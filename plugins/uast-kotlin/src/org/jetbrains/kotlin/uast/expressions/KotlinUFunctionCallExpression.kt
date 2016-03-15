@@ -20,9 +20,9 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.psi.KtCallExpression
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.uast.*
 import org.jetbrains.uast.psi.PsiElementBacked
@@ -64,8 +64,16 @@ class KotlinUFunctionCallExpression(
     }
 
     override fun resolve(context: UastContext): UFunction? {
-        val resultingDescriptor = resolveCall()?.resultingDescriptor ?: return null
-        val source = DescriptorToSourceUtilsIde.getAnyDeclaration(psi.project, resultingDescriptor) ?: return null
+        val resolvedCall = resolveCall()
+        val descriptor = resolvedCall?.resultingDescriptor ?: return null
+        val source = descriptor.toSource(psi) ?: return null
+
+        if (descriptor is ConstructorDescriptor && descriptor.isPrimary
+                && source is KtClassOrObject && source.getPrimaryConstructor() == null
+                && source.getSecondaryConstructors().isEmpty()) {
+            return (context.convert(source) as? UClass)?.constructors?.firstOrNull()
+        }
+
         return context.convert(source) as? UFunction
     }
 

@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.uast
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isBooleanOrNullableBoolean
@@ -38,7 +37,7 @@ class KotlinUType(
 
     override fun resolve(context: UastContext): UClass? {
         val descriptor = type.constructor.declarationDescriptor ?: return null
-        val sourceElement = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor) ?: return null
+        val sourceElement = descriptor.toSource(project) ?: return null
         return context.convert(sourceElement) as? UClass
     }
 

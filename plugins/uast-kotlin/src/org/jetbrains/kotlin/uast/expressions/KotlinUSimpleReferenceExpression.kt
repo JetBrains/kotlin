@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.uast
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -50,7 +49,7 @@ class KotlinClassViaConstructorUSimpleReferenceExpression(
         val resolvedCall = psi.getResolvedCall(psi.analyze(BodyResolveMode.PARTIAL))
         val resultingDescriptor = resolvedCall?.resultingDescriptor as? ConstructorDescriptor ?: return null
         val clazz = resultingDescriptor.containingDeclaration
-        val source = DescriptorToSourceUtilsIde.getAnyDeclaration(psi.project, clazz) ?: return null
+        val source = clazz.toSource(psi) ?: return null
         return context.convert(source) as? UClass
     }
 }

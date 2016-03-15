@@ -18,12 +18,9 @@ package org.jetbrains.kotlin.uast
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.uast.KotlinPsiElementStub
-import org.jetbrains.kotlin.uast.orAnonymous
 import org.jetbrains.uast.*
 import org.jetbrains.uast.psi.PsiElementBacked
 
@@ -34,7 +31,7 @@ class KotlinParameterUTypeReference(
     override fun resolve(context: UastContext): UClass? {
         val descriptor = psi.analyze(BodyResolveMode.PARTIAL)[BindingContext.TYPE_PARAMETER, psi]
                                  ?.typeConstructor?.declarationDescriptor as? ClassDescriptor ?: return null
-        return context.convert(DescriptorToSourceUtilsIde.getAnyDeclaration(psi.project, descriptor)) as? UClass
+        return context.convert(descriptor.toSource(psi)) as? UClass
     }
 
     override val nameElement: UElement?
