@@ -35,7 +35,7 @@
       <module name="idea-runner" target="1.8" />
       <module name="idea-test-framework" target="1.8" />
       <module name="j2k" target="1.8" />
-      <module name="jps-plugin" target="1.8" />
+      <module name="jps-plugin" target="1.6" />
       <module name="kannotator-jps-plugin-test" target="1.8" />
       <module name="kotlin-android-plugin" target="1.8" />
     </bytecodeTargetLevel>
