@@ -37,11 +37,11 @@ class NumberConversionFix(element: KtExpression, private val type: KotlinType) :
         if (!super.isAvailable(project, editor, file)) return false
 
         val expressionType = element.analyze(BodyResolveMode.PARTIAL).getType(element) ?: return false
-        return expressionType.isPrimitiveNumberType() && type.isPrimitiveNumberType()
+        return expressionType != type && expressionType.isPrimitiveNumberType() && type.isPrimitiveNumberType()
     }
 
     override fun getFamilyName() = "Insert number conversion"
-    override fun getText() = "Convert expression '${element.text}' to '${IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)}'"
+    override fun getText() = "Convert expression to '${IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)}'"
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
