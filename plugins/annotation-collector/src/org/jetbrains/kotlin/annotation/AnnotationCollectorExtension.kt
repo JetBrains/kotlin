@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -101,9 +101,9 @@ abstract class AnnotationCollectorExtensionBase(val supportInheritedAnnotations:
             }
         }
 
-        private var currentClassSimpleName: String? = null
+        private lateinit var currentClassSimpleName: String
 
-        private var currentPackageName: String? = null
+        private lateinit var currentPackageName: String
 
         override fun getVisitor() = classVisitor
 
@@ -184,13 +184,13 @@ abstract class AnnotationCollectorExtensionBase(val supportInheritedAnnotations:
 
             try {
                 val annotationId = shortenedAnnotationCache.save(annotationFqName, writer)
-                val packageName = this.currentPackageName!!
+                val packageName = this.currentPackageName
 
                 val packageNameId = if (!packageName.isEmpty())
                     shortenedPackageNameCache.save(packageName, writer)
                 else null
 
-                val className = this.currentClassSimpleName!!
+                val className = this.currentClassSimpleName
                 val outputClassName = getOutputClassName(packageNameId, className)
                 val elementName = if (name != null) " $name" else ""
 

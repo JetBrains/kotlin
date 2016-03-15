@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ abstract class ClassNameCollectionClassBuilderFactory(
 
         override fun getDelegate() = _delegate
 
-        private var classInternalName: String? = null
+        private lateinit var classInternalName: String
 
         override fun defineClass(origin: PsiElement?, version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<out String>) {
             classInternalName = name
@@ -50,9 +50,7 @@ abstract class ClassNameCollectionClassBuilderFactory(
         }
 
         override fun done() {
-            if (classInternalName != null) {
-                handleClashingNames(classInternalName!!, classCreatedFor)
-            }
+            handleClashingNames(classInternalName, classCreatedFor)
             super.done()
         }
     }
