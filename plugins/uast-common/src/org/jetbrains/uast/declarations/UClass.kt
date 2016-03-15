@@ -18,9 +18,13 @@ package org.jetbrains.uast
 import org.jetbrains.uast.kinds.UastClassKind
 
 interface UClass : UDeclaration, UFqNamed, UModifierOwner, UAnnotated {
+    /* The simple class name is only for the debug purposes. Do not check against it in the production code */
+    override val name: String
+
     val isAnonymous: Boolean
     val visibility: UastVisibility
     val kind: UastClassKind
+    val defaultType: UType
 
     val companions: List<UClass>
 
@@ -78,7 +82,7 @@ object UClassNotResolved : UClass {
     override val declarations = emptyList<UDeclaration>()
     override fun isSubclassOf(name: String) = false
     override val companions = emptyList<UClass>()
-
+    override val defaultType = UastErrorType
     override val nameElement = null
     override val parent = null
     override val name = "<class not resolved>"

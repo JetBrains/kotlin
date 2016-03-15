@@ -16,6 +16,7 @@
 package org.jetbrains.uast.java
 
 import com.intellij.psi.*
+import com.intellij.psi.util.PsiTypesUtil
 import org.jetbrains.uast.*
 import org.jetbrains.uast.kinds.UastClassKind
 import org.jetbrains.uast.psi.PsiElementBacked
@@ -49,6 +50,8 @@ class JavaUClass(
             else -> UastClassKind.CLASS
         }
     }
+
+    override val defaultType by lz { JavaConverter.convert(PsiTypesUtil.getClassType(psi), this) }
 
     override val companions: List<UClass>
         get() = emptyList()

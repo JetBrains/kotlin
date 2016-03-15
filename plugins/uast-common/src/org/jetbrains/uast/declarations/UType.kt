@@ -35,3 +35,12 @@ interface UTypeReference : UDeclaration, UResolvable, NoTraverse {
     override fun resolve(context: UastContext): UClass?
     override fun resolveOrEmpty(context: UastContext) = resolve(context) ?: UClassNotResolved
 }
+
+object UastErrorType : UType, NoAnnotations {
+    override val isInt = false
+    override val parent = null
+    override val name = "<error>"
+    override val fqName = null
+    override val isBoolean = false
+    override fun resolve(context: UastContext) = null
+}

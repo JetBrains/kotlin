@@ -47,12 +47,3 @@ class KotlinUType(
     //TODO
     override val annotations = emptyList<UAnnotation>()
 }
-
-object KotlinUErrorType : UType, NoAnnotations {
-    override val isInt = false
-    override val parent = null
-    override val name = "<error>"
-    override val fqName = null
-    override val isBoolean = false
-    override fun resolve(context: UastContext) = null
-}

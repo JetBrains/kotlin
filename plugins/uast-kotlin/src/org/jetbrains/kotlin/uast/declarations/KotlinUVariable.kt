@@ -37,8 +37,8 @@ open class KotlinUVariable(
     override val initializer by lz { KotlinConverter.convertOrEmpty(psi.initializer, this) }
 
     override val type by lz {
-        val descriptor = psi.resolveToDescriptorIfAny() as? CallableDescriptor ?: return@lz KotlinUErrorType
-        val type = descriptor.returnType ?: return@lz KotlinUErrorType
+        val descriptor = psi.resolveToDescriptorIfAny() as? CallableDescriptor ?: return@lz UastErrorType
+        val type = descriptor.returnType ?: return@lz UastErrorType
         KotlinConverter.convert(type, psi.project, this)
     }
 
@@ -58,11 +58,12 @@ class KotlinDestructuredUVariable(
         parent: UElement
 ) : KotlinUVariable(entry, parent) {
     override lateinit var initializer: UExpression
+        internal set
 
     override val type by lz {
         val bindingContext = entry.analyze(BodyResolveMode.PARTIAL)
-        val resolvedCall = bindingContext[BindingContext.COMPONENT_RESOLVED_CALL, entry] ?: return@lz KotlinUErrorType
-        val returnType = resolvedCall.resultingDescriptor.returnType ?: return@lz KotlinUErrorType
+        val resolvedCall = bindingContext[BindingContext.COMPONENT_RESOLVED_CALL, entry] ?: return@lz UastErrorType
+        val returnType = resolvedCall.resultingDescriptor.returnType ?: return@lz UastErrorType
         KotlinConverter.convert(returnType, entry.project, this)
     }
 }
@@ -75,7 +76,7 @@ class KotlinDestructuringUVariable(
     override val initializer by lz { KotlinConverter.convertOrEmpty(psi.initializer, this) }
     override val kind = UastVariableKind.LOCAL_VARIABLE
     override val type: UType
-        get() = initializer.getExpressionType() ?: KotlinUErrorType
+        get() = initializer.getExpressionType() ?: UastErrorType
 
     override val nameElement = null
     override fun hasModifier(modifier: UastModifier) = false
@@ -91,13 +92,13 @@ class KotlinParameterUVariable(
 
     override val nameElement by lz { KotlinConverter.asSimpleReference(psi.nameIdentifier, this) }
 
-    override val initializer by lz { KotlinConverter.convertOrEmpty(psi.defaultValue, this) }
+    override val initializer by lz { KotlinConverter.convert(psi.defaultValue, this) as? UExpression }
 
     override val kind = UastVariableKind.VALUE_PARAMETER
 
     override val type by lz {
         val bindingContext = psi.analyze(BodyResolveMode.PARTIAL)
-        val param = bindingContext[BindingContext.VALUE_PARAMETER, psi] ?: return@lz KotlinUErrorType
+        val param = bindingContext[BindingContext.VALUE_PARAMETER, psi] ?: return@lz UastErrorType
         KotlinConverter.convert(param.type, psi.project, this)
     }
 
