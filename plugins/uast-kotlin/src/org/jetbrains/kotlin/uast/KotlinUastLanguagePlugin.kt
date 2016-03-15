@@ -169,9 +169,9 @@ internal object KotlinConverter : UastConverter {
     }
 
     internal fun convert(typeReference: KtTypeReference?, parent: UElement): UType {
-        if (typeReference == null) return KotlinUErrorType
+        if (typeReference == null) return UastErrorType
         val bindingContext = typeReference.analyze(BodyResolveMode.PARTIAL)
-        val type = bindingContext[BindingContext.TYPE, typeReference] ?: return KotlinUErrorType
+        val type = bindingContext[BindingContext.TYPE, typeReference] ?: return UastErrorType
         return convert(type, typeReference.project, parent)
     }
 
