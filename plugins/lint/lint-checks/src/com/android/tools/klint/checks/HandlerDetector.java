@@ -33,6 +33,7 @@ import org.jetbrains.uast.*;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastAndroidUtils;
 import org.jetbrains.uast.check.UastScanner;
+import org.jetbrains.uast.kinds.UastClassKind;
 
 /**
  * Checks that Handler implementations are top level classes or static.
@@ -84,6 +85,10 @@ public class HandlerDetector extends Detector implements UastScanner {
 
     @Override
     public void visitClass(UastAndroidContext context, UClass node) {
+        if (UastUtils.isTopLevel(node)) {
+            return;
+        }
+
         if (node.hasModifier(UastModifier.STATIC)) {
             return;
         }
