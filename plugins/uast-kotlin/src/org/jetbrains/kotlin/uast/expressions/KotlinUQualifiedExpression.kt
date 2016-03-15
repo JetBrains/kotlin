@@ -37,7 +37,11 @@ class KotlinUComponentQualifiedExpression(
         override val parent: UElement
 ) : UQualifiedExpression, PsiElementBacked, KotlinTypeHelper, KotlinEvaluateHelper {
     override lateinit var receiver: UExpression
+        internal set
+
     override lateinit var selector: UExpression
+        internal set
+
     override val accessType = UastQualifiedExpressionAccessType.SIMPLE
     override fun resolve(context: UastContext) = null
 }

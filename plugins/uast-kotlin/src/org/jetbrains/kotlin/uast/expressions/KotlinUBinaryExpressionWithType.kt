@@ -40,6 +40,11 @@ class KotlinCustomUBinaryExpressionWithType(
         override val parent: UElement
 ) : UBinaryExpressionWithType, PsiElementBacked, NoEvaluate {
     lateinit override var operand: UExpression
+        internal set
+
     lateinit override var operationKind: UastBinaryExpressionWithTypeKind
+        internal set
+
     lateinit override var type: UType
+        internal set
 }

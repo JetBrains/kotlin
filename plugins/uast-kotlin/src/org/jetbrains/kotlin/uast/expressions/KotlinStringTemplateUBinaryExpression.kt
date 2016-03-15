@@ -28,7 +28,10 @@ class KotlinStringTemplateUBinaryExpression(
         override val parent: UElement
 ) : UBinaryExpression, PsiElementBacked, KotlinTypeHelper, KotlinEvaluateHelper {
     override lateinit var leftOperand: UExpression
+        internal set
+
     override lateinit var rightOperand: UExpression
+        internal set
 
     override val operator = UastBinaryOperator.PLUS
 }

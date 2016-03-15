@@ -17,5 +17,7 @@ package org.jetbrains.uast
 
 class KotlinUDeclarationsExpression(override val parent: UElement) : UDeclarationsExpression {
     override lateinit var declarations: List<UElement>
+        internal set
+
     override fun evaluate() = null
 }
