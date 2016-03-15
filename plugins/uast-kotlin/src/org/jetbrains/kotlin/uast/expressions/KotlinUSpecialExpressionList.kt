@@ -39,6 +39,7 @@ open class KotlinUSpecialExpressionList(
     }
 
     override lateinit var expressions: List<UExpression>
+        internal set
 
     override fun evaluate(): Any? {
         val ktElement = psi as? KtExpression ?: return null
