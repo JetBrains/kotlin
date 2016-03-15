@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.js.translate.utils;
 
 import com.google.dart.compiler.backend.js.ast.*;
 import com.intellij.util.SmartList;
+import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.translate.context.Namer;
@@ -297,6 +298,27 @@ public final class JsAstUtils {
     @NotNull
     public static JsExpression assignment(@NotNull JsExpression left, @NotNull JsExpression right) {
         return new JsBinaryOperation(JsBinaryOperator.ASG, left, right);
+    }
+
+    @Nullable
+    public static Pair<JsExpression, JsExpression> decomposeAssignment(@NotNull JsExpression expr) {
+        if (!(expr instanceof JsBinaryOperation)) return null;
+
+        JsBinaryOperation binary = (JsBinaryOperation) expr;
+        if (binary.getOperator() != JsBinaryOperator.ASG) return null;
+
+        return new Pair<JsExpression, JsExpression>(binary.getArg1(), binary.getArg2());
+    }
+
+    @Nullable
+    public static Pair<JsName, JsExpression> decomposeAssignmentToVariable(@NotNull JsExpression expr) {
+        Pair<JsExpression, JsExpression> assignment = decomposeAssignment(expr);
+        if (assignment == null || !(assignment.getFirst() instanceof JsNameRef)) return null;
+
+        JsNameRef nameRef = (JsNameRef) assignment.getFirst();
+        if (nameRef.getName() == null || nameRef.getQualifier() != null) return null;
+
+        return new Pair<JsName, JsExpression>(nameRef.getName(), assignment.getSecond());
     }
 
     @NotNull

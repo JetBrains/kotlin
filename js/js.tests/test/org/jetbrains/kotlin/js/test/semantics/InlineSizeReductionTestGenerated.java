@@ -35,6 +35,12 @@ public class InlineSizeReductionTestGenerated extends AbstractInlineSizeReductio
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/inlineSizeReduction/cases"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
+    @TestMetadata("inlineOrder.kt")
+    public void testInlineOrder() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineSizeReduction/cases/inlineOrder.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("lastBreak.kt")
     public void testLastBreak() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineSizeReduction/cases/lastBreak.kt");
@@ -44,6 +50,12 @@ public class InlineSizeReductionTestGenerated extends AbstractInlineSizeReductio
     @TestMetadata("oneTopLevelReturn.kt")
     public void testOneTopLevelReturn() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineSizeReduction/cases/oneTopLevelReturn.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("propertyAssignment.kt")
+    public void testPropertyAssignment() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineSizeReduction/cases/propertyAssignment.kt");
         doTest(fileName);
     }
 

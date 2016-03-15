@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.js.inline.context
 
 import com.google.dart.compiler.backend.js.ast.*
+import com.google.dart.compiler.backend.js.ast.metadata.synthetic
 
 import java.util.ArrayList
 import java.util.IdentityHashMap
@@ -53,6 +54,7 @@ class NamingContext(
 
     fun newVar(name: JsName, value: JsExpression? = null) {
         val vars = JsAstUtils.newVar(name, value)
+        vars.synthetic = true
         declarations.add(vars)
     }
 }

@@ -37,6 +37,8 @@ var JsParameter.hasDefaultValue: Boolean by MetadataProperty(default = false)
 
 var JsInvocation.typeCheck: TypeCheck? by MetadataProperty(default = null)
 
+var HasMetadata.synthetic: Boolean by MetadataProperty(default = false)
+
 enum class TypeCheck {
     TYPEOF,
     INSTANCEOF

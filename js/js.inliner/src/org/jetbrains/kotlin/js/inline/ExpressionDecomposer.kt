@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.js.inline.util
+package org.jetbrains.kotlin.js.inline
 
 import com.google.dart.compiler.backend.js.ast.*
+import com.google.dart.compiler.backend.js.ast.metadata.synthetic
 import com.intellij.util.SmartList
+import org.jetbrains.kotlin.js.inline.util.IdentitySet
+import org.jetbrains.kotlin.js.inline.util.canHaveOwnSideEffect
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*
 import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.*
 
@@ -322,8 +325,15 @@ internal class ExpressionDecomposer private constructor(
         val nameRef: JsExpression
             get() = name.makeRef()
 
-        fun assign(value: JsExpression): JsStatement =
-                assignment(nameRef, value).makeStmt()
+        init {
+            variable.synthetic = true
+        }
+
+        fun assign(value: JsExpression): JsStatement {
+            val statement = JsExpressionStatement(assignment(nameRef, value))
+            statement.synthetic = true
+            return statement
+        }
     }
 
     private val List<JsNode>.indicesOfExtractable: Iterator<Int>
