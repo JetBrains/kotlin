@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.uast.kinds.KotlinSpecialExpressionKinds
 import org.jetbrains.kotlin.uast.lint.PropertyAsCallAndroidUastAdditionalChecker
 import org.jetbrains.uast.*
 
@@ -57,6 +58,12 @@ internal object KotlinConverter : UastConverter {
             annotations = element.entries.map { KotlinUAnnotation(it, this) }
         }
         is KtDeclaration -> convert(element, parent)
+        is KtParameterList -> KotlinUDeclarationsExpression(parent).apply {
+            declarations = element.parameters.map { convert(it, this) }
+        }
+        is KtClassBody -> KotlinUSpecialExpressionList(element, KotlinSpecialExpressionKinds.CLASS_BODY, parent).apply {
+            expressions = emptyList()
+        }
         is KtImportDirective -> KotlinUImportStatement(element, parent)
         is KtCatchClause -> KotlinUCatchClause(element, parent)
         is KtExpression -> KotlinConverter.convert(element, parent)
@@ -121,6 +128,7 @@ internal object KotlinConverter : UastConverter {
             }
             declarations = listOf(tempAssignment) + destructuringAssignments
         }
+        is KtObjectLiteralExpression -> KotlinUObjectLiteralExpression(expression, parent)
         is KtStringTemplateEntry -> convertOrEmpty(expression.expression, parent)
         is KtDotQualifiedExpression -> KotlinUQualifiedExpression(expression, parent)
         is KtSafeQualifiedExpression -> KotlinUSafeQualifiedExpression(expression, parent)

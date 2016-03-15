@@ -16,14 +16,14 @@
 
 package org.jetbrains.kotlin.uast
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.state.IncompatibleClassTracker
-import org.jetbrains.kotlin.codegen.state.JetTypeMapper
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.fileClasses.NoResolveFileClassesProvider
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtClass
@@ -40,12 +40,22 @@ import org.jetbrains.uast.psi.PsiElementBacked
 
 class KotlinUClass(
         override val psi: KtClassOrObject,
-        override val parent: UElement
+        override val parent: UElement,
+        override val isAnonymous: Boolean = false
 ) : UClass, PsiElementBacked {
     override val name: String
         get() = psi.name.orAnonymous()
 
-    override val nameElement by lz { KotlinConverter.asSimpleReference(psi.nameIdentifier, this) }
+    override val nameElement by lz {
+        fun objectKeyword() = try { // !! in getObjectKeyword()
+            if (psi is KtObjectDeclaration && psi.isObjectLiteral()) psi.getObjectKeyword() else null
+        } catch (e: NullPointerException) {
+            null
+        }
+
+        val namePsiElement = psi.nameIdentifier ?: objectKeyword()
+        KotlinConverter.asSimpleReference(namePsiElement, this)
+    }
 
     override val fqName: String?
         get() = psi.fqName?.asString()
@@ -75,25 +85,37 @@ class KotlinUClass(
         (psi as? KtClass)?.getCompanionObjects()?.map { KotlinConverter.convert(it, this) } ?: emptyList()
     }
 
-    override val isAnonymous = false
-
     override val internalName by lz {
         val descriptor = resolveToDescriptor() ?: return@lz null
-        val typeMapper = JetTypeMapper(BindingContext.EMPTY, ClassBuilderMode.LIGHT_CLASSES, NoResolveFileClassesProvider, null,
-                                       IncompatibleClassTracker.DoNothing, JvmAbi.DEFAULT_MODULE_NAME)
+        val typeMapper = KotlinTypeMapper(BindingContext.EMPTY, ClassBuilderMode.LIGHT_CLASSES, NoResolveFileClassesProvider, null,
+                                               IncompatibleClassTracker.DoNothing, JvmAbi.DEFAULT_MODULE_NAME)
         typeMapper.mapClass(descriptor).internalName
     }
 
     override fun getSuperClass(context: UastContext): UClass? {
-        val superClass = resolveToDescriptor()?.getSuperClassOrAny() ?: return null
-        val source = DescriptorToSourceUtilsIde.getAnyDeclaration(psi.project, superClass) ?: return null
+        val descriptor = resolveToDescriptor() ?: return null
+        if (KotlinBuiltIns.isAny(descriptor)) return null
+        val source = descriptor.getSuperClassOrAny().toSource(psi.project) ?: return null
         return context.convert(source) as? UClass
     }
 
     override fun hasModifier(modifier: UastModifier) = psi.hasModifier(modifier)
 
     override val declarations by lz {
-        val primaryConstructor = psi.getPrimaryConstructor()?.let { KotlinConverter.convert(it, this) }
+        val primaryConstructor = if (psi is KtObjectDeclaration && psi.isObjectLiteral()) {
+            val obj = psi
+            object : KotlinObjectLiteralConstructorUFunction(obj, this) {
+
+            }
+        } else {
+            psi.getPrimaryConstructor()?.let { KotlinConverter.convert(it, this) } ?: run {
+                if (psi.getSecondaryConstructors().isEmpty())
+                    KotlinDefaultPrimaryConstructorUFunction(psi, this)
+                else
+                    null
+            }
+        }
+
         val anonymousInitializers = psi.getAnonymousInitializers().map { KotlinConverter.convert(it, this) }.filterNotNull()
         val declarations = psi.declarations.map { KotlinConverter.convert(it, this) }.filterNotNull()
 

@@ -96,3 +96,64 @@ class KotlinUComponentFunctionCallExpression(
     override val kind = UastCallKind.FUNCTION_CALL
     override fun resolve(context: UastContext) = null
 }
+
+class KotlinUSuperConstructorCallExpression(
+        override val psi: KtObjectDeclaration,
+        override val parent: UElement,
+        val resolvedCall: () -> ResolvedCall<*>?
+) : UCallExpression, PsiElementBacked, NoEvaluate {
+    override val functionReference: USimpleReferenceExpression?
+        get() = null
+
+    override val classReference: USimpleReferenceExpression by lz {
+        val referenceParent = this
+        object : USimpleReferenceExpression, PsiElementBacked, NoEvaluate {
+            override val parent: UElement?
+                get() = referenceParent
+
+            override val identifier: String
+                get() = resolvedCall()?.resultingDescriptor?.name?.asString().orAnonymous()
+
+            override fun resolve(context: UastContext): UDeclaration? {
+                val descriptor = resolvedCall()?.resultingDescriptor ?: return null
+                val source = DescriptorToSourceUtilsIde.getAnyDeclaration(psi.project, descriptor) ?: return null
+                return context.convert(source) as? UDeclaration
+            }
+
+            override val psi: PsiElement
+                get() = this@KotlinUSuperConstructorCallExpression.psi
+        }
+    }
+
+    override val functionName: String?
+        get() = "<init>"
+
+    override val functionNameElement by lz {
+        try {
+            KotlinPsiElementStub(psi.getObjectKeyword(), this)
+        } catch (e: NullPointerException) {
+            null
+        }
+    }
+
+    override val valueArgumentCount: Int
+        get() = resolvedCall()?.valueArguments?.size ?: 0
+
+    override val valueArguments by lz {
+        resolvedCall()?.call?.valueArguments?.map { KotlinConverter.convertOrEmpty(it.getArgumentExpression(), this) } ?: emptyList()
+    }
+
+    override val typeArgumentCount: Int
+        get() = 0
+    override val typeArguments: List<UType>
+        get() = emptyList()
+
+    override val kind: UastCallKind
+        get() = UastCallKind.CONSTRUCTOR_CALL
+
+    override fun resolve(context: UastContext): UFunction? {
+        val descriptor = resolvedCall()?.resultingDescriptor ?: return null
+        val source = DescriptorToSourceUtilsIde.getAnyDeclaration(psi.project, descriptor) ?: return null
+        return context.convert(source) as? UFunction
+    }
+}

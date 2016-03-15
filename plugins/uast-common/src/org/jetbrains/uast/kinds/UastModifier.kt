@@ -23,5 +23,7 @@ class UastModifier(val name: String) {
         val STATIC = UastModifier("static")
         @JvmField
         val FINAL = UastModifier("final")
+        @JvmField
+        val VARARG = UastModifier("vararg")
     }
 }

@@ -859,9 +859,6 @@ public class ApiDetector extends ResourceXmlDetector
                                 owner = null;
                             }
                         } else if (owner.startsWith("java/")) {    //$NON-NLS-1$
-                            if (owner.equals(LocaleDetector.DATE_FORMAT_OWNER)) {
-                                checkSimpleDateFormat(context, method, node, minSdk);
-                            }
                             // Already inlined; see comment above
                             owner = null;
                         } else if (node.getOpcode() == Opcodes.INVOKEVIRTUAL) {
