@@ -25,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink;
 import org.jetbrains.kotlin.diagnostics.Errors;
+import org.jetbrains.kotlin.js.inline.clean.FunctionPostProcessor;
 import org.jetbrains.kotlin.js.inline.clean.RemoveUnusedFunctionDefinitionsKt;
 import org.jetbrains.kotlin.js.inline.clean.RemoveUnusedLocalFunctionDeclarationsKt;
 import org.jetbrains.kotlin.js.inline.context.FunctionContext;
@@ -36,7 +37,6 @@ import org.jetbrains.kotlin.resolve.inline.InlineStrategy;
 
 import java.util.*;
 
-import static org.jetbrains.kotlin.js.inline.FunctionInlineMutator.canBeExpression;
 import static org.jetbrains.kotlin.js.inline.FunctionInlineMutator.getInlineableCallReplacement;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.flattenStatement;
 
@@ -59,12 +59,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
 
             JsInvocation call = (JsInvocation) node;
 
-            if (hasToBeInlined(call)) {
-                JsFunction function = getFunctionContext().getFunctionDefinition(call);
-                return !canBeExpression(function);
-            }
-
-            return false;
+            return hasToBeInlined(call);
         }
     };
 
@@ -107,6 +102,8 @@ public class JsInliner extends JsVisitorWithContextImpl {
 
         RemoveUnusedLocalFunctionDeclarationsKt.removeUnusedLocalFunctionDeclarations(function);
         processedFunctions.add(function);
+
+        new FunctionPostProcessor(function.getBody()).apply();
 
         assert inProcessFunctions.contains(function);
         inProcessFunctions.remove(function);

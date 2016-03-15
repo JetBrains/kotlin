@@ -17,15 +17,13 @@
 package org.jetbrains.kotlin.js.inline
 
 import com.google.dart.compiler.backend.js.ast.*
-import com.google.dart.compiler.util.AstUtil
-import com.intellij.util.containers.ContainerUtil
+import com.google.dart.compiler.backend.js.ast.metadata.synthetic
 import org.jetbrains.kotlin.js.inline.clean.removeDefaultInitializers
 import org.jetbrains.kotlin.js.inline.context.InliningContext
 import org.jetbrains.kotlin.js.inline.context.NamingContext
 import org.jetbrains.kotlin.js.inline.util.*
 import org.jetbrains.kotlin.js.inline.util.rewriters.ReturnReplacingVisitor
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.newVar
-import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.*
 
 class FunctionInlineMutator
 private constructor(
@@ -33,7 +31,6 @@ private constructor(
         private val inliningContext: InliningContext
 ) {
     private val invokedFunction: JsFunction
-    private val isResultNeeded: Boolean
     private val namingContext: NamingContext
     private val body: JsBlock
     private var resultExpr: JsExpression? = null
@@ -45,7 +42,6 @@ private constructor(
         val functionContext = inliningContext.functionContext
         invokedFunction = functionContext.getFunctionDefinition(call)
         body = invokedFunction.body.deepCopy()
-        isResultNeeded = isResultNeeded(call)
         namingContext = inliningContext.newNamingContext()
     }
 
@@ -84,45 +80,13 @@ private constructor(
     private fun removeStatementsAfterTopReturn() {
         val statements = body.statements
 
-        val statementsSize = statements.size
-        for (i in 0..statementsSize - 1) {
-            val statement = statements.get(i)
-
-            if (statement is JsReturn) {
-                statements.subList(i + 1, statementsSize).clear()
-                break
-            }
+        val returnIndex = statements.indexOfFirst { it is JsReturn }
+        if (returnIndex >= 0) {
+            statements.subList(returnIndex + 1, statements.size).clear()
         }
     }
 
     private fun processReturns() {
-        if (currentStatement is JsReturn && currentStatement.expression === call) {
-            inliningContext.statementContext.removeMe()
-            return
-        }
-
-        val returnCount = collectInstances(JsReturn::class.java, body).size
-        if (returnCount == 0) {
-            // TODO return Unit (KT-5647)
-            resultExpr = JsLiteral.UNDEFINED
-            return
-        }
-
-        if (returnCount == 1) {
-            val statements = body.statements
-            val lastTopLevelStatement = statements[statements.lastIndex]
-
-            if (lastTopLevelStatement is JsReturn) {
-                resultExpr = lastTopLevelStatement.expression
-                statements.removeAt(statements.lastIndex)
-                return
-            }
-        }
-
-        doReplaceReturns()
-    }
-
-    private fun doReplaceReturns() {
         val resultReference = getResultReference()
         if (resultReference != null) {
             resultExpr = resultReference
@@ -130,60 +94,20 @@ private constructor(
         assert(resultExpr == null || resultExpr is JsNameRef)
 
         val breakName = namingContext.getFreshName(getBreakLabel())
-        breakLabel = JsLabel(breakName)
+        val breakLabel = JsLabel(breakName)
+        breakLabel.synthetic = true
+        this.breakLabel = breakLabel
 
         val visitor = ReturnReplacingVisitor(resultExpr as? JsNameRef, breakName.makeRef())
         visitor.accept(body)
-
-        val statements = body.statements
-        val last = statements.lastOrNull() as? JsBreak
-
-        if (last?.label?.name === breakLabel?.name) {
-            statements.removeAt(statements.lastIndex)
-        }
     }
 
     private fun getResultReference(): JsNameRef? {
-        if (!isResultNeeded) return null
-
-        val existingReference = when (currentStatement) {
-            is JsExpressionStatement -> {
-                val expression = currentStatement.expression as? JsBinaryOperation
-                expression?.getResultReference()
-            }
-            is JsVars -> currentStatement.getResultReference()
-            else -> null
-        }
-
-        if (existingReference != null) return existingReference
+        if (!isResultNeeded(call)) return null
 
         val resultName = namingContext.getFreshName(getResultLabel())
         namingContext.newVar(resultName, null)
         return resultName.makeRef()
-    }
-
-    private fun JsBinaryOperation.getResultReference(): JsNameRef? {
-        if (operator !== JsBinaryOperator.ASG || arg2 !== call) return null
-
-        return arg1 as? JsNameRef
-    }
-
-    private fun JsVars.getResultReference(): JsNameRef? {
-        val vars = vars
-        val variable = vars.first()
-
-        // var a = expr1 + call() is ok, but we don't want to reuse 'a' for result,
-        // as it means to replace every 'return expr2' to 'a = expr1 + expr2'.
-        // If there is more than one return, expr1 copies are undesirable.
-        if (variable.initExpression !== call || vars.size > 1) return null
-
-        val varName = variable.name
-        with (inliningContext.statementContext) {
-            removeMe()
-            addPrevious(newVar(varName, null))
-        }
-
-        return varName.makeRef()
     }
 
     private fun getArguments(): List<JsExpression> {
@@ -245,7 +169,7 @@ private constructor(
         @JvmStatic
         private fun getThisReplacement(call: JsInvocation): JsExpression? {
             if (isCallInvocation(call)) {
-                return call.arguments.get(0)
+                return call.arguments[0]
             }
 
             if (hasCallerQualifier(call)) {
@@ -258,15 +182,6 @@ private constructor(
         private fun hasThisReference(body: JsBlock): Boolean {
             val thisRefs = collectInstances(JsLiteral.JsThisRef::class.java, body)
             return !thisRefs.isEmpty()
-        }
-
-        @JvmStatic fun canBeExpression(function: JsFunction): Boolean {
-            return canBeExpression(function.body)
-        }
-
-        private fun canBeExpression(body: JsBlock): Boolean {
-            val statements = body.statements
-            return statements.size == 1 && statements.get(0) is JsReturn
         }
     }
 }
