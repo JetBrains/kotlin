@@ -6194,6 +6194,39 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/simplifyComparison")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class SimplifyComparison extends AbstractQuickFixTest {
+        public void testAllFilesPresentInSimplifyComparison() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/simplifyComparison"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("doubleNull.kt")
+        public void testDoubleNull() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/simplifyComparison/doubleNull.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notNull.kt")
+        public void testNotNull() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/simplifyComparison/notNull.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nullOrNotNull.kt")
+        public void testNullOrNotNull() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/simplifyComparison/nullOrNotNull.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("somethingAndNotNull.kt")
+        public void testSomethingAndNotNull() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/simplifyComparison/somethingAndNotNull.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/supercalls")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
