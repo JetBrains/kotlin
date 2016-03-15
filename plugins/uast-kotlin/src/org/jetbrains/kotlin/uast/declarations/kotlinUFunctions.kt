@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.uast
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
@@ -125,4 +126,103 @@ class KotlinAnonymousInitializerUFunction(
 
     override val annotations: List<UAnnotation>
         get() = emptyList()
+}
+
+open class KotlinDefaultPrimaryConstructorUFunction(
+        override val psi: KtClassOrObject,
+        override val parent: UClass
+) : UFunction, PsiElementBacked, NoModifiers, NoAnnotations {
+    override val kind: UastFunctionKind
+        get() = UastFunctionKind.CONSTRUCTOR
+
+    override val nameElement by lz { psi.nameIdentifier?.let { KotlinPsiElementStub(it, this) } }
+    override val name: String
+        get() = "<init>"
+
+    override val valueParameters: List<UVariable>
+        get() = emptyList()
+    override val valueParameterCount: Int
+        get() = 0
+
+    override val typeParameters: List<UTypeReference>
+        get() = emptyList()
+    override val typeParameterCount: Int
+        get() = 0
+
+    override val returnType: UType?
+        get() = null
+
+    override val body: UExpression = EmptyExpression(this)
+
+    override val visibility: UastVisibility
+        get() = parent.visibility
+
+    override fun getSuperFunctions(context: UastContext) = emptyList<UFunction>()
+}
+
+open class KotlinObjectLiteralConstructorUFunction(
+        override val psi: KtObjectDeclaration,
+        override val parent: UClass
+) : UFunction, PsiElementBacked, NoModifiers, NoAnnotations {
+    private val resolvedCall by lz {
+        val bindingContext = psi.analyze(BodyResolveMode.PARTIAL)
+        val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, psi] as? ClassDescriptor
+        val primaryConstructor = descriptor?.unsubstitutedPrimaryConstructor ?: return@lz null
+        bindingContext[BindingContext.CONSTRUCTOR_RESOLVED_DELEGATION_CALL, primaryConstructor]
+    }
+
+    override val kind: UastFunctionKind
+        get() = UastFunctionKind.CONSTRUCTOR
+
+    override val nameElement by lz { psi.nameIdentifier?.let { KotlinPsiElementStub(it, this) } }
+    override val name: String
+        get() = "<init>"
+
+
+    override val valueParameters by lz {
+        val params = resolvedCall?.valueArguments?.keys ?: return@lz emptyList<UVariable>()
+        params.map { param ->
+            object : UVariable {
+                override val initializer: UExpression?
+                    get() = null
+                override val kind: UastVariableKind
+                    get() = UastVariableKind.VALUE_PARAMETER
+                override val type: UType
+                    get() = KotlinConverter.convert(param.type, psi.project, this)
+                override val nameElement: UElement?
+                    get() = null
+                override val parent: UElement?
+                    get() = this@KotlinObjectLiteralConstructorUFunction
+                override val name: String
+                    get() = param.name.asString()
+
+                override fun hasModifier(modifier: UastModifier) = when(modifier) {
+                    UastModifier.VARARG -> param.varargElementType != null
+                    else -> false
+                }
+
+                override val annotations: List<UAnnotation>
+                    get() = emptyList()
+            }
+        }
+    }
+
+    override val valueParameterCount: Int
+        get() = resolvedCall?.valueArgumentsByIndex?.size ?: 0
+
+    override val typeParameters: List<UTypeReference>
+        get() = emptyList()
+
+    override val typeParameterCount: Int
+        get() = 0
+
+    override val returnType: UType?
+        get() = null
+
+    override val body: UExpression = EmptyExpression(this)
+
+    override val visibility: UastVisibility
+        get() = parent.visibility
+
+    override fun getSuperFunctions(context: UastContext) = emptyList<UFunction>()
 }

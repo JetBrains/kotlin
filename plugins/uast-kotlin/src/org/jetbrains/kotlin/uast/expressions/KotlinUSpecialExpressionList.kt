@@ -29,7 +29,7 @@ import org.jetbrains.uast.UastSpecialExpressionKind
 import org.jetbrains.uast.psi.PsiElementBacked
 
 open class KotlinUSpecialExpressionList(
-        override val psi: PsiElement,
+        override val psi: PsiElement?,
         override val kind: UastSpecialExpressionKind, // original element
         override val parent: UElement
 ) : USpecialExpressionList, PsiElementBacked, KotlinTypeHelper, KotlinEvaluateHelper {

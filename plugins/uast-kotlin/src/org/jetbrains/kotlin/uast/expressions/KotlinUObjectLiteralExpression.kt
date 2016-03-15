@@ -14,20 +14,17 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.uast.kinds
+package org.jetbrains.kotlin.uast
 
-import org.jetbrains.uast.UastSpecialExpressionKind
+import org.jetbrains.kotlin.psi.KtObjectLiteralExpression
+import org.jetbrains.uast.NoEvaluate
+import org.jetbrains.uast.UElement
+import org.jetbrains.uast.UObjectLiteralExpression
+import org.jetbrains.uast.psi.PsiElementBacked
 
-object KotlinSpecialExpressionKinds {
-    @JvmField
-    val WHEN = UastSpecialExpressionKind("when")
-
-    @JvmField
-    val WHEN_ENTRY = UastSpecialExpressionKind("when_entry")
-
-    @JvmField
-    val CLASS_BODY = UastSpecialExpressionKind("class_body")
-
-    @JvmField
-    val VARARG = UastSpecialExpressionKind("vararg")
+class KotlinUObjectLiteralExpression(
+        override val psi: KtObjectLiteralExpression,
+        override val parent: UElement
+) : UObjectLiteralExpression, PsiElementBacked, KotlinTypeHelper, NoEvaluate {
+    override val declaration by lz { KotlinUClass(psi.objectDeclaration, this, true) }
 }
