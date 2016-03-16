@@ -33,20 +33,22 @@ open class KotlinSourceSetImpl(displayName: String?, resolver: FileResolver?): K
     }
 }
 
-private fun createDefaultSourceDirectorySet(name: String?, resolver: FileResolver?): DefaultSourceDirectorySet {
+private val createDefaultSourceDirectorySet: (name: String?, resolver: FileResolver?) -> DefaultSourceDirectorySet = run {
     val klass = DefaultSourceDirectorySet::class.java
     val defaultConstructor = klass.constructorOrNull(String::class.java, FileResolver::class.java)
 
     if (defaultConstructor != null) {
-        return defaultConstructor.newInstance(name, resolver)
+        // TODO: drop when gradle < 2.12 are obsolete
+        { name, resolver -> defaultConstructor.newInstance(name, resolver) }
     }
+    else {
+        val directoryFileTreeFactoryClass = Class.forName("org.gradle.api.internal.file.collections.DirectoryFileTreeFactory")
+        val alternativeConstructor = klass.getConstructor(String::class.java, FileResolver::class.java, directoryFileTreeFactoryClass)
 
-    // TODO: we can move to 2.12 after AS 2 release and
-    // use fallback strategy instead (try to make call, catch NoSuchMethodException, use reflection to access old API)
-    val directoryFileTreeFactoryClass = Class.forName("org.gradle.api.internal.file.collections.DirectoryFileTreeFactory")
-    val defaultFileTreeFactoryClass = Class.forName("org.gradle.api.internal.file.collections.DefaultDirectoryFileTreeFactory")
-    val alternativeConstructor = klass.getConstructor(String::class.java, FileResolver::class.java, directoryFileTreeFactoryClass)
-    return alternativeConstructor.newInstance(name, resolver, defaultFileTreeFactoryClass.getConstructor().newInstance())
+        val defaultFileTreeFactoryClass = Class.forName("org.gradle.api.internal.file.collections.DefaultDirectoryFileTreeFactory")
+        val defaultFileTreeFactory = defaultFileTreeFactoryClass.getConstructor().newInstance()
+        return@run { name, resolver -> alternativeConstructor.newInstance(name, resolver, defaultFileTreeFactory) }
+    }
 }
 
 private fun <T> Class<T>.constructorOrNull(vararg parameterTypes: Class<*>): Constructor<T>? =
