@@ -1163,5 +1163,5 @@
 
     <target name="build-bootstrap-artifacts" depends="dist,zip-compiler"/>
 
-    <target name="build-artifacts" depends="dist,zip-compiler,kotlin-for-upsource,zip-test-data"/>
+    <target name="build-artifacts" depends="dist,zip-compiler,zip-test-data"/>
 </project>
