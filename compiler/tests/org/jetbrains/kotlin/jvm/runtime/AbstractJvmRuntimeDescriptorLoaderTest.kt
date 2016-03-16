@@ -72,6 +72,8 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
         }
     }
 
+    protected open val defaultJdkKind: TestJdkKind = TestJdkKind.MOCK_JDK
+
     // NOTE: this test does a dirty hack of text substitution to make all annotations defined in source code retain at runtime.
     // Specifically each @interface in Java sources is extended by @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME)
     // Also type related annotations are removed from Java because they are invisible at runtime
@@ -83,7 +85,7 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
 
         val jdkKind =
                 if (InTextDirectivesUtils.isDirectiveDefined(text, "FULL_JDK")) TestJdkKind.FULL_JDK
-                else TestJdkKind.MOCK_JDK
+                else defaultJdkKind
 
         compileFile(file, text, jdkKind)
 

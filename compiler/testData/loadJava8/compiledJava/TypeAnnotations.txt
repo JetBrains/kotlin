@@ -1,0 +1,21 @@
+package test
+
+public open class TypeAnnotations {
+    public constructor TypeAnnotations()
+
+    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) public/*package*/ final annotation class A : kotlin.Annotation {
+        public/*package*/ constructor A(/*0*/ value: kotlin.String = ...)
+        public final val value: kotlin.String
+    }
+
+    public/*package*/ interface G</*0*/ T : kotlin.Any!> {
+    }
+
+    public/*package*/ interface G2</*0*/ A : kotlin.Any!, /*1*/ B : kotlin.Any!> {
+    }
+
+    public interface MyClass</*0*/ TT : kotlin.Any!> {
+        public abstract fun f(/*0*/ p0: test.TypeAnnotations.G2<kotlin.String!, kotlin.Int!>!): kotlin.Unit
+        public abstract fun f(/*0*/ p0: test.TypeAnnotations.G<kotlin.String!>!): kotlin.Unit
+    }
+}

@@ -113,10 +113,8 @@ import org.jetbrains.kotlin.jps.build.*
 import org.jetbrains.kotlin.jps.build.android.AbstractAndroidJpsTestCase
 import org.jetbrains.kotlin.jps.incremental.AbstractProtoComparisonTest
 import org.jetbrains.kotlin.js.test.semantics.*
-import org.jetbrains.kotlin.jvm.compiler.AbstractCompileJavaAgainstKotlinTest
-import org.jetbrains.kotlin.jvm.compiler.AbstractLoadJavaTest
-import org.jetbrains.kotlin.jvm.compiler.AbstractLoadKotlinWithTypeTableTest
-import org.jetbrains.kotlin.jvm.compiler.AbstractWriteSignatureTest
+import org.jetbrains.kotlin.jvm.compiler.*
+import org.jetbrains.kotlin.jvm.runtime.AbstractJvm8RuntimeDescriptorLoaderTest
 import org.jetbrains.kotlin.jvm.runtime.AbstractJvmRuntimeDescriptorLoaderTest
 import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidBoxTest
 import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidBytecodeShapeTest
@@ -340,11 +338,22 @@ fun main(args: Array<String>) {
         testClass<AbstractBlackBoxCodegenTest>("BlackBoxWithJava8CodegenTestGenerated") {
             model("codegen/java8/box")
         }
+
         testClass<AbstractDiagnosticsWithFullJdkTest>("DiagnosticsWithJava8TestGenerated") {
             model("diagnostics/testsWithJava8")
         }
+
         testClass<AbstractForeignJava8AnnotationsTest>() {
             model("foreignAnnotationsJava8/tests")
+        }
+
+        testClass<AbstractLoadJava8Test> {
+            model("loadJava8/compiledJava", extension = "java", testMethod = "doTestCompiledJava")
+            model("loadJava8/sourceJava", extension = "java", testMethod = "doTestSourceJava")
+        }
+
+        testClass<AbstractJvm8RuntimeDescriptorLoaderTest>() {
+            model("loadJava8/compiledJava", extension = "java", excludeDirs = listOf("sam", "kotlinSignature/propagation"))
         }
     }
 

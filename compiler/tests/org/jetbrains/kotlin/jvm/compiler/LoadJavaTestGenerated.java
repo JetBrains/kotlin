@@ -5111,12 +5111,6 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             doTestSourceJava(fileName);
         }
 
-        @TestMetadata("TypeAnnotations.java")
-        public void testTypeAnnotations() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/sourceJava/TypeAnnotations.java");
-            doTestSourceJava(fileName);
-        }
-
         @TestMetadata("WrongNumberOfGenericParameters.java")
         public void testWrongNumberOfGenericParameters() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/sourceJava/WrongNumberOfGenericParameters.java");
