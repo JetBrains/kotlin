@@ -13,8 +13,7 @@ fun main(args: Array<String>) {
     println(src)
     println("------------------\n");
     val visibilities = readKotlinVisibilities(File("""stdlib/target/stdlib-declarations.json"""))
-    val apiDumper = ApiDumper(visibilities)
-    dumpBinaryAPI(apiDumper.getBinaryAPI(JarFile(src)))
+    getBinaryAPI(JarFile(src), visibilities).filterOutNonPublic().dump()
 }
 
 
@@ -34,51 +33,55 @@ fun JarFile.classEntries() = entries().asSequence().filter {
     !it.isDirectory && it.name.endsWith(".class")
 }
 
-data class ClassBinarySignature(val name: String, val signature: String, val memberSignatures: List<String>)
+data class ClassBinarySignature(val name: String, val outerName: String?, val signature: String, val memberSignatures: List<String>, val isPublic: Boolean)
 
-class ApiDumper(val visibilityMap: Map<String, ClassVisibility>) {
-    fun getBinaryAPI(jar: JarFile): List<ClassBinarySignature> = jar.classEntries()
-            .map { entry ->
-                jar.getInputStream(entry).use { stream ->
-                    val classNode = ClassNode()
-                    ClassReader(stream).accept(classNode, ClassReader.SKIP_CODE)
-                    classNode
-                }
+fun getBinaryAPI(jar: JarFile, visibilityMap: Map<String, ClassVisibility>): List<ClassBinarySignature> = jar.classEntries()
+        .map { entry ->
+            jar.getInputStream(entry).use { stream ->
+                val classNode = ClassNode()
+                ClassReader(stream).accept(classNode, ClassReader.SKIP_CODE)
+                classNode
             }
-            .mapNotNull { with(it) {
-                val classVisibility = visibilityMap[name]
-                if (!it.isEffectivelyPublic(classVisibility))
-                    return@mapNotNull null
+        }
+        .asIterable()
+        .sortedBy { it.name }
+        .mapNotNull { with(it) {
+            val classVisibility = visibilityMap[name]
+            val isPublic = it.isEffectivelyPublic(classVisibility)
 
-                // TODO: Inspect outer classes
+            val supertypes = listOf(superName) - "java/lang/Object" + interfaces.sorted()
 
-                val supertypes = listOf(superName) - "java/lang/Object" + interfaces.sorted()
+            val classSignature = "${getModifierString(access)} class $name" +
+                    if (supertypes.isEmpty()) "" else ": ${supertypes.joinToString()}"
 
-                val classSignature = "${getModifierString(access)} class $name" +
-                        if (supertypes.isEmpty()) "" else ": ${supertypes.joinToString()}"
+            val memberSignatures =
+                    fields.filter { it.isPublic() }
+                            .sortedBy { it.name }
+                            .map { with(it) { "${getModifierString(access)} field $name $desc" } } +
+                    methods.filter { it.isEffectivelyPublic(classVisibility) }
+                            .sortedWith(compareBy({ it.name }, { it.desc }))
+                            .map { with(it) { "${getModifierString(access)} fun $name $desc" } }
 
-                val memberSignatures =
-                        fields.filter { it.isPublic() }
-                                .sortedBy { it.name }
-                                .map { with(it) { "${getModifierString(access)} field $name $desc" } } +
-                        methods.filter { it.isEffectivelyPublic(classVisibility) }
-                                .sortedWith(compareBy({ it.name }, { it.desc }))
-                                .map { with(it) { "${getModifierString(access)} fun $name $desc" } }
+            ClassBinarySignature(name, outerClassName, classSignature, memberSignatures, isPublic)
+        }}
 
-                ClassBinarySignature(name, classSignature, memberSignatures)
-            }}
-            .asIterable()
-            .sortedBy { it.name }
 
+
+fun List<ClassBinarySignature>.filterOutNonPublic(): List<ClassBinarySignature> {
+    val classByName = associateBy { it.name }
+
+    fun ClassBinarySignature.isPublicAndAccessible(): Boolean =
+            isPublic && (outerName == null || classByName[outerName]?.isPublicAndAccessible() ?: true)
+
+    return filter { it.isPublicAndAccessible() }
 }
 
-fun dumpBinaryAPI(signatures: List<ClassBinarySignature>) {
-    signatures.forEach {
-        println(it.signature)
-        it.memberSignatures.forEach { println(it) }
-        println("------------------\n")
-    }
+fun List<ClassBinarySignature>.dump() = forEach {
+    println(it.signature)
+    it.memberSignatures.forEach { println(it) }
+    println("------------------\n")
 }
+
 
 
 
@@ -137,6 +140,8 @@ private fun List<Any>.annotationValue(key: String): Any? {
     return null
 }
 
+val ClassNode.outerClassName: String?
+    get() = innerClasses.singleOrNull { it.name == name }?.outerName
 
 
 
