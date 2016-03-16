@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,7 @@
 
 package org.jetbrains.kotlin.checkers
 
-import org.jetbrains.kotlin.test.MockLibraryUtil
-import java.io.File
-
-abstract class AbstractForeignAnnotationsTest : AbstractDiagnosticsTest() {
-    override fun getExtraClasspath(): List<File> {
-        return listOf(MockLibraryUtil.compileLibraryToJar(
-                annotationsPath,
-                "foreign-annotations", /* addSources = */false, /* allowKotlinPackage = */ false
-        ))
-    }
-
-    open protected val annotationsPath: String
-        get() = "compiler/testData/foreignAnnotations/annotations"
+abstract class AbstractForeignJava8AnnotationsTest : AbstractForeignAnnotationsTest() {
+    override val annotationsPath: String
+        get() = "compiler/testData/foreignAnnotationsJava8/annotations"
 }
