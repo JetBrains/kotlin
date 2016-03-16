@@ -11,24 +11,25 @@
  *******************************************************************************/
 package org.eclipse.jdt.annotation;
 
-import java.lang.annotation.ElementType;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.LOCAL_VARIABLE;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
 
 import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
- 
+
 /**
- * Qualifier for a reference type in a {@link ElementType#TYPE_USE TYPE_USE} position:
- * The type that has this annotation is intended to not include the value <code>null</code>.
+ * Qualifier for a type in a method signature or a local variable declaration:
+ * The entity (return value, parameter, field, local variable) whose type has this
+ * annotation can never have the value <code>null</code> at runtime.
  * <p>
- * If annotation based null analysis is enabled using this annotation has two consequences:
- * </p>
+ * This has two consequences:
  * <ol>
- * <li>Dereferencing an expression of this type is safe, i.e., no <code>NullPointerException</code> can occur at runtime.</li>
- * <li>An attempt to bind a <code>null</code> value to an entity (field, local variable, method parameter or method return value)
- *      of this type is a compile time error.</li>
+ * <li>Dereferencing the entity is safe, i.e., no <code>NullPointerException</code> can occur at runtime.</li>
+ * <li>An attempt to bind a <code>null</code> value to the entity is a compile time error.</li>
  * </ol>
  * For the second case, diagnostics issued by the compiler should distinguish three situations:
  * <ol>
@@ -39,19 +40,12 @@ import java.lang.annotation.Target;
  * <li>Nullness cannot be determined, because other program elements are involved for which
  *     null annotations are lacking.</li>
  * </ol>
- * <p>
- * <b>Note:</b> Since org.eclipse.jdt.annotation 2.0.0, the
- * <code>@Target</code> is <code>{TYPE_USE}</code>. For the old API, see
- * <a href="http://help.eclipse.org/kepler/topic/org.eclipse.jdt.doc.isv/reference/api/org/eclipse/jdt/annotation/NonNull.html">
- * <code>@NonNull</code> in 1.1.0</a>.
  * </p>
  * @since 1.0
  */
 @Documented
 @Retention(RetentionPolicy.CLASS)
-
-// TODO: originally it's targer was TYPE_USE
-@Target({ ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER, ElementType.LOCAL_VARIABLE })
+@Target({ FIELD, METHOD, PARAMETER, LOCAL_VARIABLE })
 public @interface NonNull {
-	// marker annotation with no members
+    // marker annotation with no members
 }
