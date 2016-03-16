@@ -38,7 +38,7 @@ public abstract class AbstractBytecodeTextTest extends CodegenTestCase {
 
     @Override
     protected void doMultiFileTest(@NotNull File wholeFile, @NotNull List<TestFile> files, @Nullable File javaFilesDir) throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL, javaFilesDir);
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL, files, javaFilesDir);
         loadMultiFiles(files);
 
         if (isMultiFileTest(files)) {
