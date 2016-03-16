@@ -1,35 +1,25 @@
 // WITH_RUNTIME
+// KOTLIN_CONFIGURATION_FLAGS: +JVM.INHERIT_MULTIFILE_PARTS
 // FILE: box.kt
 
 import a.*
 
-fun box(): String = OK
+fun box(): String = overlapping
 
 // FILE: part1.kt
-
 @file:[JvmName("MultifileClass") JvmMultifileClass]
 package a
 
-val O: String = "O"
+private val overlapping = run { "oops #1" }
 
 // FILE: part2.kt
-
 @file:[JvmName("MultifileClass") JvmMultifileClass]
 package a
 
-val K: String = "K"
+val overlapping = run { "OK" }
 
 // FILE: part3.kt
-
 @file:[JvmName("MultifileClass") JvmMultifileClass]
 package a
 
-val OK: String = O + K
-
-// FILE: irrelevant.kt
-
-@file:[JvmName("MultifileClass") JvmMultifileClass]
-package a
-
-val X: Nothing = throw AssertionError("X should not be initialized")
-
+private val overlapping = run { "oops #2" }

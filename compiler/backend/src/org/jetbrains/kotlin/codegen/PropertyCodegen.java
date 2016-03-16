@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationSplitter;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtilKt;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
@@ -183,6 +184,9 @@ public class PropertyCodegen {
 
         // Companion object properties always should have accessors, because their backing fields are moved/copied to the outer class
         if (isCompanionObject(descriptor.getContainingDeclaration())) return true;
+
+        // Non-const properties from multifile classes have accessors regardless of visibility
+        if (!descriptor.isConst() && JvmFileClassUtilKt.isInsideJvmMultifileClassFile(declaration)) return true;
 
         // Private class properties have accessors only in cases when those accessors are non-trivial
         if (Visibilities.isPrivate(descriptor.getVisibility())) {

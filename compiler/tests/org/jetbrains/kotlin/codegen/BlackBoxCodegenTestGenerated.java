@@ -8469,6 +8469,99 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/multifileClasses/samePartNameDifferentFacades.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("compiler/testData/codegen/box/multifileClasses/optimized")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Optimized extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInOptimized() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/multifileClasses/optimized"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("callableRefToFun.kt")
+            public void testCallableRefToFun() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/multifileClasses/optimized/callableRefToFun.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("callableRefToInternalValInline.kt")
+            public void testCallableRefToInternalValInline() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/multifileClasses/optimized/callableRefToInternalValInline.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("callableRefToPrivateVal.kt")
+            public void testCallableRefToPrivateVal() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/multifileClasses/optimized/callableRefToPrivateVal.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("callableRefToVal.kt")
+            public void testCallableRefToVal() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/multifileClasses/optimized/callableRefToVal.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("calls.kt")
+            public void testCalls() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/multifileClasses/optimized/calls.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("deferredStaticInitialization.kt")
+            public void testDeferredStaticInitialization() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/multifileClasses/optimized/deferredStaticInitialization.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("delegatedVal.kt")
+            public void testDelegatedVal() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/multifileClasses/optimized/delegatedVal.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("initializePrivateVal.kt")
+            public void testInitializePrivateVal() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/multifileClasses/optimized/initializePrivateVal.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("initializePublicVal.kt")
+            public void testInitializePublicVal() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/multifileClasses/optimized/initializePublicVal.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("overlappingFuns.kt")
+            public void testOverlappingFuns() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/multifileClasses/optimized/overlappingFuns.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("overlappingVals.kt")
+            public void testOverlappingVals() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/multifileClasses/optimized/overlappingVals.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("valAccessFromInlineFunCalledFromJava.kt")
+            public void testValAccessFromInlineFunCalledFromJava() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/multifileClasses/optimized/valAccessFromInlineFunCalledFromJava.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("valAccessFromInlinedToDifferentPackage.kt")
+            public void testValAccessFromInlinedToDifferentPackage() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/multifileClasses/optimized/valAccessFromInlinedToDifferentPackage.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("valWithAccessor.kt")
+            public void testValWithAccessor() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/multifileClasses/optimized/valWithAccessor.kt");
+                doTest(fileName);
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/nonLocalReturns")

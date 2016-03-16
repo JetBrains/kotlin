@@ -973,13 +973,20 @@ public class KotlinTypeMapper {
     }
 
     @NotNull
-    private String updateMemberNameIfInternal(@NotNull String name, @NotNull  CallableMemberDescriptor descriptor) {
+    private String updateMemberNameIfInternal(@NotNull String name, @NotNull CallableMemberDescriptor descriptor) {
         if (descriptor.getContainingDeclaration() instanceof ScriptDescriptor) {
             //script properties should be public
             return name;
         }
 
         if (DescriptorUtils.isTopLevelDeclaration(descriptor)) {
+            if (Visibilities.isPrivate(descriptor.getVisibility()) && !(descriptor instanceof ConstructorDescriptor) && !"<clinit>".equals(name)) {
+                KtFile containingFile = DescriptorToSourceUtils.getContainingFile(descriptor);
+                assert containingFile != null : "Private descriptor accessed outside of corresponding file scope: " + descriptor;
+                if (JvmFileClassUtil.isFromMultifileClass(containingFile, descriptor)) {
+                    return name + "$" + JvmAbi.sanitizeAsJavaIdentifier(containingFile.getName());
+                }
+            }
             return name;
         }
 
