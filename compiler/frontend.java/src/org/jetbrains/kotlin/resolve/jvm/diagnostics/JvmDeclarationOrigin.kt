@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.resolve.jvm.diagnostics
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -68,9 +67,9 @@ fun PackagePart(file: KtFile, descriptor: PackageFragmentDescriptor): JvmDeclara
 /**
  * @param representativeFile one of the files representing this multifile class (will be used for diagnostics)
  */
-fun MultifileClass(representativeFile: KtFile?, descriptor: PackageFragmentDescriptor, multifileClassFqName: FqName): JvmDeclarationOrigin =
+fun MultifileClass(representativeFile: KtFile?, descriptor: PackageFragmentDescriptor): JvmDeclarationOrigin =
         JvmDeclarationOrigin(MULTIFILE_CLASS, representativeFile, descriptor)
-fun MultifileClassPart(file: KtFile, descriptor: PackageFragmentDescriptor, multifileClassFqName: FqName): JvmDeclarationOrigin =
+fun MultifileClassPart(file: KtFile, descriptor: PackageFragmentDescriptor): JvmDeclarationOrigin =
         JvmDeclarationOrigin(MULTIFILE_CLASS_PART, file, descriptor)
 
 fun TraitImpl(element: KtClassOrObject, descriptor: ClassDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(INTERFACE_DEFAULT_IMPL, element, descriptor)

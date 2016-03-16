@@ -17,44 +17,104 @@
 package org.jetbrains.kotlin.codegen
 
 import com.intellij.util.ArrayUtil
-import org.jetbrains.kotlin.codegen.context.FieldOwnerContext
+import org.jetbrains.kotlin.codegen.context.MultifileClassPartContext
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.MultifileClass
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
+import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
+import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
 import java.util.*
 
 class MultifileClassPartCodegen(
         v: ClassBuilder,
         file: KtFile,
-        private val filePartType: Type,
-        private val multifileClassType: Type,
-        partContext: FieldOwnerContext<*>,
+        private val packageFragment: PackageFragmentDescriptor,
+        private val superClassInternalName: String,
+        private val shouldGeneratePartHierarchy: Boolean,
+        private val partContext: MultifileClassPartContext,
         state: GenerationState
 ) : MemberCodegen<KtFile>(state, null, partContext, file, v) {
+    private val partType = partContext.filePartType
+    private val facadeClassType = partContext.multifileClassType
+    private val staticInitClassType = Type.getObjectType(partType.internalName + STATIC_INIT_CLASS_SUFFIX)
+
+    private val partClassAttributes =
+            if (shouldGeneratePartHierarchy)
+                OPEN_PART_CLASS_ATTRIBUTES
+            else
+                FINAL_PART_CLASS_ATTRIBUTES
+
+    private fun ClassBuilder.newSpecialMethod(originDescriptor: DeclarationDescriptor, name: String) =
+            newMethod(OtherOrigin(originDescriptor), Opcodes.ACC_STATIC or Opcodes.ACC_SUPER, name, "()V", null, null)
+
+    private val staticInitClassBuilder = ClassBuilderOnDemand {
+        state.factory.newVisitor(MultifileClass(file, packageFragment), staticInitClassType, file).apply {
+            defineClass(file, Opcodes.V1_6, STATE_INITIALIZER_CLASS_ATTRIBUTES,
+                        staticInitClassType.internalName, null, "java/lang/Object", ArrayUtil.EMPTY_STRING_ARRAY)
+
+            visitSource(file.name, null)
+        }
+    }
+
+    private val requiresDeferredStaticInitialization =
+            shouldGeneratePartHierarchy && file.declarations.any {
+                it is KtProperty && shouldInitializeProperty(it)
+            }
+
     override fun generate() {
         if (state.classBuilderMode == ClassBuilderMode.LIGHT_CLASSES) return
+
         super.generate()
+
+        if (shouldGeneratePartHierarchy) {
+            v.newMethod(OtherOrigin(packageFragment), Opcodes.ACC_PUBLIC, "<init>", "()V", null, null).apply {
+                visitCode()
+                visitVarInsn(Opcodes.ALOAD, 0)
+                visitMethodInsn(Opcodes.INVOKESPECIAL, superClassInternalName, "<init>", "()V", false)
+                visitInsn(Opcodes.RETURN)
+                visitMaxs(1, 1)
+                visitEnd()
+            }
+        }
+
+        if (requiresDeferredStaticInitialization) {
+            staticInitClassBuilder.apply {
+                newSpecialMethod(packageFragment, CLINIT_TRIGGER_NAME).apply {
+                    visitCode()
+                    visitInsn(Opcodes.RETURN)
+                    visitMaxs(0, 0)
+                    visitEnd()
+                }
+
+                newSpecialMethod(packageFragment, "<clinit>").apply {
+                    visitCode()
+                    visitMethodInsn(Opcodes.INVOKESTATIC, partType.internalName, DEFERRED_PART_CLINIT_NAME, "()V", false)
+                    visitInsn(Opcodes.RETURN)
+                    visitMaxs(0, 0)
+                    visitEnd()
+                }
+            }
+        }
     }
 
     override fun generateDeclaration() {
-        v.defineClass(element, Opcodes.V1_6,
-                      Opcodes.ACC_FINAL or Opcodes.ACC_SYNTHETIC or Opcodes.ACC_SUPER,
-                      filePartType.internalName,
-                      null,
-                      "java/lang/Object",
-                      ArrayUtil.EMPTY_STRING_ARRAY)
+        v.defineClass(element, Opcodes.V1_6, partClassAttributes, partType.internalName, null, superClassInternalName, ArrayUtil.EMPTY_STRING_ARRAY)
         v.visitSource(element.name, null)
 
-        generatePropertyMetadataArrayFieldIfNeeded(filePartType)
+        generatePropertyMetadataArrayFieldIfNeeded(partType)
     }
 
     override fun generateBody() {
@@ -66,6 +126,20 @@ class MultifileClassPartCodegen(
 
         if (state.classBuilderMode == ClassBuilderMode.FULL) {
             generateInitializers { createOrGetClInitCodegen() }
+        }
+    }
+
+    override fun createClInitMethodVisitor(contextDescriptor: DeclarationDescriptor): MethodVisitor =
+            if (requiresDeferredStaticInitialization)
+                v.newSpecialMethod(contextDescriptor, DEFERRED_PART_CLINIT_NAME)
+            else
+                super.createClInitMethodVisitor(contextDescriptor)
+
+    override fun done() {
+        super.done()
+
+        if (staticInitClassBuilder.isComputed) {
+            staticInitClassBuilder.done()
         }
     }
 
@@ -89,11 +163,34 @@ class MultifileClassPartCodegen(
 
         writeKotlinMetadata(v, KotlinClassHeader.Kind.MULTIFILE_CLASS_PART) { av ->
             AsmUtil.writeAnnotationData(av, serializer, packageProto)
-            av.visit(JvmAnnotationNames.METADATA_MULTIFILE_CLASS_NAME_FIELD_NAME, multifileClassType.internalName)
+            av.visit(JvmAnnotationNames.METADATA_MULTIFILE_CLASS_NAME_FIELD_NAME, facadeClassType.internalName)
         }
     }
 
     override fun generateSyntheticParts() {
         generateSyntheticAccessors()
+    }
+
+    override fun beforeMethodBody(mv: MethodVisitor) {
+        if (requiresDeferredStaticInitialization) {
+            mv.visitMethodInsn(Opcodes.INVOKESTATIC, staticInitClassType.internalName, CLINIT_TRIGGER_NAME, "()V", false)
+        }
+    }
+
+    companion object {
+        private val OPEN_PART_CLASS_ATTRIBUTES = Opcodes.ACC_SUPER
+        private val FINAL_PART_CLASS_ATTRIBUTES = Opcodes.ACC_SYNTHETIC or Opcodes.ACC_SUPER or Opcodes.ACC_FINAL
+        private val STATE_INITIALIZER_CLASS_ATTRIBUTES = Opcodes.ACC_SYNTHETIC or Opcodes.ACC_SUPER or Opcodes.ACC_FINAL
+
+        private val STATIC_INIT_CLASS_SUFFIX = "__Clinit"
+        private val CLINIT_TRIGGER_NAME = "\$\$clinitTrigger"
+        private val DEFERRED_PART_CLINIT_NAME = "\$\$clinit"
+
+        @JvmStatic fun isStaticInitTrigger(insn: AbstractInsnNode) =
+                insn.opcode == Opcodes.INVOKESTATIC
+                && insn is MethodInsnNode
+                && insn.owner.endsWith(STATIC_INIT_CLASS_SUFFIX)
+                && insn.name == CLINIT_TRIGGER_NAME
+                && insn.desc == "()V"
     }
 }
