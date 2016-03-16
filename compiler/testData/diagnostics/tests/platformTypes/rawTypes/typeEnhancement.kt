@@ -5,7 +5,7 @@ import java.util.*;
 
 class A<T> {
     @NotNull
-    List<@Nullable String> foo(@NotNull T x, @Nullable List<@NotNull String> y) {}
+    List<String> foo(@NotNull T x, @Nullable List<String> y) {}
 }
 
 // FILE: Test.java
