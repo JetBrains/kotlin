@@ -4,6 +4,7 @@ where advanced options include:
   -Xno-param-assertions      Don't generate not-null assertions on parameters of methods accessible from Java
   -Xno-optimize              Disable optimizations
   -Xreport-perf              Report detailed performance statistics
+  -Xmultifile-parts-inherit  Compile multifile classes as a hierarchy of parts and facade
   -Xallow-kotlin-package     Allow compiling code in package 'kotlin'
   -Xskip-metadata-version-check Try loading binary incompatible classes, may cause crashes
   -Xdump-declarations-to <path> Path to JSON file to dump Java to Kotlin declaration mappings

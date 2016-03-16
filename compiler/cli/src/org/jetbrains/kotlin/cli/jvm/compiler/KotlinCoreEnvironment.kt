@@ -109,10 +109,7 @@ class KotlinCoreEnvironment private constructor(
     private val sourceFiles = ArrayList<KtFile>()
     private val javaRoots = ArrayList<JavaRoot>()
 
-    val configuration: CompilerConfiguration = configuration.copy().let {
-        it.setReadOnly(true)
-        it
-    }
+    val configuration: CompilerConfiguration = configuration.copy().apply { setReadOnly(true) }
 
     init {
         PersistentFSConstants.setMaxIntellisenseFileSize(FileUtilRt.LARGE_FOR_CONTENT_LOADING)
