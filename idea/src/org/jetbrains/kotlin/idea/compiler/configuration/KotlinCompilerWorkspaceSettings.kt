@@ -28,7 +28,7 @@ import com.intellij.util.xmlb.XmlSerializerUtil
                 Storage(file = StoragePathMacros.WORKSPACE_FILE)
         )
 ) class KotlinCompilerWorkspaceSettings() : PersistentStateComponent<KotlinCompilerWorkspaceSettings> {
-    var preciseIncrementalEnabled: Boolean = false
+    var preciseIncrementalEnabled: Boolean = true
     var enableDaemon: Boolean = true
 
     override fun getState(): KotlinCompilerWorkspaceSettings {

@@ -5,6 +5,7 @@
 ## 1.0.2
 - Show only changed files in notification "Kotlin not configured"
 - Configure Kotlin: restore all changed files in undo action
+- Enable precise incremental compilation by default
 
 ### JVM
 - Remove the compiler option "Xmultifile-facades-open"
