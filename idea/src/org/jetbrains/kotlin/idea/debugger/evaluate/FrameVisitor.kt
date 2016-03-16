@@ -36,7 +36,7 @@ import org.jetbrains.org.objectweb.asm.Type
 
 class FrameVisitor(context: EvaluationContextImpl) {
     private val project = context.debugProcess.project
-    private val frame = context.frameProxy?.stackFrame
+    private val frame = context.frameProxy
 
     companion object {
         val OBJECT_TYPE = Type.getType(Any::class.java)
@@ -192,7 +192,7 @@ class FrameVisitor(context: EvaluationContextImpl) {
 
     private fun getField(owner: Value, name: String, asmType: Type?, checkType: Boolean): Value? {
         try {
-            val obj = owner.asJdiValue(frame!!.virtualMachine(), owner.asmType)
+            val obj = owner.asJdiValue(frame!!.virtualMachine.virtualMachine, owner.asmType)
             if (obj !is ObjectReference) return null
 
             val _class = obj.referenceType()

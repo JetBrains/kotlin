@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.debugger
 
 import com.intellij.debugger.engine.DebugProcessImpl
+import com.intellij.debugger.jdi.LocalVariableProxyImpl
 import com.sun.jdi.*
 import com.sun.tools.jdi.LocalVariableImpl
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
@@ -28,11 +29,11 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import java.util.*
 
-fun isInsideInlineFunctionBody(visibleVariables: List<LocalVariable>): Boolean {
+fun isInsideInlineFunctionBody(visibleVariables: List<LocalVariableProxyImpl>): Boolean {
     return visibleVariables.any { it.name().startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION) }
 }
 
-fun numberOfInlinedFunctions(visibleVariables: List<LocalVariable>): Int {
+fun numberOfInlinedFunctions(visibleVariables: List<LocalVariableProxyImpl>): Int {
     return visibleVariables.count { it.name().startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION) }
 }
 
