@@ -183,7 +183,7 @@ class JDIEval(
 
     override fun getStaticField(fieldDesc: FieldDescription): Value {
         val field = findStaticField(fieldDesc)
-        return mayThrow { field.declaringType().getValue(field) }.asValue()
+        return mayThrow { field.declaringType().getValue(field) }.ifFail(field).asValue()
     }
 
     override fun setStaticField(fieldDesc: FieldDescription, newValue: Value) {
@@ -199,7 +199,7 @@ class JDIEval(
         }
 
         val jdiValue = newValue.asJdiValue(vm, field.type().asType())
-        mayThrow { _class.setValue(field, jdiValue) }
+        mayThrow { _class.setValue(field, jdiValue) }.ifFail(field)
     }
 
     private fun findMethod(methodDesc: MethodDescription, _class: ReferenceType = methodDesc.ownerType.asReferenceType()): Method {
@@ -231,7 +231,7 @@ class JDIEval(
         }
 
         args.disableCollection()
-        val result = mayThrow { _class.invokeMethod(thread, method, args, invokePolicy) }
+        val result = mayThrow { _class.invokeMethod(thread, method, args, invokePolicy) }.ifFail(method)
         args.enableCollection()
         return result.asValue()
     }
@@ -240,7 +240,7 @@ class JDIEval(
         val field = findField(fieldDesc)
         val obj = instance.jdiObj.checkNull()
 
-        return mayThrow { obj.getValue(field) }.asValue()
+        return mayThrow { obj.getValue(field) }.ifFail(field, obj).asValue()
     }
 
     override fun setField(instance: Value, fieldDesc: FieldDescription, newValue: Value) {
@@ -288,7 +288,7 @@ class JDIEval(
             val _class = (instance as NewObjectValue).asmType.asReferenceType() as ClassType
             val args = mapArguments(arguments, ctor.safeArgumentTypes())
             args.disableCollection()
-            val result = mayThrow { _class.newInstance(thread, ctor, args, invokePolicy) }
+            val result = mayThrow { _class.newInstance(thread, ctor, args, invokePolicy) }.ifFail(ctor)
             args.enableCollection()
             instance.value = result
             return result.asValue()
@@ -302,7 +302,7 @@ class JDIEval(
             }
 
             args.disableCollection()
-            val result = mayThrow { obj.invokeMethod(thread, method, args, policy) }
+            val result = mayThrow { obj.invokeMethod(thread, method, args, policy) }.ifFail(method, obj)
             args.enableCollection()
             return result.asValue()
         }
@@ -403,11 +403,41 @@ class JDIEval(
     }
 }
 
-fun <T> mayThrow(f: () -> T): T {
+private sealed class JdiOperationResult<T> {
+    class Fail<T>(val cause: Exception): JdiOperationResult<T>()
+    class OK<T>(val value: T): JdiOperationResult<T>()
+}
+
+private fun <T> mayThrow(f: () -> T): JdiOperationResult<T> {
     try {
-        return f()
+        return JdiOperationResult.OK(f())
+    }
+    catch (e: IllegalArgumentException) {
+        return JdiOperationResult.Fail<T>(e)
     }
     catch (e: InvocationException) {
         throw ThrownFromEvaluatedCodeException(e.exception().asValue())
+    }
+}
+
+private fun memberInfo(member: TypeComponent, thisObj: ObjectReference?): String {
+    return "\nmember = $member\nobjectRef = $thisObj"
+}
+
+private fun <T> JdiOperationResult<T>.ifFail(member: TypeComponent, thisObj: ObjectReference? = null): T {
+    return ifFail { memberInfo(member, thisObj) }
+}
+
+private fun <T> JdiOperationResult<T>.ifFail(lazyMessage: () -> String): T {
+    return when(this) {
+        is JdiOperationResult.OK -> this.value
+        is JdiOperationResult.Fail -> {
+            if (cause is IllegalArgumentException) {
+                throwBrokenCodeException(IllegalArgumentException(lazyMessage(), this.cause))
+            }
+            else {
+                throwBrokenCodeException(IllegalStateException(lazyMessage(), this.cause))
+            }
+        }
     }
 }
