@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -337,7 +337,7 @@ abstract class AbstractIncrementalJpsTest(
             result.pushIndent()
 
             val mapping = project.dataManager.getSourceToOutputMap(target)
-            mapping.sources.forEach {
+            mapping.sources.sorted().forEach {
                 val outputs = mapping.getOutputs(it)!!.sorted()
                 if (outputs.isNotEmpty()) {
                     result.println("source $it -> $outputs")
