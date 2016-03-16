@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,6 +63,9 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
 
     @Argument(value = "Xreport-perf", description = "Report detailed performance statistics")
     public boolean reportPerf;
+
+    @Argument(value = "Xmultifile-parts-inherit", description = "Compile multifile classes as a hierarchy of parts and facade")
+    public boolean inheritMultifileParts;
 
     @Argument(value = "Xallow-kotlin-package", description = "Allow compiling code in package 'kotlin'")
     public boolean allowKotlinPackage;

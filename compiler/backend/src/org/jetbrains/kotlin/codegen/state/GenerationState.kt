@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,6 +57,7 @@ class GenerationState @JvmOverloads constructor(
         disableInline: Boolean = false,
         disableOptimization: Boolean = false,
         val useTypeTableInSerializer: Boolean = false,
+        val inheritMultifileParts: Boolean = false,
         val packagesWithObsoleteParts: Collection<FqName> = emptySet(),
         val obsoleteMultifileClasses: Collection<FqName> = emptySet(),
         // for PackageCodegen in incremental compilation mode
