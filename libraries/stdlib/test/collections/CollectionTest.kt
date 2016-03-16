@@ -854,4 +854,90 @@ class CollectionTest {
         // we need toString() inside pattern because of KT-8666
         assertEquals("[1, a, null, ${Long.MAX_VALUE.toString()}]", listOf(1, "a", null, Long.MAX_VALUE).toString())
     }
+
+    @test fun testListAndAxioms() {
+        val empty = listOf<Any>()
+        val l1 = listOf("ko", 8, 8, 'd', 199999L, 10.3, 12.78756F)
+        val l2 = (1..100).toList()
+        val l3 = (1..100).toList().map { toString() }
+
+        assertEquals(l1, l1 and l1)
+        assertEquals(l2, l2 and l2)
+        assertEquals(l3, l3 and l3)
+        assertEquals(empty, empty and l1)
+        assertEquals(empty, empty and l2)
+        assertEquals(empty, empty and l3)
+        assertEquals(empty, l1 and empty)
+        assertEquals(empty, l2 and empty)
+        assertEquals(empty, l3 and empty)
+        assertEquals(l1 and l2, l2 and l1)
+        assertEquals(l1 and l2 and l3, l3 and l2 and l1)
+        assertEquals(empty, l3 and l2)
+    }
+
+    @test fun testListAndElementsIn() {
+        val l1 = listOf(1, 2, 3, 3)
+        val l2 = listOf(1, 2)
+        assert(1 in l1 and l2)
+        assert(2 in l1 and l2)
+        assert(3 !in l1 and l2)
+    }
+
+    @test fun testListAndMultipleValues() {
+        val l1 = listOf(1, 1)
+        val l2 = listOf(1)
+        assertEquals(l2, l1 and l2)
+    }
+
+    @test fun testListOrAxioms() {
+        val empty = listOf<Any>()
+        val l1 = listOf("ko", 8, 8, 'd', 199999L, 10.3, 12.78756F)
+        val l2 = (1..100).toList()
+        val l3 = (1..100).toList().map { toString() }
+
+        println(listOf(1,2,3))
+        println(listOf(3,2,1))
+
+        assertEquals(l1, l1 or l1)
+        assertEquals(l2, l2 or l2)
+        assertEquals(l3, l3 or l3)
+        assertEquals(l1, empty or l1)
+        assertEquals(l2, empty or l2)
+        assertEquals(l3, empty or l3)
+        assertEquals(l1, l1 or empty)
+        assertEquals(l2, l2 or empty)
+        assertEquals(l3, l3 or empty)
+    }
+
+    @test fun testListOrElementsIn() {
+        val l1 = listOf(1, 2, 3, 3)
+        val l2 = listOf(1, 2)
+        assert(1 in l1 or l2)
+        assert(2 in l1 or l2)
+        assert(3 in l1 or l2)
+    }
+
+    @test fun testListOrMultipleValues() {
+        val l1 = listOf(1)
+        val l2 = listOf(1, 1)
+        val l3 = listOf(1, 1, 1)
+        assertEquals(2, (l1 or l2).size)
+        assertEquals(2, (l1 or l2).count { it == 1 })
+        assertEquals(3, (l2 or l3).size)
+        assertEquals(3, (l3 or l3).count { it == 1 })
+    }
+
+    @test fun testListOrSingleValues() {
+        val l1 = listOf(1)
+        val l2 = listOf(1)
+        assertEquals(1, (l1 or l2).size)
+        assertEquals(1, (l1 or l2).count { it == 1 })
+    }
+
+    @test fun testListOrAndAndRealCase() {
+        val l1 = listOf(1, 2, 3)
+        val l2 = listOf(2, 3, 4)
+        assertEquals(1, (l1 or l2).size)
+        assertEquals(1, (l1 or l2).count { it == 1 })
+    }
 }
