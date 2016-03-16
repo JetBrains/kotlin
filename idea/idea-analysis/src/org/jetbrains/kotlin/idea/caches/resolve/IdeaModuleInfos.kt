@@ -237,6 +237,10 @@ internal data class LibrarySourceInfo(val project: Project, val library: Library
         return listOf(this) + LibraryInfo(project, library).dependencies()
     }
 
+    override fun modulesWhoseInternalsAreVisible(): Collection<ModuleInfo> {
+        return listOf(LibraryInfo(project, library))
+    }
+
     override fun toString() = "LibrarySourceInfo(libraryName=${library.name})"
 }
 

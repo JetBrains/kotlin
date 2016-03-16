@@ -1,0 +1,3 @@
+package fileWithInternal2
+
+internal class MyInternal

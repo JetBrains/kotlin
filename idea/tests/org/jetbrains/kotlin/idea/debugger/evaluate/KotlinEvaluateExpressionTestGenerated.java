@@ -145,6 +145,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             doSingleBreakpointTest(fileName);
         }
 
+        @TestMetadata("fileWithError.kt")
+        public void testFileWithError() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/fileWithError.kt");
+            doSingleBreakpointTest(fileName);
+        }
+
         @TestMetadata("funFromSuperClass.kt")
         public void testFunFromSuperClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/funFromSuperClass.kt");
