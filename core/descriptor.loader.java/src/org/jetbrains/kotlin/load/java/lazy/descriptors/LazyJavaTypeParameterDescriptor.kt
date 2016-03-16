@@ -19,8 +19,10 @@ package org.jetbrains.kotlin.load.java.lazy.descriptors
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AbstractLazyTypeParameterDescriptor
 import org.jetbrains.kotlin.load.java.components.TypeUsage
+import org.jetbrains.kotlin.load.java.lazy.LazyJavaAnnotations
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.lazy.types.LazyJavaTypeResolver
 import org.jetbrains.kotlin.load.java.lazy.types.toAttributes
@@ -42,6 +44,9 @@ class LazyJavaTypeParameterDescriptor(
         index,
         SourceElement.NO_SOURCE, c.components.supertypeLoopChecker
 ) {
+    private val annotations = LazyJavaAnnotations(c, javaTypeParameter)
+
+    override fun getAnnotations() = annotations
 
     override fun resolveUpperBounds(): List<KotlinType> {
         val bounds = javaTypeParameter.upperBounds

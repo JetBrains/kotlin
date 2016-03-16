@@ -21,19 +21,19 @@ import org.jetbrains.kotlin.name.FqName
 import java.lang.reflect.AnnotatedElement
 
 interface ReflectJavaAnnotationOwner : JavaAnnotationOwner {
-    val element: AnnotatedElement
+    val element: AnnotatedElement?
 
-    override fun getAnnotations() = getAnnotations(element.declaredAnnotations)
+    override fun getAnnotations() = element?.declaredAnnotations?.getAnnotations() ?: emptyList()
 
-    override fun findAnnotation(fqName: FqName) = findAnnotation(element.declaredAnnotations, fqName)
+    override fun findAnnotation(fqName: FqName) = element?.declaredAnnotations?.findAnnotation(fqName)
 
     override fun isDeprecatedInJavaDoc() = false
 }
 
-fun getAnnotations(annotations: Array<Annotation>): List<ReflectJavaAnnotation> {
-    return annotations.map { ReflectJavaAnnotation(it) }
+fun Array<Annotation>.getAnnotations(): List<ReflectJavaAnnotation> {
+    return map { ReflectJavaAnnotation(it) }
 }
 
-fun findAnnotation(annotations: Array<Annotation>, fqName: FqName): ReflectJavaAnnotation? {
-    return annotations.firstOrNull { it.annotationClass.java.classId.asSingleFqName() == fqName }?.let { ReflectJavaAnnotation(it) }
+fun Array<Annotation>.findAnnotation(fqName: FqName): ReflectJavaAnnotation? {
+    return firstOrNull { it.annotationClass.java.classId.asSingleFqName() == fqName }?.let { ReflectJavaAnnotation(it) }
 }

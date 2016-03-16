@@ -73,4 +73,10 @@ public class JavaTypeParameterImpl extends JavaClassifierImpl<PsiTypeParameter> 
     public JavaTypeProvider getTypeProvider() {
         return new JavaTypeProviderImpl(getPsi().getManager());
     }
+
+    @Nullable
+    @Override
+    public PsiAnnotationOwner getAnnotationOwnerPsi() {
+        return getPsi();
+    }
 }

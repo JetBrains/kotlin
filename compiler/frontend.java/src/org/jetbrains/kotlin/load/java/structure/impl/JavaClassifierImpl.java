@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.load.java.structure.impl;
 
-import com.intellij.psi.PsiAnnotationOwner;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiTypeParameter;
 import org.jetbrains.annotations.NotNull;
@@ -30,12 +29,6 @@ import java.util.Collection;
 public abstract class JavaClassifierImpl<Psi extends PsiClass> extends JavaElementImpl<Psi> implements JavaClassifier, JavaAnnotationOwnerImpl {
     protected JavaClassifierImpl(@NotNull Psi psiClass) {
         super(psiClass);
-    }
-
-    @Nullable
-    @Override
-    public PsiAnnotationOwner getAnnotationOwnerPsi() {
-        return getPsi().getModifierList();
     }
 
     @NotNull

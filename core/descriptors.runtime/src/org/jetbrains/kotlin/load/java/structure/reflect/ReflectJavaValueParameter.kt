@@ -26,9 +26,9 @@ class ReflectJavaValueParameter(
         private val name: String?,
         private val isVararg: Boolean
 ) : ReflectJavaElement(), JavaValueParameter {
-    override fun getAnnotations() = getAnnotations(annotations)
+    override fun getAnnotations() = annotations.getAnnotations()
 
-    override fun findAnnotation(fqName: FqName) = findAnnotation(annotations, fqName)
+    override fun findAnnotation(fqName: FqName) = annotations.findAnnotation(fqName)
 
     override fun isDeprecatedInJavaDoc() = false
 

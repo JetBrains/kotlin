@@ -42,6 +42,12 @@ public class LoadJava8TestGenerated extends AbstractLoadJava8Test {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava8/compiledJava/TypeAnnotations.java");
             doTestCompiledJava(fileName);
         }
+
+        @TestMetadata("TypeParameterAnnotations.java")
+        public void testTypeParameterAnnotations() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava8/compiledJava/TypeParameterAnnotations.java");
+            doTestCompiledJava(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/loadJava8/sourceJava")
@@ -55,6 +61,12 @@ public class LoadJava8TestGenerated extends AbstractLoadJava8Test {
         @TestMetadata("TypeAnnotations.java")
         public void testTypeAnnotations() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava8/sourceJava/TypeAnnotations.java");
+            doTestSourceJava(fileName);
+        }
+
+        @TestMetadata("TypeParameterAnnotations.java")
+        public void testTypeParameterAnnotations() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava8/sourceJava/TypeParameterAnnotations.java");
             doTestSourceJava(fileName);
         }
     }

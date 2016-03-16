@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.name.FqName;
 
 import java.util.Collection;
 
-public interface JavaClass extends JavaClassifier, JavaTypeParameterListOwner, JavaModifierListOwner, JavaAnnotationOwner {
+public interface JavaClass extends JavaClassifier, JavaTypeParameterListOwner, JavaModifierListOwner {
     @NotNull
     Collection<JavaClass> getInnerClasses();
 

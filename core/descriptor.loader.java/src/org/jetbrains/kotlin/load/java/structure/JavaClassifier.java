@@ -16,5 +16,5 @@
 
 package org.jetbrains.kotlin.load.java.structure;
 
-public interface JavaClassifier extends JavaNamedElement {
+public interface JavaClassifier extends JavaNamedElement, JavaAnnotationOwner {
 }

@@ -197,4 +197,10 @@ public class JavaClassImpl extends JavaClassifierImpl<PsiClass> implements JavaC
 
         return PsiSubstitutorImpl.createSubstitutor(substMap);
     }
+
+    @Nullable
+    @Override
+    public PsiAnnotationOwner getAnnotationOwnerPsi() {
+        return getPsi().getModifierList();
+    }
 }

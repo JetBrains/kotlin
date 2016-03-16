@@ -40,4 +40,10 @@ public class Jvm8RuntimeDescriptorLoaderTestGenerated extends AbstractJvm8Runtim
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava8/compiledJava/TypeAnnotations.java");
         doTest(fileName);
     }
+
+    @TestMetadata("TypeParameterAnnotations.java")
+    public void testTypeParameterAnnotations() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava8/compiledJava/TypeParameterAnnotations.java");
+        doTest(fileName);
+    }
 }
