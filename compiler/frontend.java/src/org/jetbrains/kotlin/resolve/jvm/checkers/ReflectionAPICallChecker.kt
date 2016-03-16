@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import org.jetbrains.kotlin.builtins.ReflectionTypes
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -45,7 +44,7 @@ class ReflectionAPICallChecker(private val module: ModuleDescriptor, storageMana
         setOf(reflectionTypes.kProperty0, reflectionTypes.kProperty1, reflectionTypes.kProperty2)
     }
 
-    override fun <F : CallableDescriptor> check(resolvedCall: ResolvedCall<F>, context: BasicCallResolutionContext) {
+    override fun check(resolvedCall: ResolvedCall<*>, context: BasicCallResolutionContext) {
         if (isReflectionAvailable) return
 
         val descriptor = resolvedCall.resultingDescriptor

@@ -24,7 +24,6 @@ import com.google.gwt.dev.js.rhino.CodePosition
 import com.google.gwt.dev.js.rhino.ErrorReporter
 import com.google.gwt.dev.js.rhino.Utils.isEndOfLine
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
@@ -63,7 +62,7 @@ class JsCallChecker(
         }
     }
 
-    override fun <F : CallableDescriptor> check(resolvedCall: ResolvedCall<F>, context: BasicCallResolutionContext) {
+    override fun check(resolvedCall: ResolvedCall<*>, context: BasicCallResolutionContext) {
         if (context.isAnnotationContext || !resolvedCall.isJsCall()) return
 
         val expression = resolvedCall.call.callElement

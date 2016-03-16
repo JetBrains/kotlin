@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -28,8 +27,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
 class ProtectedInSuperClassCompanionCallChecker : CallChecker {
-
-    override fun <F : CallableDescriptor> check(resolvedCall: ResolvedCall<F>, context: BasicCallResolutionContext) {
+    override fun check(resolvedCall: ResolvedCall<*>, context: BasicCallResolutionContext) {
         val targetDescriptor = resolvedCall.resultingDescriptor.original
         // Protected non-JVM static
         if (targetDescriptor.visibility != Visibilities.PROTECTED) return

@@ -19,7 +19,10 @@ package org.jetbrains.kotlin.resolve.calls.checkers;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtExpression;
@@ -32,9 +35,7 @@ import java.util.Map;
 
 public class ReifiedTypeParameterSubstitutionChecker implements CallChecker {
     @Override
-    public <F extends CallableDescriptor> void check(
-            @NotNull ResolvedCall<F> resolvedCall, @NotNull BasicCallResolutionContext context
-    ) {
+    public void check(@NotNull ResolvedCall<?> resolvedCall, @NotNull BasicCallResolutionContext context) {
         Map<TypeParameterDescriptor, KotlinType> typeArguments = resolvedCall.getTypeArguments();
         for (Map.Entry<TypeParameterDescriptor, KotlinType> entry : typeArguments.entrySet()) {
             TypeParameterDescriptor parameter = entry.getKey();

@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -31,7 +30,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver
 import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
 
 object ConstructorHeaderCallChecker : CallChecker {
-    override fun <F : CallableDescriptor> check(resolvedCall: ResolvedCall<F>, context: BasicCallResolutionContext) {
+    override fun check(resolvedCall: ResolvedCall<*>, context: BasicCallResolutionContext) {
         val dispatchReceiverClass = resolvedCall.dispatchReceiver.classDescriptorForImplicitReceiver
         val extensionReceiverClass = resolvedCall.extensionReceiver.classDescriptorForImplicitReceiver
 

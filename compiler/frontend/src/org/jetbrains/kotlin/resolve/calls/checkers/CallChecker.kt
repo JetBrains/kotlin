@@ -16,10 +16,9 @@
 
 package org.jetbrains.kotlin.resolve.calls.checkers
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 
 interface CallChecker {
-    fun <F : CallableDescriptor> check(resolvedCall: ResolvedCall<F>, context: BasicCallResolutionContext)
+    fun check(resolvedCall: ResolvedCall<*>, context: BasicCallResolutionContext)
 }

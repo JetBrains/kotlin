@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getSuperCallExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.usesDefaultArguments
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
@@ -25,7 +24,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
 class SuperCallWithDefaultArgumentsChecker : CallChecker {
-    override fun <F : CallableDescriptor> check(resolvedCall: ResolvedCall<F>, context: BasicCallResolutionContext) {
+    override fun check(resolvedCall: ResolvedCall<*>, context: BasicCallResolutionContext) {
         val superCallExpression = getSuperCallExpression(resolvedCall.call)
         if (superCallExpression == null || !resolvedCall.usesDefaultArguments()) return
         context.trace.report(ErrorsJvm.SUPER_CALL_WITH_DEFAULT_PARAMETERS.on(superCallExpression.parent, resolvedCall.resultingDescriptor.name.asString()))

@@ -67,7 +67,7 @@ class InlineChecker implements CallChecker {
     }
 
     @Override
-    public <F extends CallableDescriptor> void check(@NotNull ResolvedCall<F> resolvedCall, @NotNull BasicCallResolutionContext context) {
+    public void check(@NotNull ResolvedCall<?> resolvedCall, @NotNull BasicCallResolutionContext context) {
         KtExpression expression = context.call.getCalleeExpression();
         if (expression == null) {
             return;

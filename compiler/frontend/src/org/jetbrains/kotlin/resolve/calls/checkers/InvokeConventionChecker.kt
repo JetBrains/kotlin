@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve.calls.checkers
 
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -25,7 +24,7 @@ import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCallIm
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 
 class InvokeConventionChecker : CallChecker {
-    override fun <F : CallableDescriptor> check(resolvedCall: ResolvedCall<F>, context: BasicCallResolutionContext) {
+    override fun check(resolvedCall: ResolvedCall<*>, context: BasicCallResolutionContext) {
         if (resolvedCall is VariableAsFunctionResolvedCallImpl) {
             val functionCall = resolvedCall.functionCall
             val variableCall = resolvedCall.variableCall

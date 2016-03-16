@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.psi.KtExpression
@@ -30,8 +29,8 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
 class TraitDefaultMethodCallChecker : CallChecker {
 
-    override fun <F : CallableDescriptor> check(resolvedCall: ResolvedCall<F>, context: BasicCallResolutionContext) {
-        if (getSuperCallExpression(resolvedCall.getCall()) == null) return
+    override fun check(resolvedCall: ResolvedCall<*>, context: BasicCallResolutionContext) {
+        if (getSuperCallExpression(resolvedCall.call) == null) return
 
         val targetDescriptor = resolvedCall.resultingDescriptor.original
         val containerDescriptor = targetDescriptor.containingDeclaration
