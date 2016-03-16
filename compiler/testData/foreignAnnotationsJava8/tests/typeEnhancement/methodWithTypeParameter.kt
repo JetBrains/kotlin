@@ -1,6 +1,6 @@
 // FILE: Outer.java
 
-import org.jetbrains.annotations.*;
+import org.checkerframework.checker.nullness.qual.*;
 
 interface X<T> {}
 interface Y<T> {}
@@ -15,7 +15,7 @@ class Outer {
     class B extends A {
         // OK, non-platform types
         @Override
-        <T1, T2> @NotNull T2 foo(@Nullable T1 x) { return null; }
+        <T1, T2> @NonNull T2 foo(@Nullable T1 x) { return null; }
 
         // Parameter type is fully non-flexible (OK)
         // Return type is `X<R!>?`.
@@ -23,7 +23,7 @@ class Outer {
         // so type enhancing happens only for outermost type.
         // TODO: We should properly compare equality with specific local equality axioms (as when calculating overriden descriptors)
         @Override
-        <R> @Nullable X<@Nullable R> bar(@NotNull Y<@NotNull R> x) { return null; }
+        <R> @Nullable X<@Nullable R> bar(@NonNull Y<@NonNull R> x) { return null; }
     }
 
     class C extends B {
@@ -41,11 +41,11 @@ class Outer {
         // Return type is not-nullable, covariantly overridden, OK
         // Parameter type is flexible, because of conflict with supertype, OK
         @Override
-        @NotNull
+        @NonNull
         <U, W> W foo(@Nullable U x) { return null; }
 
 
         @Override
-        <F> @NotNull X<@NotNull F> bar(@Nullable Y<@Nullable F> x) { return null; }
+        <F> @NonNull X<@NonNull F> bar(@Nullable Y<@Nullable F> x) { return null; }
     }
 }

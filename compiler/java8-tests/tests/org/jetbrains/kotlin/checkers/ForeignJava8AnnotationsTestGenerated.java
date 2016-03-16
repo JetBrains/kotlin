@@ -46,4 +46,43 @@ public class ForeignJava8AnnotationsTestGenerated extends AbstractForeignJava8An
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotationsJava8/tests/eclipse.kt");
         doTest(fileName);
     }
+
+    @TestMetadata("compiler/testData/foreignAnnotationsJava8/tests/typeEnhancement")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class TypeEnhancement extends AbstractForeignJava8AnnotationsTest {
+        public void testAllFilesPresentInTypeEnhancement() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/foreignAnnotationsJava8/tests/typeEnhancement"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("annotatedTypeArguments.kt")
+        public void testAnnotatedTypeArguments() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotationsJava8/tests/typeEnhancement/annotatedTypeArguments.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("methodWithTypeParameter.kt")
+        public void testMethodWithTypeParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotationsJava8/tests/typeEnhancement/methodWithTypeParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("returnTypeDifferentConstructor.kt")
+        public void testReturnTypeDifferentConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotationsJava8/tests/typeEnhancement/returnTypeDifferentConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("returnTypeOverrideInKotlin.kt")
+        public void testReturnTypeOverrideInKotlin() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotationsJava8/tests/typeEnhancement/returnTypeOverrideInKotlin.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotationsJava8/tests/typeEnhancement/simple.kt");
+            doTest(fileName);
+        }
+    }
 }

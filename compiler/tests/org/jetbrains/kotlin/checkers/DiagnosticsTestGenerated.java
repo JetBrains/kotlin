@@ -13028,33 +13028,9 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/platformTypes/typeEnhancement"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
-                @TestMetadata("annotatedTypeArguments.kt")
-                public void testAnnotatedTypeArguments() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/typeEnhancement/annotatedTypeArguments.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("methodWithTypeParameter.kt")
-                public void testMethodWithTypeParameter() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/typeEnhancement/methodWithTypeParameter.kt");
-                    doTest(fileName);
-                }
-
                 @TestMetadata("overriddenExtensions.kt")
                 public void testOverriddenExtensions() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/typeEnhancement/overriddenExtensions.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("returnTypeDifferentConstructor.kt")
-                public void testReturnTypeDifferentConstructor() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/typeEnhancement/returnTypeDifferentConstructor.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("returnTypeOverrideInKotlin.kt")
-                public void testReturnTypeOverrideInKotlin() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/typeEnhancement/returnTypeOverrideInKotlin.kt");
                     doTest(fileName);
                 }
 

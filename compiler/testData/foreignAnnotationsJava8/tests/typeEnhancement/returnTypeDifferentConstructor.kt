@@ -1,13 +1,13 @@
 // FILE: Outer.java
 
-import org.jetbrains.annotations.*;
+import org.checkerframework.checker.nullness.qual.*;
 
 interface Base<T> {}
 interface Derived<E> extends Base<E> {}
 
 class Outer {
     class A {
-        @Nullable Base<@NotNull String> foo() { return null; }
+        @Nullable Base<@NonNull String> foo() { return null; }
     }
 
     class B extends A {
@@ -17,7 +17,7 @@ class Outer {
 
     class C extends A {
         @Override
-        @NotNull Base<String> foo() {}
+        @NonNull Base<String> foo() {}
     }
 
     class D extends A {
@@ -27,11 +27,11 @@ class Outer {
 
     class E extends A {
         @Override
-        @NotNull Derived<String> foo() {}
+        @NonNull Derived<String> foo() {}
     }
 
     class F extends A {
         @Override
-        @NotNull Derived<@NotNull String> foo() {}
+        @NonNull Derived<@NonNull String> foo() {}
     }
 }

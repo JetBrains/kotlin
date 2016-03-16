@@ -1,6 +1,6 @@
 // FILE: AnnotatedTypeArguments.java
 
-import org.jetbrains.annotations.*;
+import org.checkerframework.checker.nullness.qual.*;
 
 interface P<X, Y> {}
 interface L<T> {}
@@ -16,7 +16,7 @@ class AnnotatedTypeArguments {
         // some complicated type tree
         // return type and argument's type differ only by nullability of outermost type
         @Nullable
-        L<P<@NotNull L<@Nullable String>, @NotNull S<?>>> foo(@NotNull L<P<@NotNull L<@Nullable String>, @NotNull S<?>>> x) {return null;}
+        L<P<@NonNull L<@Nullable String>, @NonNull S<?>>> foo(@NonNull L<P<@NonNull L<@Nullable String>, @NonNull S<?>>> x) {return null;}
     }
 
     class C extends B {
@@ -26,13 +26,13 @@ class AnnotatedTypeArguments {
 
     class D1 extends C {
         // signature should be the same as in A, but annotated String-type should be platform
-        L<P<L<@NotNull String>, S<?>>> foo(L<P<L<@NotNull String>, S<?>>> x) {return null;}
+        L<P<L<@NonNull String>, S<?>>> foo(L<P<L<@NonNull String>, S<?>>> x) {return null;}
     }
 
     class D2 extends C {
         // return type refined to not-nullable
         // argument type here same as in A except outermost type (it becomes flexible because of conflict)
-        @NotNull
+        @NonNull
         L<P<L<String>, S<?>>> foo(@Nullable L<P<L<String>, S<?>>> x) {return null;}
     }
 }

@@ -1,9 +1,9 @@
 // FILE: A.java
 
-import org.jetbrains.annotations.*;
+import org.checkerframework.checker.nullness.qual.*
 
 public class A {
-    @Nullable Base<@NotNull String> foo() { return null; }
+    @Nullable Base<@NonNull String> foo() { return null; }
 }
 
 // FILE: a.kt
