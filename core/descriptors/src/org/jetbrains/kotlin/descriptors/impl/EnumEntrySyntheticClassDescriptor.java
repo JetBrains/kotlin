@@ -79,9 +79,9 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
         assert containingClass.getKind() == ClassKind.ENUM_CLASS;
 
         this.annotations = annotations;
-        this.typeConstructor =
-                TypeConstructorImpl.createForClass(this, getAnnotations(), true, "enum entry", Collections.<TypeParameterDescriptor>emptyList(),
-                                        Collections.singleton(supertype));
+        this.typeConstructor = new TypeConstructorImpl(
+                this, getAnnotations(), true, Collections.<TypeParameterDescriptor>emptyList(), Collections.singleton(supertype)
+        );
 
         this.scope = new EnumEntryScope(storageManager);
         this.enumMemberNames = enumMemberNames;

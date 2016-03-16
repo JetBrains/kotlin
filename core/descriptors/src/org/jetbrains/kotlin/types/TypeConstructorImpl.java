@@ -17,63 +17,36 @@
 package org.jetbrains.kotlin.types;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
+import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotatedImpl;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class TypeConstructorImpl extends AnnotatedImpl implements TypeConstructor {
+public class TypeConstructorImpl extends AbstractClassTypeConstructor implements TypeConstructor {
+    private final ClassDescriptor classDescriptor;
+    private final Annotations annotations;
+    private final List<TypeParameterDescriptor> parameters;
+    private final Collection<KotlinType> supertypes;
+    private final boolean isFinal;
 
-    @NotNull
-    public static TypeConstructorImpl createForClass(
+    public TypeConstructorImpl(
             @NotNull ClassDescriptor classDescriptor,
             @NotNull Annotations annotations,
             boolean isFinal,
-            @NotNull String debugName,
             @NotNull List<? extends TypeParameterDescriptor> parameters,
             @NotNull Collection<KotlinType> supertypes
     ) {
-        return new TypeConstructorImpl(classDescriptor, annotations, isFinal, debugName, parameters, supertypes) {
-            @Override
-            public int hashCode() {
-                return AbstractClassTypeConstructor.hashCode(this);
-            }
-
-            @Override
-            @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
-            public boolean equals(Object obj) {
-                return AbstractClassTypeConstructor.equals(this, obj);
-            }
-        };
-    }
-
-    private final List<TypeParameterDescriptor> parameters;
-    private final Collection<KotlinType> supertypes;
-    private final String debugName;
-    private final boolean isFinal;
-
-    private final ClassifierDescriptor classifierDescriptor;
-
-    private TypeConstructorImpl(
-            @NotNull ClassifierDescriptor classifierDescriptor,
-            @NotNull Annotations annotations,
-            boolean isFinal,
-            @NotNull String debugName,
-            @NotNull List<? extends TypeParameterDescriptor> parameters,
-            @NotNull Collection<KotlinType> supertypes) {
-        super(annotations);
-        this.classifierDescriptor = classifierDescriptor;
+        super(LockBasedStorageManager.NO_LOCKS);
+        this.classDescriptor = classDescriptor;
+        this.annotations = annotations;
         this.isFinal = isFinal;
-        this.debugName = debugName;
         this.parameters = Collections.unmodifiableList(new ArrayList<TypeParameterDescriptor>(parameters));
         this.supertypes = Collections.unmodifiableCollection(supertypes);
     }
@@ -85,14 +58,8 @@ public abstract class TypeConstructorImpl extends AnnotatedImpl implements TypeC
     }
 
     @Override
-    @NotNull
-    public Collection<KotlinType> getSupertypes() {
-        return supertypes;
-    }
-
-    @Override
     public String toString() {
-        return debugName;
+        return DescriptorUtils.getFqName(classDescriptor).asString();
     }
 
     @Override
@@ -106,20 +73,26 @@ public abstract class TypeConstructorImpl extends AnnotatedImpl implements TypeC
     }
 
     @Override
-    @Nullable
-    public ClassifierDescriptor getDeclarationDescriptor() {
-        return classifierDescriptor;
+    @NotNull
+    public ClassDescriptor getDeclarationDescriptor() {
+        return classDescriptor;
     }
 
     @NotNull
     @Override
-    public KotlinBuiltIns getBuiltIns() {
-        return DescriptorUtilsKt.getBuiltIns(classifierDescriptor);
+    protected Collection<KotlinType> computeSupertypes() {
+        return supertypes;
     }
 
+    @NotNull
     @Override
-    public abstract int hashCode();
+    protected SupertypeLoopChecker getSupertypeLoopChecker() {
+        return SupertypeLoopChecker.EMPTY.INSTANCE;
+    }
 
+    @NotNull
     @Override
-    public abstract boolean equals(Object obj);
+    public Annotations getAnnotations() {
+        return annotations;
+    }
 }

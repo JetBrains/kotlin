@@ -151,13 +151,8 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
 
     public void createTypeConstructor() {
         assert typeConstructor == null : typeConstructor;
-        this.typeConstructor = TypeConstructorImpl.createForClass(
-                this,
-                Annotations.Companion.getEMPTY(),
-                ModalityKt.isFinalClass(this),
-                getName().asString(),
-                typeParameters,
-                supertypes
+        this.typeConstructor = new TypeConstructorImpl(
+                this, Annotations.Companion.getEMPTY(), ModalityKt.isFinalClass(this), typeParameters, supertypes
         );
         for (FunctionDescriptor functionDescriptor : getConstructors()) {
             ((ConstructorDescriptorImpl) functionDescriptor).setReturnType(getDefaultType());

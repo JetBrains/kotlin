@@ -151,14 +151,13 @@ class LazyJavaAnnotationDescriptor(
     }
 
     private fun createTypeForMissingDependencies(fqName: FqName) =
-        ErrorUtils.createErrorTypeWithCustomConstructor(
-                "[Missing annotation class: $fqName]",
-                ClassDescriptorImpl(
-                        EmptyPackageFragmentDescriptor(c.module, fqName.parent()), fqName.shortName(), Modality.FINAL,
-                        ClassKind.ANNOTATION_CLASS, listOf(c.module.builtIns.anyType), SourceElement.NO_SOURCE,
-                        "[Missing annotation class: $fqName]"
-                ).apply {
-                    initialize(MemberScope.Empty, emptySet(), null)
-                }.typeConstructor
-        )
+            ErrorUtils.createErrorTypeWithCustomConstructor(
+                    "[Missing annotation class: $fqName]",
+                    ClassDescriptorImpl(
+                            EmptyPackageFragmentDescriptor(c.module, fqName.parent()), fqName.shortName(), Modality.FINAL,
+                            ClassKind.ANNOTATION_CLASS, listOf(c.module.builtIns.anyType), SourceElement.NO_SOURCE
+                    ).apply {
+                        initialize(MemberScope.Empty, emptySet(), null)
+                    }.typeConstructor
+            )
 }

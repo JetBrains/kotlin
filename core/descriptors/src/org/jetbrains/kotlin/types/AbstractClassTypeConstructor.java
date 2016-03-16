@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.types;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
@@ -42,7 +41,13 @@ public abstract class AbstractClassTypeConstructor extends AbstractTypeConstruct
     public final int hashCode() {
         if (!hashCodeComputed) {
             hashCodeComputed = true;
-            hashCode = hashCode(this);
+            ClassifierDescriptor descriptor = getDeclarationDescriptor();
+            if (descriptor instanceof ClassDescriptor && hasMeaningfulFqName(descriptor)) {
+                hashCode = DescriptorUtils.getFqName(descriptor).hashCode();
+            }
+            else {
+                hashCode = System.identityHashCode(this);
+            }
         }
         return hashCode;
     }
@@ -58,27 +63,22 @@ public abstract class AbstractClassTypeConstructor extends AbstractTypeConstruct
     }
 
     @Override
-    @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
-    public boolean equals(Object obj) {
-        return equals(this, obj);
-    }
-
-    public static boolean equals(@NotNull TypeConstructor me, Object other) {
+    public boolean equals(Object other) {
         if (!(other instanceof TypeConstructor)) return false;
 
         // performance optimization: getFqName is slow method
-        if (other.hashCode() != me.hashCode()) return false;
+        if (other.hashCode() != hashCode()) return false;
 
-        ClassifierDescriptor myDescriptor = me.getDeclarationDescriptor();
+        ClassifierDescriptor myDescriptor = getDeclarationDescriptor();
         ClassifierDescriptor otherDescriptor = ((TypeConstructor) other).getDeclarationDescriptor();
 
         // descriptor for type is created once per module
         if (myDescriptor == otherDescriptor) return true;
 
         // All error types have the same descriptor
-        if (myDescriptor != null && !hasMeaningfulFqName(myDescriptor) ||
+        if (!hasMeaningfulFqName(myDescriptor) ||
             otherDescriptor != null && !hasMeaningfulFqName(otherDescriptor)) {
-            return me == other;
+            return this == other;
         }
 
         if (myDescriptor instanceof ClassDescriptor && otherDescriptor instanceof ClassDescriptor) {
@@ -88,14 +88,6 @@ public abstract class AbstractClassTypeConstructor extends AbstractTypeConstruct
         }
 
         return false;
-    }
-
-    public static int hashCode(@NotNull TypeConstructor me) {
-        ClassifierDescriptor descriptor = me.getDeclarationDescriptor();
-        if (descriptor instanceof ClassDescriptor && hasMeaningfulFqName(descriptor)) {
-            return DescriptorUtils.getFqName(descriptor).hashCode();
-        }
-        return System.identityHashCode(me);
     }
 
     private static boolean hasMeaningfulFqName(@NotNull ClassifierDescriptor descriptor) {
