@@ -461,7 +461,9 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
 
                 val bindingContext = analysisResult.bindingContext
                 bindingContext.diagnostics.firstOrNull { it.severity == Severity.ERROR }?.let {
-                    exception(DefaultErrorMessages.render(it))
+                    if (it.psiElement.containingFile == this) {
+                        exception(DefaultErrorMessages.render(it))
+                    }
                 }
 
                 if (analyzeInlineFunctions) {
