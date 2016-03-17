@@ -152,18 +152,8 @@ public class JavaClassImpl extends JavaClassifierImpl<PsiClass> implements JavaC
     }
 
     @Override
-    @NotNull
-    public OriginKind getOriginKind() {
-        PsiClass psiClass = getPsi();
-        if (psiClass instanceof KtJavaMirrorMarker) {
-            return OriginKind.KOTLIN_LIGHT_CLASS;
-        }
-        else if (psiClass instanceof PsiCompiledElement) {
-            return OriginKind.COMPILED;
-        }
-        else {
-            return OriginKind.SOURCE;
-        }
+    public boolean isKotlinLightClass() {
+        return getPsi() instanceof KtJavaMirrorMarker;
     }
 
     @Nullable

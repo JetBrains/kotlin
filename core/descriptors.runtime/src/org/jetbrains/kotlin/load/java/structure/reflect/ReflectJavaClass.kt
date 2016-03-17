@@ -81,10 +81,9 @@ class ReflectJavaClass(
             .map(::ReflectJavaConstructor)
             .toList()
 
-    // TODO: drop OriginKind
-    override fun getOriginKind() = JavaClass.OriginKind.COMPILED
+    override fun isKotlinLightClass() = false
 
-    override fun getName(): Name = Name.identifier(klass.simpleName)
+    override fun getName() = Name.identifier(klass.simpleName)
 
     override fun getTypeParameters() = klass.typeParameters.map { ReflectJavaTypeParameter(it) }
 

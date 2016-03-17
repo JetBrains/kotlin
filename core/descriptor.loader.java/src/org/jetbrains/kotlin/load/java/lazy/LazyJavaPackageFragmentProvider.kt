@@ -59,7 +59,7 @@ class LazyJavaPackageFragmentProvider(
     private inner class FragmentClassResolver : LazyJavaClassResolver {
         override fun resolveClass(javaClass: JavaClass): ClassDescriptor? {
             val fqName = javaClass.fqName
-            if (fqName != null && javaClass.originKind == JavaClass.OriginKind.KOTLIN_LIGHT_CLASS) {
+            if (fqName != null && javaClass.isKotlinLightClass) {
                 return c.components.javaResolverCache.getClassResolvedFromSource(fqName)
             }
 

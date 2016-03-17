@@ -35,6 +35,8 @@ public interface JavaClass extends JavaClassifier, JavaTypeParameterListOwner, J
 
     boolean isEnum();
 
+    boolean isKotlinLightClass();
+
     @Nullable
     JavaClass getOuterClass();
 
@@ -49,13 +51,4 @@ public interface JavaClass extends JavaClassifier, JavaTypeParameterListOwner, J
 
     @NotNull
     Collection<JavaConstructor> getConstructors();
-
-    @NotNull
-    OriginKind getOriginKind();
-
-    enum OriginKind {
-        COMPILED,
-        SOURCE,
-        KOTLIN_LIGHT_CLASS
-    }
 }
