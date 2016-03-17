@@ -256,8 +256,8 @@ public class CommonSupertypes {
 
         if (recursionDepth >= maxDepth) {
             // If recursion is too deep, we cut it by taking <out Any?> as an ultimate supertype argument
-            // Example: class A : Base<A>; class B : Base<B>, commonSuperType(A, B) = Base<out Any?>
-            return new TypeProjectionImpl(OUT_VARIANCE, DescriptorUtilsKt.getBuiltIns(parameterDescriptor).getNullableAnyType());
+            // Example: class A : Base<A>; class B : Base<B>, commonSuperType(A, B) = Base<*>
+            return TypeUtils.makeStarProjection(parameterDescriptor);
         }
 
         Set<KotlinType> ins = new HashSet<KotlinType>();
@@ -312,14 +312,13 @@ public class CommonSupertypes {
             assert !ins.isEmpty() : "In projections is empty for parameter " + parameterDescriptor + ", type projections " + typeProjections;
             KotlinType intersection = TypeIntersector.intersectTypes(KotlinTypeChecker.DEFAULT, ins);
             if (intersection == null) {
-                return new TypeProjectionImpl(OUT_VARIANCE, findCommonSupertype(parameterDescriptor.getUpperBounds(), recursionDepth + 1, maxDepth));
+                return TypeUtils.makeStarProjection(parameterDescriptor);
             }
             Variance projectionKind = variance == IN_VARIANCE ? Variance.INVARIANT : IN_VARIANCE;
             return new TypeProjectionImpl(projectionKind, intersection);
         }
         else {
-            Variance projectionKind = variance == OUT_VARIANCE ? Variance.INVARIANT : OUT_VARIANCE;
-            return new TypeProjectionImpl(projectionKind, findCommonSupertype(parameterDescriptor.getUpperBounds(), recursionDepth + 1, maxDepth));
+            return TypeUtils.makeStarProjection(parameterDescriptor);
         }
     }
 
