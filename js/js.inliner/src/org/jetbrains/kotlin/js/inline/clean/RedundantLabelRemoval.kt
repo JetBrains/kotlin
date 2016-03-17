@@ -22,10 +22,12 @@ import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
 internal class RedundantLabelRemoval(private val root: JsStatement) {
     private val labelUsages = mutableMapOf<JsName, Int>()
+    private var hasChanges = false
 
-    fun apply() {
+    fun apply(): Boolean {
         analyze()
         perform()
+        return hasChanges
     }
 
     private fun analyze() {
@@ -48,16 +50,21 @@ internal class RedundantLabelRemoval(private val root: JsStatement) {
                 if (x.synthetic) {
                     val statementReplacement = perform(x.statement, x.name)
                     if (statementReplacement == null) {
+                        hasChanges = true
                         ctx.removeMe()
                     }
                     else if (labelUsages[x.name] ?: 0 == 0) {
                         val replacement = statementReplacement
                         if (replacement is JsBlock) {
+                            hasChanges = true
                             ctx.addPrevious(replacement.statements)
                             ctx.removeMe()
                         }
                         else {
-                            ctx.replaceMe(replacement)
+                            if (replacement != ctx.currentNode) {
+                                hasChanges = true
+                                ctx.replaceMe(replacement)
+                            }
                         }
                     }
                     else {
@@ -93,14 +100,16 @@ internal class RedundantLabelRemoval(private val root: JsStatement) {
             }
         is JsIf -> {
             val thenRemoved = perform(statement.thenStatement, name) == null
-            val elseRemoved = statement.elseStatement?.let { perform(it, name) } == null
+            val elseRemoved = statement.elseStatement?.let { perform(it, name) } == null && statement.elseStatement != null
             when {
                 thenRemoved && elseRemoved -> null
                 elseRemoved -> {
+                    hasChanges = true
                     statement.elseStatement = null
                     statement
                 }
                 thenRemoved -> {
+                    hasChanges = true
                     statement.thenStatement = statement.elseStatement
                     statement.elseStatement = null
                     statement.ifExpression = JsAstUtils.negated(statement.ifExpression)
@@ -130,14 +139,19 @@ internal class RedundantLabelRemoval(private val root: JsStatement) {
         val lastOptimized = last?.let { perform(it, name) }
         if (lastOptimized != last) {
             if (lastOptimized == null) {
+                hasChanges = true
                 statements.removeAt(statements.lastIndex)
             }
             else if (lastOptimized is JsBlock) {
+                hasChanges = true
                 statements.removeAt(statements.lastIndex)
                 statements.addAll(lastOptimized.statements)
             }
             else {
-                statements[statements.lastIndex] = lastOptimized
+                if (statements[statements.lastIndex] != lastOptimized) {
+                    hasChanges = true
+                    statements[statements.lastIndex] = lastOptimized
+                }
             }
         }
         return statements

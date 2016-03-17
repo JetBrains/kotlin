@@ -29,11 +29,13 @@ internal class TemporaryAssignmentElimination(private val root: JsBlock) {
     private val statementsToRemove = mutableSetOf<JsStatement>()
     private val mappedUsages = mutableMapOf<JsName, Usage>()
     private val syntheticNames = mutableSetOf<JsName>()
+    private var hasChanges = false
 
-    fun apply() {
+    fun apply(): Boolean {
         analyze()
         process()
         generateDeclarations()
+        return hasChanges
     }
 
     private fun analyze() {
@@ -149,6 +151,7 @@ internal class TemporaryAssignmentElimination(private val root: JsBlock) {
         object : JsVisitorWithContextImpl() {
             override fun visit(x: JsExpressionStatement, ctx: JsContext<JsNode>): Boolean {
                 if (x in statementsToRemove) {
+                    hasChanges = true
                     ctx.removeMe()
                     return false
                 }
@@ -185,6 +188,7 @@ internal class TemporaryAssignmentElimination(private val root: JsBlock) {
                                 JsExpressionStatement(JsAstUtils.assignment(usage.target, value).source(x.expression.source))
                             }
                         }
+                        hasChanges = true
                         ctx.replaceMe(replacement)
                         statementsToRemove += usage.statements
                         return false;
@@ -195,6 +199,7 @@ internal class TemporaryAssignmentElimination(private val root: JsBlock) {
 
             override fun visit(x: JsReturn, ctx: JsContext<*>): Boolean {
                 if (x in statementsToRemove) {
+                    hasChanges = true
                     ctx.removeMe()
                     return false
                 }
@@ -203,6 +208,7 @@ internal class TemporaryAssignmentElimination(private val root: JsBlock) {
 
             override fun visit(x: JsVars, ctx: JsContext<*>): Boolean {
                 if (x in statementsToRemove) {
+                    hasChanges = true
                     ctx.removeMe()
                     return false
                 }
