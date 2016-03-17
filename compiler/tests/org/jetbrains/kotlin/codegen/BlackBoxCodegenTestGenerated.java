@@ -11833,6 +11833,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("commonSupertypeContravariant.kt")
+        public void testCommonSupertypeContravariant() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/commonSupertypeContravariant.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("commonSupertypeContravariant2.kt")
+        public void testCommonSupertypeContravariant2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/commonSupertypeContravariant2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("doubleMerge.kt")
         public void testDoubleMerge() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/doubleMerge.kt");

@@ -6939,6 +6939,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("commonSupertypeContravariant.kt")
+            public void testCommonSupertypeContravariant() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/commonSupertypeContravariant.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("commonSupertypeContravariant2.kt")
+            public void testCommonSupertypeContravariant2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/commonSupertypeContravariant2.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("genericsInType.kt")
             public void testGenericsInType() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/genericsInType.kt");
