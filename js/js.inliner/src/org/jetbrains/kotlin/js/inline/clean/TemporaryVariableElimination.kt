@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.js.inline.clean
 import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.metadata.synthetic
 import org.jetbrains.kotlin.js.inline.util.canHaveSideEffect
+import org.jetbrains.kotlin.js.inline.util.collectFreeVariables
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
 internal class TemporaryVariableElimination(private val root: JsStatement) {
@@ -120,6 +121,11 @@ internal class TemporaryVariableElimination(private val root: JsStatement) {
                     }
                 }
                 return false
+            }
+
+            override fun visit(x: JsFunction, ctx: JsContext<*>): Boolean {
+                x.collectFreeVariables().forEach { useVariable(it); useVariable(it) }
+                return super.visit(x, ctx)
             }
         }.accept(root)
     }
