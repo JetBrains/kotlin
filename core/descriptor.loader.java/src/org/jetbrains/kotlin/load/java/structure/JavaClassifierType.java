@@ -28,9 +28,6 @@ public interface JavaClassifierType extends JavaType, JavaAnnotationOwner {
     JavaClassifier getClassifier();
 
     @NotNull
-    JavaTypeSubstitutor getSubstitutor();
-
-    @NotNull
     @ReadOnly
     Collection<JavaClassifierType> getSupertypes();
 

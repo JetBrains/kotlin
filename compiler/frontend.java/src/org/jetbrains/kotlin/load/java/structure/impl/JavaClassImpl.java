@@ -176,14 +176,13 @@ public class JavaClassImpl extends JavaClassifierImpl<PsiClass> implements JavaC
     }
 
     @NotNull
-    @Override
-    public JavaType createImmediateType(@NotNull JavaTypeSubstitutor substitutor) {
+    public JavaType createImmediateType(@NotNull JavaTypeSubstitutorImpl substitutor) {
         return new JavaClassifierTypeImpl(
                 JavaPsiFacade.getElementFactory(getPsi().getProject()).createType(getPsi(), createPsiSubstitutor(substitutor)));
     }
 
     @NotNull
-    private static PsiSubstitutor createPsiSubstitutor(@NotNull JavaTypeSubstitutor substitutor) {
+    private static PsiSubstitutor createPsiSubstitutor(@NotNull JavaTypeSubstitutorImpl substitutor) {
         Map<PsiTypeParameter, PsiType> substMap = new HashMap<PsiTypeParameter, PsiType>();
         for (Map.Entry<JavaTypeParameter, JavaType> entry : substitutor.getSubstitutionMap().entrySet()) {
             PsiTypeParameter key = ((JavaTypeParameterImpl) entry.getKey()).getPsi();

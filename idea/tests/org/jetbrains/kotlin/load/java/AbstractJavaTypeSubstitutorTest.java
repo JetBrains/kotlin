@@ -23,9 +23,9 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor;
-import org.jetbrains.kotlin.load.java.structure.JavaClassifierType;
 import org.jetbrains.kotlin.load.java.structure.JavaType;
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter;
+import org.jetbrains.kotlin.load.java.structure.impl.JavaClassifierTypeImpl;
 import org.jetbrains.kotlin.load.java.structure.impl.JavaTypeImpl;
 import org.jetbrains.kotlin.load.java.structure.impl.JavaTypeParameterImpl;
 
@@ -68,7 +68,7 @@ public abstract class AbstractJavaTypeSubstitutorTest extends KotlinLightCodeIns
     private static void doTest(@NotNull PsiClassType type, @NotNull PsiTypeParameter typeParameter) {
         PsiType expectedType = type.resolveGenerics().getSubstitutor().substitute(typeParameter);
 
-        JavaClassifierType javaClassifierType = (JavaClassifierType) JavaTypeImpl.create(type);
+        JavaClassifierTypeImpl javaClassifierType = (JavaClassifierTypeImpl) JavaTypeImpl.create(type);
         JavaTypeParameter javaTypeToSubstitute = new JavaTypeParameterImpl(typeParameter);
         JavaType actualType = javaClassifierType.getSubstitutor().substitute(javaTypeToSubstitute);
 
@@ -83,7 +83,7 @@ public abstract class AbstractJavaTypeSubstitutorTest extends KotlinLightCodeIns
     private static void doTest(@NotNull PsiClassType type, @NotNull PsiType psiTypeToSubstitute) {
         PsiType expectedType = type.resolveGenerics().getSubstitutor().substitute(psiTypeToSubstitute);
 
-        JavaClassifierType javaClassifierType = (JavaClassifierType) JavaTypeImpl.create(type);
+        JavaClassifierTypeImpl javaClassifierType = (JavaClassifierTypeImpl) JavaTypeImpl.create(type);
         JavaType javaTypeToSubstitute = JavaTypeImpl.create(psiTypeToSubstitute);
         JavaType actualType = javaClassifierType.getSubstitutor().substitute(javaTypeToSubstitute);
 

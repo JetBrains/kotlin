@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class JavaTypeSubstitutorImpl implements JavaTypeSubstitutor {
+public class JavaTypeSubstitutorImpl {
     private final Map<JavaTypeParameter, JavaType> substitutionMap;
 
     public JavaTypeSubstitutorImpl(@NotNull Map<JavaTypeParameter, JavaType> substitutionMap) {
@@ -33,7 +33,6 @@ public class JavaTypeSubstitutorImpl implements JavaTypeSubstitutor {
     }
 
     @NotNull
-    @Override
     public JavaType substitute(@NotNull JavaType type) {
         JavaType substitutedType = substituteInternal(type);
         return substitutedType != null ? substitutedType : correctSubstitutionForRawType(type);
@@ -63,10 +62,10 @@ public class JavaTypeSubstitutorImpl implements JavaTypeSubstitutor {
             if (classifier instanceof JavaTypeParameter) {
                 return substitute((JavaTypeParameter) classifier);
             }
-            else if (classifier instanceof JavaClass) {
-                JavaClass javaClass = (JavaClass) classifier;
+            else if (classifier instanceof JavaClassImpl) {
+                JavaClassImpl javaClass = (JavaClassImpl) classifier;
                 Map<JavaTypeParameter, JavaType> substMap = new HashMap<JavaTypeParameter, JavaType>();
-                processClass(javaClass, classifierType.getSubstitutor(), substMap);
+                processClass(javaClass, ((JavaClassifierTypeImpl) classifierType).getSubstitutor(), substMap);
 
                 return javaClass.createImmediateType(new JavaTypeSubstitutorImpl(substMap));
             }
@@ -90,7 +89,9 @@ public class JavaTypeSubstitutorImpl implements JavaTypeSubstitutor {
         return type;
     }
 
-    private void processClass(@NotNull JavaClass javaClass, @NotNull JavaTypeSubstitutor substitutor, @NotNull Map<JavaTypeParameter, JavaType> substMap) {
+    private void processClass(
+            @NotNull JavaClass javaClass, @NotNull JavaTypeSubstitutorImpl substitutor, @NotNull Map<JavaTypeParameter, JavaType> substMap
+    ) {
         List<JavaTypeParameter> typeParameters = javaClass.getTypeParameters();
         for (JavaTypeParameter typeParameter : typeParameters) {
             JavaType substitutedParam = substitutor.substitute(typeParameter);
@@ -152,7 +153,6 @@ public class JavaTypeSubstitutorImpl implements JavaTypeSubstitutor {
         return typeParameter.getTypeProvider().createJavaLangObjectType();
     }
 
-    @Override
     @Nullable
     public JavaType substitute(@NotNull JavaTypeParameter typeParameter) {
         if (substitutionMap.containsKey(typeParameter)) {
@@ -162,7 +162,6 @@ public class JavaTypeSubstitutorImpl implements JavaTypeSubstitutor {
         return typeParameter.getType();
     }
 
-    @Override
     @NotNull
     public Map<JavaTypeParameter, JavaType> getSubstitutionMap() {
         return substitutionMap;

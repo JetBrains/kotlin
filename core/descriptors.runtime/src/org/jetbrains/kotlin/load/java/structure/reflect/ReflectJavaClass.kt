@@ -18,11 +18,9 @@ package org.jetbrains.kotlin.load.java.structure.reflect
 
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
-import org.jetbrains.kotlin.load.java.structure.JavaType
-import org.jetbrains.kotlin.load.java.structure.JavaTypeSubstitutor
 import org.jetbrains.kotlin.name.Name
 import java.lang.reflect.Method
-import java.util.Arrays
+import java.util.*
 
 class ReflectJavaClass(
         private val klass: Class<*>
@@ -87,8 +85,6 @@ class ReflectJavaClass(
 
     // TODO: drop OriginKind
     override fun getOriginKind() = JavaClass.OriginKind.COMPILED
-
-    override fun createImmediateType(substitutor: JavaTypeSubstitutor): JavaType = throw UnsupportedOperationException()
 
     override fun getName(): Name = Name.identifier(klass.simpleName)
 

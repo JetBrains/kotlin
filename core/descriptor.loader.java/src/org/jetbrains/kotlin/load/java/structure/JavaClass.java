@@ -56,9 +56,6 @@ public interface JavaClass extends JavaClassifier, JavaTypeParameterListOwner, J
     @NotNull
     OriginKind getOriginKind();
 
-    @NotNull
-    JavaType createImmediateType(@NotNull JavaTypeSubstitutor substitutor);
-
     enum OriginKind {
         COMPILED,
         SOURCE,

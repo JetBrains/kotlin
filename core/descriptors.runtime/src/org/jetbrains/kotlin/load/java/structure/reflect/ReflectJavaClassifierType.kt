@@ -16,7 +16,10 @@
 
 package org.jetbrains.kotlin.load.java.structure.reflect
 
-import org.jetbrains.kotlin.load.java.structure.*
+import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
+import org.jetbrains.kotlin.load.java.structure.JavaClassifier
+import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+import org.jetbrains.kotlin.load.java.structure.JavaType
 import org.jetbrains.kotlin.name.FqName
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
@@ -35,8 +38,6 @@ class ReflectJavaClassifierType(public override val type: Type) : ReflectJavaTyp
     }
 
     override fun getClassifier(): JavaClassifier = classifier
-
-    override fun getSubstitutor(): JavaTypeSubstitutor = throw UnsupportedOperationException()
 
     override fun getSupertypes(): Collection<JavaClassifierType> = throw UnsupportedOperationException()
 

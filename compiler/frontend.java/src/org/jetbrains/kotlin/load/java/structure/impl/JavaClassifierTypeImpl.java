@@ -19,17 +19,20 @@ package org.jetbrains.kotlin.load.java.structure.impl;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.load.java.structure.*;
+import org.jetbrains.kotlin.load.java.structure.JavaClassifier;
+import org.jetbrains.kotlin.load.java.structure.JavaClassifierType;
+import org.jetbrains.kotlin.load.java.structure.JavaType;
+import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter;
 
 import java.util.*;
 
 public class JavaClassifierTypeImpl extends JavaTypeImpl<PsiClassType> implements JavaClassifierType {
     private static class ResolutionResult {
         private final JavaClassifier classifier;
-        private final JavaTypeSubstitutor substitutor;
+        private final JavaTypeSubstitutorImpl substitutor;
         private final boolean isRaw;
 
-        private ResolutionResult(@Nullable JavaClassifier classifier, @NotNull JavaTypeSubstitutor substitutor, boolean isRaw) {
+        private ResolutionResult(@Nullable JavaClassifier classifier, @NotNull JavaTypeSubstitutorImpl substitutor, boolean isRaw) {
             this.classifier = classifier;
             this.substitutor = substitutor;
             this.isRaw = isRaw;
@@ -49,9 +52,8 @@ public class JavaClassifierTypeImpl extends JavaTypeImpl<PsiClassType> implement
         return resolutionResult.classifier;
     }
 
-    @Override
     @NotNull
-    public JavaTypeSubstitutor getSubstitutor() {
+    public JavaTypeSubstitutorImpl getSubstitutor() {
         resolve();
         return resolutionResult.substitutor;
     }
@@ -118,7 +120,7 @@ public class JavaClassifierTypeImpl extends JavaTypeImpl<PsiClassType> implement
                                                 ? getTypeParameters(((JavaClassImpl) classifier).getPsi())
                                                 : Collections.<PsiTypeParameter>emptyList();
 
-        JavaTypeSubstitutor substitutor = getSubstitutor();
+        JavaTypeSubstitutorImpl substitutor = getSubstitutor();
 
         List<JavaType> result = new ArrayList<JavaType>();
         for (PsiTypeParameter typeParameter : parameters) {
