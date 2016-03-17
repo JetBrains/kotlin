@@ -20,9 +20,13 @@ import com.google.dart.compiler.backend.js.ast.JsBlock
 
 class FunctionPostProcessor(private val root: JsBlock) {
     fun apply() {
-        TemporaryAssignmentElimination(root).apply()
-        RedundantLabelRemoval(root).apply()
-        TemporaryVariableElimination(root).apply()
-        RedundantVariableDeclarationElimination(root).apply()
+        do {
+            var hasChanges = false
+            hasChanges = hasChanges or TemporaryAssignmentElimination(root).apply()
+            hasChanges = hasChanges or RedundantLabelRemoval(root).apply()
+            hasChanges = hasChanges or TemporaryVariableElimination(root).apply()
+            hasChanges = hasChanges or DeadCodeElimination(root).apply()
+            hasChanges = hasChanges or RedundantVariableDeclarationElimination(root).apply()
+        } while (hasChanges)
     }
 }

@@ -27,10 +27,12 @@ internal class TemporaryVariableElimination(private val root: JsStatement) {
     private val usages = mutableMapOf<JsName, Int>()
     private val definedValues = mutableMapOf<JsName, JsExpression>()
     private val temporary = mutableSetOf<JsName>()
+    private var hasChanges = false
 
-    fun apply() {
+    fun apply(): Boolean {
         analyze()
         perform()
+        return hasChanges
     }
 
     private fun analyze() {
@@ -136,6 +138,7 @@ internal class TemporaryVariableElimination(private val root: JsStatement) {
                 val assignment = JsAstUtils.decomposeAssignmentToVariable(x.expression)
                 if (assignment != null) {
                     if (shouldConsiderTemporary(assignment.first)) {
+                        hasChanges = true
                         ctx.removeMe()
                         return false
                     }
@@ -146,8 +149,11 @@ internal class TemporaryVariableElimination(private val root: JsStatement) {
 
             override fun visit(x: JsVars, ctx: JsContext<*>): Boolean {
                 val filteredVars = x.vars.filter { it.initExpression == null || !shouldConsiderTemporary(it.name) }
-                x.vars.clear()
-                x.vars.addAll(filteredVars)
+                if (x.vars.size != filteredVars.size) {
+                    hasChanges = true
+                    x.vars.clear()
+                    x.vars.addAll(filteredVars)
+                }
                 if (x.vars.isEmpty()) {
                     ctx.removeMe()
                 }
@@ -158,6 +164,7 @@ internal class TemporaryVariableElimination(private val root: JsStatement) {
             override fun visit(x: JsNameRef, ctx: JsContext<JsNode>): Boolean {
                 val name = x.name
                 if (x.qualifier == null && name != null && shouldConsiderTemporary(name)) {
+                    hasChanges = true
                     val newExpr = definedValues[name]!!
                     ctx.replaceMe(accept(newExpr))
                     usages[name] = usages[name]!! - 1

@@ -22,10 +22,12 @@ import org.jetbrains.kotlin.js.inline.util.collectFreeVariables
 
 internal class RedundantVariableDeclarationElimination(private val root: JsStatement) {
     private val usages = mutableSetOf<JsName>()
+    private var hasChanges = false
 
-    fun apply() {
+    fun apply(): Boolean {
         analyze()
         perform()
+        return hasChanges
     }
 
     private fun analyze() {
@@ -53,7 +55,9 @@ internal class RedundantVariableDeclarationElimination(private val root: JsState
         object : JsVisitorWithContextImpl() {
             override fun endVisit(x: JsVars, ctx: JsContext<*>) {
                 if (x.synthetic) {
-                    x.vars.removeAll { it.initExpression == null && it.name !in usages }
+                    if (x.vars.removeAll { it.initExpression == null && it.name !in usages }) {
+                        hasChanges = true
+                    }
                     if (x.vars.isEmpty()) {
                         ctx.removeMe()
                     }
