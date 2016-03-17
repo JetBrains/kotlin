@@ -22,15 +22,17 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType;
 import org.jetbrains.kotlin.load.java.structure.JavaType;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class JavaClassifierTypeImpl extends JavaTypeImpl<PsiClassType> implements JavaClassifierType {
     private static class ResolutionResult {
         private final JavaClassifierImpl<?> classifier;
-        private final JavaTypeSubstitutorImpl substitutor;
+        private final PsiSubstitutor substitutor;
         private final boolean isRaw;
 
-        private ResolutionResult(@Nullable JavaClassifierImpl<?> classifier, @NotNull JavaTypeSubstitutorImpl substitutor, boolean isRaw) {
+        private ResolutionResult(@Nullable JavaClassifierImpl<?> classifier, @NotNull PsiSubstitutor substitutor, boolean isRaw) {
             this.classifier = classifier;
             this.substitutor = substitutor;
             this.isRaw = isRaw;
@@ -51,7 +53,7 @@ public class JavaClassifierTypeImpl extends JavaTypeImpl<PsiClassType> implement
     }
 
     @NotNull
-    public JavaTypeSubstitutorImpl getSubstitutor() {
+    public PsiSubstitutor getSubstitutor() {
         resolve();
         return resolutionResult.substitutor;
     }
@@ -62,24 +64,9 @@ public class JavaClassifierTypeImpl extends JavaTypeImpl<PsiClassType> implement
             PsiClass psiClass = result.getElement();
             PsiSubstitutor substitutor = result.getSubstitutor();
             resolutionResult = new ResolutionResult(
-                    psiClass == null ? null : JavaClassifierImpl.create(psiClass),
-                    new JavaTypeSubstitutorImpl(convertSubstitutionMap(substitutor.getSubstitutionMap())),
-                    PsiClassType.isRaw(result)
+                    psiClass == null ? null : JavaClassifierImpl.create(psiClass), substitutor, PsiClassType.isRaw(result)
             );
         }
-    }
-
-    @NotNull
-    private static Map<JavaTypeParameterImpl, JavaTypeImpl<?>> convertSubstitutionMap(@NotNull Map<PsiTypeParameter, PsiType> psiMap) {
-        if (psiMap.isEmpty()) return Collections.emptyMap();
-
-        Map<JavaTypeParameterImpl, JavaTypeImpl<?>> result = new HashMap<JavaTypeParameterImpl, JavaTypeImpl<?>>();
-        for (Map.Entry<PsiTypeParameter, PsiType> entry : psiMap.entrySet()) {
-            PsiType value = entry.getValue();
-            result.put(new JavaTypeParameterImpl(entry.getKey()), value == null ? null : JavaTypeImpl.create(value));
-        }
-
-        return result;
     }
 
     @Override
@@ -98,17 +85,17 @@ public class JavaClassifierTypeImpl extends JavaTypeImpl<PsiClassType> implement
     @NotNull
     public List<JavaType> getTypeArguments() {
         JavaClassifierImpl<?> classifier = getClassifier();
+        if (!(classifier instanceof JavaClassImpl)) return Collections.emptyList();
 
         // parameters including ones from outer class
-        Iterable<PsiTypeParameter> parameters = classifier instanceof JavaClassImpl
-                                                ? getTypeParameters(classifier.getPsi())
-                                                : Collections.<PsiTypeParameter>emptyList();
+        List<PsiTypeParameter> parameters = getTypeParameters(classifier.getPsi());
 
-        JavaTypeSubstitutorImpl substitutor = getSubstitutor();
+        PsiSubstitutor substitutor = getSubstitutor();
 
-        List<JavaType> result = new ArrayList<JavaType>();
+        List<JavaType> result = new ArrayList<JavaType>(parameters.size());
         for (PsiTypeParameter typeParameter : parameters) {
-            result.add(substitutor.substitute(new JavaTypeParameterImpl(typeParameter)));
+            PsiType substitutedType = substitutor.substitute(typeParameter);
+            result.add(substitutedType == null ? null : JavaTypeImpl.create(substitutedType));
         }
 
         return result;
@@ -124,7 +111,7 @@ public class JavaClassifierTypeImpl extends JavaTypeImpl<PsiClassType> implement
     // PsiUtil.typeParametersIterable returns H3, H2, H1
     // But we would like to have H2, H3, H1 as such order is consistent with our type representation
     @NotNull
-    public static List<PsiTypeParameter> getTypeParameters(@NotNull PsiClass owner) {
+    private static List<PsiTypeParameter> getTypeParameters(@NotNull PsiClass owner) {
         List<PsiTypeParameter> result = null;
 
         PsiTypeParameterListOwner currentOwner = owner;

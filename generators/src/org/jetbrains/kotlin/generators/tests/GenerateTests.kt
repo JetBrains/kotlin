@@ -119,7 +119,6 @@ import org.jetbrains.kotlin.jvm.runtime.AbstractJvmRuntimeDescriptorLoaderTest
 import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidBoxTest
 import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidBytecodeShapeTest
 import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidSyntheticPropertyDescriptorTest
-import org.jetbrains.kotlin.load.java.AbstractJavaTypeSubstitutorTest
 import org.jetbrains.kotlin.modules.xml.AbstractModuleXmlParserTest
 import org.jetbrains.kotlin.parsing.AbstractParsingTest
 import org.jetbrains.kotlin.psi.patternMatching.AbstractPsiUnifierTest
@@ -359,11 +358,6 @@ fun main(args: Array<String>) {
 
 
     testGroup("idea/tests", "idea/testData") {
-
-        testClass<AbstractJavaTypeSubstitutorTest>() {
-            model("typeSubstitution", extension = "java")
-        }
-
         testClass<AbstractAdditionalResolveDescriptorRendererTest>() {
             model("resolve/additionalLazyResolve")
         }

@@ -88,14 +88,6 @@ public class JavaElementCollectionFromPsiArrayUtil {
             }
         };
 
-        private static final Factory<PsiType, JavaType> TYPES = new Factory<PsiType, JavaType>() {
-            @NotNull
-            @Override
-            public JavaType create(@NotNull PsiType psiType) {
-                return JavaTypeImpl.create(psiType);
-            }
-        };
-
         private static final Factory<PsiClassType, JavaClassifierType> CLASSIFIER_TYPES = new Factory<PsiClassType, JavaClassifierType>() {
             @NotNull
             @Override
@@ -190,11 +182,6 @@ public class JavaElementCollectionFromPsiArrayUtil {
     @NotNull
     public static List<JavaTypeParameter> typeParameters(@NotNull PsiTypeParameter[] typeParameters) {
         return convert(typeParameters, Factories.TYPE_PARAMETERS);
-    }
-
-    @NotNull
-    public static List<JavaType> types(@NotNull PsiType[] types) {
-        return convert(types, Factories.TYPES);
     }
 
     @NotNull

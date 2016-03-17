@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.load.java.structure.impl;
 
 import com.intellij.psi.*;
-import com.intellij.psi.impl.PsiSubstitutorImpl;
 import kotlin.collections.ArraysKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
@@ -29,9 +28,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.jetbrains.kotlin.load.java.structure.impl.JavaElementCollectionFromPsiArrayUtil.*;
 
@@ -167,27 +164,6 @@ public class JavaClassImpl extends JavaClassifierImpl<PsiClass> implements JavaC
         else {
             return OriginKind.SOURCE;
         }
-    }
-
-    @NotNull
-    /* package */ JavaTypeImpl<?> createImmediateType(@NotNull Map<JavaTypeParameterImpl, JavaTypeImpl<?>> substitutionMap) {
-        return new JavaClassifierTypeImpl(
-                JavaPsiFacade.getElementFactory(getPsi().getProject()).createType(getPsi(), createPsiSubstitutor(substitutionMap))
-        );
-    }
-
-    @NotNull
-    private static PsiSubstitutor createPsiSubstitutor(@NotNull Map<JavaTypeParameterImpl, JavaTypeImpl<?>> substitutionMap) {
-        if (substitutionMap.isEmpty()) return PsiSubstitutor.EMPTY;
-
-        Map<PsiTypeParameter, PsiType> result = new HashMap<PsiTypeParameter, PsiType>();
-        for (Map.Entry<JavaTypeParameterImpl, JavaTypeImpl<?>> entry : substitutionMap.entrySet()) {
-            PsiTypeParameter key = entry.getKey().getPsi();
-            JavaTypeImpl<?> value = entry.getValue();
-            result.put(key, value == null ? null : value.getPsi());
-        }
-
-        return PsiSubstitutorImpl.createSubstitutor(result);
     }
 
     @Nullable
