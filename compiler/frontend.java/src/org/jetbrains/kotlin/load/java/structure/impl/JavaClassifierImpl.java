@@ -32,7 +32,7 @@ public abstract class JavaClassifierImpl<Psi extends PsiClass> extends JavaEleme
     }
 
     @NotNull
-    /* package */ static JavaClassifier create(@NotNull PsiClass psiClass) {
+    /* package */ static JavaClassifierImpl<?> create(@NotNull PsiClass psiClass) {
         if (psiClass instanceof PsiTypeParameter) {
             return new JavaTypeParameterImpl((PsiTypeParameter) psiClass);
         }

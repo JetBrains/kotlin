@@ -16,9 +16,5 @@
 
 package org.jetbrains.kotlin.load.java.structure;
 
-import org.jetbrains.annotations.NotNull;
-
 public interface JavaType {
-    @NotNull
-    JavaArrayType createArrayType();
 }

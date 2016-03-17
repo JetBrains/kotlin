@@ -20,7 +20,6 @@ import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation;
-import org.jetbrains.kotlin.load.java.structure.JavaArrayType;
 import org.jetbrains.kotlin.load.java.structure.JavaType;
 import org.jetbrains.kotlin.name.FqName;
 
@@ -77,12 +76,6 @@ public abstract class JavaTypeImpl<Psi extends PsiType> implements JavaType, Jav
                 return new JavaWildcardTypeImpl(wildcardType);
             }
         });
-    }
-
-    @NotNull
-    @Override
-    public JavaArrayType createArrayType() {
-        return new JavaArrayTypeImpl(getPsi().createArrayType());
     }
 
     @NotNull

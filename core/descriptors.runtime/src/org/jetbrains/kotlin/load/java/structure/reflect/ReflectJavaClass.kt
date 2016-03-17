@@ -81,8 +81,6 @@ class ReflectJavaClass(
             .map(::ReflectJavaConstructor)
             .toList()
 
-    override fun getDefaultType(): ReflectJavaClassifierType = throw UnsupportedOperationException()
-
     // TODO: drop OriginKind
     override fun getOriginKind() = JavaClass.OriginKind.COMPILED
 

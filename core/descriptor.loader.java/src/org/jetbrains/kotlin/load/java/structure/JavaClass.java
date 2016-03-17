@@ -51,9 +51,6 @@ public interface JavaClass extends JavaClassifier, JavaTypeParameterListOwner, J
     Collection<JavaConstructor> getConstructors();
 
     @NotNull
-    JavaClassifierType getDefaultType();
-
-    @NotNull
     OriginKind getOriginKind();
 
     enum OriginKind {

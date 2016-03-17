@@ -24,7 +24,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor;
 import org.jetbrains.kotlin.load.java.structure.JavaType;
-import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter;
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassifierTypeImpl;
 import org.jetbrains.kotlin.load.java.structure.impl.JavaTypeImpl;
 import org.jetbrains.kotlin.load.java.structure.impl.JavaTypeParameterImpl;
@@ -69,7 +68,7 @@ public abstract class AbstractJavaTypeSubstitutorTest extends KotlinLightCodeIns
         PsiType expectedType = type.resolveGenerics().getSubstitutor().substitute(typeParameter);
 
         JavaClassifierTypeImpl javaClassifierType = (JavaClassifierTypeImpl) JavaTypeImpl.create(type);
-        JavaTypeParameter javaTypeToSubstitute = new JavaTypeParameterImpl(typeParameter);
+        JavaTypeParameterImpl javaTypeToSubstitute = new JavaTypeParameterImpl(typeParameter);
         JavaType actualType = javaClassifierType.getSubstitutor().substitute(javaTypeToSubstitute);
 
         if (actualType == null) {
@@ -84,7 +83,7 @@ public abstract class AbstractJavaTypeSubstitutorTest extends KotlinLightCodeIns
         PsiType expectedType = type.resolveGenerics().getSubstitutor().substitute(psiTypeToSubstitute);
 
         JavaClassifierTypeImpl javaClassifierType = (JavaClassifierTypeImpl) JavaTypeImpl.create(type);
-        JavaType javaTypeToSubstitute = JavaTypeImpl.create(psiTypeToSubstitute);
+        JavaTypeImpl<?> javaTypeToSubstitute = JavaTypeImpl.create(psiTypeToSubstitute);
         JavaType actualType = javaClassifierType.getSubstitutor().substitute(javaTypeToSubstitute);
 
         if (expectedType instanceof PsiEllipsisType) {

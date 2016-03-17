@@ -39,8 +39,6 @@ class ReflectJavaClassifierType(public override val type: Type) : ReflectJavaTyp
 
     override fun getClassifier(): JavaClassifier = classifier
 
-    override fun getSupertypes(): Collection<JavaClassifierType> = throw UnsupportedOperationException()
-
     override fun getPresentableText(): String = type.toString()
 
     override fun isRaw(): Boolean = with(type) { this is Class<*> && getTypeParameters().isNotEmpty() }

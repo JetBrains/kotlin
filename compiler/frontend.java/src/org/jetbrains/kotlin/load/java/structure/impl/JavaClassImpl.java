@@ -78,7 +78,7 @@ public class JavaClassImpl extends JavaClassifierImpl<PsiClass> implements JavaC
 
     @Override
     @Nullable
-    public JavaClass getOuterClass() {
+    public JavaClassImpl getOuterClass() {
         PsiClass outer = getPsi().getContainingClass();
         return outer == null ? null : new JavaClassImpl(outer);
     }
@@ -156,12 +156,6 @@ public class JavaClassImpl extends JavaClassifierImpl<PsiClass> implements JavaC
 
     @Override
     @NotNull
-    public JavaClassifierType getDefaultType() {
-        return new JavaClassifierTypeImpl(JavaPsiFacade.getElementFactory(getPsi().getProject()).createType(getPsi()));
-    }
-
-    @Override
-    @NotNull
     public OriginKind getOriginKind() {
         PsiClass psiClass = getPsi();
         if (psiClass instanceof KtJavaMirrorMarker) {
@@ -176,25 +170,24 @@ public class JavaClassImpl extends JavaClassifierImpl<PsiClass> implements JavaC
     }
 
     @NotNull
-    public JavaType createImmediateType(@NotNull JavaTypeSubstitutorImpl substitutor) {
+    /* package */ JavaTypeImpl<?> createImmediateType(@NotNull Map<JavaTypeParameterImpl, JavaTypeImpl<?>> substitutionMap) {
         return new JavaClassifierTypeImpl(
-                JavaPsiFacade.getElementFactory(getPsi().getProject()).createType(getPsi(), createPsiSubstitutor(substitutor)));
+                JavaPsiFacade.getElementFactory(getPsi().getProject()).createType(getPsi(), createPsiSubstitutor(substitutionMap))
+        );
     }
 
     @NotNull
-    private static PsiSubstitutor createPsiSubstitutor(@NotNull JavaTypeSubstitutorImpl substitutor) {
-        Map<PsiTypeParameter, PsiType> substMap = new HashMap<PsiTypeParameter, PsiType>();
-        for (Map.Entry<JavaTypeParameter, JavaType> entry : substitutor.getSubstitutionMap().entrySet()) {
-            PsiTypeParameter key = ((JavaTypeParameterImpl) entry.getKey()).getPsi();
-            if (entry.getValue() == null) {
-                substMap.put(key, null);
-            }
-            else {
-                substMap.put(key, ((JavaTypeImpl) entry.getValue()).getPsi());
-            }
+    private static PsiSubstitutor createPsiSubstitutor(@NotNull Map<JavaTypeParameterImpl, JavaTypeImpl<?>> substitutionMap) {
+        if (substitutionMap.isEmpty()) return PsiSubstitutor.EMPTY;
+
+        Map<PsiTypeParameter, PsiType> result = new HashMap<PsiTypeParameter, PsiType>();
+        for (Map.Entry<JavaTypeParameterImpl, JavaTypeImpl<?>> entry : substitutionMap.entrySet()) {
+            PsiTypeParameter key = entry.getKey().getPsi();
+            JavaTypeImpl<?> value = entry.getValue();
+            result.put(key, value == null ? null : value.getPsi());
         }
 
-        return PsiSubstitutorImpl.createSubstitutor(substMap);
+        return PsiSubstitutorImpl.createSubstitutor(result);
     }
 
     @Nullable

@@ -16,11 +16,9 @@
 
 package org.jetbrains.kotlin.load.java.structure.reflect
 
-import org.jetbrains.kotlin.load.java.structure.*
+import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.name.Name
 import java.lang.reflect.AnnotatedElement
-import java.lang.reflect.Constructor
-import java.lang.reflect.Method
 import java.lang.reflect.TypeVariable
 
 class ReflectJavaTypeParameter(
@@ -35,20 +33,6 @@ class ReflectJavaTypeParameter(
     override val element: AnnotatedElement?
         // TypeVariable is AnnotatedElement only in JDK8
         get() = typeVariable as? AnnotatedElement
-
-    override fun getOwner(): JavaTypeParameterListOwner? {
-        val owner = typeVariable.genericDeclaration
-        return when (owner) {
-            is Class<*> -> ReflectJavaClass(owner)
-            is Method -> ReflectJavaMethod(owner)
-            is Constructor<*> -> ReflectJavaConstructor(owner)
-            else -> throw UnsupportedOperationException("Unsupported type parameter list owner (${owner.javaClass}): $owner")
-        }
-    }
-
-    override fun getType(): JavaType = throw UnsupportedOperationException()
-
-    override fun getTypeProvider(): JavaTypeProvider = throw UnsupportedOperationException()
 
     override fun getName() = Name.identifier(typeVariable.name)
 

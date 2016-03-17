@@ -20,16 +20,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ReadOnly;
 
-import java.util.Collection;
 import java.util.List;
 
 public interface JavaClassifierType extends JavaType, JavaAnnotationOwner {
     @Nullable
     JavaClassifier getClassifier();
-
-    @NotNull
-    @ReadOnly
-    Collection<JavaClassifierType> getSupertypes();
 
     @NotNull
     String getPresentableText();

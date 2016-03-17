@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.load.java.structure;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface JavaWildcardType extends JavaType {
@@ -24,7 +23,4 @@ public interface JavaWildcardType extends JavaType {
     JavaType getBound();
 
     boolean isExtends();
-
-    @NotNull
-    JavaTypeProvider getTypeProvider();
 }

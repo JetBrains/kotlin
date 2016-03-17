@@ -19,20 +19,18 @@ package org.jetbrains.kotlin.load.java.structure.impl;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.load.java.structure.JavaClassifier;
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType;
 import org.jetbrains.kotlin.load.java.structure.JavaType;
-import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter;
 
 import java.util.*;
 
 public class JavaClassifierTypeImpl extends JavaTypeImpl<PsiClassType> implements JavaClassifierType {
     private static class ResolutionResult {
-        private final JavaClassifier classifier;
+        private final JavaClassifierImpl<?> classifier;
         private final JavaTypeSubstitutorImpl substitutor;
         private final boolean isRaw;
 
-        private ResolutionResult(@Nullable JavaClassifier classifier, @NotNull JavaTypeSubstitutorImpl substitutor, boolean isRaw) {
+        private ResolutionResult(@Nullable JavaClassifierImpl<?> classifier, @NotNull JavaTypeSubstitutorImpl substitutor, boolean isRaw) {
             this.classifier = classifier;
             this.substitutor = substitutor;
             this.isRaw = isRaw;
@@ -47,7 +45,7 @@ public class JavaClassifierTypeImpl extends JavaTypeImpl<PsiClassType> implement
 
     @Override
     @Nullable
-    public JavaClassifier getClassifier() {
+    public JavaClassifierImpl<?> getClassifier() {
         resolve();
         return resolutionResult.classifier;
     }
@@ -66,35 +64,21 @@ public class JavaClassifierTypeImpl extends JavaTypeImpl<PsiClassType> implement
             resolutionResult = new ResolutionResult(
                     psiClass == null ? null : JavaClassifierImpl.create(psiClass),
                     new JavaTypeSubstitutorImpl(convertSubstitutionMap(substitutor.getSubstitutionMap())),
-                    PsiClassType.isRaw(result));
+                    PsiClassType.isRaw(result)
+            );
         }
     }
 
     @NotNull
-    private static Map<JavaTypeParameter, JavaType> convertSubstitutionMap(@NotNull Map<PsiTypeParameter, PsiType> psiMap) {
+    private static Map<JavaTypeParameterImpl, JavaTypeImpl<?>> convertSubstitutionMap(@NotNull Map<PsiTypeParameter, PsiType> psiMap) {
         if (psiMap.isEmpty()) return Collections.emptyMap();
 
-        Map<JavaTypeParameter, JavaType> substitutionMap = new HashMap<JavaTypeParameter, JavaType>();
+        Map<JavaTypeParameterImpl, JavaTypeImpl<?>> result = new HashMap<JavaTypeParameterImpl, JavaTypeImpl<?>>();
         for (Map.Entry<PsiTypeParameter, PsiType> entry : psiMap.entrySet()) {
             PsiType value = entry.getValue();
-            substitutionMap.put(new JavaTypeParameterImpl(entry.getKey()), value == null ? null : JavaTypeImpl.create(value));
+            result.put(new JavaTypeParameterImpl(entry.getKey()), value == null ? null : JavaTypeImpl.create(value));
         }
 
-        return substitutionMap;
-    }
-
-    @Override
-    @NotNull
-    public Collection<JavaClassifierType> getSupertypes() {
-        PsiType[] psiTypes = getPsi().getSuperTypes();
-        if (psiTypes.length == 0) return Collections.emptyList();
-        List<JavaClassifierType> result = new ArrayList<JavaClassifierType>(psiTypes.length);
-        for (PsiType psiType : psiTypes) {
-            if (!(psiType instanceof PsiClassType)) {
-                throw new IllegalStateException("Supertype should be a class: " + psiType + ", type: " + getPsi());
-            }
-            result.add(new JavaClassifierTypeImpl((PsiClassType) psiType));
-        }
         return result;
     }
 
@@ -113,11 +97,11 @@ public class JavaClassifierTypeImpl extends JavaTypeImpl<PsiClassType> implement
     @Override
     @NotNull
     public List<JavaType> getTypeArguments() {
-        JavaClassifier classifier = getClassifier();
+        JavaClassifierImpl<?> classifier = getClassifier();
 
         // parameters including ones from outer class
         Iterable<PsiTypeParameter> parameters = classifier instanceof JavaClassImpl
-                                                ? getTypeParameters(((JavaClassImpl) classifier).getPsi())
+                                                ? getTypeParameters(classifier.getPsi())
                                                 : Collections.<PsiTypeParameter>emptyList();
 
         JavaTypeSubstitutorImpl substitutor = getSubstitutor();

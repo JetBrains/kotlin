@@ -16,9 +16,13 @@
 
 package org.jetbrains.kotlin.load.java.structure.impl;
 
+import com.intellij.psi.*;
+import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.load.java.structure.*;
+import org.jetbrains.kotlin.load.java.structure.JavaClassifier;
+import org.jetbrains.kotlin.load.java.structure.JavaClassifierType;
+import org.jetbrains.kotlin.load.java.structure.JavaPrimitiveType;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -26,15 +30,15 @@ import java.util.List;
 import java.util.Map;
 
 public class JavaTypeSubstitutorImpl {
-    private final Map<JavaTypeParameter, JavaType> substitutionMap;
+    private final Map<JavaTypeParameterImpl, JavaTypeImpl<?>> substitutionMap;
 
-    public JavaTypeSubstitutorImpl(@NotNull Map<JavaTypeParameter, JavaType> substitutionMap) {
+    public JavaTypeSubstitutorImpl(@NotNull Map<JavaTypeParameterImpl, JavaTypeImpl<?>> substitutionMap) {
         this.substitutionMap = substitutionMap;
     }
 
     @NotNull
-    public JavaType substitute(@NotNull JavaType type) {
-        JavaType substitutedType = substituteInternal(type);
+    public JavaTypeImpl<?> substitute(@NotNull JavaTypeImpl<?> type) {
+        JavaTypeImpl<?> substitutedType = substituteInternal(type);
         return substitutedType != null ? substitutedType : correctSubstitutionForRawType(type);
     }
 
@@ -42,11 +46,11 @@ public class JavaTypeSubstitutorImpl {
     // In case of raw type we get substitution map like T -> null,
     // in this case we should substitute upper bound of T or,
     // if it does not exist, return java.lang.Object
-    private JavaType correctSubstitutionForRawType(@NotNull JavaType original) {
+    private JavaTypeImpl<?> correctSubstitutionForRawType(@NotNull JavaTypeImpl<?> original) {
         if (original instanceof JavaClassifierType) {
             JavaClassifier classifier = ((JavaClassifierType) original).getClassifier();
-            if (classifier instanceof JavaTypeParameter) {
-                return rawTypeForTypeParameter((JavaTypeParameter) classifier);
+            if (classifier instanceof JavaTypeParameterImpl) {
+                return rawTypeForTypeParameter((JavaTypeParameterImpl) classifier);
             }
         }
 
@@ -54,20 +58,20 @@ public class JavaTypeSubstitutorImpl {
     }
 
     @Nullable
-    private JavaType substituteInternal(@NotNull JavaType type) {
-        if (type instanceof JavaClassifierType) {
-            JavaClassifierType classifierType = (JavaClassifierType) type;
-            JavaClassifier classifier = classifierType.getClassifier();
+    private JavaTypeImpl<?> substituteInternal(@NotNull JavaTypeImpl<?> type) {
+        if (type instanceof JavaClassifierTypeImpl) {
+            JavaClassifierTypeImpl classifierType = (JavaClassifierTypeImpl) type;
+            JavaClassifierImpl<?> classifier = classifierType.getClassifier();
 
-            if (classifier instanceof JavaTypeParameter) {
-                return substitute((JavaTypeParameter) classifier);
+            if (classifier instanceof JavaTypeParameterImpl) {
+                return substitute((JavaTypeParameterImpl) classifier);
             }
             else if (classifier instanceof JavaClassImpl) {
                 JavaClassImpl javaClass = (JavaClassImpl) classifier;
-                Map<JavaTypeParameter, JavaType> substMap = new HashMap<JavaTypeParameter, JavaType>();
-                processClass(javaClass, ((JavaClassifierTypeImpl) classifierType).getSubstitutor(), substMap);
+                Map<JavaTypeParameterImpl, JavaTypeImpl<?>> substMap = new HashMap<JavaTypeParameterImpl, JavaTypeImpl<?>>();
+                processClass(javaClass, classifierType.getSubstitutor(), substMap);
 
-                return javaClass.createImmediateType(new JavaTypeSubstitutorImpl(substMap));
+                return javaClass.createImmediateType(substMap);
             }
 
             return type;
@@ -75,52 +79,50 @@ public class JavaTypeSubstitutorImpl {
         else if (type instanceof JavaPrimitiveType) {
             return type;
         }
-        else if (type instanceof JavaArrayType) {
-            JavaType componentType = ((JavaArrayType) type).getComponentType();
-            JavaType substitutedComponentType = substitute(componentType);
+        else if (type instanceof JavaArrayTypeImpl) {
+            JavaTypeImpl<?> componentType = ((JavaArrayTypeImpl) type).getComponentType();
+            JavaTypeImpl<?> substitutedComponentType = substitute(componentType);
             if (substitutedComponentType == componentType) return type;
 
-            return substitutedComponentType.createArrayType();
+            return new JavaArrayTypeImpl(substitutedComponentType.getPsi().createArrayType());
         }
-        else if (type instanceof JavaWildcardType) {
-            return substituteWildcardType((JavaWildcardType) type);
+        else if (type instanceof JavaWildcardTypeImpl) {
+            return substituteWildcardType((JavaWildcardTypeImpl) type);
         }
 
         return type;
     }
 
     private void processClass(
-            @NotNull JavaClass javaClass, @NotNull JavaTypeSubstitutorImpl substitutor, @NotNull Map<JavaTypeParameter, JavaType> substMap
+            @NotNull JavaClassImpl javaClass,
+            @NotNull JavaTypeSubstitutorImpl substitutor,
+            @NotNull Map<JavaTypeParameterImpl, JavaTypeImpl<?>> substMap
     ) {
-        List<JavaTypeParameter> typeParameters = javaClass.getTypeParameters();
-        for (JavaTypeParameter typeParameter : typeParameters) {
-            JavaType substitutedParam = substitutor.substitute(typeParameter);
-            if (substitutedParam == null) {
-                substMap.put(typeParameter, null);
-            }
-            else {
-                substMap.put(typeParameter, substituteInternal(substitutedParam));
-            }
+        @SuppressWarnings("unchecked")
+        List<JavaTypeParameterImpl> typeParameters = (List) javaClass.getTypeParameters();
+        for (JavaTypeParameterImpl typeParameter : typeParameters) {
+            JavaTypeImpl<?> substitutedParam = substitutor.substitute(typeParameter);
+            substMap.put(typeParameter, substitutedParam == null ? null : substituteInternal(substitutedParam));
         }
 
         if (javaClass.isStatic()) {
             return;
         }
 
-        JavaClass outerClass = javaClass.getOuterClass();
+        JavaClassImpl outerClass = javaClass.getOuterClass();
         if (outerClass != null) {
             processClass(outerClass, substitutor, substMap);
         }
     }
 
     @Nullable
-    private JavaType substituteWildcardType(@NotNull JavaWildcardType wildcardType) {
-        JavaType bound = wildcardType.getBound();
+    private JavaTypeImpl<?> substituteWildcardType(@NotNull JavaWildcardTypeImpl wildcardType) {
+        JavaTypeImpl<?> bound = wildcardType.getBound();
         if (bound == null) {
             return wildcardType;
         }
 
-        JavaType newBound = substituteInternal(bound);
+        JavaTypeImpl<?> newBound = substituteInternal(bound);
         if (newBound == null) {
             // This can be in case of substitution wildcard to raw type
             return null;
@@ -130,41 +132,40 @@ public class JavaTypeSubstitutorImpl {
     }
 
     @NotNull
-    private static JavaWildcardType rebound(@NotNull JavaWildcardType type, @NotNull JavaType newBound) {
-        if (type.getTypeProvider().createJavaLangObjectType().equals(newBound)) {
-            return type.getTypeProvider().createUnboundedWildcard();
+    private static JavaWildcardTypeImpl rebound(@NotNull JavaWildcardTypeImpl type, @NotNull JavaTypeImpl<?> newBound) {
+        PsiManager manager = type.getPsi().getManager();
+        if (createJavaLangObjectType(manager).equals(newBound)) {
+            return createUnboundedWildcard(manager);
         }
 
         if (type.isExtends()) {
-            return type.getTypeProvider().createUpperBoundWildcard(newBound);
+            return createUpperBoundWildcard(manager, newBound);
         }
         else {
-            return type.getTypeProvider().createLowerBoundWildcard(newBound);
+            return createLowerBoundWildcard(manager, newBound);
         }
     }
 
     @NotNull
-    private JavaType rawTypeForTypeParameter(@NotNull JavaTypeParameter typeParameter) {
+    private JavaTypeImpl<?> rawTypeForTypeParameter(@NotNull JavaTypeParameterImpl typeParameter) {
         Collection<JavaClassifierType> bounds = typeParameter.getUpperBounds();
         if (!bounds.isEmpty()) {
-            return substitute(bounds.iterator().next());
+            return substitute(((JavaClassifierTypeImpl) bounds.iterator().next()));
         }
 
-        return typeParameter.getTypeProvider().createJavaLangObjectType();
+        return createJavaLangObjectType(typeParameter.getPsi().getManager());
     }
 
     @Nullable
-    public JavaType substitute(@NotNull JavaTypeParameter typeParameter) {
+    public JavaTypeImpl<?> substitute(@NotNull JavaTypeParameterImpl typeParameter) {
         if (substitutionMap.containsKey(typeParameter)) {
             return substitutionMap.get(typeParameter);
         }
 
-        return typeParameter.getType();
-    }
-
-    @NotNull
-    public Map<JavaTypeParameter, JavaType> getSubstitutionMap() {
-        return substitutionMap;
+        PsiTypeParameter psiTypeParameter = typeParameter.getPsi();
+        return JavaTypeImpl.create(
+                JavaPsiFacade.getInstance(psiTypeParameter.getProject()).getElementFactory().createType(psiTypeParameter)
+        );
     }
 
     @Override
@@ -180,5 +181,25 @@ public class JavaTypeSubstitutorImpl {
     @Override
     public String toString() {
         return getClass().getSimpleName() + ": " + substitutionMap;
+    }
+
+    @NotNull
+    private static JavaTypeImpl<?> createJavaLangObjectType(@NotNull PsiManager manager) {
+        return JavaTypeImpl.create(PsiType.getJavaLangObject(manager, GlobalSearchScope.allScope(manager.getProject())));
+    }
+
+    @NotNull
+    private static JavaWildcardTypeImpl createUpperBoundWildcard(@NotNull PsiManager manager, @NotNull JavaTypeImpl<?> bound) {
+        return new JavaWildcardTypeImpl(PsiWildcardType.createExtends(manager, bound.getPsi()));
+    }
+
+    @NotNull
+    private static JavaWildcardTypeImpl createLowerBoundWildcard(@NotNull PsiManager manager, @NotNull JavaTypeImpl<?> bound) {
+        return new JavaWildcardTypeImpl(PsiWildcardType.createSuper(manager, bound.getPsi()));
+    }
+
+    @NotNull
+    private static JavaWildcardTypeImpl createUnboundedWildcard(@NotNull PsiManager manager) {
+        return new JavaWildcardTypeImpl(PsiWildcardType.createUnbounded(manager));
     }
 }
