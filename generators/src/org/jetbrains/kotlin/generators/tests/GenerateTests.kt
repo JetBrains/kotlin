@@ -238,6 +238,10 @@ fun main(args: Array<String>) {
             model("codegen/defaultArguments/reflection")
         }
 
+        testClass<AbstractDumpDeclarationsTest>() {
+            model("codegen/dumpDeclarations")
+        }
+
         testClass<AbstractLoadJavaTest>() {
             model("loadJava/compiledJava", extension = "java", testMethod = "doTestCompiledJava")
             model("loadJava/compiledJavaAndKotlin", extension = "txt", testMethod = "doTestCompiledJavaAndKotlin")

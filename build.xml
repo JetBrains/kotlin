@@ -926,7 +926,7 @@
     </target>
 
     <target name="reflection">
-        <new-kotlinc output="${output}/classes/reflection" moduleName="kotlin-reflection">
+        <new-kotlinc output="${output}/classes/reflection" moduleName="kotlin-reflection" additionalOptions="-Xdump-declarations-to ${output}/declarations/reflect-declarations.json">
             <src>
                 <include name="core/reflection.jvm/src"/>
             </src>
