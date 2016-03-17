@@ -10,8 +10,10 @@ public interface Visitor<D> {
 
 package p;
 
+import org.jetbrains.annotations.NotNull;
+
 public class Element {
-    public <D> R accept(@NotNull Visitor<D> visitor, D data) {return null;}
+    public <D, R> R accept(@NotNull Visitor<R> visitor, D data) {return null;}
 }
 
 // FILE: k.kt

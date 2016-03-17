@@ -30,6 +30,7 @@ interface JavaClassifierType : JavaType, JavaAnnotationOwner {
 
     val isRaw: Boolean
 
+    val canonicalText: String
     val presentableText: String
 }
 

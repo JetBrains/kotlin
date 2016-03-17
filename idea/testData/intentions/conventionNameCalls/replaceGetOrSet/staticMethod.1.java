@@ -1,5 +1,5 @@
 class JavaClass {
-    public static String get(String s) {
+    public static JavaClass get(JavaClass s) {
         return s;
     }
 }

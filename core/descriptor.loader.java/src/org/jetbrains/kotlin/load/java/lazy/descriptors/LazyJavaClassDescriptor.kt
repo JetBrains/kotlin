@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.name.isValidJavaFqName
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.scopes.InnerClassesScopeWrapper
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.serialization.deserialization.NotFoundClasses
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.toReadOnlyList
@@ -141,18 +142,17 @@ class LazyJavaClassDescriptor(
             val purelyImplementedSupertype: KotlinType? = getPurelyImplementedSupertype()
 
             for (javaType in javaTypes) {
-                val jetType = c.typeResolver.transformJavaType(javaType, TypeUsage.SUPERTYPE.toAttributes())
-                if (jetType.isError) {
+                val kotlinType = c.typeResolver.transformJavaType(javaType, TypeUsage.SUPERTYPE.toAttributes())
+                if (kotlinType.constructor.declarationDescriptor is NotFoundClasses.MockClassDescriptor) {
                     incomplete.add(javaType)
+                }
+
+                if (kotlinType.constructor == purelyImplementedSupertype?.constructor) {
                     continue
                 }
 
-                if (jetType.constructor == purelyImplementedSupertype?.constructor) {
-                    continue
-                }
-
-                if (!KotlinBuiltIns.isAnyOrNullableAny(jetType)) {
-                    result.add(jetType)
+                if (!KotlinBuiltIns.isAnyOrNullableAny(kotlinType)) {
+                    result.add(kotlinType)
                 }
             }
 

@@ -104,18 +104,13 @@ class LazyJavaTypeResolver(
         private val classifier = c.storageManager.createNullableLazyValue { javaType.classifier }
 
         override fun computeTypeConstructor(): TypeConstructor {
-            val classifier = classifier()
-            if (classifier == null) {
-                return ErrorUtils.createErrorTypeConstructor("Unresolved java classifier: " + javaType.presentableText)
-            }
+            val classifier = classifier() ?: return createNotFoundClass()
             return when (classifier) {
                 is JavaClass -> {
                     val fqName = classifier.fqName.sure { "Class type should have a FQ name: $classifier" }
 
                     val classData = mapKotlinClass(fqName) ?: c.components.moduleClassResolver.resolveClass(classifier)
-
-                    classData?.typeConstructor
-                        ?: ErrorUtils.createErrorTypeConstructor("Unresolved java classifier: " + javaType.presentableText)
+                    classData?.typeConstructor ?: createNotFoundClass()
                 }
                 is JavaTypeParameter -> {
                     typeParameterResolver.resolveTypeParameter(classifier)?.typeConstructor
@@ -123,6 +118,15 @@ class LazyJavaTypeResolver(
                 }
                 else -> throw IllegalStateException("Unknown classifier kind: $classifier")
             }
+        }
+
+        // There's no way to extract precise type information in PSI when the type's classifier cannot be resolved.
+        // So we just take the canonical text of the type (which seems to be the only option at the moment), erase all type arguments
+        // and treat the resulting qualified name as if it references a simple top-level class.
+        // Note that this makes MISSING_DEPENDENCY_CLASS diagnostic messages not as precise as they could be in some corner cases.
+        private fun createNotFoundClass(): TypeConstructor {
+            val classId = parseCanonicalFqNameIgnoringTypeArguments(javaType.canonicalText)
+            return c.components.deserializedDescriptorResolver.components.notFoundClasses.get(classId, listOf(0))
         }
 
         private fun mapKotlinClass(fqName: FqName): ClassDescriptor? {

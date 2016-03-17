@@ -2,14 +2,14 @@ package
 
 public final class Test : java.lang.Thread {
     public constructor Test()
-    invisible_fake final override /*1*/ /*fake_override*/ var blocker: [ERROR : Unresolved java classifier: Interruptible]!
+    invisible_fake final override /*1*/ /*fake_override*/ var blocker: sun.nio.ch.Interruptible!
     invisible_fake final override /*1*/ /*fake_override*/ val blockerLock: kotlin.Any!
     invisible_fake final override /*1*/ /*fake_override*/ var contextClassLoader: java.lang.ClassLoader!
     invisible_fake final override /*1*/ /*fake_override*/ var daemon: kotlin.Boolean
     invisible_fake final override /*1*/ /*fake_override*/ var eetop: kotlin.Long
-    invisible_fake final override /*1*/ /*fake_override*/ var group: [ERROR : Unresolved java classifier: ThreadGroup]!
+    invisible_fake final override /*1*/ /*fake_override*/ var group: java.lang.ThreadGroup!
     invisible_fake final override /*1*/ /*fake_override*/ var inheritableThreadLocals: java.lang.ThreadLocal.ThreadLocalMap!
-    invisible_fake final override /*1*/ /*fake_override*/ var inheritedAccessControlContext: [ERROR : Unresolved java classifier: AccessControlContext]!
+    invisible_fake final override /*1*/ /*fake_override*/ var inheritedAccessControlContext: java.security.AccessControlContext!
     invisible_fake final override /*1*/ /*fake_override*/ var name: kotlin.CharArray!
     invisible_fake final override /*1*/ /*fake_override*/ var nativeParkEventPointer: kotlin.Long
     invisible_fake final override /*1*/ /*fake_override*/ var parkBlocker: kotlin.Any!
@@ -23,7 +23,7 @@ public final class Test : java.lang.Thread {
     invisible_fake final override /*1*/ /*fake_override*/ var threadStatus: kotlin.Int
     invisible_fake final override /*1*/ /*fake_override*/ var tid: kotlin.Long
     invisible_fake final override /*1*/ /*fake_override*/ var uncaughtExceptionHandler: java.lang.Thread.UncaughtExceptionHandler!
-    invisible_fake open override /*1*/ /*fake_override*/ fun blockedOn(/*0*/ p0: [ERROR : Unresolved java classifier: Interruptible]!): kotlin.Unit
+    invisible_fake open override /*1*/ /*fake_override*/ fun blockedOn(/*0*/ p0: sun.nio.ch.Interruptible!): kotlin.Unit
     public final override /*1*/ /*fake_override*/ fun checkAccess(): kotlin.Unit
     protected/*protected and package*/ open override /*1*/ /*fake_override*/ fun clone(): kotlin.Any!
     @kotlin.Deprecated(message = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun countStackFrames(): kotlin.Int
@@ -35,12 +35,12 @@ public final class Test : java.lang.Thread {
     public open override /*1*/ /*fake_override*/ fun getId(): kotlin.Long
     public final override /*1*/ /*fake_override*/ fun getName(): kotlin.String!
     public final override /*1*/ /*fake_override*/ fun getPriority(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun getStackTrace(): kotlin.Array<(out) [ERROR : Unresolved java classifier: StackTraceElement]!>!
+    public open override /*1*/ /*fake_override*/ fun getStackTrace(): kotlin.Array<(out) java.lang.StackTraceElement!>!
     public open override /*1*/ /*fake_override*/ fun getState(): java.lang.Thread.State!
-    public final override /*1*/ /*fake_override*/ fun getThreadGroup(): [ERROR : Unresolved java classifier: ThreadGroup]!
+    public final override /*1*/ /*fake_override*/ fun getThreadGroup(): java.lang.ThreadGroup!
     public open override /*1*/ /*fake_override*/ fun getUncaughtExceptionHandler(): java.lang.Thread.UncaughtExceptionHandler!
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    invisible_fake open override /*1*/ /*fake_override*/ fun init(/*0*/ p0: [ERROR : Unresolved java classifier: ThreadGroup]!, /*1*/ p1: java.lang.Runnable!, /*2*/ p2: kotlin.String!, /*3*/ p3: kotlin.Long): kotlin.Unit
+    invisible_fake open override /*1*/ /*fake_override*/ fun init(/*0*/ p0: java.lang.ThreadGroup!, /*1*/ p1: java.lang.Runnable!, /*2*/ p2: kotlin.String!, /*3*/ p3: kotlin.Long): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun interrupt(): kotlin.Unit
     invisible_fake open override /*1*/ /*fake_override*/ fun interrupt0(): kotlin.Unit
     public final override /*1*/ /*fake_override*/ fun isAlive(): kotlin.Boolean

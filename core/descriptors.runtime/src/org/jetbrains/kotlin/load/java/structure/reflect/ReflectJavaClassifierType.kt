@@ -37,6 +37,9 @@ class ReflectJavaClassifierType(public override val reflectType: Type) : Reflect
         classifier
     }
 
+    override val canonicalText: String
+        get() = throw UnsupportedOperationException("Type not found: $reflectType")
+
     override val presentableText: String
         get() = reflectType.toString()
 

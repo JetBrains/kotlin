@@ -51,7 +51,7 @@ class NotFoundClasses(private val storageManager: StorageManager, private val mo
         }
 
         val container =
-                if (classId.isNestedClass) get(classId.outerClassId, typeParametersCount.drop(1))
+                if (classId.isNestedClass) getOrCreateClass(classId.outerClassId, typeParametersCount.drop(1))
                 else packageFragments(classId.packageFqName)
 
         // Treat a class with a nested ClassId as inner for simplicity, otherwise the outer type cannot have generic arguments
@@ -101,7 +101,7 @@ class NotFoundClasses(private val storageManager: StorageManager, private val mo
     // (This may happen when a class with the same FQ name is instantiated with different type arguments in different modules.)
     // It's better than creating just one descriptor because otherwise would fail in multiple places where it's asserted that
     // the number of type arguments in a type must be equal to the number of the type parameters of the class
-    private fun get(classId: ClassId, typeParametersCount: List<Int>): ClassDescriptor {
+    private fun getOrCreateClass(classId: ClassId, typeParametersCount: List<Int>): ClassDescriptor {
         return classes(ClassRequest(classId, typeParametersCount))
     }
 
@@ -112,6 +112,10 @@ class NotFoundClasses(private val storageManager: StorageManager, private val mo
         while (typeParametersCount.size < classNestingLevel) {
             typeParametersCount.add(0)
         }
-        return get(classId, typeParametersCount.toReadOnlyList()).typeConstructor
+        return getOrCreateClass(classId, typeParametersCount.toReadOnlyList()).typeConstructor
+    }
+
+    fun get(classId: ClassId, typeParametersCount: List<Int>): TypeConstructor {
+        return getOrCreateClass(classId, typeParametersCount).typeConstructor
     }
 }

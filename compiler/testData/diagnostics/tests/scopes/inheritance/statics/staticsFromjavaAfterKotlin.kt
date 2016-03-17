@@ -8,7 +8,7 @@ open class B: A()
 
 // FILE: C.java
 public class C extends B {
-    public static vod bar() {}
+    public static void bar() {}
 }
 
 // FILE: 2.kt

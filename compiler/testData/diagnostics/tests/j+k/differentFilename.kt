@@ -19,7 +19,7 @@ class F {
 // FILE: main.kt
 fun main(x: A) {
     x.b().bar()
-    x.f().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>foobaz<!>()
+    x.<!MISSING_DEPENDENCY_CLASS!>f()<!>.<!UNRESOLVED_REFERENCE!>foobaz<!>()
 
     <!UNRESOLVED_REFERENCE!>D<!>().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>baz<!>()
 }

@@ -71,6 +71,12 @@ public class JavaClassifierTypeImpl extends JavaTypeImpl<PsiClassType> implement
 
     @Override
     @NotNull
+    public String getCanonicalText() {
+        return getPsi().getCanonicalText();
+    }
+
+    @Override
+    @NotNull
     public String getPresentableText() {
         return getPsi().getPresentableText();
     }

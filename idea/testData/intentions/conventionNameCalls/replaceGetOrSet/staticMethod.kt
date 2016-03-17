@@ -1,4 +1,4 @@
 // IS_APPLICABLE: false
 fun foo() {
-    JavaClass.<caret>get("x")
+    JavaClass.<caret>get(JavaClass())
 }

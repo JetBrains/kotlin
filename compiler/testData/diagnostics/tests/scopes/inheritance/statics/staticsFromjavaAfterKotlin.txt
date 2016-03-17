@@ -24,7 +24,7 @@ public open class C : B {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    public open fun bar(): [ERROR : Unresolved java classifier: vod]!
+    public open fun bar(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun foo(): kotlin.Unit
 }
 

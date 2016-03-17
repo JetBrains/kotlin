@@ -5,7 +5,7 @@ public class A {
 
 // FILE: B.java
 public class B extends A {
-    public static vod bar() {}
+    public static void bar() {}
 }
 
 // FILE: 1.kt

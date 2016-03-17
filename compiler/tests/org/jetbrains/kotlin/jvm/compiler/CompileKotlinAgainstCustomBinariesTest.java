@@ -307,6 +307,17 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         KotlinTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), "output.txt"), normalizeOutput(output));
     }
 
+    public void testMissingDependencyJava() throws Exception {
+        doTestBrokenJavaLibrary("library", "test/Bar.class");
+    }
+
+    public void testMissingDependencyJavaConflictingLibraries() throws Exception {
+        File library1 = deletePaths(compileJava("library1"), "test/A.class", "test/A$Inner.class");
+        File library2 = deletePaths(compileJava("library2"), "test/A.class", "test/A$Inner.class");
+        Pair<String, ExitCode> output = compileKotlin("source.kt", tmpdir, library1, library2);
+        KotlinTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), "output.txt"), normalizeOutput(output));
+    }
+
     /*test source mapping generation when source info is absent*/
     public void testInlineFunWithoutDebugInfo() throws Exception {
         compileKotlin("sourceInline.kt", tmpdir);
