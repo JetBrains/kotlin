@@ -54,18 +54,19 @@ interface SyntheticJavaPropertyDescriptor : PropertyDescriptor {
             val identifier = name.identifier
             if (!identifier.startsWith("get") && !identifier.startsWith("is") && !identifier.startsWith("set")) return null // optimization
 
-            val owner = getterOrSetter.containingDeclaration as? ClassDescriptor ?: return null
+            val classDescriptorOwner = getterOrSetter.containingDeclaration as? ClassDescriptor ?: return null
 
             val originalGetterOrSetter = getterOrSetter.original
-            return syntheticScopes.collectSyntheticExtensionProperties(listOf(owner.defaultType))
+            return syntheticScopes.collectSyntheticExtensionProperties(listOf(classDescriptorOwner.defaultType))
                     .filterIsInstance<SyntheticJavaPropertyDescriptor>()
                     .firstOrNull { originalGetterOrSetter == it.getMethod || originalGetterOrSetter == it.setMethod }
         }
 
-        fun findByGetterOrSetter(getterOrSetter: FunctionDescriptor, syntheticScope: SyntheticScope)
-                = findByGetterOrSetter(getterOrSetter, object : SyntheticScopes {
-            override val scopes: Collection<SyntheticScope> = listOf(syntheticScope)
-        })
+        fun findByGetterOrSetter(getterOrSetter: FunctionDescriptor, syntheticScope: SyntheticScope) =
+                findByGetterOrSetter(getterOrSetter,
+                                     object : SyntheticScopes {
+                                         override val scopes: Collection<SyntheticScope> = listOf(syntheticScope)
+                                     })
 
         fun propertyNameByGetMethodName(methodName: Name): Name?
                 = org.jetbrains.kotlin.load.java.propertyNameByGetMethodName(methodName)
