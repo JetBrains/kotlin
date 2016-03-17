@@ -28,10 +28,10 @@ class CustomModuleInfoTest : KotlinLightCodeInsightFixtureTestCase() {
 
     fun testModuleInfoForMembersOfLightClassForDecompiledFile() {
         //NOTE: any class with methods from stdlib will do
-        val collectionsKtClass = JavaPsiFacade.getInstance(project).findClass("kotlin.collections.CollectionsKt", GlobalSearchScope.allScope(project))!!
-        val classModuleInfo = collectionsKtClass.getModuleInfo()
+        val tuplesKtClass = JavaPsiFacade.getInstance(project).findClass("kotlin.TuplesKt", GlobalSearchScope.allScope(project))!!
+        val classModuleInfo = tuplesKtClass.getModuleInfo()
         Assert.assertTrue(classModuleInfo is LibraryInfo)
-        val methods = collectionsKtClass.methods
+        val methods = tuplesKtClass.methods
         Assert.assertTrue(methods.isNotEmpty())
         methods.forEach {
             Assert.assertEquals("Members of decompiled class should have the same module info", classModuleInfo, it.getModuleInfo())

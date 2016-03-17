@@ -52,6 +52,7 @@
                         </goals>
                         <configuration>
                             <args combine.children="append">
+                                <arg>-Xmultifile-parts-inherit</arg>
                                 <arg>-Xdump-declarations-to</arg>
                                 <arg>${basedir}/target/stdlib-declarations.json</arg>
                             </args>
