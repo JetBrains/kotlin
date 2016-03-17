@@ -23,11 +23,14 @@ import java.lang.reflect.AnnotatedElement
 interface ReflectJavaAnnotationOwner : JavaAnnotationOwner {
     val element: AnnotatedElement?
 
-    override fun getAnnotations() = element?.declaredAnnotations?.getAnnotations() ?: emptyList()
+    override val annotations: List<ReflectJavaAnnotation>
+        get() = element?.declaredAnnotations?.getAnnotations() ?: emptyList()
 
-    override fun findAnnotation(fqName: FqName) = element?.declaredAnnotations?.findAnnotation(fqName)
+    override fun findAnnotation(fqName: FqName) =
+            element?.declaredAnnotations?.findAnnotation(fqName)
 
-    override fun isDeprecatedInJavaDoc() = false
+    override val isDeprecatedInJavaDoc: Boolean
+        get() = false
 }
 
 fun Array<Annotation>.getAnnotations(): List<ReflectJavaAnnotation> {

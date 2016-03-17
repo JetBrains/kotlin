@@ -231,7 +231,7 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
         val properties = ArrayList<PropertyDescriptor>()
 
         val field = memberIndex().findFieldByName(name)
-        if (field != null && !field.isEnumEntry()) {
+        if (field != null && !field.isEnumEntry) {
             properties.add(resolveProperty(field))
         }
 

@@ -44,7 +44,7 @@ class LazyJavaAnnotationDescriptor(
 ) : AnnotationDescriptor {
 
     private val fqName = c.storageManager.createNullableLazyValue {
-        javaAnnotation.getClassId()?.asSingleFqName()
+        javaAnnotation.classId?.asSingleFqName()
     }
 
     private val type = c.storageManager.createLazyValue {

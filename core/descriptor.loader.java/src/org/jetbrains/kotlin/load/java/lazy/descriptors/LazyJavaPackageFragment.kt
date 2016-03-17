@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.storage.getValue
 class LazyJavaPackageFragment(
         private val c: LazyJavaResolverContext,
         private val jPackage: JavaPackage
-) : PackageFragmentDescriptorImpl(c.module, jPackage.getFqName()) {
+) : PackageFragmentDescriptorImpl(c.module, jPackage.fqName) {
     private val scope by c.storageManager.createLazyValue {
         LazyJavaPackageScope(c, jPackage, this)
     }

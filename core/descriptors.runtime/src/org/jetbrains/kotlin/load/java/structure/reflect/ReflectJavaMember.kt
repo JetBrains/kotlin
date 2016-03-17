@@ -33,9 +33,11 @@ abstract class ReflectJavaMember : ReflectJavaElement(), ReflectJavaAnnotationOw
 
     override val modifiers: Int get() = member.modifiers
 
-    override fun getName() = member.name?.let { Name.identifier(it) } ?: SpecialNames.NO_NAME_PROVIDED
+    override val name: Name
+        get() = member.name?.let { Name.identifier(it) } ?: SpecialNames.NO_NAME_PROVIDED
 
-    override fun getContainingClass() = ReflectJavaClass(member.declaringClass)
+    override val containingClass: ReflectJavaClass
+        get() = ReflectJavaClass(member.declaringClass)
 
     protected fun getValueParameters(
             parameterTypes: Array<Type>,

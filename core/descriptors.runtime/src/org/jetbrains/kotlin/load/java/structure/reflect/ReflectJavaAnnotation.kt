@@ -18,18 +18,19 @@ package org.jetbrains.kotlin.load.java.structure.reflect
 
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotationArgument
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
 class ReflectJavaAnnotation(val annotation: Annotation) : ReflectJavaElement(), JavaAnnotation {
-    override fun getArguments(): Collection<JavaAnnotationArgument> {
-        return annotation.annotationClass.java.declaredMethods.map { method ->
+    override val arguments: Collection<JavaAnnotationArgument>
+        get() = annotation.annotationClass.java.declaredMethods.map { method ->
             ReflectJavaAnnotationArgument.create(method.invoke(annotation), Name.identifier(method.name))
         }
-    }
+
+    override val classId: ClassId
+        get() = annotation.annotationClass.java.classId
 
     override fun resolve() = ReflectJavaClass(annotation.annotationClass.java)
-
-    override fun getClassId() = annotation.annotationClass.java.classId
 
     override fun equals(other: Any?) = other is ReflectJavaAnnotation && annotation == other.annotation
 

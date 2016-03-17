@@ -35,7 +35,9 @@ class JavaPackageImpl(psiPackage: PsiPackage, private val scope: GlobalSearchSco
         return classes(psiClasses)
     }
 
-    override fun getSubPackages() = packages(psi.getSubPackages(scope), scope)
+    override val subPackages: Collection<JavaPackage>
+        get() = packages(psi.getSubPackages(scope), scope)
 
-    override fun getFqName() = FqName(psi.qualifiedName)
+    override val fqName: FqName
+        get() = FqName(psi.qualifiedName)
 }

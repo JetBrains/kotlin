@@ -57,7 +57,7 @@ public class JavaMethodImpl extends JavaMemberImpl<PsiMethod> implements JavaMet
     }
 
     @Override
-    public boolean hasAnnotationParameterDefaultValue() {
+    public boolean getHasAnnotationParameterDefaultValue() {
         PsiMethod psiMethod = getPsi();
         return psiMethod instanceof PsiAnnotationMethod && ((PsiAnnotationMethod) psiMethod).getDefaultValue() != null;
     }

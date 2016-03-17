@@ -75,7 +75,7 @@ class LazyJavaClassMemberScope(
     }
 
     internal val constructors = c.storageManager.createLazyValue {
-        val constructors = jClass.getConstructors()
+        val constructors = jClass.constructors
         val result = ArrayList<JavaConstructorDescriptor>(constructors.size)
         for (constructor in constructors) {
             val descriptor = resolveConstructor(constructor)
@@ -599,7 +599,7 @@ class LazyJavaClassMemberScope(
                 method.name,
                 // Parameters of annotation constructors in Java are never nullable
                 TypeUtils.makeNotNullable(returnType),
-                method.hasAnnotationParameterDefaultValue(),
+                method.hasAnnotationParameterDefaultValue,
                 /* isCrossinline = */ false,
                 /* isNoinline = */ false,
                 // Nulls are not allowed in annotation arguments in Java
@@ -649,7 +649,7 @@ class LazyJavaClassMemberScope(
             = nestedClassIndex().keys + enumEntryIndex().keys
 
     override fun getPropertyNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name> {
-        if (jClass.isAnnotationType()) return memberIndex().getMethodNames(nameFilter)
+        if (jClass.isAnnotationType) return memberIndex().getMethodNames(nameFilter)
 
         return memberIndex().getAllFieldNames() +
                ownerDescriptor.getTypeConstructor().getSupertypes().flatMapTo(LinkedHashSet<Name>()) { supertype ->

@@ -20,7 +20,9 @@ import org.jetbrains.kotlin.load.java.structure.JavaField
 import java.lang.reflect.Field
 
 class ReflectJavaField(override val member: Field) : ReflectJavaMember(), JavaField {
-    override fun isEnumEntry() = member.isEnumConstant
+    override val isEnumEntry: Boolean
+        get() = member.isEnumConstant
 
-    override fun getType() = ReflectJavaType.create(member.genericType)
+    override val type: ReflectJavaType
+        get() = ReflectJavaType.create(member.genericType)
 }

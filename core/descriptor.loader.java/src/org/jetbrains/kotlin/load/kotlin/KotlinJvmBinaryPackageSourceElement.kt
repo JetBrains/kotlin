@@ -34,7 +34,7 @@ class KotlinJvmBinaryPackageSourceElement(
         result
     }
 
-    override fun toString(): String = "Binary package ${jPackage.getFqName()}: ${implClassNameToBinaryClass.keys}"
+    override fun toString(): String = "Binary package ${jPackage.fqName}: ${implClassNameToBinaryClass.keys}"
     override fun getContainingFile(): SourceFile = SourceFile.NO_SOURCE_FILE
 
     fun getRepresentativeBinaryClass(): KotlinJvmBinaryClass {

@@ -24,17 +24,19 @@ import java.lang.reflect.TypeVariable
 class ReflectJavaTypeParameter(
         val typeVariable: TypeVariable<*>
 ) : ReflectJavaElement(), JavaTypeParameter, ReflectJavaAnnotationOwner {
-    override fun getUpperBounds(): List<ReflectJavaClassifierType> {
-        val bounds = typeVariable.bounds.map { bound -> ReflectJavaClassifierType(bound) }
-        if (bounds.singleOrNull()?.type == Any::class.java) return emptyList()
-        return bounds
-    }
+    override val upperBounds: List<ReflectJavaClassifierType>
+        get() {
+            val bounds = typeVariable.bounds.map { bound -> ReflectJavaClassifierType(bound) }
+            if (bounds.singleOrNull()?.reflectType == Any::class.java) return emptyList()
+            return bounds
+        }
 
     override val element: AnnotatedElement?
         // TypeVariable is AnnotatedElement only in JDK8
         get() = typeVariable as? AnnotatedElement
 
-    override fun getName() = Name.identifier(typeVariable.name)
+    override val name: Name
+        get() = Name.identifier(typeVariable.name)
 
     override fun equals(other: Any?) = other is ReflectJavaTypeParameter && typeVariable == other.typeVariable
 

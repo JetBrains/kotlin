@@ -100,7 +100,7 @@ class LazyJavaTypeResolver(
     ) : AbstractLazyType(c.storageManager) {
         private val annotations = CompositeAnnotations(listOf(LazyJavaAnnotations(c, javaType), attr.typeAnnotations))
 
-        private val classifier = c.storageManager.createNullableLazyValue { javaType.getClassifier() }
+        private val classifier = c.storageManager.createNullableLazyValue { javaType.classifier }
 
         override fun computeTypeConstructor(): TypeConstructor {
             val classifier = classifier()
@@ -109,7 +109,7 @@ class LazyJavaTypeResolver(
             }
             return when (classifier) {
                 is JavaClass -> {
-                    val fqName = classifier.getFqName().sure { "Class type should have a FQ name: $classifier" }
+                    val fqName = classifier.fqName.sure { "Class type should have a FQ name: $classifier" }
 
                     val classData = mapKotlinClass(fqName) ?: c.components.moduleClassResolver.resolveClass(classifier)
 
@@ -222,7 +222,7 @@ class LazyJavaTypeResolver(
                     else {
                         createProjection(
                                 type = transformJavaType(bound, UPPER_BOUND.toAttributes()),
-                                projectionKind = if (javaType.isExtends()) OUT_VARIANCE else IN_VARIANCE,
+                                projectionKind = if (javaType.isExtends) OUT_VARIANCE else IN_VARIANCE,
                                 typeParameterDescriptor = typeParameter
                         )
                     }

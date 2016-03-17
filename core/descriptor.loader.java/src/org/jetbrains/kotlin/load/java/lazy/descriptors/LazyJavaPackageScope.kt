@@ -172,7 +172,7 @@ class LazyJavaPackageScope(
 
     private val subPackages = c.storageManager.createRecursionTolerantLazyValue(
             {
-                jPackage.getSubPackages().map { sp -> sp.getFqName() }
+                jPackage.subPackages.map { sp -> sp.fqName }
             },
             // This breaks infinite recursion between loading Java descriptors and building light classes
             onRecursiveCall = listOf()

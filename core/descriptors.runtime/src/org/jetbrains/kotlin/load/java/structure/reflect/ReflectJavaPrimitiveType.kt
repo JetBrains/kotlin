@@ -16,11 +16,14 @@
 
 package org.jetbrains.kotlin.load.java.structure.reflect
 
+import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.load.java.structure.JavaPrimitiveType
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 
-class ReflectJavaPrimitiveType(override val type: Class<*>) : ReflectJavaType(), JavaPrimitiveType {
-    override fun getType() =
-            if (type == Void.TYPE) null
-            else JvmPrimitiveType.get(type.name).primitiveType
+class ReflectJavaPrimitiveType(override val reflectType: Class<*>) : ReflectJavaType(), JavaPrimitiveType {
+    override val type: PrimitiveType?
+        get() = if (reflectType == Void.TYPE)
+            null
+        else
+            JvmPrimitiveType.get(reflectType.name).primitiveType
 }

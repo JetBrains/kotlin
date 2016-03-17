@@ -62,10 +62,10 @@ open class ClassMemberIndex(val jClass: JavaClass, val memberFilter: (JavaMember
 
     override fun findMethodsByName(name: Name): Collection<JavaMethod> = methods[name] ?: listOf()
     override fun getMethodNames(nameFilter: (Name) -> Boolean): Collection<Name> =
-            jClass.getAllMemberNames(methodFilter) { getMethods() }
+            jClass.getAllMemberNames(methodFilter) { methods }
 
     override fun findFieldByName(name: Name): JavaField? = fields[name]
-    override fun getAllFieldNames(): Collection<Name> = jClass.getAllMemberNames(memberFilter) { getFields() }
+    override fun getAllFieldNames(): Collection<Name> = jClass.getAllMemberNames(memberFilter) { fields }
 }
 
 private fun JavaClass.getNonDeclaredMethodNames(): List<Name> {

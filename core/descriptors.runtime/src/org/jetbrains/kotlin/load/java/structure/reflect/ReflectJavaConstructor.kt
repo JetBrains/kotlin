@@ -17,33 +17,34 @@
 package org.jetbrains.kotlin.load.java.structure.reflect
 
 import org.jetbrains.kotlin.load.java.structure.JavaConstructor
-import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter
 import java.lang.reflect.Constructor
 import java.lang.reflect.Modifier
 
 class ReflectJavaConstructor(override val member: Constructor<*>) : ReflectJavaMember(), JavaConstructor {
     // TODO: test local/anonymous classes
-    override fun getValueParameters(): List<JavaValueParameter> {
-        val types = member.genericParameterTypes
-        if (types.isEmpty()) return emptyList()
+    override val valueParameters: List<JavaValueParameter>
+        get() {
+            val types = member.genericParameterTypes
+            if (types.isEmpty()) return emptyList()
 
-        val klass = member.declaringClass
+            val klass = member.declaringClass
 
-        val realTypes = when {
-            klass.declaringClass != null && !Modifier.isStatic(klass.modifiers) -> types.copyOfRange(1, types.size)
-            else -> types
+            val realTypes = when {
+                klass.declaringClass != null && !Modifier.isStatic(klass.modifiers) -> types.copyOfRange(1, types.size)
+                else -> types
+            }
+
+            val annotations = member.parameterAnnotations
+            val realAnnotations = when {
+                annotations.size < realTypes.size -> throw IllegalStateException("Illegal generic signature: $member")
+                annotations.size > realTypes.size -> annotations.copyOfRange(annotations.size - realTypes.size, annotations.size)
+                else -> annotations
+            }
+
+            return getValueParameters(realTypes, realAnnotations, member.isVarArgs)
         }
 
-        val annotations = member.parameterAnnotations
-        val realAnnotations = when {
-            annotations.size < realTypes.size -> throw IllegalStateException("Illegal generic signature: $member")
-            annotations.size > realTypes.size -> annotations.copyOfRange(annotations.size - realTypes.size, annotations.size)
-            else -> annotations
-        }
-
-        return getValueParameters(realTypes, realAnnotations, member.isVarArgs)
-    }
-
-    override fun getTypeParameters() = member.typeParameters.map { ReflectJavaTypeParameter(it) }
+    override val typeParameters: List<ReflectJavaTypeParameter>
+        get() = member.typeParameters.map { ReflectJavaTypeParameter(it) }
 }

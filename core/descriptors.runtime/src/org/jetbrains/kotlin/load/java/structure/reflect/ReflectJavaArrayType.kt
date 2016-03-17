@@ -20,14 +20,12 @@ import org.jetbrains.kotlin.load.java.structure.JavaArrayType
 import java.lang.reflect.GenericArrayType
 import java.lang.reflect.Type
 
-class ReflectJavaArrayType(override val type: Type) : ReflectJavaType(), JavaArrayType {
-    private val componentType: ReflectJavaType = with (type) {
+class ReflectJavaArrayType(override val reflectType: Type) : ReflectJavaType(), JavaArrayType {
+    override val componentType: ReflectJavaType = with (reflectType) {
         when {
             this is GenericArrayType -> ReflectJavaType.create(genericComponentType)
             this is Class<*> && isArray() -> ReflectJavaType.create(getComponentType())
-            else -> throw IllegalArgumentException("Not an array type (${type.javaClass}): $type")
+            else -> throw IllegalArgumentException("Not an array type (${reflectType.javaClass}): $reflectType")
         }
     }
-
-    override fun getComponentType() = componentType
 }

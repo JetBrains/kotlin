@@ -21,20 +21,22 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 class ReflectJavaValueParameter(
-        private val returnType: ReflectJavaType,
-        private val annotations: Array<Annotation>,
-        private val name: String?,
-        private val isVararg: Boolean
+        override val type: ReflectJavaType,
+        private val reflectAnnotations: Array<Annotation>,
+        private val reflectName: String?,
+        override val isVararg: Boolean
 ) : ReflectJavaElement(), JavaValueParameter {
-    override fun getAnnotations() = annotations.getAnnotations()
+    override val annotations: List<ReflectJavaAnnotation>
+        get() = reflectAnnotations.getAnnotations()
 
-    override fun findAnnotation(fqName: FqName) = annotations.findAnnotation(fqName)
+    override fun findAnnotation(fqName: FqName) =
+            reflectAnnotations.findAnnotation(fqName)
 
-    override fun isDeprecatedInJavaDoc() = false
+    override val isDeprecatedInJavaDoc: Boolean
+        get() = false
 
-    override fun getName() = name?.let(Name::guessByFirstCharacter)
-    override fun getType() = returnType
-    override fun isVararg() = isVararg
+    override val name: Name?
+        get() = reflectName?.let(Name::guessByFirstCharacter)
 
-    override fun toString() = javaClass.name + ": " + (if (isVararg) "vararg " else "") + getName() + ": " + returnType
+    override fun toString() = javaClass.name + ": " + (if (isVararg) "vararg " else "") + name + ": " + type
 }

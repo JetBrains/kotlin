@@ -29,7 +29,7 @@ abstract class VirtualFileKotlinClassFinder : JvmVirtualFileFinder {
 
     override fun findKotlinClass(javaClass: JavaClass): KotlinJvmBinaryClass? {
         var file = (javaClass as JavaClassImpl).psi.containingFile!!.virtualFile ?: return null
-        if (javaClass.getOuterClass() != null) {
+        if (javaClass.outerClass != null) {
             // For nested classes we get a file of the containing class, to get the actual class file for A.B.C,
             // we take the file for A, take its parent directory, then in this directory we look for A$B$C.class
             file = file.parent!!.findChild(classFileName(javaClass) + ".class").sure { "Virtual file not found for $javaClass" }
@@ -39,10 +39,7 @@ abstract class VirtualFileKotlinClassFinder : JvmVirtualFileFinder {
     }
 
     private fun classFileName(jClass: JavaClass): String {
-        val outerClass = jClass.outerClass
-        if (outerClass == null) {
-            return jClass.name.asString()
-        }
+        val outerClass = jClass.outerClass ?: return jClass.name.asString()
 
         return classFileName(outerClass) + "$" + jClass.name.asString()
     }

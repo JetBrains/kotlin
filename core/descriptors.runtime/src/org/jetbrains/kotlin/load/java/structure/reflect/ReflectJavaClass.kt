@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.load.java.structure.reflect
 
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import java.lang.reflect.Method
 import java.util.*
@@ -29,37 +30,42 @@ class ReflectJavaClass(
 
     override val modifiers: Int get() = klass.modifiers
 
-    override fun getInnerClasses() = klass.declaredClasses
-            .asSequence()
-            .filterNot {
-                // getDeclaredClasses() returns anonymous classes sometimes, for example enums with specialized entries (which are in fact
-                // anonymous classes) or in case of a special anonymous class created for the synthetic accessor to a private nested class
-                // constructor accessed from the outer class
-                it.simpleName.isEmpty()
-            }
-            .map(::ReflectJavaClass)
-            .toList()
-
-    override fun getFqName() = klass.classId.asSingleFqName()
-
-    override fun getOuterClass() = klass.declaringClass?.let(::ReflectJavaClass)
-
-    override fun getSupertypes(): Collection<JavaClassifierType> {
-        if (klass == Any::class.java) return emptyList()
-        return listOf(klass.genericSuperclass ?: Any::class.java, *klass.genericInterfaces).map(::ReflectJavaClassifierType)
-    }
-
-    override fun getMethods() = klass.declaredMethods
-            .asSequence()
-            .filter { method ->
-                when {
-                    method.isSynthetic -> false
-                    isEnum -> !isEnumValuesOrValueOf(method)
-                    else -> true
+    override val innerClasses: List<ReflectJavaClass>
+        get() = klass.declaredClasses
+                .asSequence()
+                .filterNot {
+                    // getDeclaredClasses() returns anonymous classes sometimes, for example enums with specialized entries (which are
+                    // in fact anonymous classes) or in case of a special anonymous class created for the synthetic accessor to a private
+                    // nested class constructor accessed from the outer class
+                    it.simpleName.isEmpty()
                 }
-            }
-            .map(::ReflectJavaMethod)
-            .toList()
+                .map(::ReflectJavaClass)
+                .toList()
+
+    override val fqName: FqName
+        get() = klass.classId.asSingleFqName()
+
+    override val outerClass: ReflectJavaClass?
+        get() = klass.declaringClass?.let(::ReflectJavaClass)
+
+    override val supertypes: Collection<JavaClassifierType>
+        get() {
+            if (klass == Any::class.java) return emptyList()
+            return listOf(klass.genericSuperclass ?: Any::class.java, *klass.genericInterfaces).map(::ReflectJavaClassifierType)
+        }
+
+    override val methods: List<ReflectJavaMethod>
+        get() = klass.declaredMethods
+                .asSequence()
+                .filter { method ->
+                    when {
+                        method.isSynthetic -> false
+                        isEnum -> !isEnumValuesOrValueOf(method)
+                        else -> true
+                    }
+                }
+                .map(::ReflectJavaMethod)
+                .toList()
 
     private fun isEnumValuesOrValueOf(method: Method): Boolean {
         return when (method.name) {
@@ -69,27 +75,35 @@ class ReflectJavaClass(
         }
     }
 
-    override fun getFields() = klass.declaredFields
-            .asSequence()
-            .filter { field -> !field.isSynthetic }
-            .map(::ReflectJavaField)
-            .toList()
+    override val fields: List<ReflectJavaField>
+        get() = klass.declaredFields
+                .asSequence()
+                .filter { field -> !field.isSynthetic }
+                .map(::ReflectJavaField)
+                .toList()
 
-    override fun getConstructors() = klass.declaredConstructors
-            .asSequence()
-            .filter { constructor -> !constructor.isSynthetic }
-            .map(::ReflectJavaConstructor)
-            .toList()
+    override val constructors: List<ReflectJavaConstructor>
+        get() = klass.declaredConstructors
+                .asSequence()
+                .filter { constructor -> !constructor.isSynthetic }
+                .map(::ReflectJavaConstructor)
+                .toList()
 
-    override fun isKotlinLightClass() = false
+    override val isKotlinLightClass: Boolean
+        get() = false
 
-    override fun getName() = Name.identifier(klass.simpleName)
+    override val name: Name
+        get() = Name.identifier(klass.simpleName)
 
-    override fun getTypeParameters() = klass.typeParameters.map { ReflectJavaTypeParameter(it) }
+    override val typeParameters: List<ReflectJavaTypeParameter>
+        get() = klass.typeParameters.map { ReflectJavaTypeParameter(it) }
 
-    override fun isInterface() = klass.isInterface
-    override fun isAnnotationType() = klass.isAnnotation
-    override fun isEnum() = klass.isEnum
+    override val isInterface: Boolean
+        get() = klass.isInterface
+    override val isAnnotationType: Boolean
+        get() = klass.isAnnotation
+    override val isEnum: Boolean
+        get() = klass.isEnum
 
     override fun equals(other: Any?) = other is ReflectJavaClass && klass == other.klass
 

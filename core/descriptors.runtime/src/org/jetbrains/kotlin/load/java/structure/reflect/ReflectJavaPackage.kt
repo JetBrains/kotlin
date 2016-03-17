@@ -21,18 +21,17 @@ import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-class ReflectJavaPackage(private val fqName: FqName) : ReflectJavaElement(), JavaPackage {
-    override fun getFqName() = fqName
-
+class ReflectJavaPackage(override val fqName: FqName) : ReflectJavaElement(), JavaPackage {
     override fun getClasses(nameFilter: (Name) -> Boolean): Collection<JavaClass> {
         // A package at runtime can't know what classes it has and has not
         return listOf()
     }
 
-    override fun getSubPackages(): Collection<JavaPackage> {
-        // A package at runtime can't know what sub packages it has and has not
-        return listOf()
-    }
+    override val subPackages: Collection<JavaPackage>
+        get() {
+            // A package at runtime can't know what sub packages it has and has not
+            return listOf()
+        }
 
     override fun equals(other: Any?) = other is ReflectJavaPackage && fqName == other.fqName
 

@@ -25,9 +25,9 @@ import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import java.lang.reflect.TypeVariable
 
-class ReflectJavaClassifierType(public override val type: Type) : ReflectJavaType(), JavaClassifierType {
-    private val classifier: JavaClassifier = run {
-        val type = type
+class ReflectJavaClassifierType(public override val reflectType: Type) : ReflectJavaType(), JavaClassifierType {
+    override val classifier: JavaClassifier = run {
+        val type = reflectType
         val classifier: JavaClassifier = when (type) {
             is Class<*> -> ReflectJavaClass(type)
             is TypeVariable<*> -> ReflectJavaTypeParameter(type)
@@ -37,25 +37,26 @@ class ReflectJavaClassifierType(public override val type: Type) : ReflectJavaTyp
         classifier
     }
 
-    override fun getClassifier(): JavaClassifier = classifier
+    override val presentableText: String
+        get() = reflectType.toString()
 
-    override fun getPresentableText(): String = type.toString()
+    override val isRaw: Boolean
+        get() = with(reflectType) { this is Class<*> && getTypeParameters().isNotEmpty() }
 
-    override fun isRaw(): Boolean = with(type) { this is Class<*> && getTypeParameters().isNotEmpty() }
-
-    override fun getTypeArguments(): List<JavaType> {
-        return generateSequence({type as? ParameterizedType}, { it.ownerType as? ParameterizedType }).flatMap {
+    override val typeArguments: List<JavaType>
+        get() = generateSequence({ reflectType as? ParameterizedType }, { it.ownerType as? ParameterizedType }).flatMap {
             it.actualTypeArguments.asSequence().map { ReflectJavaType.create(it) }
         }.toList()
-    }
 
-    override fun getAnnotations(): Collection<JavaAnnotation> {
-        return emptyList() // TODO
-    }
+    override val annotations: Collection<JavaAnnotation>
+        get() {
+            return emptyList() // TODO
+        }
 
     override fun findAnnotation(fqName: FqName): JavaAnnotation? {
         return null // TODO
     }
 
-    override fun isDeprecatedInJavaDoc() = false
+    override val isDeprecatedInJavaDoc: Boolean
+        get() = false
 }

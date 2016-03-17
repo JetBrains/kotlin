@@ -21,12 +21,15 @@ import org.jetbrains.kotlin.load.java.structure.JavaValueParameter
 import java.lang.reflect.Method
 
 class ReflectJavaMethod(override val member: Method) : ReflectJavaMember(), JavaMethod {
-    override fun getValueParameters(): List<JavaValueParameter> =
-            getValueParameters(member.genericParameterTypes, member.parameterAnnotations, member.isVarArgs)
+    override val valueParameters: List<JavaValueParameter>
+        get() = getValueParameters(member.genericParameterTypes, member.parameterAnnotations, member.isVarArgs)
 
-    override fun getReturnType() = ReflectJavaType.create(member.genericReturnType)
+    override val returnType: ReflectJavaType
+        get() = ReflectJavaType.create(member.genericReturnType)
 
-    override fun hasAnnotationParameterDefaultValue() = member.defaultValue != null
+    override val hasAnnotationParameterDefaultValue: Boolean
+        get() = member.defaultValue != null
 
-    override fun getTypeParameters() = member.typeParameters.map { ReflectJavaTypeParameter(it) }
+    override val typeParameters: List<ReflectJavaTypeParameter>
+        get() = member.typeParameters.map { ReflectJavaTypeParameter(it) }
 }
