@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.js.inline.clean
 
 import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.metadata.synthetic
+import org.jetbrains.kotlin.js.inline.util.collectFreeVariables
 
 internal class RedundantVariableDeclarationElimination(private val root: JsStatement) {
     private val usages = mutableSetOf<JsName>()
@@ -40,6 +41,11 @@ internal class RedundantVariableDeclarationElimination(private val root: JsState
             override fun visit(x: JsBreak, ctx: JsContext<*>) = false
 
             override fun visit(x: JsContinue, ctx: JsContext<*>) = false
+
+            override fun visit(x: JsFunction, ctx: JsContext<*>): Boolean {
+                usages += x.collectFreeVariables()
+                return false
+            }
         }.accept(root)
     }
 
@@ -54,6 +60,8 @@ internal class RedundantVariableDeclarationElimination(private val root: JsState
                 }
                 super.endVisit(x, ctx)
             }
+
+            override fun visit(x: JsFunction, ctx: JsContext<*>) = false
         }.accept(root)
     }
 }

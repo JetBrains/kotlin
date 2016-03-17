@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.js.inline.clean
 import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.metadata.synthetic
 import org.jetbrains.kotlin.js.inline.util.canHaveSideEffect
+import org.jetbrains.kotlin.js.inline.util.collectFreeVariables
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
 internal class TemporaryAssignmentElimination(private val root: JsBlock) {
@@ -97,6 +98,15 @@ internal class TemporaryAssignmentElimination(private val root: JsBlock) {
                 }
                 return super.visit(x, ctx)
             }
+
+            override fun visit(x: JsFunction, ctx: JsContext<*>): Boolean {
+                x.collectFreeVariables().forEach { use(it); use(it) }
+                return false
+            }
+
+            override fun visit(x: JsBreak, ctx: JsContext<*>) = false
+
+            override fun visit(x: JsContinue, ctx: JsContext<*>) = false
         }.accept(root)
 
         usages.keys.retainAll(syntheticNames)
@@ -198,6 +208,8 @@ internal class TemporaryAssignmentElimination(private val root: JsBlock) {
                 }
                 return super.visit(x, ctx)
             }
+
+            override fun visit(x: JsFunction, ctx: JsContext<*>) = false
         }.accept(root)
     }
 

@@ -67,6 +67,8 @@ internal class RedundantLabelRemoval(private val root: JsStatement) {
 
                 super.endVisit(x, ctx)
             }
+
+            override fun visit(x: JsFunction, ctx: JsContext<*>) = false
         }.accept(root)
     }
 
