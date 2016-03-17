@@ -21,6 +21,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import kotlin.Pair;
+import kotlin.collections.SetsKt;
+import kotlin.io.FilesKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.cli.AbstractCliTest;
@@ -38,19 +40,27 @@ import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
-import org.jetbrains.kotlin.test.*;
+import org.jetbrains.kotlin.test.ConfigurationKind;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
+import org.jetbrains.kotlin.test.TestJdkKind;
 import org.jetbrains.kotlin.test.util.DescriptorValidator;
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
+import org.jetbrains.kotlin.utils.StringsKt;
 import org.jetbrains.org.objectweb.asm.ClassReader;
 import org.jetbrains.org.objectweb.asm.ClassVisitor;
 import org.jetbrains.org.objectweb.asm.ClassWriter;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.regex.Pattern;
 import java.util.zip.ZipOutputStream;
 
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isObject;
@@ -58,6 +68,7 @@ import static org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.valid
 
 public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
     public static final String TEST_DATA_PATH = "compiler/testData/compileKotlinAgainstCustomBinaries/";
+    private static final Pattern JAVA_FILES = Pattern.compile(".*\\.java$");
 
     @NotNull
     private File getTestDataDirectory() {
@@ -70,10 +81,10 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
     }
 
     @NotNull
-    private File compileLibrary(@NotNull String sourcePath, @NotNull String... extraClassPath) {
-        return MockLibraryUtil.compileLibraryToJar(
-                new File(getTestDataDirectory(), sourcePath).getPath(), "customKotlinLib", false, false, extraClassPath
-        );
+    private File compileLibrary(@NotNull String sourcePath, @NotNull File... extraClassPath) {
+        File result = new File(tmpdir, sourcePath + ".jar");
+        compileKotlin(sourcePath, result, extraClassPath);
+        return result;
     }
 
     @NotNull
@@ -122,9 +133,10 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
     }
 
     @NotNull
-    private static File copyJarFileWithoutEntry(@NotNull File jarPath, @NotNull String entryToDelete) {
+    private static File copyJarFileWithoutEntry(@NotNull File jarPath, @NotNull String... entriesToDelete) {
         try {
             File outputFile = new File(jarPath.getParentFile(), FileUtil.getNameWithoutExtension(jarPath) + "-after.jar");
+            Set<String> toDelete = SetsKt.setOf(entriesToDelete);
 
             @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
             JarFile jar = new JarFile(jarPath);
@@ -132,7 +144,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
             try {
                 for (Enumeration<JarEntry> enumeration = jar.entries(); enumeration.hasMoreElements(); ) {
                     JarEntry jarEntry = enumeration.nextElement();
-                    if (entryToDelete.equals(jarEntry.getName())) {
+                    if (toDelete.contains(jarEntry.getName())) {
                         continue;
                     }
                     output.putNextEntry(jarEntry);
@@ -152,6 +164,62 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         }
     }
 
+    @NotNull
+    private File compileJava(@NotNull String libraryDir) throws Exception {
+        List<File> allJavaFiles = FileUtil.findFilesByMask(JAVA_FILES, new File(getTestDataDirectory(), libraryDir));
+        File result = new File(tmpdir, libraryDir);
+        assert result.mkdirs() : "Could not create directory: " + result;
+        KotlinTestUtils.compileJavaFiles(allJavaFiles, Arrays.asList("-d", result.getPath()));
+        return result;
+    }
+
+    @NotNull
+    private static File deletePaths(@NotNull File library, @NotNull String... pathsToDelete) {
+        for (String pathToDelete : pathsToDelete) {
+            File fileToDelete = new File(library, pathToDelete);
+            assert fileToDelete.delete() : "Can't delete " + fileToDelete;
+        }
+        return library;
+    }
+
+    @NotNull
+    private Pair<String, ExitCode> compileKotlin(
+            @NotNull String fileName,
+            @NotNull File output,
+            @NotNull File... classpath
+    ) {
+        List<String> args = new ArrayList<String>();
+        File sourceFile = new File(getTestDataDirectory(), fileName);
+        assert sourceFile.exists() : "Source file does not exist: " + sourceFile.getAbsolutePath();
+        args.add(sourceFile.getPath());
+        if (classpath.length > 0) {
+            args.add("-classpath");
+            args.add(StringsKt.join(Arrays.asList(classpath), File.pathSeparator));
+        }
+        args.add("-d");
+        args.add(output.getPath());
+
+        return AbstractCliTest.executeCompilerGrabOutput(new K2JVMCompiler(), args);
+    }
+
+    private void doTestBrokenJavaLibrary(@NotNull String libraryName, @NotNull String... pathsToDelete) throws Exception {
+        // This function compiles a Java library, then deletes one class file and attempts to compile a Kotlin source against
+        // this broken library. The expected result is an error message from the compiler
+        File library = deletePaths(compileJava(libraryName), pathsToDelete);
+
+        Pair<String, ExitCode> output = compileKotlin("source.kt", tmpdir, library);
+        KotlinTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), "output.txt"), normalizeOutput(output));
+    }
+
+    private void doTestBrokenKotlinLibrary(@NotNull String libraryName, @NotNull String... pathsToDelete) throws Exception {
+        // Analogous to doTestBrokenJavaLibrary, but with a Kotlin library compiled to a JAR file
+        File library = copyJarFileWithoutEntry(compileLibrary(libraryName), pathsToDelete);
+        Pair<String, ExitCode> output = compileKotlin("source.kt", tmpdir, library);
+        KotlinTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), "output.txt"), normalizeOutput(output));
+    }
+
+    // ------------------------------------------------------------------------------
+
     public void testRawTypes() throws Exception {
         KotlinTestUtils.compileJavaFiles(
                 Collections.singletonList(
@@ -160,21 +228,9 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
                 Arrays.asList("-d", tmpdir.getPath())
         );
 
-        File libSrc = new File(getTestDataDirectory(), "library/test/lib.kt");
+        Pair<String, ExitCode> outputLib = compileKotlin("library/test/lib.kt", tmpdir, tmpdir);
 
-        Pair<String, ExitCode> outputLib = AbstractCliTest.executeCompilerGrabOutput(new K2JVMCompiler(), Arrays.asList(
-                libSrc.getPath(),
-                "-classpath", tmpdir.getPath(),
-                "-d", tmpdir.getPath()
-        ));
-
-        File mainSrc = new File(getTestDataDirectory(), "main.kt");
-
-        Pair<String, ExitCode> outputMain = AbstractCliTest.executeCompilerGrabOutput(new K2JVMCompiler(), Arrays.asList(
-                mainSrc.getPath(),
-                "-classpath", tmpdir.getPath(),
-                "-d", tmpdir.getPath()
-        ));
+        Pair<String, ExitCode> outputMain = compileKotlin("main.kt", tmpdir, tmpdir);
 
         KotlinTestUtils.assertEqualsToFile(
                 new File(getTestDataDirectory(), "output.txt"), normalizeOutput(outputLib) + "\n" + normalizeOutput(outputMain)
@@ -227,107 +283,42 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
     }
 
     public void testIncompleteHierarchyInJava() throws Exception {
-        // This test compiles a Java library of two classes (Super and Sub), then deletes Super.class and attempts to compile a Kotlin
-        // source against this broken library. The expected result is an "incomplete hierarchy" error message from the compiler
-
-        KotlinTestUtils.compileJavaFiles(
-                Arrays.asList(
-                        new File(getTestDataDirectory() + "/library/test/Super.java"),
-                        new File(getTestDataDirectory() + "/library/test/Sub.java")
-                ),
-                Arrays.asList("-d", tmpdir.getPath())
-        );
-
-        File superClassFile = new File(tmpdir + "/test/Super.class");
-        assert superClassFile.delete() : "Can't delete " + superClassFile;
-
-        File source = new File(getTestDataDirectory(), "source.kt");
-
-        Pair<String, ExitCode> output = AbstractCliTest.executeCompilerGrabOutput(new K2JVMCompiler(), Arrays.asList(
-                source.getPath(),
-                "-classpath", tmpdir.getPath(),
-                "-d", tmpdir.getPath()
-        ));
-
-        KotlinTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), "output.txt"), normalizeOutput(output));
+        doTestBrokenJavaLibrary("library", "test/Super.class");
     }
 
     public void testIncompleteHierarchyInKotlin() throws Exception {
-        // Analogous to testIncompleteHierarchyInJava, but with a Kotlin library
-
-        File library = copyJarFileWithoutEntry(compileLibrary("library"), "test/Super.class");
-
-        File source = new File(getTestDataDirectory(), "source.kt");
-
-        Pair<String, ExitCode> output = AbstractCliTest.executeCompilerGrabOutput(new K2JVMCompiler(), Arrays.asList(
-                source.getPath(),
-                "-classpath", library.getPath(),
-                "-d", tmpdir.getPath()
-        ));
-
-        KotlinTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), "output.txt"), normalizeOutput(output));
+        doTestBrokenKotlinLibrary("library", "test/Super.class");
     }
 
     /*test source mapping generation when source info is absent*/
     public void testInlineFunWithoutDebugInfo() throws Exception {
-        File inlineSource = new File(getTestDataDirectory(), "sourceInline.kt");
+        compileKotlin("sourceInline.kt", tmpdir);
 
-        AbstractCliTest.executeCompilerGrabOutput(new K2JVMCompiler(), Arrays.asList(
-                inlineSource.getPath(),
-                "-d", tmpdir.getPath()
-        ));
-
-        ClassWriter cw;
         File inlineFunClass = new File(tmpdir.getAbsolutePath(), "test/A.class");
-        FileInputStream is = new FileInputStream(inlineFunClass);
-        try {
-            ClassReader reader = new ClassReader(is);
-            cw = new ClassWriter(Opcodes.ASM5);
-            reader.accept(new ClassVisitor(Opcodes.ASM5, cw) {
-                @Override
-                public void visitSource(String source, String debug) {
-                    //skip debug info
-                }
-            }, 0);
-        }
-        finally {
-            is.close();
-        }
+        ClassWriter cw = new ClassWriter(Opcodes.ASM5);
+        new ClassReader(FilesKt.readBytes(inlineFunClass)).accept(new ClassVisitor(Opcodes.ASM5, cw) {
+            @Override
+            public void visitSource(String source, String debug) {
+                //skip debug info
+            }
+        }, 0);
 
         assert inlineFunClass.delete();
         assert !inlineFunClass.exists();
 
-        FileOutputStream stream = new FileOutputStream(inlineFunClass);
-        try {
-            stream.write(cw.toByteArray());
-        }
-        finally {
-            stream.close();
-        }
+        FilesKt.writeBytes(inlineFunClass, cw.toByteArray());
 
-        File resultSource = new File(getTestDataDirectory(), "source.kt");
-        AbstractCliTest.executeCompilerGrabOutput(new K2JVMCompiler(), Arrays.asList(
-                resultSource.getPath(),
-                "-classpath", tmpdir.getPath(),
-                "-d", tmpdir.getPath()
-        ));
+        compileKotlin("source.kt", tmpdir, tmpdir);
 
         final Ref<String> debugInfo = new Ref<String>();
         File resultFile = new File(tmpdir.getAbsolutePath(), "test/B.class");
-        FileInputStream resultStream = new FileInputStream(resultFile);
-        try {
-            ClassReader reader = new ClassReader(resultStream);
-            reader.accept(new ClassVisitor(Opcodes.ASM5) {
-                @Override
-                public void visitSource(String source, String debug) {
-                    //skip debug info
-                    debugInfo.set(debug);
-                }
-            }, 0);
-        }
-        finally {
-            resultStream.close();
-        }
+        new ClassReader(FilesKt.readBytes(resultFile)).accept(new ClassVisitor(Opcodes.ASM5) {
+            @Override
+            public void visitSource(String source, String debug) {
+                //skip debug info
+                debugInfo.set(debug);
+            }
+        }, 0);
 
         String expected = "SMAP\n" +
                           "source.kt\n" +
@@ -350,7 +341,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
 
     public void testReplaceAnnotationClassWithInterface() throws Exception {
         File library1 = compileLibrary("library-1");
-        File usage = compileLibrary("usage", library1.getPath());
+        File usage = compileLibrary("usage", library1);
         File library2 = compileLibrary("library-2");
         doTestWithTxt(usage, library2);
     }
