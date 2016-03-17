@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.Visibility;
 import org.jetbrains.kotlin.load.java.structure.*;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.name.SpecialNames;
 
 import java.util.Collection;
 import java.util.List;
@@ -55,7 +56,7 @@ public class JavaClassImpl extends JavaClassifierImpl<PsiClass> implements JavaC
     @NotNull
     @Override
     public Name getName() {
-        return Name.identifier(getPsi().getName());
+        return SpecialNames.safeIdentifier(getPsi().getName());
     }
 
     @Override

@@ -24,40 +24,19 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation;
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotationOwner;
 import org.jetbrains.kotlin.load.java.structure.impl.JavaAnnotationImpl;
-import org.jetbrains.kotlin.load.java.structure.impl.JavaElementCollectionFromPsiArrayUtil;
 import org.jetbrains.kotlin.load.java.structure.impl.JavaModifierListOwnerImpl;
 import org.jetbrains.kotlin.name.FqName;
-
-import java.util.Collection;
-import java.util.Collections;
 
 public class PsiBasedExternalAnnotationResolver implements ExternalAnnotationResolver {
     @Nullable
     @Override
     public JavaAnnotation findExternalAnnotation(@NotNull JavaAnnotationOwner owner, @NotNull FqName fqName) {
         if (owner instanceof JavaModifierListOwnerImpl) {
-            JavaModifierListOwnerImpl modifierListOwner = (JavaModifierListOwnerImpl) owner;
-            PsiAnnotation psiAnnotation = findExternalAnnotation(modifierListOwner.getPsi(), fqName);
+            PsiModifierListOwner psiOwner = ((JavaModifierListOwnerImpl) owner).getPsi();
+            PsiAnnotation psiAnnotation =
+                    ExternalAnnotationsManager.getInstance(psiOwner.getProject()).findExternalAnnotation(psiOwner, fqName.asString());
             return psiAnnotation == null ? null : new JavaAnnotationImpl(psiAnnotation);
         }
         return null;
-    }
-
-    @NotNull
-    @Override
-    public Collection<JavaAnnotation> findExternalAnnotations(@NotNull JavaAnnotationOwner owner) {
-        if (owner instanceof JavaModifierListOwnerImpl) {
-            PsiModifierListOwner psiOwner = ((JavaModifierListOwnerImpl) owner).getPsi();
-            PsiAnnotation[] annotations = ExternalAnnotationsManager.getInstance(psiOwner.getProject()).findExternalAnnotations(psiOwner);
-            return annotations == null
-                   ? Collections.<JavaAnnotation>emptyList()
-                   : JavaElementCollectionFromPsiArrayUtil.annotations(annotations);
-        }
-        return Collections.emptyList();
-    }
-
-    @Nullable
-    public static PsiAnnotation findExternalAnnotation(@NotNull PsiModifierListOwner owner, @NotNull FqName fqName) {
-        return ExternalAnnotationsManager.getInstance(owner.getProject()).findExternalAnnotation(owner, fqName.asString());
     }
 }

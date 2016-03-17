@@ -16,7 +16,10 @@
 
 package org.jetbrains.kotlin.load.java.structure.impl;
 
-import com.intellij.psi.*;
+import com.intellij.psi.PsiAnnotation;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiJavaCodeReferenceElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation;
@@ -33,13 +36,6 @@ import static org.jetbrains.kotlin.load.java.structure.impl.JavaElementCollectio
 public class JavaAnnotationImpl extends JavaElementImpl<PsiAnnotation> implements JavaAnnotation {
     public JavaAnnotationImpl(@NotNull PsiAnnotation psiAnnotation) {
         super(psiAnnotation);
-    }
-
-    @Override
-    @Nullable
-    public JavaAnnotationArgument findArgument(@NotNull Name name) {
-        PsiAnnotationMemberValue attribute = getPsi().findAttributeValue(name.asString());
-        return attribute == null ? null : JavaAnnotationArgumentImpl.Factory.create(attribute, name);
     }
 
     @Override
@@ -74,7 +70,8 @@ public class JavaAnnotationImpl extends JavaElementImpl<PsiAnnotation> implement
         PsiClass container = psiClass.getContainingClass();
         if (container != null) {
             ClassId parentClassId = computeClassId(container);
-            return parentClassId == null ? null : parentClassId.createNestedClassId(Name.identifier(psiClass.getName()));
+            String name = psiClass.getName();
+            return parentClassId == null || name == null ? null : parentClassId.createNestedClassId(Name.identifier(name));
         }
 
         String fqName = psiClass.getQualifiedName();

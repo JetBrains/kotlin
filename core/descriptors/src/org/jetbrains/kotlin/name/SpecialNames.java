@@ -36,6 +36,11 @@ public class SpecialNames {
         return name != null && !name.isSpecial() ? name : SAFE_IDENTIFIER_FOR_NO_NAME;
     }
 
+    @NotNull
+    public static Name safeIdentifier(@Nullable String name) {
+        return safeIdentifier(name == null ? null : Name.identifier(name));
+    }
+
     public static boolean isSafeIdentifier(@NotNull Name name) {
         return !name.asString().isEmpty() && !name.isSpecial();
     }

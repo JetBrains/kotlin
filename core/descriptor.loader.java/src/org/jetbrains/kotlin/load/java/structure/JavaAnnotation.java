@@ -19,14 +19,10 @@ package org.jetbrains.kotlin.load.java.structure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.name.ClassId;
-import org.jetbrains.kotlin.name.Name;
 
 import java.util.Collection;
 
 public interface JavaAnnotation extends JavaElement {
-    @Nullable
-    JavaAnnotationArgument findArgument(@NotNull Name name);
-
     @NotNull
     Collection<JavaAnnotationArgument> getArguments();
 

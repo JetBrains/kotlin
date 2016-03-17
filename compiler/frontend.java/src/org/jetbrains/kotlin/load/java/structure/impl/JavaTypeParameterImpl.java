@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType;
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.name.SpecialNames;
 
 import java.util.Collection;
 
@@ -36,7 +37,7 @@ public class JavaTypeParameterImpl extends JavaClassifierImpl<PsiTypeParameter> 
     @NotNull
     @Override
     public Name getName() {
-        return Name.identifier(getPsi().getName());
+        return SpecialNames.safeIdentifier(getPsi().getName());
     }
 
     @Override

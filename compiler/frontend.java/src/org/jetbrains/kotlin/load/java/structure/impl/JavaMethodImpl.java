@@ -20,7 +20,6 @@ import com.intellij.psi.PsiAnnotationMethod;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.load.java.structure.JavaMethod;
 import org.jetbrains.kotlin.load.java.structure.JavaType;
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter;

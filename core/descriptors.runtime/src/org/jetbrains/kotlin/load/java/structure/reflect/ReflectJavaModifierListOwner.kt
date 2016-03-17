@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.load.java.structure.reflect
 
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.structure.JavaModifierListOwner
 import java.lang.reflect.Modifier
@@ -28,7 +29,7 @@ interface ReflectJavaModifierListOwner : JavaModifierListOwner {
     override fun isStatic() = Modifier.isStatic(modifiers)
     override fun isFinal() = Modifier.isFinal(modifiers)
 
-    override fun getVisibility() = modifiers.let { modifiers ->
+    override fun getVisibility(): Visibility = modifiers.let { modifiers ->
         when {
             Modifier.isPublic(modifiers) -> Visibilities.PUBLIC
             Modifier.isPrivate(modifiers) -> Visibilities.PRIVATE
