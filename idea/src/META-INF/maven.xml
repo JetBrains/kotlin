@@ -5,6 +5,7 @@
   </extensions>
   <extensions defaultExtensionNs="org.jetbrains.idea.maven">
     <importer implementation="org.jetbrains.kotlin.idea.configuration.KotlinMavenImporter" />
+    <archetypesProvider implementation="org.jetbrains.kotlin.idea.configuration.KotlinMavenArchetypesProvider" />
   </extensions>
   <module-components>
     <component>
