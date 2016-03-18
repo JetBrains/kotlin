@@ -224,18 +224,24 @@ class LazyJavaTypeResolver(
             return when (javaType) {
                 is JavaWildcardType -> {
                     val bound = javaType.bound
-                    if (bound == null)
+                    val projectionKind = if (javaType.isExtends) OUT_VARIANCE else IN_VARIANCE
+                    if (bound == null || projectionKind.isConflictingArgumentFor(typeParameter))
                         makeStarProjection(typeParameter, attr)
                     else {
                         createProjection(
                                 type = transformJavaType(bound, UPPER_BOUND.toAttributes()),
-                                projectionKind = if (javaType.isExtends) OUT_VARIANCE else IN_VARIANCE,
+                                projectionKind = projectionKind,
                                 typeParameterDescriptor = typeParameter
                         )
                     }
                 }
                 else -> TypeProjectionImpl(INVARIANT, transformJavaType(javaType, attr))
             }
+        }
+
+        private fun Variance.isConflictingArgumentFor(typeParameter: TypeParameterDescriptor): Boolean {
+            if (typeParameter.variance == INVARIANT) return false
+            return this != typeParameter.variance
         }
 
         override fun getCapabilities(): TypeCapabilities = if (isRaw()) RawTypeCapabilities else TypeCapabilities.NONE
