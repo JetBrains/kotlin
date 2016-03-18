@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.decompiler
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.idea.caches.IDEKotlinBinaryClassCache
-import org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToDecompiledLibraryTest
+import org.jetbrains.kotlin.idea.decompiler.textBuilder.findTestLibraryRoot
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
@@ -50,7 +50,7 @@ abstract class AbstractInternalCompiledClassesTest : KotlinLightCodeInsightFixtu
     }
 
     protected fun doTest(fileKind: String, acceptFile: VirtualFile.() -> Boolean, performTest: VirtualFile.() -> Unit) {
-        val root = NavigateToDecompiledLibraryTest.findTestLibraryRoot(myModule!!)!!
+        val root = findTestLibraryRoot(myModule!!)!!
         var foundAtLeastOneFile = false
         root.checkRecursively {
             if (acceptFile()) {

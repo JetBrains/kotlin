@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,17 @@
 
 package org.jetbrains.kotlin.idea.decompiler.textBuilder
 
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.decompiler.KtDecompiledFile
-import org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToDecompiledLibraryTest
+import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.ModuleKind
 import org.jetbrains.kotlin.idea.test.configureAs
 import kotlin.test.assertTrue
 
 abstract class AbstractDecompiledTextFromJsMetadataTest(baseDirectory: String) : AbstractDecompiledTextBaseTest(baseDirectory, true) {
-    override fun getFileToDecompile(): VirtualFile =
-            NavigateToDecompiledLibraryTest.getKjsmFile(TEST_PACKAGE, getTestName(false), myModule!!)
+    override fun getFileToDecompile(): VirtualFile = getKjsmFile(TEST_PACKAGE, getTestName(false), myModule!!)
 
     override fun checkPsiFile(psiFile: PsiFile) =
             assertTrue(psiFile is KtDecompiledFile, "Expecting decompiled kotlin javascript file, was: " + psiFile.javaClass)
@@ -40,3 +40,14 @@ abstract class AbstractDecompiledTextFromJsMetadataTest(baseDirectory: String) :
 abstract class AbstractCommonDecompiledTextFromJsMetadataTest : AbstractDecompiledTextFromJsMetadataTest("/decompiler/decompiledText")
 
 abstract class AbstractJsDecompiledTextFromJsMetadataTest : AbstractDecompiledTextFromJsMetadataTest("/decompiler/decompiledTextJs")
+
+fun getKjsmFile(
+        packageName: String,
+        className: String,
+        module: Module
+): VirtualFile {
+    val root = findTestLibraryRoot(module)!!
+    root.refresh(false, true)
+    val packageDir = root.findFileByRelativePath(JdkAndMockLibraryProjectDescriptor.LIBRARY_NAME + "/" + packageName.replace(".", "/"))!!
+    return packageDir.findChild(className + ".kjsm")!!
+}
