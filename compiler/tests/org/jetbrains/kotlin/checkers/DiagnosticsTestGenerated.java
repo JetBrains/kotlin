@@ -301,6 +301,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("implicitNestedIntersection.kt")
+        public void testImplicitNestedIntersection() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/implicitNestedIntersection.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("implicitNothing.kt")
         public void testImplicitNothing() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/implicitNothing.kt");

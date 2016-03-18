@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.SubstitutionUtils
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import java.util.*
 
@@ -707,7 +708,7 @@ class DeclarationsChecker(
                             (if (declaration is KtProperty) IMPLICIT_NOTHING_PROPERTY_TYPE else IMPLICIT_NOTHING_RETURN_TYPE).on(target)
                     )
                 }
-                if (it.constructor is IntersectionTypeConstructor) {
+                if (it.contains { type -> type.constructor is IntersectionTypeConstructor }) {
                     trace.report(IMPLICIT_INTERSECTION_TYPE.on(target, it))
                 }
             }
