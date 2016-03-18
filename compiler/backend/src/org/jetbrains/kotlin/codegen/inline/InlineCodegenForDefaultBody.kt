@@ -27,12 +27,15 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 class InlineCodegenForDefaultBody(
         function: FunctionDescriptor,
         codegen: ExpressionCodegen,
         val state: GenerationState
 ) : CallGenerator() {
+
+    private val sourceMapper: SourceMapper = codegen.parentCodegen.orCreateSourceMapper
 
     private val functionDescriptor =
             if (InlineUtil.isArrayConstructorWithLambda(function))
@@ -57,7 +60,19 @@ class InlineCodegenForDefaultBody(
 
     override fun genCallInner(callableMethod: Callable, resolvedCall: ResolvedCall<*>?, callDefault: Boolean, codegen: ExpressionCodegen) {
         val nodeAndSmap = InlineCodegen.createMethodNode(functionDescriptor, jvmSignature, codegen, context, callDefault, state)
-        nodeAndSmap.node.accept(MethodBodyVisitor(codegen.v))
+        val childSourceMapper = InlineCodegen.createNestedSourceMapper(nodeAndSmap, sourceMapper)
+
+        val node = nodeAndSmap.node
+        val transformedMethod = MethodNode(
+                node.access,
+                node.name,
+                node.desc,
+                node.signature,
+                node.exceptions.toTypedArray())
+
+        node.accept(InlineAdapter(transformedMethod, 0, childSourceMapper))
+
+        transformedMethod.accept(MethodBodyVisitor(codegen.v))
     }
 
     override fun afterParameterPut(type: Type, stackValue: StackValue?, parameterIndex: Int) {

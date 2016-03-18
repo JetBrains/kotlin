@@ -709,6 +709,18 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
             doTest(fileName);
         }
 
+        @TestMetadata("kt11479.kt")
+        public void testKt11479() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/kt11479.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt11479InlinedDefaultParameter.kt")
+        public void testKt11479InlinedDefaultParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/kt11479InlinedDefaultParameter.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt5685.kt")
         public void testKt5685() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/kt5685.kt");

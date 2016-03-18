@@ -370,7 +370,7 @@ public class InlineCodegen extends CallGenerator {
         MethodInliner inliner = new MethodInliner(
                 node, parameters, info, new FieldRemapper(null, null, parameters), isSameModule,
                 "Method inlining " + callElement.getText(),
-                createNestedSourceMapper(nodeAndSmap), info.getCallSiteInfo(),
+                createNestedSourceMapper(nodeAndSmap, sourceMapper), info.getCallSiteInfo(),
                 AnnotationUtilKt.hasInlineOnlyAnnotation(functionDescriptor) ? new InlineOnlySmapSkipper(codegen) : null
         ); //with captured
 
@@ -882,8 +882,8 @@ public class InlineCodegen extends CallGenerator {
         }
     }
 
-    private SourceMapper createNestedSourceMapper(@NotNull SMAPAndMethodNode nodeAndSmap) {
-        return new NestedSourceMapper(sourceMapper, nodeAndSmap.getRanges(), nodeAndSmap.getClassSMAP().getSourceInfo());
+    public static SourceMapper createNestedSourceMapper(@NotNull SMAPAndMethodNode nodeAndSmap, @NotNull SourceMapper parent) {
+        return new NestedSourceMapper(parent, nodeAndSmap.getRanges(), nodeAndSmap.getClassSMAP().getSourceInfo());
     }
 
     static void reportIncrementalInfo(

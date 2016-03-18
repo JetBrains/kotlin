@@ -37,6 +37,17 @@ fun box(): String {
 
 // FILE: 1.smap
 
+SMAP
+1.kt
+Kotlin
+*S Kotlin
+*F
++ 1 1.kt
+test/_1Kt
+*L
+1#1,25:1
+*E
+
 // FILE: 2.smap
 
 SMAP

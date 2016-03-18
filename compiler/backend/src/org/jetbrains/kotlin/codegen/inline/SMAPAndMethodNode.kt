@@ -29,15 +29,15 @@ class SMAPAndMethodNode(val node: MethodNode, val classSMAP: SMAP) {
 }
 
 private fun createLineNumberSequence(node: MethodNode, classSMAP: SMAP): Sequence<LabelAndMapping> {
-    return InsnSequence(node.instructions.first, null).filterIsInstance<LineNumberNode>().map { node ->
-        val index = classSMAP.intervals.binarySearch(RangeMapping(node.line, node.line, 1), Comparator {
+    return InsnSequence(node.instructions.first, null).filterIsInstance<LineNumberNode>().map { lineNumber ->
+        val index = classSMAP.intervals.binarySearch(RangeMapping(lineNumber.line, lineNumber.line, 1), Comparator {
             value, key ->
             if (key.dest in value) 0 else RangeMapping.Comparator.compare(value, key)
         })
         if (index < 0) {
-            error("Unmapped label in inlined function $node ${node.line}")
+            error("Unmapped label in inlined function $node ${lineNumber.line}")
         }
-        LabelAndMapping(node, classSMAP.intervals[index])
+        LabelAndMapping(lineNumber, classSMAP.intervals[index])
     }
 }
 
