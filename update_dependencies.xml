@@ -437,8 +437,6 @@
                     <equals arg1="${markdown.abi.incompatible}" arg2="0"/>
                 </not>
             </condition>
-            <!-- remove after bootstrapping markdown -->
-            <property name="markdown.need.recompile" value="true" />
 
             <sequential if:set="markdown.need.recompile">
                 <echo message="Recompiling intellij-markdown manually"/>
