@@ -18,8 +18,17 @@ package org.jetbrains.uast
 interface UType : UElement, UNamed, UFqNamed, UAnnotated, UResolvable, NoTraverse {
     override fun matchesName(name: String) = this.name == name || this.name.endsWith(".$name")
 
+    /* The simple type name is only for the debug purposes. Do not check against it in the production code */
+    override val name: String
+
+    /* Semantics: returns true if the type is either a boxed or an unboxed, false otherwise */
     val isInt: Boolean
+    val isLong: Boolean
+    val isFloat: Boolean
+    val isDouble: Boolean
+    val isChar: Boolean
     val isBoolean: Boolean
+    val isByte: Boolean
 
     override fun logString() = "UType ($name)"
     override fun renderString() = name
@@ -38,6 +47,11 @@ interface UTypeReference : UDeclaration, UResolvable, NoTraverse {
 
 object UastErrorType : UType, NoAnnotations {
     override val isInt = false
+    override val isLong = false
+    override val isFloat = false
+    override val isDouble = false
+    override val isChar = false
+    override val isByte = false
     override val parent = null
     override val name = "<error>"
     override val fqName = null

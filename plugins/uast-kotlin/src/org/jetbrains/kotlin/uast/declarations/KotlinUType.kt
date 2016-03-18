@@ -17,9 +17,12 @@
 package org.jetbrains.kotlin.uast
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.name.FqNameUnsafe
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.typeUtil.isBooleanOrNullableBoolean
 import org.jetbrains.uast.*
 
 class KotlinUType(
@@ -42,8 +45,30 @@ class KotlinUType(
     }
 
     override val isBoolean: Boolean
-        get() = type.isBooleanOrNullableBoolean()
+        get() = checkType(KotlinBuiltIns.FQ_NAMES._boolean)
 
-    //TODO
+    override val isLong: Boolean
+        get() = checkType(KotlinBuiltIns.FQ_NAMES._long)
+
+    override val isFloat: Boolean
+        get() = checkType(KotlinBuiltIns.FQ_NAMES._float)
+
+    override val isDouble: Boolean
+        get() = checkType(KotlinBuiltIns.FQ_NAMES._double)
+
+    override val isChar: Boolean
+        get() = checkType(KotlinBuiltIns.FQ_NAMES._char)
+
+    override val isByte: Boolean
+        get() = checkType(KotlinBuiltIns.FQ_NAMES._byte)
+
+    private fun checkType(fqNameUnsafe: FqNameUnsafe): Boolean {
+        val descriptor = type.constructor.declarationDescriptor
+        return descriptor is ClassDescriptor
+               && descriptor.getName() == fqNameUnsafe.shortName()
+               && fqNameUnsafe == DescriptorUtils.getFqName(descriptor)
+    }
+
+    //TODO support descriptor annotations
     override val annotations = emptyList<UAnnotation>()
 }
