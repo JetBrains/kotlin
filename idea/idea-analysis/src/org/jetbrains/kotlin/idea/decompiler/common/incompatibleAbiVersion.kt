@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.decompiler.common
 
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DecompiledText
+import org.jetbrains.kotlin.idea.decompiler.textBuilder.DecompiledTextIndex
 import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 
 private val FILE_ABI_VERSION_MARKER: String = "FILE_ABI"
@@ -34,6 +35,6 @@ fun <V : BinaryVersion> createIncompatibleAbiVersionDecompiledText(expectedVersi
             INCOMPATIBLE_ABI_VERSION_COMMENT
                     .replace(CURRENT_ABI_VERSION_MARKER, expectedVersion.toString())
                     .replace(FILE_ABI_VERSION_MARKER, actualVersion.toString()),
-            mapOf()
+            DecompiledTextIndex.Empty
     )
 }

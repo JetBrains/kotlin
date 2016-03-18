@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,25 +16,12 @@
 
 package org.jetbrains.kotlin.idea.decompiler
 
-import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DecompiledText
-import org.jetbrains.kotlin.idea.decompiler.textBuilder.descriptorToKey
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.load.kotlin.BuiltInClassesAreSerializableOnJvm
-import org.jetbrains.kotlin.psi.KtCallableDeclaration
-import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.idea.decompiler.textBuilder.DecompiledTextIndexer
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.jetbrains.kotlin.utils.concurrent.block.LockedClearableLazyValue
 
 open class KtDecompiledFile(
@@ -44,38 +31,6 @@ open class KtDecompiledFile(
 
     private val decompiledText = LockedClearableLazyValue(Any()) {
         buildDecompiledText(provider.virtualFile)
-    }
-
-    fun getDeclarationForDescriptor(descriptor: DeclarationDescriptor): KtDeclaration? {
-        val original = descriptor.original
-
-        if (original is ValueParameterDescriptor) {
-            val callable = original.containingDeclaration
-            val callableDeclaration = getDeclarationForDescriptor(callable) as? KtCallableDeclaration ?: return null
-            return callableDeclaration.valueParameters[original.index]
-        }
-
-        if (original is ConstructorDescriptor && original.isPrimary) {
-            val classOrObject = getDeclarationForDescriptor(original.containingDeclaration) as? KtClassOrObject
-            return classOrObject?.getPrimaryConstructor() ?: classOrObject
-        }
-
-        return original.findElementForDescriptor() ?: run {
-            if (descriptor !is ClassDescriptor) return null
-
-            val classFqName = descriptor.fqNameSafe
-            if (BuiltInClassesAreSerializableOnJvm.isSerializableInJava(classFqName)) {
-                val builtInDescriptor = TargetPlatform.Default.builtIns.builtInsModule.resolveTopLevelClass(classFqName, NoLookupLocation.FROM_IDE)
-                return builtInDescriptor?.findElementForDescriptor()
-            }
-            return null
-        }
-    }
-
-    private fun DeclarationDescriptor.findElementForDescriptor(): KtDeclaration? {
-        return decompiledText.get().renderedDescriptorsToRange[descriptorToKey(this)]?.let { range ->
-            PsiTreeUtil.findElementOfClassAtRange(this@KtDecompiledFile, range.startOffset, range.endOffset, KtDeclaration::class.java)
-        }
     }
 
     override fun getText(): String? {
@@ -89,9 +44,8 @@ open class KtDecompiledFile(
         decompiledText.drop()
     }
 
-    @TestOnly
-    fun getRenderedDescriptorsToRange(): Map<String, TextRange> {
-        return decompiledText.get().renderedDescriptorsToRange
+    fun <T : Any> getDeclaration(indexer: DecompiledTextIndexer<T>, key: T): KtDeclaration? {
+        val range = decompiledText.get().index.getRange(indexer, key) ?: return null
+        return PsiTreeUtil.findElementOfClassAtRange(this@KtDecompiledFile, range.startOffset, range.endOffset, KtDeclaration::class.java)
     }
 }
-
