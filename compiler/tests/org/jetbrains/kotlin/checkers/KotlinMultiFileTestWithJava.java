@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.checkers;
 
+import com.intellij.openapi.util.io.FileUtil;
 import kotlin.collections.CollectionsKt;
 import kotlin.io.FilesKt;
 import kotlin.text.Charsets;
@@ -68,6 +69,12 @@ public abstract class KotlinMultiFileTestWithJava<M, F> extends KotlinTestWithEn
             ContentRootsKt.addKotlinSourceRoot(configuration, kotlinSourceRoot.getPath());
         }
         return KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, getEnvironmentConfigFiles());
+    }
+
+    @Override
+    protected void removeEnvironment() throws Exception {
+        if (javaFilesDir != null) FileUtil.delete(javaFilesDir);
+        if (kotlinSourceRoot != null) FileUtil.delete(kotlinSourceRoot);
     }
 
     @NotNull
