@@ -71,6 +71,12 @@ public class InlineSizeReductionTestGenerated extends AbstractInlineSizeReductio
         doTest(fileName);
     }
 
+    @TestMetadata("ternaryConditional.kt")
+    public void testTernaryConditional() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineSizeReduction/cases/ternaryConditional.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("this.kt")
     public void testThis() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineSizeReduction/cases/this.kt");
