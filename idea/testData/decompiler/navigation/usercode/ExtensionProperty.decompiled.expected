@@ -1,0 +1,6 @@
+MainKt.class
+public val kotlin.String.<1>exProp: kotlin.String /* compiled code */
+
+public val <T> testData.libraries.Pair<T, T>.<3>exProp: kotlin.String /* compiled code */
+ Pair.class
+public final class Pair<A, B> public <2>constructor(first: A, second: B) {

@@ -68,6 +68,7 @@ import org.jetbrains.kotlin.idea.debugger.AbstractKotlinSteppingTest
 import org.jetbrains.kotlin.idea.debugger.AbstractPositionManagerTest
 import org.jetbrains.kotlin.idea.debugger.AbstractSmartStepIntoTest
 import org.jetbrains.kotlin.idea.debugger.evaluate.*
+import org.jetbrains.kotlin.idea.decompiler.navigation.AbstractNavigateToDecompiledLibraryTest
 import org.jetbrains.kotlin.idea.decompiler.navigation.AbstractNavigateToLibrarySourceTest
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.AbstractClsStubBuilderTest
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.AbstractCommonDecompiledTextFromJsMetadataTest
@@ -426,6 +427,10 @@ fun main(args: Array<String>) {
         testClass<AbstractNavigateToLibrarySourceTest>() {
             model("decompiler/navigation/usercode")
             model("decompiler/navigation/usercode", testClassName ="UsercodeWithJSModule", testMethod = "doWithJSModuleTest")
+        }
+
+        testClass<AbstractNavigateToDecompiledLibraryTest>() {
+            model("decompiler/navigation/usercode")
         }
 
         testClass<AbstractKotlinGotoImplementationTest>() {

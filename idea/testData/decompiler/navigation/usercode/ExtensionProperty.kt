@@ -5,18 +5,3 @@ fun foo() {
     val p = Pair(1, 2)
     println(p.exProp)
 }
-
-// main.kt
-//public val String.<1>exProp : String
-//get() {
-//    return this
-//}
-//
-//public val Int.exProp : Int
-//get() {
-//    return this
-//}
-//
-//public class Pair<A, B><2>(val first: A, val second: B)
-//
-//public val <T> Pair<T, T>.<3>exProp : String

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,20 +16,18 @@
 
 package org.jetbrains.kotlin.idea.decompiler.navigation
 
-import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference
-import com.intellij.testFramework.LightProjectDescriptor
-import com.intellij.testFramework.UsefulTestCase
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.navigation.NavigationTestUtils
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.test.*
+import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
-import java.util.LinkedHashMap
+import java.util.*
 
-abstract class AbstractNavigateToLibrarySourceTest : KotlinCodeInsightTestCase() {
+abstract class AbstractNavigateToLibraryTest : KotlinCodeInsightTestCase() {
 
     protected fun doTest(path: String): Unit = doTestEx(path)
 
@@ -37,6 +35,9 @@ abstract class AbstractNavigateToLibrarySourceTest : KotlinCodeInsightTestCase()
         val jsModule = this.createModule("js-module")
         jsModule.configureAs(ModuleKind.KOTLIN_JAVASCRIPT)
     }
+
+    abstract val withSource: Boolean
+    abstract val expectedFileExt: String
 
     protected fun doTestEx(path: String, additionalConfig: (() -> Unit)? = null) {
         configureByFile(path)
@@ -46,8 +47,8 @@ abstract class AbstractNavigateToLibrarySourceTest : KotlinCodeInsightTestCase()
             additionalConfig()
         }
 
-        checkAnnotatedLibraryCode(false)
-        checkAnnotatedLibraryCode(true)
+        checkAnnotatedLibraryCode(path, false)
+        checkAnnotatedLibraryCode(path, true)
     }
 
     override fun tearDown() {
@@ -58,11 +59,10 @@ abstract class AbstractNavigateToLibrarySourceTest : KotlinCodeInsightTestCase()
     override fun getTestDataPath(): String =
             KotlinTestUtils.getHomeDirectory() + File.separator
 
-    private fun checkAnnotatedLibraryCode(forceResolve: Boolean) {
+    private fun checkAnnotatedLibraryCode(path: String, forceResolve: Boolean) {
         SourceNavigationHelper.setForceResolve(forceResolve)
         val actualCode = NavigationTestUtils.getNavigateElementsText(project, collectInterestingNavigationElements())
-        val expectedCode = getExpectedAnnotatedLibraryCode()
-        UsefulTestCase.assertSameLines(expectedCode, actualCode)
+        KotlinTestUtils.assertEqualsToFile(File(path.replace(".kt", expectedFileExt)), actualCode)
     }
 
     private fun collectInterestingReferences(): Collection<KtReference> {
@@ -89,7 +89,7 @@ abstract class AbstractNavigateToLibrarySourceTest : KotlinCodeInsightTestCase()
 
         val targetNavFile = targetNavPsiFile.virtualFile ?: return
 
-        if (ProjectFileIndex.SERVICE.getInstance(project).isInLibrarySource(targetNavFile)) {
+        if (!ProjectRootsUtil.isProjectSourceFile(project, targetNavFile)) {
             put(ref.element, ref)
         }
     }
@@ -101,12 +101,16 @@ abstract class AbstractNavigateToLibrarySourceTest : KotlinCodeInsightTestCase()
                 target!!.navigationElement
             }
 
-    private fun getExpectedAnnotatedLibraryCode(): String {
-        val document = getDocument(file)
-        TestCase.assertNotNull(document)
-        return KotlinTestUtils.getLastCommentedLines(document)
-    }
+    open fun getProjectDescriptor(): KotlinLightProjectDescriptor =
+            JdkAndMockLibraryProjectDescriptor(PluginTestCaseBase.getTestDataPathBase() + "/decompiler/navigation/library", withSource)
+}
 
-    private fun getProjectDescriptor(): KotlinLightProjectDescriptor =
-            JdkAndMockLibraryProjectDescriptor(PluginTestCaseBase.getTestDataPathBase() + "/decompiler/navigation/library", true)
+abstract class AbstractNavigateToDecompiledLibraryTest : AbstractNavigateToLibraryTest() {
+    override val withSource: Boolean get() = false
+    override val expectedFileExt: String get() = ".decompiled.expected"
+}
+
+abstract class AbstractNavigateToLibrarySourceTest : AbstractNavigateToLibraryTest() {
+    override val withSource: Boolean get() = true
+    override val expectedFileExt: String get() = ".source.expected"
 }

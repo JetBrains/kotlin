@@ -1,0 +1,2 @@
+main.kt
+public inline fun <T> T.<1>filter(predicate: (T)-> Boolean) : T? = this
