@@ -64,6 +64,16 @@ internal class TemporaryVariableElimination(private val root: JsStatement) {
                 return super.visit(x, ctx)
             }
 
+            override fun visit(x: JsIf, ctx: JsContext<*>): Boolean {
+                accept(x.ifExpression)
+                lastAssignedVars.clear()
+
+                accept(x.thenStatement)
+                x.elseStatement?.let { accept(it) }
+
+                return false
+            }
+
             override fun visit(x: JsInvocation, ctx: JsContext<*>): Boolean {
                 x.arguments.asReversed().forEach { accept(it) }
                 accept(x.qualifier)
@@ -128,6 +138,16 @@ internal class TemporaryVariableElimination(private val root: JsStatement) {
             override fun visit(x: JsFunction, ctx: JsContext<*>): Boolean {
                 x.collectFreeVariables().forEach { useVariable(it); useVariable(it) }
                 return super.visit(x, ctx)
+            }
+
+            override fun visit(x: JsConditional, ctx: JsContext<*>): Boolean {
+                accept(x.testExpression)
+                lastAssignedVars.clear()
+
+                accept(x.thenExpression)
+                accept(x.elseExpression)
+
+                return false
             }
         }.accept(root)
     }

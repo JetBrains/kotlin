@@ -245,6 +245,12 @@ public class InlineEvaluationOrderTestGenerated extends AbstractInlineEvaluation
         doTest(fileName);
     }
 
+    @TestMetadata("ternaryConditional.kt")
+    public void testTernaryConditional() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/ternaryConditional.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("while.kt")
     public void testWhile() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/while.kt");
