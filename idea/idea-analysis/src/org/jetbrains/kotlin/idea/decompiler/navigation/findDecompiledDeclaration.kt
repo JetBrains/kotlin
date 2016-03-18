@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,13 +20,22 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.decompiler.KtDecompiledFile
+import org.jetbrains.kotlin.idea.decompiler.textBuilder.DecompiledTextIndexer
 import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionFqnNameIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelPropertyFqnNameIndex
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.load.kotlin.BuiltInClassesAreSerializableOnJvm
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.jetbrains.kotlin.types.ErrorUtils
 import java.util.*
 
@@ -40,8 +49,8 @@ fun findDecompiledDeclaration(
 
     val decompiledFiles = findDecompiledFilesForDescriptor(project, referencedDescriptor)
 
-    return decompiledFiles.asSequence().mapNotNull {
-        it.getDeclarationForDescriptor(referencedDescriptor)
+    return decompiledFiles.asSequence().mapNotNull { file ->
+        ByDescriptorIndexer.getDeclarationForDescriptor(referencedDescriptor, file)
     }.firstOrNull()
 }
 
@@ -89,6 +98,48 @@ private fun findCandidateDeclarationsInIndex(
             return KotlinTopLevelPropertyFqnNameIndex.getInstance().get(fqName, project, scope)
         }
         else -> error("Referenced non local declaration that is not inside top level function, property of class:\n $referencedDescriptor")
+    }
+}
+
+object ByDescriptorIndexer : DecompiledTextIndexer<String> {
+    override fun indexDescriptor(descriptor: DeclarationDescriptor): Collection<String> {
+        return listOf(descriptor.toStringKey())
+    }
+
+    internal fun getDeclarationForDescriptor(descriptor: DeclarationDescriptor, file: KtDecompiledFile): KtDeclaration? {
+        val original = descriptor.original
+
+        if (original is ValueParameterDescriptor) {
+            val callable = original.containingDeclaration
+            val callableDeclaration = getDeclarationForDescriptor(callable, file) as? KtCallableDeclaration ?: return null
+            return callableDeclaration.valueParameters[original.index]
+        }
+
+        if (original is ConstructorDescriptor && original.isPrimary) {
+            val classOrObject = getDeclarationForDescriptor(original.containingDeclaration, file) as? KtClassOrObject
+            return classOrObject?.getPrimaryConstructor() ?: classOrObject
+        }
+
+
+        return file.getDeclaration(this, original.toStringKey()) ?: run {
+            if (descriptor !is ClassDescriptor) return null
+
+            val classFqName = descriptor.fqNameSafe
+            if (BuiltInClassesAreSerializableOnJvm.isSerializableInJava(classFqName)) {
+                val builtInDescriptor = TargetPlatform.Default.builtIns.builtInsModule.resolveTopLevelClass(classFqName, NoLookupLocation.FROM_IDE)
+                return builtInDescriptor?.let { file.getDeclaration(this, it.toStringKey()) }
+            }
+            return null
+        }
+    }
+
+    private fun DeclarationDescriptor.toStringKey(): String {
+        return descriptorRendererForKeys.render(this)
+    }
+
+    private val descriptorRendererForKeys = DescriptorRenderer.COMPACT_WITH_MODIFIERS.withOptions {
+        modifiers = DescriptorRendererModifier.ALL
+        withDefinedIn = true
     }
 }
 

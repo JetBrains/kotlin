@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.decompiler.textBuilder
 
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.decompiler.navigation.ByDescriptorIndexer
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
@@ -27,22 +28,10 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.kotlin.resolve.descriptorUtil.secondaryConstructors
 import org.jetbrains.kotlin.types.isFlexible
-import java.util.*
 
 private val DECOMPILED_CODE_COMMENT = "/* compiled code */"
 private val DECOMPILED_COMMENT_FOR_PARAMETER = "/* = compiled code */"
 private val FLEXIBLE_TYPE_COMMENT = "/* platform type */"
-
-private val descriptorRendererForKeys = DescriptorRenderer.COMPACT_WITH_MODIFIERS.withOptions {
-    modifiers = DescriptorRendererModifier.ALL
-    withDefinedIn = true
-}
-
-fun descriptorToKey(descriptor: DeclarationDescriptor): String {
-    return descriptorRendererForKeys.render(descriptor)
-}
-
-data class DecompiledText(val text: String, val renderedDescriptorsToRange: Map<String, TextRange>)
 
 fun DescriptorRendererOptions.defaultDecompilerRendererOptions() {
     withDefinedIn = false
@@ -56,10 +45,10 @@ fun DescriptorRendererOptions.defaultDecompilerRendererOptions() {
 fun buildDecompiledText(
         packageFqName: FqName,
         descriptors: List<DeclarationDescriptor>,
-        descriptorRenderer: DescriptorRenderer
+        descriptorRenderer: DescriptorRenderer,
+        indexers: Collection<DecompiledTextIndexer<*>> = listOf(ByDescriptorIndexer)
 ): DecompiledText {
     val builder = StringBuilder()
-    val renderedDescriptorsToRange = HashMap<String, TextRange>()
 
     fun appendDecompiledTextAndPackageName() {
         builder.append("// IntelliJ API Decompiler stub source generated from a class file\n" + "// Implementation of methods is not available")
@@ -69,8 +58,10 @@ fun buildDecompiledText(
         }
     }
 
-    fun saveDescriptorToRange(descriptor: DeclarationDescriptor, startOffset: Int, endOffset: Int) {
-        renderedDescriptorsToRange[descriptorToKey(descriptor)] = TextRange(startOffset, endOffset)
+    val textIndex = DecompiledTextIndex(indexers)
+
+    fun indexDescriptor(descriptor: DeclarationDescriptor, startOffset: Int, endOffset: Int) {
+        textIndex.addToIndex(descriptor, TextRange(startOffset, endOffset))
     }
 
     fun appendDescriptor(descriptor: DeclarationDescriptor, indent: String, lastEnumEntry: Boolean? = null) {
@@ -161,12 +152,12 @@ fun buildDecompiledText(
         }
 
         builder.append("\n")
-        saveDescriptorToRange(descriptor, startOffset, endOffset)
+        indexDescriptor(descriptor, startOffset, endOffset)
 
         if (descriptor is ClassDescriptor) {
             val primaryConstructor = descriptor.unsubstitutedPrimaryConstructor
             if (primaryConstructor != null) {
-                saveDescriptorToRange(primaryConstructor, startOffset, endOffset)
+                indexDescriptor(primaryConstructor, startOffset, endOffset)
             }
         }
     }
@@ -177,5 +168,5 @@ fun buildDecompiledText(
         builder.append("\n")
     }
 
-    return DecompiledText(builder.toString(), renderedDescriptorsToRange)
+    return DecompiledText(builder.toString(), textIndex)
 }
