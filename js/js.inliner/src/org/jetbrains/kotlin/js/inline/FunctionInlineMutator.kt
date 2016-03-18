@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.js.inline.context.InliningContext
 import org.jetbrains.kotlin.js.inline.context.NamingContext
 import org.jetbrains.kotlin.js.inline.util.*
 import org.jetbrains.kotlin.js.inline.util.rewriters.ReturnReplacingVisitor
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.newVar
 
 class FunctionInlineMutator
 private constructor(

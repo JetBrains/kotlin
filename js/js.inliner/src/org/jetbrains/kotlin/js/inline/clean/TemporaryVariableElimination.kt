@@ -190,7 +190,7 @@ internal class TemporaryVariableElimination(private val root: JsStatement) {
                 val name = x.name
                 if (x.qualifier == null && name != null && shouldConsiderTemporary(name)) {
                     hasChanges = true
-                    val newExpr = definedValues[name]!!
+                    val newExpr = definedValues[name] ?: JsLiteral.UNDEFINED
                     ctx.replaceMe(accept(newExpr))
                     usages[name] = usages[name]!! - 1
                     return false
@@ -201,6 +201,17 @@ internal class TemporaryVariableElimination(private val root: JsStatement) {
             override fun visit(x: JsBreak, ctx: JsContext<*>) = false
 
             override fun visit(x: JsContinue, ctx: JsContext<*>) = false
+
+            override fun visit(x: JsReturn, ctx: JsContext<*>): Boolean {
+                val returnValue = x.expression
+                if (returnValue is JsNameRef) {
+                    val name = returnValue.name
+                    if (returnValue.qualifier == null && name != null && name in temporary && definitions[name] ?: 0 == 0) {
+                        x.expression = null
+                    }
+                }
+                return super.visit(x, ctx)
+            }
         }.accept(root)
     }
 

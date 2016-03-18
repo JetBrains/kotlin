@@ -157,8 +157,7 @@ internal class TemporaryAssignmentElimination(private val root: JsBlock) {
 
                 val assignment = JsAstUtils.decomposeAssignmentToVariable(x.expression)
                 if (assignment != null) {
-                    val (name, value) = assignment
-                    val usage = getUsage(name)
+                    val usage = getUsage(assignment.first)
                     if (usage is Usage.Declaration) {
                         usage.count++
                     }
