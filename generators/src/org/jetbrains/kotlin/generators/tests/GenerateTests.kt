@@ -541,7 +541,12 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractReferenceResolveInJavaTest>() {
-            model("resolve/referenceInJava", extension = "java")
+            model("resolve/referenceInJava/binaryAndSource", extension = "java")
+            model("resolve/referenceInJava/sourceOnly", extension = "java")
+        }
+
+        testClass<AbstractReferenceToCompiledKotlinResolveInJavaTest>() {
+            model("resolve/referenceInJava/binaryAndSource", extension = "java")
         }
 
         testClass<AbstractReferenceResolveWithLibTest>() {
