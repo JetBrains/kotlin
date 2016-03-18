@@ -30,11 +30,17 @@ class KotlinUBinaryExpression(
     override val rightOperand by lz { KotlinConverter.convertOrEmpty(psi.right, this) }
 
     override val operator = when (psi.operationToken) {
+        KtTokens.EQ -> UastBinaryOperator.ASSIGN
         KtTokens.PLUS -> UastBinaryOperator.PLUS
         KtTokens.MINUS -> UastBinaryOperator.MINUS
         KtTokens.MUL -> UastBinaryOperator.MULT
         KtTokens.DIV -> UastBinaryOperator.DIV
         KtTokens.PERC -> UastBinaryOperator.MOD
+        KtTokens.OROR -> UastBinaryOperator.LOGICAL_OR
+        KtTokens.ANDAND -> UastBinaryOperator.LOGICAL_AND
+        //KtTokens.OR -> UastBinaryOperator.BITWISE_OR
+        //KtTokens.AND -> UastBinaryOperator.BITWISE_AND
+        //KtTokens.XOR -> UastBinaryOperator.BITWISE_XOR
         KtTokens.EQEQ -> UastBinaryOperator.EQUALS
         KtTokens.EXCLEQ -> UastBinaryOperator.NOT_EQUALS
         KtTokens.EQEQEQ -> UastBinaryOperator.IDENTITY_EQUALS
@@ -43,6 +49,11 @@ class KotlinUBinaryExpression(
         KtTokens.GTEQ -> UastBinaryOperator.GREATER_OR_EQUAL
         KtTokens.LT -> UastBinaryOperator.LESS
         KtTokens.LTEQ -> UastBinaryOperator.LESS_OR_EQUAL
+        KtTokens.PLUSEQ -> UastBinaryOperator.PLUS_ASSIGN
+        KtTokens.MINUSEQ -> UastBinaryOperator.MINUS_ASSIGN
+        KtTokens.MULTEQ -> UastBinaryOperator.MULTIPLY_ASSIGN
+        KtTokens.DIVEQ -> UastBinaryOperator.DIVIDE_ASSIGN
+        KtTokens.PERCEQ -> UastBinaryOperator.REMAINDER_ASSIGN
         KtTokens.IN_KEYWORD -> KotlinBinaryOperators.IN
         KtTokens.NOT_IN -> KotlinBinaryOperators.NOT_IN
         else -> UastBinaryOperator.UNKNOWN
