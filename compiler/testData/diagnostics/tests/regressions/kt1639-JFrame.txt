@@ -293,10 +293,10 @@ package test {
         invisible_fake final override /*1*/ /*fake_override*/ fun getFocusTraversalKeys_NoIDCheck(/*0*/ p0: kotlin.Int): kotlin.collections.(Mutable)Set<(raw) kotlin.Any?>!
         public open override /*1*/ /*fake_override*/ fun getFocusTraversalPolicy(): [ERROR : Unresolved java classifier: FocusTraversalPolicy]!
         public open override /*1*/ /*fake_override*/ fun getFocusableWindowState(): kotlin.Boolean
-        @java.beans.Transient() public open override /*1*/ /*fake_override*/ fun getFont(): [ERROR : Unresolved java classifier: Font]!
+        @java.beans.Transient() /* annotation class not found */ public open override /*1*/ /*fake_override*/ fun getFont(): [ERROR : Unresolved java classifier: Font]!
         public open override /*1*/ /*fake_override*/ fun getFontMetrics(/*0*/ p0: [ERROR : Unresolved java classifier: Font]!): [ERROR : Unresolved java classifier: FontMetrics]!
         invisible_fake final override /*1*/ /*fake_override*/ fun getFont_NoClientCode(): [ERROR : Unresolved java classifier: Font]!
-        @java.beans.Transient() public open override /*1*/ /*fake_override*/ fun getForeground(): [ERROR : Unresolved java classifier: Color]!
+        @java.beans.Transient() /* annotation class not found */ public open override /*1*/ /*fake_override*/ fun getForeground(): [ERROR : Unresolved java classifier: Color]!
         public open override /*1*/ /*fake_override*/ fun getGlassPane(): java.awt.Component!
         public open override /*1*/ /*fake_override*/ fun getGraphics(): [ERROR : Unresolved java classifier: Graphics]!
         public open override /*1*/ /*fake_override*/ fun getGraphicsConfiguration(): [ERROR : Unresolved java classifier: GraphicsConfiguration]!
@@ -450,7 +450,7 @@ package test {
         public open override /*1*/ /*fake_override*/ fun isUndecorated(): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun isValid(): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun isValidateRoot(): kotlin.Boolean
-        @java.beans.Transient() public open override /*1*/ /*fake_override*/ fun isVisible(): kotlin.Boolean
+        @java.beans.Transient() /* annotation class not found */ public open override /*1*/ /*fake_override*/ fun isVisible(): kotlin.Boolean
         invisible_fake final override /*1*/ /*fake_override*/ fun isVisible_NoClientCode(): kotlin.Boolean
         @kotlin.Deprecated(message = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun keyDown(/*0*/ p0: [ERROR : Unresolved java classifier: Event]!, /*1*/ p1: kotlin.Int): kotlin.Boolean
         @kotlin.Deprecated(message = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun keyUp(/*0*/ p0: [ERROR : Unresolved java classifier: Event]!, /*1*/ p1: kotlin.Int): kotlin.Boolean

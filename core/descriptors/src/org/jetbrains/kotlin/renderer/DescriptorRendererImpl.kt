@@ -374,9 +374,13 @@ internal class DescriptorRendererImpl(
             if (target != null) {
                 append(target.renderName + ":")
             }
-            append(renderType(annotation.type))
+            val annotationType = annotation.type
+            append(renderType(annotationType))
             if (verbose) {
                 renderAndSortAnnotationArguments(annotation).joinTo(this, ", ", "(", ")")
+                if (annotationType.isError) {
+                    append(" /* annotation class not found */")
+                }
             }
         }
     }
