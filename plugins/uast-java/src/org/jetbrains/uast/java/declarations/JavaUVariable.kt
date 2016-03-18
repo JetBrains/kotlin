@@ -30,7 +30,7 @@ class JavaUVariable(
     override val name: String
         get() = psi.name.orAnonymous()
 
-    override val nameElement by lz { JavaConverter.convert(psi.nameIdentifier, this) }
+    override val nameElement by lz { JavaDumbUElement(psi.nameIdentifier, this) }
     override val type by lz { JavaConverter.convert(psi.type, this) }
 
     override val initializer by lz { JavaConverter.convertOrEmpty(psi.initializer, this) }

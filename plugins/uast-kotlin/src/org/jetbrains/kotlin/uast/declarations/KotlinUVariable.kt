@@ -32,7 +32,7 @@ open class KotlinUVariable(
     override val name: String
         get() = psi.name.orAnonymous()
 
-    override val nameElement by lz { KotlinConverter.asSimpleReference(psi.nameIdentifier, this) }
+    override val nameElement by lz { KotlinDumbUElement(psi.nameIdentifier, this) }
 
     override val initializer by lz { KotlinConverter.convertOrEmpty(psi.initializer, this) }
 
@@ -90,7 +90,7 @@ class KotlinParameterUVariable(
     override val name: String
         get() = psi.name.orAnonymous()
 
-    override val nameElement by lz { KotlinConverter.asSimpleReference(psi.nameIdentifier, this) }
+    override val nameElement by lz { KotlinDumbUElement(psi.nameIdentifier, this) }
 
     override val initializer by lz { KotlinConverter.convert(psi.defaultValue, this) as? UExpression }
 

@@ -57,7 +57,7 @@ class KotlinConstructorUFunction(
         override val parent: UElement
 ) : KotlinAbstractUFunction(), PsiElementBacked {
     override val nameElement by lz {
-        val constructorKeyword = psi.getConstructorKeyword()?.let { KotlinPsiElementStub(it, this) }
+        val constructorKeyword = psi.getConstructorKeyword()?.let { KotlinDumbUElement(it, this) }
         constructorKeyword ?: this.getContainingFunction()?.nameElement
     }
 
@@ -73,7 +73,7 @@ class KotlinUFunction(
         override val psi: KtFunction,
         override val parent: UElement
 ) : KotlinAbstractUFunction(), PsiElementBacked {
-    override val nameElement by lz { psi.nameIdentifier?.let { KotlinConverter.convert(it, this) } }
+    override val nameElement by lz { psi.nameIdentifier?.let { KotlinDumbUElement(it, this) } }
 
     override val kind = UastFunctionKind.FUNCTION
 
@@ -117,7 +117,7 @@ class KotlinAnonymousInitializerUFunction(
 
     override fun getSuperFunctions(context: UastContext) = emptyList<UFunction>()
 
-    override val nameElement by lz { KotlinPsiElementStub(psi.node.findChildByType(KtTokens.INIT_KEYWORD)?.psi ?: psi, this) }
+    override val nameElement by lz { KotlinDumbUElement(psi.node.findChildByType(KtTokens.INIT_KEYWORD)?.psi ?: psi, this) }
 
     override val name: String
         get() = "<init>"
@@ -135,7 +135,7 @@ open class KotlinDefaultPrimaryConstructorUFunction(
     override val kind: UastFunctionKind
         get() = UastFunctionKind.CONSTRUCTOR
 
-    override val nameElement by lz { psi.nameIdentifier?.let { KotlinPsiElementStub(it, this) } }
+    override val nameElement by lz { KotlinDumbUElement(psi.nameIdentifier, this) }
     override val name: String
         get() = "<init>"
 
@@ -174,7 +174,7 @@ open class KotlinObjectLiteralConstructorUFunction(
     override val kind: UastFunctionKind
         get() = UastFunctionKind.CONSTRUCTOR
 
-    override val nameElement by lz { psi.nameIdentifier?.let { KotlinPsiElementStub(it, this) } }
+    override val nameElement by lz { KotlinDumbUElement(psi.nameIdentifier, this) }
     override val name: String
         get() = "<init>"
 

@@ -20,10 +20,10 @@ import org.jetbrains.uast.NoTraverse
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.psi.PsiElementBacked
 
-class JavaPsiElementStub(
-        override val psi: PsiElement,
+class JavaDumbUElement(
+        override val psi: PsiElement?,
         override val parent: UElement
-) : UElement, PsiElementBacked, NoTraverse {
+) : JavaAbstractUElement(), UElement, PsiElementBacked, NoTraverse {
     override fun logString() = "JavaPsiElementStub"
     override fun renderString() = "<stub@$psi>"
 }

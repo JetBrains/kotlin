@@ -54,7 +54,7 @@ class PropertyAsCallAndroidUastAdditionalChecker : AndroidUastAdditionalChecker 
             override val functionReference = KotlinNameUSimpleReferenceExpression(expr.psi, expr.identifier, expr.parent)
             override val classReference = null
             override val functionName = accessorDescriptor.name.asString()
-            override val functionNameElement by lz { KotlinPsiElementStub(ktElement, this) }
+            override val functionNameElement by lz { KotlinDumbUElement(ktElement, this) }
 
             override val valueArgumentCount: Int
                 get() = if (setterValue != null) 1 else 0

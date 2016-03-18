@@ -130,7 +130,7 @@ class KotlinUSuperConstructorCallExpression(
 
     override val functionNameElement by lz {
         try {
-            KotlinPsiElementStub(psi.getObjectKeyword(), this)
+            KotlinDumbUElement(psi.getObjectKeyword(), this)
         } catch (e: NullPointerException) {
             null
         }
