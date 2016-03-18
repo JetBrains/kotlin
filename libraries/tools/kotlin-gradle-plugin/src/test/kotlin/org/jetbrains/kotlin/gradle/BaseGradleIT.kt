@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.gradle
 
 import com.google.common.io.Files
+import com.intellij.openapi.util.io.FileUtil
 import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.gradle.util.createGradleCommand
 import org.jetbrains.kotlin.gradle.util.runProcess
@@ -171,8 +172,9 @@ abstract class BaseGradleIT {
     }
 
     fun CompiledProject.assertContainFiles(expected: Iterable<String>, actual: Iterable<String>, messagePrefix: String = ""): CompiledProject {
-        val actualSet = actual.toSortedSet()
-        assertTrue(actualSet.containsAll(expected.toList()), messagePrefix + "expected files: ${expected.toSortedSet().joinToString()}\n  !in actual files: ${actualSet.joinToString()}")
+        val expectedNormalized = expected.map(FileUtil::normalize).toSortedSet()
+        val actualNormalized = actual.map(FileUtil::normalize).toSortedSet()
+        assertTrue(actualNormalized.containsAll(expectedNormalized), messagePrefix + "expected files: ${expectedNormalized.joinToString()}\n  !in actual files: ${actualNormalized.joinToString()}")
         return this
     }
 

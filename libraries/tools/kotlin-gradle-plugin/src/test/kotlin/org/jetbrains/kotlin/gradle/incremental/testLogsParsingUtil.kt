@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.gradle.incremental
 
+import com.intellij.openapi.util.io.FileUtil
 import java.io.File
 
 class BuildStep(
@@ -44,7 +45,7 @@ fun parseTestBuildLog(file: File): List<BuildStep> {
             }
 
             if (readFiles) {
-                val path = line.trim()
+                val path = FileUtil.normalize(line.trim())
 
                 if (path.endsWith(".kt")) {
                     compiledKotlinFiles.add(path)

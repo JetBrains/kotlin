@@ -42,18 +42,18 @@ class BuildLogParserParametrizedIT : BaseGradleIT() {
             p.printlnSorted(stage.compileErrors)
         }
 
-        val actual = sb.toString()
+        val actualNormalized = sb.toString().normalizeLineEnds()
         val expectedFile = File(testDir, EXPECTED_PARSED_LOG_FILE_NAME)
 
         if (!expectedFile.isFile) {
             expectedFile.createNewFile()
-            expectedFile.writeText(actual)
+            expectedFile.writeText(actualNormalized)
 
             throw AssertionError("Expected file log did not exist, created: $expectedFile")
         }
 
-        val expectedContent = expectedFile.readText()
-        Assert.assertEquals("Parsed content was unexpected: ", actual, expectedContent)
+        val expectedNormalized = expectedFile.readText().normalizeLineEnds()
+        Assert.assertEquals("Parsed content was unexpected: ", expectedNormalized, actualNormalized)
     }
 
     companion object {
@@ -77,3 +77,5 @@ private fun <T : Comparable<T>> Printer.printlnSorted(elements: Iterable<T>) {
     popIndent()
 }
 
+private fun String.normalizeLineEnds(): String =
+        lines().map { it.trimEnd() }.joinToString(separator="\n")
