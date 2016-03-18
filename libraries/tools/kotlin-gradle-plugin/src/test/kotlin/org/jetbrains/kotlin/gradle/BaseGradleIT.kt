@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.gradle
 import com.google.common.io.Files
 import com.intellij.openapi.util.io.FileUtil
 import org.gradle.api.logging.LogLevel
+import org.jetbrains.kotlin.gradle.plugin.ThreadTracker
 import org.jetbrains.kotlin.gradle.util.createGradleCommand
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.junit.After
@@ -66,7 +67,14 @@ abstract class BaseGradleIT {
     }
 
     // the second parameter is for using with ToolingAPI, that do not like --daemon/--no-daemon  options at all
-    data class BuildOptions(val withDaemon: Boolean = false, val daemonOptionSupported: Boolean = true)
+    data class BuildOptions(
+            val withDaemon: Boolean = false,
+            val daemonOptionSupported: Boolean = true,
+            /**
+             * @see [ThreadTracker]
+             */
+            val assertThreadLeaks: Boolean = true
+    )
 
     open inner class Project(val projectName: String, val wrapperVersion: String = "1.4", val minLogLevel: LogLevel = LogLevel.DEBUG) {
         open val resourcesRoot = File(resourcesRootFile, "testProject/$projectName")
@@ -193,17 +201,20 @@ abstract class BaseGradleIT {
     private fun Project.createBuildCommand(params: Array<out String>, options: BuildOptions): List<String> =
             createGradleCommand(createGradleTailParameters(options, params))
 
-    protected fun Project.createGradleTailParameters(options: BuildOptions, params: Array<out String> = arrayOf()): List<String> =
-            params.asList() +
-                    listOf("-PpathToKotlinPlugin=" + File("local-repo").absolutePath,
-                            if (options.daemonOptionSupported)
-                                if (options.withDaemon) "--daemon"
-                                else "--no-daemon"
-                            else null,
-                            "--stacktrace",
-                            "--${minLogLevel.name.toLowerCase()}",
-                            "-Pkotlin.gradle.test=true")
-                            .filterNotNull()
+    protected fun Project.createGradleTailParameters(options: BuildOptions, tasks: Array<out String> = arrayOf()): List<String> =
+            tasks.toMutableList().apply {
+                add("--stacktrace")
+                add("--${minLogLevel.name.toLowerCase()}")
+                if (options.daemonOptionSupported) {
+                    add(if (options.withDaemon) "--daemon" else "--no-daemon")
+                }
+
+                add("-PpathToKotlinPlugin=" + File("local-repo").absolutePath)
+                if (options.assertThreadLeaks) {
+                    add("-P${ThreadTracker.ASSERT_THREAD_LEAKS_PROPERTY}=true")
+                }
+
+            }
 
     private fun String.normalize() = this.lineSequence().joinToString(SYSTEM_LINE_SEPARATOR)
 

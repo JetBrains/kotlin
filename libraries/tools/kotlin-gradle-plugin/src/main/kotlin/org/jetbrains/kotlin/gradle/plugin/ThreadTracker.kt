@@ -1,22 +1,18 @@
 package org.jetbrains.kotlin.gradle.plugin
 
-import org.gradle.api.Project
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logging
-import org.junit.Assert
-import java.util.HashSet
+import java.util.*
 
-public class ThreadTracker {
+class ThreadTracker {
     val log = Logging.getLogger(this.javaClass)
     private var before: Collection<Thread>? = getThreads()
 
     private fun getThreads(): Collection<Thread> = Thread.getAllStackTraces().keys
 
-    public fun checkThreadLeak(gradle: Gradle?) {
+    fun checkThreadLeak(gradle: Gradle?) {
         try {
-            val testThreads = gradle != null &&
-                    gradle.rootProject.hasProperty("kotlin.gradle.test") &&
-                    !gradle.rootProject.hasProperty("kotlin.gradle.noThreadTest")
+            val testThreads = gradle != null && gradle.rootProject.hasProperty(ASSERT_THREAD_LEAKS_PROPERTY)
 
             Thread.sleep(if (testThreads) 200L else 50L)
 
@@ -38,5 +34,9 @@ public class ThreadTracker {
         } finally {
             before = null
         }
+    }
+
+    companion object {
+        const val ASSERT_THREAD_LEAKS_PROPERTY = "kotlin.gradle.test.assertThreadLeaks"
     }
 }
