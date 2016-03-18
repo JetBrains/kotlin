@@ -47,6 +47,12 @@ public class InlineSizeReductionTestGenerated extends AbstractInlineSizeReductio
         doTest(fileName);
     }
 
+    @TestMetadata("noDuplicateVariableDeclaration.kt")
+    public void testNoDuplicateVariableDeclaration() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineSizeReduction/cases/noDuplicateVariableDeclaration.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("oneTopLevelReturn.kt")
     public void testOneTopLevelReturn() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineSizeReduction/cases/oneTopLevelReturn.kt");
