@@ -146,14 +146,20 @@ class LazyJavaTypeResolver(
 
             val kotlinDescriptor = javaToKotlin.mapJavaToKotlin(fqName) ?: return null
 
-            if (howThisTypeIsUsedEffectively == MEMBER_SIGNATURE_COVARIANT || howThisTypeIsUsedEffectively == SUPERTYPE) {
-                if (javaToKotlin.isReadOnly(kotlinDescriptor)) {
+            if (javaToKotlin.isReadOnly(kotlinDescriptor)) {
+                if (howThisTypeIsUsedEffectively == MEMBER_SIGNATURE_COVARIANT
+                        || howThisTypeIsUsedEffectively == SUPERTYPE
+                        // Convert (Mutable)List<in A> to MutableList<in A>
+                        // Same for (Mutable)Map<K, in V>
+                        || javaType.typeArguments.lastOrNull().isSuperWildcard()) {
                     return javaToKotlin.convertReadOnlyToMutable(kotlinDescriptor)
                 }
             }
 
             return kotlinDescriptor
         }
+
+        private fun JavaType?.isSuperWildcard(): Boolean = (this as? JavaWildcardType)?.let { it.bound != null && !it.isExtends } ?: false
 
         private fun isRaw(): Boolean {
             if (javaType.isRaw) return true

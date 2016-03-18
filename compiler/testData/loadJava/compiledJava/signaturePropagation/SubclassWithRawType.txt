@@ -6,7 +6,7 @@ public interface SubclassWithRawType {
         public abstract override /*1*/ fun array1(): kotlin.Array<(out) kotlin.collections.(Mutable)List<kotlin.String!>!>!
         public abstract override /*1*/ fun array2(): kotlin.Array<(out) kotlin.collections.(Mutable)List<(raw) kotlin.Any?>!>!
         public abstract override /*1*/ fun boundWildcard1(): (kotlin.collections.MutableList<out kotlin.collections.(Mutable)List<kotlin.String!>!>..kotlin.collections.List<kotlin.collections.(Mutable)List<kotlin.String!>!>?)
-        public abstract override /*1*/ fun boundWildcard2(): kotlin.collections.(Mutable)List<in kotlin.collections.(Mutable)List<(raw) kotlin.Any?>!>!
+        public abstract override /*1*/ fun boundWildcard2(): kotlin.collections.MutableList<in kotlin.collections.(Mutable)List<(raw) kotlin.Any?>!>!
         public abstract override /*1*/ fun simple1(): kotlin.collections.(Mutable)List<kotlin.String!>!
         public abstract override /*1*/ fun simple2(): kotlin.collections.(Mutable)List<kotlin.collections.(Mutable)List<kotlin.String!>!>!
         public abstract override /*1*/ fun simple3(): kotlin.collections.(Mutable)List<(raw) kotlin.Any?>!
@@ -17,7 +17,7 @@ public interface SubclassWithRawType {
         public abstract fun array1(): kotlin.Array<(out) kotlin.collections.(Mutable)List<(raw) kotlin.Any?>!>!
         public abstract fun array2(): kotlin.Array<(out) kotlin.collections.(Mutable)List<kotlin.String!>!>!
         public abstract fun boundWildcard1(): (kotlin.collections.MutableList<out kotlin.collections.(Mutable)List<(raw) kotlin.Any?>!>..kotlin.collections.List<kotlin.collections.(Mutable)List<(raw) kotlin.Any?>!>?)
-        public abstract fun boundWildcard2(): kotlin.collections.(Mutable)List<in kotlin.collections.(Mutable)List<kotlin.String!>!>!
+        public abstract fun boundWildcard2(): kotlin.collections.MutableList<in kotlin.collections.(Mutable)List<kotlin.String!>!>!
         public abstract fun simple1(): kotlin.collections.(Mutable)List<(raw) kotlin.Any?>!
         public abstract fun simple2(): kotlin.collections.(Mutable)List<(raw) kotlin.Any?>!
         public abstract fun simple3(): kotlin.collections.(Mutable)List<kotlin.String!>!
