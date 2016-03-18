@@ -76,6 +76,7 @@ import org.jetbrains.kotlin.serialization.deserialization.DeserializedType;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.kotlin.types.*;
+import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.Method;
@@ -429,6 +430,15 @@ public class KotlinTypeMapper {
         TypeConstructor constructor = jetType.getConstructor();
         if (constructor instanceof IntersectionTypeConstructor) {
             jetType = CommonSupertypes.commonSupertype(new ArrayList<KotlinType>(constructor.getSupertypes()));
+
+            // interface In<in E>
+            // open class A : In<A>
+            // open class B : In<B>
+            // commonSupertype(A, B) = In<A & B>
+            // So replace arguments with star-projections to prevent infinite recursive mapping
+            // It's not very important because such types anyway are prohibited in declarations
+            jetType = TypeUtilsKt.replaceArgumentsWithStarProjections(jetType);
+
             constructor = jetType.getConstructor();
         }
         DeclarationDescriptor descriptor = constructor.getDeclarationDescriptor();

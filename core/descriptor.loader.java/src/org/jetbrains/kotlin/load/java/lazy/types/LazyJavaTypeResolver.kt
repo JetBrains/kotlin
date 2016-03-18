@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.Variance.*
 import org.jetbrains.kotlin.types.typeUtil.createProjection
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
+import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.kotlin.utils.toReadOnlyList
 
@@ -415,27 +416,3 @@ internal fun TypeParameterDescriptor.getErasedUpperBound(
     return defaultValue()
 }
 
-private fun KotlinType.replaceArgumentsWithStarProjections(): KotlinType {
-    if (constructor.parameters.isEmpty() || constructor.declarationDescriptor == null) return this
-
-    // We could just create JetTypeImpl with current type constructor and star projections,
-    // but we want to preserve flexibility of type, and that it what TypeSubstitutor does
-    return TypeSubstitutor.create(ConstantStarSubstitution).substitute(this, Variance.INVARIANT)!!
-}
-
-private object ConstantStarSubstitution : TypeSubstitution() {
-    override fun get(key: KotlinType): TypeProjection? {
-        // Let substitutor deal with flexibility
-        if (key.isFlexible()) return null
-
-        val newProjections = key.constructor.parameters.map(::StarProjectionImpl)
-
-        val substitution = TypeConstructorSubstitution.create(key.constructor, newProjections)
-
-        return TypeProjectionImpl(
-                TypeSubstitutor.create(substitution).substitute(key.constructor.declarationDescriptor!!.defaultType, Variance.INVARIANT)!!
-        )
-    }
-
-    override fun isEmpty() = false
-}
