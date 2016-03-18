@@ -80,6 +80,11 @@ internal class TemporaryVariableElimination(private val root: JsStatement) {
                 return false
             }
 
+            override fun visit(x: JsArrayLiteral, ctx: JsContext<*>): Boolean {
+                x.expressions.asReversed().forEach { accept(it) }
+                return false
+            }
+
             override fun visit(x: JsBreak, ctx: JsContext<*>) = false
 
             override fun visit(x: JsContinue, ctx: JsContext<*>) = false
@@ -216,7 +221,7 @@ internal class TemporaryVariableElimination(private val root: JsStatement) {
     }
 
     private fun isTrivial(expr: JsExpression) = when (expr) {
-        is JsNameRef -> expr.qualifier == null
+        is JsNameRef -> expr.qualifier == null && (expr.name?.let { definitions[it] ?: 0 <= 1 } ?: false)
         is JsLiteral.JsValueLiteral -> true
         else -> false
     }
