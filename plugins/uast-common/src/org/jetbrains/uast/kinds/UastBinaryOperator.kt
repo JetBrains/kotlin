@@ -119,6 +119,6 @@ class UastBinaryOperator(override val text: String): UastOperator {
         val SHIFT_RIGHT_ASSIGN = UastBinaryOperator(">>=")
         
         @JvmField
-        val BITWISE_SHIFT_RIGHT_ASSIGN = UastBinaryOperator(">>>=")
+        val UNSIGNED_SHIFT_RIGHT_ASSIGN = UastBinaryOperator(">>>=")
     }
 }

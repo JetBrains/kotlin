@@ -44,6 +44,7 @@ internal fun PsiModifierListOwner.getVisibility(): UastVisibility {
 }
 
 internal fun IElementType.getOperatorType() = when (this) {
+    JavaTokenType.EQ -> UastBinaryOperator.ASSIGN
     JavaTokenType.PLUS -> UastBinaryOperator.PLUS
     JavaTokenType.MINUS -> UastBinaryOperator.MINUS
     JavaTokenType.ASTERISK -> UastBinaryOperator.MULT
@@ -61,6 +62,16 @@ internal fun IElementType.getOperatorType() = when (this) {
     JavaTokenType.LTLT -> UastBinaryOperator.SHIFT_LEFT
     JavaTokenType.GTGT -> UastBinaryOperator.SHIFT_RIGHT
     JavaTokenType.GTGTGT -> UastBinaryOperator.BITWISE_SHIFT_RIGHT
+    JavaTokenType.PLUSEQ -> UastBinaryOperator.PLUS_ASSIGN
+    JavaTokenType.MINUSEQ -> UastBinaryOperator.MINUS_ASSIGN
+    JavaTokenType.ASTERISKEQ -> UastBinaryOperator.MULTIPLY_ASSIGN
+    JavaTokenType.DIVEQ -> UastBinaryOperator.DIVIDE_ASSIGN
+    JavaTokenType.ANDEQ -> UastBinaryOperator.AND_ASSIGN
+    JavaTokenType.XOREQ -> UastBinaryOperator.XOR_ASSIGN
+    JavaTokenType.OREQ -> UastBinaryOperator.OR_ASSIGN
+    JavaTokenType.LTLTEQ -> UastBinaryOperator.SHIFT_LEFT_ASSIGN
+    JavaTokenType.GTGTEQ -> UastBinaryOperator.SHIFT_RIGHT_ASSIGN
+    JavaTokenType.GTGTGTEQ -> UastBinaryOperator.UNSIGNED_SHIFT_RIGHT_ASSIGN
     else -> UastBinaryOperator.UNKNOWN
 }
 
