@@ -1,0 +1,7 @@
+package
+
+public fun foo(/*0*/ block: () -> () -> kotlin.Int): kotlin.Unit
+public fun </*0*/ T> run(/*0*/ block: () -> T): T
+public fun run2(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+public fun success(): kotlin.Unit
+public fun test(): kotlin.Unit

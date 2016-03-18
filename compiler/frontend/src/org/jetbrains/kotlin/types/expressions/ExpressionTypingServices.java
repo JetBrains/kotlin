@@ -293,7 +293,9 @@ public class ExpressionTypingServices {
         if (coercionStrategyForLastExpression == COERCION_TO_UNIT) {
             boolean mightBeUnit = false;
             if (statementExpression instanceof KtDeclaration) {
-                mightBeUnit = true;
+                if (!(statementExpression instanceof KtNamedFunction) || statementExpression.getName() != null) {
+                    mightBeUnit = true;
+                }
             }
             if (statementExpression instanceof KtBinaryExpression) {
                 KtBinaryExpression binaryExpression = (KtBinaryExpression) statementExpression;

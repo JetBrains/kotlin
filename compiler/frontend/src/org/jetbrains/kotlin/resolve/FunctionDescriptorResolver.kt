@@ -70,7 +70,7 @@ class FunctionDescriptorResolver(
             trace: BindingTrace,
             dataFlowInfo: DataFlowInfo
     ): SimpleFunctionDescriptor {
-        if (function.getName() == null) trace.report(FUNCTION_DECLARATION_WITH_NO_NAME.on(function))
+        if (function.name == null) trace.report(FUNCTION_DECLARATION_WITH_NO_NAME.on(function))
 
         return resolveFunctionDescriptor(
                 SimpleFunctionDescriptorImpl::create, containingDescriptor, scope, function, trace, dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE)

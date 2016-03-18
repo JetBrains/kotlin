@@ -48,17 +48,17 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : ExpressionTypingVisitor(facade) {
 
     override fun visitNamedFunction(function: KtNamedFunction, data: ExpressionTypingContext): KotlinTypeInfo {
-        return visitNamedFunction(function, data, false, null)
+        return visitNamedFunction(function, data, isDeclaration = false, statementScope = null)
     }
 
     fun visitNamedFunction(
             function: KtNamedFunction,
             context: ExpressionTypingContext,
-            isStatement: Boolean,
-            statementScope: LexicalWritableScope? // must be not null if isStatement
+            isDeclaration: Boolean,
+            statementScope: LexicalWritableScope? // must be not null if isDeclaration
     ): KotlinTypeInfo {
         checkReservedAsync(context, function)
-        if (!isStatement) {
+        if (!isDeclaration) {
             // function expression
             if (!function.getTypeParameters().isEmpty()) {
                 context.trace.report(TYPE_PARAMETERS_NOT_ALLOWED.on(function))
@@ -79,7 +79,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
         }
 
         val functionDescriptor: SimpleFunctionDescriptor
-        if (isStatement) {
+        if (isDeclaration) {
             functionDescriptor = components.functionDescriptorResolver.resolveFunctionDescriptor(
                     context.scope.ownerDescriptor, context.scope, function, context.trace, context.dataFlowInfo)
             assert(statementScope != null) {
@@ -115,7 +115,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
         components.identifierChecker.checkDeclaration(function, context.trace)
         components.declarationsCheckerBuilder.withTrace(context.trace).checkFunction(function, functionDescriptor)
 
-        if (isStatement) {
+        if (isDeclaration) {
             return createTypeInfo(components.dataFlowAnalyzer.checkStatementType(function, context), context)
         }
         else {

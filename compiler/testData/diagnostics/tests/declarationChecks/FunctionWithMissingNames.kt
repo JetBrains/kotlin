@@ -18,9 +18,9 @@ class Outer {
 }
 
 fun outerFun() {
-    <!FUNCTION_DECLARATION_WITH_NO_NAME, CONFLICTING_OVERLOADS!>fun ()<!> {}
-    <!FUNCTION_DECLARATION_WITH_NO_NAME!>fun B.()<!> {}
+    fun () {}
+    fun B.() {}
 
-    <!FUNCTION_DECLARATION_WITH_NO_NAME, CONFLICTING_OVERLOADS!>@a fun ()<!> {}
-    <!FUNCTION_DECLARATION_WITH_NO_NAME!>fun @a A.()<!> {}
+    @a fun () {}
+    fun @a A.() {}
 }

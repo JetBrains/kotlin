@@ -1,0 +1,4 @@
+package
+
+public fun foo(/*0*/ block: () -> () -> kotlin.Int): kotlin.Unit
+public fun test(): kotlin.Unit

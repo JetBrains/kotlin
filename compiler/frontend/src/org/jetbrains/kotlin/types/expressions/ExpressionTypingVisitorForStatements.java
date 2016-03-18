@@ -138,7 +138,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
 
     @Override
     public KotlinTypeInfo visitNamedFunction(@NotNull KtNamedFunction function, ExpressionTypingContext context) {
-        return functions.visitNamedFunction(function, context, true, scope);
+        return functions.visitNamedFunction(function, context, /* isDeclaration = */ function.getName() != null, scope);
     }
 
     @Override

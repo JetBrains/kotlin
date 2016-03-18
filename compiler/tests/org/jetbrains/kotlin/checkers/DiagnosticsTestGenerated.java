@@ -4320,6 +4320,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("anonymousFunAsLastExpressionInBlock.kt")
+            public void testAnonymousFunAsLastExpressionInBlock() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/anonymousFunAsLastExpressionInBlock.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("anonymousFunUnusedLastExpressionInBlock.kt")
+            public void testAnonymousFunUnusedLastExpressionInBlock() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/anonymousFunUnusedLastExpressionInBlock.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ComponentFunctionReturnTypeMismatch.kt")
             public void testComponentFunctionReturnTypeMismatch() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/ComponentFunctionReturnTypeMismatch.kt");
@@ -4431,6 +4443,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("MultiDeclarationErrors.kt")
             public void testMultiDeclarationErrors() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/MultiDeclarationErrors.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("namedFunAsLastExpressionInBlock.kt")
+            public void testNamedFunAsLastExpressionInBlock() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/namedFunAsLastExpressionInBlock.kt");
                 doTest(fileName);
             }
 
