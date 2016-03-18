@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.idea.resolve
 
+import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 
-private val FILE_WITH_KOTLIN_CODE = PluginTestCaseBase.getTestDataPathBase() +  "/resolve/referenceInJava/dependencies.kt"
+private val DIR = "/resolve/referenceInJava/dependency"
+private val FILE_WITH_KOTLIN_CODE = PluginTestCaseBase.getTestDataPathBase() + DIR + "/dependencies.kt"
 
 abstract class AbstractReferenceResolveInJavaTest : AbstractReferenceResolveTest() {
     override fun doTest(path: String) {
@@ -27,4 +29,13 @@ abstract class AbstractReferenceResolveInJavaTest : AbstractReferenceResolveTest
         myFixture.configureByFile(path)
         performChecks()
     }
+}
+
+abstract class AbstractReferenceToCompiledKotlinResolveInJavaTest : AbstractReferenceResolveTest() {
+    override fun doTest(path: String) {
+        myFixture.configureByFile(path)
+        performChecks()
+    }
+
+    override fun getProjectDescriptor() = JdkAndMockLibraryProjectDescriptor(FILE_WITH_KOTLIN_CODE, false)
 }

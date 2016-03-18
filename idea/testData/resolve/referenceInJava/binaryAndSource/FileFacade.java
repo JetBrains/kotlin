@@ -4,4 +4,4 @@ public class PackageFacade {
     }
 }
 
-// REF: /src/<test dir>/resolve/referenceInJava.dependencies.kt
+// REF: /src/<test dir>/resolve/referenceInJava/dependency.dependencies.kt
