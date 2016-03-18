@@ -30,7 +30,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class KotlinUFunctionCallExpression(
         override val psi: KtCallExpression,
         override val parent: UElement
-) : UCallExpression, PsiElementBacked, KotlinTypeHelper, NoEvaluate {
+) : KotlinAbstractUElement(), UCallExpression, PsiElementBacked, KotlinTypeHelper, NoEvaluate {
     override val functionName: String?
         get() = (psi.calleeExpression as? KtSimpleNameExpression)?.getReferencedName()
 

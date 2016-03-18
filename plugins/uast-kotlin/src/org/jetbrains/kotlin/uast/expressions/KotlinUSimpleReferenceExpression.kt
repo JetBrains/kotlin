@@ -29,7 +29,7 @@ open class KotlinUSimpleReferenceExpression(
         override val psi: PsiElement,
         override val identifier: String,
         override val parent: UElement
-) : USimpleReferenceExpression, PsiElementBacked, KotlinTypeHelper, KotlinEvaluateHelper {
+) : KotlinAbstractUElement(), USimpleReferenceExpression, PsiElementBacked, KotlinTypeHelper, KotlinEvaluateHelper {
     override fun resolve(context: UastContext) = context.convert(
             psi.references.firstOrNull()?.resolve()) as? UDeclaration
 }
@@ -44,7 +44,7 @@ class KotlinClassViaConstructorUSimpleReferenceExpression(
         override val psi: KtCallExpression,
         override val identifier: String,
         override val parent: UElement
-) : USimpleReferenceExpression, PsiElementBacked, KotlinTypeHelper, NoEvaluate {
+) : KotlinAbstractUElement(), USimpleReferenceExpression, PsiElementBacked, KotlinTypeHelper, NoEvaluate {
     override fun resolve(context: UastContext): UDeclaration? {
         val resolvedCall = psi.getResolvedCall(psi.analyze(BodyResolveMode.PARTIAL))
         val resultingDescriptor = resolvedCall?.resultingDescriptor as? ConstructorDescriptor ?: return null
@@ -57,6 +57,6 @@ class KotlinClassViaConstructorUSimpleReferenceExpression(
 class KotlinStringUSimpleReferenceExpression(
         override val identifier: String,
         override val parent: UElement
-) : USimpleReferenceExpression, NoEvaluate {
+) : KotlinAbstractUElement(), USimpleReferenceExpression, NoEvaluate {
     override fun resolve(context: UastContext) = null
 }

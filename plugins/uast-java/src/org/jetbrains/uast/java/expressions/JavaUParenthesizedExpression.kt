@@ -23,6 +23,6 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class JavaUParenthesizedExpression(
         override val psi: PsiParenthesizedExpression,
         override val parent: UElement
-) : UParenthesizedExpression, PsiElementBacked, JavaTypeHelper, JavaEvaluateHelper {
+) : JavaAbstractUElement(), UParenthesizedExpression, PsiElementBacked, JavaTypeHelper, JavaEvaluateHelper {
     override val expression by lz { JavaConverter.convertOrEmpty(psi.expression, this) }
 }

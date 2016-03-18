@@ -25,7 +25,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class KotlinUTryExpression(
         override val psi: KtTryExpression,
         override val parent: UElement
-) : UTryExpression, PsiElementBacked, KotlinTypeHelper, NoEvaluate {
+) : KotlinAbstractUElement(), UTryExpression, PsiElementBacked, KotlinTypeHelper, NoEvaluate {
     override val tryClause by lz { KotlinConverter.convert(psi.tryBlock, this) }
     override val catchClauses by lz { psi.catchClauses.map { KotlinUCatchClause(it, this) } }
     override val finallyClause by lz { psi.finallyBlock?.finalExpression?.let { KotlinConverter.convert(it, this) } }

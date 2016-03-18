@@ -25,7 +25,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class JavaUAnnotation(
         override val psi: PsiAnnotation,
         override val parent: UElement?
-) : UAnnotation, PsiElementBacked {
+) : JavaAbstractUElement(), UAnnotation, PsiElementBacked {
     override val name: String
         get() = psi.nameReferenceElement?.referenceName.orAnonymous()
 

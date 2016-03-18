@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.uast
 
 import org.jetbrains.kotlin.psi.KtSafeQualifiedExpression
-import org.jetbrains.uast.NoEvaluate
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UQualifiedExpression
 import org.jetbrains.uast.UastContext
@@ -26,7 +25,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class KotlinUSafeQualifiedExpression(
         override val psi: KtSafeQualifiedExpression,
         override val parent: UElement
-) : UQualifiedExpression, PsiElementBacked, KotlinTypeHelper, KotlinEvaluateHelper {
+) : KotlinAbstractUElement(), UQualifiedExpression, PsiElementBacked, KotlinTypeHelper, KotlinEvaluateHelper {
     override val receiver by lz { KotlinConverter.convertOrEmpty(psi.receiverExpression, this) }
     override val selector by lz { KotlinConverter.convertOrEmpty(psi.selectorExpression, this) }
     override val accessType = KotlinQualifiedExpressionAccessTypes.SAFE

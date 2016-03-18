@@ -29,7 +29,7 @@ class KotlinUType(
         val type: KotlinType,
         val project: Project,
         override val parent: UElement?
-) : UType {
+) : KotlinAbstractUElement(), UType {
     override val name: String
         get() = type.toString()
 

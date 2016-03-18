@@ -26,7 +26,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class KotlinUAnnotationList(
         override val psi: KtAnnotation,
         override val parent: UElement
-) : UElement, PsiElementBacked {
+) : KotlinAbstractUElement(), UElement, PsiElementBacked {
     lateinit var annotations: List<UAnnotation>
 
     override fun logString() = "KotlinUAnnotationList"

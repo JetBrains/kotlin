@@ -24,7 +24,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class JavaUDoWhileExpression(
         override val psi: PsiDoWhileStatement,
         override val parent: UElement
-) : UDoWhileExpression, PsiElementBacked, NoEvaluate {
+) : JavaAbstractUElement(), UDoWhileExpression, PsiElementBacked, NoEvaluate {
     override val condition by lz { JavaConverter.convertOrEmpty(psi.condition, this) }
     override val body by lz { JavaConverter.convertOrEmpty(psi.body, this) }
 }

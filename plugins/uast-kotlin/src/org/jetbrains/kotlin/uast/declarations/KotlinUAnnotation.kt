@@ -31,7 +31,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class KotlinUAnnotation(
         override val psi: KtAnnotationEntry,
         override val parent: UElement
-) : UAnnotation, PsiElementBacked {
+) : KotlinAbstractUElement(), UAnnotation, PsiElementBacked {
     override val fqName: String?
         get() = resolveToDescriptor()?.fqNameSafe?.asString()
 

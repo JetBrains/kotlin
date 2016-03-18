@@ -24,7 +24,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class JavaUPrefixExpression(
         override val psi: PsiPrefixExpression,
         override val parent: UElement
-) : UPrefixExpression, PsiElementBacked, JavaTypeHelper, JavaEvaluateHelper {
+) : JavaAbstractUElement(), UPrefixExpression, PsiElementBacked, JavaTypeHelper, JavaEvaluateHelper {
     override val operand by lz { JavaConverter.convertOrEmpty(psi.operand, this) }
 
     override val operator = when (psi.operationSign.text) {

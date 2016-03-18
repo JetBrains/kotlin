@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.uast
 
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtPrefixExpression
-import org.jetbrains.uast.NoEvaluate
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UPrefixExpression
 import org.jetbrains.uast.UastPrefixOperator
@@ -27,7 +26,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class KotlinUPrefixExpression(
         override val psi: KtPrefixExpression,
         override val parent: UElement
-) : UPrefixExpression, PsiElementBacked, KotlinTypeHelper, KotlinEvaluateHelper {
+) : KotlinAbstractUElement(), UPrefixExpression, PsiElementBacked, KotlinTypeHelper, KotlinEvaluateHelper {
     override val operand by lz { KotlinConverter.convertOrEmpty(psi.baseExpression, this) }
 
     override val operator = when (psi.operationToken) {

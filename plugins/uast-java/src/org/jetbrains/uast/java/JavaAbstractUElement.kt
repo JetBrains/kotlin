@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2016 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,21 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.jetbrains.uast.java
 
-import com.intellij.psi.PsiForeachStatement
-import org.jetbrains.uast.NoEvaluate
 import org.jetbrains.uast.UElement
-import org.jetbrains.uast.UForEachExpression
 import org.jetbrains.uast.psi.PsiElementBacked
 
-class JavaUForEachExpression(
-        override val psi: PsiForeachStatement,
-        override val parent: UElement
-) : JavaAbstractUElement(), UForEachExpression, PsiElementBacked, NoEvaluate {
-    override val variableName: String?
-        get() = psi.iterationParameter.name
+abstract class JavaAbstractUElement : UElement {
+    override fun equals(other: Any?): Boolean {
+        if (this !is PsiElementBacked || other !is PsiElementBacked) {
+            return this === other
+        }
 
-    override val iteratedValue by lz { JavaConverter.convertOrEmpty(psi.iteratedValue, this) }
-    override val body by lz { JavaConverter.convertOrEmpty(psi.body, this) }
+        return this.psi == other.psi
+    }
 }

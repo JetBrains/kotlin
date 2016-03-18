@@ -24,7 +24,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class KotlinUImportStatement(
         override val psi: KtImportDirective,
         override val parent: UElement
-) : UImportStatement, PsiElementBacked {
+) : KotlinAbstractUElement(), UImportStatement, PsiElementBacked {
     override val nameToImport = psi.importedFqName?.asString()
 
     override val isStarImport: Boolean

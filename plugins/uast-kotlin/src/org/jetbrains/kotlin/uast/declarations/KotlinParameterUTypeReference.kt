@@ -27,7 +27,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class KotlinParameterUTypeReference(
         override val psi: KtTypeParameter,
         override val parent: UElement
-) : UTypeReference, PsiElementBacked {
+) : KotlinAbstractUElement(), UTypeReference, PsiElementBacked {
     override fun resolve(context: UastContext): UClass? {
         val descriptor = psi.analyze(BodyResolveMode.PARTIAL)[BindingContext.TYPE_PARAMETER, psi]
                                  ?.typeConstructor?.declarationDescriptor as? ClassDescriptor ?: return null

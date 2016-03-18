@@ -24,7 +24,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class JavaUForExpression(
         override val psi: PsiForStatement,
         override val parent: UElement
-) : UForExpression, PsiElementBacked, NoEvaluate {
+) : JavaAbstractUElement(), UForExpression, PsiElementBacked, NoEvaluate {
     override val declaration by lz { psi.initialization?.let { JavaConverter.convert(it, this) } }
     override val condition by lz { psi.condition?.let { JavaConverter.convert(it, this) } }
     override val update by lz { psi.update?.let { JavaConverter.convert(it, this) } }

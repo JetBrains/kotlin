@@ -24,6 +24,6 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class KotlinUParenthesizedExpression(
         override val psi: KtParenthesizedExpression,
         override val parent: UElement
-) : UParenthesizedExpression, PsiElementBacked, KotlinTypeHelper, KotlinEvaluateHelper {
+) : KotlinAbstractUElement(), UParenthesizedExpression, PsiElementBacked, KotlinTypeHelper, KotlinEvaluateHelper {
     override val expression by lz { KotlinConverter.convertOrEmpty(psi.expression, this) }
 }

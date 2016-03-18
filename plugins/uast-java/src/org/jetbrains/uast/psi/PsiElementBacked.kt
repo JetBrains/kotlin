@@ -19,5 +19,5 @@ package org.jetbrains.uast.psi
 import com.intellij.psi.PsiElement
 
 interface PsiElementBacked {
-    val psi: com.intellij.psi.PsiElement?
+    val psi: PsiElement?
 }
