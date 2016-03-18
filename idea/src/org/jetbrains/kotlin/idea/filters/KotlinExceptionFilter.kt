@@ -27,6 +27,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.codegen.inline.FileMapping
 import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil
+import org.jetbrains.kotlin.codegen.inline.SMAP
 import org.jetbrains.kotlin.codegen.inline.SMAPParser
 import org.jetbrains.kotlin.idea.refactoring.getLineCount
 import org.jetbrains.kotlin.idea.refactoring.toPsiFile
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinder
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.tail
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.utils.addToStdlib.check
 import org.jetbrains.org.objectweb.asm.ClassReader
@@ -67,11 +69,15 @@ class KotlinExceptionFilter(private val searchScope: GlobalSearchScope) : Filter
 
         val virtualFile = file.virtualFile ?: return null
 
-        return virtualFileForInlineCall(jvmClassName, virtualFile, lineNumber + 1, project) ?:
-                                OpenFileHyperlinkInfo(project, virtualFile, lineNumber)
+        val hyperlinkInfoForInline = getHyperlinkInfoIfInline(jvmClassName, virtualFile, lineNumber + 1, project)
+        if (hyperlinkInfoForInline != null) {
+            return hyperlinkInfoForInline
+        }
+
+        return OpenFileHyperlinkInfo(project, virtualFile, lineNumber)
     }
 
-    private fun virtualFileForInlineCall(jvmName: JvmClassName, file: VirtualFile, lineNumber: Int, project: Project): OpenFileHyperlinkInfo? {
+    private fun getHyperlinkInfoIfInline(jvmName: JvmClassName, file: VirtualFile, lineNumber: Int, project: Project): InlineFunctionHyperLinkInfo? {
         val fqNameWithInners = jvmName.fqNameForClassNameWithoutDollars.tail(jvmName.packageFqName)
 
         if (ProjectRootsUtil.isLibrarySourceFile(project, file)) {
@@ -111,10 +117,30 @@ class KotlinExceptionFilter(private val searchScope: GlobalSearchScope) : Filter
         return null
     }
 
-    private fun readDebugInfoForInlineFun(bytes: ByteArray, line: Int, project: Project): OpenFileHyperlinkInfo? {
-        val debugInfo = readDebugInfo(bytes) ?: return null
+    private fun readDebugInfoForInlineFun(bytes: ByteArray, line: Int, project: Project): InlineFunctionHyperLinkInfo? {
+        val smapData = readDebugInfo(bytes) ?: return null
 
-        val mappings = SMAPParser.parse(debugInfo)
+        val inlineInfo = arrayListOf<InlineFunctionHyperLinkInfo.InlineInfo>()
+
+        val (inlineFunctionBodyFile, inlineFunctionBodyLine) = parseStrata(smapData.kotlin1, line, project) ?: return null
+        inlineInfo.add(InlineFunctionHyperLinkInfo.InlineInfo.InlineFunctionBodyInfo(
+                inlineFunctionBodyFile.virtualFile,
+                inlineFunctionBodyLine))
+
+        val kotlin2 = parseStrata(smapData.kotlin2, line, project)
+        if (kotlin2 != null) {
+            inlineInfo.add(InlineFunctionHyperLinkInfo.InlineInfo.CallSiteInfo(
+                    kotlin2.first.virtualFile,
+                    kotlin2.second))
+        }
+
+        return InlineFunctionHyperLinkInfo(project, inlineInfo)
+    }
+
+    private fun parseStrata(strata: String?, line: Int, project: Project): Pair<KtFile, Int>? {
+        if (strata == null) return null
+
+        val mappings = SMAPParser.parse(strata)
 
         val mappingInfo = mappings.fileMappings.firstOrNull {
             it.getIntervalIfContains(line) != null
@@ -122,10 +148,11 @@ class KotlinExceptionFilter(private val searchScope: GlobalSearchScope) : Filter
 
         val newJvmName = JvmClassName.byInternalName(mappingInfo.path)
         val newSourceFile = DebuggerUtils.findSourceFileForClassIncludeLibrarySources(project, searchScope, newJvmName, mappingInfo.name) ?: return null
-        return OpenFileHyperlinkInfo(project, newSourceFile.virtualFile, mappingInfo.getIntervalIfContains(line)!!.map(line) - 1)
+
+        return newSourceFile to mappingInfo.getIntervalIfContains(line)!!.mapDestToSource(line) - 1
     }
 
-    private fun readDebugInfo(bytes: ByteArray): String? {
+    private fun readDebugInfo(bytes: ByteArray): SmapData? {
         val cr = ClassReader(bytes);
         var debugInfo: String? = null
         cr.accept(object : ClassVisitor(InlineCodegenUtil.API) {
@@ -133,7 +160,27 @@ class KotlinExceptionFilter(private val searchScope: GlobalSearchScope) : Filter
                 debugInfo = debug
             }
         }, ClassReader.SKIP_FRAMES and ClassReader.SKIP_CODE)
-        return debugInfo
+        return debugInfo?.let { SmapData(it) }
+    }
+
+    private class SmapData(debugInfo: String) {
+        var kotlin1: String? = null
+            private set
+        var kotlin2: String? = null
+            private set
+
+        init {
+            val intervals = debugInfo.split(SMAP.END).filter { it.isNotBlank() }
+            when(intervals.count()) {
+                1 -> {
+                    kotlin1 = intervals[0] + SMAP.END
+                }
+                else -> {
+                    kotlin1 = intervals[0] + SMAP.END
+                    kotlin2 = intervals[1] + SMAP.END
+                }
+            }
+        }
     }
 
     private fun FileMapping.getIntervalIfContains(destLine: Int) = lineMappings.firstOrNull { it.contains(destLine) }
