@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.codegen;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.text.StringUtil;
 import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -102,9 +103,10 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
 
     @NotNull
     protected ClassFileFactory compileA(@NotNull String fileName, @NotNull String content, List<TestFile> files) throws IOException {
+        Disposable compileDisposable = createDisposable("compileA");
         KotlinCoreEnvironment environment =
-                KotlinTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(getTestRootDisposable(), ConfigurationKind.ALL, getJdkKind(files));
-        return compileKotlin(fileName, content, aDir, environment, getTestRootDisposable());
+                KotlinTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(compileDisposable, ConfigurationKind.ALL, getJdkKind(files));
+        return compileKotlin(fileName, content, aDir, environment, compileDisposable);
     }
 
     @NotNull
@@ -112,10 +114,17 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
         CompilerConfiguration configurationWithADirInClasspath = KotlinTestUtils
                 .compilerConfigurationForTests(ConfigurationKind.ALL, getJdkKind(files), KotlinTestUtils.getAnnotationsJar(), aDir);
 
-        KotlinCoreEnvironment environment =
-                KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configurationWithADirInClasspath, EnvironmentConfigFiles.JVM_CONFIG_FILES);
+        Disposable compileDisposable = createDisposable("compileB");
+        KotlinCoreEnvironment environment = KotlinCoreEnvironment.createForTests(
+                compileDisposable, configurationWithADirInClasspath, EnvironmentConfigFiles.JVM_CONFIG_FILES);
 
-        return compileKotlin(fileName, content, bDir, environment, getTestRootDisposable());
+        return compileKotlin(fileName, content, bDir, environment, compileDisposable);
+    }
+
+    private Disposable createDisposable(String debugName) {
+        Disposable disposable = Disposer.newDisposable("CompileDisposable" + debugName);
+        Disposer.register(getTestRootDisposable(), disposable);
+        return disposable;
     }
 
     @NotNull
