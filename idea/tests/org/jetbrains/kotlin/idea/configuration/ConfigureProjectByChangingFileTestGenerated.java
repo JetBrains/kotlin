@@ -76,6 +76,12 @@ public class ConfigureProjectByChangingFileTestGenerated extends AbstractConfigu
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/configuration/maven"), Pattern.compile("^([^\\.]+)$"), false);
         }
 
+        @TestMetadata("fixExisting")
+        public void testFixExisting() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/configuration/maven/fixExisting/");
+            doTestWithMaven(fileName);
+        }
+
         @TestMetadata("libraryMissed")
         public void testLibraryMissed() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/configuration/maven/libraryMissed/");

@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.configuration;
 
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.dom.model.MavenDomPlugin;
 import org.jetbrains.kotlin.js.resolve.JsPlatform;
@@ -32,7 +31,7 @@ public class KotlinJavascriptMavenConfigurator extends KotlinMavenConfigurator {
     private static final String PRESENTABLE_TEXT = "JavaScript Maven - experimental";
 
     public KotlinJavascriptMavenConfigurator() {
-        super(STD_LIB_ID, NAME, PRESENTABLE_TEXT);
+        super(STD_LIB_ID, null, false, NAME, PRESENTABLE_TEXT);
     }
 
     @Override
@@ -41,9 +40,9 @@ public class KotlinJavascriptMavenConfigurator extends KotlinMavenConfigurator {
     }
 
     @Override
-    protected void createExecutions(VirtualFile virtualFile, MavenDomPlugin kotlinPlugin, Module module) {
-        createExecution(virtualFile, kotlinPlugin, module, false);
-        createExecution(virtualFile, kotlinPlugin, module, true);
+    protected void createExecutions(@NotNull PomFile pomFile, @NotNull MavenDomPlugin kotlinPlugin, @NotNull Module module) {
+        createExecution(pomFile, kotlinPlugin, module, false);
+        createExecution(pomFile, kotlinPlugin, module, true);
     }
 
     @NotNull
