@@ -62,7 +62,7 @@ class TypedHandlerTest : LightCodeInsightTestCase() {
     fun testTypeStringTemplateStartBeforeString(): Unit = doCharTypeTest(
             '{',
             """fun foo() { "$<caret>something" }""",
-            """fun foo() { "$dollar{}something" }"""
+            """fun foo() { "$dollar{something" }"""
     )
 
     fun testKT3575(): Unit = doCharTypeTest(
