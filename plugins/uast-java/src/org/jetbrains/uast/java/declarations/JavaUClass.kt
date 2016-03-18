@@ -32,7 +32,7 @@ class JavaUClass(
 
     override val nameElement by lz {
         if (psi is PsiAnonymousClass && newExpression != null) {
-            newExpression.classOrAnonymousClassReference?.referenceNameElement?.let { JavaPsiElementStub(it, this) }
+            newExpression.classOrAnonymousClassReference?.referenceNameElement?.let { JavaDumbUElement(it, this) }
         } else {
             JavaConverter.convert(psi.nameIdentifier, this)
         }

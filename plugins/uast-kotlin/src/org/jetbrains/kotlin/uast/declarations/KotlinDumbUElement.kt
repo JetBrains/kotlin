@@ -21,8 +21,8 @@ import org.jetbrains.uast.NoTraverse
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.psi.PsiElementBacked
 
-class KotlinPsiElementStub(
-        override val psi: PsiElement,
+class KotlinDumbUElement(
+        override val psi: PsiElement?,
         override val parent: UElement
 ) : KotlinAbstractUElement(), UElement, PsiElementBacked, NoTraverse {
     override fun logString() = "KotlinPsiElementStub"

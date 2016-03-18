@@ -29,7 +29,7 @@ class JavaParameterUTypeReference(
     override val name: String
         get() = psi.name.orAnonymous()
 
-    override val nameElement by lz { psi.nameIdentifier?.let { JavaPsiElementStub(it, this) } }
+    override val nameElement by lz { psi.nameIdentifier?.let { JavaDumbUElement(it, this) } }
 
     override fun resolve(context: UastContext) = psi.reference?.resolve()?.let { JavaConverter.convertWithParent(it) } as? UClass
 }

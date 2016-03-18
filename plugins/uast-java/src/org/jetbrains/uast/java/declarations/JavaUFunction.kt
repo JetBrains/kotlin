@@ -29,7 +29,7 @@ class JavaUFunction(
     override val name: String
         get() = if (psi.isConstructor) "<init>" else psi.name
 
-    override val nameElement by lz { JavaConverter.convert(psi.nameIdentifier, this) }
+    override val nameElement by lz { JavaDumbUElement(psi.nameIdentifier, this) }
 
     override val valueParameters by lz { psi.parameterList.parameters.map { JavaConverter.convert(it, this) } }
 

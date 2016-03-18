@@ -35,7 +35,7 @@ class KotlinParameterUTypeReference(
     }
 
     override val nameElement: UElement?
-        get() = KotlinPsiElementStub(psi, this)
+        get() = KotlinDumbUElement(psi, this)
 
     override val name: String
         get() = psi.name.orAnonymous()
