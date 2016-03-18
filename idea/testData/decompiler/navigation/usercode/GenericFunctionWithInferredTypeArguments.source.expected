@@ -1,0 +1,2 @@
+main.kt
+public fun <T> <1>genericFunc() : T = throw Exception()

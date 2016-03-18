@@ -1,0 +1,8 @@
+MainKt.class
+public fun <4>func(): kotlin.Unit { /* compiled code */ }
+
+public fun func(cs: kotlin.CharSequence): kotlin.Unit { /* compiled code */ }
+
+public fun <3>func(a: kotlin.Int, b: kotlin.Int): kotlin.Unit { /* compiled code */ }
+
+public fun <1><2>func(a: kotlin.Int, b: kotlin.String /* = compiled code */): kotlin.Unit { /* compiled code */ }
