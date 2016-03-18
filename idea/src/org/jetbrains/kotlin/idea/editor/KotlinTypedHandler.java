@@ -250,8 +250,13 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
             PsiElement previousElement = file.findElementAt(offset - 1);
             if (previousElement instanceof LeafPsiElement
                 && ((LeafPsiElement) previousElement).getElementType() == KtTokens.LONG_TEMPLATE_ENTRY_START) {
-                editor.getDocument().insertString(offset, "}");
-                return Result.STOP;
+                PsiElement currentElement = file.findElementAt(offset);
+
+                if (currentElement instanceof LeafPsiElement
+                    && ((LeafPsiElement) currentElement).getElementType() != KtTokens.IDENTIFIER) {
+                    editor.getDocument().insertString(offset, "}");
+                    return Result.STOP;
+                }
             }
         }
         else if (c == ':') {
