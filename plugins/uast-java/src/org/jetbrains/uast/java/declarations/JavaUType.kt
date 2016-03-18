@@ -39,10 +39,28 @@ class JavaUType(
         }
 
     override val isInt: Boolean
-        get() = name == "int"
+        get() = check("int", "java.lang.Integer")
+
+    override val isLong: Boolean
+        get() = check("long", "java.lang.Long")
+
+    override val isFloat: Boolean
+        get() = check("float", "java.lang.Float")
+
+    override val isDouble: Boolean
+        get() = check("double", "java.lang.Double")
+
+    override val isChar: Boolean
+        get() = check("char", "java.lang.Character")
 
     override val isBoolean: Boolean
-        get() = name == "boolean"
+        get() = check("boolean", "java.lang.Boolean")
+
+    override val isByte: Boolean
+        get() = check("byte", "java.lang.Byte")
+
+    private inline fun check(unboxedType: String, boxedType: String): Boolean =
+            name == unboxedType || (psi as? PsiClassType)?.resolve()?.qualifiedName == boxedType
 
     override val annotations by lz { psi.getAnnotations(this) }
 
