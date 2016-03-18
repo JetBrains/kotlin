@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.idea.decompiler.AbstractInternalCompiledClassesTest
 import org.jetbrains.kotlin.idea.decompiler.classFile.KtClsFile
 import org.jetbrains.kotlin.idea.decompiler.common.INCOMPATIBLE_ABI_VERSION_GENERAL_COMMENT
-import org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToDecompiledLibraryTest
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.findClassFileByName
 import org.jetbrains.kotlin.idea.test.KotlinJdkAndLibraryProjectDescriptor
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -42,7 +41,7 @@ class DecompiledTextForWrongAbiVersionTest : AbstractInternalCompiledClassesTest
     fun testPackagePartWithWrongAbiVersion() = doTest("Wrong_packageKt")
 
     fun doTest(name: String) {
-        val root = NavigateToDecompiledLibraryTest.findTestLibraryRoot(myModule!!)!!
+        val root = findTestLibraryRoot(myModule!!)!!
         checkFileWithWrongAbiVersion(root.findClassFileByName(name))
     }
 

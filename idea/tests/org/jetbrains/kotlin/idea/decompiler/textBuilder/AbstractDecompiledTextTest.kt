@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,18 @@
 
 package org.jetbrains.kotlin.idea.decompiler.textBuilder
 
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.roots.LibraryOrderEntry
+import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.decompiler.classFile.KtClsFile
-import org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToDecompiledLibraryTest
 import kotlin.test.assertTrue
 
 abstract class AbstractDecompiledTextTest(baseDirectory: String, allowKotlinPackage: Boolean)
     : AbstractDecompiledTextBaseTest(baseDirectory, allowKotlinPackage = allowKotlinPackage) {
-    override fun getFileToDecompile(): VirtualFile =
-        NavigateToDecompiledLibraryTest.getClassFile(TEST_PACKAGE, getTestName(false), myModule!!)
+    override fun getFileToDecompile(): VirtualFile = getClassFile(TEST_PACKAGE, getTestName(false), myModule!!)
 
     override fun checkPsiFile(psiFile: PsiFile) =
             assertTrue(psiFile is KtClsFile, "Expecting decompiled kotlin file, was: " + psiFile.javaClass)
@@ -34,3 +36,22 @@ abstract class AbstractDecompiledTextTest(baseDirectory: String, allowKotlinPack
 abstract class AbstractCommonDecompiledTextTest : AbstractDecompiledTextTest("/decompiler/decompiledText", true)
 
 abstract class AbstractJvmDecompiledTextTest : AbstractDecompiledTextTest("/decompiler/decompiledTextJvm", false)
+
+fun findTestLibraryRoot(module: Module): VirtualFile? {
+    for (orderEntry in ModuleRootManager.getInstance(module).orderEntries) {
+        if (orderEntry is LibraryOrderEntry) {
+            return orderEntry.getFiles(OrderRootType.CLASSES)[0]
+        }
+    }
+    return null
+}
+
+fun getClassFile(
+        packageName: String,
+        className: String,
+        module: Module
+): VirtualFile {
+    val root = findTestLibraryRoot(module)!!
+    val packageDir = root.findFileByRelativePath(packageName.replace(".", "/"))!!
+    return packageDir.findChild(className + ".class")!!
+}
