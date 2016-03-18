@@ -239,7 +239,9 @@ class SMAP(val fileMappings: List<FileMapping>) {
 
     val sourceInfo: SourceInfo
     init {
-        val defaultMapping = default.lineMappings.single()
+        //val defaultMapping = default.lineMappings.single()
+        //temporary workaround for KT-11478 ("Couldn't inline method call" error)
+        val defaultMapping = default.lineMappings.first()
         sourceInfo = SourceInfo(default.name, default.path, defaultMapping.source + defaultMapping.range - 1)
     }
 

@@ -1877,6 +1877,12 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/anonymous/objectOnInlineCallSiteWithCapture.1.kt");
                 doBoxTestWithInlineCheck(fileName);
             }
+
+            @TestMetadata("severalMappingsForDefaultFile.1.kt")
+            public void testSeveralMappingsForDefaultFile() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/anonymous/severalMappingsForDefaultFile.1.kt");
+                doBoxTestWithInlineCheck(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/boxInline/smap/resolve")
