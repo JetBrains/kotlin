@@ -24,6 +24,7 @@ import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.getSubjectToIntroduce
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.introduceSubject
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.unwrapBlockOrParenthesis
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -66,9 +67,6 @@ class IfToWhenIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpres
         }
     }
 
-    private fun KtExpression?.unwrapBlockIfNeeded(): KtExpression? =
-            (this as? KtBlockExpression)?.statements?.singleOrNull() ?: this
-
     private fun KtIfExpression.siblingsUpTo(other: KtExpression): List<PsiElement> {
         val result = ArrayList<PsiElement>()
         var nextSibling = nextSibling
@@ -85,7 +83,7 @@ class IfToWhenIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpres
 
     private fun BuilderByPattern<*>.appendElseBlock(block: KtExpression?) {
         appendFixedText("else->")
-        appendExpression(block.unwrapBlockIfNeeded())
+        appendExpression(block?.unwrapBlockOrParenthesis())
         appendFixedText("\n")
     }
 
@@ -112,7 +110,7 @@ class IfToWhenIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpres
                 appendFixedText("->")
 
                 val currentThenBranch = currentIfExpression.then
-                appendExpression(currentThenBranch.unwrapBlockIfNeeded())
+                appendExpression(currentThenBranch?.unwrapBlockOrParenthesis())
                 appendFixedText("\n")
 
                 canPassThrough = canPassThrough || canPassThrough(currentThenBranch)
