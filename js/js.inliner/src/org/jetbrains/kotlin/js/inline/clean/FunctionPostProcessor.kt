@@ -25,6 +25,8 @@ class FunctionPostProcessor(private val root: JsBlock) {
             hasChanges = hasChanges or TemporaryAssignmentElimination(root).apply()
             hasChanges = hasChanges or RedundantLabelRemoval(root).apply()
             hasChanges = hasChanges or TemporaryVariableElimination(root).apply()
+            hasChanges = hasChanges or IfStatementReduction(root).apply()
+            // TODO: reduce to A || B, A && B if possible
             hasChanges = hasChanges or DeadCodeElimination(root).apply()
             hasChanges = hasChanges or RedundantVariableDeclarationElimination(root).apply()
         } while (hasChanges)
