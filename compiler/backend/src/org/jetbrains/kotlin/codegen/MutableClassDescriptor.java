@@ -26,9 +26,9 @@ import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorImpl;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
+import org.jetbrains.kotlin.types.ClassTypeConstructorImpl;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeConstructor;
-import org.jetbrains.kotlin.types.TypeConstructorImpl;
 import org.jetbrains.kotlin.types.TypeUtils;
 
 import java.util.*;
@@ -151,7 +151,7 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
 
     public void createTypeConstructor() {
         assert typeConstructor == null : typeConstructor;
-        this.typeConstructor = new TypeConstructorImpl(
+        this.typeConstructor = new ClassTypeConstructorImpl(
                 this, Annotations.Companion.getEMPTY(), ModalityKt.isFinalClass(this), typeParameters, supertypes
         );
         for (FunctionDescriptor functionDescriptor : getConstructors()) {

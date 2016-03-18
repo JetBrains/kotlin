@@ -23,9 +23,9 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
+import org.jetbrains.kotlin.types.ClassTypeConstructorImpl;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeConstructor;
-import org.jetbrains.kotlin.types.TypeConstructorImpl;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -53,7 +53,7 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
         this.modality = modality;
         this.kind = kind;
 
-        this.typeConstructor = new TypeConstructorImpl(
+        this.typeConstructor = new ClassTypeConstructorImpl(
                 this, Annotations.Companion.getEMPTY(), false, Collections.<TypeParameterDescriptor>emptyList(), supertypes
         );
     }

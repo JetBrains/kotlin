@@ -29,14 +29,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class TypeConstructorImpl extends AbstractClassTypeConstructor implements TypeConstructor {
+public class ClassTypeConstructorImpl extends AbstractClassTypeConstructor implements TypeConstructor {
     private final ClassDescriptor classDescriptor;
     private final Annotations annotations;
     private final List<TypeParameterDescriptor> parameters;
     private final Collection<KotlinType> supertypes;
     private final boolean isFinal;
 
-    public TypeConstructorImpl(
+    public ClassTypeConstructorImpl(
             @NotNull ClassDescriptor classDescriptor,
             @NotNull Annotations annotations,
             boolean isFinal,

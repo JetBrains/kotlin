@@ -34,9 +34,9 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl;
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.storage.StorageManager;
+import org.jetbrains.kotlin.types.ClassTypeConstructorImpl;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeConstructor;
-import org.jetbrains.kotlin.types.TypeConstructorImpl;
 import org.jetbrains.kotlin.utils.Printer;
 
 import java.util.*;
@@ -79,7 +79,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
         assert containingClass.getKind() == ClassKind.ENUM_CLASS;
 
         this.annotations = annotations;
-        this.typeConstructor = new TypeConstructorImpl(
+        this.typeConstructor = new ClassTypeConstructorImpl(
                 this, getAnnotations(), true, Collections.<TypeParameterDescriptor>emptyList(), Collections.singleton(supertype)
         );
 
