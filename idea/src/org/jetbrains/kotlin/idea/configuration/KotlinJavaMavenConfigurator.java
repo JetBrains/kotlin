@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.configuration;
 
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.dom.model.MavenDomPlugin;
 import org.jetbrains.kotlin.resolve.TargetPlatform;
@@ -26,10 +25,11 @@ import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 public class KotlinJavaMavenConfigurator extends KotlinMavenConfigurator {
     private static final String NAME = "maven";
     private static final String STD_LIB_ID = "kotlin-stdlib";
+    private static final String TEST_LIB_ID = "kotlin-test-junit";
     private static final String PRESENTABLE_TEXT = "Maven";
 
     public KotlinJavaMavenConfigurator() {
-        super(STD_LIB_ID, NAME, PRESENTABLE_TEXT);
+        super(STD_LIB_ID, TEST_LIB_ID, true, NAME, PRESENTABLE_TEXT);
     }
 
     @Override
@@ -38,9 +38,9 @@ public class KotlinJavaMavenConfigurator extends KotlinMavenConfigurator {
     }
 
     @Override
-    protected void createExecutions(VirtualFile virtualFile, MavenDomPlugin kotlinPlugin, Module module) {
-        createExecution(virtualFile, kotlinPlugin, module, false);
-        createExecution(virtualFile, kotlinPlugin, module, true);
+    protected void createExecutions(@NotNull PomFile pomFile, @NotNull MavenDomPlugin kotlinPlugin, @NotNull Module module) {
+        createExecution(pomFile, kotlinPlugin, module, false);
+        createExecution(pomFile, kotlinPlugin, module, true);
     }
 
     @NotNull

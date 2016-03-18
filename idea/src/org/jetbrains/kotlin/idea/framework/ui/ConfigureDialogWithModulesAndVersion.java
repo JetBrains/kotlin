@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.framework.ui;
 
 import com.google.common.collect.Lists;
+import com.google.common.io.Closeables;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
@@ -209,7 +210,7 @@ public class ConfigureDialogWithModulesAndVersion extends DialogWrapper {
                 }
             }
             finally {
-                streamReader.close();
+                Closeables.closeQuietly(streamReader);
             }
         }
         finally {
