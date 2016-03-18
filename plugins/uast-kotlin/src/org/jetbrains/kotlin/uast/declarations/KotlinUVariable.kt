@@ -28,7 +28,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 open class KotlinUVariable(
         override val psi: KtVariableDeclaration,
         override val parent: UElement
-) : UVariable, PsiElementBacked {
+) : KotlinAbstractUElement(), UVariable, PsiElementBacked {
     override val name: String
         get() = psi.name.orAnonymous()
 
@@ -71,7 +71,7 @@ class KotlinDestructuredUVariable(
 class KotlinDestructuringUVariable(
         override val psi: KtDestructuringDeclaration,
         override val parent: UElement
-) : UVariable, PsiElementBacked {
+) : KotlinAbstractUElement(), UVariable, PsiElementBacked {
     override val name = "var" + psi.text.hashCode()
     override val initializer by lz { KotlinConverter.convertOrEmpty(psi.initializer, this) }
     override val kind = UastVariableKind.LOCAL_VARIABLE
@@ -86,7 +86,7 @@ class KotlinDestructuringUVariable(
 class KotlinParameterUVariable(
         override val psi: KtParameter,
         override val parent: UElement
-) : UVariable, PsiElementBacked {
+) : KotlinAbstractUElement(), UVariable, PsiElementBacked {
     override val name: String
         get() = psi.name.orAnonymous()
 

@@ -15,7 +15,9 @@
  */
 package org.jetbrains.uast
 
-class KotlinUDeclarationsExpression(override val parent: UElement) : UDeclarationsExpression {
+import org.jetbrains.kotlin.uast.KotlinAbstractUElement
+
+class KotlinUDeclarationsExpression(override val parent: UElement) : KotlinAbstractUElement(), UDeclarationsExpression {
     override lateinit var declarations: List<UElement>
         internal set
 

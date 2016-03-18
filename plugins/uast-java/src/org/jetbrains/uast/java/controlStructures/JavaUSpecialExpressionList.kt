@@ -23,7 +23,7 @@ open class JavaUSpecialExpressionList(
         override val psi: PsiElement,
         override val kind: UastSpecialExpressionKind, // original element
         override val parent: UElement
-) : USpecialExpressionList, PsiElementBacked {
+) : JavaAbstractUElement(), USpecialExpressionList, PsiElementBacked {
     class Empty(psi: PsiElement, expressionType: UastSpecialExpressionKind, parent: UElement) :
             JavaUSpecialExpressionList(psi, expressionType, parent) {
         init { expressions = emptyList() }

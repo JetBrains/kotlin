@@ -42,7 +42,7 @@ class KotlinUClass(
         override val psi: KtClassOrObject,
         override val parent: UElement,
         override val isAnonymous: Boolean = false
-) : UClass, PsiElementBacked {
+) : KotlinAbstractUElement(), UClass, PsiElementBacked {
     override val name: String
         get() = psi.name.orAnonymous()
 

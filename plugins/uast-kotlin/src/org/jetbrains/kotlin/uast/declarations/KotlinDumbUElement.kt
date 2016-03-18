@@ -24,7 +24,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class KotlinPsiElementStub(
         override val psi: PsiElement,
         override val parent: UElement
-) : UElement, PsiElementBacked, NoTraverse {
+) : KotlinAbstractUElement(), UElement, PsiElementBacked, NoTraverse {
     override fun logString() = "KotlinPsiElementStub"
     override fun renderString() = "<stub@$psi>"
 }

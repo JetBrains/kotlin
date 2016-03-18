@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.uast
 
 import org.jetbrains.kotlin.psi.KtThisExpression
-import org.jetbrains.uast.NoEvaluate
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UThisExpression
 import org.jetbrains.uast.psi.PsiElementBacked
@@ -25,4 +24,4 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class KotlinUThisExpression(
         override val psi: KtThisExpression,
         override val parent: UElement
-) : UThisExpression, PsiElementBacked, KotlinTypeHelper, KotlinEvaluateHelper
+) : KotlinAbstractUElement(), UThisExpression, PsiElementBacked, KotlinTypeHelper, KotlinEvaluateHelper

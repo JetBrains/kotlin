@@ -32,7 +32,7 @@ open class KotlinUSpecialExpressionList(
         override val psi: PsiElement?,
         override val kind: UastSpecialExpressionKind, // original element
         override val parent: UElement
-) : USpecialExpressionList, PsiElementBacked, KotlinTypeHelper, KotlinEvaluateHelper {
+) : KotlinAbstractUElement(), USpecialExpressionList, PsiElementBacked, KotlinTypeHelper, KotlinEvaluateHelper {
     class Empty(psi: PsiElement, expressionType: UastSpecialExpressionKind, parent: UElement) :
             KotlinUSpecialExpressionList(psi, expressionType, parent) {
         init { expressions = emptyList() }

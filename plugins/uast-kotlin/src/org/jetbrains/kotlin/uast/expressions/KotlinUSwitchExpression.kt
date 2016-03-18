@@ -24,7 +24,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class KotlinUSwitchExpression(
         override val psi: KtWhenExpression,
         override val parent: UElement
-) : USwitchExpression, PsiElementBacked, KotlinTypeHelper, NoEvaluate {
+) : KotlinAbstractUElement(), USwitchExpression, PsiElementBacked, KotlinTypeHelper, NoEvaluate {
     override val expression by lz { KotlinConverter.convertOrNull(psi.subjectExpression, this) }
 
     //TODO to entries
@@ -47,7 +47,7 @@ class KotlinUSwitchExpression(
 class KotlinUSwitchEntry(
         override val psi: KtWhenEntry,
         override val parent: UExpression
-) : UExpression, PsiElementBacked, NoEvaluate {
+) : KotlinAbstractUElement(), UExpression, PsiElementBacked, NoEvaluate {
     val conditions by lz {
         psi.conditions.map { when (it) {
             is KtWhenConditionInRange -> KotlinCustomUBinaryExpression(it, this).apply {

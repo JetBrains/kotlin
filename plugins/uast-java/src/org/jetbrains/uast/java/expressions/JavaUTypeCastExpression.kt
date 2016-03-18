@@ -24,7 +24,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class JavaUTypeCastExpression(
         override val psi: PsiTypeCastExpression,
         override val parent: UElement
-) : UBinaryExpressionWithType, PsiElementBacked, JavaTypeHelper, JavaEvaluateHelper {
+) : JavaAbstractUElement(), UBinaryExpressionWithType, PsiElementBacked, JavaTypeHelper, JavaEvaluateHelper {
     override val operand by lz { JavaConverter.convertOrEmpty(psi.operand, this) }
     override val type by lz { JavaConverter.convert(psi.castType?.type, this) }
 

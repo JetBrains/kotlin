@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.uast
 
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtPostfixExpression
-import org.jetbrains.uast.NoEvaluate
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UPostfixExpression
 import org.jetbrains.uast.UastPostfixOperator
@@ -27,7 +26,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class KotlinUPostfixExpression(
         override val psi: KtPostfixExpression,
         override val parent: UElement
-) : UPostfixExpression, PsiElementBacked, KotlinTypeHelper, KotlinEvaluateHelper {
+) : KotlinAbstractUElement(), UPostfixExpression, PsiElementBacked, KotlinTypeHelper, KotlinEvaluateHelper {
     override val operand by lz { KotlinConverter.convertOrEmpty(psi.baseExpression, this) }
 
     override val operator = when (psi.operationToken) {

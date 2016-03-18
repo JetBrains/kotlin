@@ -26,7 +26,7 @@ class JavaUClass(
         override val psi: PsiClass,
         override val parent: UElement?,
         val newExpression: PsiNewExpression? = null
-) : UClass, PsiElementBacked {
+) : JavaAbstractUElement(), UClass, PsiElementBacked {
     override val name: String
         get() = psi.name.orAnonymous()
 
@@ -104,7 +104,7 @@ private class JavaUAnonymousClassConstructor(
         override val psi: PsiAnonymousClass,
         val newExpression: PsiNewExpression,
         override val parent: UElement
-) : UFunction, PsiElementBacked, NoAnnotations, NoModifiers {
+) : JavaAbstractUElement(), UFunction, PsiElementBacked, NoAnnotations, NoModifiers {
     override val kind = UastFunctionKind.CONSTRUCTOR
 
     override val valueParameterCount by lz { newExpression.argumentList?.expressions?.size ?: 0 }
@@ -145,7 +145,7 @@ private class JavaUAnonymousClassConstructorParameter(
         val psi: PsiExpressionList,
         val index: Int,
         override val parent: UElement
-) : UVariable, NoAnnotations, NoModifiers {
+) : JavaAbstractUElement(), UVariable, NoAnnotations, NoModifiers {
     override val initializer by lz { JavaConverter.convert(psi.expressions[index], this) }
 
     override val kind: UastVariableKind

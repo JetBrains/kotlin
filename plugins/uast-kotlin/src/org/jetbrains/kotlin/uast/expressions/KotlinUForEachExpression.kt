@@ -25,7 +25,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class KotlinUForEachExpression(
         override val psi: KtForExpression,
         override val parent: UElement
-) : UForEachExpression, PsiElementBacked, NoEvaluate {
+) : KotlinAbstractUElement(), UForEachExpression, PsiElementBacked, NoEvaluate {
     override val variableName by lz { psi.loopParameter?.name }
     override val iteratedValue by lz { KotlinConverter.convertOrEmpty(psi.loopRange, this) }
     override val body by lz { KotlinConverter.convertOrEmpty(psi.body, this) }

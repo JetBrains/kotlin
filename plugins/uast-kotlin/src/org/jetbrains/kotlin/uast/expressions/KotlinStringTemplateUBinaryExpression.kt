@@ -26,7 +26,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class KotlinStringTemplateUBinaryExpression(
         override val psi: KtStringTemplateExpression,
         override val parent: UElement
-) : UBinaryExpression, PsiElementBacked, KotlinTypeHelper, KotlinEvaluateHelper {
+) : KotlinAbstractUElement(), UBinaryExpression, PsiElementBacked, KotlinTypeHelper, KotlinEvaluateHelper {
     override lateinit var leftOperand: UExpression
         internal set
 

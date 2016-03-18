@@ -24,7 +24,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class JavaCombinedUBinaryExpression(
         override val psi: PsiPolyadicExpression,
         override val parent: UElement
-) : UBinaryExpression, PsiElementBacked, JavaTypeHelper, JavaEvaluateHelper {
+) : JavaAbstractUElement(), UBinaryExpression, PsiElementBacked, JavaTypeHelper, JavaEvaluateHelper {
     override lateinit var leftOperand: UExpression
     override lateinit var rightOperand: UExpression
 

@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.uast.*
 import org.jetbrains.uast.psi.PsiElementBacked
 
-abstract class KotlinAbstractUFunction : UFunction, PsiElementBacked {
+abstract class KotlinAbstractUFunction : KotlinAbstractUElement(), UFunction, PsiElementBacked {
     override abstract val psi: KtFunction
 
     override val name by lz { psi.name.orAnonymous() }
@@ -92,7 +92,7 @@ class KotlinUFunction(
 class KotlinAnonymousInitializerUFunction(
         override val psi: KtAnonymousInitializer,
         override val parent: UElement
-) : UFunction, PsiElementBacked {
+) : KotlinAbstractUElement(), UFunction, PsiElementBacked {
     override val kind = KotlinFunctionKinds.INIT_BLOCK
 
     override val valueParameters: List<UVariable>
@@ -131,7 +131,7 @@ class KotlinAnonymousInitializerUFunction(
 open class KotlinDefaultPrimaryConstructorUFunction(
         override val psi: KtClassOrObject,
         override val parent: UClass
-) : UFunction, PsiElementBacked, NoModifiers, NoAnnotations {
+) : KotlinAbstractUElement(), UFunction, PsiElementBacked, NoModifiers, NoAnnotations {
     override val kind: UastFunctionKind
         get() = UastFunctionKind.CONSTRUCTOR
 
@@ -163,7 +163,7 @@ open class KotlinDefaultPrimaryConstructorUFunction(
 open class KotlinObjectLiteralConstructorUFunction(
         override val psi: KtObjectDeclaration,
         override val parent: UClass
-) : UFunction, PsiElementBacked, NoModifiers, NoAnnotations {
+) : KotlinAbstractUElement(), UFunction, PsiElementBacked, NoModifiers, NoAnnotations {
     private val resolvedCall by lz {
         val bindingContext = psi.analyze(BodyResolveMode.PARTIAL)
         val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, psi] as? ClassDescriptor

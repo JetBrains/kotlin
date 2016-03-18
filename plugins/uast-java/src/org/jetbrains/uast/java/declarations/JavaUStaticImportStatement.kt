@@ -23,7 +23,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class JavaUStaticImportStatement(
         override val psi: PsiImportStaticStatement,
         override val parent: UElement
-) : UImportStatement, PsiElementBacked {
+) : JavaAbstractUElement(), UImportStatement, PsiElementBacked {
     override val nameToImport: String?
         get() = psi.referenceName
 

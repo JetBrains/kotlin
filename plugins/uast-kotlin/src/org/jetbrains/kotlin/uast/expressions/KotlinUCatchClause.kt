@@ -29,7 +29,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class KotlinUCatchClause(
         override val psi: KtCatchClause,
         override val parent: UElement
-) : UCatchClause, PsiElementBacked {
+) : KotlinAbstractUElement(), UCatchClause, PsiElementBacked {
     override val body by lz { KotlinConverter.convertOrEmpty(psi.catchBody, this) }
     override val parameters by lz { psi.catchParameter?.let { listOf(KotlinConverter.convert(it, this)) } ?: emptyList<UVariable>() }
     override val types by lz {

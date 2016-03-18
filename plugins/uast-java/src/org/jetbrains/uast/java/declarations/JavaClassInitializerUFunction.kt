@@ -22,7 +22,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class JavaClassInitializerUFunction(
         override val psi: PsiClassInitializer,
         override val parent: UElement
-) : UFunction, PsiElementBacked, NoAnnotations, NoModifiers {
+) : JavaAbstractUElement(), UFunction, PsiElementBacked, NoAnnotations, NoModifiers {
     override val kind: UastFunctionKind.UastInitializerKind
         get() = JavaFunctionKinds.STATIC_INITIALIZER
 

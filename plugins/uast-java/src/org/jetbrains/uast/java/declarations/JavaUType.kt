@@ -25,7 +25,7 @@ import org.jetbrains.uast.UastContext
 class JavaUType(
         val psi: PsiType?,
         override val parent: UElement
-) : UType {
+) : JavaAbstractUElement(), UType {
     override val name: String
         get() = when (psi) {
             is PsiClassType -> psi.className.substringAfterLast('.')

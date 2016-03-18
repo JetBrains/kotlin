@@ -24,7 +24,7 @@ class JavaUSimpleReferenceExpression(
         override val psi: PsiElement,
         override val identifier: String,
         override val parent: UElement
-) : USimpleReferenceExpression, PsiElementBacked, JavaTypeHelper, NoEvaluate {
+) : JavaAbstractUElement(), USimpleReferenceExpression, PsiElementBacked, JavaTypeHelper, NoEvaluate {
     override fun resolve(context: UastContext) = psi.reference?.resolve()?.let { context.convert(it) } as? UDeclaration
 }
 
@@ -32,7 +32,7 @@ class JavaClassUSimpleReferenceExpression(
         override val identifier: String,
         val ref: PsiJavaReference,
         override val parent: UElement
-) : USimpleReferenceExpression, PsiElementBacked, NoEvaluate {
+) : JavaAbstractUElement(), USimpleReferenceExpression, PsiElementBacked, NoEvaluate {
     override val psi: PsiElement?
         get() = ref.element
 

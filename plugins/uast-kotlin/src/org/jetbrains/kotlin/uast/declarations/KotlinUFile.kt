@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.uast.UFile
 import org.jetbrains.uast.psi.PsiElementBacked
 
-class KotlinUFile(override val psi: KtFile): UFile, PsiElementBacked {
+class KotlinUFile(override val psi: KtFile): KotlinAbstractUElement(), UFile, PsiElementBacked {
     override val packageFqName by lz {
         val packageName = psi.packageFqName.asString()
         if (packageName.isNotBlank()) packageName else null

@@ -20,7 +20,7 @@ import org.jetbrains.uast.UFile
 import org.jetbrains.uast.UImportStatement
 import org.jetbrains.uast.psi.PsiElementBacked
 
-class JavaUFile(override val psi: PsiJavaFile): UFile, PsiElementBacked {
+class JavaUFile(override val psi: PsiJavaFile): JavaAbstractUElement(), UFile, PsiElementBacked {
     override val packageFqName by lz { psi.packageName.let { if (it.isNotBlank()) it else null } }
 
     override val importStatements: List<UImportStatement> by lz {
