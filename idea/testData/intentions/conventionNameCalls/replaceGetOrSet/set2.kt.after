@@ -6,6 +6,6 @@ class C {
 
 class D(val c: C) {
     fun foo() {
-        this.c["x", 2] = 1
+        this.c<caret>["x", 2] = 1
     }
 }
