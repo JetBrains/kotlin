@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.intentions.conventionNameCalls
 import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
@@ -27,9 +28,12 @@ import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.isReceiverExpressionWithValue
 import org.jetbrains.kotlin.idea.intentions.toResolvedCall
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
+import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.buildExpression
+import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
@@ -107,6 +111,21 @@ class ReplaceGetOrSetIntention : SelfTargetingRangeIntention<KtDotQualifiedExpre
             }
         }
 
-        element.replace(expression)
+        val newElement = element.replace(expression)
+
+        if (editor != null) {
+            moveCaret(editor, isSet, newElement)
+        }
+    }
+
+    private fun moveCaret(editor: Editor, isSet: Boolean, newElement: PsiElement) {
+        val arrayAccessExpression = if (isSet) {
+            newElement.getChildOfType<KtArrayAccessExpression>()!!
+        }
+        else {
+            newElement as KtArrayAccessExpression
+        }
+
+        editor.caretModel.moveToOffset(arrayAccessExpression.leftBracket!!.startOffset)
     }
 }
