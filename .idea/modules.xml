@@ -32,6 +32,7 @@
       <module fileurl="file://$PROJECT_DIR$/core/descriptors.runtime/descriptors.runtime.iml" filepath="$PROJECT_DIR$/core/descriptors.runtime/descriptors.runtime.iml" group="core" />
       <module fileurl="file://$PROJECT_DIR$/core/deserialization/deserialization.iml" filepath="$PROJECT_DIR$/core/deserialization/deserialization.iml" group="core" />
       <module fileurl="file://$PROJECT_DIR$/eval4j/eval4j.iml" filepath="$PROJECT_DIR$/eval4j/eval4j.iml" group="ide" />
+      <module fileurl="file://$PROJECT_DIR$/idea/formatter/formatter.iml" filepath="$PROJECT_DIR$/idea/formatter/formatter.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/compiler/frontend/frontend.iml" filepath="$PROJECT_DIR$/compiler/frontend/frontend.iml" group="compiler" />
       <module fileurl="file://$PROJECT_DIR$/compiler/frontend.java/frontend.java.iml" filepath="$PROJECT_DIR$/compiler/frontend.java/frontend.java.iml" group="compiler/java" />
       <module fileurl="file://$PROJECT_DIR$/generators/generators.iml" filepath="$PROJECT_DIR$/generators/generators.iml" group="infrastructure" />
