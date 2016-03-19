@@ -116,6 +116,9 @@ class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
         else if (pet == KtNodeTypes.TRY) {
             next = node.treeNextNonWhitespace()
         }
+        else if (pet == KtNodeTypes.BODY && parent.treeParent.elementType == KtNodeTypes.DO_WHILE) {
+            next = parent.treeNextNonWhitespace()
+        }
         else {
             return false
         }

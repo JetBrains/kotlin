@@ -94,6 +94,12 @@ public class KotlinFoldingTestGenerated extends AbstractKotlinFoldingTest {
             doSettingsFoldingTest(fileName);
         }
 
+        @TestMetadata("doWhile.kt")
+        public void testDoWhile() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/folding/checkCollapse/doWhile.kt");
+            doSettingsFoldingTest(fileName);
+        }
+
         @TestMetadata("functionLiteral.kt")
         public void testFunctionLiteral() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/folding/checkCollapse/functionLiteral.kt");
