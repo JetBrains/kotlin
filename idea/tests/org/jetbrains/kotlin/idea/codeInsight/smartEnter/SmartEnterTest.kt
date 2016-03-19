@@ -596,12 +596,12 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
     // Check that no addition {} inserted
     fun testWhenBadParsed() = doFunTest(
             """
-            when ( {<caret>
+            when ({<caret>
             }
             """
             ,
             """
-            when ( {
+            when ({
                 <caret>
             }
             """

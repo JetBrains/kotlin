@@ -192,6 +192,8 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
 
             after(LBRACKET).spaces(0)
             before(RBRACKET).spaces(0)
+            after(LPAR).spaces(0)
+            before(RPAR).spaces(0)
 
             afterInside(LPAR, VALUE_PARAMETER_LIST).spaces(0)
             beforeInside(RPAR, VALUE_PARAMETER_LIST).spaces(0)
