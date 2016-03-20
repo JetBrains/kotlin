@@ -54,3 +54,59 @@ public inline fun String.toFloat(): Float = java.lang.Float.parseFloat(this)
 @kotlin.internal.InlineOnly
 public inline fun String.toDouble(): Double = java.lang.Double.parseDouble(this)
 
+
+
+/**
+ * Parses the string as a signed [Byte] number and returns the result
+ * or `null` if the string is not a valid representation of a number.
+ */
+@kotlin.internal.InlineOnly
+public inline fun String.toByteOrNull(): Byte? = try {
+    java.lang.Byte.parseByte(this)
+} catch(e: NumberFormatException) { null }
+
+/**
+ * Parses the string as a [Short] number and returns the result
+ * or `null` if the string is not a valid representation of a number.
+ */
+@kotlin.internal.InlineOnly
+public inline fun String.toShortOrNull(): Short? = try {
+    java.lang.Short.parseShort(this)
+} catch(e: NumberFormatException) { null }
+
+/**
+ * Parses the string as an [Int] number and returns the result
+ * or `null` if the string is not a valid representation of a number.
+ */
+@kotlin.internal.InlineOnly
+public inline fun String.toIntOrNull(): Int? = try {
+    java.lang.Integer.parseInt(this)
+} catch(e: NumberFormatException) { null }
+
+/**
+ * Parses the string as a [Long] number and returns the result
+ * or `null` if the string is not a valid representation of a number.
+ */
+@kotlin.internal.InlineOnly
+public inline fun String.toLongOrNull(): Long? = try {
+    java.lang.Long.parseLong(this)
+} catch(e: NumberFormatException) { null }
+
+/**
+ * Parses the string as a [Float] number and returns the result
+ * or `null` if the string is not a valid representation of a number.
+ */
+@kotlin.internal.InlineOnly
+public inline fun String.toFloatOrNull(): Float? = try {
+    java.lang.Float.parseFloat(this)
+} catch(e: NumberFormatException) { null }
+
+/**
+ * Parses the string as a [Double] number and returns the result
+ * or `null` if the string is not a valid representation of a number.
+ */
+@kotlin.internal.InlineOnly
+public inline fun String.toDoubleOrNull(): Double? = try {
+    java.lang.Double.parseDouble(this)
+} catch(e: NumberFormatException) { null }
+
