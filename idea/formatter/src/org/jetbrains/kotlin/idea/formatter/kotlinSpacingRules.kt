@@ -22,8 +22,9 @@ import com.intellij.formatting.SpacingBuilder
 import com.intellij.formatting.SpacingBuilder.RuleBuilder
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.TokenType
 import com.intellij.psi.codeStyle.CodeStyleSettings
-import com.intellij.psi.formatter.FormatterUtil
+import com.intellij.psi.impl.source.tree.TreeUtil
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeTypes.*
@@ -44,11 +45,11 @@ fun SpacingBuilder.afterInside(element: IElementType, tokenSet: TokenSet, spacin
     tokenSet.types.forEach { inType -> afterInside(element, inType).spacingFun() }
 }
 
-fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
+fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacingBuilderUtil): KotlinSpacingBuilder {
     val kotlinSettings = settings.getCustomSettings(KotlinCodeStyleSettings::class.java)!!
     val kotlinCommonSettings = settings.getCommonSettings(KotlinLanguage.INSTANCE)!!
 
-    return rules(settings) {
+    return rules(settings, builderUtil) {
         val DECLARATIONS =
                 TokenSet.create(PROPERTY, FUN, CLASS, OBJECT_DECLARATION, ENUM_ENTRY, SECONDARY_CONSTRUCTOR, CLASS_INITIALIZER)
 
@@ -65,7 +66,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             inPosition(left = FUN, right = CLASS).emptyLinesIfLineBreakInLeft(1)
 
             inPosition(left = ENUM_ENTRY, right = ENUM_ENTRY).emptyLinesIfLineBreakInLeft(
-                    emptyLines = 0, numSpacesOtherwise = 1, numberOfLineFeedsOtherwise = 0)
+                    emptyLines = 0, numberOfLineFeedsOtherwise = 0, numSpacesOtherwise = 1)
 
             inPosition(parent = CLASS_BODY, left = SEMICOLON).customRule { parent, left, right ->
                 val klass = parent.node.treeParent.psi as? KtClass ?: return@customRule null
@@ -249,7 +250,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
                     inPosition(parent = parent, right = keyword).customRule {
                         parent, left, right ->
 
-                        val previousLeaf = FormatterUtil.getPreviousNonWhitespaceLeaf(right.node)
+                        val previousLeaf = builderUtil.getPreviousNonWhitespaceLeaf(right.node)
                         val leftBlock = if (
                                 previousLeaf != null &&
                                 previousLeaf.elementType == RBRACE &&
@@ -277,7 +278,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
                 if (block != null && block.elementType == blockType) {
                     val leftBrace = block.findChildByType(LBRACE)
                     if (leftBrace != null) {
-                        val previousLeaf = FormatterUtil.getPreviousNonWhitespaceLeaf(leftBrace)
+                        val previousLeaf = builderUtil.getPreviousNonWhitespaceLeaf(leftBrace)
                         val isAfterEolComment = previousLeaf != null && (previousLeaf.elementType == EOL_COMMENT)
                         val keepLineBreaks = kotlinSettings.LBRACE_ON_NEXT_LINE || isAfterEolComment
                         val minimumLF = if (kotlinSettings.LBRACE_ON_NEXT_LINE) 1 else 0

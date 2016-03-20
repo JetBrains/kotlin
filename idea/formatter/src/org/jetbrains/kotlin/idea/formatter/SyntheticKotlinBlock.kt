@@ -24,7 +24,6 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.formatting.ChildAttributes
 import com.intellij.formatting.Spacing
 import com.intellij.lang.ASTNode
-import com.intellij.psi.formatter.common.AbstractBlock
 import com.intellij.formatting.ASTBlock
 
 class SyntheticKotlinBlock(
@@ -33,7 +32,8 @@ class SyntheticKotlinBlock(
         private val alignment: Alignment?,
         private val indent: Indent?,
         private val wrap: Wrap?,
-        private val spacingBuilder: KotlinSpacingBuilder
+        private val spacingBuilder: KotlinSpacingBuilder,
+        private val createSyntheticSpacingNodeBlock: (ASTNode) -> ASTBlock
 ) : ASTBlock {
 
     private val textRange = TextRange(
@@ -49,8 +49,9 @@ class SyntheticKotlinBlock(
     override fun isIncomplete() = getSubBlocks().last().isIncomplete
     override fun isLeaf() = false
     override fun getNode() = node
-    override fun getSpacing(child1: Block?, child2: Block): Spacing? =
-            spacingBuilder.getSpacing(KotlinSpacingBuilder.SpacingNodeBlock(node.treeParent!!), child1, child2)
+    override fun getSpacing(child1: Block?, child2: Block): Spacing? {
+        return spacingBuilder.getSpacing(createSyntheticSpacingNodeBlock(node.treeParent!!), child1, child2)
+    }
 
 
     override fun toString(): String {
@@ -59,12 +60,10 @@ class SyntheticKotlinBlock(
 
         loop@
         while (treeNode == null) when (child) {
-            is AbstractBlock -> {
-                treeNode = child.node
-            }
-            is SyntheticKotlinBlock -> {
-                child = child.getSubBlocks().first()
-            }
+            is SyntheticKotlinBlock -> child = child.getSubBlocks().first()
+
+            is ASTBlock -> treeNode = child.node
+
             else -> break@loop
         }
 
