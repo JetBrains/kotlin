@@ -243,6 +243,13 @@ public inline fun String.toDoubleOrNull(): Double? {
 
     val regex = Regex(fpRegex)
 
-    return if (regex.matches(this)) this.toDouble() else null
+    return try {
+        if (regex.matches(this))
+            this.toDouble()
+        else
+            null
+    } catch(e: NumberFormatException) {
+        null
+    }
 }
 
