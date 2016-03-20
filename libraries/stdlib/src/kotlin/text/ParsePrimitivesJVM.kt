@@ -203,46 +203,24 @@ public inline fun String.toFloatOrNull(): Float? = try {
 @Suppress("ConvertToStringTemplate")
 @kotlin.internal.InlineOnly
 public inline fun String.toDoubleOrNull(): Double? {
+    /* this RegEx was taken from OpenJDK docs for `java.lang.Double.valueOf(String)` */
+
     val Digits = "(\\p{Digit}+)"
     val HexDigits = "(\\p{XDigit}+)"
-    val Exp = "[eE][+-]?" + Digits
+    val Exp = "[eE][+-]?$Digits"
 
-    val fpRegex =
-            ("[\\x00-\\x20]*" + // Optional leading "whitespace"
-                    "[+-]?(" + // Optional sign character
-                    "NaN|" + // "NaN" string
-                    "Infinity|" + // "Infinity" string
+    val HexString = "(0[xX]$HexDigits(\\.)?)|" +         // 0[xX] HexDigits ._opt BinaryExponent FloatTypeSuffix_opt
+                    "(0[xX]$HexDigits?(\\.)$HexDigits)"  // 0[xX] HexDigits_opt . HexDigits BinaryExponent FloatTypeSuffix_opt
 
-                    // A decimal floating-point string representing a finite positive
-                    // number without a leading sign has at most five basic pieces:
-                    // Digits . Digits ExponentPart FloatTypeSuffix
-                    //
-                    // Since this method allows integer-only strings as input
-                    // in addition to strings of floating-point literals, the
-                    // two sub-patterns below are simplifications of the grammar
-                    // productions from the Java Language Specification, 2nd
-                    // edition, section 3.10.2.
+    val Number = "($Digits(\\.)?($Digits?)($Exp)?)|" +   // Digits ._opt Digits_opt ExponentPart_opt FloatTypeSuffix_opt
+                 "(\\.($Digits)($Exp)?)|" +              // . Digits ExponentPart_opt FloatTypeSuffix_opt
+                 "(($HexString)[pP][+-]?$Digits)"        // HexString
 
-                    // Digits ._opt Digits_opt ExponentPart_opt FloatTypeSuffix_opt
-                    "(((" + Digits + "(\\.)?(" + Digits + "?)(" + Exp + ")?)|" +
-
-                    // . Digits ExponentPart_opt FloatTypeSuffix_opt
-                    "(\\.(" + Digits + ")(" + Exp + ")?)|" +
-
-                    // Hexadecimal strings
-                    "((" +
-                    // 0[xX] HexDigits ._opt BinaryExponent FloatTypeSuffix_opt
-                    "(0[xX]" + HexDigits + "(\\.)?)|" +
-
-                    // 0[xX] HexDigits_opt . HexDigits BinaryExponent FloatTypeSuffix_opt
-                    "(0[xX]" + HexDigits + "?(\\.)" + HexDigits + ")" +
-
-                    ")[pP][+-]?" + Digits + "))" +
-                    "[fFdD]?))" +
-                    "[\\x00-\\x20]*");// Optional trailing "whitespace"
+    val fpRegex = "[\\x00-\\x20]*[+-]?(NaN|Infinity|(($Number)[fFdD]?))[\\x00-\\x20]*"
 
     val regex = Regex(fpRegex)
 
+    // they say the RegEx screens all invalid cases, but who knows..
     return try {
         if (regex.matches(this))
             this.toDouble()
