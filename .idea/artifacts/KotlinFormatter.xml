@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="KotlinFormatter">
+    <output-path>$PROJECT_DIR$/out/artifacts/internal</output-path>
+    <root id="archive" name="kotlin-formatter.jar">
+      <element id="module-output" name="formatter" />
+      <element id="dir-copy" path="$PROJECT_DIR$/idea/formatter" />
+    </root>
+  </artifact>
+</component>
