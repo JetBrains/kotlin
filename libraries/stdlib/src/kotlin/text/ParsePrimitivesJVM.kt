@@ -191,39 +191,41 @@ public fun String.toLongOrNull(): Long? {
  * Parses the string as a [Float] number and returns the result
  * or `null` if the string is not a valid representation of a number.
  */
-@kotlin.internal.InlineOnly
-public inline fun String.toFloatOrNull(): Float? = try {
-    java.lang.Float.parseFloat(this)
-} catch(e: NumberFormatException) { null }
+public fun String.toFloatOrNull(): Float? = screenFloatValue(this, java.lang.Float::parseFloat)
 
 /**
  * Parses the string as a [Double] number and returns the result
  * or `null` if the string is not a valid representation of a number.
  */
-@Suppress("ConvertToStringTemplate")
-@kotlin.internal.InlineOnly
-public inline fun String.toDoubleOrNull(): Double? {
-    /* this RegEx was taken from OpenJDK docs for `java.lang.Double.valueOf(String)` */
+public fun String.toDoubleOrNull(): Double? = screenFloatValue(this, java.lang.Double::parseDouble)
 
+/**
+ * RegEx from OpenJDK docs for `java.lang.Double.valueOf(String)`
+ * The source claims that *all* invalid cases are screened
+ * */
+@Suppress("ConvertToStringTemplate")
+private val screenFloatValueRegEx: Regex by lazy {
     val Digits = "(\\p{Digit}+)"
     val HexDigits = "(\\p{XDigit}+)"
     val Exp = "[eE][+-]?$Digits"
 
-    val HexString = "(0[xX]$HexDigits(\\.)?)|" +         // 0[xX] HexDigits ._opt BinaryExponent FloatTypeSuffix_opt
-                    "(0[xX]$HexDigits?(\\.)$HexDigits)"  // 0[xX] HexDigits_opt . HexDigits BinaryExponent FloatTypeSuffix_opt
+    val HexString = "(0[xX]$HexDigits(\\.)?)|" + // 0[xX] HexDigits ._opt BinaryExponent FloatTypeSuffix_opt
+            "(0[xX]$HexDigits?(\\.)$HexDigits)"  // 0[xX] HexDigits_opt . HexDigits BinaryExponent FloatTypeSuffix_opt
 
-    val Number = "($Digits(\\.)?($Digits?)($Exp)?)|" +   // Digits ._opt Digits_opt ExponentPart_opt FloatTypeSuffix_opt
-                 "(\\.($Digits)($Exp)?)|" +              // . Digits ExponentPart_opt FloatTypeSuffix_opt
-                 "(($HexString)[pP][+-]?$Digits)"        // HexString
+    val Number = "($Digits(\\.)?($Digits?)($Exp)?)|" +  // Digits ._opt Digits_opt ExponentPart_opt FloatTypeSuffix_opt
+            "(\\.($Digits)($Exp)?)|" +                  // . Digits ExponentPart_opt FloatTypeSuffix_opt
+            "(($HexString)[pP][+-]?$Digits)"            // HexSignificand BinaryExponent
 
     val fpRegex = "[\\x00-\\x20]*[+-]?(NaN|Infinity|(($Number)[fFdD]?))[\\x00-\\x20]*"
 
-    val regex = Regex(fpRegex)
+    Regex(fpRegex)
+}
 
+private inline fun <T> screenFloatValue(str: String, parse: (String) -> T): T? {
     // they say the RegEx screens all invalid cases, but who knows..
     return try {
-        if (regex.matches(this))
-            this.toDouble()
+        if (screenFloatValueRegEx.matches(str))
+            parse(str)
         else
             null
     } catch(e: NumberFormatException) {
