@@ -2,7 +2,7 @@
 package test.text
 
 import test.collections.assertArrayNotSameButEquals
-import java.util.Locale
+import java.util.*
 import kotlin.test.*
 
 import org.junit.Test
