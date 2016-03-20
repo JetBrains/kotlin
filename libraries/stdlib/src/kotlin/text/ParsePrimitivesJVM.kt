@@ -78,50 +78,53 @@ public inline fun String.toShortOrNull(): Short? = try {
  * or `null` if the string is not a valid representation of a number.
  */
 public fun String.toIntOrNull(): Int? {
-    val radix = 10
+    /* the code is somewhat ugly in order to achieve maximum performance */
 
-    var result = 0
-    var negative = false
-    var i = 0
     val len = this.length
-    var limit = -Integer.MAX_VALUE
-    val multmin: Int
-    var digit: Int
+    if (len == 0) return null
 
-    if (len > 0) {
-        val firstChar = this[0]
-        if (firstChar < '0') {
-            // Possible leading "+" or "-"
-            if (firstChar == '-') {
-                negative = true
-                limit = Integer.MIN_VALUE
-            } else if (firstChar != '+')
-                return null
+    val start: Int
+    val negative: Boolean
+    val limit: Int
 
-            if (len == 1)
-            // Cannot have lone "+" or "-"
-                return null
-            i++
-        }
-        multmin = limit / radix
-        while (i < len) {
-            // Accumulating negatively avoids surprises near MAX_VALUE
-            digit = Character.digit(this[i++], radix)
-            if (digit < 0) {
-                return null
-            }
-            if (result < multmin) {
-                return null
-            }
-            result *= radix
-            if (result < limit + digit) {
-                return null
-            }
-            result -= digit
-        }
+    val firstChar = this[0]
+    if (firstChar < '0') {  // Possible leading "+" or "-"
+        start = 1
+
+        if (firstChar == '-') {
+            negative = true
+            limit = Integer.MIN_VALUE
+        } else if (firstChar == '+') {
+            negative = false
+            limit = -Integer.MAX_VALUE
+        } else
+            return null
+
+        if (len == 1) return null  // Cannot have lone "+" or "-"
+
     } else {
-        return null
+        start = 0
+        negative = false
+        limit = -Integer.MAX_VALUE
     }
+
+
+    val multmin = limit / 10
+    var result = 0
+    for (i in start..len - 1) {
+        // Accumulating negatively avoids surprises near MAX_VALUE
+        val digit = Character.digit(this[i], 10)
+
+        if (digit < 0) return null
+        if (result < multmin) return null
+
+        result *= 10
+
+        if (result < limit + digit) return null
+
+        result -= digit
+    }
+
     return if (negative) result else -result
 }
 
