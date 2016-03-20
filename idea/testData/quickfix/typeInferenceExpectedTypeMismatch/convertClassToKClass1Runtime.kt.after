@@ -1,0 +1,9 @@
+// "Remove '.java'" "true"
+fun foo() {
+    bar(Foo::class<caret>)
+}
+
+class Foo
+
+fun bar(kc: kotlin.reflect.KClass<Foo>) {
+}
