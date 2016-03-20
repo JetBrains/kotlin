@@ -7097,6 +7097,21 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/typeInferenceExpectedTypeMismatch")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class TypeInferenceExpectedTypeMismatch extends AbstractQuickFixTest {
+        public void testAllFilesPresentInTypeInferenceExpectedTypeMismatch() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeInferenceExpectedTypeMismatch"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("convertClassToKClass1Runtime.kt")
+        public void testConvertClassToKClass1Runtime() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeInferenceExpectedTypeMismatch/convertClassToKClass1Runtime.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/typeMismatch")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

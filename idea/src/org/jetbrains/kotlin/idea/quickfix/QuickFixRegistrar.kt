@@ -338,6 +338,8 @@ class QuickFixRegistrar : QuickFixContributor {
         UPPER_BOUND_VIOLATED.registerFactory(AddGenericUpperBoundFix.Factory)
         TYPE_INFERENCE_UPPER_BOUND_VIOLATED.registerFactory(AddGenericUpperBoundFix.Factory)
 
+        TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH.registerFactory(ConvertClassToKClassFix.Factory)
+
         NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION.registerFactory(ConstFixFactory)
 
         OPERATOR_MODIFIER_REQUIRED.registerFactory(AddModifierFixFactory(KtTokens.OPERATOR_KEYWORD))
