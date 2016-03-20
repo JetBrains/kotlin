@@ -60,18 +60,22 @@ public inline fun String.toDouble(): Double = java.lang.Double.parseDouble(this)
  * or `null` if the string is not a valid representation of a number.
  */
 @kotlin.internal.InlineOnly
-public inline fun String.toByteOrNull(): Byte? = try {
-    java.lang.Byte.parseByte(this)
-} catch(e: NumberFormatException) { null }
+public inline fun String.toByteOrNull(): Byte? {
+    val int = this.toIntOrNull() ?: return null
+    if (int < Byte.MIN_VALUE || int > Byte.MAX_VALUE) return null
+    return int.toByte()
+}
 
 /**
  * Parses the string as a [Short] number and returns the result
  * or `null` if the string is not a valid representation of a number.
  */
 @kotlin.internal.InlineOnly
-public inline fun String.toShortOrNull(): Short? = try {
-    java.lang.Short.parseShort(this)
-} catch(e: NumberFormatException) { null }
+public inline fun String.toShortOrNull(): Short? {
+    val int = this.toIntOrNull() ?: return null
+    if (int < Short.MIN_VALUE || int > Short.MAX_VALUE) return null
+    return int.toShort()
+}
 
 /**
  * Parses the string as an [Int] number and returns the result
@@ -127,7 +131,6 @@ public fun String.toIntOrNull(): Int? {
 
     return if (negative) result else -result
 }
-
 
 /**
  * Parses the string as a [Long] number and returns the result
