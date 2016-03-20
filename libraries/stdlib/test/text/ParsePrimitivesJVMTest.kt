@@ -76,6 +76,8 @@ class ParsePrimitivesJVMTest {
 
     @test fun toIntOrNull() {
         assertEquals(77, "77".toIntOrNull())
+        assertEquals(Int.MAX_VALUE, "2147483647".toIntOrNull())
+        assertEquals(Int.MIN_VALUE, "-2147483648".toIntOrNull())
         assertNull("2147483648".toIntOrNull())
         assertNull("-2147483649".toIntOrNull())
     }

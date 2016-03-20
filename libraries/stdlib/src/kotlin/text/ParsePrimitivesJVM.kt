@@ -77,10 +77,54 @@ public inline fun String.toShortOrNull(): Short? = try {
  * Parses the string as an [Int] number and returns the result
  * or `null` if the string is not a valid representation of a number.
  */
-@kotlin.internal.InlineOnly
-public inline fun String.toIntOrNull(): Int? = try {
-    java.lang.Integer.parseInt(this)
-} catch(e: NumberFormatException) { null }
+public fun String.toIntOrNull(): Int? {
+    val radix = 10
+
+    var result = 0
+    var negative = false
+    var i = 0
+    val len = this.length
+    var limit = -Integer.MAX_VALUE
+    val multmin: Int
+    var digit: Int
+
+    if (len > 0) {
+        val firstChar = this[0]
+        if (firstChar < '0') {
+            // Possible leading "+" or "-"
+            if (firstChar == '-') {
+                negative = true
+                limit = Integer.MIN_VALUE
+            } else if (firstChar != '+')
+                return null
+
+            if (len == 1)
+            // Cannot have lone "+" or "-"
+                return null
+            i++
+        }
+        multmin = limit / radix
+        while (i < len) {
+            // Accumulating negatively avoids surprises near MAX_VALUE
+            digit = Character.digit(this[i++], radix)
+            if (digit < 0) {
+                return null
+            }
+            if (result < multmin) {
+                return null
+            }
+            result *= radix
+            if (result < limit + digit) {
+                return null
+            }
+            result -= digit
+        }
+    } else {
+        return null
+    }
+    return if (negative) result else -result
+}
+
 
 /**
  * Parses the string as a [Long] number and returns the result
