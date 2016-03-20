@@ -133,10 +133,56 @@ public fun String.toIntOrNull(): Int? {
  * Parses the string as a [Long] number and returns the result
  * or `null` if the string is not a valid representation of a number.
  */
-@kotlin.internal.InlineOnly
-public inline fun String.toLongOrNull(): Long? = try {
-    java.lang.Long.parseLong(this)
-} catch(e: NumberFormatException) { null }
+public fun String.toLongOrNull(): Long? {
+    /* the code is somewhat ugly in order to achieve maximum performance */
+
+    val len = this.length
+    if (len == 0) return null
+
+    val start: Int
+    val negative: Boolean
+    val limit: Long
+
+    val firstChar = this[0]
+    if (firstChar < '0') {  // Possible leading "+" or "-"
+        start = 1
+
+        if (firstChar == '-') {
+            negative = true
+            limit = Long.MIN_VALUE
+        } else if (firstChar == '+') {
+            negative = false
+            limit = -Long.MAX_VALUE
+        } else
+            return null
+
+        if (len == 1) return null  // Cannot have lone "+" or "-"
+
+    } else {
+        start = 0
+        negative = false
+        limit = -Long.MAX_VALUE
+    }
+
+
+    val multmin = limit / 10L
+    var result = 0L
+    for (i in start..len - 1) {
+        // Accumulating negatively avoids surprises near MAX_VALUE
+        val digit = Character.digit(this[i], 10)
+
+        if (digit < 0) return null
+        if (result < multmin) return null
+
+        result *= 10
+
+        if (result < limit + digit) return null
+
+        result -= digit
+    }
+
+    return if (negative) result else -result
+}
 
 /**
  * Parses the string as a [Float] number and returns the result
