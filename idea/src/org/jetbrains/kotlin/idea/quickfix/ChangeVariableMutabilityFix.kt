@@ -20,7 +20,9 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -51,13 +53,17 @@ class ChangeVariableMutabilityFix(element: KtValVarKeywordOwner, private val mak
             }
         }
 
-        val VAL_REASSIGNMENT_FACTORY: KotlinSingleIntentionActionFactory = object: KotlinSingleIntentionActionFactory() {
+        class ReassignmentActionFactory(val factory: DiagnosticFactory1<*, DeclarationDescriptor>) : KotlinSingleIntentionActionFactory() {
             override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-                val propertyDescriptor = Errors.VAL_REASSIGNMENT.cast(diagnostic).a
+                val propertyDescriptor = factory.cast(diagnostic).a
                 val declaration = DescriptorToSourceUtils.descriptorToDeclaration(propertyDescriptor) as? KtValVarKeywordOwner ?: return null
                 return ChangeVariableMutabilityFix(declaration, true)
             }
         }
+
+        val VAL_REASSIGNMENT_FACTORY = ReassignmentActionFactory(Errors.VAL_REASSIGNMENT)
+
+        val CAPTURED_VAL_INITIALIZATION_FACTORY = ReassignmentActionFactory(Errors.CAPTURED_VAL_INITIALIZATION)
 
         val VAR_OVERRIDDEN_BY_VAL_FACTORY: KotlinSingleIntentionActionFactory = object: KotlinSingleIntentionActionFactory() {
             override fun createAction(diagnostic: Diagnostic): IntentionAction? {

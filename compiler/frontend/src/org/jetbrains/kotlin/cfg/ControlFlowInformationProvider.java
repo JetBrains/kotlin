@@ -391,6 +391,22 @@ public class ControlFlowInformationProvider {
         }
     }
 
+    private boolean isCapturedWrite(
+            @NotNull VariableDescriptor variableDescriptor,
+            @NotNull WriteValueInstruction writeValueInstruction
+    ) {
+        DeclarationDescriptor containingDeclarationDescriptor = variableDescriptor.getContainingDeclaration();
+        if (containingDeclarationDescriptor instanceof ClassDescriptor) return false;
+        KtElement ownerElement = writeValueInstruction.getOwner().getCorrespondingElement();
+        DeclarationDescriptor writeOwnerDescriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, ownerElement);
+        if (containingDeclarationDescriptor.equals(writeOwnerDescriptor)) return false;
+        if (writeOwnerDescriptor instanceof ClassDescriptor) {
+            ClassDescriptor writeOwnerClass = (ClassDescriptor) writeOwnerDescriptor;
+            if (containingDeclarationDescriptor.equals(writeOwnerClass.getUnsubstitutedPrimaryConstructor())) return false;
+        }
+        return true;
+    }
+
     private boolean checkValReassignment(
             @NotNull VariableInitContext ctxt,
             @NotNull KtExpression expression,
@@ -434,7 +450,8 @@ public class ControlFlowInformationProvider {
         }
         boolean isThisOrNoDispatchReceiver =
                 PseudocodeUtil.isThisOrNoDispatchReceiver(writeValueInstruction, trace.getBindingContext());
-        if ((mayBeInitializedNotHere || !hasBackingField || !isThisOrNoDispatchReceiver) && !variableDescriptor.isVar()) {
+        boolean captured = isCapturedWrite(variableDescriptor, writeValueInstruction);
+        if ((mayBeInitializedNotHere || !hasBackingField || !isThisOrNoDispatchReceiver || captured) && !variableDescriptor.isVar()) {
             boolean hasReassignMethodReturningUnit = false;
             KtSimpleNameExpression operationReference = null;
             PsiElement parent = expression.getParent();
@@ -465,7 +482,12 @@ public class ControlFlowInformationProvider {
             }
             if (!hasReassignMethodReturningUnit) {
                 if (!isThisOrNoDispatchReceiver || !varWithValReassignErrorGenerated.contains(variableDescriptor)) {
-                    report(Errors.VAL_REASSIGNMENT.on(expression, variableDescriptor), ctxt);
+                    if (captured && !mayBeInitializedNotHere && hasBackingField && isThisOrNoDispatchReceiver) {
+                        report(Errors.CAPTURED_VAL_INITIALIZATION.on(expression, variableDescriptor), ctxt);
+                    }
+                    else {
+                        report(Errors.VAL_REASSIGNMENT.on(expression, variableDescriptor), ctxt);
+                    }
                 }
                 if (isThisOrNoDispatchReceiver) {
                     // try to get rid of repeating VAL_REASSIGNMENT diagnostic only for vars with no receiver

@@ -93,16 +93,21 @@ object J2KPostProcessingRegistrar {
         }
 
         registerDiagnosticBasedProcessingFactory(
-                Errors.VAL_REASSIGNMENT,
-                fun (element: KtSimpleNameExpression, diagnostic: Diagnostic): (() -> Unit)? {
-                    val property = element.mainReference.resolve() as? KtProperty ?: return null
-                    return {
-                        if (!property.isVar) {
-                            property.valOrVarKeyword.replace(KtPsiFactory(element.project).createVarKeyword())
-                        }
+                Errors.VAL_REASSIGNMENT, Errors.CAPTURED_VAL_INITIALIZATION
+        ) {
+            element: KtSimpleNameExpression, diagnostic: Diagnostic ->
+            val property = element.mainReference.resolve() as? KtProperty
+            if (property == null) {
+                null
+            }
+            else {
+                {
+                    if (!property.isVar) {
+                        property.valOrVarKeyword.replace(KtPsiFactory(element.project).createVarKeyword())
                     }
                 }
-        )
+            }
+        }
     }
 
     private inline fun <reified TElement : KtElement, TIntention: SelfTargetingRangeIntention<TElement>> registerIntentionBasedProcessing(
@@ -132,20 +137,20 @@ object J2KPostProcessingRegistrar {
     }
 
     private inline fun <reified TElement : KtElement> registerDiagnosticBasedProcessing(
-            diagnosticFactory: DiagnosticFactory<*>,
+            vararg diagnosticFactory: DiagnosticFactory<*>,
             crossinline fix: (TElement, Diagnostic) -> Unit
     ) {
-        registerDiagnosticBasedProcessingFactory(diagnosticFactory) { element: TElement, diagnostic: Diagnostic -> { fix(element, diagnostic) } }
+        registerDiagnosticBasedProcessingFactory(*diagnosticFactory) { element: TElement, diagnostic: Diagnostic -> { fix(element, diagnostic) } }
     }
 
     private inline fun <reified TElement : KtElement> registerDiagnosticBasedProcessingFactory(
-            diagnosticFactory: DiagnosticFactory<*>,
+            vararg diagnosticFactory: DiagnosticFactory<*>,
             crossinline fixFactory: (TElement, Diagnostic) -> (() -> Unit)?
     ) {
         _processings.add(object : J2kPostProcessing {
             override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
                 if (!TElement::class.java.isInstance(element)) return null
-                val diagnostic = diagnostics.forElement(element).firstOrNull { it.factory == diagnosticFactory } ?: return null
+                val diagnostic = diagnostics.forElement(element).firstOrNull { it.factory in diagnosticFactory } ?: return null
                 return fixFactory(element as TElement, diagnostic)
             }
         })

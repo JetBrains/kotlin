@@ -7728,6 +7728,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/variables/changeMutability"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
+            @TestMetadata("capturedValInitialization.kt")
+            public void testCapturedValInitialization() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/variables/changeMutability/capturedValInitialization.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("funParameter.kt")
             public void testFunParameter() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/variables/changeMutability/funParameter.kt");

@@ -166,6 +166,7 @@ class QuickFixRegistrar : QuickFixContributor {
 
         VAL_WITH_SETTER.registerFactory(ChangeVariableMutabilityFix.VAL_WITH_SETTER_FACTORY)
         VAL_REASSIGNMENT.registerFactory(ChangeVariableMutabilityFix.VAL_REASSIGNMENT_FACTORY)
+        CAPTURED_VAL_INITIALIZATION.registerFactory(ChangeVariableMutabilityFix.CAPTURED_VAL_INITIALIZATION_FACTORY)
         VAR_OVERRIDDEN_BY_VAL.registerFactory(ChangeVariableMutabilityFix.VAR_OVERRIDDEN_BY_VAL_FACTORY)
 
         VAL_OR_VAR_ON_FUN_PARAMETER.registerFactory(RemoveValVarFromParameterFix)
