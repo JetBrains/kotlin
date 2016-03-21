@@ -17,21 +17,80 @@
 package org.jetbrains.kotlin.asJava
 
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiAnnotation
-import com.intellij.psi.PsiAnnotationOwner
-import com.intellij.psi.PsiElement
+import com.intellij.psi.*
 import com.intellij.util.IncorrectOperationException
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
+import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
+import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
+import org.jetbrains.kotlin.resolve.source.getPsi
 
 class KtLightAnnotation(
         override val clsDelegate: PsiAnnotation,
         override val kotlinOrigin: KtAnnotationEntry,
         private val owner: PsiAnnotationOwner
 ) : PsiAnnotation by clsDelegate, KtLightElement<KtAnnotationEntry, PsiAnnotation> {
+    inner class LightExpressionValue(private val delegate: PsiExpression) : PsiAnnotationMemberValue, PsiExpression by delegate {
+        val originalExpression: KtExpression? by lazy {
+            val nameAndValue = getStrictParentOfType<PsiNameValuePair>() ?: return@lazy null
+            val annotationEntry = this@KtLightAnnotation.kotlinOrigin
+            val context = LightClassGenerationSupport.getInstance(project).analyze(annotationEntry)
+            val resolvedCall = annotationEntry.getResolvedCall(context) ?: return@lazy null
+            val annotationConstructor = resolvedCall.resultingDescriptor
+            val parameterName = nameAndValue.name ?: "value"
+            val parameter = annotationConstructor.valueParameters.singleOrNull { it.name.asString() == parameterName }
+                            ?: return@lazy null
+            val resolvedArgument = resolvedCall.valueArguments[parameter] ?: return@lazy null
+            when (resolvedArgument) {
+                is DefaultValueArgument -> {
+                    (parameter.source.getPsi() as? KtParameter)?.defaultValue
+                }
+
+                is ExpressionValueArgument -> {
+                    resolvedArgument.valueArgument?.getArgumentExpression()
+                }
+
+                is VarargValueArgument -> {
+                    val arrayInitializer = parent as? PsiArrayInitializerMemberValue ?: return@lazy null
+                    val exprIndex = arrayInitializer.initializers.indexOf(delegate as PsiAnnotationMemberValue)
+                    if (exprIndex < 0) return@lazy null
+                    resolvedArgument.arguments[exprIndex].getArgumentExpression()
+                }
+
+                else -> null
+            }
+        }
+
+        override fun getLanguage() = KotlinLanguage.INSTANCE
+    }
+
+    inner class LightArrayInitializerValue(private val delegate: PsiArrayInitializerMemberValue) : PsiArrayInitializerMemberValue by delegate {
+        private val _initializers by lazy { delegate.initializers.map { wrapAnnotationValue(it) }.toTypedArray() }
+
+        override fun getInitializers() = _initializers
+        override fun getLanguage() = KotlinLanguage.INSTANCE
+    }
+
+    private fun wrapAnnotationValue(value: PsiAnnotationMemberValue): PsiAnnotationMemberValue {
+        return when (value) {
+            is PsiExpression -> LightExpressionValue(value)
+            is PsiArrayInitializerMemberValue -> LightArrayInitializerValue(value)
+            else -> value
+        }
+    }
+
     override fun getName() = null
     override fun setName(newName: String) = throw IncorrectOperationException()
 
     override fun getOwner() = owner
+
+    override fun findAttributeValue(name: String?) = clsDelegate.findAttributeValue(name)?.let { wrapAnnotationValue(it) }
+    override fun findDeclaredAttributeValue(name: String?) = clsDelegate.findDeclaredAttributeValue(name)?.let { wrapAnnotationValue(it) }
 
     override fun getText() = kotlinOrigin.text ?: ""
     override fun getTextRange() = kotlinOrigin.textRange ?: TextRange.EMPTY_RANGE
