@@ -1,0 +1,23 @@
+package
+
+public fun test(/*0*/ x: kotlin.collections.List<kotlin.String>): kotlin.Unit
+
+public open class Assert {
+    public constructor Assert()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public open fun </*0*/ T : kotlin.Any!> assertThat(/*0*/ actual: T!, /*1*/ matcher: Matcher<in T!>!): kotlin.Unit
+}
+
+public open class Matcher</*0*/ T : kotlin.Any!> {
+    public constructor Matcher</*0*/ T : kotlin.Any!>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public open fun </*0*/ T : kotlin.Any!> hasItem(/*0*/ item: T!): Matcher<kotlin.collections.(Mutable)Iterable<*>!>!
+}

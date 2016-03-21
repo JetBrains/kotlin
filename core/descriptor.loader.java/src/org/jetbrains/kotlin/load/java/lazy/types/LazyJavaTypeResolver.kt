@@ -148,15 +148,27 @@ class LazyJavaTypeResolver(
 
             if (javaToKotlin.isReadOnly(kotlinDescriptor)) {
                 if (howThisTypeIsUsedEffectively == MEMBER_SIGNATURE_COVARIANT
-                        || howThisTypeIsUsedEffectively == SUPERTYPE
-                        // Convert (Mutable)List<in A> to MutableList<in A>
-                        // Same for (Mutable)Map<K, in V>
-                        || javaType.typeArguments.lastOrNull().isSuperWildcard()) {
+                    || howThisTypeIsUsedEffectively == SUPERTYPE
+                    || javaType.argumentsMakeSenseOnlyForMutableContainer(readOnlyContainer = kotlinDescriptor)) {
                     return javaToKotlin.convertReadOnlyToMutable(kotlinDescriptor)
                 }
             }
 
             return kotlinDescriptor
+        }
+
+        // Returns true for covariant read-only container that has mutable pair with invariant parameter
+        // List<in A> does not make sense, but MutableList<in A> does
+        // Same for Map<K, in V>
+        // But both Iterable<in A>, MutableIterable<in A> don't make sense as they are covariant, so return false
+        private fun JavaClassifierType.argumentsMakeSenseOnlyForMutableContainer(
+                readOnlyContainer: ClassDescriptor
+        ): Boolean {
+            if (!typeArguments.lastOrNull().isSuperWildcard()) return false
+            val mutableLastParameterVariance = JavaToKotlinClassMap.INSTANCE.convertReadOnlyToMutable(readOnlyContainer)
+                    .typeConstructor.parameters.lastOrNull()?.variance ?: return false
+
+            return mutableLastParameterVariance != OUT_VARIANCE
         }
 
         private fun JavaType?.isSuperWildcard(): Boolean = (this as? JavaWildcardType)?.let { it.bound != null && !it.isExtends } ?: false

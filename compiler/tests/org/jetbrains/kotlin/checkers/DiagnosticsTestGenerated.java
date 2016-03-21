@@ -10005,6 +10005,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("contravariantIterable.kt")
+            public void testContravariantIterable() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/contravariantIterable.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("differentFilename.kt")
             public void testDifferentFilename() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/differentFilename.kt");
@@ -10176,6 +10182,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("kt7523.kt")
             public void testKt7523() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/kt7523.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("matchers.kt")
+            public void testMatchers() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/matchers.kt");
                 doTest(fileName);
             }
 
