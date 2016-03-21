@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,9 @@ import com.intellij.formatting.SpacingBuilder
 import com.intellij.formatting.SpacingBuilder.RuleBuilder
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.TokenType
 import com.intellij.psi.codeStyle.CodeStyleSettings
-import com.intellij.psi.formatter.FormatterUtil
+import com.intellij.psi.impl.source.tree.TreeUtil
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeTypes.*
@@ -65,7 +66,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             inPosition(left = FUN, right = CLASS).emptyLinesIfLineBreakInLeft(1)
 
             inPosition(left = ENUM_ENTRY, right = ENUM_ENTRY).emptyLinesIfLineBreakInLeft(
-                    emptyLines = 0, numSpacesOtherwise = 1, numberOfLineFeedsOtherwise = 0)
+                    emptyLines = 0, numSpacesOtherwise = 1)
 
             inPosition(parent = CLASS_BODY, left = SEMICOLON).customRule { parent, left, right ->
                 val klass = parent.node.treeParent.psi as? KtClass ?: return@customRule null
@@ -246,7 +247,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
                     inPosition(parent = parent, right = keyword).customRule {
                         parent, left, right ->
 
-                        val previousLeaf = FormatterUtil.getPreviousNonWhitespaceLeaf(right.node)
+                        val previousLeaf = getPreviousNonWhitespaceLeaf(right.node)
                         val leftBlock = if (
                                 previousLeaf != null &&
                                 previousLeaf.elementType == RBRACE &&
@@ -274,7 +275,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
                 if (block != null && block.elementType == blockType) {
                     val leftBrace = block.findChildByType(LBRACE)
                     if (leftBrace != null) {
-                        val previousLeaf = FormatterUtil.getPreviousNonWhitespaceLeaf(leftBrace)
+                        val previousLeaf = getPreviousNonWhitespaceLeaf(leftBrace)
                         val isAfterEolComment = previousLeaf != null && (previousLeaf.elementType == EOL_COMMENT)
                         val keepLineBreaks = kotlinSettings.LBRACE_ON_NEXT_LINE || isAfterEolComment
                         val minimumLF = if (kotlinSettings.LBRACE_ON_NEXT_LINE) 1 else 0
@@ -387,4 +388,33 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             after(EOL_COMMENT).lineBreakInCode()
         }
     }
+}
+
+// TODO: Abstract this two functions
+private fun getPreviousNonWhitespaceLeaf(node: ASTNode?): ASTNode? {
+    if (node == null) return null
+    val treePrev = node.treePrev
+    if (treePrev != null) {
+        val candidate = TreeUtil.getLastChild(treePrev)
+        if (candidate != null && !isWhitespaceOrEmpty(candidate)) {
+            return candidate
+        }
+        else {
+            return getPreviousNonWhitespaceLeaf(candidate)
+        }
+    }
+    val treeParent = node.treeParent
+
+    if (treeParent == null || treeParent.treeParent == null) {
+        return null
+    }
+    else {
+        return getPreviousNonWhitespaceLeaf(treeParent)
+    }
+}
+
+private fun isWhitespaceOrEmpty(node: ASTNode?): Boolean {
+    if (node == null) return false
+    val type = node.elementType
+    return type === TokenType.WHITE_SPACE || type !== TokenType.ERROR_ELEMENT && node.textLength == 0
 }

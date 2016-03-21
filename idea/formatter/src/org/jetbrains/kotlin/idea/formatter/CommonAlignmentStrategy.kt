@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,9 @@
 
 package org.jetbrains.kotlin.idea.formatter
 
-import com.intellij.formatting.Wrap
-import com.intellij.psi.tree.IElementType
+import com.intellij.formatting.Alignment
+import com.intellij.lang.ASTNode
 
-interface WrappingStrategy {
-    fun getWrap(childElementType: IElementType): Wrap?
-
-    object NoWrapping: WrappingStrategy {
-        override fun getWrap(childElementType: IElementType): Wrap? = null
-    }
+abstract class CommonAlignmentStrategy {
+    abstract fun getAlignment(node: ASTNode): Alignment?
 }
