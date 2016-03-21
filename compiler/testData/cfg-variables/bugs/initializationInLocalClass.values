@@ -1,0 +1,19 @@
+== foo ==
+fun foo() {
+    var x: String
+    class A {
+        init {
+            x = ""
+        }
+    }
+    x.length
+}
+---------------------
+""                                                       <v0>: String              NEW: r("") -> <v0>
+x = ""                                                   !<v1>: *
+{ x = "" }                                               !<v1>: *                  COPY
+x                                                        <v2>: {<: CharSequence}   NEW: r(x) -> <v2>
+length                                                   <v3>: *                   NEW: r(length|<v2>) -> <v3>
+x.length                                                 <v3>: *                   COPY
+{ var x: String class A { init { x = "" } } x.length }   <v3>: *                   COPY
+=====================

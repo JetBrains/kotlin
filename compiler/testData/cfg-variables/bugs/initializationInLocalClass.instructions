@@ -1,0 +1,31 @@
+== foo ==
+fun foo() {
+    var x: String
+    class A {
+        init {
+            x = ""
+        }
+    }
+    x.length
+}
+---------------------
+L0:
+  1 <START>                                                         INIT: in: {} out: {}              USE: in: {length=READ} out: {length=READ}
+  2 mark({ var x: String class A { init { x = "" } } x.length })
+    v(var x: String)                                                INIT: in: {} out: {x=D}
+    jmp?(L2)                                                        INIT: in: {x=D} out: {x=D}        USE: in: {length=READ, x=READ} out: {length=READ, x=READ}
+  3 mark({ x = "" })
+    mark("")
+    r("") -> <v0>                                                                                     USE: in: {length=READ, x=WRITTEN_AFTER_READ} out: {length=READ, x=WRITTEN_AFTER_READ}
+    w(x|<v0>)                                                       INIT: in: {x=D} out: {x=ID}       USE: in: {length=READ, x=READ} out: {length=READ, x=WRITTEN_AFTER_READ}
+L2 [after local class]:
+  2 mark(x.length)                                                  INIT: in: {x=I?D} out: {x=I?D}    USE: in: {length=READ, x=READ} out: {length=READ, x=READ}
+    r(x) -> <v2>                                                                                      USE: in: {length=READ} out: {length=READ, x=READ}
+    r(length|<v2>) -> <v3>                                                                            USE: in: {} out: {length=READ}
+L1:
+  1 <END>                                                           INIT: in: {} out: {}
+error:
+    <ERROR>
+sink:
+    <SINK>                                                                                            USE: in: {} out: {}
+=====================

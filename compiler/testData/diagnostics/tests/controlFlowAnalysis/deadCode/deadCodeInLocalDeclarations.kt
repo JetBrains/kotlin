@@ -23,7 +23,7 @@ fun testObjectExpression1() {
 fun testClassDeclaration() {
     class C : <!UNREACHABLE_CODE!>Foo(<!>todo()<!UNREACHABLE_CODE!>)<!> {}
 
-    <!UNREACHABLE_CODE!>bar()<!>
+    bar()
 }
 
 fun testFunctionDefaultArgument() {

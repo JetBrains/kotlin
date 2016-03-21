@@ -915,7 +915,14 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             mark(expression)
             val statements = expression.statements
             for (statement in statements) {
+                val afterClassLabel = (statement as? KtClassOrObject)?.let { builder.createUnboundLabel("after local class") }
+                if (afterClassLabel != null) {
+                    builder.nondeterministicJump(afterClassLabel, statement, null)
+                }
                 generateInstructions(statement)
+                if (afterClassLabel != null) {
+                    builder.bindLabel(afterClassLabel)
+                }
             }
             if (statements.isEmpty()) {
                 builder.loadUnit(expression)
