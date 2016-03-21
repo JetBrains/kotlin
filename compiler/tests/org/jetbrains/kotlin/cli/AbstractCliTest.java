@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.cli;
 
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
 import kotlin.Pair;
 import kotlin.collections.CollectionsKt;
@@ -155,5 +156,16 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
 
     protected void doJsTest(@NotNull String fileName) throws Exception {
         doTest(fileName, new K2JSCompiler());
+    }
+
+    public static String removePerfOutput(String output) {
+        String[] lines = StringUtil.splitByLinesKeepSeparators(output);
+        StringBuilder result = new StringBuilder();
+        for (String line : lines) {
+            if (!line.contains("PERF:")) {
+                result.append(line);
+            }
+        }
+        return result.toString();
     }
 }
