@@ -18,14 +18,21 @@ package org.jetbrains.kotlin.idea.intentions.conventionNameCalls
 
 import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde.getAnyDeclaration
 import org.jetbrains.kotlin.idea.intentions.*
+import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.util.OperatorChecks
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class ReplaceContainsIntention : SelfTargetingRangeIntention<KtDotQualifiedExpression>(KtDotQualifiedExpression::class.java, "Replace 'contains' call with 'in' operator"), HighPriorityAction {
@@ -43,12 +50,18 @@ class ReplaceContainsIntention : SelfTargetingRangeIntention<KtDotQualifiedExpre
 
         if (!element.isReceiverExpressionWithValue()) return null
 
+        val functionDescriptor = getFunctionDescriptor(element) ?: return null
+        val isOperator = functionDescriptor.isOperator && OperatorChecks.checkOperator(functionDescriptor).isSuccess
+        if (!isOperator && !canRefactor(element.project, functionDescriptor)) return null
+
         return element.callExpression!!.calleeExpression!!.textRange
     }
 
     override fun applyTo(element: KtDotQualifiedExpression, editor: Editor?) {
         val argument = element.callExpression!!.valueArguments.single().getArgumentExpression()!!
         val receiver = element.receiverExpression
+
+        addOperatorModifier(element)
 
         val psiFactory = KtPsiFactory(element)
 
@@ -69,5 +82,22 @@ class ReplaceContainsIntention : SelfTargetingRangeIntention<KtDotQualifiedExpre
                 previousElement.parent!!.addAfter(psiFactory.createSemicolon(), previousElement)
             }
         }
+    }
+
+    private fun canRefactor(project: Project, functionDescriptor: FunctionDescriptor): Boolean {
+        val declaration = getAnyDeclaration(project, functionDescriptor)
+        return declaration?.canRefactor() ?: false
+    }
+
+    private fun addOperatorModifier(element: KtDotQualifiedExpression) {
+        val functionDescriptor = getFunctionDescriptor(element) ?: return
+        val declaration = getAnyDeclaration(element.project, functionDescriptor)
+        (declaration as? KtNamedFunction)?.addModifier(KtTokens.OPERATOR_KEYWORD)
+    }
+
+    private fun getFunctionDescriptor(element: KtDotQualifiedExpression) : FunctionDescriptor? {
+        val bindingContext = element.analyze(BodyResolveMode.PARTIAL)
+        val resolvedCall = element.getResolvedCall(bindingContext) ?: return null
+        return resolvedCall.resultingDescriptor as? FunctionDescriptor
     }
 }

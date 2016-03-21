@@ -2759,6 +2759,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/conventionNameCalls/replaceContains"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
+            @TestMetadata("containsFromJava.kt")
+            public void testContainsFromJava() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceContains/containsFromJava.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("containsInExpression.kt")
             public void testContainsInExpression() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceContains/containsInExpression.kt");
@@ -2792,6 +2798,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             @TestMetadata("functionLiteralArgumentInExpression.kt")
             public void testFunctionLiteralArgumentInExpression() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceContains/functionLiteralArgumentInExpression.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inheritedWithoutOperatorModifier.kt")
+            public void testInheritedWithoutOperatorModifier() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceContains/inheritedWithoutOperatorModifier.kt");
                 doTest(fileName);
             }
 
@@ -2858,6 +2870,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             @TestMetadata("unacceptableVararg2.kt")
             public void testUnacceptableVararg2() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceContains/unacceptableVararg2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("withoutOperatorModifier.kt")
+            public void testWithoutOperatorModifier() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceContains/withoutOperatorModifier.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("withoutOperatorModifierDifferentFiles.kt")
+            public void testWithoutOperatorModifierDifferentFiles() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceContains/withoutOperatorModifierDifferentFiles.kt");
                 doTest(fileName);
             }
         }

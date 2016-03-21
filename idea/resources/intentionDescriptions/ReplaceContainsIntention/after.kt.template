@@ -1,1 +1,5 @@
-b in a
+class A {
+    <spot>operator</spot> fun contains(x: Int) : Boolean = true
+}
+
+<spot>b in a</spot>

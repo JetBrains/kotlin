@@ -1,1 +1,5 @@
+class A {
+    fun contains(x: Int) : Boolean = true
+}
+
 a.contains(b)

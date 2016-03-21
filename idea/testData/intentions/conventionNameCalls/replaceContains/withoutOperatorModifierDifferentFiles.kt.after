@@ -1,0 +1,4 @@
+fun test() {
+    val test = Test()
+    0 in test
+}
