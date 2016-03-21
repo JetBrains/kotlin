@@ -2889,9 +2889,9 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("initInLambda.kt")
-            public void testInitInLambda() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/initInLambda.kt");
+            @TestMetadata("initializationInLambda.kt")
+            public void testInitializationInLambda() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/initializationInLambda.kt");
                 doTest(fileName);
             }
 
