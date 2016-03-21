@@ -36,19 +36,21 @@ fun createKotlinJavascriptPackageFragmentProvider(
     }
     val provider = PackageFragmentProviderImpl(packageFragments)
 
+    val notFoundClasses = NotFoundClasses(storageManager, module)
     val localClassResolver = LocalClassResolverImpl()
 
     val components = DeserializationComponents(
             storageManager,
             module,
             DeserializedClassDataFinder(provider),
-            AnnotationAndConstantLoaderImpl(module, JsSerializerProtocol),
+            AnnotationAndConstantLoaderImpl(module, notFoundClasses, JsSerializerProtocol),
             provider,
             localClassResolver,
             ErrorReporter.DO_NOTHING,
             LookupTracker.DO_NOTHING,
             FlexibleTypeCapabilitiesDeserializer.Dynamic,
-            ClassDescriptorFactory.EMPTY
+            ClassDescriptorFactory.EMPTY,
+            notFoundClasses
     )
 
     localClassResolver.setDeserializationComponents(components)

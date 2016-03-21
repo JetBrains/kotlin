@@ -16,10 +16,9 @@
 
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
-import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME
 import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
@@ -27,6 +26,7 @@ import org.jetbrains.kotlin.load.java.components.TypeUsage
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.lazy.types.toAttributes
 import org.jetbrains.kotlin.load.java.structure.*
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValueFactory
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.serialization.deserialization.findNonGenericClassAcrossDependencies
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.utils.keysToMapExceptNulls
 
@@ -51,7 +51,8 @@ class LazyJavaAnnotationDescriptor(
         val fqName = fqName() ?: return@createLazyValue ErrorUtils.createErrorType("No fqName: $javaAnnotation")
         val annotationClass = JavaToKotlinClassMap.INSTANCE.mapJavaToKotlin(fqName)
                               ?: javaAnnotation.resolve()?.let { javaClass -> c.components.moduleClassResolver.resolveClass(javaClass) }
-        annotationClass?.defaultType ?: createTypeForMissingDependencies(fqName)
+                              ?: createTypeForMissingDependencies(fqName)
+        annotationClass.defaultType
     }
 
     private val source = c.components.sourceElementFactory.source(javaAnnotation)
@@ -151,13 +152,8 @@ class LazyJavaAnnotationDescriptor(
     }
 
     private fun createTypeForMissingDependencies(fqName: FqName) =
-            ErrorUtils.createErrorTypeWithCustomConstructor(
-                    "[Missing annotation class: $fqName]",
-                    ClassDescriptorImpl(
-                            EmptyPackageFragmentDescriptor(c.module, fqName.parent()), fqName.shortName(), Modality.FINAL,
-                            ClassKind.ANNOTATION_CLASS, listOf(c.module.builtIns.anyType), SourceElement.NO_SOURCE
-                    ).apply {
-                        initialize(MemberScope.Empty, emptySet(), null)
-                    }.typeConstructor
+            c.module.findNonGenericClassAcrossDependencies(
+                    ClassId.topLevel(fqName),
+                    c.components.deserializedDescriptorResolver.components.notFoundClasses
             )
 }

@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.serialization.ClassDataWithSource
 import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
 import org.jetbrains.kotlin.serialization.deserialization.ClassDescriptorFactory
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
+import org.jetbrains.kotlin.serialization.deserialization.NotFoundClasses
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 
@@ -52,18 +53,21 @@ class DeserializerForClassfileDecompiler(
 
     private val classFinder = DirectoryBasedClassFinder(packageDirectory, directoryPackageFqName)
 
-    private val classDataFinder = DirectoryBasedDataFinder(classFinder, LOG)
+    override val deserializationComponents: DeserializationComponents
 
-    private val errorReporter = LoggingErrorReporter(LOG)
+    init {
+        val classDataFinder = DirectoryBasedDataFinder(classFinder, LOG)
+        val errorReporter = LoggingErrorReporter(LOG)
+        val notFoundClasses = NotFoundClasses(storageManager, moduleDescriptor)
+        val annotationAndConstantLoader =
+                BinaryClassAnnotationAndConstantLoaderImpl(moduleDescriptor, notFoundClasses, storageManager, classFinder, errorReporter)
 
-    private val annotationAndConstantLoader =
-            BinaryClassAnnotationAndConstantLoaderImpl(moduleDescriptor, storageManager, classFinder, errorReporter)
-
-    override val deserializationComponents: DeserializationComponents = DeserializationComponents(
-            storageManager, moduleDescriptor, classDataFinder, annotationAndConstantLoader, packageFragmentProvider,
-            ResolveEverythingToKotlinAnyLocalClassResolver(targetPlatform.builtIns), errorReporter,
-            LookupTracker.DO_NOTHING, JavaFlexibleTypeCapabilitiesDeserializer, ClassDescriptorFactory.EMPTY
-    )
+        deserializationComponents = DeserializationComponents(
+                storageManager, moduleDescriptor, classDataFinder, annotationAndConstantLoader, packageFragmentProvider,
+                ResolveEverythingToKotlinAnyLocalClassResolver(targetPlatform.builtIns), errorReporter,
+                LookupTracker.DO_NOTHING, JavaFlexibleTypeCapabilitiesDeserializer, ClassDescriptorFactory.EMPTY, notFoundClasses
+        )
+    }
 
     override fun resolveDeclarationsInFacade(facadeFqName: FqName): List<DeclarationDescriptor> {
         val packageFqName = facadeFqName.parent()

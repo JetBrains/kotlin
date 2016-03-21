@@ -30,23 +30,20 @@ import org.jetbrains.kotlin.resolve.constants.AnnotationValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValueFactory
 import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.AnnotationDeserializer
-import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
-import org.jetbrains.kotlin.serialization.deserialization.NameResolver
-import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
+import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.types.ErrorUtils
 import java.util.*
 
 class BinaryClassAnnotationAndConstantLoaderImpl(
         private val module: ModuleDescriptor,
+        private val notFoundClasses: NotFoundClasses,
         storageManager: StorageManager,
         kotlinClassFinder: KotlinClassFinder,
         errorReporter: ErrorReporter
 ) : AbstractBinaryClassAnnotationAndConstantLoader<AnnotationDescriptor, ConstantValue<*>, AnnotationWithTarget>(
         storageManager, kotlinClassFinder, errorReporter
 ) {
-    private val annotationDeserializer = AnnotationDeserializer(module)
+    private val annotationDeserializer = AnnotationDeserializer(module, notFoundClasses)
     private val factory = ConstantValueFactory(module.builtIns)
 
     override fun loadTypeAnnotation(proto: ProtoBuf.Annotation, nameResolver: NameResolver): AnnotationDescriptor =
@@ -167,7 +164,6 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
     }
 
     private fun resolveClass(classId: ClassId): ClassDescriptor {
-        return module.findClassAcrossModuleDependencies(classId)
-               ?: ErrorUtils.createErrorClass(classId.asSingleFqName().asString())
+        return module.findNonGenericClassAcrossDependencies(classId, notFoundClasses)
     }
 }

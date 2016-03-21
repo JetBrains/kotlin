@@ -52,6 +52,7 @@ import org.jetbrains.org.objectweb.asm.ClassReader;
 import org.jetbrains.org.objectweb.asm.ClassVisitor;
 import org.jetbrains.org.objectweb.asm.ClassWriter;
 import org.jetbrains.org.objectweb.asm.Opcodes;
+import org.junit.Assert;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -83,7 +84,8 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
     @NotNull
     private File compileLibrary(@NotNull String sourcePath, @NotNull File... extraClassPath) {
         File result = new File(tmpdir, sourcePath + ".jar");
-        compileKotlin(sourcePath, result, extraClassPath);
+        Pair<String, ExitCode> output = compileKotlin(sourcePath, result, extraClassPath);
+        Assert.assertEquals(normalizeOutput(new Pair<String, ExitCode>("", ExitCode.OK)), normalizeOutput(output));
         return result;
     }
 
@@ -298,6 +300,10 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         doTestBrokenKotlinLibrary("library", "a/A.class");
     }
 
+    public void testMissingDependencyNestedAnnotation() throws Exception {
+        doTestBrokenKotlinLibrary("library", "a/A$Anno.class");
+    }
+
     public void testMissingDependencyConflictingLibraries() throws Exception {
         File library1 = copyJarFileWithoutEntry(compileLibrary("library1"),
                                                 "a/A.class", "a/A$Inner.class", "a/AA.class", "a/AA$Inner.class");
@@ -316,6 +322,10 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         File library2 = deletePaths(compileJava("library2"), "test/A.class", "test/A$Inner.class");
         Pair<String, ExitCode> output = compileKotlin("source.kt", tmpdir, library1, library2);
         KotlinTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), "output.txt"), normalizeOutput(output));
+    }
+
+    public void testMissingDependencyJavaNestedAnnotation() throws Exception {
+        doTestBrokenJavaLibrary("library", "test/A$Anno.class");
     }
 
     /*test source mapping generation when source info is absent*/

@@ -37,11 +37,11 @@ class DeserializationComponents(
         val lookupTracker: LookupTracker,
         val flexibleTypeCapabilitiesDeserializer: FlexibleTypeCapabilitiesDeserializer,
         val fictitiousClassDescriptorFactory: ClassDescriptorFactory,
+        val notFoundClasses: NotFoundClasses,
         val typeCapabilitiesLoader: TypeCapabilitiesLoader = TypeCapabilitiesLoader.NONE,
         val additionalSupertypes: AdditionalSupertypes = AdditionalSupertypes.None
 ) {
     val classDeserializer: ClassDeserializer = ClassDeserializer(this)
-    val notFoundClasses: NotFoundClasses = NotFoundClasses(storageManager, moduleDescriptor)
 
     fun deserializeClass(classId: ClassId): ClassDescriptor? = classDeserializer.deserializeClass(classId)
 

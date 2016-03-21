@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
-class AnnotationDeserializer(private val module: ModuleDescriptor) {
+class AnnotationDeserializer(private val module: ModuleDescriptor, private val notFoundClasses: NotFoundClasses) {
     private val builtIns: KotlinBuiltIns
         get() = module.builtIns
 
@@ -164,7 +164,6 @@ class AnnotationDeserializer(private val module: ModuleDescriptor) {
             }
 
     private fun resolveClass(classId: ClassId): ClassDescriptor {
-        return module.findClassAcrossModuleDependencies(classId)
-               ?: ErrorUtils.createErrorClass(classId.asSingleFqName().asString())
+        return module.findNonGenericClassAcrossDependencies(classId, notFoundClasses)
     }
 }

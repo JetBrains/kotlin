@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.load.kotlin
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaPackageFragmentProvider
-import org.jetbrains.kotlin.serialization.deserialization.ClassDescriptorFactory
-import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
-import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
-import org.jetbrains.kotlin.serialization.deserialization.LocalClassResolverImpl
+import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.storage.StorageManager
 
 // This class is needed only for easier injection: exact types of needed components are specified in the constructor here.
@@ -33,6 +30,7 @@ class DeserializationComponentsForJava(
         classDataFinder: JavaClassDataFinder,
         annotationAndConstantLoader: BinaryClassAnnotationAndConstantLoaderImpl,
         packageFragmentProvider: LazyJavaPackageFragmentProvider,
+        notFoundClasses: NotFoundClasses,
         errorReporter: ErrorReporter,
         lookupTracker: LookupTracker
 ) {
@@ -42,7 +40,8 @@ class DeserializationComponentsForJava(
         val localClassResolver = LocalClassResolverImpl()
         components = DeserializationComponents(
                 storageManager, moduleDescriptor, classDataFinder, annotationAndConstantLoader, packageFragmentProvider, localClassResolver,
-                errorReporter, lookupTracker, JavaFlexibleTypeCapabilitiesDeserializer, ClassDescriptorFactory.EMPTY, JavaTypeCapabilitiesLoader,
+                errorReporter, lookupTracker, JavaFlexibleTypeCapabilitiesDeserializer, ClassDescriptorFactory.EMPTY,
+                notFoundClasses, JavaTypeCapabilitiesLoader,
                 additionalSupertypes = BuiltInClassesAreSerializableOnJvm(moduleDescriptor)
         )
         localClassResolver.setDeserializationComponents(components)

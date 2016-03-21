@@ -31,3 +31,15 @@ fun ModuleDescriptor.findClassAcrossModuleDependencies(classId: ClassId): ClassD
     }
     return result
 }
+
+// Returns a mock class descriptor if no existing class is found.
+// NB: the returned class has no type parameters and thus cannot be given arguments in types
+fun ModuleDescriptor.findNonGenericClassAcrossDependencies(classId: ClassId, notFoundClasses: NotFoundClasses): ClassDescriptor {
+    val existingClass = findClassAcrossModuleDependencies(classId)
+    if (existingClass != null) return existingClass
+
+    // Take a list of N zeros, where N is the number of class names in the given ClassId
+    val typeParametersCount = generateSequence(classId) { if (it.isNestedClass) it.outerClassId else null }.map { 0 }.toList()
+
+    return notFoundClasses.get(classId, typeParametersCount).declarationDescriptor as ClassDescriptor
+}

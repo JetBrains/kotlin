@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
 import org.jetbrains.kotlin.serialization.deserialization.LocalClassResolver
+import org.jetbrains.kotlin.serialization.deserialization.NotFoundClasses
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 class RuntimeModuleData private constructor(val deserialization: DeserializationComponents, val packageFacadeProvider: RuntimePackagePartProvider) {
@@ -65,10 +66,13 @@ class RuntimeModuleData private constructor(val deserialization: Deserialization
                     LazyJavaPackageFragmentProvider(globalJavaResolverContext, module, ReflectionTypes(module))
             val javaDescriptorResolver = JavaDescriptorResolver(lazyJavaPackageFragmentProvider)
             val javaClassDataFinder = JavaClassDataFinder(reflectKotlinClassFinder, deserializedDescriptorResolver)
-            val binaryClassAnnotationAndConstantLoader = BinaryClassAnnotationAndConstantLoaderImpl(module, storageManager, reflectKotlinClassFinder, RuntimeErrorReporter)
+            val notFoundClasses = NotFoundClasses(storageManager, module)
+            val binaryClassAnnotationAndConstantLoader = BinaryClassAnnotationAndConstantLoaderImpl(
+                    module, notFoundClasses, storageManager, reflectKotlinClassFinder, RuntimeErrorReporter
+            )
             val deserializationComponentsForJava = DeserializationComponentsForJava(
                     storageManager, module, javaClassDataFinder, binaryClassAnnotationAndConstantLoader,
-                    lazyJavaPackageFragmentProvider, RuntimeErrorReporter, LookupTracker.DO_NOTHING
+                    lazyJavaPackageFragmentProvider, notFoundClasses, RuntimeErrorReporter, LookupTracker.DO_NOTHING
             )
             singleModuleClassResolver.resolver = javaDescriptorResolver
             deserializedDescriptorResolver.setComponents(deserializationComponentsForJava)

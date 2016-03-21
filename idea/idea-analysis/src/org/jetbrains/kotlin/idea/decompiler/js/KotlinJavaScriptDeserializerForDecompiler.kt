@@ -52,13 +52,19 @@ class KotlinJavaScriptDeserializerForDecompiler(
         packageDirectory.findChild(path.substringAfterLast("/"))?.inputStream
     }
 
-    private val annotationAndConstantLoader = AnnotationAndConstantLoaderImpl(moduleDescriptor, JsSerializerProtocol)
+    override val deserializationComponents: DeserializationComponents
 
-    override val deserializationComponents = DeserializationComponents(
-            storageManager, moduleDescriptor, classDataFinder, annotationAndConstantLoader, packageFragmentProvider,
-            ResolveEverythingToKotlinAnyLocalClassResolver(targetPlatform.builtIns), LoggingErrorReporter(LOG),
-            LookupTracker.DO_NOTHING, FlexibleTypeCapabilitiesDeserializer.Dynamic, ClassDescriptorFactory.EMPTY
-    )
+    init {
+        val notFoundClasses = NotFoundClasses(storageManager, moduleDescriptor)
+        val annotationAndConstantLoader = AnnotationAndConstantLoaderImpl(moduleDescriptor, notFoundClasses, JsSerializerProtocol)
+
+        deserializationComponents = DeserializationComponents(
+                storageManager, moduleDescriptor, classDataFinder, annotationAndConstantLoader, packageFragmentProvider,
+                ResolveEverythingToKotlinAnyLocalClassResolver(targetPlatform.builtIns), LoggingErrorReporter(LOG),
+                LookupTracker.DO_NOTHING, FlexibleTypeCapabilitiesDeserializer.Dynamic, ClassDescriptorFactory.EMPTY,
+                notFoundClasses
+        )
+    }
 
     override fun resolveDeclarationsInFacade(facadeFqName: FqName): List<DeclarationDescriptor> {
         val packageFqName = facadeFqName.parent()

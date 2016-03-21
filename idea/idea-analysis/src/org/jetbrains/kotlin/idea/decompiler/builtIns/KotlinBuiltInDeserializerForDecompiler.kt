@@ -39,12 +39,19 @@ class KotlinBuiltInDeserializerForDecompiler(
 ) : DeserializerForDecompilerBase(packageDirectory, packageFqName) {
     override val targetPlatform: TargetPlatform get() = TargetPlatform.Default
 
-    override val deserializationComponents = DeserializationComponents(
-            storageManager, moduleDescriptor, BuiltInsClassDataFinder(proto, nameResolver),
-            AnnotationAndConstantLoaderImpl(moduleDescriptor, BuiltInSerializerProtocol), packageFragmentProvider,
-            ResolveEverythingToKotlinAnyLocalClassResolver(targetPlatform.builtIns), LoggingErrorReporter(LOG),
-            LookupTracker.DO_NOTHING, FlexibleTypeCapabilitiesDeserializer.ThrowException, ClassDescriptorFactory.EMPTY
-    )
+    override val deserializationComponents: DeserializationComponents
+
+    init {
+        val notFoundClasses = NotFoundClasses(storageManager, moduleDescriptor)
+
+        deserializationComponents = DeserializationComponents(
+                storageManager, moduleDescriptor, BuiltInsClassDataFinder(proto, nameResolver),
+                AnnotationAndConstantLoaderImpl(moduleDescriptor, notFoundClasses, BuiltInSerializerProtocol), packageFragmentProvider,
+                ResolveEverythingToKotlinAnyLocalClassResolver(targetPlatform.builtIns), LoggingErrorReporter(LOG),
+                LookupTracker.DO_NOTHING, FlexibleTypeCapabilitiesDeserializer.ThrowException, ClassDescriptorFactory.EMPTY,
+                notFoundClasses
+        )
+    }
 
     override fun resolveDeclarationsInFacade(facadeFqName: FqName): List<DeclarationDescriptor> {
         assert(facadeFqName == directoryPackageFqName) {

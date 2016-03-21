@@ -27,9 +27,10 @@ import org.jetbrains.kotlin.types.KotlinType
 
 class AnnotationAndConstantLoaderImpl(
         module: ModuleDescriptor,
+        private val notFoundClasses: NotFoundClasses,
         private val protocol: SerializerExtensionProtocol
 ) : AnnotationAndConstantLoader<AnnotationDescriptor, ConstantValue<*>, AnnotationWithTarget> {
-    private val deserializer = AnnotationDeserializer(module)
+    private val deserializer = AnnotationDeserializer(module, notFoundClasses)
 
     override fun loadClassAnnotations(
             classProto: ProtoBuf.Class,
