@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,13 +34,13 @@ public class ClsWrapperStubPsiFactory extends StubPsiFactory {
     private final StubPsiFactory delegate = new ClsStubPsiFactory();
 
     @Nullable
-    public static LightMemberOrigin getMemberOrigin(@NotNull PsiMember member) {
+    public static LightMemberOriginForDeclaration getMemberOrigin(@NotNull PsiMember member) {
         if (member instanceof ClsRepositoryPsiElement<?>) {
             StubElement stubElement = ((ClsRepositoryPsiElement<?>) member).getStub();
             if (stubElement instanceof UserDataHolder) {
                 LightElementOrigin origin = ((UserDataHolder) stubElement).getUserData(ORIGIN);
-                if (origin instanceof LightMemberOrigin) {
-                    return (LightMemberOrigin) origin;
+                if (origin instanceof LightMemberOriginForDeclaration) {
+                    return (LightMemberOriginForDeclaration) origin;
                 }
             }
         }

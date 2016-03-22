@@ -136,7 +136,7 @@ public abstract class KtWrappingLightClass extends AbstractLightClass implements
         return ArraysKt.map(getDelegate().getMethods(), new Function1<PsiMethod, PsiMethod>() {
             @Override
             public PsiMethod invoke(PsiMethod method) {
-                LightMemberOrigin origin = ClsWrapperStubPsiFactory.getMemberOrigin(method);
+                LightMemberOriginForDeclaration origin = ClsWrapperStubPsiFactory.getMemberOrigin(method);
                 KtDeclaration originalElement = origin != null ? origin.getOriginalElement() : null;
                 if (originalElement instanceof KtPropertyAccessor) {
                     //noinspection ConstantConditions
