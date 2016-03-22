@@ -51,7 +51,9 @@ class PropertyAsCallAndroidUastAdditionalChecker : AndroidUastAdditionalChecker 
             override val parent = element.parent
             override val psi = ktElement
 
-            override val functionReference = KotlinNameUSimpleReferenceExpression(expr.psi, expr.identifier, expr.parent)
+            override val functionReference = KotlinNameUSimpleReferenceExpression(
+                    expr.psi, expr.identifier, expr.parent, accessorDescriptor)
+
             override val classReference = null
             override val functionName = accessorDescriptor.name.asString()
             override val functionNameElement by lz { KotlinDumbUElement(ktElement, this) }
@@ -75,7 +77,13 @@ class PropertyAsCallAndroidUastAdditionalChecker : AndroidUastAdditionalChecker 
 
             override val kind = UastCallKind.FUNCTION_CALL
 
-            override fun resolve(context: UastContext) = element.resolveIfCan(context) as? UFunction
+            override fun resolve(context: UastContext): UFunction? {
+                val source = accessorDescriptor.toSource(psi.project)
+                if (source != null) {
+                    (context.convert(source) as? UFunction)?.let { return it }
+                }
+                return element.resolveIfCan(context) as? UFunction
+            }
         }
 
         handler(callExpression)
