@@ -17,6 +17,7 @@ package com.google.gwt.dev.js;
 
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.backend.js.ast.JsLiteral.JsBooleanLiteral;
+import com.google.dart.compiler.backend.js.ast.metadata.HasMetadata;
 import com.google.gwt.dev.js.parserExceptions.JsParserException;
 import com.google.gwt.dev.js.rhino.*;
 import com.intellij.util.SmartList;
@@ -460,6 +461,12 @@ public class JsAstMapper {
 
     private JsExpression mapExpression(Node exprNode) throws JsParserException {
         JsNode unknown = map(exprNode);
+
+        if (unknown instanceof HasMetadata) {
+            HasMetadata metadataContainer = (HasMetadata) unknown;
+            metadataContainer.setData("line", exprNode.getLineno());
+        }
+
         if (unknown instanceof JsExpression) {
             return (JsExpression) unknown;
         }
@@ -878,6 +885,12 @@ public class JsAstMapper {
 
     private JsStatement mapStatement(Node nodeStmt) throws JsParserException {
         JsNode unknown = map(nodeStmt);
+
+        if (unknown instanceof HasMetadata) {
+            HasMetadata metadataContainer = (HasMetadata) unknown;
+            metadataContainer.setData("line", nodeStmt.getLineno());
+        }
+
         if (unknown != null) {
             if (unknown instanceof JsStatement) {
                 return (JsStatement) unknown;
