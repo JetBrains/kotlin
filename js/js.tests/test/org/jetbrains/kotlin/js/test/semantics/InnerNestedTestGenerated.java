@@ -43,6 +43,18 @@ public class InnerNestedTestGenerated extends AbstractInnerNestedTest {
         doTest(fileName);
     }
 
+    @TestMetadata("protectedNestedClass.kt")
+    public void ignoredProtectedNestedClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/innerNested/protectedNestedClass.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("protectedNestedClassFromJava.kt")
+    public void ignoredProtectedNestedClassFromJava() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/innerNested/protectedNestedClassFromJava.kt");
+        doTest(fileName);
+    }
+
     public void testAllFilesPresentInInnerNested() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/innerNested"), Pattern.compile("^(.+)\\.kt$"), true);
     }

@@ -265,6 +265,7 @@ public class AsmUtil {
             return getVisibilityAccessFlagForAnonymous(descriptor);
         }
         if (descriptor.getVisibility() == Visibilities.PUBLIC ||
+            descriptor.getVisibility() == Visibilities.PROTECTED ||
             // TODO: should be package private, but for now Kotlin's reflection can't access members of such classes
             descriptor.getVisibility() == Visibilities.LOCAL ||
             descriptor.getVisibility() == Visibilities.INTERNAL) {
