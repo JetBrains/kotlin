@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2016 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jetbrains.uast.java
 
-import com.intellij.psi.PsiClassObjectAccessExpression
+package org.jetbrains.kotlin.uast
+
+import org.jetbrains.kotlin.psi.KtClassLiteralExpression
 import org.jetbrains.uast.NoEvaluate
 import org.jetbrains.uast.UClassLiteralExpression
 import org.jetbrains.uast.UElement
-import org.jetbrains.uast.UType
 import org.jetbrains.uast.psi.PsiElementBacked
 
-class JavaUClassLiteralExpression(
-        override val psi: PsiClassObjectAccessExpression,
+class KotlinUClassLiteralExpression(
+        override val psi: KtClassLiteralExpression,
         override val parent: UElement
-) : JavaAbstractUElement(), UClassLiteralExpression, PsiElementBacked, JavaTypeHelper, NoEvaluate {
-    override val type: UType by lz { JavaConverter.convert(psi.type, this) }
+) : KotlinAbstractUElement(), UClassLiteralExpression, PsiElementBacked, KotlinTypeHelper, NoEvaluate {
+    override val type by lz { KotlinConverter.convert(psi.typeReference, this) }
 }

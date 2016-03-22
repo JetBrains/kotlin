@@ -128,6 +128,7 @@ internal object KotlinConverter : UastConverter {
             }
             declarations = listOf(tempAssignment) + destructuringAssignments
         }
+        is KtClassLiteralExpression -> KotlinUClassLiteralExpression(expression, parent)
         is KtObjectLiteralExpression -> KotlinUObjectLiteralExpression(expression, parent)
         is KtStringTemplateEntry -> convertOrEmpty(expression.expression, parent)
         is KtDotQualifiedExpression -> KotlinUQualifiedExpression(expression, parent)
