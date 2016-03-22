@@ -54,8 +54,12 @@ abstract class UastVisitor {
     open fun visitThisExpression(node: UThisExpression): Boolean = false
     open fun visitSuperExpression(node: USuperExpression): Boolean = false
 
+    open fun beforeVisit(node: UElement) {}
+    open fun afterVisit(node: UElement) {}
+
     fun handle(node: UElement): Boolean {
-        return when (node) {
+        beforeVisit(node)
+        val result = when (node) {
             is UFile -> visitFile(node)
 
             is UClass -> visitClass(node)
@@ -91,6 +95,8 @@ abstract class UastVisitor {
             is USuperExpression -> visitSuperExpression(node)
             else -> true
         }
+        afterVisit(node)
+        return result
     }
     
     open fun process(element: UElement) {
