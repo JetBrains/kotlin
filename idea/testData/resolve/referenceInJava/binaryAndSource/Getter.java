@@ -5,3 +5,4 @@ public class Getter {
 }
 
 // REF: (in k.Class).prop
+// CLS_REF: (in k.Class).prop

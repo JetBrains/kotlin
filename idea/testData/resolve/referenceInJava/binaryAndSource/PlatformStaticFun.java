@@ -7,3 +7,4 @@ public class TestPlatformStaticFun {
 }
 
 // REF: (in k.PlatformStaticFun).test()
+// CLS_REF: (in k.PlatformStaticFun).test()

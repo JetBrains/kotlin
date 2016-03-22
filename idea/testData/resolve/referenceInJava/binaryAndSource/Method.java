@@ -5,3 +5,4 @@ public class Method {
 }
 
 // REF: (in k.Class).function()
+// CLS_REF: (in k.Class).function()

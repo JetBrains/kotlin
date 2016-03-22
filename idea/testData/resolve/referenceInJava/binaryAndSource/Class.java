@@ -4,3 +4,4 @@ public class Class {
 }
 
 // REF: (k).Class
+// CLS_REF: (k).Class
