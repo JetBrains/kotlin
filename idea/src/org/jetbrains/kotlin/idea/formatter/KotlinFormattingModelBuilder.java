@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ public class KotlinFormattingModelBuilder implements FormattingModelBuilder {
         PsiFile containingFile = element.getContainingFile().getViewProvider().getPsi(KotlinLanguage.INSTANCE);
         KotlinBlock block = new KotlinBlock(
                 containingFile.getNode(), NodeAlignmentStrategy.getNullStrategy(), Indent.getNoneIndent(), null, settings,
-                KotlinSpacingRulesKt.createSpacingBuilder(settings));
+                KotlinSpacingRulesKt.createSpacingBuilder(settings, KotlinDependantSpacingFactoryImpl.INSTANCE));
 
         //TODO: this is temporary code to allow formatting non-physical files in non-UI thread (used by conversion from Java to Kotlin)
         // it's needed until IDEA's issue with this document being created with wrong threading policy is fixed

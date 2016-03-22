@@ -45,11 +45,11 @@ fun SpacingBuilder.afterInside(element: IElementType, tokenSet: TokenSet, spacin
     tokenSet.types.forEach { inType -> afterInside(element, inType).spacingFun() }
 }
 
-fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
+fun createSpacingBuilder(settings: CodeStyleSettings, factory: KotlinDependentSpacingFactory): KotlinSpacingBuilder {
     val kotlinSettings = settings.getCustomSettings(KotlinCodeStyleSettings::class.java)!!
     val kotlinCommonSettings = settings.getCommonSettings(KotlinLanguage.INSTANCE)!!
 
-    return rules(settings) {
+    return rules(settings, factory) {
         val DECLARATIONS =
                 TokenSet.create(PROPERTY, FUN, CLASS, OBJECT_DECLARATION, ENUM_ENTRY, SECONDARY_CONSTRUCTOR, CLASS_INITIALIZER)
 
@@ -66,7 +66,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             inPosition(left = FUN, right = CLASS).emptyLinesIfLineBreakInLeft(1)
 
             inPosition(left = ENUM_ENTRY, right = ENUM_ENTRY).emptyLinesIfLineBreakInLeft(
-                    emptyLines = 0, numSpacesOtherwise = 1)
+                    emptyLines = 0, numberOfLineFeedsOtherwise = 0, numSpacesOtherwise = 1)
 
             inPosition(parent = CLASS_BODY, left = SEMICOLON).customRule { parent, left, right ->
                 val klass = parent.node.treeParent.psi as? KtClass ?: return@customRule null

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.formatter
 import com.intellij.formatting.*
 import com.intellij.formatting.alignment.AlignmentStrategy
 import com.intellij.lang.ASTNode
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.formatter.common.AbstractBlock
 import com.intellij.psi.tree.IElementType
@@ -91,6 +92,23 @@ class KotlinBlock(
     override fun isLeaf(): Boolean = kotlinDelegationBlock.isLeaf()
 }
 
+object KotlinDependantSpacingFactoryImpl : KotlinDependentSpacingFactory {
+    override fun createLineFeedDependentSpacing(
+            minSpaces: Int,
+            maxSpaces: Int,
+            minimumLineFeeds: Int,
+            keepLineBreaks: Boolean,
+            keepBlankLines: Int,
+            dependency: TextRange,
+            rule: DependentSpacingRule): Spacing {
+        return object : DependantSpacingImpl(minSpaces, maxSpaces, dependency, keepLineBreaks, keepBlankLines, rule) {
+            override fun getMinLineFeeds(): Int {
+                val superMin = super.getMinLineFeeds()
+                return if (superMin == 0) minimumLineFeeds else superMin
+            }
+        }
+    }
+}
 
 private fun createAlignment(alignOption: Boolean, defaultAlignment: Alignment?): Alignment? {
     return if (alignOption) createAlignmentOrDefault(null, defaultAlignment) else defaultAlignment

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.formatter
 import com.intellij.formatting.*
 import com.intellij.formatting.DependentSpacingRule.Anchor
 import com.intellij.formatting.DependentSpacingRule.Trigger
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
@@ -27,7 +28,7 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.lexer.KtTokens
 import java.util.ArrayList
 
-class KotlinSpacingBuilder(val codeStyleSettings: CodeStyleSettings) {
+class KotlinSpacingBuilder(val codeStyleSettings: CodeStyleSettings, val dependentSpacingFactory: KotlinDependentSpacingFactory) {
     private val builders = ArrayList<Builder>()
 
     private interface Builder {
@@ -77,16 +78,16 @@ class KotlinSpacingBuilder(val codeStyleSettings: CodeStyleSettings) {
             }
         }
 
-        fun emptyLinesIfLineBreakInLeft(emptyLines: Int, numSpacesOtherwise: Int = 0) {
+        fun emptyLinesIfLineBreakInLeft(emptyLines: Int, numberOfLineFeedsOtherwise: Int = 1, numSpacesOtherwise: Int = 0) {
             newRule { parent: ASTBlock, left: ASTBlock, right: ASTBlock ->
                 val dependentSpacingRule = DependentSpacingRule(Trigger.HAS_LINE_FEEDS).registerData(Anchor.MIN_LINE_FEEDS, emptyLines + 1)
-                Spacing.createDependentLFSpacing(
-                        numSpacesOtherwise,
-                        numSpacesOtherwise,
-                        left.textRange,
-                        codeStyleSettings.KEEP_LINE_BREAKS,
-                        codeStyleSettings.KEEP_BLANK_LINES_IN_DECLARATIONS,
-                        dependentSpacingRule)
+                dependentSpacingFactory.createLineFeedDependentSpacing(numSpacesOtherwise,
+                                                                       numSpacesOtherwise,
+                                                                       numberOfLineFeedsOtherwise,
+                                                                       codeStyleSettings.KEEP_LINE_BREAKS,
+                                                                       codeStyleSettings.KEEP_BLANK_LINES_IN_DECLARATIONS,
+                                                                       left.textRange,
+                                                                       dependentSpacingRule)
             }
         }
 
@@ -139,8 +140,18 @@ class KotlinSpacingBuilder(val codeStyleSettings: CodeStyleSettings) {
     }
 }
 
-fun rules(codeStyleSettings: CodeStyleSettings, init: KotlinSpacingBuilder.() -> Unit): KotlinSpacingBuilder {
-    val builder = KotlinSpacingBuilder(codeStyleSettings)
+interface KotlinDependentSpacingFactory {
+    fun createLineFeedDependentSpacing(minSpaces: Int,
+                                       maxSpaces: Int,
+                                       minimumLineFeeds: Int,
+                                       keepLineBreaks: Boolean,
+                                       keepBlankLines: Int,
+                                       dependency: TextRange,
+                                       rule: DependentSpacingRule): Spacing
+}
+
+fun rules(codeStyleSettings: CodeStyleSettings, factory: KotlinDependentSpacingFactory, init: KotlinSpacingBuilder.() -> Unit): KotlinSpacingBuilder {
+    val builder = KotlinSpacingBuilder(codeStyleSettings, factory)
     builder.init()
     return builder
 }
