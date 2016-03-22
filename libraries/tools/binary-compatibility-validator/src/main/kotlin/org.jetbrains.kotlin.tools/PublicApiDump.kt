@@ -47,7 +47,7 @@ fun getBinaryAPI(classStreams: Sequence<InputStream>, visibilityMap: Map<String,
             val modifiers = getModifierString(effectiveAccess and Opcodes.ACC_STATIC.inv())
 
             val memberSignatures =
-                    fields.filter { it.isPublic() }
+                    fields.filter { it.isEffectivelyPublic(classVisibility) }
                             .sortedBy { it.name }
                             .map { with(it) { MemberBinarySignature(name, "${getModifierString(access)} field $name $desc", isStatic(access) ) } } +
                     methods.filter { it.isEffectivelyPublic(classVisibility) }

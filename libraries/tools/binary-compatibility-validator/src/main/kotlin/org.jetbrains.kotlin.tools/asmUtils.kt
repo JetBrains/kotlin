@@ -46,6 +46,10 @@ fun MethodNode.isEffectivelyPublic(classVisibility: ClassVisibility?) =
                 && (classVisibility?.members?.get(MemberSignature(name, desc))?.isPublic() ?: true)
                 && !isAccessMethod()
 
+fun FieldNode.isEffectivelyPublic(classVisibility: ClassVisibility?) =
+        isPublic()
+                && (classVisibility?.members?.get(MemberSignature(name, desc))?.isPublic() ?: true)
+// TODO: lateinit exposed field
 
 
 fun ClassNode.isLocal() = innerClasses.filter { it.name == name && it.innerName == null && it.outerName == null }.count() == 1
