@@ -26,6 +26,9 @@ import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import java.util.*
 
+
+class CallSiteMarker(val lineNumber: Int)
+
 open class NestedSourceMapper(
         override val parent: SourceMapper, val ranges: List<RangeMapping>, sourceInfo: SourceInfo
 ) : DefaultSourceMapper(sourceInfo) {
@@ -86,6 +89,12 @@ open class DefaultSourceMapper @JvmOverloads constructor(
         protected var maxUsedValue: Int = sourceInfo.linesInFile
 ) : SourceMapper {
 
+    var callSiteMarker: CallSiteMarker? = null;
+        set(value) {
+            lastMappedWithChanges = null
+            field = value
+        }
+
     var lastVisited: RawFileMapping? = null
     private var lastMappedWithChanges: RawFileMapping? = null
     private var fileMappings: LinkedHashMap<String, RawFileMapping> = linkedMapOf()
@@ -139,8 +148,7 @@ open class DefaultSourceMapper @JvmOverloads constructor(
 
     protected fun createMapping(lineNumber: Int): Int {
         val fileMapping = lastVisited!!
-        //val mappedLineIndex = fileMapping.mapLine(lineNumber, maxUsedValue, lastMappedWithChanges == lastVisited)
-        val mappedLineIndex = fileMapping.mapNewLineNumber(lineNumber, maxUsedValue, lastMappedWithChanges == lastVisited)
+        val mappedLineIndex = fileMapping.mapNewLineNumber(lineNumber, maxUsedValue, lastMappedWithChanges == lastVisited, callSiteMarker)
         if (mappedLineIndex > maxUsedValue) {
             lastMappedWithChanges = fileMapping
             maxUsedValue = mappedLineIndex
@@ -167,7 +175,7 @@ class RawFileMapping(val name: String, val path: String) {
         lastMappedWithNewIndex = end
     }
 
-    fun mapNewLineNumber(source: Int, currentIndex: Int, isLastMapped: Boolean): Int {
+    fun mapNewLineNumber(source: Int, currentIndex: Int, isLastMapped: Boolean, callSiteMarker: CallSiteMarker?): Int {
         val dest: Int
         val rangeMapping: RangeMapping
         if (rangeMappings.isNotEmpty() && isLastMapped && couldFoldInRange(lastMappedWithNewIndex, source)) {
@@ -177,7 +185,7 @@ class RawFileMapping(val name: String, val path: String) {
         }
         else {
             dest = currentIndex + 1
-            rangeMapping = RangeMapping(source, dest)
+            rangeMapping = RangeMapping(source, dest, callSiteMarker = callSiteMarker)
             rangeMappings.add(rangeMapping)
         }
 

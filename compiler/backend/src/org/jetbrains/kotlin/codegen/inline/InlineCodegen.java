@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment;
 import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.inline2.*;
+import org.jetbrains.kotlin.codegen.inline2.DefaultSourceMapper;
 import org.jetbrains.kotlin.codegen.inline2.NestedSourceMapper;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicArrayConstructorsKt;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
@@ -352,6 +353,8 @@ public class InlineCodegen extends CallGenerator {
     }
 
     private InlineResult inlineCall(SMAPAndMethodNode nodeAndSmap) {
+        DefaultSourceMapper defaultSourceMapper = codegen.getParentCodegen().getOrCreateSourceMapper();
+        defaultSourceMapper.setCallSiteMarker(new CallSiteMarker(codegen.getLastLineNumber()));
         MethodNode node = nodeAndSmap.getNode();
         ReifiedTypeParametersUsages reificationResult = reifiedTypeInliner.reifyInstructions(node);
         generateClosuresBodies();
@@ -401,6 +404,8 @@ public class InlineCodegen extends CallGenerator {
         adapter.accept(new MethodBodyVisitor(codegen.v));
 
         addInlineMarker(codegen.v, false);
+
+        defaultSourceMapper.setCallSiteMarker(null);
 
         return result;
     }

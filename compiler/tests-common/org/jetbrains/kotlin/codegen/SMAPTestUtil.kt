@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil
 import org.jetbrains.kotlin.codegen.inline.RangeMapping
 import org.jetbrains.kotlin.codegen.inline.SMAPParser
+import org.jetbrains.kotlin.codegen.inline.toRange
 import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
@@ -121,6 +122,3 @@ object SMAPTestUtil {
         }
     }
 }
-
-val RangeMapping.toRange: IntRange
-           get() = this.dest..this.maxDest
