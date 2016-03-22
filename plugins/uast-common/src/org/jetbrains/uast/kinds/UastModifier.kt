@@ -25,5 +25,7 @@ class UastModifier(val name: String) {
         val FINAL = UastModifier("final")
         @JvmField
         val VARARG = UastModifier("vararg")
+        @JvmField
+        val OVERRIDE = UastModifier("override")
     }
 }

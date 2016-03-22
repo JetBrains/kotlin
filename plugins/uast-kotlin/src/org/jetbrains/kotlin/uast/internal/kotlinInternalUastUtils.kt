@@ -32,7 +32,8 @@ import org.jetbrains.kotlin.uast.kinds.KotlinUastVisibilities
 import org.jetbrains.uast.*
 
 private val MODIFIER_MAP = mapOf(
-        UastModifier.ABSTRACT to KtTokens.ABSTRACT_KEYWORD
+        UastModifier.ABSTRACT to KtTokens.ABSTRACT_KEYWORD,
+        UastModifier.OVERRIDE to KtTokens.OVERRIDE_KEYWORD
 )
 
 internal fun KtDeclaration.getVisibility() = when (visibilityModifierType()) {
