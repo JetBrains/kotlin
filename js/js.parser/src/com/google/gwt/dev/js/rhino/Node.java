@@ -416,6 +416,7 @@ public class Node implements Cloneable {
             case TokenStream.BREAK:
             case TokenStream.CONTINUE:
             case TokenStream.WITH:
+            case TokenStream.IF:
                 return true;
         }
         return false;

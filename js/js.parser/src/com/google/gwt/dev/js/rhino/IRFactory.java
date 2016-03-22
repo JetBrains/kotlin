@@ -328,8 +328,8 @@ public class IRFactory {
                            int lineno)
     {
         if (ifFalse == null)
-            return new Node(TokenStream.IF, (Node)cond, (Node)ifTrue);
-        return new Node(TokenStream.IF, (Node)cond, (Node)ifTrue, (Node)ifFalse);
+            return new Node(TokenStream.IF, (Node)cond, (Node)ifTrue, lineno);
+        return new Node(TokenStream.IF, (Node)cond, (Node)ifTrue, (Node)ifFalse, lineno);
     }
 
     public Object createTernary(Object cond, Object ifTrue, Object ifFalse) {
