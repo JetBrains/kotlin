@@ -814,6 +814,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             doMultipleBreakpointsTest(fileName);
         }
 
+        @TestMetadata("smartcasts.kt")
+        public void testSmartcasts() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/smartcasts.kt");
+            doMultipleBreakpointsTest(fileName);
+        }
+
         @TestMetadata("whenEntry.kt")
         public void testWhenEntry() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/whenEntry.kt");

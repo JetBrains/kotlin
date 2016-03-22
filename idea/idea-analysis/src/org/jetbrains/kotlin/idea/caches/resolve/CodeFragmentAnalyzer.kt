@@ -21,8 +21,6 @@ import org.jetbrains.kotlin.idea.project.ResolveElementCache
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
-import org.jetbrains.kotlin.psi.psiUtil.parents
-import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
@@ -33,7 +31,6 @@ import org.jetbrains.kotlin.resolve.scopes.utils.addImportingScopes
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import javax.inject.Inject
 
 class CodeFragmentAnalyzer(
@@ -81,15 +78,7 @@ class CodeFragmentAnalyzer(
                    is KtFunctionLiteral -> this.bodyExpression?.statements?.lastOrNull()
                    is KtDeclarationWithBody -> this.bodyExpression
                    is KtBlockExpression -> this.statements.lastOrNull()
-                   else -> {
-                       val previousSibling = this.siblings(forward = false, withItself = false).firstIsInstanceOrNull<KtExpression>()
-                       if (previousSibling != null) return previousSibling
-                       for (parent in this.parents) {
-                           if (parent is KtWhenEntry || parent is KtIfExpression || parent is KtBlockExpression) return this
-                           if (parent is KtExpression) return parent
-                       }
-                       null
-                   }
+                   else -> null
                } ?: this
     }
 
