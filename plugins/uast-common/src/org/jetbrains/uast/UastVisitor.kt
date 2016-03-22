@@ -53,8 +53,14 @@ abstract class UastVisitor {
     open fun visitLiteralExpression(node: ULiteralExpression): Boolean = false
     open fun visitThisExpression(node: UThisExpression): Boolean = false
     open fun visitSuperExpression(node: USuperExpression): Boolean = false
+    open fun visitArrayAccessExpression(node: UArrayAccessExpression): Boolean = false
+    open fun visitCallableReferenceExpression(node: UCallableReferenceExpression): Boolean = false
+    open fun visitClassLiteralExpression(node: UClassLiteralExpression): Boolean = false
+    open fun visitLambdaExpression(node: ULambdaExpression): Boolean = false
+    open fun visitObjectLiteralExpression(node: UObjectLiteralExpression): Boolean = false
 
     open fun beforeVisit(node: UElement) {}
+    open fun visitOther(node: UElement): Boolean = true
     open fun afterVisit(node: UElement) {}
 
     fun handle(node: UElement): Boolean {
@@ -93,7 +99,13 @@ abstract class UastVisitor {
             is ULiteralExpression -> visitLiteralExpression(node)
             is UThisExpression -> visitThisExpression(node)
             is USuperExpression -> visitSuperExpression(node)
-            else -> true
+            is UArrayAccessExpression -> visitArrayAccessExpression(node)
+            is UCallableReferenceExpression -> visitCallableReferenceExpression(node)
+            is UClassLiteralExpression -> visitClassLiteralExpression(node)
+            is ULambdaExpression -> visitLambdaExpression(node)
+            is UObjectLiteralExpression -> visitObjectLiteralExpression(node)
+
+            else -> visitOther(node)
         }
         afterVisit(node)
         return result
