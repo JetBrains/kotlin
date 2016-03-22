@@ -1,5 +1,4 @@
 public final class cases/special/ClassWithLateInitMembers
-public field internalLateInit Ljava/lang/String;
 public field publicLateInitWithInternalSet Ljava/lang/String;
 public final fun getPublicLateInitWithInternalSet ()Ljava/lang/String;
 ------------------

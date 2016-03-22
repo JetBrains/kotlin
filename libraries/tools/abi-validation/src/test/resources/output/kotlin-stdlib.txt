@@ -1589,9 +1589,7 @@ public static final fun readLine ()Ljava/lang/String;
 ------------------
 
 public final class kotlin/io/ConstantsKt
-public static final field DEFAULT_BLOCK_SIZE I
 public static final field DEFAULT_BUFFER_SIZE I
-public static final field MINIMUM_BLOCK_SIZE I
 ------------------
 
 public final class kotlin/io/FileAlreadyExistsException: kotlin/io/FileSystemException
