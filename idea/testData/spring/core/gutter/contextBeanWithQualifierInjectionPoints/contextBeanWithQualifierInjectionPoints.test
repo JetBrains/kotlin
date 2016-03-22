@@ -1,0 +1,9 @@
+{
+    withRuntime: "true",
+    springConfig: [],
+    file: "ContextBeanWithQualifierInjectionPoints.kt",
+    icon: "ShowAutowiredDependencies",
+    tooltip: "Navigate to the autowired dependencies",
+    naming: "generic",
+    targets: ["foo2()"]
+}

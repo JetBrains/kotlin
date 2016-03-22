@@ -9,3 +9,4 @@ annotation class MyAnnotation(val first: String, val second: String)
 // ANNOTATION: MyAnnotation
 // SEARCH: method:test1
 // SEARCH: class:Test1
+// SEARCH: field:test3
