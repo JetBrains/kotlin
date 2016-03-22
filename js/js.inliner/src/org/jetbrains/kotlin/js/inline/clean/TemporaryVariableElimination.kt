@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.js.inline.clean
 import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.metadata.synthetic
 import org.jetbrains.kotlin.js.inline.util.canHaveSideEffect
+import org.jetbrains.kotlin.js.inline.util.collectDefinedNames
 import org.jetbrains.kotlin.js.inline.util.collectFreeVariables
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
@@ -28,6 +29,7 @@ internal class TemporaryVariableElimination(private val root: JsStatement) {
     private val definedValues = mutableMapOf<JsName, JsExpression>()
     private val temporary = mutableSetOf<JsName>()
     private var hasChanges = false
+    private val namesToProcess = mutableSetOf<JsName>()
 
     fun apply(): Boolean {
         analyze()
@@ -36,6 +38,8 @@ internal class TemporaryVariableElimination(private val root: JsStatement) {
     }
 
     private fun analyze() {
+        namesToProcess.addAll(collectDefinedNames(root))
+
         object : JsVisitorWithContextImpl() {
             val lastAssignedVars = mutableListOf<JsName>()
 
@@ -44,7 +48,7 @@ internal class TemporaryVariableElimination(private val root: JsStatement) {
                 if (name != null && x.qualifier == null) {
                     val expr = definedValues[name]
                     useVariable(name)
-                    if (lastAssignedVars.lastOrNull() == name) {
+                    if (lastAssignedVars.lastOrNull() == name && name in namesToProcess) {
                         lastAssignedVars.removeAt(lastAssignedVars.lastIndex)
                     }
                     else if (expr == null || expr.canHaveSideEffect()) {
@@ -95,7 +99,7 @@ internal class TemporaryVariableElimination(private val root: JsStatement) {
                     val (name, value) = assignment
                     assignVariable(name, value)
                     accept(value)
-                    if (x.synthetic) {
+                    if (x.synthetic && name in namesToProcess) {
                         temporary += name
                     }
                     else if (value.canHaveSideEffect()) {
