@@ -113,37 +113,37 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
 
     CHAR_AT(CharSequence::class.java.name, "charAt", 1) {
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = convertWithChangedName("get", qualifier, arguments, typeArgumentsConverted, codeConverter)
+                = convertWithChangedName("get", qualifier, arguments.notNull(), typeArgumentsConverted, codeConverter)
     },
 
     NUMBER_BYTE_VALUE(Number::class.java.name, "byteValue", 0) {
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = convertWithChangedName("toByte", qualifier, arguments, typeArgumentsConverted, codeConverter)
+                = convertWithChangedName("toByte", qualifier, arguments.notNull(), typeArgumentsConverted, codeConverter)
     },
 
     NUMBER_SHORT_VALUE(Number::class.java.name, "shortValue", 0) {
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = convertWithChangedName("toShort", qualifier, arguments, typeArgumentsConverted, codeConverter)
+                = convertWithChangedName("toShort", qualifier, arguments.notNull(), typeArgumentsConverted, codeConverter)
     },
 
     NUMBER_INT_VALUE(Number::class.java.name, "intValue", 0) {
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = convertWithChangedName("toInt", qualifier, arguments, typeArgumentsConverted, codeConverter)
+                = convertWithChangedName("toInt", qualifier, arguments.notNull(), typeArgumentsConverted, codeConverter)
     },
 
     NUMBER_LONG_VALUE(Number::class.java.name, "longValue", 0) {
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = convertWithChangedName("toLong", qualifier, arguments, typeArgumentsConverted, codeConverter)
+                = convertWithChangedName("toLong", qualifier, arguments.notNull(), typeArgumentsConverted, codeConverter)
     },
 
     NUMBER_FLOAT_VALUE(Number::class.java.name, "floatValue", 0) {
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = convertWithChangedName("toFloat", qualifier, arguments, typeArgumentsConverted, codeConverter)
+                = convertWithChangedName("toFloat", qualifier, arguments.notNull(), typeArgumentsConverted, codeConverter)
     },
 
     NUMBER_DOUBLE_VALUE(Number::class.java.name, "doubleValue", 0) {
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = convertWithChangedName("toDouble", qualifier, arguments, typeArgumentsConverted, codeConverter)
+                = convertWithChangedName("toDouble", qualifier, arguments.notNull(), typeArgumentsConverted, codeConverter)
     },
 
     LIST_REMOVE(List::class.java.name, "remove", 1) {
@@ -151,7 +151,7 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
                 = super.matches(method, superMethodsSearcher) && method.parameterList.parameters.single().type.canonicalText == "int"
 
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = convertWithChangedName("removeAt", qualifier, arguments, typeArgumentsConverted, codeConverter)
+                = convertWithChangedName("removeAt", qualifier, arguments.notNull(), typeArgumentsConverted, codeConverter)
     },
 
     THROWABLE_GET_MESSAGE(Throwable::class.java.name, "getMessage", 0) {
@@ -413,8 +413,10 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
         return if (qualifier != null) QualifiedExpression(codeConverter.convertExpression(qualifier), identifier) else identifier
     }
 
-    protected fun convertWithChangedName(name: String, qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-            = MethodCallExpression.buildNotNull(codeConverter.convertExpression(qualifier), name, arguments.map { codeConverter.convertExpression(it, null, Nullability.NotNull) }, typeArgumentsConverted)
+    protected fun Array<PsiExpression>.notNull() = map { it to Nullability.NotNull }
+
+    protected fun convertWithChangedName(name: String, qualifier: PsiExpression?, arguments: List<Pair<PsiExpression, Nullability>>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
+            = MethodCallExpression.buildNotNull(codeConverter.convertExpression(qualifier), name, arguments.map { codeConverter.convertExpression(it.first, null, it.second) }, typeArgumentsConverted)
 
     protected fun convertMethodCallWithReceiverCast(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter): MethodCallExpression? {
         val convertedArguments = arguments.map { codeConverter.convertExpression(it) }
