@@ -41,13 +41,24 @@ object UastChecker {
     fun checkWithCustomHandler(
             project: Project,
             file: File,
-            converters: List<UastLanguagePlugin>,
+            context: UastAndroidContext,
             visitor: UastVisitor) {
-        check(project, file, converters, UastHandler { visitor.handle(it) })
+        check(project, file, context, UastHandler { visitor.handle(it) })
     }
 
-    fun check(project: Project, file: File, plugins: List<UastLanguagePlugin>, handler: UastHandler) {
+    fun check(project: Project, file: File, context: UastAndroidContext, handler: UastHandler) {
         val vfile = VirtualFileManager.getInstance().findFileByUrl("file://" + file.absolutePath) ?: return
+
+        val plugins = context.languagePlugins
+        val additionalCheckers = plugins.fold(mutableListOf<UastAdditionalChecker>()) { list, plugin ->
+            for (checker in plugin.additionalCheckers) {
+                if (checker is AndroidUastAdditionalChecker) list += checker
+            }
+            list
+        }
+
+        val handlerWrapper = HandlerWrapper(handler, additionalCheckers, context)
+
         ApplicationManager.getApplication().runReadAction {
             val psiFile = PsiManager.getInstance(project).findFile(vfile)
 
@@ -55,12 +66,12 @@ object UastChecker {
                 when (psiFile) {
                     is PsiJavaFile -> {
                         val ufile = JavaUastLanguagePlugin.converter.convertWithParent(psiFile)
-                        ufile?.handleTraverse(handler)
+                        ufile?.handleTraverse(handlerWrapper)
                     }
                     else -> for (plugin in plugins) {
                         val ufile = plugin.converter.convertWithParent(psiFile)
                         if (ufile != null) {
-                            ufile.handleTraverse(handler)
+                            ufile.handleTraverse(handlerWrapper)
                             break
                         }
                     }
@@ -69,21 +80,27 @@ object UastChecker {
         }
     }
 
-    fun check(project: Project, file: File, scanner: UastScanner, plugins: List<UastLanguagePlugin>, context: UastAndroidContext) {
+    private class HandlerWrapper(
+            val original: UastHandler,
+            val additionalCheckers: List<UastAdditionalChecker>,
+            val context: UastAndroidContext
+    ) : UastHandler {
+        override fun invoke(element: UElement) {
+            original(element)
+            for (checker in additionalCheckers) {
+                checker(element, this, context)
+            }
+        }
+    }
+
+    fun check(project: Project, file: File, scanner: UastScanner, context: UastAndroidContext) {
         val applicableFunctionNames = scanner.applicableFunctionNames ?: emptyList()
         val applicableSuperClasses = scanner.applicableSuperClasses ?: emptyList()
         val applicableConstructorTypes = scanner.applicableConstructorTypes ?: emptyList()
 
         val appliesToResourcesRefs = scanner.appliesToResourceRefs()
 
-        val additionalCheckers = plugins.fold(mutableListOf<UastAdditionalChecker>()) { list, plugin ->
-            for (checker in plugin.additionalCheckers) {
-                if (checker is AndroidUastAdditionalChecker) list += checker
-            }
-            list
-        }
-
-        var handler: UastHandler? = null
+        var handler: UastHandler?
         handler = UastHandler { element ->
             when (element) {
                 is UCallExpression -> {
@@ -131,13 +148,9 @@ object UastChecker {
                     }
                 }
             }
-
-            for (checker in additionalCheckers) {
-                checker(element, handler!!, context)
-            }
         }
 
-        check(project, file, plugins, handler)
+        check(project, file, context, handler)
     }
 
 }
