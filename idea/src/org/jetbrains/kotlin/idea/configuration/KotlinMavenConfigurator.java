@@ -128,7 +128,7 @@ public abstract class KotlinMavenConfigurator implements KotlinProjectConfigurat
         if (!dialog.isOK()) return;
 
         NotificationMessageCollector collector = NotificationMessageCollectorKt.createConfigureKotlinNotificationCollector(project);
-        for (Module module : dialog.getModulesToConfigure()) {
+        for (Module module : MavenModulesRelationshipKt.excludeMavenChildrenModules(project, dialog.getModulesToConfigure())) {
             PsiFile file = findModulePomFile(module);
             if (file != null && canConfigureFile(file)) {
                 changePomFile(module, file, dialog.getKotlinVersion(), collector);
