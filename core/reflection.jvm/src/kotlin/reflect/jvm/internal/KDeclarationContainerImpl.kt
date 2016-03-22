@@ -39,6 +39,9 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
     val moduleData: RuntimeModuleData
         get() = moduleData_()
 
+    protected open val methodOwner: Class<*>
+        get() = jClass
+
     abstract val constructorDescriptors: Collection<ConstructorDescriptor>
 
     abstract fun getProperties(name: Name): Collection<PropertyDescriptor>
@@ -175,9 +178,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
     fun findMethodBySignature(name: String, desc: String, declared: Boolean): Method? {
         if (name == "<init>") return null
 
-        // Method for a top level function should be the one from the package facade.
-        // This is likely to change after the package part reform.
-        return jClass.tryGetMethod(name, loadParameterTypes(desc), declared)
+        return methodOwner.tryGetMethod(name, loadParameterTypes(desc), declared)
     }
 
     fun findDefaultMethod(name: String, desc: String, isMember: Boolean, declared: Boolean): Method? {
@@ -189,7 +190,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
         }
         addParametersAndMasks(parameterTypes, desc, false)
 
-        return jClass.tryGetMethod(name + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, parameterTypes, declared)
+        return methodOwner.tryGetMethod(name + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, parameterTypes, declared)
     }
 
     fun findConstructorBySignature(desc: String, declared: Boolean): Constructor<*>? {

@@ -38,6 +38,19 @@ internal class KPackageImpl(override val jClass: Class<*>, val moduleName: Strin
         }
     }
 
+    override val methodOwner: Class<*> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        val facadeName = ReflectKotlinClass.create(jClass)?.classHeader?.multifileClassName
+        // We need to check isNotEmpty because this is the value read from the annotation which cannot be null.
+        // The default value for 'xs' is empty string, as declared in kotlin.Metadata
+        // TODO: do not read ReflectKotlinClass multiple times, obtain facade name from descriptor
+        if (facadeName != null && facadeName.isNotEmpty()) {
+            jClass.classLoader.loadClass(facadeName.replace('/', '.'))
+        }
+        else {
+            jClass
+        }
+    }
+
     internal val scope: MemberScope get() = descriptor().memberScope
 
     override val members: Collection<KCallable<*>>

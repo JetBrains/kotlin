@@ -11485,6 +11485,33 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
         }
 
+        @TestMetadata("compiler/testData/codegen/box/reflection/multifileClasses")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class MultifileClasses extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInMultifileClasses() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/multifileClasses"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("callFunctionsInMultifileClass.kt")
+            public void testCallFunctionsInMultifileClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/multifileClasses/callFunctionsInMultifileClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("callPropertiesInMultifileClass.kt")
+            public void testCallPropertiesInMultifileClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/multifileClasses/callPropertiesInMultifileClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("javaFieldForVarAndConstVal.kt")
+            public void testJavaFieldForVarAndConstVal() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/multifileClasses/javaFieldForVarAndConstVal.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/box/reflection/noReflectAtRuntime")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
