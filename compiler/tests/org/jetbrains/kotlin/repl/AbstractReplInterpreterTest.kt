@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin.repl
 
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.cli.jvm.repl.ReplInterpreter
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.junit.Assert
 import java.io.File
 import java.io.PrintWriter
@@ -37,7 +37,7 @@ private val TRAILING_NEWLINE_REGEX = Regex("\n$")
 
 private val INCOMPLETE_LINE_MESSAGE = "incomplete line"
 
-abstract class AbstractReplInterpreterTest : UsefulTestCase() {
+abstract class AbstractReplInterpreterTest : KtUsefulTestCase() {
     init {
         System.setProperty("java.awt.headless", "true")
     }

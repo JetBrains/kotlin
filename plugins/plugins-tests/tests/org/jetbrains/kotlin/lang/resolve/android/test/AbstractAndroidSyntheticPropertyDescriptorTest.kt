@@ -28,9 +28,10 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import java.io.File
 
-abstract class AbstractAndroidSyntheticPropertyDescriptorTest : UsefulTestCase() {
+abstract class AbstractAndroidSyntheticPropertyDescriptorTest : KtUsefulTestCase() {
 
     fun doTest(path: String) {
         val config = KotlinTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.ANDROID_API)

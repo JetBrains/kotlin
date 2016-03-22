@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.lang.resolve.android.test
 
-import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.registerServiceInstance
 import org.jetbrains.kotlin.android.synthetic.AndroidConfigurationKeys
 import org.jetbrains.kotlin.android.synthetic.AndroidExtensionPropertiesComponentContainerContributor
@@ -33,9 +32,10 @@ import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import java.io.File
 
-fun UsefulTestCase.createAndroidTestEnvironment(configuration: CompilerConfiguration, resDirectories: List<String>): KotlinCoreEnvironment {
+fun KtUsefulTestCase.createAndroidTestEnvironment(configuration: CompilerConfiguration, resDirectories: List<String>): KotlinCoreEnvironment {
     configuration.put(AndroidConfigurationKeys.VARIANT, resDirectories)
     configuration.put(AndroidConfigurationKeys.PACKAGE, "test")
 

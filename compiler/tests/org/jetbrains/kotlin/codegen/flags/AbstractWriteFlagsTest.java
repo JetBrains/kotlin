@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.codegen.flags;
 
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
@@ -26,6 +25,7 @@ import org.jetbrains.kotlin.codegen.GenerationUtils;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase;
 import org.jetbrains.org.objectweb.asm.*;
 
 import java.io.File;
@@ -53,7 +53,7 @@ import static org.jetbrains.kotlin.test.InTextDirectivesUtils.findStringWithPref
  * TESTED_OBJECTS: Test, prop$delegate
  * FLAGS: ACC_STATIC, ACC_FINAL, ACC_PRIVATE
  */
-public abstract class AbstractWriteFlagsTest extends UsefulTestCase {
+public abstract class AbstractWriteFlagsTest extends KtUsefulTestCase {
 
     private KotlinCoreEnvironment jetCoreEnvironment;
 

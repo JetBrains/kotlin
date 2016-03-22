@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.test;
+package com.intellij.testFramework;
 
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import java.io.File;
-
-public abstract class TestCaseWithTmpdir extends KtUsefulTestCase {
-    protected File tmpdir;
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        tmpdir = KotlinTestUtils.tmpDirForTest(this);
-    }
+/**
+ * Specifies the path to testdata for the current test case class.
+ * May use the variable $CONTENT_ROOT to specify the module content root or
+ * $PROJECT_ROOT to use the project base directory.
+ */
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE})
+public @interface TestDataPath {
+  String value();
 }

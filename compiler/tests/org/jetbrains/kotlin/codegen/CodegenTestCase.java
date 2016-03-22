@@ -22,7 +22,6 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.TestDataFile;
-import com.intellij.testFramework.UsefulTestCase;
 import kotlin.collections.ArraysKt;
 import kotlin.io.FilesKt;
 import kotlin.text.Charsets;
@@ -45,6 +44,7 @@ import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.org.objectweb.asm.ClassReader;
 import org.jetbrains.org.objectweb.asm.tree.ClassNode;
@@ -75,7 +75,7 @@ import static org.jetbrains.kotlin.codegen.CodegenTestUtil.*;
 import static org.jetbrains.kotlin.test.KotlinTestUtils.compilerConfigurationForTests;
 import static org.jetbrains.kotlin.test.KotlinTestUtils.getAnnotationsJar;
 
-public abstract class CodegenTestCase extends UsefulTestCase {
+public abstract class CodegenTestCase extends KtUsefulTestCase {
     private static final String DEFAULT_TEST_FILE_NAME = "a_test";
 
     protected KotlinCoreEnvironment myEnvironment;

@@ -24,7 +24,6 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="android-idea-plugin" target="1.8" />
       <module name="android-studio" target="1.8" />
       <module name="bare-plugin" target="1.8" />
       <module name="idea" target="1.8" />
@@ -37,7 +36,6 @@
       <module name="idea-test-framework" target="1.8" />
       <module name="j2k" target="1.8" />
       <module name="kannotator-jps-plugin-test" target="1.8" />
-      <module name="kotlin-android-plugin" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

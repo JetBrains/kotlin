@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import com.intellij.testFramework.TestRunnerUtil;
 import junit.framework.*;
 import junit.textui.TestRunner;
 import org.jetbrains.annotations.NotNull;
@@ -42,6 +41,7 @@ import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
 import org.jetbrains.kotlin.test.TestJdkKind;
+import org.jetbrains.kotlin.test.testFramework.TestRunnerUtil;
 
 import java.io.File;
 import java.lang.reflect.Modifier;
