@@ -27,6 +27,6 @@ interface UAnnotation : UElement, UNamed, UFqNamed, NoTraverse {
             valueArguments.joinToString { it.renderString() } + ")"
 }
 
-interface UAnnotated {
+interface UAnnotated : UElement {
     val annotations: List<UAnnotation>
 }
