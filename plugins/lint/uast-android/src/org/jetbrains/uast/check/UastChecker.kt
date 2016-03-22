@@ -74,6 +74,8 @@ object UastChecker {
         val applicableSuperClasses = scanner.applicableSuperClasses ?: emptyList()
         val applicableConstructorTypes = scanner.applicableConstructorTypes ?: emptyList()
 
+        val appliesToResourcesRefs = scanner.appliesToResourceRefs()
+
         val additionalCheckers = plugins.fold(mutableListOf<UastAdditionalChecker>()) { list, plugin ->
             for (checker in plugin.additionalCheckers) {
                 if (checker is AndroidUastAdditionalChecker) list += checker
@@ -104,6 +106,28 @@ object UastChecker {
                 is UClass -> if (applicableSuperClasses.isNotEmpty()) {
                     if (applicableSuperClasses.any { element.isSubclassOf(it) }) {
                         scanner.visitClass(context, element)
+                    }
+                }
+                is UQualifiedExpression -> {
+                    if (appliesToResourcesRefs && element.receiver is UQualifiedExpression) {
+                        val parentQualifiedExpr = element.receiver as UQualifiedExpression
+                        val resourceName = element.selector
+                        val resourceType = parentQualifiedExpr.selector
+                        val receiver = parentQualifiedExpr.receiver
+
+                        val receiverIsResourceClass = when (receiver) {
+                            is USimpleReferenceExpression -> receiver.identifier == "R"
+                            is UQualifiedExpression -> receiver.selectorMatches("R")
+                            else -> false
+                        }
+
+                        if (resourceName is USimpleReferenceExpression && resourceType is USimpleReferenceExpression
+                                && receiverIsResourceClass && receiver is UResolvable) {
+                            val resolvedReceiver = receiver.resolve(context)
+                            val isFramework = (resolvedReceiver as? UClass)?.matchesFqName("android.R") ?: false
+
+                            scanner.visitResourceReference(context, element, resourceType.identifier, resourceName.identifier, isFramework)
+                        }
                     }
                 }
             }
