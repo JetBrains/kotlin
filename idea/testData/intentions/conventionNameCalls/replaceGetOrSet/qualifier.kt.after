@@ -5,5 +5,5 @@ class C {
 }
 
 fun foo() {
-    C["x"]
+    C<caret>["x"]
 }
