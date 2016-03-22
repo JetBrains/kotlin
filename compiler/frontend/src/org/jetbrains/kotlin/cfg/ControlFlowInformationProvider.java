@@ -391,20 +391,48 @@ public class ControlFlowInformationProvider {
         }
     }
 
+    // Should return KtDeclarationWithBody or KtClassOrObject
+    @Nullable
+    private static KtDeclaration getElementParentDeclaration(@NotNull KtElement element) {
+        //noinspection unchecked
+        return PsiTreeUtil.getParentOfType(element, KtDeclarationWithBody.class, KtClassOrObject.class);
+    }
+
+    @Nullable
+    private DeclarationDescriptor getDeclarationDescriptor(@Nullable KtDeclaration declaration) {
+        DeclarationDescriptor descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
+        if (descriptor instanceof ClassDescriptor) {
+            // For a class primary constructor, we cannot directly get ConstructorDescriptor by KtClassInitializer,
+            // so we have to do additional conversion: KtClassInitializer -> KtClassOrObject -> ClassDescriptor -> ConstructorDescriptor
+            ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
+            return classDescriptor.getUnsubstitutedPrimaryConstructor();
+        }
+        else {
+            return descriptor;
+        }
+    }
+
     private boolean isCapturedWrite(
             @NotNull VariableDescriptor variableDescriptor,
             @NotNull WriteValueInstruction writeValueInstruction
     ) {
         DeclarationDescriptor containingDeclarationDescriptor = variableDescriptor.getContainingDeclaration();
-        if (containingDeclarationDescriptor instanceof ClassDescriptor) return false;
-        KtElement ownerElement = writeValueInstruction.getOwner().getCorrespondingElement();
-        DeclarationDescriptor writeOwnerDescriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, ownerElement);
-        if (containingDeclarationDescriptor.equals(writeOwnerDescriptor)) return false;
-        if (writeOwnerDescriptor instanceof ClassDescriptor) {
-            ClassDescriptor writeOwnerClass = (ClassDescriptor) writeOwnerDescriptor;
-            if (containingDeclarationDescriptor.equals(writeOwnerClass.getUnsubstitutedPrimaryConstructor())) return false;
+        // Do not consider member / top-level properties
+        if (containingDeclarationDescriptor instanceof ClassOrPackageFragmentDescriptor) return false;
+        KtDeclaration parentDeclaration = getElementParentDeclaration(writeValueInstruction.getElement());
+        while (true) {
+            DeclarationDescriptor parentDescriptor = getDeclarationDescriptor(parentDeclaration);
+            if (containingDeclarationDescriptor.equals(parentDescriptor)) {
+                return false;
+            }
+            else if (parentDeclaration instanceof KtObjectDeclaration) {
+                // anonymous object counts here the same as its owner
+                parentDeclaration = getElementParentDeclaration(parentDeclaration);
+            }
+            else {
+                return true;
+            }
         }
-        return true;
     }
 
     private boolean checkValReassignment(
