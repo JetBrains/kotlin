@@ -481,6 +481,18 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxAga
             doTest(fileName);
         }
 
+        @TestMetadata("kt11519.kt")
+        public void testKt11519() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/sam/kt11519.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt11519Constructor.kt")
+        public void testKt11519Constructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/sam/kt11519Constructor.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt4753.kt")
         public void testKt4753() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/sam/kt4753.kt");

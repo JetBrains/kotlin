@@ -79,3 +79,8 @@ fun CallableMemberDescriptor.createTypeParameterWithNewName(descriptor: TypePara
     newDescriptor.setInitialized()
     return newDescriptor
 }
+
+fun KotlinType.removeExternalProjections(): KotlinType {
+    val newArguments = arguments.map { TypeProjectionImpl(Variance.INVARIANT, it.type) }
+    return replace(newArguments)
+}

@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.SamAdapterDescriptor;
 import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor;
@@ -26,13 +25,12 @@ import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor;
 public class SamCodegenUtil {
     @Nullable
     public static FunctionDescriptor getOriginalIfSamAdapter(@NotNull FunctionDescriptor fun) {
-        FunctionDescriptor original = fun.getOriginal();
-        if (original instanceof SamAdapterDescriptor<?>) {
-            return ((SamAdapterDescriptor<?>) original).getOriginForSam();
+        if (fun instanceof SamAdapterDescriptor<?>) {
+            return ((SamAdapterDescriptor<?>) fun).getOriginForSam();
         }
 
-        if (original instanceof SamAdapterExtensionFunctionDescriptor) {
-            return ((SamAdapterExtensionFunctionDescriptor) original).getSourceFunction();
+        if (fun instanceof SamAdapterExtensionFunctionDescriptor) {
+            return ((SamAdapterExtensionFunctionDescriptor) fun).getSourceFunction();
         }
 
         return null;
