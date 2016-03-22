@@ -1,11 +1,13 @@
+var $tmp;
+
 function test(n) {
-    var result;
     if (n >= 0) {
-        result = n;
+        $tmp = n;
     }
     else {
-        result = -n;
+        $tmp = -n;
     }
+    var result = $tmp;
     return result;
 }
 
@@ -15,6 +17,8 @@ function box() {
 
     result = test(-20);
     if (result != 20) return "fail2: " + result;
+
+    if ($tmp != 20) return "fail3: " + result;
 
     return "OK"
 }

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.js.inline.clean
 import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.metadata.synthetic
 import org.jetbrains.kotlin.js.inline.util.canHaveSideEffect
+import org.jetbrains.kotlin.js.inline.util.collectDefinedNames
 import org.jetbrains.kotlin.js.inline.util.collectFreeVariables
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
@@ -29,6 +30,7 @@ internal class TemporaryAssignmentElimination(private val root: JsBlock) {
     private val mappedUsages = mutableMapOf<JsName, Usage>()
     private val syntheticNames = mutableSetOf<JsName>()
     private var hasChanges = false
+    private val namesToProcess = mutableSetOf<JsName>()
 
     fun apply(): Boolean {
         analyze()
@@ -39,6 +41,8 @@ internal class TemporaryAssignmentElimination(private val root: JsBlock) {
     }
 
     private fun analyze() {
+        namesToProcess.addAll(collectDefinedNames(root))
+
         object : JsVisitorWithContextImpl() {
             override fun visit(x: JsReturn, ctx: JsContext<*>): Boolean {
                 val returnExpr = x.expression
@@ -253,6 +257,7 @@ internal class TemporaryAssignmentElimination(private val root: JsBlock) {
     private fun tryRecord(expr: JsExpression, usage: Usage): Boolean {
         if (expr !is JsNameRef) return false
         val name = expr.name ?: return false
+        if (name !in namesToProcess) return false
 
         usages[name] = usage
         return true
