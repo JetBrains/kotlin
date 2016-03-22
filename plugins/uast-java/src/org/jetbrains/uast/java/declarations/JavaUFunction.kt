@@ -15,7 +15,10 @@
  */
 package org.jetbrains.uast.java
 
+import com.intellij.psi.PsiArrayType
+import com.intellij.psi.PsiClassType
 import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiType
 import org.jetbrains.uast.*
 import org.jetbrains.uast.psi.PsiElementBacked
 
@@ -53,10 +56,37 @@ class JavaUFunction(
 
     override val visibility: UastVisibility
         get() = psi.getVisibility()
-
+    
     override val body by lz { JavaConverter.convertOrEmpty(psi.body, this) }
+
+    override val bytecodeDescriptor by lz { getDescriptor(psi) }
 
     override fun getSuperFunctions(context: UastContext): List<UFunction> {
         return psi.findSuperMethods().map { context.convert(it) as? UFunction }.filterNotNull()
+    }
+    
+    private companion object {
+        fun getDescriptor(psi: PsiMethod): String? {
+            val parameterTypes = psi.parameterList.parameters.map {
+                renderType(it.type) ?: return null
+            }
+            val returnType = renderType(psi.returnType) ?: return null
+            return parameterTypes.joinToString("", "(", ")") + returnType
+        }
+        
+        fun renderType(type: PsiType?): String? = when (type) {
+            null -> null
+            PsiType.CHAR -> "C"
+            PsiType.DOUBLE -> "D"
+            PsiType.FLOAT -> "F"
+            PsiType.INT -> "I"
+            PsiType.LONG -> "J"
+            PsiType.SHORT -> "S"
+            PsiType.BOOLEAN -> "Z"
+            PsiType.VOID -> "V"
+            is PsiArrayType -> renderType(type.componentType)?.let { "[$it" }
+            is PsiClassType -> type.resolve()?.qualifiedName?.let { "L$it;" }
+            else -> null
+        }
     }
 }

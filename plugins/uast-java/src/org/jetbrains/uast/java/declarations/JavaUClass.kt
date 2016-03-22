@@ -15,7 +15,10 @@
  */
 package org.jetbrains.uast.java
 
+import com.intellij.ide.util.JavaAnonymousClassesHelper
 import com.intellij.psi.*
+import com.intellij.psi.util.ClassUtil
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.PsiTypesUtil
 import org.jetbrains.uast.*
 import org.jetbrains.uast.kinds.UastClassKind
@@ -59,7 +62,7 @@ class JavaUClass(
     override val isAnonymous: Boolean
         get() = psi is PsiAnonymousClass
 
-    override val internalName = null
+    override val internalName by lz { getInternalName(psi) }
 
     override val superTypes by lz {
         psi.extendsListTypes.map { JavaConverter.convert(it, this) } + psi.implementsListTypes.map { JavaConverter.convert(it, this) }
@@ -97,6 +100,61 @@ class JavaUClass(
         }
 
         return isSubClassOf(psi, name)
+    }
+
+    private companion object {
+        /* Primarily copied from IntellijLintUtils and ClassContext classes from the Android IDEA plugin */
+        private fun getInternalName(psiClass: PsiClass): String? {
+            if (psiClass is PsiAnonymousClass) {
+                val parent = PsiTreeUtil.getParentOfType(psiClass, PsiClass::class.java)
+                if (parent != null) {
+                    val internalName = getInternalName(parent) ?: return null
+                    return internalName + JavaAnonymousClassesHelper.getName(psiClass)
+                }
+            }
+            var sig = ClassUtil.getJVMClassName(psiClass)
+            if (sig == null) {
+                val qualifiedName = psiClass.qualifiedName
+                if (qualifiedName != null) {
+                    return getInternalName(qualifiedName)
+                }
+                return null
+            }
+            else if (sig.indexOf('.') != -1) {
+                // Workaround -- ClassUtil doesn't treat this correctly!
+                // .replace('.', '/');
+                sig = getInternalName(sig)
+            }
+            return sig
+        }
+
+        private fun getInternalName(fqcn: String): String {
+            if (fqcn.indexOf('.') == -1) {
+                return fqcn
+            }
+
+            // If class name contains $, it's not an ambiguous inner class name.
+            if (fqcn.indexOf('$') != -1) {
+                return fqcn.replace('.', '/')
+            }
+            // Let's assume that components that start with Caps are class names.
+            val sb = StringBuilder(fqcn.length)
+            var prev: String? = null
+            for (part in fqcn.split('.')) {
+                if (prev != null && !prev.isEmpty()) {
+                    if (Character.isUpperCase(prev[0])) {
+                        sb.append('$')
+                    }
+                    else {
+                        sb.append('/')
+                    }
+                }
+                sb.append(part)
+                prev = part
+            }
+
+            return sb.toString()
+        }
     }
 }
 

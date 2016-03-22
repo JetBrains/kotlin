@@ -28,7 +28,8 @@ interface UClass : UDeclaration, UFqNamed, UModifierOwner, UAnnotated {
 
     val companions: List<UClass>
 
-    val internalName: String?
+    open val internalName: String?
+        get() = null
 
     val superTypes: List<UType>
     val declarations: List<UDeclaration>

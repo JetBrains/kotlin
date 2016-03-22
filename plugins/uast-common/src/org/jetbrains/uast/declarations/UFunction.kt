@@ -25,6 +25,9 @@ interface UFunction : UDeclaration, UModifierOwner, UAnnotated {
     val body: UExpression
     val visibility: UastVisibility
 
+    open val bytecodeDescriptor: String?
+        get() = null
+
     fun getSuperFunctions(context: UastContext): List<UFunction>
 
     override fun traverse(handler: UastHandler) {
