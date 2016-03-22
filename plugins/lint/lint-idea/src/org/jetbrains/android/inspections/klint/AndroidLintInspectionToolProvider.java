@@ -121,12 +121,6 @@ public class AndroidLintInspectionToolProvider {
     }
   }
 
-  public static class AndroidKLintUnusedAttributeInspection extends AndroidLintInspectionBase {
-    public AndroidKLintUnusedAttributeInspection() {
-      super(AndroidBundle.message("android.lint.inspections.unused.attribute"), ApiDetector.UNUSED);
-    }
-  }
-
   public static class AndroidKLintUnusedIdsInspection extends AndroidLintInspectionBase {
     public AndroidKLintUnusedIdsInspection() {
       super(AndroidBundle.message("android.lint.inspections.unused.ids"), UnusedResourceDetector.ISSUE_IDS);
