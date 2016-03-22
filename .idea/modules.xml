@@ -20,6 +20,7 @@
       <module fileurl="file://$PROJECT_DIR$/compiler/cli/cli-common/cli-common.iml" filepath="$PROJECT_DIR$/compiler/cli/cli-common/cli-common.iml" group="compiler/cli" />
       <module fileurl="file://$PROJECT_DIR$/compiler/cli/cli-runner/cli-runner.iml" filepath="$PROJECT_DIR$/compiler/cli/cli-runner/cli-runner.iml" group="compiler/cli" />
       <module fileurl="file://$PROJECT_DIR$/compiler/tests/compiler-tests.iml" filepath="$PROJECT_DIR$/compiler/tests/compiler-tests.iml" group="compiler" />
+      <module fileurl="file://$PROJECT_DIR$/compiler/tests-java8/compiler-tests-java8.iml" filepath="$PROJECT_DIR$/compiler/tests-java8/compiler-tests-java8.iml" group="compiler" />
       <module fileurl="file://$PROJECT_DIR$/compiler/conditional-preprocessor/conditional-preprocessor.iml" filepath="$PROJECT_DIR$/compiler/conditional-preprocessor/conditional-preprocessor.iml" group="compiler" />
       <module fileurl="file://$PROJECT_DIR$/compiler/container/container.iml" filepath="$PROJECT_DIR$/compiler/container/container.iml" group="compiler" />
       <module fileurl="file://$PROJECT_DIR$/compiler/daemon/daemon.iml" filepath="$PROJECT_DIR$/compiler/daemon/daemon.iml" group="compiler/daemon" />
@@ -48,7 +49,6 @@
       <module fileurl="file://$PROJECT_DIR$/idea/idea-ultimate/idea-ultimate.iml" filepath="$PROJECT_DIR$/idea/idea-ultimate/idea-ultimate.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/compiler/preloader/instrumentation/instrumentation.iml" filepath="$PROJECT_DIR$/compiler/preloader/instrumentation/instrumentation.iml" group="compiler/cli" />
       <module fileurl="file://$PROJECT_DIR$/j2k/j2k.iml" filepath="$PROJECT_DIR$/j2k/j2k.iml" group="j2k" />
-      <module fileurl="file://$PROJECT_DIR$/compiler/java8-tests/java8-tests.iml" filepath="$PROJECT_DIR$/compiler/java8-tests/java8-tests.iml" group="compiler" />
       <module fileurl="file://$PROJECT_DIR$/jps-plugin/jps-plugin.iml" filepath="$PROJECT_DIR$/jps-plugin/jps-plugin.iml" group="ide/jps" />
       <module fileurl="file://$PROJECT_DIR$/js/js.dart-ast/js.dart-ast.iml" filepath="$PROJECT_DIR$/js/js.dart-ast/js.dart-ast.iml" group="compiler/js" />
       <module fileurl="file://$PROJECT_DIR$/js/js.frontend/js.frontend.iml" filepath="$PROJECT_DIR$/js/js.frontend/js.frontend.iml" group="compiler/js" />
