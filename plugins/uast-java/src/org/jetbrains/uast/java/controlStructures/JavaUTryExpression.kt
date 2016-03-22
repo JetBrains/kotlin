@@ -17,10 +17,7 @@ package org.jetbrains.uast.java
 
 import com.intellij.psi.PsiCatchSection
 import com.intellij.psi.PsiTryStatement
-import org.jetbrains.uast.NoEvaluate
-import org.jetbrains.uast.UCatchClause
-import org.jetbrains.uast.UElement
-import org.jetbrains.uast.UTryExpression
+import org.jetbrains.uast.*
 import org.jetbrains.uast.psi.PsiElementBacked
 
 class JavaUTryExpression(
@@ -30,6 +27,11 @@ class JavaUTryExpression(
     override val tryClause by lz { JavaConverter.convertOrEmpty(psi.tryBlock, this) }
     override val catchClauses by lz { psi.catchSections.map { JavaUCatchClause(it, this) } }
     override val finallyClause by lz { psi.finallyBlock?.let { JavaConverter.convert(it, this) } }
+    override val resources by lz {
+        val vars = psi.resourceList ?: return@lz null
+        val resources = vars.map { JavaConverter.convert(it, this) ?: UDeclarationNotResolved }
+        if (resources.isEmpty()) null else resources
+    }
 }
 
 class JavaUCatchClause(

@@ -16,6 +16,7 @@
 package org.jetbrains.uast
 
 interface UTryExpression : UExpression {
+    val resources: List<UElement>?
     val tryClause: UExpression
     val catchClauses: List<UCatchClause>
     val finallyClause: UExpression?

@@ -56,6 +56,7 @@ internal object JavaConverter : UastConverter {
         is PsiVariable -> convert(element, parent)
         is PsiClassInitializer -> convert(element, parent)
         is PsiAnnotation -> convert(element, parent)
+        is PsiResourceExpression -> convert(element.expression, parent)
         is PsiExpression -> convert(element, parent)
         is PsiStatement -> convert(element, parent)
         is PsiIdentifier -> JavaUSimpleReferenceExpression(element, element.text, parent)
