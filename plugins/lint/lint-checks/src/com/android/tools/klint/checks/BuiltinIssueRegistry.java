@@ -42,7 +42,6 @@ public class BuiltinIssueRegistry extends IssueRegistry {
         issues.add(ApiDetector.INLINED);
         issues.add(ApiDetector.OVERRIDE);
         issues.add(ApiDetector.UNSUPPORTED);
-        issues.add(ApiDetector.UNUSED);
         issues.add(AppCompatCallDetector.ISSUE);
         issues.add(AppCompatResourceDetector.ISSUE);
         issues.add(AssertDetector.ISSUE);
