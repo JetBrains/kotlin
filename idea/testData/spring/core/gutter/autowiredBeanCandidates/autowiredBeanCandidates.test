@@ -1,0 +1,9 @@
+{
+    withRuntime: "true",
+    springConfig: ["config.xml"],
+    file: "Bean.kt",
+    icon: "ShowAutowiredDependencies",
+    tooltip: "Navigate to autowired candidates",
+    naming: "generic",
+    targets: ["myBean(String)", "prop2", "setProp1(String)"]
+}

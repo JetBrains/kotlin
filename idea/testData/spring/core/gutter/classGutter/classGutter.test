@@ -1,0 +1,8 @@
+{
+    springConfig: ["config.xml"],
+    file: "Bean.kt",
+    icon: "SpringBean",
+    tooltip: "Navigate to the spring bean declaration(s)",
+    naming: "bean",
+    targets: ["bean"]
+}
