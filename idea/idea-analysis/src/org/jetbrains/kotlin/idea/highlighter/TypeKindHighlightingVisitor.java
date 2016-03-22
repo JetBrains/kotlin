@@ -20,10 +20,10 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 
 class TypeKindHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
@@ -61,8 +61,20 @@ class TypeKindHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
     }
 
     private void highlightAnnotation(@NotNull KtSimpleNameExpression expression) {
-        TextRange toHighlight = KtPsiUtilKt.getHighlightingRange(expression);
-        NameHighlighter.highlightName(holder, toHighlight, KotlinHighlightingColors.ANNOTATION);
+        TextRange range = expression.getTextRange();
+
+        // include '@' symbol if the reference is the first segment of KtAnnotationEntry
+        // if "Deprecated" is highlighted then '@' should be highlighted too in "@Deprecated"
+        KtAnnotationEntry annotationEntry = PsiTreeUtil.getParentOfType(
+                expression, KtAnnotationEntry.class, /* strict = */false, KtValueArgumentList.class);
+        if (annotationEntry != null) {
+            PsiElement atSymbol = annotationEntry.getAtSymbol();
+            if (atSymbol != null) {
+                range = new TextRange(atSymbol.getTextRange().getStartOffset(), expression.getTextRange().getEndOffset());
+            }
+        }
+
+        NameHighlighter.highlightName(holder, range, KotlinHighlightingColors.ANNOTATION);
     }
 
     @Override

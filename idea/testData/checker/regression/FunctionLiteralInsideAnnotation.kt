@@ -1,4 +1,4 @@
 package foo
 
-<error>@Anno</error> ({ val x: Int })
+@<error>Anno</error> ({ val x: Int })
 fun f() {}

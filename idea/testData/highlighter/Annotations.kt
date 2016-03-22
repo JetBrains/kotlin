@@ -13,11 +13,11 @@ fun <info descr="null">foo</info>() {
 
     <info descr="null"><info descr="null">bar</info></info> <info descr="null" textAttributesKey="KOTLIN_ANNOTATION">@Ann</info> { 1 }
 
-    <error descr="[UNRESOLVED_REFERENCE] Unresolved reference: Err" textAttributesKey="WRONG_REFERENCES_ATTRIBUTES">@Err</error>
+    @<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: Err" textAttributesKey="WRONG_REFERENCES_ATTRIBUTES">Err</error>
     <warning descr="[UNUSED_EXPRESSION] The expression is unused" textAttributesKey="WARNING_ATTRIBUTES">5</warning>
 }
 
-<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: Err" textAttributesKey="WRONG_REFERENCES_ATTRIBUTES">@Err</error> class <info descr="null" textAttributesKey="KOTLIN_CLASS">Err1</info>
+@<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: Err" textAttributesKey="WRONG_REFERENCES_ATTRIBUTES">Err</error> class <info descr="null" textAttributesKey="KOTLIN_CLASS">Err1</info>
 
 class <info descr="null">NotAnn</info>
 <error descr="[NOT_AN_ANNOTATION_CLASS] 'NotAnn' is not an annotation class" textAttributesKey="ERRORS_ATTRIBUTES">@NotAnn</error>
