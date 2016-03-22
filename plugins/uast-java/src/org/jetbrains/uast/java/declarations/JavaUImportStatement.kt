@@ -18,14 +18,18 @@ package org.jetbrains.uast.java
 import com.intellij.psi.PsiImportStatement
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UImportStatement
+import org.jetbrains.uast.kinds.UastImportKind
 import org.jetbrains.uast.psi.PsiElementBacked
 
 class JavaUImportStatement(
         override val psi: PsiImportStatement,
         override val parent: UElement
 ) : JavaAbstractUElement(), UImportStatement, PsiElementBacked {
-    override val nameToImport: String?
+    override val fqNameToImport: String?
         get() = psi.qualifiedName
+
+    override val kind: UastImportKind
+        get() = UastImportKind.CLASS
 
     override val isStarImport: Boolean
         get() = false

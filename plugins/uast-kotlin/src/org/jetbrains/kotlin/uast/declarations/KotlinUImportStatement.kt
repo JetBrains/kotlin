@@ -19,13 +19,18 @@ package org.jetbrains.kotlin.uast
 import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UImportStatement
+import org.jetbrains.uast.kinds.UastImportKind
 import org.jetbrains.uast.psi.PsiElementBacked
 
 class KotlinUImportStatement(
         override val psi: KtImportDirective,
         override val parent: UElement
 ) : KotlinAbstractUElement(), UImportStatement, PsiElementBacked {
-    override val nameToImport = psi.importedFqName?.asString()
+    override val fqNameToImport = psi.importedFqName?.asString()
+
+    //TODO support member imports
+    override val kind: UastImportKind
+        get() = UastImportKind.CLASS
 
     override val isStarImport: Boolean
         get() = psi.isAllUnder
