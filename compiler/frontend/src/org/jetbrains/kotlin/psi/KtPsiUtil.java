@@ -738,6 +738,7 @@ public class KtPsiUtil {
     }
 
     @Nullable
+    @Contract("_, !null -> !null")
     public static KtModifierList replaceModifierList(@NotNull KtModifierListOwner owner, @Nullable KtModifierList modifierList) {
         KtModifierList oldModifierList = owner.getModifierList();
         if (modifierList == null) {
