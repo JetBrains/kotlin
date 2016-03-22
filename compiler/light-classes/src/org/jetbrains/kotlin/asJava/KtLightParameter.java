@@ -146,7 +146,18 @@ public class KtLightParameter extends LightParameter implements KtLightDeclarati
     }
 
     @Override
+    public TextRange getTextRange() {
+        KtParameter origin = getOrigin();
+        return origin != null ? origin.getTextRange() : TextRange.EMPTY_RANGE;
+    }
+
+    @Override
     public PsiIdentifier getNameIdentifier() {
         return lightIdentifier;
+    }
+
+    @Override
+    public PsiElement getParent() {
+        return getMethod().getParameterList();
     }
 }

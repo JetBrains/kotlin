@@ -1,0 +1,8 @@
+{
+    springConfig: ["inheritors.xml"],
+    file: "AbstractBean.kt",
+    icon: "SpringBean",
+    tooltip: "Navigate to the spring bean declaration(s)",
+    naming: "bean",
+    targets: ["inheritor", "inheritor2"]
+}

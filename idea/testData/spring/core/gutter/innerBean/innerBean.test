@@ -1,0 +1,8 @@
+{
+    springConfig: ["innerBeanGutter.xml"],
+    file: "InnerBean.kt",
+    icon: "SpringBean",
+    tooltip: "Navigate to the spring bean declaration(s)",
+    naming: "bean",
+    targets: ["InnerBean"]
+}
