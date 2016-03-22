@@ -16,16 +16,16 @@
 
 package org.jetbrains.kotlin.jvm.compiler
 
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
+import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberScope
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import com.intellij.testFramework.UsefulTestCase
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.test.util.DescriptorValidator
 import org.jetbrains.kotlin.test.util.DescriptorValidator.ValidationVisitor
-import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.resolve.MemberComparator
 
 class DeserializedScopeValidationVisitor : ValidationVisitor() {
     override fun validateScope(scopeOwner: DeclarationDescriptor, scope: MemberScope, collector: DescriptorValidator.DiagnosticCollector) {
@@ -45,7 +45,7 @@ private fun validateDeserializedScope(scopeOwner: DeclarationDescriptor, scope: 
 }
 
 private fun checkSorted(descriptors: Collection<DeclarationDescriptor>, declaration: DeclarationDescriptor) {
-    UsefulTestCase.assertOrderedEquals(
+    KtUsefulTestCase.assertOrderedEquals(
             "Members of $declaration should be sorted by serialization.",
             descriptors,
             descriptors.sortedWith(MemberComparator.INSTANCE)

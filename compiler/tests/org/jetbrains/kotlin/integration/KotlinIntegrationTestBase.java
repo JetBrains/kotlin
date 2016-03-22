@@ -17,10 +17,13 @@
 package org.jetbrains.kotlin.integration;
 
 import com.intellij.execution.ExecutionException;
-import com.intellij.execution.OutputListener;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.OSProcessHandler;
+import com.intellij.execution.process.ProcessAdapter;
+import com.intellij.execution.process.ProcessEvent;
+import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.openapi.application.PathManager;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -140,5 +143,31 @@ public abstract class KotlinIntegrationTestBase extends TestCaseWithTmpdir {
 
     protected static File getKotlinProjectHome() {
         return new File(PathManager.getHomePath()).getParentFile();
+    }
+
+    private static class OutputListener extends ProcessAdapter {
+        private final StringBuilder out;
+        private final StringBuilder err;
+
+        public OutputListener(@NotNull StringBuilder out, @NotNull StringBuilder err) {
+            this.out = out;
+            this.err = err;
+        }
+
+        @Override
+        public void onTextAvailable(ProcessEvent event, Key outputType) {
+            if (outputType == ProcessOutputTypes.STDERR) {
+                err.append(event.getText());
+            }
+            else if (outputType == ProcessOutputTypes.SYSTEM) {
+                // skip
+            }
+            else {
+                out.append(event.getText());
+            }
+        }
+
+        @Override
+        public void processTerminated(ProcessEvent event) {}
     }
 }

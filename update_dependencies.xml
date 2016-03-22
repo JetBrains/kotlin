@@ -747,6 +747,15 @@
             <delete dir="@{download.dir}"/>
             <mkdir dir="@{download.dir}"/>
 
+            <!-- For running compiler tests with Java 1.6 -->
+            <get src="@{base.repository.url}/ideaIC/15.0.5/ideaIC-15.0.5.zip" dest="@{download.dir}/ideaIC-15.0.5.zip" usetimestamp="true"/>
+            <unzip src="@{download.dir}/ideaIC-15.0.5.zip" dest="@{download.dir}/idea-15-for-tests">
+                <patternset>
+                    <include name="**/lib/openapi.jar"/>
+                    <include name="**/lib/idea_rt.jar"/>
+                </patternset>
+            </unzip>
+
             <property name="idea.id" value="idea${sdk.version.prefix}"/>
 
             <get src="@{base.repository.url}/ideaIC/@{idea.maven.version}/ideaIC-@{idea.maven.version}-sources.jar"

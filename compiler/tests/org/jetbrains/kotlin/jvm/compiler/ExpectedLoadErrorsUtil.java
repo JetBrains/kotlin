@@ -30,8 +30,8 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 
 import java.util.*;
 
-import static com.intellij.testFramework.UsefulTestCase.assertNotNull;
-import static com.intellij.testFramework.UsefulTestCase.assertSameElements;
+import static org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.assertNotNull;
+import static org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.assertSameElements;
 
 public class ExpectedLoadErrorsUtil {
     public static final String ANNOTATION_CLASS_NAME = "org.jetbrains.kotlin.jvm.compiler.annotation.ExpectLoadError";

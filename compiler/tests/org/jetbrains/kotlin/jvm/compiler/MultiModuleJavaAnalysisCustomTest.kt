@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.jvm.compiler
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.analyzer.ModuleContent
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.ResolverForProject
@@ -39,13 +38,14 @@ import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.junit.Assert
 import java.io.File
 import java.util.*
 
-class MultiModuleJavaAnalysisCustomTest : UsefulTestCase() {
+class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
 
     private class TestModule(
             val _name: String, val kotlinFiles: List<KtFile>, val javaFilesScope: GlobalSearchScope,

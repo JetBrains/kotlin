@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2000-2010 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,19 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.intellij.testFramework;
 
-package org.jetbrains.kotlin.test;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase;
-
-import java.io.File;
-
-public abstract class TestCaseWithTmpdir extends KtUsefulTestCase {
-    protected File tmpdir;
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        tmpdir = KotlinTestUtils.tmpDirForTest(this);
-    }
+/**
+ * Marks the annotated parameter as referencing a file in the testdata directory.
+ */
+@Retention(RetentionPolicy.SOURCE)
+@Target({ElementType.PARAMETER})
+public @interface TestDataFile {
 }

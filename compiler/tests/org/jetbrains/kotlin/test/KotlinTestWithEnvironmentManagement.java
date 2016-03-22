@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.test;
 
-import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase;
 import org.jetbrains.kotlin.types.DelegatingFlexibleType;
 
-public abstract class KotlinTestWithEnvironmentManagement extends UsefulTestCase {
+public abstract class KotlinTestWithEnvironmentManagement extends KtUsefulTestCase {
     static {
         System.setProperty("java.awt.headless", "true");
         DelegatingFlexibleType.RUN_SLOW_ASSERTIONS = true;
