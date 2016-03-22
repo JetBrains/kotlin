@@ -16,7 +16,8 @@ val ACCESS_NAMES = mapOf(
         Opcodes.ACC_ANNOTATION to "annotation")
 
 
-private fun isPublic(access: Int) = access and Opcodes.ACC_PUBLIC != 0 || access and Opcodes.ACC_PROTECTED != 0
+public fun isPublic(access: Int) = access and Opcodes.ACC_PUBLIC != 0 || access and Opcodes.ACC_PROTECTED != 0
+public fun isStatic(access: Int) = access and Opcodes.ACC_STATIC != 0
 fun getModifiers(access: Int): List<String> = ACCESS_NAMES.entries.mapNotNull { if (access and it.key != 0) it.value else null }
 fun getModifierString(access: Int): String = getModifiers(access).joinToString(" ")
 

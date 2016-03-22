@@ -19,7 +19,8 @@ fun main(args: Array<String>) {
 fun JarFile.classEntries() = entries().asSequence().filter { !it.isDirectory && it.name.endsWith(".class") }
 
 
-data class ClassBinarySignature(val name: String, val outerName: String?, val modifiers: String, val supertypes: List<String>, val memberSignatures: List<String>, val isPublic: Boolean)
+data class ClassBinarySignature(val name: String, val superName: String, val outerName: String?, val modifiers: String, val supertypes: List<String>, val memberSignatures: List<MemberBinarySignature>, val isPublic: Boolean)
+data class MemberBinarySignature(val name: String, val signature: String, val isStatic: Boolean)
 
 val ClassBinarySignature.signature: String
     get() = "$modifiers class $name" + if (supertypes.isEmpty()) "" else ": ${supertypes.joinToString()}"
@@ -48,12 +49,12 @@ fun getBinaryAPI(classStreams: Sequence<InputStream>, visibilityMap: Map<String,
             val memberSignatures =
                     fields.filter { it.isPublic() }
                             .sortedBy { it.name }
-                            .map { with(it) { "${getModifierString(access)} field $name $desc" } } +
+                            .map { with(it) { MemberBinarySignature(name, "${getModifierString(access)} field $name $desc", isStatic(access) ) } } +
                     methods.filter { it.isEffectivelyPublic(classVisibility) }
                             .sortedWith(compareBy({ it.name }, { it.desc }))
-                            .map { with(it) { "${getModifierString(access)} fun $name $desc" } }
+                            .map { with(it) { MemberBinarySignature(name, "${getModifierString(access)} fun $name $desc", isStatic(access) ) } }
 
-            ClassBinarySignature(name, outerClassName, modifiers, supertypes, memberSignatures, isPublic)
+            ClassBinarySignature(name, superName, outerClassName, modifiers, supertypes, memberSignatures, isPublic)
         }}
 
 
@@ -64,14 +65,28 @@ fun List<ClassBinarySignature>.filterOutNonPublic(): List<ClassBinarySignature> 
     fun ClassBinarySignature.isPublicAndAccessible(): Boolean =
             isPublic && (outerName == null || classByName[outerName]?.isPublicAndAccessible() ?: true)
 
-    return filter { it -> it.isPublicAndAccessible() }
+    fun supertypes(superName: String) = generateSequence({ classByName[superName] }, { classByName[it.superName] })
+
+    fun ClassBinarySignature.flattenNonPublicBases(): ClassBinarySignature {
+
+        val nonPublicSupertypes = supertypes(superName).takeWhile { !it.isPublicAndAccessible() }.toList()
+        if (nonPublicSupertypes.isEmpty())
+            return this
+
+        val inheritedStaticSignatures = nonPublicSupertypes.flatMap { it.memberSignatures.filter { it.isStatic }}
+
+        // not covered the case when there is public superclass after chain of private superclasses
+        return this.copy(memberSignatures = memberSignatures + inheritedStaticSignatures, supertypes = supertypes - superName)
+    }
+
+    return filter { it -> it.isPublicAndAccessible() }.map { it.flattenNonPublicBases() }
 }
 
 fun List<ClassBinarySignature>.dump() = dump(to = System.out)
 
 fun <T: Appendable> List<ClassBinarySignature>.dump(to: T): T = to.apply { this@dump.forEach {
     appendln(it.signature)
-    it.memberSignatures.forEach { appendln(it) }
+    it.memberSignatures.forEach { appendln(it.signature) }
     appendln("------------------\n")
 }}
 
