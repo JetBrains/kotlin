@@ -5,3 +5,4 @@ public class ObjectInstance {
 }
 
 // REF: (k).KotlinObject
+// CLS_REF: (k).KotlinObject

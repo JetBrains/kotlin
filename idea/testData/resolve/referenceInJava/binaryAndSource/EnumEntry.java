@@ -5,3 +5,4 @@ public class EnumEntry {
 }
 
 // REF: (in k.EnumClass).ENTRY
+// CLS_REF: (in k.EnumClass).ENTRY

@@ -5,3 +5,4 @@ public class Constructor {
 }
 
 // REF: (k).Class
+// CLS_REF: (k).Class

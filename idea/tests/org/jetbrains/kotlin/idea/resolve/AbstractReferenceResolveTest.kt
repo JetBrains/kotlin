@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.resolve
 
 import com.google.common.collect.Lists
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiPolyVariantReference
 import com.intellij.psi.PsiReference
 import com.intellij.testFramework.LightProjectDescriptor
@@ -56,15 +57,19 @@ abstract class AbstractReferenceResolveTest : KotlinLightPlatformCodeInsightFixt
 
     protected fun doSingleResolveTest() {
         forEachCaret { index, offset ->
-            val expectedResolveData = readResolveData(myFixture.file.text, index)
+            val expectedResolveData = readResolveData(myFixture.file.text, index, refMarkerText)
             val psiReference = myFixture.file.findReferenceAt(offset)
-            checkReferenceResolve(expectedResolveData, offset, psiReference)
+            checkReferenceResolve(expectedResolveData, offset, psiReference) { checkResolvedTo(it) }
         }
+    }
+
+    open fun checkResolvedTo(element: PsiElement) {
+        // do nothing
     }
 
     protected fun doMultiResolveTest() {
         forEachCaret { index, offset ->
-            val expectedReferences = getExpectedReferences(myFixture.file.text, index)
+            val expectedReferences = getExpectedReferences(myFixture.file.text, index, refMarkerText)
 
             val psiReference = myFixture.file.findReferenceAt(offset)
             assertTrue(psiReference is PsiPolyVariantReference)
@@ -93,13 +98,15 @@ abstract class AbstractReferenceResolveTest : KotlinLightPlatformCodeInsightFixt
 
     override fun getTestDataPath() = "./"
 
+    open val refMarkerText: String = "REF"
+
     companion object {
         val MULTIRESOLVE: String = "MULTIRESOLVE"
         val REF_EMPTY: String = "REF_EMPTY"
 
-        fun readResolveData(fileText: String, index: Int): ExpectedResolveData {
+        fun readResolveData(fileText: String, index: Int, refMarkerText: String = "REF"): ExpectedResolveData {
             val shouldBeUnresolved = InTextDirectivesUtils.isDirectiveDefined(fileText, REF_EMPTY)
-            val refs = getExpectedReferences(fileText, index)
+            val refs = getExpectedReferences(fileText, index, refMarkerText)
 
             val referenceToString: String
             if (shouldBeUnresolved) {
@@ -117,31 +124,39 @@ abstract class AbstractReferenceResolveTest : KotlinLightPlatformCodeInsightFixt
 
         // purpose of this helper is to deal with the case when navigation element is a file
         // see ReferenceResolveInJavaTestGenerated.testPackageFacade()
-        private fun getExpectedReferences(text: String, index: Int): List<String> {
-            val prefix = if (index > 0) "// REF$index:" else "// REF:"
-            val prefixes = InTextDirectivesUtils.findLinesWithPrefixesRemoved(text, prefix)
-            return prefixes.map {
-                val replaced = it.replace("<test dir>", PluginTestCaseBase.getTestDataPathBase())
-                PathUtil.toSystemDependentName(replaced).replace("//", "/") //happens on Unix
-            }
+        private fun getExpectedReferences(text: String, index: Int, refMarkerText: String): List<String> {
+            val prefix = if (index > 0) "// $refMarkerText$index:" else "// $refMarkerText:"
+            return InTextDirectivesUtils.findLinesWithPrefixesRemoved(text, prefix)
         }
 
-        fun checkReferenceResolve(expectedResolveData: ExpectedResolveData, offset: Int, psiReference: PsiReference?) {
+        fun checkReferenceResolve(expectedResolveData: ExpectedResolveData, offset: Int, psiReference: PsiReference?, checkResolvedTo: (PsiElement) -> Unit = {}) {
+            val expectedString = expectedResolveData.referenceString
             if (psiReference != null) {
                 val resolvedTo = psiReference.resolve()
                 if (resolvedTo != null) {
-                    val resolvedToElementStr = ReferenceUtils.renderAsGotoImplementation(resolvedTo)
-                    assertEquals("Found reference to '$resolvedToElementStr', but '${expectedResolveData.referenceString}' was expected", expectedResolveData.referenceString, resolvedToElementStr)
+                    checkResolvedTo(resolvedTo)
+                    val resolvedToElementStr = replacePlaceholders(ReferenceUtils.renderAsGotoImplementation(resolvedTo))
+                    assertEquals("Found reference to '$resolvedToElementStr', but '$expectedString' was expected", expectedString, resolvedToElementStr)
                 }
                 else {
                     if (!expectedResolveData.shouldBeUnresolved()) {
-                        assertNull("Element $psiReference wasn't resolved to anything, but ${expectedResolveData.referenceString} was expected", expectedResolveData.referenceString)
+                        assertNull("Element $psiReference wasn't resolved to anything, but $expectedString was expected", expectedString)
                     }
                 }
             }
             else {
-                assertNull("No reference found at offset: $offset, but one resolved to ${expectedResolveData.referenceString} was expected", expectedResolveData.referenceString)
+                assertNull("No reference found at offset: $offset, but one resolved to $expectedString was expected", expectedString)
             }
+        }
+
+        private fun replacePlaceholders(actualString: String): String {
+            val replaced = PathUtil.toSystemIndependentName(actualString)
+                    .replace(PluginTestCaseBase.getTestDataPathBase(), "/<test dir>")
+                    .replace("//", "/") // additional slashes to fix discrepancy between windows and unix
+            if ("!/" in replaced) {
+                return replaced.replace(replaced.substringBefore("!/"), "<jar>")
+            }
+            return replaced
         }
     }
 }

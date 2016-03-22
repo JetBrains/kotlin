@@ -5,3 +5,4 @@ public class PackageFacade {
 }
 
 // REF: /src/<test dir>/resolve/referenceInJava/dependency.dependencies.kt
+// CLS_REF: (k).DependenciesKt

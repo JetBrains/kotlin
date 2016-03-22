@@ -5,3 +5,4 @@ public class ClassObjectField {
 }
 
 // REF: companion object of (k).ClassWithClassObject
+// CLS_REF: companion object of (k).ClassWithClassObject

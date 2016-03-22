@@ -16,11 +16,15 @@
 
 package org.jetbrains.kotlin.idea.resolve
 
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.asJava.KtLightElement
+import org.jetbrains.kotlin.idea.decompiler.classFile.KtClsFile
 import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.junit.Assert
 
-private val DIR = "/resolve/referenceInJava/dependency"
-private val FILE_WITH_KOTLIN_CODE = PluginTestCaseBase.getTestDataPathBase() + DIR + "/dependencies.kt"
+private val FILE_WITH_KOTLIN_CODE = PluginTestCaseBase.getTestDataPathBase() + "/resolve/referenceInJava/dependency/dependencies.kt"
 
 abstract class AbstractReferenceResolveInJavaTest : AbstractReferenceResolveTest() {
     override fun doTest(path: String) {
@@ -37,5 +41,14 @@ abstract class AbstractReferenceToCompiledKotlinResolveInJavaTest : AbstractRefe
         performChecks()
     }
 
-    override fun getProjectDescriptor() = JdkAndMockLibraryProjectDescriptor(FILE_WITH_KOTLIN_CODE, false)
+    override fun getProjectDescriptor() = JdkAndMockLibraryProjectDescriptor(FILE_WITH_KOTLIN_CODE, true)
+
+    override val refMarkerText: String
+        get() = "CLS_REF"
+
+    override fun checkResolvedTo(element: PsiElement) {
+        val navigationElement = element.navigationElement
+        Assert.assertFalse("Reference should not navigate to a light element\nWas: ${navigationElement.javaClass.simpleName}", navigationElement is KtLightElement<*, *>)
+        Assert.assertTrue("Reference should navigate to a kotlin declaration\nWas: ${navigationElement.javaClass.simpleName}", navigationElement is KtDeclaration || navigationElement is KtClsFile)
+    }
 }
