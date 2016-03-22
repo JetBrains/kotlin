@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.uast
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.name.FqNameUnsafe
@@ -24,12 +25,14 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.uast.*
+import org.jetbrains.uast.psi.PsiElementBacked
 
 class KotlinUType(
         val type: KotlinType,
         val project: Project,
-        override val parent: UElement?
-) : KotlinAbstractUElement(), UType {
+        override val parent: UElement?,
+        override val psi: PsiElement? = null
+) : KotlinAbstractUElement(), UType, PsiElementBacked {
     override val name: String
         get() = type.toString()
 
