@@ -784,7 +784,7 @@ public class LintUtils {
 
         boolean imported = false;
         for (UImportStatement importStatement : compilationUnit.getImportStatements()) {
-            String fqn = importStatement.getNameToImport();
+            String fqn = importStatement.getFqNameToImport();
             if (fqn == null) {
                 continue;
             }

@@ -207,9 +207,15 @@ public class LogDetector extends Detector implements UastScanner {
         while (curr != null) {
             if (curr instanceof UIfExpression) {
                 UIfExpression ifNode = (UIfExpression) curr;
-                if (ifNode.getCondition() instanceof UCallExpression) {
-                    UCallExpression call = (UCallExpression) ifNode.getCondition();
+                UExpression condition = ifNode.getCondition();
+                if (condition instanceof UCallExpression) {
+                    UCallExpression call = (UCallExpression) condition;
                     if (IS_LOGGABLE.equals(call.getFunctionName())) {
+                        checkTagConsistent(context, logCall, call);
+                    }
+                } else if (condition instanceof UQualifiedExpression) {
+                    UCallExpression call = UastUtils.getCallElementFromQualified((UQualifiedExpression) condition);
+                    if (call != null && IS_LOGGABLE.equals(call.getFunctionName())) {
                         checkTagConsistent(context, logCall, call);
                     }
                 }
@@ -250,31 +256,39 @@ public class LogDetector extends Detector implements UastScanner {
 
         JavaContext lintContext = context.getLintContext();
         if (logTag != null) {
-            if (!isLoggableTag.toString().equals(logTag.toString()) &&
-                    isLoggableTag instanceof UResolvable &&
-                    logTag instanceof UResolvable) {
-                UDeclaration resolved1 = ((UResolvable) isLoggableTag).resolve(context);
-                UDeclaration resolved2 = ((UResolvable) logTag).resolve(context);
-                if ((resolved1 == null || resolved2 == null || !resolved1.equals(resolved2))
-                    && lintContext.isEnabled(WRONG_TAG)) {
-                    Location location = UastAndroidUtils.getLocation(logTag);
-                    Location alternate = UastAndroidUtils.getLocation(isLoggableTag);
-                    if (location != null && alternate != null) {
-                        alternate.setMessage("Conflicting tag");
-                        location.setSecondary(alternate);
-                        String isLoggableDescription = resolved1 != null ? resolved1
-                          .getName()
-                                                                         : isLoggableTag.toString();
-                        String logCallDescription = resolved2 != null ? resolved2.getName()
-                                                                      : logTag.toString();
-                        String message = String.format(
-                          "Mismatched tags: the `%1$s()` and `isLoggable()` calls typically " +
-                          "should pass the same tag: `%2$s` versus `%3$s`",
-                          logCallName,
-                          isLoggableDescription,
-                          logCallDescription);
-                        context.report(WRONG_TAG, call, location, message);
-                    }
+            String isLoggableTagString = null;
+            String logTagString = null;
+            boolean isOk = true;
+
+            Object isLoggableTagValue = isLoggableTag.evaluate();
+            Object logTagValue = logTag.evaluate();
+
+            if (isLoggableTagValue instanceof String && logTagValue instanceof String) {
+                isLoggableTagString = (String) isLoggableTagValue;
+                logTagString = (String) logTagValue;
+                isOk = isLoggableTagString.equals(logTagString);
+            } else if (isLoggableTag instanceof UResolvable && logTag instanceof UResolvable) {
+                UDeclaration isLoggableTagResolved = ((UResolvable) isLoggableTag).resolve(context);
+                UDeclaration logTagResolved = ((UResolvable) logTag).resolve(context);
+                if (isLoggableTagResolved != null && logTagResolved != null) {
+                    isOk = isLoggableTagResolved.equals(logTagResolved);
+                }
+            }
+
+            if (!isOk) {
+                Location location = UastAndroidUtils.getLocation(logTag);
+                Location alternate = UastAndroidUtils.getLocation(isLoggableTag);
+                if (location != null && alternate != null) {
+                    alternate.setMessage("Conflicting tag");
+                    location.setSecondary(alternate);
+
+                    String message = String.format(
+                            "Mismatched tags: the `%1$s()` and `isLoggable()` calls typically " +
+                            "should pass the same tag: `%2$s` versus `%3$s`",
+                            logCallName,
+                            isLoggableTagValue,
+                            logTagValue);
+                    context.report(WRONG_TAG, call, location, message);
                 }
             }
         }

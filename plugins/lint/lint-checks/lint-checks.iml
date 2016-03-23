@@ -13,5 +13,6 @@
     <orderEntry type="library" name="guava" level="project" />
     <orderEntry type="module" module-name="uast-android" />
     <orderEntry type="library" name="intellij-core" level="project" />
+    <orderEntry type="library" name="kotlin-runtime" level="project" />
   </component>
 </module>
