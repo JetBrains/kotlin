@@ -4,23 +4,23 @@ Cleaning output files:
   out/production/module1/foo/A.class
 End of files
 Compiling files:
-  module1/src/module1_A.kt
+  module1/src/A.kt
 End of files
 Marked as dirty by Kotlin:
-  module2/src/module2_createADefault.kt
-  module2/src/module2_createANonDefault.kt
+  module2/src/createADefault.kt
+  module2/src/createANonDefault.kt
 Exit code: ADDITIONAL_PASS_REQUIRED
 ------------------------------------------
 Exit code: NOTHING_DONE
 ------------------------------------------
 Cleaning output files:
   out/production/module2/META-INF/module2.kotlin_module
-  out/production/module2/foo/Module2_createADefaultKt.class
-  out/production/module2/foo/Module2_createANonDefaultKt.class
+  out/production/module2/foo/CreateADefaultKt.class
+  out/production/module2/foo/CreateANonDefaultKt.class
 End of files
 Compiling files:
-  module2/src/module2_createADefault.kt
-  module2/src/module2_createANonDefault.kt
+  module2/src/createADefault.kt
+  module2/src/createANonDefault.kt
 End of files
 Exit code: ABORT
 ------------------------------------------
@@ -32,7 +32,7 @@ No value passed for parameter x
 Exit code: NOTHING_DONE
 ------------------------------------------
 Compiling files:
-  module2/src/module2_createANonDefault.kt
+  module2/src/createANonDefault.kt
 End of files
 Exit code: OK
 ------------------------------------------

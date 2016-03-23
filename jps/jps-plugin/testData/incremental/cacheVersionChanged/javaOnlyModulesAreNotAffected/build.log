@@ -6,7 +6,7 @@ End of files
 Exit code: NOTHING_DONE
 ------------------------------------------
 Compiling files:
-  module1/src/module1_A.java
+  module1/src/A.java
 End of files
 Exit code: NOTHING_DONE
 ------------------------------------------
@@ -21,7 +21,7 @@ End of files
 Exit code: NOTHING_DONE
 ------------------------------------------
 Compiling files:
-  module1/src/module1_B.java
+  module1/src/B.java
 End of files
 Exit code: NOTHING_DONE
 ------------------------------------------

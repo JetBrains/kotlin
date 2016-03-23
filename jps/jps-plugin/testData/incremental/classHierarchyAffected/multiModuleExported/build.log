@@ -4,13 +4,13 @@ Cleaning output files:
   out/production/module1/foo/A.class
 End of files
 Compiling files:
-  module1/src/module1_A.kt
+  module1/src/A.kt
 End of files
 Marked as dirty by Kotlin:
-  module2/src/module2_AChild.kt
-  module3/src/module3_AGrandChild.kt
-  module3/src/module3_importAGrandChild.kt
-  module4/src/module4_importAGrandChild.kt
+  module2/src/AChild.kt
+  module3/src/AGrandChild.kt
+  module3/src/importAGrandChild.kt
+  module4/src/importAGrandChild.kt
 Exit code: ADDITIONAL_PASS_REQUIRED
 ------------------------------------------
 Exit code: NOTHING_DONE
@@ -19,7 +19,7 @@ Cleaning output files:
   out/production/module2/foo/AChild.class
 End of files
 Compiling files:
-  module2/src/module2_AChild.kt
+  module2/src/AChild.kt
 End of files
 Exit code: ABORT
 ------------------------------------------
@@ -33,19 +33,19 @@ Cleaning output files:
   out/production/module1/foo/A.class
 End of files
 Compiling files:
-  module1/src/module1_A.kt
+  module1/src/A.kt
 End of files
 Marked as dirty by Kotlin:
-  module2/src/module2_AChild.kt
-  module3/src/module3_AGrandChild.kt
-  module3/src/module3_importAGrandChild.kt
-  module4/src/module4_importAGrandChild.kt
+  module2/src/AChild.kt
+  module3/src/AGrandChild.kt
+  module3/src/importAGrandChild.kt
+  module4/src/importAGrandChild.kt
 Exit code: ADDITIONAL_PASS_REQUIRED
 ------------------------------------------
 Exit code: NOTHING_DONE
 ------------------------------------------
 Compiling files:
-  module2/src/module2_AChild.kt
+  module2/src/AChild.kt
 End of files
 Exit code: OK
 ------------------------------------------
@@ -53,13 +53,13 @@ Cleaning output files:
   out/production/module3/foo/AGrandChild.class
 End of files
 Compiling files:
-  module3/src/module3_AGrandChild.kt
-  module3/src/module3_importAGrandChild.kt
+  module3/src/AGrandChild.kt
+  module3/src/importAGrandChild.kt
 End of files
 Exit code: OK
 ------------------------------------------
 Compiling files:
-  module4/src/module4_importAGrandChild.kt
+  module4/src/importAGrandChild.kt
 End of files
 Exit code: OK
 ------------------------------------------
