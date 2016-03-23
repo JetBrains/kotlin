@@ -83,7 +83,7 @@ class ClassTranslator private constructor(
         context = fixContextForCompanionObjectAccessing(context)
 
         invocationArguments.add(getSuperclassReferences(context))
-        val delegationTranslator = DelegationTranslator(classDeclaration, context())
+        val delegationTranslator = DelegationTranslator(classDeclaration, context)
         var initializer: JsFunction? = null
         if (!isTrait()) {
             initializer = ClassInitializerTranslator(classDeclaration, context).generateInitializeMethod(delegationTranslator)
