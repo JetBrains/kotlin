@@ -7715,6 +7715,39 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/unusedSuppressAnnotation")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class UnusedSuppressAnnotation extends AbstractQuickFixTest {
+        public void testAllFilesPresentInUnusedSuppressAnnotation() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/unusedSuppressAnnotation"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("notForDeprecated.kt")
+        public void testNotForDeprecated() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/unusedSuppressAnnotation/notForDeprecated.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notForJava.kt")
+        public void testNotForJava() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/unusedSuppressAnnotation/notForJava.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notForJetBrains.kt")
+        public void testNotForJetBrains() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/unusedSuppressAnnotation/notForJetBrains.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/unusedSuppressAnnotation/simple.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/variables")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

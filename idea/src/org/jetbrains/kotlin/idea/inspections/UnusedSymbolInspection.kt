@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
+import com.intellij.codeInsight.AnnotationUtil
 import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInsight.daemon.QuickFixBundle
 import com.intellij.codeInsight.daemon.impl.analysis.HighlightUtil
+import com.intellij.codeInsight.intention.QuickFixFactory
 import com.intellij.codeInspection.*
 import com.intellij.codeInspection.deadCode.UnusedDeclarationInspection
 import com.intellij.codeInspection.ex.EntryPointsManager
@@ -26,6 +28,7 @@ import com.intellij.codeInspection.ex.EntryPointsManagerBase
 import com.intellij.codeInspection.ex.EntryPointsManagerImpl
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiReference
@@ -40,9 +43,11 @@ import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
 import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinFindClassUsagesHandler
+import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.search.usagesSearch.*
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
@@ -50,11 +55,13 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import java.awt.Insets
+import java.util.*
 import javax.swing.JComponent
 import javax.swing.JPanel
 
@@ -120,19 +127,6 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return object : KtVisitorVoid() {
-            private fun createQuickFix(declaration: KtNamedDeclaration): LocalQuickFix {
-                return object : LocalQuickFix {
-                    override fun getName() = QuickFixBundle.message("safe.delete.text", declaration.name)
-
-                    override fun getFamilyName() = "Safe delete"
-
-                    override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-                        if (!FileModificationService.getInstance().prepareFileForWrite(declaration.containingFile)) return
-                        SafeDeleteHandler.invoke(project, arrayOf(declaration), false)
-                    }
-                }
-            }
-
             override fun visitNamedDeclaration(declaration: KtNamedDeclaration) {
                 val messageKey = when (declaration) {
                     is KtClass -> "unused.class"
@@ -179,7 +173,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
                         KotlinBundle.message(messageKey, declaration.name),
                         ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                         true,
-                        createQuickFix(declaration)
+                        *createQuickFixes(declaration).toTypedArray()
                 )
 
                 holder.registerProblem(problemDescriptor)
@@ -283,5 +277,41 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
                 GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, Insets(0, 0, 0, 0), 0, 0)
         )
         return panel
+    }
+
+    private fun createQuickFixes(declaration: KtNamedDeclaration): List<LocalQuickFix> {
+        val list = ArrayList<LocalQuickFix>()
+
+        list.add(SafeDeleteFix(declaration))
+
+        for (annotationEntry in declaration.annotationEntries) {
+            val typeElement = annotationEntry.typeReference?.typeElement as? KtUserType ?: continue
+            val bindingContext = annotationEntry.analyze(BodyResolveMode.PARTIAL)
+            val target = typeElement.referenceExpression?.mainReference?.resolveToDescriptors(bindingContext)?.singleOrNull() ?: continue
+            val fqName = target.importableFqName?.asString() ?: continue
+
+            // checks taken from com.intellij.codeInspection.util.SpecialAnnotationsUtilBase.createAddToSpecialAnnotationFixes
+            if (fqName.startsWith("kotlin.")
+                || fqName.startsWith("java.")
+                || fqName.startsWith("javax.")
+                || fqName.startsWith("org.jetbrains.") && AnnotationUtil.isJetbrainsAnnotation(StringUtil.getShortName(fqName)))
+                continue
+
+            val intentionAction = QuickFixFactory.getInstance().createAddToDependencyInjectionAnnotationsFix(declaration.project, fqName, "declarations")
+            list.add(IntentionWrapper(intentionAction, declaration.containingFile))
+        }
+
+        return list
+    }
+}
+
+class SafeDeleteFix(val declaration: KtDeclaration) : LocalQuickFix {
+    override fun getName() = QuickFixBundle.message("safe.delete.text", declaration.name)
+
+    override fun getFamilyName() = "Safe delete"
+
+    override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+        if (!FileModificationService.getInstance().prepareFileForWrite(declaration.containingFile)) return
+        SafeDeleteHandler.invoke(project, arrayOf(declaration), false)
     }
 }
