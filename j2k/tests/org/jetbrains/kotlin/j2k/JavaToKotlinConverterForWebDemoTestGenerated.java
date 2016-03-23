@@ -3505,6 +3505,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("notNullCast.java")
+        public void testNotNullCast() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/notNullCast.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("nullableField.java")
         public void testNullableField() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/nullableField.java");
