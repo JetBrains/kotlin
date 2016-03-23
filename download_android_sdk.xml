@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="download_android_sdk" default="download_android_sdk" xmlns:unless="ant:unless">
+
+    <property name="android.sdk.dir" value="dependencies/androidSDK"/>
+    <property name="download.dir" value="dependencies/download"/>
+
+    <condition property="tools.os" value="windows">
+        <os family="windows"/>
+    </condition>
+
+    <condition property="tools.isWindows" value="true">
+        <os family="windows"/>
+    </condition>
+
+    <condition property="tools.os" value="macosx">
+        <os family="mac"/>
+    </condition>
+
+    <condition property="tools.os" value="linux">
+        <and>
+            <os family="unix"/>
+            <not>
+                <os family="mac"/>
+            </not>
+        </and>
+    </condition>
+
+    <target name="download_android_sdk">
+        <delete dir="${android.sdk.dir}" failonerror="false" />
+
+        <mkdir dir="${download.dir}"/>
+        <mkdir dir="${android.sdk.dir}"/>
+        <mkdir dir="${android.sdk.dir}/platforms"/>
+        <mkdir dir="${android.sdk.dir}/build-tools"/>
+
+        <download_android_platform android.versioncode="23_r01" android.sdk.version="23" android.full.version="6.0" />
+
+        <download_platform_tools android.platform.tools.version="23" />
+        <download_tools android.tools.version="24.3.4" />
+        <download_build_tools android.build.tools.version="23.0.1" android.build.tools.full.version="6.0" />
+    </target>
+
+    <target name="download_sources">
+        <delete dir="${android.sdk.dir}" failonerror="false" />
+
+        <mkdir dir="${download.dir}"/>
+        <mkdir dir="${android.sdk.dir}"/>
+        <mkdir dir="${android.sdk.dir}/platforms"/>
+        <mkdir dir="${android.sdk.dir}/build-tools"/>
+
+        <download_sources android.sources.versioncode="21_r01" android.sources.version="21" />
+    </target>
+
+    <macrodef name="download_android_platform">
+        <attribute name="android.versioncode" />
+        <attribute name="android.sdk.version" />
+        <attribute name="android.full.version" />
+
+        <sequential>
+            <get src="http://dl-ssl.google.com/android/repository/android-@{android.versioncode}.zip"
+                 dest="${download.dir}/android-platform-@{android.versioncode}.zip" usetimestamp="true"/>
+
+            <unzip src="${download.dir}/android-platform-@{android.versioncode}.zip" dest="${android.sdk.dir}/platforms"/>
+
+            <move file="${android.sdk.dir}/platforms/android-@{android.full.version}" tofile="${android.sdk.dir}/platforms/android-@{android.sdk.version}"/>
+            <delete dir="${android.sdk.dir}/platforms/android-@{android.full.version}"/>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="download_platform_tools">
+        <attribute name="android.platform.tools.version" />
+
+        <sequential>
+            <get src="http://dl-ssl.google.com/android/repository/platform-tools_r@{android.platform.tools.version}-${tools.os}.zip"
+                 dest="${download.dir}/android-platform-tools_r@{android.platform.tools.version}.zip" usetimestamp="true"/>
+
+            <unzip src="${download.dir}/android-platform-tools_r@{android.platform.tools.version}.zip" dest="${android.sdk.dir}"/>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="download_tools">
+        <attribute name="android.tools.version" />
+
+        <sequential>
+            <get src="http://dl.google.com/android/repository/tools_r@{android.tools.version}-${tools.os}.zip"
+                 dest="${download.dir}/android-tools_r@{android.tools.version}.zip" usetimestamp="true"/>
+
+            <unzip src="${download.dir}/android-tools_r@{android.tools.version}.zip" dest="${android.sdk.dir}"/>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="download_build_tools">
+        <attribute name="android.build.tools.version" />
+        <attribute name="android.build.tools.full.version" />
+
+        <sequential>
+            <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="lib/ant-contrib.jar"/>
+
+            <get src="http://dl.google.com/android/repository/build-tools_r@{android.build.tools.version}-${tools.os}.zip"
+                 dest="${download.dir}/android-build-tools_r@{android.build.tools.version}.zip" usetimestamp="true"/>
+
+            <unzip src="${download.dir}/android-build-tools_r@{android.build.tools.version}.zip" dest="${android.sdk.dir}/build-tools"/>
+
+            <move file="${android.sdk.dir}/build-tools/android-@{android.build.tools.full.version}"
+                  tofile="${android.sdk.dir}/build-tools/@{android.build.tools.version}"/>
+
+            <sequential unless:set="tools.isWindows">
+                <exec executable="chmod">
+                    <arg value="a+x"/>
+                    <arg path="${android.sdk.dir}/build-tools/@{android.build.tools.version}/aapt"/>
+                    <arg path="${android.sdk.dir}/build-tools/@{android.build.tools.version}/aidl"/>
+                    <arg path="${android.sdk.dir}/build-tools/@{android.build.tools.version}/dx"/>
+                    <arg path="${android.sdk.dir}/build-tools/@{android.build.tools.version}/zipalign"/>
+                </exec>
+            </sequential>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="download_support_repository">
+        <attribute name="android.repo.version" />
+        <attribute name="android.repo.last" />
+
+        <sequential>
+            <get src="http://dl-ssl.google.com/android/repository/android_m2repository_r@{android.repo.version}.zip"
+                 dest="${download.dir}/android_m2repository_r@{android.repo.version}.zip" usetimestamp="true"/>
+
+            <mkdir dir="${android.sdk.dir}/extras/android" />
+
+            <unzip src="${download.dir}/android_m2repository_r@{android.repo.version}.zip" dest="${android.sdk.dir}/extras/android"/>
+
+            <unzip
+                    src="${android.sdk.dir}/extras/android/m2repository/com/android/support/appcompat-v7/@{android.repo.last}/appcompat-v7-@{android.repo.last}.aar"
+                    dest="${android.sdk.dir}/support/appcompat-v7" />
+
+            <unzip
+                    src="${android.sdk.dir}/extras/android/m2repository/com/android/support/support-v4/@{android.repo.last}/support-v4-@{android.repo.last}.aar"
+                    dest="${android.sdk.dir}/support/support-v4" />
+        </sequential>
+    </macrodef>
+
+    <macrodef name="download_sources">
+        <attribute name="android.sources.versioncode" />
+        <attribute name="android.sources.version" />
+
+        <sequential>
+            <get src="http://dl-ssl.google.com/android/repository/sources-@{android.sources.versioncode}.zip"
+                 dest="${download.dir}/android_sources_@{android.sources.versioncode}.zip" usetimestamp="true"/>
+
+            <mkdir dir="${android.sdk.dir}/sources/android-@{android.sources.version}" />
+
+            <unzip src="${download.dir}/android_sources_@{android.sources.versioncode}.zip"
+                   dest="${android.sdk.dir}/sources"/>
+
+            <move file="${android.sdk.dir}/sources/src"
+                  tofile="${android.sdk.dir}/sources/android-@{android.sources.version}"/>
+        </sequential>
+    </macrodef>
+
+</project>

@@ -28,7 +28,7 @@ import java.io.File
 
 abstract class AbstractAndroidJpsTestCase : JpsBuildTestCase() {
 
-    private val SDK_NAME = "Android API 21 Platform"
+    private val SDK_NAME = "Android API 23 Platform"
 
     override fun setUp() {
         super.setUp()
@@ -46,10 +46,10 @@ abstract class AbstractAndroidJpsTestCase : JpsBuildTestCase() {
     private fun addJdkAndAndroidSdk(): JpsSdk<JpsSimpleElement<JpsAndroidSdkProperties>> {
         val jdkName = "java_sdk"
         addJdk(jdkName)
-        val properties = JpsAndroidSdkProperties("android-21", jdkName)
+        val properties = JpsAndroidSdkProperties("android-23", jdkName)
         val sdkPath = homePath + "/../dependencies/androidSDK"
         val library = myModel.global.addSdk(SDK_NAME, sdkPath, "", JpsAndroidSdkType.INSTANCE, JpsSimpleElementImpl(properties))
-        library.addRoot(File(sdkPath + "/platforms/android-21/android.jar"), JpsOrderRootType.COMPILED)
+        library.addRoot(File(sdkPath + "/platforms/android-23/android.jar"), JpsOrderRootType.COMPILED)
         return library.properties
     }
 }
