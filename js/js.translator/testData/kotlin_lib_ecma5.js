@@ -257,16 +257,39 @@ var Kotlin = {};
             for (var entryName in enumEntryList) {
                 if (enumEntryList.hasOwnProperty(entryName)) {
                     var entryObject = enumEntryList[entryName];
-                    values.push(entryObject);
-                    entryObject.ordinal$ = i++;
-                    entryObject.name$ = entryName;
-                    cls[entryName] = entryObject;
+                    values.push(entryName);
+                    if (typeof entryObject === 'function' && entryObject.type === Kotlin.TYPE.INIT_FUN) {
+                        entryObject.className = entryName;
+                        Object.defineProperty(cls, entryName, {
+                            get: function(ordinal, name, obj) {
+                                return function() {
+                                    var result = obj.apply(this);
+                                    result.ordinal$ = ordinal;
+                                    result.name$ = name;
+                                    return result;
+                                }
+                            }(i++, entryName, entryObject),
+                            configurable: true
+                        })
+                    }
+                    else {
+                        entryObject.ordinal$ = i++;
+                        entryObject.name$ = entryName;
+                        cls[entryName] = entryObject;
+                    }
                 }
             }
-            enumEntryList.values$ = values;
+            cls.valuesNames$ = values;
+            cls.values$ = null;
         };
 
         staticProperties.values = function () {
+            if (this.values$ == null) {
+                this.values$ = [];
+                for (var i = 0; i < this.valuesNames$.length; ++i) {
+                    this.values$.push(this[this.valuesNames$[i]])
+                }
+            }
             return this.values$;
         };
 

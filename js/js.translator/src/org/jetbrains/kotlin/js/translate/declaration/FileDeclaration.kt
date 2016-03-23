@@ -59,7 +59,7 @@ class FileDeclarationVisitor(
         context!!
 
         // TODO: avoid duplication with superclass
-        val obj = ClassTranslator.generateObjectDeclaration(declaration, context)
+        val obj = ClassTranslator.generateClassCreation(declaration, context)
         val descriptor = BindingUtils.getClassDescriptor(context.bindingContext(), declaration)
         val objName = context.getNameForDescriptor(descriptor)
         result.add(JsPropertyInitializer(objName.makeRef(), obj))

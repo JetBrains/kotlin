@@ -84,7 +84,7 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
 
     @Override
     public Void visitObjectDeclaration(@NotNull KtObjectDeclaration declaration, TranslationContext context) {
-        JsExpression object = ClassTranslator.generateObjectDeclaration(declaration, context);
+        JsExpression object = ClassTranslator.generateClassCreation(declaration, context);
         ClassDescriptor descriptor = BindingUtils.getClassDescriptor(context.bindingContext(), declaration);
         JsName objName = context.getNameForDescriptor(descriptor);
         staticResult.add(new JsPropertyInitializer(objName.makeRef(), object));
