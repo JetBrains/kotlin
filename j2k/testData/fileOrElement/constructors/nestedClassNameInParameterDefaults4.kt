@@ -1,4 +1,3 @@
-// ERROR: Property must be initialized or be abstract
 package pack
 
 import pack.A.*
@@ -14,5 +13,5 @@ internal class A @JvmOverloads constructor(nested: Nested = Nested(Nested.FIELD)
 }
 
 internal class B {
-    var nested: Nested
+    var nested: Nested? = null
 }

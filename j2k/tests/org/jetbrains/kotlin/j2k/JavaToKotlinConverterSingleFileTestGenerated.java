@@ -1825,6 +1825,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("needInitializer.java")
+        public void testNeedInitializer() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/field/needInitializer.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("privateField.java")
         public void testPrivateField() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/field/privateField.java");

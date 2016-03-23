@@ -1,10 +1,9 @@
-// ERROR: Property must be initialized or be abstract
 internal class Library {
-    val myString: String
+    val myString: String? = null
 }
 
 internal class User {
     fun main() {
-        Library().myString.isEmpty()
+        Library().myString!!.isEmpty()
     }
 }

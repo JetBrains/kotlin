@@ -255,6 +255,9 @@ class TypeConverter(val converter: Converter) {
                     }
                 }
             }
+            else if (variable is PsiField && !variable.hasWriteAccesses(converter.referenceSearcher, variable.containingClass)) {
+                return Nullability.Nullable
+            }
 
             if (variable.isMainMethodParameter() ) {
                 return Nullability.NotNull

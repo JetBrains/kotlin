@@ -1,10 +1,9 @@
-// ERROR: Property must be initialized or be abstract
 internal object Library {
-    val ourOut: java.io.PrintStream
+    val ourOut: java.io.PrintStream? = null
 }
 
 internal class User {
     fun main() {
-        Library.ourOut.print(1)
+        Library.ourOut!!.print(1)
     }
 }
