@@ -74,7 +74,16 @@ class UsageTracker(
         val value = descriptor.value
         if (value !is ImplicitReceiver) return false
 
-        return DescriptorUtils.isObject(value.declarationDescriptor)
+        if (!DescriptorUtils.isObject(value.declarationDescriptor)) return false
+        if (containingDescriptor == value.declarationDescriptor) return false
+
+        if (containingDescriptor !is ClassDescriptor) {
+            val containingClass = generateSequence(containingDescriptor) { it.containingDeclaration as? MemberDescriptor }
+                .first { it is ClassDescriptor } as? ClassDescriptor
+            if (containingClass != null && containingClass == value.declarationDescriptor) return false
+        }
+
+        return true
     }
 
     private fun DeclarationDescriptor.getJsNameForCapturedDescriptor(): JsName {
