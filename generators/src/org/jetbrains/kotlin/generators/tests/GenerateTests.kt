@@ -913,7 +913,7 @@ fun main(args: Array<String>) {
     testGroup("jps-plugin/test", "jps-plugin/testData") {
         testClass<AbstractIncrementalJpsTest>() {
             model("incremental/multiModule", extension = null, excludeParentDirs = true)
-            model("incremental/pureKotlin", extension = null, excludeParentDirs = true)
+            model("incremental/pureKotlin", extension = null, recursive = false)
             model("incremental/withJava", extension = null, excludeParentDirs = true)
             model("incremental/inlineFunCallSite", extension = null, excludeParentDirs = true)
         }
@@ -933,7 +933,7 @@ fun main(args: Array<String>) {
     testGroup("jps-plugin/test", "jps-plugin/testData") {
         testClass<AbstractExperimentalIncrementalJpsTest>() {
             model("incremental/multiModule", extension = null, excludeParentDirs = true)
-            model("incremental/pureKotlin", extension = null, excludeParentDirs = true)
+            model("incremental/pureKotlin", extension = null, recursive = false)
             model("incremental/withJava", extension = null, excludeParentDirs = true)
             model("incremental/inlineFunCallSite", extension = null, excludeParentDirs = true)
             model("incremental/classHierarchyAffected", extension = null, excludeParentDirs = true)

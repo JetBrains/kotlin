@@ -103,6 +103,12 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
             doTest(fileName);
         }
 
+        @TestMetadata("moveFileToAnotherModule")
+        public void testMoveFileToAnotherModule() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/moveFileToAnotherModule/");
+            doTest(fileName);
+        }
+
         @TestMetadata("simpleDependency")
         public void testSimpleDependency() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/simpleDependency/");
@@ -176,7 +182,7 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
         }
 
         public void testAllFilesPresentInPureKotlin() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/pureKotlin"), Pattern.compile("^([^\\.]+)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/pureKotlin"), Pattern.compile("^([^\\.]+)$"), false);
         }
 
         @TestMetadata("annotations")
@@ -485,6 +491,18 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
             doTest(fileName);
         }
 
+        @TestMetadata("moveFileWithChangingPackage")
+        public void testMoveFileWithChangingPackage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/moveFileWithChangingPackage/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("moveFileWithoutChangingPackage")
+        public void testMoveFileWithoutChangingPackage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/moveFileWithoutChangingPackage/");
+            doTest(fileName);
+        }
+
         @TestMetadata("multifileClassFileAdded")
         public void testMultifileClassFileAdded() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/multifileClassFileAdded/");
@@ -784,7 +802,6 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/valRemoveCustomAccessor/");
             doTest(fileName);
         }
-
     }
 
     @TestMetadata("jps-plugin/testData/incremental/withJava")

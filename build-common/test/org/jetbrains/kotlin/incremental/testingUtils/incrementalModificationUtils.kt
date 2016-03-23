@@ -35,7 +35,22 @@ fun copyTestSources(testDataDir: File, sourceDestinationDir: File, filePrefix: S
         it.isDirectory || it.name.startsWith(filePrefix) && (it.name.endsWith(".kt") || it.name.endsWith(".java"))
     }
 
-    sourceDestinationDir.walk().forEach { mapping[it] = File(testDataDir, filePrefix + it.name) }
+    for (file in sourceDestinationDir.walk()) {
+        if (!file.isFile) continue
+
+        val renamedFile =
+                if (filePrefix.isEmpty()) {
+                    file
+                }
+                else {
+                    File(sourceDestinationDir, file.name.removePrefix(filePrefix)).apply {
+                        file.renameTo(this)
+                    }
+                }
+
+        mapping[renamedFile] = File(testDataDir, file.name)
+    }
+
     return mapping
 }
 
@@ -48,7 +63,7 @@ fun getModificationsToPerform(
 
     fun getModificationsForIteration(newSuffix: String, touchSuffix: String, deleteSuffix: String): List<Modification> {
 
-        fun getDirPrefix(fileName: String): String {
+        fun splitToModuleNameAndFileName(fileName: String): Pair<String?, String> {
             val underscore = fileName.indexOf("_")
 
             if (underscore != -1) {
@@ -57,32 +72,38 @@ fun getModificationsToPerform(
                 assert(moduleNames != null) { "File name has module prefix, but multi-module environment is absent" }
                 assert(module in moduleNames!!) { "Module not found for file with prefix: $fileName" }
 
-                return "$module/src"
+                return Pair(module, fileName.substring(underscore + 1))
             }
 
             assert(moduleNames == null) { "Test is multi-module, but file has no module prefix: $fileName" }
-            return "src"
+            return Pair(null, fileName)
         }
+
+        val rules = mapOf<String, (String, File) -> Modification>(
+                newSuffix to { path, file -> ModifyContent(path, file) },
+                touchSuffix to { path, file -> TouchFile(path, touchPolicy) },
+                deleteSuffix to { path, file -> DeleteFile(path) }
+        )
 
         val modifications = ArrayList<Modification>()
-        for (file in testDataDir.listFiles()!!) {
-            val fileName = file.name
 
-            if (fileName.endsWith(newSuffix)) {
-                modifications.add(ModifyContent(getDirPrefix(fileName) + "/" + fileName.removeSuffix(newSuffix), file))
-            }
-            if (fileName.endsWith(touchSuffix)) {
-                modifications.add(TouchFile(getDirPrefix(fileName) + "/" + fileName.removeSuffix(touchSuffix), touchPolicy))
-            }
-            if (fileName.endsWith(deleteSuffix)) {
-                modifications.add(DeleteFile(getDirPrefix(fileName) + "/" + fileName.removeSuffix(deleteSuffix)))
-            }
+        for (file in testDataDir.walkTopDown()) {
+            if (!file.isFile) continue
+
+            val relativeFilePath = file.toRelativeString(testDataDir)
+
+            val (suffix, createModification) = rules.entries.firstOrNull { file.path.endsWith(it.key) } ?: continue
+
+            val (moduleName, fileName) = splitToModuleNameAndFileName(relativeFilePath)
+            val srcDir = moduleName?.let { "$it/src" } ?: "src"
+            modifications.add(createModification(srcDir + "/" + fileName.removeSuffix(suffix), file))
         }
+
         return modifications
     }
 
-    val haveFilesWithoutNumbers = testDataDir.listFiles { it -> it.name.matches(".+\\.(${COMMANDS_AS_REGEX_PART})$".toRegex()) }?.isNotEmpty() ?: false
-    val haveFilesWithNumbers = testDataDir.listFiles { it -> it.name.matches(".+\\.(${COMMANDS_AS_REGEX_PART})\\.\\d+$".toRegex()) }?.isNotEmpty() ?: false
+    val haveFilesWithoutNumbers = testDataDir.walkTopDown().any { it.name.matches(".+\\.($COMMANDS_AS_REGEX_PART)$".toRegex()) }
+    val haveFilesWithNumbers = testDataDir.walkTopDown().any { it.name.matches(".+\\.($COMMANDS_AS_REGEX_PART)\\.\\d+$".toRegex()) }
 
     if (haveFilesWithoutNumbers && haveFilesWithNumbers) {
         throw IllegalStateException("Bad test data format: files ending with both unnumbered and numbered ${COMMANDS_AS_MESSAGE_PART} were found")
