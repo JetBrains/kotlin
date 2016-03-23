@@ -41,9 +41,6 @@ public static final field Companion Lcases/companions/PublicClasses$ProtectedCom
 public fun <init> ()V
 ------------------
 
-protected final class cases/companions/PublicClasses$ProtectedCompanion$Companion
-------------------
-
 public final class cases/companions/PublicClasses$PublicCompanion
 public static final field Companion Lcases/companions/PublicClasses$PublicCompanion$Companion;
 public fun <init> ()V

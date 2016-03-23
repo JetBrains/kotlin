@@ -21,19 +21,8 @@ public final class cases/nestedClasses/PublicClass
 public fun <init> ()V
 ------------------
 
-protected final class cases/nestedClasses/PublicClass$InnerProtected
-public fun <init> (Lcases/nestedClasses/PublicClass;)V
-------------------
-
 public final class cases/nestedClasses/PublicClass$InnerPublic
 public fun <init> (Lcases/nestedClasses/PublicClass;)V
-------------------
-
-protected final class cases/nestedClasses/PublicClass$NestedProtected
-public fun <init> ()V
-------------------
-
-protected abstract interface class cases/nestedClasses/PublicClass$NestedProtectedInterface
 ------------------
 
 public final class cases/nestedClasses/PublicClass$NestedPublic
@@ -41,10 +30,6 @@ public fun <init> ()V
 ------------------
 
 public abstract interface class cases/nestedClasses/PublicClass$NestedPublicInterface
-------------------
-
-protected final class cases/nestedClasses/PublicClass$ObjProtected
-public static final field INSTANCE Lcases/nestedClasses/PublicClass$ObjProtected;
 ------------------
 
 public final class cases/nestedClasses/PublicClass$ObjPublic
