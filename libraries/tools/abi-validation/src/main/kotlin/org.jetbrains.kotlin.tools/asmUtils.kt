@@ -51,6 +51,7 @@ fun ClassNode.isLocal() = innerClasses.filter { it.name == name && it.innerName 
 fun ClassNode.isWhenMappings() = isSynthetic() && name.endsWith("\$WhenMappings")
 fun MethodNode.isAccessMethod() = isSynthetic() && name.startsWith("access\$")
 
+val ClassNode.effectiveAccess: Int get() = innerClasses.singleOrNull { it.name == name }?.access ?: access
 
 
 private object KotlinClassKind {
