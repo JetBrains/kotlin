@@ -62,6 +62,10 @@ public static final fun toList (Lkotlin/Pair;)Ljava/util/List;
 public static final fun toList (Lkotlin/Triple;)Ljava/util/List;
 ------------------
 
+public final class kotlin/_Assertions
+public static final field INSTANCE Lkotlin/_Assertions;
+------------------
+
 public abstract class kotlin/collections/AbstractIterator: java/util/Iterator, kotlin/jvm/internal/markers/KMappedMarker
 public fun <init> ()V
 protected abstract fun computeNext ()V
@@ -1286,6 +1290,8 @@ public static synthetic fun binarySearch$default (Ljava/util/List;Ljava/lang/Com
 public static synthetic fun binarySearch$default (Ljava/util/List;Ljava/lang/Object;Ljava/util/Comparator;IIILjava/lang/Object;)I
 public static final fun binarySearchBy (Ljava/util/List;Ljava/lang/Comparable;IILkotlin/jvm/functions/Function1;)I
 public static synthetic fun binarySearchBy$default (Ljava/util/List;Ljava/lang/Comparable;IILkotlin/jvm/functions/Function1;ILjava/lang/Object;)I
+public static final fun collectionSizeOrDefault (Ljava/lang/Iterable;I)I
+public static final fun collectionSizeOrNull (Ljava/lang/Iterable;)Ljava/lang/Integer;
 public static final fun contains (Ljava/lang/Iterable;Ljava/lang/Object;)Z
 public static final fun count (Ljava/lang/Iterable;)I
 public static final fun count (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)I
@@ -1493,11 +1499,13 @@ public static final fun filterValues (Ljava/util/Map;Lkotlin/jvm/functions/Funct
 public static final fun flatMap (Ljava/util/Map;Lkotlin/jvm/functions/Function1;)Ljava/util/List;
 public static final fun flatMapTo (Ljava/util/Map;Ljava/util/Collection;Lkotlin/jvm/functions/Function1;)Ljava/util/Collection;
 public static final fun forEach (Ljava/util/Map;Lkotlin/jvm/functions/Function1;)V
+public static final fun getOrImplicitDefaultNullable (Ljava/util/Map;Ljava/lang/Object;)Ljava/lang/Object;
 public static final fun getOrPut (Ljava/util/Map;Ljava/lang/Object;Lkotlin/jvm/functions/Function0;)Ljava/lang/Object;
 public static final fun getOrPut (Ljava/util/concurrent/ConcurrentMap;Ljava/lang/Object;Lkotlin/jvm/functions/Function0;)Ljava/lang/Object;
 public static final fun hashMapOf ([Lkotlin/Pair;)Ljava/util/HashMap;
 public static final fun linkedMapOf ([Lkotlin/Pair;)Ljava/util/LinkedHashMap;
 public static final fun map (Ljava/util/Map;Lkotlin/jvm/functions/Function1;)Ljava/util/List;
+public static final fun mapCapacity (I)I
 public static final fun mapKeys (Ljava/util/Map;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
 public static final fun mapKeysTo (Ljava/util/Map;Ljava/util/Map;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
 public static final fun mapNotNull (Ljava/util/Map;Lkotlin/jvm/functions/Function1;)Ljava/util/List;
@@ -1569,6 +1577,10 @@ public static final fun thenDescending (Ljava/util/Comparator;Ljava/util/Compara
 public final class kotlin/concurrent/ThreadsKt
 public static final fun thread (ZZLjava/lang/ClassLoader;Ljava/lang/String;ILkotlin/jvm/functions/Function0;)Ljava/lang/Thread;
 public static synthetic fun thread$default (ZZLjava/lang/ClassLoader;Ljava/lang/String;ILkotlin/jvm/functions/Function0;ILjava/lang/Object;)Ljava/lang/Thread;
+------------------
+
+public final class kotlin/concurrent/TimersKt
+public static final fun timer (Ljava/lang/String;Z)Ljava/util/Timer;
 ------------------
 
 public final class kotlin/io/AccessDeniedException: kotlin/io/FileSystemException
@@ -1691,6 +1703,11 @@ public static final fun readBytes (Ljava/net/URL;)[B
 public static final fun readLines (Ljava/io/Reader;)Ljava/util/List;
 public static final fun readText (Ljava/io/Reader;)Ljava/lang/String;
 public static final fun useLines (Ljava/io/Reader;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+------------------
+
+public final class kotlin/jvm/internal/unsafe/MonitorKt
+public static final fun monitorEnter (Ljava/lang/Object;)V
+public static final fun monitorExit (Ljava/lang/Object;)V
 ------------------
 
 public final class kotlin/properties/Delegates
@@ -2104,6 +2121,7 @@ public static final field Companion Lkotlin/text/Regex$Companion;
 public fun <init> (Ljava/lang/String;)V
 public fun <init> (Ljava/lang/String;Ljava/util/Set;)V
 public fun <init> (Ljava/lang/String;Lkotlin/text/RegexOption;)V
+public fun <init> (Ljava/util/regex/Pattern;)V
 public final fun containsMatchIn (Ljava/lang/CharSequence;)Z
 public final fun find (Ljava/lang/CharSequence;I)Lkotlin/text/MatchResult;
 public static synthetic fun find$default (Lkotlin/text/Regex;Ljava/lang/CharSequence;IILjava/lang/Object;)Lkotlin/text/MatchResult;
