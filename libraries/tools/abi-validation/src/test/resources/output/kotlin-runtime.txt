@@ -349,7 +349,6 @@ public final class kotlin/jvm/internal/BooleanSpreadBuilder: kotlin/jvm/internal
 public fun <init> (I)V
 public final fun add (Z)V
 public synthetic fun getSize (Ljava/lang/Object;)I
-protected fun getSize ([Z)I
 public final fun toArray ()[Z
 ------------------
 
@@ -357,7 +356,6 @@ public final class kotlin/jvm/internal/ByteSpreadBuilder: kotlin/jvm/internal/Pr
 public fun <init> (I)V
 public final fun add (B)V
 public synthetic fun getSize (Ljava/lang/Object;)I
-protected fun getSize ([B)I
 public final fun toArray ()[B
 ------------------
 
@@ -381,7 +379,6 @@ public final class kotlin/jvm/internal/CharSpreadBuilder: kotlin/jvm/internal/Pr
 public fun <init> (I)V
 public final fun add (C)V
 public synthetic fun getSize (Ljava/lang/Object;)I
-protected fun getSize ([C)I
 public final fun toArray ()[C
 ------------------
 
@@ -413,7 +410,6 @@ public final class kotlin/jvm/internal/DoubleSpreadBuilder: kotlin/jvm/internal/
 public fun <init> (I)V
 public final fun add (D)V
 public synthetic fun getSize (Ljava/lang/Object;)I
-protected fun getSize ([D)I
 public final fun toArray ()[D
 ------------------
 
@@ -421,7 +417,6 @@ public final class kotlin/jvm/internal/FloatSpreadBuilder: kotlin/jvm/internal/P
 public fun <init> (I)V
 public final fun add (F)V
 public synthetic fun getSize (Ljava/lang/Object;)I
-protected fun getSize ([F)I
 public final fun toArray ()[F
 ------------------
 
@@ -492,7 +487,6 @@ public final class kotlin/jvm/internal/IntSpreadBuilder: kotlin/jvm/internal/Pri
 public fun <init> (I)V
 public final fun add (I)V
 public synthetic fun getSize (Ljava/lang/Object;)I
-protected fun getSize ([I)I
 public final fun toArray ()[I
 ------------------
 
@@ -541,7 +535,6 @@ public final class kotlin/jvm/internal/LongSpreadBuilder: kotlin/jvm/internal/Pr
 public fun <init> (I)V
 public final fun add (J)V
 public synthetic fun getSize (Ljava/lang/Object;)I
-protected fun getSize ([J)I
 public final fun toArray ()[J
 ------------------
 
@@ -833,7 +826,6 @@ public final class kotlin/jvm/internal/ShortSpreadBuilder: kotlin/jvm/internal/P
 public fun <init> (I)V
 public final fun add (S)V
 public synthetic fun getSize (Ljava/lang/Object;)I
-protected fun getSize ([S)I
 public final fun toArray ()[S
 ------------------
 
