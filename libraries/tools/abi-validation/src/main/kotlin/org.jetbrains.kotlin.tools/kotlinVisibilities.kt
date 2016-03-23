@@ -8,9 +8,9 @@ data class ClassVisibility(val name: String, val visibility: String?, val member
 data class MemberVisibility(val member: MemberSignature, val visibility: String?)
 data class MemberSignature(val name: String, val desc: String)
 
-private fun isPublic(visibility: String?) = visibility == null || visibility == "public" || visibility == "protected"
-fun ClassVisibility.isPublic() = isPublic(visibility)
-fun MemberVisibility.isPublic() = isPublic(visibility)
+private fun isPublic(visibility: String?, isInlineExposed: Boolean) = visibility == null || visibility == "public" || visibility == "protected"  || (isInlineExposed && visibility == "internal")
+fun ClassVisibility.isPublic(isInlineExposed: Boolean) = isPublic(visibility, isInlineExposed)
+fun MemberVisibility.isPublic(isInlineExposed: Boolean) = isPublic(visibility, isInlineExposed)
 
 
 fun readKotlinVisibilities(declarationFile: File): Map<String, ClassVisibility> {
