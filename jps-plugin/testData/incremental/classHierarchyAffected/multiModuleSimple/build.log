@@ -4,12 +4,12 @@ Cleaning output files:
   out/production/module1/foo/A.class
 End of files
 Compiling files:
-  module1/src/module1_A.kt
+  module1/src/A.kt
 End of files
 Marked as dirty by Kotlin:
-  module2/src/module2_AChild.kt
-  module2/src/module2_importA.kt
-  module3/src/module3_importAChild.kt
+  module2/src/AChild.kt
+  module2/src/importA.kt
+  module3/src/importAChild.kt
 Exit code: ADDITIONAL_PASS_REQUIRED
 ------------------------------------------
 Exit code: NOTHING_DONE
@@ -18,8 +18,8 @@ Cleaning output files:
   out/production/module2/foo/AChild.class
 End of files
 Compiling files:
-  module2/src/module2_AChild.kt
-  module2/src/module2_importA.kt
+  module2/src/AChild.kt
+  module2/src/importA.kt
 End of files
 Exit code: ABORT
 ------------------------------------------
@@ -34,24 +34,24 @@ Cleaning output files:
   out/production/module1/foo/A.class
 End of files
 Compiling files:
-  module1/src/module1_A.kt
+  module1/src/A.kt
 End of files
 Marked as dirty by Kotlin:
-  module2/src/module2_AChild.kt
-  module2/src/module2_importA.kt
-  module3/src/module3_importAChild.kt
+  module2/src/AChild.kt
+  module2/src/importA.kt
+  module3/src/importAChild.kt
 Exit code: ADDITIONAL_PASS_REQUIRED
 ------------------------------------------
 Exit code: NOTHING_DONE
 ------------------------------------------
 Compiling files:
-  module2/src/module2_AChild.kt
-  module2/src/module2_importA.kt
+  module2/src/AChild.kt
+  module2/src/importA.kt
 End of files
 Exit code: OK
 ------------------------------------------
 Compiling files:
-  module3/src/module3_importAChild.kt
+  module3/src/importAChild.kt
 End of files
 Exit code: OK
 ------------------------------------------
