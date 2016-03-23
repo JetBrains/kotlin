@@ -24,4 +24,12 @@ class TemporaryVariableEliminationTest : BasicOptimizerTest("temporary-variable"
     @Test fun assignment() = box()
 
     @Test fun skipsGlobalDeclarations() = box()
+
+    @Test fun methodCall() = box()
+
+    @Test fun ifBranch() = box()
+
+    @Test fun tryCatch() = box()
+
+    @Test fun nonSideEffect() = box()
 }
