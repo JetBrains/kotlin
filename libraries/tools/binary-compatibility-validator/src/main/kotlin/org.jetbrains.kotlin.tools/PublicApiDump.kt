@@ -59,7 +59,11 @@ fun List<ClassBinarySignature>.filterOutNonPublic(): List<ClassBinarySignature> 
     val classByName = associateBy { it.name }
 
     fun ClassBinarySignature.isPublicAndAccessible(): Boolean =
-            isEffectivelyPublic && (outerName == null || classByName[outerName]?.isPublicAndAccessible() ?: true)
+            isEffectivelyPublic &&
+                    (outerName == null || classByName[outerName]?.let { outerClass ->
+                        !(this.access.isProtected && outerClass.access.isFinal)
+                                && outerClass.isPublicAndAccessible()
+                    } ?: true)
 
     fun supertypes(superName: String) = generateSequence({ classByName[superName] }, { classByName[it.superName] })
 

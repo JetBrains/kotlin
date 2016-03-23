@@ -36,7 +36,7 @@ interface MemberBinarySignature {
     val isInlineExposed: Boolean
 
     fun isEffectivelyPublic(classAccess: AccessFlags, classVisibility: ClassVisibility?)
-            = access.isPublic // && !(access.isProtected && classAccess.isFinal)
+            = access.isPublic && !(access.isProtected && classAccess.isFinal)
             && (classVisibility?.members?.get(MemberSignature(name, desc))?.isPublic(isInlineExposed) ?: true)
 
     val signature: String

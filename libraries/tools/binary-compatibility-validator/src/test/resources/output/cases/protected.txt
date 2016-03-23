@@ -7,11 +7,6 @@ protected abstract fun setProtectedVar (Ljava/lang/Object;)V
 ------------------
 
 public final class cases/protected/PublicFinalClass
-protected fun <init> ()V
-protected final fun getProtectedVal ()I
-protected final fun getProtectedVar ()I
-protected final fun protectedFun ()I
-protected final fun setProtectedVar (I)V
 ------------------
 
 public class cases/protected/PublicOpenClass
