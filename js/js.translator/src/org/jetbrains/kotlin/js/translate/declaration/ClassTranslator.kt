@@ -95,10 +95,6 @@ class ClassTranslator private constructor(
         bodyVisitor.traverseContainer(classDeclaration, context)
         delegationTranslator.generateDelegated(properties)
 
-        if (descriptor.isData) {
-            JsDataClassGenerator(classDeclaration, context, properties).generate()
-        }
-
         if (isEnumClass(descriptor)) {
             val enumEntries = JsObjectLiteral(bodyVisitor.enumEntryList, true)
             val function = simpleReturnFunction(context.getScopeForDescriptor(descriptor), enumEntries)
@@ -106,6 +102,24 @@ class ClassTranslator private constructor(
         }
 
         generatedBridgeMethods(properties)
+
+        val dataClassGenerator = JsDataClassGenerator(classDeclaration, context, properties)
+        val tracker = context.usageTracker()
+        if (tracker != null && initializer != null && tracker.hasCapturedExceptContaining()) {
+            val captured = tracker.capturedDescriptorToJsName
+            val keysAsList = captured.keys.toList()
+            for ((i, key) in keysAsList.withIndex()) {
+                val name = captured[key]!!
+                initializer.parameters.add(i, JsParameter(name))
+                initializer.body.statements.add(i, JsAstUtils.defineSimpleProperty(name.ident, name.makeRef()))
+                dataClassGenerator.addClosureVariable(name)
+            }
+            context.putLocalClassClosure(descriptor, keysAsList)
+        }
+
+        if (descriptor.isData) {
+            dataClassGenerator.generate()
+        }
 
         val hasStaticProperties = !staticProperties.isEmpty()
         if (!properties.isEmpty() || hasStaticProperties) {
@@ -121,18 +135,6 @@ class ClassTranslator private constructor(
         if (hasStaticProperties) {
             invocationArguments.add(JsDocComment(JsAstUtils.LENDS_JS_DOC_TAG, qualifiedReference))
             invocationArguments.add(JsObjectLiteral(staticProperties, true))
-        }
-
-        val tracker = context.usageTracker()
-        if (tracker != null && initializer != null && tracker.hasCapturedExceptContaining()) {
-            val captured = tracker.capturedDescriptorToJsName
-            val keysAsList = captured.keys.toList()
-            for ((i, key) in keysAsList.withIndex()) {
-                val name = captured[key]!!
-                initializer.parameters.add(i, JsParameter(name))
-                initializer.body.statements.add(i, JsAstUtils.defineSimpleProperty(name.ident, name.makeRef()))
-            }
-            context.putLocalClassClosure(descriptor, keysAsList)
         }
 
         if (initializer != null && initializer.body.isEmpty) {
