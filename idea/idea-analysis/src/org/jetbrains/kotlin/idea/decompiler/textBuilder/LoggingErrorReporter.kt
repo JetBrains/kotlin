@@ -29,7 +29,7 @@ class LoggingErrorReporter(private val log: Logger) : ErrorReporter {
     }
 
     override fun reportIncompleteHierarchy(descriptor: ClassDescriptor, unresolvedSuperClasses: List<String>) {
-        log.error("Incomplete hierarchy for $descriptor. Super classes are not found: $unresolvedSuperClasses")
+        // This is absolutely fine for the decompiler
     }
 
     override fun reportCannotInferVisibility(descriptor: CallableMemberDescriptor) {
