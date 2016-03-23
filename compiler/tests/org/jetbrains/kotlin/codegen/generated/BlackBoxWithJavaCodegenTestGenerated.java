@@ -65,6 +65,12 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
         doTestWithJava(fileName);
     }
 
+    @TestMetadata("compareWithBoxedLong")
+    public void testCompareWithBoxedLong() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/compareWithBoxedLong/");
+        doTestWithJava(fileName);
+    }
+
     @TestMetadata("covariantOverrideWithDeclarationSiteProjection")
     public void testCovariantOverrideWithDeclarationSiteProjection() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/covariantOverrideWithDeclarationSiteProjection/");
