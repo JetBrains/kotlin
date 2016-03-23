@@ -1,0 +1,38 @@
+public final class cases/special/ClassWithLateInitMembers
+public field internalLateInit Ljava/lang/String;
+public field publicLateInitWithInternalSet Ljava/lang/String;
+public final fun getPublicLateInitWithInternalSet ()Ljava/lang/String;
+------------------
+
+public final class cases/special/ClassWithOverloads
+public final fun getA ()I
+public final fun getB ()Ljava/lang/String;
+------------------
+
+public final class cases/special/HiddenClass
+public synthetic fun <init> ()V
+public final synthetic fun getHiddenVal ()I
+public final synthetic fun getHiddenVar ()I
+public final synthetic fun getVarWithHiddenAccessors ()Ljava/lang/String;
+public final synthetic fun hiddenFun ()V
+public final synthetic fun setHiddenVar (I)V
+public final synthetic fun setVarWithHiddenAccessors (Ljava/lang/String;)V
+------------------
+
+public final class cases/special/HiddenKt
+public static final synthetic fun hiddenTopLevelFun ()V
+------------------
+
+public final class cases/special/JvmNamesKt
+public static final fun publicFun ()V
+public static final fun publicVarGetter ()I
+public static final fun publicVarSetter (I)V
+------------------
+
+public final class cases/special/JvmOverloadsKt
+public static fun publicFunWithOverloads ()V
+public static fun publicFunWithOverloads (I)V
+public static final fun publicFunWithOverloads (ILjava/lang/String;)V
+public static synthetic fun publicFunWithOverloads$default (ILjava/lang/String;ILjava/lang/Object;)V
+------------------
+

@@ -1,0 +1,4 @@
+public class cases/java/Facade: cases/java/Part2
+public fun <init> ()V
+------------------
+

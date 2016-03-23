@@ -43,7 +43,7 @@ fun getBinaryAPI(classStreams: Sequence<InputStream>, visibilityMap: Map<String,
 
             val supertypes = listOf(superName) - "java/lang/Object" + interfaces.sorted()
 
-            val modifiers = getModifierString(access)
+            val modifiers = getModifierString(effectiveAccess and Opcodes.ACC_STATIC.inv())
 
             val memberSignatures =
                     fields.filter { it.isPublic() }
