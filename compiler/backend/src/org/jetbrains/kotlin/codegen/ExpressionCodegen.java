@@ -3138,7 +3138,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         Type leftType = expressionType(left);
         Type rightType = expressionType(right);
         Callable callable = resolveToCallable((FunctionDescriptor) resolvedCall.getResultingDescriptor(), false, resolvedCall);
-        if (callable instanceof IntrinsicCallable) {
+        if (isPrimitive(leftType) && isPrimitive(rightType) && callable instanceof IntrinsicCallable) {
             type = comparisonOperandType(leftType, rightType);
             leftValue = gen(left);
             rightValue = gen(right);
