@@ -44,8 +44,6 @@ tailrec fun UElement?.getContainingDeclaration(): UDeclaration? {
     return parent.getContainingDeclaration()
 }
 
-fun UClass.findProperty(name: String) = declarations.firstOrNull { it is UVariable && it.name == name } as? UVariable
-
 fun UElement.handleTraverse(handler: UastHandler) {
     handler(this)
     this.traverse(handler)
@@ -80,7 +78,6 @@ fun List<UElement>.handleTraverseList(handler: UastHandler) {
 fun UClass.findFunctions(name: String) = declarations.filter { it is UFunction && it.matchesName(name) } as List<UFunction>
 
 fun UCallExpression.getReceiver(): UExpression? = (this.parent as? UQualifiedExpression)?.receiver
-fun UCallExpression.getReceiverOrEmpty(): UExpression = (this.parent as? UQualifiedExpression)?.receiver ?: EmptyExpression(this)
 
 fun UElement.resolveIfCan(context: UastContext): UDeclaration? = (this as? UResolvable)?.resolve(context)
 
@@ -96,6 +93,15 @@ fun UClass.getAllDeclarations(context: UastContext): List<UDeclaration> = mutabl
 }
 
 fun UClass.getAllFunctions(context: UastContext) = getAllDeclarations(context).filterIsInstance<UFunction>()
+
+tailrec fun UQualifiedExpression.getCallElementFromQualified(): UCallExpression? {
+    val selector = this.selector
+    return when (selector) {
+        is UQualifiedExpression -> selector.getCallElementFromQualified()
+        is UCallExpression -> selector
+        else -> null
+    }
+}
 
 fun UCallExpression.getQualifiedCallElement(): UExpression {
     fun findParent(element: UExpression?): UExpression? = when (element) {

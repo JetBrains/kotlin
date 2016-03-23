@@ -201,9 +201,9 @@ public class JavaPerformanceDetector extends Detector implements UastScanner {
                     // TODO: Should we handle factory method constructions of HashMaps as well,
                     // e.g. via Guava? This is a bit trickier since we need to infer the type
                     // arguments from the calling context.
-                    if (clazz.matchesFqName(HASH_MAP)) {
+                    if (clazz.matchesName(HASH_MAP)) {
                         checkHashMap(node);
-                    } else if (clazz.matchesFqName(SPARSE_ARRAY)) {
+                    } else if (clazz.matchesName(SPARSE_ARRAY)) {
                         checkSparseArray(node);
                     }
                 }
@@ -481,29 +481,29 @@ public class JavaPerformanceDetector extends Detector implements UastScanner {
             List<UType> types = node.getTypeArguments();
             if (types.size() == 2) {
                 UType first = types.get(0);
-                String typeName = first.getName();
 
                 Project mainProject = mContext.getLintContext().getMainProject();
                 int minSdk = mainProject.getMinSdk();
 
-                if (typeName.equals(INTEGER) || typeName.equals(BYTE)) {
-                    String valueType = types.get(1).getName();
-                    if (valueType.equals(INTEGER)) {
+                if (first.isInt() || first.isByte()) {
+                    UType valueType = types.get(1);
+                    String valueTypeText = valueType.getName();
+                    if (valueType.isInt()) {
                         mContext.report(USE_SPARSE_ARRAY, node, mContext.getLocation(node),
                             "Use new `SparseIntArray(...)` instead for better performance");
-                    } else if (valueType.equals(LONG) && minSdk >= 18) {
+                    } else if (valueType.isLong() && minSdk >= 18) {
                         mContext.report(USE_SPARSE_ARRAY, node, mContext.getLocation(node),
                                 "Use `new SparseLongArray(...)` instead for better performance");
-                    } else if (valueType.equals(BOOLEAN)) {
+                    } else if (valueType.isBoolean()) {
                         mContext.report(USE_SPARSE_ARRAY, node, mContext.getLocation(node),
                                 "Use `new SparseBooleanArray(...)` instead for better performance");
                     } else {
                         mContext.report(USE_SPARSE_ARRAY, node, mContext.getLocation(node),
                             String.format(
                                 "Use `new SparseArray<%1$s>(...)` instead for better performance",
-                              valueType));
+                                valueTypeText));
                     }
-                } else if (typeName.equals(LONG) && (minSdk >= 16 ||
+                } else if (first.isLong() && (minSdk >= 16 ||
                                                      Boolean.TRUE == mainProject.dependsOn(
                                 SUPPORT_LIB_ARTIFACT))) {
                     boolean useBuiltin = minSdk >= 16;
@@ -521,11 +521,10 @@ public class JavaPerformanceDetector extends Detector implements UastScanner {
             List<UType> types = node.getTypeArguments();
             if (types.size() == 1) {
                 UType first = types.get(0);
-                String valueType = first.getName();
-                if (valueType.equals(INTEGER)) {
+                if (first.isInt()) {
                     mContext.report(USE_SPARSE_ARRAY, node, mContext.getLocation(node),
                         "Use `new SparseIntArray(...)` instead for better performance");
-                } else if (valueType.equals(BOOLEAN)) {
+                } else if (first.isBoolean()) {
                     mContext.report(USE_SPARSE_ARRAY, node, mContext.getLocation(node),
                             "Use `new SparseBooleanArray(...)` instead for better performance");
                 }

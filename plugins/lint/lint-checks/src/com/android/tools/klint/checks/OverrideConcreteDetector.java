@@ -145,7 +145,7 @@ public class OverrideConcreteDetector extends Detector implements UastScanner {
 
     private static int getTargetApi(UClass node) {
         while (node != null) {
-            int targetApi = ApiDetector.getTargetApi(node.getAnnotations());
+            int targetApi = ApiDetector.Companion.getTargetApi(node.getAnnotations());
             if (targetApi != -1) {
                 return targetApi;
             }
