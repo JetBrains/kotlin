@@ -21,8 +21,13 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.PackagePartSource
 
-class JvmPackagePartSource(val className: JvmClassName) : PackagePartSource {
-    constructor(classId: ClassId) : this(JvmClassName.byClassId(classId))
+class JvmPackagePartSource(val className: JvmClassName, val facadeClassName: JvmClassName?) : PackagePartSource {
+    constructor(kotlinClass: KotlinJvmBinaryClass) : this(
+            JvmClassName.byClassId(kotlinClass.classId),
+            kotlinClass.classHeader.multifileClassName?.let {
+                if (it.isNotEmpty()) JvmClassName.byInternalName(it) else null
+            }
+    )
 
     val simpleName: Name get() = Name.identifier(className.internalName.substringAfterLast('/'))
 

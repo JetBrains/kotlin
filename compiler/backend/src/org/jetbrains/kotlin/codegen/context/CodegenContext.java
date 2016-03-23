@@ -251,12 +251,13 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
 
     @NotNull
     public FieldOwnerContext<PackageFragmentDescriptor> intoMultifileClassPart(
+            @NotNull MultifileClassCodegen codegen,
             @NotNull PackageFragmentDescriptor descriptor,
             @NotNull Type multifileClassType,
             @NotNull Type filePartType,
             @NotNull KtFile sourceFile
     ) {
-        return new MultifileClassPartContext(descriptor, this, multifileClassType, filePartType, sourceFile);
+        return new MultifileClassPartContext(codegen, descriptor, this, multifileClassType, filePartType, sourceFile);
     }
 
     @NotNull

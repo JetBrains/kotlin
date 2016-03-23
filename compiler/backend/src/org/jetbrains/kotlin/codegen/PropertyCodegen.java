@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
@@ -69,9 +68,6 @@ import static org.jetbrains.kotlin.resolve.jvm.annotations.AnnotationUtilKt.hasJ
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class PropertyCodegen {
-
-    private static Logger LOG = Logger.getInstance(PropertyCodegen.class);
-
     private final GenerationState state;
     private final ClassBuilder v;
     private final FunctionCodegen functionCodegen;
@@ -123,7 +119,7 @@ public class PropertyCodegen {
         assert kind == OwnerKind.PACKAGE || kind == OwnerKind.IMPLEMENTATION || kind == OwnerKind.DEFAULT_IMPLS
                 : "Generating property with a wrong kind (" + kind + "): " + descriptor;
 
-        if (isBackingFieldOwner(descriptor)) {
+        if (CodegenContextUtil.isImplClassOwner(context)) {
             assert declaration != null : "Declaration is null for different context: " + context;
 
             genBackingFieldAndAnnotations(declaration, descriptor, false);
@@ -137,14 +133,10 @@ public class PropertyCodegen {
         }
     }
 
-    private boolean isBackingFieldOwner(@NotNull PropertyDescriptor descriptor) {
-        if (descriptor.isConst()) {
-            return !(context instanceof MultifileClassPartContext);
-        }
-        return CodegenContextUtil.isImplClassOwner(context);
-    }
-
     private void genBackingFieldAndAnnotations(@NotNull KtNamedDeclaration declaration, @NotNull PropertyDescriptor descriptor, boolean isParameter) {
+        ClassBuilder builder = getCorrectClassBuilder(descriptor);
+        if (builder == null) return;
+
         boolean hasBackingField = hasBackingField(declaration, descriptor);
         boolean hasDelegate = declaration instanceof KtProperty && ((KtProperty) declaration).hasDelegate();
 
@@ -157,8 +149,17 @@ public class PropertyCodegen {
         Annotations delegateAnnotations = annotationSplitter.getAnnotationsForTarget(AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD);
         Annotations propertyAnnotations = annotationSplitter.getAnnotationsForTarget(AnnotationUseSiteTarget.PROPERTY);
 
-        generateBackingField(declaration, descriptor, fieldAnnotations, delegateAnnotations);
-        generateSyntheticMethodIfNeeded(descriptor, propertyAnnotations);
+        generateBackingField(builder, declaration, descriptor, fieldAnnotations, delegateAnnotations);
+        generateSyntheticMethodIfNeeded(builder, descriptor, propertyAnnotations);
+    }
+
+    @Nullable
+    private ClassBuilder getCorrectClassBuilder(@NotNull PropertyDescriptor descriptor) {
+        if (descriptor.isConst() && context instanceof MultifileClassPartContext) {
+            return ((MultifileClassPartContext) context).getMultifileClassCodegen().getClassBuilder();
+        }
+
+        return this.v;
     }
 
     /**
@@ -244,6 +245,7 @@ public class PropertyCodegen {
     }
 
     private boolean generateBackingField(
+            @NotNull ClassBuilder builder,
             @NotNull KtNamedDeclaration p,
             @NotNull PropertyDescriptor descriptor,
             @NotNull Annotations backingFieldAnnotations,
@@ -254,10 +256,10 @@ public class PropertyCodegen {
         }
 
         if (p instanceof KtProperty && ((KtProperty) p).hasDelegate()) {
-            generatePropertyDelegateAccess((KtProperty) p, descriptor, delegateAnnotations);
+            generatePropertyDelegateAccess(builder, (KtProperty) p, descriptor, delegateAnnotations);
         }
         else if (Boolean.TRUE.equals(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor))) {
-            generateBackingFieldAccess(p, descriptor, backingFieldAnnotations);
+            generateBackingFieldAccess(builder, p, descriptor, backingFieldAnnotations);
         }
         else {
             return false;
@@ -267,16 +269,19 @@ public class PropertyCodegen {
 
     // Annotations on properties are stored in bytecode on an empty synthetic method. This way they're still
     // accessible via reflection, and 'deprecated' and 'private' flags prevent this method from being called accidentally
-    private void generateSyntheticMethodIfNeeded(@NotNull PropertyDescriptor descriptor, Annotations annotations) {
+    private void generateSyntheticMethodIfNeeded(
+            @NotNull ClassBuilder builder,
+            @NotNull PropertyDescriptor descriptor,
+            @NotNull Annotations annotations
+    ) {
         if (annotations.getAllAnnotations().isEmpty()) return;
 
-        ReceiverParameterDescriptor receiver = descriptor.getExtensionReceiverParameter();
-        String name = JvmAbi.getSyntheticMethodNameForAnnotatedProperty(descriptor.getName());
-        String desc = receiver == null ? "()V" : "(" + typeMapper.mapType(receiver.getType()) + ")V";
+        Method syntheticMethod = getSyntheticMethodSignature(descriptor);
 
         if (!isInterface(context.getContextDescriptor()) || kind == OwnerKind.DEFAULT_IMPLS) {
             int flags = ACC_DEPRECATED | ACC_FINAL | ACC_PRIVATE | ACC_STATIC | ACC_SYNTHETIC;
-            MethodVisitor mv = v.newMethod(JvmDeclarationOriginKt.OtherOrigin(descriptor), flags, name, desc, null, null);
+            MethodVisitor mv = builder.newMethod(JvmDeclarationOriginKt.OtherOrigin(descriptor), flags, syntheticMethod.getName(),
+                                                 syntheticMethod.getDescriptor(), null, null);
             AnnotationCodegen.forMethod(mv, typeMapper)
                     .genAnnotations(new AnnotatedSimple(annotations), Type.VOID_TYPE, AnnotationUseSiteTarget.PROPERTY);
             mv.visitCode();
@@ -285,15 +290,24 @@ public class PropertyCodegen {
         }
 
         if (kind != OwnerKind.DEFAULT_IMPLS) {
-            v.getSerializationBindings().put(SYNTHETIC_METHOD_FOR_PROPERTY, descriptor, new Method(name, desc));
+            v.getSerializationBindings().put(SYNTHETIC_METHOD_FOR_PROPERTY, descriptor, syntheticMethod);
         }
     }
 
+    @NotNull
+    private Method getSyntheticMethodSignature(@NotNull PropertyDescriptor descriptor) {
+        ReceiverParameterDescriptor receiver = descriptor.getExtensionReceiverParameter();
+        String name = JvmAbi.getSyntheticMethodNameForAnnotatedProperty(descriptor.getName());
+        String desc = receiver == null ? "()V" : "(" + typeMapper.mapType(receiver.getType()) + ")V";
+        return new Method(name, desc);
+    }
+
     private void generateBackingField(
+            ClassBuilder builder,
             KtNamedDeclaration element,
             PropertyDescriptor propertyDescriptor,
             boolean isDelegate,
-            KotlinType jetType,
+            KotlinType kotlinType,
             Object defaultValue,
             Annotations annotations
     ) {
@@ -317,9 +331,7 @@ public class PropertyCodegen {
             modifiers |= ACC_SYNTHETIC;
         }
 
-        Type type = typeMapper.mapType(jetType);
-
-        ClassBuilder builder = v;
+        Type type = typeMapper.mapType(kotlinType);
 
         FieldOwnerContext backingFieldContext = context;
         if (AsmUtil.isInstancePropertyWithStaticBackingField(propertyDescriptor) ) {
@@ -342,15 +354,22 @@ public class PropertyCodegen {
 
         v.getSerializationBindings().put(FIELD_FOR_PROPERTY, propertyDescriptor, Pair.create(type, name));
 
-        FieldVisitor fv = builder.newField(JvmDeclarationOriginKt.OtherOrigin(element, propertyDescriptor), modifiers, name, type.getDescriptor(),
-                                           typeMapper.mapFieldSignature(jetType, propertyDescriptor), defaultValue);
+        FieldVisitor fv = builder.newField(
+                JvmDeclarationOriginKt.OtherOrigin(element, propertyDescriptor), modifiers, name, type.getDescriptor(),
+                typeMapper.mapFieldSignature(kotlinType, propertyDescriptor), defaultValue
+        );
 
         Annotated fieldAnnotated = new AnnotatedWithFakeAnnotations(propertyDescriptor, annotations);
         AnnotationCodegen.forField(fv, typeMapper).genAnnotations(
                 fieldAnnotated, type, isDelegate ? AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD : AnnotationUseSiteTarget.FIELD);
     }
 
-    private void generatePropertyDelegateAccess(KtProperty p, PropertyDescriptor propertyDescriptor, Annotations annotations) {
+    private void generatePropertyDelegateAccess(
+            @NotNull ClassBuilder builder,
+            @NotNull KtProperty p,
+            @NotNull PropertyDescriptor propertyDescriptor,
+            @NotNull Annotations annotations
+    ) {
         KtExpression delegateExpression = p.getDelegateExpression();
         KotlinType delegateType = delegateExpression != null ? bindingContext.getType(p.getDelegateExpression()) : null;
         if (delegateType == null) {
@@ -358,10 +377,15 @@ public class PropertyCodegen {
             delegateType = ErrorUtils.createErrorType("Delegate type");
         }
 
-        generateBackingField(p, propertyDescriptor, true, delegateType, null, annotations);
+        generateBackingField(builder, p, propertyDescriptor, true, delegateType, null, annotations);
     }
 
-    private void generateBackingFieldAccess(KtNamedDeclaration p, PropertyDescriptor propertyDescriptor, Annotations annotations) {
+    private void generateBackingFieldAccess(
+            @NotNull ClassBuilder builder,
+            @NotNull KtNamedDeclaration p,
+            @NotNull PropertyDescriptor propertyDescriptor,
+            @NotNull Annotations annotations
+    ) {
         Object value = null;
 
         if (shouldWriteFieldInitializer(propertyDescriptor)) {
@@ -371,7 +395,7 @@ public class PropertyCodegen {
             }
         }
 
-        generateBackingField(p, propertyDescriptor, false, propertyDescriptor.getType(), value, annotations);
+        generateBackingField(builder, p, propertyDescriptor, false, propertyDescriptor.getType(), value, annotations);
     }
 
     private boolean shouldWriteFieldInitializer(@NotNull PropertyDescriptor descriptor) {

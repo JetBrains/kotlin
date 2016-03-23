@@ -73,7 +73,7 @@ class MultifileClassCodegen(
     private fun getDeserializedCallables(compiledPackageFragment: PackageFragmentDescriptor) =
             compiledPackageFragment.getMemberScope().getContributedDescriptors(DescriptorKindFilter.CALLABLES, MemberScope.ALL_NAME_FILTER).filterIsInstance<DeserializedCallableMemberDescriptor>()
 
-    private val classBuilder = ClassBuilderOnDemand {
+    val classBuilder = ClassBuilderOnDemand {
         val originFile = files.firstOrNull()
         val actualPackageFragment = packageFragment ?:
                                     compiledPackageFragment ?:
@@ -163,7 +163,7 @@ class MultifileClassCodegen(
         var generatePart = false
         val partClassInfo = state.fileClassesProvider.getFileClassInfo(file)
         val partType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(partClassInfo.fileClassFqName)
-        val partContext = state.rootContext.intoMultifileClassPart(packageFragment, facadeClassType, partType, file)
+        val partContext = state.rootContext.intoMultifileClassPart(this, packageFragment, facadeClassType, partType, file)
 
         for (declaration in file.declarations) {
             when (declaration) {

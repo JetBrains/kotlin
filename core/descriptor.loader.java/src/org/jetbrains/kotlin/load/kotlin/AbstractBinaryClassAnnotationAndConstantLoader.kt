@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.serialization.jvm.ClassMapperLite
@@ -96,12 +97,14 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any, 
             val syntheticFunctionSignature = getPropertySignature(proto, container.nameResolver, container.typeTable, synthetic = true)
             val fieldSignature = getPropertySignature(proto, container.nameResolver, container.typeTable, field = true)
 
+            val isConst = Flags.IS_CONST.get(proto.flags)
+
             val propertyAnnotations = syntheticFunctionSignature?.let { sig ->
-                findClassAndLoadMemberAnnotations(container, sig, property = true)
+                findClassAndLoadMemberAnnotations(container, sig, property = true, isConst = isConst)
             }.orEmpty()
 
             val fieldAnnotations = fieldSignature?.let { sig ->
-                findClassAndLoadMemberAnnotations(container, sig, property = true, field = true)
+                findClassAndLoadMemberAnnotations(container, sig, property = true, field = true, isConst = isConst)
             }.orEmpty()
 
             // TODO: check delegate presence in some other way
@@ -132,9 +135,10 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any, 
     protected abstract fun transformAnnotations(annotations: List<A>): List<T>
 
     private fun findClassAndLoadMemberAnnotations(
-            container: ProtoContainer, signature: MemberSignature, property: Boolean = false, field: Boolean = false
+            container: ProtoContainer, signature: MemberSignature,
+            property: Boolean = false, field: Boolean = false, isConst: Boolean? = null
     ): List<A> {
-        val kotlinClass = findClassWithAnnotationsAndInitializers(container, getImplClassName(container, property), field)
+        val kotlinClass = findClassWithAnnotationsAndInitializers(container, getImplClassName(container, property, isConst), field)
                           ?: return listOf()
 
         return storage(kotlinClass).memberAnnotations[signature] ?: listOf()
@@ -196,8 +200,8 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any, 
         val signature = getCallableSignature(proto, container.nameResolver, container.typeTable, AnnotatedCallableKind.PROPERTY)
                         ?: return null
 
-        val kotlinClass = findClassWithAnnotationsAndInitializers(container, getImplClassName(container, property = true), field = true)
-                          ?: return null
+        val implClassName = getImplClassName(container, property = true, isConst = Flags.IS_CONST.get(proto.flags))
+        val kotlinClass = findClassWithAnnotationsAndInitializers(container, implClassName, field = true) ?: return null
 
         return storage(kotlinClass).propertyConstants[signature]
     }
@@ -222,9 +226,20 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any, 
         return null
     }
 
-    private fun getImplClassName(container: ProtoContainer, property: Boolean): ClassId? {
-        if (property && container is ProtoContainer.Class && container.kind == ProtoBuf.Class.Kind.INTERFACE) {
-            return container.classId.createNestedClassId(Name.identifier(JvmAbi.DEFAULT_IMPLS_CLASS_NAME))
+    private fun getImplClassName(container: ProtoContainer, property: Boolean, isConst: Boolean?): ClassId? {
+        if (property) {
+            checkNotNull(isConst) { "isConst should not be null for property (container=$container)" }
+            if (container is ProtoContainer.Class && container.kind == ProtoBuf.Class.Kind.INTERFACE) {
+                return container.classId.createNestedClassId(Name.identifier(JvmAbi.DEFAULT_IMPLS_CLASS_NAME))
+            }
+            if (isConst!! && container is ProtoContainer.Package) {
+                // Const properties in multifile classes are generated into the facade class
+                val facadeClassName = (container.packagePartSource as? JvmPackagePartSource)?.facadeClassName
+                if (facadeClassName != null) {
+                    // Converting '/' to '.' is fine here because the facade class has a top level ClassId
+                    return ClassId.topLevel(FqName(facadeClassName.internalName.replace('/', '.')))
+                }
+            }
         }
         return ((container as? ProtoContainer.Package)?.packagePartSource as? JvmPackagePartSource)?.classId
     }

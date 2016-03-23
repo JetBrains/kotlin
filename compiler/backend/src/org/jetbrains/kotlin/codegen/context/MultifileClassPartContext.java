@@ -18,14 +18,17 @@ package org.jetbrains.kotlin.codegen.context;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.codegen.MultifileClassCodegen;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.org.objectweb.asm.Type;
 
 public class MultifileClassPartContext extends MultifileClassContextBase implements DelegatingToPartContext, FacadePartWithSourceFile {
     private final KtFile sourceFile;
+    private final MultifileClassCodegen codegen;
 
     public MultifileClassPartContext(
+            @NotNull MultifileClassCodegen codegen,
             PackageFragmentDescriptor descriptor,
             CodegenContext parent,
             Type multifileClassType,
@@ -34,6 +37,7 @@ public class MultifileClassPartContext extends MultifileClassContextBase impleme
     ) {
         super(descriptor, parent, multifileClassType, filePartType);
         this.sourceFile = sourceFile;
+        this.codegen = codegen;
     }
 
     @Nullable
@@ -46,5 +50,10 @@ public class MultifileClassPartContext extends MultifileClassContextBase impleme
     @Override
     public KtFile getSourceFile() {
         return sourceFile;
+    }
+
+    @NotNull
+    public MultifileClassCodegen getMultifileClassCodegen() {
+        return codegen;
     }
 }

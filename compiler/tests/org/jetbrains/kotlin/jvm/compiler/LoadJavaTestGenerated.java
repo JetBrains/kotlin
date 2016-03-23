@@ -4880,6 +4880,21 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlinWithStdlib"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Annotations extends AbstractLoadJavaTest {
+            public void testAllFilesPresentInAnnotations() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("ConstValInMultifileClass.kt")
+            public void testConstValInMultifileClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations/ConstValInMultifileClass.kt");
+                doTestCompiledKotlinWithStdlib(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/loadJava/compiledKotlinWithStdlib/mutability")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

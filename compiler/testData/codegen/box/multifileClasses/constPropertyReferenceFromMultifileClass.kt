@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_REFLECT
 // FILE: 1.kt
 
 import a.OK
@@ -6,12 +6,10 @@ import a.OK
 fun box(): String {
     val okRef = ::OK
 
-    // TODO: see KT-10892
-//    val annotations = okRef.annotations
-//    val numAnnotations = annotations.size
-//    if (numAnnotations != 1) {
-//        return "Failed, annotations: $annotations"
-//    }
+    val annotations = okRef.annotations
+    if (annotations.size != 1) {
+        return "Failed, annotations: $annotations"
+    }
 
     return okRef.get()
 }

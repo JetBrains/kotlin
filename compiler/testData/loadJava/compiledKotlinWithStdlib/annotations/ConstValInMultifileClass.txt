@@ -1,0 +1,10 @@
+package test
+
+@test.Anno(value = "OK") public const val constant: kotlin.String = "OK"
+    public fun <get-constant>(): kotlin.String
+
+public final annotation class Anno : kotlin.Annotation {
+    /*primary*/ public constructor Anno(/*0*/ value: kotlin.String)
+    public final val value: kotlin.String
+        public final fun <get-value>(): kotlin.String
+}
