@@ -35,9 +35,8 @@ class TraceBasedErrorReporter(private val trace: BindingTrace) : ErrorReporter {
         @JvmField
         val METADATA_VERSION_ERRORS: WritableSlice<String, IncompatibleVersionErrorData> = Slices.createCollectiveSlice()
 
-        // TODO: MutableList is a workaround for KT-5792 Covariant types in Kotlin translated to wildcard types in Java
         @JvmField
-        val INCOMPLETE_HIERARCHY: WritableSlice<ClassDescriptor, MutableList<String>> = Slices.createCollectiveSlice()
+        val INCOMPLETE_HIERARCHY: WritableSlice<ClassDescriptor, List<String>> = Slices.createCollectiveSlice()
     }
 
     override fun reportIncompatibleMetadataVersion(classId: ClassId, filePath: String, actualVersion: BinaryVersion) {
@@ -45,8 +44,7 @@ class TraceBasedErrorReporter(private val trace: BindingTrace) : ErrorReporter {
     }
 
     override fun reportIncompleteHierarchy(descriptor: ClassDescriptor, unresolvedSuperClasses: List<String>) {
-        // TODO: MutableList is a workaround for KT-5792 Covariant types in Kotlin translated to wildcard types in Java
-        trace.record(INCOMPLETE_HIERARCHY, descriptor, unresolvedSuperClasses as MutableList)
+        trace.record(INCOMPLETE_HIERARCHY, descriptor, unresolvedSuperClasses)
     }
 
     override fun reportCannotInferVisibility(descriptor: CallableMemberDescriptor) {
