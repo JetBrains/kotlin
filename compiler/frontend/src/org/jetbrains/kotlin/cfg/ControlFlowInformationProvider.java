@@ -393,7 +393,7 @@ public class ControlFlowInformationProvider {
 
     // Should return KtDeclarationWithBody or KtClassOrObject
     @Nullable
-    private static KtDeclaration getElementParentDeclaration(@NotNull KtElement element) {
+    public static KtDeclaration getElementParentDeclaration(@NotNull KtElement element) {
         //noinspection unchecked
         return PsiTreeUtil.getParentOfType(element, KtDeclarationWithBody.class, KtClassOrObject.class);
     }

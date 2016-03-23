@@ -22,6 +22,7 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
+import org.jetbrains.kotlin.cfg.ControlFlowInformationProvider;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
@@ -355,21 +356,11 @@ public class DataFlowValueFactory {
             @NotNull BindingContext bindingContext,
             @NotNull KtElement accessElement
     ) {
-        PsiElement parent = accessElement.getParent();
-        while (parent != null) {
-            // We are inside some declaration
-            if (parent instanceof KtDeclarationWithBody || parent instanceof KtClassOrObject) {
-                DeclarationDescriptor descriptor = bindingContext.get(DECLARATION_TO_DESCRIPTOR, parent);
-                if (variableContainingDeclaration.equals(descriptor)) {
-                    // Access is at the same declaration: not in closure
-                    break;
-                }
-                else {
-                    // Access is lower than parent: in closure
-                    return true;
-                }
-            }
-            parent = parent.getParent();
+        KtDeclaration parent = ControlFlowInformationProvider.getElementParentDeclaration(accessElement);
+        if (parent != null) {
+            DeclarationDescriptor descriptor = bindingContext.get(DECLARATION_TO_DESCRIPTOR, parent);
+            // Access is at the same declaration: not in closure, lower: in closure
+            return !variableContainingDeclaration.equals(descriptor);
         }
         return false;
     }
