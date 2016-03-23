@@ -62,9 +62,6 @@ class ClassTranslator private constructor(
 
     private val descriptor = getClassDescriptor(context.bindingContext(), classDeclaration)
 
-    // TODO: eliminate
-    private fun translateObjectLiteralExpression() = translate(context())
-
     private fun translate(declarationContext: TranslationContext = context()): JsInvocation {
         return JsInvocation(context().namer().classCreateInvocation(descriptor), getClassCreateInvocationArguments(declarationContext))
     }
@@ -103,7 +100,7 @@ class ClassTranslator private constructor(
         }
 
         if (isEnumClass(descriptor)) {
-            val enumEntries = JsObjectLiteral(bodyVisitor.getEnumEntryList(), true)
+            val enumEntries = JsObjectLiteral(bodyVisitor.enumEntryList, true)
             val function = simpleReturnFunction(context.getScopeForDescriptor(descriptor), enumEntries)
             invocationArguments.add(function)
         }
@@ -293,10 +290,6 @@ class ClassTranslator private constructor(
 
         @JvmStatic fun generateObjectLiteral(objectDeclaration: KtObjectDeclaration, context: TranslationContext): JsExpression {
             return ClassTranslator(objectDeclaration, context).translateObjectInsideClass(context)
-        }
-
-        @JvmStatic fun generateObjectDeclaration(objectDeclaration: KtObjectDeclaration, context: TranslationContext): JsExpression {
-            return ClassTranslator(objectDeclaration, context).translateObjectLiteralExpression()
         }
 
         private fun generateSecondaryConstructor(constructor: KtSecondaryConstructor, context: TranslationContext): JsPropertyInitializer {
