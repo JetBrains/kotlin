@@ -237,7 +237,7 @@ public class AndroidLintExternalAnnotator extends ExternalAnnotator<State, State
           if (startElement != null && endElement != null && !inspection.isSuppressedFor(startElement)) {
             if (problemData.getConfiguredSeverity() != null) {
               HighlightDisplayLevel configuredLevel =
-                org.jetbrains.android.inspections.klint.AndroidLintInspectionBase.toHighlightDisplayLevel(problemData.getConfiguredSeverity());
+                AndroidLintInspectionBase.toHighlightDisplayLevel(problemData.getConfiguredSeverity());
               if (configuredLevel != null) {
                 displayLevel = configuredLevel;
               }
@@ -253,7 +253,6 @@ public class AndroidLintExternalAnnotator extends ExternalAnnotator<State, State
             for (IntentionAction intention : inspection.getIntentions(startElement, endElement)) {
               annotation.registerFix(intention);
             }
-            annotation.registerFix(new org.jetbrains.android.inspections.klint.SuppressLintIntentionAction(key.getID(), startElement));
             annotation.registerFix(new MyDisableInspectionFix(key));
             annotation.registerFix(new MyEditInspectionToolsSettingsAction(key, inspection));
 
