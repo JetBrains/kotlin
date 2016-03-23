@@ -29,8 +29,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
@@ -51,21 +49,21 @@ class ConvertClassToKClassFix(element: KtDotQualifiedExpression, private val typ
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
         if (!super.isAvailable(project, editor, file)) return false
 
-        val expressionType = element.analyze(BodyResolveMode.PARTIAL).getType(element) ?: return false
+        val bindingContext = element.analyze(BodyResolveMode.PARTIAL)
+        val expressionType = bindingContext.getType(element) ?: return false
         if (!expressionType.isJClass()) return false
 
         val children = element.children
         if (children.size != 2) return false
 
         val firstChild = children.first() as? KtExpression ?: return false
-        val firstChildType = firstChild.analyze(BodyResolveMode.PARTIAL).getType(firstChild) ?: return false
+        val firstChildType = bindingContext.getType(firstChild) ?: return false
 
         return firstChildType.isSubtypeOf(type)
     }
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
-        val lastChild = element.children.lastOrNull() ?: return
-        editor?.document?.replaceString(lastChild.startOffset - 1, lastChild.endOffset, "")
+        element.replace(element.firstChild)
     }
 
     object Factory : KotlinIntentionActionsFactory() {
