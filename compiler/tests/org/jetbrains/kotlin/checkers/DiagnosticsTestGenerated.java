@@ -15455,6 +15455,45 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     }
                 }
             }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/scopes/protectedVisibility")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class ProtectedVisibility extends AbstractDiagnosticsTest {
+                public void testAllFilesPresentInProtectedVisibility() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/scopes/protectedVisibility"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("complexCompanion.kt")
+                public void testComplexCompanion() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/protectedVisibility/complexCompanion.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("innerClassInJava.kt")
+                public void testInnerClassInJava() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/protectedVisibility/innerClassInJava.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("javaInheritedInKotlin.kt")
+                public void testJavaInheritedInKotlin() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/protectedVisibility/javaInheritedInKotlin.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt7971.kt")
+                public void testKt7971() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/protectedVisibility/kt7971.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("protectedCallOnSubClass.kt")
+                public void testProtectedCallOnSubClass() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/protectedVisibility/protectedCallOnSubClass.kt");
+                    doTest(fileName);
+                }
+            }
         }
 
         @TestMetadata("compiler/testData/diagnostics/tests/script")

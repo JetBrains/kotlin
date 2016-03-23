@@ -101,6 +101,9 @@ public interface BindingContext {
      */
     WritableSlice<KtExpression, Qualifier> QUALIFIER = new BasicWritableSlice<KtExpression, Qualifier>(DO_NOTHING);
 
+    WritableSlice<KtSuperExpression, KotlinType> THIS_TYPE_FOR_SUPER_EXPRESSION =
+            new BasicWritableSlice<KtSuperExpression, KotlinType>(DO_NOTHING);
+
     WritableSlice<KtReferenceExpression, DeclarationDescriptor> REFERENCE_TARGET =
             new BasicWritableSlice<KtReferenceExpression, DeclarationDescriptor>(DO_NOTHING);
     // if 'A' really means 'A.Companion' then this slice stores class descriptor for A, REFERENCE_TARGET stores descriptor Companion in this case

@@ -262,7 +262,7 @@ public class DescriptorUtils {
         return false;
     }
 
-    private static boolean isSubtypeOfClass(@NotNull KotlinType type, @NotNull DeclarationDescriptor superClass) {
+    public static boolean isSubtypeOfClass(@NotNull KotlinType type, @NotNull DeclarationDescriptor superClass) {
         if (isSameClass(type, superClass)) return true;
         for (KotlinType superType : type.getConstructor().getSupertypes()) {
             if (isSubtypeOfClass(superType, superClass)) {
@@ -429,6 +429,15 @@ public class DescriptorUtils {
             //noinspection unchecked
             descriptor = (D) overridden.iterator().next();
         }
+        return descriptor;
+    }
+
+    public static <D extends DeclarationDescriptorWithVisibility> D unwrapFakeOverrideToAnyDeclaration(@NotNull D descriptor) {
+        if (descriptor instanceof CallableMemberDescriptor) {
+            //noinspection unchecked
+            return (D) unwrapFakeOverride((CallableMemberDescriptor) descriptor);
+        }
+
         return descriptor;
     }
 
