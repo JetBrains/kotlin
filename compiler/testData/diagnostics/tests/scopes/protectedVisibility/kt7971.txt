@@ -1,0 +1,14 @@
+package
+
+package module2 {
+    public fun </*0*/ T> javaClass(): java.lang.Class<T>
+
+    public final class AppServiceModule : module1.AbstractModule<kotlin.String> {
+        public constructor AppServiceModule()
+        protected/*protected and package*/ open override /*1*/ /*fake_override*/ fun </*0*/ T : kotlin.Any!> bind(/*0*/ clazz: java.lang.Class<T!>!): kotlin.String!
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        public final inline fun </*0*/ reified T> module1.AbstractModule<kotlin.Int>.bind(): kotlin.Unit
+    }
+}

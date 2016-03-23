@@ -66,21 +66,7 @@ public class JavaVisibilities {
     public static final Visibility PROTECTED_STATIC_VISIBILITY = new Visibility("protected_static", true) {
         @Override
         public boolean isVisible(@Nullable ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
-            if (areInSamePackage(what, from)) {
-                return true;
-            }
-
-            ClassDescriptor fromClass = DescriptorUtils.getParentOfType(from, ClassDescriptor.class, false);
-            if (fromClass == null) return false;
-
-            DeclarationDescriptor containingDeclaration = what.getContainingDeclaration();
-            assert containingDeclaration instanceof ClassDescriptor : "Only class members can have protected_static visibility";
-            ClassDescriptor whatClass = (ClassDescriptor) containingDeclaration;
-
-            if (DescriptorUtils.isSubclass(fromClass, whatClass)) {
-                return true;
-            }
-            return isVisible(receiver, what, fromClass.getContainingDeclaration());
+            return isVisibleForProtectedAndPackage(receiver, what, from);
         }
 
         @Override
@@ -104,20 +90,7 @@ public class JavaVisibilities {
     public static final Visibility PROTECTED_AND_PACKAGE = new Visibility("protected_and_package", true) {
         @Override
         public boolean isVisible(@Nullable ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
-            if (areInSamePackage(what, from)) {
-                return true;
-            }
-
-            ClassDescriptor whatClass = DescriptorUtils.getParentOfType(what, ClassDescriptor.class, false);
-            if (whatClass == null) return false;
-
-            ClassDescriptor fromClass = DescriptorUtils.getParentOfType(from, ClassDescriptor.class, false);
-            if (fromClass == null) return false;
-
-            if (DescriptorUtils.isSubclass(fromClass, whatClass)) {
-                return true;
-            }
-            return isVisible(receiver, what, fromClass.getContainingDeclaration());
+            return isVisibleForProtectedAndPackage(receiver, what, from);
         }
 
         @Override
@@ -145,6 +118,18 @@ public class JavaVisibilities {
             return Visibilities.PROTECTED;
         }
     };
+
+    private static boolean isVisibleForProtectedAndPackage(
+            @Nullable ReceiverValue receiver,
+            @NotNull DeclarationDescriptorWithVisibility what,
+            @NotNull DeclarationDescriptor from
+    ) {
+        if (areInSamePackage(DescriptorUtils.unwrapFakeOverrideToAnyDeclaration(what), from)) {
+            return true;
+        }
+
+        return Visibilities.PROTECTED.isVisible(receiver, what, from);
+    }
 
     private static boolean areInSamePackage(@NotNull DeclarationDescriptor first, @NotNull DeclarationDescriptor second) {
         PackageFragmentDescriptor whatPackage = DescriptorUtils.getParentOfType(first, PackageFragmentDescriptor.class, false);

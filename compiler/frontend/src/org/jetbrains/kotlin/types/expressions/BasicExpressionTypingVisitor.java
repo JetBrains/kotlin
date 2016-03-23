@@ -502,6 +502,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             context.trace.recordType(expression.getInstanceReference(), result);
             context.trace.record(BindingContext.REFERENCE_TARGET, expression.getInstanceReference(),
                                  result.getConstructor().getDeclarationDescriptor());
+            context.trace.record(THIS_TYPE_FOR_SUPER_EXPRESSION, expression, thisType);
         }
 
         BindingContextUtilsKt.recordScope(context.trace, context.scope, superTypeQualifier);

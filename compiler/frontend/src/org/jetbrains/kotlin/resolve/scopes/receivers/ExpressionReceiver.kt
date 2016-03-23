@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.resolve.scopes.receivers
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.psi.KtConstructorDelegationReferenceExpression
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtReferenceExpression
-import org.jetbrains.kotlin.psi.KtThisExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -40,6 +37,12 @@ interface ExpressionReceiver :  ReceiverValue {
                 type: KotlinType
         ) : ExpressionReceiverImpl(expression, type), ThisClassReceiver
 
+        private class SuperExpressionReceiver(
+                override val thisType: KotlinType,
+                expression: KtExpression,
+                type: KotlinType
+        ) : ExpressionReceiverImpl(expression, type), SuperCallReceiverValue
+
         fun create(
                 expression: KtExpression,
                 type: KotlinType,
@@ -57,6 +60,13 @@ interface ExpressionReceiver :  ReceiverValue {
                 val descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, referenceExpression)
                 if (descriptor is ClassDescriptor) {
                     return ThisExpressionClassReceiver(descriptor.original as ClassDescriptor, expression, type)
+                }
+            }
+            else if (expression is KtSuperExpression) {
+                // if there is no THIS_TYPE_FOR_SUPER_EXPRESSION in binding context, we fall through into more restrictive option
+                // i.e. just return common ExpressionReceiverImpl
+                bindingContext[BindingContext.THIS_TYPE_FOR_SUPER_EXPRESSION, expression]?.let {
+                    thisType -> return SuperExpressionReceiver(thisType, expression, type)
                 }
             }
 
