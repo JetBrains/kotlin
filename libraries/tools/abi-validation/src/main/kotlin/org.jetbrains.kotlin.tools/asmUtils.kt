@@ -37,7 +37,10 @@ interface MemberBinarySignature {
 
     fun isEffectivelyPublic(classAccess: AccessFlags, classVisibility: ClassVisibility?)
             = access.isPublic && !(access.isProtected && classAccess.isFinal)
-            && (classVisibility?.members?.get(MemberSignature(name, desc))?.isPublic(isInlineExposed) ?: true)
+            && (findMemberVisibility(classVisibility)?.isPublic(isInlineExposed) ?: true)
+
+    fun findMemberVisibility(classVisibility: ClassVisibility?)
+            = classVisibility?.members?.get(MemberSignature(name, desc))
 
     val signature: String
 }
@@ -65,9 +68,15 @@ data class FieldBinarySignature(
     override val signature: String
         get() = "${access.getModifierString()} field $name $desc"
 
-    override fun isEffectivelyPublic(classAccess: AccessFlags, classVisibility: ClassVisibility?)
-            = super.isEffectivelyPublic(classAccess, classVisibility)
-    // TODO: lateinit exposed field
+    override fun findMemberVisibility(classVisibility: ClassVisibility?): MemberVisibility? {
+        val fieldVisibility = super.findMemberVisibility(classVisibility) ?: return null
+
+        // good case for 'satisfying': fieldVisibility.satisfying { it.isLateInit() }?.let { classVisibility?.findSetterForProperty(it) }
+        if (fieldVisibility.isLateInit()) {
+            classVisibility?.findSetterForProperty(fieldVisibility)?.let { return it }
+        }
+        return fieldVisibility
+    }
 }
 
 
