@@ -32,23 +32,23 @@ fun ClassNode.isEffectivelyPublic(classVisibility: ClassVisibility?) =
         isPublic()
                 && !isLocal()
                 && !isWhenMappings()
-                && (classVisibility?.isPublic() ?: true)
+                && (classVisibility?.isPublic(isInlineExposed()) ?: true)
                 && !isNonPublicFileOrFacade(classVisibility)
 
 fun ClassNode.isNonPublicFileOrFacade(classVisibility: ClassVisibility?) =
         isFileOrMultipartFacade()
                 && methods.none { it.isEffectivelyPublic(classVisibility) }
-                && fields.none { it.isPublic() }
+                && fields.none { it.isEffectivelyPublic(classVisibility) }
 
 
 fun MethodNode.isEffectivelyPublic(classVisibility: ClassVisibility?) =
         isPublic()
-                && (classVisibility?.members?.get(MemberSignature(name, desc))?.isPublic() ?: true)
+                && (classVisibility?.members?.get(MemberSignature(name, desc))?.isPublic(isInlineExposed()) ?: true)
                 && !isAccessMethod()
 
 fun FieldNode.isEffectivelyPublic(classVisibility: ClassVisibility?) =
         isPublic()
-                && (classVisibility?.members?.get(MemberSignature(name, desc))?.isPublic() ?: true)
+                && (classVisibility?.members?.get(MemberSignature(name, desc))?.isPublic(isInlineExposed()) ?: true)
 // TODO: lateinit exposed field
 
 
@@ -58,6 +58,10 @@ fun MethodNode.isAccessMethod() = isSynthetic() && name.startsWith("access\$")
 
 val ClassNode.effectiveAccess: Int get() = innerClasses.singleOrNull { it.name == name }?.access ?: access
 
+const val inlineExposedAnnotationName = "kotlin/internal/InlineExposed"
+fun ClassNode.isInlineExposed() = hasAnnotation(inlineExposedAnnotationName, includeInvisible = true)
+fun MethodNode.isInlineExposed() = hasAnnotation(inlineExposedAnnotationName, includeInvisible = true)
+fun FieldNode.isInlineExposed() = hasAnnotation(inlineExposedAnnotationName, includeInvisible = true)
 
 private object KotlinClassKind {
     const val FILE = 2
@@ -75,8 +79,15 @@ val ClassNode.kotlinClassKind: Int?
             ?.map { (it.values.annotationValue("k") as? Int) }
             ?.firstOrNull()
 
-fun ClassNode.hasAnnotation(annotationName: String)
-        = "L$annotationName;".let { desc -> visibleAnnotations?.any { it.desc == desc } ?: false }
+fun ClassNode.hasAnnotation(annotationName: String, includeInvisible: Boolean = false) = hasAnnotation(annotationName, visibleAnnotations, invisibleAnnotations, includeInvisible)
+fun MethodNode.hasAnnotation(annotationName: String, includeInvisible: Boolean = false) = hasAnnotation(annotationName, visibleAnnotations, invisibleAnnotations, includeInvisible)
+fun FieldNode.hasAnnotation(annotationName: String, includeInvisible: Boolean = false) = hasAnnotation(annotationName, visibleAnnotations, invisibleAnnotations, includeInvisible)
+
+private fun hasAnnotation(annotationName: String, visibleAnnotations: List<AnnotationNode>?, invisibleAnnotations: List<AnnotationNode>?, includeInvisible: Boolean)
+        = "L$annotationName;".let { desc ->
+            (visibleAnnotations?.any { it.desc == desc } ?: false)
+            || (includeInvisible && (invisibleAnnotations?.any { it.desc == desc } ?: false))
+        }
 
 private fun List<Any>.annotationValue(key: String): Any? {
     for (index in (0 .. size / 2 - 1)) {
