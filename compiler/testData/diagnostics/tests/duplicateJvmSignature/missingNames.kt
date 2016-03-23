@@ -58,11 +58,11 @@ class Outer {
 }
 
 fun outerFun() {
-    fun () {
+    <!UNUSED_EXPRESSION!>fun () {
 
-    }
-    fun () {
+    }<!>
+    <!UNUSED_EXPRESSION!>fun () {
 
-    }
+    }<!>
 }
 

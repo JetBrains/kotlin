@@ -260,6 +260,7 @@ fun Instruction.calcSideEffectFree(): Boolean {
                 }
 
                 else -> when (element) {
+                    is KtNamedFunction -> element.name == null
                     is KtConstantExpression, is KtLambdaExpression, is KtStringTemplateExpression -> true
                     else -> false
                 }
