@@ -5706,6 +5706,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("NestedClass1.kt")
+        public void testNestedClass1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/importMember/NestedClass1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NestedClass2.kt")
+        public void testNestedClass2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/importMember/NestedClass2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("NoTarget.kt")
         public void testNoTarget() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/importMember/NoTarget.kt");

@@ -1,0 +1,17 @@
+// INTENTION_TEXT: "Add import for 'ppp.Foo.Bar'"
+// WITH_RUNTIME
+package ppp
+
+import ppp.Foo.Bar
+
+sealed class Foo {
+    class Bar(val x: Int) : Foo()
+}
+
+fun test() {
+    val foo = Bar(5)
+
+    when (foo) {
+        is <caret>Bar -> println(foo.x)
+    }
+}

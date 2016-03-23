@@ -26,10 +26,13 @@ import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
+import org.jetbrains.kotlin.psi.KtUserType
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
+import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
@@ -38,9 +41,10 @@ class ImportMemberIntention : SelfTargetingOffsetIndependentIntention<KtNameRefe
         "Add import for member"
 ){
     override fun isApplicableTo(element: KtNameReferenceExpression): Boolean {
-        val qualifiedExpression = qualifiedExpression(element) ?: return false
+        val qualifiedElement = element.getQualifiedElement()
+        if (qualifiedElement == element) return false
 
-        val fqName = targetFqName(qualifiedExpression) ?: return false
+        val fqName = targetFqName(qualifiedElement) ?: return false
 
         text = "Add import for '${fqName.asString()}'"
         return true
@@ -59,19 +63,20 @@ class ImportMemberIntention : SelfTargetingOffsetIndependentIntention<KtNameRefe
             val selector = qualifiedExpression.getQualifiedElementSelector() as? KtNameReferenceExpression
             selector?.getReferencedNameAsName() == fqName.shortName() && targetFqName(qualifiedExpression) == fqName
         }
+        val userTypes = file.collectDescendantsOfType<KtUserType> { userType ->
+            val selector = userType.getQualifiedElementSelector() as? KtNameReferenceExpression
+            selector?.getReferencedNameAsName() == fqName.shortName() && targetFqName(userType) == fqName
+        }
 
         //TODO: not deep
-        ShortenReferences.DEFAULT.process(qualifiedExpressions)
+        ShortenReferences.DEFAULT.process(qualifiedExpressions + userTypes)
     }
 
-    private fun qualifiedExpression(element: KtNameReferenceExpression): KtDotQualifiedExpression? {
-        return element.getQualifiedElement() as? KtDotQualifiedExpression
-    }
-
-    private fun targetFqName(qualifiedExpression: KtDotQualifiedExpression): FqName? {
-        val nameExpression = qualifiedExpression.getQualifiedElementSelector() as? KtNameReferenceExpression ?: return null
-        val bindingContext = qualifiedExpression.analyze(BodyResolveMode.PARTIAL)
-        if (bindingContext[BindingContext.QUALIFIER, qualifiedExpression.receiverExpression] == null) return null
+    private fun targetFqName(qualifiedElement: KtElement): FqName? {
+        val nameExpression = qualifiedElement.getQualifiedElementSelector() as? KtNameReferenceExpression ?: return null
+        val receiver = nameExpression.getReceiverExpression() ?: return null
+        val bindingContext = qualifiedElement.analyze(BodyResolveMode.PARTIAL)
+        if (bindingContext[BindingContext.QUALIFIER, receiver] == null) return null
 
         val targets = nameExpression.mainReference.resolveToDescriptors(bindingContext)
         if (targets.isEmpty()) return null
