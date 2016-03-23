@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
+import org.jetbrains.kotlin.js.translate.context.UsageTracker;
 import org.jetbrains.kotlin.js.translate.declaration.DelegationTranslator;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.reference.CallArgumentTranslator;
@@ -124,8 +125,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
             return;
         }
 
-        // TODO: avoid name clashing
-        JsName outerName = initFunction.getScope().declareName(Namer.OUTER_FIELD_NAME);
+        JsName outerName = initFunction.getScope().declareFreshName(Namer.OUTER_FIELD_NAME);
         initFunction.getParameters().add(0, new JsParameter(outerName));
 
         JsExpression paramRef = fqnWithoutSideEffects(outerName, null);
@@ -161,13 +161,27 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
                 initializerStatements.add(0, fixedInvocation.makeStmt());
             }
             else {
-                List<JsExpression> arguments = CallArgumentTranslator.translate(superCall, null, context()).getTranslateArguments();
+                List<JsExpression> arguments = new ArrayList<JsExpression>();
+
                 ClassDescriptor superDescriptor = DescriptorUtils.getSuperClassDescriptor(descriptor);
                 assert superDescriptor != null : "This class is expected to have super class: "
                                                  + PsiUtilsKt.getTextWithLocation(classDeclaration);
-                if (superDescriptor.isInner() && descriptor.isInner()) {
-                    arguments.add(0, fqnWithoutSideEffects(Namer.OUTER_FIELD_NAME, JsLiteral.THIS));
+
+                List<DeclarationDescriptor> superclassClosure = context.getLocalClassClosure(superDescriptor);
+                UsageTracker tracker = context.usageTracker();
+                if (superclassClosure != null && tracker != null) {
+                    for (DeclarationDescriptor capturedValue : superclassClosure) {
+                        tracker.used(capturedValue);
+                        arguments.add(tracker.getCapturedDescriptorToJsName().get(capturedValue).makeRef());
+                    }
                 }
+
+                if (superDescriptor.isInner() && descriptor.isInner()) {
+                    arguments.add(fqnWithoutSideEffects(Namer.OUTER_FIELD_NAME, JsLiteral.THIS));
+                }
+
+                arguments.addAll(CallArgumentTranslator.translate(superCall, null, context()).getTranslateArguments());
+
                 addCallToSuperMethod(arguments, initializer);
             }
         }
@@ -195,7 +209,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    List<JsParameter> translatePrimaryConstructorParameters() {
+    private List<JsParameter> translatePrimaryConstructorParameters() {
         List<KtParameter> parameterList = getPrimaryConstructorParameters(classDeclaration);
         List<JsParameter> result = new ArrayList<JsParameter>();
         for (KtParameter jetParameter : parameterList) {

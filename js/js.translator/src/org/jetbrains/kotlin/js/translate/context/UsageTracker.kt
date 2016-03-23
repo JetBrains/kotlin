@@ -88,7 +88,7 @@ class UsageTracker(
 
     private fun DeclarationDescriptor.getJsNameForCapturedDescriptor(): JsName {
         val suggestedName = when (this) {
-            is ReceiverParameterDescriptor -> this.getNameForCapturedReceiver()
+            is ReceiverParameterDescriptor -> getNameForCapturedReceiver()
             is TypeParameterDescriptor -> Namer.isInstanceSuggestedName(this)
 
             // Append 'closure$' prefix to avoid name clash between closure and member fields in case of local classes
