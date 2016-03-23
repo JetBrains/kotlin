@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 
 public abstract class KotlinTestWithEnvironment extends KotlinTestWithEnvironmentManagement {
-    private KotlinCoreEnvironment environment;
+    protected KotlinCoreEnvironment environment;
 
     @Override
     protected void setUp() throws Exception {

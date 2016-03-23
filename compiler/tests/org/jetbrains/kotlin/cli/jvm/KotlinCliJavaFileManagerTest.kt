@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,24 +15,36 @@
  */
 package org.jetbrains.kotlin.cli.jvm
 
-import com.intellij.ide.highlighter.JavaFileType
-import com.intellij.psi.PsiFileFactory
+import com.intellij.core.CoreJavaFileManager
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.testFramework.PlatformTestCase
-import com.intellij.testFramework.PsiTestCase
-import com.intellij.testFramework.PsiTestUtil
 import junit.framework.TestCase
 import org.intellij.lang.annotations.Language
-import org.jetbrains.kotlin.cli.jvm.compiler.JavaRoot
-import org.jetbrains.kotlin.cli.jvm.compiler.JvmDependenciesIndex
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCliJavaFileManagerImpl
+import org.jetbrains.kotlin.cli.jvm.compiler.*
+import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
+import org.jetbrains.kotlin.test.TestJdkKind
+import java.io.File
 
-//Partial copy of CoreJavaFileManagerTest
-class KotlinCliJavaFileManagerTest : PsiTestCase() {
+
+class KotlinCliJavaFileManagerTest : KotlinTestWithEnvironment() {
+    private var javaFilesDir: File? = null
+
     fun testCommon() {
-        val manager = configureManager("package foo;\n\n" + "public class TopLevel {\n" + "public class Inner {\n" + "   public class Inner {}\n" + "}\n" + "\n" + "}", "TopLevel")
+        val manager = configureManager(
+                "package foo;\n" +
+                "\n" +
+                "public class TopLevel {\n" +
+                "public class Inner {\n" +
+                "   public class Inner {}\n" +
+                "}\n" +
+                "\n" +
+                "}",
+                "TopLevel")
 
         assertCanFind(manager, "foo", "TopLevel")
         assertCanFind(manager, "foo", "TopLevel.Inner")
@@ -44,8 +56,32 @@ class KotlinCliJavaFileManagerTest : PsiTestCase() {
     }
 
     fun testInnerClassesWithDollars() {
-        val manager = configureManager("package foo;\n\n" + "public class TopLevel {\n" +
-                                       "public class I\$nner {" + "   public class I\$nner{}" + "   public class \$Inner{}" + "   public class In\$ne\$r\${}" + "   public class Inner\$\${}" + "   public class \$\$\$\$\${}" + "}\n" + "public class Inner\$ {" + "   public class I\$nner{}" + "   public class \$Inner{}" + "   public class In\$ne\$r\${}" + "   public class Inner\$\${}" + "   public class \$\$\$\$\${}" + "}\n" + "public class In\$ner\$\$ {" + "   public class I\$nner{}" + "   public class \$Inner{}" + "   public class In\$ne\$r\${}" + "   public class Inner\$\${}" + "   public class \$\$\$\$\${}" + "}\n" + "\n" + "}", "TopLevel")
+        val manager = configureManager(
+                "package foo;\n\n" +
+                "public class TopLevel {\n" +
+                "public class I\$nner {\n" +
+                "   public class I\$nner{}\n" +
+                "   public class \$Inner{}\n" +
+                "   public class In\$ne\$r\${}\n" +
+                "   public class Inner\$\${}\n" +
+                "   public class \$\$\$\$\${}\n" +
+                "}\n" +
+                "public class Inner\$ {\n" +
+                "   public class I\$nner{}\n" +
+                "   public class \$Inner{}\n" +
+                "   public class In\$ne\$r\${}\n" +
+                "   public class Inner\$\${}\n" +
+                "   public class \$\$\$\$\${}\n" +
+                "}\n" +
+                "public class In\$ner\$\$ {\n" +
+                "   public class I\$nner{}\n" +
+                "   public class \$Inner{}\n" +
+                "   public class In\$ne\$r\${}\n" +
+                "   public class Inner\$\${}\n" +
+                "   public class \$\$\$\$\${}\n" +
+                "}\n" +
+                "\n" +
+                "}", "TopLevel")
 
         assertCanFind(manager, "foo", "TopLevel")
 
@@ -138,17 +174,31 @@ class KotlinCliJavaFileManagerTest : PsiTestCase() {
         TestCase.assertNull("Should not find class in empty scope", manager.findClass("foo.Test", GlobalSearchScope.EMPTY_SCOPE))
     }
 
+    @Throws(Exception::class)
+    override fun createEnvironment(): KotlinCoreEnvironment {
+        javaFilesDir = KotlinTestUtils.tmpDir("java-file-manager-test")
+
+        val configuration = KotlinTestUtils.compilerConfigurationForTests(
+                ConfigurationKind.MOCK_RUNTIME,
+                TestJdkKind.MOCK_JDK,
+                emptyList(),
+                listOf<File>(javaFilesDir!!))
+
+        return KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+    }
+
     private fun configureManager(@Language("JAVA") text: String, className: String): KotlinCliJavaFileManagerImpl {
-        val root = PsiTestUtil.createTestProjectStructure(myProject, myModule, PlatformTestCase.myFilesToDelete)
-        val pkg = root.createChildDirectory(this, "foo")
-        val dir = myPsiManager.findDirectory(pkg)
-        TestCase.assertNotNull(dir)
-        dir!!
-        dir.add(PsiFileFactory.getInstance(project).createFileFromText(className + ".java", JavaFileType.INSTANCE, text))
-        val coreJavaFileManagerExt = KotlinCliJavaFileManagerImpl(myPsiManager)
-        coreJavaFileManagerExt.initIndex(JvmDependenciesIndex(listOf(JavaRoot(root, JavaRoot.RootType.SOURCE))))
-        coreJavaFileManagerExt.addToClasspath(root)
-        return coreJavaFileManagerExt
+        val fooPackageDir = File(javaFilesDir, "foo")
+        fooPackageDir.mkdir()
+
+        File(fooPackageDir, "$className.java").writeText(text)
+
+        val coreJavaFileManager = ServiceManager.getService(project, CoreJavaFileManager::class.java) as KotlinCliJavaFileManagerImpl
+
+        val root = environment.contentRootToVirtualFile(JavaSourceRoot(javaFilesDir!!, null))!!
+        coreJavaFileManager.initIndex(JvmDependenciesIndex(listOf(JavaRoot(root, JavaRoot.RootType.SOURCE))))
+
+        return coreJavaFileManager
     }
 
     private fun assertCanFind(manager: KotlinCliJavaFileManagerImpl, packageFQName: String, classFqName: String) {
