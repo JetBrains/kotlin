@@ -17,13 +17,13 @@
 package org.jetbrains.kotlin.idea.completion.test.weighers
 
 import com.intellij.codeInsight.completion.CompletionType
+import org.jetbrains.kotlin.idea.completion.test.configureWithExtraFile
 import org.jetbrains.kotlin.idea.completion.test.COMPLETION_TEST_DATA_BASE_PATH
 import org.jetbrains.kotlin.idea.completion.test.RELATIVE_COMPLETION_TEST_DATA_BASE_PATH
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.util.configureWithExtraFile
 import org.junit.Assert
 import java.io.File
 

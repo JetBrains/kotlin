@@ -23,12 +23,12 @@ import com.intellij.openapi.ui.Queryable.PrintInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.ui.treeStructure.filtered.FilteringTreeStructure
 import com.intellij.util.ui.tree.TreeUtil
+import org.jetbrains.kotlin.idea.completion.test.configureWithExtraFile
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.util.configureWithExtraFile
 import java.io.File
 
 abstract class AbstractKotlinFileStructureTest : KotlinLightCodeInsightFixtureTestCase() {

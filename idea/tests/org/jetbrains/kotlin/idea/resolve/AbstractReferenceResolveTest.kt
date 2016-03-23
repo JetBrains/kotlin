@@ -22,12 +22,12 @@ import com.intellij.psi.PsiReference
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.PathUtil
+import org.jetbrains.kotlin.idea.completion.test.configureWithExtraFile
 import org.jetbrains.kotlin.idea.test.KotlinLightPlatformCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.ReferenceUtils
-import org.jetbrains.kotlin.test.util.configureWithExtraFile
 import org.junit.Assert
 import kotlin.test.assertTrue
 

@@ -24,17 +24,17 @@ import com.intellij.psi.PsiElement;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.completion.test.IdeaTestUtilsKt;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
-import org.jetbrains.kotlin.test.util.JetTestUtilsKt;
 
 import java.io.File;
 import java.util.List;
 
 public abstract class AbstractQuickDocProviderTest extends KotlinLightCodeInsightFixtureTestCase {
     public void doTest(@NotNull String path) throws Exception {
-        JetTestUtilsKt.configureWithExtraFileAbs(myFixture, path, "_Data");
+        IdeaTestUtilsKt.configureWithExtraFileAbs(myFixture, path, "_Data");
 
         PsiElement element = myFixture.getFile().findElementAt(myFixture.getEditor().getCaretModel().getOffset());
         assertNotNull("Can't find element at caret in file: " + path, element);

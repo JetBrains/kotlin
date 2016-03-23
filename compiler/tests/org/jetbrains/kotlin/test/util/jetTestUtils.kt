@@ -16,37 +16,18 @@
 
 package org.jetbrains.kotlin.test.util
 
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.UsefulTestCase
-import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.util.SmartFMap
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtPackageDirective
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
-import java.io.File
 
 fun String.trimTrailingWhitespacesAndAddNewlineAtEOF(): String =
         this.split('\n').map { it.trimEnd() }.joinToString(separator = "\n").let {
             result -> if (result.endsWith("\n")) result else result + "\n"
         }
-
-fun CodeInsightTestFixture.configureWithExtraFileAbs(path: String, vararg extraNameParts: String) {
-    configureWithExtraFile(path, *extraNameParts, relativePaths = false)
-}
-
-fun CodeInsightTestFixture.configureWithExtraFile(path: String, vararg extraNameParts: String = arrayOf(".Data"), relativePaths: Boolean = false) {
-    fun String.toFile(): File = if (relativePaths) File(testDataPath, this) else File(this)
-
-    val noExtensionPath = FileUtil.getNameWithoutExtension(path)
-    val extensions = arrayOf("kt", "java")
-    val extraPaths: List<String> = extraNameParts
-            .flatMap { extensions.map { ext -> "$noExtensionPath$it.$ext" } }
-            .filter { it.toFile().exists() }
-
-    configureByFiles(*(listOf(path) + extraPaths).toTypedArray())
-}
 
 fun PsiFile.findElementByCommentPrefix(commentText: String): PsiElement? =
         findElementsByCommentPrefix(commentText).keys.singleOrNull()
