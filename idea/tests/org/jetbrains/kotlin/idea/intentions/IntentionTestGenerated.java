@@ -4735,6 +4735,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("kt11295.kt")
+        public void testKt11295() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/kt11295.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("multilineString.kt")
         public void testMultilineString() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/multilineString.kt");
