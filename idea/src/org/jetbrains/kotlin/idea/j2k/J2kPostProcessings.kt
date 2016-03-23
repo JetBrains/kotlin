@@ -21,6 +21,7 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.core.setVisibility
 import org.jetbrains.kotlin.idea.inspections.RedundantSamConstructorInspection
 import org.jetbrains.kotlin.idea.intentions.*
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import java.util.*
 
@@ -54,6 +56,7 @@ object J2KPostProcessingRegistrar {
         _processings.add(ConvertToStringTemplateProcessing())
         _processings.add(UsePropertyAccessSyntaxProcessing())
         _processings.add(RemoveRedundantSamAdaptersProcessing())
+        _processings.add(RemoveRedundantCastToNullableProcessing())
 
         registerIntentionBasedProcessing(ConvertToExpressionBodyIntention()) { it is KtPropertyAccessor }
         registerIntentionBasedProcessing(IfThenToSafeAccessIntention())
@@ -217,6 +220,25 @@ object J2KPostProcessingRegistrar {
                 RedundantSamConstructorInspection.samConstructorCallsToBeConverted(element)
                         .forEach { RedundantSamConstructorInspection.replaceSamConstructorCall(it) }
             }
+        }
+    }
+
+    private class RemoveRedundantCastToNullableProcessing : J2kPostProcessing {
+        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+            if (element !is KtBinaryExpressionWithTypeRHS) return null
+
+            val context = element.analyzeAndGetResult().bindingContext
+            val leftType = context.getType(element.left) ?: return null
+            val rightType = context.get(BindingContext.TYPE, element.right) ?: return null
+
+            if (!leftType.isMarkedNullable && rightType.isMarkedNullable) {
+                return {
+                    val type = element.right?.typeElement as? KtNullableType
+                    type?.replace(type.innerType!!)
+                }
+            }
+
+            return null
         }
     }
 }
