@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.asJava
 
+import com.google.common.collect.Lists
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.Comparing
 import com.intellij.openapi.util.Key
@@ -31,6 +32,7 @@ import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.IncorrectOperationException
+import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.binding.PsiCodegenPredictor
@@ -327,12 +329,26 @@ open class KtLightClassForExplicitDeclaration(
             val typeElement = typeReference.typeElement
             if (typeElement !is KtUserType) continue // If it's not a user type, it's definitely not a ref to deprecated
 
-            val fqName = KtPsiUtil.toQualifiedName(typeElement) ?: continue
+            val fqName = toQualifiedName(typeElement) ?: continue
 
             if (deprecatedFqName == fqName) return true
             if (deprecatedName == fqName.asString()) return true
         }
         return false
+    }
+
+    private fun toQualifiedName(userType: KtUserType): FqName? {
+        val reversedNames = Lists.newArrayList<String>()
+
+        var current: KtUserType? = userType
+        while (current != null) {
+            val name = current.referencedName ?: return null
+
+            reversedNames.add(name)
+            current = current.qualifier
+        }
+
+        return FqName.fromSegments(ContainerUtil.reverse(reversedNames))
     }
 
     override fun isInterface(): Boolean {

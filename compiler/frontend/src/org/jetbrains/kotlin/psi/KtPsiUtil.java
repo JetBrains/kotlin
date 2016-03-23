@@ -27,7 +27,6 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.codeInsight.CommentUtilCore;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,7 +37,6 @@ import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
 import org.jetbrains.kotlin.kdoc.psi.api.KDocElement;
 import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.parsing.KotlinExpressionParsing;
@@ -159,23 +157,6 @@ public class KtPsiUtil {
         else {
             return unquoteIdentifier(quoted);
         }
-    }
-
-    /** @return <code>null</code> iff the tye has syntactic errors */
-    @Nullable
-    public static FqName toQualifiedName(@NotNull KtUserType userType) {
-        List<String> reversedNames = Lists.newArrayList();
-
-        KtUserType current = userType;
-        while (current != null) {
-            String name = current.getReferencedName();
-            if (name == null) return null;
-
-            reversedNames.add(name);
-            current = current.getQualifier();
-        }
-
-        return FqName.fromSegments(ContainerUtil.reverse(reversedNames));
     }
 
     @Nullable
