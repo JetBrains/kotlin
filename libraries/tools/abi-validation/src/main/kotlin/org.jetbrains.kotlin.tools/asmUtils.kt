@@ -3,7 +3,6 @@ package org.jetbrains.kotlin.tools
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.tree.*
 
-
 val ACCESS_NAMES = mapOf(
         Opcodes.ACC_PUBLIC to "public",
         Opcodes.ACC_PROTECTED to "protected",
@@ -15,48 +14,96 @@ val ACCESS_NAMES = mapOf(
         Opcodes.ACC_INTERFACE to "interface",
         Opcodes.ACC_ANNOTATION to "annotation")
 
+data class ClassBinarySignature(
+        val name: String,
+        val superName: String,
+        val outerName: String?,
+        val supertypes: List<String>,
+        val memberSignatures: List<MemberBinarySignature>,
+        val access: AccessFlags,
+        val isEffectivelyPublic: Boolean) {
 
-public fun isPublic(access: Int) = access and Opcodes.ACC_PUBLIC != 0 || access and Opcodes.ACC_PROTECTED != 0
-public fun isStatic(access: Int) = access and Opcodes.ACC_STATIC != 0
-fun getModifiers(access: Int): List<String> = ACCESS_NAMES.entries.mapNotNull { if (access and it.key != 0) it.value else null }
-fun getModifierString(access: Int): String = getModifiers(access).joinToString(" ")
+    val signature: String
+        get() = "${access.getModifierString()} class $name" + if (supertypes.isEmpty()) "" else ": ${supertypes.joinToString()}"
 
-fun ClassNode.isSynthetic() = access and Opcodes.ACC_SYNTHETIC != 0
-fun MethodNode.isSynthetic() = access and Opcodes.ACC_SYNTHETIC != 0
-fun ClassNode.isPublic() = isPublic(access)
-fun MethodNode.isPublic() = isPublic(access)
-fun FieldNode.isPublic() = isPublic(access)
+}
+
+
+interface MemberBinarySignature {
+    val name: String
+    val desc: String
+    val access: AccessFlags
+    val isInlineExposed: Boolean
+
+    fun isEffectivelyPublic(classAccess: AccessFlags, classVisibility: ClassVisibility?)
+            = access.isPublic // && !(access.isProtected && classAccess.isFinal)
+            && (classVisibility?.members?.get(MemberSignature(name, desc))?.isPublic(isInlineExposed) ?: true)
+
+    val signature: String
+}
+
+data class MethodBinarySignature(
+        override val name: String,
+        override val desc: String,
+        override val isInlineExposed: Boolean,
+        override val access: AccessFlags) : MemberBinarySignature {
+    override val signature: String
+        get() = "${access.getModifierString()} fun $name $desc"
+
+    override fun isEffectivelyPublic(classAccess: AccessFlags, classVisibility: ClassVisibility?)
+            = super.isEffectivelyPublic(classAccess, classVisibility)
+            && !isAccessMethod()
+
+    private fun isAccessMethod() = access.isSynthetic && name.startsWith("access\$")
+}
+
+data class FieldBinarySignature(
+        override val name: String,
+        override val desc: String,
+        override val isInlineExposed: Boolean,
+        override val access: AccessFlags) : MemberBinarySignature {
+    override val signature: String
+        get() = "${access.getModifierString()} field $name $desc"
+
+    override fun isEffectivelyPublic(classAccess: AccessFlags, classVisibility: ClassVisibility?)
+            = super.isEffectivelyPublic(classAccess, classVisibility)
+    // TODO: lateinit exposed field
+}
+
+
+
+data class AccessFlags(val access: Int) {
+    val isPublic: Boolean get() = isPublic(access)
+    val isProtected: Boolean get() = isProtected(access)
+    val isStatic: Boolean get() = isStatic(access)
+    val isFinal: Boolean get() = isFinal(access)
+    val isSynthetic: Boolean get() = isSynthetic(access)
+
+    fun getModifiers(): List<String> = ACCESS_NAMES.entries.mapNotNull { if (access and it.key != 0) it.value else null }
+    fun getModifierString(): String = getModifiers().joinToString(" ")
+}
+
+fun isPublic(access: Int) = access and Opcodes.ACC_PUBLIC != 0 || access and Opcodes.ACC_PROTECTED != 0
+fun isProtected(access: Int) = access and Opcodes.ACC_PROTECTED != 0
+fun isStatic(access: Int) = access and Opcodes.ACC_STATIC != 0
+fun isFinal(access: Int) = access and Opcodes.ACC_FINAL != 0
+fun isSynthetic(access: Int) = access and Opcodes.ACC_SYNTHETIC != 0
 
 
 fun ClassNode.isEffectivelyPublic(classVisibility: ClassVisibility?) =
-        isPublic()
+        isPublic(access)
                 && !isLocal()
                 && !isWhenMappings()
                 && (classVisibility?.isPublic(isInlineExposed()) ?: true)
-                && !isNonPublicFileOrFacade(classVisibility)
-
-fun ClassNode.isNonPublicFileOrFacade(classVisibility: ClassVisibility?) =
-        isFileOrMultipartFacade()
-                && methods.none { it.isEffectivelyPublic(classVisibility) }
-                && fields.none { it.isEffectivelyPublic(classVisibility) }
 
 
-fun MethodNode.isEffectivelyPublic(classVisibility: ClassVisibility?) =
-        isPublic()
-                && (classVisibility?.members?.get(MemberSignature(name, desc))?.isPublic(isInlineExposed()) ?: true)
-                && !isAccessMethod()
+val ClassNode.innerClassNode: InnerClassNode? get() = innerClasses.singleOrNull { it.name == name }
+fun ClassNode.isLocal() = innerClassNode?.run { innerName == null && outerName == null} ?: false
+fun ClassNode.isWhenMappings() = isSynthetic(access) && name.endsWith("\$WhenMappings")
 
-fun FieldNode.isEffectivelyPublic(classVisibility: ClassVisibility?) =
-        isPublic()
-                && (classVisibility?.members?.get(MemberSignature(name, desc))?.isPublic(isInlineExposed()) ?: true)
-// TODO: lateinit exposed field
+val ClassNode.effectiveAccess: Int get() = innerClassNode?.access ?: access
+val ClassNode.outerClassName: String? get() = innerClassNode?.outerName
 
-
-fun ClassNode.isLocal() = innerClasses.filter { it.name == name && it.innerName == null && it.outerName == null }.count() == 1
-fun ClassNode.isWhenMappings() = isSynthetic() && name.endsWith("\$WhenMappings")
-fun MethodNode.isAccessMethod() = isSynthetic() && name.startsWith("access\$")
-
-val ClassNode.effectiveAccess: Int get() = innerClasses.singleOrNull { it.name == name }?.access ?: access
 
 const val inlineExposedAnnotationName = "kotlin/internal/InlineExposed"
 fun ClassNode.isInlineExposed() = hasAnnotation(inlineExposedAnnotationName, includeInvisible = true)
@@ -96,7 +143,3 @@ private fun List<Any>.annotationValue(key: String): Any? {
     }
     return null
 }
-
-val ClassNode.outerClassName: String?
-    get() = innerClasses.singleOrNull { it.name == name }?.outerName
-
