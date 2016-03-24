@@ -24,9 +24,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
-* @author Eugene.Kudelevsky
-*/
 public class State {
   private final Module myModule;
   private final VirtualFile myMainFile;

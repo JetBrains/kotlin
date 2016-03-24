@@ -75,9 +75,6 @@ import static com.android.SdkConstants.*;
 import static com.android.tools.klint.detector.api.TextFormat.HTML;
 import static com.android.tools.klint.detector.api.TextFormat.RAW;
 
-/**
- * @author Eugene.Kudelevsky
- */
 public class AndroidLintExternalAnnotator extends ExternalAnnotator<State, State> {
   static final boolean INCLUDE_IDEA_SUPPRESS_ACTIONS = false;
 
