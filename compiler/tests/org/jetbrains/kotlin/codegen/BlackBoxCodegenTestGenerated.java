@@ -730,6 +730,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("compareWithBoxedDouble.kt")
+        public void testCompareWithBoxedDouble() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/binaryOp/compareWithBoxedDouble.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("compareWithBoxedLong.kt")
         public void testCompareWithBoxedLong() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/binaryOp/compareWithBoxedLong.kt");
