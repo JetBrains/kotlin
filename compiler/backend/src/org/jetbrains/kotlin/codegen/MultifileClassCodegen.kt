@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.MultifileClassKind.*
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
@@ -330,6 +331,8 @@ class MultifileClassCodegen(
                 arv.visit(null, internalName)
             }
             arv.visitEnd()
+            val multifileClassKind = if (shouldGeneratePartHierarchy) INHERITING else DELEGATING
+            av.visit(JvmAnnotationNames.METADATA_MULTIFILE_CLASS_KIND_FIELD_NAME, multifileClassKind.id)
         }
     }
 

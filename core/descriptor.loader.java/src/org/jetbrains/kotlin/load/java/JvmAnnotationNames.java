@@ -29,7 +29,10 @@ public final class JvmAnnotationNames {
     public static final String KIND_FIELD_NAME = "k";
     public static final String METADATA_DATA_FIELD_NAME = "d1";
     public static final String METADATA_STRINGS_FIELD_NAME = "d2";
-    public static final String METADATA_MULTIFILE_CLASS_NAME_FIELD_NAME = "xs";
+    public static final String METADATA_EXTRA_STRING_FIELD_NAME = "xs";
+    public static final String METADATA_MULTIFILE_CLASS_NAME_FIELD_NAME = METADATA_EXTRA_STRING_FIELD_NAME;
+    public static final String METADATA_EXTRA_INT_FIELD_NAME = "xi";
+    public static final String METADATA_MULTIFILE_CLASS_KIND_FIELD_NAME = METADATA_EXTRA_INT_FIELD_NAME;
 
     public static final Name DEFAULT_ANNOTATION_MEMBER_NAME = Name.identifier("value");
 

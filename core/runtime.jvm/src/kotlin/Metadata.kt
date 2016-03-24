@@ -55,5 +55,9 @@ internal annotation class Metadata(
         /**
          * An extra string. For a multi-file part class, internal name of the facade class.
          */
-        val xs: String = ""
+        val xs: String = "",
+        /**
+         * An extra int. For multi-file class, represents code generation scheme.
+         */
+        val xi: Int = 0
 )

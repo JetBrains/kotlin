@@ -25,7 +25,8 @@ class KotlinClassHeader(
         val bytecodeVersion: JvmBytecodeBinaryVersion,
         val data: Array<String>?,
         val strings: Array<String>?,
-        val multifileClassName: String?
+        val extraString: String?,
+        val extraInt: Int
 ) {
     // See kotlin.Metadata
     enum class Kind(val id: Int) {
@@ -43,6 +44,28 @@ class KotlinClassHeader(
             fun getById(id: Int) = entryById[id] ?: UNKNOWN
         }
     }
+
+    // See kotlin.Metadata
+    enum class MultifileClassKind(val id: Int) {
+        DELEGATING(0),
+        INHERITING(1);
+
+        companion object {
+            private val entryById = values().associateBy(MultifileClassKind::id)
+
+            @JvmStatic
+            fun getById(id: Int) = entryById[id]
+        }
+    }
+
+    val multifileClassName: String?
+        get() = if (kind == Kind.MULTIFILE_CLASS_PART) extraString else null
+
+    val multifileClassKind: MultifileClassKind?
+        get() = if (kind == Kind.MULTIFILE_CLASS || kind == Kind.MULTIFILE_CLASS_PART)
+            MultifileClassKind.getById(extraInt)
+        else
+            null
 
     override fun toString() = "$kind version=$metadataVersion"
 }
