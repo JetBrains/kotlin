@@ -65,6 +65,29 @@ abstract class AbstractKotlinAndroidGradleTests(
     }
 
     @Test
+    fun testIncrementalCompile() {
+        val project = Project("AndroidIncrementalSingleModuleProject", gradleVersion)
+        val options = defaultBuildOptions().copy(incremental = true)
+
+        project.build("build", options = options) {
+            assertSuccessful()
+        }
+
+        val getSomethingKt = project.projectDir.walk().filter { it.isFile && it.name.endsWith("getSomething.kt") }.first()
+        getSomethingKt.writeText("""
+package foo
+
+fun getSomething() = 10
+""")
+
+        project.build("build", options = options) {
+            assertSuccessful()
+            assertCompiledKotlinSources(listOf("src/main/kotlin/foo/KotlinActivity1.kt", "src/main/kotlin/foo/getSomething.kt"))
+            assertCompiledJavaSources(listOf("app/src/main/java/foo/JavaActivity.java"), weakTesting = true)
+        }
+    }
+
+    @Test
     fun testModuleNameAndroid() {
         val project = Project("AndroidProject", gradleVersion)
 
