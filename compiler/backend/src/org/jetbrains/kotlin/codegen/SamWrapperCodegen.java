@@ -49,17 +49,27 @@ public class SamWrapperCodegen {
     private static final String FUNCTION_FIELD_NAME = "function";
 
     private final GenerationState state;
+    private final boolean isInsideInline;
     private final JetTypeMapper typeMapper;
     private final SamType samType;
     private final MemberCodegen<?> parentCodegen;
+    private final int visibility;
 
-    public SamWrapperCodegen(@NotNull GenerationState state, @NotNull SamType samType, @NotNull MemberCodegen<?> parentCodegen) {
+    public SamWrapperCodegen(
+            @NotNull GenerationState state,
+            @NotNull SamType samType,
+            @NotNull MemberCodegen<?> parentCodegen,
+            boolean isInsideInline
+    ) {
         this.state = state;
+        this.isInsideInline = isInsideInline;
         this.typeMapper = state.getTypeMapper();
         this.samType = samType;
         this.parentCodegen = parentCodegen;
+        visibility = isInsideInline ? ACC_PUBLIC : NO_FLAG_PACKAGE_PRIVATE;
     }
 
+    @NotNull
     public Type genWrapper(@NotNull KtFile file) {
         // Name for generated class, in form of whatever$1
         FqName fqName = getWrapperName(file);
@@ -88,7 +98,7 @@ public class SamWrapperCodegen {
         ClassBuilder cv = state.getFactory().newVisitor(JvmDeclarationOriginKt.OtherOrigin(erasedInterfaceFunction), asmType, file);
         cv.defineClass(file,
                        V1_6,
-                       ACC_FINAL | ACC_SUPER,
+                       ACC_FINAL | ACC_SUPER | visibility,
                        asmType.getInternalName(),
                        null,
                        OBJECT_TYPE.getInternalName(),
@@ -118,7 +128,7 @@ public class SamWrapperCodegen {
 
     private void generateConstructor(Type ownerType, Type functionType, ClassBuilder cv) {
         MethodVisitor mv = cv.newMethod(JvmDeclarationOriginKt.OtherOrigin(samType.getJavaClassDescriptor()),
-                                        NO_FLAG_PACKAGE_PRIVATE, "<init>", Type.getMethodDescriptor(Type.VOID_TYPE, functionType), null, null);
+                                        visibility, "<init>", Type.getMethodDescriptor(Type.VOID_TYPE, functionType), null, null);
 
         if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             mv.visitCode();
@@ -177,9 +187,10 @@ public class SamWrapperCodegen {
         int hash = PackagePartClassUtils.getPathHashCode(containingFile.getVirtualFile()) * 31 +
                 DescriptorUtils.getFqNameSafe(descriptor).hashCode();
         String shortName = String.format(
-                "%s$sam$%s$%08x",
+                "%s$sam$%s%s$%08x",
                 fileClassFqName.shortName().asString(),
                 descriptor.getName().asString(),
+                (isInsideInline ? "$i" : ""),
                 hash
         );
         return fileClassFqName.parent().child(Name.identifier(shortName));
