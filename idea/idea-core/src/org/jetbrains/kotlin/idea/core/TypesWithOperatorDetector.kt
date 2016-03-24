@@ -30,20 +30,28 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.isValidOperator
 import java.util.*
 
-//TODO: support not imported extensions
 abstract class TypesWithOperatorDetector(
         private val name: Name,
-        private val scope: LexicalScope
+        private val scope: LexicalScope,
+        private val indicesHelper: KotlinIndicesHelper?
 ) {
     protected abstract fun isSuitableByType(function: FunctionDescriptor, freeTypeParams: Collection<TypeParameterDescriptor>): Boolean
 
     private val cache = HashMap<FuzzyType, FunctionDescriptor?>()
 
-    private val typesWithExtension: Map<KotlinType, FunctionDescriptor> by lazy {
+    private val typesWithExtensionFromScope: Map<KotlinType, FunctionDescriptor> by lazy {
         scope.collectFunctions(name, NoLookupLocation.FROM_IDE)
                 .filter { it.extensionReceiverParameter != null && it.isValidOperator() && isSuitableByType(it, it.typeParameters) }
                 .map { it.extensionReceiverParameter!!.type to it }
                 .toMap()
+    }
+
+    private val typesWithExtensionFromIndices: Map<KotlinType, FunctionDescriptor> by lazy {
+        indicesHelper?.getTopLevelExtensionOperatorsByName(name.asString())
+                ?.filter { it.extensionReceiverParameter != null && it.isValidOperator() && isSuitableByType(it, it.typeParameters) }
+                ?.map { it.extensionReceiverParameter!!.type to it }
+                ?.filter { it.first !in typesWithExtensionFromScope.keys }
+                ?.toMap() ?: emptyMap()
     }
 
     fun findOperator(type: FuzzyType): FunctionDescriptor? {
@@ -64,19 +72,21 @@ abstract class TypesWithOperatorDetector(
             if (memberFunction != null) return memberFunction
         }
 
-        for ((typeWithExtension, operator) in typesWithExtension) {
+        for ((typeWithExtension, operator) in typesWithExtensionFromScope + typesWithExtensionFromIndices) {
             if (type.checkIsSubtypeOf(typeWithExtension) != null) {
                 return operator //TODO: substitution
             }
         }
+
         return null
     }
 }
 
 class TypesWithContainsDetector(
         scope: LexicalScope,
+        indicesHelper: KotlinIndicesHelper?,
         private val argumentType: KotlinType
-) : TypesWithOperatorDetector(OperatorNameConventions.CONTAINS, scope) {
+) : TypesWithOperatorDetector(OperatorNameConventions.CONTAINS, scope, indicesHelper) {
 
     override fun isSuitableByType(function: FunctionDescriptor, freeTypeParams: Collection<TypeParameterDescriptor>): Boolean {
         val parameter = function.valueParameters.single()
@@ -87,9 +97,10 @@ class TypesWithContainsDetector(
 
 class TypesWithGetValueDetector(
         scope: LexicalScope,
+        indicesHelper: KotlinIndicesHelper?,
         private val propertyOwnerType: KotlinType,
         private val propertyType: KotlinType?
-) : TypesWithOperatorDetector(OperatorNameConventions.GET_VALUE, scope) {
+) : TypesWithOperatorDetector(OperatorNameConventions.GET_VALUE, scope, indicesHelper) {
 
     override fun isSuitableByType(function: FunctionDescriptor, freeTypeParams: Collection<TypeParameterDescriptor>): Boolean {
         val paramType = FuzzyType(function.valueParameters.first().type, freeTypeParams)
@@ -106,8 +117,9 @@ class TypesWithGetValueDetector(
 
 class TypesWithSetValueDetector(
         scope: LexicalScope,
+        indicesHelper: KotlinIndicesHelper?,
         private val propertyOwnerType: KotlinType
-) : TypesWithOperatorDetector(OperatorNameConventions.SET_VALUE, scope) {
+) : TypesWithOperatorDetector(OperatorNameConventions.SET_VALUE, scope, indicesHelper) {
 
     override fun isSuitableByType(function: FunctionDescriptor, freeTypeParams: Collection<TypeParameterDescriptor>): Boolean {
         val paramType = FuzzyType(function.valueParameters.first().type, freeTypeParams)

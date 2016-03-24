@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.core
 
-import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.codeInsight.JavaProjectCodeInsightSettings
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiFile
@@ -26,10 +25,7 @@ import com.intellij.psi.search.PsiShortNamesCache
 import com.intellij.psi.stubs.StringStubIndexExtension
 import com.intellij.util.Processor
 import com.intellij.util.indexing.IdFilter
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaFieldDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaMethodDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
@@ -78,12 +74,12 @@ class KotlinIndicesHelper(
     }
 
     fun getTopLevelCallablesByName(name: String): Collection<CallableDescriptor> {
-        val declarations = HashSet<KtCallableDeclaration>()
+        val declarations = LinkedHashSet<KtCallableDeclaration>()
         declarations.addTopLevelNonExtensionCallablesByName(KotlinFunctionShortNameIndex.getInstance(), name)
         declarations.addTopLevelNonExtensionCallablesByName(KotlinPropertyShortNameIndex.getInstance(), name)
         return declarations
                 .flatMap { it.resolveToDescriptorsWithHack() }
-                .filter { it.extensionReceiverParameter == null && descriptorFilter(it) }
+                .filter { descriptorFilter(it) }
     }
 
     private fun MutableSet<KtCallableDeclaration>.addTopLevelNonExtensionCallablesByName(
@@ -91,6 +87,15 @@ class KotlinIndicesHelper(
             name: String
     ) {
         index.get(name, project, scope).filterTo(this) { it.parent is KtFile && it.receiverTypeReference == null }
+    }
+
+    fun getTopLevelExtensionOperatorsByName(name: String): Collection<FunctionDescriptor> {
+        return KotlinFunctionShortNameIndex.getInstance().get(name, project, scope)
+                .filter { it.parent is KtFile && it.receiverTypeReference != null && it.hasModifier(KtTokens.OPERATOR_KEYWORD) }
+                .flatMap { it.resolveToDescriptorsWithHack() }
+                .filterIsInstance<FunctionDescriptor>()
+                .filter { descriptorFilter(it) }
+                .distinct()
     }
 
     fun processTopLevelCallables(nameFilter: (String) -> Boolean, processor: (CallableDescriptor) -> Unit) {

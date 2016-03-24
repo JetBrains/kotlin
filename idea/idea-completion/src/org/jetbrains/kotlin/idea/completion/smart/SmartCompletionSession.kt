@@ -59,7 +59,7 @@ class SmartCompletionSession(
 
     private val smartCompletion by lazy(LazyThreadSafetyMode.NONE) {
         expression?.let {
-            SmartCompletion(it, resolutionFacade, bindingContext, moduleDescriptor, isVisibleFilter,
+            SmartCompletion(it, resolutionFacade, bindingContext, moduleDescriptor, isVisibleFilter, indicesHelper(false),
                             prefixMatcher, originalSearchScope, toFromOriginalFileMapper,
                             callTypeAndReceiver, isJvmModule)
         }
@@ -192,7 +192,7 @@ class SmartCompletionSession(
                     override fun getValueArgumentList() = throw UnsupportedOperationException()
                 }
 
-                val expectedInfos = ExpectedInfos(bindingContext, resolutionFacade)
+                val expectedInfos = ExpectedInfos(bindingContext, resolutionFacade, indicesHelper(false))
                         .calculateForArgument(dummyCall, dummyArgument)
                 collector.addElements(LambdaItems.collect(expectedInfos))
             }

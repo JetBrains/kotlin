@@ -140,6 +140,7 @@ object IfConditionAdditionalData : ExpectedInfo.AdditionalData
 class ExpectedInfos(
         private val bindingContext: BindingContext,
         private val resolutionFacade: ResolutionFacade,
+        private val indicesHelper: KotlinIndicesHelper?,
         private val useHeuristicSignatures: Boolean = true,
         private val useOuterCallsExpectedTypeCount: Int = 0
 ) {
@@ -207,7 +208,7 @@ class ExpectedInfos(
 
         if (useOuterCallsExpectedTypeCount > 0 && results.any(::makesSenseToUseOuterCallExpectedType)) {
             val callExpression = (call.callElement as? KtExpression)?.getQualifiedExpressionForSelectorOrThis() ?: return results
-            val expectedFuzzyTypes = ExpectedInfos(bindingContext, resolutionFacade, useHeuristicSignatures, useOuterCallsExpectedTypeCount - 1)
+            val expectedFuzzyTypes = ExpectedInfos(bindingContext, resolutionFacade, indicesHelper, useHeuristicSignatures, useOuterCallsExpectedTypeCount - 1)
                     .calculate(callExpression)
                     .mapNotNull { it.fuzzyType }
             if (expectedFuzzyTypes.isEmpty() || expectedFuzzyTypes.any { it.freeParameters.isNotEmpty() }) return results
@@ -587,7 +588,7 @@ class ExpectedInfos(
 
         val leftOperandType = binaryExpression.left?.let { bindingContext.getType(it) } ?: return null
         val scope = expressionWithType.getResolutionScope(bindingContext, resolutionFacade)
-        val detector = TypesWithContainsDetector(scope, leftOperandType)
+        val detector = TypesWithContainsDetector(scope, indicesHelper, leftOperandType)
 
         val byTypeFilter = object : ByTypeFilter {
             override fun matchingSubstitutor(descriptorType: FuzzyType): TypeSubstitutor? {
@@ -608,8 +609,8 @@ class ExpectedInfos(
                             ?: return null
 
         val explicitPropertyType = property.returnType?.check { propertyDeclaration.typeReference != null }
-        val typesWithGetDetector = TypesWithGetValueDetector(scope, propertyOwnerType, explicitPropertyType)
-        val typesWithSetDetector = if (property.isVar) TypesWithSetValueDetector(scope, propertyOwnerType) else null
+        val typesWithGetDetector = TypesWithGetValueDetector(scope, indicesHelper, propertyOwnerType, explicitPropertyType)
+        val typesWithSetDetector = if (property.isVar) TypesWithSetValueDetector(scope, indicesHelper, propertyOwnerType) else null
 
         val byTypeFilter = object : ByTypeFilter {
             override fun matchingSubstitutor(descriptorType: FuzzyType): TypeSubstitutor? {

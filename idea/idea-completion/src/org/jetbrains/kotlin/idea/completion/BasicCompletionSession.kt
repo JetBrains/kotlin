@@ -78,7 +78,7 @@ class BasicCompletionSession(
 
     private val smartCompletion = expression?.let {
         SmartCompletion(
-                it, resolutionFacade, bindingContext, moduleDescriptor, isVisibleFilter, prefixMatcher,
+                it, resolutionFacade, bindingContext, moduleDescriptor, isVisibleFilter, indicesHelper(false), prefixMatcher,
                 GlobalSearchScope.EMPTY_SCOPE, toFromOriginalFileMapper, callTypeAndReceiver,
                 isJvmModule, forBasicCompletion = true
         )

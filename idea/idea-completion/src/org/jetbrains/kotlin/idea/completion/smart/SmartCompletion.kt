@@ -55,6 +55,7 @@ class SmartCompletion(
         private val bindingContext: BindingContext,
         private val moduleDescriptor: ModuleDescriptor,
         private val visibilityFilter: (DeclarationDescriptor) -> Boolean,
+        private val indicesHelper: KotlinIndicesHelper,
         private val prefixMatcher: PrefixMatcher,
         private val inheritorSearchScope: GlobalSearchScope,
         private val toFromOriginalFileMapper: ToFromOriginalFileMapper,
@@ -302,7 +303,7 @@ class SmartCompletion(
         // if expected types are too general, try to use expected type from outer calls
         var count = 0
         while (true) {
-            val infos = ExpectedInfos(bindingContext, resolutionFacade, useOuterCallsExpectedTypeCount = count)
+            val infos = ExpectedInfos(bindingContext, resolutionFacade, indicesHelper, useOuterCallsExpectedTypeCount = count)
                     .calculate(expression)
             if (count == 2 /* use two outer calls maximum */ || infos.none { it.fuzzyType?.isAlmostEverything() ?: false }) {
                 return if (forBasicCompletion)

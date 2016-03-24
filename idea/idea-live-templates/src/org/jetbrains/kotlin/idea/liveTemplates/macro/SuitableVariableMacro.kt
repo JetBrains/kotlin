@@ -40,7 +40,7 @@ class SuitableVariableMacro : BaseKotlinVariableMacro<SuitableVariableMacro.Stat
         if (contextElement is KtNameReferenceExpression) {
             val callTypeAndReceiver = CallTypeAndReceiver.detect(contextElement)
             if (callTypeAndReceiver is CallTypeAndReceiver.DEFAULT) {
-                val expectedInfos = ExpectedInfos(bindingContext, resolutionFacade).calculate(contextElement)
+                val expectedInfos = ExpectedInfos(bindingContext, resolutionFacade, null).calculate(contextElement)
                 if (expectedInfos.isNotEmpty()) {
                     val scope = contextElement.getResolutionScope(bindingContext, resolutionFacade)
                     val smartCastCalculator = SmartCastCalculator(bindingContext, scope.ownerDescriptor, contextElement, null, resolutionFacade)
