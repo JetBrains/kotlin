@@ -30,7 +30,7 @@ class RuntimePublicAPITest {
     val testName = TestName()
 
     @Test fun kotlinRuntime() {
-        snapshotAPIAndCompare("../../tools/runtime/target", "kotlin-runtime", "runtime-declarations.json")
+        snapshotAPIAndCompare("../../tools/runtime/target", "kotlin-runtime", "runtime-declarations.json", listOf("kotlin.jvm.internal"))
     }
 
     @Test fun kotlinStdlib() {
@@ -44,14 +44,16 @@ class RuntimePublicAPITest {
     }
 */
 
-    private fun snapshotAPIAndCompare(basePath: String, jarPrefix: String, kotlinJvmMappingsPath: String) {
+    private fun snapshotAPIAndCompare(basePath: String, jarPrefix: String, kotlinJvmMappingsPath: String, publicPackages: List<String> = emptyList()) {
         val base = File(basePath).absoluteFile.normalize()
         val jarFile = getJarPath(base, jarPrefix)
         val kotlinJvmMappingsFile = base.resolve(kotlinJvmMappingsPath)
 
         println("Reading kotlin visibilities from $kotlinJvmMappingsFile")
+        val publicPackagePrefixes = publicPackages.map { it.replace('.', '/') + '/' }
         val visibilities =
                 readKotlinVisibilities(kotlinJvmMappingsFile)
+                .filterKeys { name -> publicPackagePrefixes.none { name.startsWith(it) } }
 
         println("Reading binary API from $jarFile")
         val api = getBinaryAPI(JarFile(jarFile), visibilities).filterOutNonPublic()

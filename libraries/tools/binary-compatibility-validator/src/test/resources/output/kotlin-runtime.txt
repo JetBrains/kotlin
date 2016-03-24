@@ -352,6 +352,12 @@ public synthetic fun getSize (Ljava/lang/Object;)I
 public final fun toArray ()[Z
 ------------------
 
+public final class kotlin/jvm/internal/ByteCompanionObject
+public static final field INSTANCE Lkotlin/jvm/internal/ByteCompanionObject;
+public static final field MAX_VALUE B
+public static final field MIN_VALUE B
+------------------
+
 public final class kotlin/jvm/internal/ByteSpreadBuilder: kotlin/jvm/internal/PrimitiveSpreadBuilder
 public fun <init> (I)V
 public final fun add (B)V
@@ -373,6 +379,16 @@ public fun getParameters ()Ljava/util/List;
 protected fun getReflected ()Lkotlin/reflect/KCallable;
 public fun getReturnType ()Lkotlin/reflect/KType;
 public fun getSignature ()Ljava/lang/String;
+------------------
+
+public final class kotlin/jvm/internal/CharCompanionObject
+public static final field INSTANCE Lkotlin/jvm/internal/CharCompanionObject;
+public static final field MAX_HIGH_SURROGATE C
+public static final field MAX_LOW_SURROGATE C
+public static final field MAX_SURROGATE C
+public static final field MIN_HIGH_SURROGATE C
+public static final field MIN_LOW_SURROGATE C
+public static final field MIN_SURROGATE C
 ------------------
 
 public final class kotlin/jvm/internal/CharSpreadBuilder: kotlin/jvm/internal/PrimitiveSpreadBuilder
@@ -406,11 +422,33 @@ public static fun toArray (Ljava/util/Collection;)[Ljava/lang/Object;
 public static fun toArray (Ljava/util/Collection;[Ljava/lang/Object;)[Ljava/lang/Object;
 ------------------
 
+public final class kotlin/jvm/internal/DoubleCompanionObject
+public static final field INSTANCE Lkotlin/jvm/internal/DoubleCompanionObject;
+public final fun getMAX_VALUE ()D
+public final fun getMIN_VALUE ()D
+public final fun getNEGATIVE_INFINITY ()D
+public final fun getNaN ()D
+public final fun getPOSITIVE_INFINITY ()D
+------------------
+
 public final class kotlin/jvm/internal/DoubleSpreadBuilder: kotlin/jvm/internal/PrimitiveSpreadBuilder
 public fun <init> (I)V
 public final fun add (D)V
 public synthetic fun getSize (Ljava/lang/Object;)I
 public final fun toArray ()[D
+------------------
+
+public final class kotlin/jvm/internal/EnumCompanionObject
+public static final field INSTANCE Lkotlin/jvm/internal/EnumCompanionObject;
+------------------
+
+public final class kotlin/jvm/internal/FloatCompanionObject
+public static final field INSTANCE Lkotlin/jvm/internal/FloatCompanionObject;
+public final fun getMAX_VALUE ()F
+public final fun getMIN_VALUE ()F
+public final fun getNEGATIVE_INFINITY ()F
+public final fun getNaN ()F
+public final fun getPOSITIVE_INFINITY ()F
 ------------------
 
 public final class kotlin/jvm/internal/FloatSpreadBuilder: kotlin/jvm/internal/PrimitiveSpreadBuilder
@@ -483,6 +521,12 @@ public static fun mark (I)V
 public static fun mark (Ljava/lang/String;)V
 ------------------
 
+public final class kotlin/jvm/internal/IntCompanionObject
+public static final field INSTANCE Lkotlin/jvm/internal/IntCompanionObject;
+public static final field MAX_VALUE I
+public static final field MIN_VALUE I
+------------------
+
 public final class kotlin/jvm/internal/IntSpreadBuilder: kotlin/jvm/internal/PrimitiveSpreadBuilder
 public fun <init> (I)V
 public final fun add (I)V
@@ -529,6 +573,12 @@ public abstract class kotlin/jvm/internal/Lambda: kotlin/jvm/internal/FunctionIm
 public fun <init> (I)V
 public fun getArity ()I
 public fun toString ()Ljava/lang/String;
+------------------
+
+public final class kotlin/jvm/internal/LongCompanionObject
+public static final field INSTANCE Lkotlin/jvm/internal/LongCompanionObject;
+public static final field MAX_VALUE J
+public static final field MIN_VALUE J
 ------------------
 
 public final class kotlin/jvm/internal/LongSpreadBuilder: kotlin/jvm/internal/PrimitiveSpreadBuilder
@@ -822,6 +872,12 @@ public fun property2 (Lkotlin/jvm/internal/PropertyReference2;)Lkotlin/reflect/K
 public fun renderLambdaToString (Lkotlin/jvm/internal/Lambda;)Ljava/lang/String;
 ------------------
 
+public final class kotlin/jvm/internal/ShortCompanionObject
+public static final field INSTANCE Lkotlin/jvm/internal/ShortCompanionObject;
+public static final field MAX_VALUE S
+public static final field MIN_VALUE S
+------------------
+
 public final class kotlin/jvm/internal/ShortSpreadBuilder: kotlin/jvm/internal/PrimitiveSpreadBuilder
 public fun <init> (I)V
 public final fun add (S)V
@@ -835,6 +891,10 @@ public fun add (Ljava/lang/Object;)V
 public fun addSpread (Ljava/lang/Object;)V
 public fun size ()I
 public fun toArray ([Ljava/lang/Object;)[Ljava/lang/Object;
+------------------
+
+public final class kotlin/jvm/internal/StringCompanionObject
+public static final field INSTANCE Lkotlin/jvm/internal/StringCompanionObject;
 ------------------
 
 public class kotlin/jvm/internal/TypeIntrinsics
