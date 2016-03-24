@@ -17,7 +17,3 @@ fun noInline(lambda: ()->Unit) : Runnable {
 fun noInline2(lambda: ()->Unit) : Runnable {
     return Runnable(lambda)
 }
-
-// 1 final class test/_1Kt\$sam\$Runnable\$89f9321c
-// 1 public final class test/_1Kt\$sam\$Runnable\$i\$89f9321c
-// 2 class test/_1Kt\$sam\$

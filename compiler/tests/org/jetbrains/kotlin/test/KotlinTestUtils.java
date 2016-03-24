@@ -950,10 +950,14 @@ public class KotlinTestUtils {
 
     @NotNull
     public static String replaceHashWithStar(@NotNull String string) {
+        return replaceHash(string, "*");
+    }
+
+    public static String replaceHash(@NotNull String string, @NotNull String replacement) {
         //TODO: hashes are still used in SamWrapperCodegen
         Matcher matcher = STRIP_PACKAGE_PART_HASH_PATTERN.matcher(string);
         if (matcher.find()) {
-            return matcher.replaceAll("\\$*");
+            return matcher.replaceAll("\\$" + replacement);
         }
         return string;
     }

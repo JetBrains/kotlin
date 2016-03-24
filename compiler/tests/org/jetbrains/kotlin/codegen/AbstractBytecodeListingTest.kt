@@ -34,7 +34,7 @@ abstract class AbstractBytecodeListingTest : CodegenTestCase() {
                     val cr = ClassReader(it.asByteArray())
                     val visitor = TextCollectingVisitor()
                     cr.accept(visitor, ClassReader.SKIP_CODE)
-                    visitor.text
+                    KotlinTestUtils.replaceHash(visitor.text, "HASH")
                 }.joinToString("\n\n")
 
         KotlinTestUtils.assertEqualsToFile(txtFile, generatedFiles)
