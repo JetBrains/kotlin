@@ -55,9 +55,6 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author Eugene.Kudelevsky
- */
 class AndroidLintGlobalInspectionContext implements GlobalInspectionContextExtension<AndroidLintGlobalInspectionContext> {
   static final Key<AndroidLintGlobalInspectionContext> ID = Key.create("AndroidKlintGlobalInspectionContext");
   private Map<Issue, Map<File, List<ProblemData>>> myResults;

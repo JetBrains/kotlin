@@ -28,9 +28,6 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author Eugene.Kudelevsky
- */
 public class AndroidLintUtil {
   @NonNls static final String ATTR_VALUE_VERTICAL = "vertical";
   @NonNls static final String ATTR_VALUE_WRAP_CONTENT = "wrap_content";

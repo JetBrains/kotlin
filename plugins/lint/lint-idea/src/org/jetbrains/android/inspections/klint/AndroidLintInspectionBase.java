@@ -55,9 +55,6 @@ import static com.android.tools.klint.detector.api.TextFormat.RAW;
 import static com.intellij.xml.CommonXmlStrings.HTML_END;
 import static com.intellij.xml.CommonXmlStrings.HTML_START;
 
-/**
- * @author Eugene.Kudelevsky
- */
 public abstract class AndroidLintInspectionBase extends GlobalInspectionTool {
   private static final Logger LOG = Logger.getInstance("#org.jetbrains.android.inspections.klint.AndroidLintInspectionBase");
 
