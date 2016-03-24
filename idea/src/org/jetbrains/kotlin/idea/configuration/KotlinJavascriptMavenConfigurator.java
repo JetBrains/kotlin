@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.resolve.TargetPlatform;
 
 public class KotlinJavascriptMavenConfigurator extends KotlinMavenConfigurator {
     private static final String NAME = "js maven";
-    private static final String STD_LIB_ID = "kotlin-js-library";
+    public static final String STD_LIB_ID = "kotlin-js-library";
     private static final String JS_GOAL = "js";
     private static final String JS_TEST_GOAL = "test-js";
     private static final String JS_EXECUTION_ID = "js";
