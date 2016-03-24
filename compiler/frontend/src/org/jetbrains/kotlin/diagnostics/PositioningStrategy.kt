@@ -30,7 +30,7 @@ open class PositioningStrategy<E : PsiElement> {
         return mark(diagnostic.psiElement)
     }
 
-    protected open fun mark(element: E): List<TextRange> {
+    open fun mark(element: E): List<TextRange> {
         return markElement(element)
     }
 
