@@ -10,7 +10,3 @@ repositories {
 dependencies {
     compile project(':projA')
 }
-
-compileKotlin {
-    experimentalIncremental = incrementalOption
-}

@@ -127,13 +127,14 @@ class KotlinGradleIT: BaseGradleIT() {
 
     @Test
     fun testSimpleMultiprojectIncremental() {
-
         fun Project.modify(body: Project.() -> Unit): Project {
             this.body()
             return this
         }
 
-        Project("multiprojectWithDependency", "1.6").build("-PincrementalOption=true", "assemble") {
+        val incremental = defaultBuildOptions().copy(incremental = true)
+
+        Project("multiprojectWithDependency", "1.6").build("assemble", options = incremental) {
             assertSuccessful()
             assertReportExists("projA")
             assertContains(":projA:compileKotlin")
@@ -148,7 +149,7 @@ class KotlinGradleIT: BaseGradleIT() {
             assertTrue { oldSrc.exists() }
             assertTrue { newSrc.exists() }
             newSrc.copyTo(oldSrc, overwrite = true)
-        }.build("-PincrementalOption=true", "assemble") {
+        }.build("assemble", options = incremental) {
             assertSuccessful()
             assertReportExists("projA")
             assertContains(":projA:compileKotlin")

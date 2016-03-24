@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.gradle
 
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -24,7 +23,8 @@ class KotlinGradlePluginJpsParametrizedCLIOnly : BaseIncrementalGradleIT() {
         JpsTestProject(jpsResourcesPath, relativePath).performAndAssertBuildStages(weakTesting = true)
     }
 
-    override fun defaultBuildOptions(): BuildOptions = BuildOptions(withDaemon = true)
+    override fun defaultBuildOptions(): BuildOptions =
+            BuildOptions(withDaemon = true, incremental = true)
 
     companion object {
 
