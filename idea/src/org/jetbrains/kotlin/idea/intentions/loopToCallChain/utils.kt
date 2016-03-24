@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.intentions.loopToCallChain
 
+import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isNullExpression
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -57,7 +59,10 @@ fun generateLambda(workingVariable: KtCallableDeclaration, expression: KtExpress
 
     val itExpr = psiFactory.createSimpleName("it")
     for (usage in usages) {
-        usage.replace(itExpr)
+        val replaced = usage.replaced(itExpr)
+
+        // we need to copy user data for checkSmartCastsPreserved() to work
+        (usage.node as UserDataHolderBase).copyCopyableDataTo(replaced.node as UserDataHolderBase)
     }
 
     return psiFactory.createExpressionByPattern("{ $0 }", lambdaExpression.bodyExpression!!) as KtLambdaExpression
