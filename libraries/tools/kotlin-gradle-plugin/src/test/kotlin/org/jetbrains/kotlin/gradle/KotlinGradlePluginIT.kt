@@ -210,6 +210,26 @@ class KotlinGradleIT: BaseGradleIT() {
     }
 
     @Test
+    fun testKaptStubsIncrementalBuild() {
+        val project = Project("kaptStubs", "1.12")
+
+        project.build("build") {
+            assertSuccessful()
+
+            // Modify the Kotlin source file somehow
+            val someJavaFile = fileInWorkingDir("src/main/java/test.kt")
+            someJavaFile.appendText(" ")
+        }
+
+        project.build("build") {
+            assertSuccessful()
+            assertContains(":compileKotlin")
+            assertContains(":compileJava")
+            assertNotContains(":compileJava UP-TO-DATE")
+        }
+    }
+
+    @Test
     fun testKaptArguments() {
         Project("kaptArguments", "1.12").build("build") {
             assertSuccessful()
@@ -248,5 +268,4 @@ class KotlinGradleIT: BaseGradleIT() {
             assertFileExists("build/classes/main/example/TestClassCustomized.class")
         }
     }
-
 }

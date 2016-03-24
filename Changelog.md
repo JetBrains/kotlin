@@ -24,6 +24,9 @@
 - Drop line breaks between operator arguments (except '+', "-", "&&" and "||")
 - Add non-null assertions on call site for non-null parameters
 
+### Tools. Android
+- Fixed sequential build with kapt and stubs enabled when Kotlin source file was modified and no Java source files were modified
+
 ### IDE
 - Debugger can distinguish nested inline arguments
 - Add kotlinClassName() and kotlinFunctionName() macros for use in live templates

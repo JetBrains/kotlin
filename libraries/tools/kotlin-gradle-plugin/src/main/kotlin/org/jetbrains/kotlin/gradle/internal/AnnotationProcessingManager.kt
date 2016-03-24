@@ -24,6 +24,7 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.plugin.*
 import java.io.File
 import java.io.IOException
+import java.util.*
 import java.util.zip.ZipFile
 
 fun Project.initKapt(
@@ -125,6 +126,7 @@ public class AnnotationProcessingManager(
         private val androidVariant: Any? = null) {
 
     private val project = task.project
+    private val random = Random()
 
     private companion object {
         val JAVA_FQNAME_PATTERN = "^([\\p{L}_$][\\p{L}\\p{N}_$]*\\.)*[\\p{L}_$][\\p{L}\\p{N}_$]*$".toRegex()
@@ -184,10 +186,16 @@ public class AnnotationProcessingManager(
         if (!javaHackPackageDir.exists()) javaHackPackageDir.mkdirs()
 
         val javaHackClFile = File(javaHackPackageDir, "Cl.java")
-        if (!javaHackClFile.exists()) {
-            javaHackClFile.writeText("package __gen.annotation; class Cl { @__gen.KotlinAptAnnotation boolean v; }")
-            project.logger.kotlinDebug("kapt: Java file stub generated: $javaHackClFile")
-        }
+        val previouslyExisted = javaHackClFile.exists()
+        val comment = System.currentTimeMillis().toString() + "-" + random.nextInt()
+
+        javaHackClFile.writeText(
+                "// $comment\n" +
+                        "package __gen.annotation;\n" +
+                        "class Cl { @__gen.KotlinAptAnnotation boolean v; }")
+
+        project.logger.kotlinDebug("kapt: Java file stub generated: $javaHackClFile " +
+                "(previously existed: $previouslyExisted)")
 
         if (!javaTask.source.contains(javaHackClFile)) {
             javaTask.source(javaAptSourceDir)
