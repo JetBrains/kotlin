@@ -16,6 +16,10 @@
 
 package org.jetbrains.kotlin.idea.intentions.loopToCallChain
 
+import com.intellij.openapi.util.Key
+import org.jetbrains.kotlin.idea.analysis.analyzeInContext
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.result.FindAndAssignTransformation
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.result.FindAndReturnTransformation
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.FilterTransformation
@@ -23,7 +27,15 @@ import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.FlatMapTran
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.MapTransformation
 import org.jetbrains.kotlin.idea.intentions.negate
 import org.jetbrains.kotlin.idea.util.CommentSaver
+import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
 
 object MatcherRegistrar {
@@ -59,7 +71,8 @@ fun match(loop: KtForExpression): ResultTransformationMatch? {
             val match = matcher.match(state)
             if (match != null) {
                 sequenceTransformations.addAll(match.sequenceTransformations)
-                return ResultTransformationMatch(match.resultTransformation, sequenceTransformations)
+                val resultMatch = ResultTransformationMatch(match.resultTransformation, sequenceTransformations)
+                return resultMatch.check { checkSmartCastsPreserved(loop, it) }
             }
         }
 
@@ -87,6 +100,57 @@ fun convertLoop(loop: KtForExpression, matchResult: ResultTransformationMatch): 
     commentSaver.restore(matchResult.resultTransformation.commentRestoringRange)
 
     return result
+}
+
+private fun checkSmartCastsPreserved(loop: KtForExpression, matchResult: ResultTransformationMatch): Boolean {
+    val bindingContext = loop.analyze(BodyResolveMode.FULL)
+
+    val SMARTCAST_KEY = Key<KotlinType>("SMARTCAST_KEY")
+    val IMPLICIT_RECEIVER_SMARTCAST_KEY = Key<KotlinType>("IMPLICIT_RECEIVER_SMARTCAST")
+
+    var smartCastsFound = false
+    try {
+        loop.forEachDescendantOfType<KtExpression> { expression ->
+            bindingContext[BindingContext.SMARTCAST, expression]?.let {
+                expression.putCopyableUserData(SMARTCAST_KEY, it)
+                smartCastsFound = true
+            }
+
+            bindingContext[BindingContext.IMPLICIT_RECEIVER_SMARTCAST, expression]?.let {
+                expression.putCopyableUserData(IMPLICIT_RECEIVER_SMARTCAST_KEY, it)
+                smartCastsFound = true
+            }
+        }
+
+        if (!smartCastsFound) return true // optimization
+
+        val callChain = matchResult.generateCallChain(loop)
+
+        val resolutionScope = loop.getResolutionScope(bindingContext, loop.getResolutionFacade())
+        val dataFlowInfo = bindingContext.getDataFlowInfo(loop)
+        val newBindingContext = callChain.analyzeInContext(resolutionScope, loop, dataFlowInfo = dataFlowInfo)
+
+        val smartCastBroken = callChain.anyDescendantOfType<KtExpression> { expression ->
+            val smartCastType = expression.getCopyableUserData(SMARTCAST_KEY)
+            if (smartCastType != null && newBindingContext[BindingContext.SMARTCAST, expression] != smartCastType && newBindingContext.getType(expression) != smartCastType) {
+                return@anyDescendantOfType true
+            }
+
+            val implicitReceiverSmartCastType = expression.getCopyableUserData(IMPLICIT_RECEIVER_SMARTCAST_KEY)
+            if (implicitReceiverSmartCastType != null && newBindingContext[BindingContext.IMPLICIT_RECEIVER_SMARTCAST, expression] != implicitReceiverSmartCastType) {
+                return@anyDescendantOfType true
+            }
+
+            false
+        }
+
+        return !smartCastBroken
+    }
+    finally {
+        if (smartCastsFound) {
+            loop.forEachDescendantOfType<KtExpression> { it.putCopyableUserData(SMARTCAST_KEY, null) }
+        }
+    }
 }
 
 private fun ResultTransformationMatch.generateCallChain(loop: KtForExpression): KtExpression {
