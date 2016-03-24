@@ -9,6 +9,7 @@ Compiling files:
   src/APartG.kt
 End of files
 Marked as dirty by Kotlin:
+  src/AChild.kt
   src/useF.kt
   src/useG.kt
 Exit code: ADDITIONAL_PASS_REQUIRED
