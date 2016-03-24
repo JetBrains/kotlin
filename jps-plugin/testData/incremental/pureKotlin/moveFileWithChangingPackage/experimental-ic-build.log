@@ -9,6 +9,7 @@ Compiling files:
   src/bar/a.kt
 End of files
 Marked as dirty by Kotlin:
+  src/useClass.kt
   src/useFun.kt
 Exit code: ADDITIONAL_PASS_REQUIRED
 ------------------------------------------
