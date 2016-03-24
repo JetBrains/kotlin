@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.kotlin.js.translate.context.Namer.getCapturedVarAccessor;
@@ -519,17 +520,23 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @Override
     @NotNull
     public JsNode visitObjectLiteralExpression(@NotNull KtObjectLiteralExpression expression, @NotNull TranslationContext context) {
-        return ClassTranslator.generateObjectLiteral(expression.getObjectDeclaration(), context);
-    }
+        ClassDescriptor descriptor = BindingUtils.getClassDescriptor(context.bindingContext(), expression.getObjectDeclaration());
+        JsScope scope = context.getScopeForDescriptor(descriptor);
+        TranslationContext classContext = context.innerWithUsageTracker(scope, descriptor);
 
-    @Override
-    @NotNull
-    public JsNode visitObjectDeclaration(@NotNull KtObjectDeclaration expression,
-            @NotNull TranslationContext context) {
-        DeclarationDescriptor descriptor = getDescriptorForElement(context.bindingContext(), expression);
-        JsName name = context.getNameForDescriptor(descriptor);
-        JsExpression value = ClassTranslator.generateClassCreation(expression, context);
-        return newVar(name, value).source(expression);
+        List<JsPropertyInitializer> properties = ClassTranslator.Companion.translate(expression.getObjectDeclaration(), classContext);
+        context.getDefinitionPlace().getProperties().addAll(properties);
+
+        JsExpression constructor = context.getQualifiedReference(descriptor);
+        List<DeclarationDescriptor> closure = context.getLocalClassClosure(descriptor);
+        List<JsExpression> closureArgs = new ArrayList<JsExpression>();
+        if (closure != null) {
+            for (DeclarationDescriptor capturedValue : closure) {
+                closureArgs.add(context.getParameterNameRefForInvocation(capturedValue));
+            }
+        }
+
+        return new JsNew(constructor, closureArgs);
     }
 
     @Override
@@ -569,7 +576,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @Override
     public JsNode visitClass(@NotNull KtClass klass, TranslationContext context) {
         ClassDescriptor descriptor = BindingUtils.getClassDescriptor(context.bindingContext(), klass);
-        JsObjectScope scope = new JsObjectScope(context.scope(), descriptor.toString(), "");
+        JsScope scope = context.getScopeForDescriptor(descriptor);
         TranslationContext classContext = context.innerWithUsageTracker(scope, descriptor);
 
         context.getDefinitionPlace().getProperties().addAll(ClassTranslator.Companion.translate(klass, classContext));

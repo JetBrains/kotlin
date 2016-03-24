@@ -39,9 +39,7 @@ import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getSupertypesWi
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getPrimaryConstructorParameters
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.simpleReturnFunction
 import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.toInvocationWith
-import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.KtSecondaryConstructor
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -197,33 +195,6 @@ class ClassTranslator private constructor(
         }
     }
 
-    private fun translateObjectInsideClass(outerClassContext: TranslationContext): JsExpression {
-        var outerDeclaration = descriptor.containingDeclaration.containingDeclaration
-        if (outerDeclaration != null && outerDeclaration !is ClassDescriptor) {
-            outerDeclaration = DescriptorUtils.getContainingClass(outerDeclaration)
-        }
-        val scope = if (outerDeclaration != null)
-            outerClassContext.getScopeForDescriptor(outerDeclaration)
-        else
-            outerClassContext.rootScope
-
-        val classContext = outerClassContext.innerWithUsageTracker(scope, descriptor)
-
-        var declarationArgs = getClassCreateInvocationArguments(classContext)
-        val jsClass = JsInvocation(context().namer().classCreationMethodReference(), declarationArgs)
-
-        val name = outerClassContext.getNameForDescriptor(descriptor)
-        val constructor = outerClassContext.define(name, jsClass)
-
-        val closure = outerClassContext.getLocalClassClosure(descriptor)
-        var closureArgs = emptyList<JsExpression>()
-        if (closure != null) {
-            closureArgs = closure.map { context().getParameterNameRefForInvocation(it) }.toList()
-        }
-
-        return JsNew(constructor, closureArgs)
-    }
-
     private fun generatedBridgeMethods(properties: MutableList<JsPropertyInitializer>) {
         if (isTrait()) return
 
@@ -270,7 +241,7 @@ class ClassTranslator private constructor(
     }
 
     companion object {
-        fun translate(classDeclaration: KtClass, context: TranslationContext): List<JsPropertyInitializer> {
+        fun translate(classDeclaration: KtClassOrObject, context: TranslationContext): List<JsPropertyInitializer> {
             val result = arrayListOf<JsPropertyInitializer>()
 
             val classDescriptor = getClassDescriptor(context.bindingContext(), classDeclaration)
@@ -286,12 +257,8 @@ class ClassTranslator private constructor(
             return result
         }
 
-        @JvmStatic fun generateClassCreation(classDeclaration: KtClassOrObject, context: TranslationContext): JsInvocation {
+        private fun generateClassCreation(classDeclaration: KtClassOrObject, context: TranslationContext): JsInvocation {
             return ClassTranslator(classDeclaration, context).translate()
-        }
-
-        @JvmStatic fun generateObjectLiteral(objectDeclaration: KtObjectDeclaration, context: TranslationContext): JsExpression {
-            return ClassTranslator(objectDeclaration, context).translateObjectInsideClass(context)
         }
 
         private fun generateSecondaryConstructor(constructor: KtSecondaryConstructor, context: TranslationContext): JsPropertyInitializer {
