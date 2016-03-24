@@ -3,18 +3,23 @@ package org.jetbrains.kotlin.gradle
 import org.junit.Test
 import java.io.File
 
-private const val DEFAULT_GRADLE_VERSION = "2.3"
 
-class KotlinAndroidGradleCLIOnly : BaseGradleIT() {
+class KotlinAndroidGradleCLIOnly : AbstractKotlinAndroidGradleTests(gradleVersion = "2.3", androidGradlePluginVersion = "1.5.+")
+
+abstract class AbstractKotlinAndroidGradleTests(
+        private val gradleVersion: String,
+        private val androidGradlePluginVersion: String
+) : BaseGradleIT() {
 
     override fun defaultBuildOptions() =
             BuildOptions(withDaemon = true,
                          assertThreadLeaks = false,
-                         androidHome = File("../../../dependencies/android-sdk-for-tests"))
+                         androidHome = File("../../../dependencies/android-sdk-for-tests"),
+                         androidGradlePluginVersion = androidGradlePluginVersion)
 
     @Test
     fun testSimpleCompile() {
-        val project = Project("AndroidProject", DEFAULT_GRADLE_VERSION)
+        val project = Project("AndroidProject", gradleVersion)
 
         project.build("build") {
             assertSuccessful()
@@ -61,7 +66,7 @@ class KotlinAndroidGradleCLIOnly : BaseGradleIT() {
 
     @Test
     fun testModuleNameAndroid() {
-        val project = Project("AndroidProject", DEFAULT_GRADLE_VERSION)
+        val project = Project("AndroidProject", gradleVersion)
 
         project.build("build") {
             assertContains(

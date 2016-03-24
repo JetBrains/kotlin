@@ -75,7 +75,8 @@ abstract class BaseGradleIT {
              * @see [ThreadTracker]
              */
             val assertThreadLeaks: Boolean = true,
-            val androidHome: File? = null)
+            val androidHome: File? = null,
+            val androidGradlePluginVersion: String? = null)
 
     open inner class Project(val projectName: String, val wrapperVersion: String = "1.4", val minLogLevel: LogLevel = LogLevel.DEBUG) {
         open val resourcesRoot = File(resourcesRootFile, "testProject/$projectName")
@@ -212,6 +213,7 @@ abstract class BaseGradleIT {
                     add("-P${ThreadTracker.ASSERT_THREAD_LEAKS_PROPERTY}=true")
                 }
                 options.incremental?.let { add("-Pkotlin.incremental=$it") }
+                options.androidGradlePluginVersion?.let { add("-PandroidToolsVersion=$it")}
             }
 
     private fun Project.createEnvironmentVariablesMap(options: BuildOptions): Map<String, String> =
