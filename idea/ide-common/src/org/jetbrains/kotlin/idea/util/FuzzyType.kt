@@ -19,6 +19,7 @@
 package org.jetbrains.kotlin.idea.util
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.CallHandle
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl
@@ -56,13 +57,24 @@ class FuzzyType(
 
     init {
         if (freeParameters.isNotEmpty()) {
-            val usedTypeParameters = HashSet<TypeParameterDescriptor>()
-            usedTypeParameters.addUsedTypeParameters(type)
-            this.freeParameters = freeParameters.filter { it in usedTypeParameters }.toSet()
+            // we allow to pass type parameters from another function with the same original in freeParameters
+            val usedTypeParameters = HashSet<TypeParameterDescriptor>().apply { addUsedTypeParameters(type) }
+            if (usedTypeParameters.isNotEmpty()) {
+                val originalFreeParameters = freeParameters.map { it.toOriginal() }.toSet()
+                this.freeParameters = usedTypeParameters.filter { it.toOriginal() in originalFreeParameters }.toSet()
+            }
+            else {
+                this.freeParameters = emptySet()
+            }
         }
         else {
             this.freeParameters = emptySet()
         }
+    }
+
+    private fun TypeParameterDescriptor.toOriginal(): TypeParameterDescriptor {
+        val functionDescriptor = containingDeclaration as? FunctionDescriptor ?: return this
+        return functionDescriptor.original.typeParameters[index]
     }
 
     override fun equals(other: Any?) = other is FuzzyType && other.type == type && other.freeParameters == freeParameters
@@ -137,9 +149,9 @@ class FuzzyType(
         // that's why we have to check subtyping manually
         val substitutor = constraintSystem.resultingSubstitutor
         val substitutedType = substitutor.substitute(type, Variance.INVARIANT) ?: return null
-        if (substitutedType.isError) return null
+        if (substitutedType.isError) return TypeSubstitutor.EMPTY
         val otherSubstitutedType = substitutor.substitute(otherType.type, Variance.INVARIANT) ?: return null
-        if (otherSubstitutedType.isError) return null
+        if (otherSubstitutedType.isError) return TypeSubstitutor.EMPTY
         if (!substitutedType.checkInheritance(otherSubstitutedType)) return null
 
         val substitution = constraintSystem.typeVariables.map { it.originalTypeParameter }.associateBy({ it.typeConstructor }) {

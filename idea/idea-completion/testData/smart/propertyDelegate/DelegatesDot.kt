@@ -4,7 +4,7 @@ class C {
     val v by Delegates.<caret>
 }
 
-// EXIST: notNull
-// EXIST: observable
-// EXIST: vetoable
+// EXIST: { itemText: "notNull", typeText: "ReadWriteProperty<Any?, T>" }
+// EXIST: { itemText: "observable", typeText: "ReadWriteProperty<Any?, T>" }
+// EXIST: { itemText: "vetoable", typeText: "ReadWriteProperty<Any?, T>" }
 // NOTHING_ELSE

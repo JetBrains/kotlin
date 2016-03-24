@@ -1450,6 +1450,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("DelegatesDotExplicitPropertyType.kt")
+        public void testDelegatesDotExplicitPropertyType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/DelegatesDotExplicitPropertyType.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ExplicitValType.kt")
         public void testExplicitValType() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/ExplicitValType.kt");
@@ -1459,6 +1465,30 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         @TestMetadata("ExplicitVarType.kt")
         public void testExplicitVarType() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/ExplicitVarType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExtensionSubstitution1.kt")
+        public void testExtensionSubstitution1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/ExtensionSubstitution1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExtensionSubstitution2.kt")
+        public void testExtensionSubstitution2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/ExtensionSubstitution2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExtensionSubstitution3.kt")
+        public void testExtensionSubstitution3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/ExtensionSubstitution3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExtensionSubstitution4.kt")
+        public void testExtensionSubstitution4() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/ExtensionSubstitution4.kt");
             doTest(fileName);
         }
 

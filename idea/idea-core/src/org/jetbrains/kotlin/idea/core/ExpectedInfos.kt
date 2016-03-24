@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.*
 import org.jetbrains.kotlin.utils.addToStdlib.check
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
@@ -592,7 +593,7 @@ class ExpectedInfos(
 
         val byTypeFilter = object : ByTypeFilter {
             override fun matchingSubstitutor(descriptorType: FuzzyType): TypeSubstitutor? {
-                return if (detector.findOperator(descriptorType) != null) TypeSubstitutor.EMPTY else null
+                return detector.findOperator(descriptorType)?.second
             }
         }
         return listOf(ExpectedInfo(byTypeFilter, null, null))
@@ -614,16 +615,22 @@ class ExpectedInfos(
 
         val byTypeFilter = object : ByTypeFilter {
             override fun matchingSubstitutor(descriptorType: FuzzyType): TypeSubstitutor? {
-                val getValueOperator = typesWithGetDetector.findOperator(descriptorType) ?: return null
+                val (getValueOperator, getOperatorSubstitutor) = typesWithGetDetector.findOperator(descriptorType) ?: return null
 
-                if (typesWithSetDetector != null) {
-                    val setValueOperator = typesWithSetDetector.findOperator(descriptorType) ?: return null
-                    val propertyType = explicitPropertyType ?: getValueOperator.returnType!!
-                    val setParamType = FuzzyType(setValueOperator.valueParameters.last().type, setValueOperator.typeParameters)
-                    if (setParamType.checkIsSuperTypeOf(propertyType) == null) return null
-                }
+                if (typesWithSetDetector == null) return getOperatorSubstitutor
 
-                return TypeSubstitutor.EMPTY //TODO: substitutor from property type
+                val substitutedType = FuzzyType(getOperatorSubstitutor.substitute(descriptorType.type, Variance.INVARIANT)!!, descriptorType.freeParameters)
+
+                val (setValueOperator, setOperatorSubstitutor) = typesWithSetDetector.findOperator(substitutedType) ?: return null
+                val propertyType = if (explicitPropertyType != null)
+                    FuzzyType(explicitPropertyType, emptyList())
+                else
+                    getValueOperator.fuzzyReturnType()!!
+                val setParamType = FuzzyType(setValueOperator.valueParameters.last().type, setValueOperator.typeParameters)
+                val setParamTypeSubstitutor = setParamType.checkIsSuperTypeOf(propertyType) ?: return null
+                return TypeSubstitutor.createChainedSubstitutor(getOperatorSubstitutor.substitution,
+                                                                TypeSubstitutor.createChainedSubstitutor(setOperatorSubstitutor.substitution,
+                                                                                                         setParamTypeSubstitutor.substitution).substitution)
             }
         }
         return listOf(ExpectedInfo(byTypeFilter, null, null))

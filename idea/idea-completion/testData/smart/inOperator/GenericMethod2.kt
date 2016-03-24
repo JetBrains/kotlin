@@ -10,4 +10,4 @@ interface A {
     }
 }
 
-// EXIST: { lookupString:"createX", itemText: "createX", tailText: "(t: T)", typeText:"X<T>" }
+// EXIST: { lookupString:"createX", itemText: "createX", tailText: "(t: String)", typeText:"X<String>" }

@@ -19,12 +19,14 @@ package org.jetbrains.kotlin.idea.core
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.idea.util.FuzzyType
+import org.jetbrains.kotlin.idea.util.fuzzyExtensionReceiverType
 import org.jetbrains.kotlin.idea.util.nullability
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.collectFunctions
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.isValidOperator
@@ -35,26 +37,26 @@ abstract class TypesWithOperatorDetector(
         private val scope: LexicalScope,
         private val indicesHelper: KotlinIndicesHelper?
 ) {
-    protected abstract fun isSuitableByType(function: FunctionDescriptor, freeTypeParams: Collection<TypeParameterDescriptor>): Boolean
+    protected abstract fun checkIsSuitableByType(function: FunctionDescriptor, freeTypeParams: Collection<TypeParameterDescriptor>): TypeSubstitutor?
 
-    private val cache = HashMap<FuzzyType, FunctionDescriptor?>()
+    private val cache = HashMap<FuzzyType, Pair<FunctionDescriptor, TypeSubstitutor>?>()
 
-    private val typesWithExtensionFromScope: Map<KotlinType, FunctionDescriptor> by lazy {
-        scope.collectFunctions(name, NoLookupLocation.FROM_IDE)
-                .filter { it.extensionReceiverParameter != null && it.isValidOperator() && isSuitableByType(it, it.typeParameters) }
-                .map { it.extensionReceiverParameter!!.type to it }
-                .toMap()
+    private val extensionOperators: Collection<FunctionDescriptor> by lazy {
+        val result = ArrayList<FunctionDescriptor>()
+        collectExtensionOperators(scope.collectFunctions(name, NoLookupLocation.FROM_IDE), result)
+        indicesHelper?.getTopLevelExtensionOperatorsByName(name.asString())?.let { collectExtensionOperators(it, result) }
+        result.distinctBy { it.original }
     }
 
-    private val typesWithExtensionFromIndices: Map<KotlinType, FunctionDescriptor> by lazy {
-        indicesHelper?.getTopLevelExtensionOperatorsByName(name.asString())
-                ?.filter { it.extensionReceiverParameter != null && it.isValidOperator() && isSuitableByType(it, it.typeParameters) }
-                ?.map { it.extensionReceiverParameter!!.type to it }
-                ?.filter { it.first !in typesWithExtensionFromScope.keys }
-                ?.toMap() ?: emptyMap()
+    private fun collectExtensionOperators(functions: Collection<FunctionDescriptor>, result: MutableCollection<FunctionDescriptor>) {
+        for (function in functions) {
+            if (function.extensionReceiverParameter == null || !function.isValidOperator()) continue
+            val substitutor = checkIsSuitableByType(function, function.typeParameters) ?: continue
+            result.add(function.substitute(substitutor))
+        }
     }
 
-    fun findOperator(type: FuzzyType): FunctionDescriptor? {
+    fun findOperator(type: FuzzyType): Pair<FunctionDescriptor, TypeSubstitutor>? {
         if (cache.containsKey(type)) {
             return cache[type]
         }
@@ -65,16 +67,21 @@ abstract class TypesWithOperatorDetector(
         }
     }
 
-    private fun findOperatorNoCache(type: FuzzyType): FunctionDescriptor? {
+    private fun findOperatorNoCache(type: FuzzyType): Pair<FunctionDescriptor, TypeSubstitutor>? {
         if (type.nullability() != TypeNullability.NULLABLE) {
-            val memberFunction = type.type.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_IDE)
-                    .firstOrNull { it.isValidOperator() && isSuitableByType(it, type.freeParameters) }
-            if (memberFunction != null) return memberFunction
+            for (memberFunction in type.type.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_IDE)) {
+                if (memberFunction.isValidOperator()) {
+                    checkIsSuitableByType(memberFunction, type.freeParameters)?.let { substitutor ->
+                        return Pair(memberFunction.substitute(substitutor), substitutor)
+                    }
+                }
+            }
         }
 
-        for ((typeWithExtension, operator) in typesWithExtensionFromScope + typesWithExtensionFromIndices) {
-            if (type.checkIsSubtypeOf(typeWithExtension) != null) {
-                return operator //TODO: substitution
+        for (operator in extensionOperators) {
+            val substitutor = type.checkIsSubtypeOf(operator.fuzzyExtensionReceiverType()!!)
+            if (substitutor != null) {
+                return Pair(operator.substitute(substitutor), substitutor)
             }
         }
 
@@ -88,10 +95,10 @@ class TypesWithContainsDetector(
         private val argumentType: KotlinType
 ) : TypesWithOperatorDetector(OperatorNameConventions.CONTAINS, scope, indicesHelper) {
 
-    override fun isSuitableByType(function: FunctionDescriptor, freeTypeParams: Collection<TypeParameterDescriptor>): Boolean {
+    override fun checkIsSuitableByType(function: FunctionDescriptor, freeTypeParams: Collection<TypeParameterDescriptor>): TypeSubstitutor? {
         val parameter = function.valueParameters.single()
         val fuzzyParameterType = FuzzyType(parameter.type, function.typeParameters + freeTypeParams)
-        return fuzzyParameterType.checkIsSuperTypeOf(argumentType) != null
+        return fuzzyParameterType.checkIsSuperTypeOf(argumentType)
     }
 }
 
@@ -102,16 +109,15 @@ class TypesWithGetValueDetector(
         private val propertyType: KotlinType?
 ) : TypesWithOperatorDetector(OperatorNameConventions.GET_VALUE, scope, indicesHelper) {
 
-    override fun isSuitableByType(function: FunctionDescriptor, freeTypeParams: Collection<TypeParameterDescriptor>): Boolean {
+    override fun checkIsSuitableByType(function: FunctionDescriptor, freeTypeParams: Collection<TypeParameterDescriptor>): TypeSubstitutor? {
         val paramType = FuzzyType(function.valueParameters.first().type, freeTypeParams)
-        if (paramType.checkIsSuperTypeOf(propertyOwnerType) == null) return false
+        val substitutor = paramType.checkIsSuperTypeOf(propertyOwnerType) ?: return null
 
-        if (propertyType != null) {
-            val returnType = FuzzyType(function.returnType ?: return false, freeTypeParams)
-            return returnType.checkIsSubtypeOf(propertyType) != null
-        }
+        if (propertyType == null) return substitutor
 
-        return true
+        val fuzzyReturnType = FuzzyType(function.returnType ?: return null, freeTypeParams)
+        val substitutorFromPropertyType = fuzzyReturnType.checkIsSubtypeOf(propertyType) ?: return null
+        return TypeSubstitutor.createChainedSubstitutor(substitutor.substitution, substitutorFromPropertyType.substitution)
     }
 }
 
@@ -121,8 +127,8 @@ class TypesWithSetValueDetector(
         private val propertyOwnerType: KotlinType
 ) : TypesWithOperatorDetector(OperatorNameConventions.SET_VALUE, scope, indicesHelper) {
 
-    override fun isSuitableByType(function: FunctionDescriptor, freeTypeParams: Collection<TypeParameterDescriptor>): Boolean {
+    override fun checkIsSuitableByType(function: FunctionDescriptor, freeTypeParams: Collection<TypeParameterDescriptor>): TypeSubstitutor? {
         val paramType = FuzzyType(function.valueParameters.first().type, freeTypeParams)
-        return paramType.checkIsSuperTypeOf(propertyOwnerType) != null
+        return paramType.checkIsSuperTypeOf(propertyOwnerType)
     }
 }
