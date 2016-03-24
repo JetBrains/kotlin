@@ -4807,6 +4807,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("unescapeSingleQuote.kt")
+        public void testUnescapeSingleQuote() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/unescapeSingleQuote.kt");
+            doTest(fileName);
+        }
+
     }
 
     @TestMetadata("idea/testData/intentions/declarations")

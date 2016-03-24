@@ -1,0 +1,3 @@
+fun test(p: String): String {
+    return <caret>p + '\''
+}
