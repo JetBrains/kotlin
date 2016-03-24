@@ -149,6 +149,11 @@ class CliLightClassGenerationSupport(project: Project) : LightClassGenerationSup
                 KtLightClassForFacade.createForFacade(psiManager, facadeFqName, scope, filesForFacade))
     }
 
+    override fun getMultifilePartClasses(partFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
+        //
+        return emptyList()
+    }
+
     override fun findFilesForFacade(facadeFqName: FqName, scope: GlobalSearchScope): Collection<KtFile> {
         if (facadeFqName.isRoot) return emptyList()
 

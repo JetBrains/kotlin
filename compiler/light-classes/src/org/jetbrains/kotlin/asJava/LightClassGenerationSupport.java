@@ -76,6 +76,9 @@ public abstract class LightClassGenerationSupport {
     public abstract Collection<PsiClass> getFacadeClasses(@NotNull FqName facadeFqName, @NotNull GlobalSearchScope scope);
 
     @NotNull
+    public abstract Collection<PsiClass> getMultifilePartClasses(@NotNull FqName partFqName, @NotNull GlobalSearchScope scope);
+
+    @NotNull
     public abstract Collection<PsiClass> getFacadeClassesInPackage(@NotNull FqName packageFqName, @NotNull GlobalSearchScope scope);
 
     @NotNull
@@ -86,5 +89,4 @@ public abstract class LightClassGenerationSupport {
 
     @NotNull
     public abstract LightClassConstructionContext getContextForFacade(@NotNull Collection<KtFile> files);
-
 }
