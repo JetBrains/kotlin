@@ -295,6 +295,7 @@ class ClassTranslator private constructor(
         }
 
         private fun generateSecondaryConstructor(constructor: KtSecondaryConstructor, context: TranslationContext): JsPropertyInitializer {
+            // Prepare
             val constructorDescriptor = BindingUtils.getDescriptorForElement(context.bindingContext(), constructor) as ConstructorDescriptor
             val classDescriptor = constructorDescriptor.containingDeclaration
 
@@ -309,6 +310,9 @@ class ClassTranslator private constructor(
             translationContext = translationContext.newDeclaration(constructorDescriptor, translationContext.definitionPlace)
             translationContext = translationContext.innerContextWithAliased(receiverDescriptor, thisNameRef)
 
+            val closure = translationContext.getLocalClassClosure(classDescriptor)
+            val usageTracker = context.usageTracker()
+
             val outerName = translationContext.getOuterClassReference(classDescriptor);
             val outerClass = DescriptorUtils.getContainingClass(classDescriptor)
             if (outerClass != null && outerName != null) {
@@ -316,43 +320,59 @@ class ClassTranslator private constructor(
                 translationContext = translationContext.innerContextWithAliased(outerClassRef, outerName.makeRef())
             }
 
+            // Translate constructor body
             val constructorInitializer = FunctionTranslator.newInstance(constructor, translationContext).translateAsMethod()
             val constructorFunction = constructorInitializer.valueExpr as JsFunction
 
-            val leadingArgs = mutableListOf<JsExpression>()
-
-            if (outerName != null) {
-                constructorFunction.parameters.add(0, JsParameter(outerName))
-                leadingArgs.add(outerName.makeRef())
-            }
-            constructorFunction.parameters.add(JsParameter(thisName))
+            // Translate super/this call
+            val forAddToBeginning = arrayListOf<JsStatement>()
 
             val referenceToClass = translationContext.getQualifiedReference(classDescriptor)
 
-            val forAddToBeginning: List<JsStatement> =
-                    with(arrayListOf<JsStatement>()) {
-                        addAll(FunctionBodyTranslator.setDefaultValueForArguments(constructorDescriptor, translationContext))
+            forAddToBeginning.addAll(FunctionBodyTranslator.setDefaultValueForArguments(constructorDescriptor, translationContext))
 
-                        val createInstance = Namer.createObjectWithPrototypeFrom(referenceToClass)
-                        val instanceVar = JsAstUtils.assignment(thisNameRef, JsAstUtils.or(thisNameRef, createInstance)).makeStmt()
-                        add(instanceVar)
+            val createInstance = Namer.createObjectWithPrototypeFrom(referenceToClass)
+            val instanceVar = JsAstUtils.assignment(thisNameRef, JsAstUtils.or(thisNameRef, createInstance)).makeStmt()
+            forAddToBeginning.add(instanceVar)
 
-                        val resolvedCall = BindingContextUtils.getDelegationConstructorCall(translationContext.bindingContext(),
-                                                                                            constructorDescriptor)
-                        val delegationClassDescriptor = resolvedCall?.resultingDescriptor?.containingDeclaration
+            val resolvedCall = BindingContextUtils.getDelegationConstructorCall(translationContext.bindingContext(),
+                                                                                constructorDescriptor)
+            val delegationClassDescriptor = resolvedCall?.resultingDescriptor?.containingDeclaration
+            val superCall = if (resolvedCall != null && !KotlinBuiltIns.isAny(delegationClassDescriptor!!)) {
+                CallTranslator.translate(translationContext, resolvedCall)
+            }
+            else {
+                null
+            }
 
-                        if (resolvedCall != null && !KotlinBuiltIns.isAny(delegationClassDescriptor!!)) {
-                            val superCall = CallTranslator.translate(translationContext, resolvedCall)
-                            add(superCall.toInvocationWith(leadingArgs, thisNameRef).makeStmt())
-                        }
+            // Add parameters for closure and outer instance
+            val leadingArgs = mutableListOf<JsExpression>()
 
-                        val delegationCtorInTheSameClass = delegationClassDescriptor == classDescriptor
-                        if (!delegationCtorInTheSameClass && !classDescriptor.hasPrimaryConstructor()) {
-                            add(JsInvocation(Namer.getFunctionCallRef(referenceToClass), listOf(thisNameRef) + leadingArgs).makeStmt())
-                        }
+            var additionalParameterIndex = 0
+            if (closure != null && usageTracker != null) {
+                for (capturedValue in closure) {
+                    val capturedName = usageTracker.capturedDescriptorToJsName[capturedValue]!!
+                    constructorFunction.parameters.add(additionalParameterIndex++, JsParameter(capturedName))
+                    leadingArgs.add(capturedName.makeRef())
+                }
+            }
 
-                        this
-                    }
+            if (outerName != null) {
+                constructorFunction.parameters.add(additionalParameterIndex, JsParameter(outerName))
+                leadingArgs.add(outerName.makeRef())
+            }
+
+            constructorFunction.parameters.add(JsParameter(thisName))
+
+            // Insert super/this call to beginning of function
+            if (superCall != null) {
+                forAddToBeginning.add(superCall.toInvocationWith(leadingArgs, thisNameRef).makeStmt())
+            }
+
+            val delegationCtorInTheSameClass = delegationClassDescriptor == classDescriptor
+            if (!delegationCtorInTheSameClass && !classDescriptor.hasPrimaryConstructor()) {
+                forAddToBeginning.add(JsInvocation(Namer.getFunctionCallRef(referenceToClass), listOf(thisNameRef) + leadingArgs).makeStmt())
+            }
 
             with(constructorFunction.body.statements) {
                 addAll(0, forAddToBeginning)

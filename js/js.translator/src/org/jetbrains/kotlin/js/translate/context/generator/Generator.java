@@ -31,7 +31,7 @@ public class Generator<V> {
     @NotNull
     private final List<Rule<V>> rules = Lists.newArrayList();
 
-    public void addRule(@NotNull Rule<V> rule) {
+    protected final void addRule(@NotNull Rule<V> rule) {
         rules.add(rule);
     }
 

@@ -572,9 +572,8 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         JsObjectScope scope = new JsObjectScope(context.scope(), descriptor.toString(), "");
         TranslationContext classContext = context.innerWithUsageTracker(scope, descriptor);
 
-        JsInvocation jsClass = ClassTranslator.generateClassCreation(klass, classContext);
+        context.getDefinitionPlace().getProperties().addAll(ClassTranslator.Companion.translate(klass, classContext));
 
-        JsName name = context.getNameForDescriptor(descriptor);
-        return context.define(name, jsClass);
+        return JsEmpty.INSTANCE;
     }
 }
