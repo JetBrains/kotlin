@@ -309,6 +309,10 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
                 val toIntIsNeeded = value != null && value.toString().toInt() < 0 && !isLongField(expression.parent)
                 text = if (value != null && !isHexLiteral(text)) value.toString() else text + (if (toIntIsNeeded) ".toInt()" else "")
             }
+
+            if (typeStr == "java.lang.String") {
+                text = text.replace("\\$([A-Za-z]+|\\{)".toRegex(), "\\\\$0")
+            }
         }
 
         result = LiteralExpression(text)
