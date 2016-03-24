@@ -1444,6 +1444,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/smart/propertyDelegate"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("DelegatesDot.kt")
+        public void testDelegatesDot() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/DelegatesDot.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ExplicitValType.kt")
         public void testExplicitValType() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/ExplicitValType.kt");
