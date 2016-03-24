@@ -169,6 +169,12 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             doBoxTestWithInlineCheck(fileName);
         }
 
+        @TestMetadata("sam.1.kt")
+        public void testSam() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/sam.1.kt");
+            doBoxTestWithInlineCheck(fileName);
+        }
+
         @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/properRecapturing")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
