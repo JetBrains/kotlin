@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.kotlin.js.translate.initializer.InitializerUtils.generateInitializerForDelegate
 import org.jetbrains.kotlin.js.translate.initializer.InitializerUtils.generateInitializerForProperty
 import org.jetbrains.kotlin.js.translate.initializer.InitializerVisitor
-import org.jetbrains.kotlin.js.translate.utils.BindingUtils
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getPropertyDescriptor
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.psi.KtClass
@@ -59,10 +58,7 @@ class FileDeclarationVisitor(
         context!!
 
         // TODO: avoid duplication with superclass
-        val obj = ClassTranslator.generateClassCreation(declaration, context)
-        val descriptor = BindingUtils.getClassDescriptor(context.bindingContext(), declaration)
-        val objName = context.getNameForDescriptor(descriptor)
-        result.add(JsPropertyInitializer(objName.makeRef(), obj))
+        result.addAll(ClassTranslator.translate(declaration, context))
 
         return null
     }

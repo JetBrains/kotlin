@@ -73,22 +73,18 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
         ClassDescriptor descriptor = getClassDescriptor(data.bindingContext(), enumEntry);
         List<KotlinType> supertypes = getSupertypesWithoutFakes(descriptor);
         if (enumEntry.getBody() != null || supertypes.size() > 1) {
-            jsEnumEntryCreation = ClassTranslator.generateClassCreation(enumEntry, data);
+            enumEntryList.addAll(ClassTranslator.Companion.translate(enumEntry, data));
         } else {
             assert supertypes.size() == 1 : "Simple Enum entry must have one supertype";
             jsEnumEntryCreation = new ClassInitializerTranslator(enumEntry, data).generateEnumEntryInstanceCreation(supertypes.get(0));
+            enumEntryList.add(new JsPropertyInitializer(data.getNameForDescriptor(descriptor).makeRef(), jsEnumEntryCreation));
         }
-        enumEntryList.add(new JsPropertyInitializer(data.getNameForDescriptor(descriptor).makeRef(), jsEnumEntryCreation));
         return null;
     }
 
     @Override
     public Void visitObjectDeclaration(@NotNull KtObjectDeclaration declaration, TranslationContext context) {
-        JsExpression object = ClassTranslator.generateClassCreation(declaration, context);
-        ClassDescriptor descriptor = BindingUtils.getClassDescriptor(context.bindingContext(), declaration);
-        JsName objName = context.getNameForDescriptor(descriptor);
-        staticResult.add(new JsPropertyInitializer(objName.makeRef(), object));
-
+        staticResult.addAll(ClassTranslator.Companion.translate(declaration, context));
         return null;
     }
 
