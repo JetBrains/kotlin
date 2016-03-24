@@ -31,6 +31,12 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class ClassesTestGenerated extends AbstractClassesTest {
+    @TestMetadata("classCompanionInitializationWithJava.kt")
+    public void ignoredClassCompanionInitializationWithJava() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/classCompanionInitializationWithJava.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("classObjectAsStaticInitializer.kt")
     public void ignoredClassObjectAsStaticInitializer() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/classObjectAsStaticInitializer.kt");
@@ -566,6 +572,12 @@ public class ClassesTestGenerated extends AbstractClassesTest {
     @TestMetadata("kt725.kt")
     public void testKt725() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt725.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kt8011.kt")
+    public void testKt8011() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt8011.kt");
         doTest(fileName);
     }
 

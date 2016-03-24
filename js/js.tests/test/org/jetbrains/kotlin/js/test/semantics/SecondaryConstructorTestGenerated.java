@@ -31,30 +31,6 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class SecondaryConstructorTestGenerated extends AbstractSecondaryConstructorTest {
-    @TestMetadata("accessToNestedObject.kt")
-    public void ignoredAccessToNestedObject() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/accessToNestedObject.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("innerClasses.kt")
-    public void ignoredInnerClasses() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/innerClasses.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("innerClassesInheritance.kt")
-    public void ignoredInnerClassesInheritance() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/innerClassesInheritance.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("localClasses.kt")
-    public void ignoredLocalClasses() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/localClasses.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("withGenerics.kt")
     public void ignoredWithGenerics() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/withGenerics.kt");
@@ -88,6 +64,12 @@ public class SecondaryConstructorTestGenerated extends AbstractSecondaryConstruc
     @TestMetadata("accessToCompanion.kt")
     public void testAccessToCompanion() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/accessToCompanion.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("accessToNestedObject.kt")
+    public void testAccessToNestedObject() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/accessToNestedObject.kt");
         doTest(fileName);
     }
 
@@ -146,6 +128,24 @@ public class SecondaryConstructorTestGenerated extends AbstractSecondaryConstruc
     @TestMetadata("generics.kt")
     public void testGenerics() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/generics.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("innerClasses.kt")
+    public void testInnerClasses() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/innerClasses.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("innerClassesInheritance.kt")
+    public void testInnerClassesInheritance() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/innerClassesInheritance.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("localClasses.kt")
+    public void testLocalClasses() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/localClasses.kt");
         doTest(fileName);
     }
 

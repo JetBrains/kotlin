@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
 
 import java.util.HashMap;
 import java.util.List;
@@ -58,8 +59,6 @@ public class TranslationContext {
     private final DeclarationDescriptor declarationDescriptor;
     @Nullable
     private final ClassDescriptor classDescriptor;
-    @Nullable
-    private final ClassDescriptor objectDescriptor;
 
     @NotNull
     public static TranslationContext rootContext(@NotNull StaticContext staticContext, JsFunction rootFunction) {
@@ -86,19 +85,11 @@ public class TranslationContext {
         this.usageTracker = usageTracker;
         this.definitionPlace = definitionPlace;
         this.declarationDescriptor = declarationDescriptor;
-        if (declarationDescriptor instanceof ClassDescriptor
-                && !DescriptorUtils.isAnonymousObject(declarationDescriptor)
-                && !DescriptorUtils.isObject(declarationDescriptor)) {
+        if (declarationDescriptor instanceof ClassDescriptor) {
             this.classDescriptor = (ClassDescriptor) declarationDescriptor;
         }
         else {
             this.classDescriptor = parent != null ? parent.classDescriptor : null;
-        }
-        if (declarationDescriptor instanceof ClassDescriptor && DescriptorUtils.isObject(declarationDescriptor)) {
-            this.objectDescriptor = (ClassDescriptor) declarationDescriptor;
-        }
-        else {
-            this.objectDescriptor = parent != null ? parent.objectDescriptor : null;
         }
     }
 
@@ -361,7 +352,20 @@ public class TranslationContext {
                 return getQualifiedReference(descriptor.getContainingDeclaration());
             }
         }
-        return getDispatchReceiverPath(getNearestClass(descriptor));
+
+        if (descriptor.getValue() instanceof ExtensionReceiver) return JsLiteral.THIS;
+
+        ClassifierDescriptor classifier = descriptor.getValue().getType().getConstructor().getDeclarationDescriptor();
+        if (!(classifier instanceof ClassDescriptor)) return JsLiteral.THIS;
+
+        ClassDescriptor cls = (ClassDescriptor) classifier;
+
+        JsExpression receiver = getAliasForDescriptor(cls.getThisAsReceiverParameter());
+        if (receiver == null) {
+            receiver = JsLiteral.THIS;
+        }
+
+        return getDispatchReceiverPath(cls, receiver);
     }
 
     private boolean isConstructorOrDirectScope(DeclarationDescriptor descriptor) {
@@ -374,7 +378,7 @@ public class TranslationContext {
     }
 
     @NotNull
-    private JsExpression getDispatchReceiverPath(@Nullable ClassDescriptor cls) {
+    private JsExpression getDispatchReceiverPath(@Nullable ClassDescriptor cls, JsExpression thisExpression) {
         if (cls != null) {
             JsExpression alias = getAliasForDescriptor(cls);
             if (alias != null) {
@@ -385,14 +389,14 @@ public class TranslationContext {
             (classDescriptor != null &&
              cls != null && DescriptorUtils.isSubclass(classDescriptor, cls)) ||
             parent == null) {
-            return JsLiteral.THIS;
+            return thisExpression;
         }
         ClassDescriptor parentDescriptor = parent.classDescriptor;
         if (classDescriptor != parentDescriptor) {
-            return new JsNameRef(Namer.OUTER_FIELD_NAME, parent.getDispatchReceiverPath(cls));
+            return new JsNameRef(Namer.OUTER_FIELD_NAME, parent.getDispatchReceiverPath(cls, thisExpression));
         }
         else {
-            return parent.getDispatchReceiverPath(cls);
+            return parent.getDispatchReceiverPath(cls, thisExpression);
         }
     }
 
@@ -443,20 +447,6 @@ public class TranslationContext {
     }
 
     @Nullable
-    private static ClassDescriptor getNearestClass(@NotNull DeclarationDescriptor declaration) {
-        DeclarationDescriptor decl = declaration;
-        while (decl != null) {
-            if (decl instanceof ClassDescriptor) {
-                if (!DescriptorUtils.isAnonymousObject(decl) && !DescriptorUtils.isObject(decl)) {
-                    return (ClassDescriptor) decl;
-                }
-            }
-            decl = decl.getContainingDeclaration();
-        }
-        return null;
-    }
-
-    @Nullable
     public DeclarationDescriptor getDeclarationDescriptor() {
         return declarationDescriptor;
     }
@@ -481,5 +471,15 @@ public class TranslationContext {
     @NotNull
     public JsScope getRootScope() {
         return staticContext.getRootScope();
+    }
+
+    @Nullable
+    public JsName getOuterClassReference(ClassDescriptor descriptor) {
+        DeclarationDescriptor container = descriptor.getContainingDeclaration();
+        if (!(container instanceof ClassDescriptor) || !descriptor.isInner()) {
+            return null;
+        }
+
+        return staticContext.getScopeForDescriptor(descriptor).declareName(Namer.OUTER_FIELD_NAME);
     }
 }
