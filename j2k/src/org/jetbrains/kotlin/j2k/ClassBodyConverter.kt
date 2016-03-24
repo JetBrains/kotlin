@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.j2k
 import com.intellij.psi.*
 import org.jetbrains.kotlin.j2k.ast.*
 import org.jetbrains.kotlin.j2k.usageProcessing.AccessorToPropertyProcessing
-import org.jetbrains.kotlin.j2k.usageProcessing.MethodIntoObjectProcessing
+import org.jetbrains.kotlin.j2k.usageProcessing.MemberIntoObjectProcessing
 import org.jetbrains.kotlin.j2k.usageProcessing.ToObjectWithOnlyMethodsProcessing
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.SpecialNames
@@ -100,9 +100,8 @@ class ClassBodyConverter(private val psiClass: PsiClass,
             }
             else {
                 for (psiMember in psiMembers) {
-                    if (psiMember is PsiMethod /* fields in object can be accessed as fields from java */
-                        && !psiMember.hasModifierProperty(PsiModifier.PRIVATE)) {
-                        converter.addUsageProcessing(MethodIntoObjectProcessing(psiMember, JvmAbi.INSTANCE_FIELD))
+                    if (!psiMember.hasModifierProperty(PsiModifier.PRIVATE)) {
+                        converter.addUsageProcessing(MemberIntoObjectProcessing(psiMember, JvmAbi.INSTANCE_FIELD))
                     }
                 }
             }
@@ -123,9 +122,8 @@ class ClassBodyConverter(private val psiClass: PsiClass,
             }
             else if (useCompanionObject && member !is Class && psiMember !is PsiEnumConstant && psiMember.hasModifierProperty(PsiModifier.STATIC)) {
                 companionObjectMembers.add(member)
-                if (psiMember is PsiMethod /* fields in companion object can be accessed as fields from java */
-                        && !psiMember.hasModifierProperty(PsiModifier.PRIVATE)) {
-                    converter.addUsageProcessing(MethodIntoObjectProcessing(psiMember, SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT.identifier))
+                if (!psiMember.hasModifierProperty(PsiModifier.PRIVATE)) {
+                    converter.addUsageProcessing(MemberIntoObjectProcessing(psiMember, SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT.identifier))
                 }
             }
             else {

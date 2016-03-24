@@ -18,13 +18,18 @@ package org.jetbrains.kotlin.j2k.usageProcessing
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
 class ToObjectWithOnlyMethodsProcessing(private val psiClass: PsiClass) : UsageProcessing {
     override val targetElement: PsiElement get() = psiClass
 
     override val convertedCodeProcessor: ConvertedCodeProcessor? get() = null
 
-    override val javaCodeProcessor = object: ExternalCodeProcessor {
+    override val javaCodeProcessors = ToObjectWithOnlyMethodsProcessor().singletonList()
+
+    override val kotlinCodeProcessors = emptyList<ExternalCodeProcessor>()
+
+    inner class ToObjectWithOnlyMethodsProcessor: ExternalCodeProcessor {
         override fun processUsage(reference: PsiReference): Array<PsiReference>? {
             val refExpr = reference.element as? PsiReferenceExpression ?: return null
             val factory = PsiElementFactory.SERVICE.getInstance(psiClass.project)
@@ -33,6 +38,4 @@ class ToObjectWithOnlyMethodsProcessing(private val psiClass: PsiClass) : UsageP
             return arrayOf(qualifiedExpr)
         }
     }
-
-    override val kotlinCodeProcessor: ExternalCodeProcessor? get() = null
 }

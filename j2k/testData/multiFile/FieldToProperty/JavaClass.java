@@ -8,4 +8,6 @@ public class JavaClass {
     public int getProperty() {
         return myProperty;
     }
+
+    public static final String NAME = "Bar";
 }

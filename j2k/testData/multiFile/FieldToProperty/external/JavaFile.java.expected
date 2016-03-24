@@ -9,5 +9,7 @@ public class C extends JavaClass {
         setField(getProperty());
         setField(getField() * 2);
         setField(getField() * 2);
+
+        String s = JavaClass.Companion.getNAME();
     }
 }

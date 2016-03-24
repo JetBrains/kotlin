@@ -5,4 +5,9 @@ open class JavaClass {
 
     var property = 0
         protected set
+
+    companion object {
+
+        val NAME = "Bar"
+    }
 }

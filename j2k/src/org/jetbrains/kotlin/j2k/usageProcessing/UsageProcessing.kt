@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.j2k.ast.Expression
 interface UsageProcessing {
     val targetElement: PsiElement
     val convertedCodeProcessor: ConvertedCodeProcessor?
-    val javaCodeProcessor: ExternalCodeProcessor?
-    val kotlinCodeProcessor: ExternalCodeProcessor?
+    val javaCodeProcessors: List<ExternalCodeProcessor>
+    val kotlinCodeProcessors: List<ExternalCodeProcessor>
 }
 
 interface ConvertedCodeProcessor {

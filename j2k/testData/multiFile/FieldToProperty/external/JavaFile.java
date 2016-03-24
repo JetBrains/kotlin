@@ -9,5 +9,7 @@ public class C extends JavaClass {
         field = myProperty;
         field *= 2;
         field = field * 2;
+
+        String s = JavaClass.NAME;
     }
 }

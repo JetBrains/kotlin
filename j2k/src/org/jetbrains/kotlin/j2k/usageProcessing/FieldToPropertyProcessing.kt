@@ -21,6 +21,7 @@ import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.j2k.AccessorKind
 import org.jetbrains.kotlin.j2k.CodeConverter
 import org.jetbrains.kotlin.j2k.ast.*
+import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
 class FieldToPropertyProcessing(val field: PsiField, val propertyName: String, val isNullable: Boolean) : UsageProcessing {
     override val targetElement: PsiElement get() = this.field
@@ -28,16 +29,19 @@ class FieldToPropertyProcessing(val field: PsiField, val propertyName: String, v
     override val convertedCodeProcessor: ConvertedCodeProcessor? =
             if (field.name != propertyName) MyConvertedCodeProcessor() else null
 
-    override var javaCodeProcessor = if (field.hasModifierProperty(PsiModifier.PRIVATE))
-        null
-     else if (!field.hasModifierProperty(PsiModifier.STATIC))
-        UseAccessorsJavaCodeProcessor()
-    else if (field.name != propertyName)
-        ElementRenamedCodeProcessor(propertyName)
-    else
-        null
+    override var javaCodeProcessors =
+            if (field.hasModifierProperty(PsiModifier.PRIVATE))
+                emptyList()
+            else if (field.name != propertyName)
+                listOf(ElementRenamedCodeProcessor(propertyName), UseAccessorsJavaCodeProcessor())
+            else
+                UseAccessorsJavaCodeProcessor().singletonList()
 
-    override val kotlinCodeProcessor = if (field.name != propertyName) ElementRenamedCodeProcessor(propertyName) else null
+    override val kotlinCodeProcessors =
+            if (field.name != propertyName)
+                ElementRenamedCodeProcessor(propertyName).singletonList()
+            else
+                emptyList()
 
     private inner class MyConvertedCodeProcessor : ConvertedCodeProcessor {
         override fun convertVariableUsage(expression: PsiReferenceExpression, codeConverter: CodeConverter): Expression? {

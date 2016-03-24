@@ -2,9 +2,9 @@ package test;
 
 class C {
     void foo(ClassWithStatics c) {
-        ClassWithStatics.Companion.staticMethod(ClassWithStatics.staticField);
+        ClassWithStatics.Companion.staticMethod(ClassWithStatics.Companion.getStaticField());
         c.instanceMethod();
-        ClassWithStatics.staticField += 2;
+        ClassWithStatics.Companion.setStaticNonFinalField(ClassWithStatics.Companion.getStaticNonFinalField() + 2);
     }
 
     void methodReferences() {
@@ -15,7 +15,7 @@ class C {
 
 class D extends ClassWithStatics {
     void foo() {
-        Companion.staticMethod(staticField);
-        value *= 2;
+        Companion.staticMethod(Companion.getStaticField());
+        Companion.setValue(Companion.getValue() * 2);
     }
 }

@@ -152,7 +152,7 @@ class JavaToKotlinConverter(
 
         val map: Map<PsiElement, Collection<UsageProcessing>> = usageProcessings.values
                 .flatMap { it }
-                .filter { it.javaCodeProcessor != null || it.kotlinCodeProcessor != null }
+                .filter { it.javaCodeProcessors != null || it.kotlinCodeProcessors != null }
                 .groupBy { it.targetElement }
         if (map.isEmpty()) return null
 
@@ -171,8 +171,8 @@ class JavaToKotlinConverter(
 
                     ProgressManager.getInstance().runProcess(
                             {
-                                val searchJava = processings.any { it.javaCodeProcessor != null }
-                                val searchKotlin = processings.any { it.kotlinCodeProcessor != null }
+                                val searchJava = processings.any { it.javaCodeProcessors != null }
+                                val searchKotlin = processings.any { it.kotlinCodeProcessors != null }
                                 services.referenceSearcher.findUsagesForExternalCodeProcessing(psiElement, searchJava, searchKotlin)
                                         .filterNot { inConversionScope(it.element) }
                                         .mapTo(refs) { ReferenceInfo(it, psiElement, it.element.containingFile, processings) }
@@ -191,8 +191,8 @@ class JavaToKotlinConverter(
             ReferenceLoop@
             for ((reference, target, file, processings) in fileRefs.sortedWith(ReferenceComparator)) {
                 val processors = when (reference.element.language) {
-                    JavaLanguage.INSTANCE -> processings.mapNotNull { it.javaCodeProcessor }
-                    KotlinLanguage.INSTANCE -> processings.mapNotNull { it.kotlinCodeProcessor }
+                    JavaLanguage.INSTANCE -> processings.flatMap { it.javaCodeProcessors }
+                    KotlinLanguage.INSTANCE -> processings.flatMap { it.kotlinCodeProcessors }
                     else -> continue@ReferenceLoop
                 }
 

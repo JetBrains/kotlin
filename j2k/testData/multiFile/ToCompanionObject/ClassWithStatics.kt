@@ -10,6 +10,7 @@ internal open class ClassWithStatics {
         }
 
         val staticField = 1
+        var staticNonFinalField = 1
 
         var value = 0
     }

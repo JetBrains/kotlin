@@ -17,17 +17,22 @@
 package org.jetbrains.kotlin.j2k.usageProcessing
 
 import com.intellij.psi.*
+import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
-class MethodIntoObjectProcessing(private val method: PsiMethod, private val objectName: String) : UsageProcessing {
-    override val targetElement: PsiElement get() = method
+class MemberIntoObjectProcessing(private val member: PsiMember, private val objectName: String) : UsageProcessing {
+    override val targetElement: PsiElement get() = member
 
     override val convertedCodeProcessor: ConvertedCodeProcessor? get() = null
 
-    override val javaCodeProcessor = object: ExternalCodeProcessor {
+    override val javaCodeProcessors = AppendObjectNameProcessor().singletonList()
+
+    override val kotlinCodeProcessors = emptyList<ExternalCodeProcessor>()
+
+    inner class AppendObjectNameProcessor : ExternalCodeProcessor {
         override fun processUsage(reference: PsiReference): Array<PsiReference>? {
             val refExpr = reference.element as? PsiReferenceExpression ?: return null
             val qualifier = refExpr.qualifierExpression
-            val factory = PsiElementFactory.SERVICE.getInstance(method.project)
+            val factory = PsiElementFactory.SERVICE.getInstance(member.project)
             if (qualifier != null) {
                 val newQualifier = factory.createExpressionFromText(qualifier.text + "." + objectName, null)
                 qualifier.replace(newQualifier)
@@ -40,6 +45,4 @@ class MethodIntoObjectProcessing(private val method: PsiMethod, private val obje
             }
         }
     }
-
-    override val kotlinCodeProcessor: ExternalCodeProcessor? get() = null
 }

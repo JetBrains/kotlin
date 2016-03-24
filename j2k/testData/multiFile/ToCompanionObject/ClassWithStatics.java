@@ -6,6 +6,7 @@ class ClassWithStatics {
     public static void staticMethod(int p) {}
 
     public static final int staticField = 1;
+    public static int staticNonFinalField = 1;
 
     protected static int ourValue = 0;
 
