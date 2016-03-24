@@ -301,35 +301,54 @@ class ClassTranslator private constructor(
             val constructorScope = context.getScopeForDescriptor(constructorDescriptor)
             val thisName = constructorScope.declareName(Namer.ANOTHER_THIS_PARAMETER_NAME)
             val thisNameRef = thisName.makeRef()
-            val receiverDescriptor = JsDescriptorUtils.getReceiverParameterForDeclaration(classDescriptor)
-            val translationContext = context.innerContextWithAliased(receiverDescriptor, thisNameRef)
+            val receiverDescriptor = classDescriptor.thisAsReceiverParameter
+
+            var translationContext = context
+            translationContext = translationContext.newDeclaration(constructorDescriptor.containingDeclaration,
+                                                                   translationContext.definitionPlace)
+            translationContext = translationContext.newDeclaration(constructorDescriptor, translationContext.definitionPlace)
+            translationContext = translationContext.innerContextWithAliased(receiverDescriptor, thisNameRef)
+
+            val outerName = translationContext.getOuterClassReference(classDescriptor);
+            val outerClass = DescriptorUtils.getContainingClass(classDescriptor)
+            if (outerClass != null && outerName != null) {
+                val outerClassRef = outerClass.thisAsReceiverParameter
+                translationContext = translationContext.innerContextWithAliased(outerClassRef, outerName.makeRef())
+            }
 
             val constructorInitializer = FunctionTranslator.newInstance(constructor, translationContext).translateAsMethod()
             val constructorFunction = constructorInitializer.valueExpr as JsFunction
 
+            val leadingArgs = mutableListOf<JsExpression>()
+
+            if (outerName != null) {
+                constructorFunction.parameters.add(0, JsParameter(outerName))
+                leadingArgs.add(outerName.makeRef())
+            }
             constructorFunction.parameters.add(JsParameter(thisName))
 
-            val referenceToClass = context.getQualifiedReference(classDescriptor)
+            val referenceToClass = translationContext.getQualifiedReference(classDescriptor)
 
             val forAddToBeginning: List<JsStatement> =
                     with(arrayListOf<JsStatement>()) {
-                        addAll(FunctionBodyTranslator.setDefaultValueForArguments(constructorDescriptor, context))
+                        addAll(FunctionBodyTranslator.setDefaultValueForArguments(constructorDescriptor, translationContext))
 
                         val createInstance = Namer.createObjectWithPrototypeFrom(referenceToClass)
                         val instanceVar = JsAstUtils.assignment(thisNameRef, JsAstUtils.or(thisNameRef, createInstance)).makeStmt()
                         add(instanceVar)
 
-                        val resolvedCall = BindingContextUtils.getDelegationConstructorCall(context.bindingContext(), constructorDescriptor)
+                        val resolvedCall = BindingContextUtils.getDelegationConstructorCall(translationContext.bindingContext(),
+                                                                                            constructorDescriptor)
                         val delegationClassDescriptor = resolvedCall?.resultingDescriptor?.containingDeclaration
 
                         if (resolvedCall != null && !KotlinBuiltIns.isAny(delegationClassDescriptor!!)) {
-                            val superCall = CallTranslator.translate(context, resolvedCall)
-                            add(superCall.toInvocationWith(thisNameRef).makeStmt())
+                            val superCall = CallTranslator.translate(translationContext, resolvedCall)
+                            add(superCall.toInvocationWith(leadingArgs, thisNameRef).makeStmt())
                         }
 
                         val delegationCtorInTheSameClass = delegationClassDescriptor == classDescriptor
                         if (!delegationCtorInTheSameClass && !classDescriptor.hasPrimaryConstructor()) {
-                            add(JsInvocation(Namer.getFunctionCallRef(referenceToClass), thisNameRef).makeStmt())
+                            add(JsInvocation(Namer.getFunctionCallRef(referenceToClass), listOf(thisNameRef) + leadingArgs).makeStmt())
                         }
 
                         this

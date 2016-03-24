@@ -120,12 +120,9 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
     }
 
     private void addOuterClassReference(ClassDescriptor classDescriptor) {
-        DeclarationDescriptor container = classDescriptor.getContainingDeclaration();
-        if (!(container instanceof ClassDescriptor) || !classDescriptor.isInner()) {
-            return;
-        }
+        JsName outerName = context.getOuterClassReference(classDescriptor);
+        if (outerName == null) return;
 
-        JsName outerName = initFunction.getScope().declareFreshName(Namer.OUTER_FIELD_NAME);
         initFunction.getParameters().add(0, new JsParameter(outerName));
 
         JsExpression paramRef = fqnWithoutSideEffects(outerName, null);
@@ -157,7 +154,8 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
 
             if (classDeclaration instanceof KtEnumEntry) {
                 JsExpression expression = CallTranslator.translate(context(), superCall, null);
-                JsExpression fixedInvocation = AstUtilsKt.toInvocationWith(expression, JsLiteral.THIS);
+                JsExpression fixedInvocation = AstUtilsKt.toInvocationWith(expression, Collections.<JsExpression>emptyList(),
+                                                                           JsLiteral.THIS);
                 initializerStatements.add(0, fixedInvocation.makeStmt());
             }
             else {
