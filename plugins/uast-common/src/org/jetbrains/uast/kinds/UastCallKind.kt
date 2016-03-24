@@ -23,4 +23,8 @@ class UastCallKind(val name: String) {
         @JvmField
         val CONSTRUCTOR_CALL = UastCallKind("constructor_call")
     }
+
+    override fun toString(): String{
+        return "UastCallKind(name='$name')"
+    }
 }

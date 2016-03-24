@@ -1,11 +1,17 @@
 UFile (package = null)
-    UClass (Declarations, enum = false, interface = false, object = false)
+    UClass (Declarations, kind = class)
+        UFunction (<init>, kind = CONSTRUCTOR, paramCount = 0)
+            EmptyExpression
         UVariable (a, kind = member)
             ULiteralExpression ("a")
-        UClass (NestedClass, enum = false, interface = false, object = false)
+        UClass (NestedClass, kind = class)
+            UFunction (<init>, kind = CONSTRUCTOR, paramCount = 0)
+                EmptyExpression
             UVariable (b, kind = member)
                 ULiteralExpression ("b")
-        UClass (InnerClass, enum = false, interface = false, object = false)
+        UClass (InnerClass, kind = class)
+            UFunction (<init>, kind = CONSTRUCTOR, paramCount = 0)
+                EmptyExpression
             UVariable (c, kind = member)
                 USimpleReferenceExpression (a)
         UFunction (func, kind = function, paramCount = 2)

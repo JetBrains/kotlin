@@ -1,18 +1,24 @@
 UFile (package = null)
-    UClass (Simple, enum = false, interface = false, object = false)
+    UClass (Simple, kind = class)
+        UFunction (<init>, kind = CONSTRUCTOR, paramCount = 0)
+            EmptyExpression
         UVariable (a, kind = member)
             UBinaryExpression (+)
                 UBinaryExpression (+)
                     ULiteralExpression ("text")
                     ULiteralExpression ("other")
                 ULiteralExpression ("text")
+        UVariable (b, kind = member)
+            UFunctionCallExpression (UastCallKind(name='function_call'), argCount = 1)
+                USimpleReferenceExpression (listOf)
+                ULiteralExpression ("A")
         UFunction (test, kind = function, paramCount = 0)
             UBlockExpression
                 UQualifiedExpression
                     UQualifiedExpression
                         USimpleReferenceExpression (System)
                         USimpleReferenceExpression (out)
-                    UFunctionCallExpression (FUNCTION_CALL, argCount = 1)
+                    UFunctionCallExpression (UastCallKind(name='function_call'), argCount = 1)
                         USimpleReferenceExpression (println)
                         UBinaryExpression (/)
                             ULiteralExpression (5.0f)

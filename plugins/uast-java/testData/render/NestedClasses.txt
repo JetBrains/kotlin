@@ -1,14 +1,14 @@
 default class _Dummy_ {
-    default inner class NestedClasses {
-        public class Nested {
+    default class NestedClasses {
+        public static class Nested {
             default fun func1(): void {
             }
-            
+
         }
-        public inner class Inner {
+        public class Inner {
             default fun func2(): void {
             }
-            
+
         }
     }
 }

@@ -40,4 +40,8 @@ class UastPrefixOperator(override val text: String): UastOperator {
         @JvmField
         val UNKNOWN = UastPrefixOperator("<unknown>")
     }
+
+    override fun toString(): String{
+        return "UastPrefixOperator(text='$text')"
+    }
 }

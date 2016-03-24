@@ -28,4 +28,8 @@ class UastPostfixOperator(override val text: String): UastOperator {
         @JvmField
         val UNKNOWN = UastPostfixOperator("<unknown>")
     }
+
+    override fun toString(): String{
+        return "UastPostfixOperator(text='$text')"
+    }
 }

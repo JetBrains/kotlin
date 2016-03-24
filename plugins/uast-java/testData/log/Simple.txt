@@ -1,9 +1,9 @@
 UFile (package = null)
-    UClass (_Dummy_, enum = false, interface = false, object = false)
-        UClass (Simple, enum = false, interface = false, object = false)
+    UClass (_Dummy_, kind = class)
+        UClass (Simple, kind = class)
             UVariable (name, kind = member)
                 EmptyExpression
-            UFunction (Simple, kind = function, paramCount = 1)
+            UFunction (<init>, kind = CONSTRUCTOR, paramCount = 1)
                 UBlockExpression
                     UAssignmentExpression (=)
                         UQualifiedExpression

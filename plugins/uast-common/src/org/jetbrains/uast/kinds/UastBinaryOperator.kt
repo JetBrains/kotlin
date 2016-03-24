@@ -127,4 +127,8 @@ open class UastBinaryOperator(override val text: String): UastOperator {
         @JvmField
         val UNSIGNED_SHIFT_RIGHT_ASSIGN = AssignOperator(">>>=")
     }
+
+    override fun toString(): String{
+        return "UastBinaryOperator(text='$text')"
+    }
 }

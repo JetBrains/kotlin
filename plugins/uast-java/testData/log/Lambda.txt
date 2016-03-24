@@ -1,9 +1,9 @@
 UFile (package = null)
-    UClass (_Dummy_, enum = false, interface = false, object = false)
-        UClass (Lambda, enum = false, interface = false, object = false)
+    UClass (_Dummy_, kind = class)
+        UClass (Lambda, kind = class)
             UFunction (example, kind = function, paramCount = 0)
                 UBlockExpression
-                    UFunctionCallExpression (FUNCTION_CALL, argCount = 2)
+                    UFunctionCallExpression (UastCallKind(name='function_call'), argCount = 2)
                         USimpleReferenceExpression (doJob)
                         ULambdaExpression
                             UVariable (arg, kind = parameter)
@@ -18,13 +18,13 @@ UFile (package = null)
                         UQualifiedExpression
                             USimpleReferenceExpression (System)
                             USimpleReferenceExpression (out)
-                        UFunctionCallExpression (FUNCTION_CALL, argCount = 1)
+                        UFunctionCallExpression (UastCallKind(name='function_call'), argCount = 1)
                             USimpleReferenceExpression (println)
                             UQualifiedExpression
                                 USimpleReferenceExpression (job)
-                                UFunctionCallExpression (FUNCTION_CALL, argCount = 1)
+                                UFunctionCallExpression (UastCallKind(name='function_call'), argCount = 1)
                                     USimpleReferenceExpression (doJob)
                                     USimpleReferenceExpression (arg)
-        UClass (Job, enum = false, interface = true, object = false)
+        UClass (Job, kind = interface)
             UFunction (doJob, kind = function, paramCount = 1)
                 EmptyExpression

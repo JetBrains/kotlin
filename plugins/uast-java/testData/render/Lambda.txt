@@ -1,5 +1,5 @@
 default class _Dummy_ {
-    default inner class Lambda {
+    default class Lambda {
         default fun example(): void {
             doJob({ arg: String ->
                 arg + arg
@@ -11,7 +11,7 @@ default class _Dummy_ {
         }
 
     }
-    default abstract interface Job {
+    default abstract static interface Job {
         public fun doJob(arg: String): String = EmptyExpression
     }
 }

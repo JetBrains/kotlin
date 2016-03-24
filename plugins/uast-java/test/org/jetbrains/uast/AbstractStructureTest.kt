@@ -24,7 +24,7 @@ import java.io.File
 
 open class AbstractStructureTest : LightCodeInsightTestCase() {
     fun test(name: String) {
-        val testDir = File("testData")
+        val testDir = testDataPath
         val javaFile = File(testDir, "$name.java")
         val logFile = File(File(testDir, "log"), "$name.txt")
         val renderFile = File(File(testDir, "render"), "$name.txt")
@@ -61,4 +61,6 @@ open class AbstractStructureTest : LightCodeInsightTestCase() {
     }
 
     private class NoTestFileException(file: File) : RuntimeException("Test file was generated: $file")
+
+    override fun getTestDataPath() = "plugins/uast-java/testData"
 }
