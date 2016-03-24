@@ -28,7 +28,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.ReflectionTypes;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.js.config.Config;
-import org.jetbrains.kotlin.js.config.EcmaVersion;
 import org.jetbrains.kotlin.js.config.LibrarySourcesConfig;
 import org.jetbrains.kotlin.js.translate.context.generator.Generator;
 import org.jetbrains.kotlin.js.translate.context.generator.Rule;
@@ -39,8 +38,6 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -106,9 +103,6 @@ public final class StaticContext {
     @NotNull
     private final Config config;
 
-    @NotNull
-    private final EcmaVersion ecmaVersion;
-
     //TODO: too many parameters in constructor
     private StaticContext(@NotNull JsProgram program, @NotNull BindingTrace bindingTrace,
             @NotNull Namer namer, @NotNull Intrinsics intrinsics,
@@ -120,12 +114,7 @@ public final class StaticContext {
         this.rootScope = rootScope;
         this.standardClasses = standardClasses;
         this.config = config;
-        this.ecmaVersion = config.getTarget();
         this.reflectionTypes = new ReflectionTypes(moduleDescriptor);
-    }
-
-    public boolean isEcma5() {
-        return ecmaVersion == EcmaVersion.v5;
     }
 
     @NotNull
@@ -272,21 +261,15 @@ public final class StaticContext {
                         return null;
                     }
 
-                    List<String> parts = new ArrayList<String>();
+                    String suggested = getSuggestedName(descriptor);
+
                     do {
-                        parts.add(descriptor.getName().isSpecial() ? "f" : descriptor.getName().getIdentifier());
                         descriptor = descriptor.getContainingDeclaration();
                     } while (descriptor != null && !(descriptor instanceof ClassOrPackageFragmentDescriptor));
                     assert descriptor != null;
 
-                    Collections.reverse(parts);
-                    StringBuilder suggestedName = new StringBuilder(parts.get(0));
-                    for (int i = 1; i < parts.size(); ++i) {
-                        suggestedName.append('$').append(parts.get(i));
-                    }
-
                     JsScope scope = getScopeForDescriptor(descriptor);
-                    return scope.declareFreshName(suggestedName.toString());
+                    return scope.declareFreshName(suggested);
                 }
             };
 
