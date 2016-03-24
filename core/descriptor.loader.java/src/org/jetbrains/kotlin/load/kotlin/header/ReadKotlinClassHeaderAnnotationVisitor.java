@@ -50,7 +50,8 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
 
     private JvmMetadataVersion metadataVersion = null;
     private JvmBytecodeBinaryVersion bytecodeVersion = null;
-    private String multifileClassName = null;
+    private String extraString = null;
+    private int extraInt = 0;
     private String[] data = null;
     private String[] strings = null;
     private KotlinClassHeader.Kind headerKind = null;
@@ -76,7 +77,8 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
                 bytecodeVersion != null ? bytecodeVersion : JvmBytecodeBinaryVersion.INVALID_VERSION,
                 data,
                 strings,
-                multifileClassName
+                extraString,
+                extraInt
         );
     }
 
@@ -135,9 +137,14 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
                     bytecodeVersion = new JvmBytecodeBinaryVersion((int[]) value);
                 }
             }
-            else if (METADATA_MULTIFILE_CLASS_NAME_FIELD_NAME.equals(string)) {
+            else if (METADATA_EXTRA_STRING_FIELD_NAME.equals(string)) {
                 if (value instanceof String) {
-                    multifileClassName = (String) value;
+                    extraString = (String) value;
+                }
+            }
+            else if (METADATA_EXTRA_INT_FIELD_NAME.equals(string)) {
+                if (value instanceof Integer) {
+                    extraInt = (Integer) value;
                 }
             }
         }
@@ -209,7 +216,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
                 }
             }
             else if ("multifileClassName".equals(string)) {
-                multifileClassName = value instanceof String ? (String) value : null;
+                extraString = value instanceof String ? (String) value : null;
             }
         }
 
