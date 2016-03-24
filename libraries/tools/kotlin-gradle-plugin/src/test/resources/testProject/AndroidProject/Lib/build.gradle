@@ -1,16 +1,5 @@
-buildscript {
-    repositories {
-        mavenCentral()
-        maven {
-            url 'file://' + pathToKotlinPlugin
-        }
-    }
-    dependencies {
-        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:0.1-SNAPSHOT'
-        classpath 'com.android.tools.build:gradle:1.1.0'
-    }
-}
-apply plugin: 'com.android.library'
+apply plugin: 'android-sdk-manager'
+apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 repositories {

@@ -74,8 +74,8 @@ abstract class BaseGradleIT {
             /**
              * @see [ThreadTracker]
              */
-            val assertThreadLeaks: Boolean = true
-    )
+            val assertThreadLeaks: Boolean = true,
+            val androidHome: File? = null)
 
     open inner class Project(val projectName: String, val wrapperVersion: String = "1.4", val minLogLevel: LogLevel = LogLevel.DEBUG) {
         open val resourcesRoot = File(resourcesRootFile, "testProject/$projectName")
@@ -97,8 +97,9 @@ abstract class BaseGradleIT {
         val compiledJavaSources: Iterable<File> by lazy { javaSourcesListRegex.findAll(output).asIterable().flatMap { it.groups[1]!!.value.split(" ").filter { it.endsWith(".java", ignoreCase = true) }.map { File(it).canonicalFile } } }
     }
 
-    fun Project.build(vararg tasks: String, options: BuildOptions = defaultBuildOptions(), check: CompiledProject.() -> Unit) {
-        val cmd = createBuildCommand(tasks, options)
+    fun Project.build(vararg params: String, options: BuildOptions = defaultBuildOptions(), check: CompiledProject.() -> Unit) {
+        val cmd = createBuildCommand(params, options)
+        val env = createEnvironmentVariablesMap(options)
 
         if (options.withDaemon) {
             prepareDaemon(wrapperVersion)
@@ -106,16 +107,12 @@ abstract class BaseGradleIT {
 
         println("<=== Test build: ${this.projectName} $cmd ===>")
 
-        runAndCheck(cmd, check)
-    }
-
-    private fun Project.runAndCheck(cmd: List<String>, check: CompiledProject.() -> Unit) {
         val projectDir = File(workingDir, projectName)
         if (!projectDir.exists()) {
             setupWorkingDir()
         }
 
-        val result = runProcess(cmd, projectDir)
+        val result = runProcess(cmd, projectDir, env)
         CompiledProject(this, result.output, result.exitCode).check()
     }
 
@@ -217,6 +214,13 @@ abstract class BaseGradleIT {
                 options.incremental?.let { add("-Pkotlin.incremental=$it") }
             }
 
+    private fun Project.createEnvironmentVariablesMap(options: BuildOptions): Map<String, String> =
+            hashMapOf<String, String>().apply {
+                val sdkDir = options.androidHome
+                if (sdkDir != null) {
+                    sdkDir.parentFile.mkdirs()
+                    put("ANDROID_HOME", sdkDir.canonicalPath)
+                }
             }
 
     private fun String.normalize() = this.lineSequence().joinToString(SYSTEM_LINE_SEPARATOR)

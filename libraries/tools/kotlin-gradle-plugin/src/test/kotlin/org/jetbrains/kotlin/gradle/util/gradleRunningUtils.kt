@@ -20,8 +20,9 @@ Executing process was ${if (isSuccessful) "successful" else "unsuccessful"}
 """
 }
 
-fun runProcess(cmd: List<String>, workingDir: File): ProcessRunResult {
+fun runProcess(cmd: List<String>, workingDir: File, environmentVariables: Map<String, String> = mapOf()): ProcessRunResult {
     val builder = ProcessBuilder(cmd)
+    builder.environment().putAll(environmentVariables)
     builder.directory(workingDir)
     // redirectErrorStream merges stdout and stderr, so it can be get from process.inputStream
     builder.redirectErrorStream(true)

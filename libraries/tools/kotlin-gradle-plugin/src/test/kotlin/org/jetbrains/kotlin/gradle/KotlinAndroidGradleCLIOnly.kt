@@ -1,17 +1,20 @@
 package org.jetbrains.kotlin.gradle
 
-import org.junit.Ignore
 import org.junit.Test
+import java.io.File
 
-@Ignore("Requires Android SDK")
-class KotlinAndroidGradleIT : BaseGradleIT() {
+private const val DEFAULT_GRADLE_VERSION = "2.3"
+
+class KotlinAndroidGradleCLIOnly : BaseGradleIT() {
 
     override fun defaultBuildOptions() =
-            BuildOptions(withDaemon = true, assertThreadLeaks = false)
+            BuildOptions(withDaemon = true,
+                         assertThreadLeaks = false,
+                         androidHome = File("../../../dependencies/android-sdk-for-tests"))
 
     @Test
     fun testSimpleCompile() {
-        val project = Project("AndroidProject", "2.3")
+        val project = Project("AndroidProject", DEFAULT_GRADLE_VERSION)
 
         project.build("build") {
             assertSuccessful()
@@ -58,7 +61,7 @@ class KotlinAndroidGradleIT : BaseGradleIT() {
 
     @Test
     fun testModuleNameAndroid() {
-        val project = Project("AndroidProject", "2.3")
+        val project = Project("AndroidProject", DEFAULT_GRADLE_VERSION)
 
         project.build("build") {
             assertContains(
