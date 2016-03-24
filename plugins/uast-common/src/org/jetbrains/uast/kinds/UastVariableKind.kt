@@ -26,4 +26,8 @@ class UastVariableKind(val name: String) {
         @JvmField
         val VALUE_PARAMETER = UastVariableKind("parameter")
     }
+
+    override fun toString(): String{
+        return "UastVariableKind(name='$name')"
+    }
 }

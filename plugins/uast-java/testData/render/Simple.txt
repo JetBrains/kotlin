@@ -1,18 +1,18 @@
 default class _Dummy_ {
-    default inner class Simple {
+    default class Simple {
         var name: String
-        
-        public fun Simple(name: String) {
+
+        public fun <init>(name: String) {
             this.name = name
         }
-        
+
         public fun getName(): String {
             return name
         }
-        
+
         public fun setName(name: String): void {
             this.name = name
         }
-        
+
     }
 }

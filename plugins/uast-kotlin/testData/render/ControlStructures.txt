@@ -1,6 +1,98 @@
-public class ControlStructures {
+public static class ControlStructures {
+    public fun <init>() = EmptyExpression
     public fun test(): Boolean {
-        var x: List = listOf("ABC")
+        if (5 > 3) {
+            println("5 > 3")
+        }
+
+        for (c : "ABC") {
+            println(c)
+        }
+
+        for (c : "DEF") {
+            println(c.toByte())
+        }
+
+        var i: Int = 5
+        while (i > 0) {
+            i--
+            if (i == 3) break
+            if (i == 2) {
+                continue
+            }
+
+        }
+
+        i = 5
+        do {
+            i -= 1
+        }
+        while (i > 0)
+
+        "ABC".forEach({
+            println(it.toString()[0])
+        })
+        "ABC".zip("DEF").forEach({
+            println(it.first + " " + it.second)
+        })
+        var var1496943053: <error> = "ABC".zip("DEF")
+        var a: Pair<Char, Char> = var1496943053.component1()
+        var b: Pair<Char, Char> = var1496943053.component2()
+        var value: String = if (5 > 3) "a" else "b"
+        var list: List<String> = listOf("A")
+        var list2: List<String> = listOf("A")
+        var type: String = switch (value)  {
+            it in list -> {
+                "inlist"
+                break
+            }
+
+            it in list2 -> {
+                "notinlist2"
+                break
+            }
+
+            (it) is null -> {
+                "string"
+                break
+            }
+
+            (it) is null -> {
+                "cs"
+                break
+            }
+
+            else -> {
+                "unknown"
+                break
+            }
+
+        }
+
+        var x: String = switch  {
+            value == "b" -> {
+                "B"
+                break
+            }
+
+            5 % 2 == 0 -> {
+                println("A")
+                "Q"
+                break
+            }
+
+            false -> {
+                "!"
+                break
+            }
+
+            else -> {
+                "A"
+                break
+            }
+
+        }
+
         return false
     }
 

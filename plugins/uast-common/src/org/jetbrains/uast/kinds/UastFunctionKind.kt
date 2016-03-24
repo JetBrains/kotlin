@@ -25,4 +25,8 @@ open class UastFunctionKind(val text: String) {
         @JvmField
         val CONSTRUCTOR = UastFunctionKind("CONSTRUCTOR")
     }
+
+    override fun toString(): String{
+        return "UastFunctionKind(text='$text')"
+    }
 }

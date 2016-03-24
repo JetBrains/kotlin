@@ -28,4 +28,8 @@ class UastVisibility(val name: String) {
     }
 
     fun isPublic() = this == PUBLIC
+
+    override fun toString(): String {
+        return "UastVisibility(name='$name')"
+    }
 }

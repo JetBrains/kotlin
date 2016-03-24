@@ -20,4 +20,8 @@ class UastQualifiedExpressionAccessType(val name: String) {
         @JvmField
         val SIMPLE = UastQualifiedExpressionAccessType(".")
     }
+
+    override fun toString(): String{
+        return "UastQualifiedExpressionAccessType(name='$name')"
+    }
 }

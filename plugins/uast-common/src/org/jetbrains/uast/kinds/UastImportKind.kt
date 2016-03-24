@@ -25,4 +25,8 @@ class UastImportKind(val text: String) {
         @JvmField
         val MEMBER = UastImportKind("member")
     }
+
+    override fun toString(): String{
+        return "UastImportKind(text='$text')"
+    }
 }

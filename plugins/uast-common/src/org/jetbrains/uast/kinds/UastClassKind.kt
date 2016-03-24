@@ -35,4 +35,8 @@ open class UastClassKind(val text: String) {
         @JvmField
         val OBJECT = UastClassKind("object")
     }
+
+    override fun toString(): String{
+        return "UastClassKind(text='$text')"
+    }
 }

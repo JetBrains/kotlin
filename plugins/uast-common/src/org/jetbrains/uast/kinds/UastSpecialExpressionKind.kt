@@ -29,4 +29,8 @@ class UastSpecialExpressionKind(val name: String) {
         @JvmField
         val CONTINUE = UastSpecialExpressionKind("continue")
     }
+
+    override fun toString(): String{
+        return "UastSpecialExpressionKind(name='$name')"
+    }
 }

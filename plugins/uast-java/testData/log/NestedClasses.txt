@@ -1,11 +1,10 @@
 UFile (package = null)
-    UClass (_Dummy_, enum = false, interface = false, object = false)
-        UClass (NestedClasses, enum = false, interface = false, object = false)
-            UClass (Nested, enum = false, interface = false, object = false)
+    UClass (_Dummy_, kind = class)
+        UClass (NestedClasses, kind = class)
+            UClass (Nested, kind = class)
                 UFunction (func1, kind = function, paramCount = 0)
                     UBlockExpression
-                    
-            UClass (Inner, enum = false, interface = false, object = false)
+
+            UClass (Inner, kind = class)
                 UFunction (func2, kind = function, paramCount = 0)
                     UBlockExpression
-                    

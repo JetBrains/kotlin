@@ -1,6 +1,6 @@
 UFile (package = null)
-    UClass (_Dummy_, enum = false, interface = false, object = false)
-        UClass (SpecialExpressions, enum = false, interface = false, object = false)
+    UClass (_Dummy_, kind = class)
+        UClass (SpecialExpressions, kind = class)
             UFunction (test, kind = function, paramCount = 0)
                 UBlockExpression
                     USpecialExpressionList (assert)
@@ -20,7 +20,7 @@ UFile (package = null)
                                 UQualifiedExpression
                                     USimpleReferenceExpression (System)
                                     USimpleReferenceExpression (out)
-                                UFunctionCallExpression (FUNCTION_CALL, argCount = 1)
+                                UFunctionCallExpression (UastCallKind(name='function_call'), argCount = 1)
                                     USimpleReferenceExpression (println)
                                     ULiteralExpression ("A")
                     UDeclarationsExpression
@@ -41,7 +41,7 @@ UFile (package = null)
                                     ULiteralExpression (3)
                                 UBlockExpression
                                     USpecialExpressionList (break)
-                                    
+
                                 EmptyExpression
                             UIfExpression
                                 UBinaryExpression (===)
@@ -51,20 +51,20 @@ UFile (package = null)
                                     ULiteralExpression (0)
                                 UBlockExpression
                                     USpecialExpressionList (continue)
-                                    
+
                                 EmptyExpression
                             UPostfixExpression (--)
                                 USimpleReferenceExpression (a)
                     UQualifiedExpression
                         UThisExpression
-                        UFunctionCallExpression (FUNCTION_CALL, argCount = 0)
+                        UFunctionCallExpression (UastCallKind(name='function_call'), argCount = 0)
                             USimpleReferenceExpression (test)
-                        
+
                     UQualifiedExpression
                         USuperExpression
-                        UFunctionCallExpression (FUNCTION_CALL, argCount = 0)
+                        UFunctionCallExpression (UastCallKind(name='function_call'), argCount = 0)
                             USimpleReferenceExpression (hashCode)
-                        
+
                     UDeclarationsExpression
                         UVariable (x, kind = local)
                             EmptyExpression
@@ -78,7 +78,7 @@ UFile (package = null)
                                     USimpleReferenceExpression (x)
                                     ULiteralExpression ("1")
                                 USpecialExpressionList (break)
-                                
+
                             UExpressionSwitchClauseExpression
                                 ULiteralExpression (3)
                             UAssignmentExpression (=)
@@ -97,16 +97,16 @@ UFile (package = null)
                         UQualifiedExpression
                             UQualifiedExpression
                                 USimpleReferenceExpression (System)
-                                UFunctionCallExpression (FUNCTION_CALL, argCount = 2)
+                                UFunctionCallExpression (UastCallKind(name='function_call'), argCount = 2)
                                     USimpleReferenceExpression (getProperty)
                                     ULiteralExpression ("abc")
                                     ULiteralExpression ("")
-                            UFunctionCallExpression (FUNCTION_CALL, argCount = 1)
+                            UFunctionCallExpression (UastCallKind(name='function_call'), argCount = 1)
                                 USimpleReferenceExpression (equals)
                                 ULiteralExpression ("1")
                         UBlockExpression
                             USpecialExpressionList (throw)
-                                UFunctionCallExpression (CONSTRUCTOR_CALL, argCount = 1)
+                                UFunctionCallExpression (UastCallKind(name='constructor_call'), argCount = 1)
                                     <no element>
                                     ULiteralExpression ("Err")
                         EmptyExpression
@@ -114,7 +114,7 @@ UFile (package = null)
                         UBlockExpression
                             UQualifiedExpression
                                 USimpleReferenceExpression (Thread)
-                                UFunctionCallExpression (FUNCTION_CALL, argCount = 1)
+                                UFunctionCallExpression (UastCallKind(name='function_call'), argCount = 1)
                                     USimpleReferenceExpression (sleep)
                                     ULiteralExpression (1000)    UCatchClause
                             UBlockExpression

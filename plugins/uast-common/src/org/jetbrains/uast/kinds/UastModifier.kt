@@ -28,4 +28,8 @@ class UastModifier(val name: String) {
         @JvmField
         val OVERRIDE = UastModifier("override")
     }
+
+    override fun toString(): String{
+        return "UastModifier(name='$name')"
+    }
 }

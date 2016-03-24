@@ -1,6 +1,6 @@
 UFile (package = null)
-    UClass (_Dummy_, enum = false, interface = false, object = false)
-        UClass (ControlStructures, enum = false, interface = false, object = false)
+    UClass (_Dummy_, kind = class)
+        UClass (ControlStructures, kind = class)
             UFunction (main, kind = function, paramCount = 1)
                 UBlockExpression
                     UIfExpression
@@ -11,7 +11,7 @@ UFile (package = null)
                             ULiteralExpression (0)
                         UBlockExpression
                             USpecialExpressionList (return)
-                            
+
                         EmptyExpression
                     UDeclarationsExpression
                         UVariable (mode, kind = local)
@@ -30,7 +30,7 @@ UFile (package = null)
                                 UQualifiedExpression
                                     USimpleReferenceExpression (System)
                                     USimpleReferenceExpression (out)
-                                UFunctionCallExpression (FUNCTION_CALL, argCount = 1)
+                                UFunctionCallExpression (UastCallKind(name='function_call'), argCount = 1)
                                     USimpleReferenceExpression (println)
                                     USimpleReferenceExpression (arg)
                     UForExpression
@@ -49,7 +49,7 @@ UFile (package = null)
                                 UQualifiedExpression
                                     USimpleReferenceExpression (System)
                                     USimpleReferenceExpression (out)
-                                UFunctionCallExpression (FUNCTION_CALL, argCount = 1)
+                                UFunctionCallExpression (UastCallKind(name='function_call'), argCount = 1)
                                     USimpleReferenceExpression (println)
                                     UBinaryExpression (+)
                                         UBinaryExpression (+)
@@ -72,7 +72,7 @@ UFile (package = null)
                                 UQualifiedExpression
                                     USimpleReferenceExpression (System)
                                     USimpleReferenceExpression (out)
-                                UFunctionCallExpression (FUNCTION_CALL, argCount = 1)
+                                UFunctionCallExpression (UastCallKind(name='function_call'), argCount = 1)
                                     USimpleReferenceExpression (println)
                                     UBinaryExpression (+)
                                         ULiteralExpression ("Index ")
@@ -93,7 +93,7 @@ UFile (package = null)
                                 UQualifiedExpression
                                     USimpleReferenceExpression (System)
                                     USimpleReferenceExpression (out)
-                                UFunctionCallExpression (FUNCTION_CALL, argCount = 1)
+                                UFunctionCallExpression (UastCallKind(name='function_call'), argCount = 1)
                                     USimpleReferenceExpression (println)
                                     USimpleReferenceExpression (i)
                             UAssignmentExpression (+=)

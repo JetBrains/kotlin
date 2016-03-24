@@ -1,11 +1,14 @@
-public class Declarations {
+public static class Declarations {
+    public fun <init>() = EmptyExpression
     var a: String = "a"
 
-    public class NestedClass {
+    public static class NestedClass {
+        public fun <init>() = EmptyExpression
         var b: String = "b"
 
     }
-    public inner class InnerClass {
+    public class InnerClass {
+        public fun <init>() = EmptyExpression
         var c: CharSequence = a
 
     }
