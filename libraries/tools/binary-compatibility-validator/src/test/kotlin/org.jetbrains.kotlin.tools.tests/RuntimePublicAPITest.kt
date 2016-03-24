@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.tools.tests
 
 import org.jetbrains.kotlin.tools.*
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestName
@@ -29,25 +30,46 @@ class RuntimePublicAPITest {
     val testName = TestName()
 
     @Test fun kotlinRuntime() {
-        snapshotAPIAndCompare("../../tools/runtime/target", "kotlin-runtime-0.1-SNAPSHOT.jar", "runtime-declarations.json")
+        snapshotAPIAndCompare("../../tools/runtime/target", "kotlin-runtime", "runtime-declarations.json")
     }
 
     @Test fun kotlinStdlib() {
-        snapshotAPIAndCompare("../../stdlib/target", "kotlin-stdlib-0.1-SNAPSHOT.jar", "stdlib-declarations.json")
+        snapshotAPIAndCompare("../../stdlib/target", "kotlin-stdlib", "stdlib-declarations.json")
     }
 
-    private fun snapshotAPIAndCompare(basePath: String, jarPath: String, kotlinJvmMappingsPath: String) {
-        val base = File(basePath).absoluteFile
-        val visibilities = readKotlinVisibilities(base.resolve(kotlinJvmMappingsPath))
+/*
+    @Test fun kotlinReflect() {
+        // requires declaration mapping JSON from kotlin-reflect which isn't built by maven build
+        snapshotAPIAndCompare("../../tools/kotlin-reflect/target", "kotlin-reflect", "../../../../dist/declarations/reflect-declarations.json ")
+    }
+*/
 
-        // TODO: List jars since version can differ
-        // TODO: Excluded package list
-        val api = getBinaryAPI(JarFile(base.resolve(jarPath)), visibilities).filterOutNonPublic()
+    private fun snapshotAPIAndCompare(basePath: String, jarPrefix: String, kotlinJvmMappingsPath: String) {
+        val base = File(basePath).absoluteFile.normalize()
+        val jarFile = getJarPath(base, jarPrefix)
+        val kotlinJvmMappingsFile = base.resolve(kotlinJvmMappingsPath)
+
+        println("Reading kotlin visibilities from $kotlinJvmMappingsFile")
+        val visibilities =
+                readKotlinVisibilities(kotlinJvmMappingsFile)
+
+        println("Reading binary API from $jarFile")
+        val api = getBinaryAPI(JarFile(jarFile), visibilities).filterOutNonPublic()
 
         val target = File("src/test/resources/output")
                 .resolve(testName.methodName.replaceCamelCaseWithDashedLowerCase() + ".txt")
 
         api.dumpAndCompareWith(target)
+    }
+
+    private fun getJarPath(base: File, jarPrefix: String): File {
+        val files = (base.listFiles() ?: throw Exception("Cannot list files in $base"))
+            .filter { it.name.let {
+                it.startsWith(jarPrefix) && it.endsWith(".jar")
+                    && !it.endsWith("-sources.jar")
+                    && !it.endsWith("-javadoc.jar") }}
+
+        return files.singleOrNull() ?: throw Exception("No single file matching $jarPrefix in $base: $files")
     }
 
 }
