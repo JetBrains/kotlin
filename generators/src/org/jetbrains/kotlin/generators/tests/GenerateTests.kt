@@ -85,6 +85,7 @@ import org.jetbrains.kotlin.idea.intentions.declarations.AbstractJoinLinesTest
 import org.jetbrains.kotlin.idea.internal.AbstractBytecodeToolWindowTest
 import org.jetbrains.kotlin.idea.kdoc.AbstractKDocHighlightingTest
 import org.jetbrains.kotlin.idea.kdoc.AbstractKDocTypingTest
+import org.jetbrains.kotlin.idea.maven.AbstractKotlinMavenInspectionTest
 import org.jetbrains.kotlin.idea.navigation.AbstractGotoSuperTest
 import org.jetbrains.kotlin.idea.navigation.AbstractKotlinGotoImplementationTest
 import org.jetbrains.kotlin.idea.navigation.AbstractKotlinGotoTest
@@ -488,6 +489,10 @@ fun main(args: Array<String>) {
         testClass<AbstractInspectionTest>() {
             model("intentions", pattern = "^(inspections\\.test)$", singleClass = true)
             model("inspections", pattern = "^(inspections\\.test)$", singleClass = true)
+        }
+
+        testClass<AbstractKotlinMavenInspectionTest> {
+            model("maven-inspections", pattern = "^([\\w\\-]+).xml$", singleClass = true)
         }
 
         testClass<AbstractHierarchyTest>() {

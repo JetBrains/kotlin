@@ -24,11 +24,7 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ContentEntry;
-import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.roots.SourceFolder;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.WritingAccessProvider;
 import com.intellij.psi.PsiFile;
@@ -39,15 +35,14 @@ import com.intellij.psi.xml.XmlFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.dom.MavenDomUtil;
-import org.jetbrains.idea.maven.dom.model.*;
+import org.jetbrains.idea.maven.dom.model.MavenDomPlugin;
+import org.jetbrains.idea.maven.dom.model.MavenDomProjectModel;
 import org.jetbrains.idea.maven.model.MavenId;
 import org.jetbrains.idea.maven.project.MavenProjectsManager;
 import org.jetbrains.idea.maven.utils.MavenArtifactScope;
-import org.jetbrains.jps.model.java.JavaSourceRootType;
 import org.jetbrains.kotlin.idea.KotlinPluginUtil;
 import org.jetbrains.kotlin.idea.framework.ui.ConfigureDialogWithModulesAndVersion;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -55,16 +50,10 @@ import java.util.List;
 public abstract class KotlinMavenConfigurator implements KotlinProjectConfigurator {
     public static final String NAME = "maven";
 
-    private static final String GROUP_ID = "org.jetbrains.kotlin";
-    private static final String MAVEN_PLUGIN_ID = "kotlin-maven-plugin";
+    public static final String GROUP_ID = "org.jetbrains.kotlin";
+    public static final String MAVEN_PLUGIN_ID = "kotlin-maven-plugin";
     private static final String KOTLIN_VERSION_PROPERTY = "kotlin.version";
 
-    private static final String PROCESS_TEST_SOURCES_PHASE = "process-test-sources";
-    private static final String PROCESS_SOURCES_PHASE = "process-sources";
-    private static final String TEST_COMPILE_PHASE = "test-compile";
-    private static final String COMPILE_PHASE = "compile";
-    private static final String TEST_COMPILE_GOAL = "test-compile";
-    private static final String COMPILE_GOAL = "compile";
     private static final String TEST_COMPILE_EXECUTION_ID = "test-compile";
     private static final String COMPILE_EXECUTION_ID = "compile";
 
@@ -146,9 +135,7 @@ public abstract class KotlinMavenConfigurator implements KotlinProjectConfigurat
     protected abstract void createExecutions(@NotNull PomFile pomFile, @NotNull MavenDomPlugin kotlinPlugin, @NotNull Module module);
 
     @NotNull
-    protected String getGoal(boolean isTest) {
-        return isTest ? TEST_COMPILE_GOAL : COMPILE_GOAL;
-    }
+    protected abstract String getGoal(boolean isTest);
 
     @NotNull
     protected String getExecutionId(boolean isTest) {
@@ -208,36 +195,8 @@ public abstract class KotlinMavenConfigurator implements KotlinProjectConfigurat
             @NotNull Module module,
             boolean isTest
     ) {
-        MavenDomPluginExecution execution = pomFile.addExecution(kotlinPlugin, getExecutionId(isTest), getPhase(module, isTest), Collections.singletonList(getGoal(isTest)));
-
-        List<String> sourceDirs = new ArrayList<String>();
-        for (ContentEntry contentEntry : ModuleRootManager.getInstance(module).getContentEntries()) {
-            SourceFolder[] folders = contentEntry.getSourceFolders();
-            for (SourceFolder sourceFolder : folders) {
-                if (isRelatedSourceRoot(isTest, sourceFolder)) {
-                    VirtualFile sourceFolderFile = sourceFolder.getFile();
-                    if (sourceFolderFile != null) {
-                        String relativePath = VfsUtilCore.getRelativePath(sourceFolderFile, pomFile.getXmlFile().getVirtualFile().getParent(), '/');
-                        sourceDirs.add(relativePath);
-                    }
-                }
-            }
-        }
-
-        pomFile.executionSourceDirs(execution, sourceDirs);
-    }
-
-    private static boolean isRelatedSourceRoot(boolean isTest, SourceFolder folder) {
-        return isTest && folder.getRootType() == JavaSourceRootType.TEST_SOURCE ||
-               (!isTest && folder.getRootType() == JavaSourceRootType.SOURCE);
-    }
-
-    @NotNull
-    private static String getPhase(@NotNull Module module, boolean isTest) {
-        if (hasJavaFiles(module)) {
-            return isTest ? PROCESS_TEST_SOURCES_PHASE : PROCESS_SOURCES_PHASE;
-        }
-        return isTest ? TEST_COMPILE_PHASE : COMPILE_PHASE;
+        pomFile.addKotlinExecution(module, kotlinPlugin, getExecutionId(isTest), PomFile.Companion.getPhase(hasJavaFiles(module), isTest), isTest,
+                                   Collections.singletonList(getGoal(isTest)));
     }
 
     private static boolean hasJavaFiles(@NotNull Module module) {

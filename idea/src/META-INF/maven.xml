@@ -7,9 +7,51 @@
     <importer implementation="org.jetbrains.kotlin.idea.configuration.KotlinMavenImporter" />
     <archetypesProvider implementation="org.jetbrains.kotlin.idea.configuration.KotlinMavenArchetypesProvider" />
   </extensions>
+  <extensions defaultExtensionNs="com.intellij">
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.configuration.KotlinMavenPluginPhaseInspection"
+                     displayName="Kotlin Maven Plugin inspection"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     language="XML"
+                     hasStaticDescription="true"
+                     level="WARNING" />
+
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.configuration.MavenPluginSourcesMoveToBuild</className>
+      <category>Kotlin</category>
+    </intentionAction>
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.configuration.MavenPluginSourcesMoveToExecutionIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+  </extensions>
+
   <module-components>
     <component>
       <implementation-class>org.jetbrains.kotlin.idea.configuration.KotlinImporterComponent</implementation-class>
     </component>
   </module-components>
+
+  <actions>
+    <group id="KotlinMavenGenerate">
+      <separator />
+
+      <action id="KotlinGenerateMavenCompileExecutionAction"
+              icon="/org/jetbrains/kotlin/idea/icons/kotlin13.png"
+              class="org.jetbrains.kotlin.idea.configuration.GenerateMavenCompileExecutionAction"
+              text="Kotlin compile execution" />
+
+      <action id="KotlinGenerateMavenTestCompileExecutionAction"
+              icon="/org/jetbrains/kotlin/idea/icons/kotlin13.png"
+              class="org.jetbrains.kotlin.idea.configuration.GenerateMavenTestCompileExecutionAction"
+              text="Kotlin test-compile execution" />
+
+      <action id="KotlinGenerateMavenPluginAction"
+              icon="/org/jetbrains/kotlin/idea/icons/kotlin13.png"
+              class="org.jetbrains.kotlin.idea.configuration.GenerateMavenPluginAction"
+              text="Kotlin plugin" />
+
+      <add-to-group group-id="GenerateGroup" anchor="last" />
+    </group>
+  </actions>
 </idea-plugin>

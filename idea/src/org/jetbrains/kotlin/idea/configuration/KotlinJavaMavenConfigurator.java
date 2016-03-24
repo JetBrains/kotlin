@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 
 public class KotlinJavaMavenConfigurator extends KotlinMavenConfigurator {
     private static final String NAME = "maven";
-    private static final String STD_LIB_ID = "kotlin-stdlib";
+    public static final String STD_LIB_ID = "kotlin-stdlib";
     private static final String TEST_LIB_ID = "kotlin-test-junit";
     private static final String PRESENTABLE_TEXT = "Maven";
 
@@ -41,6 +41,12 @@ public class KotlinJavaMavenConfigurator extends KotlinMavenConfigurator {
     protected void createExecutions(@NotNull PomFile pomFile, @NotNull MavenDomPlugin kotlinPlugin, @NotNull Module module) {
         createExecution(pomFile, kotlinPlugin, module, false);
         createExecution(pomFile, kotlinPlugin, module, true);
+    }
+
+    @NotNull
+    @Override
+    protected String getGoal(boolean isTest) {
+        return isTest ? PomFile.KotlinGoals.INSTANCE.getTestCompile() : PomFile.KotlinGoals.INSTANCE.getCompile();
     }
 
     @NotNull
