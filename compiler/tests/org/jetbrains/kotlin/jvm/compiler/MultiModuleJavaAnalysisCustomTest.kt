@@ -25,9 +25,8 @@ import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.ResolverForProject
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoots
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -38,18 +37,20 @@ import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
-import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
+import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.junit.Assert
 import java.io.File
-import java.util.HashMap
+import java.util.*
 
 class MultiModuleJavaAnalysisCustomTest : UsefulTestCase() {
 
-    private class TestModule(val _name: String, val kotlinFiles: List<KtFile>, val javaFilesScope: GlobalSearchScope,
-                             val _dependencies: TestModule.() -> List<TestModule>) :
-            ModuleInfo {
+    private class TestModule(
+            val _name: String, val kotlinFiles: List<KtFile>, val javaFilesScope: GlobalSearchScope,
+            val _dependencies: TestModule.() -> List<TestModule>
+    ) : ModuleInfo {
         override fun dependencies() = _dependencies()
         override val name = Name.special("<$_name>")
     }
@@ -75,8 +76,9 @@ class MultiModuleJavaAnalysisCustomTest : UsefulTestCase() {
     }
 
     private fun createEnvironment(moduleDirs: Array<File>): KotlinCoreEnvironment {
-        val configuration = CompilerConfiguration()
-        configuration.addJavaSourceRoots(moduleDirs.toList())
+        val configuration = KotlinTestUtils.compilerConfigurationForTests(
+                ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, emptyList(), moduleDirs.toList()
+        )
         return KotlinCoreEnvironment.createForTests(testRootDisposable!!, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     }
 
