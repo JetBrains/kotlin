@@ -60,8 +60,10 @@ class AndroidSyntheticPackageFragmentDescriptor(
                 when (resource) {
                     is AndroidResource.Widget -> {
                         val resolvedWidget = resource.resolve(module)
-                        for (receiver in widgetReceivers) {
-                            properties += genPropertyForWidget(packageFragmentDescriptor, receiver, resolvedWidget, context)
+                        if (resolvedWidget != null) {
+                            for (receiver in widgetReceivers) {
+                                properties += genPropertyForWidget(packageFragmentDescriptor, receiver, resolvedWidget, context)
+                            }
                         }
                     }
                     is AndroidResource.Fragment -> if (!packageData.forView) {

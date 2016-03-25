@@ -36,6 +36,6 @@ class AndroidSimpleNameReferenceExtension : SimpleNameReferenceExtension {
         if (resolvedElement !is XmlAttributeValue || !AndroidResourceUtil.isIdDeclaration(resolvedElement)) return null
         val newSyntheticPropertyName = androidIdToName(newElementName) ?: return null
 
-        return psiFactory.createNameIdentifier(newSyntheticPropertyName)
+        return psiFactory.createNameIdentifier(newSyntheticPropertyName.name)
     }
 }

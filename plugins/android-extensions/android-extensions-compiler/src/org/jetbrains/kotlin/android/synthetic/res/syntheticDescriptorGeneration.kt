@@ -81,7 +81,7 @@ internal fun genPropertyForFragment(
 }
 
 private fun genProperty(
-        id: String,
+        id: ResourceIdentifier,
         receiverType: KotlinType,
         type: KotlinType,
         containingDeclaration: DeclarationDescriptor,
@@ -98,13 +98,14 @@ private fun genProperty(
             Modality.FINAL,
             Visibilities.PUBLIC,
             false,
-            Name.identifier(id),
+            Name.identifier(id.name),
             CallableMemberDescriptor.Kind.SYNTHESIZED,
             sourceElement,
             false,
             false) {
         override val errorType = errorType
         override val alwaysCastToView = alwaysCastToView
+        override val resourceId = id
     }
 
     val actualType = if (alwaysCastToView) context.viewType else type
@@ -139,6 +140,7 @@ interface AndroidSyntheticFunction
 interface AndroidSyntheticProperty {
     val errorType: String?
     val alwaysCastToView: Boolean
+    val resourceId: ResourceIdentifier
 
     val isErrorType: Boolean
         get() = errorType != null

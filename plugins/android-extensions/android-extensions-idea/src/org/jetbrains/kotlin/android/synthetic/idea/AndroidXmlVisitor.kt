@@ -24,8 +24,9 @@ import com.intellij.psi.xml.XmlTag
 import org.jetbrains.kotlin.android.synthetic.AndroidConst
 import org.jetbrains.kotlin.android.synthetic.androidIdToName
 import org.jetbrains.kotlin.android.synthetic.isWidgetTypeIgnored
+import org.jetbrains.kotlin.android.synthetic.res.ResourceIdentifier
 
-class AndroidXmlVisitor(val elementCallback: (String, String, XmlAttribute) -> Unit) : XmlElementVisitor() {
+class AndroidXmlVisitor(val elementCallback: (ResourceIdentifier, String, XmlAttribute) -> Unit) : XmlElementVisitor() {
 
     override fun visitElement(element: PsiElement) {
         element.acceptChildren(this)
