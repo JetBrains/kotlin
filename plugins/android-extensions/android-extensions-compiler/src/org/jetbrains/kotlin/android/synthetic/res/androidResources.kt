@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.isValidJavaFqName
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
 
 class AndroidVariant(val name: String, val resDirectories: List<String>) {
@@ -43,18 +44,35 @@ class AndroidModule(val applicationPackage: String, val variants: List<AndroidVa
     override fun hashCode() = applicationPackage.hashCode()
 }
 
-sealed class AndroidResource(val id: String, val sourceElement: PsiElement?) {
+class ResourceIdentifier(val name: String, val packageName: String?) {
+    // Without packageName
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other?.javaClass != javaClass) return false
+
+        other as ResourceIdentifier
+
+        if (name != other.name) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return name.hashCode()
+    }
+}
+
+sealed class AndroidResource(val id: ResourceIdentifier, val sourceElement: PsiElement?) {
     open fun sameClass(other: AndroidResource): Boolean = false
 
     class Widget(
-            id: String,
+            id: ResourceIdentifier,
             val xmlType: String,
             sourceElement: PsiElement?
     ) : AndroidResource(id, sourceElement) {
         override fun sameClass(other: AndroidResource) = other is Widget
     }
 
-    class Fragment(id: String, sourceElement: PsiElement?) : AndroidResource(id, sourceElement) {
+    class Fragment(id: ResourceIdentifier, sourceElement: PsiElement?) : AndroidResource(id, sourceElement) {
         override fun sameClass(other: AndroidResource) = other is Fragment
     }
 }
@@ -71,8 +89,15 @@ class ResolvedWidget(val widget: AndroidResource.Widget, val viewClassDescriptor
         get() = if (isErrorType) widget.xmlType else null
 }
 
-fun AndroidResource.Widget.resolve(module: ModuleDescriptor): ResolvedWidget {
-    fun resolve(fqName: String) = module.findClassAcrossModuleDependencies(ClassId.topLevel(FqName(fqName)))
+fun AndroidResource.Widget.resolve(module: ModuleDescriptor): ResolvedWidget? {
+    fun resolve(fqName: String): ClassDescriptor? {
+        if (!isValidJavaFqName(fqName)) return null
+        return module.findClassAcrossModuleDependencies(ClassId.topLevel(FqName(fqName)))
+    }
+
+    if (id.packageName != null && resolve(id.packageName + ".R") == null) {
+        return null
+    }
 
     if ('.' in xmlType) {
         return ResolvedWidget(this, resolve(xmlType))

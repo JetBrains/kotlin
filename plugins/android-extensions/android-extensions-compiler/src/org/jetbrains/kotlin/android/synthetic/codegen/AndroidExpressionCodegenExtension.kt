@@ -178,10 +178,16 @@ class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
                 return putSelectorForFragment(v)
             }
 
+            val syntheticProperty = propertyDescriptor as AndroidSyntheticProperty
+
             if (androidClassType.supportsCache && isCacheSupported(receiverDescriptor, propertyDescriptor)) {
                 val declarationDescriptorType = typeMapper.mapType(receiverDescriptor)
                 receiver.put(declarationDescriptorType, v)
-                v.getstatic(androidPackage.replace(".", "/") + "/R\$id", propertyDescriptor.name.asString(), "I")
+
+                val resourceId = syntheticProperty.resourceId
+                val packageName = resourceId.packageName ?: androidPackage
+                v.getstatic(packageName.replace(".", "/") + "/R\$id", resourceId.name, "I")
+
                 v.invokevirtual(declarationDescriptorType.internalName, CACHED_FIND_VIEW_BY_ID_METHOD_NAME, "(I)Landroid/view/View;", false)
             }
             else {

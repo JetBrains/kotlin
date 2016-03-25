@@ -84,7 +84,7 @@ class IDEAndroidLayoutXmlFileManager(val module: Module) : AndroidLayoutXmlFileM
 
             val attributes = arrayListOf<PsiElement>()
             val visitor = AndroidXmlVisitor { retId, wClass, valueElement ->
-                if (retId == propertyName) attributes.add(valueElement)
+                if (retId.name == propertyName) attributes.add(valueElement)
             }
 
             layoutFiles.forEach { it.accept(visitor) }
