@@ -3,6 +3,10 @@ package org.jetbrains.kotlin.gradle.incremental
 import com.intellij.openapi.util.io.FileUtil
 import java.io.File
 
+private const val BEGIN_COMPILED_FILES = "Compiling files:"
+private const val END_COMPILED_FILES = "End of files"
+private const val BEGIN_ERRORS = "COMPILATION FAILED"
+
 class BuildStep(
         val compiledKotlinFiles: MutableSet<String> = hashSetOf(),
         val compiledJavaFiles: MutableSet<String> = hashSetOf(),
@@ -34,12 +38,12 @@ fun parseTestBuildLog(file: File): List<BuildStep> {
         var readFiles = false
 
         for (line in stepLines) {
-            if (line.startsWith("Compiling files:")) {
+            if (line.startsWith(BEGIN_COMPILED_FILES)) {
                 readFiles = true
                 continue
             }
 
-            if (readFiles && line.startsWith("End of files")) {
+            if (readFiles && line.startsWith(END_COMPILED_FILES)) {
                 readFiles = false
                 continue
             }
@@ -61,7 +65,7 @@ fun parseTestBuildLog(file: File): List<BuildStep> {
     }
 
     fun BuildStep.parseErrors(stepLines: List<String>) {
-        val startIndex = stepLines.indexOfLast { it.startsWith("COMPILATION FAILED") }
+        val startIndex = stepLines.indexOfLast { it.startsWith(BEGIN_ERRORS) }
 
         if (startIndex > 0) {
             compileErrors.addAll(stepLines.subList(startIndex + 1, stepLines.size))
@@ -77,4 +81,29 @@ fun parseTestBuildLog(file: File): List<BuildStep> {
         buildStep.parseErrors(stepLines)
         buildStep
     }
+}
+
+fun dumpBuildLog(buildSteps: Iterable<BuildStep>): String {
+    val sb = StringBuilder()
+
+    for ((i, step) in buildSteps.withIndex()) {
+        if (i > 0) {
+            sb.appendln()
+        }
+
+        sb.appendln("================ Step #${i+1} =================")
+        sb.appendln()
+        sb.appendln(BEGIN_COMPILED_FILES)
+        step.compiledKotlinFiles.sorted().forEach { sb.appendln(it) }
+        step.compiledJavaFiles.sorted().forEach { sb.appendln(it) }
+        sb.appendln(END_COMPILED_FILES)
+        sb.appendln("------------------------------------------")
+
+        if (!step.compileSucceeded) {
+            sb.appendln(BEGIN_ERRORS)
+            step.compileErrors.forEach { sb.appendln(it) }
+        }
+    }
+
+    return sb.toString()
 }

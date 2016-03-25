@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.gradle
 
+import org.jetbrains.kotlin.gradle.incremental.dumpBuildLog
 import org.jetbrains.kotlin.gradle.incremental.parseTestBuildLog
-import org.jetbrains.kotlin.utils.Printer
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -21,28 +21,7 @@ class BuildLogParserParametrizedIT : BaseGradleIT() {
         val logFile = File(testDir, LOG_FILE_NAME)
         assert(logFile.isFile) { "Log file: $logFile does not exist" }
 
-        val parsedStages = parseTestBuildLog(logFile)
-        val sb = StringBuilder()
-        val p = Printer(sb)
-
-        for ((i, stage) in parsedStages.withIndex()) {
-            if (i > 0) {
-                p.println()
-            }
-
-            p.println("Step #${i + 1}")
-
-            p.println("Compiled java files:")
-            p.printlnSorted(stage.compiledJavaFiles)
-
-            p.println("Compiled kotlin files:")
-            p.printlnSorted(stage.compiledKotlinFiles)
-
-            p.println("Compile errors:")
-            p.printlnSorted(stage.compileErrors)
-        }
-
-        val actualNormalized = sb.toString().normalizeLineEnds()
+        val actualNormalized = dumpBuildLog(parseTestBuildLog(logFile)).trim()
         val expectedFile = File(testDir, EXPECTED_PARSED_LOG_FILE_NAME)
 
         if (!expectedFile.isFile) {
@@ -52,8 +31,12 @@ class BuildLogParserParametrizedIT : BaseGradleIT() {
             throw AssertionError("Expected file log did not exist, created: $expectedFile")
         }
 
-        val expectedNormalized = expectedFile.readText().normalizeLineEnds()
+        val expectedNormalized = expectedFile.readText().trim()
         Assert.assertEquals("Parsed content was unexpected: ", expectedNormalized, actualNormalized)
+
+        // parse expected, dump again and compare (to check that dumped log can be parsed again)
+        val reparsedActualNormalized = dumpBuildLog(parseTestBuildLog(expectedFile)).trim()
+        Assert.assertEquals("Reparsed content was unexpected: ", expectedNormalized, reparsedActualNormalized)
     }
 
     companion object {
@@ -70,12 +53,3 @@ class BuildLogParserParametrizedIT : BaseGradleIT() {
         }
     }
 }
-
-private fun <T : Comparable<T>> Printer.printlnSorted(elements: Iterable<T>) {
-    pushIndent()
-    elements.sorted().forEach { this.println(it) }
-    popIndent()
-}
-
-private fun String.normalizeLineEnds(): String =
-        lines().map { it.trimEnd() }.joinToString(separator="\n")
