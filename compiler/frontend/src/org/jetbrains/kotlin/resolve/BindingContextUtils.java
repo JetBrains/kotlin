@@ -125,9 +125,18 @@ public class BindingContextUtils {
         return descriptor;
     }
 
+    @Nullable
     public static FunctionDescriptor getEnclosingFunctionDescriptor(@NotNull BindingContext context, @NotNull KtElement element) {
-        KtFunction function = PsiTreeUtil.getParentOfType(element, KtFunction.class);
-        return (FunctionDescriptor)context.get(DECLARATION_TO_DESCRIPTOR, function);
+        KtElement functionOrClass = PsiTreeUtil.getParentOfType(element, KtFunction.class, KtClassOrObject.class);
+        DeclarationDescriptor descriptor = context.get(DECLARATION_TO_DESCRIPTOR, functionOrClass);
+        if (functionOrClass instanceof KtFunction) {
+            if (descriptor instanceof FunctionDescriptor) return (FunctionDescriptor) descriptor;
+            return null;
+        }
+        else {
+            if (descriptor instanceof ClassDescriptor) return ((ClassDescriptor) descriptor).getUnsubstitutedPrimaryConstructor();
+            return null;
+        }
     }
 
     public static void reportAmbiguousLabel(

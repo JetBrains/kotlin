@@ -793,16 +793,31 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
         override fun visitBreakExpression(expression: KtBreakExpression) {
             val loop = getCorrespondingLoop(expression)
             if (loop != null) {
-                checkJumpDoesNotCrossFunctionBoundary(expression, loop)
-                builder.getExitPoint(loop)?.let { builder.jump(it, expression) }
+                if (jumpDoesNotCrossFunctionBoundary(expression, loop)) {
+                    builder.getExitPoint(loop)?.let { builder.jump(it, expression) }
+                }
             }
         }
 
         override fun visitContinueExpression(expression: KtContinueExpression) {
             val loop = getCorrespondingLoop(expression)
             if (loop != null) {
-                checkJumpDoesNotCrossFunctionBoundary(expression, loop)
-                builder.jump(builder.getConditionEntryPoint(loop), expression)
+                if (jumpDoesNotCrossFunctionBoundary(expression, loop)) {
+                    builder.jump(builder.getConditionEntryPoint(loop), expression)
+                }
+            }
+        }
+
+        private fun getNearestLoopExpression(expression: KtExpression) = expression.getStrictParentOfType<KtLoopExpression>()
+
+        private fun getCorrespondingLoopWithoutLabel(expression: KtExpression): KtLoopExpression? {
+            val parentLoop = getNearestLoopExpression(expression) ?: return null
+            val parentBody = parentLoop.body
+            return if (parentBody != null && parentBody.textRange.contains(expression.textRange)) {
+                parentLoop
+            }
+            else {
+                getNearestLoopExpression(parentLoop)
             }
         }
 
@@ -821,7 +836,7 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
                 }
             }
             else {
-                loop = builder.currentLoop
+                loop = getCorrespondingLoopWithoutLabel(expression)
                 if (loop == null) {
                     trace.report(BREAK_OR_CONTINUE_OUTSIDE_A_LOOP.on(expression))
                 }
@@ -842,13 +857,24 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             return loop
         }
 
-        private fun checkJumpDoesNotCrossFunctionBoundary(jumpExpression: KtExpressionWithLabel, jumpTarget: KtElement) {
+        private fun jumpDoesNotCrossFunctionBoundary(jumpExpression: KtExpressionWithLabel, jumpTarget: KtElement): Boolean {
             val bindingContext = trace.bindingContext
 
             val labelExprEnclosingFunc = BindingContextUtils.getEnclosingFunctionDescriptor(bindingContext, jumpExpression)
             val labelTargetEnclosingFunc = BindingContextUtils.getEnclosingFunctionDescriptor(bindingContext, jumpTarget)
-            if (labelExprEnclosingFunc !== labelTargetEnclosingFunc) {
-                trace.report(BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY.on(jumpExpression))
+            return if (labelExprEnclosingFunc !== labelTargetEnclosingFunc) {
+                // Check to report only once
+                if (builder.getExitPoint(jumpTarget) != null ||
+                    // Local class secondary constructors are handled differently
+                    // They are the only local class element NOT included in owner pseudocode
+                    // See generateInitializersForScriptClassOrObject && generateDeclarationForLocalClassOrObjectIfNeeded
+                    labelExprEnclosingFunc is ConstructorDescriptor && !labelExprEnclosingFunc.isPrimary) {
+                    trace.report(BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY.on(jumpExpression))
+                }
+                false
+            }
+            else {
+                true
             }
         }
 

@@ -31,7 +31,7 @@ L7 [after local declaration]:
   3 jmp(L2)                                                NEXT:[jmp?(L3)]
 L3 [loop exit point]:
 L5 [body exit point]:
-    read (Unit)                                            PREV:[jmp?(L3), jmp(L3)]
+    read (Unit)                                            PREV:[jmp?(L3)]
 L1:
   1 <END>                                                  NEXT:[<SINK>]
 error:
@@ -47,10 +47,9 @@ sink:
 L8:
   5 <START>
   6 mark(break)
-    jmp(L3)            NEXT:[read (Unit)]
-- 5 ret(*|!<v0>) L9    PREV:[]
+  5 ret(*|!<v0>) L9
 L9:
-    <END>              NEXT:[<SINK>]         PREV:[]
+    <END>              NEXT:[<SINK>]
 error:
     <ERROR>            PREV:[]
 sink:
