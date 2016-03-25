@@ -110,6 +110,7 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
         createAdditionalBreakpoints(fileText)
 
         val shouldPrintFrame = InTextDirectivesUtils.isDirectiveDefined(fileText, "// PRINT_FRAME")
+        val skipInPrintFrame = if (shouldPrintFrame) InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "// SKIP: ") else emptyList()
 
         val expressions = loadTestDirectivesPairs(fileText, "// EXPRESSION: ", "// RESULT: ")
 
@@ -140,7 +141,7 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
             }
             finally {
                if (shouldPrintFrame) {
-                    printFrame(variablesView, watchesView)
+                    printFrame(variablesView, watchesView, PrinterConfig(skipInPrintFrame))
                     println(fileText, ProcessOutputTypes.SYSTEM)
                 }
                 else {
@@ -198,18 +199,18 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
         return variablesView
     }
 
-    private fun SuspendContextImpl.printFrame(variablesView: XVariablesView, watchesView: XWatchesViewImpl) {
+    private fun SuspendContextImpl.printFrame(variablesView: XVariablesView, watchesView: XWatchesViewImpl, config: PrinterConfig) {
         val tree = variablesView.tree!!
         expandAll(
                 tree,
                 Runnable {
                     try {
-                        Printer().printTree(tree)
+                        Printer(config).printTree(tree)
 
                         for (extra in getExtraVars()) {
                             watchesView.addWatchExpression(XExpressionImpl.fromText(extra.text), -1, false);
                         }
-                        Printer().printTree(watchesView.tree)
+                        Printer(config).printTree(watchesView.tree)
                     }
                     finally {
                         resume(this)
@@ -226,7 +227,11 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
         return KotlinFrameExtraVariablesProvider().collectVariables(debuggerContext.sourcePosition, evaluationContext, hashSetOf())
     }
 
-    private inner class Printer() {
+    private class PrinterConfig(
+            val variablesToSkipInPrintFrame: List<String> = emptyList()
+    )
+
+    private inner class Printer(private val config: PrinterConfig) {
         fun printTree(tree: XDebuggerTree) {
             val root = tree.treeModel.root as TreeNode
             printNode(root, 0)
@@ -251,6 +256,7 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
 
         fun printDescriptor(descriptor: NodeDescriptorImpl, indent: Int): Boolean {
             if (descriptor is DefaultNodeDescriptor) return true
+            if (config.variablesToSkipInPrintFrame.contains(descriptor.name)) return true
 
             var label = descriptor.label
             // TODO: update presentation before calc label
