@@ -47,6 +47,8 @@ public class AnnotationListParseTest {
     @Test
     fun testDeclarations() = doTest("classDeclarations")
 
+    @Test
+    fun testSameMethodDifferentClasses() = doTest("sameMethodDifferentClasses")
 
     private val resourcesRootFile = File("src/test/resources/parse")
 
@@ -91,7 +93,7 @@ public class AnnotationListParseTest {
             Assert.fail("Expected data file did not exist. Generating: " + expectedFile)
         }
 
-        val expectedText = expectedFile.readText().replace(lineSeparator, "\n")
+        val expectedText = expectedFile.readText().replace(lineSeparator, "\n").trim('\n', ' ', '\t')
 
         assertEquals(expectedText, actualText)
     }
