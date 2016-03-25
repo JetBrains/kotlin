@@ -24,6 +24,9 @@ class C {
 }
 
 // ABSENT: lazy
+// EXIST: { itemText: "Delegates.notNull", tailText:"() (kotlin.properties)", typeText: "ReadWriteProperty<Any?, CharSequence>", attributes:"" }
+// EXIST: { itemText: "Delegates.observable", tailText:"(initialValue: CharSequence, crossinline onChange: (KProperty<*>, CharSequence, CharSequence) -> Unit) (kotlin.properties)", typeText: "ReadWriteProperty<Any?, CharSequence>", attributes:"" }
+// EXIST: { itemText: "Delegates.vetoable", tailText:"(initialValue: CharSequence, crossinline onChange: (KProperty<*>, CharSequence, CharSequence) -> Boolean) (kotlin.properties)", typeText: "ReadWriteProperty<Any?, CharSequence>", attributes:"" }
 // ABSENT: createX1
 // EXIST: createX2
 // ABSENT: createX3

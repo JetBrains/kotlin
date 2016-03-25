@@ -209,7 +209,7 @@ class SmartCompletion(
                         .addTo(items, inheritanceSearchers, expectedInfos)
 
                 if (expression is KtSimpleNameExpression) {
-                    StaticMembers(bindingContext, lookupElementFactory, resolutionFacade)
+                    StaticMembers(bindingContext, lookupElementFactory, resolutionFacade, moduleDescriptor)
                             .addToCollection(items, expectedInfos, expression, descriptorsToSkip)
                 }
 

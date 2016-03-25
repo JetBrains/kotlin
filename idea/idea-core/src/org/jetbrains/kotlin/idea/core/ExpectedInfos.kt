@@ -148,6 +148,8 @@ class WhenEntryAdditionalData(val whenWithSubject: Boolean) : ExpectedInfo.Addit
 
 object IfConditionAdditionalData : ExpectedInfo.AdditionalData
 
+object PropertyDelegateAdditionalData : ExpectedInfo.AdditionalData
+
 class ExpectedInfos(
         private val bindingContext: BindingContext,
         private val resolutionFacade: ResolutionFacade,
@@ -662,8 +664,7 @@ class ExpectedInfos(
                 result
             }
         }
-        return listOf(ExpectedInfo(byTypeFilter, null, null))
-        //TODO: special items for "Delegates...."
+        return listOf(ExpectedInfo(byTypeFilter, null, null, additionalData = PropertyDelegateAdditionalData))
     }
 
     private fun getFromBindingContext(expressionWithType: KtExpression): Collection<ExpectedInfo>? {

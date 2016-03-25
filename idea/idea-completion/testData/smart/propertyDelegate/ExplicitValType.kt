@@ -27,9 +27,18 @@ class C {
 }
 
 // EXIST: lazy
+// EXIST: { itemText: "Delegates.notNull", tailText:"() (kotlin.properties)", typeText: "ReadWriteProperty<Any?, CharSequence>", attributes:"" }
+// EXIST: { itemText: "Delegates.observable", tailText:"(initialValue: CharSequence, crossinline onChange: (KProperty<*>, CharSequence, CharSequence) -> Unit) (kotlin.properties)", typeText: "ReadWriteProperty<Any?, CharSequence>", attributes:"" }
+// EXIST: { itemText: "Delegates.vetoable", tailText:"(initialValue: CharSequence, crossinline onChange: (KProperty<*>, CharSequence, CharSequence) -> Boolean) (kotlin.properties)", typeText: "ReadWriteProperty<Any?, CharSequence>", attributes:"" }
+
 // EXIST: createX1
 // EXIST: createX2
 // ABSENT: createX3
 // EXIST: createY1
 // ABSENT: createY2
-/*TODO: add constructors*/
+
+// EXIST: X1
+// EXIST: X2
+// ABSENT: X3
+// EXIST: Y1
+// ABSENT: Y2

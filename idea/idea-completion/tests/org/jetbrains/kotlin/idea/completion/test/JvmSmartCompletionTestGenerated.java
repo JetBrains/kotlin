@@ -1504,6 +1504,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("Order.kt")
+        public void testOrder() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/Order.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ValInClass.kt")
         public void testValInClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/ValInClass.kt");
