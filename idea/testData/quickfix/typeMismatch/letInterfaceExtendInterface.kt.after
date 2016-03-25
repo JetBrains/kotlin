@@ -1,0 +1,14 @@
+// "Let 'C' extend interface 'A'" "true"
+package let.extend
+
+fun main(args: Array<String>) {
+    foo(B() as C<caret>)
+}
+
+
+fun foo(a: A) {
+}
+
+interface A
+interface C : A
+class B : C

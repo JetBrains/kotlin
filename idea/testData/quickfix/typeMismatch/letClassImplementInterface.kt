@@ -1,0 +1,13 @@
+// "Let 'B' implement interface 'A'" "true"
+package let.implement
+
+fun main(args: Array<String>) {
+    foo(B()<caret>)
+}
+
+
+fun foo(a: A) {
+}
+
+interface A
+class B
