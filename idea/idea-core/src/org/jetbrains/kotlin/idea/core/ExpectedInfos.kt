@@ -372,12 +372,7 @@ class ExpectedInfos(
         else {
             if (alreadyHasStar) return
 
-            val parameterType = if (useHeuristicSignatures)
-                resolutionFacade.ideService<HeuristicSignatures>().
-                        correctedParameterType(descriptor, parameter) ?: parameter.type
-            else
-                parameter.type
-
+            val parameterType = parameter.type
             if (isFunctionLiteralArgument) {
                 if (parameterType.isFunctionType) {
                     add(ExpectedInfo.createForArgument(parameterType, expectedName, null, argumentPositionData))
