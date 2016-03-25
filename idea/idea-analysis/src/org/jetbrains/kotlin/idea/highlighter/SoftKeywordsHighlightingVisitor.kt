@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.highlighter
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.PsiElement
-import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.KtVisitorVoid
@@ -27,29 +26,34 @@ import org.jetbrains.kotlin.psi.KtVisitorVoid
 internal class SoftKeywordsHighlightingVisitor(private val holder: AnnotationHolder) : KtVisitorVoid() {
 
     override fun visitElement(element: PsiElement) {
-        if (element is LeafPsiElement) {
-            val elementType = element.elementType
-            if (KtTokens.SOFT_KEYWORDS.contains(elementType)) {
-                var attributes = KotlinHighlightingColors.KEYWORD
-                if (KtTokens.MODIFIER_KEYWORDS.contains(elementType)) {
-                    attributes = KotlinHighlightingColors.BUILTIN_ANNOTATION
+        val elementType = element.node.elementType
+        val attributes = when (elementType) {
+            in KtTokens.SOFT_KEYWORDS -> {
+                when (elementType) {
+                    in KtTokens.MODIFIER_KEYWORDS -> KotlinHighlightingColors.BUILTIN_ANNOTATION
+                    else -> KotlinHighlightingColors.KEYWORD
                 }
-                holder.createInfoAnnotation(element as PsiElement, null).textAttributes = attributes
             }
-            if (KtTokens.SAFE_ACCESS == elementType) {
-                holder.createInfoAnnotation(element as PsiElement, null).textAttributes = KotlinHighlightingColors.SAFE_ACCESS
-            }
+
+            KtTokens.SAFE_ACCESS -> KotlinHighlightingColors.SAFE_ACCESS
+
+            else -> return
         }
+
+        holder.createInfoAnnotation(element, null).textAttributes = attributes
     }
 
     override fun visitLambdaExpression(lambdaExpression: KtLambdaExpression) {
         if (ApplicationManager.getApplication().isUnitTestMode) return
+
         val functionLiteral = lambdaExpression.functionLiteral
         holder.createInfoAnnotation(functionLiteral.lBrace, null).textAttributes = KotlinHighlightingColors.FUNCTION_LITERAL_BRACES_AND_ARROW
+
         val closingBrace = functionLiteral.rBrace
         if (closingBrace != null) {
             holder.createInfoAnnotation(closingBrace, null).textAttributes = KotlinHighlightingColors.FUNCTION_LITERAL_BRACES_AND_ARROW
         }
+
         val arrow = functionLiteral.arrow
         if (arrow != null) {
             holder.createInfoAnnotation(arrow, null).textAttributes = KotlinHighlightingColors.FUNCTION_LITERAL_BRACES_AND_ARROW
