@@ -2847,6 +2847,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("breakContinueInTryFinally.kt")
+            public void testBreakContinueInTryFinally() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/breakContinueInTryFinally.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("breakInsideLocal.kt")
+            public void testBreakInsideLocal() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/breakInsideLocal.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("breakOrContinueInLoopCondition.kt")
             public void testBreakOrContinueInLoopCondition() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/breakOrContinueInLoopCondition.kt");

@@ -1,0 +1,10 @@
+package
+
+public fun test(): kotlin.Unit
+public fun test2(): kotlin.Unit
+public fun test3(): kotlin.Unit
+public fun test4(): kotlin.Unit
+public fun test5(): kotlin.Unit
+public fun test6(): kotlin.Unit
+public fun test7(): kotlin.Unit
+public fun test8(): kotlin.Unit

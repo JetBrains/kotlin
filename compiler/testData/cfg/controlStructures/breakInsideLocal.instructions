@@ -1,0 +1,62 @@
+== test ==
+fun test() {
+    while (true) {
+        class LocalClass(val x: Int) {
+            init {
+                break
+            }
+            constructor() : this(42) {
+                break
+            }
+            fun foo() {
+                break
+            }
+        }
+    }
+}
+---------------------
+L0:
+  1 <START>
+  2 mark({ while (true) { class LocalClass(val x: Int) { init { break } constructor() : this(42) { break } fun foo() { break } } } })
+L2 [loop entry point]:
+L6 [condition entry point]:
+    r(true) -> <v0>                                                                                                                      PREV:[mark({ while (true) { class LocalClass(val x: Int) { init { break } constructor() : this(42) { break } fun foo() { break } } } }), jmp(L2)]
+    mark(while (true) { class LocalClass(val x: Int) { init { break } constructor() : this(42) { break } fun foo() { break } } })
+    magic[VALUE_CONSUMER](true|<v0>) -> <v1>
+L4 [body entry point]:
+  3 mark({ class LocalClass(val x: Int) { init { break } constructor() : this(42) { break } fun foo() { break } } })
+    jmp?(L7)                                                                                                                             NEXT:[jmp(L2), v(val x: Int)]
+    v(val x: Int)
+    magic[FAKE_INITIALIZER](val x: Int) -> <v2>
+    w(x|<v2>)
+  4 mark({ break })
+  3 jmp?(L8)                                                                                                                             NEXT:[jmp(L2), d(fun foo() { break })]
+    d(fun foo() { break })                                                                                                               NEXT:[<SINK>]
+L7 [after local class]:
+L8 [after local declaration]:
+  2 jmp(L2)                                                                                                                              NEXT:[r(true) -> <v0>]                                                                                                                      PREV:[jmp?(L7), jmp?(L8)]
+L3 [loop exit point]:
+L5 [body exit point]:
+-   read (Unit)                                                                                                                          PREV:[]
+L1:
+  1 <END>                                                                                                                                NEXT:[<SINK>]                                                                                                                               PREV:[]
+error:
+    <ERROR>                                                                                                                              PREV:[]
+sink:
+    <SINK>                                                                                                                               PREV:[<ERROR>, <END>, d(fun foo() { break })]
+=====================
+== foo ==
+fun foo() {
+                break
+            }
+---------------------
+L9:
+  4 <START>
+  5 mark({ break })
+L10:
+  4 <END>              NEXT:[<SINK>]
+error:
+    <ERROR>            PREV:[]
+sink:
+    <SINK>             PREV:[<ERROR>, <END>]
+=====================
