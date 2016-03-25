@@ -74,9 +74,7 @@ class CodeConverter(
     }
 
     fun convertLocalVariable(variable: PsiLocalVariable): LocalVariable {
-        val isVal = variable.hasModifierProperty(PsiModifier.FINAL) ||
-                    variable.initializer == null/* we do not know actually and prefer val until we have better analysis*/ ||
-                    !variable.hasWriteAccesses(converter.referenceSearcher, variable.getContainingMethod())
+        val isVal = canChangeType(variable)
         val type = typeConverter.convertVariableType(variable)
         val explicitType = type.check { settings.specifyLocalVariableTypeByDefault || converter.shouldDeclareVariableType(variable, type, isVal) }
         return LocalVariable(variable.declarationIdentifier(),
@@ -85,6 +83,12 @@ class CodeConverter(
                              explicitType,
                              convertExpression(variable.initializer, variable.type),
                              isVal).assignPrototype(variable)
+    }
+
+    fun canChangeType(variable: PsiLocalVariable) : Boolean {
+        return variable.hasModifierProperty(PsiModifier.FINAL) ||
+                    variable.initializer == null/* we do not know actually and prefer val until we have better analysis*/ ||
+                    !variable.hasWriteAccesses(converter.referenceSearcher, variable.getContainingMethod())
     }
 
     fun convertExpression(expression: PsiExpression?, expectedType: PsiType?, expectedNullability: Nullability? = null): Expression {

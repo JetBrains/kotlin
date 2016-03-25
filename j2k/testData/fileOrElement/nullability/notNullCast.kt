@@ -1,5 +1,3 @@
-// ERROR: Type mismatch: inferred type is Passenger.PassChild? but Passenger.PassChild was expected
-// ERROR: Type mismatch: inferred type is Passenger.PassChild? but Passenger.PassChild was expected
 class Passenger {
     open class PassParent
 
@@ -18,9 +16,9 @@ class Passenger {
         val pass = provideNullable(1)
         if (1 == 2) {
             assert(pass != null)
-            accept2(pass as PassChild?)
+            accept2((pass as PassChild?)!!)
         }
-        accept2(pass as PassChild?)
+        accept2((pass as PassChild?)!!)
     }
 
     fun accept1(p: PassChild) {
