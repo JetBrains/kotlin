@@ -2,6 +2,10 @@ import kotlin.reflect.KProperty
 
 class X1 {
     operator fun getValue(thisRef: C, property: KProperty<*>): String = ""
+
+    companion object {
+        fun create() = X1()
+    }
 }
 class X2 {
     operator fun getValue(thisRef: String, property: KProperty<*>): String = ""
@@ -30,15 +34,19 @@ class C {
 }
 
 // EXIST: lazy
+
 // EXIST: createX1
 // ABSENT: createX2
 // EXIST: createX3
 // EXIST: createY1
 // ABSENT: createY2
 // EXIST: createY3
+
 // EXIST: X1
 // ABSENT: X2
 // EXIST: X3
 // EXIST: Y1
 // ABSENT: Y2
 // ABSENT: Y3
+
+// EXIST: { itemText:"X1.create", tailText:"() (<root>)", typeText:"X1", attributes:"" }

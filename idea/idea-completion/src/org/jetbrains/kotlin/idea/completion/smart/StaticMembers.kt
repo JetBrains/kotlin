@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.completion.LookupElementFactory
 import org.jetbrains.kotlin.idea.completion.decorateAsStaticMember
 import org.jetbrains.kotlin.idea.core.ExpectedInfo
-import org.jetbrains.kotlin.idea.core.fuzzyType
 import org.jetbrains.kotlin.idea.core.isVisible
+import org.jetbrains.kotlin.idea.core.multipleFuzzyTypes
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.fuzzyReturnType
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.types.TypeUtils
+import java.util.*
 
 // adds java static members, enum members and members from companion object
 class StaticMembers(
@@ -42,12 +42,16 @@ class StaticMembers(
                                expectedInfos: Collection<ExpectedInfo>,
                                context: KtSimpleNameExpression,
                                enumEntriesToSkip: Set<DeclarationDescriptor>) {
-
-        val expectedInfosByClass = expectedInfos.groupBy {
-            expectedInfo -> expectedInfo.fuzzyType?.type?.let { TypeUtils.getClassDescriptor(it) }
+        val expectedInfosByClass = HashMap<ClassDescriptor, MutableList<ExpectedInfo>>()
+        for (expectedInfo in expectedInfos) {
+            for (fuzzyType in expectedInfo.multipleFuzzyTypes) {
+                val classDescriptor = fuzzyType.type.constructor.declarationDescriptor as? ClassDescriptor ?: continue
+                expectedInfosByClass.getOrPut(classDescriptor) { ArrayList() }.add(expectedInfo)
+            }
         }
+
         for ((classDescriptor, expectedInfosForClass) in expectedInfosByClass) {
-            if (classDescriptor != null && !classDescriptor.name.isSpecial) {
+            if (!classDescriptor.name.isSpecial) {
                 addToCollection(collection, classDescriptor, expectedInfosForClass, context, enumEntriesToSkip)
             }
         }
