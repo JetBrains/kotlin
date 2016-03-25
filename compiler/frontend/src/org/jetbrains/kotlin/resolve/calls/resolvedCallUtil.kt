@@ -16,15 +16,14 @@
 
 package org.jetbrains.kotlin.resolve.calls.resolvedCallUtil
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.KtThisExpression
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
+import org.jetbrains.kotlin.resolve.calls.smartcasts.getReceiverValueWithSmartCast
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.descriptorUtil.getOwnerForEffectiveDispatchReceiverParameter
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
@@ -89,3 +88,6 @@ fun ResolvedCall<*>.makeNullableTypeIfSafeReceiver(type: KotlinType?, context: C
         type?.let { TypeUtils.makeNullableIfNeeded(type, hasSafeNullableReceiver(context)) }
 
 fun ResolvedCall<*>.hasBothReceivers() = dispatchReceiver != null && extensionReceiver != null
+
+fun ResolvedCall<*>.getDispatchReceiverWithSmartCast(): ReceiverValue?
+        = getReceiverValueWithSmartCast(dispatchReceiver, smartCastDispatchReceiverType)

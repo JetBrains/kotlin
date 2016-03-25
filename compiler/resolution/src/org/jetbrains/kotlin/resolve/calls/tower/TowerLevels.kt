@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.tower
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.calls.smartcasts.getReceiverValueWithSmartCast
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.HIDES_MEMBERS_NAME_LIST
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasClassValueDescriptor
@@ -65,7 +66,8 @@ internal abstract class AbstractScopeTowerLevel(
             val shouldSkipVisibilityCheck = scopeTower.isDebuggerContext
             if (!shouldSkipVisibilityCheck) {
                 Visibilities.findInvisibleMember(
-                        dispatchReceiver, descriptor,
+                        getReceiverValueWithSmartCast(dispatchReceiver, dispatchReceiverSmartCastType),
+                        descriptor,
                         scopeTower.lexicalScope.ownerDescriptor
                 )?.let { diagnostics.add(VisibilityError(it)) }
             }

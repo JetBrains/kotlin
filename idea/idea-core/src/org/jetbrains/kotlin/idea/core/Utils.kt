@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getDispatchReceiverWithSmartCast
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
@@ -136,7 +137,7 @@ fun Call.resolveCandidates(
 
     if (filterOutByVisibility) {
         candidates = candidates.filter {
-            Visibilities.isVisible(it.dispatchReceiver, it.resultingDescriptor, inDescriptor)
+            Visibilities.isVisible(it.getDispatchReceiverWithSmartCast(), it.resultingDescriptor, inDescriptor)
         }
     }
 
