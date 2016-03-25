@@ -531,7 +531,21 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
 
         val referenceName = expression.referenceName!!
         val target = expression.resolve()
-        val isNullable = target is PsiVariable && typeConverter.variableNullability(target).isNullable(codeConverter.settings)
+
+        fun isNullable(target: PsiVariable): Boolean {
+            if (typeConverter.variableNullability(target).isNullable(codeConverter.settings)) return true
+
+            val canChangeType = when (target) {
+                is PsiLocalVariable -> codeConverter.canChangeType(target)
+                is PsiField -> target.hasModifierProperty(PsiModifier.PRIVATE)
+                else -> return false
+            }
+            val shouldDeclareVariableType = converter.shouldDeclareVariableType(target, converter.typeConverter.convertVariableType(target), canChangeType)
+            return !shouldDeclareVariableType && !converter.settings.specifyFieldTypeByDefault && codeConverter.convertExpression(target.initializer).isNullable
+        }
+
+        val isNullable = target is PsiVariable && isNullable(target)
+
         val qualifier = expression.qualifierExpression
 
         var identifier = Identifier(referenceName, isNullable).assignNoPrototype()
