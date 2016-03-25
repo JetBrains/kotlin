@@ -37,6 +37,7 @@
 
 ### Tools.Gradle
 - Added project property 'kotlin.incremental'
+- Fixed a bug causing Java rebuild when both Java and Kotlin are up-to-date
 
 ## 1.0.1-2
 

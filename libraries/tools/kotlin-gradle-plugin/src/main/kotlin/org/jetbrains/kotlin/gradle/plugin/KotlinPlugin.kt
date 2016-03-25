@@ -17,6 +17,7 @@ import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.initialization.dsl.ScriptHandler
 import org.gradle.api.internal.HasConvention
 import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.plugins.JavaBasePlugin
@@ -134,28 +135,8 @@ class Kotlin2JvmSourceSetProcessor(
         kotlinTask.setProperty("kotlinDestinationDir", kotlinDestinationDir)
 
         val javaTask = project.tasks.findByName(sourceSet.compileJavaTaskName) as AbstractCompile?
-
         if (javaTask != null) {
-            // Since we cannot update classpath statically, java not able to detect changes in the classpath after kotlin compiler.
-            // Therefore this (probably inefficient since java cannot decide "uptodateness" by the list of changed class files, but told
-            // explicitly being out of date whenever any kotlin files are compiled
-            if (kotlinTask.hasProperty("anyClassesCompiled")) {
-                kotlinTask.property("anyClassesCompiled")?.let {
-                    kotlinTask.setProperty("anyClassesCompiled", false)
-                    javaTask.outputs.upToDateWhen { task ->
-                        val kotlinClassesCompiled = kotlinTask.property("anyClassesCompiled") as? Boolean ?: false
-                        if (kotlinClassesCompiled) {
-                            logger.info("Marking $task out of date, because kotlin classes are changed")
-                        }
-                        !kotlinClassesCompiled
-                    }
-                }
-            }
-
-            javaTask.dependsOn(kotlinTaskName)
-            javaTask.doFirst {
-                javaTask.classpath += project.files(kotlinDestinationDir)
-            }
+            setUpKotlinToJavaDependency(project, kotlinTask, javaTask, logger)
         }
 
         val kotlinAnnotationProcessingDep = cachedKotlinAnnotationProcessingDep ?: run {
@@ -440,8 +421,6 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
                 }
             }
 
-            javaTask.dependsOn(kotlinTaskName)
-
             val (aptOutputDir, aptWorkingDir) = project.getAptDirsForSourceSet(variantDataName)
             variantData.addJavaSourceFoldersToModel(aptOutputDir)
 
@@ -457,17 +436,7 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
                 }
             }
 
-            javaTask.doFirst {
-                /*
-                 * It's important to modify javaTask.classpath only in doFirst,
-                 * because Android plugin uses ConventionMapping to modify it too (see JavaCompileConfigAction.execute),
-                 * and setting classpath explicitly prevents usage of Android mappings.
-                 * Also classpath setted by Android can be modified after excecution of some tasks (see VarianConfiguration.getCompileClasspath)
-                 * ex. it adds some support libraries jars after execution of prepareComAndroidSupportSupportV42311Library task,
-                 * so it's only safe to modify javaTask.classpath right before its usage
-                 */
-                javaTask.classpath += project.files(kotlinTask.property("kotlinDestinationDir"))
-            }
+            setUpKotlinToJavaDependency(project, kotlinTask, javaTask, logger)
         }
     }
 
@@ -481,8 +450,40 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
         val result = (obj as HasConvention).convention.plugins[extensionName]
         return result as T
     }
+}
 
+private fun setUpKotlinToJavaDependency(project: Project, kotlinTask: AbstractCompile, javaTask: AbstractCompile, logger: Logger) {
+    // Since we cannot update classpath statically, java not able to detect changes in the classpath after kotlin compiler.
+    // Therefore this (probably inefficient since java cannot decide "uptodateness" by the list of changed class files, but told
+    // explicitly being out of date whenever any kotlin files are compiled
+    if (kotlinTask.hasProperty("anyClassesCompiled")) {
+        kotlinTask.property("anyClassesCompiled")?.let {
+            kotlinTask.setProperty("anyClassesCompiled", false)
+            javaTask.outputs.upToDateWhen { task ->
+                val kotlinClassesCompiled = kotlinTask.property("anyClassesCompiled") as? Boolean ?: false
+                if (kotlinClassesCompiled) {
+                    logger.info("Marking $task out of date, because kotlin classes are changed")
+                }
+                !kotlinClassesCompiled
+            }
+        }
+    }
 
+    javaTask.dependsOn(kotlinTask.name)
+    javaTask.doFirst {
+        /*
+         * It's important to modify javaTask.classpath only in doFirst,
+         * because Android plugin uses ConventionMapping to modify it too (see JavaCompileConfigAction.execute),
+         * and setting classpath explicitly prevents usage of Android mappings.
+         * Also classpath setted by Android can be modified after excecution of some tasks (see VarianConfiguration.getCompileClasspath)
+         * ex. it adds some support libraries jars after execution of prepareComAndroidSupportSupportV42311Library task,
+         * so it's only safe to modify javaTask.classpath right before its usage
+         */
+        javaTask.classpath += project.files(kotlinTask.property("kotlinDestinationDir"))
+    }
+    javaTask.doLast {
+        javaTask.classpath -= project.files(kotlinTask.property("kotlinDestinationDir"))
+    }
 }
 
 private fun loadSubplugins(project: Project): SubpluginEnvironment {
