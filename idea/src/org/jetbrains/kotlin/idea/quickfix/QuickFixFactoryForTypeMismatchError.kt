@@ -29,12 +29,14 @@ import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.idea.util.approximateWithResolvableType
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getTargetFunction
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParentResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentForExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.typeUtil.isInterface
 import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
@@ -82,6 +84,13 @@ class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
 
         if (expressionType.isPrimitiveNumberType() && expectedType.isPrimitiveNumberType()) {
             actions.add(NumberConversionFix(diagnosticElement, expectedType))
+        }
+
+        if (expectedType.isInterface()) {
+            val expressionTypeDeclaration = expressionType.constructor.declarationDescriptor?.let {
+                DescriptorToSourceUtils.descriptorToDeclaration(it)
+            } as? KtClassOrObject
+            expressionTypeDeclaration?.let { actions.add(LetImplementInterfaceFix(it, expectedType, expressionType)) }
         }
 
         // We don't want to cast a cast or type-asserted expression:
