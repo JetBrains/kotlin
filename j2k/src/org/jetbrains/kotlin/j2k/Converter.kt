@@ -451,11 +451,34 @@ class Converter private constructor(
             }
         }
 
+        val initializerType = createDefaultCodeConverter().convertedExpressionType(initializer, variable.type)
+        // do not add explicit type when initializer is not resolved, let user add it if really needed
+        if (initializerType is ErrorType) return false
+
+        if (shouldSpecifyTypeForAnonymousType(variable, initializerType)) return true
+
         if (canChangeType) return false
 
-        var initializerType = createDefaultCodeConverter().convertedExpressionType(initializer, variable.type)
-        if (initializerType is ErrorType) return false // do not add explicit type when initializer is not resolved, let user add it if really needed
         return type != initializerType
+    }
+
+    // add explicit type when initializer has anonymous type,
+    // the variable is private or local and
+    // it has write accesses or is stored to another variable
+    private fun shouldSpecifyTypeForAnonymousType(variable: PsiVariable, initializerType: Type): Boolean {
+        if (initializerType !is ClassType || !initializerType.isAnonymous()) return false
+
+        val scope: PsiElement? =
+                when {
+                    variable is PsiField && variable.hasModifierProperty(PsiModifier.PRIVATE) -> variable.containingClass
+                    variable is PsiLocalVariable -> variable.getContainingMethod()
+                    else -> null
+                }
+
+        if (scope == null) return false
+
+        return variable.hasWriteAccesses(referenceSearcher, scope) ||
+               variable.isInVariableInitializer(referenceSearcher, scope)
     }
 
     fun convertMethod(

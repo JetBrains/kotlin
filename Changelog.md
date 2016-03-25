@@ -23,6 +23,7 @@
 - Place comments from the middle of the call to the end
 - Drop line breaks between operator arguments (except '+', "-", "&&" and "||")
 - Add non-null assertions on call site for non-null parameters
+- Specify type for variables with anonymous type if they have write accesses
 
 ### Tools. Android
 - Fixed sequential build with kapt and stubs enabled when Kotlin source file was modified and no Java source files were modified

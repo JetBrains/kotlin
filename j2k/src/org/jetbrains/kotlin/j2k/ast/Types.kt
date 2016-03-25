@@ -100,6 +100,8 @@ class ClassType(val referenceElement: ReferenceElement, nullability: Nullability
 
     override fun toNotNullType(): Type = ClassType(referenceElement, Nullability.NotNull, settings).assignPrototypesFrom(this)
     override fun toNullableType(): Type = ClassType(referenceElement, Nullability.Nullable, settings).assignPrototypesFrom(this)
+
+    fun isAnonymous() = referenceElement.name.isEmpty
 }
 
 class ArrayType(val elementType: Type, nullability: Nullability, settings: ConverterSettings)

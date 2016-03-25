@@ -25,4 +25,37 @@ class A {
         field9 = null;
         field10 = null;
     }
+
+    interface I
+
+    private I anonymous = new I() {
+    };
+
+    public I anonymous2 = new I() {
+    };
+
+    private I anonymous3 = new I() {
+    };
+
+    private I iimpl = anonymous;
+
+    void testAnonymousObject(Object i) {
+        if (true) {
+            iimpl = (I) i;
+        }
+        else if (true) {
+            anonymous3 = (I) i;
+        }
+
+        I anonymousLocal1 = new I() {
+        };
+
+        I anonymousLocal2 = new I() {
+        };
+
+        I iimpl = anonymousLocal1;
+        if (true) {
+            anonymousLocal2 = (I) i;
+        }
+    }
 }
