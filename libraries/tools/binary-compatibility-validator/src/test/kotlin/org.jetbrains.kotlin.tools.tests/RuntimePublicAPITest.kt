@@ -58,7 +58,7 @@ class RuntimePublicAPITest {
         println("Reading binary API from $jarFile")
         val api = getBinaryAPI(JarFile(jarFile), visibilities).filterOutNonPublic()
 
-        val target = File("src/test/resources/output")
+        val target = File("reference-public-api")
                 .resolve(testName.methodName.replaceCamelCaseWithDashedLowerCase() + ".txt")
 
         api.dumpAndCompareWith(target)

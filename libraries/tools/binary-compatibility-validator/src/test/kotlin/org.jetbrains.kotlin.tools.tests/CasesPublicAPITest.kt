@@ -7,8 +7,11 @@ import java.io.File
 
 class CasesPublicAPITest {
 
-    val visibilities = readKotlinVisibilities(File("target/cases-declarations.json"))
-    val baseClassPath = File("target/test-classes/cases").absoluteFile
+    companion object {
+        val visibilities = readKotlinVisibilities(File("target/cases-declarations.json"))
+        val baseClassPath = File("target/test-classes/cases").absoluteFile
+        val baseOutputPath = File("src/test/kotlin/cases")
+    }
 
     @[Rule JvmField]
     val testName = TestName()
@@ -43,7 +46,7 @@ class CasesPublicAPITest {
 
         val api = getBinaryAPI(testClassStreams, visibilities).filterOutNonPublic()
 
-        val target = File("src/test/resources/output/cases").resolve(testName.methodName + ".txt")
+        val target = baseOutputPath.resolve(testClassRelativePath).resolve(testName.methodName + ".txt")
 
         api.dumpAndCompareWith(target)
     }
