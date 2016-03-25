@@ -24,7 +24,7 @@ data class ClassBinarySignature(
         val isEffectivelyPublic: Boolean) {
 
     val signature: String
-        get() = "${access.getModifierString()} class $name" + if (supertypes.isEmpty()) "" else ": ${supertypes.joinToString()}"
+        get() = "${access.getModifierString()} class $name" + if (supertypes.isEmpty()) "" else " : ${supertypes.joinToString()}"
 
 }
 

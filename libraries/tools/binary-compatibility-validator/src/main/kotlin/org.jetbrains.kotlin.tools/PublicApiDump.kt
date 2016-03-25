@@ -85,8 +85,8 @@ fun List<ClassBinarySignature>.filterOutNonPublic(): List<ClassBinarySignature> 
 fun List<ClassBinarySignature>.dump() = dump(to = System.out)
 
 fun <T: Appendable> List<ClassBinarySignature>.dump(to: T): T = to.apply { this@dump.forEach {
-    appendln(it.signature)
-    it.memberSignatures.forEach { appendln(it.signature) }
-    appendln("------------------\n")
+    append(it.signature).appendln(" {")
+    it.memberSignatures.forEach { append("\t").appendln(it.signature) }
+    appendln("}\n")
 }}
 
