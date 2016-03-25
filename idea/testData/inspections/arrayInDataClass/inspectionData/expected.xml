@@ -1,0 +1,18 @@
+<problems>
+  <problem>
+    <file>test.kt</file>
+    <line>1</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Array property in data class</problem_class>
+    <description>Array property in data class: it's recommended to override equals() / hashCode()</description>
+  </problem>
+  <problem>
+    <file>test.kt</file>
+    <line>5</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Array property in data class</problem_class>
+    <description>Array property in data class: it's recommended to override equals() / hashCode()</description>
+  </problem>
+</problems>
