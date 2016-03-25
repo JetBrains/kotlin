@@ -74,7 +74,7 @@ class JavaTypeAccessibilityChecker : AdditionalTypeChecker {
             if (visitedTypeConstructors.contains(typeConstructor)) return
             visitedTypeConstructors.add(typeConstructor)
 
-            if (typeConstructor is JavaClassDescriptor && !Visibilities.isVisibleWithIrrelevantReceiver(typeConstructor, scopeOwner)) {
+            if (typeConstructor is JavaClassDescriptor && !Visibilities.isVisibleIgnoringReceiver(typeConstructor, scopeOwner)) {
                 inaccessibleTypes.add(type)
             }
             for (typeProjection in type.arguments) {

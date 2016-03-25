@@ -54,7 +54,7 @@ private fun DeclarationDescriptorWithVisibility.isVisible(
         bindingContext: BindingContext? = null,
         resolutionScope: LexicalScope? = null
 ): Boolean {
-    if (Visibilities.isVisibleWithIrrelevantReceiver(this, from)) return true
+    if (Visibilities.isVisibleWithAnyReceiver(this, from)) return true
 
     if (bindingContext == null || resolutionScope == null) return false
 

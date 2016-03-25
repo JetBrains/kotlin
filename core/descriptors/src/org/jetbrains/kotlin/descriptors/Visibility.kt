@@ -22,6 +22,19 @@ abstract class Visibility protected constructor(
         val name: String,
         val isPublicAPI: Boolean
 ) {
+    /**
+     * @param receiver can be used to determine callee accessibility for some special receiver value
+     *
+     * 'null'-value basically means that receiver is absent in current call
+     *
+     * In case if it's needed to perform basic checks ignoring ones considering receiver (e.g. when checks happen beyond any call),
+     * special value Visibilities.ALWAYS_SUITABLE_RECEIVER should be used.
+     * If it's needed to determine whether visibility accepts any receiver, Visibilities.IRRELEVANT_RECEIVER should be used.
+     *
+     * NB: Currently Visibilities.IRRELEVANT_RECEIVER has the same effect as 'null'
+     *
+     * Also it's important that implementation that take receiver into account do aware about these special values.
+     */
     abstract fun isVisible(receiver: ReceiverValue?, what: DeclarationDescriptorWithVisibility, from: DeclarationDescriptor): Boolean
 
     /**

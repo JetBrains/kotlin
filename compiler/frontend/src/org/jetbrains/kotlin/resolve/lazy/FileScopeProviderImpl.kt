@@ -160,7 +160,7 @@ open class FileScopeProviderImpl(
             override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
                 if (name in excludedNames) return null
                 val classifier = scope.getContributedClassifier(name, location) ?: return null
-                val visible = Visibilities.isVisibleWithIrrelevantReceiver(classifier as ClassDescriptor, fromDescriptor)
+                val visible = Visibilities.isVisibleIgnoringReceiver(classifier as ClassDescriptor, fromDescriptor)
                 return classifier.check { filteringKind == if (visible) FilteringKind.VISIBLE_CLASSES else FilteringKind.INVISIBLE_CLASSES }
             }
 
