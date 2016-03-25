@@ -337,7 +337,7 @@ public class OverridingUtil {
         for (CallableMemberDescriptor fromSupertype : descriptorsFromSuper) {
             OverrideCompatibilityInfo.Result result = DEFAULT.isOverridableBy(fromSupertype, fromCurrent, current).getResult();
 
-            boolean isVisible = Visibilities.isVisibleWithIrrelevantReceiver(fromSupertype, current);
+            boolean isVisible = Visibilities.isVisibleIgnoringReceiver(fromSupertype, current);
             switch (result) {
                 case OVERRIDABLE:
                     if (isVisible) {
@@ -567,7 +567,7 @@ public class OverridingUtil {
             public Boolean invoke(CallableMemberDescriptor descriptor) {
                 //nested class could capture private member, so check for private visibility added
                 return !Visibilities.isPrivate(descriptor.getVisibility()) &&
-                       Visibilities.isVisibleWithIrrelevantReceiver(descriptor, current);
+                       Visibilities.isVisibleIgnoringReceiver(descriptor, current);
             }
         });
     }

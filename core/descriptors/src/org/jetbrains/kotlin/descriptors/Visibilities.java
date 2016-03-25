@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisClassReceiver;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.util.ModuleVisibilityHelper;
 import org.jetbrains.kotlin.utils.CollectionsKt;
 
@@ -88,6 +89,10 @@ public class Visibilities {
         @Override
         public boolean isVisible(@Nullable ReceiverValue thisObject, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             if (PRIVATE.isVisible(thisObject, what, from)) {
+                // See Visibility.isVisible contract
+                if (thisObject == ALWAYS_SUITABLE_RECEIVER) return true;
+                if (thisObject == IRRELEVANT_RECEIVER) return false;
+
                 DeclarationDescriptor classDescriptor = DescriptorUtils.getParentOfType(what, ClassDescriptor.class);
 
                 if (classDescriptor != null && thisObject instanceof ThisClassReceiver) {
@@ -223,12 +228,20 @@ public class Visibilities {
     }
 
     /**
-     * Receiver used only for visibility PRIVATE_TO_THIS.
-     * For all other visibilities this method give correct result.
+     * @see Visibility.isVisible contract
      */
-    public static boolean isVisibleWithIrrelevantReceiver(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
-        return findInvisibleMember(null, what, from) == null;
+    public static boolean isVisibleIgnoringReceiver(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
+        return findInvisibleMember(ALWAYS_SUITABLE_RECEIVER, what, from) == null;
     }
+
+    /**
+     * @see Visibility.isVisible contract
+     * @see Visibilities.RECEIVER_DOES_NOT_EXIST
+     */
+    public static boolean isVisibleWithAnyReceiver(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
+        return findInvisibleMember(IRRELEVANT_RECEIVER, what, from) == null;
+    }
+
 
     @Nullable
     public static DeclarationDescriptorWithVisibility findInvisibleMember(
@@ -284,6 +297,30 @@ public class Visibilities {
     }
 
     public static final Visibility DEFAULT_VISIBILITY = PUBLIC;
+
+    /**
+     * This value should be used for receiverValue parameter of Visibility.isVisible
+     * iff there is intention to determine if member is visible for any receiver.
+     */
+    private static final ReceiverValue IRRELEVANT_RECEIVER = new ReceiverValue() {
+        @NotNull
+        @Override
+        public KotlinType getType() {
+            throw new IllegalStateException("This method should not be called");
+        }
+    };
+
+    /**
+     * This value should be used for receiverValue parameter of Visibility.isVisible
+     * iff there is intention to determine if member is visible without receiver related checks being performed.
+     */
+    public static final ReceiverValue ALWAYS_SUITABLE_RECEIVER = new ReceiverValue() {
+        @NotNull
+        @Override
+        public KotlinType getType() {
+            throw new IllegalStateException("This method should not be called");
+        }
+    };
 
     public static boolean isPrivate(@NotNull Visibility visibility) {
         return visibility == PRIVATE || visibility == PRIVATE_TO_THIS;
