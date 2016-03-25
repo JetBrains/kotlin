@@ -42,10 +42,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.descriptors.SamAdapterDescriptor
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtCallableDeclaration
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtObjectDeclaration
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.isHiddenInResolution
 import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils
@@ -59,6 +56,7 @@ class KotlinIndicesHelper(
         private val resolutionFacade: ResolutionFacade,
         private val scope: GlobalSearchScope,
         visibilityFilter: (DeclarationDescriptor) -> Boolean,
+        private val declarationTranslator: (KtDeclaration) -> KtDeclaration? = { it },
         applyExcludeSettings: Boolean = true,
         private val filterOutPrivate: Boolean = true
 ) {
@@ -94,7 +92,16 @@ class KotlinIndicesHelper(
                 .filter { it.parent is KtFile && it.receiverTypeReference != null && it.hasModifier(KtTokens.OPERATOR_KEYWORD) }
                 .flatMap { it.resolveToDescriptorsWithHack() }
                 .filterIsInstance<FunctionDescriptor>()
-                .filter { descriptorFilter(it) }
+                .filter { descriptorFilter(it) && it.extensionReceiverParameter != null }
+                .distinct()
+    }
+
+    fun getMemberOperatorsByName(name: String): Collection<FunctionDescriptor> {
+        return KotlinFunctionShortNameIndex.getInstance().get(name, project, scope)
+                .filter { it.parent is KtClassBody && it.receiverTypeReference == null && it.hasModifier(KtTokens.OPERATOR_KEYWORD) }
+                .flatMap { it.resolveToDescriptorsWithHack() }
+                .filterIsInstance<FunctionDescriptor>()
+                .filter { descriptorFilter(it) && it.extensionReceiverParameter == null }
                 .distinct()
     }
 
@@ -316,7 +323,8 @@ class KotlinIndicesHelper(
             return resolutionFacade.resolveImportReference(moduleDescriptor, fqName!!).filterIsInstance<CallableDescriptor>()
         }
         else {
-            return (resolutionFacade.resolveToDescriptor(this) as? CallableDescriptor).singletonOrEmptyList()
+            val translatedDeclaration = declarationTranslator(this) ?: return emptyList()
+            return (resolutionFacade.resolveToDescriptor(translatedDeclaration) as? CallableDescriptor).singletonOrEmptyList()
         }
     }
 }

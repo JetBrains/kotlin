@@ -24,6 +24,13 @@ class X5 {
     operator fun setValue(thisRef: C, property: KProperty<*>, value: String) {}
 }
 
+class Y1
+class Y2
+
+operator fun Y1.getValue(thisRef: C, property: KProperty<*>): String = ""
+operator fun Y1.setValue(thisRef: C, property: KProperty<*>, value: String) {}
+operator fun Y2.getValue(thisRef: C, property: KProperty<*>): String = ""
+
 fun createX1() = X1()
 fun createX2() = X2()
 fun createX3() = X3()
@@ -40,3 +47,10 @@ class C {
 // ABSENT: createX3
 // EXIST: createX4
 // ABSENT: createX5
+// EXIST: X1
+// ABSENT: X2
+// ABSENT: X3
+// EXIST: X4
+// ABSENT: X5
+// EXIST: Y1
+// ABSENT: Y2

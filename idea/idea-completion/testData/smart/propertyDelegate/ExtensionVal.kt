@@ -30,10 +30,17 @@ class C
 val C.property by <caret>
 
 // EXIST: lazy
+
 // EXIST: createX1
 // ABSENT: createX2
 // EXIST: createX3
 // EXIST: createY1
 // ABSENT: createY2
 // EXIST: createY3
-/*TODO: add constructors*/
+
+// EXIST: X1
+// ABSENT: X2
+// EXIST: X3
+// EXIST: Y1
+// ABSENT: Y2
+// EXIST: Y3

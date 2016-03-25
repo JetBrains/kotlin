@@ -13,7 +13,8 @@ operator fun <TValue3, TOwner3> Property<TOwner3, TValue3>.setValue(thisRef: TOw
 fun<TOwner4, TValue4> createProperty(): Property<TOwner4, TValue4> = Property()
 
 class C {
-    var v: Int by create<caret>
+    var v: Int by <caret>
 }
 
 // EXIST: { itemText: "createProperty", typeText: "Property<C, Int>" }
+// EXIST: Property

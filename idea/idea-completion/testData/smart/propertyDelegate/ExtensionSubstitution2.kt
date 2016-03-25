@@ -9,7 +9,8 @@ operator fun <TValue, TOwner> Property<TOwner, TValue>.getValue(thisRef: TOwner,
 fun<TOwner, TValue> createProperty(): Property<TOwner, TValue> = Property()
 
 class C {
-    val v: Int by create<caret>
+    val v: Int by <caret>
 }
 
 // EXIST: { itemText: "createProperty", typeText: "Property<C, Int>" }
+// EXIST: Property

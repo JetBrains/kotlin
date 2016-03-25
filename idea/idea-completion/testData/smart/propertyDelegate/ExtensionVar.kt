@@ -35,8 +35,15 @@ class C
 var C.property by <caret>
 
 // ABSENT: lazy
+
 // EXIST: createX1
 // ABSENT: createX2
 // ABSENT: createX3
 // EXIST: createX4
 // ABSENT: createX5
+
+// EXIST: X1
+// ABSENT: X2
+// ABSENT: X3
+// EXIST: X4
+// ABSENT: X5

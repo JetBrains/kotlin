@@ -12,7 +12,7 @@ class X3 {
 
 class Y1
 class Y2
-class Y3
+abstract class Y3
 
 operator fun Y1.getValue(thisRef: C, property: KProperty<*>): String = ""
 operator fun Y2.getValue(thisRef: String, property: KProperty<*>): String = ""
@@ -36,4 +36,9 @@ class C {
 // EXIST: createY1
 // ABSENT: createY2
 // EXIST: createY3
-/*TODO: add constructors*/
+// EXIST: X1
+// ABSENT: X2
+// EXIST: X3
+// EXIST: Y1
+// ABSENT: Y2
+// ABSENT: Y3

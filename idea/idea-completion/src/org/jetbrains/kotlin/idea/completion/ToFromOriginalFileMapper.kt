@@ -16,16 +16,25 @@
 
 package org.jetbrains.kotlin.idea.completion
 
+import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-class ToFromOriginalFileMapper(
+class ToFromOriginalFileMapper private constructor(
         val originalFile: KtFile,
         val syntheticFile: KtFile,
         val completionOffset: Int
 ) {
+    companion object {
+        fun create(parameters: CompletionParameters): ToFromOriginalFileMapper {
+            val originalFile = parameters.originalFile as KtFile
+            val syntheticFile = parameters.position.containingFile as KtFile
+            return ToFromOriginalFileMapper(originalFile, syntheticFile, parameters.offset)
+        }
+    }
+
     private val syntheticLength: Int
     private val originalLength: Int
     private val tailLength: Int

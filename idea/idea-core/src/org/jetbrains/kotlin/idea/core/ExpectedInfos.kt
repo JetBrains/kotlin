@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.ideService
 import org.jetbrains.kotlin.idea.util.FuzzyType
+import org.jetbrains.kotlin.idea.util.fuzzyExtensionReceiverType
 import org.jetbrains.kotlin.idea.util.fuzzyReturnType
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -63,6 +64,12 @@ data class ItemOptions(val starPrefix: Boolean) {
 interface ByTypeFilter {
     fun matchingSubstitutor(descriptorType: FuzzyType): TypeSubstitutor?
 
+    val fuzzyType: FuzzyType?
+        get() = null
+
+    val multipleFuzzyTypes: Collection<FuzzyType>
+        get() = fuzzyType.singletonOrEmptyList()
+
     object All : ByTypeFilter {
         override fun matchingSubstitutor(descriptorType: FuzzyType) = TypeSubstitutor.EMPTY
     }
@@ -72,7 +79,7 @@ interface ByTypeFilter {
     }
 }
 
-class ByExpectedTypeFilter(val fuzzyType: FuzzyType) : ByTypeFilter {
+class ByExpectedTypeFilter(override val fuzzyType: FuzzyType) : ByTypeFilter {
     override fun matchingSubstitutor(descriptorType: FuzzyType) = descriptorType.checkIsSubtypeOf(fuzzyType)
 
     override fun equals(other: Any?) = other is ByExpectedTypeFilter && fuzzyType == other.fuzzyType
@@ -118,7 +125,10 @@ class ExpectedInfo(
 }
 
 val ExpectedInfo.fuzzyType: FuzzyType?
-    get() = (this.filter as? ByExpectedTypeFilter)?.fuzzyType
+    get() = filter.fuzzyType
+
+val ExpectedInfo.multipleFuzzyTypes: Collection<FuzzyType>
+    get() = filter.multipleFuzzyTypes
 
 sealed class ArgumentPositionData(val function: FunctionDescriptor, val callType: Call.CallType) : ExpectedInfo.AdditionalData {
     class Positional(
@@ -631,6 +641,25 @@ class ExpectedInfos(
                 return TypeSubstitutor.createChainedSubstitutor(getOperatorSubstitutor.substitution,
                                                                 TypeSubstitutor.createChainedSubstitutor(setOperatorSubstitutor.substitution,
                                                                                                          setParamTypeSubstitutor.substitution).substitution)
+            }
+
+            override val multipleFuzzyTypes: Collection<FuzzyType> by lazy {
+                val result = ArrayList<FuzzyType>()
+
+                for (classDescriptor in typesWithGetDetector.classesWithMemberOperators) {
+                    val type = classDescriptor.defaultType
+                    val typeParameters = classDescriptor.declaredTypeParameters
+                    val substitutor = matchingSubstitutor(FuzzyType(type, typeParameters)) ?: continue
+                    result.add(FuzzyType(substitutor.substitute(type, Variance.INVARIANT)!!, typeParameters))
+                }
+
+                for (extensionOperator in typesWithGetDetector.extensionOperators) {
+                    val receiverType = extensionOperator.fuzzyExtensionReceiverType()!!
+                    val substitutor = matchingSubstitutor(receiverType) ?: continue
+                    result.add(FuzzyType(substitutor.substitute(receiverType.type, Variance.INVARIANT)!!, receiverType.freeParameters))
+                }
+
+                result
             }
         }
         return listOf(ExpectedInfo(byTypeFilter, null, null))

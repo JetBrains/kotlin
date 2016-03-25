@@ -59,12 +59,15 @@ class KDocCompletionContributor(): CompletionContributor() {
 
 object KDocNameCompletionProvider: CompletionProvider<CompletionParameters>() {
     override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
-        KDocNameCompletionSession(parameters, result).complete()
+        KDocNameCompletionSession(parameters, ToFromOriginalFileMapper.create(parameters), result).complete()
     }
 }
 
-class KDocNameCompletionSession(parameters: CompletionParameters,
-                                resultSet: CompletionResultSet): CompletionSession(CompletionSessionConfiguration(parameters), parameters, resultSet) {
+class KDocNameCompletionSession(
+        parameters: CompletionParameters,
+        toFromOriginalFileMapper: ToFromOriginalFileMapper,
+        resultSet: CompletionResultSet
+): CompletionSession(CompletionSessionConfiguration(parameters), parameters, toFromOriginalFileMapper, resultSet) {
     override val descriptorKindFilter: DescriptorKindFilter? get() = null
     override val expectedInfos: Collection<ExpectedInfo> get() = emptyList()
 
@@ -85,7 +88,7 @@ class KDocNameCompletionSession(parameters: CompletionParameters,
         val section = position.getContainingSection()
         val documentedParameters = section.findTagsByName("param").map { it.getSubjectName() }.toSet()
         val descriptors = getParamDescriptors(declarationDescriptor)
-                .filter { it.getName().asString() !in documentedParameters }
+                .filter { it.name.asString() !in documentedParameters }
 
         descriptors.forEach {
             collector.addElement(basicLookupElementFactory.createLookupElement(it, parametersAndTypeGrayed = true))

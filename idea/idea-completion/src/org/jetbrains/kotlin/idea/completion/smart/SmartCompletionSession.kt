@@ -41,7 +41,7 @@ class SmartCompletionSession(
         parameters: CompletionParameters,
         toFromOriginalFileMapper: ToFromOriginalFileMapper,
         resultSet: CompletionResultSet
-) : CompletionSession(configuration, parameters, resultSet) {
+) : CompletionSession(configuration, parameters, toFromOriginalFileMapper, resultSet) {
 
     override val descriptorKindFilter: DescriptorKindFilter by lazy {
         // we do not include SAM-constructors because they are handled separately and adding them requires iterating of java classes
@@ -60,7 +60,7 @@ class SmartCompletionSession(
     private val smartCompletion by lazy(LazyThreadSafetyMode.NONE) {
         expression?.let {
             SmartCompletion(it, resolutionFacade, bindingContext, moduleDescriptor, isVisibleFilter, indicesHelper(false),
-                            prefixMatcher, originalSearchScope, toFromOriginalFileMapper,
+                            prefixMatcher, searchScope, toFromOriginalFileMapper,
                             callTypeAndReceiver, isJvmModule)
         }
     }

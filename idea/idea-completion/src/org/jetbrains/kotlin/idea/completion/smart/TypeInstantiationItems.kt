@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.idea.completion.*
 import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
 import org.jetbrains.kotlin.idea.core.ExpectedInfo
 import org.jetbrains.kotlin.idea.core.Tail
-import org.jetbrains.kotlin.idea.core.fuzzyType
+import org.jetbrains.kotlin.idea.core.multipleFuzzyTypes
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.FuzzyType
@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.utils.addIfNotNull
+import java.util.*
 
 class TypeInstantiationItems(
         val resolutionFacade: ResolutionFacade,
@@ -67,9 +68,14 @@ class TypeInstantiationItems(
             inheritanceSearchers: MutableCollection<InheritanceItemsSearcher>,
             expectedInfos: Collection<ExpectedInfo>
     ) {
-        val expectedInfosGrouped: Map<FuzzyType?, List<ExpectedInfo>> = expectedInfos.groupBy { it.fuzzyType?.makeNotNullable() }
+        val expectedInfosGrouped = LinkedHashMap<FuzzyType, MutableList<ExpectedInfo>>()
+        for (expectedInfo in expectedInfos) {
+            for (fuzzyType in expectedInfo.multipleFuzzyTypes) {
+                expectedInfosGrouped.getOrPut(fuzzyType.makeNotNullable()) { ArrayList() }.add(expectedInfo)
+            }
+        }
+
         for ((type, infos) in expectedInfosGrouped) {
-            if (type == null) continue
             val tail = mergeTails(infos.map { it.tail })
             addTo(items, inheritanceSearchers, type, tail)
         }

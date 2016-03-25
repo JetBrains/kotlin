@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.core
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.idea.util.FuzzyType
@@ -41,19 +42,32 @@ abstract class TypesWithOperatorDetector(
 
     private val cache = HashMap<FuzzyType, Pair<FunctionDescriptor, TypeSubstitutor>?>()
 
-    private val extensionOperators: Collection<FunctionDescriptor> by lazy {
+    val extensionOperators: Collection<FunctionDescriptor> by lazy {
         val result = ArrayList<FunctionDescriptor>()
-        collectExtensionOperators(scope.collectFunctions(name, NoLookupLocation.FROM_IDE), result)
-        indicesHelper?.getTopLevelExtensionOperatorsByName(name.asString())?.let { collectExtensionOperators(it, result) }
+
+        val extensionsFromScope = scope
+                .collectFunctions(name, NoLookupLocation.FROM_IDE)
+                .filter { it.extensionReceiverParameter != null }
+        result.addSuitableOperators(extensionsFromScope)
+
+        indicesHelper?.getTopLevelExtensionOperatorsByName(name.asString())?.let { result.addSuitableOperators(it) }
+
         result.distinctBy { it.original }
     }
 
-    private fun collectExtensionOperators(functions: Collection<FunctionDescriptor>, result: MutableCollection<FunctionDescriptor>) {
+    val classesWithMemberOperators: Collection<ClassDescriptor> by lazy {
+        if (indicesHelper == null) return@lazy emptyList<ClassDescriptor>()
+        val operators = ArrayList<FunctionDescriptor>().addSuitableOperators(indicesHelper.getMemberOperatorsByName(name.asString()))
+        operators.map { it.containingDeclaration as ClassDescriptor }.distinct()
+    }
+
+    private fun MutableCollection<FunctionDescriptor>.addSuitableOperators(functions: Collection<FunctionDescriptor>): MutableCollection<FunctionDescriptor> {
         for (function in functions) {
-            if (function.extensionReceiverParameter == null || !function.isValidOperator()) continue
+            if (!function.isValidOperator()) continue
             val substitutor = checkIsSuitableByType(function, function.typeParameters) ?: continue
-            result.add(function.substitute(substitutor))
+            add(function.substitute(substitutor))
         }
+        return this
     }
 
     fun findOperator(type: FuzzyType): Pair<FunctionDescriptor, TypeSubstitutor>? {
