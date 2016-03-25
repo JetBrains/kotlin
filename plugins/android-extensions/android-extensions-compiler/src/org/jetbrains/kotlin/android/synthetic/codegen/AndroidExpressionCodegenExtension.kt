@@ -96,7 +96,7 @@ class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
         fun isCacheSupported(receiverDescriptor: ClassDescriptor, descriptor: PropertyDescriptor? = null): Boolean {
             val receiverIsKotlinClass = receiverDescriptor.source is KotlinSourceElement
             return receiverIsKotlinClass && when (descriptor) {
-                is AndroidSyntheticProperty -> !descriptor.alwaysCastToView
+                is AndroidSyntheticProperty -> descriptor.cacheView
                 else -> true
             }
         }
