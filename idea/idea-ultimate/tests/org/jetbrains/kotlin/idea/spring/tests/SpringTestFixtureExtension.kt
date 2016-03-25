@@ -24,6 +24,7 @@ import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.TestFixtureExtension
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.util.*
 
 @Suppress("unused")
@@ -37,12 +38,12 @@ class SpringTestFixtureExtension() : TestFixtureExtension {
         )
     }
 
-    val SPRING_LIBRARY_ROOT = "${PluginTestCaseBase.getTestDataPathBase()}/spring/_lib"
+    val SPRING_LIBRARY_ROOT = "${KotlinTestUtils.getHomeDirectory()}/dependencies/spring"
 
     override fun setUp(module: Module) {
         this.module = module
         val library = SpringFramework.FRAMEWORK_4_2_0
-        val libraryPath = "$SPRING_LIBRARY_ROOT/spring/${library.version}/"
+        val libraryPath = "$SPRING_LIBRARY_ROOT/${library.version}/"
         val jarNames = HashSet<String>(library.artifactIds.size)
         for (id in library.artifactIds) {
             jarNames.add("spring-$id-${library.version}.jar")

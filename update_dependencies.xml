@@ -145,7 +145,7 @@
                 lib="@{lib}"
                 version="@{version}"
                 src="false"
-                dependencies="idea/testData/spring/_lib/spring/@{version}"/>
+                dependencies="dependencies/spring/@{version}"/>
         </sequential>
     </macrodef>
 
