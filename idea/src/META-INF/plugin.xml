@@ -1433,6 +1433,12 @@
     <filetype.decompiler filetype="kotlin_builtins" implementationClass="com.intellij.psi.impl.compiled.ClassFileDecompiler"/>
 
     <pathMacroExpandableProtocol protocol="kotlin-js-meta"/>
+
+    <languageInjector implementation="org.jetbrains.kotlin.idea.injection.KotlinLanguageInjector" />
+  </extensions>
+
+  <extensions defaultExtensionNs="org.intellij.intelliLang">
+    <languageSupport implementation="org.jetbrains.kotlin.idea.injection.KotlinLanguageInjectionSupport"/>
   </extensions>
 
   <xi:include href="extensions/ide.xml" xpointer="xpointer(/idea-plugin/*)"/>
