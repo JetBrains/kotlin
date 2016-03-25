@@ -174,7 +174,8 @@ fun KtBlockExpression.contentRange(): PsiChildRange {
 // ----------- Inheritance -----------------------------------------------------------------------------------------------------------------
 
 fun KtClass.isInheritable(): Boolean {
-    return isInterface() || hasModifier(KtTokens.OPEN_KEYWORD) || hasModifier(KtTokens.ABSTRACT_KEYWORD)
+    return isInterface() || hasModifier(KtTokens.OPEN_KEYWORD) ||
+           hasModifier(KtTokens.ABSTRACT_KEYWORD) || hasModifier(KtTokens.SEALED_KEYWORD)
 }
 
 fun KtDeclaration.isOverridable(): Boolean {

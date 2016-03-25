@@ -1,0 +1,4 @@
+// "Make private" "true"
+class C {
+    private fun foo() {}
+}

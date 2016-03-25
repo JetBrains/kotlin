@@ -1,0 +1,4 @@
+// "Make class open" "true"
+open class C {
+    protected fun foo() {}
+}
