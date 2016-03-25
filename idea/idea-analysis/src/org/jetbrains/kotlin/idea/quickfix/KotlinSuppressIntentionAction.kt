@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.util.PsiPrecedences
+import org.jetbrains.kotlin.idea.util.addAnnotation
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.replaceFileAnnotationList
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -50,7 +51,13 @@ class KotlinSuppressIntentionAction private constructor(
         val id = "\"$suppressKey\""
         when (suppressAt) {
             is KtModifierListOwner ->
-                suppressAtModifierListOwner(suppressAt, id)
+                suppressAt.addAnnotation(KotlinBuiltIns.FQ_NAMES.suppress.toSafe(),
+                                         "$id",
+                                         whiteSpaceText = if (kind.newLineNeeded) "\n" else " ",
+                                         addToExistingAnnotation = { entry ->
+                                             addArgumentToSuppressAnnotation(entry, id)
+                                             true
+                                         })
 
             is KtAnnotatedExpression ->
                 suppressAtAnnotatedExpression(CaretBox(suppressAt, editor), id)
@@ -85,32 +92,6 @@ class KotlinSuppressIntentionAction private constructor(
         }
         
         addArgumentToSuppressAnnotation(suppressAnnotation, id)
-    }
-
-    private fun suppressAtModifierListOwner(suppressAt: KtModifierListOwner, id: String) {
-        val modifierList = suppressAt.modifierList
-        val psiFactory = KtPsiFactory(suppressAt)
-        if (modifierList == null) {
-            // create a modifier list from scratch
-            val newModifierList = psiFactory.createModifierList(suppressAnnotationText(id))
-            val replaced = KtPsiUtil.replaceModifierList(suppressAt, newModifierList)
-            val whiteSpace = psiFactory.createWhiteSpace(kind)
-            suppressAt.addAfter(whiteSpace, replaced)
-        }
-        else {
-            val entry = findSuppressAnnotation(suppressAt)
-            if (entry == null) {
-                // no [suppress] annotation
-                val newAnnotation = psiFactory.createAnnotationEntry(suppressAnnotationText(id))
-                val addedAnnotation = modifierList.addBefore(newAnnotation, modifierList.firstChild)
-                val whiteSpace = psiFactory.createWhiteSpace(kind)
-                modifierList.addAfter(whiteSpace, addedAnnotation)
-            }
-            else {
-                // already annotated with [suppress]
-                addArgumentToSuppressAnnotation(entry, id)
-            }
-        }
     }
 
     private fun suppressAtAnnotatedExpression(suppressAt: CaretBox<KtAnnotatedExpression>, id: String) {
