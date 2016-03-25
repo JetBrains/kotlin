@@ -466,7 +466,7 @@ public class ControlFlowInformationProvider {
             ResolvedCall<? extends CallableDescriptor> resolvedCall = CallUtilKt.getResolvedCall(expression, trace.getBindingContext());
             ReceiverValue receiverValue = null;
             if (resolvedCall != null) {
-                receiverValue = resolvedCall.getDispatchReceiver();
+                receiverValue = ResolvedCallUtilKt.getDispatchReceiverWithSmartCast(resolvedCall);
             }
 
             if (Visibilities.isVisible(receiverValue, variableDescriptor, descriptor) && setterDescriptor != null
