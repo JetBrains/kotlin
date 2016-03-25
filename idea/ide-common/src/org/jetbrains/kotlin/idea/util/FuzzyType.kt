@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.CallHandle
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.*
 import java.util.*
 
@@ -47,6 +48,26 @@ fun FuzzyType.isAlmostEverything(): Boolean {
     val typeParameter = type.constructor.declarationDescriptor as? TypeParameterDescriptor ?: return false
     if (typeParameter !in freeParameters) return false
     return typeParameter.upperBounds.singleOrNull()?.isAnyOrNullableAny() ?: false
+}
+
+/**
+ * Replaces free parameters inside the type with corresponding type parameters of the class (when possible)
+ */
+fun FuzzyType.presentationType(): KotlinType {
+    if (freeParameters.isEmpty()) return type
+
+    val map = HashMap<TypeConstructor, TypeProjection>()
+    for ((argument, typeParameter) in type.arguments.zip(type.constructor.parameters)) {
+        if (argument.projectionKind == Variance.INVARIANT) {
+            val equalToFreeParameter = freeParameters.firstOrNull {
+                KotlinTypeChecker.FLEXIBLE_UNEQUAL_TO_INFLEXIBLE.equalTypes(it.defaultType, argument.type)
+            } ?: continue
+
+            map[equalToFreeParameter.typeConstructor] = createProjection(typeParameter.defaultType, Variance.INVARIANT, null)
+        }
+    }
+    val substitutor = TypeSubstitutor.create(map)
+    return substitutor.substitute(type, Variance.INVARIANT)!!
 }
 
 class FuzzyType(

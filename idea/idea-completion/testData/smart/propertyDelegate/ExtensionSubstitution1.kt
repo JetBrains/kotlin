@@ -13,4 +13,4 @@ class C {
 }
 
 // EXIST: { itemText: "createProperty", typeText: "Property<C, TValue>" }
-// EXIST: Property
+// EXIST: { itemText: "Property", tailText: "(owner: C, value: TValue) (<root>)" }

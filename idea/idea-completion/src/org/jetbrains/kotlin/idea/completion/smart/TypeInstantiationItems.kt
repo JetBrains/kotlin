@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.makeNotNullable
+import org.jetbrains.kotlin.idea.util.presentationType
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
@@ -208,7 +209,14 @@ class TypeInstantiationItems(
             //TODO: when constructor has one parameter of lambda type with more than one parameter, generate special additional item
             signatureText = when (visibleConstructors.size) {
                 0 -> "()"
-                1 -> DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderFunctionParameters(visibleConstructors.single())
+
+                1 -> {
+                    val constructor = visibleConstructors.single()
+                    val substitutor = TypeSubstitutor.create(fuzzyType.presentationType())
+                    val substitutedConstructor = constructor.substitute(substitutor)
+                    DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderFunctionParameters(substitutedConstructor)
+                }
+
                 else -> "(...)"
             }
 
