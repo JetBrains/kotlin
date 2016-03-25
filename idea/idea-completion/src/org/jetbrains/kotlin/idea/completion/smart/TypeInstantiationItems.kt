@@ -240,8 +240,7 @@ class TypeInstantiationItems(
             lookupElement = lookupElement.assignSmartCompletionPriority(SmartCompletionItemPriority.INSTANTIATION)
         }
 
-        //TODO: cannot use lookupElement from context due to KT-6344
-        class InstantiationLookupElement(lookupElement: LookupElement) : LookupElementDecorator<LookupElement>(lookupElement) {
+        class InstantiationLookupElement : LookupElementDecorator<LookupElement>(lookupElement) {
             override fun getLookupString() = lookupString
 
             override fun getAllLookupStrings() = allLookupStrings
@@ -275,7 +274,7 @@ class TypeInstantiationItems(
             override fun hashCode() = lookupString.hashCode()
         }
 
-        return InstantiationLookupElement(lookupElement).addTail(tail)
+        return InstantiationLookupElement().addTail(tail)
     }
 
     private fun KotlinType.areTypeParametersUsedInside(freeParameters: Collection<TypeParameterDescriptor>): Boolean {
