@@ -70,7 +70,7 @@ class SmartCompletionSession(
 
     override fun doComplete() {
         if (nameExpression != null && NamedArgumentCompletion.isOnlyNamedArgumentExpected(nameExpression)) {
-            NamedArgumentCompletion.complete(collector, expectedInfos)
+            NamedArgumentCompletion.complete(collector, expectedInfos, callTypeAndReceiver.callType)
             return
         }
 

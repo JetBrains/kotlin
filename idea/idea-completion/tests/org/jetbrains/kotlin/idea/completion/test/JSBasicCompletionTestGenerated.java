@@ -1758,6 +1758,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 doTest(fileName);
             }
 
+            @TestMetadata("NotAfterDot.kt")
+            public void testNotAfterDot() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/namedArguments/NotAfterDot.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("NotInBrackets.kt")
             public void testNotInBrackets() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/namedArguments/NotInBrackets.kt");

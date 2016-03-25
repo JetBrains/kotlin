@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
 import org.jetbrains.kotlin.idea.core.ArgumentPositionData
 import org.jetbrains.kotlin.idea.core.ExpectedInfo
+import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
@@ -46,7 +47,9 @@ object NamedArgumentCompletion {
                 .any { it.isNamed() }
     }
 
-    fun complete(collector: LookupElementsCollector, expectedInfos: Collection<ExpectedInfo>) {
+    fun complete(collector: LookupElementsCollector, expectedInfos: Collection<ExpectedInfo>, callType: CallType<*>) {
+        if (callType != CallType.DEFAULT) return
+
         val nameToParameterType = HashMap<Name, MutableSet<KotlinType>>()
         for (expectedInfo in expectedInfos) {
             val argumentData = expectedInfo.additionalData as? ArgumentPositionData.Positional ?: continue

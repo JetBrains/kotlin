@@ -214,7 +214,7 @@ class BasicCompletionSession(
             
             flushToResultSet()
 
-            NamedArgumentCompletion.complete(collector, expectedInfos)
+            NamedArgumentCompletion.complete(collector, expectedInfos, callTypeAndReceiver.callType)
             flushToResultSet()
 
             val contextVariablesProvider = RealContextVariablesProvider(referenceVariantsHelper, position)
@@ -436,7 +436,7 @@ class BasicCompletionSession(
             get() = null
 
         override fun doComplete() {
-            NamedArgumentCompletion.complete(collector, expectedInfos)
+            NamedArgumentCompletion.complete(collector, expectedInfos, callTypeAndReceiver.callType)
         }
     }
 
