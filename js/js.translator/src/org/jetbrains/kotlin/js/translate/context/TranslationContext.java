@@ -414,11 +414,6 @@ public class TranslationContext {
         return getDefinitionPlace().define(suggestedName, expression);
     }
 
-    @NotNull
-    public JsNameRef define(JsName name, JsExpression expression) {
-        return getDefinitionPlace().define(name, expression);
-    }
-
     @Nullable
     private JsNameRef captureIfNeedAndGetCapturedName(DeclarationDescriptor descriptor) {
         if (usageTracker != null) {
@@ -440,9 +435,10 @@ public class TranslationContext {
     private boolean shouldCaptureViaThis() {
         if (declarationDescriptor == null) return false;
 
-        if (DescriptorUtils.isDescriptorWithLocalVisibility(declarationDescriptor)) {
-            return !(declarationDescriptor instanceof FunctionDescriptor);
-        }
+        if (DescriptorUtils.isDescriptorWithLocalVisibility(declarationDescriptor)) return false;
+        if (declarationDescriptor instanceof ConstructorDescriptor &&
+            DescriptorUtils.isDescriptorWithLocalVisibility(declarationDescriptor.getContainingDeclaration())) return false;
+
         return true;
     }
 
@@ -451,12 +447,12 @@ public class TranslationContext {
         return declarationDescriptor;
     }
 
-    public void putLocalClassClosure(@NotNull ClassDescriptor localClass, @NotNull List<DeclarationDescriptor> closure) {
+    public void putLocalClassClosure(@NotNull MemberDescriptor localClass, @NotNull List<DeclarationDescriptor> closure) {
         staticContext.putLocalClassClosure(localClass, closure);
     }
 
     @Nullable
-    public List<DeclarationDescriptor> getLocalClassClosure(@NotNull ClassDescriptor localClass) {
+    public List<DeclarationDescriptor> getLocalClassClosure(@NotNull MemberDescriptor localClass) {
         return staticContext.getLocalClassClosure(localClass);
     }
 
@@ -466,11 +462,6 @@ public class TranslationContext {
         if (alias != null) return alias;
         if (descriptor instanceof ReceiverParameterDescriptor) return JsLiteral.THIS;
         return getNameForDescriptor(descriptor).makeRef();
-    }
-
-    @NotNull
-    public JsScope getRootScope() {
-        return staticContext.getRootScope();
     }
 
     @Nullable
