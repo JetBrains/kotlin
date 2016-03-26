@@ -33,8 +33,7 @@ import org.jetbrains.kotlin.js.translate.expression.FunctionTranslator
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator
 import org.jetbrains.kotlin.js.translate.initializer.ClassInitializerTranslator
 import org.jetbrains.kotlin.js.translate.utils.*
-import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getClassDescriptor
-import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getPropertyDescriptorForConstructorParameter
+import org.jetbrains.kotlin.js.translate.utils.BindingUtils.*
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getSupertypesWithoutFakes
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getPrimaryConstructorParameters
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.simpleReturnFunction
@@ -62,15 +61,17 @@ class ClassTranslator private constructor(
     private val secondaryConstructors = mutableListOf<ConstructorInfo>()
     private val secondaryConstructorProperties = mutableListOf<JsPropertyInitializer>()
     private var primaryConstructor: ConstructorInfo? = null
+    private lateinit var definitionPlace: DefinitionPlace
 
-    private fun translate(): List<JsPropertyInitializer> {
+    fun translate(): TranslationResult {
         invocationArguments.clear()
         getClassCreateInvocationArguments()
 
         val classNameRef = context().getNameForDescriptor(descriptor).makeRef()
         val classCreation = JsInvocation(context().namer().classCreateInvocation(descriptor), invocationArguments)
 
-        return listOf(JsPropertyInitializer(classNameRef, classCreation)) + secondaryConstructorProperties
+        val properties = listOf(JsPropertyInitializer(classNameRef, classCreation)) + secondaryConstructorProperties
+        return TranslationResult(properties, definitionPlace)
     }
 
     private fun isTrait(): Boolean = descriptor.kind == ClassKind.INTERFACE
@@ -86,7 +87,7 @@ class ClassTranslator private constructor(
         val definitionPlace = DefinitionPlace(scope as JsObjectScope, qualifiedReference, staticProperties)
         context = context.newDeclaration(descriptor, definitionPlace)
 
-        invocationArguments.add(getSuperclassReferences(context))
+        invocationArguments += getSuperclassReferences(context)
 
         val nonConstructorContext = context.innerWithUsageTracker(scope, descriptor)
         val delegationTranslator = DelegationTranslator(classDeclaration, nonConstructorContext)
@@ -121,7 +122,7 @@ class ClassTranslator private constructor(
             dataClassGenerator.generate()
         }
 
-        val hasStaticProperties = !staticProperties.isEmpty()
+        val hasStaticProperties = !staticProperties.isEmpty() || DescriptorUtils.isAnonymousObject(descriptor)
         if (!properties.isEmpty() || hasStaticProperties) {
             if (properties.isEmpty()) {
                 invocationArguments += JsLiteral.NULL
@@ -140,6 +141,7 @@ class ClassTranslator private constructor(
         if (primaryConstructor != null && primaryConstructor!!.function.body.isEmpty) {
             invocationArguments[invocationArguments.indexOf(primaryConstructor!!.function)] = JsLiteral.NULL
         }
+        this.definitionPlace = definitionPlace
     }
 
     private fun translatePrimaryConstructor(classContext: TranslationContext, delegationTranslator: DelegationTranslator) {
@@ -426,10 +428,12 @@ class ClassTranslator private constructor(
     }
 
     companion object {
-        fun translate(classDeclaration: KtClassOrObject, context: TranslationContext): List<JsPropertyInitializer> {
+        @JvmStatic fun translate(classDeclaration: KtClassOrObject, context: TranslationContext): TranslationResult {
             return ClassTranslator(classDeclaration, context).translate()
         }
     }
+
+    class TranslationResult(val properties: List<JsPropertyInitializer>, val definitionPlace: DefinitionPlace)
 
     private class ConstructorInfo(
             val function: JsFunction,
