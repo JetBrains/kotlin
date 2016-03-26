@@ -50,7 +50,7 @@ class FileDeclarationVisitor(
     }
 
     override fun visitClass(declaration: KtClass, context: TranslationContext?): Void? {
-        result.addAll(ClassTranslator.translate(declaration, context!!))
+        result += ClassTranslator.translate(declaration, context!!).properties
         return null
     }
 
@@ -58,7 +58,7 @@ class FileDeclarationVisitor(
         context!!
 
         // TODO: avoid duplication with superclass
-        result.addAll(ClassTranslator.translate(declaration, context))
+        result += ClassTranslator.translate(declaration, context).properties
 
         return null
     }

@@ -5,6 +5,10 @@ open class A(val b : B) {
 }
 
 fun box() : String {
-    A(B()).a()
+    val b = B()
+    val a = A(b).a()
+
+    if (a.b !== b) return "failed"
+
     return "OK"
 }
