@@ -40,6 +40,14 @@ public inline fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.r
         = @Suppress("UNCHECKED_CAST") (this as MutableCollection<T>).retainAll(elements)
 
 /**
+ * Removes the element at the specified [index] from this list.
+ * In Kotlin one should use the [MutableList.removeAt] function instead.
+ */
+@Deprecated("Use removeAt(index) instead.", ReplaceWith("removeAt(index)"), level = DeprecationLevel.ERROR)
+@kotlin.internal.InlineOnly
+public inline fun <T> MutableList<T>.remove(index: Int): T = removeAt(index)
+
+/**
  * Adds the specified [element] to this mutable collection.
  */
 @kotlin.internal.InlineOnly
