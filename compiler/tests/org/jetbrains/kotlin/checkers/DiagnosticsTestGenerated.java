@@ -15470,6 +15470,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("constructors.kt")
+                public void testConstructors() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/protectedVisibility/constructors.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("constructorsInner.kt")
+                public void testConstructorsInner() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/protectedVisibility/constructorsInner.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("innerClassInJava.kt")
                 public void testInnerClassInJava() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/protectedVisibility/innerClassInJava.kt");
