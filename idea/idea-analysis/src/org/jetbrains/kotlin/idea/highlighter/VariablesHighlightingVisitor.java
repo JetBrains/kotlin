@@ -51,7 +51,10 @@ class VariablesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
             }
         }
 
-        highlightVariable(expression, target);
+        if (!(expression.getParent() instanceof KtValueArgumentName)) { // highlighted separately
+            highlightVariable(expression, target);
+        }
+
         super.visitSimpleNameExpression(expression);
     }
 

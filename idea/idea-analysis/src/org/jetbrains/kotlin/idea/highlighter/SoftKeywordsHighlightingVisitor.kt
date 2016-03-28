@@ -18,10 +18,14 @@ package org.jetbrains.kotlin.idea.highlighter
 
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtLambdaExpression
+import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.psi.KtVisitorVoid
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 internal class SoftKeywordsHighlightingVisitor(private val holder: AnnotationHolder) : KtVisitorVoid() {
 
@@ -58,5 +62,13 @@ internal class SoftKeywordsHighlightingVisitor(private val holder: AnnotationHol
         if (arrow != null) {
             holder.createInfoAnnotation(arrow, null).textAttributes = KotlinHighlightingColors.FUNCTION_LITERAL_BRACES_AND_ARROW
         }
+    }
+
+    override fun visitArgument(argument: KtValueArgument) {
+        super.visitArgument(argument)
+
+        val argumentName = argument.getArgumentName() ?: return
+        val eq = argument.equalsToken ?: return
+        holder.createInfoAnnotation(TextRange(argumentName.startOffset, eq.endOffset), null).textAttributes = KotlinHighlightingColors.NAMED_ARGUMENT
     }
 }

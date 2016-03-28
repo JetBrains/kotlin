@@ -9,7 +9,7 @@ fun inline() {
     run ({ x1 })
 
     val x2 = 1
-    run (f = { x2 })
+    run (<info descr="null">f =</info> { x2 })
 
     val x3 = 1
     run {

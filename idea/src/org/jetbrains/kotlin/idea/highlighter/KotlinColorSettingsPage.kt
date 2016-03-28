@@ -65,7 +65,7 @@ class KotlinColorSettingsPage : ColorSettingsPage {
 
 fun Int?.bar() {
     if (this != null) {
-        println(<SMART_CAST_RECEIVER>toString</SMART_CAST_RECEIVER>())
+        println(<NAMED_ARGUMENT>message =</NAMED_ARGUMENT> <SMART_CAST_RECEIVER>toString</SMART_CAST_RECEIVER>())
     }
     else {
         println(<SMART_CONSTANT>this</SMART_CONSTANT>.toString())
@@ -157,7 +157,8 @@ var <PACKAGE_PROPERTY><MUTABLE_VARIABLE><PROPERTY_WITH_BACKING_FIELD>globalCount
                        KotlinBundle.message("options.kotlin.attribute.descriptor.smart.cast") to KotlinHighlightingColors.SMART_CAST_VALUE,
                        KotlinBundle.message("options.kotlin.attribute.descriptor.smart.constant") to KotlinHighlightingColors.SMART_CONSTANT,
                        KotlinBundle.message("options.kotlin.attribute.descriptor.smart.cast.receiver") to KotlinHighlightingColors.SMART_CAST_RECEIVER,
-                       KotlinBundle.message("options.kotlin.attribute.descriptor.label") to KotlinHighlightingColors.LABEL)
+                       KotlinBundle.message("options.kotlin.attribute.descriptor.label") to KotlinHighlightingColors.LABEL,
+                       "Named argument" to KotlinHighlightingColors.NAMED_ARGUMENT)
     }
 
     override fun getColorDescriptors(): Array<ColorDescriptor> = ColorDescriptor.EMPTY_ARRAY
