@@ -41,6 +41,11 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
                 = convertWithChangedName("toTypedArray", qualifier,  arguments.notNull(), typeArgumentsConverted, codeConverter)
     },
 
+    COLLECTION_TO_ARRAY_WITH_ARG(Collection::class.java.name, "toArray", 1) {
+        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
+                = convertWithChangedName("toTypedArray", qualifier,  emptyList(), typeArgumentsConverted, codeConverter)
+    },
+
     MAP_SIZE(Map::class.java.name, "size", 0) {
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
                 = convertMethodCallToPropertyUse(codeConverter, qualifier)
