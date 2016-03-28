@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.KtVisitorVoid
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-internal class SoftKeywordsHighlightingVisitor(private val holder: AnnotationHolder) : KtVisitorVoid() {
+internal class BeforeResolveHighlightingVisitor(private val holder: AnnotationHolder) : KtVisitorVoid() {
 
     override fun visitElement(element: PsiElement) {
         val elementType = element.node.elementType

@@ -46,7 +46,7 @@ class KotlinBeforeResolveHighlightingPass(
     override fun doCollectInformation(progress: ProgressIndicator) {
         val annotationHolder = AnnotationHolderImpl(AnnotationSession(file))
         val visitors = listOf(
-                SoftKeywordsHighlightingVisitor(annotationHolder),
+                BeforeResolveHighlightingVisitor(annotationHolder),
                 LabelsHighlightingVisitor(annotationHolder),
                 KDocHighlightingVisitor(annotationHolder)
         )
