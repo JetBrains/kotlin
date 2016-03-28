@@ -457,6 +457,11 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
             outputDir: File,
             args: K2JVMCompilerArguments
     ): ExitCode {
+        logger.kotlinDebug("Removing all kotlin classes in $outputDir")
+        // we're free to delete all classes since only we know about that directory
+        // todo: can be optimized -- compile and remove only files that were not generated
+        listClassFiles(outputDir.canonicalPath).forEach { it.delete() }
+
         val moduleFile = makeModuleFile(args.moduleName, isTest = false, outputDir = outputDir, sourcesToCompile = sourcesToCompile, javaSourceRoots = getJavaSourceRoots(), classpath = classpath, friendDirs = listOf())
         args.module = moduleFile.absolutePath
         val messageCollector = GradleMessageCollector(logger)

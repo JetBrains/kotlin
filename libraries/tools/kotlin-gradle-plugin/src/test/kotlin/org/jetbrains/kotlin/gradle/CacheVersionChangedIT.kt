@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.gradle
 
-import org.jetbrains.kotlin.gradle.util.findFileByName
+import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
 import java.io.File
@@ -44,7 +44,7 @@ class CacheVersionChangedIT : BaseGradleIT() {
         versionFile.writeText(modifiedVersion)
 
         // gradle won't call kotlin task if no file is changed
-        val dummyKtFile = project.projectDir.findFileByName("Dummy.kt")
+        val dummyKtFile = project.projectDir.getFileByName("Dummy.kt")
         dummyKtFile.modify { it + " " }
 
         project.build("build", options = options) {
