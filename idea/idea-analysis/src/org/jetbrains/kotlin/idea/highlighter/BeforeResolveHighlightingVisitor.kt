@@ -20,7 +20,9 @@ import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtExpressionWithLabel
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.psi.KtVisitorVoid
@@ -31,16 +33,16 @@ internal class BeforeResolveHighlightingVisitor(private val holder: AnnotationHo
 
     override fun visitElement(element: PsiElement) {
         val elementType = element.node.elementType
-        val attributes = when (elementType) {
-            in KtTokens.SOFT_KEYWORDS -> {
+        val attributes = when {
+            element is KDocLink -> KotlinHighlightingColors.KDOC_LINK
+
+            elementType in KtTokens.SOFT_KEYWORDS -> {
                 when (elementType) {
                     in KtTokens.MODIFIER_KEYWORDS -> KotlinHighlightingColors.BUILTIN_ANNOTATION
                     else -> KotlinHighlightingColors.KEYWORD
                 }
             }
-
-            KtTokens.SAFE_ACCESS -> KotlinHighlightingColors.SAFE_ACCESS
-
+            elementType == KtTokens.SAFE_ACCESS -> KotlinHighlightingColors.SAFE_ACCESS
             else -> return
         }
 
@@ -70,5 +72,12 @@ internal class BeforeResolveHighlightingVisitor(private val holder: AnnotationHo
         val argumentName = argument.getArgumentName() ?: return
         val eq = argument.equalsToken ?: return
         holder.createInfoAnnotation(TextRange(argumentName.startOffset, eq.endOffset), null).textAttributes = KotlinHighlightingColors.NAMED_ARGUMENT
+    }
+
+    override fun visitExpressionWithLabel(expression: KtExpressionWithLabel) {
+        val targetLabel = expression.getTargetLabel()
+        if (targetLabel != null) {
+            NameHighlighter.highlightName(holder, targetLabel, KotlinHighlightingColors.LABEL)
+        }
     }
 }

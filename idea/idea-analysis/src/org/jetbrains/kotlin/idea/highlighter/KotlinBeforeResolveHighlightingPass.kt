@@ -33,7 +33,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiRecursiveElementVisitor
-import org.jetbrains.kotlin.idea.kdoc.KDocHighlightingVisitor
 import org.jetbrains.kotlin.psi.KtFile
 
 class KotlinBeforeResolveHighlightingPass(
@@ -45,15 +44,11 @@ class KotlinBeforeResolveHighlightingPass(
 
     override fun doCollectInformation(progress: ProgressIndicator) {
         val annotationHolder = AnnotationHolderImpl(AnnotationSession(file))
-        val visitors = listOf(
-                BeforeResolveHighlightingVisitor(annotationHolder),
-                LabelsHighlightingVisitor(annotationHolder),
-                KDocHighlightingVisitor(annotationHolder)
-        )
+        val visitor = BeforeResolveHighlightingVisitor(annotationHolder)
         file.accept(object : PsiRecursiveElementVisitor(){
             override fun visitElement(element: PsiElement) {
                 super.visitElement(element)
-                visitors.forEach { element.accept(it) }
+                element.accept(visitor)
             }
         })
         this.annotationHolder = annotationHolder
