@@ -22,8 +22,8 @@ class A(val n: IntArray, val s: Array<String>) {
 
     override fun hashCode(): Int{
         var result = Arrays.hashCode(n)
-        result += 31 * result + Arrays.hashCode(s)
-        result += 31 * result + f.hashCode()
+        result = 31 * result + Arrays.hashCode(s)
+        result = 31 * result + f.hashCode()
         return result
     }
 }

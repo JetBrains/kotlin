@@ -17,7 +17,7 @@ class A(val result: Int, val s: String) {
 
     override fun hashCode(): Int{
         var result1 = result
-        result1 += 31 * result1 + s.hashCode()
+        result1 = 31 * result1 + s.hashCode()
         return result1
     }
 }

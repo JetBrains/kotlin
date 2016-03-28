@@ -221,7 +221,7 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
                 val resultVarName = KotlinNameSuggester.suggestNameByName("result", validator)
                 StringBuilder().apply {
                     append("var $resultVarName = $initialValue\n")
-                    propertyIterator.forEach { append("$resultVarName += 31 * $resultVarName + ${it.genVariableHashCode(true)}\n") }
+                    propertyIterator.forEach { append("$resultVarName = 31 * $resultVarName + ${it.genVariableHashCode(true)}\n") }
                     append("return $resultVarName")
                 }.toString()
             } else "return $initialValue"

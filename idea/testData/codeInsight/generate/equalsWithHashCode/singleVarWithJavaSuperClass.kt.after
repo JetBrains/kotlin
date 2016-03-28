@@ -17,7 +17,7 @@ class A(val n: Int) : X() {
 
     override fun hashCode(): Int{
         var result = super.hashCode()
-        result += 31 * result + n
+        result = 31 * result + n
         return result
     }
 }
