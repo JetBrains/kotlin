@@ -14,252 +14,209 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.quickfix;
+package org.jetbrains.kotlin.idea.quickfix
 
-import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.descriptors.CallableDescriptor;
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
-import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.idea.KotlinBundle;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
-import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
-import org.jetbrains.kotlin.idea.util.ShortenReferences;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsKt;
-import org.jetbrains.kotlin.types.ErrorUtils;
-import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
+import com.intellij.codeInsight.intention.IntentionAction
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiFile
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.util.IncorrectOperationException
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.Errors.COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH
+import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
+import org.jetbrains.kotlin.idea.project.platform
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.ShortenReferences
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.dataClassUtils.getComponentIndex
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import java.util.*
 
-import java.util.LinkedList;
-import java.util.List;
+class ChangeFunctionReturnTypeFix(element: KtFunction, private val type: KotlinType) : KotlinQuickFixAction<KtFunction>(element) {
+    private val changeFunctionLiteralReturnTypeFix: ChangeFunctionLiteralReturnTypeFix?
 
-import static org.jetbrains.kotlin.diagnostics.Errors.COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH;
-import static org.jetbrains.kotlin.idea.project.PlatformKt.getPlatform;
-import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getBuiltIns;
-
-public class ChangeFunctionReturnTypeFix extends KotlinQuickFixAction<KtFunction> {
-    private final KotlinType type;
-    private final ChangeFunctionLiteralReturnTypeFix changeFunctionLiteralReturnTypeFix;
-
-    public ChangeFunctionReturnTypeFix(@NotNull KtFunction element, @NotNull KotlinType type) {
-        super(element);
-        this.type = type;
-        if (element instanceof KtFunctionLiteral) {
-            KtLambdaExpression functionLiteralExpression = PsiTreeUtil.getParentOfType(element, KtLambdaExpression.class);
-            assert functionLiteralExpression != null : "FunctionLiteral outside any FunctionLiteralExpression: " +
-                                                       PsiUtilsKt.getElementTextWithContext(element);
-            changeFunctionLiteralReturnTypeFix = new ChangeFunctionLiteralReturnTypeFix(functionLiteralExpression, type);
+    init {
+        if (element is KtFunctionLiteral) {
+            val functionLiteralExpression = PsiTreeUtil.getParentOfType(element, KtLambdaExpression::class.java) ?: error("FunctionLiteral outside any FunctionLiteralExpression: " + element.getElementTextWithContext())
+            changeFunctionLiteralReturnTypeFix = ChangeFunctionLiteralReturnTypeFix(functionLiteralExpression, type)
         }
         else {
-            changeFunctionLiteralReturnTypeFix = null;
+            changeFunctionLiteralReturnTypeFix = null
         }
     }
 
-    @NotNull
-    @Override
-    public String getText() {
+    override fun getText(): String {
         if (changeFunctionLiteralReturnTypeFix != null) {
-            return changeFunctionLiteralReturnTypeFix.getText();
+            return changeFunctionLiteralReturnTypeFix.text
         }
 
-        String functionName = getElement().getName();
-        FqName fqName = getElement().getFqName();
-        if (fqName != null) functionName = fqName.asString();
+        var functionName = element.name
+        val fqName = element.fqName
+        if (fqName != null) functionName = fqName.asString()
 
-        if (KotlinBuiltIns.isUnit(type) && getElement().hasBlockBody()) {
-            return functionName == null ?
-                   KotlinBundle.message("remove.no.name.function.return.type") :
-                   KotlinBundle.message("remove.function.return.type", functionName);
+        if (KotlinBuiltIns.isUnit(type) && element.hasBlockBody()) {
+            return if (functionName == null)
+                KotlinBundle.message("remove.no.name.function.return.type")
+            else
+                KotlinBundle.message("remove.function.return.type", functionName)
         }
-        String renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type);
-        return functionName == null ?
-               KotlinBundle.message("change.no.name.function.return.type", renderedType) :
-               KotlinBundle.message("change.function.return.type", functionName, renderedType);
+        val renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
+        return if (functionName == null)
+            KotlinBundle.message("change.no.name.function.return.type", renderedType)
+        else
+            KotlinBundle.message("change.function.return.type", functionName, renderedType)
     }
 
-    @NotNull
-    @Override
-    public String getFamilyName() {
-        return KotlinBundle.message("change.type.family");
+    override fun getFamilyName(): String {
+        return KotlinBundle.message("change.type.family")
     }
 
-    @Override
-    public boolean isAvailable(@NotNull Project project, @Nullable Editor editor, @NotNull PsiFile file) {
+    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
         return super.isAvailable(project, editor, file) &&
                !ErrorUtils.containsErrorType(type) &&
-               !(getElement() instanceof KtConstructor);
+               element !is KtConstructor<*>
     }
 
-    @Override
-    public void invoke(@NotNull Project project, @Nullable Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
+    @Throws(IncorrectOperationException::class)
+    public override operator fun invoke(project: Project, editor: Editor?, file: KtFile) {
         if (changeFunctionLiteralReturnTypeFix != null) {
-            changeFunctionLiteralReturnTypeFix.invoke(project, editor, file);
+            changeFunctionLiteralReturnTypeFix.invoke(project, editor!!, file)
         }
         else {
-            if (!(KotlinBuiltIns.isUnit(type) && getElement().hasBlockBody())) {
-                KtTypeReference newTypeRef = KtPsiFactoryKt
-                        .KtPsiFactory(project).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type));
-                newTypeRef = getElement().setTypeReference(newTypeRef);
-                assert newTypeRef != null;
-                ShortenReferences.DEFAULT.process(newTypeRef);
+            if (!(KotlinBuiltIns.isUnit(type) && element.hasBlockBody())) {
+                var newTypeRef: KtTypeReference? = KtPsiFactory(project).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type))
+                newTypeRef = element.setTypeReference(newTypeRef)
+                assert(newTypeRef != null)
+                ShortenReferences.DEFAULT.process(newTypeRef!!)
             }
             else {
-                getElement().setTypeReference(null);
+                element.typeReference = null
             }
         }
     }
 
-    @NotNull
-    public static KtDestructuringDeclarationEntry getDestructuringDeclarationEntryThatTypeMismatchComponentFunction(Diagnostic diagnostic) {
-        Name componentName = COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH.cast(diagnostic).getA();
-        int componentIndex = DataClassUtilsKt.getComponentIndex(componentName);
-        KtDestructuringDeclaration multiDeclaration = QuickFixUtil.getParentElementOfType(diagnostic, KtDestructuringDeclaration.class);
-        assert multiDeclaration != null : "COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH reported on expression that is not within any multi declaration";
-        return multiDeclaration.getEntries().get(componentIndex - 1);
-    }
+    companion object {
 
-    @NotNull
-    public static KotlinSingleIntentionActionFactory createFactoryForComponentFunctionReturnTypeMismatch() {
-        return new KotlinSingleIntentionActionFactory() {
-            @Nullable
-            @Override
-            public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
-                KtDestructuringDeclarationEntry entry = getDestructuringDeclarationEntryThatTypeMismatchComponentFunction(diagnostic);
-                BindingContext context = ResolutionUtils.analyze(entry);
-                ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.COMPONENT_RESOLVED_CALL, entry);
-                if (resolvedCall == null) return null;
-                KtFunction componentFunction = (KtFunction) DescriptorToSourceUtils
-                        .descriptorToDeclaration(resolvedCall.getCandidateDescriptor());
-                KotlinType expectedType = context.get(BindingContext.TYPE, entry.getTypeReference());
-                if (componentFunction != null && expectedType != null) {
-                    return new ChangeFunctionReturnTypeFix(componentFunction, expectedType);
-                }
-                else return null;
-            }
-        };
-    }
+        fun getDestructuringDeclarationEntryThatTypeMismatchComponentFunction(diagnostic: Diagnostic): KtDestructuringDeclarationEntry {
+            val componentName = COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH.cast(diagnostic).a
+            val componentIndex = getComponentIndex(componentName)
+            val multiDeclaration = QuickFixUtil.getParentElementOfType(diagnostic, KtDestructuringDeclaration::class.java) ?: error("COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH reported on expression that is not within any multi declaration")
+            return multiDeclaration.entries[componentIndex - 1]
+        }
 
-    @NotNull
-    public static KotlinSingleIntentionActionFactory createFactoryForHasNextFunctionTypeMismatch() {
-        return new KotlinSingleIntentionActionFactory() {
-            @Nullable
-            @Override
-            public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
-                KtExpression expression = QuickFixUtil.getParentElementOfType(diagnostic, KtExpression.class);
-                assert expression != null : "HAS_NEXT_FUNCTION_TYPE_MISMATCH reported on element that is not within any expression";
-                BindingContext context = ResolutionUtils.analyze(expression);
-                ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.LOOP_RANGE_HAS_NEXT_RESOLVED_CALL, expression);
-                if (resolvedCall == null) return null;
-                FunctionDescriptor hasNextDescriptor = resolvedCall.getCandidateDescriptor();
-                KtFunction hasNextFunction = (KtFunction) DescriptorToSourceUtils
-                        .descriptorToDeclaration(hasNextDescriptor);
-                if (hasNextFunction != null) {
-                    return new ChangeFunctionReturnTypeFix(hasNextFunction, getBuiltIns(hasNextDescriptor).getBooleanType());
-                }
-                else return null;
-            }
-        };
-    }
-
-    @NotNull
-    public static KotlinSingleIntentionActionFactory createFactoryForCompareToTypeMismatch() {
-        return new KotlinSingleIntentionActionFactory() {
-            @Nullable
-            @Override
-            public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
-                KtBinaryExpression expression = QuickFixUtil.getParentElementOfType(diagnostic, KtBinaryExpression.class);
-                assert expression != null : "COMPARE_TO_TYPE_MISMATCH reported on element that is not within any expression";
-                BindingContext context = ResolutionUtils.analyze(expression);
-                ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(expression, context);
-                if (resolvedCall == null) return null;
-                CallableDescriptor compareToDescriptor = resolvedCall.getCandidateDescriptor();
-                PsiElement compareTo = DescriptorToSourceUtils.descriptorToDeclaration(compareToDescriptor);
-                if (!(compareTo instanceof KtFunction)) return null;
-                return new ChangeFunctionReturnTypeFix((KtFunction) compareTo, getBuiltIns(compareToDescriptor).getIntType());
-            }
-        };
-    }
-
-    @NotNull
-    public static KotlinIntentionActionsFactory createFactoryForReturnTypeMismatchOnOverride() {
-        return new KotlinIntentionActionsFactory() {
-            @NotNull
-            @Override
-            protected List<IntentionAction> doCreateActions(@NotNull Diagnostic diagnostic) {
-                List<IntentionAction> actions = new LinkedList<IntentionAction>();
-
-                KtFunction function = QuickFixUtil.getParentElementOfType(diagnostic, KtFunction.class);
-                if (function != null) {
-                    FunctionDescriptor descriptor = (FunctionDescriptor) ResolutionUtils.resolveToDescriptor(function);
-
-                    KotlinType matchingReturnType = QuickFixUtil.findLowerBoundOfOverriddenCallablesReturnTypes(descriptor);
-                    if (matchingReturnType != null) {
-                        actions.add(new ChangeFunctionReturnTypeFix(function, matchingReturnType));
+        fun createFactoryForComponentFunctionReturnTypeMismatch(): KotlinSingleIntentionActionFactory {
+            return object : KotlinSingleIntentionActionFactory() {
+                public override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+                    val entry = getDestructuringDeclarationEntryThatTypeMismatchComponentFunction(diagnostic)
+                    val context = entry.analyze()
+                    val resolvedCall = context.get(BindingContext.COMPONENT_RESOLVED_CALL, entry) ?: return null
+                    val componentFunction = DescriptorToSourceUtils.descriptorToDeclaration(resolvedCall.candidateDescriptor) as KtFunction?
+                    val expectedType = context.get(BindingContext.TYPE, entry.typeReference!!)
+                    if (componentFunction != null && expectedType != null) {
+                        return ChangeFunctionReturnTypeFix(componentFunction, expectedType)
                     }
+                    else
+                        return null
+                }
+            }
+        }
 
-                    KotlinType functionType = descriptor.getReturnType();
-                    if (functionType == null) return actions;
+        fun createFactoryForHasNextFunctionTypeMismatch(): KotlinSingleIntentionActionFactory {
+            return object : KotlinSingleIntentionActionFactory() {
+                public override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+                    val expression = QuickFixUtil.getParentElementOfType(diagnostic, KtExpression::class.java) ?: error("HAS_NEXT_FUNCTION_TYPE_MISMATCH reported on element that is not within any expression")
+                    val context = expression.analyze()
+                    val resolvedCall = context.get(BindingContext.LOOP_RANGE_HAS_NEXT_RESOLVED_CALL, expression) ?: return null
+                    val hasNextDescriptor = resolvedCall.candidateDescriptor
+                    val hasNextFunction = DescriptorToSourceUtils.descriptorToDeclaration(hasNextDescriptor) as KtFunction?
+                    if (hasNextFunction != null) {
+                        return ChangeFunctionReturnTypeFix(hasNextFunction, hasNextDescriptor.builtIns.booleanType)
+                    }
+                    else
+                        return null
+                }
+            }
+        }
 
-                    List<FunctionDescriptor> overriddenMismatchingFunctions = new LinkedList<FunctionDescriptor>();
-                    for (FunctionDescriptor overriddenFunction: descriptor.getOverriddenDescriptors()) {
-                        KotlinType overriddenFunctionType = overriddenFunction.getReturnType();
-                        if (overriddenFunctionType == null) continue;
-                        if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(functionType, overriddenFunctionType)) {
-                            overriddenMismatchingFunctions.add(overriddenFunction);
+        fun createFactoryForCompareToTypeMismatch(): KotlinSingleIntentionActionFactory {
+            return object : KotlinSingleIntentionActionFactory() {
+                public override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+                    val expression = QuickFixUtil.getParentElementOfType(diagnostic, KtBinaryExpression::class.java) ?: error("COMPARE_TO_TYPE_MISMATCH reported on element that is not within any expression")
+                    val context = expression.analyze()
+                    val resolvedCall = expression.getResolvedCall(context) ?: return null
+                    val compareToDescriptor = resolvedCall.candidateDescriptor
+                    val compareTo = DescriptorToSourceUtils.descriptorToDeclaration(compareToDescriptor)
+                    if (compareTo !is KtFunction) return null
+                    return ChangeFunctionReturnTypeFix(compareTo, compareToDescriptor.builtIns.intType)
+                }
+            }
+        }
+
+        fun createFactoryForReturnTypeMismatchOnOverride(): KotlinIntentionActionsFactory {
+            return object : KotlinIntentionActionsFactory() {
+                override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
+                    val actions = LinkedList<IntentionAction>()
+
+                    val function = QuickFixUtil.getParentElementOfType(diagnostic, KtFunction::class.java)
+                    if (function != null) {
+                        val descriptor = function.resolveToDescriptor() as FunctionDescriptor
+
+                        val matchingReturnType = QuickFixUtil.findLowerBoundOfOverriddenCallablesReturnTypes(descriptor)
+                        if (matchingReturnType != null) {
+                            actions.add(ChangeFunctionReturnTypeFix(function, matchingReturnType))
+                        }
+
+                        val functionType = descriptor.returnType ?: return actions
+
+                        val overriddenMismatchingFunctions = LinkedList<FunctionDescriptor>()
+                        for (overriddenFunction in descriptor.overriddenDescriptors) {
+                            val overriddenFunctionType = overriddenFunction.returnType ?: continue
+                            if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(functionType, overriddenFunctionType)) {
+                                overriddenMismatchingFunctions.add(overriddenFunction)
+                            }
+                        }
+
+                        if (overriddenMismatchingFunctions.size == 1) {
+                            val overriddenFunction = DescriptorToSourceUtils.descriptorToDeclaration(overriddenMismatchingFunctions[0])
+                            if (overriddenFunction is KtFunction) {
+                                actions.add(ChangeFunctionReturnTypeFix(overriddenFunction, functionType))
+                            }
                         }
                     }
-
-                    if (overriddenMismatchingFunctions.size() == 1) {
-                        PsiElement overriddenFunction = DescriptorToSourceUtils
-                                .descriptorToDeclaration(overriddenMismatchingFunctions.get(0));
-                        if (overriddenFunction instanceof KtFunction) {
-                            actions.add(new ChangeFunctionReturnTypeFix((KtFunction) overriddenFunction, functionType));
-                        }
-                    }
+                    return actions
                 }
-                return actions;
             }
-        };
-    }
+        }
 
-    @NotNull
-    public static KotlinSingleIntentionActionFactory createFactoryForChangingReturnTypeToUnit() {
-        return new KotlinSingleIntentionActionFactory() {
-            @Nullable
-            @Override
-            public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
-                KtFunction function = QuickFixUtil.getParentElementOfType(diagnostic, KtFunction.class);
-                return function == null ? null : new ChangeFunctionReturnTypeFix(function, getPlatform(function).getBuiltIns().getUnitType());
+        fun createFactoryForChangingReturnTypeToUnit(): KotlinSingleIntentionActionFactory {
+            return object : KotlinSingleIntentionActionFactory() {
+                public override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+                    val function = QuickFixUtil.getParentElementOfType(diagnostic, KtFunction::class.java) ?: return null
+                    return ChangeFunctionReturnTypeFix(function, function.platform.builtIns.unitType)
+                }
             }
-        };
-    }
+        }
 
-    @NotNull
-    public static KotlinSingleIntentionActionFactory createFactoryForChangingReturnTypeToNothing() {
-        return new KotlinSingleIntentionActionFactory() {
-            @Nullable
-            @Override
-            public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
-                KtFunction function = QuickFixUtil.getParentElementOfType(diagnostic, KtFunction.class);
-                return function == null ? null : new ChangeFunctionReturnTypeFix(function, getPlatform(function).getBuiltIns().getNothingType());
+        fun createFactoryForChangingReturnTypeToNothing(): KotlinSingleIntentionActionFactory {
+            return object : KotlinSingleIntentionActionFactory() {
+                public override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+                    val function = QuickFixUtil.getParentElementOfType(diagnostic, KtFunction::class.java)
+                    return if (function == null) null else ChangeFunctionReturnTypeFix(function, function.platform.builtIns.nothingType)
+                }
             }
-        };
+        }
     }
 }
