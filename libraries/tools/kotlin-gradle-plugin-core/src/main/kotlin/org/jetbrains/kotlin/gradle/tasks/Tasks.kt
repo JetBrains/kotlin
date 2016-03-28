@@ -14,7 +14,6 @@ import org.apache.commons.lang.StringUtils
 import org.codehaus.groovy.runtime.MethodClosure
 import org.gradle.api.GradleException
 import org.gradle.api.file.SourceDirectorySet
-import org.gradle.api.internal.AbstractTask
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.api.plugins.ExtraPropertiesExtension
@@ -51,11 +50,9 @@ import java.util.*
 
 const val DEFAULT_ANNOTATIONS = "org.jebrains.kotlin.gradle.defaultAnnotations"
 const val ANNOTATIONS_PLUGIN_NAME = "org.jetbrains.kotlin.kapt"
-const val KOTLIN_CACHES_DIR_NAME = "kotlin-caches"
+const val KOTLIN_BUILD_DIR_NAME = "kotlin"
+const val CACHES_DIR_NAME = "caches"
 const val DIRTY_SOURCES_FILE_NAME = "dirty-sources.txt"
-
-val AbstractTask.kotlinCachesDir: File
-    get() = File(File(project.buildDir, KOTLIN_CACHES_DIR_NAME), name)
 
 abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCompile() {
     abstract protected val compiler: CLICompiler<T>
@@ -82,7 +79,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
 
     @TaskAction
     fun execute(inputs: IncrementalTaskInputs): Unit {
-        logger.debug("Starting ${javaClass} task")
         logger.kotlinDebug("all sources ${getSource().joinToString { it.path }}")
         logger.kotlinDebug("is incremental == ${inputs.isIncremental}")
         val modified = arrayListOf<File>()
@@ -107,7 +103,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
         beforeCompileHook(args)
 
         try {
-            callCompiler(args, sources, inputs.isIncremental, modified, removed, kotlinCachesDir)
+            callCompiler(args, sources, inputs.isIncremental, modified, removed)
         }
         finally {
             afterCompileHook(args)
@@ -130,8 +126,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
         args.noInline = kotlinOptions.noInline
     }
 
-    protected open fun callCompiler(args: T, sources: List<File>, isIncremental: Boolean, modified: List<File>, removed: List<File>, cachesBaseDir: File) {
-
+    protected open fun callCompiler(args: T, sources: List<File>, isIncremental: Boolean, modified: List<File>, removed: List<File>) {
         populateSources(args, sources)
 
         val messageCollector = GradleMessageCollector(logger)
@@ -163,6 +158,17 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
 
     // TODO: find out whether we really need to be able to override destination dir here, and how it should work with destinationDir property
     private val compilerDestinationDir: String get() = if (StringUtils.isEmpty(kotlinOptions.destination)) { kotlinDestinationDir?.path.orEmpty() } else { kotlinOptions.destination }
+
+    // lazy because name is probably not available when constructor is called
+    private val taskBuildDirectory: File by lazy { File(File(project.buildDir, KOTLIN_BUILD_DIR_NAME), name) }
+    private val cacheDirectory: File by lazy { File(taskBuildDirectory, CACHES_DIR_NAME) }
+    private val dirtySourcesSinceLastTimeFile: File by lazy { File(taskBuildDirectory, DIRTY_SOURCES_FILE_NAME) }
+    private val cacheVersions by lazy {
+        listOf(normalCacheVersion(taskBuildDirectory),
+               experimentalCacheVersion(taskBuildDirectory),
+               dataContainerCacheVersion(taskBuildDirectory),
+               gradleCacheVersion(taskBuildDirectory))
+    }
 
     override fun populateTargetSpecificArgs(args: K2JVMCompilerArguments) {
         // show kotlin compiler where to look for java source files
@@ -216,7 +222,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
         logger.kotlinDebug("args.moduleName = ${args.moduleName}")
     }
 
-    override fun callCompiler(args: K2JVMCompilerArguments, sources: List<File>, isIncrementalRequested: Boolean, modified: List<File>, removed: List<File>, cachesBaseDir: File) {
+    override fun callCompiler(args: K2JVMCompilerArguments, sources: List<File>, isIncrementalRequested: Boolean, modified: List<File>, removed: List<File>) {
 
         fun projectRelativePath(f: File) = f.toRelativeString(project.projectDir)
 
@@ -232,15 +238,14 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
         val targets = listOf(TargetId(moduleName, targetType))
         val outputDir = File(compilerDestinationDir)
         val caches = hashMapOf<TargetId, GradleIncrementalCacheImpl>()
-        val lookupStorage = LookupStorage(File(cachesBaseDir, "lookups"))
+        val lookupStorage = LookupStorage(File(cacheDirectory, "lookups"))
         val lookupTracker = LookupTrackerImpl(LookupTracker.DO_NOTHING)
         var currentRemoved = removed.filter { it.isKotlinFile() }
         val allGeneratedFiles = hashSetOf<GeneratedFile<TargetId>>()
         val logAction = { logStr: String -> logger.kotlinInfo(logStr) }
-        val dirtySourcesSinceLastTimeFile = File(cachesBaseDir, DIRTY_SOURCES_FILE_NAME)
 
         fun getOrCreateIncrementalCache(target: TargetId): GradleIncrementalCacheImpl {
-            val cacheDir = File(cachesBaseDir, "increCache.${target.name}")
+            val cacheDir = File(cacheDirectory, "increCache.${target.name}")
             cacheDir.mkdirs()
             return GradleIncrementalCacheImpl(targetDataRoot = cacheDir, targetOutputDir = outputDir, target = target)
         }
@@ -294,57 +299,20 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
             return changedClasspath.any()
         }
 
-        fun allCachesVersions() = allCachesVersions(cachesBaseDir, listOf(cachesBaseDir))
-
         fun calculateSourcesToCompile(): Pair<Set<File>, Boolean> {
-
-            if (!experimentalIncremental ||
-                    !isIncrementalRequested ||
-                    // TODO: more precise will be not to rebuild unconditionally on classpath changes, but retrieve lookup info and try to find out which sources are affected by cp changes
-                    isClassPathChanged() ||
-                    // so far considering it not incremental TODO: store java files in the cache and extract removed symbols from it here
-                    removed.any { it.isJavaFile() }
+            if (!experimentalIncremental
+                || !isIncrementalRequested
+                // TODO: more precise will be not to rebuild unconditionally on classpath changes, but retrieve lookup info and try to find out which sources are affected by cp changes
+                || isClassPathChanged()
+                // so far considering it not incremental TODO: store java files in the cache and extract removed symbols from it here
+                || removed.any { it.isJavaFile() }
+                || cacheVersions.any { it.checkVersion() != CacheVersion.Action.DO_NOTHING }
             ) {
                 logger.kotlinInfo(if (!isIncrementalRequested) "clean caches on rebuild" else "classpath changed, rebuilding all kotlin files")
                 targets.forEach { getIncrementalCache(it).clean() }
                 lookupStorage.clean()
+                dirtySourcesSinceLastTimeFile.delete()
                 return Pair(sources.toSet(), false)
-            }
-            val actions = if (isIncrementalRequested) allCachesVersions().map { it.checkVersion() }
-                          else listOf(CacheVersion.Action.REBUILD_ALL_KOTLIN)
-            // TODO: find out whether these flags should be emulated too
-//            val hasKotlin = HasKotlinMarker(dataManager)
-//            val rebuildAfterCacheVersionChanged = RebuildAfterCacheVersionChangeMarker(dataManager)
-
-            for (status in actions.distinct().sorted()) {
-                when (status) {
-                    CacheVersion.Action.REBUILD_ALL_KOTLIN -> {
-                        logger.kotlinInfo("Kotlin global lookup map format changed, rebuilding all kotlin files")
-                        targets.forEach { getIncrementalCache(it).clean() }
-                        lookupStorage.clean()
-                        return Pair(sources.toSet(), false)
-                    }
-                    CacheVersion.Action.REBUILD_CHUNK -> {
-                        logger.kotlinInfo("Clearing caches for " + targets.joinToString { it.name })
-                        targets.forEach { getIncrementalCache(it).clean() }
-                    }
-                    CacheVersion.Action.CLEAN_NORMAL_CACHES -> {
-                        logger.kotlinInfo("Clearing caches for all targets")
-                        targets.forEach { getIncrementalCache(it).clean() }
-                    }
-                    CacheVersion.Action.CLEAN_EXPERIMENTAL_CACHES -> {
-                        logger.kotlinInfo("Clearing experimental caches for all targets")
-                        targets.forEach { getIncrementalCache(it).cleanExperimental() }
-                    }
-                    CacheVersion.Action.CLEAN_DATA_CONTAINER -> {
-                        logger.kotlinInfo("Clearing lookup cache")
-                        lookupStorage.clean()
-                        dataContainerCacheVersion(cachesBaseDir).clean()
-                    }
-                    else -> {
-                        assert(status == CacheVersion.Action.DO_NOTHING) { "Unknown version status $status" }
-                    }
-                }
             }
 
             val dirtyFiles = dirtyKotlinSourcesFromGradle()
@@ -426,7 +394,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
                                                             getIncrementalCache = { caches[it]!! })
 
             lookupStorage.update(lookupTracker, sourcesToCompile, currentRemoved)
-            allCachesVersions().forEach { it.saveIfNeeded() }
+            cacheVersions.forEach { it.saveIfNeeded() }
             processCompilerExitCode(exitCode)
 
             if (!isIncrementalDecided) break;
