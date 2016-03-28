@@ -59,7 +59,7 @@ interface ExpressionReceiver :  ReceiverValue {
             if (referenceExpression != null) {
                 val descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, referenceExpression)
                 if (descriptor is ClassDescriptor) {
-                    return ThisExpressionClassReceiver(descriptor.original as ClassDescriptor, expression, type)
+                    return ThisExpressionClassReceiver(descriptor.original, expression, type)
                 }
             }
             else if (expression is KtSuperExpression) {

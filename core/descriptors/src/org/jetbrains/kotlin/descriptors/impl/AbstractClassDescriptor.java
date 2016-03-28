@@ -65,7 +65,7 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor {
 
     @NotNull
     @Override
-    public DeclarationDescriptorWithSource getOriginal() {
+    public ClassDescriptor getOriginal() {
         return this;
     }
 
