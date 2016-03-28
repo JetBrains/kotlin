@@ -60,17 +60,13 @@ public class IntrinsicMethods {
     private final IntrinsicsMap intrinsicsMap = new IntrinsicsMap();
 
     public IntrinsicMethods() {
-        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, null, "javaClass", 0, new JavaClassFunction());
         intrinsicsMap.registerIntrinsic(KOTLIN_JVM, RECEIVER_PARAMETER_FQ_NAME, "javaClass", -1, new JavaClassProperty());
         intrinsicsMap.registerIntrinsic(KOTLIN_JVM, KotlinBuiltIns.FQ_NAMES.kClass, "java", -1, new KClassJavaProperty());
         intrinsicsMap.registerIntrinsic(new FqName("kotlin.jvm.internal.unsafe"), null, "monitorEnter", 1, MonitorInstruction.MONITOR_ENTER);
         intrinsicsMap.registerIntrinsic(new FqName("kotlin.jvm.internal.unsafe"), null, "monitorExit", 1, MonitorInstruction.MONITOR_EXIT);
         intrinsicsMap.registerIntrinsic(KOTLIN_JVM, KotlinBuiltIns.FQ_NAMES.array, "isArrayOf", 0, new IsArrayOf());
 
-        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, null, "arrayOf", 1, new JavaClassArray());
-
-        // TODO: drop when deprecated kotlin.javaClass property is gone
-        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, RECEIVER_PARAMETER_FQ_NAME, "javaClass", -1, new JavaClassProperty());
+        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, null, "arrayOf", 1, new ArrayOf());
 
         ImmutableList<Name> primitiveCastMethods = OperatorConventions.NUMBER_CONVERSIONS.asList();
         for (Name method : primitiveCastMethods) {
@@ -100,7 +96,7 @@ public class IntrinsicMethods {
             declareIntrinsicFunction(typeFqName, "toString", 0, TO_STRING);
 
             intrinsicsMap.registerIntrinsic(
-                    BUILT_INS_PACKAGE_FQ_NAME, null, StringsKt.decapitalize(type.getArrayTypeName().asString()) + "Of", 1, new JavaClassArray()
+                    BUILT_INS_PACKAGE_FQ_NAME, null, StringsKt.decapitalize(type.getArrayTypeName().asString()) + "Of", 1, new ArrayOf()
             );
         }
 
