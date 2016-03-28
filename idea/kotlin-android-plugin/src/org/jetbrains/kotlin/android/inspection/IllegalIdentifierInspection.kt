@@ -34,7 +34,7 @@ class IllegalIdentifierInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return object : KtVisitorVoid() {
             override fun visitElement(element: PsiElement) {
-                if (element.node.elementType != KtTokens.IDENTIFIER) return
+                if (element.node?.elementType != KtTokens.IDENTIFIER) return
 
                 val text = element.text
                 // '`' can't be escaped now
