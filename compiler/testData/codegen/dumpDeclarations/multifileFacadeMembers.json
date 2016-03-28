@@ -42,12 +42,11 @@
 		"declaration": "package-fragment ",
 		"class": "MultifileFacade",
 		"members": [
-			{"visibility": "public",	"declaration": "const val publicConst: kotlin.Int", "name": "publicConst", "desc": "I"},
 			{"visibility": "internal",	"declaration": "const val internalConst: kotlin.Int", "name": "internalConst", "desc": "I"},
-			{"visibility": "private",	"declaration": "const val privateConst: kotlin.Int", "name": "privateConst", "desc": "I"},
 			{"visibility": "internal",	"declaration": "fun <get-internalVal>(): kotlin.Long", "name": "getInternalVal", "desc": "()J"},
 			{"visibility": "internal",	"declaration": "fun <get-internalVar>(): kotlin.Long", "name": "getInternalVar", "desc": "()J"},
 			{"visibility": "internal",	"declaration": "fun <set-internalVar>(<set-?>: kotlin.Long): kotlin.Unit", "name": "setInternalVar", "desc": "(J)V"},
+			{"visibility": "public",	"declaration": "const val publicConst: kotlin.Int", "name": "publicConst", "desc": "I"},
 			{"visibility": "public",	"declaration": "fun <get-publicVal>(): kotlin.Int", "name": "getPublicVal", "desc": "()I"},
 			{"visibility": "public",	"declaration": "fun <get-publicVar>(): kotlin.Int", "name": "getPublicVar", "desc": "()I"},
 			{"visibility": "public",	"declaration": "fun <set-publicVar>(<set-?>: kotlin.Int): kotlin.Unit", "name": "setPublicVar", "desc": "(I)V"},

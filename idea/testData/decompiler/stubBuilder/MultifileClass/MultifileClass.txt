@@ -2,6 +2,20 @@ PsiJetFileStubImpl[package=test]
   PACKAGE_DIRECTIVE:
     REFERENCE_EXPRESSION:[referencedName=test]
   IMPORT_LIST:
+  PROPERTY:[fqName=test.annotatedConstVal, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=annotatedConstVal]
+    MODIFIER_LIST:[public const]
+      ANNOTATION_ENTRY:[hasValueArguments=false, shortName=Deprecated]
+        CONSTRUCTOR_CALLEE:
+          TYPE_REFERENCE:
+            USER_TYPE:[isAbsoluteInRootPackage=false]
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                REFERENCE_EXPRESSION:[referencedName=kotlin]
+              REFERENCE_EXPRESSION:[referencedName=Deprecated]
+    TYPE_REFERENCE:
+      USER_TYPE:[isAbsoluteInRootPackage=false]
+        USER_TYPE:[isAbsoluteInRootPackage=false]
+          REFERENCE_EXPRESSION:[referencedName=kotlin]
+        REFERENCE_EXPRESSION:[referencedName=Int]
   PROPERTY:[fqName=test.p1Val, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=p1Val]
     MODIFIER_LIST:[public]
     TYPE_REFERENCE:

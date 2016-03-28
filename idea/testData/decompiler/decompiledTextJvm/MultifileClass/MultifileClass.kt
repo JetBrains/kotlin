@@ -9,3 +9,6 @@ public fun String.fn2a() {}
 
 class ShouldNotBeVisible1
 interface ShouldNotBeVisible2
+
+@Deprecated("deprecated")
+const val annotatedConstVal = 42
