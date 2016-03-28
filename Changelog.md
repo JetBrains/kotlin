@@ -34,16 +34,18 @@
 - Complete private members from libraries in Evaluate Expression dialog
 - Show error message when debug info for some local variable is corrupted
 
+## 1.0.1-2
+
+### Compiler
+
+- [KT-11584](https://youtrack.jetbrains.com/issue/KT-11584), [KT-11514](https://youtrack.jetbrains.com/issue/KT-11514) Correct comparison of Long! / Double! with integer constant
+- [KT-11590](https://youtrack.jetbrains.com/issue/KT-11590) SAM adapter for inline function corrected
+
 ## 1.0.1-1
 
 ### Compiler
 
-Analysis & diagnostics issues fixed:
-
 - [KT-11468](https://youtrack.jetbrains.com/issue/KT-11468) More correct use-site / declaration-site variance combination handling
-
-JVM code generation issues fixed:
-
 - [KT-11478](https://youtrack.jetbrains.com/issue/KT-11478) "Couldn't inline method call" internal compiler error fixed
 
 ## 1.0.1
