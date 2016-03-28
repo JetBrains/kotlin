@@ -11,19 +11,33 @@ class Test {
         myIntProp = 1
     }
 
-    fun test() {
+    fun test1() {
         foo1(myProp!!)
-        foo2(myProp!!)
-        foo3(myProp)
+    }
 
+    fun test2() {
+        foo2(myProp!!)
+    }
+
+    fun test3() {
+        foo3(myProp)
+    }
+
+    fun test4() {
         myProp!![myIntProp!!]
         println(myProp)
+    }
 
+    fun test5() {
         val b = "aaa" == myProp
         val s = "aaa" + myProp!!
+    }
 
+    fun test6() {
         myProp!!.compareTo(myProp!!, ignoreCase = true)
+    }
 
+    fun test7() {
         val list = ArrayList<Int>()
         list.remove(myIntProp!!)
     }

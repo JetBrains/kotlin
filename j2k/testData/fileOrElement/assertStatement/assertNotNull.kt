@@ -3,9 +3,9 @@ internal abstract class C {
         val s1 = f()!!
 
         val s2 = g() ?: error("g should not return null")
-        val h = s2.hashCode()
+        val h = s2!!.hashCode()
     }
 
-    internal abstract fun f()
-    internal abstract fun g()
+    internal abstract fun f(): String?
+    internal abstract fun g(): String?
 }
