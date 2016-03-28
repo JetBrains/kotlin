@@ -15506,6 +15506,24 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("nonSuperCallConstructor.kt")
+                public void testNonSuperCallConstructor() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/protectedVisibility/nonSuperCallConstructor.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("nonSuperCallConstructorJavaDifferentPackage.kt")
+                public void testNonSuperCallConstructorJavaDifferentPackage() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/protectedVisibility/nonSuperCallConstructorJavaDifferentPackage.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("nonSuperCallConstructorJavaSamePackage.kt")
+                public void testNonSuperCallConstructorJavaSamePackage() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/protectedVisibility/nonSuperCallConstructorJavaSamePackage.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("protectedCallOnSubClass.kt")
                 public void testProtectedCallOnSubClass() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/protectedVisibility/protectedCallOnSubClass.kt");
