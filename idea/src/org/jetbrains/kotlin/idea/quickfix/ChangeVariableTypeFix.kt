@@ -73,67 +73,60 @@ class ChangeVariableTypeFix(element: KtVariableDeclaration, private val type: Ko
         ShortenReferences.DEFAULT.process(toShorten)
     }
 
-    companion object {
-
-        fun createFactoryForComponentFunctionReturnTypeMismatch(): KotlinSingleIntentionActionFactory {
-            return object : KotlinSingleIntentionActionFactory() {
-                public override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-                    val entry = ChangeFunctionReturnTypeFix.getDestructuringDeclarationEntryThatTypeMismatchComponentFunction(diagnostic)
-                    val context = entry.analyze()
-                    val resolvedCall = context.get(BindingContext.COMPONENT_RESOLVED_CALL, entry) ?: return null
-                    if (DescriptorToSourceUtils.descriptorToDeclaration(resolvedCall.candidateDescriptor) == null) return null
-                    val expectedType = resolvedCall.candidateDescriptor.returnType ?: return null
-                    return ChangeVariableTypeFix(entry, expectedType)
-                }
-            }
+    object ComponentFunctionReturnTypeMismatchFactory : KotlinSingleIntentionActionFactory() {
+        override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+            val entry = ChangeFunctionReturnTypeFix.getDestructuringDeclarationEntryThatTypeMismatchComponentFunction(diagnostic)
+            val context = entry.analyze()
+            val resolvedCall = context.get(BindingContext.COMPONENT_RESOLVED_CALL, entry) ?: return null
+            if (DescriptorToSourceUtils.descriptorToDeclaration(resolvedCall.candidateDescriptor) == null) return null
+            val expectedType = resolvedCall.candidateDescriptor.returnType ?: return null
+            return ChangeVariableTypeFix(entry, expectedType)
         }
+    }
 
-        fun createFactoryForPropertyOrReturnTypeMismatchOnOverride(): KotlinIntentionActionsFactory {
-            return object : KotlinIntentionActionsFactory() {
-                override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
-                    val actions = LinkedList<IntentionAction>()
+    object PropertyOrReturnTypeMismatchOnOverrideFactory : KotlinIntentionActionsFactory() {
+        override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
+            val actions = LinkedList<IntentionAction>()
 
-                    if (diagnostic.psiElement is KtProperty) {
-                        val property = diagnostic.psiElement as KtProperty
-                        val descriptor = property.resolveToDescriptor() as? PropertyDescriptor ?: return actions
+            if (diagnostic.psiElement is KtProperty) {
+                val property = diagnostic.psiElement as KtProperty
+                val descriptor = property.resolveToDescriptor() as? PropertyDescriptor ?: return actions
 
-                        var lowerBoundOfOverriddenPropertiesTypes = QuickFixUtil.findLowerBoundOfOverriddenCallablesReturnTypes(descriptor)
+                var lowerBoundOfOverriddenPropertiesTypes = QuickFixUtil.findLowerBoundOfOverriddenCallablesReturnTypes(descriptor)
 
-                        val propertyType = descriptor.returnType ?: error("Property type cannot be null if it mismatches something")
+                val propertyType = descriptor.returnType ?: error("Property type cannot be null if it mismatches something")
 
-                        val overriddenMismatchingProperties = LinkedList<PropertyDescriptor>()
-                        var canChangeOverriddenPropertyType = true
-                        for (overriddenProperty in descriptor.overriddenDescriptors) {
-                            val overriddenPropertyType = overriddenProperty.returnType
-                            if (overriddenPropertyType != null) {
-                                if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(propertyType, overriddenPropertyType)) {
-                                    overriddenMismatchingProperties.add(overriddenProperty)
-                                }
-                                else if (overriddenProperty.isVar && !KotlinTypeChecker.DEFAULT.equalTypes(overriddenPropertyType, propertyType)) {
-                                    canChangeOverriddenPropertyType = false
-                                }
-                                if (overriddenProperty.isVar && lowerBoundOfOverriddenPropertiesTypes != null &&
-                                    !KotlinTypeChecker.DEFAULT.equalTypes(lowerBoundOfOverriddenPropertiesTypes, overriddenPropertyType)) {
-                                    lowerBoundOfOverriddenPropertiesTypes = null
-                                }
-                            }
+                val overriddenMismatchingProperties = LinkedList<PropertyDescriptor>()
+                var canChangeOverriddenPropertyType = true
+                for (overriddenProperty in descriptor.overriddenDescriptors) {
+                    val overriddenPropertyType = overriddenProperty.returnType
+                    if (overriddenPropertyType != null) {
+                        if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(propertyType, overriddenPropertyType)) {
+                            overriddenMismatchingProperties.add(overriddenProperty)
                         }
-
-                        if (lowerBoundOfOverriddenPropertiesTypes != null) {
-                            actions.add(ChangeVariableTypeFix(property, lowerBoundOfOverriddenPropertiesTypes))
+                        else if (overriddenProperty.isVar && !KotlinTypeChecker.DEFAULT.equalTypes(overriddenPropertyType, propertyType)) {
+                            canChangeOverriddenPropertyType = false
                         }
-
-                        if (overriddenMismatchingProperties.size == 1 && canChangeOverriddenPropertyType) {
-                            val overriddenProperty = DescriptorToSourceUtils.descriptorToDeclaration(overriddenMismatchingProperties.single())
-                            if (overriddenProperty is KtProperty) {
-                                actions.add(ChangeVariableTypeFix(overriddenProperty, propertyType))
-                            }
+                        if (overriddenProperty.isVar && lowerBoundOfOverriddenPropertiesTypes != null &&
+                            !KotlinTypeChecker.DEFAULT.equalTypes(lowerBoundOfOverriddenPropertiesTypes, overriddenPropertyType)) {
+                            lowerBoundOfOverriddenPropertiesTypes = null
                         }
                     }
+                }
 
-                    return actions
+                if (lowerBoundOfOverriddenPropertiesTypes != null) {
+                    actions.add(ChangeVariableTypeFix(property, lowerBoundOfOverriddenPropertiesTypes))
+                }
+
+                if (overriddenMismatchingProperties.size == 1 && canChangeOverriddenPropertyType) {
+                    val overriddenProperty = DescriptorToSourceUtils.descriptorToDeclaration(overriddenMismatchingProperties.single())
+                    if (overriddenProperty is KtProperty) {
+                        actions.add(ChangeVariableTypeFix(overriddenProperty, propertyType))
+                    }
                 }
             }
+
+            return actions
         }
     }
 }

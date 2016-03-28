@@ -219,11 +219,11 @@ class QuickFixRegistrar : QuickFixContributor {
 
         NOT_AN_ANNOTATION_CLASS.registerFactory(MakeClassAnAnnotationClassFix)
 
-        val changeVariableTypeFix = ChangeVariableTypeFix.createFactoryForPropertyOrReturnTypeMismatchOnOverride()
+        val changeVariableTypeFix = ChangeVariableTypeFix.PropertyOrReturnTypeMismatchOnOverrideFactory
         RETURN_TYPE_MISMATCH_ON_OVERRIDE.registerFactory(changeVariableTypeFix)
         PROPERTY_TYPE_MISMATCH_ON_OVERRIDE.registerFactory(changeVariableTypeFix)
         VAR_TYPE_MISMATCH_ON_OVERRIDE.registerFactory(changeVariableTypeFix)
-        COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH.registerFactory(ChangeVariableTypeFix.createFactoryForComponentFunctionReturnTypeMismatch())
+        COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH.registerFactory(ChangeVariableTypeFix.ComponentFunctionReturnTypeMismatchFactory)
 
         val changeFunctionReturnTypeFix = ChangeFunctionReturnTypeFix.createFactoryForChangingReturnTypeToUnit()
         RETURN_TYPE_MISMATCH.registerFactory(changeFunctionReturnTypeFix)
