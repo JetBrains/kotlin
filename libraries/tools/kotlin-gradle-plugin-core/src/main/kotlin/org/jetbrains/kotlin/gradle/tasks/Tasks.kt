@@ -55,7 +55,7 @@ const val KOTLIN_CACHES_DIR_NAME = "kotlin-caches"
 const val DIRTY_SOURCES_FILE_NAME = "dirty-sources.txt"
 
 val AbstractTask.kotlinCachesDir: File
-    get() = File(project.buildDir, KOTLIN_CACHES_DIR_NAME)
+    get() = File(File(project.buildDir, KOTLIN_CACHES_DIR_NAME), name)
 
 abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCompile() {
     abstract protected val compiler: CLICompiler<T>
