@@ -160,6 +160,9 @@ public class Visibilities {
                 @NotNull DeclarationDescriptorWithVisibility whatDeclaration,
                 @NotNull ClassDescriptor fromClass
         ) {
+            //noinspection deprecation
+            if (receiver == FALSE_IF_PROTECTED) return false;
+
             // Do not check receiver for non-callable declarations
             if (!(whatDeclaration instanceof CallableMemberDescriptor)) return true;
             // Constructor accessibility check is performed manually
@@ -282,7 +285,6 @@ public class Visibilities {
         return findInvisibleMember(IRRELEVANT_RECEIVER, what, from) == null;
     }
 
-
     @Nullable
     public static DeclarationDescriptorWithVisibility findInvisibleMember(
             @Nullable ReceiverValue receiver,
@@ -355,6 +357,16 @@ public class Visibilities {
      * iff there is intention to determine if member is visible without receiver related checks being performed.
      */
     public static final ReceiverValue ALWAYS_SUITABLE_RECEIVER = new ReceiverValue() {
+        @NotNull
+        @Override
+        public KotlinType getType() {
+            throw new IllegalStateException("This method should not be called");
+        }
+    };
+
+    // This constant is not intended to use somewhere else from
+    @Deprecated
+    public static final ReceiverValue FALSE_IF_PROTECTED = new ReceiverValue() {
         @NotNull
         @Override
         public KotlinType getType() {
