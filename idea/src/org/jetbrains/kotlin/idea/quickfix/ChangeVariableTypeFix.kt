@@ -36,25 +36,28 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import java.util.*
 
-class ChangeVariableTypeFix(element: KtVariableDeclaration, private val type: KotlinType) : KotlinQuickFixAction<KtVariableDeclaration>(element) {
+class ChangeVariableTypeFix(element: KtVariableDeclaration, type: KotlinType) : KotlinQuickFixAction<KtVariableDeclaration>(element) {
+    private val typeContainsError = ErrorUtils.containsErrorType(type)
+    private val typePresentation = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
+    private val typeSourceCode = IdeDescriptorRenderers.SOURCE_CODE.renderType(type)
 
     override fun getText(): String {
         var propertyName = element.fqName?.asString() ?: element.name
-        return KotlinBundle.message("change.element.type", propertyName, IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type))
+        return "Change '$propertyName' type to '$typePresentation'"
     }
 
     override fun getFamilyName()
             = KotlinBundle.message("change.type.family")
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile)
-            = super.isAvailable(project, editor, file) && !ErrorUtils.containsErrorType(type)
+            = !typeContainsError && super.isAvailable(project, editor, file)
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val psiFactory = KtPsiFactory(file)
 
         assert(element.nameIdentifier != null) { "ChangeVariableTypeFix applied to variable without name" }
 
-        val replacingTypeReference = psiFactory.createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type))
+        val replacingTypeReference = psiFactory.createType(typeSourceCode)
         val toShorten = ArrayList<KtTypeReference>()
         toShorten.add(element.setTypeReference(replacingTypeReference)!!)
 
