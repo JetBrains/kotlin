@@ -1,7 +1,7 @@
 <project name="Update Dependencies" default="update" xmlns:if="ant:if" xmlns:unless="ant:unless">
 
     <property name="automerge_dummy" value="This property is used to trick git merge. Do not delete empty lines around."/>
-    <property name="ideaVersion" value="143.2287.1"/>
+    <property name="ideaVersion" value="145.184.1"/>
     <property name="idea.kotlin.branch" value="rc"/>
 
 
