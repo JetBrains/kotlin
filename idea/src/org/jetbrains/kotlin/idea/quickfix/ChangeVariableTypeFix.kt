@@ -20,7 +20,6 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
-import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.KotlinBundle
@@ -44,34 +43,28 @@ class ChangeVariableTypeFix(element: KtVariableDeclaration, private val type: Ko
         return KotlinBundle.message("change.element.type", propertyName, IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type))
     }
 
-    override fun getFamilyName(): String {
-        return KotlinBundle.message("change.type.family")
-    }
+    override fun getFamilyName()
+            = KotlinBundle.message("change.type.family")
 
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
-        return super.isAvailable(project, editor, file) && !ErrorUtils.containsErrorType(type)
-    }
+    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile)
+            = super.isAvailable(project, editor, file) && !ErrorUtils.containsErrorType(type)
 
-    @Throws(IncorrectOperationException::class)
-    public override operator fun invoke(project: Project, editor: Editor?, file: KtFile) {
+    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val psiFactory = KtPsiFactory(file)
 
-        val nameIdentifier = element.nameIdentifier ?: error("ChangeVariableTypeFix applied to variable without name")
+        assert(element.nameIdentifier != null) { "ChangeVariableTypeFix applied to variable without name" }
 
         val replacingTypeReference = psiFactory.createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type))
         val toShorten = ArrayList<KtTypeReference>()
         toShorten.add(element.setTypeReference(replacingTypeReference)!!)
 
         if (element is KtProperty) {
-            val getter = element.getter
-            val getterReturnTypeRef = getter?.returnTypeReference
+            val getterReturnTypeRef = element.getter?.returnTypeReference
             if (getterReturnTypeRef != null) {
                 toShorten.add(getterReturnTypeRef.replace(replacingTypeReference) as KtTypeReference)
             }
 
-            val setter = element.setter
-            val setterParameter = setter?.parameter
-            val setterParameterTypeRef = setterParameter?.typeReference
+            val setterParameterTypeRef = element.setter?.parameter?.typeReference
             if (setterParameterTypeRef != null) {
                 toShorten.add(setterParameterTypeRef.replace(replacingTypeReference) as KtTypeReference)
             }
@@ -88,9 +81,9 @@ class ChangeVariableTypeFix(element: KtVariableDeclaration, private val type: Ko
                     val entry = ChangeFunctionReturnTypeFix.getDestructuringDeclarationEntryThatTypeMismatchComponentFunction(diagnostic)
                     val context = entry.analyze()
                     val resolvedCall = context.get(BindingContext.COMPONENT_RESOLVED_CALL, entry) ?: return null
-                    val componentFunction = DescriptorToSourceUtils.descriptorToDeclaration(resolvedCall.candidateDescriptor) as KtFunction? ?: return null
-                    val expectedType = resolvedCall.candidateDescriptor.returnType
-                    return if (expectedType == null) null else ChangeVariableTypeFix(entry, expectedType)
+                    if (DescriptorToSourceUtils.descriptorToDeclaration(resolvedCall.candidateDescriptor) == null) return null
+                    val expectedType = resolvedCall.candidateDescriptor.returnType ?: return null
+                    return ChangeVariableTypeFix(entry, expectedType)
                 }
             }
         }
@@ -102,19 +95,18 @@ class ChangeVariableTypeFix(element: KtVariableDeclaration, private val type: Ko
 
                     if (diagnostic.psiElement is KtProperty) {
                         val property = diagnostic.psiElement as KtProperty
-                        val descriptor = property.resolveToDescriptor()
-                        if (descriptor !is PropertyDescriptor) return actions
+                        val descriptor = property.resolveToDescriptor() as? PropertyDescriptor ?: return actions
 
                         var lowerBoundOfOverriddenPropertiesTypes = QuickFixUtil.findLowerBoundOfOverriddenCallablesReturnTypes(descriptor)
 
-                        val propertyType = descriptor.returnType ?: error("Property type cannot be null if it mismatch something")
+                        val propertyType = descriptor.returnType ?: error("Property type cannot be null if it mismatches something")
 
                         val overriddenMismatchingProperties = LinkedList<PropertyDescriptor>()
                         var canChangeOverriddenPropertyType = true
                         for (overriddenProperty in descriptor.overriddenDescriptors) {
                             val overriddenPropertyType = overriddenProperty.returnType
                             if (overriddenPropertyType != null) {
-                                if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(propertyType!!, overriddenPropertyType)) {
+                                if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(propertyType, overriddenPropertyType)) {
                                     overriddenMismatchingProperties.add(overriddenProperty)
                                 }
                                 else if (overriddenProperty.isVar && !KotlinTypeChecker.DEFAULT.equalTypes(overriddenPropertyType, propertyType)) {
@@ -132,9 +124,9 @@ class ChangeVariableTypeFix(element: KtVariableDeclaration, private val type: Ko
                         }
 
                         if (overriddenMismatchingProperties.size == 1 && canChangeOverriddenPropertyType) {
-                            val overriddenProperty = DescriptorToSourceUtils.descriptorToDeclaration(overriddenMismatchingProperties[0])
+                            val overriddenProperty = DescriptorToSourceUtils.descriptorToDeclaration(overriddenMismatchingProperties.single())
                             if (overriddenProperty is KtProperty) {
-                                actions.add(ChangeVariableTypeFix(overriddenProperty, propertyType!!))
+                                actions.add(ChangeVariableTypeFix(overriddenProperty, propertyType))
                             }
                         }
                     }
