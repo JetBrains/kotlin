@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.ProjectTopics
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtilCore
@@ -125,7 +126,9 @@ class KotlinSetupEnvironmentNotificationProvider(
 
                 override fun onChosen(selectedValue: KotlinProjectConfigurator?, finalChoice: Boolean): PopupStep<*>? {
                     selectedValue?.let {
-                        it.configure(project, emptyList())
+                        ApplicationManager.getApplication().invokeLater {
+                            it.configure(project, emptyList())
+                        }
                     }
                     return null
                 }
