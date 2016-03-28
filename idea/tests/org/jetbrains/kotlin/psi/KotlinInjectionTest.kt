@@ -177,6 +177,20 @@ class KotlinInjectionTest : KotlinLightCodeInsightFixtureTestCase() {
             """
     )
 
+    // TODO: Doesn't work. UnInjectionLanguageAction is not enabled because of absent LanguageInjectionSupport.INJECTOR_SUPPORT user data.
+//    fun testRemoveInjectionFromOneLineFunWithAnnotation() = doRemoveInjectionTest(
+//            """
+//            |import org.intellij.lang.annotations.Language
+//            |
+//            |@Language("HTML") fun template(): String = "<caret><html></html>"
+//            """,
+//            """
+//            |import org.intellij.lang.annotations.Language
+//            |
+//            |fun template(): String = "<caret><html></html>"
+//            """
+//    )
+
     fun testRemoveInjectionWithComment() = doRemoveInjectionTest(
             """
             |//language=file-reference
