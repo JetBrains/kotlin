@@ -264,5 +264,5 @@ fun inForLoop(x: Any?) {
     if (x is Array<*>) {
         for (i in <info descr="Smart cast to kotlin.Array<*>">x</info>) {}
     }
-    for (i in <error descr="[ITERATOR_MISSING] For-loop range must have an iterator() method">x</error>) {}
+    for (i in <error descr="[ITERATOR_MISSING] For-loop range must have an 'iterator()' method">x</error>) {}
 }

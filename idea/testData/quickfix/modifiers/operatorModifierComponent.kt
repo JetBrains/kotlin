@@ -1,5 +1,5 @@
 // "Add 'operator' modifier" "true"
-// ERROR: operator modifier is required on 'component2' in 'A'
+// ERROR: 'operator' modifier is required on 'component2' in 'A'
 
 class A {
     fun component1(): Int = 0

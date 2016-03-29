@@ -1,5 +1,5 @@
 // IS_APPLICABLE: false
-// ERROR: operator modifier is inapplicable on this function: must be a member or an extension
+// ERROR: 'operator' modifier is inapplicable on this function: must be a member or an extension
 
 package p
 

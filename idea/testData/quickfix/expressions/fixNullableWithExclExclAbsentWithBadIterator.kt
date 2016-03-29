@@ -1,6 +1,6 @@
 // "Add non-null asserted (!!) call" "false"
 // ACTION: Replace with a 'forEach' function call
-// ERROR: Not nullable value required to call an iterator() method on for-loop range
+// ERROR: Not nullable value required to call an 'iterator()' method on for-loop range
 
 class Some {
     fun iterator(): Iterator<Int> = null!!
