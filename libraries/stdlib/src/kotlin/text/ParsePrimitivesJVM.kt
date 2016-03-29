@@ -204,27 +204,29 @@ public fun String.toDoubleOrNull(): Double? = screenFloatValue(this, java.lang.D
  * The source claims that *all* invalid cases are screened
  * */
 @Suppress("ConvertToStringTemplate")
-private val screenFloatValueRegEx: Regex by lazy {
-    val Digits = "(\\p{Digit}+)"
-    val HexDigits = "(\\p{XDigit}+)"
-    val Exp = "[eE][+-]?$Digits"
+private object ScreenFloatValueRegEx {
+    @JvmField val value = run {
+        val Digits = "(\\p{Digit}+)"
+        val HexDigits = "(\\p{XDigit}+)"
+        val Exp = "[eE][+-]?$Digits"
 
-    val HexString = "(0[xX]$HexDigits(\\.)?)|" + // 0[xX] HexDigits ._opt BinaryExponent FloatTypeSuffix_opt
-            "(0[xX]$HexDigits?(\\.)$HexDigits)"  // 0[xX] HexDigits_opt . HexDigits BinaryExponent FloatTypeSuffix_opt
+        val HexString = "(0[xX]$HexDigits(\\.)?)|" + // 0[xX] HexDigits ._opt BinaryExponent FloatTypeSuffix_opt
+                "(0[xX]$HexDigits?(\\.)$HexDigits)"  // 0[xX] HexDigits_opt . HexDigits BinaryExponent FloatTypeSuffix_opt
 
-    val Number = "($Digits(\\.)?($Digits?)($Exp)?)|" +  // Digits ._opt Digits_opt ExponentPart_opt FloatTypeSuffix_opt
-            "(\\.($Digits)($Exp)?)|" +                  // . Digits ExponentPart_opt FloatTypeSuffix_opt
-            "(($HexString)[pP][+-]?$Digits)"            // HexSignificand BinaryExponent
+        val Number = "($Digits(\\.)?($Digits?)($Exp)?)|" +  // Digits ._opt Digits_opt ExponentPart_opt FloatTypeSuffix_opt
+                "(\\.($Digits)($Exp)?)|" +                  // . Digits ExponentPart_opt FloatTypeSuffix_opt
+                "(($HexString)[pP][+-]?$Digits)"            // HexSignificand BinaryExponent
 
-    val fpRegex = "[\\x00-\\x20]*[+-]?(NaN|Infinity|(($Number)[fFdD]?))[\\x00-\\x20]*"
+        val fpRegex = "[\\x00-\\x20]*[+-]?(NaN|Infinity|(($Number)[fFdD]?))[\\x00-\\x20]*"
 
-    Regex(fpRegex)
+        Regex(fpRegex)
+    }
 }
 
 private inline fun <T> screenFloatValue(str: String, parse: (String) -> T): T? {
     // they say the RegEx screens all invalid cases, but who knows..
     return try {
-        if (screenFloatValueRegEx.matches(str))
+        if (ScreenFloatValueRegEx.value.matches(str))
             parse(str)
         else
             null
