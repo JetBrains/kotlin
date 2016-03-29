@@ -25,7 +25,7 @@ import org.jetbrains.uast.UExpression
 import org.jetbrains.uast.UType
 import org.jetbrains.uast.psi.PsiElementBacked
 
-interface KotlinTypeHelper : UExpression, PsiElementBacked {
+interface KotlinUElementWithType : UExpression, PsiElementBacked {
     override fun getExpressionType(): UType? {
         val ktElement = psi as? KtExpression ?: return null
         val ktType = ktElement.analyze(BodyResolveMode.PARTIAL)[BindingContext.EXPECTED_EXPRESSION_TYPE, ktElement] ?: return null
@@ -33,7 +33,7 @@ interface KotlinTypeHelper : UExpression, PsiElementBacked {
     }
 }
 
-interface KotlinEvaluateHelper : UExpression, PsiElementBacked {
+interface KotlinEvaluatableUElement : UExpression, PsiElementBacked {
     override fun evaluate(): Any? {
         val ktElement = psi as? KtExpression ?: return null
         val compileTimeConst = ktElement.analyze(BodyResolveMode.PARTIAL)[BindingContext.COMPILE_TIME_VALUE, ktElement]

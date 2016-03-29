@@ -42,6 +42,14 @@ open class KotlinUVariable(
         KotlinConverter.convert(type, psi.project, this)
     }
 
+    override val getters: List<UFunction>? by lz {
+        (psi as? KtProperty)?.accessors?.filter { it.isGetter }?.map { VariableAccessorFunction(it, this) }
+    }
+
+    override val setters: List<UFunction>? by lz {
+        (psi as? KtProperty)?.accessors?.filter { it.isSetter }?.map { VariableAccessorFunction(it, this) }
+    }
+
     override val kind: UastVariableKind
         get() = when (psi.parent) {
             is KtClassBody -> UastVariableKind.MEMBER
@@ -49,8 +57,58 @@ open class KotlinUVariable(
             else -> UastVariableKind.LOCAL_VARIABLE
         }
 
+    override val visibility: UastVisibility
+        get() = psi.getVisibility()
+
     override fun hasModifier(modifier: UastModifier) = psi.hasModifier(modifier)
     override val annotations by lz { psi.getUastAnnotations(this) }
+
+    private class VariableAccessorFunction(
+            override val psi: KtPropertyAccessor,
+            override val parent: UVariable
+    ) : KotlinAbstractUElement(), UFunction, PsiElementBacked {
+        override val kind: UastFunctionKind
+            get() = if (psi.isGetter)
+                UastFunctionKind.GETTER
+            else if (psi.isSetter)
+                UastFunctionKind.SETTER
+            else
+                UastFunctionKind.FUNCTION
+
+        override val valueParameters by lz { psi.valueParameters.map { KotlinConverter.convert(it, this) } }
+
+        override val valueParameterCount: Int
+            get() = psi.valueParameters.size
+
+        override val typeParameters: List<UTypeReference>
+            get() = emptyList()
+        override val typeParameterCount: Int
+            get() = 0
+
+        override val returnType: UType?
+            get() = if (psi.isSetter) null else parent.type
+
+        override val body by lz { KotlinConverter.convertOrEmpty(psi.bodyExpression, this) }
+
+        override val visibility: UastVisibility
+            get() = psi.getVisibility()
+
+        override fun getSuperFunctions(context: UastContext): List<UFunction> {
+            throw UnsupportedOperationException()
+        }
+
+        override val nameElement: UElement?
+            get() = throw UnsupportedOperationException()
+        override val name: String
+            get() = throw UnsupportedOperationException()
+
+        override fun hasModifier(modifier: UastModifier): Boolean {
+            throw UnsupportedOperationException()
+        }
+
+        override val annotations: List<UAnnotation>
+            get() = throw UnsupportedOperationException()
+    }
 }
 
 class KotlinDestructuredUVariable(
@@ -66,6 +124,9 @@ class KotlinDestructuredUVariable(
         val returnType = resolvedCall.resultingDescriptor.returnType ?: return@lz UastErrorType
         KotlinConverter.convert(returnType, entry.project, this)
     }
+
+    override val visibility: UastVisibility
+        get() = UastVisibility.LOCAL
 }
 
 class KotlinDestructuringUVariable(
@@ -81,6 +142,9 @@ class KotlinDestructuringUVariable(
     override val nameElement = null
     override fun hasModifier(modifier: UastModifier) = false
     override val annotations = emptyList<UAnnotation>()
+
+    override val visibility: UastVisibility
+        get() = UastVisibility.LOCAL
 }
 
 class KotlinParameterUVariable(
@@ -101,6 +165,9 @@ class KotlinParameterUVariable(
         val param = bindingContext[BindingContext.VALUE_PARAMETER, psi] ?: return@lz UastErrorType
         KotlinConverter.convert(param.type, psi.project, this)
     }
+
+    override val visibility: UastVisibility
+        get() = UastVisibility.LOCAL
 
     override fun hasModifier(modifier: UastModifier) = psi.hasModifier(modifier)
     override val annotations = psi.getUastAnnotations(this)

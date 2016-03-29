@@ -46,6 +46,7 @@ import com.android.utils.XmlUtils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.uast.*;
 import org.jetbrains.uast.check.UastAndroidContext;
@@ -1103,9 +1104,9 @@ public class SupportAnnotationDetector extends Detector implements UastScanner {
     private static void checkTypeDefConstant(@NonNull UastAndroidContext context,
             @NonNull UAnnotation annotation, @NonNull UElement argument,
             @Nullable UElement errorNode, boolean flag, Object value) {
-        List<Object> valueArguments = annotation.getValues();
-        for (Object o : valueArguments) {
-            if (o.equals(value)) {
+        List<Pair<String, Object>> valueArguments = annotation.getValues();
+        for (Pair<String, Object> o : valueArguments) {
+            if (o.getSecond().equals(value)) {
                 return;
             }
         }
@@ -1115,12 +1116,12 @@ public class SupportAnnotationDetector extends Detector implements UastScanner {
     private static void reportTypeDef(@NonNull UastAndroidContext context,
             @NonNull UAnnotation annotation, @NonNull UElement argument,
             @Nullable UElement errorNode) {
-        List<Object> allowed = annotation.getValues();
+        List<Pair<String, Object>> allowed = annotation.getValues();
         reportTypeDef(context, argument, errorNode, false, allowed);
     }
 
     private static void reportTypeDef(@NonNull UastAndroidContext context, @NonNull UElement node,
-            @Nullable UElement errorNode, boolean flag, @NonNull List<Object> allowedValues) {
+            @Nullable UElement errorNode, boolean flag, @NonNull List<Pair<String, Object>> allowedValues) {
         String values = listAllowedValues(allowedValues);
         String message;
         if (flag) {
@@ -1134,9 +1135,10 @@ public class SupportAnnotationDetector extends Detector implements UastScanner {
         context.report(TYPE_DEF, errorNode, context.getLocation(errorNode), message);
     }
 
-    private static String listAllowedValues(@NonNull List<Object> allowedValues) {
+    private static String listAllowedValues(@NonNull List<Pair<String, Object>> allowedValues) {
         StringBuilder sb = new StringBuilder();
-        for (Object allowedValue : allowedValues) {
+        for (Pair<String, Object> namedValue : allowedValues) {
+            Object allowedValue = namedValue.getSecond();
             String s;
             if (allowedValue instanceof Integer) {
                 s = allowedValue.toString();

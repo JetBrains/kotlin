@@ -15,9 +15,18 @@
  */
 package org.jetbrains.uast.java
 
-import org.jetbrains.uast.UastModifier
+import com.intellij.psi.PsiPolyadicExpression
+import org.jetbrains.uast.UBinaryExpression
+import org.jetbrains.uast.UElement
+import org.jetbrains.uast.UExpression
+import org.jetbrains.uast.psi.PsiElementBacked
 
-object JavaUastModifiers {
-    @JvmField
-    val INITIALIZER = UastModifier("static")
+class JavaSeparatedPolyadicUBinaryExpression(
+        override val psi: PsiPolyadicExpression,
+        override val parent: UElement
+) : JavaAbstractUElement(), UBinaryExpression, PsiElementBacked, JavaUElementWithType, JavaEvaluatableUElement {
+    override lateinit var leftOperand: UExpression
+    override lateinit var rightOperand: UExpression
+
+    override val operator = psi.operationTokenType.getOperatorType()
 }

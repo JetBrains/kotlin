@@ -25,7 +25,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class KotlinUBinaryExpressionWithType(
         override val psi: KtBinaryExpressionWithTypeRHS,
         override val parent: UElement
-) : KotlinAbstractUElement(), UBinaryExpressionWithType, PsiElementBacked, KotlinTypeHelper, KotlinEvaluateHelper {
+) : KotlinAbstractUElement(), UBinaryExpressionWithType, PsiElementBacked, KotlinUElementWithType, KotlinEvaluatableUElement {
     override val operand by lz { KotlinConverter.convert(psi.left, this) }
     override val type by lz { KotlinConverter.convert(psi.right, this) }
     override val operationKind = when (psi.operationReference.getReferencedNameElementType()) {
@@ -38,7 +38,7 @@ class KotlinUBinaryExpressionWithType(
 class KotlinCustomUBinaryExpressionWithType(
         override val psi: PsiElement,
         override val parent: UElement
-) : KotlinAbstractUElement(), UBinaryExpressionWithType, PsiElementBacked, NoEvaluate {
+) : KotlinAbstractUElement(), UBinaryExpressionWithType, PsiElementBacked {
     lateinit override var operand: UExpression
         internal set
 

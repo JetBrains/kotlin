@@ -47,7 +47,7 @@ interface UClass : UDeclaration, UFqNamed, UModifierOwner, UAnnotated {
     val constructors: List<UFunction>
         get() = declarations.filter { it is UFunction && it.kind == UastFunctionKind.CONSTRUCTOR } as List<UFunction>
 
-    fun isSubclassOf(name: String) : Boolean
+    fun isSubclassOf(fqName: String) : Boolean
 
     fun getSuperClass(context: UastContext): UClass?
 
@@ -81,7 +81,7 @@ object UClassNotResolved : UClass {
     override val visibility = UastVisibility.PRIVATE
     override val superTypes = emptyList<UType>()
     override val declarations = emptyList<UDeclaration>()
-    override fun isSubclassOf(name: String) = false
+    override fun isSubclassOf(fqName: String) = false
     override val companions = emptyList<UClass>()
     override val defaultType = UastErrorType
     override val nameElement = null

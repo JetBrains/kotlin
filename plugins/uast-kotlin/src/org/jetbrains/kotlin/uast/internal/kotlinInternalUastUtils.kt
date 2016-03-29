@@ -98,3 +98,5 @@ internal fun DeclarationDescriptor.toSource(project: Project) = try {
 } catch (e: Exception) {
     null
 }
+
+internal fun <T> lz(initializer: () -> T) = lazy(LazyThreadSafetyMode.NONE, initializer)

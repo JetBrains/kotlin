@@ -19,7 +19,7 @@ interface UastConverter {
     fun convert(element: Any?, parent: UElement): UElement?
     fun convertWithParent(element: Any?): UElement?
 
-    fun isFileSupported(path: String): Boolean
+    fun isFileSupported(name: String): Boolean
 }
 
 interface UastLanguagePlugin {
@@ -33,7 +33,7 @@ interface UastAdditionalChecker {
 
 object UastConverterUtils {
     @JvmStatic
-    fun isFileSupported(converters: List<UastLanguagePlugin>, path: String): Boolean {
-        return converters.any { it.converter.isFileSupported(path) }
+    fun isFileSupported(converters: List<UastLanguagePlugin>, name: String): Boolean {
+        return converters.any { it.converter.isFileSupported(name) }
     }
 }

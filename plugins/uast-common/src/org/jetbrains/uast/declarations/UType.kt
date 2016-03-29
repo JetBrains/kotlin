@@ -35,6 +35,10 @@ interface UType : UElement, UNamed, UFqNamed, UAnnotated, UResolvable, LeafUElem
 
     override fun resolve(context: UastContext): UClass?
     override fun resolveOrEmpty(context: UastContext) = resolve(context) ?: UClassNotResolved
+
+    override fun traverse(callback: UastCallback) {
+        annotations.handleTraverseList(callback)
+    }
 }
 
 interface UTypeReference : UDeclaration, UResolvable, LeafUElement {

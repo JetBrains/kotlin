@@ -30,6 +30,9 @@ internal fun PsiModifierListOwner.hasModifier(modifier: UastModifier): Boolean {
     if (modifier == UastModifier.OVERRIDE && this is PsiAnnotationOwner) {
         return this.annotations.any { it.qualifiedName == "java.lang.Override" }
     }
+    if (modifier == UastModifier.VARARG && this is PsiParameter) {
+        return this.isVarArgs
+    }
     val javaModifier = MODIFIER_MAP[modifier] ?: return false
     return hasModifierProperty(javaModifier)
 }
@@ -43,7 +46,7 @@ internal fun PsiModifierListOwner.getVisibility(): UastVisibility {
     if (hasModifierProperty(PsiModifier.PUBLIC)) return UastVisibility.PUBLIC
     if (hasModifierProperty(PsiModifier.PROTECTED)) return UastVisibility.PROTECTED
     if (hasModifierProperty(PsiModifier.PRIVATE)) return UastVisibility.PRIVATE
-    return JavaUastVisibilities.DEFAULT
+    return JavaUastVisibilities.PACKAGE_LOCAL
 }
 
 internal fun IElementType.getOperatorType() = when (this) {
@@ -88,3 +91,5 @@ internal inline fun String?.orAnonymous(kind: String = ""): String {
 internal fun <T> runReadAction(action: () -> T): T {
     return ApplicationManager.getApplication().runReadAction<T>(action)
 }
+
+internal fun <T> lz(initializer: () -> T) = lazy(LazyThreadSafetyMode.NONE, initializer)

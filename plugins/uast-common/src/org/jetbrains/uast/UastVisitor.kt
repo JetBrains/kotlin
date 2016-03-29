@@ -34,7 +34,6 @@ abstract class UastVisitor {
     open fun visitQualifiedExpression(node: UQualifiedExpression): Boolean = false
     open fun visitSimpleReferenceExpression(node: USimpleReferenceExpression): Boolean = false
     open fun visitCallExpression(node: UCallExpression): Boolean = false
-    open fun visitAssignmentExpression(node: UAssignmentExpression): Boolean = false
     open fun visitBinaryExpression(node: UBinaryExpression): Boolean = false
     open fun visitBinaryExpressionWithType(node: UBinaryExpressionWithType): Boolean = false
     open fun visitParenthesizedExpression(node: UParenthesizedExpression): Boolean = false
@@ -80,7 +79,6 @@ abstract class UastVisitor {
             is UQualifiedExpression -> visitQualifiedExpression(node)
             is USimpleReferenceExpression -> visitSimpleReferenceExpression(node)
             is UCallExpression -> visitCallExpression(node)
-            is UAssignmentExpression -> visitAssignmentExpression(node)
             is UBinaryExpression -> visitBinaryExpression(node)
             is UBinaryExpressionWithType -> visitBinaryExpressionWithType(node)
             is UParenthesizedExpression -> visitParenthesizedExpression(node)

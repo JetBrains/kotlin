@@ -23,7 +23,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class JavaUBinaryExpression(
         override val psi: PsiBinaryExpression,
         override val parent: UElement
-) : JavaAbstractUElement(), UBinaryExpression, PsiElementBacked, JavaTypeHelper, JavaEvaluateHelper {
+) : JavaAbstractUElement(), UBinaryExpression, PsiElementBacked, JavaUElementWithType, JavaEvaluatableUElement {
     override val leftOperand by lz { JavaConverter.convert(psi.lOperand, this) }
     override val rightOperand by lz { JavaConverter.convertOrEmpty(psi.rOperand, this) }
     override val operator by lz { psi.operationTokenType.getOperatorType() }

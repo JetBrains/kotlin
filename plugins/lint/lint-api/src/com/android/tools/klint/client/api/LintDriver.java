@@ -1504,8 +1504,8 @@ public class LintDriver {
                 continue;
             }
 
-            String path = file.getPath();
-            if (!path.endsWith(DOT_JAVA) && !UastConverterUtils.isFileSupported(plugins, path)) {
+            String filename = file.getName();
+            if (!filename.endsWith(DOT_JAVA) && !UastConverterUtils.isFileSupported(plugins, filename)) {
                 continue;
             }
 

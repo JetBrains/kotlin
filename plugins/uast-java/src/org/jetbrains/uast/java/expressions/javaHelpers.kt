@@ -20,13 +20,13 @@ import com.intellij.psi.PsiExpression
 import org.jetbrains.uast.UExpression
 import org.jetbrains.uast.psi.PsiElementBacked
 
-interface JavaEvaluateHelper : UExpression, PsiElementBacked {
+interface JavaEvaluatableUElement : UExpression, PsiElementBacked {
     override fun evaluate(): Any? {
         val psi = this.psi ?: return null
         return JavaPsiFacade.getInstance(psi.project).constantEvaluationHelper.computeConstantExpression(psi)
     }
 }
 
-interface JavaTypeHelper : UExpression, PsiElementBacked {
+interface JavaUElementWithType : UExpression, PsiElementBacked {
     override fun getExpressionType() = (psi as? PsiExpression)?.type?.let { JavaConverter.convert(it, this) }
 }

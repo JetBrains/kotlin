@@ -20,7 +20,8 @@ interface UAnnotation : UElement, UNamed, UFqNamed, LeafUElement {
 
     val valueArguments: List<UNamedExpression>
     fun getValue(name: String) = valueArguments.firstOrNull { it.name == name }?.expression?.evaluate()
-    fun getValues() = valueArguments.map { it.expression.evaluate() }
+
+    fun getValues() = valueArguments.map { Pair(it.name, it.expression.evaluate()) }
 
     override fun logString() = log("UAnnotation ($name)")
     override fun renderString() = if (valueArguments.isEmpty()) "@$name" else "@$name(" +

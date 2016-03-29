@@ -22,7 +22,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class JavaValueParameterUVariable(
         override val psi: PsiParameter,
         override val parent: UElement
-) : JavaAbstractUElement(), UVariable, PsiElementBacked, NoModifiers {
+) : JavaAbstractUElement(), UVariable, PsiElementBacked {
     override val name: String
         get() = psi.name.orAnonymous()
 
@@ -35,5 +35,9 @@ class JavaValueParameterUVariable(
     override val kind: UastVariableKind
         get() = UastVariableKind.VALUE_PARAMETER
 
+    override val visibility: UastVisibility
+        get() = UastVisibility.LOCAL
+
+    override fun hasModifier(modifier: UastModifier) = psi.hasModifier(modifier)
     override val annotations by lz { psi.modifierList.getAnnotations(this) }
 }

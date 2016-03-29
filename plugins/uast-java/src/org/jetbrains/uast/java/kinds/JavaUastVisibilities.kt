@@ -19,8 +19,5 @@ import org.jetbrains.uast.UastVisibility
 
 object JavaUastVisibilities {
     @JvmField
-    val DEFAULT = UastVisibility("default")
-
-    @JvmField
-    val INSTANCE = UastVisibility("instance")
+    val PACKAGE_LOCAL = UastVisibility("package_local")
 }

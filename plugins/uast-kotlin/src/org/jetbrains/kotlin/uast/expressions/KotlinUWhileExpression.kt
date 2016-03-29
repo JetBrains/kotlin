@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.uast
 
 import org.jetbrains.kotlin.psi.KtWhileExpression
-import org.jetbrains.uast.NoEvaluate
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UWhileExpression
 import org.jetbrains.uast.psi.PsiElementBacked
@@ -25,7 +24,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class KotlinUWhileExpression(
         override val psi: KtWhileExpression,
         override val parent: UElement
-) : KotlinAbstractUElement(), UWhileExpression, PsiElementBacked, NoEvaluate {
+) : KotlinAbstractUElement(), UWhileExpression, PsiElementBacked {
     override val condition by lz { KotlinConverter.convertOrEmpty(psi.condition, this) }
     override val body by lz { KotlinConverter.convertOrEmpty(psi.body, this) }
 }

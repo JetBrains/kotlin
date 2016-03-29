@@ -96,24 +96,23 @@ public class AppCompatCallDetector extends Detector implements UastScanner {
     @Override
     public void visitFunctionCall(UastAndroidContext context, UCallExpression node) {
         if (mDependsOnAppCompat && isAppBarActivityCall(context, node)) {
-            String name = node.getFunctionName();
             String replace = null;
-            if (GET_ACTION_BAR.equals(name)) {
+            if (node.functionNameMatches(GET_ACTION_BAR)) {
                 replace = "getSupportActionBar";
-            } else if (START_ACTION_MODE.equals(name)) {
+            } else if (node.functionNameMatches(START_ACTION_MODE)) {
                 replace = "startSupportActionMode";
-            } else if (SET_PROGRESS_BAR_VIS.equals(name)) {
+            } else if (node.functionNameMatches(SET_PROGRESS_BAR_VIS)) {
                 replace = "setSupportProgressBarVisibility";
-            } else if (SET_PROGRESS_BAR_IN_VIS.equals(name)) {
+            } else if (node.functionNameMatches(SET_PROGRESS_BAR_IN_VIS)) {
                 replace = "setSupportProgressBarIndeterminateVisibility";
-            } else if (SET_PROGRESS_BAR_INDETERMINATE.equals(name)) {
+            } else if (node.functionNameMatches(SET_PROGRESS_BAR_INDETERMINATE)) {
                 replace = "setSupportProgressBarIndeterminate";
-            } else if (REQUEST_WINDOW_FEATURE.equals(name)) {
+            } else if (node.functionNameMatches(REQUEST_WINDOW_FEATURE)) {
                 replace = "supportRequestWindowFeature";
             }
 
             if (replace != null) {
-                String message = String.format(ERROR_MESSAGE_FORMAT, replace, name);
+                String message = String.format(ERROR_MESSAGE_FORMAT, replace, node.getFunctionName());
                 context.report(ISSUE, node, UastAndroidUtils.getLocation(node), message);
             }
         }

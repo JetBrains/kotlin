@@ -16,8 +16,6 @@
 package org.jetbrains.uast
 
 interface ULiteralExpression : UExpression {
-    val text: String
-
     val value: Any?
 
     val isNull: Boolean
@@ -28,7 +26,9 @@ interface ULiteralExpression : UExpression {
     val isBoolean: Boolean
         get() = evaluate() is Boolean
 
+    fun asString() = value?.toString() ?: ""
+
     override fun traverse(callback: UastCallback) {}
-    override fun logString() = "ULiteralExpression ($text)"
-    override fun renderString() = text
+    override fun logString() = "ULiteralExpression (${asString()})"
+    override fun renderString() = asString()
 }

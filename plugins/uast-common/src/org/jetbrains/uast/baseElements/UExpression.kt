@@ -16,13 +16,9 @@
 package org.jetbrains.uast
 
 interface UExpression : UElement {
-    fun evaluate(): Any?
+    open fun evaluate(): Any? = null
     fun evaluateString(): String? = evaluate() as? String
     fun getExpressionType(): UType? = null
-}
-
-interface NoEvaluate : UExpression {
-    override fun evaluate() = null
 }
 
 interface NoAnnotations : UAnnotated {
@@ -34,6 +30,6 @@ interface NoModifiers : UModifierOwner {
     override fun hasModifier(modifier: UastModifier) = false
 }
 
-class EmptyExpression(override val parent: UElement) : UExpression, LeafUElement, NoEvaluate {
+class EmptyExpression(override val parent: UElement) : UExpression, LeafUElement {
     override fun logString() = "EmptyExpression"
 }

@@ -24,7 +24,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class KotlinUIfExpression(
         override val psi: KtIfExpression,
         override val parent: UElement
-) : KotlinAbstractUElement(), UIfExpression, PsiElementBacked, KotlinTypeHelper, KotlinEvaluateHelper {
+) : KotlinAbstractUElement(), UIfExpression, PsiElementBacked, KotlinUElementWithType, KotlinEvaluatableUElement {
     override val condition by lz { KotlinConverter.convertOrEmpty(psi.condition, this) }
     override val thenBranch by lz { KotlinConverter.convertOrNull(psi.then, this) }
     override val elseBranch by lz { KotlinConverter.convertOrNull(psi.`else`, this) }

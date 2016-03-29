@@ -16,7 +16,6 @@
 package org.jetbrains.uast.java
 
 import com.intellij.psi.PsiForeachStatement
-import org.jetbrains.uast.NoEvaluate
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UForEachExpression
 import org.jetbrains.uast.psi.PsiElementBacked
@@ -24,9 +23,8 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class JavaUForEachExpression(
         override val psi: PsiForeachStatement,
         override val parent: UElement
-) : JavaAbstractUElement(), UForEachExpression, PsiElementBacked, NoEvaluate {
-    override val variableName: String?
-        get() = psi.iterationParameter.name
+) : JavaAbstractUElement(), UForEachExpression, PsiElementBacked {
+    override val variable by lz { JavaConverter.convert(psi.iterationParameter, this) }
 
     override val iteratedValue by lz { JavaConverter.convertOrEmpty(psi.iteratedValue, this) }
     override val body by lz { JavaConverter.convertOrEmpty(psi.body, this) }

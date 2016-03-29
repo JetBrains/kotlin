@@ -16,7 +16,6 @@
 package org.jetbrains.uast.java
 
 import com.intellij.psi.PsiThisExpression
-import org.jetbrains.uast.NoEvaluate
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UThisExpression
 import org.jetbrains.uast.psi.PsiElementBacked
@@ -24,4 +23,4 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class JavaUThisExpression(
         override val psi: PsiThisExpression,
         override val parent: UElement
-) : JavaAbstractUElement(), UThisExpression, PsiElementBacked, JavaTypeHelper, NoEvaluate
+) : JavaAbstractUElement(), UThisExpression, PsiElementBacked, JavaUElementWithType

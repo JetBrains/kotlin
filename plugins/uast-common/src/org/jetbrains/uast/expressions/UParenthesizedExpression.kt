@@ -22,6 +22,8 @@ interface UParenthesizedExpression : UExpression {
         expression.handleTraverse(callback)
     }
 
+    override fun evaluate() = expression.evaluate()
+
     override fun logString() = log("UParenthesizedExpression", expression)
     override fun renderString() = '(' + expression.renderString() + ')'
 }

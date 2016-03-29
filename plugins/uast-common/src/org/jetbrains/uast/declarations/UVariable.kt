@@ -19,6 +19,13 @@ interface UVariable : UDeclaration, UModifierOwner, UAnnotated {
     val initializer: UExpression?
     val kind: UastVariableKind
     val type: UType
+    val visibility: UastVisibility
+
+    open val getters: List<UFunction>?
+        get() = null
+
+    open val setters: List<UFunction>?
+        get() = null
 
     override fun traverse(callback: UastCallback) {
         nameElement?.handleTraverse(callback)
@@ -36,4 +43,17 @@ interface UVariable : UDeclaration, UModifierOwner, UAnnotated {
 
     override fun logString() = "UVariable ($name, kind = ${kind.name})\n" +
             (initializer?.let { it.logString().withMargin } ?: "<no initializer>")
+}
+
+object UVariableNotResolved : UVariable {
+    override val initializer = null
+    override val kind = UastVariableKind.MEMBER
+    override val type = UastErrorType
+    override val nameElement = null
+    override val parent = null
+    override val name = "<variable not resolved>"
+    override val visibility = UastVisibility.LOCAL
+
+    override fun hasModifier(modifier: UastModifier) = false
+    override val annotations = emptyList<UAnnotation>()
 }

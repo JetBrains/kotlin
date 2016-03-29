@@ -15,17 +15,24 @@
  */
 package org.jetbrains.uast
 
-interface UAssignmentExpression : UExpression {
-    val reference: UExpression
-    val operator: String
-    val value: UExpression
+interface UForEachExpression : ULoopExpression {
+    val variable: UVariable
+    val iteratedValue: UExpression
 
     override fun traverse(callback: UastCallback) {
-        reference.handleTraverse(callback)
-        value.handleTraverse(callback)
+        variable.handleTraverse(callback)
+        iteratedValue.handleTraverse(callback)
+        body.handleTraverse(callback)
     }
 
-    override fun logString() = "UAssignmentExpression ($operator)\n" + reference.logString().withMargin + "\n" + value.logString().withMargin
+    override fun renderString() = buildString {
+        append("for (")
+        append(variable.name)
+        append(" : ")
+        append(iteratedValue.renderString())
+        append(") ")
+        append(body.renderString())
+    }
 
-    override fun renderString() = reference.renderString() + ' ' + operator + ' ' + value.renderString()
+    override fun logString() = log("UForEachExpression", variable, iteratedValue, body)
 }

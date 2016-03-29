@@ -22,7 +22,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class JavaUQualifiedExpression(
         override val psi: PsiReferenceExpression,
         override val parent: UElement
-) : JavaAbstractUElement(), UQualifiedExpression, PsiElementBacked, JavaTypeHelper, NoEvaluate {
+) : JavaAbstractUElement(), UQualifiedExpression, PsiElementBacked, JavaUElementWithType {
     override val receiver by lz { JavaConverter.convertOrEmpty(psi.qualifierExpression, this) }
     override val selector by lz { JavaConverter.convert(psi.referenceNameElement, this) as? UExpression ?: EmptyExpression(this) }
 

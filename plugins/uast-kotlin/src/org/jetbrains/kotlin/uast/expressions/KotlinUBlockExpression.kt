@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.uast
 
 import org.jetbrains.kotlin.psi.KtBlockExpression
-import org.jetbrains.uast.NoEvaluate
 import org.jetbrains.uast.UBlockExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.psi.PsiElementBacked
@@ -25,6 +24,6 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class KotlinUBlockExpression(
         override val psi: KtBlockExpression,
         override val parent: UElement
-) : KotlinAbstractUElement(), UBlockExpression, PsiElementBacked, KotlinTypeHelper, NoEvaluate {
+) : KotlinAbstractUElement(), UBlockExpression, PsiElementBacked, KotlinUElementWithType {
     override val expressions by lz { psi.statements.map { KotlinConverter.convertOrEmpty(it, this) } }
 }

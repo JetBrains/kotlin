@@ -83,7 +83,7 @@ public class CipherGetInstanceDetector extends Detector implements UastScanner {
             UExpression expression = argumentList.get(0);
             if (expression instanceof ULiteralExpression) {
                 ULiteralExpression argument = (ULiteralExpression)expression;
-                String parameter = argument.getText();
+                String parameter = argument.asString();
                 checkParameter(context, node, argument, parameter, false);
             } else if (expression instanceof UResolvable) {
                 UDeclaration declaration = ((UResolvable)expression).resolve(context);

@@ -35,7 +35,7 @@ object KotlinUastLanguagePlugin : UastLanguagePlugin {
 }
 
 internal object KotlinConverter : UastConverter {
-    override fun isFileSupported(path: String) = path.endsWith(".kt", false) || path.endsWith(".kts", false)
+    override fun isFileSupported(name: String) = name.endsWith(".kt", false) || name.endsWith(".kts", false)
 
     override fun convert(element: Any?, parent: UElement): UElement? {
         if (element !is KtElement) return null

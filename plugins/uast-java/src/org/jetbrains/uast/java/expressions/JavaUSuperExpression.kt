@@ -16,7 +16,6 @@
 package org.jetbrains.uast.java
 
 import com.intellij.psi.PsiSuperExpression
-import org.jetbrains.uast.NoEvaluate
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.USuperExpression
 import org.jetbrains.uast.psi.PsiElementBacked
@@ -24,4 +23,4 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class JavaUSuperExpression(
         override val psi: PsiSuperExpression,
         override val parent: UElement
-) : JavaAbstractUElement(), USuperExpression, PsiElementBacked, JavaTypeHelper, NoEvaluate
+) : JavaAbstractUElement(), USuperExpression, PsiElementBacked, JavaUElementWithType

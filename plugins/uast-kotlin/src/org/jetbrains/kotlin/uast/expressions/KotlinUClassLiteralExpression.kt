@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.uast
 
 import org.jetbrains.kotlin.psi.KtClassLiteralExpression
-import org.jetbrains.uast.NoEvaluate
 import org.jetbrains.uast.UClassLiteralExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.psi.PsiElementBacked
@@ -25,6 +24,6 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class KotlinUClassLiteralExpression(
         override val psi: KtClassLiteralExpression,
         override val parent: UElement
-) : KotlinAbstractUElement(), UClassLiteralExpression, PsiElementBacked, KotlinTypeHelper, NoEvaluate {
+) : KotlinAbstractUElement(), UClassLiteralExpression, PsiElementBacked, KotlinUElementWithType {
     override val type by lz { KotlinConverter.convert(psi.typeReference, this) }
 }

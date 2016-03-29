@@ -23,6 +23,8 @@ interface ULabeledExpression : UExpression {
         expression.handleTraverse(callback)
     }
 
+    override fun evaluate() = expression.evaluate()
+
     override fun logString() = log("ULabeledExpression ($label)", expression)
 
     override fun renderString() = "$label@ ${expression.renderString()}"

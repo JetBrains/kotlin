@@ -25,6 +25,6 @@ class KotlinDumbUElement(
         override val psi: PsiElement?,
         override val parent: UElement
 ) : KotlinAbstractUElement(), UElement, PsiElementBacked, LeafUElement {
-    override fun logString() = "KotlinPsiElementStub"
+    override fun logString() = "KotlinDumbUElement"
     override fun renderString() = "<stub@$psi>"
 }

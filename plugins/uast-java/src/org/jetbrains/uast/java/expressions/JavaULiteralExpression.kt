@@ -23,11 +23,11 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class JavaULiteralExpression(
         override val psi: PsiLiteralExpression,
         override val parent: UElement
-) : JavaAbstractUElement(), ULiteralExpression, PsiElementBacked, JavaTypeHelper {
-    override val text by lz { psi.text }
+) : JavaAbstractUElement(), ULiteralExpression, PsiElementBacked, JavaUElementWithType {
+    override val asString by lz { psi.text }
     override fun evaluate() = psi.value
     override val value by lz { evaluate() }
 
     override val isNull: Boolean
-        get() = text == "null"
+        get() = asString() == "null"
 }

@@ -17,7 +17,11 @@
 package org.jetbrains.uast.psi
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.uast.UElement
 
-interface PsiElementBacked {
+interface PsiElementBacked : UElement {
     val psi: PsiElement?
+
+    override val isValid: Boolean
+        get() = psi?.isValid ?: true
 }

@@ -26,7 +26,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class KotlinUPrefixExpression(
         override val psi: KtPrefixExpression,
         override val parent: UElement
-) : KotlinAbstractUElement(), UPrefixExpression, PsiElementBacked, KotlinTypeHelper, KotlinEvaluateHelper {
+) : KotlinAbstractUElement(), UPrefixExpression, PsiElementBacked, KotlinUElementWithType, KotlinEvaluatableUElement {
     override val operand by lz { KotlinConverter.convertOrEmpty(psi.baseExpression, this) }
 
     override val operator = when (psi.operationToken) {

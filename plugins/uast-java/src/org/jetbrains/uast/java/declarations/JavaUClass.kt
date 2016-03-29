@@ -92,14 +92,14 @@ class JavaUClass(
         declarations
     }
 
-    override fun isSubclassOf(name: String): Boolean {
+    override fun isSubclassOf(fqName: String): Boolean {
         tailrec fun isSubClassOf(clazz: PsiClass?, name: String): Boolean = when {
             clazz == null -> false
             clazz.qualifiedName == name -> true
             else -> isSubClassOf(clazz.superClass, name)
         }
 
-        return isSubClassOf(psi, name)
+        return isSubClassOf(psi, fqName)
     }
 
     private companion object {
@@ -169,13 +169,7 @@ private class JavaUAnonymousClassConstructor(
 
     override val valueParameters by lz {
         val args = newExpression.argumentList ?: return@lz emptyList<UVariable>()
-        val variables = ArrayList<UVariable>(args.expressions.size)
-
-        for (i in 0..(args.expressions.size - 1)) {
-            variables += JavaUAnonymousClassConstructorParameter(args, i, this)
-        }
-
-        variables
+        args.expressions.mapIndexed { i, psiExpression -> JavaUAnonymousClassConstructorParameter(args, i, this) }
     }
     override val typeParameters by lz { psi.typeParameters.map { JavaConverter.convert(it, this) } }
 
@@ -216,4 +210,7 @@ private class JavaUAnonymousClassConstructorParameter(
 
     override val name: String
         get() = "p$index"
+
+    override val visibility: UastVisibility
+        get() = UastVisibility.LOCAL
 }

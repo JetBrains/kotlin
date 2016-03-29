@@ -25,7 +25,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class KotlinUSafeQualifiedExpression(
         override val psi: KtSafeQualifiedExpression,
         override val parent: UElement
-) : KotlinAbstractUElement(), UQualifiedExpression, PsiElementBacked, KotlinTypeHelper, KotlinEvaluateHelper {
+) : KotlinAbstractUElement(), UQualifiedExpression, PsiElementBacked, KotlinUElementWithType, KotlinEvaluatableUElement {
     override val receiver by lz { KotlinConverter.convertOrEmpty(psi.receiverExpression, this) }
     override val selector by lz { KotlinConverter.convertOrEmpty(psi.selectorExpression, this) }
     override val accessType = KotlinQualifiedExpressionAccessTypes.SAFE

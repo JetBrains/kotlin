@@ -15,8 +15,7 @@
  */
 package org.jetbrains.uast
 
-interface USuperExpression : UExpression {
+interface USuperExpression : UExpression, LeafUElement {
     override fun logString() = "USuperExpression"
     override fun renderString() = "super"
-    override fun traverse(callback: UastCallback) {}
 }
