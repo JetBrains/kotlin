@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,8 +56,6 @@ open class KtLightClassForExplicitDeclaration(
         protected val classFqName: FqName, // FqName of (possibly inner) class
         protected val classOrObject: KtClassOrObject)
 : KtWrappingLightClass(classOrObject.manager), KtJavaMirrorMarker, StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
-    private var delegate: PsiClass? = null
-
     private val lightIdentifier = KtLightIdentifier(this, classOrObject)
 
     private fun getLocalClassParent(): PsiElement? {
@@ -139,7 +137,7 @@ open class KtLightClassForExplicitDeclaration(
             containingClass
     }
 
-    override fun getOrigin(): KtClassOrObject = classOrObject
+    override val kotlinOrigin: KtClassOrObject = classOrObject
 
     override fun getFqName(): FqName = classFqName
 
@@ -147,28 +145,21 @@ open class KtLightClassForExplicitDeclaration(
         return KtLightClassForExplicitDeclaration(classFqName, classOrObject.copy() as KtClassOrObject)
     }
 
-    override fun getDelegate(): PsiClass {
-        if (delegate == null) {
-            val javaFileStub = getJavaFileStub()
+    override val clsDelegate: PsiClass by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        val javaFileStub = getJavaFileStub()
 
-            val psiClass = LightClassUtil.findClass(classFqName, javaFileStub)
-            if (psiClass == null) {
-                val outermostClassOrObject = getOutermostClassOrObject(classOrObject)
-                val ktFileText: String? = try {
-                    outermostClassOrObject.containingFile.text
-                }
-                catch (e: Exception) {
-                    "Can't get text for outermost class"
-                }
-
-                val stubFileText = DebugUtil.stubTreeToString(javaFileStub)
-
-                throw IllegalStateException("Class was not found $classFqName\nin $ktFileText\nstub: \n$stubFileText")
+        LightClassUtil.findClass(classFqName, javaFileStub) ?: run {
+            val outermostClassOrObject = getOutermostClassOrObject(classOrObject)
+            val ktFileText: String? = try {
+                outermostClassOrObject.containingFile.text
             }
-            delegate = psiClass
-        }
+            catch (e: Exception) {
+                "Can't get text for outermost class"
+            }
 
-        return delegate!!
+            val stubFileText = DebugUtil.stubTreeToString(javaFileStub)
+            throw IllegalStateException("Class was not found $classFqName\nin $ktFileText\nstub: \n$stubFileText")
+        }
     }
 
     private fun getJavaFileStub(): PsiJavaFileStub = getLightClassData().javaFileStub
@@ -380,7 +371,7 @@ open class KtLightClassForExplicitDeclaration(
 
     @Throws(IncorrectOperationException::class)
     override fun setName(@NonNls name: String): PsiElement {
-        getOrigin().setName(name)
+        kotlinOrigin.setName(name)
         return this
     }
 
@@ -396,7 +387,7 @@ open class KtLightClassForExplicitDeclaration(
         return result
     }
 
-    override fun getUseScope(): SearchScope = getOrigin().useScope
+    override fun getUseScope(): SearchScope = kotlinOrigin.useScope
 
     override fun getElementType(): IStubElementType<out StubElement<*>, *>? = classOrObject.elementType
     override fun getStub(): KotlinClassOrObjectStub<out KtClassOrObject>? = classOrObject.stub

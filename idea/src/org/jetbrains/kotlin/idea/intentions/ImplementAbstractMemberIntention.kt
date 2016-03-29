@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -91,7 +91,7 @@ abstract class ImplementAbstractMemberIntentionBase :
 
         fun acceptSubClass(subClass: PsiElement): Boolean {
             val classDescriptor = when (subClass) {
-                is KtLightClass -> subClass.getOrigin()?.resolveToDescriptorIfAny()
+                is KtLightClass -> subClass.kotlinOrigin?.resolveToDescriptorIfAny()
                 is KtEnumEntry -> subClass.resolveToDescriptorIfAny()
                 is PsiClass -> subClass.getJavaClassDescriptor()
                 else -> null
@@ -153,7 +153,7 @@ abstract class ImplementAbstractMemberIntentionBase :
                 for (targetClass in targetClasses) {
                     try {
                         when (targetClass) {
-                            is KtLightClass -> targetClass.getOrigin()?.let { implementInKotlinClass(member, it) }
+                            is KtLightClass -> targetClass.kotlinOrigin?.let { implementInKotlinClass(member, it) }
                             is KtEnumEntry -> implementInKotlinClass(member, targetClass)
                             is PsiClass -> implementInJavaClass(member, targetClass)
                         }

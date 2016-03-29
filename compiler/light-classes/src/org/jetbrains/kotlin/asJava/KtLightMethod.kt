@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,22 +32,22 @@ interface KtLightMethod : PsiMethod, KtLightDeclaration<KtDeclaration, PsiMethod
 }
 
 sealed class KtLightMethodImpl(
-        private val delegate: PsiMethod,
+        override val clsDelegate: PsiMethod,
         private val lightMethodOrigin: LightMemberOrigin?,
         containingClass: KtLightClass
-) : LightMethod(delegate.manager, delegate, containingClass), KtLightMethod {
-    private val origin = lightMethodOrigin?.originalElement as? KtDeclaration
+) : LightMethod(clsDelegate.manager, clsDelegate, containingClass), KtLightMethod {
+    override val kotlinOrigin: KtDeclaration? = lightMethodOrigin?.originalElement as? KtDeclaration
 
-    private val lightIdentifier = KtLightIdentifier(this, origin as? KtNamedDeclaration)
+    private val lightIdentifier by lazy { KtLightIdentifier(this, kotlinOrigin as? KtNamedDeclaration) }
 
     override fun getContainingClass(): KtLightClass = super.getContainingClass() as KtLightClass
 
     private val paramsList: CachedValue<PsiParameterList> by lazy {
-        val cacheManager = CachedValuesManager.getManager(delegate.project)
+        val cacheManager = CachedValuesManager.getManager(clsDelegate.project)
         cacheManager.createCachedValue<PsiParameterList>({
             val parameterBuilder = LightParameterListBuilder(manager, KotlinLanguage.INSTANCE, this)
 
-            for ((index, parameter) in delegate.parameterList.parameters.withIndex()) {
+            for ((index, parameter) in clsDelegate.parameterList.parameters.withIndex()) {
                 parameterBuilder.addParameter(KtLightParameter(parameter, index, this))
             }
 
@@ -56,13 +56,14 @@ sealed class KtLightMethodImpl(
     }
 
     private val typeParamsList: CachedValue<PsiTypeParameterList> by lazy {
-        val cacheManager = CachedValuesManager.getManager(delegate.project)
+        val cacheManager = CachedValuesManager.getManager(clsDelegate.project)
         cacheManager.createCachedValue<PsiTypeParameterList>({
+            val origin = kotlinOrigin
             val list = if (origin is KtClassOrObject) {
                 KotlinLightTypeParameterListBuilder(manager)
             }
             else if (origin == null) {
-                delegate.typeParameterList
+                clsDelegate.typeParameterList
             }
             else {
                 LightClassUtil.buildLightTypeParameterList(this@KtLightMethodImpl, origin)
@@ -71,13 +72,11 @@ sealed class KtLightMethodImpl(
         }, false)
     }
 
-    override fun getNavigationElement(): PsiElement = origin ?: super.getNavigationElement()
-    override fun getOriginalElement(): PsiElement = origin ?: super.getOriginalElement()
-    override fun getDelegate() = delegate
-    override fun getOrigin() = origin
+    override fun getNavigationElement(): PsiElement = kotlinOrigin?.navigationElement ?: super.getNavigationElement()
+    override fun getOriginalElement(): PsiElement = kotlinOrigin ?: super.getOriginalElement()
     override fun getParent(): PsiElement? = containingClass
-    override fun getText() = origin?.text ?: ""
-    override fun getTextRange() = origin?.textRange ?: TextRange.EMPTY_RANGE
+    override fun getText() = kotlinOrigin?.text ?: ""
+    override fun getTextRange() = kotlinOrigin?.textRange ?: TextRange.EMPTY_RANGE
 
     override val isDelegated: Boolean
         get() = lightMethodOrigin?.originKind == JvmDeclarationOriginKind.DELEGATION
@@ -93,13 +92,13 @@ sealed class KtLightMethodImpl(
     }
 
     override fun setName(name: String): PsiElement? {
-        val toRename = origin as? PsiNamedElement ?: throwCanNotModify()
+        val toRename = kotlinOrigin as? PsiNamedElement ?: throwCanNotModify()
         toRename.setName(name)
         return this
     }
 
     override fun delete() {
-        origin?.let {
+        kotlinOrigin?.let {
             if (it.isValid) {
                 it.delete()
             }
@@ -110,7 +109,7 @@ sealed class KtLightMethodImpl(
         throw IncorrectOperationException(JavaCoreBundle.message("psi.error.attempt.to.edit.class.file"))
     }
 
-    private val _modifierList by lazy { KtLightModifierList(delegate.modifierList, this) }
+    private val _modifierList by lazy { KtLightModifierList(clsDelegate.modifierList, this) }
 
     override fun getModifierList() = _modifierList
 
@@ -125,16 +124,16 @@ sealed class KtLightMethodImpl(
 
     override fun getSignature(substitutor: PsiSubstitutor): MethodSignature {
         if (substitutor == PsiSubstitutor.EMPTY) {
-            return delegate.getSignature(substitutor)
+            return clsDelegate.getSignature(substitutor)
         }
         return MethodSignatureBackedByPsiMethod.create(this, substitutor)
     }
 
     override fun copy(): PsiElement {
-        return Factory.create(delegate, lightMethodOrigin?.copy(), containingClass)
+        return Factory.create(clsDelegate, lightMethodOrigin?.copy(), containingClass)
     }
 
-    override fun getUseScope() = origin?.useScope ?: super.getUseScope()
+    override fun getUseScope() = kotlinOrigin?.useScope ?: super.getUseScope()
 
     override fun getLanguage() = KotlinLanguage.INSTANCE
 
@@ -143,7 +142,7 @@ sealed class KtLightMethodImpl(
     }
 
     override fun isEquivalentTo(another: PsiElement?): Boolean {
-        if (another is KtLightMethod && origin == another.getOrigin() && delegate == another.getDelegate()) {
+        if (another is KtLightMethod && kotlinOrigin == another.kotlinOrigin && clsDelegate == another.clsDelegate) {
             return true
         }
 
@@ -153,11 +152,11 @@ sealed class KtLightMethodImpl(
     override fun equals(other: Any?): Boolean =
             other is KtLightMethod &&
             name == other.name &&
-            origin == other.getOrigin() &&
+            kotlinOrigin == other.kotlinOrigin &&
             containingClass == other.containingClass &&
-            delegate == other.getDelegate()
+            clsDelegate == other.clsDelegate
 
-    override fun hashCode(): Int = ((name.hashCode() * 31 + (origin?.hashCode() ?: 0)) * 31 + containingClass.hashCode()) * 31 + delegate.hashCode()
+    override fun hashCode(): Int = ((name.hashCode() * 31 + (kotlinOrigin?.hashCode() ?: 0)) * 31 + containingClass.hashCode()) * 31 + clsDelegate.hashCode()
 
     override fun toString(): String = "${this.javaClass.simpleName}:$name"
 
@@ -166,12 +165,11 @@ sealed class KtLightMethodImpl(
     ) : KtLightMethodImpl(delegate, origin, containingClass)
 
     private class KtLightAnnotationMethod(
-            delegate: PsiAnnotationMethod,
+            override val clsDelegate: PsiAnnotationMethod,
             origin: LightMemberOrigin?,
             containingClass: KtLightClass
-    ) : KtLightMethodImpl(delegate, origin, containingClass), PsiAnnotationMethod {
-        override fun getDefaultValue() = getDelegate().defaultValue
-        override fun getDelegate() = super.getDelegate() as PsiAnnotationMethod
+    ) : KtLightMethodImpl(clsDelegate, origin, containingClass), PsiAnnotationMethod {
+        override fun getDefaultValue() = clsDelegate.defaultValue
     }
 
     companion object Factory {
@@ -187,13 +185,13 @@ sealed class KtLightMethodImpl(
 }
 
 fun KtLightMethod.isTraitFakeOverride(): Boolean {
-    val methodOrigin = this.getOrigin()
+    val methodOrigin = this.kotlinOrigin
     if (!(methodOrigin is KtNamedFunction || methodOrigin is KtPropertyAccessor || methodOrigin is KtProperty)) {
         return false
     }
 
     val parentOfMethodOrigin = PsiTreeUtil.getParentOfType(methodOrigin, KtClassOrObject::class.java)
-    val thisClassDeclaration = (this.containingClass as KtLightClass).getOrigin()
+    val thisClassDeclaration = (this.containingClass as KtLightClass).kotlinOrigin
 
     // Method was generated from declaration in some other trait
     return (parentOfMethodOrigin != null && thisClassDeclaration !== parentOfMethodOrigin && KtPsiUtil.isTrait(parentOfMethodOrigin))

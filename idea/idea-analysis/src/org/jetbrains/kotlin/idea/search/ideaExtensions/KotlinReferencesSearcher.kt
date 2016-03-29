@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -197,7 +197,7 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
                                             originLightClass.fields.map { it as? KtLightField }
 
                                     for (declaration in element.declarations) {
-                                        val lightDeclaration = lightDeclarations.find { it?.getOrigin() == declaration }
+                                        val lightDeclaration = lightDeclarations.find { it?.kotlinOrigin == declaration }
                                         if (lightDeclaration != null) {
                                             searchNamedElement(queryParameters, lightDeclaration)
                                         }
@@ -218,7 +218,7 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
                 val originClass = originObject.getStrictParentOfType<KtClass>()
                 val originLightClass = originClass?.toLightClass()
                 val allMethods = originLightClass?.allMethods
-                return allMethods?.find { it is KtLightMethod && it.getOrigin() == function }
+                return allMethods?.find { it is KtLightMethod && it.kotlinOrigin == function }
             }
             return null
         }
@@ -275,7 +275,7 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
                 }
 
                 is KtLightMethod -> {
-                    val declaration = element.getOrigin()
+                    val declaration = element.kotlinOrigin
                     if (declaration is KtProperty || (declaration is KtParameter && declaration.hasValOrVar())) {
                         searchNamedElement(queryParameters, declaration as PsiNamedElement)
                     }
@@ -292,7 +292,7 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
                 }
 
                 is KtLightParameter -> {
-                    val origin = element.getOrigin() ?: return
+                    val origin = element.kotlinOrigin ?: return
                     runReadAction {
                         val componentFunctionDescriptor = origin.dataClassComponentFunction()
                         if (componentFunctionDescriptor != null) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,13 +44,19 @@ public class KtLightTypeParameter
 
     @NotNull
     @Override
-    public PsiTypeParameter getDelegate() {
+    public PsiTypeParameter getClsDelegate() {
         return getOwnerDelegate().getTypeParameters()[index];
     }
 
     @NotNull
     @Override
-    public KtTypeParameter getOrigin() {
+    public PsiClass getDelegate() {
+        return getClsDelegate();
+    }
+
+    @NotNull
+    @Override
+    public KtTypeParameter getKotlinOrigin() {
         KtTypeParameterListOwner jetOwner = (KtTypeParameterListOwner) LightClassUtilsKt.getUnwrapped(owner);
         assert (jetOwner != null) : "Invalid type parameter owner: " + owner;
 
@@ -59,8 +65,8 @@ public class KtLightTypeParameter
 
     @NotNull
     private PsiTypeParameterListOwner getOwnerDelegate() {
-        if (owner instanceof KtLightClass) return ((KtLightClass) owner).getDelegate();
-        if (owner instanceof KtLightMethod) return ((KtLightMethod) owner).getDelegate();
+        if (owner instanceof KtLightClass) return ((KtLightClass) owner).getClsDelegate();
+        if (owner instanceof KtLightMethod) return ((KtLightMethod) owner).getClsDelegate();
         return owner;
     }
 
@@ -104,24 +110,24 @@ public class KtLightTypeParameter
     @NotNull
     @Override
     public PsiAnnotation[] getAnnotations() {
-        return getDelegate().getAnnotations();
+        return getClsDelegate().getAnnotations();
     }
 
     @NotNull
     @Override
     public PsiAnnotation[] getApplicableAnnotations() {
-        return getDelegate().getApplicableAnnotations();
+        return getClsDelegate().getApplicableAnnotations();
     }
 
     @Override
     public PsiAnnotation findAnnotation(@NotNull String qualifiedName) {
-        return getDelegate().findAnnotation(qualifiedName);
+        return getClsDelegate().findAnnotation(qualifiedName);
     }
 
     @NotNull
     @Override
     public PsiAnnotation addAnnotation(@NotNull String qualifiedName) {
-        return getDelegate().addAnnotation(qualifiedName);
+        return getClsDelegate().addAnnotation(qualifiedName);
     }
 
     @Override
@@ -132,7 +138,7 @@ public class KtLightTypeParameter
     @NotNull
     @Override
     public PsiElement getNavigationElement() {
-        return getOrigin();
+        return getKotlinOrigin();
     }
 
     @NotNull
@@ -144,12 +150,12 @@ public class KtLightTypeParameter
     @NotNull
     @Override
     public SearchScope getUseScope() {
-        return getOrigin().getUseScope();
+        return getKotlinOrigin().getUseScope();
     }
 
     @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
-        return obj instanceof KtLightTypeParameter && getOrigin().equals(((KtLightTypeParameter) obj).getOrigin());
+        return obj instanceof KtLightTypeParameter && getKotlinOrigin().equals(((KtLightTypeParameter) obj).getKotlinOrigin());
     }
 }

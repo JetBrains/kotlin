@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,7 +77,7 @@ public class KotlinLightClassCoherenceTest extends KotlinAsJavaTestBase {
         }
 
         public void assertModifiersCoherent(KtLightClass lightClass) {
-            PsiClass delegate = lightClass.getDelegate();
+            PsiClass delegate = lightClass.getClsDelegate();
             for (String modifier : PsiModifier.MODIFIERS) {
                 assertEquals("Incoherent modifier: " + modifier,
                              delegate.hasModifierProperty(modifier),
@@ -90,7 +90,7 @@ public class KotlinLightClassCoherenceTest extends KotlinAsJavaTestBase {
             try {
                 Method method = reflect.getMethod(methodName);
                 Object lightResult = method.invoke(lightClass);
-                Object delegateResult = method.invoke(lightClass.getDelegate());
+                Object delegateResult = method.invoke(lightClass.getClsDelegate());
                 assertEquals("Result of method " + methodName + "() differs in light class and its delegate", delegateResult, lightResult);
             }
             catch (NoSuchMethodException e) {

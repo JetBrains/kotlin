@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -326,7 +326,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
         val typeArguments = convertTypeArguments(expression)
 
         if (target is KtLightMethod) {
-            val origin = target.getOrigin()
+            val origin = target.kotlinOrigin
             val isTopLevel = origin?.getStrictParentOfType<KtClassOrObject>() == null
             if (origin is KtProperty || origin is KtPropertyAccessor || origin is KtParameter) {
                 val property = if (origin is KtPropertyAccessor)
@@ -429,7 +429,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
     }
 
     private fun KtLightMethod.isKotlinExtensionFunction(): Boolean {
-        val origin = this.getOrigin()
+        val origin = this.kotlinOrigin
         if (origin != null) return origin.isExtensionDeclaration()
 
         val parameters = parameterList.parameters
@@ -539,7 +539,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
             identifier = Identifier("size", isNullable).assignNoPrototype()
         }
         else if (qualifier != null) {
-            if (target is KtLightField && target.getOrigin() is KtObjectDeclaration) {
+            if (target is KtLightField && target.kotlinOrigin is KtObjectDeclaration) {
                 result = codeConverter.convertExpression(qualifier)
                 return
             }

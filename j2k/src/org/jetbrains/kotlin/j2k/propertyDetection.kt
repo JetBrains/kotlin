@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -367,7 +367,7 @@ private class PropertyDetector(
             return if (propertyInfo != null) SuperInfo.Property(propertyInfo.isVar, propertyInfo.name) else SuperInfo.Function
         }
         else if (superMethod is KtLightMethod) {
-            val origin = superMethod.getOrigin()
+            val origin = superMethod.kotlinOrigin
             return if (origin is KtProperty) SuperInfo.Property(origin.isVar, origin.name ?: "") else SuperInfo.Function
         }
         else {

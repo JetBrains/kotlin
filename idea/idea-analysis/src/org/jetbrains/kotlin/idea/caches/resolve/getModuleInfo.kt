@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -130,10 +130,10 @@ private fun KtLightElement<*, *>.getModuleInfoForLightElement(onFailure: (String
                 false
         )
     }
-    val element = getOrigin() ?: when (this) {
+    val element = kotlinOrigin ?: when (this) {
         is FakeLightClassForFileOfPackage -> this.getContainingFile()!!
         is KtLightClassForFacade -> this.files.first()
-        else -> return onFailure("Light element without origin is referenced by resolve:\n$this\n${this.getDelegate().text}")
+        else -> return onFailure("Light element without origin is referenced by resolve:\n$this\n${this.clsDelegate.text}")
     }
     return element.getModuleInfo()
 }

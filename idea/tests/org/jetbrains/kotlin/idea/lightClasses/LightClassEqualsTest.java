@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ public class LightClassEqualsTest extends KotlinLightCodeInsightFixtureTestCase 
         assertNotNull(theClass);
         assertInstanceOf(theClass, KtLightClassForExplicitDeclaration.class);
 
-        doTestEquals(((KtLightClass) theClass).getOrigin());
+        doTestEquals(((KtLightClass) theClass).getKotlinOrigin());
     }
 
     public void testEqualsForDecompiledClass() throws Exception {
@@ -53,7 +53,7 @@ public class LightClassEqualsTest extends KotlinLightCodeInsightFixtureTestCase 
         assertNotNull(theClass);
         assertInstanceOf(theClass, KtLightClassForDecompiledDeclaration.class);
 
-        doTestEquals(((KtLightClass) theClass).getOrigin());
+        doTestEquals(((KtLightClass) theClass).getKotlinOrigin());
     }
 
     private static void doTestEquals(@Nullable KtClassOrObject origin) {

@@ -93,7 +93,7 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
                 return renderKotlinDeclaration(element, quickNavigation)
             }
             else if (element is KtLightDeclaration<*, *>) {
-                val origin = element.getOrigin() ?: return null
+                val origin = element.kotlinOrigin ?: return null
                 return renderKotlinDeclaration(origin, quickNavigation)
             }
 

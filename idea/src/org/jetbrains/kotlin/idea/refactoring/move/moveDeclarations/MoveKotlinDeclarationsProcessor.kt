@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,7 +64,10 @@ import org.jetbrains.kotlin.idea.refactoring.move.postProcessMoveUsages
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference.ShorteningMode
 import org.jetbrains.kotlin.idea.search.projectScope
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.psi.psiUtil.isInsideOf
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
@@ -359,7 +362,7 @@ class MoveKotlinDeclarationsProcessor(
                             if (e1 === e2) return true
                             // Name should be enough to distinguish different light elements based on the same original declaration
                             if (e1 is KtLightElement<*, *> && e2 is KtLightElement<*, *>) {
-                                return e1.getOrigin() == e2.getOrigin() && e1.name == e2.name
+                                return e1.kotlinOrigin == e2.kotlinOrigin && e1.name == e2.name
                             }
                             return e1 == e2
                         }
@@ -367,7 +370,7 @@ class MoveKotlinDeclarationsProcessor(
                         override fun computeHashCode(e: PsiElement?): Int {
                             return when (e) {
                                 null -> 0
-                                is KtLightElement<*, *> -> (e.getOrigin()?.hashCode() ?: 0) * 31 + (e.name?.hashCode() ?: 0)
+                                is KtLightElement<*, *> -> (e.kotlinOrigin?.hashCode() ?: 0) * 31 + (e.name?.hashCode() ?: 0)
                                 else -> e.hashCode()
                             }
                         }

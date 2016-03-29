@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -279,7 +279,7 @@ public class KotlinJavaFacadeTest extends KotlinLightCodeInsightFixtureTestCase 
         if (shouldBeWrapped) {
             assertNotNull(String.format("Failed to wrap declaration '%s' to method", declaration.getText()), psiMethod);
             assertInstanceOf(psiMethod, KtLightMethod.class);
-            assertEquals("Invalid original element for generated method", ((KtLightMethod) psiMethod).getOrigin(), declaration);
+            assertEquals("Invalid original element for generated method", ((KtLightMethod) psiMethod).getKotlinOrigin(), declaration);
         }
         else {
             assertNull("There should be no wrapper for given method", psiMethod);
@@ -304,7 +304,7 @@ public class KotlinJavaFacadeTest extends KotlinLightCodeInsightFixtureTestCase 
 
         // This invokes codegen with ClassBuilderMode = LIGHT_CLASSES
         // No exception/error should happen here
-        lightClass.getDelegate();
+        lightClass.getClsDelegate();
     }
 
     @NotNull

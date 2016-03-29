@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -105,7 +105,7 @@ fun KtTypeParameter.toPsiTypeParameters(): List<PsiTypeParameter> {
 
 // Returns original declaration if given PsiElement is a Kotlin light element, and element itself otherwise
 val PsiElement.unwrapped: PsiElement?
-    get() = if (this is KtLightElement<*, *>) getOrigin() else this
+    get() = if (this is KtLightElement<*, *>) kotlinOrigin else this
 
 val PsiElement.namedUnwrappedElement: PsiNamedElement?
     get() = unwrapped?.getNonStrictParentOfType<PsiNamedElement>()
@@ -131,5 +131,5 @@ fun FqName.defaultImplsChild() = child(DEFAULT_IMPLS_CLASS_NAME)
 fun KtAnnotationEntry.toLightAnnotation(): PsiAnnotation? {
     val ktDeclaration = getStrictParentOfType<KtModifierList>()?.parent as? KtDeclaration ?: return null
     val lightElement = ktDeclaration.toLightElements().firstOrNull() as? PsiModifierListOwner ?: return null
-    return lightElement.modifierList?.annotations?.firstOrNull { it is KtLightAnnotation && it.getOrigin() == this }
+    return lightElement.modifierList?.annotations?.firstOrNull { it is KtLightAnnotation && it.kotlinOrigin == this }
 }

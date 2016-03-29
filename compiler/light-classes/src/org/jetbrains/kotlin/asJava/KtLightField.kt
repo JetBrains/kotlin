@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,109 +31,105 @@ interface KtLightField : PsiField, KtLightDeclaration<KtDeclaration, PsiField>
 
 // Copied from com.intellij.psi.impl.light.LightField
 sealed class KtLightFieldImpl(
-        private val origin: KtDeclaration?,
-        private val delegate: PsiField,
+        private val lightMemberOrigin: LightMemberOrigin?,
+        override val clsDelegate: PsiField,
         private val containingClass: KtLightClass
-) : LightElement(delegate.manager, KotlinLanguage.INSTANCE), KtLightField {
-    private val lightIdentifier = KtLightIdentifier(this, origin as? KtNamedDeclaration)
+) : LightElement(clsDelegate.manager, KotlinLanguage.INSTANCE), KtLightField {
+    private val lightIdentifier by lazy { KtLightIdentifier(this, kotlinOrigin as? KtNamedDeclaration) }
 
     @Throws(IncorrectOperationException::class)
     override fun setInitializer(initializer: PsiExpression?) = throw IncorrectOperationException("Not supported")
 
-    override fun getUseScope() = origin?.useScope ?: super.getUseScope()
+    override fun getUseScope() = kotlinOrigin?.useScope ?: super.getUseScope()
 
-    override fun getName() = delegate.name
+    override fun getName() = clsDelegate.name
 
     override fun getNameIdentifier() = lightIdentifier
 
-    override fun getDocComment() = delegate.docComment
+    override fun getDocComment() = clsDelegate.docComment
 
-    override fun isDeprecated() = delegate.isDeprecated
+    override fun isDeprecated() = clsDelegate.isDeprecated
 
     override fun getContainingClass() = containingClass
 
-    override fun getType() = delegate.type
+    override fun getType() = clsDelegate.type
 
-    override fun getTypeElement() = delegate.typeElement
+    override fun getTypeElement() = clsDelegate.typeElement
 
-    override fun getInitializer() = delegate.initializer
+    override fun getInitializer() = clsDelegate.initializer
 
-    override fun hasInitializer() = delegate.hasInitializer()
+    override fun hasInitializer() = clsDelegate.hasInitializer()
 
     @Throws(IncorrectOperationException::class)
     override fun normalizeDeclaration() = throw IncorrectOperationException("Not supported")
 
-    override fun computeConstantValue() = delegate.computeConstantValue()
+    override fun computeConstantValue() = clsDelegate.computeConstantValue()
 
     @Throws(IncorrectOperationException::class)
     override fun setName(@NonNls name: String) = throw IncorrectOperationException("Not supported")
 
-    private val _modifierList by lazy { delegate.modifierList?.let { KtLightModifierList(it, this) } }
+    private val _modifierList by lazy { clsDelegate.modifierList?.let { KtLightModifierList(it, this) } }
 
     override fun getModifierList() = _modifierList
 
-    override fun hasModifierProperty(@NonNls name: String) = delegate.hasModifierProperty(name)
+    override fun hasModifierProperty(@NonNls name: String) = clsDelegate.hasModifierProperty(name)
 
-    override fun getText() = origin?.text ?: ""
+    override fun getText() = kotlinOrigin?.text ?: ""
 
-    override fun getTextRange() = origin?.textRange ?: TextRange.EMPTY_RANGE
+    override fun getTextRange() = kotlinOrigin?.textRange ?: TextRange.EMPTY_RANGE
 
     override fun isValid() = containingClass.isValid
 
     override fun toString(): String = "${this.javaClass.simpleName}:$name"
 
-    override fun getOrigin() = origin
+    override val kotlinOrigin: KtDeclaration? get() = lightMemberOrigin?.originalElement
 
-    override fun getDelegate() = delegate
+    override fun getNavigationElement() = kotlinOrigin ?: super.getNavigationElement()
 
-    override fun getNavigationElement() = origin ?: super.getNavigationElement()
-    
     override fun isEquivalentTo(another: PsiElement?): Boolean {
-        if (another is KtLightField && origin == another.getOrigin() && delegate == another.getDelegate()) {
+        if (another is KtLightField && kotlinOrigin == another.kotlinOrigin && clsDelegate == another.clsDelegate) {
             return true
         }
         return super.isEquivalentTo(another)
     }
 
-    override fun isWritable() = getOrigin()?.isWritable ?: false
+    override fun isWritable() = kotlinOrigin?.isWritable ?: false
 
-    override fun copy() = Factory.create(origin?.copy() as? KtDeclaration, delegate, containingClass)
+    override fun copy() = Factory.create(lightMemberOrigin?.copy(), clsDelegate, containingClass)
 
     class KtLightEnumConstant(
-            origin: KtEnumEntry?,
-            enumConstant: PsiEnumConstant,
+            origin: LightMemberOrigin?,
+            override val clsDelegate: PsiEnumConstant,
             containingClass: KtLightClass,
             private val initializingClass: PsiEnumConstantInitializer?
-    ) : KtLightFieldImpl(origin, enumConstant, containingClass), PsiEnumConstant {
-        override fun getDelegate() = super.getDelegate() as PsiEnumConstant
-
+    ) : KtLightFieldImpl(origin, clsDelegate, containingClass), PsiEnumConstant {
         // NOTE: we don't use "delegation by" because the compiler would generate method calls to ALL of PsiEnumConstant members,
         // but we need only members whose implementations are not present in KotlinLightField
-        override fun getArgumentList() = getDelegate().argumentList
+        override fun getArgumentList() = clsDelegate.argumentList
 
         override fun getInitializingClass(): PsiEnumConstantInitializer? = initializingClass
         override fun getOrCreateInitializingClass(): PsiEnumConstantInitializer =
-                initializingClass ?: throw UnsupportedOperationException("Can't create enum constant body: ${getDelegate().name}")
+                initializingClass ?: throw UnsupportedOperationException("Can't create enum constant body: ${clsDelegate.name}")
 
-        override fun resolveConstructor() = getDelegate().resolveConstructor()
-        override fun resolveMethod() = getDelegate().resolveMethod()
-        override fun resolveMethodGenerics() = getDelegate().resolveMethodGenerics()
+        override fun resolveConstructor() = clsDelegate.resolveConstructor()
+        override fun resolveMethod() = clsDelegate.resolveMethod()
+        override fun resolveMethodGenerics() = clsDelegate.resolveMethodGenerics()
     }
 
-    class KtLightFieldForDeclaration(origin: KtDeclaration?, delegate: PsiField, containingClass: KtLightClass)
-    : KtLightFieldImpl(origin, delegate, containingClass)
+    class KtLightFieldForDeclaration(origin: LightMemberOrigin?, delegate: PsiField, containingClass: KtLightClass) :
+            KtLightFieldImpl(origin, delegate, containingClass)
 
     companion object Factory {
-        fun create(origin: KtDeclaration?, delegate: PsiField, containingClass: KtLightClass): KtLightField {
+        fun create(origin: LightMemberOrigin?, delegate: PsiField, containingClass: KtLightClass): KtLightField {
             when (delegate) {
                 is PsiEnumConstant -> {
-                    val kotlinEnumEntry = origin as? KtEnumEntry
+                    val kotlinEnumEntry = origin?.originalElement as? KtEnumEntry
                     val initializingClass = if (kotlinEnumEntry != null && kotlinEnumEntry.declarations.isNotEmpty()) {
                         val enumConstantFqName = FqName(containingClass.getFqName().asString() + "." + kotlinEnumEntry.name)
                         KtLightClassForEnumEntry(enumConstantFqName, kotlinEnumEntry, delegate)
                     }
                     else null
-                    return KtLightEnumConstant(kotlinEnumEntry, delegate, containingClass, initializingClass)
+                    return KtLightEnumConstant(origin, delegate, containingClass, initializingClass)
                 }
                 else -> return KtLightFieldForDeclaration(origin, delegate, containingClass)
             }

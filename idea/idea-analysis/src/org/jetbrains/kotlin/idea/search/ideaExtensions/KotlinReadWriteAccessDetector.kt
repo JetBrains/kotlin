@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ class KotlinReadWriteAccessDetector : ReadWriteAccessDetector() {
 
         val refTarget = reference.resolve()
         if (refTarget is KtLightMethod) {
-            val origin = refTarget.getOrigin()
+            val origin = refTarget.kotlinOrigin
             val declaration: KtNamedDeclaration = when (origin) {
                 is KtPropertyAccessor -> origin.getNonStrictParentOfType<KtProperty>()
                 is KtProperty, is KtParameter -> origin as KtNamedDeclaration

@@ -92,7 +92,7 @@ class KtLightClassForFacade private constructor(
             stub = { lightClassDataCache.value.javaFileStub }
     )
 
-    override fun getOrigin(): KtClassOrObject? = null
+    override val kotlinOrigin: KtClassOrObject? get() = null
 
     override fun getFqName(): FqName = facadeClassFqName
 
@@ -146,11 +146,12 @@ class KtLightClassForFacade private constructor(
 
     override fun copy() = KtLightClassForFacade(getManager(), facadeClassFqName, lightClassDataCache, files)
 
-    override fun getDelegate(): PsiClass {
-        val psiClass = LightClassUtil.findClass(facadeClassFqName, lightClassDataCache.value.javaFileStub)
-                ?: throw IllegalStateException("Facade class $facadeClassFqName not found")
-        return psiClass
-    }
+    override val clsDelegate: PsiClass
+        get() {
+            val psiClass = LightClassUtil.findClass(facadeClassFqName, lightClassDataCache.value.javaFileStub)
+                           ?: throw IllegalStateException("Facade class $facadeClassFqName not found")
+            return psiClass
+        }
 
     override fun getNavigationElement() = files.iterator().next()
 

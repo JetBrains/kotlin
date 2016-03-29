@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,7 +74,7 @@ class RenameKotlinClassProcessor : RenameKotlinPsiProcessor() {
     private fun getKtClassOrObject(element: PsiElement?, showErrors: Boolean, editor: Editor?): KtClassOrObject? = when (element) {
         is KtLightClass ->
             if (element is KtLightClassForExplicitDeclaration) {
-                element.getOrigin()
+                element.kotlinOrigin
             }
             else if (element is KtLightClassForFacade) {
                 if (showErrors) {

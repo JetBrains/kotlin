@@ -115,7 +115,7 @@ public class MoveKotlinNestedClassesDialog extends RefactoringDialog {
                                     @Override
                                     public boolean isAccepted(PsiClass aClass) {
                                         if (!(aClass instanceof KtLightClassForExplicitDeclaration)) return false;
-                                        KtClassOrObject classOrObject = ((KtLightClassForExplicitDeclaration) aClass).getOrigin();
+                                        KtClassOrObject classOrObject = ((KtLightClassForExplicitDeclaration) aClass).getKotlinOrigin();
 
                                         if (classOrObject instanceof KtObjectDeclaration) {
                                             return !((KtObjectDeclaration) classOrObject).isObjectLiteral();
@@ -149,7 +149,7 @@ public class MoveKotlinNestedClassesDialog extends RefactoringDialog {
 
                         PsiClass aClass = chooser.getSelected();
                         if (aClass instanceof KtLightClassForExplicitDeclaration) {
-                            targetClass = ((KtLightClassForExplicitDeclaration) aClass).getOrigin();
+                            targetClass = ((KtLightClassForExplicitDeclaration) aClass).getKotlinOrigin();
                             targetClassChooser.setText(aClass.getQualifiedName());
                         }
                     }
@@ -167,7 +167,7 @@ public class MoveKotlinNestedClassesDialog extends RefactoringDialog {
                                 .getInstance(myProject)
                                 .findClass(targetClassChooser.getText(), GlobalSearchScope.projectScope(myProject));
                         targetClass = aClass instanceof KtLightClassForExplicitDeclaration
-                                      ? ((KtLightClassForExplicitDeclaration) aClass).getOrigin()
+                                      ? ((KtLightClassForExplicitDeclaration) aClass).getKotlinOrigin()
                                       : null;
                         validateButtons();
                     }

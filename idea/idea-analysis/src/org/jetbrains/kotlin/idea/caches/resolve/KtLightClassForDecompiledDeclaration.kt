@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,34 +19,32 @@ package org.jetbrains.kotlin.idea.caches.resolve
 import com.intellij.psi.PsiClass
 import com.intellij.psi.impl.compiled.ClsClassImpl
 import org.jetbrains.kotlin.asJava.KtWrappingLightClass
+import org.jetbrains.kotlin.idea.decompiler.classFile.KtClsFile
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
 class KtLightClassForDecompiledDeclaration(
-        private val clsClass: ClsClassImpl,
-        private val origin: KtClassOrObject?
-) : KtWrappingLightClass(clsClass.manager) {
-    private val fqName = origin?.fqName ?: FqName(clsClass.qualifiedName)
+        override val clsDelegate: ClsClassImpl,
+        override val kotlinOrigin: KtClassOrObject?,
+        private val file: KtClsFile
+) : KtWrappingLightClass(clsDelegate.manager) {
+    private val fqName = kotlinOrigin?.fqName ?: FqName(clsDelegate.qualifiedName)
 
     override fun copy() = this
 
     override fun getOwnInnerClasses(): List<PsiClass> {
-        val nestedClasses = origin?.declarations?.filterIsInstance<KtClassOrObject>() ?: emptyList()
-        return clsClass.ownInnerClasses.map { innerClsClass ->
+        val nestedClasses = kotlinOrigin?.declarations?.filterIsInstance<KtClassOrObject>() ?: emptyList()
+        return clsDelegate.ownInnerClasses.map { innerClsClass ->
             KtLightClassForDecompiledDeclaration(innerClsClass as ClsClassImpl,
-                                                 nestedClasses.firstOrNull { innerClsClass.name == it.name })
+                                                 nestedClasses.firstOrNull { innerClsClass.name == it.name }, file)
         }
     }
 
-    override fun getNavigationElement() = origin?.navigationElement ?: super.getNavigationElement()
-
-    override fun getDelegate() = clsClass
-
-    override fun getOrigin() = origin
+    override fun getNavigationElement() = kotlinOrigin?.navigationElement ?: file
 
     override fun getFqName() = fqName
 
-    override fun getParent() = clsClass.parent
+    override fun getParent() = clsDelegate.parent
 
     override fun equals(other: Any?): Boolean =
             other is KtLightClassForDecompiledDeclaration &&
@@ -55,3 +53,4 @@ class KtLightClassForDecompiledDeclaration(
     override fun hashCode(): Int =
             getFqName().hashCode()
 }
+

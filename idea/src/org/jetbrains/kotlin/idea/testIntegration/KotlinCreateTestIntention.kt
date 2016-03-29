@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -132,7 +132,7 @@ class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtNamedDeclaration
                 val dialog = KotlinCreateTestDialog(project, text, srcClass, srcPackage, srcModule)
                 if (!dialog.showAndGet()) return
 
-                val existingClass = (findTestClass(dialog.targetDirectory, dialog.className) as? KtLightClass)?.getOrigin()
+                val existingClass = (findTestClass(dialog.targetDirectory, dialog.className) as? KtLightClass)?.kotlinOrigin
                 if (existingClass != null) {
                     // TODO: Override dialog method when it becomes protected
                     val answer = Messages.showYesNoDialog(

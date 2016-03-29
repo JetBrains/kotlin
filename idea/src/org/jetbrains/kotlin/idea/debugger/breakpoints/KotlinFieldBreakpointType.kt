@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -89,7 +89,7 @@ class KotlinFieldBreakpointType : JavaBreakpointType<KotlinPropertyBreakpointPro
                         psiClass.files.asSequence().mapNotNull { createBreakpointIfPropertyExists(it, it, className, fieldName) }.firstOrNull()
                     }
                     is KtLightClassForExplicitDeclaration -> {
-                        val jetClass = psiClass.getOrigin()
+                        val jetClass = psiClass.kotlinOrigin
                         createBreakpointIfPropertyExists(jetClass, jetClass.getContainingKtFile(), className, fieldName)
                     }
                     else -> null

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ class KotlinOverridingMethodsWithGenericsSearcher : QueryExecutor<PsiMethod, Ove
         val method = p.method
         if (method !is KtLightMethod) return true
 
-        val declaration = method.getOrigin() as? KtCallableDeclaration
+        val declaration = method.kotlinOrigin as? KtCallableDeclaration
         if (declaration == null) return true
 
         val callDescriptor = runReadAction { declaration.resolveToDescriptor() }
@@ -67,7 +67,7 @@ class KotlinOverridingMethodsWithGenericsSearcher : QueryExecutor<PsiMethod, Ove
         val methodsByName = inheritor.findMethodsByName(name, false)
 
         for (lightMethodCandidate in methodsByName) {
-            val candidateDescriptor = (lightMethodCandidate as? KtLightMethod)?.getOrigin()?.resolveToDescriptor() ?: continue
+            val candidateDescriptor = (lightMethodCandidate as? KtLightMethod)?.kotlinOrigin?.resolveToDescriptor() ?: continue
             if (candidateDescriptor !is CallableMemberDescriptor) continue
 
             val overriddenDescriptors = OverrideResolver.getDirectlyOverriddenDeclarations(candidateDescriptor)

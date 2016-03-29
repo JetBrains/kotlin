@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -910,7 +910,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
             is KotlinChangeInfo -> changeInfo
             is JavaChangeInfo -> {
                 val method = changeInfo.method as? KtLightMethod ?: return false
-                var baseFunction = method.getOrigin() ?: return false
+                var baseFunction = method.kotlinOrigin ?: return false
                 if (baseFunction is KtClass) {
                     baseFunction = baseFunction.createPrimaryConstructorIfAbsent()
                 }

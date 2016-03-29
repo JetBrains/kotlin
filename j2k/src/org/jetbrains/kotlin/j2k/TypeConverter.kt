@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -380,7 +380,7 @@ class TypeConverter(val converter: Converter) {
 
         override fun fromAnnotations(owner: PsiModifierListOwner): Mutability {
             if (owner is KtLightElement<*, *>) {
-                val jetDeclaration = owner.getOrigin() as? KtCallableDeclaration ?: return Mutability.Default
+                val jetDeclaration = owner.kotlinOrigin as? KtCallableDeclaration ?: return Mutability.Default
                 val descriptor = converter.services.resolverForConverter.resolveToDescriptor(jetDeclaration) as? CallableDescriptor ?: return Mutability.Default
                 val type = descriptor.returnType ?: return Mutability.Default
                 val classDescriptor = TypeUtils.getClassDescriptor(type) ?: return Mutability.Default
