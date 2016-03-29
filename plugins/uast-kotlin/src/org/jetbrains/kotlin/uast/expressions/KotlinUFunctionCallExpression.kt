@@ -30,7 +30,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class KotlinUFunctionCallExpression(
         override val psi: KtCallExpression,
         override val parent: UElement
-) : KotlinAbstractUElement(), UCallExpression, PsiElementBacked, KotlinTypeHelper, NoEvaluate {
+) : KotlinAbstractUElement(), UCallExpression, PsiElementBacked, KotlinUElementWithType {
     override val functionName: String?
         get() = (psi.calleeExpression as? KtSimpleNameExpression)?.getReferencedName()
 
@@ -84,7 +84,7 @@ class KotlinUComponentFunctionCallExpression(
         override val psi: PsiElement,
         val n: Int,
         override val parent: UElement
-) : UCallExpression, PsiElementBacked, NoEvaluate {
+) : UCallExpression, PsiElementBacked {
     override val valueArgumentCount = 0
     override val valueArguments = emptyList<UExpression>()
     override val typeArgumentCount = 0
@@ -101,13 +101,13 @@ class KotlinUSuperConstructorCallExpression(
         override val psi: KtObjectDeclaration,
         override val parent: UElement,
         val resolvedCall: () -> ResolvedCall<*>?
-) : UCallExpression, PsiElementBacked, NoEvaluate {
+) : UCallExpression, PsiElementBacked {
     override val functionReference: USimpleReferenceExpression?
         get() = null
 
     override val classReference: USimpleReferenceExpression by lz {
         val referenceParent = this
-        object : USimpleReferenceExpression, PsiElementBacked, NoEvaluate {
+        object : USimpleReferenceExpression, PsiElementBacked {
             override val parent: UElement?
                 get() = referenceParent
 

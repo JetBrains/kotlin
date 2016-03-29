@@ -17,10 +17,7 @@ package org.jetbrains.uast.java
 
 import com.intellij.psi.PsiField
 import com.intellij.psi.PsiVariable
-import org.jetbrains.uast.UElement
-import org.jetbrains.uast.UVariable
-import org.jetbrains.uast.UastModifier
-import org.jetbrains.uast.UastVariableKind
+import org.jetbrains.uast.*
 import org.jetbrains.uast.psi.PsiElementBacked
 
 class JavaUVariable(
@@ -39,6 +36,9 @@ class JavaUVariable(
         is PsiField -> UastVariableKind.MEMBER
         else -> UastVariableKind.LOCAL_VARIABLE
     }
+
+    override val visibility: UastVisibility
+        get() = psi.getVisibility()
 
     override fun hasModifier(modifier: UastModifier) = psi.hasModifier(modifier)
     override val annotations by lz { psi.modifierList.getAnnotations(this) }

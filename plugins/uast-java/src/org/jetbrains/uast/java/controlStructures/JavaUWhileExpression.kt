@@ -16,7 +16,6 @@
 package org.jetbrains.uast.java
 
 import com.intellij.psi.PsiWhileStatement
-import org.jetbrains.uast.NoEvaluate
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UWhileExpression
 import org.jetbrains.uast.psi.PsiElementBacked
@@ -24,7 +23,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class JavaUWhileExpression(
         override val psi: PsiWhileStatement,
         override val parent: UElement
-) : JavaAbstractUElement(), UWhileExpression, PsiElementBacked, NoEvaluate {
+) : JavaAbstractUElement(), UWhileExpression, PsiElementBacked {
     override val condition by lz { JavaConverter.convertOrEmpty(psi.condition, this) }
     override val body by lz { JavaConverter.convertOrEmpty(psi.body, this) }
 }

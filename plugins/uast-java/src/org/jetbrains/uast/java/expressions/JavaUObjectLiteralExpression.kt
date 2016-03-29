@@ -16,7 +16,6 @@
 package org.jetbrains.uast.java
 
 import com.intellij.psi.PsiNewExpression
-import org.jetbrains.uast.NoEvaluate
 import org.jetbrains.uast.UClassNotResolved
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UObjectLiteralExpression
@@ -24,7 +23,7 @@ import org.jetbrains.uast.UObjectLiteralExpression
 class JavaUObjectLiteralExpression(
         override val psi: PsiNewExpression,
         override val parent: UElement
-) : JavaAbstractUElement(), UObjectLiteralExpression, JavaTypeHelper, NoEvaluate {
+) : JavaAbstractUElement(), UObjectLiteralExpression, JavaUElementWithType {
     override val declaration by lz {
         psi.anonymousClass?.let { JavaUClass(it, this, psi) } ?: UClassNotResolved
     }

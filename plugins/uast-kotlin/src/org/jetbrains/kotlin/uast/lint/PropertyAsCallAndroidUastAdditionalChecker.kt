@@ -47,7 +47,7 @@ class PropertyAsCallAndroidUastAdditionalChecker : AndroidUastAdditionalChecker 
         else
             null
 
-        val callExpression: UCallExpression = object : UCallExpression, NoEvaluate, PsiElementBacked {
+        val callExpression: UCallExpression = object : UCallExpression, PsiElementBacked {
             override val parent = element.parent
             override val psi = ktElement
 

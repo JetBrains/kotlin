@@ -16,8 +16,10 @@
 package org.jetbrains.uast.java
 
 import com.intellij.psi.PsiImportStaticStatement
+import org.jetbrains.uast.UDeclaration
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UImportStatement
+import org.jetbrains.uast.UastContext
 import org.jetbrains.uast.kinds.UastImportKind
 import org.jetbrains.uast.psi.PsiElementBacked
 
@@ -32,5 +34,11 @@ class JavaUStaticImportStatement(
         get() = UastImportKind.MEMBER
 
     override val isStarImport: Boolean
-        get() = true
+        get() = psi.isOnDemand
+
+    override fun resolve(context: UastContext): UDeclaration? {
+        if (psi.isOnDemand) return null
+        val resolvedElement = psi.resolve() ?: return null
+        return context.convert(resolvedElement) as? UDeclaration
+    }
 }

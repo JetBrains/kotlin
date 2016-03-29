@@ -25,8 +25,8 @@ object JavaUastLanguagePlugin : UastLanguagePlugin {
 }
 
 internal object JavaConverter : UastConverter {
-    override fun isFileSupported(path: String): Boolean {
-        return path.endsWith(".java", ignoreCase = true)
+    override fun isFileSupported(name: String): Boolean {
+        return name.endsWith(".java", ignoreCase = true)
     }
 
     fun convert(file: PsiJavaFile): UFile = JavaUFile(file)
@@ -125,10 +125,10 @@ internal object JavaConverter : UastConverter {
             parent: UElement,
             i: Int
     ): UExpression {
-        return if (i == 1) JavaCombinedUBinaryExpression(expression, parent).apply {
+        return if (i == 1) JavaSeparatedPolyadicUBinaryExpression(expression, parent).apply {
             leftOperand = convert(expression.operands[0], this)
             rightOperand = convert(expression.operands[1], this)
-        } else JavaCombinedUBinaryExpression(expression, parent).apply {
+        } else JavaSeparatedPolyadicUBinaryExpression(expression, parent).apply {
             leftOperand = convertPolyadicExpression(expression, parent, i - 1)
             rightOperand = convert(expression.operands[i], this)
         }

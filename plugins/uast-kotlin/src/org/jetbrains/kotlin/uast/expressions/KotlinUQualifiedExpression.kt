@@ -24,7 +24,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class KotlinUQualifiedExpression(
         override val psi: KtDotQualifiedExpression,
         override val parent: UElement
-) : KotlinAbstractUElement(), UQualifiedExpression, PsiElementBacked, KotlinTypeHelper, KotlinEvaluateHelper {
+) : KotlinAbstractUElement(), UQualifiedExpression, PsiElementBacked, KotlinUElementWithType, KotlinEvaluatableUElement {
     override val receiver by lz { KotlinConverter.convertOrEmpty(psi.receiverExpression, this) }
     override val selector by lz { KotlinConverter.convertOrEmpty(psi.selectorExpression, this) }
     override val accessType = UastQualifiedExpressionAccessType.SIMPLE
@@ -35,7 +35,7 @@ class KotlinUQualifiedExpression(
 class KotlinUComponentQualifiedExpression(
         override val psi: KtDestructuringDeclarationEntry,
         override val parent: UElement
-) : KotlinAbstractUElement(), UQualifiedExpression, PsiElementBacked, KotlinTypeHelper, KotlinEvaluateHelper {
+) : KotlinAbstractUElement(), UQualifiedExpression, PsiElementBacked, KotlinUElementWithType, KotlinEvaluatableUElement {
     override lateinit var receiver: UExpression
         internal set
 

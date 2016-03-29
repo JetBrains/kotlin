@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.uast
 import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UImportStatement
+import org.jetbrains.uast.UastContext
 import org.jetbrains.uast.kinds.UastImportKind
 import org.jetbrains.uast.psi.PsiElementBacked
 
@@ -30,8 +31,11 @@ class KotlinUImportStatement(
 
     //TODO support member imports
     override val kind: UastImportKind
-        get() = UastImportKind.CLASS
+        get() = UastImportKind.UNKNOWN
 
     override val isStarImport: Boolean
         get() = psi.isAllUnder
+
+    //TODO support
+    override fun resolve(context: UastContext) = null
 }

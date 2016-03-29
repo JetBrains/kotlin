@@ -17,16 +17,14 @@
 package org.jetbrains.kotlin.uast
 
 import org.jetbrains.kotlin.psi.KtForExpression
-import org.jetbrains.uast.NoEvaluate
-import org.jetbrains.uast.UElement
-import org.jetbrains.uast.UForEachExpression
+import org.jetbrains.uast.*
 import org.jetbrains.uast.psi.PsiElementBacked
 
 class KotlinUForEachExpression(
         override val psi: KtForExpression,
         override val parent: UElement
-) : KotlinAbstractUElement(), UForEachExpression, PsiElementBacked, NoEvaluate {
-    override val variableName by lz { psi.loopParameter?.name }
+) : KotlinAbstractUElement(), UForEachExpression, PsiElementBacked {
+    override val variable by lz { psi.loopParameter?.let { KotlinConverter.convert(it, this) } ?: UVariableNotResolved }
     override val iteratedValue by lz { KotlinConverter.convertOrEmpty(psi.loopRange, this) }
     override val body by lz { KotlinConverter.convertOrEmpty(psi.body, this) }
 }

@@ -24,7 +24,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class JavaUInstanceCheckExpression(
         override val psi: PsiInstanceOfExpression,
         override val parent: UElement
-) : JavaAbstractUElement(), UBinaryExpressionWithType, PsiElementBacked, JavaTypeHelper, JavaEvaluateHelper {
+) : JavaAbstractUElement(), UBinaryExpressionWithType, PsiElementBacked, JavaUElementWithType, JavaEvaluatableUElement {
     override val operand by lz { JavaConverter.convertOrEmpty(psi.operand, this) }
     override val type by lz { JavaConverter.convert(psi.checkType?.type, this) }
 

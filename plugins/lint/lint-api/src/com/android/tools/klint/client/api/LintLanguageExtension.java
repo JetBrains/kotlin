@@ -29,10 +29,10 @@ public abstract class LintLanguageExtension implements UastLanguagePlugin {
     public static final ExtensionPointName<LintLanguageExtension> EP_NAME =
         ExtensionPointName.create("com.android.tools.klint.client.api.lintLanguageExtension");
 
-    public static boolean isFileSupported(@Nullable Project project, String path) {
+    public static boolean isFileSupported(@Nullable Project project, String name) {
         LintLanguageExtension[] extensions = getExtensions(project);
         for (LintLanguageExtension ext : extensions) {
-            if (ext.getConverter().isFileSupported(path)) {
+            if (ext.getConverter().isFileSupported(name)) {
                 return true;
             }
         }

@@ -157,11 +157,10 @@ public class CleanupDetector extends Detector implements UastScanner {
 
     @Override
     public void visitFunctionCall(UastAndroidContext context, UCallExpression node) {
-        String name = node.getFunctionName();
-        if (BEGIN_TRANSACTION.equals(name)) {
+        if (node.functionNameMatches(BEGIN_TRANSACTION)) {
             checkTransactionCommits(context, node);
         } else {
-            checkResourceRecycled(context, node, name);
+            checkResourceRecycled(context, node, node.getFunctionName());
         }
     }
 
@@ -246,8 +245,7 @@ public class CleanupDetector extends Detector implements UastScanner {
         FinishVisitor visitor = new FinishVisitor(context, boundVariable) {
             @Override
             protected boolean isCleanupCall(@NonNull UCallExpression call) {
-                String methodName = call.getFunctionName();
-                if (!recycleName.equals(methodName)) {
+                if (!call.functionNameMatches(recycleName)) {
                     return false;
                 }
                 UDeclaration resolved = call.resolve(mContext);
@@ -385,8 +383,7 @@ public class CleanupDetector extends Detector implements UastScanner {
     private static boolean isTransactionCommitMethodCall(@NonNull UastAndroidContext context,
             @NonNull UCallExpression call) {
 
-        String methodName = call.getFunctionName();
-        return (COMMIT.equals(methodName) || COMMIT_ALLOWING_LOSS.equals(methodName)) &&
+        return (call.functionNameMatches(COMMIT) || call.functionNameMatches(COMMIT_ALLOWING_LOSS)) &&
                 isMethodOnFragmentClass(context, call,
                         FRAGMENT_TRANSACTION_CLS,
                         FRAGMENT_TRANSACTION_V4_CLS);
@@ -394,8 +391,7 @@ public class CleanupDetector extends Detector implements UastScanner {
 
     private static boolean isShowFragmentMethodCall(@NonNull UastAndroidContext context,
             @NonNull UCallExpression call) {
-        String methodName = call.getFunctionName();
-        return SHOW.equals(methodName)
+        return call.functionNameMatches(SHOW)
                 && isMethodOnFragmentClass(context, call,
                 DIALOG_FRAGMENT, DIALOG_V4_FRAGMENT);
     }
@@ -439,9 +435,8 @@ public class CleanupDetector extends Detector implements UastScanner {
 
     private static boolean isBeginTransaction(@NonNull UastAndroidContext context,
             @NonNull UCallExpression node) {
-        String methodName = node.getFunctionName();
-        assert BEGIN_TRANSACTION.equals(methodName) : methodName;
-        if (BEGIN_TRANSACTION.equals(methodName)) {
+        assert node.functionNameMatches(BEGIN_TRANSACTION) : node.renderString();
+        if (node.functionNameMatches(BEGIN_TRANSACTION)) {
             UFunction method = node.resolve(context);
             if (method != null) {
                 UClass containingClass = UastUtils.getContainingClassOrEmpty(method);

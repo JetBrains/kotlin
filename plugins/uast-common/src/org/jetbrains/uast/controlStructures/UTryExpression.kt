@@ -22,6 +22,7 @@ interface UTryExpression : UExpression {
     val finallyClause: UExpression?
 
     override fun traverse(callback: UastCallback) {
+        resources?.handleTraverseList(callback)
         tryClause.handleTraverse(callback)
         catchClauses.handleTraverseList(callback)
         finallyClause?.handleTraverse(callback)
@@ -47,6 +48,8 @@ interface UCatchClause : UElement {
 
     override fun traverse(callback: UastCallback) {
         body.handleTraverse(callback)
+        parameters.handleTraverseList(callback)
+        types.handleTraverseList(callback)
     }
 
     override fun logString() = log("UCatchClause", body)

@@ -51,4 +51,4 @@ interface UDefaultSwitchClauseExpression : USwitchClauseExpression {
     override fun renderString() = "else -> "
 }
 
-class SimpleUDefaultSwitchClauseExpression(override val parent: UElement) : UDefaultSwitchClauseExpression, NoEvaluate
+class SimpleUDefaultSwitchClauseExpression(override val parent: UElement) : UDefaultSwitchClauseExpression

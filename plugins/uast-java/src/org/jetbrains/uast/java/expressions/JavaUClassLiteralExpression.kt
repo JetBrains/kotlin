@@ -16,7 +16,6 @@
 package org.jetbrains.uast.java
 
 import com.intellij.psi.PsiClassObjectAccessExpression
-import org.jetbrains.uast.NoEvaluate
 import org.jetbrains.uast.UClassLiteralExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UType
@@ -25,6 +24,6 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class JavaUClassLiteralExpression(
         override val psi: PsiClassObjectAccessExpression,
         override val parent: UElement
-) : JavaAbstractUElement(), UClassLiteralExpression, PsiElementBacked, JavaTypeHelper, NoEvaluate {
+) : JavaAbstractUElement(), UClassLiteralExpression, PsiElementBacked, JavaUElementWithType {
     override val type: UType by lz { JavaConverter.convert(psi.type, this) }
 }

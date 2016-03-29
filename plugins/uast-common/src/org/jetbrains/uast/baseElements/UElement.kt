@@ -17,6 +17,10 @@ package org.jetbrains.uast
 
 interface UElement {
     val parent: UElement?
+
+    open val isValid: Boolean
+        get() = true
+    
     fun logString(): String
     fun renderString(): String = logString()
     fun traverse(callback: UastCallback)

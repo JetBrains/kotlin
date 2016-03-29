@@ -16,7 +16,6 @@
 package org.jetbrains.uast.java
 
 import com.intellij.psi.PsiLabeledStatement
-import org.jetbrains.uast.NoEvaluate
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.ULabeledExpression
 import org.jetbrains.uast.psi.PsiElementBacked
@@ -24,7 +23,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class JavaULabeledExpression(
         override val psi: PsiLabeledStatement,
         override val parent: UElement
-) : JavaAbstractUElement(), ULabeledExpression, PsiElementBacked, NoEvaluate {
+) : JavaAbstractUElement(), ULabeledExpression, PsiElementBacked {
     override val label by lz { psi.labelIdentifier.text }
     override val expression by lz { JavaConverter.convertOrEmpty(psi.statement, this) }
 }

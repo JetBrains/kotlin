@@ -19,7 +19,6 @@ import com.intellij.psi.PsiCodeBlock
 import com.intellij.psi.PsiExpression
 import com.intellij.psi.PsiLambdaExpression
 import org.jetbrains.uast.EmptyExpression
-import org.jetbrains.uast.NoEvaluate
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.ULambdaExpression
 import org.jetbrains.uast.psi.PsiElementBacked
@@ -27,7 +26,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class JavaULambdaExpression(
         override val psi: PsiLambdaExpression,
         override val parent: UElement
-) : JavaAbstractUElement(), ULambdaExpression, PsiElementBacked, JavaTypeHelper, NoEvaluate {
+) : JavaAbstractUElement(), ULambdaExpression, PsiElementBacked, JavaUElementWithType {
     override val valueParameters by lz { psi.parameterList.parameters.map { JavaConverter.convert(it, this) } }
 
     override val body by lz {

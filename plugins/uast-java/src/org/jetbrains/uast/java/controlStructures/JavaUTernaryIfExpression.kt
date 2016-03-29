@@ -23,7 +23,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class JavaUTernaryIfExpression(
         override val psi: PsiConditionalExpression,
         override val parent: UElement
-) : JavaAbstractUElement(), UIfExpression, PsiElementBacked, JavaTypeHelper, JavaEvaluateHelper {
+) : JavaAbstractUElement(), UIfExpression, PsiElementBacked, JavaUElementWithType, JavaEvaluatableUElement {
     override val condition by lz { JavaConverter.convert(psi.condition, this) }
     override val thenBranch by lz { JavaConverter.convertOrEmpty(psi.thenExpression, this) }
     override val elseBranch by lz { JavaConverter.convertOrEmpty(psi.elseExpression, this) }

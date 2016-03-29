@@ -17,13 +17,20 @@ package org.jetbrains.uast
 
 open class UastFunctionKind(val text: String) {
     class UastInitializerKind(val name: String) : UastFunctionKind("INITIALIZER ($name)")
+    class UastVariableAccessor(val name: String) : UastFunctionKind(name)
 
     companion object {
         @JvmField
         val FUNCTION = UastFunctionKind("function")
 
         @JvmField
-        val CONSTRUCTOR = UastFunctionKind("CONSTRUCTOR")
+        val CONSTRUCTOR = UastFunctionKind("constructor")
+
+        @JvmField
+        val GETTER = UastVariableAccessor("getter")
+
+        @JvmField
+        val SETTER = UastVariableAccessor("setter")
     }
 
     override fun toString(): String{

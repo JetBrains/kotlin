@@ -134,10 +134,10 @@ class KotlinUClass(
 
     override val visibility by lz { psi.getVisibility() }
 
-    override fun isSubclassOf(name: String): Boolean {
+    override fun isSubclassOf(fqName: String): Boolean {
         val descriptor = psi.resolveToDescriptorIfAny() as? ClassDescriptor ?: return false
         return descriptor.defaultType.supertypes().any {
-            it.constructor.declarationDescriptor?.fqNameSafe?.asString() == name
+            it.constructor.declarationDescriptor?.fqNameSafe?.asString() == fqName
         }
     }
 

@@ -16,7 +16,6 @@
 package org.jetbrains.uast.java
 
 import com.intellij.psi.PsiArrayAccessExpression
-import org.jetbrains.uast.NoEvaluate
 import org.jetbrains.uast.UArrayAccessExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.psi.PsiElementBacked
@@ -24,7 +23,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class JavaUArrayAccessExpression(
         override val psi: PsiArrayAccessExpression,
         override val parent: UElement
-) : JavaAbstractUElement(), UArrayAccessExpression, PsiElementBacked, JavaTypeHelper, NoEvaluate {
+) : JavaAbstractUElement(), UArrayAccessExpression, PsiElementBacked, JavaUElementWithType {
     override val receiver by lz { JavaConverter.convert(psi.arrayExpression, this) }
     override val indices by lz { singletonListOrEmpty(JavaConverter.convertOrNull(psi.indexExpression, this)) }
 }

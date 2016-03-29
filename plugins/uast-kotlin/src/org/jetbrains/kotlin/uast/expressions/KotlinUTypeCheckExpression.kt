@@ -24,7 +24,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class KotlinUTypeCheckExpression(
         override val psi: KtIsExpression,
         override val parent: UElement
-) : KotlinAbstractUElement(), UBinaryExpressionWithType, PsiElementBacked, KotlinTypeHelper, KotlinEvaluateHelper {
+) : KotlinAbstractUElement(), UBinaryExpressionWithType, PsiElementBacked, KotlinUElementWithType, KotlinEvaluatableUElement {
     override val operand by lz { KotlinConverter.convert(psi.leftHandSide, this) }
     override val type by lz { KotlinConverter.convert(psi.typeReference, this) }
     override val operationKind = KotlinBinaryExpressionWithTypeKinds.NEGATED_INSTANCE_CHECK

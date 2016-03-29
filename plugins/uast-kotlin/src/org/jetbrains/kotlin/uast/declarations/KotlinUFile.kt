@@ -21,10 +21,8 @@ import org.jetbrains.uast.UFile
 import org.jetbrains.uast.psi.PsiElementBacked
 
 class KotlinUFile(override val psi: KtFile): KotlinAbstractUElement(), UFile, PsiElementBacked {
-    override val packageFqName by lz {
-        val packageName = psi.packageFqName.asString()
-        if (packageName.isNotBlank()) packageName else null
-    }
+    override val packageFqName: String?
+        get() = psi.packageFqName.asString()
 
     override val declarations by lz { psi.declarations.map { KotlinConverter.convert(it, this) }.filterNotNull() }
     override val importStatements by lz { psi.importDirectives.map { KotlinUImportStatement(it, this) } }

@@ -16,7 +16,6 @@
 package org.jetbrains.uast.java
 
 import com.intellij.psi.PsiForStatement
-import org.jetbrains.uast.NoEvaluate
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UForExpression
 import org.jetbrains.uast.psi.PsiElementBacked
@@ -24,7 +23,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class JavaUForExpression(
         override val psi: PsiForStatement,
         override val parent: UElement
-) : JavaAbstractUElement(), UForExpression, PsiElementBacked, NoEvaluate {
+) : JavaAbstractUElement(), UForExpression, PsiElementBacked {
     override val declaration by lz { psi.initialization?.let { JavaConverter.convert(it, this) } }
     override val condition by lz { psi.condition?.let { JavaConverter.convert(it, this) } }
     override val update by lz { psi.update?.let { JavaConverter.convert(it, this) } }

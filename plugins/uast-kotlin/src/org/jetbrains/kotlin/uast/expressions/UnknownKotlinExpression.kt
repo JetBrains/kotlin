@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.uast
 
 import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.uast.NoEvaluate
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UExpression
 import org.jetbrains.uast.UastCallback
@@ -26,7 +25,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class UnknownKotlinExpression(
         override val psi: KtExpression,
         override val parent: UElement
-) : KotlinAbstractUElement(), UExpression, PsiElementBacked, NoEvaluate {
+) : KotlinAbstractUElement(), UExpression, PsiElementBacked {
     override fun traverse(callback: UastCallback) {}
     override fun logString() = "[!] UnknownKotlinExpression ($psi)"
 }

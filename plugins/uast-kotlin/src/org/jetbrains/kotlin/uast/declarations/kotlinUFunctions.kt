@@ -211,6 +211,8 @@ open class KotlinObjectLiteralConstructorUFunction(
                     get() = this@KotlinObjectLiteralConstructorUFunction
                 override val name: String
                     get() = param.name.asString()
+                override val visibility: UastVisibility
+                    get() = UastVisibility.LOCAL
 
                 override fun hasModifier(modifier: UastModifier) = when(modifier) {
                     UastModifier.VARARG -> param.varargElementType != null

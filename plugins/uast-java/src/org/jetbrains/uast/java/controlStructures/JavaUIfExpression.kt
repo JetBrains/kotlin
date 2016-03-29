@@ -16,7 +16,6 @@
 package org.jetbrains.uast.java
 
 import com.intellij.psi.PsiIfStatement
-import org.jetbrains.uast.NoEvaluate
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UIfExpression
 import org.jetbrains.uast.psi.PsiElementBacked
@@ -24,7 +23,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class JavaUIfExpression(
         override val psi: PsiIfStatement,
         override val parent: UElement
-) : JavaAbstractUElement(), UIfExpression, PsiElementBacked, NoEvaluate {
+) : JavaAbstractUElement(), UIfExpression, PsiElementBacked {
     override val condition by lz { JavaConverter.convertOrEmpty(psi.condition, this) }
     override val thenBranch by lz { JavaConverter.convertOrEmpty(psi.thenBranch, this) }
     override val elseBranch by lz { JavaConverter.convertOrEmpty(psi.elseBranch, this) }

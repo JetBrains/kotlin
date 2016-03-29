@@ -16,7 +16,6 @@
 package org.jetbrains.uast.java
 
 import com.intellij.psi.PsiBlockStatement
-import org.jetbrains.uast.NoEvaluate
 import org.jetbrains.uast.UBlockExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.psi.PsiElementBacked
@@ -24,6 +23,6 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class JavaUBlockExpression(
         override val psi: PsiBlockStatement,
         override val parent: UElement
-) : JavaAbstractUElement(), UBlockExpression, PsiElementBacked, JavaTypeHelper, NoEvaluate {
+) : JavaAbstractUElement(), UBlockExpression, PsiElementBacked, JavaUElementWithType {
     override val expressions by lz { psi.codeBlock.statements.map { JavaConverter.convert(it, this) } }
 }
