@@ -28,6 +28,7 @@ import com.intellij.openapi.util.Key
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.util.IncorrectOperationException
 import com.intellij.util.concurrency.Semaphore
 import com.intellij.xdebugger.XDebuggerManager
 import com.intellij.xdebugger.impl.XDebugSessionImpl
@@ -40,9 +41,9 @@ import org.jetbrains.eval4j.jdi.asValue
 import org.jetbrains.kotlin.asJava.KtLightClass
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
+import org.jetbrains.kotlin.idea.debugger.KotlinEditorTextProvider
 import org.jetbrains.kotlin.idea.refactoring.j2kText
 import org.jetbrains.kotlin.idea.refactoring.quoteIfNeeded
-import org.jetbrains.kotlin.idea.debugger.KotlinEditorTextProvider
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -117,7 +118,31 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
             = wrapContextIfNeeded(project, getContextElement(context))
 
     override fun createPresentationCodeFragment(item: TextWithImports, context: PsiElement?, project: Project): JavaCodeFragment {
-        return createCodeFragment(item, context, project)
+        val kotlinCodeFragment = createCodeFragment(item, context, project)
+        if (PsiTreeUtil.hasErrorElements(kotlinCodeFragment) && kotlinCodeFragment is KtExpressionCodeFragment) {
+            val javaExpression = try {
+                PsiElementFactory.SERVICE.getInstance(project).createExpressionFromText(item.text, context)
+            }
+            catch(e: IncorrectOperationException) {
+                null
+            }
+
+            if (javaExpression != null) {
+                val newText = javaExpression.j2kText()
+                if (newText != null) {
+                    val convertedFragment = KtExpressionCodeFragment(
+                            project,
+                            kotlinCodeFragment.name,
+                            newText,
+                            kotlinCodeFragment.importsToString(),
+                            kotlinCodeFragment.context
+                    )
+
+                    return convertedFragment
+                }
+            }
+        }
+        return kotlinCodeFragment
     }
 
     override fun isContextAccepted(contextElement: PsiElement?): Boolean {

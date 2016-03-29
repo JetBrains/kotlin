@@ -1,0 +1,32 @@
+LineBreakpoint created at createExpressionSimple.kt:14
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! createExpressionSimple.CreateExpressionSimpleKt
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+createExpressionSimple.kt:14
+package createExpressionSimple
+
+class MyClass: Base() {
+    val i = 1
+}
+
+open class Base {
+    val baseI = 2
+}
+
+fun main(args: Array<String>) {
+    val myClass: Base = MyClass()
+    //Breakpoint!
+    val a = 1
+}
+
+// PRINT_FRAME
+// DESCRIPTOR_VIEW_OPTIONS: NAME_AND_EXPRESSION
+
+
+ frame    = main
+   local    = args (expression = args)
+   local    = myClass (expression = myClass)
+     field    = i (expression = (myClass as MyClass).i)
+     field    = baseI (expression = (myClass as MyClass).baseI)
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0
