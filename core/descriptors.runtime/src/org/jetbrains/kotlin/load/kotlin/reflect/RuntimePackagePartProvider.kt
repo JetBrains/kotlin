@@ -25,7 +25,7 @@ class RuntimePackagePartProvider(private val classLoader: ClassLoader) : Package
 
     fun registerModule(moduleName: String) {
         val mapping = try {
-            classLoader.getResourceAsStream("META-INF/$moduleName.${ModuleMapping.MAPPING_FILE_EXT}")?.let { stream ->
+            classLoader.getResourceAsStream("META-INF/$moduleName.${ModuleMapping.MAPPING_FILE_EXT}")?.use { stream ->
                 ModuleMapping.create(stream.readBytes())
             }
         }

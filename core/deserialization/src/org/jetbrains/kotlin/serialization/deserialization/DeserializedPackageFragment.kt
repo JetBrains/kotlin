@@ -30,7 +30,7 @@ abstract class DeserializedPackageFragment(
         fqName: FqName,
         protected val storageManager: StorageManager,
         module: ModuleDescriptor,
-        protected val loadResource: (path: String) -> InputStream?
+        private val loadResource: (path: String) -> InputStream?
 ) : PackageFragmentDescriptorImpl(module, fqName) {
     // component dependency cycle
     @set:Inject

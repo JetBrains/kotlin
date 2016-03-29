@@ -78,11 +78,8 @@ private class ClassBytes(val name: String) {
         val inputStream = this.javaClass.classLoader.getResourceAsStream(name.replace('.', '/') + ".class")
                           ?: throw EvaluateException("Couldn't find $name class in current class loader")
 
-        try {
-            inputStream.readBytes()
-        }
-        finally {
-            inputStream.close()
+        inputStream.use {
+            it.readBytes()
         }
     }
 }
