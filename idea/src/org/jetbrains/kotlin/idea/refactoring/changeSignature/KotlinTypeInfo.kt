@@ -25,7 +25,7 @@ data class KotlinTypeInfo(val isCovariant: Boolean, val type: KotlinType? = null
 fun KotlinTypeInfo.render(): String {
     return when {
         text != null -> text
-        type != null -> (if (isCovariant) IdeDescriptorRenderers.SOURCE_CODE else IdeDescriptorRenderers.SOURCE_CODE_FOR_TYPE_ARGUMENTS).renderType(type)
+        type != null -> (if (isCovariant) IdeDescriptorRenderers.SOURCE_CODE else IdeDescriptorRenderers.SOURCE_CODE_NOT_NULL_TYPE_APPROXIMATION).renderType(type)
         else -> ""
     }
 }

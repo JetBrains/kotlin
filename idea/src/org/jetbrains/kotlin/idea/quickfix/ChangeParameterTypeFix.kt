@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.types.KotlinType
 
 class ChangeParameterTypeFix(element: KtParameter, type: KotlinType) : KotlinQuickFixAction<KtParameter>(element) {
     private val typePresentation = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
-    private val typeInfo = KotlinTypeInfo(isCovariant = false, text = IdeDescriptorRenderers.SOURCE_CODE_FOR_TYPE_ARGUMENTS.renderType(type))
+    private val typeInfo = KotlinTypeInfo(isCovariant = false, text = IdeDescriptorRenderers.SOURCE_CODE_NOT_NULL_TYPE_APPROXIMATION.renderType(type))
 
     private val containingDeclarationName: String?
     private val isPrimaryConstructorParameter: Boolean

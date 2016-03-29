@@ -76,7 +76,7 @@ fun getCallableSubstitutor(
 
 fun KotlinType.renderTypeWithSubstitution(substitutor: TypeSubstitutor?, defaultText: String, inArgumentPosition: Boolean): String {
     val newType = substitutor?.substitute(this, Variance.INVARIANT) ?: return defaultText
-    val renderer = if (inArgumentPosition) IdeDescriptorRenderers.SOURCE_CODE_FOR_TYPE_ARGUMENTS else IdeDescriptorRenderers.SOURCE_CODE
+    val renderer = if (inArgumentPosition) IdeDescriptorRenderers.SOURCE_CODE_NOT_NULL_TYPE_APPROXIMATION else IdeDescriptorRenderers.SOURCE_CODE
     return renderer.renderType(newType)
 }
 

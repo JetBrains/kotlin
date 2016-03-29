@@ -22,9 +22,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames.JETBRAINS_READONLY_ANNOTATION
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -34,10 +32,10 @@ import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.*
 
-fun approximateFlexibleTypes(jetType: KotlinType, outermost: Boolean = true): KotlinType {
-    if (jetType.isDynamic()) return jetType
-    if (jetType.isFlexible()) {
-        val flexible = jetType.flexibility()
+fun KotlinType.approximateFlexibleTypes(preferNotNull: Boolean = false): KotlinType {
+    if (isDynamic()) return this
+    if (isFlexible()) {
+        val flexible = flexibility()
         val lowerClass = flexible.lowerBound.constructor.declarationDescriptor as? ClassDescriptor?
         val isCollection = lowerClass != null && JavaToKotlinClassMap.INSTANCE.isMutable(lowerClass)
         // (Mutable)Collection<T>! -> MutableCollection<T>?
@@ -46,13 +44,13 @@ fun approximateFlexibleTypes(jetType: KotlinType, outermost: Boolean = true): Ko
         // Foo<Bar!>! -> Foo<Bar>?
         var approximation =
                 if (isCollection)
-                    TypeUtils.makeNullableAsSpecified(if (jetType.isAnnotatedReadOnly()) flexible.upperBound else flexible.lowerBound, outermost)
+                    TypeUtils.makeNullableAsSpecified(if (isAnnotatedReadOnly()) flexible.upperBound else flexible.lowerBound, !preferNotNull)
                 else
-                    if (outermost) flexible.upperBound else flexible.lowerBound
+                    if (preferNotNull) flexible.lowerBound else flexible.upperBound
 
-        approximation = approximateFlexibleTypes(approximation)
+        approximation = approximation.approximateFlexibleTypes()
 
-        approximation = if (jetType.isAnnotatedNotNull()) approximation.makeNotNullable() else approximation
+        approximation = if (isAnnotatedNotNull()) approximation.makeNotNullable() else approximation
 
         if (approximation.isMarkedNullable && !flexible.lowerBound.isMarkedNullable && TypeUtils.isTypeParameter(approximation) && TypeUtils.hasNullableSuperType(approximation)) {
             approximation = approximation.makeNotNullable()
@@ -61,10 +59,10 @@ fun approximateFlexibleTypes(jetType: KotlinType, outermost: Boolean = true): Ko
         return approximation
     }
     return KotlinTypeImpl.create(
-            jetType.annotations,
-            jetType.constructor,
-            jetType.isMarkedNullable,
-            jetType.arguments.map { it.substitute { type -> approximateFlexibleTypes(type, false)} },
+            annotations,
+            constructor,
+            isMarkedNullable,
+            arguments.map { it.substitute { type -> type.approximateFlexibleTypes(preferNotNull = true) } },
             ErrorUtils.createErrorScope("This type is not supposed to be used in member resolution", true)
     )
 }

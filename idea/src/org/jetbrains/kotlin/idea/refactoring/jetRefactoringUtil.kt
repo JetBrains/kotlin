@@ -748,7 +748,7 @@ fun getQualifiedTypeArgumentList(initializer: KtExpression): KtTypeArgumentList?
     val typeArgumentMap = call.typeArguments
     val typeArguments = call.candidateDescriptor.typeParameters.mapNotNull { typeArgumentMap[it] }
     val renderedList = typeArguments.joinToString(prefix = "<", postfix = ">") {
-        IdeDescriptorRenderers.SOURCE_CODE_FOR_TYPE_ARGUMENTS.renderType(it)
+        IdeDescriptorRenderers.SOURCE_CODE_NOT_NULL_TYPE_APPROXIMATION.renderType(it)
     }
     return KtPsiFactory(initializer).createTypeArguments(renderedList)
 }
