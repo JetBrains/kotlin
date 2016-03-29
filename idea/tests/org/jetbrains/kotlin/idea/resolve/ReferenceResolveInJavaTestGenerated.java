@@ -61,6 +61,12 @@ public class ReferenceResolveInJavaTestGenerated extends AbstractReferenceResolv
             doTest(fileName);
         }
 
+        @TestMetadata("Field.java")
+        public void testField() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/referenceInJava/binaryAndSource/Field.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("FileFacade.java")
         public void testFileFacade() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/referenceInJava/binaryAndSource/FileFacade.java");
@@ -76,6 +82,18 @@ public class ReferenceResolveInJavaTestGenerated extends AbstractReferenceResolv
         @TestMetadata("Method.java")
         public void testMethod() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/referenceInJava/binaryAndSource/Method.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("MethodOfDeeplyNested.java")
+        public void testMethodOfDeeplyNested() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/referenceInJava/binaryAndSource/MethodOfDeeplyNested.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("MethodWithParameters.java")
+        public void testMethodWithParameters() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/referenceInJava/binaryAndSource/MethodWithParameters.java");
             doTest(fileName);
         }
 
