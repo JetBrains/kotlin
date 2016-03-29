@@ -16,14 +16,14 @@
 package org.jetbrains.uast.java
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.uast.NoTraverse
+import org.jetbrains.uast.LeafUElement
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.psi.PsiElementBacked
 
 class JavaDumbUElement(
         override val psi: PsiElement?,
         override val parent: UElement
-) : JavaAbstractUElement(), UElement, PsiElementBacked, NoTraverse {
+) : JavaAbstractUElement(), UElement, PsiElementBacked, LeafUElement {
     override fun logString() = "JavaPsiElementStub"
     override fun renderString() = "<stub@$psi>"
 }

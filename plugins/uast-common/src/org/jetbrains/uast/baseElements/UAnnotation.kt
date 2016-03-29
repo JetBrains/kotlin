@@ -15,7 +15,7 @@
  */
 package org.jetbrains.uast
 
-interface UAnnotation : UElement, UNamed, UFqNamed, NoTraverse {
+interface UAnnotation : UElement, UNamed, UFqNamed, LeafUElement {
     fun resolve(context: UastContext): UClass?
 
     val valueArguments: List<UNamedExpression>

@@ -15,7 +15,7 @@
  */
 package org.jetbrains.uast
 
-interface USimpleReferenceExpression : UExpression, UResolvable, NoTraverse {
+interface USimpleReferenceExpression : UExpression, UResolvable, LeafUElement {
     val identifier: String
 
     override fun logString() = "USimpleReferenceExpression ($identifier)"

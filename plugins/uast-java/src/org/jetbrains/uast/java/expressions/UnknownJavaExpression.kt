@@ -22,6 +22,6 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class UnknownJavaExpression(
         override val psi: PsiElement,
         override val parent: UElement
-) : UExpression, PsiElementBacked, NoEvaluate, NoTraverse {
+) : UExpression, PsiElementBacked, NoEvaluate, LeafUElement {
     override fun logString() = "[!] UnknownJavaExpression ($psi)"
 }

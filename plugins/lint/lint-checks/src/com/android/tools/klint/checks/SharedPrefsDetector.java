@@ -125,7 +125,11 @@ public class SharedPrefsDetector extends Detector implements UastScanner {
         } else {
             if (!verifiedType) {
                 UType type = definition.getType();
-                String possiblefqName = type.resolveOrEmpty(context).getFqNameOrName();
+                UClass clazz = type.resolveOrEmpty(context);
+                String possiblefqName = clazz.getFqName();
+                if (possiblefqName == null) {
+                    possiblefqName = clazz.getName();
+                }
                 if (possiblefqName.endsWith("SharedPreferences.Editor")) { //$NON-NLS-1$
                     if (!type.matchesFqName("Editor") ||                  //$NON-NLS-1$
                         !LintUtils.isImported(context.getLintContext().getCompilationUnit(),
