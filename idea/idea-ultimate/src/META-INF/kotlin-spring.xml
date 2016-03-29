@@ -2,8 +2,6 @@
   <extensions defaultExtensionNs="com.intellij">
       <psi.referenceContributor language="kotlin" implementation="org.jetbrains.kotlin.idea.spring.references.KotlinSpringReferenceContributor"/>
 
-      <multiHostInjector implementation="org.jetbrains.kotlin.idea.spring.el.KotlinSpringELInjector"/>
-
       <codeInsight.lineMarkerProvider language="kotlin" implementationClass="org.jetbrains.kotlin.idea.spring.lineMarking.KotlinSpringClassAnnotator"/>
 
       <localInspection implementationClass="org.jetbrains.kotlin.idea.spring.inspections.KotlinFinalClassOrFunSpringInspection"
