@@ -10,10 +10,10 @@ open class Base {
 
 fun main(args: Array<String>) {
     val myClass: Base = MyClass()
+    val myBase = Base()
     //Breakpoint!
     val a = 1
 }
 
 // PRINT_FRAME
 // DESCRIPTOR_VIEW_OPTIONS: NAME_AND_EXPRESSION
-
