@@ -238,7 +238,14 @@ object KotlinToJVMBytecodeCompiler {
         val scriptConstructor = getScriptConstructor(scriptClass)
 
         try {
-            scriptConstructor.newInstance(*arrayOf<Any>(scriptArgs.toTypedArray()))
+            try {
+                scriptConstructor.newInstance(*arrayOf<Any>(scriptArgs.toTypedArray()))
+            }
+            finally {
+                // NB: these lines are required (see KT-9546) but aren't covered by tests
+                System.out.flush()
+                System.err.flush()
+            }
         }
         catch (e: Throwable) {
             reportExceptionFromScript(e)
