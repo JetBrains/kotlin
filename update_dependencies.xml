@@ -14,6 +14,11 @@
 
     <property name="bootstrap.build.no.tests" value="false"/>
 
+    <!--<property name="use.ultimate.by.default" value="true"/>-->
+
+    <property name="sdk.version.prefix" value="IU" if:set="use.ultimate.by.default"/>
+    <property name="sdk.version.prefix" value="IC" unless:set="use.ultimate.by.default"/>
+
     <!-- Uncomment to enable force version increment in branch. Set override.version.disabled to temporary disable feature without commits -->
     <!--
     <property name="override.version.url" value="https://teamcity.jetbrains.com/guestAuth/app/rest/builds/?locator=buildType:bt345,count:1${kotlin.bootstrap.branch.locator}"/>
@@ -130,7 +135,7 @@
             <move file="dependencies/apache-ant-@{version}" tofile="dependencies/@{folderName}"/>
         </sequential>
     </macrodef>
-   
+
     <target name="make-native-platform-uberjar">
         <property name="dependencies" value="dependencies"/>
         <property name="download" value="${dependencies}/download"/>
@@ -138,7 +143,7 @@
         <property name="version" value="${native-platform-lib-version}"/>
         <property name="common.name" value="native-platform"/>
         <property name="common.prefix" value="${server}/net/rubygrapefruit/${common.name}"/>
-        
+
         <macrodef name="get-lib">
             <attribute name="suffix"/>
             <sequential>
@@ -148,7 +153,7 @@
 
         <mkdir dir="${dependencies}"/>
         <mkdir dir="${download}"/>
-        
+
         <get-lib suffix=""/>
         <get-lib suffix="-windows-amd64"/>
         <get-lib suffix="-windows-i386"/>
@@ -170,9 +175,9 @@
             <zipfileset src="${download}/${common.name}-freebsd-amd64.jar" includes="**" />
             <zipfileset src="${download}/${common.name}-freebsd-i386.jar" includes="**" />
         </jar>
-        
+
     </target>
-    
+
     <target name="fetch-third-party" depends="make-native-platform-uberjar">
         <mkdir dir="dependencies"/>
         <mkdir dir="dependencies/download"/>
@@ -485,15 +490,30 @@
             <get src="@{base.url}/BUILD/@{idea.maven.version}/BUILD-@{idea.maven.version}.txt" dest="dependencies/version.txt"/>
             <loadfile property="execute.build.id" srcFile="dependencies/version.txt"/>
 
+            <condition property="idea.sdk.exists">
+                <available file="${idea.dir}/build.txt"/>
+            </condition>
+
+            <loadfile property="idea.sdk.version" srcFile="${idea.dir}/build.txt" if:set="idea.sdk.exists"/>
+
+            <condition property="edition.matched">
+                <equals arg1="${idea.sdk.version}" arg2="${sdk.version.prefix}-${execute.build.id}"/>
+            </condition>
+
             <local name="idea.already.downloaded"/>
             <condition property="idea.already.downloaded">
-                <equals arg1="${dependencies.info.prev.idea.build.id}" arg2="${execute.build.id}"/>
+                <and>
+                    <equals arg1="${dependencies.info.prev.idea.build.id}" arg2="${execute.build.id}"/>
+                    <istrue value="${edition.matched}"/>
+                </and>
             </condition>
 
             <echo message="IDEA build id: ${execute.build.id}. Already downloaded." if:set="idea.already.downloaded"/>
 
             <sequential unless:set="idea.already.downloaded">
                 <echo message="IDEA build id: ${execute.build.id}, previous build id: ${dependencies.info.prev.idea.build.id}"/>
+
+                <delete dir="${idea.dir}" unless:set="edition.matched"/>
                 <download_and_update_idea idea.maven.version="@{idea.maven.version}" base.repository.url="@{base.url}"/>
 
                 <propertyfile file="${dependencies.info.file}">
@@ -727,11 +747,13 @@
             <delete dir="@{download.dir}"/>
             <mkdir dir="@{download.dir}"/>
 
+            <property name="idea.id" value="idea${sdk.version.prefix}"/>
+
             <get src="@{base.repository.url}/ideaIC/@{idea.maven.version}/ideaIC-@{idea.maven.version}-sources.jar"
                  dest="@{download.dir}/ideaIC-@{idea.maven.version}-sources.jar" usetimestamp="true"/>
 
-            <get src="@{base.repository.url}/ideaIC/@{idea.maven.version}/ideaIC-@{idea.maven.version}.zip"
-                 dest="@{download.dir}/ideaIC-@{idea.maven.version}.zip" usetimestamp="true"/>
+            <get src="@{base.repository.url}/${idea.id}/@{idea.maven.version}/${idea.id}-@{idea.maven.version}.zip"
+                 dest="@{download.dir}/${idea.id}-@{idea.maven.version}.zip" usetimestamp="true"/>
 
             <download_and_unzip
                 dir="@{download.dir}/intellij-core-@{idea.maven.version}"
@@ -752,7 +774,7 @@
 
                 download.dir.intellij-core="@{download.dir}/intellij-core-@{idea.maven.version}"
                 download.dir.jps-standalone="@{download.dir}/jps-standalone-@{idea.maven.version}"
-                download.file.archive.idea="@{download.dir}/ideaIC-@{idea.maven.version}.zip"
+                download.file.archive.idea="@{download.dir}/${idea.id}-@{idea.maven.version}.zip"
                 download.file.archive.sources="@{download.dir}/ideaIC-@{idea.maven.version}-sources.jar"
                 download.file.archive.jps-build-test="@{download.dir}/jps-build-test-@{idea.maven.version}.jar"/>
         </sequential>
