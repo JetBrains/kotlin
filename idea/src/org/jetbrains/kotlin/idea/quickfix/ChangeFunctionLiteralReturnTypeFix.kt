@@ -14,147 +14,125 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.quickfix;
+package org.jetbrains.kotlin.idea.quickfix
 
-import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.analyzer.AnalysisResult;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.descriptors.CallableDescriptor;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.idea.KotlinBundle;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
-import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
-import org.jetbrains.kotlin.idea.util.ShortenReferences;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.TypeProjection;
-import org.jetbrains.kotlin.types.TypeUtils;
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
+import com.intellij.codeInsight.intention.IntentionAction
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiFile
+import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
+import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
+import org.jetbrains.kotlin.idea.project.platform
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.ShortenReferences
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getParentResolvedCall
+import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentForExpression
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import java.util.*
 
-import java.util.LinkedList;
-import java.util.List;
+class ChangeFunctionLiteralReturnTypeFix(functionLiteralExpression: KtLambdaExpression, private val type: KotlinType) : KotlinQuickFixAction<KtLambdaExpression>(functionLiteralExpression) {
+    private val functionLiteralReturnTypeRef: KtTypeReference?
+    private var appropriateQuickFix: IntentionAction? = null
 
-import static org.jetbrains.kotlin.idea.project.PlatformKt.getPlatform;
+    init {
+        functionLiteralReturnTypeRef = functionLiteralExpression.functionLiteral.typeReference
 
-public class ChangeFunctionLiteralReturnTypeFix extends KotlinQuickFixAction<KtLambdaExpression> {
-    private final KotlinType type;
-    private final KtTypeReference functionLiteralReturnTypeRef;
-    private IntentionAction appropriateQuickFix = null;
+        doInit(functionLiteralExpression)
+    }
 
-    public ChangeFunctionLiteralReturnTypeFix(@NotNull KtLambdaExpression functionLiteralExpression, @NotNull KotlinType type) {
-        super(functionLiteralExpression);
-        this.type = type;
-        functionLiteralReturnTypeRef = functionLiteralExpression.getFunctionLiteral().getTypeReference();
+    private fun doInit(functionLiteralExpression: KtLambdaExpression) {
+        val analysisResult = functionLiteralExpression.getContainingKtFile().analyzeFullyAndGetResult()
+        val context = analysisResult.bindingContext
+        val functionLiteralType = context.getType(functionLiteralExpression) ?: error("Type of function literal not available in binding context")
 
-        AnalysisResult analysisResult = ResolutionUtils.analyzeFullyAndGetResult(functionLiteralExpression.getContainingKtFile());
-        BindingContext context = analysisResult.getBindingContext();
-        KotlinType functionLiteralType = context.getType(functionLiteralExpression);
-        assert functionLiteralType != null : "Type of function literal not available in binding context";
-
-        KotlinBuiltIns builtIns = analysisResult.getModuleDescriptor().getBuiltIns();
-        ClassDescriptor functionClass = builtIns.getFunction(functionLiteralType.getArguments().size() - 1);
-        List<KotlinType> functionClassTypeParameters = new LinkedList<KotlinType>();
-        for (TypeProjection typeProjection: functionLiteralType.getArguments()) {
-            functionClassTypeParameters.add(typeProjection.getType());
+        val builtIns = analysisResult.moduleDescriptor.builtIns
+        val functionClass = builtIns.getFunction(functionLiteralType.arguments.size - 1)
+        val functionClassTypeParameters = LinkedList<KotlinType>()
+        for (typeProjection in functionLiteralType.arguments) {
+            functionClassTypeParameters.add(typeProjection.type)
         }
         // Replacing return type:
-        functionClassTypeParameters.remove(functionClassTypeParameters.size() - 1);
-        functionClassTypeParameters.add(type);
-        KotlinType eventualFunctionLiteralType = TypeUtils.substituteParameters(functionClass, functionClassTypeParameters);
+        functionClassTypeParameters.removeAt(functionClassTypeParameters.size - 1)
+        functionClassTypeParameters.add(type)
+        val eventualFunctionLiteralType = TypeUtils.substituteParameters(functionClass, functionClassTypeParameters)
 
-        KtProperty correspondingProperty = PsiTreeUtil.getParentOfType(functionLiteralExpression, KtProperty.class);
-        if (correspondingProperty != null && QuickFixUtil.canEvaluateTo(correspondingProperty.getInitializer(), functionLiteralExpression)) {
-            KtTypeReference correspondingPropertyTypeRef = correspondingProperty.getTypeReference();
-            KotlinType propertyType = context.get(BindingContext.TYPE, correspondingPropertyTypeRef);
+        val correspondingProperty = PsiTreeUtil.getParentOfType(functionLiteralExpression, KtProperty::class.java)
+        if (correspondingProperty != null && QuickFixUtil.canEvaluateTo(correspondingProperty.initializer!!, functionLiteralExpression)) {
+            val correspondingPropertyTypeRef = correspondingProperty.typeReference
+            val propertyType = context.get(BindingContext.TYPE, correspondingPropertyTypeRef)
             if (propertyType != null && !KotlinTypeChecker.DEFAULT.isSubtypeOf(eventualFunctionLiteralType, propertyType)) {
-                appropriateQuickFix = new ChangeVariableTypeFix(correspondingProperty, eventualFunctionLiteralType);
+                appropriateQuickFix = ChangeVariableTypeFix(correspondingProperty, eventualFunctionLiteralType)
             }
-            return;
+            return
         }
 
-        ResolvedCall<? extends CallableDescriptor> resolvedCall = CallUtilKt.getParentResolvedCall(
-                functionLiteralExpression, context, true);
+        val resolvedCall = functionLiteralExpression.getParentResolvedCall(context, true)
         if (resolvedCall != null) {
-            ValueArgument valueArgument = CallUtilKt.getValueArgumentForExpression(resolvedCall.getCall(), functionLiteralExpression);
-            KtParameter correspondingParameter = QuickFixUtil.getParameterDeclarationForValueArgument(resolvedCall, valueArgument);
+            val valueArgument = resolvedCall.call.getValueArgumentForExpression(functionLiteralExpression)
+            val correspondingParameter = QuickFixUtil.getParameterDeclarationForValueArgument(resolvedCall, valueArgument)
             if (correspondingParameter != null) {
-                KtTypeReference correspondingParameterTypeRef = correspondingParameter.getTypeReference();
-                KotlinType parameterType = context.get(BindingContext.TYPE, correspondingParameterTypeRef);
+                val correspondingParameterTypeRef = correspondingParameter.typeReference
+                val parameterType = context.get(BindingContext.TYPE, correspondingParameterTypeRef)
                 if (parameterType != null && !KotlinTypeChecker.DEFAULT.isSubtypeOf(eventualFunctionLiteralType, parameterType)) {
-                    appropriateQuickFix = new ChangeParameterTypeFix(correspondingParameter, eventualFunctionLiteralType);
+                    appropriateQuickFix = ChangeParameterTypeFix(correspondingParameter, eventualFunctionLiteralType)
                 }
-                return;
+                return
             }
         }
 
 
-        KtFunction parentFunction = PsiTreeUtil.getParentOfType(functionLiteralExpression, KtFunction.class, true);
+        val parentFunction = PsiTreeUtil.getParentOfType(functionLiteralExpression, KtFunction::class.java, true)
         if (parentFunction != null && QuickFixUtil.canFunctionOrGetterReturnExpression(parentFunction, functionLiteralExpression)) {
-            KtTypeReference parentFunctionReturnTypeRef = parentFunction.getTypeReference();
-            KotlinType parentFunctionReturnType = context.get(BindingContext.TYPE, parentFunctionReturnTypeRef);
+            val parentFunctionReturnTypeRef = parentFunction.typeReference
+            val parentFunctionReturnType = context.get(BindingContext.TYPE, parentFunctionReturnTypeRef)
             if (parentFunctionReturnType != null && !KotlinTypeChecker.DEFAULT.isSubtypeOf(eventualFunctionLiteralType, parentFunctionReturnType)) {
-                appropriateQuickFix = new ChangeFunctionReturnTypeFix(parentFunction, eventualFunctionLiteralType);
+                appropriateQuickFix = ChangeFunctionReturnTypeFix(parentFunction, eventualFunctionLiteralType)
             }
         }
     }
 
-    @NotNull
-    @Override
-    public String getText() {
+    override fun getText(): String {
         if (appropriateQuickFix != null) {
-            return appropriateQuickFix.getText();
+            return appropriateQuickFix!!.text
         }
         return String.format("Change lambda expression return type to '%s'",
-                             IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type));
+                             IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type))
     }
 
-    @NotNull
-    @Override
-    public String getFamilyName() {
-        return KotlinBundle.message("change.type.family");
+    override fun getFamilyName(): String {
+        return KotlinBundle.message("change.type.family")
     }
 
-    @Override
-    public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiFile file) {
-        return super.isAvailable(project, editor, file) &&
-            (functionLiteralReturnTypeRef != null || (appropriateQuickFix != null && appropriateQuickFix.isAvailable(project, editor, file)));
+    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+        return super.isAvailable(project, editor, file) && (functionLiteralReturnTypeRef != null || appropriateQuickFix != null && appropriateQuickFix!!.isAvailable(project, editor!!, file))
     }
 
-    @Override
-    public void invoke(@NotNull Project project, Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
+    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         if (functionLiteralReturnTypeRef != null) {
-            KtTypeReference newTypeRef = KtPsiFactoryKt.KtPsiFactory(file).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type));
-            newTypeRef = (KtTypeReference) functionLiteralReturnTypeRef.replace(newTypeRef);
-            ShortenReferences.DEFAULT.process(newTypeRef);
+            var newTypeRef = KtPsiFactory(file).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type))
+            newTypeRef = functionLiteralReturnTypeRef.replace(newTypeRef) as KtTypeReference
+            ShortenReferences.DEFAULT.process(newTypeRef)
         }
-        if (appropriateQuickFix != null && appropriateQuickFix.isAvailable(project, editor, file)) {
-            appropriateQuickFix.invoke(project, editor, file);
+        if (appropriateQuickFix != null && appropriateQuickFix!!.isAvailable(project, editor!!, file)) {
+            appropriateQuickFix!!.invoke(project, editor, file)
         }
     }
 
-    @NotNull
-    public static KotlinSingleIntentionActionFactory createFactoryForExpectedOrAssignmentTypeMismatch() {
-        return new KotlinSingleIntentionActionFactory() {
-            @Nullable
-            @Override
-            public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
-                KtLambdaExpression
-                        functionLiteralExpression = QuickFixUtil.getParentElementOfType(diagnostic, KtLambdaExpression.class);
-                if (functionLiteralExpression == null) return null;
-                return new ChangeFunctionLiteralReturnTypeFix(functionLiteralExpression, getPlatform(functionLiteralExpression).getBuiltIns().getUnitType());
+    companion object {
+        fun createFactoryForExpectedOrAssignmentTypeMismatch(): KotlinSingleIntentionActionFactory {
+            return object : KotlinSingleIntentionActionFactory() {
+                public override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+                    val functionLiteralExpression = QuickFixUtil.getParentElementOfType(diagnostic, KtLambdaExpression::class.java) ?: return null
+                    return ChangeFunctionLiteralReturnTypeFix(functionLiteralExpression, functionLiteralExpression.platform.builtIns.getUnitType())
+                }
             }
-        };
+        }
     }
 }
