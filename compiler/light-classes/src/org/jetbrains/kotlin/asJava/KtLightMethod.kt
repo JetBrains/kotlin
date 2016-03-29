@@ -28,15 +28,16 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 
 interface KtLightMethod : PsiMethod, KtLightDeclaration<KtDeclaration, PsiMethod> {
+    val lightMethodOrigin: LightMemberOrigin?
     val isDelegated: Boolean
 }
 
 sealed class KtLightMethodImpl(
         override val clsDelegate: PsiMethod,
-        private val lightMethodOrigin: LightMemberOrigin?,
+        override val lightMethodOrigin: LightMemberOrigin?,
         containingClass: KtLightClass
 ) : LightMethod(clsDelegate.manager, clsDelegate, containingClass), KtLightMethod {
-    override val kotlinOrigin: KtDeclaration? = lightMethodOrigin?.originalElement as? KtDeclaration
+    override val kotlinOrigin: KtDeclaration? get() = lightMethodOrigin?.originalElement as? KtDeclaration
 
     private val lightIdentifier by lazy { KtLightIdentifier(this, kotlinOrigin as? KtNamedDeclaration) }
 
@@ -58,22 +59,23 @@ sealed class KtLightMethodImpl(
     private val typeParamsList: CachedValue<PsiTypeParameterList> by lazy {
         val cacheManager = CachedValuesManager.getManager(clsDelegate.project)
         cacheManager.createCachedValue<PsiTypeParameterList>({
-            val origin = kotlinOrigin
-            val list = if (origin is KtClassOrObject) {
-                KotlinLightTypeParameterListBuilder(manager)
-            }
-            else if (origin == null) {
-                clsDelegate.typeParameterList
-            }
-            else {
-                LightClassUtil.buildLightTypeParameterList(this@KtLightMethodImpl, origin)
-            }
-            CachedValueProvider.Result.create(list, PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT)
-        }, false)
+             val origin = (lightMethodOrigin as? LightMemberOriginForDeclaration)?.originalElement
+             val list = if (origin != null) {
+                 if (origin is KtClassOrObject) {
+                     KotlinLightTypeParameterListBuilder(manager)
+                 }
+                 else {
+                     LightClassUtil.buildLightTypeParameterList(this@KtLightMethodImpl, origin)
+                 }
+             }
+             else {
+                 clsDelegate.typeParameterList
+             }
+             CachedValueProvider.Result.create(list, PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT)
+         }, false)
     }
 
     override fun getNavigationElement(): PsiElement = kotlinOrigin?.navigationElement ?: super.getNavigationElement()
-    override fun getOriginalElement(): PsiElement = kotlinOrigin ?: super.getOriginalElement()
     override fun getParent(): PsiElement? = containingClass
     override fun getText() = kotlinOrigin?.text ?: ""
     override fun getTextRange() = kotlinOrigin?.textRange ?: TextRange.EMPTY_RANGE
@@ -152,11 +154,11 @@ sealed class KtLightMethodImpl(
     override fun equals(other: Any?): Boolean =
             other is KtLightMethod &&
             name == other.name &&
-            kotlinOrigin == other.kotlinOrigin &&
+            lightMethodOrigin == other.lightMethodOrigin &&
             containingClass == other.containingClass &&
             clsDelegate == other.clsDelegate
 
-    override fun hashCode(): Int = ((name.hashCode() * 31 + (kotlinOrigin?.hashCode() ?: 0)) * 31 + containingClass.hashCode()) * 31 + clsDelegate.hashCode()
+    override fun hashCode(): Int = ((name.hashCode() * 31 + (lightMethodOrigin?.hashCode() ?: 0)) * 31 + containingClass.hashCode()) * 31 + clsDelegate.hashCode()
 
     override fun toString(): String = "${this.javaClass.simpleName}:$name"
 

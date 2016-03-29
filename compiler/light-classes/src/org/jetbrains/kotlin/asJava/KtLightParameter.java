@@ -106,6 +106,11 @@ public class KtLightParameter extends LightParameter implements KtLightDeclarati
     }
 
     @Override
+    public boolean isValid() {
+        return method.isValid();
+    }
+
+    @Override
     public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
         KtParameter origin = getKotlinOrigin();
         if (origin != null) {
@@ -116,8 +121,7 @@ public class KtLightParameter extends LightParameter implements KtLightDeclarati
 
     @Override
     public PsiFile getContainingFile() {
-        KtDeclaration declaration = method.getKotlinOrigin();
-        return declaration != null ? declaration.getContainingFile() : super.getContainingFile();
+        return method.getContainingFile();
     }
 
     @NotNull
