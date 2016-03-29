@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,7 +62,7 @@ object LightClassUtil {
         val outerPsiClass = getWrappingClass(companionObject)
         if (outerPsiClass != null) {
             for (fieldOfParent in outerPsiClass.fields) {
-                if ((fieldOfParent is KtLightElement<*, *>) && fieldOfParent.getOrigin() === companionObject) {
+                if ((fieldOfParent is KtLightElement<*, *>) && fieldOfParent.kotlinOrigin === companionObject) {
                     return fieldOfParent
                 }
             }
@@ -84,7 +84,7 @@ object LightClassUtil {
         var psiClass: PsiClass = getWrappingClass(declaration) ?: return null
 
         if (psiClass is KtLightClass) {
-            val origin = psiClass.getOrigin()
+            val origin = psiClass.kotlinOrigin
             if (origin is KtObjectDeclaration && origin.isCompanion()) {
                 val containingClass = PsiTreeUtil.getParentOfType(origin, KtClass::class.java)
                 if (containingClass != null) {
@@ -97,7 +97,7 @@ object LightClassUtil {
         }
 
         for (field in psiClass.fields) {
-            if (field is KtLightField && field.getOrigin() === declaration) {
+            if (field is KtLightField && field.kotlinOrigin === declaration) {
                 return field
             }
         }
@@ -126,7 +126,7 @@ object LightClassUtil {
         val methods = SmartList<PsiMethod>()
         for (method in psiClass.methods.asList()) {
             try {
-                if (method is KtLightMethod && method.getOrigin() === declaration) {
+                if (method is KtLightMethod && method.kotlinOrigin === declaration) {
                     methods.add(method)
                     if (!collectAll) {
                         return methods

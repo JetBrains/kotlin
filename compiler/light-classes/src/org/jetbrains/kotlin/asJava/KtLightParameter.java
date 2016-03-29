@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ public class KtLightParameter extends LightParameter implements KtLightDeclarati
     private final PsiParameter delegate;
     private final int index;
     private final KtLightMethod method;
-    private final KtLightIdentifier lightIdentifier;
+    private KtLightIdentifier lightIdentifier = null;
 
     public KtLightParameter(final PsiParameter delegate, int index, KtLightMethod method) {
         super(getName(delegate, index), delegate.getType(), method, KotlinLanguage.INSTANCE);
@@ -56,8 +56,6 @@ public class KtLightParameter extends LightParameter implements KtLightDeclarati
                 return delegate.getModifierList();
             }
         };
-
-        lightIdentifier = new KtLightIdentifier(this, getOrigin());
     }
 
     @NotNull
@@ -68,14 +66,14 @@ public class KtLightParameter extends LightParameter implements KtLightDeclarati
 
     @NotNull
     @Override
-    public PsiParameter getDelegate() {
+    public PsiParameter getClsDelegate() {
         return delegate;
     }
 
     @Nullable
     @Override
-    public KtParameter getOrigin() {
-        KtDeclaration declaration = method.getOrigin();
+    public KtParameter getKotlinOrigin() {
+        KtDeclaration declaration = method.getKotlinOrigin();
         if (declaration == null) return null;
 
         int jetIndex = KtPsiUtilKt.isExtensionDeclaration(declaration) ? index - 1 : index;
@@ -103,13 +101,13 @@ public class KtLightParameter extends LightParameter implements KtLightDeclarati
     @NotNull
     @Override
     public PsiElement getNavigationElement() {
-        KtParameter origin = getOrigin();
+        KtParameter origin = getKotlinOrigin();
         return origin != null ? origin : super.getNavigationElement();
     }
 
     @Override
     public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
-        KtParameter origin = getOrigin();
+        KtParameter origin = getKotlinOrigin();
         if (origin != null) {
             origin.setName(name);
         }
@@ -118,7 +116,7 @@ public class KtLightParameter extends LightParameter implements KtLightDeclarati
 
     @Override
     public PsiFile getContainingFile() {
-        KtDeclaration declaration = method.getOrigin();
+        KtDeclaration declaration = method.getKotlinOrigin();
         return declaration != null ? declaration.getContainingFile() : super.getContainingFile();
     }
 
@@ -131,7 +129,7 @@ public class KtLightParameter extends LightParameter implements KtLightDeclarati
     @NotNull
     @Override
     public SearchScope getUseScope() {
-        KtParameter origin = getOrigin();
+        KtParameter origin = getKotlinOrigin();
         return origin != null ? origin.getUseScope() : GlobalSearchScope.EMPTY_SCOPE;
     }
 
@@ -146,6 +144,9 @@ public class KtLightParameter extends LightParameter implements KtLightDeclarati
 
     @Override
     public PsiIdentifier getNameIdentifier() {
+        if (lightIdentifier == null) {
+            lightIdentifier = new KtLightIdentifier(this, getKotlinOrigin());
+        }
         return lightIdentifier;
     }
 }

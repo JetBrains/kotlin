@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -128,4 +128,4 @@ fun PsiMember.isImported(file: PsiJavaFile): Boolean {
 fun PsiExpression.isNullLiteral() = this is PsiLiteralExpression && type == PsiType.NULL
 
 // TODO: set origin for facade classes in library
-fun isFacadeClassFromLibrary(element: PsiElement?) = element is KtLightClass && element.getOrigin() == null
+fun isFacadeClassFromLibrary(element: PsiElement?) = element is KtLightClass && element.kotlinOrigin == null

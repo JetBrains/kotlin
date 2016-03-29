@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -87,7 +87,7 @@ fun PsiClass.resolveToDescriptor(
         declarationTranslator: (KtClassOrObject) -> KtClassOrObject? = { it }
 ): ClassDescriptor? {
     return if (this is KtLightClass && this !is KtLightClassForDecompiledDeclaration) {
-        val origin = this.getOrigin() ?: return null
+        val origin = this.kotlinOrigin ?: return null
         val declaration = declarationTranslator(origin) ?: return null
         resolutionFacade.resolveToDescriptor(declaration)
     }

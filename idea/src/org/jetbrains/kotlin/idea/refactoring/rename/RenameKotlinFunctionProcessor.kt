@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
     private val javaMethodProcessorInstance = RenameJavaMethodProcessor()
 
     override fun canProcessElement(element: PsiElement): Boolean {
-        return element is KtNamedFunction || (element is KtLightMethod && element.getOrigin() is KtNamedFunction)
+        return element is KtNamedFunction || (element is KtLightMethod && element.kotlinOrigin is KtNamedFunction)
     }
 
     override fun substituteElementToRename(element: PsiElement?, editor: Editor?): PsiElement?  {
@@ -47,7 +47,7 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
         val substitutedJavaElement = javaMethodProcessorInstance.substituteElementToRename(wrappedMethod, editor)
 
         return when (substitutedJavaElement) {
-            is KtLightMethod -> substitutedJavaElement.getOrigin() as? KtNamedFunction
+            is KtLightMethod -> substitutedJavaElement.kotlinOrigin as? KtNamedFunction
             else -> substitutedJavaElement
         }
     }

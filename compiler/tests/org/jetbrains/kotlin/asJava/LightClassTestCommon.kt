@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@ object LightClassTestCommon {
         }
         TestCase.assertTrue("Not a light class: $lightClass ($fqName)", lightClass is KtLightClass)
 
-        val delegate = (lightClass as KtLightClass).getDelegate()
+        val delegate = (lightClass as KtLightClass).clsDelegate
         TestCase.assertTrue("Not a CLS element: $delegate", delegate is ClsElementImpl)
 
         val buffer = StringBuilder()

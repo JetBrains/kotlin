@@ -24,20 +24,17 @@ import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 
 class KtLightAnnotation(
-        private val delegate: PsiAnnotation,
-        private val originalElement: KtAnnotationEntry,
+        override val clsDelegate: PsiAnnotation,
+        override val kotlinOrigin: KtAnnotationEntry,
         private val owner: PsiAnnotationOwner
-) : PsiAnnotation by delegate, KtLightElement<KtAnnotationEntry, PsiAnnotation> {
-    override fun getDelegate() = delegate
-    override fun getOrigin() = originalElement
-
+) : PsiAnnotation by clsDelegate, KtLightElement<KtAnnotationEntry, PsiAnnotation> {
     override fun getName() = null
     override fun setName(newName: String) = throw IncorrectOperationException()
 
     override fun getOwner() = owner
 
-    override fun getText() = originalElement.text ?: ""
-    override fun getTextRange() = originalElement.textRange ?: TextRange.EMPTY_RANGE
+    override fun getText() = kotlinOrigin.text ?: ""
+    override fun getTextRange() = kotlinOrigin.textRange ?: TextRange.EMPTY_RANGE
 
     override fun getParent() = owner as? PsiElement
 
@@ -46,8 +43,8 @@ class KtLightAnnotation(
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other?.javaClass != javaClass) return false
-        return originalElement == (other as KtLightAnnotation).originalElement
+        return kotlinOrigin == (other as KtLightAnnotation).kotlinOrigin
     }
 
-    override fun hashCode() = originalElement.hashCode()
+    override fun hashCode() = kotlinOrigin.hashCode()
 }

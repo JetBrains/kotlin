@@ -69,7 +69,7 @@ internal fun computeAnnotations(lightElement: PsiModifierList,
     val cacheManager = CachedValuesManager.getManager(lightElement.project)
     return cacheManager.createCachedValue<Array<out PsiAnnotation>>(
             {
-                val declaration = (lightElement.parent as? KtLightElement<*, *>)?.getOrigin() as? KtDeclaration
+                val declaration = (lightElement.parent as? KtLightElement<*, *>)?.kotlinOrigin as? KtDeclaration
                 val descriptor = declaration?.let { LightClassGenerationSupport.getInstance(lightElement.project).resolveToDescriptor(it) }
                 val ktAnnotations = descriptor?.annotations?.getAllAnnotations() ?: emptyList()
                 var nextIndex = 0

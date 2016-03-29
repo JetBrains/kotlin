@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,6 @@ import com.intellij.util.containers.ContainerUtil;
 import kotlin.collections.ArraysKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.psi.KtClassOrObject;
 import org.jetbrains.kotlin.psi.KtDeclaration;
@@ -47,13 +46,11 @@ public abstract class KtWrappingLightClass extends AbstractLightClass implements
         super(manager, KotlinLanguage.INSTANCE);
     }
 
-    @Nullable
-    @Override
-    public abstract KtClassOrObject getOrigin();
-
     @NotNull
     @Override
-    public abstract PsiClass getDelegate();
+    public PsiClass getDelegate() {
+        return getClsDelegate();
+    }
 
     @Override
     @NotNull
@@ -123,9 +120,7 @@ public abstract class KtWrappingLightClass extends AbstractLightClass implements
             @Override
             public PsiField fun(PsiField field) {
                 LightMemberOrigin origin = ClsWrapperStubPsiFactory.getMemberOrigin(field);
-                return KtLightFieldImpl.Factory.create(origin != null ? origin.getOriginalElement() : null,
-                                                       field,
-                                                       KtWrappingLightClass.this);
+                return KtLightFieldImpl.Factory.create(origin, field, KtWrappingLightClass.this);
             }
         });
     }
@@ -161,7 +156,7 @@ public abstract class KtWrappingLightClass extends AbstractLightClass implements
 
     @Override
     public String getText() {
-        KtClassOrObject origin = getOrigin();
+        KtClassOrObject origin = getKotlinOrigin();
         return origin == null ? "" : origin.getText();
     }
 
