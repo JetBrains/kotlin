@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.jps.build.android
 
+import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.jps.builders.JpsBuildTestCase
 import org.jetbrains.jps.android.model.JpsAndroidSdkProperties
 import org.jetbrains.jps.model.JpsSimpleElement
@@ -39,22 +40,7 @@ abstract class AbstractAndroidJpsTestCase : JpsBuildTestCase() {
         loadProject(path + getTestName(true) + ".ipr")
         rebuildAll()
         makeAll().assertSuccessful()
-        deleteDirectory(File(path + "/out"))
-    }
-
-    fun deleteDirectory(path: File): Boolean {
-        if (path.exists() && path.isDirectory) {
-            val files = path.listFiles()
-            for (i in files.indices) {
-                if (files[i].isDirectory) {
-                    deleteDirectory(files[i])
-                }
-                else {
-                    files[i].delete()
-                }
-            }
-        }
-        return (path.delete())
+        FileUtil.delete(File(path + "/out"))
     }
 
     private fun addJdkAndAndroidSdk(): JpsSdk<JpsSimpleElement<JpsAndroidSdkProperties>> {
