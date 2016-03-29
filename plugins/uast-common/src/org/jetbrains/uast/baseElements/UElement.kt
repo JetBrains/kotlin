@@ -31,9 +31,6 @@ interface UNamed {
 interface UFqNamed : UNamed {
     val fqName: String?
 
-    val fqNameOrName: String
-        get() = fqName ?: name
-
     fun matchesFqName(fqName: String) = this.fqName == fqName
 }
 
