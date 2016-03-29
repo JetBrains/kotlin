@@ -197,5 +197,5 @@ fun createResolutionCandidatesForConstructors(
         dispatchReceiver = null
     }
 
-    return constructors.map { ResolutionCandidate.create(call, it, dispatchReceiver, null, receiverKind, knownSubstitutor) }
+    return constructors.map { ResolutionCandidate.create(call, it, dispatchReceiver, receiverKind, knownSubstitutor) }
 }
