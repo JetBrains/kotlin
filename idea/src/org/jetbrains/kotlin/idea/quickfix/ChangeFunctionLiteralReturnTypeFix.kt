@@ -37,11 +37,17 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import java.util.*
 
-class ChangeFunctionLiteralReturnTypeFix(functionLiteralExpression: KtLambdaExpression, private val type: KotlinType) : KotlinQuickFixAction<KtLambdaExpression>(functionLiteralExpression) {
-    private val functionLiteralReturnTypeRef = functionLiteralExpression.functionLiteral.typeReference
-    private val appropriateQuickFix = createAppropriateQuickFix(functionLiteralExpression)
+class ChangeFunctionLiteralReturnTypeFix(
+        functionLiteralExpression: KtLambdaExpression,
+        type: KotlinType
+) : KotlinQuickFixAction<KtLambdaExpression>(functionLiteralExpression) {
 
-    private fun createAppropriateQuickFix(functionLiteralExpression: KtLambdaExpression): IntentionAction? {
+    private val typePresentation = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
+    private val typeSourceCode = IdeDescriptorRenderers.SOURCE_CODE.renderType(type)
+    private val functionLiteralReturnTypeRef = functionLiteralExpression.functionLiteral.typeReference
+    private val appropriateQuickFix = createAppropriateQuickFix(functionLiteralExpression, type)
+
+    private fun createAppropriateQuickFix(functionLiteralExpression: KtLambdaExpression, type: KotlinType): IntentionAction? {
         val analysisResult = functionLiteralExpression.getContainingKtFile().analyzeFullyAndGetResult()
         val context = analysisResult.bindingContext
         val functionLiteralType = context.getType(functionLiteralExpression) ?: error("Type of function literal not available in binding context")
@@ -97,7 +103,7 @@ class ChangeFunctionLiteralReturnTypeFix(functionLiteralExpression: KtLambdaExpr
 
     override fun getText(): String {
         appropriateQuickFix?.let { return it.text }
-        return "Change lambda expression return type to '${IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)}'"
+        return "Change lambda expression return type to '$typePresentation'"
     }
 
     override fun getFamilyName() = KotlinBundle.message("change.type.family")
@@ -109,8 +115,7 @@ class ChangeFunctionLiteralReturnTypeFix(functionLiteralExpression: KtLambdaExpr
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         if (functionLiteralReturnTypeRef != null) {
-            var newTypeRef = KtPsiFactory(file).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type))
-            newTypeRef = functionLiteralReturnTypeRef.replace(newTypeRef) as KtTypeReference
+            val newTypeRef = functionLiteralReturnTypeRef.replace(KtPsiFactory(file).createType(typeSourceCode)) as KtTypeReference
             ShortenReferences.DEFAULT.process(newTypeRef)
         }
         if (appropriateQuickFix != null && appropriateQuickFix.isAvailable(project, editor!!, file)) {
