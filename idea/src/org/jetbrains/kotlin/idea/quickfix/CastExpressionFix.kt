@@ -33,20 +33,22 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.flexibility
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
-class CastExpressionFix(element: KtExpression, private val type: KotlinType) : KotlinQuickFixAction<KtExpression>(element) {
-    override fun getFamilyName() = "Cast expression"
-    override fun getText() = "Cast expression '${element.text}' to '${IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)}'"
-
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
-        if (!super.isAvailable(project, editor, file)) return false
-
-        val expressionType = element.analyze(BodyResolveMode.PARTIAL).getType(element) ?: return false
-        return type.isSubtypeOf(expressionType) || expressionType.isSubtypeOf(type) // donwcast/upcast
+class CastExpressionFix(element: KtExpression, type: KotlinType) : KotlinQuickFixAction<KtExpression>(element) {
+    private val typeSourceCode = IdeDescriptorRenderers.SOURCE_CODE.renderType(type)
+    private val typePresentation = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
+    private val upOrDownCast: Boolean = run {
+        val expressionType = element.analyze(BodyResolveMode.PARTIAL).getType(element)
+        expressionType != null && (type.isSubtypeOf(expressionType) || expressionType.isSubtypeOf(type))
     }
 
+    override fun getFamilyName() = "Cast expression"
+    override fun getText() = "Cast expression '${element.text}' to '$typePresentation'"
+
+    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile)
+            = upOrDownCast && super.isAvailable(project, editor, file)
+
     public override fun invoke(project: Project, editor: Editor?, file: KtFile) {
-        val renderedType = IdeDescriptorRenderers.SOURCE_CODE.renderType(type)
-        val expressionToInsert = KtPsiFactory(file).createExpressionByPattern("$0 as $1", element, renderedType)
+        val expressionToInsert = KtPsiFactory(file).createExpressionByPattern("$0 as $1", element, typeSourceCode)
         val newExpression = element.replaced(expressionToInsert)
         ShortenReferences.DEFAULT.process((KtPsiUtil.safeDeparenthesize(newExpression) as KtBinaryExpressionWithTypeRHS).right!!)
         editor?.caretModel?.moveToOffset(newExpression.endOffset)
