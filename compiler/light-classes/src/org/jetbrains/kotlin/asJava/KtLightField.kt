@@ -123,7 +123,7 @@ sealed class KtLightFieldImpl(
         fun create(origin: LightMemberOrigin?, delegate: PsiField, containingClass: KtLightClass): KtLightField {
             when (delegate) {
                 is PsiEnumConstant -> {
-                    val kotlinEnumEntry = origin?.originalElement as? KtEnumEntry
+                    val kotlinEnumEntry = (origin as? LightMemberOriginForDeclaration)?.originalElement as? KtEnumEntry
                     val initializingClass = if (kotlinEnumEntry != null && kotlinEnumEntry.declarations.isNotEmpty()) {
                         val enumConstantFqName = FqName(containingClass.getFqName().asString() + "." + kotlinEnumEntry.name)
                         KtLightClassForEnumEntry(enumConstantFqName, kotlinEnumEntry, delegate)
