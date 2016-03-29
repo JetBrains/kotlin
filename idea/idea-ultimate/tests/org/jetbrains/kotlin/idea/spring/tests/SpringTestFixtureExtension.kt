@@ -19,8 +19,6 @@ package org.jetbrains.kotlin.idea.spring.tests
 import com.intellij.facet.impl.FacetUtil
 import com.intellij.openapi.module.Module
 import com.intellij.spring.facet.SpringFacet
-import com.intellij.spring.facet.SpringFileSet
-import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.TestFixtureExtension
@@ -51,18 +49,6 @@ class SpringTestFixtureExtension() : TestFixtureExtension {
 
         FacetUtil.addFacet(module, SpringFacet.getSpringFacetType())
     }
-
-    fun configureFileSet(fixture: CodeInsightTestFixture, configFiles: Collection<String>): SpringFileSet {
-        return configureFileSet(fixture, "default", module!!, configFiles)
-    }
-
-    fun configureFileSet(fixture: CodeInsightTestFixture, id: String, module: Module, configFiles: Collection<String>): SpringFileSet {
-        return module.getSpringFacetWithAssertion().addFileSet(id, id).apply {
-            configFiles.forEach { addFile(fixture.copyFileToProject(it)) }
-        }
-    }
-
-    fun Module.getSpringFacetWithAssertion() = SpringFacet.getInstance(this) ?: error("No Spring facet in ${this}")
 
     override fun tearDown() {
         try {

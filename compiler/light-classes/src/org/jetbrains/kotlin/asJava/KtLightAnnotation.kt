@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.asJava
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
-import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
@@ -67,8 +66,6 @@ class KtLightAnnotation(
             }
         }
 
-        override fun getReference() = references.singleOrNull()
-        override fun getReferences() = ReferenceProvidersRegistry.getReferencesFromProviders(delegate, PsiReferenceService.Hints.NO_HINTS)
         override fun getLanguage() = KotlinLanguage.INSTANCE
     }
 
