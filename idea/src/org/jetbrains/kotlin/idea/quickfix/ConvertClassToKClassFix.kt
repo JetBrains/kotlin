@@ -41,32 +41,32 @@ private fun KotlinType.isJClass(): Boolean {
     return expressionTypeFqName == JAVA_LANG_CLASS_FQ_NAME
 }
 
-class ConvertClassToKClassFix(element: KtDotQualifiedExpression, private val type: KotlinType) : KotlinQuickFixAction<KtDotQualifiedExpression>(element) {
+class ConvertClassToKClassFix(element: KtDotQualifiedExpression, type: KotlinType) : KotlinQuickFixAction<KtDotQualifiedExpression>(element) {
+    private val isApplicable: Boolean = run {
+        val bindingContext = element.analyze(BodyResolveMode.PARTIAL)
+        val expressionType = bindingContext.getType(element) ?: return@run false
+        if (!expressionType.isJClass()) return@run false
+
+        val children = element.children
+        if (children.size != 2) return@run false
+
+        val firstChild = children.first() as? KtExpression ?: return@run false
+        val firstChildType = bindingContext.getType(firstChild) ?: return@run false
+
+        return@run firstChildType.isSubtypeOf(type)
+    }
+
     override fun getText() = "Remove '.${element.children.lastOrNull()?.text}'"
     override fun getFamilyName() = "Remove conversion from 'KClass' to 'Class'"
 
-
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
-        if (!super.isAvailable(project, editor, file)) return false
-
-        val bindingContext = element.analyze(BodyResolveMode.PARTIAL)
-        val expressionType = bindingContext.getType(element) ?: return false
-        if (!expressionType.isJClass()) return false
-
-        val children = element.children
-        if (children.size != 2) return false
-
-        val firstChild = children.first() as? KtExpression ?: return false
-        val firstChildType = bindingContext.getType(firstChild) ?: return false
-
-        return firstChildType.isSubtypeOf(type)
-    }
+    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile)
+            = isApplicable && super.isAvailable(project, editor, file)
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         element.replace(element.firstChild)
     }
 
-    object Factory : KotlinIntentionActionsFactory() {
+    companion object Factory : KotlinIntentionActionsFactory() {
         override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
             val casted = Errors.TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH.cast(diagnostic)
 
