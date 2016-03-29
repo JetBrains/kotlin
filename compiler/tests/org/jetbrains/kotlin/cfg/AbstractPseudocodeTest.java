@@ -44,6 +44,10 @@ import java.util.List;
 import java.util.Set;
 
 public abstract class AbstractPseudocodeTest extends KotlinTestWithEnvironment {
+    static {
+        System.setProperty("idea.platform.prefix", "Idea");
+    }
+
     @Override
     protected KotlinCoreEnvironment createEnvironment() {
         return createEnvironmentWithMockJdk(ConfigurationKind.JDK_ONLY);
