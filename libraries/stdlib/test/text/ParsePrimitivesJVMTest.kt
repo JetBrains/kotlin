@@ -13,97 +13,79 @@ class ParsePrimitivesJVMTest {
     }
 
     @test fun toByte() {
-        assertEquals(77.toByte(), "77".toByte())
-        assertFails { "255".toByte() }
+        assertEqualsOrFailsNullable(77.toByte(), "+77", String::toByte, String::toByteOrNull)
+        assertEqualsOrFailsNullable(Byte.MIN_VALUE, "-128", String::toByte, String::toByteOrNull)
+        assertEqualsOrFailsNullable(null, "128", String::toByte, String::toByteOrNull)
     }
 
     @test fun toShort() {
-        assertEquals(77.toShort(), "77".toShort())
-        assertFails { "32768".toShort() }
+        assertEqualsOrFailsNullable(77.toShort(), "77", String::toShort, String::toShortOrNull)
+        assertEqualsOrFailsNullable(Short.MIN_VALUE, "-32768", String::toShort, String::toShortOrNull)
+        assertEqualsOrFailsNullable(null, "+32768", String::toShort, String::toShortOrNull)
     }
 
     @test fun toInt() {
-        assertEquals(77, "77".toInt())
-        assertFails { "2147483648".toInt() }
+        assertEqualsOrFailsNullable(77, "77", String::toInt, String::toIntOrNull)
+        assertEqualsOrFailsNullable(Int.MAX_VALUE, "+2147483647", String::toInt, String::toIntOrNull)
+        assertEqualsOrFailsNullable(Int.MIN_VALUE, "-2147483648", String::toInt, String::toIntOrNull)
+
+        assertEqualsOrFailsNullable(null, "2147483648", String::toInt, String::toIntOrNull)
+        assertEqualsOrFailsNullable(null, "-2147483649", String::toInt, String::toIntOrNull)
+        assertEqualsOrFailsNullable(null, "239239kotlin", String::toInt, String::toIntOrNull)
     }
 
     @test fun toLong() {
-        assertEquals(77.toLong(), "77".toLong())
-        assertFails { "-9223372036854775809".toLong() }
+        assertEqualsOrFailsNullable(77.toLong(), "77", String::toLong, String::toLongOrNull)
+        assertEqualsOrFailsNullable(Long.MAX_VALUE, "+9223372036854775807", String::toLong, String::toLongOrNull)
+        assertEqualsOrFailsNullable(Long.MIN_VALUE, "-9223372036854775808", String::toLong, String::toLongOrNull)
+
+        assertEqualsOrFailsNullable(null, "9223372036854775808", String::toLong, String::toLongOrNull)
+        assertEqualsOrFailsNullable(null, "-9223372036854775809", String::toLong, String::toLongOrNull)
+        assertEqualsOrFailsNullable(null, "922337 75809", String::toLong, String::toLongOrNull)
+        assertEqualsOrFailsNullable(null, "92233,75809", String::toLong, String::toLongOrNull)
+        assertEqualsOrFailsNullable(null, "92233`75809", String::toLong, String::toLongOrNull)
+        assertEqualsOrFailsNullable(null, "-922337KOTLIN775809", String::toLong, String::toLongOrNull)
     }
 
     @test fun toFloat() {
-        assertEquals(77.0f, "77.0".toFloat())
-        assertFails { "dark side".toFloat() }
+        assertEqualsOrFailsNullable(77.0f, "77.0", String::toFloat, String::toFloatOrNull)
+        assertEqualsOrFailsNullable(Float.NEGATIVE_INFINITY, "-1e39", String::toFloat, String::toFloatOrNull)
+        assertEqualsOrFailsNullable(Float.POSITIVE_INFINITY, "1000000000000000000000000000000000000000",
+                String::toFloat, String::toFloatOrNull)
+
+        assertEqualsOrFailsNullable(null, "dark side", String::toFloat, String::toFloatOrNull)
     }
 
     @test fun toDouble() {
-        assertEquals(77.0, "77.0".toDouble())
-        assertFails { "0x77e1".toDouble() }
+        assertEqualsOrFailsNullable(-77.0, "-77", String::toDouble, String::toDoubleOrNull)
+        assertEqualsOrFailsNullable(77.0, "77.", String::toDouble, String::toDoubleOrNull)
+        assertEqualsOrFailsNullable(77.0, "77.0", String::toDouble, String::toDoubleOrNull)
+        assertEqualsOrFailsNullable(-1.77, "-1.77", String::toDouble, String::toDoubleOrNull)
+        assertEqualsOrFailsNullable(0.77, "+.77", String::toDouble, String::toDoubleOrNull)
+        assertEqualsOrFailsNullable(-77.0, "\t-77 \n", String::toDouble, String::toDoubleOrNull)
+        assertEqualsOrFailsNullable(77.0, "7.7e1", String::toDouble, String::toDoubleOrNull)
+        assertEqualsOrFailsNullable(77.0, "+770e-1", String::toDouble, String::toDoubleOrNull)
+
+        assertEqualsOrFailsNullable(-Double.NaN, "-NaN", String::toDouble, String::toDoubleOrNull)
+        assertEqualsOrFailsNullable(Double.POSITIVE_INFINITY, "+Infinity", String::toDouble, String::toDoubleOrNull)
+        assertEqualsOrFailsNullable((0x77 shl 1).toDouble(), "0x77p1", String::toDouble, String::toDoubleOrNull)
+        assertEqualsOrFailsNullable(0x77.toDouble(), "0x.77P8", String::toDouble, String::toDoubleOrNull)
+
+        assertEqualsOrFailsNullable(null, "7..7", String::toDouble, String::toDoubleOrNull)
+        assertEqualsOrFailsNullable(null, "0x77e1", String::toDouble, String::toDoubleOrNull)
+        assertEqualsOrFailsNullable(null, "007 not a number", String::toDouble, String::toDoubleOrNull)
     }
+}
 
-
-    @test fun toByteOrNull() {
-        assertEquals(77.toByte(), "+77".toByteOrNull())
-        assertEquals(Byte.MIN_VALUE, "-128".toByteOrNull())
-        assertNull("128".toByteOrNull())
-    }
-
-    @test fun toShortOrNull() {
-        assertEquals(77.toShort(), "77".toShortOrNull())
-        assertEquals(Short.MIN_VALUE, "-32768".toShortOrNull())
-        assertNull("+32768".toShortOrNull())
-    }
-
-    @test fun toIntOrNull() {
-        assertEquals(77, "77".toIntOrNull())
-        assertEquals(Int.MAX_VALUE, "+2147483647".toIntOrNull())
-        assertEquals(Int.MIN_VALUE, "-2147483648".toIntOrNull())
-        assertNull("2147483648".toIntOrNull())
-        assertNull("-2147483649".toIntOrNull())
-        assertNull("239239kotlin".toIntOrNull())
-    }
-
-    @test fun toLongOrNull() {
-        assertEquals(77.toLong(), "77".toLongOrNull())
-        assertEquals(Long.MAX_VALUE, "+9223372036854775807".toLongOrNull())
-        assertEquals(Long.MIN_VALUE, "-9223372036854775808".toLongOrNull())
-        assertNull("9223372036854775808".toLongOrNull())
-        assertNull("-9223372036854775809".toLongOrNull())
-
-        assertNull("922337 75809".toLongOrNull())
-        assertNull("92233,75809".toLongOrNull())
-        assertNull("92233`75809".toLongOrNull())
-        assertNull("-922337KOTLIN775809".toLongOrNull())
-    }
-
-    @test fun toFloatOrNull() {
-        assertEquals(77.0f, "77.0".toFloatOrNull())
-        assertEquals(Float.NEGATIVE_INFINITY, "-1e39".toFloatOrNull())
-        assertEquals(Float.POSITIVE_INFINITY, "1000000000000000000000000000000000000000".toFloatOrNull())
-        assertNull("dark side".toFloatOrNull())
-    }
-
-    @test fun toDoubleOrNull() {
-        assertEquals(-77.0, "-77".toDoubleOrNull())
-        assertEquals(77.0, "77.".toDoubleOrNull())
-        assertEquals(77.0, "77.0".toDoubleOrNull())
-
-        assertEquals(-1.77, "-1.77".toDoubleOrNull())
-        assertEquals(0.77, "+.77".toDoubleOrNull())
-
-        assertEquals(-77.0, "\t-77 \n".toDoubleOrNull())
-        assertEquals(77.0, "7.7e1".toDoubleOrNull())
-        assertEquals(77.0, "+770e-1".toDoubleOrNull())
-
-        assertEquals(-Double.NaN, "-NaN".toDoubleOrNull())
-        assertEquals(Double.POSITIVE_INFINITY, "+Infinity".toDoubleOrNull())
-
-        assertEquals((0x77 shl 1).toDouble(), "0x77p1".toDoubleOrNull())
-        assertEquals(0x77.toDouble(), "0x.77P8".toDoubleOrNull())
-
-        assertNull("7..7".toDoubleOrNull())
-        assertNull("0x77e1".toDoubleOrNull())
-        assertNull("007 not a number".toDoubleOrNull())
+private inline fun <T: Any> assertEqualsOrFailsNullable(output: T?,
+                                                        input: String,
+                                                        crossinline converOrFail: (String) -> T,
+                                                        crossinline convertOrNull: (String) -> T?) {
+    if(output == null) {
+        assertFails { converOrFail(input) }
+        assertNull (convertOrNull(input) )
+    } else {
+        assertEquals(output, converOrFail(input))
+        assertEquals(output, convertOrNull(input))
     }
 }
