@@ -640,10 +640,6 @@
     <testCreator language="kotlin" implementationClass="org.jetbrains.kotlin.idea.testIntegration.KotlinTestCreator"/>
     <testFinder implementation="org.jetbrains.kotlin.idea.testIntegration.KotlinTestFinder"/>
 
-    <constantExpressionEvaluator
-        language="kotlin"
-        implementationClass="org.jetbrains.kotlin.idea.KotlinLightConstantExpressionEvaluator"/>
-
     <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.IfNullToElvisIntention</className>
       <category>Kotlin</category>

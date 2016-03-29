@@ -27,9 +27,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtClassOrObject;
 import org.jetbrains.kotlin.psi.KtDeclaration;
-import org.jetbrains.kotlin.psi.KtElement;
 import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.resolve.BindingContext;
 
 import java.util.Collection;
 
@@ -73,9 +71,6 @@ public abstract class LightClassGenerationSupport {
 
     @Nullable
     public abstract DeclarationDescriptor resolveToDescriptor(@NotNull KtDeclaration declaration);
-
-    @NotNull
-    public abstract BindingContext analyze(@NotNull KtElement element);
 
     @NotNull
     public abstract Collection<PsiClass> getFacadeClasses(@NotNull FqName facadeFqName, @NotNull GlobalSearchScope scope);
