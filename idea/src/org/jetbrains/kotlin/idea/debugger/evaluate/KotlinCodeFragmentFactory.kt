@@ -21,6 +21,7 @@ import com.intellij.debugger.engine.evaluation.CodeFragmentFactory
 import com.intellij.debugger.engine.evaluation.CodeFragmentKind
 import com.intellij.debugger.engine.evaluation.TextWithImports
 import com.intellij.debugger.jdi.StackFrameProxyImpl
+import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
@@ -28,6 +29,7 @@ import com.intellij.openapi.util.Key
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.PsiTypesUtil
 import com.intellij.util.IncorrectOperationException
 import com.intellij.util.concurrency.Semaphore
 import com.intellij.xdebugger.XDebuggerManager
@@ -70,7 +72,7 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
                     project,
                     "fragment.kt",
                     item.text,
-                    item.imports,
+                    initImports(item.imports),
                     contextElement
             )
         }
@@ -79,7 +81,7 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
                     project,
                     "fragment.kt",
                     item.text,
-                    item.imports,
+                    initImports(item.imports),
                     contextElement
             )
         }
@@ -117,6 +119,28 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
         return codeFragment
     }
 
+    private fun initImports(imports: String?): String? {
+        if (imports != null && !imports.isEmpty()) {
+            return imports.split(KtCodeFragment.IMPORT_SEPARATOR)
+                    .mapNotNull { fixImportIfNeeded(it) }
+                    .joinToString(KtCodeFragment.IMPORT_SEPARATOR)
+        }
+        return null
+    }
+
+    private fun fixImportIfNeeded(import: String): String? {
+        // skip arrays
+        if (import.endsWith("[]")) {
+            return fixImportIfNeeded(import.removeSuffix("[]").trim())
+        }
+
+        // skip primitive types
+        if (PsiTypesUtil.boxIfPossible(import) != import) {
+            return null
+        }
+        return import
+    }
+
     private fun getWrappedContextElement(project: Project, context: PsiElement?)
             = wrapContextIfNeeded(project, getContextElement(context))
 
@@ -130,16 +154,28 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
                 null
             }
 
+            val importList = try {
+                kotlinCodeFragment.importsAsImportList()?.let {
+                    (PsiFileFactory.getInstance(project).createFileFromText(
+                            "dummy.java", JavaFileType.INSTANCE, it.text
+                    ) as? PsiJavaFile)?.importList
+                }
+            }
+            catch(e: IncorrectOperationException) {
+                null
+            }
+
             if (javaExpression != null) {
                 var convertedFragment: KtExpressionCodeFragment? = null
                 project.executeWriteCommand("Convert java expression to kotlin in Evaluate Expression") {
                     val newText = javaExpression.j2kText()
+                    val newImports = importList?.j2kText()
                     if (newText != null) {
                         convertedFragment = KtExpressionCodeFragment(
                                 project,
                                 kotlinCodeFragment.name,
                                 newText,
-                                kotlinCodeFragment.importsToString(),
+                                newImports,
                                 kotlinCodeFragment.context
                         )
 

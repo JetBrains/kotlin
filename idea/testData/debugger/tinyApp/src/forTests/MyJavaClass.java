@@ -23,4 +23,19 @@ public class MyJavaClass {
     private static class PrivateJavaClass {
         public final int prop = 1;
     }
+
+    public static class BaseClass {
+        public final int i2 = 1;
+    }
+
+    public BaseClass getBaseClassValue() {
+        return new BaseClass();
+    }
+    public BaseClass getInnerClassValue() {
+        return new InnerClass();
+    }
+
+    public static class InnerClass extends BaseClass {
+        public final int i = 1;
+    }
 }

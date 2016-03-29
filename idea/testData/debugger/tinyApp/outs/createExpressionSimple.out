@@ -20,7 +20,7 @@ fun main(args: Array<String>) {
 }
 
 // PRINT_FRAME
-// DESCRIPTOR_VIEW_OPTIONS: NAME_AND_EXPRESSION
+// DESCRIPTOR_VIEW_OPTIONS: NAME_EXPRESSION
 
  frame    = main
    local    = args (expression = args)
