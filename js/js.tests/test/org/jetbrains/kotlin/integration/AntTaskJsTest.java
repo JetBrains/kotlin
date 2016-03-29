@@ -21,8 +21,8 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-//import org.jetbrains.kotlin.js.test.rhino.RhinoFunctionResultChecker;
-//import org.jetbrains.kotlin.js.test.rhino.RhinoUtils;
+import org.jetbrains.kotlin.js.test.rhino.RhinoFunctionResultChecker;
+import org.jetbrains.kotlin.js.test.rhino.RhinoUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.io.File;
@@ -61,7 +61,7 @@ public class AntTaskJsTest extends AbstractAntTaskTest {
             }
         });
 
-        //RhinoUtils.runRhinoTest(filePaths, new RhinoFunctionResultChecker("out", "foo", "box", "OK"));
+        RhinoUtils.runRhinoTest(filePaths, new RhinoFunctionResultChecker("out", "foo", "box", "OK"));
     }
 
     private void doJsAntTestForPostfixPrefix(@Nullable String prefix, @Nullable String postfix) throws Exception {
