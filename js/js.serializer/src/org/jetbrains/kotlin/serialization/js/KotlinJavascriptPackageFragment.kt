@@ -33,21 +33,24 @@ class KotlinJavascriptPackageFragment(
         loadResource: (path: String) -> InputStream?
 ) : DeserializedPackageFragment(fqName, storageManager, module, loadResource) {
     private val nameResolver =
-            NameResolverImpl.read(loadResourceSure(KotlinJavascriptSerializedResourcePaths.getStringTableFilePath(fqName)))
+            loadResourceSure(KotlinJavascriptSerializedResourcePaths.getStringTableFilePath(fqName)).use { stream ->
+                NameResolverImpl.read(stream)
+            }
 
     override val classDataFinder = KotlinJavascriptClassDataFinder(nameResolver, loadResource)
 
-    override fun computeMemberScope(): DeserializedPackageMemberScope {
-        val packageStream = loadResourceSure(KotlinJavascriptSerializedResourcePaths.getPackageFilePath(fqName))
-        val packageProto = ProtoBuf.Package.parseFrom(packageStream, JsSerializerProtocol.extensionRegistry)
-        return DeserializedPackageMemberScope(
-                this, packageProto, nameResolver, packagePartSource = null, components = components, classNames = { loadClassNames() }
-        )
-    }
+    override fun computeMemberScope(): DeserializedPackageMemberScope =
+            loadResourceSure(KotlinJavascriptSerializedResourcePaths.getPackageFilePath(fqName)).use { packageStream ->
+                val packageProto = ProtoBuf.Package.parseFrom(packageStream, JsSerializerProtocol.extensionRegistry)
+                DeserializedPackageMemberScope(
+                        this, packageProto, nameResolver, packagePartSource = null, components = components,
+                        classNames = { loadClassNames() }
+                )
+            }
 
-    private fun loadClassNames(): Collection<Name> {
-        val classesStream = loadResourceSure(KotlinJavascriptSerializedResourcePaths.getClassesInPackageFilePath(fqName))
-        val classesProto = JsProtoBuf.Classes.parseFrom(classesStream, JsSerializerProtocol.extensionRegistry)
-        return classesProto.classNameList?.map { id -> nameResolver.getName(id) } ?: listOf()
-    }
+    private fun loadClassNames(): Collection<Name> =
+            loadResourceSure(KotlinJavascriptSerializedResourcePaths.getClassesInPackageFilePath(fqName)).use { classesStream ->
+                val classesProto = JsProtoBuf.Classes.parseFrom(classesStream, JsSerializerProtocol.extensionRegistry)
+                classesProto.classNameList?.map { id -> nameResolver.getName(id) } ?: listOf()
+            }
 }
