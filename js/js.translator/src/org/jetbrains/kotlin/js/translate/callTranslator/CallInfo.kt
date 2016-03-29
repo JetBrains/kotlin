@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -118,7 +118,7 @@ private fun TranslationContext.createCallInfo(resolvedCall: ResolvedCall<out Cal
         return when (receiverKind) {
             EXTENSION_RECEIVER -> explicitReceivers.extensionOrDispatchReceiver
             BOTH_RECEIVERS -> explicitReceivers.extensionReceiver
-            else -> this.getDispatchReceiver(receiverValue as ReceiverValue)
+            else -> this.getDispatchReceiver(receiverValue)
         }
     }
 

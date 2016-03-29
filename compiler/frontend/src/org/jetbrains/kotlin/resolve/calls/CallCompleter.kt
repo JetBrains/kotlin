@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
@@ -214,7 +213,7 @@ class CallCompleter(
             return
         }
 
-        val receiverType = (extensionReceiver as? ReceiverValue)?.type
+        val receiverType = extensionReceiver?.type
 
         val errorData = InferenceErrorData.create(
                 candidateDescriptor, constraintSystem!!, valueArgumentsCheckingResult.argumentTypes,

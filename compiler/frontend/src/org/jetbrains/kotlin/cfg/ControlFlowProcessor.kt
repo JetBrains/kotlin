@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1402,7 +1402,7 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
                 //noinspection EnumSwitchStatementWhichMissesCases
                 when (kind) {
                     ExplicitReceiverKind.DISPATCH_RECEIVER -> explicitReceiver = resolvedCall.dispatchReceiver
-                    ExplicitReceiverKind.EXTENSION_RECEIVER, ExplicitReceiverKind.BOTH_RECEIVERS -> explicitReceiver = resolvedCall.extensionReceiver as ReceiverValue?
+                    ExplicitReceiverKind.EXTENSION_RECEIVER, ExplicitReceiverKind.BOTH_RECEIVERS -> explicitReceiver = resolvedCall.extensionReceiver
                     ExplicitReceiverKind.NO_EXPLICIT_RECEIVER -> {}
                 }
             }
@@ -1413,7 +1413,7 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             }
             val callElement = resolvedCall.call.callElement
             receiverValues = getReceiverValues(callElement, resolvedCall.dispatchReceiver, receiverValues)
-            receiverValues = getReceiverValues(callElement, resolvedCall.extensionReceiver as ReceiverValue?, receiverValues)
+            receiverValues = getReceiverValues(callElement, resolvedCall.extensionReceiver, receiverValues)
             return receiverValues
         }
 

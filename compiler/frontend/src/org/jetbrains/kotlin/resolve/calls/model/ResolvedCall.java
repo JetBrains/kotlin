@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.psi.ValueArgument;
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus;
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind;
-import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.KotlinType;
 
@@ -50,7 +49,7 @@ public interface ResolvedCall<D extends CallableDescriptor> {
 
     /** If the target was an extension function or property, this is the value for its receiver parameter */
     @Nullable
-    Receiver getExtensionReceiver();
+    ReceiverValue getExtensionReceiver();
 
     /** If the target was a member of a class, this is the object of that class to call it on */
     @Nullable

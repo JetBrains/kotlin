@@ -452,7 +452,7 @@ class CandidateResolver(
         resultStatus = resultStatus.combine(context.checkReceiver(
                 candidateCall,
                 candidateCall.getResultingDescriptor().extensionReceiverParameter,
-                candidateCall.extensionReceiver as ReceiverValue?,
+                candidateCall.extensionReceiver,
                 candidateCall.explicitReceiverKind.isExtensionReceiver,
                 implicitInvokeCheck = false, isDispatchReceiver = false))
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -191,11 +191,8 @@ class KotlinFunctionCallUsage(
             }
             else {
                 addReceiver = descriptor !is ReceiverParameterDescriptor
-                val extensionReceiver = resolvedCall.extensionReceiver
                 argumentExpression =
-                        (if (extensionReceiver is ReceiverValue)
-                            getReceiverExpressionIfMatched(extensionReceiver, descriptor, psiFactory)
-                        else null)
+                        getReceiverExpressionIfMatched(resolvedCall.extensionReceiver, descriptor, psiFactory)
                         ?: getReceiverExpressionIfMatched(resolvedCall.dispatchReceiver, descriptor, psiFactory)
             }
             if (argumentExpression == null) continue

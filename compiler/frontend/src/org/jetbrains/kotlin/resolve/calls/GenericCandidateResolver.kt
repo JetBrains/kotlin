@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.INCOMPLETE_TY
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.OTHER_ERROR
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
@@ -79,7 +78,7 @@ class GenericCandidateResolver(private val argumentTypeResolver: ArgumentTypeRes
         val receiverArgument = candidateCall.extensionReceiver
         val receiverParameter = candidate.extensionReceiverParameter
         if (receiverArgument != null && receiverParameter != null) {
-            val receiverArgumentType = (receiverArgument as ReceiverValue).type
+            val receiverArgumentType = receiverArgument.type
             var receiverType: KotlinType? = if (context.candidateCall.isSafeCall)
                 TypeUtils.makeNotNullable(receiverArgumentType)
             else
