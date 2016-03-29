@@ -31,21 +31,21 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
 
-class NumberConversionFix(element: KtExpression, private val type: KotlinType) : KotlinQuickFixAction<KtExpression>(element) {
-
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
-        if (!super.isAvailable(project, editor, file)) return false
-
-        val expressionType = element.analyze(BodyResolveMode.PARTIAL).getType(element) ?: return false
-        return expressionType != type && expressionType.isPrimitiveNumberType() && type.isPrimitiveNumberType()
+class NumberConversionFix(element: KtExpression, type: KotlinType) : KotlinQuickFixAction<KtExpression>(element) {
+    private val isConversionAvailable: Boolean = run {
+        val expressionType = element.analyze(BodyResolveMode.PARTIAL).getType(element)
+        expressionType != null && expressionType != type && expressionType.isPrimitiveNumberType() && type.isPrimitiveNumberType()
     }
+    private val typePresentation = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
+
+    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile)
+            = isConversionAvailable && super.isAvailable(project, editor, file)
 
     override fun getFamilyName() = "Insert number conversion"
-    override fun getText() = "Convert expression to '${IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)}'"
+    override fun getText() = "Convert expression to '$typePresentation'"
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
-        val renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
-        val expressionToInsert = KtPsiFactory(file).createExpressionByPattern("$0.to$1()", element, renderedType)
+        val expressionToInsert = KtPsiFactory(file).createExpressionByPattern("$0.to$1()", element, typePresentation)
         val newExpression = element.replaced(expressionToInsert)
         editor?.caretModel?.moveToOffset(newExpression.endOffset)
     }
