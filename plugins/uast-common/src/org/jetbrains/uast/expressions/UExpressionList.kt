@@ -19,7 +19,7 @@ interface UExpressionList : UExpression {
     val expressions: List<UExpression>
 
     override fun evaluate(): Any? = null
-    override fun traverse(handler: UastHandler) = expressions.forEach { it.handleTraverse(handler) }
+    override fun traverse(callback: UastCallback) = expressions.forEach { it.handleTraverse(callback) }
 
     override fun logString() = log("UExpressionList", expressions)
     override fun renderString() = log("", expressions)

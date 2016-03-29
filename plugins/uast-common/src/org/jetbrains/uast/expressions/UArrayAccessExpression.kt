@@ -19,9 +19,9 @@ interface UArrayAccessExpression : UExpression {
     val receiver: UExpression
     val indices: List<UExpression>
 
-    override fun traverse(handler: UastHandler) {
-        receiver.handleTraverse(handler)
-        indices.handleTraverseList(handler)
+    override fun traverse(callback: UastCallback) {
+        receiver.handleTraverse(callback)
+        indices.handleTraverseList(callback)
     }
 
     override fun logString() = log("UArrayAccessExpression", receiver, indices)

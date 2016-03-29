@@ -51,10 +51,10 @@ interface UClass : UDeclaration, UFqNamed, UModifierOwner, UAnnotated {
 
     fun getSuperClass(context: UastContext): UClass?
 
-    override fun traverse(handler: UastHandler) {
-        nameElement?.handleTraverse(handler)
-        declarations.handleTraverseList(handler)
-        annotations.handleTraverseList(handler)
+    override fun traverse(callback: UastCallback) {
+        nameElement?.handleTraverse(callback)
+        declarations.handleTraverseList(callback)
+        annotations.handleTraverseList(callback)
     }
 
     override fun renderString(): String {

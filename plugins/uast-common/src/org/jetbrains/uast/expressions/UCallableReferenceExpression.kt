@@ -18,8 +18,8 @@ package org.jetbrains.uast
 interface UCallableReferenceExpression : UExpression {
     val qualifierType: UType
 
-    override fun traverse(handler: UastHandler) {
-        qualifierType.handleTraverse(handler)
+    override fun traverse(callback: UastCallback) {
+        qualifierType.handleTraverse(callback)
     }
 
     override fun logString() = "UCallableReferenceExpression"

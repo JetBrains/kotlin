@@ -19,9 +19,9 @@ interface USwitchExpression : UExpression {
     val expression: UExpression?
     val body: UExpression
 
-    override fun traverse(handler: UastHandler) {
-        expression?.handleTraverse(handler)
-        body.handleTraverse(handler)
+    override fun traverse(callback: UastCallback) {
+        expression?.handleTraverse(callback)
+        body.handleTraverse(callback)
     }
 
     override fun logString() = log("USwitchExpression", expression, body)
@@ -37,8 +37,8 @@ interface USwitchClauseExpression : UExpression
 interface UExpressionSwitchClauseExpression : USwitchClauseExpression {
     val caseValue: UExpression
 
-    override fun traverse(handler: UastHandler) {
-        caseValue.handleTraverse(handler)
+    override fun traverse(callback: UastCallback) {
+        caseValue.handleTraverse(callback)
     }
 
     override fun renderString() = caseValue.renderString() + " -> "
@@ -46,7 +46,7 @@ interface UExpressionSwitchClauseExpression : USwitchClauseExpression {
 }
 
 interface UDefaultSwitchClauseExpression : USwitchClauseExpression {
-    override fun traverse(handler: UastHandler) {}
+    override fun traverse(callback: UastCallback) {}
     override fun logString() = "UDefaultSwitchClause"
     override fun renderString() = "else -> "
 }

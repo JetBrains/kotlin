@@ -20,9 +20,9 @@ interface UAssignmentExpression : UExpression {
     val operator: String
     val value: UExpression
 
-    override fun traverse(handler: UastHandler) {
-        reference.handleTraverse(handler)
-        value.handleTraverse(handler)
+    override fun traverse(callback: UastCallback) {
+        reference.handleTraverse(callback)
+        value.handleTraverse(callback)
     }
 
     override fun logString() = "UAssignmentExpression ($operator)\n" + reference.logString().withMargin + "\n" + value.logString().withMargin

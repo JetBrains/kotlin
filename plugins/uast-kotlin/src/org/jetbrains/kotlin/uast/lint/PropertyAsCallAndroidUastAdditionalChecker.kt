@@ -29,7 +29,7 @@ import org.jetbrains.uast.check.AndroidUastAdditionalChecker
 import org.jetbrains.uast.psi.PsiElementBacked
 
 class PropertyAsCallAndroidUastAdditionalChecker : AndroidUastAdditionalChecker {
-    override fun invoke(element: UElement, handler: UastHandler, context: UastContext) {
+    override fun invoke(element: UElement, callback: UastCallback, context: UastContext) {
         val expr = element as? KotlinUSimpleReferenceExpression ?: return
         if (expr is KotlinNameUSimpleReferenceExpression) return
 
@@ -86,7 +86,7 @@ class PropertyAsCallAndroidUastAdditionalChecker : AndroidUastAdditionalChecker 
             }
         }
 
-        handler(callExpression)
+        callback(callExpression)
     }
 
     private tailrec fun findAssignment(prev: PsiElement?, element: PsiElement?): KtBinaryExpression? = when (element) {

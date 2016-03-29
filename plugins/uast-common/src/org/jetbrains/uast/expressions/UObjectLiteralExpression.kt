@@ -18,8 +18,8 @@ package org.jetbrains.uast
 interface UObjectLiteralExpression : UExpression {
     val declaration: UClass
 
-    override fun traverse(handler: UastHandler) {
-        declaration.handleTraverse(handler)
+    override fun traverse(callback: UastCallback) {
+        declaration.handleTraverse(callback)
     }
 
     override fun logString() = log("UObjectLiteralExpression", declaration)

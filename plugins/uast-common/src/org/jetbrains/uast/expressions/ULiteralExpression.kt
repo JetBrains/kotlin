@@ -28,7 +28,7 @@ interface ULiteralExpression : UExpression {
     val isBoolean: Boolean
         get() = evaluate() is Boolean
 
-    override fun traverse(handler: UastHandler) {}
+    override fun traverse(callback: UastCallback) {}
     override fun logString() = "ULiteralExpression ($text)"
     override fun renderString() = text
 }

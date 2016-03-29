@@ -21,10 +21,10 @@ interface UIfExpression : UExpression {
     val elseBranch: UExpression?
     val isTernary: Boolean
 
-    override fun traverse(handler: UastHandler) {
-        condition.handleTraverse(handler)
-        thenBranch?.handleTraverse(handler)
-        elseBranch?.handleTraverse(handler)
+    override fun traverse(callback: UastCallback) {
+        condition.handleTraverse(callback)
+        thenBranch?.handleTraverse(callback)
+        elseBranch?.handleTraverse(callback)
     }
 
     override fun logString() = log("UIfExpression", condition, thenBranch, elseBranch)

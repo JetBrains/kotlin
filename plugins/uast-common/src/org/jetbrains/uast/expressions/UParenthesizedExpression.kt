@@ -18,8 +18,8 @@ package org.jetbrains.uast
 interface UParenthesizedExpression : UExpression {
     val expression: UExpression
 
-    override fun traverse(handler: UastHandler) {
-        expression.handleTraverse(handler)
+    override fun traverse(callback: UastCallback) {
+        expression.handleTraverse(callback)
     }
 
     override fun logString() = log("UParenthesizedExpression", expression)

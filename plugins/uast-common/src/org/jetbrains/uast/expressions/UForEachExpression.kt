@@ -19,9 +19,9 @@ interface UForEachExpression : ULoopExpression {
     val variableName: String?
     val iteratedValue: UExpression
 
-    override fun traverse(handler: UastHandler) {
-        iteratedValue.handleTraverse(handler)
-        body.handleTraverse(handler)
+    override fun traverse(callback: UastCallback) {
+        iteratedValue.handleTraverse(callback)
+        body.handleTraverse(callback)
     }
 
     override fun renderString() = buildString {

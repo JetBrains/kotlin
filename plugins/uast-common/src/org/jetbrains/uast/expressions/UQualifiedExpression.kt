@@ -24,9 +24,9 @@ interface UQualifiedExpression : UExpression, UResolvable {
 
     override fun renderString() = receiver.renderString() + accessType.name + selector.renderString()
 
-    override fun traverse(handler: UastHandler) {
-        receiver.handleTraverse(handler)
-        selector.handleTraverse(handler)
+    override fun traverse(callback: UastCallback) {
+        receiver.handleTraverse(callback)
+        selector.handleTraverse(callback)
     }
 
     override fun logString() = log("UQualifiedExpression", receiver, selector)

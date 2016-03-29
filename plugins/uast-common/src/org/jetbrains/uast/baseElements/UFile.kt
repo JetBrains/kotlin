@@ -26,9 +26,9 @@ interface UFile: UElement {
     override val parent: UElement?
         get() = null
 
-    override fun traverse(handler: UastHandler) {
-        declarations.handleTraverseList(handler)
-        importStatements.handleTraverseList(handler)
+    override fun traverse(callback: UastCallback) {
+        declarations.handleTraverseList(callback)
+        importStatements.handleTraverseList(callback)
     }
 
     override fun logString() = "UFile (package = $packageFqName)\n" + declarations.joinToString("\n") { it.logString().withMargin }

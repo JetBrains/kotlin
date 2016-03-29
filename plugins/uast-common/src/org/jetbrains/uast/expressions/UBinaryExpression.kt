@@ -20,9 +20,9 @@ interface UBinaryExpression : UExpression {
     val operator: UastBinaryOperator
     val rightOperand: UExpression
 
-    override fun traverse(handler: UastHandler) {
-        leftOperand.handleTraverse(handler)
-        rightOperand.handleTraverse(handler)
+    override fun traverse(callback: UastCallback) {
+        leftOperand.handleTraverse(callback)
+        rightOperand.handleTraverse(callback)
     }
 
     override fun logString() =

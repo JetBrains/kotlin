@@ -19,8 +19,8 @@ interface ULabeledExpression : UExpression {
     val label: String
     val expression: UExpression
 
-    override fun traverse(handler: UastHandler) {
-        expression.handleTraverse(handler)
+    override fun traverse(callback: UastCallback) {
+        expression.handleTraverse(callback)
     }
 
     override fun logString() = log("ULabeledExpression ($label)", expression)

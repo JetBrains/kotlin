@@ -118,7 +118,7 @@ abstract class UastVisitor {
     }
 
     fun processChildren(element: UElement) {
-        element.traverse(UastHandler { handle(it) })
+        element.traverse(UastCallback { handle(it) })
     }
 }
 

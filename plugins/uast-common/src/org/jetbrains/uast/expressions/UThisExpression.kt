@@ -18,5 +18,5 @@ package org.jetbrains.uast
 interface UThisExpression : UExpression {
     override fun logString() = "UThisExpression"
     override fun renderString() = "this"
-    override fun traverse(handler: UastHandler) {}
+    override fun traverse(callback: UastCallback) {}
 }
