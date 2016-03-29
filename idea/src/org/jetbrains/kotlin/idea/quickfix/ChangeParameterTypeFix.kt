@@ -53,9 +53,9 @@ class ChangeParameterTypeFix(element: KtParameter, type: KotlinType) : KotlinQui
 
     override fun getText(): String {
         return if (isPrimaryConstructorParameter)
-            KotlinBundle.message("change.primary.constructor.parameter.type", element.name, containingDeclarationName, typePresentation)
+            "Change parameter '${element.name}' type of primary constructor of class '$containingDeclarationName' to '$typePresentation'"
         else
-            KotlinBundle.message("change.function.parameter.type", element.name, containingDeclarationName, typePresentation)
+            "Change parameter '${element.name}' type of function '$containingDeclarationName' to '$typePresentation'"
     }
 
     override fun getFamilyName() = KotlinBundle.message("change.type.family")
