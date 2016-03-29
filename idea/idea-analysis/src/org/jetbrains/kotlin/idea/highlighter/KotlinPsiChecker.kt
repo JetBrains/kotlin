@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import java.lang.reflect.*
 import java.util.*
@@ -156,9 +157,16 @@ private object NoDeclarationDescriptorsChecker {
     private fun checkType(type: Type, field: Field) {
         when (type) {
             is Class<*> -> {
-                if (DeclarationDescriptor::class.java.isAssignableFrom(type)) {
-                    LOG.error("QuickFix class ${field.declaringClass.name} contains field ${field.name} that holds DeclarationDescriptor")
+                if (DeclarationDescriptor::class.java.isAssignableFrom(type) || KotlinType::class.java.isAssignableFrom(type)) {
+                    LOG.error("QuickFix class ${field.declaringClass.name} contains field ${field.name} that holds ${type.simpleName}. "
+                              + "This leads to holding too much memory through this quick-fix instance. "
+                              + "Possible solution can be wrapping it using KotlinIntentionActionFactoryWithDelegate.")
                 }
+
+                if (IntentionAction::class.java.isAssignableFrom(type)) {
+                    check(type)
+                }
+
             }
 
             is GenericArrayType -> checkType(type.genericComponentType, field)
