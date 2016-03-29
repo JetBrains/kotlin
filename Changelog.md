@@ -103,7 +103,6 @@ New features:
 - Kotlin Education Plugin (for IDEA 2016)
 - [KT-9752](https://youtrack.jetbrains.com/issue/KT-9752)  More usable file chooser for "Move declaration to another file"
 - [KT-9697](https://youtrack.jetbrains.com/issue/KT-9697)  Move method to companion object and back
-- [KT-11098](https://youtrack.jetbrains.com/issue/KT-11098) Inspection on final classes/functions annotated with Spring @Configuration/@Component/@Bean
 
 General issues fixed:
 

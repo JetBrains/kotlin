@@ -24,15 +24,21 @@ import com.intellij.codeInspection.ex.InspectionManagerEx
 import com.intellij.codeInspection.ex.LocalInspectionToolWrapper
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.psi.PsiFile
 import com.intellij.testFramework.IdeaTestUtil
 import com.intellij.testFramework.InspectionTestUtil
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
-import org.jetbrains.kotlin.idea.test.*
+import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
+import kotlin.test.assertFalse
+import java.util.*
 
 abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() {
     companion object {
@@ -58,8 +64,6 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
         val inspectionClass = Class.forName(InTextDirectivesUtils.findStringWithPrefixes(options, "// INSPECTION_CLASS: ")!!)
         val toolWrapper = LocalInspectionToolWrapper(inspectionClass.newInstance() as LocalInspectionTool)
 
-        val fixtureClasses = InTextDirectivesUtils.findListWithPrefixes(options, "// FIXTURE_CLASS: ")
-
         val inspectionsTestDir = optionsFile.parentFile!!
         val srcDir = inspectionsTestDir.parentFile!!
 
@@ -70,7 +74,7 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
             val psiFiles = srcDir.walkTopDown().onEnter { it.name != "inspectionData" }.mapNotNull {
                 file ->
                 if (file.isDirectory) {
-                    null
+                     null
                 }
                 else if (file.extension != "kt") {
                     val filePath = file.relativeTo(srcDir).invariantSeparatorsPath
@@ -108,8 +112,6 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
                     )
                 }
 
-                fixtureClasses.forEach { TestFixtureExtension.loadFixture(it, myFixture.module) }
-
                 val scope = AnalysisScope(project, psiFiles.map { it.virtualFile!! })
                 scope.invalidate()
 
@@ -137,8 +139,6 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
 
             }
             finally {
-                fixtureClasses.forEach { TestFixtureExtension.unloadFixture(it) }
-
                 if (isWithRuntime) {
                     ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(myFixture.module, IdeaTestUtil.getMockJdk17())
                 }
