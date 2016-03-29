@@ -1,0 +1,19 @@
+<component name="libraryTable">
+  <library name="gradle-and-groovy-plugin">
+    <ANNOTATIONS>
+      <root url="file://$PROJECT_DIR$/../annotations" />
+    </ANNOTATIONS>
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/ideaSDK/plugins/gradle/lib" />
+      <root url="file://$PROJECT_DIR$/ideaSDK/plugins/Groovy/lib" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/ideaSDK/plugins/gradle/lib" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.jar!/" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/ideaSDK/plugins/gradle/lib" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/ideaSDK/plugins/Groovy/lib" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/ideaSDK/plugins/gradle/lib" recursive="false" type="SOURCES" />
+  </library>
+</component>

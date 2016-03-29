@@ -1,0 +1,18 @@
+<component name="libraryTable">
+  <library name="intellij-core">
+    <ANNOTATIONS>
+      <root url="file://$PROJECT_DIR$/../annotations" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.jar!/" />
+    </ANNOTATIONS>
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/ideaSDK/core" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/../dependencies/guava-17.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../dependencies/asm5-src.zip!/" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.jar!/" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/ideaSDK/core" recursive="false" />
+  </library>
+</component>

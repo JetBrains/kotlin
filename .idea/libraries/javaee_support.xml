@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="javaee-support">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/ideaSDK/plugins/JavaEE/lib" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/ideaSDK/lib/src/src_javaee-openapi.zip!/" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/ideaSDK/plugins/JavaEE/lib" recursive="false" />
+  </library>
+</component>

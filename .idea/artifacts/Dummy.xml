@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact name="Dummy">
+    <output-path>$PROJECT_DIR$/out/artifacts/Dummy</output-path>
+    <root id="root">
+      <element id="module-output" name="kotlin-ultimate" />
+    </root>
+  </artifact>
+</component>
