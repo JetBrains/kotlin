@@ -17,7 +17,9 @@
 package org.jetbrains.kotlin.js.inline.clean
 
 import com.google.dart.compiler.backend.js.ast.*
+import com.google.dart.compiler.backend.js.ast.metadata.HasMetadata
 import com.google.dart.compiler.backend.js.ast.metadata.synthetic
+import com.google.dart.compiler.backend.js.ast.metadata.withoutSideEffects
 import org.jetbrains.kotlin.js.inline.util.collectDefinedNames
 import org.jetbrains.kotlin.js.inline.util.collectFreeVariables
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
@@ -163,18 +165,24 @@ internal class TemporaryVariableElimination(private val root: JsStatement) {
                         if (sideEffectOccurred) {
                             lastProperlyUsedIndex = -1
                         }
-                        if (index == nextExpectedIndex) {
-                            ++nextExpectedIndex
-                        }
                         else {
-                            lastProperlyUsedIndex = index
-                            nextExpectedIndex = index + 1
+                            if (index == nextExpectedIndex) {
+                                ++nextExpectedIndex
+                            }
+                            else {
+                                lastProperlyUsedIndex = index
+                                nextExpectedIndex = index + 1
+                            }
                         }
                         firstUsedIndex = Math.min(firstUsedIndex, index)
                     }
                     return
                 }
-                super.visitNameRef(nameRef)
+
+                if (nameRef.qualifier != null && !(nameRef is HasMetadata && nameRef.withoutSideEffects)) {
+                    super.visitNameRef(nameRef)
+                    sideEffectOccurred = true
+                }
             }
 
             override fun visitInvocation(invocation: JsInvocation) {
@@ -204,10 +212,35 @@ internal class TemporaryVariableElimination(private val root: JsStatement) {
             }
 
             override fun visitBinaryExpression(x: JsBinaryOperation) {
-                super.visitBinaryExpression(x)
                 if (x.operator == JsBinaryOperator.ASG) {
+                    val left = x.arg1
+                    val right = x.arg2
+
+                    if (left is JsNameRef) {
+                        val qualifier = left.qualifier
+                        if (qualifier != null) {
+                            accept(qualifier)
+                        }
+                    }
+                    else if (left is JsArrayAccess) {
+                        accept(left.arrayExpression)
+                        accept(left.indexExpression)
+                    }
+                    else {
+                        accept(left)
+                    }
+
+                    accept(right)
                     sideEffectOccurred = true
                 }
+                else {
+                    super.visitBinaryExpression(x)
+                }
+            }
+
+            override fun visitArrayAccess(x: JsArrayAccess) {
+                super.visitArrayAccess(x)
+                sideEffectOccurred = true
             }
 
             override fun visitArray(x: JsArrayLiteral) {
@@ -368,7 +401,6 @@ internal class TemporaryVariableElimination(private val root: JsStatement) {
                 firstUsedIndex = lastAssignedVars.size
                 nextExpectedIndex = -1
                 sideEffectOccurred = false
-
                 accept(expression)
 
                 if (lastProperlyUsedIndex >= 0 && nextExpectedIndex == lastAssignedVars.size) {

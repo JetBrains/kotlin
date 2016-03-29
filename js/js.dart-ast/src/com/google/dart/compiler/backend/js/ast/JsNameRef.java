@@ -102,7 +102,7 @@ public final class JsNameRef extends JsExpressionImpl implements HasName {
     public JsNameRef deepCopy() {
         JsExpression qualifierCopy = AstUtil.deepCopy(qualifier);
 
-        if (name != null) return new JsNameRef(name, qualifierCopy);
+        if (name != null) return new JsNameRef(name, qualifierCopy).withMetadataFrom(this);
 
         return new JsNameRef(ident, qualifierCopy).withMetadataFrom(this);
     }
