@@ -243,9 +243,8 @@ class QuickFixRegistrar : QuickFixContributor {
 
         EXTENSION_PROPERTY_WITH_BACKING_FIELD.registerFactory(ConvertExtensionPropertyInitializerToGetterFix)
 
-        val changeFunctionLiteralReturnTypeFix = ChangeFunctionLiteralReturnTypeFix.createFactoryForExpectedOrAssignmentTypeMismatch()
-        EXPECTED_TYPE_MISMATCH.registerFactory(changeFunctionLiteralReturnTypeFix)
-        ASSIGNMENT_TYPE_MISMATCH.registerFactory(changeFunctionLiteralReturnTypeFix)
+        EXPECTED_TYPE_MISMATCH.registerFactory(ChangeFunctionLiteralReturnTypeFix)
+        ASSIGNMENT_TYPE_MISMATCH.registerFactory(ChangeFunctionLiteralReturnTypeFix)
 
         UNRESOLVED_REFERENCE.registerFactory(CreateUnaryOperationActionFactory)
         UNRESOLVED_REFERENCE_WRONG_RECEIVER.registerFactory(CreateUnaryOperationActionFactory)

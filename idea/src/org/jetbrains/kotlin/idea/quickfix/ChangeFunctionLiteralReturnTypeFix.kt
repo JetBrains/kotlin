@@ -38,16 +38,10 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import java.util.*
 
 class ChangeFunctionLiteralReturnTypeFix(functionLiteralExpression: KtLambdaExpression, private val type: KotlinType) : KotlinQuickFixAction<KtLambdaExpression>(functionLiteralExpression) {
-    private val functionLiteralReturnTypeRef: KtTypeReference?
-    private var appropriateQuickFix: IntentionAction? = null
+    private val functionLiteralReturnTypeRef = functionLiteralExpression.functionLiteral.typeReference
+    private val appropriateQuickFix = createAppropriateQuickFix(functionLiteralExpression)
 
-    init {
-        functionLiteralReturnTypeRef = functionLiteralExpression.functionLiteral.typeReference
-
-        doInit(functionLiteralExpression)
-    }
-
-    private fun doInit(functionLiteralExpression: KtLambdaExpression) {
+    private fun createAppropriateQuickFix(functionLiteralExpression: KtLambdaExpression): IntentionAction? {
         val analysisResult = functionLiteralExpression.getContainingKtFile().analyzeFullyAndGetResult()
         val context = analysisResult.bindingContext
         val functionLiteralType = context.getType(functionLiteralExpression) ?: error("Type of function literal not available in binding context")
@@ -67,10 +61,10 @@ class ChangeFunctionLiteralReturnTypeFix(functionLiteralExpression: KtLambdaExpr
         if (correspondingProperty != null && QuickFixUtil.canEvaluateTo(correspondingProperty.initializer!!, functionLiteralExpression)) {
             val correspondingPropertyTypeRef = correspondingProperty.typeReference
             val propertyType = context.get(BindingContext.TYPE, correspondingPropertyTypeRef)
-            if (propertyType != null && !KotlinTypeChecker.DEFAULT.isSubtypeOf(eventualFunctionLiteralType, propertyType)) {
-                appropriateQuickFix = ChangeVariableTypeFix(correspondingProperty, eventualFunctionLiteralType)
-            }
-            return
+            return if (propertyType != null && !KotlinTypeChecker.DEFAULT.isSubtypeOf(eventualFunctionLiteralType, propertyType))
+                ChangeVariableTypeFix(correspondingProperty, eventualFunctionLiteralType)
+            else
+                null
         }
 
         val resolvedCall = functionLiteralExpression.getParentResolvedCall(context, true)
@@ -80,10 +74,10 @@ class ChangeFunctionLiteralReturnTypeFix(functionLiteralExpression: KtLambdaExpr
             if (correspondingParameter != null) {
                 val correspondingParameterTypeRef = correspondingParameter.typeReference
                 val parameterType = context.get(BindingContext.TYPE, correspondingParameterTypeRef)
-                if (parameterType != null && !KotlinTypeChecker.DEFAULT.isSubtypeOf(eventualFunctionLiteralType, parameterType)) {
-                    appropriateQuickFix = ChangeParameterTypeFix(correspondingParameter, eventualFunctionLiteralType)
-                }
-                return
+                return if (parameterType != null && !KotlinTypeChecker.DEFAULT.isSubtypeOf(eventualFunctionLiteralType, parameterType))
+                    ChangeParameterTypeFix(correspondingParameter, eventualFunctionLiteralType)
+                else
+                    null
             }
         }
 
@@ -92,26 +86,25 @@ class ChangeFunctionLiteralReturnTypeFix(functionLiteralExpression: KtLambdaExpr
         if (parentFunction != null && QuickFixUtil.canFunctionOrGetterReturnExpression(parentFunction, functionLiteralExpression)) {
             val parentFunctionReturnTypeRef = parentFunction.typeReference
             val parentFunctionReturnType = context.get(BindingContext.TYPE, parentFunctionReturnTypeRef)
-            if (parentFunctionReturnType != null && !KotlinTypeChecker.DEFAULT.isSubtypeOf(eventualFunctionLiteralType, parentFunctionReturnType)) {
-                appropriateQuickFix = ChangeFunctionReturnTypeFix(parentFunction, eventualFunctionLiteralType)
-            }
+            return if (parentFunctionReturnType != null && !KotlinTypeChecker.DEFAULT.isSubtypeOf(eventualFunctionLiteralType, parentFunctionReturnType))
+                ChangeFunctionReturnTypeFix(parentFunction, eventualFunctionLiteralType)
+            else
+                null
         }
+
+        return null
     }
 
     override fun getText(): String {
-        if (appropriateQuickFix != null) {
-            return appropriateQuickFix!!.text
-        }
-        return String.format("Change lambda expression return type to '%s'",
-                             IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type))
+        appropriateQuickFix?.let { return it.text }
+        return "Change lambda expression return type to '${IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)}'"
     }
 
-    override fun getFamilyName(): String {
-        return KotlinBundle.message("change.type.family")
-    }
+    override fun getFamilyName() = KotlinBundle.message("change.type.family")
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
-        return super.isAvailable(project, editor, file) && (functionLiteralReturnTypeRef != null || appropriateQuickFix != null && appropriateQuickFix!!.isAvailable(project, editor!!, file))
+        return super.isAvailable(project, editor, file)
+               && (functionLiteralReturnTypeRef != null || appropriateQuickFix != null && appropriateQuickFix.isAvailable(project, editor!!, file))
     }
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
@@ -120,19 +113,15 @@ class ChangeFunctionLiteralReturnTypeFix(functionLiteralExpression: KtLambdaExpr
             newTypeRef = functionLiteralReturnTypeRef.replace(newTypeRef) as KtTypeReference
             ShortenReferences.DEFAULT.process(newTypeRef)
         }
-        if (appropriateQuickFix != null && appropriateQuickFix!!.isAvailable(project, editor!!, file)) {
-            appropriateQuickFix!!.invoke(project, editor, file)
+        if (appropriateQuickFix != null && appropriateQuickFix.isAvailable(project, editor!!, file)) {
+            appropriateQuickFix.invoke(project, editor, file)
         }
     }
 
-    companion object {
-        fun createFactoryForExpectedOrAssignmentTypeMismatch(): KotlinSingleIntentionActionFactory {
-            return object : KotlinSingleIntentionActionFactory() {
-                public override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-                    val functionLiteralExpression = QuickFixUtil.getParentElementOfType(diagnostic, KtLambdaExpression::class.java) ?: return null
-                    return ChangeFunctionLiteralReturnTypeFix(functionLiteralExpression, functionLiteralExpression.platform.builtIns.getUnitType())
-                }
-            }
+    companion object : KotlinSingleIntentionActionFactory() {
+        override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+            val functionLiteralExpression = QuickFixUtil.getParentElementOfType(diagnostic, KtLambdaExpression::class.java) ?: return null
+            return ChangeFunctionLiteralReturnTypeFix(functionLiteralExpression, functionLiteralExpression.platform.builtIns.unitType)
         }
     }
 }
