@@ -34,6 +34,6 @@ interface NoModifiers : UModifierOwner {
     override fun hasModifier(modifier: UastModifier) = false
 }
 
-class EmptyExpression(override val parent: UElement) : UExpression, NoTraverse, NoEvaluate {
+class EmptyExpression(override val parent: UElement) : UExpression, LeafUElement, NoEvaluate {
     override fun logString() = "EmptyExpression"
 }

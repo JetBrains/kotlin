@@ -38,7 +38,7 @@ interface UModifierOwner {
     fun hasModifier(modifier: UastModifier): Boolean
 }
 
-interface NoTraverse : UElement {
+interface LeafUElement : UElement {
     override fun traverse(callback: UastCallback) {}
 }
 

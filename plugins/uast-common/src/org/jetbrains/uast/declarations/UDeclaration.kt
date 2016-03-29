@@ -19,7 +19,7 @@ interface UDeclaration : UElement, UNamed {
     val nameElement: UElement?
 }
 
-object UDeclarationNotResolved : UDeclaration, NoTraverse {
+object UDeclarationNotResolved : UDeclaration, LeafUElement {
     override val name = "<declaration not resolved>"
     override val nameElement = null
     override val parent = null

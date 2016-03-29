@@ -15,7 +15,7 @@
  */
 package org.jetbrains.uast
 
-interface UClassLiteralExpression : UExpression, NoTraverse {
+interface UClassLiteralExpression : UExpression, LeafUElement {
     override fun logString() = "UClassLiteralExpression"
     override fun renderString() = getExpressionType()?.name ?: "::class"
 
