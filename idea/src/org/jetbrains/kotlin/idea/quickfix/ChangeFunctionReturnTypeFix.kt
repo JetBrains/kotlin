@@ -43,11 +43,15 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.types.typeUtil.isUnit
 import java.util.*
 
-class ChangeFunctionReturnTypeFix(element: KtFunction, private val type: KotlinType) : KotlinQuickFixAction<KtFunction>(element) {
+class ChangeFunctionReturnTypeFix(element: KtFunction, type: KotlinType) : KotlinQuickFixAction<KtFunction>(element) {
     private val changeFunctionLiteralReturnTypeFix: ChangeFunctionLiteralReturnTypeFix?
+
+    private val typeContainsError = ErrorUtils.containsErrorType(type)
+    private val typePresentation = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
+    private val typeSourceCode = IdeDescriptorRenderers.SOURCE_CODE.renderType(type)
+    private val isUnitType = KotlinBuiltIns.isUnit(type)
 
     init {
         if (element is KtFunctionLiteral) {
@@ -66,35 +70,34 @@ class ChangeFunctionReturnTypeFix(element: KtFunction, private val type: KotlinT
 
         val functionName = element.fqName?.asString() ?: element.name
 
-        if (KotlinBuiltIns.isUnit(type) && element.hasBlockBody()) {
+        if (isUnitType && element.hasBlockBody()) {
             return if (functionName == null)
                 KotlinBundle.message("remove.no.name.function.return.type")
             else
                 KotlinBundle.message("remove.function.return.type", functionName)
         }
 
-        val renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
         return if (functionName == null)
-            KotlinBundle.message("change.no.name.function.return.type", renderedType)
+            KotlinBundle.message("change.no.name.function.return.type", typePresentation)
         else
-            KotlinBundle.message("change.function.return.type", functionName, renderedType)
+            KotlinBundle.message("change.function.return.type", functionName, typePresentation)
     }
 
     override fun getFamilyName() = KotlinBundle.message("change.type.family")
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
         return super.isAvailable(project, editor, file) &&
-               !ErrorUtils.containsErrorType(type) &&
+               !typeContainsError &&
                element !is KtConstructor<*>
     }
 
-    override operator fun invoke(project: Project, editor: Editor?, file: KtFile) {
+    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         if (changeFunctionLiteralReturnTypeFix != null) {
             changeFunctionLiteralReturnTypeFix.invoke(project, editor!!, file)
         }
         else {
-            if (!(type.isUnit() && element.hasBlockBody())) {
-                var newTypeRef = KtPsiFactory(project).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type))
+            if (!(isUnitType && element.hasBlockBody())) {
+                var newTypeRef = KtPsiFactory(project).createType(typeSourceCode)
                 newTypeRef = element.setTypeReference(newTypeRef)!!
                 ShortenReferences.DEFAULT.process(newTypeRef)
             }
