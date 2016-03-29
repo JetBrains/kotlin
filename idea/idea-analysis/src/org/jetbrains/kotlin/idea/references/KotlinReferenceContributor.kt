@@ -16,21 +16,22 @@
 
 package org.jetbrains.kotlin.idea.references
 
-import com.intellij.psi.PsiReference
-import com.intellij.psi.PsiReferenceRegistrar
+import com.intellij.patterns.PlatformPatterns
+import com.intellij.psi.*
+import com.intellij.util.ProcessingContext
 import org.jetbrains.kotlin.idea.kdoc.KDocReference
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
-class KotlinReferenceContributor() : AbstractKotlinReferenceContributor() {
+class KotlinReferenceContributor() : PsiReferenceContributor() {
     override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
         with(registrar) {
-            registerProvider<KtSimpleNameExpression> {
+            registerProvider(KtSimpleNameExpression::class.java) {
                 KtSimpleNameReference(it)
             }
 
-            registerMultiProvider<KtNameReferenceExpression> {
+            registerMultiProvider(KtNameReferenceExpression::class.java) {
                 if (it.getReferencedNameElementType() != KtTokens.IDENTIFIER) return@registerMultiProvider emptyArray()
 
                 when (it.readWriteAccess(useResolveForReadWrite = false)) {
@@ -43,33 +44,46 @@ class KotlinReferenceContributor() : AbstractKotlinReferenceContributor() {
                 }
             }
 
-            registerProvider<KtConstructorDelegationReferenceExpression> {
+            registerProvider(KtConstructorDelegationReferenceExpression::class.java) {
                 KtConstructorDelegationReference(it)
             }
 
-            registerProvider<KtCallExpression> {
+            registerProvider(KtCallExpression::class.java) {
                 KtInvokeFunctionReference(it)
             }
 
-            registerProvider<KtArrayAccessExpression> {
+            registerProvider(KtArrayAccessExpression::class.java) {
                 KtArrayAccessReference(it)
             }
 
-            registerProvider<KtForExpression> {
+            registerProvider(KtForExpression::class.java) {
                 KtForLoopInReference(it)
             }
 
-            registerProvider<KtPropertyDelegate> {
+            registerProvider(KtPropertyDelegate::class.java) {
                 KtPropertyDelegationMethodsReference(it)
             }
 
-            registerProvider<KtDestructuringDeclaration> {
+            registerProvider(KtDestructuringDeclaration::class.java) {
                 KtDestructuringDeclarationReference(it)
             }
 
-            registerProvider<KDocName> {
+            registerProvider(KDocName::class.java) {
                 KDocReference(it)
             }
         }
+    }
+
+    private fun <E : KtElement> PsiReferenceRegistrar.registerProvider(elementClass: Class<E>, factory: (E) -> KtReference) {
+        registerMultiProvider(elementClass, { arrayOf(factory(it)) })
+    }
+
+    private fun <E : KtElement> PsiReferenceRegistrar.registerMultiProvider(elementClass: Class<E>, factory: (E) -> Array<PsiReference>) {
+        registerReferenceProvider(PlatformPatterns.psiElement(elementClass), object: PsiReferenceProvider() {
+            override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<PsiReference> {
+                @Suppress("UNCHECKED_CAST")
+                return factory(element as E)
+            }
+        })
     }
 }

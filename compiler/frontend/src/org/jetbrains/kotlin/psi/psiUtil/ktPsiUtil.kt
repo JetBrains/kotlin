@@ -367,9 +367,6 @@ fun KtStringTemplateExpression.getContentRange(): TextRange {
     return TextRange(start, if (lastChild.elementType == KtTokens.CLOSING_QUOTE) length - lastChild.textLength else length)
 }
 
-val KtStringTemplateExpression.plainContent: String
-    get() = getContentRange().substring(text)
-
 fun KtStringTemplateExpression.isSingleQuoted(): Boolean
         = node.firstChildNode.textLength == 1
 

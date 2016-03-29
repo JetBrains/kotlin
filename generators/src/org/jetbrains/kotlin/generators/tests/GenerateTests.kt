@@ -101,9 +101,6 @@ import org.jetbrains.kotlin.idea.refactoring.pushDown.AbstractPushDownTest
 import org.jetbrains.kotlin.idea.refactoring.rename.AbstractRenameTest
 import org.jetbrains.kotlin.idea.refactoring.safeDelete.AbstractSafeDeleteTest
 import org.jetbrains.kotlin.idea.resolve.*
-import org.jetbrains.kotlin.idea.spring.tests.references.AbstractSpringReferenceCompletionHandlerTest
-import org.jetbrains.kotlin.idea.spring.tests.references.AbstractSpringReferenceCompletionTest
-import org.jetbrains.kotlin.idea.spring.tests.references.AbstractSpringReferenceNavigationTest
 import org.jetbrains.kotlin.idea.structureView.AbstractKotlinFileStructureTest
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiFileHighlightingTest
 import org.jetbrains.kotlin.idea.stubs.AbstractResolveByStubTest
@@ -788,18 +785,6 @@ fun main(args: Array<String>) {
 
         testClass<AbstractQuickFixTest>("UltimateQuickFixTestGenerated") {
             model("ultimateQuickFixes", pattern = "^([\\w\\-_]+)\\.kt$", filenameStartsLowerCase = true)
-        }
-
-        testClass<AbstractSpringReferenceCompletionHandlerTest>() {
-            model("spring/core/references/completion/handler")
-        }
-
-        testClass<AbstractSpringReferenceCompletionTest>() {
-            model("spring/core/references/completion/variants")
-        }
-
-        testClass<AbstractSpringReferenceNavigationTest>() {
-            model("spring/core/references/navigation")
         }
     }
 

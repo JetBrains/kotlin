@@ -36,18 +36,13 @@ abstract class KotlinFixtureCompletionBaseTestCase : KotlinLightCodeInsightFixtu
     open fun doTest(testPath: String) {
         setUpFixture(testPath)
 
-        try {
-            val fileText = FileUtil.loadFile(File(testPath), true)
+        val fileText = FileUtil.loadFile(File(testPath), true)
 
-            if (ExpectedCompletionUtils.shouldRunHighlightingBeforeCompletion(fileText)) {
-                myFixture.doHighlighting()
-            }
+        if (ExpectedCompletionUtils.shouldRunHighlightingBeforeCompletion(fileText)) {
+            myFixture.doHighlighting()
+        }
 
-            testCompletion(fileText, getPlatform(), { completionType, count -> complete(completionType, count) }, defaultCompletionType(), defaultInvocationCount())
-        }
-        finally {
-            tearDownFixture()
-        }
+        testCompletion(fileText, getPlatform(), { completionType, count -> complete(completionType, count) }, defaultCompletionType(), defaultInvocationCount())
     }
 
     protected open fun setUpFixture(testPath: String) {
@@ -55,9 +50,5 @@ abstract class KotlinFixtureCompletionBaseTestCase : KotlinLightCodeInsightFixtu
         LibraryModificationTracker.getInstance(project).incModificationCount()
 
         myFixture.configureByFile(testPath)
-    }
-
-    protected open fun tearDownFixture() {
-
     }
 }

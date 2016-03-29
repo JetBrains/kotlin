@@ -25,8 +25,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.psi.KtClass;
 import org.jetbrains.kotlin.psi.KtObjectDeclaration;
-import org.jetbrains.kotlin.psi.KtStringTemplateExpression;
-import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.junit.Assert;
 
 public final class ReferenceUtils {
@@ -43,16 +41,11 @@ public final class ReferenceUtils {
             return "companion object of " + renderAsGotoImplementation(containingClass);
         }
 
-        if (navigationElement instanceof KtStringTemplateExpression) {
-            return KtPsiUtilKt.getPlainContent((KtStringTemplateExpression) navigationElement);
-        }
-
         Assert.assertTrue(navigationElement instanceof NavigationItem);
         ItemPresentation presentation = ((NavigationItem) navigationElement).getPresentation();
 
         if (presentation == null) {
-            String elementText = element.getText();
-            return elementText != null ? elementText : navigationElement.getText();
+            return element.getText();
         }
 
         String presentableText = presentation.getPresentableText();

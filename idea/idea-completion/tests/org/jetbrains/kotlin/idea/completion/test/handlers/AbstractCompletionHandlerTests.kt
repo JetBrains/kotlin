@@ -73,16 +73,11 @@ abstract class AbstractCompletionHandlerTest(private val defaultCompletionType: 
         }
         finally {
             settingManager.dropTemporarySettings()
-            tearDownFixture()
         }
     }
 
     protected open fun setUpFixture(testPath: String) {
         fixture.configureByFile(testPath)
-    }
-
-    protected open fun tearDownFixture() {
-
     }
 
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
