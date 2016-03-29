@@ -17,45 +17,34 @@
 package org.jetbrains.kotlin.test.testFramework;
 
 import com.intellij.openapi.application.AccessToken;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
-import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
 import com.intellij.util.text.StringTokenizer;
-import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 
 import java.io.File;
 import java.io.IOException;
 
 public class VfsTestUtil {
-    public static final Key<String> TEST_DATA_FILE_PATH = Key.create("TEST_DATA_FILE_PATH");
-
     private VfsTestUtil() {
     }
 
-    public static VirtualFile createFile(final VirtualFile root, final String relativePath) {
+    public static VirtualFile createFile(VirtualFile root, String relativePath) {
         return createFile(root, relativePath, "");
     }
 
-    public static VirtualFile createFile(final VirtualFile root, final String relativePath, final String text) {
+    public static VirtualFile createFile(VirtualFile root, String relativePath, String text) {
         return createFileOrDir(root, relativePath, text, false);
     }
 
-    public static VirtualFile createDir(final VirtualFile root, final String relativePath) {
-        return createFileOrDir(root, relativePath, "", true);
-    }
-
-    private static VirtualFile createFileOrDir(final VirtualFile root,
-            final String relativePath,
-            final String text,
-            final boolean dir) {
+    private static VirtualFile createFileOrDir(
+            VirtualFile root,
+            String relativePath,
+            String text,
+            boolean dir) {
         try {
             AccessToken token = WriteAction.start();
             try {
@@ -63,7 +52,7 @@ public class VfsTestUtil {
                 Assert.assertNotNull(parent);
                 StringTokenizer parents = new StringTokenizer(PathUtil.getParentPath(relativePath), "/");
                 while (parents.hasMoreTokens()) {
-                    final String name = parents.nextToken();
+                    String name = parents.nextToken();
                     VirtualFile child = parent.findChild(name);
                     if (child == null || !child.isValid()) {
                         child = parent.createChildDirectory(VfsTestUtil.class, name);
@@ -94,24 +83,6 @@ public class VfsTestUtil {
         }
     }
 
-    public static void deleteFile(@NotNull VirtualFile file) {
-        UtilKt.deleteFile(file);
-    }
-
-    public static void clearContent(@NotNull final VirtualFile file) {
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    VfsUtil.saveText(file, "");
-                }
-                catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        });
-    }
-
     @SuppressWarnings("UnusedDeclaration")
     public static void overwriteTestData(String filePath, String actual) {
         try {
@@ -119,33 +90,6 @@ public class VfsTestUtil {
         }
         catch (IOException e) {
             throw new AssertionError(e);
-        }
-    }
-
-    @NotNull
-    public static VirtualFile findFileByCaseSensitivePath(@NotNull String absolutePath) {
-        String vfsPath = FileUtil.toSystemIndependentName(absolutePath);
-        VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(vfsPath);
-        Assert.assertNotNull("file " + absolutePath + " not found", vFile);
-        String realVfsPath = vFile.getPath();
-        if (!SystemInfo.isFileSystemCaseSensitive && !vfsPath.equals(realVfsPath) &&
-            vfsPath.equalsIgnoreCase(realVfsPath)) {
-            Assert.fail("Please correct case-sensitivity of path to prevent test failure on case-sensitive file systems:\n" +
-                        "     path " + vfsPath + "\n" +
-                        "real path " + realVfsPath);
-        }
-        return vFile;
-    }
-
-    public static void assertFilePathEndsWithCaseSensitivePath(@NotNull VirtualFile file, @NotNull String suffixPath) {
-        String vfsSuffixPath = FileUtil.toSystemIndependentName(suffixPath);
-        String vfsPath = file.getPath();
-        if (!SystemInfo.isFileSystemCaseSensitive && !vfsPath.endsWith(vfsSuffixPath) &&
-            StringUtil.endsWithIgnoreCase(vfsPath, vfsSuffixPath)) {
-            String realSuffixPath = vfsPath.substring(vfsPath.length() - vfsSuffixPath.length());
-            Assert.fail("Please correct case-sensitivity of path to prevent test failure on case-sensitive file systems:\n" +
-                        "     path " + suffixPath + "\n" +
-                        "real path " + realSuffixPath);
         }
     }
 }

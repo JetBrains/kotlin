@@ -21,17 +21,6 @@ import com.intellij.openapi.components.ComponentManager
 import com.intellij.openapi.vfs.VirtualFile
 import org.picocontainer.MutablePicoContainer
 
-fun <T> ComponentManager.registerServiceInstance(interfaceClass: Class<T>, instance: T) {
-    val picoContainer = picoContainer as MutablePicoContainer
-    val key = interfaceClass.name
-    picoContainer.unregisterComponent(key)
-    picoContainer.registerComponentInstance(key, instance)
-}
-
-fun deleteFile(file: VirtualFile) {
-    runInEdtAndWait { runWriteAction { file.delete(null) } }
-}
-
 fun <T> runWriteAction(action: () -> T): T {
     return ApplicationManager.getApplication().runWriteAction<T>(action)
 }
