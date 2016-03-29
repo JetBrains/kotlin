@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.js.translate.context;
 
 import com.google.common.collect.Maps;
 import com.google.dart.compiler.backend.js.ast.*;
+import com.google.dart.compiler.backend.js.ast.metadata.HasMetadata;
+import com.google.dart.compiler.backend.js.ast.metadata.MetadataProperties;
 import com.intellij.openapi.util.Factory;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -176,13 +178,15 @@ public final class StaticContext {
             return getQualifiedReference(((PackageFragmentDescriptor) descriptor).getFqName());
         }
 
-        return new JsNameRef(getNameForDescriptor(descriptor), getQualifierForDescriptor(descriptor));
+        JsNameRef result = new JsNameRef(getNameForDescriptor(descriptor), getQualifierForDescriptor(descriptor));
+        applySideEffects(result, descriptor);
+        return result;
     }
 
     @NotNull
     public JsNameRef getQualifiedReference(@NotNull FqName packageFqName) {
-        return new JsNameRef(getNameForPackage(packageFqName),
-                             packageFqName.isRoot() ? null : getQualifierForParentPackage(packageFqName.parent()));
+        JsName packageName = getNameForPackage(packageFqName);
+        return JsAstUtils.fqn(packageName, packageFqName.isRoot() ? null : getQualifierForParentPackage(packageFqName.parent()));
     }
 
     @NotNull
@@ -211,7 +215,7 @@ public final class StaticContext {
         FqName fqName = packageFqName;
 
         while (true) {
-            JsNameRef ref = getNameForPackage(fqName).makeRef();
+            JsNameRef ref = JsAstUtils.fqn(getNameForPackage(fqName), null);
 
             if (qualifier == null) {
                 result = ref;
@@ -565,7 +569,7 @@ public final class StaticContext {
                     if (DescriptorUtils.isCompanionObject(container)) {
                         result = Namer.getCompanionObjectAccessor(result);
                     }
-                    return result;
+                    return applySideEffects(result, descriptor);
                 }
             };
 
@@ -577,6 +581,18 @@ public final class StaticContext {
             addRule(staticMembersHaveContainerQualifier);
             addRule(nestedClassesHaveContainerQualifier);
         }
+    }
+
+    private static JsExpression applySideEffects(JsExpression expression, DeclarationDescriptor descriptor) {
+        if (expression instanceof HasMetadata) {
+            if (descriptor instanceof FunctionDescriptor ||
+                descriptor instanceof PackageFragmentDescriptor ||
+                descriptor instanceof ClassDescriptor
+            ) {
+                MetadataProperties.setSideEffects((HasMetadata) expression, false);
+            }
+        }
+        return expression;
     }
 
     private static class QualifierIsNullGenerator extends Generator<Boolean> {

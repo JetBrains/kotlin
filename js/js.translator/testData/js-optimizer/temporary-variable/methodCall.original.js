@@ -59,6 +59,13 @@ function test5() {
     return $tmp1 + $tmp2 + $tmp3;
 }
 
+function test6() {
+    init();
+
+    var $tmp = foo(1);
+    return foo(2) + $tmp;
+}
+
 function box() {
     var result = test1();
     if (result != 3) return "fail1a: " + result;
@@ -79,6 +86,10 @@ function box() {
     result = test5();
     if (result != 6) return "fail5a: " + result;
     if (log != "{1}{2}{3}{4}") return "fail5b: " + log;
+
+    result = test6();
+    if (result != 3) return "fail6a: " + result;
+    if (log != "{1}{2}") return "fail6b: " + result;
 
     return "OK";
 }

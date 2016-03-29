@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.js.translate.callTranslator
 
 import com.google.dart.compiler.backend.js.ast.*
+import com.google.dart.compiler.backend.js.ast.metadata.withoutSideEffects
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -80,7 +81,9 @@ object DefaultFunctionCallCase : FunctionCallCase() {
 
         val functionRef = context.aliasOrValue(callableDescriptor) {
             val qualifierForFunction = context.getQualifierForDescriptor(it)
-            JsNameRef(functionName, qualifierForFunction)
+            val result = JsNameRef(functionName, qualifierForFunction)
+            result.withoutSideEffects = true
+            result
         }
         return JsInvocation(functionRef, argumentsInfo.translateArguments)
     }
