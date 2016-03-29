@@ -57,4 +57,20 @@ public interface KClass<T : Any> : KDeclarationContainer, KAnnotatedElement {
      * The instance of the object declaration, or `null` if this class is not an object declaration.
      */
     public val objectInstance: T?
+
+    /**
+     * Returns `true` if [other] is a [KClass] instance representing the same class on a given platform.
+     *
+     * On JVM this means that the given instance is backed by the same [Class] object as this one. In particular, it requires
+     * that the two classes are loaded with the same class loader and have the same name. Note that there are cases where the behavior
+     * of this method may seem unintuitive:
+     * * For each JVM primitive type, there are two classes at runtime: one for the primitive itself, and another for the wrapper class.
+     *   [KClass] instances for those classes are different: [KClass] for `int` is **not equal** to [KClass] for `java.lang.Integer`,
+     *   although both have the same qualified name [kotlin.Int].
+     * * For JVM arrays of different types, [KClass] instances are different,
+     *   although all of them have the same qualified name [kotlin.Array].
+     */
+    override fun equals(other: Any?): Boolean
+
+    override fun hashCode(): Int
 }
