@@ -96,7 +96,7 @@ class CodeConverter(
 
         var convertedExpression = convertExpression(expression)
 
-        if (convertedExpression.isNullable && expectedNullability != null && !expectedNullability.isNullable(settings)) {
+        if (convertedExpression.isNullable && expectedNullability != null && expectedNullability == Nullability.NotNull) {
             convertedExpression = BangBangExpression.surroundIfNullable(convertedExpression)
         }
 

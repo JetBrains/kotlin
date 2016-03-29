@@ -1,3 +1,7 @@
+// ERROR: Type mismatch: inferred type is String? but String was expected
+// ERROR: Type mismatch: inferred type is Int? but Int was expected
+// ERROR: Type inference failed. Please try to specify type arguments explicitly.
+// ERROR: Using 'remove(Int): T' is an error. Use removeAt(index) instead.
 package test
 
 import java.util.ArrayList
@@ -16,7 +20,7 @@ class Test {
     }
 
     fun test2() {
-        foo2(myProp!!)
+        foo2(myProp)
     }
 
     fun test3() {
@@ -39,7 +43,7 @@ class Test {
 
     fun test7() {
         val list = ArrayList<Int>()
-        list.remove(myIntProp!!)
+        list.remove(myIntProp)
     }
 
     fun foo1(s: String) {
