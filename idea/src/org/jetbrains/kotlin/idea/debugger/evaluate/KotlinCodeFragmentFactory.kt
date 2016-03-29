@@ -42,9 +42,12 @@ import org.jetbrains.kotlin.asJava.KtLightClass
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.debugger.KotlinEditorTextProvider
+import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
 import org.jetbrains.kotlin.idea.refactoring.j2kText
 import org.jetbrains.kotlin.idea.refactoring.quoteIfNeeded
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
+import org.jetbrains.kotlin.j2k.AfterConversionPass
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
@@ -128,18 +131,22 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
             }
 
             if (javaExpression != null) {
-                val newText = javaExpression.j2kText()
-                if (newText != null) {
-                    val convertedFragment = KtExpressionCodeFragment(
-                            project,
-                            kotlinCodeFragment.name,
-                            newText,
-                            kotlinCodeFragment.importsToString(),
-                            kotlinCodeFragment.context
-                    )
+                var convertedFragment: KtExpressionCodeFragment? = null
+                project.executeWriteCommand("Convert java expression to kotlin in Evaluate Expression") {
+                    val newText = javaExpression.j2kText()
+                    if (newText != null) {
+                        convertedFragment = KtExpressionCodeFragment(
+                                project,
+                                kotlinCodeFragment.name,
+                                newText,
+                                kotlinCodeFragment.importsToString(),
+                                kotlinCodeFragment.context
+                        )
 
-                    return convertedFragment
+                        AfterConversionPass(project, J2kPostProcessor(formatCode = false)).run(convertedFragment!!, range = null)
+                    }
                 }
+                return convertedFragment ?: kotlinCodeFragment
             }
         }
         return kotlinCodeFragment
