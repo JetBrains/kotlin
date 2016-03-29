@@ -59,8 +59,7 @@ public inline fun String.toDouble(): Double = java.lang.Double.parseDouble(this)
  * Parses the string as a signed [Byte] number and returns the result
  * or `null` if the string is not a valid representation of a number.
  */
-@kotlin.internal.InlineOnly
-public inline fun String.toByteOrNull(): Byte? {
+public fun String.toByteOrNull(): Byte? {
     val int = this.toIntOrNull() ?: return null
     if (int < Byte.MIN_VALUE || int > Byte.MAX_VALUE) return null
     return int.toByte()
@@ -70,8 +69,7 @@ public inline fun String.toByteOrNull(): Byte? {
  * Parses the string as a [Short] number and returns the result
  * or `null` if the string is not a valid representation of a number.
  */
-@kotlin.internal.InlineOnly
-public inline fun String.toShortOrNull(): Short? {
+public fun String.toShortOrNull(): Short? {
     val int = this.toIntOrNull() ?: return null
     if (int < Short.MIN_VALUE || int > Short.MAX_VALUE) return null
     return int.toShort()
