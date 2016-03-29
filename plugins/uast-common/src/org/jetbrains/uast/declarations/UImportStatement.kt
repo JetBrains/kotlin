@@ -22,7 +22,7 @@ interface UImportStatement : UElement {
     val isStarImport: Boolean
     val kind: UastImportKind
 
-    override fun traverse(handler: UastHandler) {}
+    override fun traverse(callback: UastCallback) {}
     override fun logString() = "UImport ($fqNameToImport)"
     override fun renderString() = "import ${fqNameToImport ?: ""}"
 }

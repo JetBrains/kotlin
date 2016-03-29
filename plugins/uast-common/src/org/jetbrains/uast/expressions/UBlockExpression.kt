@@ -18,7 +18,7 @@ package org.jetbrains.uast
 interface UBlockExpression : UExpression {
     val expressions: List<UExpression>
 
-    override fun traverse(handler: UastHandler) = expressions.handleTraverseList(handler)
+    override fun traverse(callback: UastCallback) = expressions.handleTraverseList(callback)
     override fun logString() = log("UBlockExpression", expressions)
 
     override fun renderString() = buildString {

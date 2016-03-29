@@ -23,8 +23,8 @@ interface UBinaryExpressionWithType : UExpression {
     override fun logString() = log("UBinaryExpressionWithType (${getExpressionType()?.name}, ${operationKind.name})", operand)
     override fun renderString() = "(${operand.renderString()}) ${operationKind.name} ${getExpressionType()?.name}"
 
-    override fun traverse(handler: UastHandler) {
-        operand.handleTraverse(handler)
-        type.handleTraverse(handler)
+    override fun traverse(callback: UastCallback) {
+        operand.handleTraverse(callback)
+        type.handleTraverse(callback)
     }
 }

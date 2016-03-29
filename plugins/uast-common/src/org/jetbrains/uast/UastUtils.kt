@@ -44,9 +44,9 @@ tailrec fun UElement?.getContainingDeclaration(): UDeclaration? {
     return parent.getContainingDeclaration()
 }
 
-fun UElement.handleTraverse(handler: UastHandler) {
-    handler(this)
-    this.traverse(handler)
+fun UElement.handleTraverse(callback: UastCallback) {
+    callback(this)
+    this.traverse(callback)
 }
 
 fun UDeclaration.isTopLevel() = parent is UFile
@@ -67,10 +67,10 @@ fun UElement.log(firstLine: String, vararg nested: Any?): String {
 val String.withMargin: String
     get() = lines().joinToString("\n") { "    " + it }
 
-fun List<UElement>.handleTraverseList(handler: UastHandler) {
+fun List<UElement>.handleTraverseList(callback: UastCallback) {
     for (element in this) {
-        handler(element)
-        element.traverse(handler)
+        callback(element)
+        element.traverse(callback)
     }
 }
 

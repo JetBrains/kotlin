@@ -28,7 +28,7 @@ interface UastLanguagePlugin {
 }
 
 interface UastAdditionalChecker {
-    operator fun invoke(element: UElement, handler: UastHandler, context: UastContext)
+    operator fun invoke(element: UElement, callback: UastCallback, context: UastContext)
 }
 
 object UastConverterUtils {

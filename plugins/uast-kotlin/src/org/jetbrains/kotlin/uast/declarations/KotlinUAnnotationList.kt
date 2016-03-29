@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.uast
 import org.jetbrains.kotlin.psi.KtAnnotation
 import org.jetbrains.uast.UAnnotation
 import org.jetbrains.uast.UElement
-import org.jetbrains.uast.UastHandler
+import org.jetbrains.uast.UastCallback
 import org.jetbrains.uast.handleTraverseList
 import org.jetbrains.uast.psi.PsiElementBacked
 
@@ -31,7 +31,7 @@ class KotlinUAnnotationList(
 
     override fun logString() = "KotlinUAnnotationList"
     override fun renderString() = annotations.joinToString(" ") { it.renderString() }
-    override fun traverse(handler: UastHandler) {
-        annotations.handleTraverseList(handler)
+    override fun traverse(callback: UastCallback) {
+        annotations.handleTraverseList(callback)
     }
 }

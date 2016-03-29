@@ -30,13 +30,13 @@ interface UFunction : UDeclaration, UModifierOwner, UAnnotated {
 
     fun getSuperFunctions(context: UastContext): List<UFunction>
 
-    override fun traverse(handler: UastHandler) {
-        nameElement?.handleTraverse(handler)
-        valueParameters.handleTraverseList(handler)
-        body.handleTraverse(handler)
-        annotations.handleTraverseList(handler)
-        typeParameters.handleTraverseList(handler)
-        returnType?.handleTraverse(handler)
+    override fun traverse(callback: UastCallback) {
+        nameElement?.handleTraverse(callback)
+        valueParameters.handleTraverseList(callback)
+        body.handleTraverse(callback)
+        annotations.handleTraverseList(callback)
+        typeParameters.handleTraverseList(callback)
+        returnType?.handleTraverse(callback)
     }
 
     override fun renderString(): String {

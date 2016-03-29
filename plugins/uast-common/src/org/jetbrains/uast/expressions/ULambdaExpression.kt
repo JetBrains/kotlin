@@ -19,9 +19,9 @@ interface ULambdaExpression : UExpression {
     val valueParameters: List<UVariable>
     val body: UExpression
 
-    override fun traverse(handler: UastHandler) {
-        valueParameters.handleTraverseList(handler)
-        body.handleTraverse(handler)
+    override fun traverse(callback: UastCallback) {
+        valueParameters.handleTraverseList(callback)
+        body.handleTraverse(callback)
     }
 
     override fun logString() = log("ULambdaExpression", valueParameters, body)

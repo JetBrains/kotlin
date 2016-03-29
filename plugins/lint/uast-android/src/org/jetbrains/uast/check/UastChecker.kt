@@ -43,10 +43,10 @@ object UastChecker {
             file: File,
             context: UastAndroidContext,
             visitor: UastVisitor) {
-        check(project, file, context, UastHandler { visitor.handle(it) })
+        check(project, file, context, UastCallback { visitor.handle(it) })
     }
 
-    fun check(project: Project, file: File, context: UastAndroidContext, handler: UastHandler) {
+    fun check(project: Project, file: File, context: UastAndroidContext, callback: UastCallback) {
         val vfile = VirtualFileManager.getInstance().findFileByUrl("file://" + file.absolutePath) ?: return
 
         val plugins = context.languagePlugins
@@ -57,7 +57,7 @@ object UastChecker {
             list
         }
 
-        val handlerWrapper = HandlerWrapper(handler, additionalCheckers, context)
+        val handlerWrapper = CallbackWrapper(callback, additionalCheckers, context)
 
         ApplicationManager.getApplication().runReadAction {
             val psiFile = PsiManager.getInstance(project).findFile(vfile)
@@ -80,11 +80,11 @@ object UastChecker {
         }
     }
 
-    private class HandlerWrapper(
-            val original: UastHandler,
+    private class CallbackWrapper(
+            val original: UastCallback,
             val additionalCheckers: List<UastAdditionalChecker>,
             val context: UastAndroidContext
-    ) : UastHandler {
+    ) : UastCallback {
         override fun invoke(element: UElement) {
             original(element)
             for (checker in additionalCheckers) {
@@ -100,8 +100,8 @@ object UastChecker {
 
         val appliesToResourcesRefs = scanner.appliesToResourceRefs()
 
-        var handler: UastHandler?
-        handler = UastHandler { element ->
+        var callback: UastCallback?
+        callback = UastCallback { element ->
             when (element) {
                 is UCallExpression -> {
                     if (applicableFunctionNames.isNotEmpty()) {
@@ -150,7 +150,7 @@ object UastChecker {
             }
         }
 
-        check(project, file, context, handler)
+        check(project, file, context, callback)
     }
 
 }

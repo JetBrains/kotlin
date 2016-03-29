@@ -15,6 +15,6 @@
  */
 package org.jetbrains.uast;
 
-public interface UastHandler {
+public interface UastCallback {
     void invoke(UElement element);
 }

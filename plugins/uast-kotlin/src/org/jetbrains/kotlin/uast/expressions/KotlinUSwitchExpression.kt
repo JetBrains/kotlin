@@ -101,7 +101,7 @@ class KotlinUSwitchEntry(
 
     override fun logString() = log("KotlinUSwitchEntry", expression)
 
-    override fun traverse(handler: UastHandler) {
-        expression.handleTraverse(handler)
+    override fun traverse(callback: UastCallback) {
+        expression.handleTraverse(callback)
     }
 }

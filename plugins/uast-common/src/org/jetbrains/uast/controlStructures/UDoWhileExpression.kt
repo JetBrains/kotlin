@@ -18,9 +18,9 @@ package org.jetbrains.uast
 interface UDoWhileExpression : ULoopExpression {
     val condition: UExpression
 
-    override fun traverse(handler: UastHandler) {
-        condition.handleTraverse(handler)
-        body.handleTraverse(handler)
+    override fun traverse(callback: UastCallback) {
+        condition.handleTraverse(callback)
+        body.handleTraverse(callback)
     }
 
     override fun renderString() = buildString {

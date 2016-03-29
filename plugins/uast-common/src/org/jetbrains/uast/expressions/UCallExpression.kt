@@ -36,12 +36,12 @@ interface UCallExpression : UExpression, UResolvable {
     override fun resolve(context: UastContext): UFunction?
     override fun resolveOrEmpty(context: UastContext): UFunction = resolve(context) ?: UFunctionNotResolved
 
-    override fun traverse(handler: UastHandler) {
-        functionReference?.handleTraverse(handler)
-        classReference?.handleTraverse(handler)
-        functionNameElement?.handleTraverse(handler)
-        valueArguments.handleTraverseList(handler)
-        typeArguments.handleTraverseList(handler)
+    override fun traverse(callback: UastCallback) {
+        functionReference?.handleTraverse(callback)
+        classReference?.handleTraverse(callback)
+        functionNameElement?.handleTraverse(callback)
+        valueArguments.handleTraverseList(callback)
+        typeArguments.handleTraverseList(callback)
     }
 
     override fun logString() = log("UFunctionCallExpression ($kind, argCount = $valueArgumentCount)", functionReference, valueArguments)

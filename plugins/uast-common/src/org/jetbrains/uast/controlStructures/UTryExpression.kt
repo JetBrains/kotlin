@@ -21,10 +21,10 @@ interface UTryExpression : UExpression {
     val catchClauses: List<UCatchClause>
     val finallyClause: UExpression?
 
-    override fun traverse(handler: UastHandler) {
-        tryClause.handleTraverse(handler)
-        catchClauses.handleTraverseList(handler)
-        finallyClause?.handleTraverse(handler)
+    override fun traverse(callback: UastCallback) {
+        tryClause.handleTraverse(callback)
+        catchClauses.handleTraverseList(callback)
+        finallyClause?.handleTraverse(callback)
     }
 
     override fun renderString() = buildString {
@@ -45,8 +45,8 @@ interface UCatchClause : UElement {
     val parameters: List<UVariable>
     val types: List<UType>
 
-    override fun traverse(handler: UastHandler) {
-        body.handleTraverse(handler)
+    override fun traverse(callback: UastCallback) {
+        body.handleTraverse(callback)
     }
 
     override fun logString() = log("UCatchClause", body)

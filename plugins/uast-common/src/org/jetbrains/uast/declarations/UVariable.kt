@@ -20,11 +20,11 @@ interface UVariable : UDeclaration, UModifierOwner, UAnnotated {
     val kind: UastVariableKind
     val type: UType
 
-    override fun traverse(handler: UastHandler) {
-        nameElement?.handleTraverse(handler)
-        initializer?.handleTraverse(handler)
-        annotations.handleTraverseList(handler)
-        type.handleTraverse(handler)
+    override fun traverse(callback: UastCallback) {
+        nameElement?.handleTraverse(callback)
+        initializer?.handleTraverse(callback)
+        annotations.handleTraverseList(callback)
+        type.handleTraverse(callback)
     }
 
     override fun renderString(): String {

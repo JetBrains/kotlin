@@ -19,7 +19,7 @@ interface UElement {
     val parent: UElement?
     fun logString(): String
     fun renderString(): String = logString()
-    fun traverse(handler: UastHandler)
+    fun traverse(callback: UastCallback)
 }
 
 interface UNamed {
@@ -42,7 +42,7 @@ interface UModifierOwner {
 }
 
 interface NoTraverse : UElement {
-    override fun traverse(handler: UastHandler) {}
+    override fun traverse(callback: UastCallback) {}
 }
 
 interface UResolvable {

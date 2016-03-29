@@ -22,7 +22,7 @@ interface UDeclarationsExpression : UExpression {
         get() = declarations.filterIsInstance<UVariable>()
 
     override fun evaluate() = null
-    override fun traverse(handler: UastHandler) = declarations.handleTraverseList(handler)
+    override fun traverse(callback: UastCallback) = declarations.handleTraverseList(callback)
 
     override fun renderString() = declarations.joinToString("\n") { it.renderString() }
     override fun logString() = log("UDeclarationsExpression", declarations)

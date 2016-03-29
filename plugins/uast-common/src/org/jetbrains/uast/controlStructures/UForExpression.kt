@@ -20,11 +20,11 @@ interface UForExpression : ULoopExpression {
     val condition: UExpression?
     val update: UExpression?
 
-    override fun traverse(handler: UastHandler) {
-        declaration?.handleTraverse(handler)
-        condition?.handleTraverse(handler)
-        update?.handleTraverse(handler)
-        body.handleTraverse(handler)
+    override fun traverse(callback: UastCallback) {
+        declaration?.handleTraverse(callback)
+        condition?.handleTraverse(callback)
+        update?.handleTraverse(callback)
+        body.handleTraverse(callback)
     }
 
     override fun renderString() = buildString {

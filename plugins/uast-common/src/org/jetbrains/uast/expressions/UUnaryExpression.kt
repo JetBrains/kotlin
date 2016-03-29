@@ -21,8 +21,8 @@ interface UUnaryExpression : UExpression {
     val operand: UExpression
     val operator: UastOperator
 
-    override fun traverse(handler: UastHandler) {
-        operand.handleTraverse(handler)
+    override fun traverse(callback: UastCallback) {
+        operand.handleTraverse(callback)
     }
 }
 
