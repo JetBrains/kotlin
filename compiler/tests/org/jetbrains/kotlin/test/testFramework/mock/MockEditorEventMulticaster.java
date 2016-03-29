@@ -40,7 +40,7 @@ public class MockEditorEventMulticaster implements EditorEventMulticaster {
   }
 
   @Override
-  public void addEditorMouseListener(@NotNull final EditorMouseListener listener, @NotNull final Disposable parentDisposable) {
+  public void addEditorMouseListener(@NotNull EditorMouseListener listener, @NotNull Disposable parentDisposable) {
   }
 
   @Override

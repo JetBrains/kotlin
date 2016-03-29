@@ -28,6 +28,7 @@ public class MockSchemesManagerFactory extends SchemesManagerFactory {
                                                                                            @NotNull SchemeProcessor<E> processor,
                                                                                            @NotNull RoamingType roamingType,
                                                                                            @Nullable String presentableName) {
+    //noinspection unchecked
     return EMPTY;
   }
 }

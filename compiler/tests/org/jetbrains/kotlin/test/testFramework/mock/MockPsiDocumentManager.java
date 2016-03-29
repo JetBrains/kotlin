@@ -57,7 +57,7 @@ public class MockPsiDocumentManager extends PsiDocumentManager {
   }
 
   @Override
-  public void performForCommittedDocument(@NotNull final Document document, @NotNull final Runnable action) {
+  public void performForCommittedDocument(@NotNull Document document, @NotNull Runnable action) {
     action.run();
   }
 

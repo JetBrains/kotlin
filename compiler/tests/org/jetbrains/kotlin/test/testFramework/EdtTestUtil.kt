@@ -23,10 +23,6 @@ import javax.swing.SwingUtilities
 
 class EdtTestUtil {
     companion object {
-        @TestOnly @JvmStatic fun runInEdtAndWait(runnable: ThrowableRunnable<Throwable>) {
-            runInEdtAndWait { runnable.run() }
-        }
-
         @TestOnly @JvmStatic fun runInEdtAndWait(runnable: Runnable) {
             runInEdtAndWait { runnable.run() }
         }

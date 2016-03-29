@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.test.testFramework;
 import com.intellij.core.CoreEncodingProjectManager;
 import com.intellij.mock.MockApplicationEx;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ComponentManager;
 import com.intellij.openapi.extensions.ExtensionPoint;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.extensions.Extensions;
@@ -28,76 +27,63 @@ import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.util.Getter;
 import com.intellij.openapi.vfs.encoding.EncodingManager;
-import org.jetbrains.annotations.NotNull;
 import org.picocontainer.MutablePicoContainer;
 
-@SuppressWarnings("ALL")
+import java.lang.reflect.Modifier;
+
 public abstract class KtPlatformLiteFixture extends KtUsefulTestCase {
     protected MockProjectEx myProject;
 
-    public KtPlatformLiteFixture() {
-    }
-
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
-        Extensions.cleanRootArea(this.getTestRootDisposable());
+        Extensions.cleanRootArea(getTestRootDisposable());
     }
 
     public static MockApplicationEx getApplication() {
-        return (MockApplicationEx) ApplicationManager.getApplication();
+        return (MockApplicationEx)ApplicationManager.getApplication();
     }
 
     public void initApplication() {
-        MockApplicationEx instance = new MockApplicationEx(this.getTestRootDisposable());
-        ApplicationManager.setApplication(instance, new Getter() {
-            public FileTypeRegistry get() {
-                return FileTypeManager.getInstance();
-            }
-        }, this.getTestRootDisposable());
+        MockApplicationEx instance = new MockApplicationEx(getTestRootDisposable());
+        ApplicationManager.setApplication(instance,
+                                          new Getter<FileTypeRegistry>() {
+                                              @Override
+                                              public FileTypeRegistry get() {
+                                                  return FileTypeManager.getInstance();
+                                              }
+                                          },
+                                          getTestRootDisposable());
         getApplication().registerService(EncodingManager.class, CoreEncodingProjectManager.class);
     }
 
+    @Override
     protected void tearDown() throws Exception {
         super.tearDown();
         clearFields(this);
-        this.myProject = null;
-    }
-
-    protected <T> void registerExtension(ExtensionPointName<T> extensionPointName, @NotNull T t) {
-        this.registerExtension(Extensions.getRootArea(), extensionPointName, t);
-    }
-
-    public <T> void registerExtension(ExtensionsArea area, ExtensionPointName<T> name, T t) {
-        this.registerExtensionPoint(area, name, (Class<? extends T>) t.getClass());
-        KtPlatformTestUtil.registerExtension(area, name, t, this.myTestRootDisposable);
+        myProject = null;
     }
 
     protected <T> void registerExtensionPoint(ExtensionPointName<T> extensionPointName, Class<T> aClass) {
-        this.registerExtensionPoint(Extensions.getRootArea(), extensionPointName, aClass);
+        registerExtensionPoint(Extensions.getRootArea(), extensionPointName, aClass);
     }
 
-    protected <T> void registerExtensionPoint(ExtensionsArea area, ExtensionPointName<T> extensionPointName, Class<? extends T> aClass) {
+    private static <T> void registerExtensionPoint(
+            ExtensionsArea area, ExtensionPointName<T> extensionPointName,
+            Class<? extends T> aClass
+    ) {
         String name = extensionPointName.getName();
-        if(!area.hasExtensionPoint(name)) {
-            ExtensionPoint.Kind kind = !aClass.isInterface() && (aClass.getModifiers() & 1024) == 0 ? ExtensionPoint.Kind.BEAN_CLASS : ExtensionPoint.Kind.INTERFACE;
+        if (!area.hasExtensionPoint(name)) {
+            ExtensionPoint.Kind kind = aClass.isInterface() || (aClass.getModifiers() & Modifier.ABSTRACT) != 0 ? ExtensionPoint.Kind.INTERFACE : ExtensionPoint.Kind.BEAN_CLASS;
             area.registerExtensionPoint(name, aClass.getName(), kind);
         }
-
-    }
-
-    protected void registerComponentImplementation(MutablePicoContainer container, Class<?> key, Class<?> implementation) {
-        container.unregisterComponent(key);
-        container.registerComponentImplementation(key, implementation);
     }
 
     public static <T> T registerComponentInstance(MutablePicoContainer container, Class<T> key, T implementation) {
         Object old = container.getComponentInstance(key);
         container.unregisterComponent(key);
         container.registerComponentInstance(key, implementation);
-        return (T) old;
-    }
-
-    public static <T> T registerComponentInstance(ComponentManager container, Class<T> key, T implementation) {
-        return registerComponentInstance((MutablePicoContainer)container.getPicoContainer(), key, implementation);
+        //noinspection unchecked
+        return (T)old;
     }
 }

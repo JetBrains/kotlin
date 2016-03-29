@@ -29,10 +29,6 @@ import com.intellij.util.text.CharArrayCharSequence;
 import org.jetbrains.annotations.NotNull;
 
 public class MockEditorFactory extends EditorFactory {
-  public Document createDocument(String text) {
-    return new DocumentImpl(text);
-  }
-
   @Override
   public Editor createEditor(@NotNull Document document) {
     return null;
@@ -54,7 +50,7 @@ public class MockEditorFactory extends EditorFactory {
   }
 
   @Override
-  public Editor createEditor(@NotNull final Document document, final Project project, @NotNull final FileType fileType, final boolean isViewer) {
+  public Editor createEditor(@NotNull Document document, Project project, @NotNull FileType fileType, boolean isViewer) {
     return null;
   }
 

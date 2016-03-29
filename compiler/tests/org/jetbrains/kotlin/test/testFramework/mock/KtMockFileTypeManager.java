@@ -16,9 +16,7 @@
 
 package org.jetbrains.kotlin.test.testFramework.mock;
 
-import com.intellij.mock.*;
 import com.intellij.openapi.fileTypes.*;
-import com.intellij.openapi.fileTypes.MockLanguageFileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
@@ -26,7 +24,6 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.test.testFramework.mock.KtMockLanguageFileType;
 
 import java.util.Collections;
 import java.util.List;
@@ -47,14 +44,6 @@ public class KtMockFileTypeManager extends FileTypeManager {
 
     @Override
     public void setIgnoredFilesList(@NotNull String list) {
-    }
-
-    public void save() {
-    }
-
-    @NotNull
-    public String getExtension(@NotNull String fileName) {
-        return "";
     }
 
     @Override
@@ -135,7 +124,7 @@ public class KtMockFileTypeManager extends FileTypeManager {
 
     @Override
     @NotNull
-    public FileType getStdFileType(@NotNull @NonNls final String fileTypeName) {
+    public FileType getStdFileType(@NotNull @NonNls String fileTypeName) {
         if ("ARCHIVE".equals(fileTypeName) || "CLASS".equals(fileTypeName)) return UnknownFileType.INSTANCE;
         if ("PLAIN_TEXT".equals(fileTypeName)) return PlainTextFileType.INSTANCE;
         if ("JAVA".equals(fileTypeName)) return loadFileTypeSafe("com.intellij.ide.highlighter.JavaFileType", fileTypeName);
@@ -150,7 +139,7 @@ public class KtMockFileTypeManager extends FileTypeManager {
         return new KtMockLanguageFileType(PlainTextLanguage.INSTANCE, fileTypeName.toLowerCase());
     }
 
-    private static FileType loadFileTypeSafe(final String className, String fileTypeName) {
+    private static FileType loadFileTypeSafe(String className, String fileTypeName) {
         try {
             return (FileType)Class.forName(className).getField("INSTANCE").get(null);
         }

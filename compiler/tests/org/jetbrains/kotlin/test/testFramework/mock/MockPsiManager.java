@@ -43,6 +43,7 @@ public class MockPsiManager extends PsiManagerEx {
     myProject = project;
   }
 
+  @SuppressWarnings("unused")
   public void addPsiDirectory(VirtualFile file, PsiDirectory psiDirectory) {
     myDirectories.put(file, psiDirectory);
   }
@@ -175,11 +176,11 @@ public class MockPsiManager extends PsiManagerEx {
   }
 
   @Override
-  public void beforeChildRemoval(@NotNull final PsiTreeChangeEventImpl event) {
+  public void beforeChildRemoval(@NotNull PsiTreeChangeEventImpl event) {
   }
 
   @Override
-  public void beforeChildReplacement(@NotNull final PsiTreeChangeEventImpl event) {
+  public void beforeChildReplacement(@NotNull PsiTreeChangeEventImpl event) {
   }
 
   @Override

@@ -27,8 +27,8 @@ public class TestRunnerUtil {
   }
 
   @TestOnly
-  public static boolean isJUnit4TestClass(final Class aClass) {
-    final int modifiers = aClass.getModifiers();
+  public static boolean isJUnit4TestClass(Class aClass) {
+    int modifiers = aClass.getModifiers();
     if ((modifiers & Modifier.ABSTRACT) != 0) return false;
     if ((modifiers & Modifier.PUBLIC) == 0) return false;
     if (aClass.getAnnotation(RunWith.class) != null) return true;
@@ -37,30 +37,4 @@ public class TestRunnerUtil {
     }
     return false;
   }
-
-  //public static void replaceIdeEventQueueSafely() {
-  //  if (Toolkit.getDefaultToolkit().getSystemEventQueue() instanceof IdeEventQueue) {
-  //    return;
-  //  }
-  //  if (SwingUtilities.isEventDispatchThread()) {
-  //    throw new RuntimeException("must not call under EDT");
-  //  }
-  //  AWTAutoShutdown.getInstance().notifyThreadBusy(Thread.currentThread());
-  //  UIUtil.pump();
-  //  // in JDK 1.6 java.awt.EventQueue.push() causes slow painful death of current EDT
-  //  // so we have to wait through its agony to termination
-  //  try {
-  //    SwingUtilities.invokeAndWait(new Runnable() {
-  //      @Override
-  //      public void run() {
-  //        IdeEventQueue.getInstance();
-  //      }
-  //    });
-  //    SwingUtilities.invokeAndWait(EmptyRunnable.getInstance());
-  //    SwingUtilities.invokeAndWait(EmptyRunnable.getInstance());
-  //  }
-  //  catch (Exception e) {
-  //    throw new RuntimeException(e);
-  //  }
-  //}
 }

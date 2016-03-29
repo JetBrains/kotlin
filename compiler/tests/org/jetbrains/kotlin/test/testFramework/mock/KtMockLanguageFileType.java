@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.test.testFramework.mock;
 
 import com.intellij.lang.Language;
 import com.intellij.openapi.fileTypes.LanguageFileType;
-import com.sun.istack.internal.NotNull;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -30,16 +30,19 @@ public class KtMockLanguageFileType extends LanguageFileType {
         this.myExtension = extension;
     }
 
+    @Override
     @NotNull
     public String getName() {
         return this.getLanguage().getID();
     }
 
+    @Override
     @NotNull
     public String getDescription() {
         return "";
     }
 
+    @Override
     @NotNull
     public String getDefaultExtension() {
         String var10000 = this.myExtension;
@@ -50,11 +53,12 @@ public class KtMockLanguageFileType extends LanguageFileType {
         }
     }
 
+    @Override
     public Icon getIcon() {
         return null;
     }
 
     public boolean equals(Object obj) {
-        return !(obj instanceof LanguageFileType)?false:this.getLanguage().equals(((LanguageFileType)obj).getLanguage());
+        return obj instanceof LanguageFileType && this.getLanguage().equals(((LanguageFileType) obj).getLanguage());
     }
 }
