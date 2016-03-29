@@ -37,4 +37,5 @@ fun CodeInsightTestFixture.configureWithExtraFile(path: String, vararg extraName
     configureByFiles(*(listOf(path) + extraPaths).toTypedArray())
 }
 
+@Suppress("unused") // Used in kotlin-ultimate
 inline fun <reified T: Any> Any?.assertInstanceOf() = UsefulTestCase.assertInstanceOf(this, T::class.java)

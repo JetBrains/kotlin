@@ -34,11 +34,6 @@ which will setup the dependencies on
 
 * intellij-core: is a part of command line compiler and contains only necessary APIs.
 * idea-full: is a full blown IntelliJ IDEA Community Edition to be used in former plugin module.
-* idea-ultimate-full: is a full blown IntelliJ IDEA Ultimate Edition to be used in former plugin module.
-
-If you are not dealing with IDEA Ultimate-specific features, you may want to disable corresponding project dependency.
-(that will also relieve you from necessity to download the IDEA Ultimate distribution during dependency update process)
-To do so change "use.ultimate.by.default" property to false (update_dependencies.xml) before running dependency update
 
 Then, you need to run
 
@@ -71,9 +66,6 @@ If you want to have an IntelliJ IDEA installation without the Kotlin plugin whic
 plugin [see this document](http://devnet.jetbrains.net/docs/DOC-181) which describes how to have multiple IntelliJ IDEA installations using different configurations and plugin directories.
 
 From this root project there are Run/Debug Configurations for running IDEA or the Compiler Tests for example; so if you want to try out the latest and greatest IDEA plugin
-
-If you've decided to disable IDEA Ultimate configuration during dependency update, you also need to locally disable the compilation of its dependent code.
-To do so you can either delete idea-ultimate module using IDEA action in the Project View, or remove corresponding line in .idea/modules.xml
 
 * VCS -> Git -> Pull
 * Run IntelliJ IDEA

@@ -18,12 +18,8 @@
   <depends optional="true" config-file="coverage.xml">Coverage</depends>
   <depends optional="true" config-file="i18n.xml">com.intellij.java-i18n</depends>
   <depends optional="true" config-file="injection.xml">org.intellij.intelliLang</depends>
-  <depends optional="true" config-file="kotlin-spring.xml">com.intellij.spring</depends>
-  <depends optional="true">com.intellij.javaee</depends>
-  <depends optional="true">com.intellij.persistence</depends>
-  <depends optional="true">com.intellij.database</depends>
-  <depends optional="true">com.intellij.css</depends>
-  <depends optional="true">com.intellij.jsp</depends>
+
+  <!-- ULTIMATE-PLUGIN-PLACEHOLDER -->
 
   <project-components>
     <component>

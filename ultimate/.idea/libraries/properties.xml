@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="properties">
+    <ANNOTATIONS>
+      <root url="file://$PROJECT_DIR$/../annotations" />
+    </ANNOTATIONS>
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/properties/lib/properties.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

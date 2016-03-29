@@ -99,10 +99,6 @@ import org.jetbrains.kotlin.idea.refactoring.pushDown.AbstractPushDownTest
 import org.jetbrains.kotlin.idea.refactoring.rename.AbstractRenameTest
 import org.jetbrains.kotlin.idea.refactoring.safeDelete.AbstractSafeDeleteTest
 import org.jetbrains.kotlin.idea.resolve.*
-import org.jetbrains.kotlin.idea.spring.tests.generate.AbstractGenerateSpringDependencyActionTest
-import org.jetbrains.kotlin.idea.spring.tests.references.AbstractSpringReferenceCompletionHandlerTest
-import org.jetbrains.kotlin.idea.spring.tests.references.AbstractSpringReferenceCompletionTest
-import org.jetbrains.kotlin.idea.spring.tests.references.AbstractSpringReferenceNavigationTest
 import org.jetbrains.kotlin.idea.structureView.AbstractKotlinFileStructureTest
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiFileHighlightingTest
 import org.jetbrains.kotlin.idea.stubs.AbstractResolveByStubTest
@@ -795,32 +791,6 @@ fun main(args: Array<String>) {
         }
     }
 
-    testGroup("idea/idea-ultimate/tests", "idea/testData") {
-        testClass<AbstractInspectionTest>("UltimateInspectionTestGenerated") {
-            model("ultimateInspections", pattern = "^(inspections\\.test)$", singleClass = true)
-        }
-
-        testClass<AbstractQuickFixTest>("UltimateQuickFixTestGenerated") {
-            model("ultimateQuickFixes", pattern = "^([\\w\\-_]+)\\.kt$", filenameStartsLowerCase = true)
-        }
-
-        testClass<AbstractSpringReferenceCompletionHandlerTest>() {
-            model("spring/core/references/completion/handler")
-        }
-
-        testClass<AbstractSpringReferenceCompletionTest>() {
-            model("spring/core/references/completion/variants")
-        }
-
-        testClass<AbstractSpringReferenceNavigationTest>() {
-            model("spring/core/references/navigation")
-        }
-
-        testClass<AbstractGenerateSpringDependencyActionTest>() {
-            model("spring/core/generate", pattern = "^([\\w]+)\\.kt$", singleClass = true)
-        }
-    }
-
     testGroup("idea/tests", "compiler/testData") {
         testClass<AbstractResolveByStubTest>() {
             model("loadJava/compiledKotlin")
@@ -1132,7 +1102,7 @@ fun main(args: Array<String>) {
     }
 }
 
-internal class TestGroup(val testsRoot: String, val testDataRoot: String) {
+class TestGroup(val testsRoot: String, val testDataRoot: String) {
     inline fun <reified T: TestCase> testClass(
             suiteTestClass: String = getDefaultSuiteTestClass(T::class.java),
             noinline init: TestClass.() -> Unit
@@ -1196,11 +1166,11 @@ internal class TestGroup(val testsRoot: String, val testDataRoot: String) {
 
 }
 
-private fun testGroup(testsRoot: String, testDataRoot: String, init: TestGroup.() -> Unit) {
+fun testGroup(testsRoot: String, testDataRoot: String, init: TestGroup.() -> Unit) {
     TestGroup(testsRoot, testDataRoot).init()
 }
 
-private fun getDefaultSuiteTestClass(baseTestClass:Class<*>): String {
+fun getDefaultSuiteTestClass(baseTestClass:Class<*>): String {
     val baseName = baseTestClass.simpleName
     if (!baseName.startsWith("Abstract")) {
         throw IllegalArgumentException("Doesn't start with \"Abstract\": $baseName")
