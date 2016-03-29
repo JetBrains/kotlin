@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="kotlin-reflect">
+    <CLASSES>
+      <root url="jar://$KOTLIN_BUNDLED$/lib/kotlin-reflect.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

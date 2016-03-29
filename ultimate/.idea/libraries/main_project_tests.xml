@@ -1,0 +1,21 @@
+<component name="libraryTable">
+  <library name="main-project-tests">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/../out/test/compiler-tests" />
+      <root url="file://$PROJECT_DIR$/../out/test/idea-test-framework" />
+      <root url="file://$PROJECT_DIR$/../out/test/idea" />
+      <root url="file://$PROJECT_DIR$/../out/test/idea-completion" />
+      <root url="file://$PROJECT_DIR$/../out/test/generators" />
+      <root url="file://$PROJECT_DIR$/../out/test/tests-common" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/../idea/idea-completion/tests" />
+      <root url="file://$PROJECT_DIR$/../idea/idea-android/tests" />
+      <root url="file://$PROJECT_DIR$/../idea/tests" />
+      <root url="file://$PROJECT_DIR$/../generators/src" />
+      <root url="file://$PROJECT_DIR$/../generators/tests" />
+      <root url="file://$PROJECT_DIR$/../compiler/tests-common" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="kotlin-runtime">
+    <CLASSES>
+      <root url="jar://$KOTLIN_BUNDLED$/lib/kotlin-runtime.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/../libraries/stdlib/src" />
+      <root url="file://$PROJECT_DIR$/../core/builtins/native" />
+      <root url="file://$PROJECT_DIR$/../core/builtins/src" />
+    </SOURCES>
+  </library>
+</component>
