@@ -3,6 +3,26 @@ package k
 public class Class() {
     public val prop: Int = 0
     fun function() = 1
+
+    fun <T : Number, G> function2(
+            b: Byte, c: Char, s: Short, i: Int, l: Long, bool: Boolean, f: Float, d: Double,
+            ba: ByteArray, ca: CharArray, ia: IntArray, la: LongArray, boola: BooleanArray, fa: FloatArray, da: DoubleArray, sa: Array<String>,
+            baa: Array<ByteArray>, saa: Array<Array<String>>,
+            t: T, g: G, str: String, nestedClass: Class.F, innerClass: Class.G, nestedNested: Class.F.F
+    ) {
+    }
+
+    class F {
+        fun function() = 1
+
+        class F {
+            fun function() = 1
+        }
+    }
+
+    inner class G {
+        fun function() = 5
+    }
 }
 
 public enum class EnumClass {

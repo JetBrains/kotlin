@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,13 @@ import com.intellij.openapi.roots.FileIndexFacade
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.compiled.ClassFileDecompilers
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.IDEKotlinBinaryClassCache
+import org.jetbrains.kotlin.idea.caches.resolve.BySignatureIndexer
 import org.jetbrains.kotlin.idea.decompiler.KotlinDecompiledFileViewProvider
 import org.jetbrains.kotlin.idea.decompiler.KtDecompiledFile
 import org.jetbrains.kotlin.idea.decompiler.common.createIncompatibleAbiVersionDecompiledText
+import org.jetbrains.kotlin.idea.decompiler.navigation.ByDescriptorIndexer
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DecompiledText
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.ResolverForDecompiler
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.buildDecompiledText
@@ -34,7 +37,6 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.flexibility
 import org.jetbrains.kotlin.types.isFlexible
-import java.util.*
 
 class KotlinClassFileDecompiler : ClassFileDecompilers.Full() {
     private val stubBuilder = KotlinClsStubBuilder()
@@ -75,19 +77,21 @@ fun buildDecompiledTextForClassFile(
         return createIncompatibleAbiVersionDecompiledText(JvmMetadataVersion.INSTANCE, classHeader.metadataVersion)
     }
 
+    fun buildText(declarations: List<DeclarationDescriptor>) =
+            buildDecompiledText(classId.packageFqName, declarations, decompilerRendererForClassFiles, listOf(ByDescriptorIndexer, BySignatureIndexer))
+
     return when (classHeader.kind) {
         KotlinClassHeader.Kind.FILE_FACADE ->
-            buildDecompiledText(classId.packageFqName, ArrayList(resolver.resolveDeclarationsInFacade(classId.asSingleFqName())),
-                                decompilerRendererForClassFiles)
-        KotlinClassHeader.Kind.CLASS ->
-            buildDecompiledText(classId.packageFqName, listOfNotNull(resolver.resolveTopLevelClass(classId)),
-                                decompilerRendererForClassFiles)
+            buildText(resolver.resolveDeclarationsInFacade(classId.asSingleFqName()))
+        KotlinClassHeader.Kind.CLASS -> {
+            buildText(listOfNotNull(resolver.resolveTopLevelClass(classId)))
+        }
         KotlinClassHeader.Kind.MULTIFILE_CLASS -> {
             val partClasses = findMultifileClassParts(classFile, classId, classHeader)
             val partMembers = partClasses.flatMap { partClass ->
                 resolver.resolveDeclarationsInFacade(partClass.classId.asSingleFqName())
             }
-            buildDecompiledText(classId.packageFqName, partMembers, decompilerRendererForClassFiles)
+            buildText(partMembers)
         }
         else ->
             throw UnsupportedOperationException("Unknown header kind: $classHeader, class $classId")
