@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.test.util
 
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.SmartFMap
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtPackageDirective
@@ -56,5 +55,3 @@ fun PsiFile.findElementsByCommentPrefix(prefix: String): Map<PsiElement, String>
     )
     return result
 }
-
-inline fun <reified T: Any> Any?.assertInstanceOf() = UsefulTestCase.assertInstanceOf(this, T::class.java)

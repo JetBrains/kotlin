@@ -135,21 +135,7 @@
             <move file="dependencies/apache-ant-@{version}" tofile="dependencies/@{folderName}"/>
         </sequential>
     </macrodef>
-    <macrodef name="get-spring-library">
-        <attribute name="lib"/>
-        <attribute name="version"/>
-
-        <sequential>
-            <get-maven-library
-                server="http://central.maven.org/maven2"
-                prefix="org/springframework"
-                lib="@{lib}"
-                version="@{version}"
-                src="false"
-                dependencies="idea/testData/spring/_lib/spring/@{version}"/>
-        </sequential>
-    </macrodef>
-
+   
     <target name="make-native-platform-uberjar">
         <property name="dependencies" value="dependencies"/>
         <property name="download" value="${dependencies}/download"/>
@@ -157,7 +143,7 @@
         <property name="version" value="${native-platform-lib-version}"/>
         <property name="common.name" value="native-platform"/>
         <property name="common.prefix" value="${server}/net/rubygrapefruit/${common.name}"/>
-
+        
         <macrodef name="get-lib">
             <attribute name="suffix"/>
             <sequential>
@@ -167,7 +153,7 @@
 
         <mkdir dir="${dependencies}"/>
         <mkdir dir="${download}"/>
-
+        
         <get-lib suffix=""/>
         <get-lib suffix="-windows-amd64"/>
         <get-lib suffix="-windows-i386"/>
@@ -189,9 +175,9 @@
             <zipfileset src="${download}/${common.name}-freebsd-amd64.jar" includes="**" />
             <zipfileset src="${download}/${common.name}-freebsd-i386.jar" includes="**" />
         </jar>
-
+        
     </target>
-
+    
     <target name="fetch-third-party" depends="make-native-platform-uberjar">
         <mkdir dir="dependencies"/>
         <mkdir dir="dependencies/download"/>
@@ -334,12 +320,6 @@
         <antcall target="override-version"/>
 
         <download-or-build-markdown-parser/>
-
-        <sequential if:set="use.ultimate.by.default">
-            <get-spring-library lib="spring-core" version="4.2.0.RELEASE"/>
-            <get-spring-library lib="spring-beans" version="4.2.0.RELEASE"/>
-            <get-spring-library lib="spring-context" version="4.2.0.RELEASE"/>
-        </sequential>
     </target>
 
     <macrodef name="get_android_sdk">
