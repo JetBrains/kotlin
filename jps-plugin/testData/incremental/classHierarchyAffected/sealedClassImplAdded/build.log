@@ -22,7 +22,7 @@ End of files
 Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
-when expression must be exhaustive, add necessary 'is C' branch or 'else' branch instead
+'when' expression must be exhaustive, add necessary 'is C' branch or 'else' branch instead
 
 ================ Step #2 =================
 

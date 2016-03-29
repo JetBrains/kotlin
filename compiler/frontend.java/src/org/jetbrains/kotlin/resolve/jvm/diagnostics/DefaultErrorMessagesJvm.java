@@ -49,7 +49,7 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         }
     };
 
-    public static final DiagnosticFactoryToRendererMap MAP = new DiagnosticFactoryToRendererMap("JVM");
+    private static final DiagnosticFactoryToRendererMap MAP = new DiagnosticFactoryToRendererMap("JVM");
     static {
         MAP.put(ErrorsJvm.CONFLICTING_JVM_DECLARATIONS, "Platform declaration clash: {0}", CONFLICTING_JVM_DECLARATIONS_DATA);
         MAP.put(ErrorsJvm.ACCIDENTAL_OVERRIDE, "Accidental override: {0}", CONFLICTING_JVM_DECLARATIONS_DATA);
@@ -57,17 +57,17 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
 
         MAP.put(ErrorsJvm.MISSING_DEPENDENCY_CLASS, "Cannot access class ''{0}''. Check your module classpath for missing or conflicting dependencies", Renderers.TO_STRING);
 
-        MAP.put(ErrorsJvm.JVM_STATIC_NOT_IN_OBJECT, "Only functions in named objects and companion objects of classes can be annotated with ''@JvmStatic''");
-        MAP.put(ErrorsJvm.JVM_STATIC_ON_CONST_OR_JVM_FIELD, "''@JvmStatic'' annotation is useless for const or ''@JvmField'' properties");
-        MAP.put(ErrorsJvm.OVERRIDE_CANNOT_BE_STATIC, "Override member cannot be ''@JvmStatic'' in object");
-        MAP.put(ErrorsJvm.OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS, "''@JvmOverloads'' annotation has no effect for methods without default arguments");
-        MAP.put(ErrorsJvm.OVERLOADS_ABSTRACT, "''@JvmOverloads'' annotation cannot be used on abstract methods");
-        MAP.put(ErrorsJvm.OVERLOADS_PRIVATE, "''@JvmOverloads'' annotation has no effect on private and local declarations");
-        MAP.put(ErrorsJvm.INAPPLICABLE_JVM_NAME, "''@JvmName'' annotation is not applicable to this declaration");
+        MAP.put(ErrorsJvm.JVM_STATIC_NOT_IN_OBJECT, "Only functions in named objects and companion objects of classes can be annotated with '@JvmStatic'");
+        MAP.put(ErrorsJvm.JVM_STATIC_ON_CONST_OR_JVM_FIELD, "'@JvmStatic' annotation is useless for const or '@JvmField' properties");
+        MAP.put(ErrorsJvm.OVERRIDE_CANNOT_BE_STATIC, "Override member cannot be '@JvmStatic' in object");
+        MAP.put(ErrorsJvm.OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS, "'@JvmOverloads' annotation has no effect for methods without default arguments");
+        MAP.put(ErrorsJvm.OVERLOADS_ABSTRACT, "'@JvmOverloads' annotation cannot be used on abstract methods");
+        MAP.put(ErrorsJvm.OVERLOADS_PRIVATE, "'@JvmOverloads' annotation has no effect on private and local declarations");
+        MAP.put(ErrorsJvm.INAPPLICABLE_JVM_NAME, "'@JvmName' annotation is not applicable to this declaration");
         MAP.put(ErrorsJvm.ILLEGAL_JVM_NAME, "Illegal JVM name");
-        MAP.put(ErrorsJvm.VOLATILE_ON_VALUE, "''@Volatile'' annotation cannot be used on immutable properties");
-        MAP.put(ErrorsJvm.VOLATILE_ON_DELEGATE, "''@Volatile'' annotation cannot be used on delegated properties");
-        MAP.put(ErrorsJvm.SYNCHRONIZED_ON_ABSTRACT, "''@Synchronized'' annotation cannot be used on abstract functions");
+        MAP.put(ErrorsJvm.VOLATILE_ON_VALUE, "'@Volatile' annotation cannot be used on immutable properties");
+        MAP.put(ErrorsJvm.VOLATILE_ON_DELEGATE, "'@Volatile' annotation cannot be used on delegated properties");
+        MAP.put(ErrorsJvm.SYNCHRONIZED_ON_ABSTRACT, "'@Synchronized' annotation cannot be used on abstract functions");
         MAP.put(ErrorsJvm.EXTERNAL_DECLARATION_CANNOT_BE_ABSTRACT, "External declaration can not be abstract");
         MAP.put(ErrorsJvm.EXTERNAL_DECLARATION_CANNOT_HAVE_BODY, "External declaration can not have a body");
         MAP.put(ErrorsJvm.EXTERNAL_DECLARATION_IN_INTERFACE, "Members of interfaces can not be external");
@@ -101,9 +101,9 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
 
         MAP.put(ErrorsJvm.INAPPLICABLE_JVM_FIELD, "{0}", Renderers.TO_STRING);
 
-        MAP.put(ErrorsJvm.JVM_SYNTHETIC_ON_DELEGATE, "''@JvmSynthetic'' annotation cannot be used on delegated properties");
+        MAP.put(ErrorsJvm.JVM_SYNTHETIC_ON_DELEGATE, "'@JvmSynthetic' annotation cannot be used on delegated properties");
 
-        MAP.put(ErrorsJvm.STRICTFP_ON_CLASS, "''@Strictfp'' annotation on classes is unsupported yet");
+        MAP.put(ErrorsJvm.STRICTFP_ON_CLASS, "'@Strictfp' annotation on classes is unsupported yet");
 
         MAP.put(ErrorsJvm.SUPER_CALL_WITH_DEFAULT_PARAMETERS, "Super-calls with default arguments are not allowed. Please specify all arguments of ''super.{0}'' explicitly", Renderers.TO_STRING);
     }

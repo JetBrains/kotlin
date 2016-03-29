@@ -1,5 +1,5 @@
 // "Make <set-prop> internal" "true"
-// ERROR: Cannot assign to 'prop': the setter is 'private' in file
+// ERROR: Cannot assign to 'prop': the setter is private in file
 
 package test
 
