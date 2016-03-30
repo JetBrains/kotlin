@@ -38,8 +38,11 @@ import org.jetbrains.idea.maven.dom.MavenDomUtil;
 import org.jetbrains.idea.maven.dom.model.MavenDomPlugin;
 import org.jetbrains.idea.maven.dom.model.MavenDomProjectModel;
 import org.jetbrains.idea.maven.model.MavenId;
+import org.jetbrains.idea.maven.model.MavenPlugin;
+import org.jetbrains.idea.maven.project.MavenProject;
 import org.jetbrains.idea.maven.project.MavenProjectsManager;
 import org.jetbrains.idea.maven.utils.MavenArtifactScope;
+import org.jetbrains.idea.maven.utils.MavenUtil;
 import org.jetbrains.kotlin.idea.KotlinPluginUtil;
 import org.jetbrains.kotlin.idea.framework.ui.ConfigureDialogWithModulesAndVersion;
 
@@ -90,8 +93,8 @@ public abstract class KotlinMavenConfigurator implements KotlinProjectConfigurat
 
     @Override
     public boolean isConfigured(@NotNull Module module) {
-        if (isKotlinModule(module)) {
-            return true;
+        if (!isKotlinModule(module)) {
+            return false;
         }
 
         PsiFile psi = findModulePomFile(module);
@@ -103,9 +106,29 @@ public abstract class KotlinMavenConfigurator implements KotlinProjectConfigurat
             return false;
         }
 
-        PomFile pom = new PomFile((XmlFile) psi);
+        MavenProject mavenProject = MavenProjectsManager.getInstance(module.getProject()).findProject(module);
+        if (mavenProject == null) {
+            return false;
+        }
 
-        return pom.hasPlugin(new MavenId(GROUP_ID, MAVEN_PLUGIN_ID, null)) && pom.hasDependency(new MavenId(GROUP_ID, stdlibArtifactId, null), MavenArtifactScope.COMPILE);
+        MavenPlugin plugin = mavenProject.findPlugin(GROUP_ID, MAVEN_PLUGIN_ID);
+        if (plugin == null) {
+            return false;
+        }
+
+        if (plugin.getExecutions() != null) {
+            for (MavenPlugin.Execution execution : plugin.getExecutions()) {
+                if (execution.getGoals() != null) {
+                    for (String goal : execution.getGoals()) {
+                        if (goal != null && isRelevantGoal(goal)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 
     @Override
@@ -131,6 +154,7 @@ public abstract class KotlinMavenConfigurator implements KotlinProjectConfigurat
     }
 
     protected abstract boolean isKotlinModule(@NotNull Module module);
+    protected abstract boolean isRelevantGoal(@NotNull String goalName);
 
     protected abstract void createExecutions(@NotNull PomFile pomFile, @NotNull MavenDomPlugin kotlinPlugin, @NotNull Module module);
 
