@@ -27,7 +27,7 @@ class C {
 
 
 object Delegate {
-    operator fun getValue(x: C, p: KProperty<*>) = throw AssertionError()
+    operator fun getValue(x: C, p: KProperty<*>): Nothing = throw AssertionError()
 
-    operator fun setValue(x: C, p: KProperty<*>, value: Int) = throw AssertionError()
+    operator fun setValue(x: C, p: KProperty<*>, value: Int): Nothing = throw AssertionError()
 }

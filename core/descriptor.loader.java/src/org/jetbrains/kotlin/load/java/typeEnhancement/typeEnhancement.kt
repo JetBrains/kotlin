@@ -213,7 +213,7 @@ private class EnhancedTypeAnnotations(private val fqNameToMatch: FqName) : Annot
 }
 
 private object EnhancedTypeAnnotationDescriptor : AnnotationDescriptor {
-    private fun throwError() = error("No methods should be called on this descriptor. Only its presence matters")
+    private fun throwError(): Nothing = error("No methods should be called on this descriptor. Only its presence matters")
     override fun getType() = throwError()
     override fun getAllValueArguments() = throwError()
     override fun getSource() = throwError()

@@ -4,7 +4,7 @@ import kotlin.reflect.KProperty
 
 class NotImplemented<T>(){
     operator fun getValue(thisRef: Any?, prop: KProperty<*>): T = notImplemented()
-    operator fun setValue(thisRef: Any?, prop: KProperty<*>, value: T) = notImplemented()
+    operator fun setValue(thisRef: Any?, prop: KProperty<*>, value: T): Nothing = notImplemented()
 }
 
 fun notImplemented() : Nothing = notImplemented()
