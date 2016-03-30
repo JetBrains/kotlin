@@ -42,7 +42,10 @@ import java.io.File
  * Matches string like Kotlin.defineModule("stdlib", _)
  * Kotlin, _ can be renamed by minifier, quotes type can be changed too (" to ')
  */
-private val DEFINE_MODULE_PATTERN = "(\\w+)\\.defineModule\\(\\s*(['\"])(\\w+)\\2\\s*,\\s*(\\w+)\\s*\\)".toRegex()
+private val JS_IDENTIFIER_START = "\\p{Lu}\\p{Ll}\\p{Lt}\\p{Lm}\\p{Lo}\\p{Nl}\\\$_"
+private val JS_IDENTIFIER_PART = "$JS_IDENTIFIER_START\\p{Pc}\\p{Mc}\\p{Mn}\\d"
+private val JS_IDENTIFIER="[$JS_IDENTIFIER_START][$JS_IDENTIFIER_PART]*"
+private val DEFINE_MODULE_PATTERN = ("($JS_IDENTIFIER)\\.defineModule\\(\\s*(['\"])(\\w+)\\2\\s*,\\s*(\\w+)\\s*\\)").toRegex().toPattern()
 private val DEFINE_MODULE_FIND_PATTERN = ".defineModule("
 
 class FunctionReader(private val context: TranslationContext) {
@@ -76,8 +79,8 @@ class FunctionReader(private val context: TranslationContext) {
                 if (index < 0) break
 
                 current = index + 1
-                index = rewindToFirstAlpha(fileContent, index)
-                val preciseMatcher = DEFINE_MODULE_PATTERN.toPattern().matcher(offset(fileContent, index))
+                index = rewindToIdentifierStart(fileContent, index)
+                val preciseMatcher = DEFINE_MODULE_PATTERN.matcher(offset(fileContent, index))
                 if (!preciseMatcher.lookingAt()) continue
 
                 val moduleName = preciseMatcher.group(3)
@@ -91,9 +94,9 @@ class FunctionReader(private val context: TranslationContext) {
         }
     }
 
-    private fun rewindToFirstAlpha(text: String, index: Int): Int {
+    private fun rewindToIdentifierStart(text: String, index: Int): Int {
         var result = index
-        while (result > 0 && isAlphaNum(text[result - 1])) {
+        while (result > 0 && Character.isJavaIdentifierPart(text[result - 1])) {
             --result
         }
         return result
@@ -108,13 +111,6 @@ class FunctionReader(private val context: TranslationContext) {
         override fun subSequence(startIndex: Int, endIndex: Int) = text.subSequence(startIndex + offset, endIndex + offset)
 
         override fun toString() = text.substring(offset)
-    }
-
-    private fun isAlphaNum(c: Char) = when (c) {
-        in 'A'..'Z',
-        in 'a'..'z',
-        in '0'..'9' -> true
-        else -> false
     }
 
     private val functionCache = object : SLRUCache<CallableDescriptor, JsFunction>(50, 50) {
