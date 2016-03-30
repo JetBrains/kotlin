@@ -440,9 +440,9 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
             }
         }
 
-        private fun exception(msg: String) = throw EvaluateExceptionUtil.createEvaluateException(msg)
+        private fun exception(msg: String): Nothing = throw EvaluateExceptionUtil.createEvaluateException(msg)
 
-        private fun exception(e: Throwable) = throw EvaluateExceptionUtil.createEvaluateException(e)
+        private fun exception(e: Throwable): Nothing = throw EvaluateExceptionUtil.createEvaluateException(e)
 
         // contextFile must be NotNull when analyzeInlineFunctions = true
         private fun KtFile.checkForErrors(analyzeInlineFunctions: Boolean = false, contextFile: KtFile? = null): ExtendedAnalysisResult {

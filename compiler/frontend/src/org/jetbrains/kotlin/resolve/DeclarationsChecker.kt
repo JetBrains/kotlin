@@ -349,6 +349,7 @@ class DeclarationsChecker(
             if (memberDescriptor.kind != CallableMemberDescriptor.Kind.DECLARATION) continue
             val member = DescriptorToSourceUtils.descriptorToDeclaration(memberDescriptor) as? KtFunction
             if (member != null && memberDescriptor is FunctionDescriptor) {
+                checkImplicitCallableType(member, memberDescriptor)
                 checkFunctionExposedType(member, memberDescriptor)
                 checkVarargParameters(trace, memberDescriptor)
             }
@@ -689,14 +690,15 @@ class DeclarationsChecker(
             if (!hasBody && !hasAbstractModifier && !hasExternalModifier && !inTrait) {
                 trace.report(NON_ABSTRACT_FUNCTION_WITH_NO_BODY.on(function, functionDescriptor))
             }
-            return
         }
-        if (!function.hasBody() && !hasAbstractModifier && !hasExternalModifier) {
-            trace.report(NON_MEMBER_FUNCTION_NO_BODY.on(function, functionDescriptor))
+        else /* top-level only */ {
+            if (!function.hasBody() && !hasAbstractModifier && !hasExternalModifier) {
+                trace.report(NON_MEMBER_FUNCTION_NO_BODY.on(function, functionDescriptor))
+            }
+            checkImplicitCallableType(function, functionDescriptor)
+            checkFunctionExposedType(function, functionDescriptor)
+            checkVarargParameters(trace, functionDescriptor)
         }
-        checkImplicitCallableType(function, functionDescriptor)
-        checkFunctionExposedType(function, functionDescriptor)
-        checkVarargParameters(trace, functionDescriptor)
     }
 
     private fun checkImplicitCallableType(declaration: KtCallableDeclaration, descriptor: CallableDescriptor) {

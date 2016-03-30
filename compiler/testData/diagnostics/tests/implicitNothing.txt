@@ -7,3 +7,13 @@ public fun baz(): kotlin.Nothing
 public fun check(): kotlin.Unit
 public fun foo(): kotlin.Nothing
 public fun gav(): kotlin.Any
+
+public final class Klass {
+    public constructor Klass()
+    public final val y: kotlin.Nothing
+    public final fun bar(): kotlin.Nothing
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
