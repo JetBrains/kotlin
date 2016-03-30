@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentForExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.typeUtil.isInterface
 import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
@@ -82,6 +83,10 @@ class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
 
         if (expressionType.isPrimitiveNumberType() && expectedType.isPrimitiveNumberType()) {
             actions.add(NumberConversionFix(diagnosticElement, expectedType))
+        }
+
+        if (expectedType.isInterface()) {
+            actions.add(LetImplementInterfaceFix(diagnosticElement, expectedType))
         }
 
         // We don't want to cast a cast or type-asserted expression:
