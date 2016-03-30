@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.tools
 
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.tree.*
+import kotlin.comparisons.*
 
 val ACCESS_NAMES = mapOf(
         Opcodes.ACC_PUBLIC to "public",
@@ -21,7 +22,8 @@ data class ClassBinarySignature(
         val supertypes: List<String>,
         val memberSignatures: List<MemberBinarySignature>,
         val access: AccessFlags,
-        val isEffectivelyPublic: Boolean) {
+        val isEffectivelyPublic: Boolean,
+        val isFileOrMultipartFacade: Boolean) {
 
     val signature: String
         get() = "${access.getModifierString()} class $name" + if (supertypes.isEmpty()) "" else " : ${supertypes.joinToString()}"
@@ -79,6 +81,17 @@ data class FieldBinarySignature(
     }
 }
 
+val MemberBinarySignature.kind: Int get() = when (this) {
+    is FieldBinarySignature -> 1
+    is MethodBinarySignature -> 2
+    else -> error("Unsupported $this")
+}
+
+val MEMBER_SORT_ORDER = compareBy<MemberBinarySignature>(
+        { it.kind },
+        { it.name },
+        { it.desc }
+)
 
 
 data class AccessFlags(val access: Int) {
