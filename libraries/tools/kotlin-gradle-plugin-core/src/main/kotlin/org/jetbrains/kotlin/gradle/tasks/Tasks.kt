@@ -63,7 +63,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
     }
     abstract protected fun populateTargetSpecificArgs(args: T)
 
-    var experimentalIncremental: Boolean = false
+    // indicates that task should compile kotlin incrementally if possible
+    // it's not possible when IncrementalTaskInputs#isIncremental returns false (i.e first build)
+    var incremental: Boolean = false
     var kotlinOptions: T = createBlankArgs()
     var kotlinDestinationDir: File? = destinationDir
     var compilerCalled: Boolean = false
@@ -226,7 +228,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
 
         fun projectRelativePath(f: File) = f.toRelativeString(project.projectDir)
 
-        if (experimentalIncremental) {
+        if (incremental) {
             // TODO: consider other ways to pass incremental flag to compiler/builder
             System.setProperty("kotlin.incremental.compilation", "true")
             // TODO: experimental should be removed as soon as it becomes standard
@@ -300,7 +302,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
         }
 
         fun calculateSourcesToCompile(): Pair<Set<File>, Boolean> {
-            if (!experimentalIncremental
+            if (!incremental
                 || !isIncrementalRequested
                 // TODO: more precise will be not to rebuild unconditionally on classpath changes, but retrieve lookup info and try to find out which sources are affected by cp changes
                 || isClassPathChanged()
@@ -351,7 +353,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
             }
         }
 
-        if (!experimentalIncremental) {
+        if (!incremental) {
             anyClassesCompiled = true
             processCompilerExitCode(compileNotIncremental(sources, outputDir, args))
             return

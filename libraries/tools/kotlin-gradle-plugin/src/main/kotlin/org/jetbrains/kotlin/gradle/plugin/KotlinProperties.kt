@@ -10,7 +10,7 @@ fun mapKotlinTaskProperties(project: Project, task: AbstractCompile) {
 }
 
 private val propertyMappings = listOf(
-        KotlinPropertyMapping("kotlin.incremental", "experimentalIncremental", String::toBoolean)
+        KotlinPropertyMapping("kotlin.incremental", "incremental", String::toBoolean)
 )
 
 private class KotlinPropertyMapping<T>(
