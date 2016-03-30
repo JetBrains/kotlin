@@ -705,7 +705,7 @@ class DeclarationsChecker(
         descriptor.returnType?.let {
             if (declaration.typeReference == null) {
                 val target = declaration.nameIdentifier ?: declaration
-                if (it.isNothing()) {
+                if (it.isNothing() && !declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) {
                     trace.report(
                             (if (declaration is KtProperty) IMPLICIT_NOTHING_PROPERTY_TYPE else IMPLICIT_NOTHING_RETURN_TYPE).on(target)
                     )
