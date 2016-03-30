@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,47 +23,3 @@ import kotlin.internal.PureReifiable
  */
 public inline fun <reified @PureReifiable T> emptyArray(): Array<T> = arrayOfNulls<T>(0) as Array<T>
 
-/**
- * Returns an array containing the specified elements.
- */
-public inline fun <reified @PureReifiable T> arrayOf(vararg elements: T): Array<T> = elements as Array<T>
-
-/**
- * Returns an array containing the specified [Double] numbers.
- */
-public fun doubleArrayOf(vararg elements: Double): DoubleArray = elements
-
-/**
- * Returns an array containing the specified [Float] numbers.
- */
-public fun floatArrayOf(vararg elements: Float): FloatArray = elements
-
-/**
- * Returns an array containing the specified [Long] numbers.
- */
-public fun longArrayOf(vararg elements: Long): LongArray = elements
-
-/**
- * Returns an array containing the specified [Int] numbers.
- */
-public fun intArrayOf(vararg elements: Int): IntArray = elements
-
-/**
- * Returns an array containing the specified characters.
- */
-public fun charArrayOf(vararg elements: Char): CharArray = elements
-
-/**
- * Returns an array containing the specified [Short] numbers.
- */
-public fun shortArrayOf(vararg elements: Short): ShortArray = elements
-
-/**
- * Returns an array containing the specified [Byte] numbers.
- */
-public fun byteArrayOf(vararg elements: Byte): ByteArray = elements
-
-/**
- * Returns an array containing the specified boolean values.
- */
-public fun booleanArrayOf(vararg elements: Boolean): BooleanArray = elements

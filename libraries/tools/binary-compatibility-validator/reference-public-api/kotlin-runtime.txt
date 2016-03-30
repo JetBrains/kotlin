@@ -1,14 +1,3 @@
-public final class kotlin/ArrayIntrinsicsKt {
-	public static final fun booleanArrayOf ([Z)[Z
-	public static final fun byteArrayOf ([B)[B
-	public static final fun charArrayOf ([C)[C
-	public static final fun doubleArrayOf ([D)[D
-	public static final fun floatArrayOf ([F)[F
-	public static final fun intArrayOf ([I)[I
-	public static final fun longArrayOf ([J)[J
-	public static final fun shortArrayOf ([S)[S
-}
-
 public abstract interface annotation class kotlin/Deprecated : java/lang/annotation/Annotation {
 	public abstract fun level ()Lkotlin/DeprecationLevel;
 	public abstract fun message ()Ljava/lang/String;
