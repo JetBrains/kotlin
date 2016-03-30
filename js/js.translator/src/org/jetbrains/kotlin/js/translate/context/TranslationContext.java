@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.js.translate.context;
 
 import com.google.dart.compiler.backend.js.ast.*;
-import com.google.dart.compiler.backend.js.ast.metadata.MetadataProperties;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -228,9 +227,7 @@ public class TranslationContext {
 
     @NotNull
     public JsNameRef getQualifiedReference(@NotNull FqName packageFqName) {
-        JsNameRef result = staticContext.getQualifiedReference(packageFqName);
-        MetadataProperties.setWithoutSideEffects(result, true);
-        return result;
+        return staticContext.getQualifiedReference(packageFqName);
     }
 
     @Nullable

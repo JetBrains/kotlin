@@ -24,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic;
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 
 import java.util.List;
@@ -33,7 +34,7 @@ public class KotlinFunctionIntrinsic extends FunctionIntrinsic {
     private final JsNameRef function;
 
     public KotlinFunctionIntrinsic(@NotNull String functionName) {
-        function = new JsNameRef(functionName, Namer.KOTLIN_NAME);
+        function = JsAstUtils.fqn(functionName, Namer.kotlinObject());
     }
 
     @NotNull

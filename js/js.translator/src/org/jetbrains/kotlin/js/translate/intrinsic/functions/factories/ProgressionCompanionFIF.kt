@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.js.translate.intrinsic.functions.factories
 
-import com.google.dart.compiler.backend.js.ast.*
+import com.google.dart.compiler.backend.js.ast.JsExpression
+import com.google.dart.compiler.backend.js.ast.JsNew
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.js.patterns.PatternBuilder.pattern
-import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic
 
@@ -38,7 +38,7 @@ object ProgressionCompanionFIF : CompositeFIF() {
 
     private class CallProgressionConstructorIntrinsic(val libraryProgressionName: String) : FunctionIntrinsic() {
         override fun apply(receiver: JsExpression?, arguments: MutableList<JsExpression>, context: TranslationContext): JsExpression
-                = JsNew(JsNameRef(libraryProgressionName, Namer.KOTLIN_OBJECT_REF), arguments)
+                = JsNew(context.namer().kotlin(libraryProgressionName), arguments)
     }
 
 }

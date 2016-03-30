@@ -106,7 +106,7 @@ public final class PatternTranslator extends AbstractTranslator {
         }
 
         if (NamePredicate.LONG.apply(typeName)) {
-            return namer().isInstanceOf(Namer.KOTLIN_LONG_NAME_REF);
+            return namer().isInstanceOf(Namer.kotlinLong());
         }
 
         if (NamePredicate.NUMBER.apply(typeName)) {

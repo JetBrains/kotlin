@@ -127,9 +127,8 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
         JsName outerName = initFunction.getScope().declareName(Namer.OUTER_FIELD_NAME);
         initFunction.getParameters().add(0, new JsParameter(outerName));
 
-        JsExpression target = new JsNameRef(outerName, JsLiteral.THIS);
-        JsExpression paramRef = outerName.makeRef();
-        JsExpression assignment = JsAstUtils.assignment(target, paramRef);
+        JsExpression paramRef = JsAstUtils.fqn(outerName, null);
+        JsExpression assignment = JsAstUtils.assignment(JsAstUtils.fqn(outerName, JsLiteral.THIS), paramRef);
         initFunction.getBody().getStatements().add(new JsExpressionStatement(assignment));
     }
 
@@ -166,7 +165,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
                 assert superDescriptor != null : "This class is expected to have super class: "
                                                  + PsiUtilsKt.getTextWithLocation(classDeclaration);
                 if (superDescriptor.isInner() && descriptor.isInner()) {
-                    arguments.add(0, new JsNameRef(Namer.OUTER_FIELD_NAME, JsLiteral.THIS));
+                    arguments.add(0, JsAstUtils.fqn(Namer.OUTER_FIELD_NAME, JsLiteral.THIS));
                 }
                 addCallToSuperMethod(arguments, initializer);
             }
