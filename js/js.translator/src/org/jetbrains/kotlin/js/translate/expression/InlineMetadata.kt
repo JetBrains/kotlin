@@ -41,7 +41,8 @@ class InlineMetadata(val tag: JsStringLiteral, val function: JsFunction) {
                 }
 
         private fun decomposeCreateFunctionCall(call: JsInvocation): InlineMetadata? {
-            if (Namer.CREATE_INLINE_FUNCTION != call.qualifier) return null
+            val qualifier = call.qualifier
+            if (qualifier !is JsNameRef || qualifier.ident != Namer.DEFINE_INLINE_FUNCTION) return null
 
             val arguments = call.arguments
             if (arguments.size != METADATA_PROPERTIES_COUNT) return null
@@ -57,6 +58,6 @@ class InlineMetadata(val tag: JsStringLiteral, val function: JsFunction) {
     val functionWithMetadata: JsExpression
         get() {
             val propertiesList = listOf(tag, function)
-            return JsInvocation(Namer.CREATE_INLINE_FUNCTION, propertiesList)
+            return JsInvocation(Namer.createInlineFunction(), propertiesList)
         }
 }

@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.js.inline.clean
 
 import com.google.dart.compiler.backend.js.ast.*
-import com.google.dart.compiler.backend.js.ast.metadata.HasMetadata
 import com.google.dart.compiler.backend.js.ast.metadata.synthetic
 import com.google.dart.compiler.backend.js.ast.metadata.withoutSideEffects
 import org.jetbrains.kotlin.js.inline.util.collectDefinedNames
@@ -179,15 +178,17 @@ internal class TemporaryVariableElimination(private val root: JsStatement) {
                     return
                 }
 
-                if (nameRef.qualifier != null && !(nameRef is HasMetadata && nameRef.withoutSideEffects)) {
-                    super.visitNameRef(nameRef)
+                super.visitNameRef(nameRef)
+                if (nameRef.qualifier != null && !nameRef.withoutSideEffects) {
                     sideEffectOccurred = true
                 }
             }
 
             override fun visitInvocation(invocation: JsInvocation) {
                 super.visitInvocation(invocation)
-                sideEffectOccurred = true
+                if (!invocation.withoutSideEffects) {
+                    sideEffectOccurred = true
+                }
             }
 
             override fun visitNew(x: JsNew) {
@@ -240,7 +241,9 @@ internal class TemporaryVariableElimination(private val root: JsStatement) {
 
             override fun visitArrayAccess(x: JsArrayAccess) {
                 super.visitArrayAccess(x)
-                sideEffectOccurred = true
+                if (!x.withoutSideEffects) {
+                    sideEffectOccurred = true
+                }
             }
 
             override fun visitArray(x: JsArrayLiteral) {

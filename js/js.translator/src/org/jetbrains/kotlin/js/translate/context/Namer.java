@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.js.translate.context;
 
 import com.google.dart.compiler.backend.js.ast.*;
+import com.google.dart.compiler.backend.js.ast.metadata.HasMetadata;
 import com.google.dart.compiler.backend.js.ast.metadata.MetadataProperties;
 import com.google.dart.compiler.backend.js.ast.metadata.TypeCheck;
 import com.intellij.openapi.util.text.StringUtil;
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.js.resolve.JsPlatform;
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -43,8 +45,6 @@ import static org.jetbrains.kotlin.js.translate.utils.ManglingUtils.getSuggested
 public final class Namer {
     public static final String KOTLIN_NAME = KotlinLanguage.NAME;
     public static final String KOTLIN_LOWER_NAME = KOTLIN_NAME.toLowerCase();
-    public static final JsNameRef KOTLIN_OBJECT_REF = new JsNameRef(KOTLIN_NAME);
-    public static final JsNameRef KOTLIN_LONG_NAME_REF = new JsNameRef("Long", KOTLIN_OBJECT_REF);
 
     public static final String EQUALS_METHOD_NAME = getStableMangledNameForDescriptor(JsPlatform.INSTANCE.getBuiltIns().getAny(), "equals");
     public static final String COMPARE_TO_METHOD_NAME = getStableMangledNameForDescriptor(JsPlatform.INSTANCE.getBuiltIns().getComparable(), "compareTo");
@@ -96,11 +96,7 @@ public final class Namer {
     private static final String COMPANION_OBJECT_INITIALIZER = "object_initializer$";
     private static final String PROTOTYPE_NAME = "prototype";
     public static final String CAPTURED_VAR_FIELD = "v";
-
-    public static final JsNameRef CREATE_INLINE_FUNCTION = new JsNameRef("defineInlineFunction", KOTLIN_OBJECT_REF);
-
-    @NotNull
-    public static final JsExpression UNDEFINED_EXPRESSION = new JsPrefixOperation(JsUnaryOperator.VOID, JsNumberLiteral.ZERO);
+    public static final String DEFINE_INLINE_FUNCTION = "defineInlineFunction";
 
     private static final JsNameRef JS_OBJECT = new JsNameRef("Object");
     private static final JsNameRef JS_OBJECT_CREATE_FUNCTION = new JsNameRef("create", JS_OBJECT);
@@ -141,7 +137,7 @@ public final class Namer {
 
     @NotNull
     public static JsNameRef superMethodNameRef(@NotNull JsName superClassJsName) {
-        return new JsNameRef(SUPER_METHOD_NAME, superClassJsName.makeRef());
+        return JsAstUtils.fqn(SUPER_METHOD_NAME, superClassJsName.makeRef());
     }
 
     @NotNull
@@ -175,7 +171,7 @@ public final class Namer {
 
     @NotNull
     public static JsExpression getCompanionObjectAccessor(@NotNull JsExpression referenceToClass) {
-        return new JsNameRef(COMPANION_OBJECT_GETTER, referenceToClass);
+        return JsAstUtils.fqn(COMPANION_OBJECT_GETTER, referenceToClass);
     }
 
     @NotNull
@@ -190,7 +186,7 @@ public final class Namer {
 
     @NotNull
     public static JsNameRef getRefToPrototype(@NotNull JsExpression classOrTraitExpression) {
-        return new JsNameRef(getPrototypeName(), classOrTraitExpression);
+        return JsAstUtils.fqn(getPrototypeName(), classOrTraitExpression);
     }
 
     @NotNull
@@ -215,12 +211,12 @@ public final class Namer {
 
     @NotNull
     public static JsNameRef getFunctionCallRef(@NotNull JsExpression functionExpression) {
-        return new JsNameRef(CALL_FUNCTION, functionExpression);
+        return JsAstUtils.fqn(CALL_FUNCTION, functionExpression);
     }
 
     @NotNull
     public static JsNameRef getFunctionApplyRef(@NotNull JsExpression functionExpression) {
-        return new JsNameRef(APPLY_FUNCTION, functionExpression);
+        return JsAstUtils.fqn(APPLY_FUNCTION, functionExpression);
     }
 
     @NotNull
@@ -230,7 +226,7 @@ public final class Namer {
 
     @NotNull
     public static JsNameRef getCapturedVarAccessor(@NotNull JsExpression ref) {
-        return new JsNameRef(CAPTURED_VAR_FIELD, ref);
+        return JsAstUtils.fqn(CAPTURED_VAR_FIELD, ref);
     }
 
     @NotNull
@@ -308,6 +304,7 @@ public final class Namer {
 
         isTypeName = kotlinScope.declareName("isType");
         modulesMap = kotlin("modules");
+        MetadataProperties.setWithoutSideEffects((HasMetadata) modulesMap, true);
     }
 
     @NotNull
@@ -376,29 +373,30 @@ public final class Namer {
     }
 
     @NotNull
-    public JsExpression throwNPEFunctionRef() {
+    public static JsExpression throwNPEFunctionRef() {
         return new JsNameRef(THROW_NPE_FUN_NAME, kotlinObject());
     }
 
     @NotNull
-    private JsNameRef kotlin(@NotNull JsName name) {
-        return new JsNameRef(name, kotlinObject());
+    public static JsNameRef kotlin(@NotNull JsName name) {
+        return JsAstUtils.fqn(name, kotlinObject());
     }
 
     @NotNull
-    public JsExpression kotlin(@NotNull String name) {
+    public JsNameRef kotlin(@NotNull String name) {
         return kotlin(kotlinScope.declareName(name));
     }
 
     @NotNull
-    public JsNameRef kotlinObject() {
-        return kotlinName.makeRef();
+    public static JsNameRef kotlinObject() {
+        return JsAstUtils.fqn(KOTLIN_NAME, null);
     }
 
     @NotNull
     public JsExpression isTypeOf(@NotNull JsExpression type) {
         JsInvocation invocation = new JsInvocation(kotlin("isTypeOf"), type);
         MetadataProperties.setTypeCheck(invocation, TypeCheck.TYPEOF);
+        MetadataProperties.setWithoutSideEffects(invocation, true);
         return invocation;
     }
 
@@ -406,12 +404,15 @@ public final class Namer {
     public JsExpression isInstanceOf(@NotNull JsExpression type) {
         JsInvocation invocation = new JsInvocation(kotlin("isInstanceOf"), type);
         MetadataProperties.setTypeCheck(invocation, TypeCheck.INSTANCEOF);
+        MetadataProperties.setWithoutSideEffects(invocation, true);
         return invocation;
     }
 
     @NotNull
     public JsExpression isInstanceOf(@NotNull JsExpression instance, @NotNull JsExpression type) {
-        return new JsInvocation(kotlin(isTypeName), instance, type);
+        JsInvocation result = new JsInvocation(kotlin(isTypeName), instance, type);
+        MetadataProperties.setWithoutSideEffects(result, true);
+        return result;
     }
 
     @NotNull
@@ -445,8 +446,8 @@ public final class Namer {
     }
 
     @NotNull
-    public JsExpression getUndefinedExpression() {
-        return UNDEFINED_EXPRESSION;
+    public static JsExpression getUndefinedExpression() {
+        return new JsPrefixOperation(JsUnaryOperator.VOID, JsNumberLiteral.ZERO);
     }
 
     @NotNull
@@ -461,6 +462,17 @@ public final class Namer {
 
     @NotNull
     public JsExpression getModuleReference(@NotNull JsStringLiteral moduleName) {
-        return new JsArrayAccess(modulesMap, moduleName);
+        JsArrayAccess result = new JsArrayAccess(modulesMap, moduleName);
+        MetadataProperties.setWithoutSideEffects(result, true);
+        return result;
+    }
+
+    public static JsNameRef kotlinLong() {
+        return JsAstUtils.fqn("Long", kotlinObject());
+    }
+
+    @NotNull
+    public static JsNameRef createInlineFunction() {
+        return JsAstUtils.fqn(DEFINE_INLINE_FUNCTION, kotlinObject());
     }
 }

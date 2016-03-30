@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.js.translate.intrinsic.functions.factories;
 import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.JsArrayAccess;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
+import com.google.dart.compiler.backend.js.ast.metadata.MetadataProperties;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -30,7 +31,6 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic;
 import org.jetbrains.kotlin.name.Name;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static com.intellij.openapi.util.text.StringUtil.decapitalize;
@@ -42,7 +42,6 @@ public final class ArrayFIF extends CompositeFIF {
     private static final NamePredicate CHAR_ARRAY;
     private static final NamePredicate BOOLEAN_ARRAY;
     private static final NamePredicate LONG_ARRAY;
-    private static final NamePredicate ARRAY;
     private static final NamePredicate ARRAYS;
     private static final DescriptorPredicate ARRAY_FACTORY_METHODS;
 
@@ -66,7 +65,6 @@ public final class ArrayFIF extends CompositeFIF {
         CHAR_ARRAY = new NamePredicate(charArrayName);
         BOOLEAN_ARRAY = new NamePredicate(booleanArrayName);
         LONG_ARRAY = new NamePredicate(longArrayName);
-        ARRAY = new NamePredicate(arrayName);
 
         arrayTypeNames.add(charArrayName);
         arrayTypeNames.add(booleanArrayName);
@@ -99,7 +97,9 @@ public final class ArrayFIF extends CompositeFIF {
             assert receiver != null;
             assert arguments.size() == 1 : "Array get expression must have one argument.";
             JsExpression indexExpression = arguments.get(0);
-            return new JsArrayAccess(receiver, indexExpression);
+            JsArrayAccess result = new JsArrayAccess(receiver, indexExpression);
+            MetadataProperties.setWithoutSideEffects(result, true);
+            return result;
         }
     };
 

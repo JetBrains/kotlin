@@ -17,10 +17,10 @@
 package org.jetbrains.kotlin.js.translate.intrinsic.functions.basic;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 
 import java.util.List;
 
@@ -40,6 +40,6 @@ public final class BuiltInPropertyIntrinsic extends FunctionIntrinsic {
                               @NotNull TranslationContext context) {
         assert receiver != null;
         assert arguments.isEmpty() : "Properties can't have arguments.";
-        return new JsNameRef(propertyName, receiver);
+        return JsAstUtils.fqn(propertyName, receiver);
     }
 }

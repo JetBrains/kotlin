@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.js.translate.intrinsic.functions.factories;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsInvocation;
-import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import com.google.dart.compiler.backend.js.ast.JsNew;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -213,7 +212,7 @@ public final class TopLevelFIF extends CompositeFIF {
 
             String mangledName = getStableMangledNameForDescriptor(JsPlatform.INSTANCE.getBuiltIns().getMutableMap(), operationName());
 
-            return new JsInvocation(new JsNameRef(mangledName, thisOrReceiver), arguments);
+            return new JsInvocation(JsAstUtils.fqn(mangledName, thisOrReceiver), arguments);
         }
     }
 

@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.js.translate.callTranslator
 
 import com.google.dart.compiler.backend.js.ast.*
-import com.google.dart.compiler.backend.js.ast.metadata.withoutSideEffects
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -61,8 +60,7 @@ object DefaultFunctionCallCase : FunctionCallCase() {
         if (isNative && hasSpreadOperator) {
             return nativeSpreadFunWithDispatchOrExtensionReceiver(argumentsInfo, functionName)
         }
-        val functionRef = JsNameRef(functionName, dispatchReceiver)
-        return JsInvocation(functionRef, argumentsInfo.translateArguments)
+        return JsInvocation(JsAstUtils.fqn(functionName, dispatchReceiver), argumentsInfo.translateArguments)
     }
 
     fun buildDefaultCallWithoutReceiver(context: TranslationContext,
@@ -81,9 +79,7 @@ object DefaultFunctionCallCase : FunctionCallCase() {
 
         val functionRef = context.aliasOrValue(callableDescriptor) {
             val qualifierForFunction = context.getQualifierForDescriptor(it)
-            val result = JsNameRef(functionName, qualifierForFunction)
-            result.withoutSideEffects = true
-            result
+            JsAstUtils.fqn(functionName, qualifierForFunction)
         }
         return JsInvocation(functionRef, argumentsInfo.translateArguments)
     }
@@ -106,7 +102,7 @@ object DefaultFunctionCallCase : FunctionCallCase() {
 
         val functionRef = context.aliasOrValue(callableDescriptor) {
             val qualifierForFunction = context.getQualifierForDescriptor(it)
-            JsNameRef(functionName, qualifierForFunction) // TODO: remake to call
+            JsAstUtils.fqn(functionName, qualifierForFunction) // TODO: remake to call
         }
 
         val referenceToCall =
@@ -231,7 +227,7 @@ object SuperCallCase : FunctionCallCase() {
 
     override fun FunctionCallInfo.dispatchReceiver(): JsExpression {
         // TODO: spread operator
-        val prototypeClass = JsNameRef(Namer.getPrototypeName(), calleeOwner)
+        val prototypeClass = JsAstUtils.fqn(Namer.getPrototypeName(), calleeOwner)
         val functionRef = Namer.getFunctionCallRef(JsNameRef(functionName, prototypeClass))
         return JsInvocation(functionRef, argumentsInfo.argsWithReceiver(dispatchReceiver!!))
     }

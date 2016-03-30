@@ -112,7 +112,7 @@ private fun getDefaultParamsNames(
     initialized: Boolean
 ): Set<JsName> {
 
-    val argsParams = args.zipWithDefault(params, Namer.UNDEFINED_EXPRESSION)
+    val argsParams = args.zipWithDefault(params, Namer.getUndefinedExpression())
     val relevantParams = argsParams.asSequence()
                                    .filter { it.second.hasDefaultValue }
                                    .filter { initialized == !isUndefined(it.first) }
