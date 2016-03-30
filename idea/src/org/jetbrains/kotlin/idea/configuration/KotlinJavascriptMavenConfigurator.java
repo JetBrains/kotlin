@@ -40,6 +40,11 @@ public class KotlinJavascriptMavenConfigurator extends KotlinMavenConfigurator {
     }
 
     @Override
+    protected boolean isRelevantGoal(@NotNull String goalName) {
+        return goalName.equals(PomFile.KotlinGoals.INSTANCE.getJs());
+    }
+
+    @Override
     protected void createExecutions(@NotNull PomFile pomFile, @NotNull MavenDomPlugin kotlinPlugin, @NotNull Module module) {
         createExecution(pomFile, kotlinPlugin, module, false);
         createExecution(pomFile, kotlinPlugin, module, true);
