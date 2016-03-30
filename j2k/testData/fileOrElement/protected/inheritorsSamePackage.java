@@ -5,8 +5,12 @@ public class BaseInheritorSamePackage {
 
     }
 
-    protected void foo() {
+    protected BaseInheritorSamePackage(int x) {
 
+    }
+
+    protected void foo() {
+        new BaseInheritorSamePackage(1);
     }
 
     protected int i = 1;
