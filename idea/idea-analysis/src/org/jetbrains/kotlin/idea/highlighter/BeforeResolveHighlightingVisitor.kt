@@ -67,8 +67,6 @@ internal class BeforeResolveHighlightingVisitor(private val holder: AnnotationHo
     }
 
     override fun visitArgument(argument: KtValueArgument) {
-        super.visitArgument(argument)
-
         val argumentName = argument.getArgumentName() ?: return
         val eq = argument.equalsToken ?: return
         holder.createInfoAnnotation(TextRange(argumentName.startOffset, eq.endOffset), null).textAttributes = KotlinHighlightingColors.NAMED_ARGUMENT
