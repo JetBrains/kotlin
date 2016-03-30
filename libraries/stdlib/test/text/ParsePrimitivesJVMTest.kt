@@ -13,7 +13,7 @@ class ParsePrimitivesJVMTest {
     }
 
     @test fun toByte() {
-        CompareBehaviourContext(String::toByte, String::toByteOrNull).apply {
+        CompareBehaviorContext(String::toByte, String::toByteOrNull).apply {
 
             assertProduce("+77", 77.toByte())
             assertProduce("-128", Byte.MIN_VALUE)
@@ -22,7 +22,7 @@ class ParsePrimitivesJVMTest {
     }
 
     @test fun toShort() {
-        CompareBehaviourContext(String::toShort, String::toShortOrNull).apply {
+        CompareBehaviorContext(String::toShort, String::toShortOrNull).apply {
 
             assertProduce("77", 77.toShort())
             assertProduce("-32768", Short.MIN_VALUE)
@@ -31,7 +31,7 @@ class ParsePrimitivesJVMTest {
     }
 
     @test fun toInt() {
-        CompareBehaviourContext(String::toInt, String::toIntOrNull).apply {
+        CompareBehaviorContext(String::toInt, String::toIntOrNull).apply {
 
             assertProduce("77", 77)
             assertProduce("+2147483647", Int.MAX_VALUE)
@@ -44,7 +44,7 @@ class ParsePrimitivesJVMTest {
     }
 
     @test fun toLong() {
-        CompareBehaviourContext(String::toLong, String::toLongOrNull).apply {
+        CompareBehaviorContext(String::toLong, String::toLongOrNull).apply {
 
             assertProduce("77", 77.toLong())
             assertProduce("+9223372036854775807", Long.MAX_VALUE)
@@ -60,7 +60,7 @@ class ParsePrimitivesJVMTest {
     }
 
     @test fun toFloat() {
-        CompareBehaviourContext(String::toFloat, String::toFloatOrNull).apply {
+        CompareBehaviorContext(String::toFloat, String::toFloatOrNull).apply {
 
             assertProduce("77.0", 77.0f)
             assertProduce("-1e39", Float.NEGATIVE_INFINITY)
@@ -70,7 +70,7 @@ class ParsePrimitivesJVMTest {
     }
 
     @test fun toDouble() {
-        CompareBehaviourContext(String::toDouble, String::toDoubleOrNull).apply {
+        CompareBehaviorContext(String::toDouble, String::toDoubleOrNull).apply {
 
             assertProduce("-77", -77.0)
             assertProduce("77.", 77.0)
@@ -94,15 +94,15 @@ class ParsePrimitivesJVMTest {
 }
 
 
-private class CompareBehaviourContext<T: Any>(val convertOrFail: (String) -> T,
-                                              val convertOrNull: (String) -> T?) {
+private class CompareBehaviorContext<T: Any>(val convertOrFail: (String) -> T,
+                                             val convertOrNull: (String) -> T?) {
     fun assertProduce(input: String, output: T) {
         assertEquals(output, convertOrFail(input))
         assertEquals(output, convertOrNull(input))
     }
 
     fun assertFailsOrNull(input: String) {
-        assertFails { convertOrFail(input) }
-        assertNull (convertOrNull(input) )
+        assertFailsWith<NumberFormatException>("Expected to fail on input \"$input\"") { convertOrFail(input) }
+        assertNull (convertOrNull(input), message = "On input \"$input\"")
     }
 }
