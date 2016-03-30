@@ -453,7 +453,11 @@ public class TranslationContext {
 
     @Nullable
     public List<DeclarationDescriptor> getLocalClassClosure(@NotNull MemberDescriptor localClass) {
-        return staticContext.getLocalClassClosure(localClass);
+        List<DeclarationDescriptor> result = staticContext.getLocalClassClosure(localClass);
+        if (result == null && localClass instanceof ConstructorDescriptor && ((ConstructorDescriptor) localClass).isPrimary()) {
+            result = staticContext.getLocalClassClosure((ClassDescriptor) localClass.getContainingDeclaration());
+        }
+        return result;
     }
 
     @NotNull

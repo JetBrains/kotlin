@@ -109,13 +109,9 @@ class ClassTranslator private constructor(
 
         val dataClassGenerator = JsDataClassGenerator(classDeclaration, context, properties)
 
-        inflateClosure()
+        emitConstructors(nonConstructorContext)
         for (constructor in allConstructors) {
             addClosureParameters(constructor, nonConstructorContext, dataClassGenerator)
-        }
-
-        for (constructor in allConstructors) {
-            constructor.superCallGenerator()
         }
 
         if (descriptor.isData) {
@@ -147,7 +143,8 @@ class ClassTranslator private constructor(
     private fun translatePrimaryConstructor(classContext: TranslationContext, delegationTranslator: DelegationTranslator) {
         if (isTrait()) return
 
-        var constructorContext = classContext.innerWithUsageTracker(classContext.scope(), descriptor)
+        val scope = JsFunctionScope(classContext.scope(), "$descriptor: primary constructor")
+        var constructorContext = classContext.innerWithUsageTracker(scope, descriptor)
         val initializer = ClassInitializerTranslator(classDeclaration, constructorContext).generateInitializeMethod(delegationTranslator)
         invocationArguments += initializer
 
@@ -159,9 +156,9 @@ class ClassTranslator private constructor(
         val constructorDescriptor = BindingUtils.getDescriptorForElement(classContext.bindingContext(), constructor) as ConstructorDescriptor
         val classDescriptor = constructorDescriptor.containingDeclaration
 
-        var context = classContext.innerWithUsageTracker(classContext.scope(), constructorDescriptor)
+        val constructorScope = classContext.getScopeForDescriptor(constructorDescriptor)
+        var context = classContext.innerWithUsageTracker(constructorScope, constructorDescriptor)
 
-        val constructorScope = context.getScopeForDescriptor(constructorDescriptor)
         val thisName = constructorScope.declareName(Namer.ANOTHER_THIS_PARAMETER_NAME)
         val thisNameRef = thisName.makeRef()
         val receiverDescriptor = classDescriptor.thisAsReceiverParameter
@@ -204,16 +201,10 @@ class ClassTranslator private constructor(
         // Generate super/this call to insert to beginning of the function
         val resolvedCall = BindingContextUtils.getDelegationConstructorCall(context.bindingContext(), constructorDescriptor)
         val delegationClassDescriptor = resolvedCall?.resultingDescriptor?.containingDeclaration
-        val superCall = if (resolvedCall != null && !KotlinBuiltIns.isAny(delegationClassDescriptor!!)) {
-            CallTranslator.translate(context, resolvedCall)
-        }
-        else {
-            null
-        }
 
-        if (superCall != null) {
+        if (resolvedCall != null && !KotlinBuiltIns.isAny(delegationClassDescriptor!!)) {
             superCallGenerators += {
-                it += CallTranslator.translate(context, resolvedCall!!).toInvocationWith(leadingArgs, thisNameRef).makeStmt()
+                it += CallTranslator.translate(context, resolvedCall).toInvocationWith(leadingArgs, thisNameRef).makeStmt()
             }
         }
 
@@ -248,9 +239,9 @@ class ClassTranslator private constructor(
             return if (primary != null) sequenceOf(primary) + secondaryConstructors else secondaryConstructors.asSequence()
         }
 
-    private fun inflateClosure() {
+    private fun emitConstructors(nonConstructorContext: TranslationContext) {
         // Build map that maps constructor to all constructors called via this()
-        val constructorMap = allConstructors.map { Pair(it.descriptor, it) }.toMap()
+        val constructorMap = allConstructors.map { it.descriptor to it }.toMap()
         val primaryConstructor = this.primaryConstructor
 
         val thisCalls = allConstructors.map {
@@ -286,9 +277,27 @@ class ClassTranslator private constructor(
 
         allConstructors.forEach(::sort)
 
-        // Inflate closure
+        // Emit constructors
         for (constructor in sortedConstructors) {
+            constructor.superCallGenerator()
+
+            val nonConstructorUsageTracker = nonConstructorContext.usageTracker()!!
             val usageTracker = constructor.context.usageTracker() ?: continue
+
+            val nonConstructorCapturedVars = nonConstructorUsageTracker.capturedDescriptors
+            val constructorCapturedVars = usageTracker.capturedDescriptors
+
+            val capturedVars = (nonConstructorCapturedVars.asSequence() +
+                                constructorCapturedVars.asSequence().filter { it !in nonConstructorCapturedVars }).toList()
+
+            val descriptor = constructor.descriptor
+            nonConstructorContext.putLocalClassClosure(descriptor, capturedVars)
+            if (descriptor is ClassDescriptor) {
+                if (primaryConstructor != null) {
+                    nonConstructorContext.putLocalClassClosure(primaryConstructor.descriptor, capturedVars)
+                }
+            }
+
             for (thisCall in thisCalls[constructor].orEmpty()) {
                 val callUsageTracker = thisCall.context.usageTracker() ?: continue
                 callUsageTracker.capturedDescriptors.forEach { usageTracker.used(it) }
@@ -299,31 +308,18 @@ class ClassTranslator private constructor(
     private fun addClosureParameters(constructor: ConstructorInfo, nonConstructorContext: TranslationContext,
                                      dataClassGenerator: JsDataClassGenerator) {
         val usageTracker = constructor.context.usageTracker()!!
+        val capturedVars = context().getLocalClassClosure(constructor.descriptor) ?: return
         val nonConstructorUsageTracker = nonConstructorContext.usageTracker()!!
-
-        val nonConstructorCapturedVars = nonConstructorUsageTracker.capturedDescriptors
-        val constructorCapturedVars = usageTracker.capturedDescriptors
-
-        val capturedVars = (nonConstructorCapturedVars.asSequence() +
-                           constructorCapturedVars.asSequence().filter { it !in nonConstructorCapturedVars }).toList()
-
-        val descriptor = constructor.descriptor
-        nonConstructorContext.putLocalClassClosure(descriptor, capturedVars)
-        if (descriptor is ClassDescriptor) {
-            val primaryConstructor = descriptor.constructors.find { it.isPrimary }
-            if (primaryConstructor != null) {
-                nonConstructorContext.putLocalClassClosure(primaryConstructor, capturedVars)
-            }
-        }
 
         val function = constructor.function
         for ((i, capturedVar) in capturedVars.withIndex()) {
-            val name = usageTracker.capturedDescriptorToJsName[capturedVar] ?:
-                       nonConstructorUsageTracker.capturedDescriptorToJsName[capturedVar]!!
+            val fieldName = nonConstructorUsageTracker.capturedDescriptorToJsName[capturedVar]
+            val name = usageTracker.capturedDescriptorToJsName[capturedVar] ?: fieldName!!
+
             function.parameters.add(i, JsParameter(name))
-            if (capturedVar in nonConstructorUsageTracker.capturedDescriptors && constructor == primaryConstructor) {
-                function.body.statements.add(i, JsAstUtils.defineSimpleProperty(name.ident, name.makeRef()))
-                dataClassGenerator.addClosureVariable(name)
+            if (fieldName != null && constructor == primaryConstructor) {
+                function.body.statements.add(i, JsAstUtils.defineSimpleProperty(fieldName.ident, name.makeRef()))
+                dataClassGenerator.addClosureVariable(fieldName)
             }
         }
     }
