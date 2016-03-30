@@ -16,8 +16,6 @@
 
 package kotlin.jvm.internal.unsafe
 
-@kotlin.internal.InlineExposed
-internal fun monitorEnter(@Suppress("UNUSED_PARAMETER") monitor: Any): Unit = throw UnsupportedOperationException("This function can only be used privately")
+private fun monitorEnter(@Suppress("UNUSED_PARAMETER") monitor: Any): Unit = throw UnsupportedOperationException("This function can only be used privately")
 
-@kotlin.internal.InlineExposed
-internal fun monitorExit(@Suppress("UNUSED_PARAMETER") monitor: Any): Unit = throw UnsupportedOperationException("This function can only be used privately")
+private fun monitorExit(@Suppress("UNUSED_PARAMETER") monitor: Any): Unit = throw UnsupportedOperationException("This function can only be used privately")
