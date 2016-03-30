@@ -1100,12 +1100,14 @@ public abstract interface class kotlin/reflect/KCallable : kotlin/reflect/KAnnot
 }
 
 public abstract interface class kotlin/reflect/KClass : kotlin/reflect/KAnnotatedElement, kotlin/reflect/KDeclarationContainer {
+	public abstract fun equals (Ljava/lang/Object;)Z
 	public abstract fun getConstructors ()Ljava/util/Collection;
 	public abstract fun getMembers ()Ljava/util/Collection;
 	public abstract fun getNestedClasses ()Ljava/util/Collection;
 	public abstract fun getObjectInstance ()Ljava/lang/Object;
 	public abstract fun getQualifiedName ()Ljava/lang/String;
 	public abstract fun getSimpleName ()Ljava/lang/String;
+	public abstract fun hashCode ()I
 }
 
 public abstract interface class kotlin/reflect/KDeclarationContainer {
