@@ -34,3 +34,17 @@ class Klass {
         <!UNREACHABLE_CODE!>val <!UNUSED_VARIABLE!>x<!> =<!> y
     }
 }
+
+interface Base {
+    val x: Int
+
+    fun foo(): String
+}
+
+class Derived : Base {
+    // Ok for override
+    
+    override val x = null!!
+
+    override fun foo() = null!!
+}
