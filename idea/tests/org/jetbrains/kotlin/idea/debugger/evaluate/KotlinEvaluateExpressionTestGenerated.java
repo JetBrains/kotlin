@@ -412,6 +412,33 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             }
         }
 
+        @TestMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/createExpression")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class CreateExpression extends AbstractKotlinEvaluateExpressionTest {
+            public void testAllFilesPresentInCreateExpression() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/createExpression"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("createExpressionCastToBuiltIn.kt")
+            public void testCreateExpressionCastToBuiltIn() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/createExpression/createExpressionCastToBuiltIn.kt");
+                doSingleBreakpointTest(fileName);
+            }
+
+            @TestMetadata("createExpressionSimple.kt")
+            public void testCreateExpressionSimple() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/createExpression/createExpressionSimple.kt");
+                doSingleBreakpointTest(fileName);
+            }
+
+            @TestMetadata("createExpressionWithArray.kt")
+            public void testCreateExpressionWithArray() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/createExpression/createExpressionWithArray.kt");
+                doSingleBreakpointTest(fileName);
+            }
+        }
+
         @TestMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/extraVariables")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -493,18 +520,6 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
         public static class Frame extends AbstractKotlinEvaluateExpressionTest {
             public void testAllFilesPresentInFrame() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame"), Pattern.compile("^(.+)\\.kt$"), true);
-            }
-
-            @TestMetadata("createExpressionSimple.kt")
-            public void testCreateExpressionSimple() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/createExpressionSimple.kt");
-                doSingleBreakpointTest(fileName);
-            }
-
-            @TestMetadata("createExpressionWithArray.kt")
-            public void testCreateExpressionWithArray() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/createExpressionWithArray.kt");
-                doSingleBreakpointTest(fileName);
             }
 
             @TestMetadata("delegatedPropertyInClass.kt")
