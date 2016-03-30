@@ -1705,11 +1705,6 @@ public final class kotlin/io/TextStreamsKt {
 	public static final fun useLines (Ljava/io/Reader;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 }
 
-public final class kotlin/jvm/internal/unsafe/MonitorKt {
-	public static final fun monitorEnter (Ljava/lang/Object;)V
-	public static final fun monitorExit (Ljava/lang/Object;)V
-}
-
 public final class kotlin/properties/Delegates {
 	public static final field INSTANCE Lkotlin/properties/Delegates;
 	public final fun notNull ()Lkotlin/properties/ReadWriteProperty;
