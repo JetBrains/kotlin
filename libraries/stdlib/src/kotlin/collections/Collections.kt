@@ -280,4 +280,32 @@ private fun rangeCheck(size: Int, fromIndex: Int, toIndex: Int) {
     }
 }
 
+/**
+ * List "and" operation that returns elements that are in both lists in number of lower list
+ * Note that listOf(1, 1) and listOf(1, 1, 1) == listOf(1, 1)
+ */
+infix fun <T> List<T>.and(secList: List<T>): List<T> {
+    var tempSecList = secList
+    return filter {
+        if ( it in tempSecList ) {
+            tempSecList -= it
+            true
+        } else {
+            false
+        }
+    }
+}
 
+/**
+ * List "or" operation that returns elements that are in both lists in number of lower list
+ * Note that listOf(1, 1) and listOf(1, 1, 1) == listOf(1, 1, 1)
+ */
+infix fun <T> List<T>.or(secList: List<T>): List<T> {
+    var tempSecList = secList
+    forEach {
+        if ( it in tempSecList ) {
+            tempSecList -= it
+        }
+    }
+    return this+tempSecList
+}
