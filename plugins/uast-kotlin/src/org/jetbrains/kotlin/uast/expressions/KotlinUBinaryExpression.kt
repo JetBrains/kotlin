@@ -38,9 +38,6 @@ class KotlinUBinaryExpression(
         KtTokens.PERC -> UastBinaryOperator.MOD
         KtTokens.OROR -> UastBinaryOperator.LOGICAL_OR
         KtTokens.ANDAND -> UastBinaryOperator.LOGICAL_AND
-        //KtTokens.OR -> UastBinaryOperator.BITWISE_OR
-        //KtTokens.AND -> UastBinaryOperator.BITWISE_AND
-        //KtTokens.XOR -> UastBinaryOperator.BITWISE_XOR
         KtTokens.EQEQ -> UastBinaryOperator.EQUALS
         KtTokens.EXCLEQ -> UastBinaryOperator.NOT_EQUALS
         KtTokens.EQEQEQ -> UastBinaryOperator.IDENTITY_EQUALS
@@ -56,6 +53,7 @@ class KotlinUBinaryExpression(
         KtTokens.PERCEQ -> UastBinaryOperator.REMAINDER_ASSIGN
         KtTokens.IN_KEYWORD -> KotlinBinaryOperators.IN
         KtTokens.NOT_IN -> KotlinBinaryOperators.NOT_IN
+        KtTokens.RANGE -> KotlinBinaryOperators.RANGE_TO
         else -> UastBinaryOperator.UNKNOWN
     }
 }

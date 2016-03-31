@@ -28,7 +28,6 @@ class KotlinUSwitchExpression(
 ) : KotlinAbstractUElement(), USwitchExpression, PsiElementBacked, KotlinUElementWithType {
     override val expression by lz { KotlinConverter.convertOrNull(psi.subjectExpression, this) }
 
-    //TODO to entries
     override val body: UExpression by lz {
         object : KotlinUSpecialExpressionList(psi, KotlinSpecialExpressionKinds.WHEN, this) {
             override fun renderString() = expressions.joinToString("\n") { it.renderString().withMargin }
@@ -48,8 +47,8 @@ class KotlinUSwitchExpression(
 class KotlinUSwitchEntry(
         override val psi: KtWhenEntry,
         override val parent: UExpression
-) : KotlinAbstractUElement(), UExpression, PsiElementBacked {
-    val conditions by lz {
+) : KotlinAbstractUElement(), USwitchClauseExpressionWithBody, PsiElementBacked {
+    override val caseValues by lz {
         psi.conditions.map { when (it) {
             is KtWhenConditionInRange -> KotlinCustomUBinaryExpression(it, this).apply {
                 leftOperand = KotlinStringUSimpleReferenceExpression("it", this)
@@ -68,11 +67,11 @@ class KotlinUSwitchEntry(
                 type = KotlinConverter.convert(it.typeReference, this)
             }
             is KtWhenConditionWithExpression -> KotlinConverter.convertOrEmpty(it.expression, this)
-            else -> EmptyExpression(this)
+            else -> EmptyUExpression(this)
         }}
     }
 
-    val expression: UExpression by lz {
+    override val body: UExpression by lz {
         object : KotlinUSpecialExpressionList(psi, KotlinSpecialExpressionKinds.WHEN_ENTRY, this) {
             override fun renderString() = buildString {
                 appendln("{")
@@ -85,25 +84,13 @@ class KotlinUSwitchEntry(
                 is KtBlockExpression -> exprPsi.statements.map { KotlinConverter.convert(it, this) }
                 else -> listOf(KotlinConverter.convertOrEmpty(exprPsi, this))
             }
-            expressions = userExpressions + KotlinUSpecialExpressionList.Empty(
-                    exprPsi ?: this@KotlinUSwitchEntry.psi, UastSpecialExpressionKind.BREAK, parent)
+            parent
+            expressions = userExpressions + object : UBreakExpression {
+                override val label: String?
+                    get() = null
+                override val parent: UElement?
+                    get() = this@KotlinUSwitchEntry
+            }
         }
-    }
-
-    override fun renderString() = buildString {
-        if (conditions.isEmpty()) {
-            append("else")
-        } else {
-            append(conditions.joinToString { it.renderString() })
-        }
-        append(" -> ")
-        append(expression.renderString())
-    }
-
-    override fun logString() = log("KotlinUSwitchEntry", expression)
-
-    override fun accept(visitor: UastVisitor) {
-        if (visitor.visitElement(this)) return
-        expression.accept(visitor)
     }
 }

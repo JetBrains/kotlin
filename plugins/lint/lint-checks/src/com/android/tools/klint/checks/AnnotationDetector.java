@@ -35,7 +35,6 @@ import java.io.File;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.uast.*;
 import org.jetbrains.uast.check.UastAndroidContext;
-import org.jetbrains.uast.check.UastAndroidUtils;
 import org.jetbrains.uast.check.UastScanner;
 import org.jetbrains.uast.java.JavaUastCallKinds;
 import org.jetbrains.uast.visitor.UastVisitor;
@@ -62,7 +61,7 @@ public class AnnotationDetector extends Detector implements UastScanner {
             Severity.ERROR,
             new Implementation(
                     AnnotationDetector.class,
-                    Scope.JAVA_FILE_SCOPE));
+                    Scope.SOURCE_FILE_SCOPE));
 
     /** Constructs a new {@link AnnotationDetector} check */
     public AnnotationDetector() {
@@ -108,7 +107,7 @@ public class AnnotationDetector extends Detector implements UastScanner {
                                 return super.visitAnnotation(node);
                             }
                         } else if (valueNode instanceof UCallExpression &&
-                                   ((UCallExpression) valueNode).getKind() == JavaUastCallKinds.ARRAY_INITIALIZER) {
+                                   ((UCallExpression) valueNode).getKind() == UastCallKind.ARRAY_INITIALIZER) {
                             UCallExpression array = (UCallExpression) valueNode;
                             if (array.getValueArgumentCount() == 0) {
                                 continue;
@@ -126,7 +125,7 @@ public class AnnotationDetector extends Detector implements UastScanner {
                 }
             }
 
-            return false;
+            return super.visitAnnotation(node);
         }
 
         private boolean checkId(UAnnotation node, String id) {
@@ -143,7 +142,7 @@ public class AnnotationDetector extends Detector implements UastScanner {
                     if (parent instanceof UFunction || parent instanceof UBlockExpression) {
                         break;
                     } else if (issue == ApiDetector.UNSUPPORTED && parent instanceof UDeclarationsExpression) {
-                        UDeclarationsExpression declarations = (UDeclarationsExpression)parent;
+                        UDeclarationsExpression declarations = (UDeclarationsExpression) parent;
                         for (UVariable var : declarations.getVariables()) {
                             if (var.getKind() != UastVariableKind.MEMBER && var.getInitializer() instanceof UQualifiedExpression) {
                                 return true;
@@ -158,7 +157,7 @@ public class AnnotationDetector extends Detector implements UastScanner {
 
                 // This issue doesn't have AST access: annotations are not
                 // available for local variables or parameters
-                mContext.report(ISSUE, node, UastAndroidUtils.getLocation(node), String.format(
+                mContext.report(ISSUE, node, mContext.getLocation(node), String.format(
                     "The `@SuppressLint` annotation cannot be used on a local " +
                     "variable with the lint check '%1$s': move out to the " +
                     "surrounding method", id));

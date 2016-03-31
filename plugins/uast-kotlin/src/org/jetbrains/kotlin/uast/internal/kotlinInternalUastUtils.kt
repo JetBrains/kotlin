@@ -17,15 +17,12 @@
 package org.jetbrains.kotlin.uast
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
-import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.uast.kinds.KotlinUastVisibilities
@@ -49,14 +46,17 @@ internal fun KtModifierListOwner.hasModifier(modifier: UastModifier): Boolean {
         if (this is KtObjectDeclaration && this.isObjectLiteral()) {
             return false
         }
-        return !hasModifier(KtTokens.INNER_KEYWORD)
-    }
-
-    if (modifier == UastModifier.FINAL) {
-        if (hasModifier(KtTokens.FINAL_KEYWORD)) return true
-        if (this is KtProperty && !this.isVar) return true
+        if (this is KtClassOrObject && !hasModifier(KtTokens.INNER_KEYWORD)) {
+            return true
+        }
+        if (this is KtDeclaration && parent is KtObjectDeclaration) {
+            return true
+        }
         return false
     }
+
+    if (modifier == UastModifier.IMMUTABLE && this is KtVariableDeclaration && !this.isVar) return true
+    if (modifier == UastModifier.FINAL && hasModifier(KtTokens.FINAL_KEYWORD)) return true
 
     val javaModifier = MODIFIER_MAP[modifier] ?: return false
     return hasModifier(javaModifier)
@@ -69,15 +69,7 @@ internal fun <T> runReadAction(action: () -> T): T {
 internal fun KtElement?.resolveCallToUDeclaration(context: UastContext): UDeclaration? {
     if (this == null) return null
     val resolvedCall = this.getResolvedCall(analyze(BodyResolveMode.PARTIAL)) ?: return null
-    val source = (resolvedCall.resultingDescriptor).toSource(project) ?: return null
-    return context.convert(source) as? UDeclaration
-}
-
-internal fun KtElement?.resolveElementToUDeclaration(context: UastContext): UDeclaration? {
-    if (this == null) return null
-    val bindingContext = analyze(BodyResolveMode.PARTIAL)
-    val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, this] ?: return null
-    val source = descriptor.toSource(project) ?: return null
+    val source = (resolvedCall.resultingDescriptor).toSource() ?: return null
     return context.convert(source) as? UDeclaration
 }
 
@@ -90,11 +82,8 @@ internal fun KtAnnotated.getUastAnnotations(parent: UElement) = annotationEntrie
 
 internal fun <T> singletonListOrEmpty(element: T?) = if (element != null) listOf(element) else emptyList<T>()
 
-@Suppress("NOTHING_TO_INLINE")
-internal inline fun DeclarationDescriptor.toSource(element: PsiElement) = toSource(element.project)
-
-internal fun DeclarationDescriptor.toSource(project: Project) = try {
-    DescriptorToSourceUtilsIde.getAnyDeclaration(project, this)
+internal fun DeclarationDescriptor.toSource() = try {
+    DescriptorToSourceUtils.descriptorToDeclaration(this)
 } catch (e: Exception) {
     null
 }

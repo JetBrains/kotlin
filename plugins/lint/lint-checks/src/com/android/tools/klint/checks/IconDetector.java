@@ -1958,6 +1958,7 @@ public class IconDetector extends ResourceXmlDetector implements UastScanner {
     // ---- Implements UastScanner ----
 
     private static final String NOTIFICATION_CLASS = "Notification";              //$NON-NLS-1$
+    private static final String NOTIFICATION_COMPAT_CLASS = "NotificationCompat"; //$NON-NLS-1$
 
     private static final String NOTIFICATION_CLASS_FQNAME =
             "android.app.Notification";                                           //$NON-NLS-1$
@@ -2006,6 +2007,8 @@ public class IconDetector extends ResourceXmlDetector implements UastScanner {
                 return;
             }
 
+            List<String> parts = UastUtils.asQualifiedIdentifiers(UastUtils.getQualifiedCallElement(node));
+
             String typeName = reference.getIdentifier();
             if (NOTIFICATION_CLASS.equals(typeName)) {
                 List<UExpression> args = node.getValueArguments();
@@ -2028,10 +2031,16 @@ public class IconDetector extends ResourceXmlDetector implements UastScanner {
                     }
                 }
             } else if (BUILDER_CLASS.equals(typeName)) {
-                UClass resolvedClass = reference.resolveClass(mContext);
-                boolean isBuilder = resolvedClass != null
-                                    && (resolvedClass.matchesFqName(NOTIFICATION_CLASS_FQNAME)
-                                        || resolvedClass.matchesFqName(NOTIFICATION_COMPAT_CLASS_FQNAME));
+                boolean isBuilder = false;
+                if (parts != null && parts.size() == 1) {
+                    isBuilder = true;
+                } else if (parts != null && parts.size() == 2) {
+                    String clz = parts.get(0);
+                    if (NOTIFICATION_CLASS.equals(clz) || NOTIFICATION_COMPAT_CLASS_FQNAME.equals(clz)) {
+                        isBuilder = true;
+                    }
+                }
+
                 if (isBuilder) {
                     UFunction method = UastUtils.getContainingFunction(node);
                     if (method != null) {

@@ -41,7 +41,7 @@ public class AlarmDetector extends Detector implements UastScanner {
 
     private static final Implementation IMPLEMENTATION = new Implementation(
             AlarmDetector.class,
-            Scope.JAVA_FILE_SCOPE);
+            Scope.SOURCE_FILE_SCOPE);
 
     /** Alarm set too soon/frequently  */
     public static final Issue ISSUE = Issue.create(
@@ -84,7 +84,7 @@ public class AlarmDetector extends Detector implements UastScanner {
     }
 
     @Override
-    public void visitFunctionCall(UastAndroidContext context, UCallExpression node) {
+    public void visitCall(UastAndroidContext context, UCallExpression node) {
         UFunction setRepeatingFunction = node.resolve(context);
         UClass containingClass = UastUtils.getContainingClassOrEmpty(setRepeatingFunction);
 

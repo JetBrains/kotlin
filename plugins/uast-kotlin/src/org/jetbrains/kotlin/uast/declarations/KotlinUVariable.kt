@@ -42,12 +42,8 @@ open class KotlinUVariable(
         KotlinConverter.convert(type, psi.project, this)
     }
 
-    override val getters: List<UFunction>? by lz {
-        (psi as? KtProperty)?.accessors?.filter { it.isGetter }?.map { VariableAccessorFunction(it, this) }
-    }
-
-    override val setters: List<UFunction>? by lz {
-        (psi as? KtProperty)?.accessors?.filter { it.isSetter }?.map { VariableAccessorFunction(it, this) }
+    override val accessors: List<UFunction>? by lz {
+        (psi as? KtProperty)?.accessors?.map { VariableAccessorFunction(it, this) }
     }
 
     override val kind: UastVariableKind
@@ -82,32 +78,33 @@ open class KotlinUVariable(
 
         override val typeParameters: List<UTypeReference>
             get() = emptyList()
+
         override val typeParameterCount: Int
             get() = 0
 
         override val returnType: UType?
             get() = if (psi.isSetter) null else parent.type
 
-        override val body by lz { KotlinConverter.convertOrEmpty(psi.bodyExpression, this) }
+        override val body by lz { KotlinConverter.convertOrNull(psi.bodyExpression, this) }
 
         override val visibility: UastVisibility
             get() = psi.getVisibility()
 
-        override fun getSuperFunctions(context: UastContext): List<UFunction> {
-            throw UnsupportedOperationException()
-        }
+        override fun getSuperFunctions(context: UastContext) = emptyList<UFunction>()
 
-        override val nameElement: UElement?
-            get() = throw UnsupportedOperationException()
+        override val nameElement by lz { KotlinDumbUElement(psi.namePlaceholder, this) }
+
         override val name: String
-            get() = throw UnsupportedOperationException()
+            get() = when {
+                psi.isSetter -> "<set>"
+                psi.isGetter -> "<get>"
+                else -> "<accessor>"
+            }
 
-        override fun hasModifier(modifier: UastModifier): Boolean {
-            throw UnsupportedOperationException()
-        }
+        override fun hasModifier(modifier: UastModifier) = false
 
         override val annotations: List<UAnnotation>
-            get() = throw UnsupportedOperationException()
+            get() = emptyList()
     }
 }
 

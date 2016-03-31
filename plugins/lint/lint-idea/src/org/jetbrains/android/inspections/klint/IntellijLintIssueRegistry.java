@@ -49,16 +49,12 @@ public class IntellijLintIssueRegistry extends BuiltinIssueRegistry {
         Implementation implementation = issue.getImplementation();
         EnumSet<Scope> scope = implementation.getScope();
         Class<? extends Detector> detectorClass = implementation.getDetectorClass();
-        if (detectorClass == RegistrationDetector.class) {
-          issue.setImplementation(IntellijRegistrationDetector.IMPLEMENTATION);
-        } else if (detectorClass == ViewTypeDetector.class) {
-          issue.setImplementation(IntellijViewTypeDetector.IMPLEMENTATION);
-        } else if (detectorClass == SupportAnnotationDetector.class) {
+        if (detectorClass == SupportAnnotationDetector.class) {
           // Handled by the ResourceTypeInspection
           continue;
         } else if (scope.contains(Scope.CLASS_FILE) ||
-                   scope.contains(Scope.ALL_CLASS_FILES) ||
-                   scope.contains(Scope.JAVA_LIBRARIES)) {
+            scope.contains(Scope.ALL_CLASS_FILES) ||
+            scope.contains(Scope.JAVA_LIBRARIES)) {
           //noinspection ConstantConditions
           assert !IntellijLintProject.SUPPORT_CLASS_FILES; // When enabled, adjust this to include class detector based issues
 

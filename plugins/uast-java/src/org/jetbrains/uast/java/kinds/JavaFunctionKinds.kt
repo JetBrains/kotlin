@@ -19,5 +19,6 @@ package org.jetbrains.uast.java
 import org.jetbrains.uast.UastFunctionKind
 
 object JavaFunctionKinds {
+    val INSTANCE_INITIALIZER = UastFunctionKind.UastInitializerKind("<instance>")
     val STATIC_INITIALIZER = UastFunctionKind.UastInitializerKind("<static>")
 }

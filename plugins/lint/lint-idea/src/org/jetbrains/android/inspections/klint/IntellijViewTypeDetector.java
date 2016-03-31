@@ -30,8 +30,8 @@ import java.util.Collections;
 
 public class IntellijViewTypeDetector extends ViewTypeDetector {
   static final Implementation IMPLEMENTATION = new Implementation(
-          IntellijViewTypeDetector.class,
-          Scope.JAVA_FILE_SCOPE);
+    IntellijViewTypeDetector.class,
+    Scope.SOURCE_FILE_SCOPE);
 
   @Nullable
   @Override

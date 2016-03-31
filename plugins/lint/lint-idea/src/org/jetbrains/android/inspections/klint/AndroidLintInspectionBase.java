@@ -1,19 +1,3 @@
-/*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.jetbrains.android.inspections.klint;
 
 import com.android.annotations.concurrency.GuardedBy;
@@ -215,8 +199,7 @@ public abstract class AndroidLintInspectionBase extends GlobalInspectionTool {
     if (AndroidLintExternalAnnotator.INCLUDE_IDEA_SUPPRESS_ACTIONS) {
       final List<SuppressQuickFix> result = new ArrayList<SuppressQuickFix>();
       result.add(suppressLintQuickFix);
-      result.addAll(Arrays.asList(
-              BatchSuppressManager.SERVICE.getInstance().createBatchSuppressActions(HighlightDisplayKey.find(getShortName()))));
+      result.addAll(Arrays.asList(BatchSuppressManager.SERVICE.getInstance().createBatchSuppressActions(HighlightDisplayKey.find(getShortName()))));
       result.addAll(Arrays.asList(new XmlSuppressableInspectionTool.SuppressTagStatic(getShortName()),
                                   new XmlSuppressableInspectionTool.SuppressForFile(getShortName())));
       return result.toArray(new SuppressQuickFix[result.size()]);
@@ -250,13 +233,7 @@ public abstract class AndroidLintInspectionBase extends GlobalInspectionTool {
     }
 
     @Override
-    public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-      PsiElement myElement = descriptor.getPsiElement();
-      PsiFile file = PsiTreeUtil.getParentOfType(myElement, PsiFile.class, false);
-      if (file != null) {
-        new SuppressLintIntentionAction(myIssue.getId(), myElement).invoke(project, null, file);
-      }
-    }
+    public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {}
   }
 
   @TestOnly
@@ -454,9 +431,9 @@ public abstract class AndroidLintInspectionBase extends GlobalInspectionTool {
   }
 
   /**
-   * A {@link ProblemDescriptor} for image and directory files. This is
+   * A {@link com.intellij.codeInspection.ProblemDescriptor} for image and directory files. This is
    * necessary because the {@link InspectionManager}'s createProblemDescriptor methods
-   * all use {@link ProblemDescriptorBase} where in the constructor
+   * all use {@link com.intellij.codeInspection.ProblemDescriptorBase} where in the constructor
    * it insists that the start and end {@link PsiElement} instances must have a valid
    * <b>text</b> range, which does not apply for images.
    * <p>

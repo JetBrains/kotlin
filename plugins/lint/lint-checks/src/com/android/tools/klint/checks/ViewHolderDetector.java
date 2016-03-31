@@ -34,7 +34,6 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.uast.*;
 import org.jetbrains.uast.check.UastAndroidContext;
-import org.jetbrains.uast.check.UastAndroidUtils;
 import org.jetbrains.uast.check.UastScanner;
 import org.jetbrains.uast.visitor.UastVisitor;
 
@@ -45,7 +44,7 @@ public class ViewHolderDetector extends Detector implements UastScanner {
 
     private static final Implementation IMPLEMENTATION = new Implementation(
             ViewHolderDetector.class,
-            Scope.JAVA_FILE_SCOPE);
+            Scope.SOURCE_FILE_SCOPE);
 
     /** Using a view inflater unconditionally in an AdapterView */
     public static final Issue ISSUE = Issue.create(
@@ -109,32 +108,8 @@ public class ViewHolderDetector extends Detector implements UastScanner {
             if (GET_VIEW.equals(node.getName())) {
                 List<UVariable> parameters = node.getValueParameters();
                 if (parameters.size() == 3) {
-                    Iterator<UVariable> iterator = parameters.iterator();
-                    if (!iterator.hasNext()) {
-                        return false;
-                    }
-
-                    UVariable first = iterator.next();
-                    if (!first.getType().isInt()) {
-                        return false;
-                    }
-
-                    if (!iterator.hasNext()) {
-                        return false;
-                    }
-
-                    UVariable second = iterator.next();
-                    if (!second.getType().matchesFqName(CLASS_VIEW)) {
-                        return false;
-                    }
-
-                    if (!iterator.hasNext()) {
-                        return false;
-                    }
-
-                    UVariable third = iterator.next();
                     //noinspection RedundantIfStatement
-                    if (!third.getType().matchesFqName(CLASS_VIEWGROUP)) {
+                    if (!parameters.get(2).getType().matchesFqName(CLASS_VIEWGROUP)) {
                         return false;
                     }
 
@@ -202,7 +177,7 @@ public class ViewHolderDetector extends Detector implements UastScanner {
                             + "Should use View Holder pattern (use recycled view passed "
                             + "into this method as the second parameter) for smoother "
                             + "scrolling";
-                    mContext.report(ISSUE, node, UastAndroidUtils.getLocation(node), message);
+                    mContext.report(ISSUE, node, mContext.getLocation(node), message);
                 }
             }
         }

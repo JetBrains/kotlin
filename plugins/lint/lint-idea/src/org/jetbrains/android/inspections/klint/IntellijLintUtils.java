@@ -20,6 +20,12 @@ import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.android.builder.model.SourceProvider;
 import com.android.tools.klint.client.api.LintRequest;
+import com.android.tools.klint.detector.api.ClassContext;
+import com.android.tools.klint.detector.api.Context;
+import com.android.tools.klint.detector.api.DefaultPosition;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.Location;
+import com.android.tools.klint.detector.api.Position;
 import com.google.common.base.Splitter;
 import com.intellij.debugger.engine.JVMNameUtil;
 import com.intellij.facet.Facet;
@@ -36,9 +42,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.util.ClassUtil;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.util.TypeConversionUtil;
 import org.jetbrains.android.facet.AndroidFacet;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.uast.UClass;
 import org.jetbrains.uast.UElement;
@@ -49,9 +53,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.android.SdkConstants.CONSTRUCTOR_NAME;
-import static com.android.SdkConstants.SUPPRESS_ALL;
-
 /**
  * Common utilities for handling lint within IntelliJ
  * TODO: Merge with {@link AndroidLintUtil}
@@ -59,11 +60,6 @@ import static com.android.SdkConstants.SUPPRESS_ALL;
 public class IntellijLintUtils {
   private IntellijLintUtils() {
   }
-
-  @NonNls
-  public static final String SUPPRESS_LINT_FQCN = "android.annotation.SuppressLint";
-  @NonNls
-  public static final String SUPPRESS_WARNINGS_FQCN = "java.lang.SuppressWarnings";
 
   private static final ProjectSystemId GRADLE_ID = new ProjectSystemId("GRADLE");
 
@@ -75,7 +71,7 @@ public class IntellijLintUtils {
    * @return the location of the given element
    */
   @NonNull
-  public static com.android.tools.klint.detector.api.Location getLocation(@NonNull File file, @NonNull PsiElement element) {
+  public static Location getLocation(@NonNull File file, @NonNull PsiElement element) {
     //noinspection ConstantConditions
     assert element.getContainingFile().getVirtualFile() == null
            || FileUtil.filesEqual(VfsUtilCore.virtualToIoFile(element.getContainingFile().getVirtualFile()), file);
@@ -90,19 +86,19 @@ public class IntellijLintUtils {
     }
 
     TextRange textRange = element.getTextRange();
-    com.android.tools.klint.detector.api.Position start = new com.android.tools.klint.detector.api.DefaultPosition(-1, -1, textRange.getStartOffset());
-    com.android.tools.klint.detector.api.Position end = new com.android.tools.klint.detector.api.DefaultPosition(-1, -1, textRange.getEndOffset());
-    return com.android.tools.klint.detector.api.Location.create(file, start, end);
+    Position start = new DefaultPosition(-1, -1, textRange.getStartOffset());
+    Position end = new DefaultPosition(-1, -1, textRange.getEndOffset());
+    return Location.create(file, start, end);
   }
 
   /**
-   * Returns the {@link PsiFile} associated with a given lint {@link com.android.tools.klint.detector.api.Context}
+   * Returns the {@link PsiFile} associated with a given lint {@link Context}
    *
    * @param context the context to look up the file for
    * @return the corresponding {@link PsiFile}, or null
    */
   @Nullable
-  public static PsiFile getPsiFile(@NonNull com.android.tools.klint.detector.api.Context context) {
+  public static PsiFile getPsiFile(@NonNull Context context) {
     VirtualFile file = VfsUtil.findFileByIoFile(context.file, false);
     if (file == null) {
       return null;
@@ -115,98 +111,9 @@ public class IntellijLintUtils {
     return PsiManager.getInstance(project).findFile(file);
   }
 
-  public static boolean isSuppressed(@NonNull UElement element, @NonNull UFile file, @NonNull com.android.tools.klint.detector.api.Issue issue) {
-    //TODO
-    return true;
-  }
-
-  /**
-   * Returns true if the given issue is suppressed at the given element within the given file
-   *
-   * @param element the element to check
-   * @param file the file containing the element
-   * @param issue the issue to check
-   * @return true if the given issue is suppressed
-   */
-  public static boolean isSuppressed(@NonNull PsiElement element, @NonNull PsiFile file, @NonNull com.android.tools.klint.detector.api.Issue issue) {
-    // Search upwards for suppress lint and suppress warnings annotations
-    // Search upwards for target api annotations
-    while (element != null && element != file) { // otherwise it will keep going into directories!
-      if (element instanceof PsiModifierListOwner) {
-        PsiModifierListOwner owner = (PsiModifierListOwner)element;
-        PsiModifierList modifierList = owner.getModifierList();
-        if (modifierList != null) {
-          for (PsiAnnotation annotation : modifierList.getAnnotations()) {
-            String fqcn = annotation.getQualifiedName();
-            if (fqcn.equals(SUPPRESS_LINT_FQCN) || fqcn.equals(SUPPRESS_WARNINGS_FQCN)) {
-              PsiAnnotationParameterList parameterList = annotation.getParameterList();
-              for (PsiNameValuePair pair : parameterList.getAttributes()) {
-                PsiAnnotationMemberValue v = pair.getValue();
-                String text = v.getText().trim(); // UGH! Find better way to access value!
-                if (text.isEmpty()) {
-                  continue;
-                }
-                if (v instanceof PsiLiteral) {
-                  PsiLiteral literal = (PsiLiteral)v;
-                  Object value = literal.getValue();
-                  if (value instanceof String) {
-                    text = (String) value;
-                  }
-                } else if (v instanceof PsiArrayInitializerMemberValue) {
-                  PsiArrayInitializerMemberValue mv = (PsiArrayInitializerMemberValue)v;
-                  for (PsiAnnotationMemberValue mmv : mv.getInitializers()) {
-                    if (mmv instanceof PsiLiteral) {
-                      PsiLiteral literal = (PsiLiteral) mmv;
-                      Object value = literal.getValue();
-                      if (value instanceof String) {
-                        text = (String) value;
-                        break;
-                      }
-                    }
-                  }
-                }
-
-                if (text != null) {
-                  for (String id : Splitter.on(',').trimResults().split(text)) {
-                    if (id.equals(issue.getId()) || id.equals(SUPPRESS_ALL)) {
-                      return true;
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-      element = element.getParent();
-    }
-
+  public static boolean isSuppressed(@NonNull UElement element, @NonNull UFile file, @NonNull Issue issue) {
     return false;
   }
-
-  /** Returns the internal method name */
-  @NonNull
-  public static String getInternalMethodName(@NonNull PsiMethod method) {
-    if (method.isConstructor()) {
-      return SdkConstants.CONSTRUCTOR_NAME;
-    }
-    else {
-      return method.getName();
-    }
-  }
-
-  @Nullable
-  public static PsiElement getCallName(@NonNull PsiCallExpression expression) {
-    PsiElement firstChild = expression.getFirstChild();
-    if (firstChild != null) {
-      PsiElement lastChild = firstChild.getLastChild();
-      if (lastChild instanceof PsiIdentifier) {
-        return lastChild;
-      }
-    }
-    return null;
-  }
-
 
   /**
    * Computes the internal class name of the given class.
@@ -214,7 +121,7 @@ public class IntellijLintUtils {
    *
    * @param psiClass the class to look up the internal name for
    * @return the internal class name
-   * @see com.android.tools.klint.detector.api.ClassContext#getInternalName(String)
+   * @see ClassContext#getInternalName(String)
    */
   @Nullable
   public static String getInternalName(@NonNull PsiClass psiClass) {
@@ -232,13 +139,13 @@ public class IntellijLintUtils {
     if (sig == null) {
       String qualifiedName = psiClass.getQualifiedName();
       if (qualifiedName != null) {
-        return com.android.tools.klint.detector.api.ClassContext.getInternalName(qualifiedName);
+        return ClassContext.getInternalName(qualifiedName);
       }
       return null;
     } else if (sig.indexOf('.') != -1) {
       // Workaround -- ClassUtil doesn't treat this correctly!
       // .replace('.', '/');
-      sig = com.android.tools.klint.detector.api.ClassContext.getInternalName(sig);
+      sig = ClassContext.getInternalName(sig);
     }
     return sig;
   }
@@ -249,134 +156,6 @@ public class IntellijLintUtils {
     } else {
       return null;
     }
-  }
-
-  /**
-   * Computes the internal class name of the given class type.
-   * For example, for PsiClassType foo.bar.Foo.Bar it returns foo/bar/Foo$Bar.
-   *
-   * @param psiClassType the class type to look up the internal name for
-   * @return the internal class name
-   * @see com.android.tools.klint.detector.api.ClassContext#getInternalName(String)
-   */
-  @Nullable
-  public static String getInternalName(@NonNull PsiClassType psiClassType) {
-    PsiClass resolved = psiClassType.resolve();
-    if (resolved != null) {
-      return getInternalName(resolved);
-    }
-
-    String className = psiClassType.getClassName();
-    if (className != null) {
-      return com.android.tools.klint.detector.api.ClassContext.getInternalName(className);
-    }
-
-    return null;
-  }
-
-  /**
-   * Computes the internal JVM description of the given method. This is in the same
-   * format as the ASM desc fields for methods; meaning that a method named foo which for example takes an
-   * int and a String and returns a void will have description {@code foo(ILjava/lang/String;):V}.
-   *
-   * @param method the method to look up the description for
-   * @param includeName whether the name should be included
-   * @param includeReturn whether the return type should be included
-   * @return the internal JVM description for this method
-   */
-  @Nullable
-  public static String getInternalDescription(@NonNull PsiMethod method, boolean includeName, boolean includeReturn) {
-    assert !includeName; // not yet tested
-    assert !includeReturn; // not yet tested
-
-    StringBuilder signature = new StringBuilder();
-
-    if (includeName) {
-      if (method.isConstructor()) {
-        final PsiClass declaringClass = method.getContainingClass();
-        if (declaringClass != null) {
-          final PsiClass outerClass = declaringClass.getContainingClass();
-          if (outerClass != null) {
-            // declaring class is an inner class
-            if (!declaringClass.hasModifierProperty(PsiModifier.STATIC)) {
-              if (!appendJvmTypeName(signature, outerClass)) {
-                return null;
-              }
-            }
-          }
-        }
-        signature.append(CONSTRUCTOR_NAME);
-      } else {
-        signature.append(method.getName());
-      }
-    }
-
-    signature.append('(');
-
-    for (PsiParameter psiParameter : method.getParameterList().getParameters()) {
-      if (!appendJvmSignature(signature, psiParameter.getType())) {
-        return null;
-      }
-    }
-    signature.append(')');
-    if (includeReturn) {
-      if (!method.isConstructor()) {
-        if (!appendJvmSignature(signature, method.getReturnType())) {
-          return null;
-        }
-      }
-      else {
-        signature.append('V');
-      }
-    }
-    return signature.toString();
-  }
-
-  private static boolean appendJvmTypeName(@NonNull StringBuilder signature, @NonNull PsiClass outerClass) {
-    String className = getInternalName(outerClass);
-    if (className == null) {
-      return false;
-    }
-    signature.append('L').append(className.replace('.', '/')).append(';');
-    return true;
-  }
-
-  private static boolean appendJvmSignature(@NonNull StringBuilder buffer, @Nullable PsiType type) {
-    if (type == null) {
-      return false;
-    }
-    final PsiType psiType = TypeConversionUtil.erasure(type);
-    if (psiType instanceof PsiArrayType) {
-      buffer.append('[');
-      appendJvmSignature(buffer, ((PsiArrayType)psiType).getComponentType());
-    }
-    else if (psiType instanceof PsiClassType) {
-      PsiClass resolved = ((PsiClassType)psiType).resolve();
-      if (resolved == null) {
-        return false;
-      }
-      if (!appendJvmTypeName(buffer, resolved)) {
-        return false;
-      }
-    }
-    else if (psiType instanceof PsiPrimitiveType) {
-      buffer.append(JVMNameUtil.getPrimitiveSignature(psiType.getCanonicalText()));
-    }
-    else {
-      return false;
-    }
-    return true;
-  }
-
-  public static boolean isProjectReady(AndroidFacet facet) {
-    try {
-       return AndroidFacet.class.getMethod("getIdeaAndroidProject", AndroidFacet.class).invoke(facet) != null;
-    } catch (Exception e) {
-      try {
-        return AndroidFacet.class.getMethod("getAndroidModel", AndroidFacet.class).invoke(facet) != null;
-      } catch (Exception ignored) {}
-    }
-    return false;
   }
 
   public static AndroidModelFacade getModelFacade(AndroidFacet facet) {

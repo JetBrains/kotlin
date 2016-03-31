@@ -1,19 +1,42 @@
 public static class Declarations {
     public fun <init>() = EmptyExpression
-    var a: String = "a"
+
+    public immutable var a: String = "a"
+
+    public var b: String
+        public fun <get>(): String = "A"
+        public fun <set>(v: String) {
+            println(v)
+        }
+
+
+    public immutable var c: String
 
     public static class NestedClass {
         public fun <init>() = EmptyExpression
-        var b: String = "b"
 
+        public immutable var b: String = "b"
     }
+
     public class InnerClass {
         public fun <init>() = EmptyExpression
-        var c: CharSequence = a
 
+        public immutable var c: CharSequence = a
     }
+
+    public static companion object Companion {
+        public fun <init>() = EmptyExpression
+
+        public immutable var CONST_VAL: Int = 1
+    }
+
+    public static companion object A {
+        public fun <init>() = EmptyExpression
+
+        public fun b(): Boolean = true
+    }
+
     public fun func(a: Int, b: String): Int {
         return (a + 1) * b.length
     }
-
 }

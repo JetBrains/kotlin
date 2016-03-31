@@ -73,7 +73,6 @@ import com.android.tools.klint.detector.api.XmlContext;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.uast.*;
-import org.jetbrains.uast.check.UastAndroidUtils;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
 import org.jetbrains.uast.visitor.EmptyUastVisitor;
@@ -99,7 +98,7 @@ public class RtlDetector extends LayoutDetector implements UastScanner {
             RtlDetector.class,
             EnumSet.of(Scope.RESOURCE_FILE, Scope.SOURCE_FILE, Scope.MANIFEST),
             Scope.RESOURCE_FILE_SCOPE,
-            Scope.JAVA_FILE_SCOPE,
+            Scope.SOURCE_FILE_SCOPE,
             Scope.MANIFEST_SCOPE
     );
 
@@ -607,7 +606,7 @@ public class RtlDetector extends LayoutDetector implements UastScanner {
                 // Can't resolve types (for example while editing code with errors):
                 // rely on heuristics like import statements and class qualifiers
                 if (parent instanceof UQualifiedExpression &&
-                    !(GRAVITY_CLASS.equals(((UQualifiedExpression) parent).getReceiver().renderString()))) {
+                    !(UastUtils.matchesQualified(((UQualifiedExpression) parent).getReceiver(), GRAVITY_CLASS))) {
                     return false;
                 }
                 if (parent instanceof USimpleReferenceExpression) {
@@ -624,7 +623,7 @@ public class RtlDetector extends LayoutDetector implements UastScanner {
               + "behavior in right-to-left locales",
               (isLeft ? GRAVITY_VALUE_START : GRAVITY_VALUE_END).toUpperCase(Locale.US),
               (isLeft ? GRAVITY_VALUE_LEFT : GRAVITY_VALUE_RIGHT).toUpperCase(Locale.US));
-            Location location = UastAndroidUtils.getLocation(node);
+            Location location = mContext.getLocation(node);
             mContext.report(USE_START, node, location, message);
 
             return true;

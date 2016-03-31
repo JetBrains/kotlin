@@ -1,6 +1,6 @@
-UFile (package = null)
+UFile (package = )
     UClass (Simple, kind = class)
-        UFunction (<init>, kind = CONSTRUCTOR, paramCount = 0)
+        UFunction (<init>, kind = constructor, paramCount = 0)
             EmptyExpression
         UVariable (a, kind = member)
             UBinaryExpression (+)

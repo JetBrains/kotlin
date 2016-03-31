@@ -15,6 +15,7 @@
  */
 package org.jetbrains.uast.java
 
+import com.intellij.psi.JavaTokenType
 import com.intellij.psi.PsiPrefixExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UPrefixExpression
@@ -27,13 +28,13 @@ class JavaUPrefixExpression(
 ) : JavaAbstractUElement(), UPrefixExpression, PsiElementBacked, JavaUElementWithType, JavaEvaluatableUElement {
     override val operand by lz { JavaConverter.convertOrEmpty(psi.operand, this) }
 
-    override val operator = when (psi.operationSign.text) {
-        "+" -> UastPrefixOperator.UNARY_PLUS
-        "-" -> UastPrefixOperator.UNARY_MINUS
-        "++" -> UastPrefixOperator.INC
-        "--" -> UastPrefixOperator.DEC
-        "!" -> UastPrefixOperator.LOGICAL_NOT
-        "~" -> UastPrefixOperator.BITWISE_NOT
+    override val operator = when (psi.operationSign) {
+        JavaTokenType.PLUS -> UastPrefixOperator.UNARY_PLUS
+        JavaTokenType.MINUS -> UastPrefixOperator.UNARY_MINUS
+        JavaTokenType.PLUSPLUS -> UastPrefixOperator.INC
+        JavaTokenType.MINUSMINUS-> UastPrefixOperator.DEC
+        JavaTokenType.EXCL -> UastPrefixOperator.LOGICAL_NOT
+        JavaTokenType.TILDE -> UastPrefixOperator.BITWISE_NOT
         else -> UastPrefixOperator.UNKNOWN
     }
 }

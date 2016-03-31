@@ -15,6 +15,12 @@
  */
 package org.jetbrains.uast
 
+/**
+ * Represents the loop expression.
+ */
 interface ULoopExpression : UExpression {
+    /**
+     * Returns the loop body [UExpression].
+     */
     val body: UExpression
 }

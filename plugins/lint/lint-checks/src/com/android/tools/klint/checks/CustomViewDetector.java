@@ -36,7 +36,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jetbrains.uast.*;
-import org.jetbrains.uast.check.UastAndroidUtils;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
 
@@ -48,7 +47,7 @@ public class CustomViewDetector extends Detector implements UastScanner {
 
     private static final Implementation IMPLEMENTATION = new Implementation(
             CustomViewDetector.class,
-            Scope.JAVA_FILE_SCOPE);
+            Scope.SOURCE_FILE_SCOPE);
 
     /** Mismatched style and class names */
     public static final Issue ISSUE = Issue.create(
@@ -92,7 +91,7 @@ public class CustomViewDetector extends Detector implements UastScanner {
     }
 
     @Override
-    public void visitFunctionCall(UastAndroidContext context, UCallExpression node) {
+    public void visitCall(UastAndroidContext context, UCallExpression node) {
         if (node.getParent() instanceof UExpression) {
             if (!context.getLintContext().isContextMethod(node)) {
                 return;
@@ -137,7 +136,7 @@ public class CustomViewDetector extends Detector implements UastScanner {
                       + "should have the same name (various editor features rely on "
                       + "this convention)",
                       className, styleableName);
-                    context.report(ISSUE, node, UastAndroidUtils.getLocation(expression), message);
+                    context.report(ISSUE, node, context.getLocation(expression), message);
                 }
             } else if (resolvedClass.isSubclassOf(CLASS_VIEWGROUP + DOT_LAYOUT_PARAMS)) {
                 UClass outer = UastUtils.getContainingClass(resolvedClass);
@@ -153,7 +152,7 @@ public class CustomViewDetector extends Detector implements UastScanner {
                       + "class (`%3$s`) plus \"`_Layout`\", e.g. `%4$s`. "
                       + "(Various editor features rely on this convention.)",
                       styleableName, className, layoutClassName, expectedName);
-                    context.report(ISSUE, node, UastAndroidUtils.getLocation(expression), message);
+                    context.report(ISSUE, node, context.getLocation(expression), message);
                 }
             }
         }

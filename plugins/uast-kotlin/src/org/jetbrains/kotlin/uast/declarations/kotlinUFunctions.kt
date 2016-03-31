@@ -43,10 +43,11 @@ abstract class KotlinAbstractUFunction : KotlinAbstractUElement(), UFunction, Ps
     override val valueParameters by lz { psi.valueParameters.map { KotlinConverter.convert(it, this) } }
 
     override fun getSuperFunctions(context: UastContext): List<UFunction> {
+        if (this.isTopLevel()) return emptyList()
         val bindingContext = psi.analyze(BodyResolveMode.PARTIAL)
         val clazz = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, psi] as? FunctionDescriptor ?: return emptyList()
         return clazz.overriddenDescriptors.map {
-            context.convert(it.toSource(psi)) as? UFunction
+            context.convert(it.toSource()) as? UFunction
         }.filterNotNull()
     }
 
@@ -61,7 +62,7 @@ abstract class KotlinAbstractUFunction : KotlinAbstractUElement(), UFunction, Ps
     override fun hasModifier(modifier: UastModifier) = psi.hasModifier(modifier)
     override val annotations by lz { psi.getUastAnnotations(this) }
 
-    override val body by lz { KotlinConverter.convertOrEmpty(psi.bodyExpression, this) }
+    override val body by lz { KotlinConverter.convertOrNull(psi.bodyExpression, this) }
     override val visibility by lz { psi.getVisibility() }
 }
 
@@ -126,7 +127,7 @@ class KotlinAnonymousInitializerUFunction(
     override val returnType: UType?
         get() = null
 
-    override val body by lz { KotlinConverter.convertOrEmpty(psi.body, this) }
+    override val body by lz { KotlinConverter.convertOrNull(psi.body, this) }
 
     override val visibility: UastVisibility
         get() = UastVisibility.PRIVATE
@@ -168,7 +169,8 @@ open class KotlinDefaultPrimaryConstructorUFunction(
     override val returnType: UType?
         get() = null
 
-    override val body: UExpression = EmptyExpression(this)
+    override val body: UExpression?
+        get() = null
 
     override val visibility: UastVisibility
         get() = parent.visibility
@@ -207,7 +209,7 @@ open class KotlinObjectLiteralConstructorUFunction(
                     get() = KotlinConverter.convert(param.type, psi.project, this)
                 override val nameElement: UElement?
                     get() = null
-                override val parent: UElement?
+                override val parent: UElement
                     get() = this@KotlinObjectLiteralConstructorUFunction
                 override val name: String
                     get() = param.name.asString()
@@ -237,7 +239,8 @@ open class KotlinObjectLiteralConstructorUFunction(
     override val returnType: UType?
         get() = null
 
-    override val body: UExpression = EmptyExpression(this)
+    override val body: UExpression?
+        get() = null
 
     override val visibility: UastVisibility
         get() = parent.visibility

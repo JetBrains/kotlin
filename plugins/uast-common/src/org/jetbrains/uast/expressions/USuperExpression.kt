@@ -17,11 +17,16 @@ package org.jetbrains.uast
 
 import org.jetbrains.uast.visitor.UastVisitor
 
+/**
+ * Represents a `super` expression.
+ * Qualified `super` is not supported at the moment.
+ */
 interface USuperExpression : UExpression {
     override fun logString() = "USuperExpression"
     override fun renderString() = "super"
 
     override fun accept(visitor: UastVisitor) {
         visitor.visitSuperExpression(this)
+        visitor.afterVisitSuperExpression(this)
     }
 }

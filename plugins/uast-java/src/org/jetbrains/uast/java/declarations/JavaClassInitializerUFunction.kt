@@ -16,15 +16,21 @@
 package org.jetbrains.uast.java
 
 import com.intellij.psi.PsiClassInitializer
+import com.intellij.psi.PsiModifier
 import org.jetbrains.uast.*
 import org.jetbrains.uast.psi.PsiElementBacked
 
 class JavaClassInitializerUFunction(
         override val psi: PsiClassInitializer,
         override val parent: UElement
-) : JavaAbstractUElement(), UFunction, PsiElementBacked, NoAnnotations, NoModifiers {
+) : JavaAbstractUElement(), UFunction, PsiElementBacked, NoAnnotations {
     override val kind: UastFunctionKind.UastInitializerKind
-        get() = JavaFunctionKinds.STATIC_INITIALIZER
+        get() {
+            return if (psi.hasModifierProperty(PsiModifier.STATIC))
+                JavaFunctionKinds.STATIC_INITIALIZER
+            else
+                JavaFunctionKinds.INSTANCE_INITIALIZER
+        }
 
     override val valueParameters: List<UVariable>
         get() = emptyList()
@@ -53,4 +59,5 @@ class JavaClassInitializerUFunction(
         get() = "<static>"
 
     override fun getSuperFunctions(context: UastContext) = emptyList<UFunction>()
+    override fun hasModifier(modifier: UastModifier) = psi.hasModifier(modifier)
 }

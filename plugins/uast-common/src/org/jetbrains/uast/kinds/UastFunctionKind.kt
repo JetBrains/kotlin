@@ -15,6 +15,9 @@
  */
 package org.jetbrains.uast
 
+/**
+ * Kinds of [UFunction].
+ */
 open class UastFunctionKind(val text: String) {
     class UastInitializerKind(val name: String) : UastFunctionKind("INITIALIZER ($name)")
     class UastVariableAccessor(val name: String) : UastFunctionKind(name)

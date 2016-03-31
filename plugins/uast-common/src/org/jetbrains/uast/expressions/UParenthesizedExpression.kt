@@ -17,12 +17,19 @@ package org.jetbrains.uast
 
 import org.jetbrains.uast.visitor.UastVisitor
 
+/**
+ * Represents a parenthesized expression, e.g. `(23 + 3)`.
+ */
 interface UParenthesizedExpression : UExpression {
+    /**
+     * Returns an expression inside the parenthesis.
+     */
     val expression: UExpression
 
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitParenthesizedExpression(this)) return
         expression.accept(visitor)
+        visitor.afterVisitParenthesizedExpression(this)
     }
 
     override fun evaluate() = expression.evaluate()

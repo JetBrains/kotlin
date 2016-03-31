@@ -33,7 +33,6 @@ import org.jetbrains.uast.UExpression;
 import org.jetbrains.uast.UCallExpression;
 import org.jetbrains.uast.ULiteralExpression;
 import org.jetbrains.uast.USimpleReferenceExpression;
-import org.jetbrains.uast.check.UastAndroidUtils;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
 
@@ -53,7 +52,7 @@ public class NonInternationalizedSmsDetector extends Detector implements UastSca
             Severity.WARNING,
             new Implementation(
                     NonInternationalizedSmsDetector.class,
-                    Scope.JAVA_FILE_SCOPE));
+                    Scope.SOURCE_FILE_SCOPE));
 
 
     /** Constructs a new {@link NonInternationalizedSmsDetector} check */
@@ -77,15 +76,11 @@ public class NonInternationalizedSmsDetector extends Detector implements UastSca
     }
 
     @Override
-    public void visitFunctionCall(UastAndroidContext context, UCallExpression node) {
+    public void visitCall(UastAndroidContext context, UCallExpression node) {
         String functionName = node.getFunctionName();
 
         assert "sendTextMessage".equals(functionName) ||  //$NON-NLS-1$
                "sendMultipartTextMessage".equals(functionName);  //$NON-NLS-1$
-        if (node instanceof USimpleReferenceExpression) {
-            // "sendTextMessage"/"sendMultipartTextMessage" in the code with no operand
-            return;
-        }
 
         List<UExpression> args = node.getValueArguments();
         if (args.size() == 5) {
@@ -95,7 +90,7 @@ public class NonInternationalizedSmsDetector extends Detector implements UastSca
                 String number = (String) ((ULiteralExpression) destinationAddress).getValue();
 
                 if (number != null && !number.startsWith("+")) {  //$NON-NLS-1$
-                    context.report(ISSUE, node, UastAndroidUtils.getLocation(destinationAddress),
+                    context.report(ISSUE, node, context.getLocation(destinationAddress),
                                    "To make sure the SMS can be sent by all users, please start the SMS number " +
                                    "with a + and a country code or restrict the code invocation to people in the country " +
                                    "you are targeting.");

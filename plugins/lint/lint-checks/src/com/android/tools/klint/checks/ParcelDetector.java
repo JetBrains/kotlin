@@ -27,10 +27,8 @@ import com.android.tools.klint.detector.api.Speed;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.uast.*;
-import org.jetbrains.uast.check.UastAndroidUtils;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
-import org.jetbrains.uast.kinds.UastClassKind;
 import org.jetbrains.uast.visitor.UastVisitor;
 
 /**
@@ -53,7 +51,7 @@ public class ParcelDetector extends Detector implements UastScanner {
             Severity.ERROR,
             new Implementation(
                     ParcelDetector.class,
-                    Scope.JAVA_FILE_SCOPE))
+                    Scope.SOURCE_FILE_SCOPE))
             .addMoreInfo("http://developer.android.com/reference/android/os/Parcelable.html");
 
     /** Constructs a new {@link ParcelDetector} check */
@@ -100,7 +98,7 @@ public class ParcelDetector extends Detector implements UastScanner {
                                 return true;
                             }
                         }
-                        Location location = UastAndroidUtils.getLocation(node.getNameElement());
+                        Location location = mContext.getLocation(node.getNameElement());
                         mContext.report(ISSUE, node, location,
                                         "This class implements `Parcelable` but does not "
                                         + "provide a `CREATOR` field");

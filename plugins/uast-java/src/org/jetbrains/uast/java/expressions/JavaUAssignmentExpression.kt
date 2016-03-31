@@ -18,7 +18,6 @@ package org.jetbrains.uast.java
 import com.intellij.psi.PsiAssignmentExpression
 import org.jetbrains.uast.UBinaryExpression
 import org.jetbrains.uast.UElement
-import org.jetbrains.uast.UastBinaryOperator
 import org.jetbrains.uast.psi.PsiElementBacked
 
 class JavaUAssignmentExpression(
@@ -26,9 +25,6 @@ class JavaUAssignmentExpression(
         override val parent: UElement
 ) : JavaAbstractUElement(), UBinaryExpression, PsiElementBacked, JavaUElementWithType, JavaEvaluatableUElement {
     override val leftOperand by lz { JavaConverter.convert(psi.lExpression, this) }
-
-    override val operator: UastBinaryOperator
-        get() = UastBinaryOperator.ASSIGN
-
     override val rightOperand by lz { JavaConverter.convertOrEmpty(psi.rExpression, this) }
+    override val operator by lz { psi.operationTokenType.getOperatorType() }
 }

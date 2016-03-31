@@ -15,8 +15,9 @@
  */
 package org.jetbrains.uast
 
-import org.jetbrains.uast.kinds.UastOperator
-
+/**
+ * [UPrefixExpression] operators.
+ */
 class UastPrefixOperator(override val text: String): UastOperator {
     companion object {
         @JvmField

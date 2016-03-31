@@ -53,7 +53,6 @@ import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
 import org.jetbrains.uast.java.JavaUFunction;
 import org.jetbrains.uast.java.JavaUastCallKinds;
-import org.jetbrains.uast.kinds.UastOperator;
 import org.jetbrains.uast.visitor.UastVisitor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -79,7 +78,7 @@ import java.util.Set;
 public class SupportAnnotationDetector extends Detector implements UastScanner {
 
     public static final Implementation IMPLEMENTATION
-            = new Implementation(SupportAnnotationDetector.class, Scope.JAVA_FILE_SCOPE);
+            = new Implementation(SupportAnnotationDetector.class, Scope.SOURCE_FILE_SCOPE);
 
     /** Method result should be used */
     public static final Issue RANGE = Issue.create(
@@ -753,7 +752,7 @@ public class SupportAnnotationDetector extends Detector implements UastScanner {
                 UQualifiedExpression select = (UQualifiedExpression) node.getReceiver();
                 if (select.getReceiver() instanceof UQualifiedExpression) { // android.R....
                     UQualifiedExpression innerSelect = (UQualifiedExpression) select.getReceiver();
-                    if (innerSelect.getSelector().renderString().equals(R_CLASS)) {
+                    if (UastUtils.matchesQualified(innerSelect.getSelector(), R_CLASS)) {
                         String typeName = select.getSelector().renderString();
                         ResourceType type = ResourceType.getEnum(typeName);
                         return type != null ? Collections.singletonList(type) : null;
@@ -770,7 +769,7 @@ public class SupportAnnotationDetector extends Detector implements UastScanner {
             }
 
             // Arbitrary packages -- android.R.type.name, foo.bar.R.type.name
-            if (node.getSelector().renderString().equals(R_CLASS)) {
+            if (UastUtils.matchesQualified(node.getSelector(), R_CLASS)) {
                 UElement parent = node.getParent();
                 if (parent instanceof UQualifiedExpression) {
                     UElement grandParent = parent.getParent();
@@ -788,8 +787,7 @@ public class SupportAnnotationDetector extends Detector implements UastScanner {
             }
         } else if (argument instanceof UCallExpression) {
             UDeclaration resolved = ((UCallExpression)argument).resolve(context);
-            //noinspection ConstantConditions
-            if (resolved instanceof UAnnotated) {
+            if (resolved != null) {
                 List<UAnnotation> annotations = ((UAnnotated) resolved).getAnnotations();
                 for (UAnnotation annotation : annotations) {
                     String signature = annotation.getFqName();
@@ -972,7 +970,7 @@ public class SupportAnnotationDetector extends Detector implements UastScanner {
             assert s != null;
             actual = s.length();
         } else if (argument instanceof UCallExpression
-                   && ((UCallExpression)argument).getKind() == JavaUastCallKinds.ARRAY_INITIALIZER) {
+                   && ((UCallExpression)argument).getKind() == UastCallKind.ARRAY_INITIALIZER) {
             UCallExpression initializer = (UCallExpression) argument;
             actual = initializer.getValueArgumentCount();
         } else {
@@ -1059,7 +1057,7 @@ public class SupportAnnotationDetector extends Detector implements UastScanner {
             if (!flag) {
                 reportTypeDef(context, annotation, argument, errorNode);
             }
-        } else if (argument instanceof UIfExpression && ((UIfExpression) argument).isTernary()) {
+        } else if (argument instanceof UIfExpression) {
             UIfExpression expression = (UIfExpression) argument;
             if (expression.getThenBranch() != null) {
                 checkTypeDefConstant(context, annotation, expression.getThenBranch(), errorNode, flag);
@@ -1077,7 +1075,6 @@ public class SupportAnnotationDetector extends Detector implements UastScanner {
                         "Flag not allowed here");
             }
         } else if (argument instanceof UBinaryExpression) {
-            // If it's ?: then check both the if and else clauses
             UBinaryExpression expression = (UBinaryExpression) argument;
             if (flag) {
                 checkTypeDefConstant(context, annotation, expression.getLeftOperand(), errorNode, true);
@@ -1102,13 +1099,18 @@ public class SupportAnnotationDetector extends Detector implements UastScanner {
     private static void checkTypeDefConstant(@NonNull UastAndroidContext context,
             @NonNull UAnnotation annotation, @NonNull UElement argument,
             @Nullable UElement errorNode, boolean flag, Object value) {
-        List<Pair<String, Object>> valueArguments = annotation.getValues();
-        for (Pair<String, Object> o : valueArguments) {
-            if (o.getSecond().equals(value)) {
-                return;
+        for (UNamedExpression namedExpression : annotation.getValueArguments()) {
+            UExpression expression = namedExpression.getExpression();
+            if (expression instanceof UCallExpression &&
+                ((UCallExpression) expression).getKind() == UastCallKind.ARRAY_INITIALIZER) {
+                for (UExpression arg : ((UCallExpression) expression).getValueArguments()) {
+                    if (value.equals(arg.evaluate())) {
+                        return;
+                    }
+                }
             }
         }
-        reportTypeDef(context, argument, errorNode, flag, valueArguments);
+        reportTypeDef(context, argument, errorNode, flag, annotation.getValues());
     }
 
     private static void reportTypeDef(@NonNull UastAndroidContext context,
@@ -1234,47 +1236,6 @@ public class SupportAnnotationDetector extends Detector implements UastScanner {
                 if (inner.matchesFqName(INT_DEF_ANNOTATION)
                         || inner.matchesFqName(STRING_DEF_ANNOTATION)
                         || inner.matchesFqName(PERMISSION_ANNOTATION)) {
-                    return inner;
-                }
-            }
-        }
-
-        return null;
-    }
-
-    @Nullable
-    static UAnnotation getRelevantAnnotation(
-            @NonNull UastAndroidContext context,
-            @NonNull UAnnotation annotation
-    ) {
-        String signature = annotation.getFqName();
-        if (signature != null && signature.startsWith(SUPPORT_ANNOTATIONS_PREFIX)) {
-            // Bail on the nullness annotations early since they're the most commonly
-            // defined ones. They're not analyzed in lint yet.
-            if (signature.endsWith(".Nullable") || signature.endsWith(".NonNull")) {
-                return null;
-            }
-
-
-            return annotation;
-        }
-
-        if (signature != null && signature.startsWith("java.")) {
-            // @Override, @SuppressWarnings etc. Ignore
-            return null;
-        }
-
-        // Special case @IntDef and @StringDef: These are used on annotations
-        // themselves. For example, you create a new annotation named @foo.bar.Baz,
-        // annotate it with @IntDef, and then use @foo.bar.Baz in your signatures.
-        // Here we want to map from @foo.bar.Baz to the corresponding int def.
-        // Don't need to compute this if performing @IntDef or @StringDef lookup
-        UClass type = annotation.resolve(context);
-        if (type != null) {
-            for (UAnnotation inner : type.getAnnotations()) {
-                if (INT_DEF_ANNOTATION.equals(inner.getFqName())
-                    || STRING_DEF_ANNOTATION.equals(inner.getFqName())
-                    || PERMISSION_ANNOTATION.equals(inner.getFqName())) {
                     return inner;
                 }
             }

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.uast
 
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isNullExpression
 import org.jetbrains.kotlin.psi.KtConstantExpression
@@ -30,20 +31,18 @@ class KotlinULiteralExpression(
     override val isNull: Boolean
         get() = psi.isNullExpression()
 
-    override fun asString(): String = psi.text
-
     override val value by lz { evaluate() }
 }
 
 class KotlinStringULiteralExpression(
         override val psi: PsiElement,
-        override val parent: UElement
-) : KotlinAbstractUElement(), ULiteralExpression, PsiElementBacked, KotlinUElementWithType, KotlinEvaluatableUElement {
+        override val parent: UElement,
+        val text: String? = null
+) : KotlinAbstractUElement(), ULiteralExpression, PsiElementBacked, KotlinUElementWithType{
     override val isNull = false
-    override fun asString(): String = '"' + psi.text + '"'
 
     override val value: String
-        get() = psi.text
+        get() = text ?: StringUtil.unescapeStringCharacters(psi.text)
 
-    override fun evaluate() = psi.text
+    override fun evaluate() = value
 }

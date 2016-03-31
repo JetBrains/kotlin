@@ -17,58 +17,109 @@ package org.jetbrains.uast
 
 import org.jetbrains.uast.visitor.UastVisitor
 
-interface UFunction : UDeclaration, UModifierOwner, UAnnotated {
+/**
+ * Represents a function.
+ * Function could be a JVM method, a property accessor, a constructor, etc.
+ */
+interface UFunction : UDeclaration, UModifierOwner, UVisibilityOwner, UAnnotated {
+    /**
+     * Returns the function kind.
+     */
     val kind: UastFunctionKind
-    val valueParameters: List<UVariable>
-    val valueParameterCount: Int
-    val typeParameters: List<UTypeReference>
-    val typeParameterCount: Int
-    val returnType: UType?
-    val body: UExpression
-    val visibility: UastVisibility
 
+    /**
+     * Returns the function value parameters.
+     */
+    val valueParameters: List<UVariable>
+
+    /**
+     * Returns the function value parameters count.
+     * Retrieving the parameter count could be faster than getting the [valueParameters.size],
+     *    because there is no need to create actual [UVariable] instances.
+     */
+    val valueParameterCount: Int
+
+    /**
+     * Returns the function type parameters.
+     */
+    val typeParameters: List<UTypeReference>
+
+    /**
+     * Returns the function type parameter count.
+     */
+    val typeParameterCount: Int
+
+    /**
+     * Returns the function return type, or null if the function does not have a return type
+     *     (e.g. it is a constructor).
+     */
+    val returnType: UType?
+
+    /**
+     * Returns the function body expression.
+     */
+    val body: UExpression?
+
+    /**
+     * Returns the function JVM descriptor (for example, "(ILjava/lang/String;)[I"), or null if the descriptor is unknown.
+     */
     open val bytecodeDescriptor: String?
         get() = null
 
+
+    /**
+     * Get the list of all super functions for this function.
+     */
     fun getSuperFunctions(context: UastContext): List<UFunction>
 
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitFunction(this)) return
         nameElement?.accept(visitor)
         valueParameters.acceptList(visitor)
-        body.accept(visitor)
+        body?.accept(visitor)
         annotations.acceptList(visitor)
         typeParameters.acceptList(visitor)
         returnType?.accept(visitor)
+        visitor.afterVisitFunction(this)
     }
 
-    override fun renderString(): String {
-        val typeParameters = if (typeParameterCount == 0) "" else "<" + typeParameters.joinToString { it.renderString() } + "> "
-        val valueParameters = valueParameters.joinToString { it.renderString() }
-        val returnType = returnType?.let { ": " + it.renderString() } ?: ""
-        val body = when (body) {
+    override fun renderString(): String = buildString {
+        appendWithSpace(visibility.name)
+        appendWithSpace(renderModifiers())
+        append("fun ")
+        if (typeParameterCount > 0) {
+            append('<').append(typeParameters.joinToString { it.renderString() }).append("> ")
+        }
+        append(name)
+        append('(')
+        append(valueParameters.joinToString() { it.renderString() })
+        append(')')
+        returnType?.let { append(": " + it.renderString()) }
+
+        val body = body
+        val bodyRendered = when (body) {
+            null -> ""
             is UBlockExpression -> " " + body.renderString()
             else -> " = " + body.renderString()
         }
-        return "${visibility.name} fun " + typeParameters + name + "(" + valueParameters + ")" + returnType + body
+        append(bodyRendered)
     }
 
-    override fun logString() = "UFunction ($name, kind = ${kind.text}, " +
-            "paramCount = $valueParameterCount)\n" + body.logString().withMargin
+    override fun logString() = log("UFunction ($name, kind = ${kind.text}, paramCount = $valueParameterCount)", body)
 }
 
 object UFunctionNotResolved : UFunction {
-    override val kind = UastFunctionKind("<unknown>")
+    override val kind = UastFunctionKind(ERROR_NAME)
     override val valueParameters = emptyList<UVariable>()
     override val valueParameterCount = 0
     override val typeParameters = emptyList<UTypeReference>()
     override val typeParameterCount = 0
     override val returnType = null
-    override val body = EmptyExpression(this)
+    override val body = null
     override val visibility = UastVisibility.PRIVATE
     override val nameElement = null
     override val parent = null
-    override val name = "<function not resolved>"
+    override val name = ERROR_NAME
 
     override fun hasModifier(modifier: UastModifier) = false
     override fun getSuperFunctions(context: UastContext) = emptyList<UFunction>()

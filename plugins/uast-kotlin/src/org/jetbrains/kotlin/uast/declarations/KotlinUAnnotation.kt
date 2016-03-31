@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.uast
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtUserType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -55,7 +54,7 @@ class KotlinUAnnotation(
 
     override fun resolve(context: UastContext): UClass? {
         val classDescriptor = resolveToDescriptor() ?: return null
-        val source = DescriptorToSourceUtilsIde.getAnyDeclaration(psi.project, classDescriptor) ?: return null
+        val source = classDescriptor.toSource() ?: return null
         return context.convert(source) as? UClass
     }
 }

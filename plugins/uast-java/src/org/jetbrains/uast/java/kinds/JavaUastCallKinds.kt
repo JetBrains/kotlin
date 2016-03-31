@@ -19,8 +19,11 @@ import org.jetbrains.uast.UastCallKind
 
 object JavaUastCallKinds {
     @JvmField
-    val ARRAY_INITIALIZER = UastCallKind("array_initializer")
+    val NEW_ARRAY_WITH_INITIALIZER = UastCallKind("new_array_with_initializer")
 
     @JvmField
-    val ARRAY_DIMENSIONS = UastCallKind("array_dimensions")
+    val NEW_ARRAY_DIMENTIONS = UastCallKind("new_array_dimensions")
+
+    @JvmField
+    val ASSERT = UastCallKind("assert")
 }

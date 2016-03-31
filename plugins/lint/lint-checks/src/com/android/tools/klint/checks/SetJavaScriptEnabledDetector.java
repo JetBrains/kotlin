@@ -27,7 +27,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jetbrains.uast.UCallExpression;
-import org.jetbrains.uast.check.UastAndroidUtils;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
 
@@ -47,7 +46,7 @@ public class SetJavaScriptEnabledDetector extends Detector implements UastScanne
             Severity.WARNING,
             new Implementation(
                     SetJavaScriptEnabledDetector.class,
-                    Scope.JAVA_FILE_SCOPE))
+                    Scope.SOURCE_FILE_SCOPE))
             .addMoreInfo(
             "http://developer.android.com/guide/practices/security.html"); //$NON-NLS-1$
 
@@ -58,14 +57,14 @@ public class SetJavaScriptEnabledDetector extends Detector implements UastScanne
     // ---- Implements UastScanner ----
 
     @Override
-    public void visitFunctionCall(UastAndroidContext context, UCallExpression node) {
+    public void visitCall(UastAndroidContext context, UCallExpression node) {
         if (node.getValueArgumentCount() != 1) {
             return;
         }
 
         Object value = node.getValueArguments().get(0).evaluate();
         if (value instanceof Boolean && (Boolean) value) {
-            context.report(ISSUE, node, UastAndroidUtils.getLocation(node),
+            context.report(ISSUE, node, context.getLocation(node),
                            "Using `setJavaScriptEnabled` can introduce XSS vulnerabilities " +
                            "into you application, review carefully.");
         }

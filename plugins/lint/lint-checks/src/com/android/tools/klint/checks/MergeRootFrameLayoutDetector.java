@@ -45,6 +45,7 @@ import com.android.utils.Pair;
 import org.jetbrains.uast.UExpression;
 import org.jetbrains.uast.UCallExpression;
 import org.jetbrains.uast.UQualifiedExpression;
+import org.jetbrains.uast.UastUtils;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
 import org.w3c.dom.Element;
@@ -196,7 +197,7 @@ public class MergeRootFrameLayoutDetector extends LayoutDetector implements Uast
     }
 
     @Override
-    public void visitFunctionCall(UastAndroidContext context, UCallExpression node) {
+    public void visitCall(UastAndroidContext context, UCallExpression node) {
         if (node.getValueArgumentCount() != 1) {
             return;
         }

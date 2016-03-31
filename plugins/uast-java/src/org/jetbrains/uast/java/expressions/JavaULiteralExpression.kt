@@ -15,6 +15,7 @@
  */
 package org.jetbrains.uast.java
 
+import com.intellij.psi.PsiKeyword
 import com.intellij.psi.PsiLiteralExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.ULiteralExpression
@@ -29,5 +30,5 @@ class JavaULiteralExpression(
     override val value by lz { evaluate() }
 
     override val isNull: Boolean
-        get() = asString() == "null"
+        get() = asString() == PsiKeyword.NULL
 }

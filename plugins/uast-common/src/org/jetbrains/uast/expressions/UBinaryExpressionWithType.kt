@@ -17,17 +17,32 @@ package org.jetbrains.uast
 
 import org.jetbrains.uast.visitor.UastVisitor
 
+/**
+ * Represents a binary expression with type (value op type), e.g. ("A" instanceof String).
+ */
 interface UBinaryExpressionWithType : UExpression {
+    /**
+     * Returns the operand expression.
+     */
     val operand: UExpression
+
+    /**
+     * Returns the operation kind.
+     */
     val operationKind: UastBinaryExpressionWithTypeKind
+
+    /**
+     * Returns the type.
+     */
     val type: UType
 
     override fun logString() = log("UBinaryExpressionWithType (${getExpressionType()?.name}, ${operationKind.name})", operand)
-    override fun renderString() = "(${operand.renderString()}) ${operationKind.name} ${getExpressionType()?.name}"
+    override fun renderString() = "${operand.renderString()} ${operationKind.name} ${type.name}"
 
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitBinaryExpressionWithType(this)) return
         operand.accept(visitor)
         type.accept(visitor)
+        visitor.afterVisitBinaryExpressionWithType(this)
     }
 }

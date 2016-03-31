@@ -17,15 +17,30 @@ package org.jetbrains.uast
 
 import org.jetbrains.uast.visitor.UastVisitor
 
+/**
+ * Represents a binary expression (value1 op value2), eg. `2 + "A"`.
+ */
 interface UBinaryExpression : UExpression {
+    /**
+     * Returns the left operand.
+     */
     val leftOperand: UExpression
+
+    /**
+     * Returns the binary operator.
+     */
     val operator: UastBinaryOperator
+
+    /**
+     * Returns the right operand.
+     */
     val rightOperand: UExpression
 
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitBinaryExpression(this)) return
         leftOperand.accept(visitor)
         rightOperand.accept(visitor)
+        visitor.afterVisitBinaryExpression(this)
     }
 
     override fun logString() =

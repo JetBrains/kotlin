@@ -17,16 +17,26 @@ package org.jetbrains.uast
 
 import org.jetbrains.uast.visitor.UastVisitor
 
-interface UVariable : UDeclaration, UModifierOwner, UAnnotated {
+interface UVariable : UDeclaration, UModifierOwner, UVisibilityOwner, UAnnotated {
+    /**
+     * Return the variable initializer (or the default value for value parameter), or null if the variable is not initialized.
+     */
     val initializer: UExpression?
+
+    /**
+     * Return the variable kind.
+     */
     val kind: UastVariableKind
+
+    /**
+     * Return the variable type.
+     */
     val type: UType
-    val visibility: UastVisibility
 
-    open val getters: List<UFunction>?
-        get() = null
-
-    open val setters: List<UFunction>?
+    /**
+     * Return the list of accessors if the variable is a property, or null otherwise.
+     */
+    open val accessors: List<UFunction>?
         get() = null
 
     override fun accept(visitor: UastVisitor) {
@@ -35,13 +45,28 @@ interface UVariable : UDeclaration, UModifierOwner, UAnnotated {
         initializer?.accept(visitor)
         annotations.acceptList(visitor)
         type.accept(visitor)
+        visitor.afterVisitVariable(this)
     }
 
-    override fun renderString(): String {
-        val initializer = if (initializer != null && initializer !is EmptyExpression) " = ${initializer!!.renderString()}" else ""
-        val prefix = if (kind == UastVariableKind.VALUE_PARAMETER) "" else "var "
-        val emptyLine = if (kind == UastVariableKind.MEMBER) "\n" else ""
-        return "$prefix$name: " + type.name + initializer + emptyLine
+    override fun renderString(): String = buildString {
+        if (kind != UastVariableKind.VALUE_PARAMETER) appendWithSpace(visibility.name)
+        appendWithSpace(renderModifiers())
+        if (kind != UastVariableKind.VALUE_PARAMETER) append("var ")
+        append(name)
+        append(": ")
+        append(type.name)
+        if (initializer != null && initializer !is EmptyUExpression) {
+            append(" = ")
+            append(initializer!!.renderString())
+        }
+
+        accessors?.let {
+            appendln()
+            it.forEachIndexed { i, accessor ->
+                this@buildString.append(accessor.renderString().withMargin)
+                if ((i + 1) < it.size) appendln()
+            }
+        }
     }
 
     override fun logString() = "UVariable ($name, kind = ${kind.name})\n" +
@@ -50,11 +75,11 @@ interface UVariable : UDeclaration, UModifierOwner, UAnnotated {
 
 object UVariableNotResolved : UVariable {
     override val initializer = null
-    override val kind = UastVariableKind.MEMBER
+    override val kind = UastVariableKind(ERROR_NAME)
     override val type = UastErrorType
     override val nameElement = null
     override val parent = null
-    override val name = "<variable not resolved>"
+    override val name = ERROR_NAME
     override val visibility = UastVisibility.LOCAL
 
     override fun hasModifier(modifier: UastModifier) = false

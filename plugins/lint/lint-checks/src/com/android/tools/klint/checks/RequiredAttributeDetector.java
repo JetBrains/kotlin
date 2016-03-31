@@ -538,7 +538,7 @@ public class RequiredAttributeDetector extends LayoutDetector implements UastSca
     }
 
     @Override
-    public void visitFunctionCall(UastAndroidContext context, UCallExpression node) {
+    public void visitCall(UastAndroidContext context, UCallExpression node) {
         // Handle
         //    View#inflate(Context context, int resource, ViewGroup root)
         //    LayoutInflater#inflate(int resource, ViewGroup root)

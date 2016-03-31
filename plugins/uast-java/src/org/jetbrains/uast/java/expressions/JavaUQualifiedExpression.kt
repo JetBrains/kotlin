@@ -24,7 +24,7 @@ class JavaUQualifiedExpression(
         override val parent: UElement
 ) : JavaAbstractUElement(), UQualifiedExpression, PsiElementBacked, JavaUElementWithType {
     override val receiver by lz { JavaConverter.convertOrEmpty(psi.qualifierExpression, this) }
-    override val selector by lz { JavaConverter.convert(psi.referenceNameElement, this) as? UExpression ?: EmptyExpression(this) }
+    override val selector by lz { JavaConverter.convert(psi.referenceNameElement, this) as? UExpression ?: EmptyUExpression(this) }
 
     override val accessType: UastQualifiedExpressionAccessType
         get() = UastQualifiedExpressionAccessType.SIMPLE

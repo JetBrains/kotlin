@@ -16,6 +16,10 @@
 @file:JvmName("UastBinaryExpressionWithTypeUtils")
 package org.jetbrains.uast
 
+/**
+ * Kinds of [UBinaryExpressionWithType].
+ * Examples: type casts, instance checks.
+ */
 open class UastBinaryExpressionWithTypeKind(val name: String) {
     open class TypeCast(name: String) : UastBinaryExpressionWithTypeKind(name)
     open class InstanceCheck(name: String) : UastBinaryExpressionWithTypeKind(name)

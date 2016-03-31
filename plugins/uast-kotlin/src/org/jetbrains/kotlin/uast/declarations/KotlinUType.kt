@@ -39,16 +39,20 @@ class KotlinUType(
     override val fqName: String?
         get() = type.constructor.declarationDescriptor?.fqNameSafe?.asString()
 
-    override val isInt = name == "Int"
-
     override fun resolve(context: UastContext): UClass? {
         val descriptor = type.constructor.declarationDescriptor ?: return null
-        val sourceElement = descriptor.toSource(project) ?: return null
+        val sourceElement = descriptor.toSource() ?: return null
         return context.convert(sourceElement) as? UClass
     }
 
     override val isBoolean: Boolean
         get() = checkType(KotlinBuiltIns.FQ_NAMES._boolean)
+
+    override val isInt: Boolean
+        get() = checkType(KotlinBuiltIns.FQ_NAMES._int)
+
+    override val isShort: Boolean
+        get() = checkType(KotlinBuiltIns.FQ_NAMES._short)
 
     override val isLong: Boolean
         get() = checkType(KotlinBuiltIns.FQ_NAMES._long)

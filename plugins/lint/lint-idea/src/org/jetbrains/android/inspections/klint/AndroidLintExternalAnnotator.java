@@ -1,19 +1,3 @@
-/*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.jetbrains.android.inspections.klint;
 
 import com.android.SdkConstants;
@@ -139,14 +123,14 @@ public class AndroidLintExternalAnnotator extends ExternalAnnotator<State, State
           scope = Scope.RESOURCE_FILE_SCOPE;
         }
       } else if (fileType == StdFileTypes.JAVA) {
-        scope = Scope.JAVA_FILE_SCOPE;
+        scope = Scope.SOURCE_FILE_SCOPE;
       } else if (name.equals(OLD_PROGUARD_FILE) || name.equals(FN_PROJECT_PROGUARD_FILE)) {
         scope = EnumSet.of(Scope.PROGUARD_FILE);
       } else if (fileType == StdFileTypes.PROPERTIES) {
         scope = Scope.PROPERTY_SCOPE;
       } else {
         if (UastConverterUtils.isFileSupported(client.getLanguagePlugins(), mainFile.getName())) {
-          scope = Scope.JAVA_FILE_SCOPE;
+          scope = Scope.SOURCE_FILE_SCOPE;
         } else {
           // #collectionInformation above should have prevented this
           assert false;
@@ -178,8 +162,7 @@ public class AndroidLintExternalAnnotator extends ExternalAnnotator<State, State
     final IssueRegistry fullRegistry = new IntellijLintIssueRegistry();
 
     for (Issue issue : fullRegistry.getIssues()) {
-      final String inspectionShortName = org.jetbrains.android.inspections.klint.AndroidLintInspectionBase
-              .getInspectionShortNameByIssue(project, issue);
+      final String inspectionShortName = AndroidLintInspectionBase.getInspectionShortNameByIssue(project, issue);
       if (inspectionShortName == null) {
         continue;
       }
@@ -216,12 +199,12 @@ public class AndroidLintExternalAnnotator extends ExternalAnnotator<State, State
         continue;
       }
 
-      final Pair<org.jetbrains.android.inspections.klint.AndroidLintInspectionBase, HighlightDisplayLevel> pair =
+      final Pair<AndroidLintInspectionBase, HighlightDisplayLevel> pair =
         AndroidLintUtil.getHighlighLevelAndInspection(project, issue, file);
       if (pair == null) {
         continue;
       }
-      final org.jetbrains.android.inspections.klint.AndroidLintInspectionBase inspection = pair.getFirst();
+      final AndroidLintInspectionBase inspection = pair.getFirst();
       HighlightDisplayLevel displayLevel = pair.getSecond();
 
       if (inspection != null) {
@@ -259,7 +242,7 @@ public class AndroidLintExternalAnnotator extends ExternalAnnotator<State, State
                 if (action.isAvailable(project, startElement)) {
                   ProblemHighlightType type = annotation.getHighlightType();
                   annotation.registerFix(action, null, key, InspectionManager.getInstance(project).createProblemDescriptor(
-                          startElement, endElement, message, type, true, LocalQuickFix.EMPTY_ARRAY));
+                    startElement, endElement, message, type, true, LocalQuickFix.EMPTY_ARRAY));
                 }
               }
             }
@@ -295,10 +278,10 @@ public class AndroidLintExternalAnnotator extends ExternalAnnotator<State, State
     if (createHtmlAnnotation != null) {
       // Based on LocalInspectionsPass#createHighlightInfo
       String link = " <a "
-                    + "href=\"#lint/" + issue.getId() + "\""
-                    + (UIUtil.isUnderDarcula() ? " color=\"7AB4C9\" " : "")
-                    + ">" + DaemonBundle.message("inspection.extended.description")
-                    + "</a> " + getShowMoreShortCut();
+          + "href=\"#lint/" + issue.getId() + "\""
+          + (UIUtil.isUnderDarcula() ? " color=\"7AB4C9\" " : "")
+          + ">" + DaemonBundle.message("inspection.extended.description")
+          + "</a> " + getShowMoreShortCut();
       String tooltip = XmlStringUtil.wrapInHtml(RAW.convertTo(message, HTML) + link);
 
       try {
@@ -333,7 +316,7 @@ public class AndroidLintExternalAnnotator extends ExternalAnnotator<State, State
       ourCreateHtmlAnnotationMethodFailed = true;
       try {
         ourCreateHtmlAnnotationMethod = AnnotationHolder.class.getMethod("createAnnotation", HighlightSeverity.class,
-                                                                         TextRange.class, String.class, String.class);
+                                                                        TextRange.class, String.class, String.class);
       }
       catch (NoSuchMethodException ignore) {
       }
@@ -440,7 +423,7 @@ public class AndroidLintExternalAnnotator extends ExternalAnnotator<State, State
   }
 
   private static class MyEditInspectionToolsSettingsAction extends CustomEditInspectionToolsSettingsAction {
-    private MyEditInspectionToolsSettingsAction(@NotNull HighlightDisplayKey key, @NotNull final org.jetbrains.android.inspections.klint.AndroidLintInspectionBase inspection) {
+    private MyEditInspectionToolsSettingsAction(@NotNull HighlightDisplayKey key, @NotNull final AndroidLintInspectionBase inspection) {
       super(key, new Computable<String>() {
         @Override
         public String compute() {

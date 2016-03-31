@@ -30,9 +30,8 @@ import java.io.File;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.uast.*;
 import org.jetbrains.uast.check.UastAndroidContext;
-import org.jetbrains.uast.check.UastAndroidUtils;
 import org.jetbrains.uast.check.UastScanner;
-import org.jetbrains.uast.java.JavaSpecialExpressionKinds;
+import org.jetbrains.uast.java.JavaUAssertExpression;
 import org.jetbrains.uast.visitor.UastVisitor;
 
 import static org.jetbrains.uast.UastLiteralUtils.isNullLiteral;
@@ -65,7 +64,7 @@ public class AssertDetector extends Detector implements UastScanner {
             Severity.WARNING,
             new Implementation(
                     AssertDetector.class,
-                    Scope.JAVA_FILE_SCOPE))
+                    Scope.SOURCE_FILE_SCOPE))
             .addMoreInfo(
             "https://code.google.com/p/android/issues/detail?id=65183"); //$NON-NLS-1$
 
@@ -84,8 +83,12 @@ public class AssertDetector extends Detector implements UastScanner {
     public UastVisitor createUastVisitor(final UastAndroidContext context) {
         return new UastVisitor() {
             @Override
-            public boolean visitSpecialExpressionList(@NotNull USpecialExpressionList node) {
-                if (node.getKind() != JavaSpecialExpressionKinds.ASSERT) {
+            public boolean visitCallExpression(@NotNull UCallExpression node) {
+                if (!(node instanceof JavaUAssertExpression)) {
+                    return true;
+                }
+
+                if (node.getValueArgumentCount() < 1) {
                     return true;
                 }
 
@@ -93,7 +96,7 @@ public class AssertDetector extends Detector implements UastScanner {
                     return true;
                 }
 
-                UExpression assertion = node.firstOrNull();
+                UExpression assertion = node.getValueArguments().get(0);
                 // Allow "assert true"; it's basically a no-op
                 if (assertion instanceof ULiteralExpression) {
                     ULiteralExpression literal = (ULiteralExpression) assertion;
@@ -114,8 +117,8 @@ public class AssertDetector extends Detector implements UastScanner {
                     }
                 }
                 String message
-                  = "Assertions are unreliable. Use `BuildConfig.DEBUG` conditional checks instead.";
-                context.report(ISSUE, node, UastAndroidUtils.getLocation(node), message);
+                        = "Assertions are unreliable. Use `BuildConfig.DEBUG` conditional checks instead.";
+                context.report(ISSUE, node, context.getLocation(node), message);
                 return false;
             }
         };

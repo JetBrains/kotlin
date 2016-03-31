@@ -17,8 +17,24 @@ package org.jetbrains.uast
 
 import org.jetbrains.uast.visitor.UastVisitor
 
+/**
+ * Represents a
+ *
+ * `for (element : collectionOfElements) {
+ *      // body
+ *  }`
+ *
+ *  loop expression.
+ */
 interface UForEachExpression : ULoopExpression {
+    /**
+     * Returns the loop variable.
+     */
     val variable: UVariable
+
+    /**
+     * Returns the iterated value (collection, sequence, iterable etc.)
+     */
     val iteratedValue: UExpression
 
     override fun accept(visitor: UastVisitor) {
@@ -26,6 +42,7 @@ interface UForEachExpression : ULoopExpression {
         variable.accept(visitor)
         iteratedValue.accept(visitor)
         body.accept(visitor)
+        visitor.afterVisitForEachExpression(this)
     }
 
     override fun renderString() = buildString {

@@ -75,7 +75,7 @@ object UastChecker {
             override fun visitCallExpression(node: UCallExpression): Boolean {
                 if (applicableFunctionNames.isNotEmpty()) {
                     if (node.kind == FUNCTION_CALL && node.functionName in applicableFunctionNames) {
-                        scanner.visitFunctionCall(context, node)
+                        scanner.visitCall(context, node)
                     }
                 }
 

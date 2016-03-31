@@ -15,7 +15,6 @@
  */
 package org.jetbrains.uast
 
-import org.jetbrains.uast.kinds.UastOperator
 import org.jetbrains.uast.visitor.UastVisitor
 
 interface UUnaryExpression : UExpression {
@@ -25,6 +24,7 @@ interface UUnaryExpression : UExpression {
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitUnaryExpression(this)) return
         operand.accept(visitor)
+        visitor.afterVisitUnaryExpression(this)
     }
 }
 
@@ -34,6 +34,7 @@ interface UPrefixExpression : UUnaryExpression {
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitPrefixExpression(this)) return
         operand.accept(visitor)
+        visitor.afterVisitPrefixExpression(this)
     }
 
     override fun logString() = log("UPrefixExpression (${operator.text})", operand)
@@ -46,6 +47,7 @@ interface UPostfixExpression : UUnaryExpression {
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitPostfixExpression(this)) return
         operand.accept(visitor)
+        visitor.afterVisitPostfixExpression(this)
     }
 
     override fun logString() = log("UPostfixExpression (${operator.text})", operand)

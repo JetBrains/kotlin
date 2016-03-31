@@ -29,7 +29,6 @@ import java.util.List;
 
 import org.jetbrains.uast.*;
 import org.jetbrains.uast.check.UastAndroidContext;
-import org.jetbrains.uast.check.UastAndroidUtils;
 import org.jetbrains.uast.check.UastScanner;
 
 public class GetSignaturesDetector extends Detector implements UastScanner {
@@ -47,7 +46,7 @@ public class GetSignaturesDetector extends Detector implements UastScanner {
             Severity.INFORMATIONAL,
             new Implementation(
                     GetSignaturesDetector.class,
-                    Scope.JAVA_FILE_SCOPE))
+                    Scope.SOURCE_FILE_SCOPE))
             .addMoreInfo("https://bluebox.com/technical/android-fake-id-vulnerability/");
 
     private static final String PACKAGE_MANAGER_CLASS = "android.content.pm.PackageManager"; //$NON-NLS-1$
@@ -63,7 +62,7 @@ public class GetSignaturesDetector extends Detector implements UastScanner {
     }
 
     @Override
-    public void visitFunctionCall(UastAndroidContext context, UCallExpression node) {
+    public void visitCall(UastAndroidContext context, UCallExpression node) {
         UFunction resolved = node.resolve(context);
 
         if (resolved == null ||
@@ -86,7 +85,7 @@ public class GetSignaturesDetector extends Detector implements UastScanner {
     private static void maybeReportIssue(
             int flagValue, UastAndroidContext context, UCallExpression node) {
         if ((flagValue & GET_SIGNATURES_FLAG) != 0) {
-            context.report(ISSUE, node, UastAndroidUtils.getLocation(node.getValueArguments().get(1)),
+            context.report(ISSUE, node, context.getLocation(node.getValueArguments().get(1)),
                 "Reading app signatures from getPackageInfo: The app signatures "
                     + "could be exploited if not validated properly; "
                     + "see issue explanation for details.");

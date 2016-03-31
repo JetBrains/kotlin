@@ -34,9 +34,8 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.uast.*;
 import org.jetbrains.uast.check.UastAndroidContext;
-import org.jetbrains.uast.check.UastAndroidUtils;
 import org.jetbrains.uast.check.UastScanner;
-import org.jetbrains.uast.java.JavaSpecialExpressionKinds;
+import org.jetbrains.uast.java.JavaUAssertExpression;
 import org.jetbrains.uast.visitor.UastVisitor;
 
 /**
@@ -57,7 +56,7 @@ public class SharedPrefsDetector extends Detector implements UastScanner {
             Severity.WARNING,
             new Implementation(
                     SharedPrefsDetector.class,
-                    Scope.JAVA_FILE_SCOPE));
+                    Scope.SOURCE_FILE_SCOPE));
 
     public static final String ANDROID_CONTENT_SHARED_PREFERENCES =
             "android.content.SharedPreferences"; //$NON-NLS-1$
@@ -82,7 +81,7 @@ public class SharedPrefsDetector extends Detector implements UastScanner {
     }
 
     @Override
-    public void visitFunctionCall(UastAndroidContext context, UCallExpression node) {
+    public void visitCall(UastAndroidContext context, UCallExpression node) {
         assert "edit".equals(node.getFunctionName());
 
         boolean verifiedType = false;
@@ -149,7 +148,7 @@ public class SharedPrefsDetector extends Detector implements UastScanner {
         CommitFinder finder = new CommitFinder(context, node, allowCommitBeforeTarget);
         method.accept(finder);
         if (!finder.isCommitCalled()) {
-            context.report(ISSUE, method, UastAndroidUtils.getLocation(node),
+            context.report(ISSUE, method, context.getLocation(node),
                            "`SharedPreferences.edit()` without a corresponding `commit()` or `apply()` call");
         }
     }
@@ -220,8 +219,7 @@ public class SharedPrefsDetector extends Detector implements UastScanner {
                                 returnValueIgnored = true;
                             } else if (qualifiedElement instanceof UIfExpression) {
                                 returnValueIgnored = ((UIfExpression) qualifiedElement).getCondition() != node;
-                            } else if (qualifiedElement instanceof USpecialExpressionList &&
-                                       ((USpecialExpressionList)qualifiedElement).getKind() == UastSpecialExpressionKind.RETURN) {
+                            } else if (qualifiedElement instanceof UReturnExpression) {
                                 returnValueIgnored = false;
                             } else if (qualifiedElement instanceof UVariable) {
                                 returnValueIgnored = false;
@@ -231,11 +229,16 @@ public class SharedPrefsDetector extends Detector implements UastScanner {
                                 returnValueIgnored = ((UWhileExpression) qualifiedElement).getCondition() != node;
                             } else if (qualifiedElement instanceof UDoWhileExpression) {
                                 returnValueIgnored = ((UDoWhileExpression) qualifiedElement).getCondition() != node;
-                            } else if (qualifiedElement instanceof UExpressionSwitchClauseExpression) {
-                                returnValueIgnored = ((UExpressionSwitchClauseExpression) qualifiedElement).getCaseValue() != node;
-                            } else if (qualifiedElement instanceof USpecialExpressionList &&
-                                       ((USpecialExpressionList)qualifiedElement).getKind() == JavaSpecialExpressionKinds.ASSERT) {
-                                returnValueIgnored = !((USpecialExpressionList) qualifiedElement).getExpressions().contains(node);
+                            } else if (qualifiedElement instanceof USwitchClauseExpression) {
+                                List<UExpression> caseValues = ((USwitchClauseExpression) qualifiedElement).getCaseValues();
+                                for (UExpression caseValue : caseValues) {
+                                    if (caseValue == node) {
+                                        returnValueIgnored = false;
+                                        break;
+                                    }
+                                }
+                            } else if (qualifiedElement instanceof JavaUAssertExpression) {
+                                returnValueIgnored = !((JavaUAssertExpression) qualifiedElement).getCondition().equals(node);
                             } else {
                                 returnValueIgnored = true;
                             }
@@ -243,7 +246,7 @@ public class SharedPrefsDetector extends Detector implements UastScanner {
                                 String message = "Consider using `apply()` instead; `commit` writes "
                                                  + "its data to persistent storage immediately, whereas "
                                                  + "`apply` will handle it in the background";
-                                mContext.report(ISSUE, node, UastAndroidUtils.getLocation(node), message);
+                                mContext.report(ISSUE, node, mContext.getLocation(node), message);
                             }
                         }
                     }
@@ -254,11 +257,9 @@ public class SharedPrefsDetector extends Detector implements UastScanner {
         }
 
         @Override
-        public boolean visitSpecialExpressionList(@NotNull USpecialExpressionList node) {
-            if (node.getKind() == UastSpecialExpressionKind.RETURN) {
-                if (node.getExpressions().contains(mTarget)) {
-                    mFound = true;
-                }
+        public boolean visitReturnExpression(@NotNull UReturnExpression node) {
+            if (mTarget.equals(node.getExpressionType())) {
+                mFound = true;
             }
 
             return false;

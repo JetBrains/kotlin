@@ -15,7 +15,10 @@
  */
 package org.jetbrains.uast
 
-class UastVariableKind(val name: String) {
+/**
+ * Kinds of [UVariable].
+ */
+open class UastVariableKind(val name: String) {
     companion object {
         @JvmField
         val LOCAL_VARIABLE = UastVariableKind("local")

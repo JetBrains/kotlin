@@ -17,14 +17,25 @@ package org.jetbrains.uast
 
 import org.jetbrains.uast.visitor.UastVisitor
 
+/**
+ * Represents the lambda expression.
+ */
 interface ULambdaExpression : UExpression {
+    /**
+     * Returns the list of lambda value parameters.
+     */
     val valueParameters: List<UVariable>
+
+    /**
+     * Returns the lambda body expression.
+     */
     val body: UExpression
 
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitLambdaExpression(this)) return
         valueParameters.acceptList(visitor)
         body.accept(visitor)
+        visitor.afterVisitLambdaExpression(this)
     }
 
     override fun logString() = log("ULambdaExpression", valueParameters, body)

@@ -33,10 +33,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.jetbrains.uast.*;
-import org.jetbrains.uast.check.UastAndroidUtils;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
-import org.jetbrains.uast.kinds.UastClassKind;
 
 /**
  * Checks that Fragment subclasses can be instantiated via
@@ -66,7 +64,7 @@ public class FragmentDetector extends Detector implements UastScanner {
         Severity.FATAL,
         new Implementation(
                 FragmentDetector.class,
-                Scope.JAVA_FILE_SCOPE)
+                Scope.SOURCE_FILE_SCOPE)
         ).addMoreInfo(
             "http://developer.android.com/reference/android/app/Fragment.html#Fragment()"); //$NON-NLS-1$
 
@@ -89,6 +87,16 @@ public class FragmentDetector extends Detector implements UastScanner {
         return Arrays.asList(CLASS_FRAGMENT, CLASS_V4_FRAGMENT);
     }
 
+    private boolean isAllParametersWithDefaultValue(UFunction function) {
+        List<UVariable> parameters = function.getValueParameters();
+        for (UVariable parameter : parameters) {
+            if (parameter.getInitializer() == null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     @Override
     public void visitClass(UastAndroidContext context, UClass cls) {
         if (cls.hasModifier(UastModifier.ABSTRACT) || cls.getKind() != UastClassKind.CLASS) {
@@ -98,14 +106,14 @@ public class FragmentDetector extends Detector implements UastScanner {
         if (!cls.getVisibility().isPublic()) {
             String message = String.format("This fragment class should be public (%1$s)",
                                            cls.getFqName());
-            context.report(ISSUE, cls, UastAndroidUtils.getLocation(cls.getNameElement()), message);
+            context.report(ISSUE, cls, context.getLocation(cls.getNameElement()), message);
             return;
         }
 
         if (UastUtils.getContainingClass(cls) != null && !cls.hasModifier(UastModifier.STATIC)) {
             String message = String.format(
               "This fragment inner class should be static (%1$s)", cls.getName());
-            context.report(ISSUE, cls, UastAndroidUtils.getLocation(cls.getNameElement()), message);
+            context.report(ISSUE, cls, context.getLocation(cls.getNameElement()), message);
             return;
         }
 
@@ -114,11 +122,11 @@ public class FragmentDetector extends Detector implements UastScanner {
 
         for (UFunction constructor : cls.getConstructors()) {
             hasConstructor = true;
-            if (constructor.getValueParameterCount() == 0) {
+            if (constructor.getValueParameterCount() == 0 || isAllParametersWithDefaultValue(constructor)) {
                 if (constructor.getVisibility().isPublic()) {
                     hasDefaultConstructor = true;
                 } else {
-                    Location location = UastAndroidUtils.getLocation(constructor.getNameElement());
+                    Location location = context.getLocation(constructor.getNameElement());
                     context.report(ISSUE, constructor, location,
                                    "The default constructor must be public");
                     // Also mark that we have a constructor so we don't complain again
@@ -127,7 +135,7 @@ public class FragmentDetector extends Detector implements UastScanner {
                     hasDefaultConstructor = true;
                 }
             } else {
-                Location location = UastAndroidUtils.getLocation(constructor.getNameElement());
+                Location location = context.getLocation(constructor.getNameElement());
                 // TODO: Use separate issue for this which isn't an error
                 String message = "Avoid non-default constructors in fragments: "
                                  + "use a default constructor plus "
@@ -141,7 +149,7 @@ public class FragmentDetector extends Detector implements UastScanner {
               "This fragment should provide a default constructor (a public " +
               "constructor with no arguments) (`%1$s`)",
               cls.getName());
-            context.report(ISSUE, cls, UastAndroidUtils.getLocation(cls.getNameElement()), message);
+            context.report(ISSUE, cls, context.getLocation(cls.getNameElement()), message);
         }
     }
 }

@@ -16,8 +16,11 @@
 
 package org.jetbrains.kotlin.uast
 
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.uast.*
 import org.jetbrains.uast.psi.PsiElementBacked
 
@@ -43,5 +46,10 @@ class KotlinUComponentQualifiedExpression(
         internal set
 
     override val accessType = UastQualifiedExpressionAccessType.SIMPLE
-    override fun resolve(context: UastContext) = null
+    override fun resolve(context: UastContext): UDeclaration? {
+        val bindingContext = psi.analyze(BodyResolveMode.PARTIAL)
+        val descriptor = bindingContext[BindingContext.COMPONENT_RESOLVED_CALL, psi]?.resultingDescriptor ?: return null
+        val source = descriptor.toSource() ?: return null
+        return context.convert(source) as? UDeclaration
+    }
 }

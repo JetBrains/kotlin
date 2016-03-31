@@ -102,7 +102,7 @@ public class StringFormatDetector extends ResourceXmlDetector implements UastSca
     private static final Implementation IMPLEMENTATION_XML_AND_JAVA = new Implementation(
             StringFormatDetector.class,
             EnumSet.of(Scope.ALL_RESOURCE_FILES, Scope.SOURCE_FILE),
-            Scope.JAVA_FILE_SCOPE);
+            Scope.SOURCE_FILE_SCOPE);
 
 
     /** Whether formatting strings are invalid */
@@ -987,7 +987,7 @@ public class StringFormatDetector extends ResourceXmlDetector implements UastSca
     }
 
     @Override
-    public void visitFunctionCall(UastAndroidContext context, UCallExpression node) {
+    public void visitCall(UastAndroidContext context, UCallExpression node) {
         if (mFormatStrings == null && !context.getLintContext().getClient().supportsProjectResources()) {
             return;
         }

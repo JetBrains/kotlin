@@ -26,6 +26,7 @@ class UNamedExpression(
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitElement(this)) return
         expression.accept(visitor)
+        visitor.afterVisitElement(this)
     }
 
     override fun logString() = log("UNamedExpression ($name)", expression)

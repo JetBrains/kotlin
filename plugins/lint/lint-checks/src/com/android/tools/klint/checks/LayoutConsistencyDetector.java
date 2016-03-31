@@ -427,7 +427,7 @@ public class LayoutConsistencyDetector extends LayoutDetector implements UastSca
         return locations.get(0);
     }
 
-    // ---- Implements JavaScanner ----
+    // ---- Implements UastScanner ----
 
     @Override
     public boolean appliesToResourceRefs() {

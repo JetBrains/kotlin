@@ -510,7 +510,7 @@ public abstract class Detector {
         return null;
     }
 
-    public void visitFunctionCall(UastAndroidContext context, UCallExpression node) {
+    public void visitCall(UastAndroidContext context, UCallExpression node) {
 
     }
 

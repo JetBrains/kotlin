@@ -31,7 +31,7 @@ class KotlinParameterUTypeReference(
     override fun resolve(context: UastContext): UClass? {
         val descriptor = psi.analyze(BodyResolveMode.PARTIAL)[BindingContext.TYPE_PARAMETER, psi]
                                  ?.typeConstructor?.declarationDescriptor as? ClassDescriptor ?: return null
-        return context.convert(descriptor.toSource(psi)) as? UClass
+        return context.convert(descriptor.toSource()) as? UClass
     }
 
     override val nameElement: UElement?

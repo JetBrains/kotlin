@@ -15,13 +15,19 @@
  */
 package org.jetbrains.uast
 
-class UastCallKind(val name: String) {
+/**
+ * Kinds of [UCallExpression].
+ */
+open class UastCallKind(val name: String) {
     companion object {
         @JvmField
         val FUNCTION_CALL = UastCallKind("function_call")
 
         @JvmField
         val CONSTRUCTOR_CALL = UastCallKind("constructor_call")
+
+        @JvmField
+        val ARRAY_INITIALIZER = UastCallKind("array_initializer")
     }
 
     override fun toString(): String{

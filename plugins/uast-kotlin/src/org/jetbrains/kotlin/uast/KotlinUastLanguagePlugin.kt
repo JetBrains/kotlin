@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.uast.expressions.KotlinUBreakExpression
+import org.jetbrains.kotlin.uast.expressions.KotlinUContinueExpression
 import org.jetbrains.kotlin.uast.kinds.KotlinSpecialExpressionKinds
 import org.jetbrains.kotlin.uast.lint.PropertyAsCallAndroidUastAdditionalChecker
 import org.jetbrains.uast.*
@@ -102,7 +104,10 @@ internal object KotlinConverter : UastConverter {
 
     internal fun convert(entry: KtStringTemplateEntry, parent: UElement): UExpression = when (entry) {
         is KtStringTemplateEntryWithExpression -> convertOrEmpty(entry.expression, parent)
-        else -> KotlinStringULiteralExpression(entry, parent)
+        is KtEscapeStringTemplateEntry -> KotlinStringULiteralExpression(entry, parent, entry.unescapedValue)
+        else -> {
+            KotlinStringULiteralExpression(entry, parent)
+        }
     }
 
     internal fun convert(expression: KtExpression, parent: UElement): UExpression = when (expression) {
@@ -111,7 +116,9 @@ internal object KotlinConverter : UastConverter {
         is KtClass -> convertDeclaration(expression, parent)
 
         is KtStringTemplateExpression -> {
-            if (expression.entries.size == 1)
+            if (expression.entries.isEmpty())
+                KotlinStringULiteralExpression(expression, parent)
+            else if (expression.entries.size == 1)
                 convert(expression.entries[0], parent)
             else
                 convertStringTemplateExpression(expression, parent, expression.entries.size - 1)
@@ -128,6 +135,7 @@ internal object KotlinConverter : UastConverter {
             }
             declarations = listOf(tempAssignment) + destructuringAssignments
         }
+        is KtLabeledExpression -> KotlinULabeledExpression(expression, parent)
         is KtClassLiteralExpression -> KotlinUClassLiteralExpression(expression, parent)
         is KtObjectLiteralExpression -> KotlinUObjectLiteralExpression(expression, parent)
         is KtStringTemplateEntry -> convertOrEmpty(expression.expression, parent)
@@ -141,20 +149,17 @@ internal object KotlinConverter : UastConverter {
         is KtPostfixExpression -> KotlinUPostfixExpression(expression, parent)
         is KtThisExpression -> KotlinUThisExpression(expression, parent)
         is KtSuperExpression -> KotlinUSuperExpression(expression, parent)
+        is KtCallableReferenceExpression -> KotlinUCallableReferenceExpression(expression, parent)
         is KtIsExpression -> KotlinUTypeCheckExpression(expression, parent)
         is KtIfExpression -> KotlinUIfExpression(expression, parent)
         is KtWhileExpression -> KotlinUWhileExpression(expression, parent)
         is KtDoWhileExpression -> KotlinUDoWhileExpression(expression, parent)
         is KtForExpression -> KotlinUForEachExpression(expression, parent)
         is KtWhenExpression -> KotlinUSwitchExpression(expression, parent)
-        is KtBreakExpression -> KotlinUSpecialExpressionList.Empty(expression, UastSpecialExpressionKind.BREAK, parent)
-        is KtContinueExpression -> KotlinUSpecialExpressionList.Empty(expression, UastSpecialExpressionKind.CONTINUE, parent)
-        is KtReturnExpression -> KotlinUSpecialExpressionList(expression, UastSpecialExpressionKind.RETURN, parent).apply {
-            expressions = listOf(convertOrEmpty(expression.returnedExpression, this))
-        }
-        is KtThrowExpression -> KotlinUSpecialExpressionList(expression, UastSpecialExpressionKind.THROW, parent).apply {
-            expressions = singletonListOrEmpty(convertOrNull(expression.thrownExpression, this))
-        }
+        is KtBreakExpression -> KotlinUBreakExpression(expression, parent)
+        is KtContinueExpression -> KotlinUContinueExpression(expression, parent)
+        is KtReturnExpression -> KotlinUReturnExpression(expression, parent)
+        is KtThrowExpression -> KotlinUThrowExpression(expression, parent)
         is KtBlockExpression -> KotlinUBlockExpression(expression, parent)
         is KtConstantExpression -> KotlinULiteralExpression(expression, parent)
         is KtTryExpression -> KotlinUTryExpression(expression, parent)
@@ -190,7 +195,7 @@ internal object KotlinConverter : UastConverter {
     }
 
     internal fun convertOrEmpty(expression: KtExpression?, parent: UElement): UExpression {
-        return if (expression != null) convert(expression, parent) else EmptyExpression(parent)
+        return if (expression != null) convert(expression, parent) else EmptyUExpression(parent)
     }
 
     internal fun convertOrNull(expression: KtExpression?, parent: UElement): UExpression? {

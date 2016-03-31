@@ -17,9 +17,7 @@ package org.jetbrains.uast.java
 
 import com.intellij.psi.PsiSwitchLabelStatement
 import com.intellij.psi.PsiSwitchStatement
-import org.jetbrains.uast.UElement
-import org.jetbrains.uast.UExpressionSwitchClauseExpression
-import org.jetbrains.uast.USwitchExpression
+import org.jetbrains.uast.*
 import org.jetbrains.uast.psi.PsiElementBacked
 
 class JavaUSwitchExpression(
@@ -30,9 +28,20 @@ class JavaUSwitchExpression(
     override val body by lz { JavaConverter.convertOrEmpty(psi.body, this) }
 }
 
-class JavaUExpressionSwitchClauseExpression(
+class JavaUCaseSwitchClauseExpression(
         override val psi: PsiSwitchLabelStatement,
         override val parent: UElement
-) : JavaAbstractUElement(), UExpressionSwitchClauseExpression, PsiElementBacked {
-    override val caseValue by lz { JavaConverter.convertOrEmpty(psi.caseValue, this) }
+) : JavaAbstractUElement(), USwitchClauseExpression, PsiElementBacked {
+    override val caseValues by lz {
+        val value = psi.caseValue ?: return@lz null
+        listOf(JavaConverter.convert(value, this))
+    }
+}
+
+class DefaultUSwitchClauseExpression(override val parent: UElement) : USwitchClauseExpression {
+    override val caseValues: List<UExpression>?
+        get() = null
+
+    override fun logString() = "DefaultUSwitchClauseExpression"
+    override fun renderString() = "else -> "
 }

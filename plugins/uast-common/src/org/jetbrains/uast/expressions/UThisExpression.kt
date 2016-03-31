@@ -17,11 +17,16 @@ package org.jetbrains.uast
 
 import org.jetbrains.uast.visitor.UastVisitor
 
+/**
+ * Represents a `this` expression.
+ * Qualified `this` is not supported at the moment.
+ */
 interface UThisExpression : UExpression {
     override fun logString() = "UThisExpression"
     override fun renderString() = "this"
 
     override fun accept(visitor: UastVisitor) {
         visitor.visitThisExpression(this)
+        visitor.afterVisitThisExpression(this)
     }
 }
