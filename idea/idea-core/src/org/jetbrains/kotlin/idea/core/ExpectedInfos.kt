@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.allArgumentsMapped
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
@@ -611,7 +612,7 @@ class ExpectedInfos(
         val scope = expressionWithType.getResolutionScope(bindingContext, resolutionFacade)
         val propertyOwnerType = property.fuzzyExtensionReceiverType()
                             ?: property.dispatchReceiverParameter?.type?.let { FuzzyType(it, emptyList()) }
-                            ?: return null
+                            ?: FuzzyType(property.builtIns.nullableNothingType, emptyList())
 
         val explicitPropertyType = property.fuzzyReturnType()?.check { propertyDeclaration.typeReference != null }
         val typesWithGetDetector = TypesWithGetValueDetector(scope, indicesHelper, propertyOwnerType, explicitPropertyType)
