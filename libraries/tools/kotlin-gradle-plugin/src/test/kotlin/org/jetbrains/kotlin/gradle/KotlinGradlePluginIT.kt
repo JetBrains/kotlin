@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.gradle.plugin.CleanUpBuildListener
+import org.jetbrains.kotlin.gradle.tasks.USING_EXPERIMENTAL_INCREMENTAL_MESSAGE
 import org.junit.Test
 import java.io.File
 import kotlin.test.assertTrue
@@ -267,6 +268,19 @@ class KotlinGradleIT: BaseGradleIT() {
             assertFileExists("build/tmp/kapt/main/kotlinGenerated/TestClass.kt")
             assertFileExists("build/classes/main/example/TestClass.class")
             assertFileExists("build/classes/main/example/TestClassCustomized.class")
+        }
+    }
+
+    @Test
+    fun testIncrementalPropertyFromLocalPropertiesFile() {
+        val project = Project("kotlinProject", "2.10")
+        project.setupWorkingDir()
+
+        val localPropertyFile = File(project.projectDir, "local.properties")
+        localPropertyFile.writeText("kotlin.incremental=true")
+
+        project.build("build") {
+            assertContains(USING_EXPERIMENTAL_INCREMENTAL_MESSAGE)
         }
     }
 }
