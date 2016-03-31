@@ -243,7 +243,9 @@ Now let's discuss the specific steps the compiler performs to resolve a call:
 Members is an example of a such group - the one with the highest priority.
 
 * Then for each group the most specific function is chosen; if many are applicable and no one is the most specific, then an `ambiguity` error is reported.
-The name resolution for each group works like in Java.
+
+We omit the description of the process of choosing the most specific function.
+It works very similar to how the most specific method is found in Java and in simple cases is rather straightforward.
 
 Note that if any function from an earlier group is applicable, it's chosen, in spite of the fact that the next group may contain a more precise function.
 This was shown in the example with members and extensions above: a member function is chosen, although an extension is available that is more precise.
@@ -254,10 +256,10 @@ Below we describe the groups of functions that are created to resolve `a.foo()`:
 All overloaded member functions with the name `foo` have the same priority and go in one group.
 
 2. _Local extension functions._
-Local extensions have higher priority than other extensions, however, even they can't go before members.
-Several groups of local extension functions are created.
+Several groups of local extensions are created.
 The functions are prioritized by scopes: more local functions have higher priority and go earlier.
 Two overloaded functions from the same scope will be in the same group.
+Note that local extensions have higher priority than other extensions, however, even they can't go before members.
 
 3. _Member extensions_.
 Let's say several implicit receivers are available in the context.
@@ -356,7 +358,7 @@ Such function may be located in the same file as the usage or in the other files
 
 3. _Star-imports_.
 By using `*` you import all contents of a package.
-The functions imported in this way have lower priority then the functions imported directly.
+Note that the functions imported in this way have lower priority then the functions imported directly.
 
 4. _Function from stdlib_.
 The Kotlin standard library contains lots of extension functions.
