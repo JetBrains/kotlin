@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.debugger
 
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
+import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.debugger.stepping.KotlinSmartStepIntoHandler
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
@@ -33,7 +34,14 @@ abstract class AbstractSmartStepIntoTest : KotlinLightCodeInsightFixtureTestCase
         val offset = fixture.caretOffset
         val line = fixture.getDocument(fixture.file!!)!!.getLineNumber(offset)
 
-        val position = MockSourcePosition(_file = fixture.file, _line = line, _offset = offset, _editor = fixture.editor)
+        val lineStart = CodeInsightUtils.getStartLineOffset(file, line)!!
+        val elementAtOffset = file.findElementAt(lineStart)
+
+        val position = MockSourcePosition(_file = fixture.file,
+                                          _line = line,
+                                          _offset = offset,
+                                          _editor = fixture.editor,
+                                          _elementAt = elementAtOffset)
 
         val actual = KotlinSmartStepIntoHandler().findSmartStepTargets(position).map { it.presentation }
 
