@@ -30,10 +30,6 @@ import com.intellij.codeInsight.template.TemplateManager
 import com.intellij.openapi.command.WriteCommandAction
 
 class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
-    init {
-        System.setProperty("idea.platform.prefix", "Idea")
-    }
-
     override fun isRunInWriteAction(): Boolean = false
     override fun getTestDataPath(): String = PluginTestCaseBase.getTestDataPathBase() + "/refactoring/rename/inplace/"
 
