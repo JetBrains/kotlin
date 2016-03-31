@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 
@@ -32,6 +33,7 @@ public interface CallableDescriptor extends DeclarationDescriptorWithVisibility,
     ReceiverParameterDescriptor getDispatchReceiverParameter();
 
     @NotNull
+    @ReadOnly
     List<TypeParameterDescriptor> getTypeParameters();
 
     /**

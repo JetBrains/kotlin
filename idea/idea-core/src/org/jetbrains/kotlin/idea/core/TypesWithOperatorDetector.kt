@@ -64,7 +64,14 @@ abstract class TypesWithOperatorDetector(
     private fun MutableCollection<FunctionDescriptor>.addSuitableOperators(functions: Collection<FunctionDescriptor>): MutableCollection<FunctionDescriptor> {
         for (function in functions) {
             if (!function.isValidOperator()) continue
-            val substitutor = checkIsSuitableByType(function, function.typeParameters) ?: continue
+
+            var freeParameters = function.typeParameters
+            val containingClass = function.containingDeclaration as? ClassDescriptor
+            if (containingClass != null) {
+                freeParameters += containingClass.typeConstructor.parameters
+            }
+
+            val substitutor = checkIsSuitableByType(function, freeParameters) ?: continue
             add(function.substitute(substitutor))
         }
         return this

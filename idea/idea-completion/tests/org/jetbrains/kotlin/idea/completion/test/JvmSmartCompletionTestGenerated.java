@@ -1534,9 +1534,33 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("ValInGenericClass1.kt")
+        public void testValInGenericClass1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/ValInGenericClass1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ValInGenericClass2.kt")
+        public void testValInGenericClass2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/ValInGenericClass2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ValInGenericClass3.kt")
+        public void testValInGenericClass3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/ValInGenericClass3.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("VarInClass.kt")
         public void testVarInClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/VarInClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("VarInGenericClass.kt")
+        public void testVarInGenericClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/VarInGenericClass.kt");
             doTest(fileName);
         }
     }
