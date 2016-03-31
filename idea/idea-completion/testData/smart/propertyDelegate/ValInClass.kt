@@ -27,7 +27,7 @@ fun createX2() = X2()
 fun createX3() = X3()
 fun createY1() = Y1()
 fun createY2() = Y2()
-fun createY3() = Y3()
+fun createY3(): Y3 = object : Y3() {}
 
 class C {
     val property by <caret>
