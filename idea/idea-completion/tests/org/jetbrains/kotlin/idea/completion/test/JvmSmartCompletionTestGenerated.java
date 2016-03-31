@@ -203,9 +203,9 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
 
-    @TestMetadata("InClassObject.kt")
-    public void testInClassObject() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/InClassObject.kt");
+    @TestMetadata("InCompanionObject.kt")
+    public void testInCompanionObject() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/InCompanionObject.kt");
         doTest(fileName);
     }
 
