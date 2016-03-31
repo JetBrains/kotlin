@@ -98,7 +98,7 @@ public final class ArrayFIF extends CompositeFIF {
             assert arguments.size() == 1 : "Array get expression must have one argument.";
             JsExpression indexExpression = arguments.get(0);
             JsArrayAccess result = new JsArrayAccess(receiver, indexExpression);
-            MetadataProperties.setWithoutSideEffects(result, true);
+            MetadataProperties.setSideEffects(result, false);
             return result;
         }
     };

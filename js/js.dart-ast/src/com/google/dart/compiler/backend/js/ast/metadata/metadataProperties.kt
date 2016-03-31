@@ -39,7 +39,7 @@ var JsInvocation.typeCheck: TypeCheck? by MetadataProperty(default = null)
 
 var HasMetadata.synthetic: Boolean by MetadataProperty(default = false)
 
-var HasMetadata.withoutSideEffects: Boolean by MetadataProperty(default = false)
+var HasMetadata.sideEffects: Boolean by MetadataProperty(default = true)
 
 enum class TypeCheck {
     TYPEOF,

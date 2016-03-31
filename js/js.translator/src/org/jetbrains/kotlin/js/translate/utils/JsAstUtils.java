@@ -490,14 +490,14 @@ public final class JsAstUtils {
     @NotNull
     public static JsNameRef fqn(@NotNull String identifier, @Nullable JsExpression qualifier) {
         JsNameRef result = new JsNameRef(identifier, qualifier);
-        MetadataProperties.setWithoutSideEffects(result, true);
+        MetadataProperties.setSideEffects(result, false);
         return result;
     }
 
     @NotNull
     public static JsNameRef fqn(@NotNull JsName identifier, @Nullable JsExpression qualifier) {
         JsNameRef result = new JsNameRef(identifier, qualifier);
-        MetadataProperties.setWithoutSideEffects(result, true);
+        MetadataProperties.setSideEffects(result, false);
         return result;
     }
 

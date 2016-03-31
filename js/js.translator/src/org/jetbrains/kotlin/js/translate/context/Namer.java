@@ -304,7 +304,7 @@ public final class Namer {
 
         isTypeName = kotlinScope.declareName("isType");
         modulesMap = kotlin("modules");
-        MetadataProperties.setWithoutSideEffects((HasMetadata) modulesMap, true);
+        MetadataProperties.setSideEffects((HasMetadata) modulesMap, false);
     }
 
     @NotNull
@@ -396,7 +396,7 @@ public final class Namer {
     public JsExpression isTypeOf(@NotNull JsExpression type) {
         JsInvocation invocation = new JsInvocation(kotlin("isTypeOf"), type);
         MetadataProperties.setTypeCheck(invocation, TypeCheck.TYPEOF);
-        MetadataProperties.setWithoutSideEffects(invocation, true);
+        MetadataProperties.setSideEffects(invocation, false);
         return invocation;
     }
 
@@ -404,14 +404,14 @@ public final class Namer {
     public JsExpression isInstanceOf(@NotNull JsExpression type) {
         JsInvocation invocation = new JsInvocation(kotlin("isInstanceOf"), type);
         MetadataProperties.setTypeCheck(invocation, TypeCheck.INSTANCEOF);
-        MetadataProperties.setWithoutSideEffects(invocation, true);
+        MetadataProperties.setSideEffects(invocation, false);
         return invocation;
     }
 
     @NotNull
     public JsExpression isInstanceOf(@NotNull JsExpression instance, @NotNull JsExpression type) {
         JsInvocation result = new JsInvocation(kotlin(isTypeName), instance, type);
-        MetadataProperties.setWithoutSideEffects(result, true);
+        MetadataProperties.setSideEffects(result, false);
         return result;
     }
 
@@ -463,7 +463,7 @@ public final class Namer {
     @NotNull
     public JsExpression getModuleReference(@NotNull JsStringLiteral moduleName) {
         JsArrayAccess result = new JsArrayAccess(modulesMap, moduleName);
-        MetadataProperties.setWithoutSideEffects(result, true);
+        MetadataProperties.setSideEffects(result, false);
         return result;
     }
 
