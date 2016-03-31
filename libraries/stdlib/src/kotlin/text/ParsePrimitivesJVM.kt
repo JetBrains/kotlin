@@ -82,6 +82,9 @@ public fun String.toShortOrNull(radix: Int = 10): Short? {
 public fun String.toIntOrNull(radix: Int = 10): Int? {
     /* the code is somewhat ugly in order to achieve maximum performance */
 
+    if (radix < Character.MIN_RADIX) throw NumberFormatException("radix $radix less than Character.MIN_RADIX")
+    if (radix > Character.MAX_RADIX) throw NumberFormatException("radix $radix greater than Character.MAX_RADIX")
+
     val len = this.length
     if (len == 0) return null
 
@@ -136,6 +139,9 @@ public fun String.toIntOrNull(radix: Int = 10): Int? {
  */
 public fun String.toLongOrNull(radix: Int = 10): Long? {
     /* the code is somewhat ugly in order to achieve maximum performance */
+
+    if (radix < Character.MIN_RADIX) throw NumberFormatException("radix $radix less than Character.MIN_RADIX")
+    if (radix > Character.MAX_RADIX) throw NumberFormatException("radix $radix greater than Character.MAX_RADIX")
 
     val len = this.length
     if (len == 0) return null
