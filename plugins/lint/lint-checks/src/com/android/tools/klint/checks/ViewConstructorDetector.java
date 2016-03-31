@@ -35,10 +35,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jetbrains.uast.*;
-import org.jetbrains.uast.check.UastAndroidUtils;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
-import org.jetbrains.uast.kinds.UastClassKind;
 
 /**
  * Looks for custom views that do not define the view constructors needed by UI builders
@@ -65,7 +63,7 @@ public class ViewConstructorDetector extends Detector implements UastScanner {
             Severity.WARNING,
             new Implementation(
                     ViewConstructorDetector.class,
-                    Scope.JAVA_FILE_SCOPE));
+                    Scope.SOURCE_FILE_SCOPE));
 
     /** Constructs a new {@link ViewConstructorDetector} check */
     public ViewConstructorDetector() {
@@ -140,7 +138,7 @@ public class ViewConstructorDetector extends Detector implements UastScanner {
               + "`(Context)` or `(Context,AttributeSet)` "
               + "or `(Context,AttributeSet,int)`",
               node.getFqName());
-            Location location = UastAndroidUtils.getLocation(node.getNameElement());
+            Location location = context.getLocation(node.getNameElement());
             context.report(ISSUE, node, location, message  /*data*/);
         }
     }

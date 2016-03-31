@@ -54,7 +54,6 @@ import com.google.common.collect.Sets;
 
 import org.jetbrains.uast.*;
 import org.jetbrains.uast.check.UastAndroidContext;
-import org.jetbrains.uast.check.UastAndroidUtils;
 import org.jetbrains.uast.check.UastScanner;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -98,7 +97,7 @@ public class ViewTypeDetector extends ResourceXmlDetector implements UastScanner
             new Implementation(
                     ViewTypeDetector.class,
                     EnumSet.of(Scope.ALL_RESOURCE_FILES, Scope.ALL_SOURCE_FILES),
-                    Scope.JAVA_FILE_SCOPE));
+                    Scope.SOURCE_FILE_SCOPE));
 
     /** Flag used to do no work if we're running in incremental mode in a .java file without
      * a client supporting project resources */
@@ -168,7 +167,7 @@ public class ViewTypeDetector extends ResourceXmlDetector implements UastScanner
     }
 
     @Override
-    public void visitFunctionCall(UastAndroidContext context, UCallExpression node) {
+    public void visitCall(UastAndroidContext context, UCallExpression node) {
         JavaContext lintContext = context.getLintContext();
         LintClient client = lintContext.getClient();
         if (mIgnore == Boolean.TRUE) {
@@ -193,41 +192,41 @@ public class ViewTypeDetector extends ResourceXmlDetector implements UastScanner
             // TODO: Do flow analysis as in the StringFormatDetector in order
             // to handle variable references too
             if (first instanceof UQualifiedExpression) {
-                String resource = first.renderString();
-                if (resource.startsWith("R.id.")) { //$NON-NLS-1$
-                    String id = ((UQualifiedExpression) first).getSelector().renderString();
+                if (UastUtils.startsWithQualified(first, "R.id")) { //$NON-NLS-1$
+                    String id = ((UQualifiedExpression) first).getSelectorAsIdentifier();
 
-                    if (client.supportsProjectResources()) {
-                        AbstractResourceRepository resources = client
-                          .getProjectResources(lintContext.getMainProject(), true);
-                        if (resources == null) {
-                            return;
-                        }
+                    if (id != null) {
+                        if (client.supportsProjectResources()) {
+                            AbstractResourceRepository resources = client
+                                    .getProjectResources(lintContext.getMainProject(), true);
+                            if (resources == null) {
+                                return;
+                            }
 
-                        List<ResourceItem> items = resources.getResourceItem(ResourceType.ID,
-                                                                             id);
-                        if (items != null && !items.isEmpty()) {
-                            Set<String> compatible = Sets.newHashSet();
-                            for (ResourceItem item : items) {
-                                Collection<String> tags = getViewTags(lintContext, item);
-                                if (tags != null) {
-                                    compatible.addAll(tags);
+                            List<ResourceItem> items = resources.getResourceItem(ResourceType.ID, id);
+                            if (items != null && !items.isEmpty()) {
+                                Set<String> compatible = Sets.newHashSet();
+                                for (ResourceItem item : items) {
+                                    Collection<String> tags = getViewTags(lintContext, item);
+                                    if (tags != null) {
+                                        compatible.addAll(tags);
+                                    }
+                                }
+                                if (!compatible.isEmpty()) {
+                                    ArrayList<String> layoutTypes = Lists.newArrayList(compatible);
+                                    checkCompatible(lintContext, castType, null, layoutTypes, cast);
                                 }
                             }
-                            if (!compatible.isEmpty()) {
-                                ArrayList<String> layoutTypes = Lists.newArrayList(compatible);
+                        } else {
+                            Object types = mIdToViewTag.get(id);
+                            if (types instanceof String) {
+                                String layoutType = (String) types;
+                                checkCompatible(lintContext, castType, layoutType, null, cast);
+                            } else if (types instanceof List<?>) {
+                                @SuppressWarnings("unchecked")
+                                List<String> layoutTypes = (List<String>) types;
                                 checkCompatible(lintContext, castType, null, layoutTypes, cast);
                             }
-                        }
-                    } else {
-                        Object types = mIdToViewTag.get(id);
-                        if (types instanceof String) {
-                            String layoutType = (String) types;
-                            checkCompatible(lintContext, castType, layoutType, null, cast);
-                        } else if (types instanceof List<?>) {
-                            @SuppressWarnings("unchecked")
-                            List<String> layoutTypes = (List<String>) types;
-                            checkCompatible(lintContext, castType, null, layoutTypes, cast);
                         }
                     }
                 }
@@ -240,6 +239,8 @@ public class ViewTypeDetector extends ResourceXmlDetector implements UastScanner
             return (UBinaryExpressionWithType) expression;
         } else if (expression instanceof UQualifiedExpression) {
             return findContainingTypeCast(expression.getParent());
+        } else if (expression instanceof UParenthesizedExpression) {
+            return findContainingTypeCast(((UParenthesizedExpression) expression).getExpression());
         } else {
             return null;
         }
@@ -337,7 +338,7 @@ public class ViewTypeDetector extends ResourceXmlDetector implements UastScanner
             String message = String.format(
                     "Unexpected cast to `%1$s`: layout tag was `%2$s`",
                     castType, layoutType);
-            context.report(ISSUE, node, UastAndroidUtils.getLocation(node), message);
+            context.report(ISSUE, node, context.getLocation(node), message);
         }
     }
 }

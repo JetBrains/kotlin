@@ -46,7 +46,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import org.jetbrains.uast.*;
-import org.jetbrains.uast.check.UastAndroidUtils;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
 import org.kxml2.io.KXmlParser;
@@ -75,7 +74,7 @@ public class LayoutInflationDetector extends LayoutDetector implements UastScann
     private static final Implementation IMPLEMENTATION = new Implementation(
             LayoutInflationDetector.class,
             Scope.SOURCE_AND_RESOURCE_FILES,
-            Scope.JAVA_FILE_SCOPE);
+            Scope.SOURCE_FILE_SCOPE);
 
     /** Passing in a null parent to a layout inflater */
     public static final Issue ISSUE = Issue.create(
@@ -153,7 +152,7 @@ public class LayoutInflationDetector extends LayoutDetector implements UastScann
     }
 
     @Override
-    public void visitFunctionCall(UastAndroidContext context, UCallExpression node) {
+    public void visitCall(UastAndroidContext context, UCallExpression node) {
         assert ViewHolderDetector.INFLATE.equals(node.getFunctionName());
         if (node instanceof USimpleReferenceExpression) {
             return;
@@ -169,8 +168,8 @@ public class LayoutInflationDetector extends LayoutDetector implements UastScann
             return;
         }
         UQualifiedExpression select = (UQualifiedExpression) first;
-        UExpression selector = select.getSelector();
         UExpression receiver = select.getReceiver();
+        UExpression selector = select.getSelector();
         if (receiver instanceof UQualifiedExpression && selector instanceof USimpleReferenceExpression) {
             UQualifiedExpression rLayout = (UQualifiedExpression) receiver;
             if (rLayout.selectorMatches(ResourceType.LAYOUT.getName()) &&
@@ -186,11 +185,11 @@ public class LayoutInflationDetector extends LayoutDetector implements UastScann
                         if (mPendingErrors == null) {
                             mPendingErrors = Lists.newArrayList();
                         }
-                        Location location = UastAndroidUtils.getLocation(second);
+                        Location location = context.getLocation(second);
                         mPendingErrors.add(Pair.of(layoutName, location));
                     }
                 } else if (hasLayoutParams(lintContext, layoutName)) {
-                    context.report(ISSUE, node, UastAndroidUtils.getLocation(second), ERROR_MESSAGE);
+                    context.report(ISSUE, node, context.getLocation(second), ERROR_MESSAGE);
                 }
             }
         }

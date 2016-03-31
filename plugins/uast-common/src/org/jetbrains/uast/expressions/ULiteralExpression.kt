@@ -17,23 +17,51 @@ package org.jetbrains.uast
 
 import org.jetbrains.uast.visitor.UastVisitor
 
+/**
+ * Represents a literal expression.
+ */
 interface ULiteralExpression : UExpression {
+    /**
+     * Returns the literal expression value.
+     * This is basically a String, Number or null if the literal is a `null` literal.
+     */
     val value: Any?
 
+    /**
+     * Returns true if the literal is a `null`-literal, false otherwise.
+     */
     val isNull: Boolean
 
+    /**
+     * Returns true if the literal is a [String] literal, false otherwise.
+     */
     val isString: Boolean
         get() = evaluate() is String
 
+    /**
+     * Returns true if the literal is a [Boolean] literal, false otherwise.
+     */
     val isBoolean: Boolean
         get() = evaluate() is Boolean
 
-    fun asString() = value?.toString() ?: ""
+    /**
+     * Returns the string representation of the literal expression.
+     *
+     * @return the string representation, or "null" if the literal is a "null"-literal.
+     */
+    fun asString(): String {
+        val value = value
+        return if (value == null)
+            "null"
+        else
+            value.toString()
+    }
 
     override fun accept(visitor: UastVisitor) {
         visitor.visitLiteralExpression(this)
+        visitor.afterVisitLiteralExpression(this)
     }
 
     override fun logString() = "ULiteralExpression (${asString()})"
-    override fun renderString() = asString()
+    override fun renderString() = if (value is String) "\"$value\"" else asString()
 }

@@ -38,7 +38,7 @@ public class CommentDetector extends Detector implements UastScanner {
 
     private static final Implementation IMPLEMENTATION = new Implementation(
             CommentDetector.class,
-            Scope.JAVA_FILE_SCOPE);
+            Scope.SOURCE_FILE_SCOPE);
 
     /** Looks for hidden code */
     public static final Issue EASTER_EGG = Issue.create(

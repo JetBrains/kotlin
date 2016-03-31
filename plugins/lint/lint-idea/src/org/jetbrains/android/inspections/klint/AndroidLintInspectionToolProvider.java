@@ -1,19 +1,3 @@
-/*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.jetbrains.android.inspections.klint;
 
 import com.android.tools.klint.checks.*;
@@ -64,12 +48,6 @@ public class AndroidLintInspectionToolProvider {
   public static class AndroidKLintIconMixedNinePatchInspection extends AndroidLintInspectionBase {
     public AndroidKLintIconMixedNinePatchInspection() {
       super(AndroidBundle.message("android.lint.inspections.icon.mixed.nine.patch"), IconDetector.ICON_MIX_9PNG);
-    }
-  }
-
-  public static class AndroidKLintFullBackupContentInspection extends AndroidLintInspectionBase {
-    public AndroidKLintFullBackupContentInspection() {
-      super(AndroidBundle.message("android.lint.inspections.full.backup.content"), FullBackupContentDetector.ISSUE);
     }
   }
 
@@ -136,12 +114,6 @@ public class AndroidLintInspectionToolProvider {
   public static class AndroidKLintAppCompatMethodInspection extends AndroidLintInspectionBase {
     public AndroidKLintAppCompatMethodInspection() {
       super(AndroidBundle.message("android.lint.inspections.app.compat.method"), AppCompatCallDetector.ISSUE);
-    }
-  }
-
-  public static class AndroidKLintAppCompatResourceInspection extends AndroidLintInspectionBase {
-    public AndroidKLintAppCompatResourceInspection() {
-      super(AndroidBundle.message("android.lint.inspections.app.compat.resource"), AppCompatResourceDetector.ISSUE);
     }
   }
 
@@ -268,12 +240,6 @@ public class AndroidLintInspectionToolProvider {
   public static class AndroidKLintMergeRootFrameInspection extends AndroidLintInspectionBase {
     public AndroidKLintMergeRootFrameInspection() {
       super(AndroidBundle.message("android.lint.inspections.merge.root.frame"), MergeRootFrameLayoutDetector.ISSUE);
-    }
-  }
-
-  public static class AndroidKLintNfcTechWhitespaceInspection extends AndroidLintInspectionBase {
-    public AndroidKLintNfcTechWhitespaceInspection() {
-      super(AndroidBundle.message("android.lint.inspections.nfc.tech.whitespace"), NfcTechListDetector.ISSUE);
     }
   }
 
@@ -441,12 +407,6 @@ public class AndroidLintInspectionToolProvider {
     }
   }
 
-  public static class AndroidKLintMenuTitleInspection extends AndroidLintInspectionBase {
-    public AndroidKLintMenuTitleInspection() {
-      super(AndroidBundle.message("android.lint.inspections.menu.title"), TitleDetector.ISSUE);
-    }
-  }
-
   public static class AndroidKLintOverrideAbstractInspection extends AndroidLintInspectionBase {
     public AndroidKLintOverrideAbstractInspection() {
       super(AndroidBundle.message("android.lint.inspections.override.abstract"), OverrideConcreteDetector.ISSUE);
@@ -456,12 +416,6 @@ public class AndroidLintInspectionToolProvider {
   public static class AndroidKLintRecycleInspection extends AndroidLintInspectionBase {
     public AndroidKLintRecycleInspection() {
       super(AndroidBundle.message("android.lint.inspections.recycle"), CleanupDetector.RECYCLE_RESOURCE);
-    }
-  }
-
-  public static class AndroidKLintRegisteredInspection extends AndroidLintInspectionBase {
-    public AndroidKLintRegisteredInspection() {
-      super(AndroidBundle.message("android.lint.inspections.registered"), RegistrationDetector.ISSUE);
     }
   }
 

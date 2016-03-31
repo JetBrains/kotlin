@@ -17,12 +17,40 @@ package org.jetbrains.uast
 
 import org.jetbrains.uast.visitor.UastVisitor
 
+/**
+ * Represents the qualified expression (receiver.selector).
+ */
 interface UQualifiedExpression : UExpression, UResolvable {
+    /**
+     * Returns the expression receiver.
+     */
     val receiver: UExpression
+
+    /**
+     * Returns the expression selector.
+     */
     val selector: UExpression
+
+    /**
+     * Returns the access type (simple, safe access, etc.).
+     */
     val accessType: UastQualifiedExpressionAccessType
 
+    /**
+     * Checks if the selector is a simple reference expression, and if its identifier is [identifier].
+     *
+     * @param identifier the identifier to check agains
+     * @return true if the selector is a simple reference expression, and if its identifier is [identifier],
+     *         false otherwise
+     */
     fun selectorMatches(identifier: String) = (selector as? USimpleReferenceExpression)?.identifier == identifier
+
+    /**
+     * Returns the selector identifier if the selector is a simple reference expression.
+     *
+     * @return the selector identifier if the selector is a simple reference expression, null otherwise.
+     */
+    fun getSelectorAsIdentifier(): String? = (selector as? USimpleReferenceExpression)?.identifier
 
     override fun renderString() = receiver.renderString() + accessType.name + selector.renderString()
 
@@ -30,6 +58,7 @@ interface UQualifiedExpression : UExpression, UResolvable {
         if (visitor.visitQualifiedExpression(this)) return
         receiver.accept(visitor)
         selector.accept(visitor)
+        visitor.afterVisitQualifiedExpression(this)
     }
 
     override fun logString() = log("UQualifiedExpression", receiver, selector)

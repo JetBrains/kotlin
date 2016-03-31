@@ -16,3 +16,14 @@
 package org.jetbrains.uast
 
 internal fun List<UElement>.logString() = joinToString("\n") { it.logString().withMargin }
+
+internal fun UModifierOwner.renderModifiers() = UastModifier.VALUES
+        .filter { hasModifier(it) }
+        .joinToString(" ") { it.name }
+
+internal fun StringBuilder.appendWithSpace(s: String) {
+    if (s.isNotEmpty()) {
+        append(s)
+        append(' ')
+    }
+}

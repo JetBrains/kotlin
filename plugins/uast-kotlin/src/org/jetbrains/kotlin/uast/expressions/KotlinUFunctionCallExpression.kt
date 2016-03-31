@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.uast
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -31,8 +30,8 @@ class KotlinUFunctionCallExpression(
         override val psi: KtCallExpression,
         override val parent: UElement
 ) : KotlinAbstractUElement(), UCallExpression, PsiElementBacked, KotlinUElementWithType {
-    override val functionName: String?
-        get() = (psi.calleeExpression as? KtSimpleNameExpression)?.getReferencedName()
+    override val functionName: String? by lz { resolveCall()?.resultingDescriptor?.name?.asString().orAnonymous() }
+    override fun matchesFunctionName(name: String) = functionName == name
 
     override val functionNameElement by lz { psi.calleeExpression?.let { KotlinConverter.convert(it, this) } }
 
@@ -66,7 +65,7 @@ class KotlinUFunctionCallExpression(
     override fun resolve(context: UastContext): UFunction? {
         val resolvedCall = resolveCall()
         val descriptor = resolvedCall?.resultingDescriptor ?: return null
-        val source = descriptor.toSource(psi) ?: return null
+        val source = descriptor.toSource() ?: return null
 
         if (descriptor is ConstructorDescriptor && descriptor.isPrimary
                 && source is KtClassOrObject && source.getPrimaryConstructor() == null
@@ -95,65 +94,4 @@ class KotlinUComponentFunctionCallExpression(
     override val functionNameElement = null
     override val kind = UastCallKind.FUNCTION_CALL
     override fun resolve(context: UastContext) = null
-}
-
-class KotlinUSuperConstructorCallExpression(
-        override val psi: KtObjectDeclaration,
-        override val parent: UElement,
-        val resolvedCall: () -> ResolvedCall<*>?
-) : UCallExpression, PsiElementBacked {
-    override val functionReference: USimpleReferenceExpression?
-        get() = null
-
-    override val classReference: USimpleReferenceExpression by lz {
-        val referenceParent = this
-        object : USimpleReferenceExpression, PsiElementBacked {
-            override val parent: UElement?
-                get() = referenceParent
-
-            override val identifier: String
-                get() = resolvedCall()?.resultingDescriptor?.name?.asString().orAnonymous()
-
-            override fun resolve(context: UastContext): UDeclaration? {
-                val descriptor = resolvedCall()?.resultingDescriptor ?: return null
-                val source = DescriptorToSourceUtilsIde.getAnyDeclaration(psi.project, descriptor) ?: return null
-                return context.convert(source) as? UDeclaration
-            }
-
-            override val psi: PsiElement
-                get() = this@KotlinUSuperConstructorCallExpression.psi
-        }
-    }
-
-    override val functionName: String?
-        get() = "<init>"
-
-    override val functionNameElement by lz {
-        try {
-            KotlinDumbUElement(psi.getObjectKeyword(), this)
-        } catch (e: NullPointerException) {
-            null
-        }
-    }
-
-    override val valueArgumentCount: Int
-        get() = resolvedCall()?.valueArguments?.size ?: 0
-
-    override val valueArguments by lz {
-        resolvedCall()?.call?.valueArguments?.map { KotlinConverter.convertOrEmpty(it.getArgumentExpression(), this) } ?: emptyList()
-    }
-
-    override val typeArgumentCount: Int
-        get() = 0
-    override val typeArguments: List<UType>
-        get() = emptyList()
-
-    override val kind: UastCallKind
-        get() = UastCallKind.CONSTRUCTOR_CALL
-
-    override fun resolve(context: UastContext): UFunction? {
-        val descriptor = resolvedCall()?.resultingDescriptor ?: return null
-        val source = DescriptorToSourceUtilsIde.getAnyDeclaration(psi.project, descriptor) ?: return null
-        return context.convert(source) as? UFunction
-    }
 }

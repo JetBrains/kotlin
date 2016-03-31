@@ -31,7 +31,6 @@ import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.uast.*;
-import org.jetbrains.uast.check.UastAndroidUtils;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
 import org.jetbrains.uast.visitor.UastVisitor;
@@ -51,7 +50,7 @@ public class ToastDetector extends Detector implements UastScanner {
             Severity.WARNING,
             new Implementation(
                     ToastDetector.class,
-                    Scope.JAVA_FILE_SCOPE));
+                    Scope.SOURCE_FILE_SCOPE));
 
 
     /** Constructs a new {@link ToastDetector} check */
@@ -72,7 +71,7 @@ public class ToastDetector extends Detector implements UastScanner {
     }
 
     @Override
-    public void visitFunctionCall(UastAndroidContext context, UCallExpression node) {
+    public void visitCall(UastAndroidContext context, UCallExpression node) {
         assert "makeText".equals(node.getFunctionName());
 
         UElement qualifiedExpression = node.getParent();
@@ -80,8 +79,7 @@ public class ToastDetector extends Detector implements UastScanner {
             return;
         }
 
-        String operand = ((UQualifiedExpression)qualifiedExpression).getReceiver().renderString();
-        if (!(operand.equals("Toast") || operand.endsWith(".Toast"))) {
+        if (!UastUtils.endsWithQualified(((UQualifiedExpression) qualifiedExpression).getReceiver(), "Toast")) {
             return;
         }
 
@@ -107,7 +105,7 @@ public class ToastDetector extends Detector implements UastScanner {
         ShowFinder finder = new ShowFinder(nodeWithPossibleQualifier);
         method.accept(finder);
         if (!finder.isShowCalled()) {
-            context.report(ISSUE, node, UastAndroidUtils.getLocation(node),
+            context.report(ISSUE, node, context.getLocation(node),
                            "Toast created but not shown: did you forget to call `show()` ?");
         }
     }
@@ -128,7 +126,7 @@ public class ToastDetector extends Detector implements UastScanner {
         public boolean visitCallExpression(@NotNull UCallExpression node) {
             if (node == mTarget) {
                 mSeenTarget = true;
-            } else if (mSeenTarget && node.functionNameMatches("show")) { //$NON-NLS-1$
+            } else if (mSeenTarget && node.matchesFunctionName("show")) { //$NON-NLS-1$
                 // TODO: Do more flow analysis to see whether we're really calling show
                 // on the right type of object?
                 mFound = true;
@@ -147,9 +145,8 @@ public class ToastDetector extends Detector implements UastScanner {
         }
 
         @Override
-        public boolean visitSpecialExpressionList(@NotNull USpecialExpressionList node) {
-            if (node.getKind() == UastSpecialExpressionKind.RETURN && node.firstOrNull() == mTarget) {
-                // If you just do "return Toast.makeText(...) don't warn
+        public boolean visitReturnExpression(@NotNull UReturnExpression node) {
+            if (mTarget.equals(node.getReturnExpression())) {
                 mFound = true;
             }
 

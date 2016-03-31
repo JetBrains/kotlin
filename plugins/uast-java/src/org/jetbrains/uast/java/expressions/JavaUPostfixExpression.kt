@@ -15,6 +15,7 @@
  */
 package org.jetbrains.uast.java
 
+import com.intellij.psi.JavaTokenType
 import com.intellij.psi.PsiPostfixExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UPostfixExpression
@@ -27,9 +28,9 @@ class JavaUPostfixExpression(
 ) : JavaAbstractUElement(), UPostfixExpression, PsiElementBacked, JavaUElementWithType, JavaEvaluatableUElement {
     override val operand by lz { JavaConverter.convertOrEmpty(psi.operand, this) }
 
-    override val operator = when (psi.operationSign.text) {
-        "++" -> UastPostfixOperator.INC
-        "--" -> UastPostfixOperator.DEC
+    override val operator = when (psi.operationSign) {
+        JavaTokenType.PLUSPLUS -> UastPostfixOperator.INC
+        JavaTokenType.MINUSMINUS -> UastPostfixOperator.DEC
         else -> UastPostfixOperator.UNKNOWN
     }
 }

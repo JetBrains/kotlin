@@ -29,7 +29,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jetbrains.uast.*;
-import org.jetbrains.uast.check.UastAndroidUtils;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
 
@@ -38,7 +37,7 @@ import org.jetbrains.uast.check.UastScanner;
  */
 public class SQLiteDetector extends Detector implements UastScanner {
     private static final Implementation IMPLEMENTATION = new Implementation(
-          SQLiteDetector.class, Scope.JAVA_FILE_SCOPE);
+          SQLiteDetector.class, Scope.SOURCE_FILE_SCOPE);
 
     /** Using STRING instead of TEXT for columns */
     public static final Issue ISSUE = Issue.create(
@@ -77,7 +76,7 @@ public class SQLiteDetector extends Detector implements UastScanner {
     }
 
     @Override
-    public void visitFunctionCall(UastAndroidContext context, UCallExpression node) {
+    public void visitCall(UastAndroidContext context, UCallExpression node) {
         UFunction resolvedFunction = node.resolve(context);
         UClass containingClass = UastUtils.getContainingClass(resolvedFunction);
         if (resolvedFunction == null || containingClass == null) {
@@ -100,7 +99,7 @@ public class SQLiteDetector extends Detector implements UastScanner {
                                  + "(STRING is a numeric type and its value can be adjusted; for example,"
                                  + "strings that look like integers can drop leading zeroes. See issue "
                                  + "explanation for details.)";
-                context.report(ISSUE, node, UastAndroidUtils.getLocation(node), message);
+                context.report(ISSUE, node, context.getLocation(node), message);
             }
         }
     }

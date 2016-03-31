@@ -34,7 +34,6 @@ import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.uast.*;
 import org.jetbrains.uast.check.UastAndroidContext;
-import org.jetbrains.uast.check.UastAndroidUtils;
 import org.jetbrains.uast.check.UastScanner;
 import org.jetbrains.uast.visitor.UastVisitor;
 
@@ -56,7 +55,7 @@ public class JavaScriptInterfaceDetector extends Detector implements UastScanner
             Severity.ERROR,
             new Implementation(
                     JavaScriptInterfaceDetector.class,
-                    Scope.JAVA_FILE_SCOPE))
+                    Scope.SOURCE_FILE_SCOPE))
             .addMoreInfo(
             "http://developer.android.com/reference/android/webkit/WebView.html#addJavascriptInterface(java.lang.Object, java.lang.String)"); //$NON-NLS-1$
 
@@ -83,7 +82,7 @@ public class JavaScriptInterfaceDetector extends Detector implements UastScanner
     }
 
     @Override
-    public void visitFunctionCall(UastAndroidContext context, UCallExpression node) {
+    public void visitCall(UastAndroidContext context, UCallExpression node) {
         if (context.getLintContext().getMainProject().getTargetSdk() < 17) {
             return;
         }
@@ -146,7 +145,7 @@ public class JavaScriptInterfaceDetector extends Detector implements UastScanner
                 return;
             }
 
-            Location location = UastAndroidUtils.getLocation(node.getFunctionNameElement());
+            Location location = context.getLocation(node.getFunctionNameElement());
             String message = String.format(
               "None of the methods in the added interface (%1$s) have been annotated " +
               "with `@android.webkit.JavascriptInterface`; they will not " +
@@ -216,29 +215,19 @@ public class JavaScriptInterfaceDetector extends Detector implements UastScanner
         }
 
         @Override
-        public boolean visitCallExpression(@NotNull UCallExpression node) {
+        public void afterVisitCallExpression(@NotNull UCallExpression node) {
             if (node.getKind() == UastCallKind.FUNCTION_CALL && node == mTargetCall) {
                 mFoundCall = true;
             } else if (node.getKind() == UastCallKind.CONSTRUCTOR_CALL) {
                 UFunction resolved = node.resolve(mContext);
                 if (resolved != null) {
                     mTypes.put(node, UastUtils.getContainingClass(resolved));
-                } else {
-                    // Implicit constructor?
-                    UType type = node.getExpressionType();
-                    if (type != null) {
-                        UClass typeClass = type.resolve(mContext);
-                        if (typeClass != null) {
-                            mTypes.put(node, typeClass);
-                        }
-                    }
                 }
             }
-            return false;
         }
 
         @Override
-        public boolean visitSimpleReferenceExpression(@NotNull USimpleReferenceExpression node) {
+        public void afterVisitSimpleReferenceExpression(@NotNull USimpleReferenceExpression node) {
             if (mTypes.get(node) == null) {
                 UElement resolved = node.resolve(mContext);
                 if (resolved instanceof UVariable) {
@@ -248,11 +237,10 @@ public class JavaScriptInterfaceDetector extends Detector implements UastScanner
                     }
                 }
             }
-            return false;
         }
 
         @Override
-        public boolean visitBinaryExpression(@NotNull UBinaryExpression node) {
+        public void afterVisitBinaryExpression(@NotNull UBinaryExpression node) {
             if (node.getOperator() == UastBinaryOperator.ASSIGN) {
                 UExpression rhs = node.getRightOperand();
                 UClass resolvedClass = mTypes.get(rhs);
@@ -267,11 +255,10 @@ public class JavaScriptInterfaceDetector extends Detector implements UastScanner
                     }
                 }
             }
-            return false;
         }
 
         @Override
-        public boolean visitIfExpression(@NotNull UIfExpression node) {
+        public void afterVisitIfExpression(@NotNull UIfExpression node) {
             if (node.isTernary()) {
                 UClass resolvedClass = mTypes.get(node.getThenBranch());
                 if (resolvedClass == null) {
@@ -281,11 +268,10 @@ public class JavaScriptInterfaceDetector extends Detector implements UastScanner
                     mTypes.put(node, resolvedClass);
                 }
             }
-            return false;
         }
 
         @Override
-        public boolean visitVariable(@NotNull UVariable node) {
+        public void afterVisitVariable(@NotNull UVariable node) {
             UExpression initializer = node.getInitializer();
             if (initializer != null) {
                 UClass resolvedClass = mTypes.get(initializer);
@@ -294,16 +280,14 @@ public class JavaScriptInterfaceDetector extends Detector implements UastScanner
                     mVariableTypes.put(node, resolvedClass);
                 }
             }
-            return false;
         }
 
         @Override
-        public boolean visitBinaryExpressionWithType(@NotNull UBinaryExpressionWithType node) {
+        public void afterVisitBinaryExpressionWithType(@NotNull UBinaryExpressionWithType node) {
             UClass resolvedClass = mTypes.get(node);
             if (resolvedClass != null) {
                 mTypes.put(node, resolvedClass);
             }
-            return false;
         }
     }
 }

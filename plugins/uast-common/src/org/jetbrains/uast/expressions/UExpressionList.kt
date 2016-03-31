@@ -17,20 +17,25 @@ package org.jetbrains.uast
 
 import org.jetbrains.uast.visitor.UastVisitor
 
-interface UExpressionList : UExpression {
+/**
+ * Represents a generic list of expressions.
+ */
+interface USpecialExpressionList : UExpression {
+    /**
+     * Returns the list of expressions.
+     */
     val expressions: List<UExpression>
 
-    override fun accept(visitor: UastVisitor) {
-        if (visitor.visitExpressionList(this)) return
-        expressions.acceptList(visitor)
-    }
-
-    override fun logString() = log("UExpressionList", expressions)
-    override fun renderString() = log("", expressions)
-}
-
-interface USpecialExpressionList : UExpressionList {
+    /**
+     * Returns the list kind.
+     */
     val kind: UastSpecialExpressionKind
+
+    override fun accept(visitor: UastVisitor) {
+        if (visitor.visitSpecialExpressionList(this)) return
+        expressions.acceptList(visitor)
+        visitor.afterVisitSpecialExpressionList(this)
+    }
 
     fun firstOrNull(): UExpression? = expressions.firstOrNull()
 

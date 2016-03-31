@@ -17,12 +17,19 @@ package org.jetbrains.uast
 
 import org.jetbrains.uast.visitor.UastVisitor
 
+/**
+ * Represents an object literal expression, e.g. `new Runnable() {}` in Java.
+ */
 interface UObjectLiteralExpression : UExpression {
+    /**
+     * Returns the class declaration.
+     */
     val declaration: UClass
 
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitObjectLiteralExpression(this)) return
         declaration.accept(visitor)
+        visitor.afterVisitObjectLiteralExpression(this)
     }
 
     override fun logString() = log("UObjectLiteralExpression", declaration)

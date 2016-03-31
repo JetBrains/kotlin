@@ -43,7 +43,6 @@ public class BuiltinIssueRegistry extends IssueRegistry {
         issues.add(ApiDetector.OVERRIDE);
         issues.add(ApiDetector.UNSUPPORTED);
         issues.add(AppCompatCallDetector.ISSUE);
-        issues.add(AppCompatResourceDetector.ISSUE);
         issues.add(AssertDetector.ISSUE);
         issues.add(CallSuperDetector.ISSUE);
         issues.add(CipherGetInstanceDetector.ISSUE);
@@ -54,7 +53,6 @@ public class BuiltinIssueRegistry extends IssueRegistry {
         issues.add(CustomViewDetector.ISSUE);
         issues.add(CutPasteDetector.ISSUE);
         issues.add(DateFormatDetector.DATE_FORMAT);
-        issues.add(FullBackupContentDetector.ISSUE);
         issues.add(FragmentDetector.ISSUE);
         issues.add(GetSignaturesDetector.ISSUE);
         issues.add(HandlerDetector.ISSUE);
@@ -82,7 +80,6 @@ public class BuiltinIssueRegistry extends IssueRegistry {
         issues.add(LogDetector.LONG_TAG);
         issues.add(LogDetector.WRONG_TAG);
         issues.add(MergeRootFrameLayoutDetector.ISSUE);
-        issues.add(NfcTechListDetector.ISSUE);
         issues.add(NonInternationalizedSmsDetector.ISSUE);
         issues.add(OverdrawDetector.ISSUE);
         issues.add(OverrideConcreteDetector.ISSUE);
@@ -117,7 +114,6 @@ public class BuiltinIssueRegistry extends IssueRegistry {
         issues.add(SupportAnnotationDetector.RESOURCE_TYPE);
         issues.add(SupportAnnotationDetector.THREAD);
         issues.add(SupportAnnotationDetector.TYPE_DEF);
-        issues.add(TitleDetector.ISSUE);
         issues.add(ToastDetector.ISSUE);
         issues.add(UnusedResourceDetector.ISSUE);
         issues.add(UnusedResourceDetector.ISSUE_IDS);

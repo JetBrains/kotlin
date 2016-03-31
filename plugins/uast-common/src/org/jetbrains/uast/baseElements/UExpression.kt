@@ -24,6 +24,7 @@ interface UExpression : UElement {
 
     override fun accept(visitor: UastVisitor) {
         visitor.visitElement(this)
+        visitor.afterVisitElement(this)
     }
 }
 
@@ -36,6 +37,6 @@ interface NoModifiers : UModifierOwner {
     override fun hasModifier(modifier: UastModifier) = false
 }
 
-class EmptyExpression(override val parent: UElement) : UExpression {
+class EmptyUExpression(override val parent: UElement) : UExpression {
     override fun logString() = "EmptyExpression"
 }

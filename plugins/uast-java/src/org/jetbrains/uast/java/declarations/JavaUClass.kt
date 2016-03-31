@@ -21,13 +21,11 @@ import com.intellij.psi.util.ClassUtil
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.PsiTypesUtil
 import org.jetbrains.uast.*
-import org.jetbrains.uast.kinds.UastClassKind
 import org.jetbrains.uast.psi.PsiElementBacked
-import java.util.*
 
 class JavaUClass(
         override val psi: PsiClass,
-        override val parent: UElement?,
+        override val parent: UElement,
         val newExpression: PsiNewExpression? = null
 ) : JavaAbstractUElement(), UClass, PsiElementBacked {
     override val name: String
@@ -79,27 +77,19 @@ class JavaUClass(
     override val declarations by lz {
         val declarations = arrayListOf<UDeclaration>()
         psi.fields.mapTo(declarations) { JavaConverter.convert(it, this) }
-        psi.constructors.mapTo(declarations) { JavaConverter.convert(it, this) }
 
         if (psi is PsiAnonymousClass && newExpression != null) {
             declarations += JavaUAnonymousClassConstructor(psi, newExpression, this)
         }
 
-        psi.methods.filter { !it.isConstructor }.mapTo(declarations) { JavaConverter.convert(it, this) }
-        psi.interfaces.mapTo(declarations) { JavaConverter.convert(it, this) }
+        psi.methods.mapTo(declarations) { JavaConverter.convert(it, this) }
         psi.innerClasses.mapTo(declarations) { JavaConverter.convert(it, this) }
         psi.initializers.mapTo(declarations) { JavaConverter.convert(it, this) }
         declarations
     }
 
     override fun isSubclassOf(fqName: String): Boolean {
-        tailrec fun isSubClassOf(clazz: PsiClass?, name: String): Boolean = when {
-            clazz == null -> false
-            clazz.qualifiedName == name -> true
-            else -> isSubClassOf(clazz.superClass, name)
-        }
-
-        return isSubClassOf(psi, fqName)
+        return psi.supers.any { base -> psi.isInheritor(base, false) }
     }
 
     private companion object {
@@ -179,7 +169,8 @@ private class JavaUAnonymousClassConstructor(
     override val returnType: UType?
         get() = null
 
-    override val body = EmptyExpression(this)
+    override val body: UExpression?
+        get() = null
 
     override val visibility: UastVisibility
         get() = UastVisibility.LOCAL

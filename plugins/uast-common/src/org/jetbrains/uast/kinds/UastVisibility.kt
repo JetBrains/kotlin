@@ -15,7 +15,10 @@
  */
 package org.jetbrains.uast
 
-class UastVisibility(val name: String) {
+/**
+ * Uast visibility list.
+ */
+open class UastVisibility(val name: String) {
     companion object {
         @JvmField
         val PUBLIC = UastVisibility("public")

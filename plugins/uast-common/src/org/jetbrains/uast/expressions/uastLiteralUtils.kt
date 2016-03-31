@@ -16,15 +16,40 @@
 @file:JvmName("UastLiteralUtils")
 package org.jetbrains.uast
 
+/**
+ * Checks if the [UElement] is a null literal.
+ *
+ * @return true if the receiver is a null literal, false otherwise.
+ */
 fun UElement.isNullLiteral(): Boolean = this is ULiteralExpression && this.isNull
 
+/**
+ * Checks if the [UElement] is a [String] literal.
+ *
+ * @return true if the receiver is a [String] literal, false otherwise.
+ */
 fun UElement.isStringLiteral(): Boolean = this is ULiteralExpression && this.isString
 
+/**
+ * Returns the [String] literal value.
+ *
+ * @return literal text if the receiver is a valid [String] literal, null otherwise.
+ */
 fun UElement.getValueIfStringLiteral(): String? =
         if (isStringLiteral()) (this as ULiteralExpression).value as String else null
 
+/**
+ * Checks if the [UElement] is a [Number] literal (Integer, Long, Float, Double, etc.).
+ *
+ * @return true if the receiver is a [Number] literal, false otherwise.
+ */
 fun UElement.isNumberLiteral(): Boolean = this is ULiteralExpression && this.value is Number
 
+/**
+ * Checks if the [UElement] is an integral literal (is an [Integer], [Long], [Short], [Char] or [Byte]).
+ *
+ * @return true if the receiver is an integral literal, false otherwise.
+ */
 fun UElement.isIntegralLiteral(): Boolean = this is ULiteralExpression && when (value) {
     is Int -> true
     is Long -> true
@@ -34,8 +59,12 @@ fun UElement.isIntegralLiteral(): Boolean = this is ULiteralExpression && when (
     else -> false
 }
 
-fun UElement.isBooleanLiteral(): Boolean = this is ULiteralExpression && this.isBoolean
-
+/**
+ * Returns the integral value of the literal.
+ *
+ * @return long representation of the literal expression value,
+ *         0 if the receiver literal expression is not a integral one.
+ */
 fun ULiteralExpression.getLongValue(): Long = value.let {
     when (it) {
         is Long -> it

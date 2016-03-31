@@ -44,6 +44,9 @@ class JavaUType(
     override val isLong: Boolean
         get() = check("long", "java.lang.Long")
 
+    override val isShort: Boolean
+        get() = check("short", "java.lang.Short")
+
     override val isFloat: Boolean
         get() = check("float", "java.lang.Float")
 
@@ -59,6 +62,7 @@ class JavaUType(
     override val isByte: Boolean
         get() = check("byte", "java.lang.Byte")
 
+    @Suppress("NOTHING_TO_INLINE")
     private inline fun check(unboxedType: String, boxedType: String): Boolean =
             name == unboxedType || (psi as? PsiClassType)?.resolve()?.qualifiedName == boxedType
 

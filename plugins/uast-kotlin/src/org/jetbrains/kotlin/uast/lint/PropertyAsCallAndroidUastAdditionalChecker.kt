@@ -25,10 +25,9 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.uast.*
 import org.jetbrains.uast.*
-import org.jetbrains.uast.check.AndroidUastAdditionalChecker
 import org.jetbrains.uast.psi.PsiElementBacked
 
-class PropertyAsCallAndroidUastAdditionalChecker : AndroidUastAdditionalChecker {
+class PropertyAsCallAndroidUastAdditionalChecker : UastAdditionalChecker {
     override fun invoke(element: UElement, callback: UastCallback, context: UastContext) {
         val expr = element as? KotlinUSimpleReferenceExpression ?: return
         if (expr is KotlinNameUSimpleReferenceExpression) return
@@ -78,7 +77,7 @@ class PropertyAsCallAndroidUastAdditionalChecker : AndroidUastAdditionalChecker 
             override val kind = UastCallKind.FUNCTION_CALL
 
             override fun resolve(context: UastContext): UFunction? {
-                val source = accessorDescriptor.toSource(psi.project)
+                val source = accessorDescriptor.toSource()
                 if (source != null) {
                     (context.convert(source) as? UFunction)?.let { return it }
                 }

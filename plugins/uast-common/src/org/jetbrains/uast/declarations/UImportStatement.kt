@@ -15,19 +15,33 @@
  */
 package org.jetbrains.uast
 
-import org.jetbrains.uast.kinds.UastImportKind
 import org.jetbrains.uast.visitor.UastVisitor
 
+/**
+ * Represents an import statement.
+ */
 interface UImportStatement : UElement {
+    /**
+     * Returns the qualified name to import.
+     */
     val fqNameToImport: String?
-    val isStarImport: Boolean
-    val kind: UastImportKind
 
-    /* Returns null if isStarImport = true */
+    /**
+     * Returns true is the import is a "star" import (on-demand, all-under).
+     */
+    val isStarImport: Boolean
+
+    /**
+     * Resolve the import statement to the declaration.
+     *
+     * @param context the Uast context
+     * @return the declaration element, or null if the declaration was not resolved.
+     */
     fun resolve(context: UastContext): UDeclaration?
 
     override fun accept(visitor: UastVisitor) {
         visitor.visitImportStatement(this)
+        visitor.afterVisitImportStatement(this)
     }
 
     override fun logString() = "UImport ($fqNameToImport)"

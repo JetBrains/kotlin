@@ -35,5 +35,6 @@ class KotlinUAnnotationList(
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitElement(this)) return
         annotations.acceptList(visitor)
+        visitor.afterVisitElement(this)
     }
 }

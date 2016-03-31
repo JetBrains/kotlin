@@ -17,16 +17,38 @@ package org.jetbrains.uast
 
 import org.jetbrains.uast.visitor.UastVisitor
 
+/**
+ * Represents a declaration.
+ */
 interface UDeclaration : UElement, UNamed {
+    /**
+     * Returns an element for the name node, or null if the node does not exist in the underlying AST (Psi).
+     */
     val nameElement: UElement?
+
+    /**
+     * Checks if the function name is [name], and the function containing class qualified name is [containingClassFqName].
+     *
+     * @param containingClassFqName the required containing class qualified name.
+     * @param name the function name to check against.
+     * @return true if the call is a function call, the function name is [name],
+     *              and the qualified name of the function direct containing class is [containingClassFqName],
+     *         false otherwise.
+     */
+    open fun matchesNameWithContaining(containingClassFqName: String, name: String): Boolean {
+        if (!matchesName(name)) return false
+        val containingClass = parent as? UClass ?: return false
+        return containingClass.matchesFqName(containingClassFqName)
+    }
 
     override fun accept(visitor: UastVisitor) {
         visitor.visitElement(this)
+        visitor.afterVisitElement(this)
     }
 }
 
 object UDeclarationNotResolved : UDeclaration {
-    override val name = "<declaration not resolved>"
+    override val name = ERROR_NAME
     override val nameElement = null
     override val parent = null
 

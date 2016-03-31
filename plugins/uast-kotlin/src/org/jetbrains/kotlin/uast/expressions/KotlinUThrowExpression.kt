@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2016 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,14 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jetbrains.uast.java
 
-import org.jetbrains.uast.UastSpecialExpressionKind
+package org.jetbrains.kotlin.uast
 
-object JavaSpecialExpressionKinds {
-    @JvmField
-    val ASSERT = UastSpecialExpressionKind("assert")
+import org.jetbrains.kotlin.psi.KtThrowExpression
+import org.jetbrains.uast.UElement
+import org.jetbrains.uast.UThrowExpression
+import org.jetbrains.uast.psi.PsiElementBacked
 
-    @JvmField
-    val SYNCHRONIZED = UastSpecialExpressionKind("synchronized")
+class KotlinUThrowExpression(
+        override val psi: KtThrowExpression,
+        override val parent: UElement
+) : KotlinAbstractUElement(), UThrowExpression, PsiElementBacked, KotlinUElementWithType {
+    override val thrownExpression by lz { KotlinConverter.convertOrEmpty(psi.thrownExpression, this) }
 }

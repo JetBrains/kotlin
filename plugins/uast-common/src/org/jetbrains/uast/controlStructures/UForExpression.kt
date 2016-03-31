@@ -17,9 +17,29 @@ package org.jetbrains.uast
 
 import org.jetbrains.uast.visitor.UastVisitor
 
+/**
+ * Represents a
+ *
+ * `for (initDeclarations; loopCondition; update) {
+ *      // body
+ *  }`
+ *
+ *  loop expression.
+ */
 interface UForExpression : ULoopExpression {
+    /**
+     * Returns the [UExpression] containing variable declarations, or null if the are no variables declared.
+     */
     val declaration: UExpression?
+
+    /**
+     * Returns the loop condition, or null if the condition is empty.
+     */
     val condition: UExpression?
+
+    /**
+     * Returns the loop update expression(s).
+     */
     val update: UExpression?
 
     override fun accept(visitor: UastVisitor) {
@@ -28,6 +48,7 @@ interface UForExpression : ULoopExpression {
         condition?.accept(visitor)
         update?.accept(visitor)
         body.accept(visitor)
+        visitor.afterVisitForExpression(this)
     }
 
     override fun renderString() = buildString {

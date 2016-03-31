@@ -15,41 +15,94 @@
  */
 package org.jetbrains.uast
 
-import org.jetbrains.uast.kinds.UastClassKind
 import org.jetbrains.uast.visitor.UastVisitor
 
-interface UClass : UDeclaration, UFqNamed, UModifierOwner, UAnnotated {
-    /* The simple class name is only for the debug purposes. Do not check against it in the production code */
+/**
+ * Represents a JVM class (ordinary class, interface, annotation, singleton, etc.).
+ */
+interface UClass : UDeclaration, UFqNamed, UModifierOwner, UVisibilityOwner, UAnnotated {
+    /**
+     * Returns the class simple (non-qualified) name.
+     * The simple class name is only for the debug purposes. Do not check against it in the production code.
+     */
     override val name: String
 
+    /**
+     * Returns true if the class is anonymous ([name] in this case should return a placeholder like "<anonymous>").
+     */
     val isAnonymous: Boolean
-    val visibility: UastVisibility
+
+    /**
+     * Returns the class kind (ordinary class, interface, annotation, etc.).
+     */
     val kind: UastClassKind
+
+    /**
+     * Returns the default type for this class.
+     */
     val defaultType: UType
 
+    /**
+     * Returns the class companions.
+     */
     val companions: List<UClass>
 
+    /**
+     * Returns the class JVM name, or null if the JVM name is unknown.
+     */
     open val internalName: String?
         get() = null
 
+    /**
+     * Returns the all supertypes of this class.
+     */
     val superTypes: List<UType>
+
+    /**
+     * Returns class declarations (nested classes, constructors, functions, variables, etc.).
+     * An empty (default) constructor also should be present.
+     */
     val declarations: List<UDeclaration>
 
+    /**
+     * Returns nested classes declared in this class.
+     */
     val nestedClasses: List<UClass>
         get() = declarations.filterIsInstance<UClass>()
 
+    /**
+     * Returns functions declared in this class.
+     */
     val functions: List<UFunction>
         get() = declarations.filterIsInstance<UFunction>()
 
+    /**
+     * Returns properties declared in this class.
+     */
     val properties: List<UVariable>
         get() = declarations.filterIsInstance<UVariable>()
 
+    /**
+     * Returns constructors declared in this class.
+     */
     @Suppress("UNCHECKED_CAST")
     val constructors: List<UFunction>
         get() = declarations.filter { it is UFunction && it.kind == UastFunctionKind.CONSTRUCTOR } as List<UFunction>
 
+    /**
+     * Checks if the class is subclass of another.
+     *
+     * @param fqName qualified name of the class to check against
+     * @return true if the class is the *subclass* of the class with the specified [fqName],
+     *         false if the class qualified name is [fqName] or if the class is not a subclass of the class with the specified [fqName]
+     */
     fun isSubclassOf(fqName: String) : Boolean
 
+    /**
+     * Get the direct superclass of this class.
+     *
+     * @return null if the class has not a superclass (java.lang.Object).
+     */
     fun getSuperClass(context: UastContext): UClass?
 
     override fun accept(visitor: UastVisitor) {
@@ -57,24 +110,24 @@ interface UClass : UDeclaration, UFqNamed, UModifierOwner, UAnnotated {
         nameElement?.accept(visitor)
         declarations.acceptList(visitor)
         annotations.acceptList(visitor)
+        visitor.afterVisitClass(this)
     }
 
-    override fun renderString(): String {
-        val modifiers = listOf(UastModifier.ABSTRACT, UastModifier.FINAL, UastModifier.STATIC)
-                .filter { hasModifier(it) }.joinToString(" ") { it.name }.let { if (it.isBlank()) it else "$it " }
-
-        val name = if (isAnonymous) "" else " $name"
+    override fun renderString() = buildString {
+        appendWithSpace(visibility.name)
+        appendWithSpace(renderModifiers())
+        appendWithSpace(kind.text)
+        appendWithSpace(name)
 
         val declarations = if (declarations.isEmpty()) "" else buildString {
             appendln("{")
-            append(declarations.joinToString("\n") { it.renderString() }.withMargin)
+            append(declarations.joinToString("\n\n") { it.renderString().trim('\n') }.withMargin)
             append("\n}")
         }
-
-        return "${visibility.name} " + modifiers + kind.text + name + " " + declarations
+        append(declarations)
     }
 
-    override fun logString() = "UClass ($name, kind = ${kind.text})\n" + declarations.logString()
+    override fun logString() = log("UClass ($name, kind = ${kind.text})", declarations)
 }
 
 object UClassNotResolved : UClass {
@@ -88,7 +141,7 @@ object UClassNotResolved : UClass {
     override val defaultType = UastErrorType
     override val nameElement = null
     override val parent = null
-    override val name = "<class not resolved>"
+    override val name = ERROR_NAME
     override val fqName = null
     override val internalName = null
 

@@ -31,7 +31,6 @@ import java.io.File;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.uast.ULiteralExpression;
-import org.jetbrains.uast.check.UastAndroidUtils;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
 import org.jetbrains.uast.visitor.UastVisitor;
@@ -57,7 +56,7 @@ public class SdCardDetector extends Detector implements UastScanner {
             Severity.WARNING,
             new Implementation(
                     SdCardDetector.class,
-                    Scope.JAVA_FILE_SCOPE))
+                    Scope.SOURCE_FILE_SCOPE))
             .addMoreInfo(
             "http://developer.android.com/guide/topics/data/data-storage.html#filesExternal"); //$NON-NLS-1$
 
@@ -110,13 +109,13 @@ public class SdCardDetector extends Detector implements UastScanner {
                 || s.startsWith("file:///sdcard/")) {      //$NON-NLS-1$
                 String message = "Do not hardcode \"/sdcard/\"; " +
                                  "use `Environment.getExternalStorageDirectory().getPath()` instead";
-                Location location = UastAndroidUtils.getLocation(node);
+                Location location = mContext.getLocation(node);
                 mContext.report(ISSUE, node, location, message);
             } else if (s.startsWith("/data/data/")    //$NON-NLS-1$
                        || s.startsWith("/data/user/")) { //$NON-NLS-1$
                 String message = "Do not hardcode \"`/data/`\"; " +
                                  "use `Context.getFilesDir().getPath()` instead";
-                Location location = UastAndroidUtils.getLocation(node);
+                Location location = mContext.getLocation(node);
                 mContext.report(ISSUE, node, location, message);
             }
 

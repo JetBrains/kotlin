@@ -34,7 +34,6 @@ import org.jetbrains.uast.UFunction;
 import org.jetbrains.uast.UCallExpression;
 import org.jetbrains.uast.UType;
 import org.jetbrains.uast.check.UastAndroidContext;
-import org.jetbrains.uast.check.UastAndroidUtils;
 import org.jetbrains.uast.check.UastScanner;
 
 /**
@@ -44,7 +43,7 @@ public class DateFormatDetector extends Detector implements UastScanner {
 
     private static final Implementation IMPLEMENTATION = new Implementation(
             DateFormatDetector.class,
-            Scope.JAVA_FILE_SCOPE);
+            Scope.SOURCE_FILE_SCOPE);
 
     /** Constructing SimpleDateFormat without an explicit locale */
     public static final Issue DATE_FORMAT = Issue.create(
@@ -93,7 +92,7 @@ public class DateFormatDetector extends Detector implements UastScanner {
     @Override
     public void visitConstructor(UastAndroidContext context, UCallExpression functionCall, UFunction constructor) {
         if (!specifiesLocale(constructor)) {
-            Location location = UastAndroidUtils.getLocation(functionCall);
+            Location location = context.getLocation(functionCall);
             String message =
               "To get local formatting use `getDateInstance()`, `getDateTimeInstance()`, " +
               "or `getTimeInstance()`, or use `new SimpleDateFormat(String template, " +

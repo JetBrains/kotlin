@@ -13,8 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jetbrains.uast.kinds
+package org.jetbrains.uast
 
+/**
+ * Uast operator base inteface.
+ *
+ * @see [UastPrefixOperator], [UastPostfixOperator], [UastBinaryOperator]
+ */
 interface UastOperator {
+    /**
+     * Returns the operator text to render in [UElement.renderString].
+     */
     val text: String
 }

@@ -56,7 +56,7 @@ public class JavaPerformanceDetector extends Detector implements UastScanner {
     private static final Implementation
             IMPLEMENTATION = new Implementation(
             JavaPerformanceDetector.class,
-            Scope.JAVA_FILE_SCOPE);
+            Scope.SOURCE_FILE_SCOPE);
 
     /** Allocating objects during a paint method */
     public static final Issue PAINT_ALLOC = Issue.create(
@@ -227,7 +227,7 @@ public class JavaPerformanceDetector extends Detector implements UastScanner {
                 }
             }
 
-            if (mFlagAllocations && !(UastUtils.isThrow(node.getParent())) && mCheckAllocations) {
+            if (mFlagAllocations && !(node.getParent() instanceof UThrowExpression) && mCheckAllocations) {
                 // Make sure we're still inside the method declaration that marked
                 // mInDraw as true, in case we've left it and we're in a static
                 // block or something:

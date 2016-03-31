@@ -35,7 +35,6 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.uast.*;
 import org.jetbrains.uast.check.UastAndroidContext;
-import org.jetbrains.uast.check.UastAndroidUtils;
 import org.jetbrains.uast.check.UastScanner;
 import org.jetbrains.uast.visitor.UastVisitor;
 
@@ -47,7 +46,7 @@ public class CleanupDetector extends Detector implements UastScanner {
 
     private static final Implementation IMPLEMENTATION = new Implementation(
             CleanupDetector.class,
-            Scope.JAVA_FILE_SCOPE);
+            Scope.SOURCE_FILE_SCOPE);
 
     /** Problems with missing recycle calls */
     public static final Issue RECYCLE_RESOURCE = Issue.create(
@@ -156,8 +155,8 @@ public class CleanupDetector extends Detector implements UastScanner {
     }
 
     @Override
-    public void visitFunctionCall(UastAndroidContext context, UCallExpression node) {
-        if (node.functionNameMatches(BEGIN_TRANSACTION)) {
+    public void visitCall(UastAndroidContext context, UCallExpression node) {
+        if (node.matchesFunctionName(BEGIN_TRANSACTION)) {
             checkTransactionCommits(context, node);
         } else {
             checkResourceRecycled(context, node, node.getFunctionName());
@@ -245,7 +244,7 @@ public class CleanupDetector extends Detector implements UastScanner {
         FinishVisitor visitor = new FinishVisitor(context, boundVariable) {
             @Override
             protected boolean isCleanupCall(@NonNull UCallExpression call) {
-                if (!call.functionNameMatches(recycleName)) {
+                if (!call.matchesFunctionName(recycleName)) {
                     return false;
                 }
                 UDeclaration resolved = call.resolve(mContext);
@@ -286,7 +285,7 @@ public class CleanupDetector extends Detector implements UastScanner {
         }
         UElement locationNode = node instanceof UCallExpression ?
                 ((UCallExpression) node).getFunctionNameElement() : node;
-        Location location = UastAndroidUtils.getLocation(locationNode);
+        Location location = context.getLocation(locationNode);
         context.report(RECYCLE_RESOURCE, node, location, message);
     }
 
@@ -353,7 +352,7 @@ public class CleanupDetector extends Detector implements UastScanner {
             }
 
             String message = "This transaction should be completed with a `commit()` call";
-            context.report(COMMIT_FRAGMENT, node, UastAndroidUtils.getLocation(node.getFunctionReference()),
+            context.report(COMMIT_FRAGMENT, node, context.getLocation(node.getFunctionReference()),
                            message);
         }
         return false;
@@ -383,15 +382,15 @@ public class CleanupDetector extends Detector implements UastScanner {
     private static boolean isTransactionCommitMethodCall(@NonNull UastAndroidContext context,
             @NonNull UCallExpression call) {
 
-        return (call.functionNameMatches(COMMIT) || call.functionNameMatches(COMMIT_ALLOWING_LOSS)) &&
-                isMethodOnFragmentClass(context, call,
+        return (call.matchesFunctionName(COMMIT) || call.matchesFunctionName(COMMIT_ALLOWING_LOSS)) &&
+               isMethodOnFragmentClass(context, call,
                         FRAGMENT_TRANSACTION_CLS,
                         FRAGMENT_TRANSACTION_V4_CLS);
     }
 
     private static boolean isShowFragmentMethodCall(@NonNull UastAndroidContext context,
             @NonNull UCallExpression call) {
-        return call.functionNameMatches(SHOW)
+        return call.matchesFunctionName(SHOW)
                 && isMethodOnFragmentClass(context, call,
                 DIALOG_FRAGMENT, DIALOG_V4_FRAGMENT);
     }
@@ -435,8 +434,8 @@ public class CleanupDetector extends Detector implements UastScanner {
 
     private static boolean isBeginTransaction(@NonNull UastAndroidContext context,
             @NonNull UCallExpression node) {
-        assert node.functionNameMatches(BEGIN_TRANSACTION) : node.renderString();
-        if (node.functionNameMatches(BEGIN_TRANSACTION)) {
+        assert node.matchesFunctionName(BEGIN_TRANSACTION) : node.renderString();
+        if (node.matchesFunctionName(BEGIN_TRANSACTION)) {
             UFunction method = node.resolve(context);
             if (method != null) {
                 UClass containingClass = UastUtils.getContainingClassOrEmpty(method);
@@ -565,15 +564,13 @@ public class CleanupDetector extends Detector implements UastScanner {
         }
 
         @Override
-        public boolean visitSpecialExpressionList(@NotNull USpecialExpressionList node) {
-            if (node.getKind() == UastSpecialExpressionKind.RETURN) {
-                UExpression value = node.firstOrNull();
-                if (value instanceof USimpleReferenceExpression) {
-                    UDeclaration resolved = ((USimpleReferenceExpression) value).resolve(mContext);
-                    //noinspection SuspiciousMethodCalls
-                    if (resolved != null && mVariables.contains(resolved)) {
-                        mEscapes = true;
-                    }
+        public boolean visitReturnExpression(@NotNull UReturnExpression node) {
+            UExpression value = node.getReturnExpression();
+            if (value instanceof USimpleReferenceExpression) {
+                UDeclaration resolved = ((USimpleReferenceExpression) value).resolve(mContext);
+                //noinspection SuspiciousMethodCalls
+                if (resolved != null && mVariables.contains(resolved)) {
+                    mEscapes = true;
                 }
             }
 

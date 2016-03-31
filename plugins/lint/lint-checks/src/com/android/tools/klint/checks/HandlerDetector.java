@@ -31,9 +31,7 @@ import java.util.List;
 
 import org.jetbrains.uast.*;
 import org.jetbrains.uast.check.UastAndroidContext;
-import org.jetbrains.uast.check.UastAndroidUtils;
 import org.jetbrains.uast.check.UastScanner;
-import org.jetbrains.uast.kinds.UastClassKind;
 
 /**
  * Checks that Handler implementations are top level classes or static.
@@ -60,7 +58,7 @@ public class HandlerDetector extends Detector implements UastScanner {
             Severity.WARNING,
             new Implementation(
                     HandlerDetector.class,
-                    Scope.JAVA_FILE_SCOPE));
+                    Scope.SOURCE_FILE_SCOPE));
 
     private static final String LOOPER_CLS = "android.os.Looper";
     private static final String HANDLER_CLS = "android.os.Handler";
@@ -99,7 +97,7 @@ public class HandlerDetector extends Detector implements UastScanner {
         }
 
         UElement locationNode = node.getNameElement();
-        Location location = UastAndroidUtils.getLocation(locationNode);
+        Location location = context.getLocation(locationNode);
         context.report(ISSUE, node, location, String.format(
           "This Handler class should be static or leaks might occur (%1$s)",
           node.getName()));

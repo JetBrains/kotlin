@@ -15,7 +15,11 @@
  */
 package org.jetbrains.uast
 
-class UastQualifiedExpressionAccessType(val name: String) {
+/**
+ * Access types of [UQualifiedExpression].
+ * Additional type examples: Kotlin safe call (?.).
+ */
+open class UastQualifiedExpressionAccessType(val name: String) {
     companion object {
         @JvmField
         val SIMPLE = UastQualifiedExpressionAccessType(".")

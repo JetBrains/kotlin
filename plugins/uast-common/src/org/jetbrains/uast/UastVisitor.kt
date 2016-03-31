@@ -46,7 +46,6 @@ abstract class UastVisitor {
     open fun visitPrefixExpression(node: UPrefixExpression) = visitElement(node)
     open fun visitPostfixExpression(node: UPostfixExpression) = visitElement(node)
     open fun visitSpecialExpressionList(node: USpecialExpressionList) = visitElement(node)
-    open fun visitExpressionList(node: UExpressionList) = visitElement(node)
     open fun visitIfExpression(node: UIfExpression) = visitElement(node)
     open fun visitSwitchExpression(node: USwitchExpression) = visitElement(node)
     open fun visitSwitchClauseExpression(node: USwitchClauseExpression) = visitElement(node)
@@ -58,11 +57,66 @@ abstract class UastVisitor {
     open fun visitLiteralExpression(node: ULiteralExpression) = visitElement(node)
     open fun visitThisExpression(node: UThisExpression) = visitElement(node)
     open fun visitSuperExpression(node: USuperExpression) = visitElement(node)
+    open fun visitReturnExpression(node: UReturnExpression) = visitElement(node)
+    open fun visitBreakExpression(node: UBreakExpression) = visitElement(node)
+    open fun visitContinueExpression(node: UContinueExpression) = visitElement(node)
+    open fun visitThrowExpression(node: UThrowExpression) = visitElement(node)
     open fun visitArrayAccessExpression(node: UArrayAccessExpression) = visitElement(node)
     open fun visitCallableReferenceExpression(node: UCallableReferenceExpression) = visitElement(node)
     open fun visitClassLiteralExpression(node: UClassLiteralExpression) = visitElement(node)
     open fun visitLambdaExpression(node: ULambdaExpression) = visitElement(node)
     open fun visitObjectLiteralExpression(node: UObjectLiteralExpression) = visitElement(node)
+
+    // After
+
+    open fun afterVisitElement(node: UElement) {}
+
+    open fun afterVisitFile(node: UFile) {}
+    open fun afterVisitImportStatement(node: UImportStatement) {}
+    open fun afterVisitAnnotation(node: UAnnotation) {}
+    open fun afterVisitCatchClause(node: UCatchClause) {}
+    open fun afterVisitType(node: UType) {}
+
+    // Declarations
+    open fun afterVisitClass(node: UClass) {}
+    open fun afterVisitFunction(node: UFunction) {}
+    open fun afterVisitVariable(node: UVariable) {}
+
+
+    // Expressions
+    open fun afterVisitLabeledExpression(node: ULabeledExpression) {}
+    open fun afterVisitDeclarationsExpression(node: UDeclarationsExpression) {}
+    open fun afterVisitBlockExpression(node: UBlockExpression) {}
+    open fun afterVisitQualifiedExpression(node: UQualifiedExpression) {}
+    open fun afterVisitSimpleReferenceExpression(node: USimpleReferenceExpression) {}
+    open fun afterVisitCallExpression(node: UCallExpression) {}
+    open fun afterVisitBinaryExpression(node: UBinaryExpression) {}
+    open fun afterVisitBinaryExpressionWithType(node: UBinaryExpressionWithType) {}
+    open fun afterVisitParenthesizedExpression(node: UParenthesizedExpression) {}
+    open fun afterVisitUnaryExpression(node: UUnaryExpression) {}
+    open fun afterVisitPrefixExpression(node: UPrefixExpression) {}
+    open fun afterVisitPostfixExpression(node: UPostfixExpression) {}
+    open fun afterVisitSpecialExpressionList(node: USpecialExpressionList) {}
+    open fun afterVisitIfExpression(node: UIfExpression) {}
+    open fun afterVisitSwitchExpression(node: USwitchExpression) {}
+    open fun afterVisitSwitchClauseExpression(node: USwitchClauseExpression) {}
+    open fun afterVisitWhileExpression(node: UWhileExpression) {}
+    open fun afterVisitDoWhileExpression(node: UDoWhileExpression) {}
+    open fun afterVisitForExpression(node: UForExpression) {}
+    open fun afterVisitForEachExpression(node: UForEachExpression) {}
+    open fun afterVisitTryExpression(node: UTryExpression) {}
+    open fun afterVisitLiteralExpression(node: ULiteralExpression) {}
+    open fun afterVisitThisExpression(node: UThisExpression) {}
+    open fun afterVisitSuperExpression(node: USuperExpression) {}
+    open fun afterVisitReturnExpression(node: UReturnExpression) {}
+    open fun afterVisitBreakExpression(node: UBreakExpression) {}
+    open fun afterVisitContinueExpression(node: UContinueExpression) {}
+    open fun afterVisitThrowExpression(node: UThrowExpression) {}
+    open fun afterVisitArrayAccessExpression(node: UArrayAccessExpression) {}
+    open fun afterVisitCallableReferenceExpression(node: UCallableReferenceExpression) {}
+    open fun afterVisitClassLiteralExpression(node: UClassLiteralExpression) {}
+    open fun afterVisitLambdaExpression(node: ULambdaExpression) {}
+    open fun afterVisitObjectLiteralExpression(node: UObjectLiteralExpression) {}
 }
 
 object EmptyUastVisitor : UastVisitor()

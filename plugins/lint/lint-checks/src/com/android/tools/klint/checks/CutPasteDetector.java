@@ -38,7 +38,6 @@ import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.uast.*;
 import org.jetbrains.uast.check.UastAndroidContext;
-import org.jetbrains.uast.check.UastAndroidUtils;
 import org.jetbrains.uast.check.UastScanner;
 import org.jetbrains.uast.visitor.UastVisitor;
 
@@ -63,7 +62,7 @@ public class CutPasteDetector extends Detector implements UastScanner {
             Severity.WARNING,
             new Implementation(
                     CutPasteDetector.class,
-                    Scope.JAVA_FILE_SCOPE));
+                    Scope.SOURCE_FILE_SCOPE));
 
     private UFunction mLastMethod;
     private Map<String, UCallExpression> mIds;
@@ -88,7 +87,7 @@ public class CutPasteDetector extends Detector implements UastScanner {
     }
 
     @Override
-    public void visitFunctionCall(UastAndroidContext context, UCallExpression node) {
+    public void visitCall(UastAndroidContext context, UCallExpression node) {
         String lhs = getLhs(node);
         if (lhs == null) {
             return;
@@ -129,8 +128,8 @@ public class CutPasteDetector extends Detector implements UastScanner {
                         if (!isReachableFrom(method, earlierCall, node)) {
                             return;
                         }
-                        Location location = UastAndroidUtils.getLocation(node);
-                        Location secondary = UastAndroidUtils.getLocation(earlierCall);
+                        Location location = context.getLocation(node);
+                        Location secondary = context.getLocation(earlierCall);
                         if (location != null && secondary != null) {
                             secondary.setMessage("First usage here");
                             location.setSecondary(secondary);

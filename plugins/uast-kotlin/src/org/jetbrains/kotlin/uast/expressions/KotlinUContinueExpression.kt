@@ -14,22 +14,18 @@
  * limitations under the License.
  */
 
-package org.jetbrains.uast.kinds
+package org.jetbrains.kotlin.uast.expressions
 
-class UastImportKind(val text: String) {
+import org.jetbrains.kotlin.psi.KtContinueExpression
+import org.jetbrains.kotlin.uast.KotlinAbstractUElement
+import org.jetbrains.uast.UContinueExpression
+import org.jetbrains.uast.UElement
+import org.jetbrains.uast.psi.PsiElementBacked
 
-    companion object {
-        @JvmField
-        val CLASS = UastImportKind("class")
-
-        @JvmField
-        val MEMBER = UastImportKind("member")
-
-        @JvmField
-        val UNKNOWN = UastImportKind("unknown")
-    }
-
-    override fun toString(): String{
-        return "UastImportKind(text='$text')"
-    }
+class KotlinUContinueExpression(
+        override val psi: KtContinueExpression,
+        override val parent: UElement
+) : KotlinAbstractUElement(), UContinueExpression, PsiElementBacked {
+    override val label: String?
+        get() = psi.getLabelName()
 }

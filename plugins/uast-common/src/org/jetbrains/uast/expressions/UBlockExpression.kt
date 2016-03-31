@@ -17,12 +17,19 @@ package org.jetbrains.uast
 
 import org.jetbrains.uast.visitor.UastVisitor
 
+/**
+ * Represents the code block expression: `{ /* code */ }`.
+ */
 interface UBlockExpression : UExpression {
+    /**
+     * Returns the list of block expressions.
+     */
     val expressions: List<UExpression>
 
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitBlockExpression(this)) return
         expressions.acceptList(visitor)
+        visitor.afterVisitBlockExpression(this)
     }
 
     override fun logString() = log("UBlockExpression", expressions)

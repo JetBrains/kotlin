@@ -15,9 +15,10 @@
  */
 package org.jetbrains.uast
 
-import org.jetbrains.uast.kinds.UastOperator
-
-class UastPostfixOperator(override val text: String): UastOperator {
+/**
+ * [UPostfixExpression] operators.
+ */
+open class UastPostfixOperator(override val text: String): UastOperator {
     companion object {
         @JvmField
         val INC = UastPostfixOperator("++")

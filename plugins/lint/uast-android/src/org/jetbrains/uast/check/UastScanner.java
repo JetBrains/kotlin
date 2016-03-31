@@ -30,7 +30,7 @@ public interface UastScanner {
     List<String> getApplicableSuperClasses();
     List<String> getApplicableConstructorTypes();
 
-    void visitFunctionCall(UastAndroidContext context, UCallExpression node);
+    void visitCall(UastAndroidContext context, UCallExpression node);
     void visitClass(UastAndroidContext context, UClass node);
     void visitConstructor(UastAndroidContext context, UCallExpression functionCall, UFunction constructor);
 

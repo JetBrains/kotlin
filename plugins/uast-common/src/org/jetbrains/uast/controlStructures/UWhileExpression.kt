@@ -17,13 +17,26 @@ package org.jetbrains.uast
 
 import org.jetbrains.uast.visitor.UastVisitor
 
+/**
+ * Represents a
+ *
+ * `while (condition) {
+ *      // body
+ *  }`
+ *
+ *  expression.
+ */
 interface UWhileExpression : ULoopExpression {
+    /**
+     * Returns the loop condition.
+     */
     val condition: UExpression
 
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitWhileExpression(this)) return
         condition.accept(visitor)
         body.accept(visitor)
+        visitor.afterVisitWhileExpression(this)
     }
 
     override fun renderString() = buildString {

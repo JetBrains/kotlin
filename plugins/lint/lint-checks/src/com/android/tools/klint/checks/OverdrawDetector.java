@@ -486,16 +486,7 @@ public class OverdrawDetector extends LayoutDetector implements UastScanner {
             String name = node.getName();
             if (mActivities != null && mActivities.contains(mClassFqn) || name.endsWith(ACTIVITY)
                 || node.isSubclassOf(CLASS_ACTIVITY)) {
-                String packageName = "";
-                if (node.getParent() instanceof UFile) {
-                    UFile file = (UFile) node.getParent();
-                    if (file.getPackageFqName() == null) {
-                        return true;
-                    }
-                    packageName = file.getPackageFqName();
-                }
-                mClassFqn = (!packageName.isEmpty() ? (packageName + '.') : "") + name;
-
+                mClassFqn = node.getFqName();
                 return false;
             }
 

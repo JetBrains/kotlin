@@ -226,7 +226,7 @@ public enum Scope {
     /** Scope-set used for detectors which scan all resources */
     public static final EnumSet<Scope> ALL_RESOURCES_SCOPE = EnumSet.of(ALL_RESOURCE_FILES);
     /** Scope-set used for detectors which are affected by a single Java source file */
-    public static final EnumSet<Scope> JAVA_FILE_SCOPE = EnumSet.of(SOURCE_FILE);
+    public static final EnumSet<Scope> SOURCE_FILE_SCOPE = EnumSet.of(SOURCE_FILE);
     /** Scope-set used for detectors which are affected by a single Java class file */
     public static final EnumSet<Scope> CLASS_FILE_SCOPE = EnumSet.of(CLASS_FILE);
     /** Scope-set used for detectors which are affected by a single Gradle build file */

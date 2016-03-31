@@ -1044,7 +1044,7 @@ public class LintDriver {
             }
             for (File file : files) {
                 Context context = new Context(this, project, main, file);
-                fireEvent(EventType.SCANNING_FILE, context);
+                fireEvent(LintListener.EventType.SCANNING_FILE, context);
                 for (Detector detector : detectors) {
                     if (detector.appliesTo(context, file)) {
                         detector.beforeCheckFile(context);
@@ -1437,7 +1437,7 @@ public class LintDriver {
         if (!sources.isEmpty()) {
             List<JavaContext> contexts = Lists.newArrayListWithExpectedSize(sources.size());
             for (File file : sources) {
-                JavaContext context = new JavaContext(this, project, main, file, javaParser);
+                JavaContext context = new JavaContext(this, project, main, file);
                 contexts.add(context);
             }
 
@@ -2377,7 +2377,7 @@ public class LintDriver {
                             return true;
                         }
                     } else if (valueNode instanceof UCallExpression
-                               && ((UCallExpression)valueNode).getKind() == JavaUastCallKinds.ARRAY_INITIALIZER) {
+                               && ((UCallExpression)valueNode).getKind() == UastCallKind.ARRAY_INITIALIZER) {
                         UCallExpression array = (UCallExpression) valueNode;
                         List<UExpression> expressions = array.getValueArguments();
                         for (UExpression arrayElement : expressions) {

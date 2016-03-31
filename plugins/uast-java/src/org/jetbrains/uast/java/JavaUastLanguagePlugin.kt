@@ -18,6 +18,7 @@ package org.jetbrains.uast.java
 
 import com.intellij.psi.*
 import org.jetbrains.uast.*
+import org.jetbrains.uast.java.expressions.JavaUSynchronizedExpression
 
 object JavaUastLanguagePlugin : UastLanguagePlugin {
     override val converter: UastConverter = JavaConverter
@@ -44,8 +45,6 @@ internal object JavaConverter : UastConverter {
         val parentUElement = convertWithParent(parent) ?: return null
         return convertPsiElement(element, parentUElement)
     }
-
-    fun convertAnnotation(annotation: PsiAnnotation) = convertWithParent(annotation) as UAnnotation
 
     private fun convertPsiElement(element: PsiElement?, parent: UElement) = when (element) {
         is PsiJavaFile -> JavaUFile(element)
@@ -115,7 +114,7 @@ internal object JavaConverter : UastConverter {
         val referenceNameElement = expression.element ?: expression
 
         return JavaUCompositeQualifiedExpression(parent).apply {
-            receiver = expression.qualifier?.let { convert(it, this) } as? UExpression ?: EmptyExpression(parent)
+            receiver = expression.qualifier?.let { convert(it, this) } as? UExpression ?: EmptyUExpression(parent)
             selector = JavaUSimpleReferenceExpression(referenceNameElement, referenceName, this)
         }
     }
@@ -185,42 +184,30 @@ internal object JavaConverter : UastConverter {
         is PsiSwitchStatement -> JavaUSwitchExpression(statement, parent)
         is PsiSwitchLabelStatement -> {
             if (statement.isDefaultCase)
-                SimpleUDefaultSwitchClauseExpression(parent)
-            else JavaUExpressionSwitchClauseExpression(statement, parent)
+                DefaultUSwitchClauseExpression(parent)
+            else JavaUCaseSwitchClauseExpression(statement, parent)
         }
         is PsiWhileStatement -> JavaUWhileExpression(statement, parent)
         is PsiDoWhileStatement -> JavaUDoWhileExpression(statement, parent)
         is PsiForStatement -> JavaUForExpression(statement, parent)
         is PsiForeachStatement -> JavaUForEachExpression(statement, parent)
-        is PsiBreakStatement -> JavaUSpecialExpressionList.Empty(statement, UastSpecialExpressionKind.BREAK, parent)
-        is PsiContinueStatement -> JavaUSpecialExpressionList.Empty(statement, UastSpecialExpressionKind.CONTINUE, parent)
-        is PsiReturnStatement -> JavaUSpecialExpressionList(statement, UastSpecialExpressionKind.RETURN, parent).apply {
-            expressions = singletonListOrEmpty(convertOrNull(statement.returnValue, this))
-        }
-        is PsiAssertStatement -> JavaUSpecialExpressionList(statement, JavaSpecialExpressionKinds.ASSERT, parent).apply {
-            expressions = listOf(
-                    convertOrEmpty(statement.assertCondition, this),
-                    convertOrEmpty(statement.assertDescription, this))
-        }
-        is PsiThrowStatement -> JavaUSpecialExpressionList(statement, UastSpecialExpressionKind.THROW, parent).apply {
-            expressions = singletonListOrEmpty(convertOrNull(statement.exception, this))
-        }
-        is PsiSynchronizedStatement -> JavaUSpecialExpressionList(statement, JavaSpecialExpressionKinds.SYNCHRONIZED, parent).apply {
-            expressions = listOf(
-                    convertOrEmpty(statement.lockExpression, this),
-                    convertOrEmpty(statement.body, this))
-        }
+        is PsiBreakStatement -> JavaUBreakExpression(statement, parent)
+        is PsiContinueStatement -> JavaUContinueExpression(statement, parent)
+        is PsiReturnStatement -> JavaUReturnExpression(statement, parent)
+        is PsiAssertStatement -> JavaUAssertExpression(statement, parent)
+        is PsiThrowStatement -> JavaUThrowExpression(statement, parent)
+        is PsiSynchronizedStatement -> JavaUSynchronizedExpression(statement, parent)
         is PsiTryStatement -> JavaUTryExpression(statement, parent)
 
         else -> UnknownJavaExpression(statement, parent)
     }
 
     internal fun convertOrEmpty(statement: PsiStatement?, parent: UElement): UExpression {
-        return if (statement != null) convert(statement, parent) else EmptyExpression(parent)
+        return if (statement != null) convert(statement, parent) else EmptyUExpression(parent)
     }
 
     internal fun convertOrEmpty(expression: PsiExpression?, parent: UElement): UExpression {
-        return if (expression != null) convert(expression, parent) else EmptyExpression(parent)
+        return if (expression != null) convert(expression, parent) else EmptyUExpression(parent)
     }
 
     internal fun convertOrNull(expression: PsiExpression?, parent: UElement): UExpression? {
@@ -228,7 +215,7 @@ internal object JavaConverter : UastConverter {
     }
 
     internal fun convertOrEmpty(block: PsiCodeBlock?, parent: UElement): UExpression {
-        return if (block != null) convert(block, parent) else EmptyExpression(parent)
+        return if (block != null) convert(block, parent) else EmptyUExpression(parent)
     }
 
     private fun convertDeclarations(elements: Array<out PsiElement>, parent: UElement): SimpleUDeclarationsExpression {

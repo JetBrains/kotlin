@@ -14,8 +14,16 @@
  * limitations under the License.
  */
 
-package org.jetbrains.uast.check
+package org.jetbrains.kotlin.uast
 
-import org.jetbrains.uast.UastAdditionalChecker
+import org.jetbrains.kotlin.psi.KtReturnExpression
+import org.jetbrains.uast.UElement
+import org.jetbrains.uast.UReturnExpression
+import org.jetbrains.uast.psi.PsiElementBacked
 
-interface AndroidUastAdditionalChecker : UastAdditionalChecker
+class KotlinUReturnExpression(
+        override val psi: KtReturnExpression,
+        override val parent: UElement
+) : KotlinAbstractUElement(), UReturnExpression, PsiElementBacked, KotlinUElementWithType {
+    override val returnExpression by lz { KotlinConverter.convertOrNull(psi.returnedExpression, this) }
+}

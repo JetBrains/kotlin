@@ -40,7 +40,6 @@ import org.jetbrains.uast.UClass;
 import org.jetbrains.uast.UFunction;
 import org.jetbrains.uast.UastUtils;
 import org.jetbrains.uast.check.UastAndroidContext;
-import org.jetbrains.uast.check.UastAndroidUtils;
 import org.jetbrains.uast.check.UastScanner;
 
 public class AppCompatCallDetector extends Detector implements UastScanner {
@@ -53,7 +52,7 @@ public class AppCompatCallDetector extends Detector implements UastScanner {
             Category.CORRECTNESS, 6, Severity.WARNING,
             new Implementation(
                     AppCompatCallDetector.class,
-                    Scope.JAVA_FILE_SCOPE)).
+                    Scope.SOURCE_FILE_SCOPE)).
             addMoreInfo("http://developer.android.com/tools/support-library/index.html");
 
     private static final String GET_ACTION_BAR = "getActionBar";
@@ -94,26 +93,26 @@ public class AppCompatCallDetector extends Detector implements UastScanner {
     }
 
     @Override
-    public void visitFunctionCall(UastAndroidContext context, UCallExpression node) {
+    public void visitCall(UastAndroidContext context, UCallExpression node) {
         if (mDependsOnAppCompat && isAppBarActivityCall(context, node)) {
             String replace = null;
-            if (node.functionNameMatches(GET_ACTION_BAR)) {
+            if (node.matchesFunctionName(GET_ACTION_BAR)) {
                 replace = "getSupportActionBar";
-            } else if (node.functionNameMatches(START_ACTION_MODE)) {
+            } else if (node.matchesFunctionName(START_ACTION_MODE)) {
                 replace = "startSupportActionMode";
-            } else if (node.functionNameMatches(SET_PROGRESS_BAR_VIS)) {
+            } else if (node.matchesFunctionName(SET_PROGRESS_BAR_VIS)) {
                 replace = "setSupportProgressBarVisibility";
-            } else if (node.functionNameMatches(SET_PROGRESS_BAR_IN_VIS)) {
+            } else if (node.matchesFunctionName(SET_PROGRESS_BAR_IN_VIS)) {
                 replace = "setSupportProgressBarIndeterminateVisibility";
-            } else if (node.functionNameMatches(SET_PROGRESS_BAR_INDETERMINATE)) {
+            } else if (node.matchesFunctionName(SET_PROGRESS_BAR_INDETERMINATE)) {
                 replace = "setSupportProgressBarIndeterminate";
-            } else if (node.functionNameMatches(REQUEST_WINDOW_FEATURE)) {
+            } else if (node.matchesFunctionName(REQUEST_WINDOW_FEATURE)) {
                 replace = "supportRequestWindowFeature";
             }
 
             if (replace != null) {
                 String message = String.format(ERROR_MESSAGE_FORMAT, replace, node.getFunctionName());
-                context.report(ISSUE, node, UastAndroidUtils.getLocation(node), message);
+                context.report(ISSUE, node, context.getLocation(node), message);
             }
         }
     }

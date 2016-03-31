@@ -17,13 +17,24 @@ package org.jetbrains.uast
 
 import org.jetbrains.uast.visitor.UastVisitor
 
+/**
+ * Represents an expression with the label specified.
+ */
 interface ULabeledExpression : UExpression {
+    /**
+     * Returns the expression label.
+     */
     val label: String
+
+    /**
+     * Returns the expression itself.
+     */
     val expression: UExpression
 
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitLabeledExpression(this)) return
         expression.accept(visitor)
+        visitor.afterVisitLabeledExpression(this)
     }
 
     override fun evaluate() = expression.evaluate()

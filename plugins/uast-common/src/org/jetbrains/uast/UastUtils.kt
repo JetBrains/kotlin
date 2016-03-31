@@ -16,15 +16,28 @@
 @file:JvmName("UastUtils")
 package org.jetbrains.uast
 
-import org.jetbrains.uast.kinds.UastClassKind
 import org.jetbrains.uast.visitor.UastVisitor
 
+internal val ERROR_NAME = "<error>"
+
+/**
+ * Returns the containing class of an element.
+ *
+ * @return the containing [UClass] element,
+ *         or null if the receiver is null, or it is a top-level declaration.
+ */
 tailrec fun UElement?.getContainingClass(): UClass? {
     val parent = this?.parent ?: return null
     if (parent is UClass) return parent
     return parent.getContainingClass()
 }
 
+/**
+ * Returns the containing file of an element.
+ *
+ * @return the containing [UFile] element,
+ *         or null if the receiver is null, or the element is not inside a [UFile] (it is abmormal).
+ */
 tailrec fun UElement?.getContainingFile(): UFile? {
     val parent = this?.parent ?: return null
     if (parent is UFile) return parent
@@ -33,20 +46,45 @@ tailrec fun UElement?.getContainingFile(): UFile? {
 
 fun UElement?.getContainingClassOrEmpty() = getContainingClass() ?: UClassNotResolved
 
+/**
+ * Returns the containing function of an element.
+ *
+ * @return the containing [UFunction] element,
+ *         or null if the receiver is null, or the element is not inside a [UFunction].
+ */
 tailrec fun UElement?.getContainingFunction(): UFunction? {
     val parent = this?.parent ?: return null
     if (parent is UFunction) return parent
     return parent.getContainingFunction()
 }
 
+/**
+ * Returns the containing declaration of an element.
+ *
+ * @return the containing [UDeclaration] element,
+ *         or null if the receiver is null, or the element is a top-level declaration.
+ */
 tailrec fun UElement?.getContainingDeclaration(): UDeclaration? {
     val parent = this?.parent ?: return null
     if (parent is UDeclaration) return parent
     return parent.getContainingDeclaration()
 }
 
+/**
+ * Checks if the element is a top-level declaration.
+ *
+ * @return true if the element is a top-level declaration, false otherwise.
+ */
 fun UDeclaration.isTopLevel() = parent is UFile
 
+/**
+ * Builds the log message for the [UElement.logString] function.
+ *
+ * @param firstLine the message line (the interface name, some optional information).
+ * @param nested nested UElements. Could be `List<UElement>`, [UElement] or `null`.
+ * @throws IllegalStateException if the [nested] argument is invalid.
+ * @return the rendered log string.
+ */
 fun UElement.log(firstLine: String, vararg nested: Any?): String {
     return (if (firstLine.isBlank()) "" else firstLine + "\n") + nested.joinToString("\n") {
         when (it) {
@@ -74,12 +112,27 @@ fun UClass.findFunctions(name: String) = declarations.filter { it is UFunction &
 
 fun UCallExpression.getReceiver(): UExpression? = (this.parent as? UQualifiedExpression)?.receiver
 
+/**
+ * Resolves the receiver element if it implements [UResolvable].
+ *
+ * @return the resolved element, or null if the element was not resolved, or if the receiver element is not an [UResolvable].
+ */
 fun UElement.resolveIfCan(context: UastContext): UDeclaration? = (this as? UResolvable)?.resolve(context)
 
-fun UElement.isThrow() = this is USpecialExpressionList && this.kind == UastSpecialExpressionKind.THROW
-
+/**
+ * Find an annotation with the required qualified name.
+ *
+ * @param fqName the qualified name to search
+ * @return [UAnnotation] element if the annotation with the specified [fqName] was found, null otherwise.
+ */
 fun UAnnotated.findAnnotation(fqName: String) = annotations.firstOrNull { it.fqName == fqName }
 
+/**
+ * Get all class declarations (including supertypes).
+ *
+ * @param context the Uast context
+ * @return the list of declarations for the receiver class
+ */
 fun UClass.getAllDeclarations(context: UastContext): List<UDeclaration> = mutableListOf<UDeclaration>().apply {
     this += declarations
     for (superType in superTypes) {
@@ -107,14 +160,6 @@ fun UCallExpression.getQualifiedCallElement(): UExpression {
     return findParent(parent as? UExpression) ?: this
 }
 
-val UDeclaration.fqName: String
-    get() {
-        val containingFqName = this.getContainingDeclaration()?.fqName
-                ?: this.getContainingFile()?.packageFqName
-        val containingFqNameWithDot = containingFqName?.let { it + "." } ?: ""
-        return containingFqNameWithDot + this.name
-    }
-
 inline fun <reified T: UElement> UElement.getParentOfType(): T? = getParentOfType(T::class.java)
 
 fun <T: UElement> UElement.getParentOfType(clazz: Class<T>): T? {
@@ -133,10 +178,9 @@ fun <T: UElement> UElement.getParentOfType(clazz: Class<T>): T? {
 
 fun <T> UClass.findStaticMemberOfType(name: String, type: Class<out T>): T? {
     for (companion in companions) {
-        val classKind = companion.kind as? UastClassKind.UastCompanionObject ?: continue
-        if (!classKind.default) continue
-
-        val member = companion.declarations.firstOrNull { it.name == name && type.isInstance(it) }
+        val member = companion.declarations.firstOrNull {
+            it.name == name && type.isInstance(it) && it is UModifierOwner && it.hasModifier(UastModifier.STATIC)
+        }
         @Suppress("UNCHECKED_CAST")
         if (member != null) return member as T
     }
@@ -146,4 +190,52 @@ fun <T> UClass.findStaticMemberOfType(name: String, type: Class<out T>): T? {
         it.name == name && it is UModifierOwner
                 && it.hasModifier(UastModifier.STATIC) && type.isInstance(it)
     } as T
+}
+
+fun UExpression.asQualifiedIdentifiers(): List<String>? {
+    var error = false
+    val list = mutableListOf<String>()
+    fun addIdentifiers(expr: UQualifiedExpression) {
+        val receiver = expr.receiver
+        val selector = expr.selector as? USimpleReferenceExpression ?: run { error = true; return }
+        when (receiver) {
+            is UQualifiedExpression -> addIdentifiers(receiver)
+            is USimpleReferenceExpression -> list += receiver.identifier
+            else -> {
+                error = true
+                return
+            }
+        }
+        list += selector.identifier
+    }
+    when (this) {
+        is UQualifiedExpression -> addIdentifiers(this)
+        is USimpleReferenceExpression -> listOf(identifier)
+        else -> return null
+    }
+    return if (error) null else list
+}
+
+fun UExpression.matchesQualified(fqName: String): Boolean {
+    val identifiers = this.asQualifiedIdentifiers() ?: return false
+    val passedIdentifiers = fqName.split('.')
+    return identifiers == passedIdentifiers
+}
+
+fun UExpression.startsWithQualified(fqName: String): Boolean {
+    val identifiers = this.asQualifiedIdentifiers() ?: return false
+    val passedIdentifiers = fqName.split('.')
+    identifiers.forEachIndexed { i, identifier ->
+        if (identifier != passedIdentifiers[i]) return false
+    }
+    return true
+}
+
+fun UExpression.endsWithQualified(fqName: String): Boolean {
+    val identifiers = this.asQualifiedIdentifiers() ?: return false
+    val passedIdentifiers = fqName.split('.')
+    identifiers.forEachIndexed { i, identifier ->
+        if (identifier != passedIdentifiers[i]) return false
+    }
+    return true
 }

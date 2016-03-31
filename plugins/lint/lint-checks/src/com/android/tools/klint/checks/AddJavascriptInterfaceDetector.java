@@ -34,7 +34,6 @@ import com.android.tools.klint.detector.api.Scope;
 import com.android.tools.klint.detector.api.Severity;
 import com.android.tools.klint.detector.api.Speed;
 import org.jetbrains.uast.*;
-import org.jetbrains.uast.check.UastAndroidUtils;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
 
@@ -54,20 +53,20 @@ public class AddJavascriptInterfaceDetector extends Detector implements UastScan
             Severity.WARNING,
             new Implementation(
                     AddJavascriptInterfaceDetector.class,
-                    Scope.JAVA_FILE_SCOPE)).
+                    Scope.SOURCE_FILE_SCOPE)).
             addMoreInfo(
                     "https://labs.mwrinfosecurity.com/blog/2013/09/24/webview-addjavascriptinterface-remote-code-execution/");
 
     private static final String WEB_VIEW = "android.webkit.WebView"; //$NON-NLS-1$
     private static final String ADD_JAVASCRIPT_INTERFACE = "addJavascriptInterface"; //$NON-NLS-1$
 
-    // ---- Implements UastScanner ----
-
     @NonNull
     @Override
     public Speed getSpeed() {
         return Speed.FAST;
     }
+
+    // ---- Implements UastScanner ----
 
     @Nullable
     @Override
@@ -76,11 +75,13 @@ public class AddJavascriptInterfaceDetector extends Detector implements UastScan
     }
 
     @Override
-    public void visitFunctionCall(UastAndroidContext context, UCallExpression node) {
+    public void visitCall(UastAndroidContext context, UCallExpression node) {
+        // Ignore the issue if we never build for any API less than 17.
         if (context.getLintContext().getMainProject().getMinSdk() >= 17) {
             return;
         }
 
+        // Ignore if the method doesn't fit our description.
         UFunction resolvedFunction = node.resolveOrEmpty(context);
         UClass containingClass = UastUtils.getContainingClassOrEmpty(resolvedFunction);
         if (!containingClass.isSubclassOf(WEB_VIEW)) {
@@ -95,6 +96,6 @@ public class AddJavascriptInterfaceDetector extends Detector implements UastScan
 
         String message = "`WebView.addJavascriptInterface` should not be called with minSdkVersion < 17 for security reasons: " +
                          "JavaScript can use reflection to manipulate application";
-        context.report(ISSUE, node, UastAndroidUtils.getLocation(node), message);
+        context.report(ISSUE, node, context.getLocation(node), message);
     }
 }

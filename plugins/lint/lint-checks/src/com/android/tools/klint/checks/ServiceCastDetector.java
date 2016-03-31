@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.jetbrains.uast.*;
-import org.jetbrains.uast.check.UastAndroidUtils;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
 
@@ -55,7 +54,7 @@ public class ServiceCastDetector extends Detector implements UastScanner {
             Severity.FATAL,
             new Implementation(
                     ServiceCastDetector.class,
-                    Scope.JAVA_FILE_SCOPE));
+                    Scope.SOURCE_FILE_SCOPE));
 
     /** Constructs a new {@link ServiceCastDetector} check */
     public ServiceCastDetector() {
@@ -75,7 +74,7 @@ public class ServiceCastDetector extends Detector implements UastScanner {
     }
 
     @Override
-    public void visitFunctionCall(UastAndroidContext context, UCallExpression node) {
+    public void visitCall(UastAndroidContext context, UCallExpression node) {
         UExpression receiver = UastUtils.getQualifiedCallElement(node);
         UElement parent = receiver.getParent();
         if (!(parent instanceof UBinaryExpressionWithType)
@@ -103,7 +102,7 @@ public class ServiceCastDetector extends Detector implements UastScanner {
                     String message = String.format(
                       "Suspicious cast to `%1$s` for a `%2$s`: expected `%3$s`",
                       stripPackage(castType), name, stripPackage(expectedClass));
-                    context.report(ISSUE, node, UastAndroidUtils.getLocation(cast), message);
+                    context.report(ISSUE, node, context.getLocation(cast), message);
                 }
             }
         }

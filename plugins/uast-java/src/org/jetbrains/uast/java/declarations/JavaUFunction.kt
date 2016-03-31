@@ -57,7 +57,7 @@ class JavaUFunction(
     override val visibility: UastVisibility
         get() = psi.getVisibility()
     
-    override val body by lz { JavaConverter.convertOrEmpty(psi.body, this) }
+    override val body by lz { psi.body?.let { JavaConverter.convert(it, this) } }
 
     override val bytecodeDescriptor by lz { getDescriptor(psi) }
 

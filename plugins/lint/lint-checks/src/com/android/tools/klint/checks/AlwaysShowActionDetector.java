@@ -38,6 +38,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.uast.UElement;
 import org.jetbrains.uast.UQualifiedExpression;
 import org.jetbrains.uast.USimpleReferenceExpression;
+import org.jetbrains.uast.UastUtils;
 import org.jetbrains.uast.check.UastAndroidUtils;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
@@ -220,22 +221,22 @@ public class AlwaysShowActionDetector extends ResourceXmlDetector implements Uas
             boolean isIfRoom = description.equals("SHOW_AS_ACTION_IF_ROOM"); //$NON-NLS-1$
             boolean isAlways = description.equals("SHOW_AS_ACTION_ALWAYS");  //$NON-NLS-1$
             if ((isIfRoom || isAlways)
-                && node.getReceiver().renderString().equals("MenuItem")) { //$NON-NLS-1$
+                && UastUtils.endsWithQualified(node.getReceiver(), "MenuItem")) { //$NON-NLS-1$
                 if (isAlways) {
                     JavaContext lintContext = mContext.getLintContext();
                     if (lintContext.getDriver().isSuppressed(lintContext, ISSUE, node)) {
-                        return false;
+                        return super.visitQualifiedExpression(node);
                     }
                     if (mAlwaysFields == null) {
                         mAlwaysFields = new ArrayList<Location>();
                     }
-                    mAlwaysFields.add(UastAndroidUtils.getLocation(node));
+                    mAlwaysFields.add(mContext.getLocation(node));
                 } else {
                     mHasIfRoomRefs = true;
                 }
             }
 
-            return false;
+            return super.visitQualifiedExpression(node);
         }
     }
 }

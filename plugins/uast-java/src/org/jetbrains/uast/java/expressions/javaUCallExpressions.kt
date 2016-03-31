@@ -57,8 +57,8 @@ class JavaConstructorUCallExpression(
 ) : JavaAbstractUElement(), UCallExpression, PsiElementBacked, JavaUElementWithType {
     override val kind by lz {
         when {
-            psi.arrayInitializer != null -> JavaUastCallKinds.ARRAY_INITIALIZER
-            psi.arrayDimensions.isNotEmpty() -> JavaUastCallKinds.ARRAY_DIMENSIONS
+            psi.arrayInitializer != null -> JavaUastCallKinds.NEW_ARRAY_WITH_INITIALIZER
+            psi.arrayDimensions.isNotEmpty() -> JavaUastCallKinds.NEW_ARRAY_DIMENTIONS
             else -> UastCallKind.CONSTRUCTOR_CALL
         }
     }
@@ -104,7 +104,7 @@ class JavaConstructorUCallExpression(
         get() {
             val initializer = psi.arrayInitializer
             return if (initializer != null)
-                "<newArray>"
+                "<newArrayWithInitializer>"
             else if (psi.arrayDimensions.isNotEmpty())
                 "<newArrayWithDimensions>"
             else null
@@ -141,7 +141,7 @@ class JavaArrayInitializerUCallExpression(
         get() = emptyList()
 
     override val kind: UastCallKind
-        get() = JavaUastCallKinds.ARRAY_INITIALIZER
+        get() = UastCallKind.ARRAY_INITIALIZER
 
     override fun resolve(context: UastContext) = null
 }
@@ -150,7 +150,8 @@ class JavaAnnotationArrayInitializerUCallExpression(
         override val psi: PsiArrayInitializerMemberValue,
         override val parent: UElement
 ) : JavaAbstractUElement(), UCallExpression, PsiElementBacked, JavaUElementWithType, JavaEvaluatableUElement {
-    override val kind = JavaUastCallKinds.ARRAY_INITIALIZER
+    override val kind: UastCallKind
+        get() = UastCallKind.ARRAY_INITIALIZER
 
     override val functionReference: USimpleReferenceExpression?
         get() = null

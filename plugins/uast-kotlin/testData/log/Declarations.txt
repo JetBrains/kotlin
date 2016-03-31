@@ -1,22 +1,36 @@
-UFile (package = null)
+UFile (package = )
     UClass (Declarations, kind = class)
-        UFunction (<init>, kind = CONSTRUCTOR, paramCount = 0)
+        UFunction (<init>, kind = constructor, paramCount = 0)
             EmptyExpression
         UVariable (a, kind = member)
             ULiteralExpression ("a")
+        UVariable (b, kind = member)
+            EmptyExpression
+        UVariable (c, kind = member)
+            EmptyExpression
         UClass (NestedClass, kind = class)
-            UFunction (<init>, kind = CONSTRUCTOR, paramCount = 0)
+            UFunction (<init>, kind = constructor, paramCount = 0)
                 EmptyExpression
             UVariable (b, kind = member)
                 ULiteralExpression ("b")
         UClass (InnerClass, kind = class)
-            UFunction (<init>, kind = CONSTRUCTOR, paramCount = 0)
+            UFunction (<init>, kind = constructor, paramCount = 0)
                 EmptyExpression
             UVariable (c, kind = member)
                 USimpleReferenceExpression (a)
+        UClass (Companion, kind = companion object)
+            UFunction (<init>, kind = constructor, paramCount = 0)
+                EmptyExpression
+            UVariable (CONST_VAL, kind = member)
+                ULiteralExpression (1)
+        UClass (A, kind = companion object)
+            UFunction (<init>, kind = constructor, paramCount = 0)
+                EmptyExpression
+            UFunction (b, kind = function, paramCount = 0)
+                ULiteralExpression (true)
         UFunction (func, kind = function, paramCount = 2)
             UBlockExpression
-                USpecialExpressionList (return)
+                UReturnExpression
                     UBinaryExpression (*)
                         UParenthesizedExpression
                             UBinaryExpression (+)

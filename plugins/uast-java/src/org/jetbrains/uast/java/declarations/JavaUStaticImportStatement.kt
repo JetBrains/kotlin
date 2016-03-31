@@ -20,7 +20,6 @@ import org.jetbrains.uast.UDeclaration
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UImportStatement
 import org.jetbrains.uast.UastContext
-import org.jetbrains.uast.kinds.UastImportKind
 import org.jetbrains.uast.psi.PsiElementBacked
 
 class JavaUStaticImportStatement(
@@ -29,9 +28,6 @@ class JavaUStaticImportStatement(
 ) : JavaAbstractUElement(), UImportStatement, PsiElementBacked {
     override val fqNameToImport: String?
         get() = psi.referenceName
-
-    override val kind: UastImportKind
-        get() = UastImportKind.MEMBER
 
     override val isStarImport: Boolean
         get() = psi.isOnDemand

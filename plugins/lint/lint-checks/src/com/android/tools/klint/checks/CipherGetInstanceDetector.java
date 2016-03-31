@@ -32,7 +32,6 @@ import java.util.Set;
 
 import org.jetbrains.uast.*;
 import org.jetbrains.uast.check.UastAndroidContext;
-import org.jetbrains.uast.check.UastAndroidUtils;
 import org.jetbrains.uast.check.UastScanner;
 
 /**
@@ -50,7 +49,7 @@ public class CipherGetInstanceDetector extends Detector implements UastScanner {
             Severity.WARNING,
             new Implementation(
                     CipherGetInstanceDetector.class,
-                    Scope.JAVA_FILE_SCOPE));
+                    Scope.SOURCE_FILE_SCOPE));
 
     private static final String CIPHER = "javax.crypto.Cipher"; //$NON-NLS-1$
     private static final String GET_INSTANCE = "getInstance"; //$NON-NLS-1$
@@ -72,7 +71,7 @@ public class CipherGetInstanceDetector extends Detector implements UastScanner {
     }
 
     @Override
-    public void visitFunctionCall(UastAndroidContext context, UCallExpression node) {
+    public void visitCall(UastAndroidContext context, UCallExpression node) {
         UClass containingClass = UastUtils.getContainingClass(node);
         if (containingClass == null || !containingClass.isSubclassOf(CIPHER)) {
             return;
@@ -107,13 +106,13 @@ public class CipherGetInstanceDetector extends Detector implements UastScanner {
         if (ALGORITHM_ONLY.contains(value)) {
             String message = "`Cipher.getInstance` should not be called without setting the"
                     + " encryption mode and padding";
-            context.report(ISSUE, call, UastAndroidUtils.getLocation(arg), message);
+            context.report(ISSUE, call, context.getLocation(arg), message);
         } else if (value.contains(ECB)) {
             String message = "ECB encryption mode should not be used";
             if (includeValue) {
                 message += " (was \"" + value + "\")";
             }
-            context.report(ISSUE, call, UastAndroidUtils.getLocation(arg), message);
+            context.report(ISSUE, call, context.getLocation(arg), message);
         }
     }
 }

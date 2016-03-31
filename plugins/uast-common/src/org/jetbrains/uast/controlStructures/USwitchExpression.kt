@@ -17,14 +17,35 @@ package org.jetbrains.uast
 
 import org.jetbrains.uast.visitor.UastVisitor
 
+/**
+ * Represents a
+ *
+ * ` switch (expression) {
+ *       case value1 -> expr1
+ *       case value2 -> expr2
+ *       ...
+ *       else -> exprElse
+ *   }
+ *
+ *   conditional expression.
+ */
 interface USwitchExpression : UExpression {
+    /*
+        Returns the expression on which the `switch` expression is performed.
+     */
     val expression: UExpression?
+
+    /*
+        Returns the switch body.
+        Body should contain [USwitchClauseExpression] expressions.
+     */
     val body: UExpression
 
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitSwitchExpression(this)) return
         expression?.accept(visitor)
         body.accept(visitor)
+        visitor.afterVisitSwitchExpression(this)
     }
 
     override fun logString() = log("USwitchExpression", expression, body)
@@ -35,23 +56,47 @@ interface USwitchExpression : UExpression {
     }
 }
 
-interface USwitchClauseExpression : UExpression
-
-interface UExpressionSwitchClauseExpression : USwitchClauseExpression {
-    val caseValue: UExpression
+/**
+ * Represents a [USwitchExpression] clause.
+ * [USwitchClauseExpression] does not contain the clause body,
+ *     and the actual body expression should be the next element in the parent expression list.
+ */
+interface USwitchClauseExpression : UExpression {
+    /**
+     * Returns the list of values for this clause, or null if the are no values for this close
+     *     (for example, for the `else` clause).
+     */
+    val caseValues: List<UExpression>?
 
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitSwitchClauseExpression(this)) return
-        caseValue.accept(visitor)
+        caseValues?.acceptList(visitor)
+        visitor.afterVisitSwitchClauseExpression(this)
     }
 
-    override fun renderString() = caseValue.renderString() + " -> "
-    override fun logString() = log("UExpressionSwitchClauseExpression", caseValue)
+    override fun renderString() = (caseValues?.joinToString { it.renderString() } ?: "else") + " -> "
+    override fun logString() = log("USwitchClauseExpression", caseValues)
 }
 
-interface UDefaultSwitchClauseExpression : USwitchClauseExpression {
-    override fun logString() = "UDefaultSwitchClause"
-    override fun renderString() = "else -> "
-}
+/**
+ * Represents a [USwitchExpression] clause with the body.
+ * [USwitchClauseExpressionWithBody], comparing with [USwitchClauseExpression], contains the body expression.
+ *
+ * Implementing this interface *is the right way* to support `switch` clauses in your language.
+ */
+interface USwitchClauseExpressionWithBody : USwitchClauseExpression {
+    /**
+     * Returns the body expression for this clause.
+     */
+    val body: UExpression
 
-class SimpleUDefaultSwitchClauseExpression(override val parent: UElement) : UDefaultSwitchClauseExpression
+    override fun accept(visitor: UastVisitor) {
+        if (visitor.visitSwitchClauseExpression(this)) return
+        caseValues?.acceptList(visitor)
+        body.accept(visitor)
+        visitor.afterVisitSwitchClauseExpression(this)
+    }
+
+    override fun renderString() = (caseValues?.joinToString { it.renderString() } ?: "else") + " -> " + body.renderString()
+    override fun logString() = log("USwitchClauseExpressionWithBody", caseValues, body)
+}

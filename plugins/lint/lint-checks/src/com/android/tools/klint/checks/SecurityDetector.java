@@ -52,7 +52,6 @@ import com.android.tools.klint.detector.api.XmlContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.uast.UCallExpression;
 import org.jetbrains.uast.USimpleReferenceExpression;
-import org.jetbrains.uast.check.UastAndroidUtils;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
 import org.jetbrains.uast.visitor.UastVisitor;
@@ -75,7 +74,7 @@ public class SecurityDetector extends Detector implements Detector.XmlScanner, U
 
     private static final Implementation IMPLEMENTATION_JAVA = new Implementation(
             SecurityDetector.class,
-            Scope.JAVA_FILE_SCOPE);
+            Scope.SOURCE_FILE_SCOPE);
 
     /** Exported services */
     public static final Issue EXPORTED_SERVICE = Issue.create(
@@ -366,12 +365,12 @@ public class SecurityDetector extends Detector implements Detector.XmlScanner, U
             @Override
             public boolean visitSimpleReferenceExpression(@NotNull USimpleReferenceExpression node) {
                 if ("MODE_WORLD_WRITEABLE".equals(node.getIdentifier())) { //$NON-NLS-1$
-                    Location location = UastAndroidUtils.getLocation(node);
+                    Location location = mContext.getLocation(node);
                     mContext.report(WORLD_WRITEABLE, node, location,
                                     "Using `MODE_WORLD_WRITEABLE` when creating files can be " +
                                     "risky, review carefully");
                 } else if ("MODE_WORLD_READABLE".equals(node.getIdentifier())) { //$NON-NLS-1$
-                    Location location = UastAndroidUtils.getLocation(node);
+                    Location location = mContext.getLocation(node);
                     mContext.report(WORLD_READABLE, node, location,
                                     "Using `MODE_WORLD_READABLE` when creating files can be " +
                                     "risky, review carefully");

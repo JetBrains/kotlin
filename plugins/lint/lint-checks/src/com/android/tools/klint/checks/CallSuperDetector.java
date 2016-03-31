@@ -37,7 +37,6 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.uast.*;
 import org.jetbrains.uast.check.UastAndroidContext;
-import org.jetbrains.uast.check.UastAndroidUtils;
 import org.jetbrains.uast.check.UastScanner;
 import org.jetbrains.uast.visitor.UastVisitor;
 
@@ -51,7 +50,7 @@ public class CallSuperDetector extends Detector implements UastScanner {
 
     private static final Implementation IMPLEMENTATION = new Implementation(
             CallSuperDetector.class,
-            Scope.JAVA_FILE_SCOPE);
+            Scope.SOURCE_FILE_SCOPE);
 
     /** Missing call to super */
     public static final Issue ISSUE = Issue.create(
@@ -103,7 +102,7 @@ public class CallSuperDetector extends Detector implements UastScanner {
                 String methodName = declaration.getName();
                 String message = "Overriding method should call `super."
                         + methodName + "`";
-                Location location = UastAndroidUtils.getLocation(declaration.getNameElement());
+                Location location = context.getLocation(declaration.getNameElement());
                 context.report(ISSUE, declaration, location, message);
             }
         }
@@ -148,12 +147,12 @@ public class CallSuperDetector extends Detector implements UastScanner {
         UFunction superMethod = directSuper;
         while (superMethod != null) {
             for (UAnnotation annotation : superMethod.getAnnotations()) {
-                annotation = SupportAnnotationDetector.getRelevantAnnotation(context, annotation);
+                annotation = SupportAnnotationDetector.getRelevantAnnotation(annotation, context);
                 if (annotation != null) {
-                    String signature = annotation.getFqName();
-                    if (CALL_SUPER_ANNOTATION.equals(signature)) {
+                    String fqName = annotation.getFqName();
+                    if (CALL_SUPER_ANNOTATION.equals(fqName)) {
                         return directSuper;
-                    } else if (signature != null && signature.endsWith(".OverrideMustInvoke")) {
+                    } else if (fqName != null && fqName.endsWith(".OverrideMustInvoke")) {
                         // Handle findbugs annotation on the fly too
                         return directSuper;
                     }
@@ -169,7 +168,8 @@ public class CallSuperDetector extends Detector implements UastScanner {
     /** Visits a method and determines whether the method calls its super method */
     private static class SuperCallVisitor extends UastVisitor {
         private final UastAndroidContext mContext;
-        private final String mMethodFqName;
+        private final String mMethodContainingClassFqName;
+        private final String mMethodName;
         private boolean mCallsSuper;
 
         public static boolean callsSuper(
@@ -181,9 +181,10 @@ public class CallSuperDetector extends Detector implements UastScanner {
             return visitor.mCallsSuper;
         }
 
-        private SuperCallVisitor(@NonNull UastAndroidContext context, @NonNull UFunction method) {
+        private SuperCallVisitor(@NonNull UastAndroidContext context, @NonNull UFunction function) {
             mContext = context;
-            mMethodFqName = UastUtils.getFqName(method);
+            mMethodContainingClassFqName = UastUtils.getContainingClassOrEmpty(function).getFqName();
+            mMethodName = function.getName();
         }
 
         @Override
@@ -193,7 +194,7 @@ public class CallSuperDetector extends Detector implements UastScanner {
 
             if (receiver instanceof USuperExpression && selector instanceof UCallExpression) {
                 UFunction resolvedFunction = ((UCallExpression) selector).resolve(mContext);
-                if (mMethodFqName.equals(UastUtils.getFqName(resolvedFunction))) {
+                if (resolvedFunction != null && resolvedFunction.matchesNameWithContaining(mMethodContainingClassFqName, mMethodName)) {
                     mCallsSuper = true;
                     return true;
                 }

@@ -30,6 +30,7 @@ class KotlinUPrefixExpression(
     override val operand by lz { KotlinConverter.convertOrEmpty(psi.baseExpression, this) }
 
     override val operator = when (psi.operationToken) {
+        KtTokens.EXCL -> UastPrefixOperator.LOGICAL_NOT
         KtTokens.PLUS -> UastPrefixOperator.UNARY_PLUS
         KtTokens.MINUS -> UastPrefixOperator.UNARY_MINUS
         KtTokens.PLUSPLUS -> UastPrefixOperator.INC

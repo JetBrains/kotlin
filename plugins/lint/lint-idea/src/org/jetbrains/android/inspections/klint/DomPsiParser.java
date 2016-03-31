@@ -57,13 +57,13 @@ class DomPsiParser extends XmlParser {
 
   @Override
   public int getNodeStartOffset(@NonNull XmlContext context, @NonNull Node node) {
-    TextRange textRange = org.jetbrains.android.inspections.klint.DomPsiConverter.getTextRange(node);
+    TextRange textRange = DomPsiConverter.getTextRange(node);
     return textRange.getStartOffset();
   }
 
   @Override
   public int getNodeEndOffset(@NonNull XmlContext context, @NonNull Node node) {
-    TextRange textRange = org.jetbrains.android.inspections.klint.DomPsiConverter.getTextRange(node);
+    TextRange textRange = DomPsiConverter.getTextRange(node);
     return textRange.getEndOffset();
   }
 
@@ -92,7 +92,7 @@ class DomPsiParser extends XmlParser {
     XmlFile xmlFile = (XmlFile)psiFile;
 
     try {
-      return org.jetbrains.android.inspections.klint.DomPsiConverter.convert(xmlFile);
+      return DomPsiConverter.convert(xmlFile);
     } catch (Throwable t) {
       myClient.log(t, "Failed converting PSI parse tree to DOM for file %1$s",
                    context.file.getPath());
@@ -103,7 +103,7 @@ class DomPsiParser extends XmlParser {
   @NonNull
   @Override
   public Location getLocation(@NonNull XmlContext context, @NonNull Node node) {
-    TextRange textRange = org.jetbrains.android.inspections.klint.DomPsiConverter.getTextRange(node);
+    TextRange textRange = DomPsiConverter.getTextRange(node);
     Position start = new DefaultPosition(-1, -1, textRange.getStartOffset());
     Position end = new DefaultPosition(-1, -1, textRange.getEndOffset());
     return Location.create(context.file, start, end);
@@ -112,7 +112,7 @@ class DomPsiParser extends XmlParser {
   @NonNull
   @Override
   public Location getLocation(@NonNull XmlContext context, @NonNull Node node, int startDelta, int endDelta) {
-    TextRange textRange = org.jetbrains.android.inspections.klint.DomPsiConverter.getTextRange(node);
+    TextRange textRange = DomPsiConverter.getTextRange(node);
     Position start = new DefaultPosition(-1, -1, textRange.getStartOffset() + startDelta);
     Position end = new DefaultPosition(-1, -1, textRange.getStartOffset() + endDelta);
     return Location.create(context.file, start, end);
@@ -121,7 +121,7 @@ class DomPsiParser extends XmlParser {
   @NonNull
   @Override
   public Location getNameLocation(@NonNull XmlContext context, @NonNull Node node) {
-    TextRange textRange = org.jetbrains.android.inspections.klint.DomPsiConverter.getTextNameRange(node);
+    TextRange textRange = DomPsiConverter.getTextNameRange(node);
     Position start = new DefaultPosition(-1, -1, textRange.getStartOffset());
     Position end = new DefaultPosition(-1, -1, textRange.getEndOffset());
     return Location.create(context.file, start, end);
@@ -130,7 +130,7 @@ class DomPsiParser extends XmlParser {
   @NonNull
   @Override
   public Location getValueLocation(@NonNull XmlContext context, @NonNull Attr node) {
-    TextRange textRange = org.jetbrains.android.inspections.klint.DomPsiConverter.getTextValueRange(node);
+    TextRange textRange = DomPsiConverter.getTextValueRange(node);
     Position start = new DefaultPosition(-1, -1, textRange.getStartOffset());
     Position end = new DefaultPosition(-1, -1, textRange.getEndOffset());
     return Location.create(context.file, start, end);
@@ -163,7 +163,7 @@ class DomPsiParser extends XmlParser {
           }
         });
       }
-      TextRange textRange = org.jetbrains.android.inspections.klint.DomPsiConverter.getTextRange(myNode);
+      TextRange textRange = DomPsiConverter.getTextRange(myNode);
       Position start = new DefaultPosition(-1, -1, textRange.getStartOffset());
       Position end = new DefaultPosition(-1, -1, textRange.getEndOffset());
       return Location.create(myFile, start, end);

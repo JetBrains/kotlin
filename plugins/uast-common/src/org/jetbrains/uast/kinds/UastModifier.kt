@@ -15,7 +15,12 @@
  */
 package org.jetbrains.uast
 
-class UastModifier(val name: String) {
+/**
+ * Uast declaration modifiers.
+ *
+ * @see UModifierOwner
+ */
+open class UastModifier(val name: String) {
     companion object {
         @JvmField
         val ABSTRACT = UastModifier("abstract")
@@ -24,9 +29,13 @@ class UastModifier(val name: String) {
         @JvmField
         val FINAL = UastModifier("final")
         @JvmField
+        val IMMUTABLE = UastModifier("immutable")
+        @JvmField
         val VARARG = UastModifier("vararg")
         @JvmField
         val OVERRIDE = UastModifier("override")
+
+        val VALUES = listOf(ABSTRACT, STATIC, FINAL, IMMUTABLE, VARARG, OVERRIDE)
     }
 
     override fun toString(): String{

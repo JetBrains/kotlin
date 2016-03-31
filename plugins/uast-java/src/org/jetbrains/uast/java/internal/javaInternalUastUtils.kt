@@ -33,6 +33,12 @@ internal fun PsiModifierListOwner.hasModifier(modifier: UastModifier): Boolean {
     if (modifier == UastModifier.VARARG && this is PsiParameter) {
         return this.isVarArgs
     }
+    if (modifier == UastModifier.IMMUTABLE && this is PsiVariable) {
+        return this.hasModifierProperty(PsiModifier.FINAL)
+    }
+    if (modifier == UastModifier.FINAL && this is PsiVariable) {
+        return false;
+    }
     val javaModifier = MODIFIER_MAP[modifier] ?: return false
     return hasModifierProperty(javaModifier)
 }
@@ -58,7 +64,6 @@ internal fun IElementType.getOperatorType() = when (this) {
     JavaTokenType.PERC -> UastBinaryOperator.MOD
     JavaTokenType.OR -> UastBinaryOperator.BITWISE_OR
     JavaTokenType.AND -> UastBinaryOperator.BITWISE_AND
-    JavaTokenType.TILDE -> UastBinaryOperator.BITWISE_XOR
     JavaTokenType.EQEQ -> UastBinaryOperator.IDENTITY_EQUALS
     JavaTokenType.NE -> UastBinaryOperator.IDENTITY_NOT_EQUALS
     JavaTokenType.GT -> UastBinaryOperator.GREATER
@@ -72,6 +77,7 @@ internal fun IElementType.getOperatorType() = when (this) {
     JavaTokenType.MINUSEQ -> UastBinaryOperator.MINUS_ASSIGN
     JavaTokenType.ASTERISKEQ -> UastBinaryOperator.MULTIPLY_ASSIGN
     JavaTokenType.DIVEQ -> UastBinaryOperator.DIVIDE_ASSIGN
+    JavaTokenType.PERCEQ -> UastBinaryOperator.REMAINDER_ASSIGN
     JavaTokenType.ANDEQ -> UastBinaryOperator.AND_ASSIGN
     JavaTokenType.XOREQ -> UastBinaryOperator.XOR_ASSIGN
     JavaTokenType.OREQ -> UastBinaryOperator.OR_ASSIGN

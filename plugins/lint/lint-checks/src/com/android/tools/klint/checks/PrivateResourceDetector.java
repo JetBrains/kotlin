@@ -81,7 +81,7 @@ public class PrivateResourceDetector extends ResourceXmlDetector implements Uast
     private static final Implementation IMPLEMENTATION = new Implementation(
             PrivateResourceDetector.class,
             Scope.SOURCE_AND_RESOURCE_FILES,
-            Scope.JAVA_FILE_SCOPE,
+            Scope.SOURCE_FILE_SCOPE,
             Scope.RESOURCE_FILE_SCOPE);
 
     /** The main issue discovered by this detector */
@@ -259,7 +259,7 @@ public class PrivateResourceDetector extends ResourceXmlDetector implements Uast
     }
 
     @Override
-    public void beforeCheckProject(@NonNull Context context) {
+    public void beforeCheckFile(@NonNull Context context) {
         File file = context.file;
         boolean isXmlFile = LintUtils.isXmlFile(file);
         if (!isXmlFile && !LintUtils.isBitmapFile(file)) {

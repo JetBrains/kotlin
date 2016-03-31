@@ -15,8 +15,9 @@
  */
 package org.jetbrains.uast
 
-import org.jetbrains.uast.kinds.UastOperator
-
+/**
+ * Kinds of operators in [UBinaryExpression].
+ */
 open class UastBinaryOperator(override val text: String): UastOperator {
     class LogicalOperator(text: String): UastBinaryOperator(text)
     class ComparationOperator(text: String): UastBinaryOperator(text)
@@ -105,7 +106,7 @@ open class UastBinaryOperator(override val text: String): UastOperator {
         
         @JvmField
         val DIVIDE_ASSIGN = AssignOperator("/=")
-        
+
         @JvmField
         val REMAINDER_ASSIGN = AssignOperator("%=")
         

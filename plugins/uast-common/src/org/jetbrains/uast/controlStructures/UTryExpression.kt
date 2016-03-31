@@ -17,10 +17,45 @@ package org.jetbrains.uast
 
 import org.jetbrains.uast.visitor.UastVisitor
 
+/**
+ * Represents
+ *
+ * `try {
+ *      // tryClause body
+ *  } catch (e: Type1, Type2 ... TypeN) {
+ *      // catchClause1 body
+ *  } ... {
+ *  finally {
+ *      //finallyBody
+ *  }`
+ *
+ *  and
+ *
+ *  `try (resource1, ..., resourceN) {
+ *      // tryClause body
+ *  }`
+ *
+ *  expressions.
+ */
 interface UTryExpression : UExpression {
+    /**
+     * Returns the list of try resources, or null if this expression is not a `try-with-resources` expression.
+     */
     val resources: List<UElement>?
+
+    /**
+     * Returns the `try` clause expression.
+     */
     val tryClause: UExpression
+
+    /**
+     * Returns the `catch` clauses [UCatchClause] expression list.
+     */
     val catchClauses: List<UCatchClause>
+
+    /**
+     * Returns the `finally` clause expression, or null if the `finally` clause is absent.
+     */
     val finallyClause: UExpression?
 
     override fun accept(visitor: UastVisitor) {
@@ -29,13 +64,14 @@ interface UTryExpression : UExpression {
         tryClause.accept(visitor)
         catchClauses.acceptList(visitor)
         finallyClause?.accept(visitor)
+        visitor.afterVisitTryExpression(this)
     }
 
     override fun renderString() = buildString {
         append("try ")
-        appendln(tryClause.renderString())
-        catchClauses.forEach { appendln(it.renderString()) }
-        finallyClause?.let { append("finally ").append(it.renderString()) }
+        appendln(tryClause.renderString().trim('\n'))
+        catchClauses.forEach { appendln(it.renderString().trim('\n')) }
+        finallyClause?.let { append("finally ").append(it.renderString().trim('\n')) }
     }
 
     override fun logString() = "UTryExpression\n" +
@@ -44,9 +80,23 @@ interface UTryExpression : UExpression {
             (finallyClause?.let { it.logString().withMargin } ?: "<no finally clause>" )
 }
 
+/**
+ * Represents the `catch` clause in [UTryExpression].
+ */
 interface UCatchClause : UElement {
+    /**
+     * Returns the `catch` clause body expression.
+     */
     val body: UExpression
+
+    /**
+     * Returns the exception parameter variables for this `catch` clause.
+     */
     val parameters: List<UVariable>
+
+    /**
+     * Returns the exception types for this `catch` clause.
+     */
     val types: List<UType>
 
     override fun accept(visitor: UastVisitor) {
@@ -54,6 +104,7 @@ interface UCatchClause : UElement {
         body.accept(visitor)
         parameters.acceptList(visitor)
         types.acceptList(visitor)
+        visitor.afterVisitCatchClause(this)
     }
 
     override fun logString() = log("UCatchClause", body)

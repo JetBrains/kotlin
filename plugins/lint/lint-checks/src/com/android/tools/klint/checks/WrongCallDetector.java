@@ -37,7 +37,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.jetbrains.uast.*;
-import org.jetbrains.uast.check.UastAndroidUtils;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
 
@@ -58,7 +57,7 @@ public class WrongCallDetector extends Detector implements UastScanner {
             Severity.FATAL,
             new Implementation(
                     WrongCallDetector.class,
-                    Scope.JAVA_FILE_SCOPE));
+                    Scope.SOURCE_FILE_SCOPE));
 
     /** Constructs a new {@link WrongCallDetector} */
     public WrongCallDetector() {
@@ -83,7 +82,7 @@ public class WrongCallDetector extends Detector implements UastScanner {
     }
 
     @Override
-    public void visitFunctionCall(UastAndroidContext context, UCallExpression node) {
+    public void visitCall(UastAndroidContext context, UCallExpression node) {
         // Call is only allowed if it is both only called on the super class (invoke special)
         // as well as within the same overriding method (e.g. you can't call super.onLayout
         // from the onMeasure method)
@@ -130,7 +129,7 @@ public class WrongCallDetector extends Detector implements UastScanner {
                 // Keep in sync with {@link #getOldValue} and {@link #getNewValue} below!
                 "Suspicious method call; should probably call \"`%1$s`\" rather than \"`%2$s`\"",
                 suggestion, name);
-        context.report(ISSUE, node, UastAndroidUtils.getLocation(node.getFunctionReference()), message);
+        context.report(ISSUE, node, context.getLocation(node.getFunctionReference()), message);
     }
 
     /**

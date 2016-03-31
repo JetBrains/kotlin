@@ -23,4 +23,7 @@ object KotlinBinaryOperators {
     val IN = UastBinaryOperator("in")
     @JvmField
     val NOT_IN = UastBinaryOperator("!in")
+
+    @JvmField
+    val RANGE_TO = UastBinaryOperator("..")
 }

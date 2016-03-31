@@ -35,7 +35,6 @@ import java.util.List;
 
 import org.jetbrains.uast.*;
 import org.jetbrains.uast.check.UastAndroidContext;
-import org.jetbrains.uast.check.UastAndroidUtils;
 import org.jetbrains.uast.check.UastScanner;
 
 /**
@@ -43,7 +42,7 @@ import org.jetbrains.uast.check.UastScanner;
  */
 public class LogDetector extends Detector implements UastScanner {
     private static final Implementation IMPLEMENTATION = new Implementation(
-          LogDetector.class, Scope.JAVA_FILE_SCOPE);
+          LogDetector.class, Scope.SOURCE_FILE_SCOPE);
 
 
     /** Log call missing surrounding if */
@@ -113,7 +112,7 @@ public class LogDetector extends Detector implements UastScanner {
     }
 
     @Override
-    public void visitFunctionCall(UastAndroidContext context, UCallExpression node) {
+    public void visitCall(UastAndroidContext context, UCallExpression node) {
         UFunction method = node.resolve(context);
         if (method == null) {
             return;
@@ -137,7 +136,7 @@ public class LogDetector extends Detector implements UastScanner {
                                            "conditional: surround with `if (Log.isLoggable(...))` or " +
                                            "`if (BuildConfig.DEBUG) { ... }`",
                                            node.getFunctionName());
-            context.report(CONDITIONAL, node, UastAndroidUtils.getLocation(node), message);
+            context.report(CONDITIONAL, node, context.getLocation(node), message);
         }
 
         // Check tag length
@@ -156,7 +155,7 @@ public class LogDetector extends Detector implements UastScanner {
                     String message = String.format(
                       "The logging tag can be at most 23 characters, was %1$d (%2$s)",
                       tag.length(), tag);
-                    context.report(LONG_TAG, node, UastAndroidUtils.getLocation(node), message);
+                    context.report(LONG_TAG, node, context.getLocation(node), message);
                 }
             }
         }
@@ -276,8 +275,8 @@ public class LogDetector extends Detector implements UastScanner {
             }
 
             if (!isOk) {
-                Location location = UastAndroidUtils.getLocation(logTag);
-                Location alternate = UastAndroidUtils.getLocation(isLoggableTag);
+                Location location = context.getLocation(logTag);
+                Location alternate = context.getLocation(isLoggableTag);
                 if (location != null && alternate != null) {
                     alternate.setMessage("Conflicting tag");
                     location.setSecondary(alternate);
@@ -305,7 +304,10 @@ public class LogDetector extends Detector implements UastScanner {
         }
         String levelString = isLoggableLevel.toString();
         if (isLoggableLevel instanceof UQualifiedExpression) {
-            levelString = ((UQualifiedExpression)isLoggableLevel).getSelector().renderString();
+            String identifier = ((UQualifiedExpression)isLoggableLevel).getSelectorAsIdentifier();
+            if (identifier != null) {
+                levelString = identifier;
+            }
         }
         if (levelString.isEmpty()) {
             return;
@@ -331,8 +333,8 @@ public class LogDetector extends Detector implements UastScanner {
                 "Mismatched logging levels: when checking `isLoggable` level `%1$s`, the " +
                 "corresponding log call should be `Log.%2$s`, not `Log.%3$s`",
                 levelString, expectedCall, logCallName);
-        Location location = UastAndroidUtils.getLocation(logCall.getFunctionNameElement());
-        Location alternate = UastAndroidUtils.getLocation(isLoggableLevel);
+        Location location = context.getLocation(logCall.getFunctionNameElement());
+        Location alternate = context.getLocation(isLoggableLevel);
         if (location != null && alternate != null) {
             alternate.setMessage("Conflicting tag");
             location.setSecondary(alternate);

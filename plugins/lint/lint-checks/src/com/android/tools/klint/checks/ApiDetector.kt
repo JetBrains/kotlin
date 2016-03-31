@@ -199,7 +199,8 @@ open class ApiDetector : Detector(), UastScanner {
 
     companion object {
         private val AOSP_BUILD = System.getenv("ANDROID_BUILD_TOP") != null
-        private val SDK_INT_FQNAME = "android.os.Build.VERSION.SDK_INT"
+        private val SDK_INT_CONTAINING = "android.os.Build.VERSION"
+        private val SDK_INT = "SDK_INT"
 
         tailrec fun getLocalMinSdk(scope: UElement?): Int {
             if (scope == null) return -1
@@ -223,7 +224,7 @@ open class ApiDetector : Detector(), UastScanner {
                             val value = (valueNode as ULiteralExpression).value as String
                             return SdkVersionInfo.getApiByBuildCode(value, true)
                         } else if (valueNode is UQualifiedExpression) {
-                            val codename = valueNode.selector.renderString()
+                            val codename = valueNode.getSelectorAsIdentifier();
                             return SdkVersionInfo.getApiByBuildCode(codename, true)
                         } else if (valueNode is USimpleReferenceExpression) {
                             val codename = valueNode.identifier;
@@ -239,8 +240,8 @@ open class ApiDetector : Detector(), UastScanner {
         fun isCheckedExplicitly(context: UastAndroidContext, requiredVersion: Int, node: UElement): Boolean {
             tailrec fun UExpression.isSdkIntReference(): Boolean = when (this) {
                 is UParenthesizedExpression -> expression.isSdkIntReference()
-                is USimpleReferenceExpression -> resolve(context)?.fqName == SDK_INT_FQNAME
-                is UQualifiedExpression -> resolve(context)?.fqName == SDK_INT_FQNAME
+                is USimpleReferenceExpression -> resolve(context)?.matchesNameWithContaining(SDK_INT_CONTAINING, SDK_INT) ?: false
+                is UQualifiedExpression -> resolve(context)?.matchesNameWithContaining(SDK_INT_CONTAINING, SDK_INT) ?: false
                 else -> false
             }
 
@@ -305,8 +306,8 @@ open class ApiDetector : Detector(), UastScanner {
                         else
                             check(node.parent, node, context)
                     }
-                    is UExpressionSwitchClauseExpression -> {
-                        if (checkCondition(node.caseValue) == true)
+                    is USwitchClauseExpression -> {
+                        if (node.caseValues?.any { checkCondition(it) == true } ?: false)
                             true
                         else
                             check(node.parent, node, context)
@@ -400,7 +401,7 @@ open class ApiDetector : Detector(), UastScanner {
                 Severity.WARNING,
                 Implementation(
                         ApiDetector::class.java,
-                        Scope.JAVA_FILE_SCOPE))
+                        Scope.SOURCE_FILE_SCOPE))
 
         /** Accessing an unsupported API  */
         @JvmField
@@ -429,6 +430,6 @@ open class ApiDetector : Detector(), UastScanner {
                 Severity.ERROR,
                 Implementation(
                         ApiDetector::class.java,
-                        Scope.JAVA_FILE_SCOPE))
+                        Scope.SOURCE_FILE_SCOPE))
     }
 }
