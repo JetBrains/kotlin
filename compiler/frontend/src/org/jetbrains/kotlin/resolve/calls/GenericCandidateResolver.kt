@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.resolve.calls.callResolverUtil.*
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
+import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.context.CallCandidateResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
@@ -79,7 +80,7 @@ class GenericCandidateResolver(private val argumentTypeResolver: ArgumentTypeRes
         val receiverParameter = candidate.extensionReceiverParameter
         if (receiverArgument != null && receiverParameter != null) {
             val receiverArgumentType = receiverArgument.type
-            var receiverType: KotlinType? = if (context.candidateCall.isSafeCall)
+            var receiverType: KotlinType? = if (context.candidateCall.call.isSafeCall())
                 TypeUtils.makeNotNullable(receiverArgumentType)
             else
                 receiverArgumentType

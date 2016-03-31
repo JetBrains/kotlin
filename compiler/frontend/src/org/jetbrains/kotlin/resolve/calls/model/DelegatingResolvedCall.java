@@ -110,11 +110,6 @@ public abstract class DelegatingResolvedCall<D extends CallableDescriptor> imple
         return resolvedCall.getDataFlowInfoForArguments();
     }
 
-    @Override
-    public boolean isSafeCall() {
-        return resolvedCall.isSafeCall();
-    }
-
     @Nullable
     @Override
     public KotlinType getSmartCastDispatchReceiverType() {

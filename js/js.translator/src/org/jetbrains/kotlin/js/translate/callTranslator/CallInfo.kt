@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.js.translate.reference.CallArgumentTranslator
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getReceiverParameterForReceiver
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
+import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
@@ -126,7 +127,7 @@ private fun TranslationContext.createCallInfo(resolvedCall: ResolvedCall<out Cal
     var extensionReceiver = getExtensionReceiver()
     var notNullConditional: JsConditional? = null
 
-    if (resolvedCall.isSafeCall) {
+    if (resolvedCall.call.isSafeCall()) {
         when (resolvedCall.explicitReceiverKind) {
             BOTH_RECEIVERS, EXTENSION_RECEIVER -> {
                 notNullConditional = TranslationUtils.notNullConditional(extensionReceiver!!, JsLiteral.NULL, this)

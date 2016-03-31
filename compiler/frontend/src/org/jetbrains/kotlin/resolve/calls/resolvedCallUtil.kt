@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.KtThisExpression
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
@@ -78,7 +79,7 @@ fun ResolvedCall<*>.getImplicitReceiverValue(): ReceiverValue? {
 }
 
 private fun ResolvedCall<*>.hasSafeNullableReceiver(context: CallResolutionContext<*>): Boolean {
-    if (!isSafeCall) return false
+    if (!call.isSafeCall()) return false
     val receiverValue = getExplicitReceiverValue()?.let { DataFlowValueFactory.createDataFlowValue(it, context) }
                         ?: return false
     return context.dataFlowInfo.getPredictableNullability(receiverValue).canBeNull()
