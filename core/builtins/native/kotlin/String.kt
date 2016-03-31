@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ public class String : Comparable<String>, CharSequence {
 
     public override fun get(index: Int): Char
 
-    public override fun subSequence(start: Int, end: Int): CharSequence
+    public override fun subSequence(startIndex: Int, endIndex: Int): CharSequence
 
     public override fun compareTo(other: String): Int
 }

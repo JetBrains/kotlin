@@ -654,7 +654,7 @@ public final class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequenc
     public open override /*1*/ fun compareTo(/*0*/ other: kotlin.String): kotlin.Int
     public open override /*1*/ fun get(/*0*/ index: kotlin.Int): kotlin.Char
     public final operator fun plus(/*0*/ other: kotlin.Any?): kotlin.String
-    public open override /*1*/ fun subSequence(/*0*/ start: kotlin.Int, /*1*/ end: kotlin.Int): kotlin.CharSequence
+    public open override /*1*/ fun subSequence(/*0*/ startIndex: kotlin.Int, /*1*/ endIndex: kotlin.Int): kotlin.CharSequence
 
     public companion object Companion {
         /*primary*/ private constructor Companion()
