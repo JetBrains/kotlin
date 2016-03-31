@@ -1,0 +1,27 @@
+package
+
+public open class BaseClass {
+    public constructor BaseClass()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    protected final fun foo(): BaseClass.Nested
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    protected final class Nested {
+        public constructor Nested(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int)
+        public final val x: kotlin.Int
+        protected final val y: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public final class Foo : BaseClass {
+    public constructor Foo()
+    public final fun bar(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    protected final override /*1*/ /*fake_override*/ fun foo(): BaseClass.Nested
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

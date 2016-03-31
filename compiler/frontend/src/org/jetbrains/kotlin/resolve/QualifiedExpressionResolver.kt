@@ -609,7 +609,7 @@ class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageValidator
             if (Visibilities.isPrivate(visibility)) return false
             if (!visibility.mustCheckInImports()) return true
         }
-        return Visibilities.isVisibleWithIrrelevantReceiver(descriptor, shouldBeVisibleFrom)
+        return Visibilities.isVisibleIgnoringReceiver(descriptor, shouldBeVisibleFrom)
     }
 }
 

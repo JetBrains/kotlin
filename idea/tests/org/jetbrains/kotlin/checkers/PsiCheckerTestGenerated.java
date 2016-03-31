@@ -343,6 +343,12 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             doTest(fileName);
         }
 
+        @TestMetadata("TypeArgumentsNotAllowed.kt")
+        public void testTypeArgumentsNotAllowed() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/TypeArgumentsNotAllowed.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("TypeParameterBounds.kt")
         public void testTypeParameterBounds() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/TypeParameterBounds.kt");
@@ -595,6 +601,12 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
         @TestMetadata("kt303.kt")
         public void testKt303() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/kt303.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt9887.kt")
+        public void testKt9887() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/kt9887.kt");
             doTest(fileName);
         }
 

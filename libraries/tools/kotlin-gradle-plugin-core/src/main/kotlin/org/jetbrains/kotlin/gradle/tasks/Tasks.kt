@@ -307,7 +307,8 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
                 // TODO: more precise will be not to rebuild unconditionally on classpath changes, but retrieve lookup info and try to find out which sources are affected by cp changes
                 || isClassPathChanged()
                 // so far considering it not incremental TODO: store java files in the cache and extract removed symbols from it here
-                || removed.any { it.isJavaFile() }
+                || removed.any { it.isJavaFile() || it.hasClassFileExtension() }
+                || modified.any { it.hasClassFileExtension() }
                 || cacheVersions.any { it.checkVersion() != CacheVersion.Action.DO_NOTHING }
             ) {
                 logger.kotlinInfo(if (!isIncrementalRequested) "clean caches on rebuild" else "classpath changed, rebuilding all kotlin files")
@@ -376,7 +377,10 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
                 it.removeClassfilesBySources(removedAndModified)
             }}
 
-            logger.kotlinInfo("compile iteration: ${sourcesToCompile.joinToString{ projectRelativePath(it) }}")
+            // can be empty if only removed sources are present
+            if (sourcesToCompile.isNotEmpty()) {
+                logger.kotlinInfo("compile iteration: ${sourcesToCompile.joinToString { projectRelativePath(it) }}")
+            }
 
             val (existingSource, nonExistingSource) = sourcesToCompile.partition { it.isFile }
             assert(nonExistingSource.isEmpty()) { "Trying to compile removed files: ${nonExistingSource.map(::projectRelativePath)}" }
@@ -710,4 +714,7 @@ internal fun Logger.kotlinDebug(message: ()->String) {
 }
 
 internal fun listClassFiles(path: String): Sequence<File> =
-        File(path).walk().filter { it.isFile && it.extension.toLowerCase() == "class" }
+        File(path).walk().filter { it.isFile && it.hasClassFileExtension() }
+
+private fun File.hasClassFileExtension(): Boolean =
+        extension.toLowerCase() == "class"

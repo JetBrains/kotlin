@@ -103,4 +103,8 @@ public interface ClassDescriptor extends ClassifierDescriptor, MemberDescriptor,
     @ReadOnly
     @NotNull
     List<TypeParameterDescriptor> getDeclaredTypeParameters();
+
+    @NotNull
+    @Override
+    ClassDescriptor getOriginal();
 }

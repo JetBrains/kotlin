@@ -36,7 +36,7 @@ fun syntheticExtensionVisibility(originalDescriptor: DeclarationDescriptorWithVi
 
         else -> object : Visibility(originalVisibility.name, originalVisibility.isPublicAPI) {
             override fun isVisible(receiver: ReceiverValue?, what: DeclarationDescriptorWithVisibility, from: DeclarationDescriptor)
-                    = originalVisibility.isVisible(receiver, originalDescriptor, from)
+                    = originalVisibility.isVisible(Visibilities.ALWAYS_SUITABLE_RECEIVER, originalDescriptor, from)
 
             override fun mustCheckInImports()
                     = throw UnsupportedOperationException("Should never be called for this visibility")

@@ -196,7 +196,7 @@ private fun checkVisibility(
     fun reportConflictIfAny(targetDescriptor: DeclarationDescriptor) {
         val target = (targetDescriptor as? DeclarationDescriptorWithSource)?.source?.getPsi() ?: return
         if (targetDescriptor is DeclarationDescriptorWithVisibility
-            && !Visibilities.isVisibleWithIrrelevantReceiver(targetDescriptor, targetClassDescriptor)) {
+            && !Visibilities.isVisibleIgnoringReceiver(targetDescriptor, targetClassDescriptor)) {
             val message = "${context.memberDescriptors[member]!!.renderForConflicts()} " +
                           "uses ${targetDescriptor.renderForConflicts()}, " +
                           "which is not accessible from the ${targetClassDescriptor.renderForConflicts()}"

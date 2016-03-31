@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
+import org.jetbrains.kotlin.resolve.calls.smartcasts.getReceiverValueWithSmartCast
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver
@@ -76,7 +77,7 @@ class CandidateResolver(
         }
 
         if (!context.isDebuggerContext) {
-            checkVisibility()
+            checkVisibilityWithoutReceiver()
         }
 
         when (checkArguments) {
@@ -134,7 +135,7 @@ class CandidateResolver(
 
             if (expectedTypeArgumentCount != jetTypeArguments.size) {
                 candidateCall.addStatus(OTHER_ERROR)
-                tracing.wrongNumberOfTypeArguments(trace, expectedTypeArgumentCount)
+                tracing.wrongNumberOfTypeArguments(trace, expectedTypeArgumentCount, candidateDescriptor)
             }
             else {
                 checkGenericBoundsInAFunctionCall(jetTypeArguments, typeArguments, candidateDescriptor, substitutor, trace)
@@ -169,15 +170,37 @@ class CandidateResolver(
                 }
             }
 
-    private fun CallCandidateResolutionContext<*>.checkVisibility() = checkAndReport {
-        val invisibleMember = Visibilities.findInvisibleMember(candidateCall.dispatchReceiver, candidateDescriptor, scope.ownerDescriptor)
-        if (invisibleMember != null) {
+    private fun CallCandidateResolutionContext<*>.checkVisibilityWithoutReceiver() = checkAndReport {
+        checkVisibilityWithDispatchReceiver(Visibilities.ALWAYS_SUITABLE_RECEIVER, null)
+    }
+
+    private fun CallCandidateResolutionContext<*>.checkVisibilityWithDispatchReceiver(
+            receiverArgument: ReceiverValue?,
+            smartCastType: KotlinType?
+    ): ResolutionStatus {
+        val invisibleMember = Visibilities.findInvisibleMember(
+                getReceiverValueWithSmartCast(receiverArgument, smartCastType), candidateDescriptor, scope.ownerDescriptor)
+        return if (invisibleMember != null) {
             tracing.invisibleMember(trace, invisibleMember)
             OTHER_ERROR
         } else {
             SUCCESS
         }
     }
+
+    private fun CallCandidateResolutionContext<*>.isCandidateVisibleOrExtensionReceiver(
+            receiverArgument: ReceiverValue?,
+            smartCastType: KotlinType?,
+            isDispatchReceiver: Boolean
+    ) = !isDispatchReceiver || isCandidateVisible(receiverArgument, smartCastType)
+
+    private fun CallCandidateResolutionContext<*>.isCandidateVisible(
+            receiverArgument: ReceiverValue?,
+            smartCastType: KotlinType?
+    ) = Visibilities.findInvisibleMember(
+            getReceiverValueWithSmartCast(receiverArgument, smartCastType),
+            candidateDescriptor, scope.ownerDescriptor
+    ) == null
 
     private fun CallCandidateResolutionContext<*>.checkExtensionReceiver() = checkAndReport {
         val receiverParameter = candidateCall.getCandidateDescriptor().extensionReceiverParameter
@@ -430,13 +453,25 @@ class CandidateResolver(
                 candidateCall,
                 candidateCall.getResultingDescriptor().extensionReceiverParameter,
                 candidateCall.extensionReceiver as ReceiverValue?,
-                candidateCall.getExplicitReceiverKind().isExtensionReceiver, false))
+                candidateCall.explicitReceiverKind.isExtensionReceiver,
+                implicitInvokeCheck = false, isDispatchReceiver = false))
 
         resultStatus = resultStatus.combine(context.checkReceiver(candidateCall,
                                                                   candidateCall.getResultingDescriptor().dispatchReceiverParameter, candidateCall.getDispatchReceiver(),
                                                                   candidateCall.getExplicitReceiverKind().isDispatchReceiver,
                 // for the invocation 'foo(1)' where foo is a variable of function type we should mark 'foo' if there is unsafe call error
-                                                                  context.call is CallForImplicitInvoke))
+                                                                  implicitInvokeCheck = context.call is CallForImplicitInvoke,
+                                                                  isDispatchReceiver = true))
+
+        if (!context.isDebuggerContext
+                && candidateCall.dispatchReceiver != null
+                // Do not report error if it's already reported when checked without receiver
+                && context.isCandidateVisible(receiverArgument = Visibilities.ALWAYS_SUITABLE_RECEIVER, smartCastType = null)) {
+            resultStatus = resultStatus.combine(
+                    context.checkVisibilityWithDispatchReceiver(
+                            candidateCall.dispatchReceiver, candidateCall.smartCastDispatchReceiverType))
+        }
+
         return resultStatus
     }
 
@@ -445,7 +480,9 @@ class CandidateResolver(
             receiverParameter: ReceiverParameterDescriptor?,
             receiverArgument: ReceiverValue?,
             isExplicitReceiver: Boolean,
-            implicitInvokeCheck: Boolean): ResolutionStatus {
+            implicitInvokeCheck: Boolean,
+            isDispatchReceiver: Boolean
+    ): ResolutionStatus {
         if (receiverParameter == null || receiverArgument == null) return SUCCESS
         val candidateDescriptor = candidateCall.candidateDescriptor
         if (TypeUtils.dependsOnTypeParameters(receiverParameter.type, candidateDescriptor.typeParameters)) return SUCCESS
@@ -465,11 +502,11 @@ class CandidateResolver(
         val call = candidateCall.call
         val safeAccess = isExplicitReceiver && !implicitInvokeCheck && call.isExplicitSafeCall()
         val expectedReceiverParameterType = if (safeAccess) TypeUtils.makeNullable(receiverParameter.type) else receiverParameter.type
-        val smartCastNeeded = !ArgumentTypeResolver.isSubtypeOfForArgumentType(receiverArgument.type, expectedReceiverParameterType)
+        val notNullReceiverExpected = !ArgumentTypeResolver.isSubtypeOfForArgumentType(receiverArgument.type, expectedReceiverParameterType)
+        val smartCastNeeded =
+                notNullReceiverExpected || !isCandidateVisibleOrExtensionReceiver(receiverArgument, null, isDispatchReceiver)
         var reportUnsafeCall = false
 
-        val dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiverArgument, this)
-        val nullability = dataFlowInfo.getPredictableNullability(dataFlowValue)
         var nullableImplicitInvokeReceiver = false
         var receiverArgumentType = receiverArgument.type
         if (implicitInvokeCheck && call is CallForImplicitInvoke && call.isSafeCall()) {
@@ -483,6 +520,9 @@ class CandidateResolver(
                 }
             }
         }
+
+        val dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiverArgument, this)
+        val nullability = dataFlowInfo.getPredictableNullability(dataFlowValue)
         val expression = (receiverArgument as? ExpressionReceiver)?.expression
         if (nullability.canBeNull() && !nullability.canBeNonNull()) {
             if (!TypeUtils.isNullableType(expectedReceiverParameterType)) {
@@ -496,14 +536,20 @@ class CandidateResolver(
             // Look if smart cast has some useful nullability info
 
             val smartCastResult = SmartCastManager.checkAndRecordPossibleCast(
-                    dataFlowValue, expectedReceiverParameterType, expression, this, candidateCall.call.calleeExpression, /*recordType =*/true
+                    dataFlowValue, expectedReceiverParameterType,
+                    { possibleSmartCast -> isCandidateVisibleOrExtensionReceiver(receiverArgument, possibleSmartCast, isDispatchReceiver) },
+                    expression, this, candidateCall.call.calleeExpression, /*recordType =*/true
             )
 
             if (smartCastResult == null) {
-                reportUnsafeCall = true
+                if (notNullReceiverExpected) {
+                    reportUnsafeCall = true
+                }
             }
             else {
-                candidateCall.setSmartCastDispatchReceiverType(smartCastResult.resultType)
+                if (isDispatchReceiver) {
+                    candidateCall.setSmartCastDispatchReceiverType(smartCastResult.resultType)
+                }
                 if (!smartCastResult.isCorrect) {
                     // Error about unstable smart cast reported within checkAndRecordPossibleCast
                     return OTHER_ERROR

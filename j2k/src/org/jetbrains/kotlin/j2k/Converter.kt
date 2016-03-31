@@ -19,8 +19,10 @@ package org.jetbrains.kotlin.j2k
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
 import com.intellij.psi.CommonClassNames.*
+import com.intellij.psi.util.InheritanceUtil
 import com.intellij.psi.util.PsiMethodUtil
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.PsiUtil
 import org.jetbrains.kotlin.j2k.ast.*
 import org.jetbrains.kotlin.j2k.ast.Annotation
 import org.jetbrains.kotlin.j2k.ast.Enum
@@ -29,6 +31,7 @@ import org.jetbrains.kotlin.j2k.usageProcessing.FieldToPropertyProcessing
 import org.jetbrains.kotlin.j2k.usageProcessing.UsageProcessing
 import org.jetbrains.kotlin.j2k.usageProcessing.UsageProcessingExpressionConverter
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.types.expressions.OperatorConventions.*
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
@@ -714,28 +717,34 @@ class Converter private constructor(
         val originalClass = member.containingClass ?: return this
         // Search for usages only in Java because java-protected member cannot be used in Kotlin from same package
         val usages = referenceSearcher.findUsagesForExternalCodeProcessing(member, true, false)
-        for (usage in usages) {
-            val element = usage.element
 
-            var allowProtected = false
-            var parent: PsiElement? = element
-            while (parent != null) {
-                if (parent is PsiClass && allowProtected(parent, originalClass)) {
-                    allowProtected = true
-                    break
-                }
-                parent = parent.parent
-            }
-
-            if (!allowProtected) {
-                return without(Modifier.PROTECTED).with(Modifier.PUBLIC)
-            }
-        }
-        return this
+        return if (usages.any { !allowProtected(it.element, member, originalClass) })
+            without(Modifier.PROTECTED).with(Modifier.PUBLIC)
+        else this
     }
 
-    private fun allowProtected(containingClass: PsiClass, originalClass: PsiClass): Boolean {
-        return originalClass == containingClass || containingClass.isInheritor(originalClass, true)
+    private fun allowProtected(element: PsiElement, member: PsiMember, originalClass: PsiClass): Boolean {
+        if (element.parent is PsiNewExpression && member is PsiMethod && member.isConstructor) {
+            // calls to for protected constructors are allowed only within same class or as super calls
+            return element.parentsWithSelf.contains(originalClass)
+        }
+
+        return element.parentsWithSelf.filterIsInstance<PsiClass>().any { accessContainingClass ->
+            if (!InheritanceUtil.isInheritorOrSelf(accessContainingClass, originalClass, true)) return@any false
+
+            if (element !is PsiReferenceExpression) return@any true
+
+            val qualifierExpression = element.qualifierExpression ?: return@any true
+
+            // super.foo is allowed if 'foo' is protected
+            if (qualifierExpression is PsiSuperExpression) return@any true
+
+            val receiverType = qualifierExpression.type ?: return@any true
+            val resolvedClass = PsiUtil.resolveGenericsClassInType(receiverType).element ?: return@any true
+
+            // receiver type should be subtype of containing class
+            InheritanceUtil.isInheritorOrSelf(resolvedClass, accessContainingClass, true)
+        }
     }
 
     fun convertAnonymousClassBody(anonymousClass: PsiAnonymousClass): AnonymousClassBody {

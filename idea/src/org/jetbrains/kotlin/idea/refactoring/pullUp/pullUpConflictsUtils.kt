@@ -150,7 +150,7 @@ private fun KotlinPullUpData.checkVisibility(
         if (targetDescriptor in memberDescriptors.values) return
         val target = (targetDescriptor as? DeclarationDescriptorWithSource)?.source?.getPsi() ?: return
         if (targetDescriptor is DeclarationDescriptorWithVisibility
-            && !Visibilities.isVisibleWithIrrelevantReceiver(targetDescriptor, targetClassDescriptor)) {
+            && !Visibilities.isVisibleIgnoringReceiver(targetDescriptor, targetClassDescriptor)) {
             val message = RefactoringBundle.message(
                     "0.uses.1.which.is.not.accessible.from.the.superclass",
                     memberDescriptor.renderForConflicts(),

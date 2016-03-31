@@ -173,7 +173,7 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
 
     @NotNull
     @Override
-    public DeclarationDescriptorWithSource getOriginal() {
+    public ClassDescriptor getOriginal() {
         return original.getOriginal();
     }
 

@@ -86,6 +86,9 @@ abstract class BaseGradleIT {
             copyRecursively(this.resourcesRoot, workingDir)
             copyDirRecursively(File(resourcesRootFile, "GradleWrapper-$wrapperVersion"), projectDir)
         }
+
+        fun relativePaths(files: Iterable<File>): List<String> =
+                files.map { it.relativeTo(projectDir).path }
     }
 
     class CompiledProject(val project: Project, val output: String, val resultCode: Int) {
