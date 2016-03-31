@@ -17,6 +17,7 @@
   <depends optional="true" config-file="android.xml">org.jetbrains.android</depends>
   <depends optional="true" config-file="coverage.xml">Coverage</depends>
   <depends optional="true" config-file="i18n.xml">com.intellij.java-i18n</depends>
+  <depends optional="true" config-file="injection.xml">org.intellij.intelliLang</depends>
 
   <project-components>
     <component>
@@ -1433,12 +1434,6 @@
     <filetype.decompiler filetype="kotlin_builtins" implementationClass="com.intellij.psi.impl.compiled.ClassFileDecompiler"/>
 
     <pathMacroExpandableProtocol protocol="kotlin-js-meta"/>
-
-    <languageInjector implementation="org.jetbrains.kotlin.idea.injection.KotlinLanguageInjector" />
-  </extensions>
-
-  <extensions defaultExtensionNs="org.intellij.intelliLang">
-    <languageSupport implementation="org.jetbrains.kotlin.idea.injection.KotlinLanguageInjectionSupport"/>
   </extensions>
 
   <xi:include href="extensions/ide.xml" xpointer="xpointer(/idea-plugin/*)"/>
