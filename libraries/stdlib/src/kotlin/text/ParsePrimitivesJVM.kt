@@ -17,42 +17,42 @@ public inline fun String.toBoolean(): Boolean = java.lang.Boolean.parseBoolean(t
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
 @kotlin.internal.InlineOnly
-public inline fun String.toByte(): Byte = java.lang.Byte.parseByte(this)
+public inline fun String.toByte(radix: Int = 10): Byte = java.lang.Byte.parseByte(this, radix)
 
 /**
  * Parses the string as a [Short] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
 @kotlin.internal.InlineOnly
-public inline fun String.toShort(): Short = java.lang.Short.parseShort(this)
+public inline fun String.toShort(radix: Int = 10): Short = java.lang.Short.parseShort(this, radix)
 
 /**
  * Parses the string as an [Int] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
 @kotlin.internal.InlineOnly
-public inline fun String.toInt(): Int = java.lang.Integer.parseInt(this)
+public inline fun String.toInt(radix: Int = 10): Int = java.lang.Integer.parseInt(this, radix)
 
 /**
  * Parses the string as a [Long] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
 @kotlin.internal.InlineOnly
-public inline fun String.toLong(): Long = java.lang.Long.parseLong(this)
+public inline fun String.toLong(radix: Int = 10): Long = java.lang.Long.parseLong(this, radix)
 
 /**
  * Parses the string as a [Float] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
 @kotlin.internal.InlineOnly
-public inline fun String.toFloat(): Float = java.lang.Float.parseFloat(this)
+public inline fun String.toFloat(radix: Int = 10): Float = java.lang.Float.parseFloat(this)
 
 /**
  * Parses the string as a [Double] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
 @kotlin.internal.InlineOnly
-public inline fun String.toDouble(): Double = java.lang.Double.parseDouble(this)
+public inline fun String.toDouble(radix: Int = 10): Double = java.lang.Double.parseDouble(this)
 
 
 
@@ -60,8 +60,8 @@ public inline fun String.toDouble(): Double = java.lang.Double.parseDouble(this)
  * Parses the string as a signed [Byte] number and returns the result
  * or `null` if the string is not a valid representation of a number.
  */
-public fun String.toByteOrNull(): Byte? {
-    val int = this.toIntOrNull() ?: return null
+public fun String.toByteOrNull(radix: Int = 10): Byte? {
+    val int = this.toIntOrNull(radix) ?: return null
     if (int < Byte.MIN_VALUE || int > Byte.MAX_VALUE) return null
     return int.toByte()
 }
@@ -70,8 +70,8 @@ public fun String.toByteOrNull(): Byte? {
  * Parses the string as a [Short] number and returns the result
  * or `null` if the string is not a valid representation of a number.
  */
-public fun String.toShortOrNull(): Short? {
-    val int = this.toIntOrNull() ?: return null
+public fun String.toShortOrNull(radix: Int = 10): Short? {
+    val int = this.toIntOrNull(radix) ?: return null
     if (int < Short.MIN_VALUE || int > Short.MAX_VALUE) return null
     return int.toShort()
 }
@@ -80,7 +80,10 @@ public fun String.toShortOrNull(): Short? {
  * Parses the string as an [Int] number and returns the result
  * or `null` if the string is not a valid representation of a number.
  */
-public fun String.toIntOrNull(): Int? {
+public fun String.toIntOrNull(radix: Int = 10): Int? {
+    if (radix < Character.MIN_RADIX) throw NumberFormatException("radix $radix less than Character.MIN_RADIX")
+    if (radix > Character.MAX_RADIX) throw NumberFormatException("radix $radix greater than Character.MAX_RADIX")
+
     val length = this.length
     if (length == 0) return null
 
@@ -109,15 +112,15 @@ public fun String.toIntOrNull(): Int? {
     }
 
 
-    val limitBeforeMul = limit / 10
+    val limitBeforeMul = limit / radix
     var result = 0
     for (i in start..(length - 1)) {
-        val digit = Character.digit(this[i], 10)
+        val digit = Character.digit(this[i], radix)
 
         if (digit < 0) return null
         if (result < limitBeforeMul) return null
 
-        result *= 10
+        result *= radix
 
         if (result < limit + digit) return null
 
@@ -131,7 +134,10 @@ public fun String.toIntOrNull(): Int? {
  * Parses the string as a [Long] number and returns the result
  * or `null` if the string is not a valid representation of a number.
  */
-public fun String.toLongOrNull(): Long? {
+public fun String.toLongOrNull(radix: Int = 10): Long? {
+    if (radix < Character.MIN_RADIX) throw NumberFormatException("radix $radix less than Character.MIN_RADIX")
+    if (radix > Character.MAX_RADIX) throw NumberFormatException("radix $radix greater than Character.MAX_RADIX")
+
     val length = this.length
     if (length == 0) return null
 
@@ -160,15 +166,15 @@ public fun String.toLongOrNull(): Long? {
     }
 
 
-    val limitBeforeMul = limit / 10L
+    val limitBeforeMul = limit / radix
     var result = 0L
     for (i in start..(length - 1)) {
-        val digit = Character.digit(this[i], 10)
+        val digit = Character.digit(this[i], radix)
 
         if (digit < 0) return null
         if (result < limitBeforeMul) return null
 
-        result *= 10
+        result *= radix
 
         if (result < limit + digit) return null
 
@@ -213,13 +219,12 @@ private object ScreenFloatValueRegEx {
 }
 
 private inline fun <T> screenFloatValue(str: String, parse: (String) -> T): T? {
-    // they say the RegEx screens all invalid cases, but who knows..
     return try {
         if (ScreenFloatValueRegEx.value.matches(str))
             parse(str)
         else
             null
-    } catch(e: NumberFormatException) {
+    } catch(e: NumberFormatException) {  // overflow
         null
     }
 }
