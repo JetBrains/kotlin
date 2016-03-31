@@ -161,7 +161,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
                 if (declaration is KtClassOrObject && classOrObjectHasTextUsages(declaration)) return
 
                 val (inspectionTarget, textRange) = if (isCompanionObject && declaration.nameIdentifier == null) {
-                    val objectKeyword = (declaration as KtObjectDeclaration).getObjectKeyword()
+                    val objectKeyword = (declaration as KtObjectDeclaration).getObjectKeyword()!!
                     Pair(declaration, TextRange(0, objectKeyword.startOffsetInParent + objectKeyword.textLength))
                 } else {
                     Pair(declaration.nameIdentifier!!, null)

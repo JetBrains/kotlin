@@ -51,7 +51,7 @@ object PositioningStrategies {
             when (element) {
                 is KtObjectLiteralExpression -> {
                     val objectDeclaration = element.objectDeclaration
-                    val objectKeyword = objectDeclaration.getObjectKeyword()
+                    val objectKeyword = objectDeclaration.getObjectKeyword()!!
                     val delegationSpecifierList = objectDeclaration.getSuperTypeList()
                     if (delegationSpecifierList == null) {
                         return markElement(objectKeyword)
@@ -60,8 +60,8 @@ object PositioningStrategies {
                 }
                 is KtObjectDeclaration -> {
                     return markRange(
-                            element.getObjectKeyword(),
-                            element.getNameIdentifier() ?: element.getObjectKeyword()
+                            element.getObjectKeyword()!!,
+                            element.getNameIdentifier() ?: element.getObjectKeyword()!!
                     )
                 }
                 is KtConstructorDelegationCall -> {
@@ -265,7 +265,7 @@ object PositioningStrategies {
             }
 
             val elementToMark = when (element) {
-                is KtObjectDeclaration -> element.getObjectKeyword()
+                is KtObjectDeclaration -> element.getObjectKeyword()!!
                 is KtPropertyAccessor -> element.getNamePlaceholder()
                 is KtAnonymousInitializer -> element
                 else -> throw IllegalArgumentException(
