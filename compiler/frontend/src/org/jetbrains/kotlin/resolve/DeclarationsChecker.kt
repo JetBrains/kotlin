@@ -99,7 +99,6 @@ class DeclarationsChecker(
         for ((classOrObject, classDescriptor) in bodiesResolveContext.declaredClasses.entries) {
             checkSupertypesForConsistency(classDescriptor, classOrObject)
             checkTypesInClassHeader(classOrObject)
-            checkClassOrObjectMembers(classDescriptor)
 
             when (classOrObject) {
                 is KtClass -> {
@@ -341,18 +340,6 @@ class DeclarationsChecker(
         }
         else if (aClass is KtEnumEntry) {
             checkEnumEntry(aClass, classDescriptor)
-        }
-    }
-
-    private fun checkClassOrObjectMembers(classDescriptor: ClassDescriptorWithResolutionScopes) {
-        for (memberDescriptor in classDescriptor.declaredCallableMembers) {
-            if (memberDescriptor.kind != CallableMemberDescriptor.Kind.DECLARATION) continue
-            val member = DescriptorToSourceUtils.descriptorToDeclaration(memberDescriptor) as? KtFunction
-            if (member != null && memberDescriptor is FunctionDescriptor) {
-                checkImplicitCallableType(member, memberDescriptor)
-                checkFunctionExposedType(member, memberDescriptor)
-                checkVarargParameters(trace, memberDescriptor)
-            }
         }
     }
 
@@ -665,6 +652,9 @@ class DeclarationsChecker(
             trace.report(DEPRECATED_TYPE_PARAMETER_SYNTAX.on(typeParameterList))
         }
         checkTypeParameterConstraints(function)
+        checkImplicitCallableType(function, functionDescriptor)
+        checkFunctionExposedType(function, functionDescriptor)
+        checkVarargParameters(trace, functionDescriptor)
 
         val containingDescriptor = functionDescriptor.containingDeclaration
         val hasAbstractModifier = function.hasModifier(KtTokens.ABSTRACT_KEYWORD)
@@ -695,9 +685,6 @@ class DeclarationsChecker(
             if (!function.hasBody() && !hasAbstractModifier && !hasExternalModifier) {
                 trace.report(NON_MEMBER_FUNCTION_NO_BODY.on(function, functionDescriptor))
             }
-            checkImplicitCallableType(function, functionDescriptor)
-            checkFunctionExposedType(function, functionDescriptor)
-            checkVarargParameters(trace, functionDescriptor)
         }
     }
 
