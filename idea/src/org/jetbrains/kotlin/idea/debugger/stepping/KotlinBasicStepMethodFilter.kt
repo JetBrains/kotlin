@@ -19,11 +19,15 @@ package org.jetbrains.kotlin.idea.debugger.stepping
 import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.NamedMethodFilter
+import com.intellij.debugger.impl.DebuggerUtilsEx
 import com.intellij.util.Range
 import com.sun.jdi.Location
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtAnonymousInitializer
+import org.jetbrains.kotlin.psi.KtConstructor
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtPropertyAccessor
 
 class KotlinBasicStepMethodFilter(
         val resolvedElement: KtElement,
@@ -53,6 +57,8 @@ class KotlinBasicStepMethodFilter(
 
         val classes = positionManager.getAllClasses(sourcePosition)
 
-        return classes.contains(location.declaringType())
+        return classes.any {
+            it == location.declaringType() || DebuggerUtilsEx.isAssignableFrom(it.name(), location.declaringType())
+        }
     }
 }
