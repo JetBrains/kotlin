@@ -24,6 +24,8 @@
       <className>org.jetbrains.kotlin.idea.configuration.MavenPluginSourcesMoveToExecutionIntention</className>
       <category>Kotlin</category>
     </intentionAction>
+    <codeInsight.unresolvedReferenceQuickFixProvider
+        implementation="org.jetbrains.kotlin.idea.configuration.KotlinMavenUnresolvedReferenceQuickFixProvider" />
   </extensions>
 
   <module-components>
