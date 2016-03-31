@@ -109,7 +109,7 @@ public class JavaScriptInterfaceDetector extends Detector implements UastScanner
             UFunction method = UastUtils.getContainingFunction(node);
             if (method != null) {
                 ConcreteTypeVisitor v = new ConcreteTypeVisitor(context, node);
-                v.process(method);
+                method.accept(v);
                 resolved = v.getType();
                 if (resolved == null) {
                     return;
@@ -211,10 +211,8 @@ public class JavaScriptInterfaceDetector extends Detector implements UastScanner
         }
 
         @Override
-        public void process(@NotNull UElement element) {
-            if (!mFoundCall) {
-                super.process(element);
-            }
+        public boolean visitElement(@NotNull UElement node) {
+            return mFoundCall || super.visitElement(node);
         }
 
         @Override

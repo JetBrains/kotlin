@@ -16,6 +16,7 @@
 package org.jetbrains.uast
 
 import org.jetbrains.uast.kinds.UastClassKind
+import org.jetbrains.uast.visitor.UastVisitor
 
 interface UClass : UDeclaration, UFqNamed, UModifierOwner, UAnnotated {
     /* The simple class name is only for the debug purposes. Do not check against it in the production code */
@@ -51,10 +52,11 @@ interface UClass : UDeclaration, UFqNamed, UModifierOwner, UAnnotated {
 
     fun getSuperClass(context: UastContext): UClass?
 
-    override fun traverse(callback: UastCallback) {
-        nameElement?.handleTraverse(callback)
-        declarations.handleTraverseList(callback)
-        annotations.handleTraverseList(callback)
+    override fun accept(visitor: UastVisitor) {
+        if (visitor.visitClass(this)) return
+        nameElement?.accept(visitor)
+        declarations.acceptList(visitor)
+        annotations.acceptList(visitor)
     }
 
     override fun renderString(): String {

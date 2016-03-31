@@ -20,6 +20,4 @@ import org.jetbrains.kotlin.uast.KotlinAbstractUElement
 class KotlinUDeclarationsExpression(override val parent: UElement) : KotlinAbstractUElement(), UDeclarationsExpression {
     override lateinit var declarations: List<UElement>
         internal set
-
-    override fun evaluate() = null
 }

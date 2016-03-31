@@ -19,9 +19,9 @@ package org.jetbrains.kotlin.uast
 import org.jetbrains.kotlin.psi.KtAnnotation
 import org.jetbrains.uast.UAnnotation
 import org.jetbrains.uast.UElement
-import org.jetbrains.uast.UastCallback
-import org.jetbrains.uast.handleTraverseList
+import org.jetbrains.uast.acceptList
 import org.jetbrains.uast.psi.PsiElementBacked
+import org.jetbrains.uast.visitor.UastVisitor
 
 class KotlinUAnnotationList(
         override val psi: KtAnnotation,
@@ -31,7 +31,9 @@ class KotlinUAnnotationList(
 
     override fun logString() = "KotlinUAnnotationList"
     override fun renderString() = annotations.joinToString(" ") { it.renderString() }
-    override fun traverse(callback: UastCallback) {
-        annotations.handleTraverseList(callback)
+
+    override fun accept(visitor: UastVisitor) {
+        if (visitor.visitElement(this)) return
+        annotations.acceptList(visitor)
     }
 }

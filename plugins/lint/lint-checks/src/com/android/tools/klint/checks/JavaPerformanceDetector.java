@@ -324,7 +324,7 @@ public class JavaPerformanceDetector extends Detector implements UastScanner {
                     UExpression thenBranch = ifNode.getThenBranch();
                     if (thenBranch != null) {
                         AssignmentTracker visitor = new AssignmentTracker(assignments);
-                        visitor.process(thenBranch);
+                        thenBranch.accept(visitor);
                     }
                     if (!assignments.isEmpty()) {
                         List<String> references = new ArrayList<String>();

@@ -15,7 +15,13 @@
  */
 package org.jetbrains.uast
 
-interface USuperExpression : UExpression, LeafUElement {
+import org.jetbrains.uast.visitor.UastVisitor
+
+interface USuperExpression : UExpression {
     override fun logString() = "USuperExpression"
     override fun renderString() = "super"
+
+    override fun accept(visitor: UastVisitor) {
+        visitor.visitSuperExpression(this)
+    }
 }

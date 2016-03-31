@@ -15,6 +15,8 @@
  */
 package org.jetbrains.uast
 
+import org.jetbrains.uast.visitor.UastVisitor
+
 interface UCallExpression : UExpression, UResolvable {
     val functionReference: USimpleReferenceExpression?
 
@@ -36,12 +38,13 @@ interface UCallExpression : UExpression, UResolvable {
     override fun resolve(context: UastContext): UFunction?
     override fun resolveOrEmpty(context: UastContext): UFunction = resolve(context) ?: UFunctionNotResolved
 
-    override fun traverse(callback: UastCallback) {
-        functionReference?.handleTraverse(callback)
-        classReference?.handleTraverse(callback)
-        functionNameElement?.handleTraverse(callback)
-        valueArguments.handleTraverseList(callback)
-        typeArguments.handleTraverseList(callback)
+    override fun accept(visitor: UastVisitor) {
+        if (visitor.visitCallExpression(this)) return
+        functionReference?.accept(visitor)
+        classReference?.accept(visitor)
+        functionNameElement?.accept(visitor)
+        valueArguments.acceptList(visitor)
+        typeArguments.acceptList(visitor)
     }
 
     override fun logString() = log("UFunctionCallExpression ($kind, argCount = $valueArgumentCount)", functionReference, valueArguments)

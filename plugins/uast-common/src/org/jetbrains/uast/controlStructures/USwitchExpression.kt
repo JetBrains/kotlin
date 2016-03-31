@@ -15,13 +15,16 @@
  */
 package org.jetbrains.uast
 
+import org.jetbrains.uast.visitor.UastVisitor
+
 interface USwitchExpression : UExpression {
     val expression: UExpression?
     val body: UExpression
 
-    override fun traverse(callback: UastCallback) {
-        expression?.handleTraverse(callback)
-        body.handleTraverse(callback)
+    override fun accept(visitor: UastVisitor) {
+        if (visitor.visitSwitchExpression(this)) return
+        expression?.accept(visitor)
+        body.accept(visitor)
     }
 
     override fun logString() = log("USwitchExpression", expression, body)
@@ -37,8 +40,9 @@ interface USwitchClauseExpression : UExpression
 interface UExpressionSwitchClauseExpression : USwitchClauseExpression {
     val caseValue: UExpression
 
-    override fun traverse(callback: UastCallback) {
-        caseValue.handleTraverse(callback)
+    override fun accept(visitor: UastVisitor) {
+        if (visitor.visitSwitchClauseExpression(this)) return
+        caseValue.accept(visitor)
     }
 
     override fun renderString() = caseValue.renderString() + " -> "
@@ -46,7 +50,6 @@ interface UExpressionSwitchClauseExpression : USwitchClauseExpression {
 }
 
 interface UDefaultSwitchClauseExpression : USwitchClauseExpression {
-    override fun traverse(callback: UastCallback) {}
     override fun logString() = "UDefaultSwitchClause"
     override fun renderString() = "else -> "
 }

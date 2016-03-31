@@ -15,6 +15,8 @@
  */
 package org.jetbrains.uast
 
+import org.jetbrains.uast.visitor.UastVisitor
+
 interface UFunction : UDeclaration, UModifierOwner, UAnnotated {
     val kind: UastFunctionKind
     val valueParameters: List<UVariable>
@@ -30,13 +32,14 @@ interface UFunction : UDeclaration, UModifierOwner, UAnnotated {
 
     fun getSuperFunctions(context: UastContext): List<UFunction>
 
-    override fun traverse(callback: UastCallback) {
-        nameElement?.handleTraverse(callback)
-        valueParameters.handleTraverseList(callback)
-        body.handleTraverse(callback)
-        annotations.handleTraverseList(callback)
-        typeParameters.handleTraverseList(callback)
-        returnType?.handleTraverse(callback)
+    override fun accept(visitor: UastVisitor) {
+        if (visitor.visitFunction(this)) return
+        nameElement?.accept(visitor)
+        valueParameters.acceptList(visitor)
+        body.accept(visitor)
+        annotations.acceptList(visitor)
+        typeParameters.acceptList(visitor)
+        returnType?.accept(visitor)
     }
 
     override fun renderString(): String {

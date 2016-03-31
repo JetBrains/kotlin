@@ -590,13 +590,13 @@ public abstract class PermissionRequirement {
 
             if (node != null) {
                 final AtomicReference<UExpression> reference = new AtomicReference<UExpression>();
-                new UastVisitor() {
+                node.accept(new UastVisitor() {
                     @Override
                     public boolean visitVariable(@NotNull UVariable node) {
                         reference.set(node.getInitializer());
                         return true;
                     }
-                }.process(node);
+                });
                 UExpression expression = reference.get();
                 if (expression != null) {
                     return parse(annotation, expression);

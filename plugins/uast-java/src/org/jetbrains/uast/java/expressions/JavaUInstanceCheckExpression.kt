@@ -30,6 +30,4 @@ class JavaUInstanceCheckExpression(
 
     override val operationKind: UastBinaryExpressionWithTypeKind.InstanceCheck
         get() = UastBinaryExpressionWithTypeKind.INSTANCE_CHECK
-
-    override fun evaluate() = null
 }

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.uast.kinds.KotlinSpecialExpressionKinds
 import org.jetbrains.uast.*
 import org.jetbrains.uast.psi.PsiElementBacked
+import org.jetbrains.uast.visitor.UastVisitor
 
 class KotlinUSwitchExpression(
         override val psi: KtWhenExpression,
@@ -101,7 +102,8 @@ class KotlinUSwitchEntry(
 
     override fun logString() = log("KotlinUSwitchEntry", expression)
 
-    override fun traverse(callback: UastCallback) {
-        expression.handleTraverse(callback)
+    override fun accept(visitor: UastVisitor) {
+        if (visitor.visitElement(this)) return
+        expression.accept(visitor)
     }
 }

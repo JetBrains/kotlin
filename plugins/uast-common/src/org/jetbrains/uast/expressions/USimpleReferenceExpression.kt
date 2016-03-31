@@ -15,8 +15,14 @@
  */
 package org.jetbrains.uast
 
-interface USimpleReferenceExpression : UExpression, UResolvable, LeafUElement {
+import org.jetbrains.uast.visitor.UastVisitor
+
+interface USimpleReferenceExpression : UExpression, UResolvable {
     val identifier: String
+
+    override fun accept(visitor: UastVisitor) {
+        visitor.visitSimpleReferenceExpression(this)
+    }
 
     override fun logString() = "USimpleReferenceExpression ($identifier)"
     override fun renderString() = identifier

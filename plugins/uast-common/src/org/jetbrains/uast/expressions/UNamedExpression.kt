@@ -15,14 +15,17 @@
  */
 package org.jetbrains.uast
 
+import org.jetbrains.uast.visitor.UastVisitor
+
 class UNamedExpression(
         override val name: String,
         override val parent: UElement
 ): UExpression, UNamed {
     lateinit var expression: UExpression
 
-    override fun traverse(callback: UastCallback) {
-        expression.handleTraverse(callback)
+    override fun accept(visitor: UastVisitor) {
+        if (visitor.visitElement(this)) return
+        expression.accept(visitor)
     }
 
     override fun logString() = log("UNamedExpression ($name)", expression)

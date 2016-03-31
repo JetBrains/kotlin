@@ -1454,7 +1454,7 @@ public class LintDriver {
                         UastScanner scanner = (UastScanner) check;
                         UastVisitor customVisitor = scanner.createUastVisitor(context);
                         if (customVisitor != null) {
-                            UastChecker.INSTANCE.checkWithCustomHandler(
+                            UastChecker.INSTANCE.check(
                                     ideaProject, context.file, context, customVisitor);
                         } else {
                             UastChecker.INSTANCE.check(
@@ -1515,7 +1515,7 @@ public class LintDriver {
             for (UastScanner detector : detectors) {
                 UastVisitor customHandler = detector.createUastVisitor(context);
                 if (customHandler != null) {
-                    checker.checkWithCustomHandler(intellijProject, file, context, customHandler);
+                    checker.check(intellijProject, file, context, customHandler);
                 } else {
                     checker.check(intellijProject, file, detector, context);
                 }

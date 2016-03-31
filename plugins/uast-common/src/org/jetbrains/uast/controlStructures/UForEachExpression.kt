@@ -15,14 +15,17 @@
  */
 package org.jetbrains.uast
 
+import org.jetbrains.uast.visitor.UastVisitor
+
 interface UForEachExpression : ULoopExpression {
     val variable: UVariable
     val iteratedValue: UExpression
 
-    override fun traverse(callback: UastCallback) {
-        variable.handleTraverse(callback)
-        iteratedValue.handleTraverse(callback)
-        body.handleTraverse(callback)
+    override fun accept(visitor: UastVisitor) {
+        if (visitor.visitForEachExpression(this)) return
+        variable.accept(visitor)
+        iteratedValue.accept(visitor)
+        body.accept(visitor)
     }
 
     override fun renderString() = buildString {

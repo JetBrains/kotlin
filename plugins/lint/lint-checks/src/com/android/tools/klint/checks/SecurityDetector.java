@@ -389,10 +389,10 @@ public class SecurityDetector extends Detector implements Detector.XmlScanner, U
         public boolean visitCallExpression(@NotNull UCallExpression node) {
             String name = node.getFunctionName();
             if ("openFileOutput".equals(name) || "getSharedPreferences".equals(name)) {
-                identifierHandler.processChildren(node);
+                return false;
             }
 
-            return false;
+            return true;
         }
     }
 }

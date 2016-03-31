@@ -15,6 +15,8 @@
  */
 package org.jetbrains.uast
 
+import org.jetbrains.uast.visitor.UastVisitor
+
 interface UVariable : UDeclaration, UModifierOwner, UAnnotated {
     val initializer: UExpression?
     val kind: UastVariableKind
@@ -27,11 +29,12 @@ interface UVariable : UDeclaration, UModifierOwner, UAnnotated {
     open val setters: List<UFunction>?
         get() = null
 
-    override fun traverse(callback: UastCallback) {
-        nameElement?.handleTraverse(callback)
-        initializer?.handleTraverse(callback)
-        annotations.handleTraverseList(callback)
-        type.handleTraverse(callback)
+    override fun accept(visitor: UastVisitor) {
+        if (visitor.visitVariable(this)) return
+        nameElement?.accept(visitor)
+        initializer?.accept(visitor)
+        annotations.acceptList(visitor)
+        type.accept(visitor)
     }
 
     override fun renderString(): String {

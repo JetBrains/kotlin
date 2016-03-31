@@ -15,6 +15,8 @@
  */
 package org.jetbrains.uast
 
+import org.jetbrains.uast.visitor.UastVisitor
+
 interface UQualifiedExpression : UExpression, UResolvable {
     val receiver: UExpression
     val selector: UExpression
@@ -24,9 +26,10 @@ interface UQualifiedExpression : UExpression, UResolvable {
 
     override fun renderString() = receiver.renderString() + accessType.name + selector.renderString()
 
-    override fun traverse(callback: UastCallback) {
-        receiver.handleTraverse(callback)
-        selector.handleTraverse(callback)
+    override fun accept(visitor: UastVisitor) {
+        if (visitor.visitQualifiedExpression(this)) return
+        receiver.accept(visitor)
+        selector.accept(visitor)
     }
 
     override fun logString() = log("UQualifiedExpression", receiver, selector)

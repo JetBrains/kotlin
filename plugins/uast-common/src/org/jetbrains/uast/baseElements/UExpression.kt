@@ -15,10 +15,16 @@
  */
 package org.jetbrains.uast
 
+import org.jetbrains.uast.visitor.UastVisitor
+
 interface UExpression : UElement {
     open fun evaluate(): Any? = null
     fun evaluateString(): String? = evaluate() as? String
     fun getExpressionType(): UType? = null
+
+    override fun accept(visitor: UastVisitor) {
+        visitor.visitElement(this)
+    }
 }
 
 interface NoAnnotations : UAnnotated {
@@ -30,6 +36,6 @@ interface NoModifiers : UModifierOwner {
     override fun hasModifier(modifier: UastModifier) = false
 }
 
-class EmptyExpression(override val parent: UElement) : UExpression, LeafUElement {
+class EmptyExpression(override val parent: UElement) : UExpression {
     override fun logString() = "EmptyExpression"
 }

@@ -15,11 +15,14 @@
  */
 package org.jetbrains.uast
 
+import org.jetbrains.uast.visitor.UastVisitor
+
 interface UCallableReferenceExpression : UExpression {
     val qualifierType: UType
 
-    override fun traverse(callback: UastCallback) {
-        qualifierType.handleTraverse(callback)
+    override fun accept(visitor: UastVisitor) {
+        if (visitor.visitCallableReferenceExpression(this)) return
+        qualifierType.accept(visitor)
     }
 
     override fun logString() = "UCallableReferenceExpression"

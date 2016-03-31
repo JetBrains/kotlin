@@ -15,14 +15,18 @@
  */
 package org.jetbrains.uast
 
+import org.jetbrains.uast.visitor.UastVisitor
+
 interface UDeclarationsExpression : UExpression {
     val declarations: List<UElement>
 
     val variables: List<UVariable>
         get() = declarations.filterIsInstance<UVariable>()
 
-    override fun evaluate() = null
-    override fun traverse(callback: UastCallback) = declarations.handleTraverseList(callback)
+    override fun accept(visitor: UastVisitor) {
+        if (visitor.visitDeclarationsExpression(this)) return
+        declarations.acceptList(visitor)
+    }
 
     override fun renderString() = declarations.joinToString("\n") { it.renderString() }
     override fun logString() = log("UDeclarationsExpression", declarations)
@@ -31,6 +35,4 @@ interface UDeclarationsExpression : UExpression {
 class SimpleUDeclarationsExpression(
         override val parent: UElement,
         override val declarations: List<UElement>
-) : UDeclarationsExpression {
-    override fun evaluate() = null
-}
+) : UDeclarationsExpression

@@ -15,9 +15,15 @@
  */
 package org.jetbrains.uast
 
-interface UClassLiteralExpression : UExpression, LeafUElement {
+import org.jetbrains.uast.visitor.UastVisitor
+
+interface UClassLiteralExpression : UExpression {
     override fun logString() = "UClassLiteralExpression"
     override fun renderString() = getExpressionType()?.name ?: "::class"
 
     val type: UType
+
+    override fun accept(visitor: UastVisitor) {
+        visitor.visitClassLiteralExpression(this)
+    }
 }

@@ -15,6 +15,8 @@
  */
 package org.jetbrains.uast
 
+import org.jetbrains.uast.visitor.UastVisitor
+
 interface UFile: UElement {
     val packageFqName: String?
     val importStatements: List<UImportStatement>
@@ -26,9 +28,10 @@ interface UFile: UElement {
     override val parent: UElement?
         get() = null
 
-    override fun traverse(callback: UastCallback) {
-        declarations.handleTraverseList(callback)
-        importStatements.handleTraverseList(callback)
+    override fun accept(visitor: UastVisitor) {
+        if (visitor.visitFile(this)) return
+        declarations.acceptList(visitor)
+        importStatements.acceptList(visitor)
     }
 
     override fun logString() = "UFile (package = $packageFqName)\n" + declarations.joinToString("\n") { it.logString().withMargin }

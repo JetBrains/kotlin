@@ -15,11 +15,17 @@
  */
 package org.jetbrains.uast
 
+import org.jetbrains.uast.visitor.UastVisitor
+
 interface UDeclaration : UElement, UNamed {
     val nameElement: UElement?
+
+    override fun accept(visitor: UastVisitor) {
+        visitor.visitElement(this)
+    }
 }
 
-object UDeclarationNotResolved : UDeclaration, LeafUElement {
+object UDeclarationNotResolved : UDeclaration {
     override val name = "<declaration not resolved>"
     override val nameElement = null
     override val parent = null

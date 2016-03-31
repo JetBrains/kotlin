@@ -15,6 +15,8 @@
  */
 package org.jetbrains.uast
 
+import org.jetbrains.uast.visitor.UastVisitor
+
 interface ULiteralExpression : UExpression {
     val value: Any?
 
@@ -28,7 +30,10 @@ interface ULiteralExpression : UExpression {
 
     fun asString() = value?.toString() ?: ""
 
-    override fun traverse(callback: UastCallback) {}
+    override fun accept(visitor: UastVisitor) {
+        visitor.visitLiteralExpression(this)
+    }
+
     override fun logString() = "ULiteralExpression (${asString()})"
     override fun renderString() = asString()
 }
