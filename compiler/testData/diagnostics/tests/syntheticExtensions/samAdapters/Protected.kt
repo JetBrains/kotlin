@@ -12,7 +12,7 @@ fun foo(javaClass: JavaClass) {
 class X : JavaClass() {
     fun foo(other: JavaClass) {
         doSomething { bar() }
-        other.doSomething { bar() } // currently not flagged as error - see KT-8654
+        other.<!INVISIBLE_MEMBER!>doSomething<!> { bar() }
     }
 }
 

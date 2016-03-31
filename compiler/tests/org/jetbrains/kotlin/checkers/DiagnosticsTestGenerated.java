@@ -15536,6 +15536,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("syntheticPropertyExtensions.kt")
+                public void testSyntheticPropertyExtensions() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/protectedVisibility/syntheticPropertyExtensions.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("syntheticSAMExtensions.kt")
+                public void testSyntheticSAMExtensions() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/protectedVisibility/syntheticSAMExtensions.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("unstableSmartCast.kt")
                 public void testUnstableSmartCast() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/protectedVisibility/unstableSmartCast.kt");
