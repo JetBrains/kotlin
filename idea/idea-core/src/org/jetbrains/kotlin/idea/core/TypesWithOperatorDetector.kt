@@ -38,7 +38,7 @@ abstract class TypesWithOperatorDetector(
         private val scope: LexicalScope,
         private val indicesHelper: KotlinIndicesHelper?
 ) {
-    protected abstract fun checkIsSuitableByType(function: FunctionDescriptor, freeTypeParams: Collection<TypeParameterDescriptor>): TypeSubstitutor?
+    protected abstract fun checkIsSuitableByType(operator: FunctionDescriptor, freeTypeParams: Collection<TypeParameterDescriptor>): TypeSubstitutor?
 
     private val cache = HashMap<FuzzyType, Pair<FunctionDescriptor, TypeSubstitutor>?>()
 
@@ -109,9 +109,9 @@ class TypesWithContainsDetector(
         private val argumentType: KotlinType
 ) : TypesWithOperatorDetector(OperatorNameConventions.CONTAINS, scope, indicesHelper) {
 
-    override fun checkIsSuitableByType(function: FunctionDescriptor, freeTypeParams: Collection<TypeParameterDescriptor>): TypeSubstitutor? {
-        val parameter = function.valueParameters.single()
-        val fuzzyParameterType = FuzzyType(parameter.type, function.typeParameters + freeTypeParams)
+    override fun checkIsSuitableByType(operator: FunctionDescriptor, freeTypeParams: Collection<TypeParameterDescriptor>): TypeSubstitutor? {
+        val parameter = operator.valueParameters.single()
+        val fuzzyParameterType = FuzzyType(parameter.type, operator.typeParameters + freeTypeParams)
         return fuzzyParameterType.checkIsSuperTypeOf(argumentType)
     }
 }
@@ -123,13 +123,13 @@ class TypesWithGetValueDetector(
         private val propertyType: KotlinType?
 ) : TypesWithOperatorDetector(OperatorNameConventions.GET_VALUE, scope, indicesHelper) {
 
-    override fun checkIsSuitableByType(function: FunctionDescriptor, freeTypeParams: Collection<TypeParameterDescriptor>): TypeSubstitutor? {
-        val paramType = FuzzyType(function.valueParameters.first().type, freeTypeParams)
+    override fun checkIsSuitableByType(operator: FunctionDescriptor, freeTypeParams: Collection<TypeParameterDescriptor>): TypeSubstitutor? {
+        val paramType = FuzzyType(operator.valueParameters.first().type, freeTypeParams)
         val substitutor = paramType.checkIsSuperTypeOf(propertyOwnerType) ?: return null
 
         if (propertyType == null) return substitutor
 
-        val fuzzyReturnType = FuzzyType(function.returnType ?: return null, freeTypeParams)
+        val fuzzyReturnType = FuzzyType(operator.returnType ?: return null, freeTypeParams)
         val substitutorFromPropertyType = fuzzyReturnType.checkIsSubtypeOf(propertyType) ?: return null
         return TypeSubstitutor.createChainedSubstitutor(substitutor.substitution, substitutorFromPropertyType.substitution)
     }
@@ -141,8 +141,8 @@ class TypesWithSetValueDetector(
         private val propertyOwnerType: KotlinType
 ) : TypesWithOperatorDetector(OperatorNameConventions.SET_VALUE, scope, indicesHelper) {
 
-    override fun checkIsSuitableByType(function: FunctionDescriptor, freeTypeParams: Collection<TypeParameterDescriptor>): TypeSubstitutor? {
-        val paramType = FuzzyType(function.valueParameters.first().type, freeTypeParams)
+    override fun checkIsSuitableByType(operator: FunctionDescriptor, freeTypeParams: Collection<TypeParameterDescriptor>): TypeSubstitutor? {
+        val paramType = FuzzyType(operator.valueParameters.first().type, freeTypeParams)
         return paramType.checkIsSuperTypeOf(propertyOwnerType)
     }
 }

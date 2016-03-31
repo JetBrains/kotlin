@@ -19,7 +19,7 @@
 package org.jetbrains.kotlin.idea.util
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.CallHandle
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl
@@ -94,8 +94,8 @@ class FuzzyType(
     }
 
     private fun TypeParameterDescriptor.toOriginal(): TypeParameterDescriptor {
-        val functionDescriptor = containingDeclaration as? FunctionDescriptor ?: return this
-        return functionDescriptor.original.typeParameters[index]
+        val callableDescriptor = containingDeclaration as? CallableMemberDescriptor ?: return this
+        return callableDescriptor.original.typeParameters[index]
     }
 
     override fun equals(other: Any?) = other is FuzzyType && other.type == type && other.freeParameters == freeParameters
