@@ -35,6 +35,54 @@ public class GenerateSpringDependencyActionTestGenerated extends AbstractGenerat
         KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/spring/core/generate"), Pattern.compile("^([\\w]+)\\.kt$"));
     }
 
+    @TestMetadata("autowiredDependencies/duplicatingPropertyAnnotationConfig.kt")
+    public void testAutowiredDependencies_DuplicatingPropertyAnnotationConfig() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/spring/core/generate/autowiredDependencies/duplicatingPropertyAnnotationConfig.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("autowiredDependencies/duplicatingPropertyXmlConfig.kt")
+    public void testAutowiredDependencies_DuplicatingPropertyXmlConfig() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/spring/core/generate/autowiredDependencies/duplicatingPropertyXmlConfig.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("autowiredDependencies/multiplePropertiesAnnotationConfig.kt")
+    public void testAutowiredDependencies_MultiplePropertiesAnnotationConfig() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/spring/core/generate/autowiredDependencies/multiplePropertiesAnnotationConfig.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("autowiredDependencies/multiplePropertiesXmlConfig.kt")
+    public void testAutowiredDependencies_MultiplePropertiesXmlConfig() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/spring/core/generate/autowiredDependencies/multiplePropertiesXmlConfig.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("autowiredDependencies/propertyWithQualifierAnnotationConfig.kt")
+    public void testAutowiredDependencies_PropertyWithQualifierAnnotationConfig() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/spring/core/generate/autowiredDependencies/propertyWithQualifierAnnotationConfig.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("autowiredDependencies/propertyWithQualifierXmlConfig.kt")
+    public void testAutowiredDependencies_PropertyWithQualifierXmlConfig() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/spring/core/generate/autowiredDependencies/propertyWithQualifierXmlConfig.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("autowiredDependencies/singlePropertyAnnotationConfig.kt")
+    public void testAutowiredDependencies_SinglePropertyAnnotationConfig() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/spring/core/generate/autowiredDependencies/singlePropertyAnnotationConfig.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("autowiredDependencies/singlePropertyXmlConfig.kt")
+    public void testAutowiredDependencies_SinglePropertyXmlConfig() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/spring/core/generate/autowiredDependencies/singlePropertyXmlConfig.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("beanDependenciesByXml/firstConstructor.kt")
     public void testBeanDependenciesByXml_FirstConstructor() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/spring/core/generate/beanDependenciesByXml/firstConstructor.kt");

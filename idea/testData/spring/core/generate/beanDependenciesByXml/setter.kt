@@ -1,4 +1,4 @@
-// ACTION_CLASS: org.jetbrains.kotlin.idea.spring.generate.GenerateKotlinSpringBeanDependencyAction$Setter
+// ACTION_CLASS: org.jetbrains.kotlin.idea.spring.generate.GenerateKotlinSpringBeanXmlDependencyAction$Setter
 // CONFIG_FILE: setter-config.xml
 // CHOOSE_BEAN: barBean
 package a

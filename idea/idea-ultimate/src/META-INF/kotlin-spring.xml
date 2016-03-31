@@ -25,15 +25,20 @@
 
   <actions>
       <action id="Kotlin.Spring.Beans.Generate.Setter.Dependency.Action"
-              class="org.jetbrains.kotlin.idea.spring.generate.GenerateKotlinSpringBeanDependencyAction$Setter">
+              class="org.jetbrains.kotlin.idea.spring.generate.GenerateKotlinSpringBeanXmlDependencyAction$Setter">
           <add-to-group anchor="last" group-id="GenerateGroup"/>
       </action>
       <action id="Kotlin.Spring.Beans.Generate.Constructor.Dependency.Action"
-              class="org.jetbrains.kotlin.idea.spring.generate.GenerateKotlinSpringBeanDependencyAction$Constructor">
+              class="org.jetbrains.kotlin.idea.spring.generate.GenerateKotlinSpringBeanXmlDependencyAction$Constructor">
           <add-to-group anchor="last" group-id="GenerateGroup"/>
       </action>
       <action id="Kotlin.Spring.Beans.Generate.Lateinit.Property.Dependency.Action"
-              class="org.jetbrains.kotlin.idea.spring.generate.GenerateKotlinSpringBeanDependencyAction$LateinitProperty">
+              class="org.jetbrains.kotlin.idea.spring.generate.GenerateKotlinSpringBeanXmlDependencyAction$LateinitProperty">
+          <add-to-group anchor="last" group-id="GenerateGroup"/>
+      </action>
+
+      <action id="Kotlin.Spring.Beans.Generate.Autowired.Dependency.Action"
+              class="org.jetbrains.kotlin.idea.spring.generate.GenerateKotlinAutowiredDependencyAction">
           <add-to-group anchor="last" group-id="GenerateGroup"/>
       </action>
   </actions>
