@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject;
 
 import java.util.List;
 import java.util.Map;
@@ -383,6 +384,19 @@ public final class StaticContext {
                 }
             };
 
+            Rule<JsName> fakeCallableDescriptor = new Rule<JsName>() {
+                @Nullable
+                @Override
+                public JsName apply(@NotNull DeclarationDescriptor descriptor) {
+                    if (!(descriptor instanceof FakeCallableDescriptorForObject)) {
+                        return null;
+                    }
+
+                    FakeCallableDescriptorForObject fakeCallableDescriptor = (FakeCallableDescriptorForObject) descriptor;
+                    return getNameForDescriptor(fakeCallableDescriptor.getReferencedDescriptor());
+                }
+            };
+
             addRule(namesForDynamic);
             addRule(localClasses);
             addRule(namesForStandardClasses);
@@ -390,6 +404,7 @@ public final class StaticContext {
             addRule(propertyOrPropertyAccessor);
             addRule(predefinedObjectsHasUnobfuscatableNames);
             addRule(overridingDescriptorsReferToOriginalName);
+            addRule(fakeCallableDescriptor);
             addRule(memberDeclarationsInsideParentsScope);
         }
     }
