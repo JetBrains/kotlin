@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -120,7 +120,7 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
         val getMethod = possibleGetMethodNames
                                 .flatMap { memberScope.getContributedFunctions(it, NoLookupLocation.FROM_SYNTHETIC_SCOPE) }
                                 .singleOrNull {
-                                    isGoodGetMethod(it) && it.hasJavaOriginInHierarchy()
+                                    it.hasJavaOriginInHierarchy() && isGoodGetMethod(it)
                                 } ?: return result(null, possibleGetMethodNames)
 
 
