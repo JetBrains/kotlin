@@ -105,9 +105,12 @@ class StaticMembers(
                     .forEach(::processMember)
         }
 
-        var members = classDescriptor.defaultType.memberScope.getContributedDescriptors()
-        if (classDescriptor.kind != ClassKind.ENUM_CLASS && classDescriptor.kind != ClassKind.OBJECT) {
-            members = members.filter { DescriptorUtils.isNonCompanionObject(it) }
+        val members = classDescriptor.defaultType.memberScope.getContributedDescriptors().filter { member ->
+            when (classDescriptor.kind) {
+                ClassKind.ENUM_CLASS -> member is ClassDescriptor // enum member
+                ClassKind.OBJECT -> true
+                else -> DescriptorUtils.isNonCompanionObject(member)
+            }
         }
         members.forEach(::processMember)
     }
