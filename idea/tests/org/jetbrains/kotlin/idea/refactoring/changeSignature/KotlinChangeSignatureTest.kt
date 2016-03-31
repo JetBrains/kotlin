@@ -684,6 +684,7 @@ class KotlinChangeSignatureTest : KotlinCodeInsightTestCase() {
 
     fun testParameterToReceiverImplicitReceivers() = doTest { receiverParameterInfo = newParameters[0] }
 
+/*
     fun testJavaMethodOverridesReplaceParam() = doJavaTest {
         newReturnType = stringPsiType
         newParameters[0] = ParameterInfoImpl(-1, "x", PsiType.INT, "1")
@@ -695,6 +696,7 @@ class KotlinChangeSignatureTest : KotlinCodeInsightTestCase() {
         newParameters[0].name = "x"
         newParameters[0].setType(PsiType.INT)
     }
+*/
 
     fun testChangeProperty() = doTest {
         newName = "s"
@@ -760,6 +762,7 @@ class KotlinChangeSignatureTest : KotlinCodeInsightTestCase() {
         primaryPropagationTargets = listOf(functionBar, functionTest)
     }
 
+/*
     fun testJavaParameterPropagation() = doJavaTest {
         newParameters.add(ParameterInfoImpl(-1, "n", PsiType.INT, "1"))
         newParameters.add(ParameterInfoImpl(-1, "s", stringPsiType, "\"abc\""))
@@ -771,6 +774,7 @@ class KotlinChangeSignatureTest : KotlinCodeInsightTestCase() {
         val functionTest = KotlinTopLevelFunctionFqnNameIndex.getInstance().get("test", project, project.allScope()).first()
         parameterPropagationTargets.add(functionTest.getRepresentativeLightMethod()!!)
     }
+*/
 
     fun testPropagateWithParameterDuplication() = doTestConflict {
         val defaultValueForCall = KtPsiFactory(project).createExpression("1")
@@ -821,7 +825,9 @@ class KotlinChangeSignatureTest : KotlinCodeInsightTestCase() {
         primaryPropagationTargets = findCallers(method.getRepresentativeLightMethod()!!)
     }
 
+/*
     fun testJavaMethodOverridesOmitUnitType() = doJavaTest {}
+*/
 
     fun testOverrideInAnonymousObjectWithTypeParameters() = doTest { newName = "bar" }
 

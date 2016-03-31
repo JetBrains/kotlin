@@ -25,7 +25,7 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 
-public class KotlinLightProjectDescriptor extends LightProjectDescriptor {
+public class KotlinLightProjectDescriptor implements LightProjectDescriptor {
     protected KotlinLightProjectDescriptor() {
     }
     

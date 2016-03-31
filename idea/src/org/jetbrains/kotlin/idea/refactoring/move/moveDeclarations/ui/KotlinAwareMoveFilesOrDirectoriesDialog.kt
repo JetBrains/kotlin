@@ -25,7 +25,6 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.fileChooser.FileChooserFactory
 import com.intellij.openapi.help.HelpManager
 import com.intellij.openapi.keymap.KeymapUtil
-import com.intellij.openapi.project.DumbModePermission
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
@@ -167,7 +166,7 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
     }
 
     override fun doOKAction() {
-        PropertiesComponent.getInstance().setValue(MOVE_FILES_OPEN_IN_EDITOR, openInEditorCb.isSelected, true)
+        PropertiesComponent.getInstance().setValue(MOVE_FILES_OPEN_IN_EDITOR, openInEditorCb.isSelected.toString(), true.toString())
         RecentsManager.getInstance(project).registerRecentEntry(RECENT_KEYS, targetDirectoryField.childComponent.text)
 
         if (DumbService.isDumb(project)) {
@@ -176,7 +175,10 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
         }
 
         project.executeCommand(RefactoringBundle.message("move.title"), null) {
+/*
             DumbService.allowStartingDumbModeInside(DumbModePermission.MAY_START_MODAL) {
+*/
+            allowStartingDumbModeInside {
                 runWriteAction {
                     val directoryName = targetDirectoryField.childComponent.text.replace(File.separatorChar, '/')
                     try {
@@ -199,4 +201,6 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
             }
         }
     }
+
+    private fun allowStartingDumbModeInside(f: () -> Unit) = f()
 }

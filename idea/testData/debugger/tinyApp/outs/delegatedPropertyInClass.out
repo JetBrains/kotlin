@@ -1,5 +1,5 @@
 LineBreakpoint created at delegatedPropertyInClass.kt:9
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! delegatedPropertyInClass.DelegatedPropertyInClassKt
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! delegatedPropertyInClass.DelegatedPropertyInClassKt
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 delegatedPropertyInClass.kt:9
 package delegatedPropertyInClass
@@ -36,10 +36,10 @@ Compile bytecode for args.size
    local    = a: delegatedPropertyInClass.A = {delegatedPropertyInClass.A@uniqueID} (sp = delegatedPropertyInClass.kt, 7)
      field    = prop$delegate: delegatedPropertyInClass.MyDelegate = {delegatedPropertyInClass.MyDelegate@uniqueID} (sp = delegatedPropertyInClass.kt, 13)
                 - Class has no fields
-     field    = prop: int = 1 (sp = delegatedPropertyInClass.kt, 13)
+     field    = prop: delegatedPropertyInClass.MyDelegate = 1 (sp = delegatedPropertyInClass.kt, 13)
      field    = propEx$delegate: delegatedPropertyInClass.MyDelegateThrowsException = {delegatedPropertyInClass.MyDelegateThrowsException@uniqueID} (sp = delegatedPropertyInClass.kt, 14)
                 - Class has no fields
-     field    = propEx: int = {java.lang.IllegalStateException@uniqueID}java.lang.IllegalStateException (sp = delegatedPropertyInClass.kt, 14)
+     field    = propEx: delegatedPropertyInClass.MyDelegateThrowsException = {java.lang.IllegalStateException@uniqueID}java.lang.IllegalStateException (sp = delegatedPropertyInClass.kt, 14)
        field    = detailMessage: java.lang.String = null (sp = Throwable.!EXT!)
        field    = cause: java.lang.Throwable = {java.lang.IllegalStateException@uniqueID}java.lang.IllegalStateException (sp = Throwable.!EXT!)
    extra    = args.size

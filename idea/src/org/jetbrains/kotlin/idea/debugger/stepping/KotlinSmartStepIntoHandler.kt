@@ -78,7 +78,7 @@ class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
             private fun recordFunctionLiteral(function: KtFunction): Boolean {
                 val context = function.analyze()
                 val resolvedCall = function.getParentCall(context).getResolvedCall(context)
-                if (resolvedCall != null) {
+                if (resolvedCall != null && !InlineUtil.isInline(resolvedCall.getResultingDescriptor())) {
                     val arguments = resolvedCall.valueArguments
                     for ((param, argument) in arguments) {
                         if (argument.arguments.any { getArgumentExpression(it) == function }) {

@@ -35,6 +35,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.compiled.ClsFileImpl
 import com.intellij.psi.search.searches.ReferencesSearch
+import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ThreeState
 import com.intellij.xdebugger.frame.XStackFrame
@@ -79,19 +80,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
 import com.intellij.debugger.engine.DebuggerUtils as JDebuggerUtils
 
-class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiRequestPositionManager, PositionManagerEx() {
-
-    override fun evaluateCondition(context: EvaluationContext, frame: StackFrameProxyImpl, location: Location, expression: String): ThreeState? {
-        return ThreeState.UNSURE
-    }
-
-    override fun createStackFrame(frame: StackFrameProxyImpl, debugProcess: DebugProcessImpl, location: Location): XStackFrame? {
-        if (location.declaringType().containsKotlinStrata()) {
-            return KotlinStackFrame(frame)
-        }
-        return null
-    }
-
+class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiRequestPositionManager {
     override fun getSourcePosition(location: Location?): SourcePosition? {
         if (location == null) {
             throw NoDataException.INSTANCE
@@ -132,28 +121,10 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
             if (lambdaOrFunIfInside != null) {
                 return SourcePosition.createFromElement(lambdaOrFunIfInside.bodyExpression!!)
             }
-            val property = getParameterIfInConstructor(location, psiFile, lineNumber)
-            if (property != null) {
-                return SourcePosition.createFromElement(property)
-            }
             return SourcePosition.createFromLine(psiFile, lineNumber)
         }
 
         throw NoDataException.INSTANCE
-    }
-
-    private fun getParameterIfInConstructor(location: Location, file: KtFile, lineNumber: Int): KtParameter? {
-        val lineStartOffset = file.getLineStartOffset(lineNumber) ?: return null
-        val elementAt = file.findElementAt(lineStartOffset)
-        val contextElement = KotlinCodeFragmentFactory.getContextElement(elementAt)
-        val methodName = location.method().name()
-        if (contextElement is KtClass && JvmAbi.isGetterName(methodName)) {
-            val parameterForGetter = contextElement.getPrimaryConstructor()?.valueParameters?.firstOrNull() {
-                it.hasValOrVar() && it.name != null && JvmAbi.getterName(it.name!!) == methodName
-            } ?: return null
-            return parameterForGetter
-        }
-        return null
     }
 
     private fun getLambdaOrFunIfInside(location: Location, file: KtFile, lineNumber: Int): KtFunction? {

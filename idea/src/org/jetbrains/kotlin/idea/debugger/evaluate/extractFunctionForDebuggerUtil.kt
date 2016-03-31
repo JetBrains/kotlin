@@ -229,42 +229,7 @@ private fun getExpressionToAddDebugExpressionBefore(tmpFile: KtFile, contextElem
 }
 
 private fun addDebugExpressionBeforeContextElement(codeFragment: KtCodeFragment, contextElement: PsiElement): List<KtExpression> {
-    val elementBefore = findElementBefore(contextElement)
-
-    val parent = elementBefore?.parent
-    if (parent == null || elementBefore == null) return emptyList()
-
     val psiFactory = KtPsiFactory(codeFragment)
-
-    parent.addBefore(psiFactory.createNewLine(), elementBefore)
-
-    fun insertExpression(expr: KtElement?): List<KtExpression> {
-        when (expr) {
-            is KtBlockExpression -> return expr.statements.flatMap { insertExpression(it) }
-            is KtExpression -> {
-                val newDebugExpression = parent.addBefore(expr, elementBefore)
-                if (newDebugExpression == null) {
-                    LOG.error("Couldn't insert debug expression ${expr.text} to context file before ${elementBefore.text}")
-                    return emptyList()
-                }
-                parent.addBefore(psiFactory.createNewLine(), elementBefore)
-                return listOf(newDebugExpression as KtExpression)
-            }
-        }
-        return emptyList()
-    }
-
-    val containingFile = codeFragment.context?.containingFile
-    if (containingFile is KtCodeFragment) {
-        insertExpression(containingFile.getContentElement() as? KtExpression)
-    }
-
-    val debugExpression = codeFragment.getContentElement() ?: return emptyList()
-    return insertExpression(debugExpression)
-}
-
-private fun findElementBefore(contextElement: PsiElement): PsiElement? {
-    val psiFactory = KtPsiFactory(contextElement)
 
     fun insertNewInitializer(classBody: KtClassBody): PsiElement? {
         val initializer = psiFactory.createAnonymousInitializer()
@@ -273,7 +238,7 @@ private fun findElementBefore(contextElement: PsiElement): PsiElement? {
         return block?.lastChild
     }
 
-    return when {
+    val elementBefore = when {
         contextElement is KtFile -> {
             val fakeFunction = psiFactory.createFunction("fun _debug_fun_() {}")
             contextElement.add(psiFactory.createNewLine())
@@ -294,10 +259,6 @@ private fun findElementBefore(contextElement: PsiElement): PsiElement? {
                     (getter.bodyExpression as KtBlockExpression).statements.first()
                 }
             }
-        }
-        contextElement is KtParameter -> {
-            val ownerFunction = contextElement.ownerFunction!!
-            findElementBefore(ownerFunction)
         }
         contextElement is KtPrimaryConstructor -> {
             val classOrObject = contextElement.getContainingClassOrObject()
@@ -339,6 +300,35 @@ private fun findElementBefore(contextElement: PsiElement): PsiElement? {
             contextElement
         }
     }
+
+    val parent = elementBefore?.parent
+    if (parent == null || elementBefore == null) return emptyList()
+
+    parent.addBefore(psiFactory.createNewLine(), elementBefore)
+
+    fun insertExpression(expr: KtElement?): List<KtExpression> {
+        when (expr) {
+            is KtBlockExpression -> return expr.statements.flatMap { insertExpression(it) }
+            is KtExpression -> {
+                val newDebugExpression = parent.addBefore(expr, elementBefore)
+                if (newDebugExpression == null) {
+                    LOG.error("Couldn't insert debug expression ${expr.text} to context file before ${elementBefore.text}")
+                    return emptyList()
+                }
+                parent.addBefore(psiFactory.createNewLine(), elementBefore)
+                return listOf(newDebugExpression as KtExpression)
+            }
+        }
+        return emptyList()
+    }
+
+    val containingFile = codeFragment.context?.containingFile
+    if (containingFile is KtCodeFragment) {
+        insertExpression(containingFile.getContentElement() as? KtExpression)
+    }
+
+    val debugExpression = codeFragment.getContentElement() ?: return emptyList()
+    return insertExpression(debugExpression)
 }
 
 private fun replaceByRunFunction(expression: KtExpression): KtCallExpression {

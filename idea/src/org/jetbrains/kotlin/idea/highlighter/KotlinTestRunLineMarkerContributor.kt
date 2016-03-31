@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.highlighter
 
+/*
 import com.intellij.codeInsight.TestFrameworks
 import com.intellij.execution.TestStateStorage
 import com.intellij.execution.lineMarker.ExecutorAction
@@ -83,3 +84,4 @@ class KotlinTestRunLineMarkerContributor : RunLineMarkerContributor() {
         return RunLineMarkerContributor.Info(icon, { "Run Test" }, ExecutorAction.getActions(1))
     }
 }
+*/

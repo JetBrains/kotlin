@@ -41,7 +41,9 @@ import kotlin.comparisons.compareBy
 // Set this to true if you want to dump all bytecode (test will fail in this case)
 private val DUMP_ALL = System.getProperty("comparison.dump.all") == "true"
 
-fun assertEqualDirectories(expected: File, actual: File, forgiveExtraFiles: Boolean) {
+@JvmOverloads
+fun assertEqualDirectories(expected: File, actual: File, forgiveExtraFiles: Boolean,
+                           beforeCompare: ((String, String) -> Pair<String, String>)? = null) {
     val pathsInExpected = getAllRelativePaths(expected)
     val pathsInActual = getAllRelativePaths(actual)
 
@@ -68,7 +70,13 @@ fun assertEqualDirectories(expected: File, actual: File, forgiveExtraFiles: Bool
         }
     }
 
-    Assert.assertEquals(expectedString, actualString)
+    if (beforeCompare == null) {
+        Assert.assertEquals(expectedString, actualString)
+    }
+    else {
+        val (expectedProcessed, actualProcessed) = beforeCompare(expectedString, actualString)
+        Assert.assertEquals(expectedProcessed, actualProcessed)
+    }
 }
 
 private fun File.hash() = Files.hash(this, Hashing.crc32())

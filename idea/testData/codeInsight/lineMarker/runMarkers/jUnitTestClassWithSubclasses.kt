@@ -1,4 +1,4 @@
-// CONFIGURE_LIBRARY: JUnit@lib/junit-4.12.jar
+// CONFIGURE_LIBRARY: JUnit@lib/junit-4.11.jar
 package testing
 
 import junit.framework.TestCase
@@ -11,16 +11,16 @@ abstract class <lineMarker></lineMarker>KBase : TestCase() {
     }
 }
 
-class <lineMarker></lineMarker>KTest : KBase() {
+class KTest : KBase() {
     @Test
-    fun <lineMarker></lineMarker>testBar() {
+    fun testBar() {
 
     }
 }
 
-class <lineMarker></lineMarker>KTest2 : KBase() {
+class KTest2 : KBase() {
     @Test
-    fun <lineMarker></lineMarker>testBaz() {
+    fun testBaz() {
 
     }
 }

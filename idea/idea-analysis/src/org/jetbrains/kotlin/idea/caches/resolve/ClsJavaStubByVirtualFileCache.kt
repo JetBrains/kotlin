@@ -31,7 +31,9 @@ import java.io.IOException
 class ClsJavaStubByVirtualFileCache {
     private class CachedJavaStub(val modificationStamp: Long, val javaFileStub: PsiJavaFileStubImpl)
 
-    private val cache = ContainerUtil.createConcurrentWeakKeySoftValueMap<VirtualFile, CachedJavaStub>()
+    private val cache = ContainerUtil.createConcurrentWeakKeySoftValueMap<VirtualFile, CachedJavaStub>(
+            100, 0.75f, Runtime.getRuntime().availableProcessors(), ContainerUtil.canonicalStrategy<VirtualFile>()
+    )
 
     fun get(classFile: VirtualFile): PsiJavaFileStubImpl? {
         val cached = cache.get(classFile)

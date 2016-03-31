@@ -73,17 +73,22 @@ fun Module.configureAs(kind: ModuleKind) {
 }
 
 fun KtFile.dumpTextWithErrors(): String {
+    return diagnosticsHeader() + getText()
+}
+
+fun KtFile.diagnosticsHeader(): String {
     val diagnostics = analyzeFullyAndGetResult().bindingContext.getDiagnostics()
     val errors = diagnostics.filter { it.getSeverity() == Severity.ERROR }
-    if (errors.isEmpty()) return text
-    val header = errors.map { "// ERROR: " + DefaultErrorMessages.render(it).replace('\n', ' ') }.joinToString("\n", postfix = "\n")
-    return header + text
+    if (errors.isEmpty()) return ""
+    return errors.map { "// ERROR: " + DefaultErrorMessages.render(it).replace('\n', ' ') }.joinToString("\n", postfix = "\n")
 }
 
 fun closeAndDeleteProject(): Unit =
     ApplicationManager.getApplication().runWriteAction() { LightPlatformTestCase.closeAndDeleteProject() }
 
 fun unInvalidateBuiltinsAndStdLib(project: Project, runnable: RunnableWithException) {
+    val fileManager = (PsiManager.getInstance(project) as PsiManagerEx).getFileManager()
+
     val stdLibViewProviders = HashSet<KotlinDecompiledFileViewProvider>()
     val vFileToViewProviderMap = ((PsiManager.getInstance(project) as PsiManagerEx).fileManager as FileManagerImpl).vFileToViewProviderMap
     for ((file, viewProvider) in vFileToViewProviderMap) {
@@ -94,11 +99,11 @@ fun unInvalidateBuiltinsAndStdLib(project: Project, runnable: RunnableWithExcept
 
     runnable.run()
 
-    // Base tearDown() invalidates builtins and std-lib files. Restore them with brute force.
+    // Restore mapping between PsiFiles and VirtualFiles dropped in FileManager.cleanupForNextTest(),
+    // otherwise built-ins psi elements will become invalid in next test.
     fun unInvalidateFile(file: PsiFileImpl) {
-        val field = PsiFileImpl::class.java.getDeclaredField("myInvalidated")!!
-        field.isAccessible = true
-        field.set(file, false)
+        val provider = file.getViewProvider();
+        fileManager.setViewProvider(provider.getVirtualFile(), provider);
     }
 
     stdLibViewProviders.forEach {

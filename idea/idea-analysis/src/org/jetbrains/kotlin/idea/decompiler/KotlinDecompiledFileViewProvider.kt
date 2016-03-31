@@ -38,6 +38,7 @@ class KotlinDecompiledFileViewProvider(
         val psiFile = createFile(manager.project, file, KotlinFileType.INSTANCE)
         val text = psiFile?.text ?: ""
 
+/*
         DebugUtil.startPsiModification("Invalidating throw-away copy of file that was used for getting text")
         try {
             (psiFile as? PsiFileImpl)?.markInvalidated()
@@ -45,6 +46,7 @@ class KotlinDecompiledFileViewProvider(
         finally {
             DebugUtil.finishPsiModification()
         }
+*/
 
         text
     }

@@ -29,6 +29,7 @@ import com.intellij.debugger.impl.PositionUtil
 import com.intellij.debugger.settings.DebuggerSettings
 import com.intellij.debugger.ui.breakpoints.Breakpoint
 import com.intellij.debugger.ui.breakpoints.BreakpointManager
+import com.intellij.debugger.ui.breakpoints.JavaLineBreakpointType
 import com.intellij.debugger.ui.breakpoints.LineBreakpoint
 import com.intellij.execution.process.ProcessOutputTypes
 import com.intellij.openapi.application.ModalityState
@@ -48,7 +49,6 @@ import org.jetbrains.java.debugger.breakpoints.properties.JavaLineBreakpointProp
 import org.jetbrains.kotlin.idea.refactoring.getLineNumber
 import org.jetbrains.kotlin.idea.debugger.breakpoints.KotlinFieldBreakpoint
 import org.jetbrains.kotlin.idea.debugger.breakpoints.KotlinFieldBreakpointType
-import org.jetbrains.kotlin.idea.debugger.breakpoints.KotlinLineBreakpointType
 import org.jetbrains.kotlin.idea.debugger.stepping.*
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -145,15 +145,11 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
     }
 
     protected fun SuspendContextImpl.doStepOut() {
-        val stepOutCommand = runReadAction { KotlinSteppingCommandProvider().getStepOutCommand(this, debuggerContext) }
-                             ?: dp.createStepOutCommand(this)
-        dp.managerThread.schedule(stepOutCommand)
+        dp.managerThread!!.schedule(dp.createStepOutCommand(this))
     }
 
     protected fun SuspendContextImpl.doStepOver() {
-        val stepOverCommand = runReadAction { KotlinSteppingCommandProvider().getStepOverCommand(this, false, debuggerContext) }
-                             ?: dp.createStepOverCommand(this, false)
-        dp.managerThread.schedule(stepOverCommand)
+        dp.managerThread.schedule(dp.createStepOverCommand(this, false))
     }
 
     protected fun doStepping(path: String) {
@@ -173,7 +169,7 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
 
         when {
             !line.startsWith("//") -> return
-            line.startsWith("// STEP_INTO: ") -> repeat("// STEP_INTO: ") { stepInto(this) }
+            line.startsWith("// STEP_INTO: ") -> repeat("// STEP_INTO: ") { doStepInto(false, null) }
             line.startsWith("// STEP_OUT: ") -> repeat("// STEP_OUT: ") { doStepOut() }
             line.startsWith("// STEP_OVER: ") -> repeat("// STEP_OVER: ") { doStepOver() }
             line.startsWith("// SMART_STEP_INTO_BY_INDEX: ") -> doOnBreakpoint { doSmartStepInto(InTextDirectivesUtils.getPrefixedInt(line, "// SMART_STEP_INTO_BY_INDEX: ")!!) }
@@ -339,17 +335,16 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
             lambdaOrdinal: Int?,
             condition: String?
     ) {
-        val kotlinLineBreakpointType = findBreakpointType(KotlinLineBreakpointType::class.java)
+        val kotlinLineBreakpointType = findBreakpointType(JavaLineBreakpointType::class.java)
         val javaBreakpoint = createBreakpointOfType(
                 breakpointManager,
                 kotlinLineBreakpointType  as XLineBreakpointType<XBreakpointProperties<*>>,
                 lineIndex,
                 file.virtualFile)
-        if (javaBreakpoint is LineBreakpoint<*>) {
+        if (javaBreakpoint is LineBreakpoint) {
             val properties = javaBreakpoint.xBreakpoint.properties as? JavaLineBreakpointProperties ?: return
             var suffix = ""
             if (lambdaOrdinal != null) {
-                properties.lambdaOrdinal = lambdaOrdinal
                 suffix += " lambdaOrdinal = $lambdaOrdinal"
             }
             if (condition != null) {

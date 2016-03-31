@@ -1,5 +1,5 @@
 LineBreakpoint created at frameInlineFunCallInsideInlineFun.kt:20
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! frameInlineFunCallInsideInlineFun.FrameInlineFunCallInsideInlineFunKt
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! frameInlineFunCallInsideInlineFun.FrameInlineFunCallInsideInlineFunKt
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 frameInlineFunCallInsideInlineFun.kt:20
 frameInlineFunCallInsideInlineFun.kt:5
@@ -60,11 +60,13 @@ fun main(args: Array<String>) {
    local    = element: float = 1.0 (sp = frameInlineFunCallInsideInlineFun.kt, 5)
    local    = this_$iv: frameInlineFunCallInsideInlineFun.B = {frameInlineFunCallInsideInlineFun.B@uniqueID} (sp = null)
               - Class has no fields
+   local    = $i$f$foo: int = 0 (sp = null)
    local    = element$iv: int = 2 (sp = frameInlineFunCallInsideInlineFun.kt, 5)
    local    = a$iv: frameInlineFunCallInsideInlineFun.A = {frameInlineFunCallInsideInlineFun.A@uniqueID} (sp = null)
      field    = prop: int = 1 (sp = frameInlineFunCallInsideInlineFun.kt, 10)
    local    = this_$iv$iv: frameInlineFunCallInsideInlineFun.A = {frameInlineFunCallInsideInlineFun.A@uniqueID} (sp = null)
      field    = prop: int = 1 (sp = frameInlineFunCallInsideInlineFun.kt, 10)
+   local    = $i$f$inlineFun: int = 0 (sp = null)
    local    = element$iv$iv: double = 1.0 (sp = frameInlineFunCallInsideInlineFun.kt, 5)
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 

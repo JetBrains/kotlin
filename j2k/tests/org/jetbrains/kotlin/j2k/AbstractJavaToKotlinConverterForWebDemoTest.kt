@@ -24,6 +24,7 @@ import com.intellij.core.JavaCoreApplicationEnvironment
 import com.intellij.core.JavaCoreProjectEnvironment
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.extensions.ExtensionsArea
+import com.intellij.openapi.fileTypes.ContentBasedFileSubstitutor
 import com.intellij.openapi.fileTypes.FileTypeExtensionPoint
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
@@ -33,12 +34,11 @@ import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.PsiModifierListOwner
 import com.intellij.psi.augment.PsiAugmentProvider
 import com.intellij.psi.compiled.ClassFileDecompilers
-import com.intellij.psi.impl.JavaClassSupersImpl
 import com.intellij.psi.impl.PsiTreeChangePreprocessor
 import com.intellij.psi.impl.compiled.ClsCustomNavigationPolicy
+import com.intellij.psi.impl.compiled.ClsStubBuilderFactory
 import com.intellij.psi.meta.MetaDataContributor
 import com.intellij.psi.stubs.BinaryFileStubBuilders
-import com.intellij.psi.util.JavaClassSupers
 import junit.framework.TestCase
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
@@ -79,8 +79,6 @@ abstract class AbstractJavaToKotlinConverterForWebDemoTest : TestCase() {
             override fun hasHardcodedContracts(element: PsiElement): Boolean = false
         })
 
-        applicationEnvironment.application.registerService(JavaClassSupers::class.java, JavaClassSupersImpl::class.java)
-
         for (root in PathUtil.getJdkClassesRoots()) {
             javaCoreEnvironment.addJarToClassPath(root)
         }
@@ -92,10 +90,12 @@ abstract class AbstractJavaToKotlinConverterForWebDemoTest : TestCase() {
     }
 
     private fun registerExtensionPoints(area: ExtensionsArea) {
+        CoreApplicationEnvironment.registerExtensionPoint(area, ContentBasedFileSubstitutor.EP_NAME, ContentBasedFileSubstitutor::class.java)
         CoreApplicationEnvironment.registerExtensionPoint(area, BinaryFileStubBuilders.EP_NAME, FileTypeExtensionPoint::class.java)
         CoreApplicationEnvironment.registerExtensionPoint(area, FileContextProvider.EP_NAME, FileContextProvider::class.java)
 
         CoreApplicationEnvironment.registerExtensionPoint(area, MetaDataContributor.EP_NAME, MetaDataContributor::class.java)
+        CoreApplicationEnvironment.registerExtensionPoint(area, ClsStubBuilderFactory.EP_NAME, ClsStubBuilderFactory::class.java)
         CoreApplicationEnvironment.registerExtensionPoint(area, PsiAugmentProvider.EP_NAME, PsiAugmentProvider::class.java)
         CoreApplicationEnvironment.registerExtensionPoint(area, JavaMainMethodProvider.EP_NAME, JavaMainMethodProvider::class.java)
 

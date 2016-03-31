@@ -20,16 +20,17 @@ import com.intellij.find.findUsages.AbstractFindUsagesDialog
 import com.intellij.find.findUsages.FindUsagesOptions
 import com.intellij.find.findUsages.JavaFindUsagesHelper
 import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiReference
+import com.intellij.psi.*
+import com.intellij.psi.meta.PsiMetaOwner
 import com.intellij.psi.search.PsiElementProcessor
 import com.intellij.psi.search.PsiElementProcessorAdapter
 import com.intellij.psi.search.searches.ReferencesSearch
+import com.intellij.psi.util.PsiUtil
+import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.FilteredQuery
 import com.intellij.util.Processor
+import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.asJava.KtLightMethod
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -196,7 +197,7 @@ class KotlinFindClassUsagesHandler(
                            else -> null
                        } ?: return Collections.emptyList()
 
-        return JavaFindUsagesHelper.getElementNames(psiClass)
+        return getElementNames(psiClass)
     }
 
     override fun isSearchForTextOccurencesAvailable(psiElement: PsiElement, isSingleFile: Boolean): Boolean {
@@ -205,5 +206,59 @@ class KotlinFindClassUsagesHandler(
 
     override fun getFindUsagesOptions(dataContext: DataContext?): FindUsagesOptions {
         return factory.findClassOptions
+    }
+
+    fun getElementNames(element: PsiElement): Set<String> {
+        if (element is PsiDirectory) {
+            // normalize a directory to a corresponding package
+            val aPackage = runReadAction { JavaDirectoryService.getInstance().getPackage(element) }
+            return if (aPackage == null) emptySet<String>() else getElementNames(aPackage)
+        }
+
+        val result = HashSet<String>()
+
+        runReadAction {
+            when (element) {
+                is PsiPackage -> {
+                    ContainerUtil.addIfNotNull(result, element.qualifiedName)
+                }
+                is PsiClass -> {
+                    val qname = element.qualifiedName
+                    if (qname != null) {
+                        result.add(qname)
+                        val topLevelClass = PsiUtil.getTopLevelClass(element)
+                        if (topLevelClass != null) {
+                            val topName = topLevelClass.qualifiedName
+                            assert(topName != null)
+                            if (qname.length > topName!!.length) {
+                                result.add(topName + qname.substring(topName.length).replace('.', '$'))
+                            }
+                        }
+                    }
+                }
+                is PsiMethod -> {
+                    ContainerUtil.addIfNotNull(result, element.name)
+                }
+                is PsiVariable -> {
+                    ContainerUtil.addIfNotNull(result, element.name)
+                }
+                is PsiMetaOwner -> {
+                    val metaData = element.metaData
+                    if (metaData != null) {
+                        ContainerUtil.addIfNotNull(result, metaData.name)
+                    }
+                }
+                is PsiNamedElement -> {
+                    ContainerUtil.addIfNotNull(result, element.name)
+                }
+                is XmlAttributeValue -> {
+                    ContainerUtil.addIfNotNull(result, element.value)
+                }
+                else -> {
+                }
+            }
+        }
+
+        return result
     }
 }

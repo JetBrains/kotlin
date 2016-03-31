@@ -58,14 +58,18 @@ public class PluginStartupComponent implements ApplicationComponent {
 
         DebuggerFiltersUtilKt.addKotlinStdlibDebugFilterIfNeeded();
 
+        /*
         try {
             // API added in 15.0.2
             UpdateChecker.INSTANCE.getExcludedFromUpdateCheckPlugins().add("org.jetbrains.kotlin");
         }
         catch (Throwable throwable) {
             LOG.debug("Excluding Kotlin plugin updates using old API", throwable);
+        */
             UpdateChecker.getDisabledToUpdatePlugins().add("org.jetbrains.kotlin");
+        /*
         }
+        */
         EditorFactory.getInstance().getEventMulticaster().addDocumentListener(new DocumentAdapter() {
             @Override
             public void documentChanged(DocumentEvent e) {

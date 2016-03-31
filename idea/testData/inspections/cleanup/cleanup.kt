@@ -8,7 +8,11 @@ class A private()
 fun foo() {
     @loop
     for (i in 1..100) {
+        // Can't replace oldFun2 because previous fix invalidates element
         val v = oldFun2(i as Int) as Int
+
+        val other = oldFun2(i as Int)
+
         /* comment */
         continue@loop
     }

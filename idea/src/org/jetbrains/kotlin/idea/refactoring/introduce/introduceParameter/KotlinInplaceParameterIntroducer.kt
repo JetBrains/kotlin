@@ -243,11 +243,6 @@ class KotlinInplaceParameterIntroducer(
         revalidate()
     }
 
-    override fun getRangeToRename(element: PsiElement): TextRange {
-        if (element is KtProperty) return element.nameIdentifier!!.textRange.shiftRight(-element.startOffset)
-        return super.getRangeToRename(element)
-    }
-
     override fun createMarker(element: PsiElement): RangeMarker {
         if (element is KtProperty) return super.createMarker(element.nameIdentifier)
         return super.createMarker(element)

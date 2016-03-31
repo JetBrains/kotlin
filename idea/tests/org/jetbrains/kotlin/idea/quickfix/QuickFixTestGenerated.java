@@ -4813,27 +4813,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
-    @TestMetadata("idea/testData/quickfix/libraries")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class Libraries extends AbstractQuickFixTest {
-        public void testAllFilesPresentInLibraries() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/libraries"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
-        }
-
-        @TestMetadata("junit.kt")
-        public void testJunit() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/libraries/junit.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("testNG.kt")
-        public void testTestNG() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/libraries/testNG.kt");
-            doTest(fileName);
-        }
-    }
-
     @TestMetadata("idea/testData/quickfix/migration")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

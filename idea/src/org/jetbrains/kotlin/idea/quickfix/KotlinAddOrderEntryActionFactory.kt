@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.quickfix
 
+/*
 import com.intellij.codeInsight.daemon.impl.quickfix.OrderEntryFix
 import com.intellij.codeInsight.daemon.impl.quickfix.QuickFixActionRegistrarImpl
 import com.intellij.codeInsight.intention.IntentionAction
@@ -57,3 +58,4 @@ object KotlinAddOrderEntryActionFactory : KotlinIntentionActionsFactory() {
         return OrderEntryFix.registerFixes(QuickFixActionRegistrarImpl(null), reference) as List<IntentionAction>? ?: emptyList()
     }
 }
+*/

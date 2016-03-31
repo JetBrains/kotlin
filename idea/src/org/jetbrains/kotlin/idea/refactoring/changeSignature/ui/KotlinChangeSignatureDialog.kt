@@ -328,6 +328,7 @@ class KotlinChangeSignatureDialog(
     }
 
     override fun validateAndCommitData(): String? {
+/*
         if (myMethod.canChangeReturnType() == MethodDescriptor.ReadWriteOption.ReadWrite &&
             myReturnTypeCodeFragment.getTypeInfo(true, false).type == null) {
             if (Messages.showOkCancelDialog(
@@ -353,6 +354,7 @@ class KotlinChangeSignatureDialog(
                 }
             }
         }
+*/
         return null
     }
 

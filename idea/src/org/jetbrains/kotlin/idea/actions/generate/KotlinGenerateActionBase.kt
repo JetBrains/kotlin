@@ -18,9 +18,6 @@ package org.jetbrains.kotlin.idea.actions.generate
 
 import com.intellij.codeInsight.CodeInsightActionHandler
 import com.intellij.codeInsight.actions.CodeInsightAction
-import com.intellij.lang.ContextAwareActionHandler
-import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
@@ -30,6 +27,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
 abstract class KotlinGenerateActionBase() : CodeInsightAction(), CodeInsightActionHandler {
+/*
     override fun update(
             presentation: Presentation,
             project: Project,
@@ -44,6 +42,7 @@ abstract class KotlinGenerateActionBase() : CodeInsightAction(), CodeInsightActi
             presentation.isEnabled = actionHandler.isAvailableForQuickList(editor, file, dataContext)
         }
     }
+*/
 
     override fun isValidForFile(project: Project, editor: Editor, file: PsiFile): Boolean {
         if (file !is KtFile || file.isCompiled) return false

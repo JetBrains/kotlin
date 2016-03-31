@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.debugger
 
+import com.intellij.debugger.actions.SmartStepTarget
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import org.jetbrains.kotlin.idea.debugger.stepping.KotlinSmartStepIntoHandler
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
@@ -35,7 +36,7 @@ abstract class AbstractSmartStepIntoTest : KotlinLightCodeInsightFixtureTestCase
 
         val position = MockSourcePosition(_file = fixture.file, _line = line, _offset = offset, _editor = fixture.editor)
 
-        val actual = KotlinSmartStepIntoHandler().findSmartStepTargets(position).map { it.presentation }
+        val actual = KotlinSmartStepIntoHandler().findSmartStepTargets(position).map { it: SmartStepTarget -> it.label ?: "" }
 
         val expected = InTextDirectivesUtils.findListWithPrefixes(fixture.file?.text!!.replace("\\,", "+++"), "// EXISTS: ").map { it.replace("+++", ",") }
 

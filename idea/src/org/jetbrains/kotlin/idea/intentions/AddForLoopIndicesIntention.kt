@@ -97,7 +97,7 @@ class AddForLoopIndicesIntention : SelfTargetingRangeIntention<KtForExpression>(
             else -> templateBuilder.setEndVariableBefore(body)
         }
 
-        templateBuilder.run(editor, true)
+        templateBuilder.run(editor, false)
     }
 
     private fun createWithIndexExpression(originalExpression: KtExpression): KtExpression {

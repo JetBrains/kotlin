@@ -247,21 +247,9 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             doSingleBreakpointTest(fileName);
         }
 
-        @TestMetadata("onGetter.kt")
-        public void testOnGetter() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/onGetter.kt");
-            doSingleBreakpointTest(fileName);
-        }
-
         @TestMetadata("onObjectHeader.kt")
         public void testOnObjectHeader() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/onObjectHeader.kt");
-            doSingleBreakpointTest(fileName);
-        }
-
-        @TestMetadata("package.kt")
-        public void testPackage() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/package.kt");
             doSingleBreakpointTest(fileName);
         }
 
@@ -784,21 +772,9 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             doMultipleBreakpointsTest(fileName);
         }
 
-        @TestMetadata("isInsideInlineLambda.kt")
-        public void testIsInsideInlineLambda() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/isInsideInlineLambda.kt");
-            doMultipleBreakpointsTest(fileName);
-        }
-
         @TestMetadata("localFun.kt")
         public void testLocalFun() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/localFun.kt");
-            doMultipleBreakpointsTest(fileName);
-        }
-
-        @TestMetadata("multipleBreakpointsAtLine.kt")
-        public void testMultipleBreakpointsAtLine() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/multipleBreakpointsAtLine.kt");
             doMultipleBreakpointsTest(fileName);
         }
 

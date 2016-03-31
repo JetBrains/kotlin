@@ -36,11 +36,11 @@ class KotlinLambdaMethodFilter(
     private val myLastStatementLine: Int
 
     init {
-        val body = lambda.bodyExpression
-        if (body != null && lambda.isMultiLine()) {
+        if (lambda.isMultiLine()) {
             var firstStatementPosition: SourcePosition? = null
             var lastStatementPosition: SourcePosition? = null
-            val statements = (body as? KtBlockExpression)?.statements ?: listOf(body)
+            val body = lambda.bodyExpression as KtBlockExpression
+            val statements = body.statements
             if (statements.isNotEmpty()) {
                 firstStatementPosition = SourcePosition.createFromElement(statements.first())
                 if (firstStatementPosition != null) {

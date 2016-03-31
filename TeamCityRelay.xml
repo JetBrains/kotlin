@@ -88,12 +88,5 @@
             origin.version="${relay.origin.version}"
             plugin.subdir="BareKotlin"
             substituted.version="${relay.substitute.version}"/>
-
-        <substitudeVersionInPlugin
-            plugin.jar.name="kotlin-android-extensions"
-            plugin.path="${relay.plugins.dir}/kotlin-android-extensions-plugin-${relay.origin.version}.zip"
-            origin.version="${relay.origin.version}"
-            plugin.subdir="KotlinAndroidExtensions"
-            substituted.version="${relay.substitute.version}"/>
     </target>
 </project>

@@ -52,6 +52,7 @@ public class KotlinCallHierarchyNodeDescriptor extends HierarchyNodeDescriptor i
     private int usageCount = 0;
     private final Set<PsiReference> references = new HashSet<PsiReference>();
     private final CallHierarchyNodeDescriptor javaDelegate;
+    private final PsiElement psiElement;
 
     public KotlinCallHierarchyNodeDescriptor(@NotNull Project project,
             HierarchyNodeDescriptor parentDescriptor,
@@ -59,6 +60,7 @@ public class KotlinCallHierarchyNodeDescriptor extends HierarchyNodeDescriptor i
             boolean isBase,
             boolean navigateToReference) {
         super(project, parentDescriptor, element, isBase);
+        this.psiElement = element;
         this.javaDelegate = new CallHierarchyNodeDescriptor(myProject, null, element, isBase, navigateToReference);
     }
 
@@ -71,6 +73,10 @@ public class KotlinCallHierarchyNodeDescriptor extends HierarchyNodeDescriptor i
             usageCount++;
         }
         javaDelegate.addReference(reference);
+    }
+
+    private PsiElement getPsiElement() {
+        return psiElement;
     }
 
     public final PsiElement getTargetElement(){

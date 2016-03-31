@@ -70,6 +70,10 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
         private val javaInspection = UnusedDeclarationInspection()
 
         fun isEntryPoint(declaration: KtNamedDeclaration): Boolean {
+            // TODO Workaround for EA-64030 - IOE: PsiJavaParserFacadeImpl.createAnnotationFromText
+            // This should be fixed on IDEA side: ClsAnnotation should not throw exceptions when annotation class has Java keyword
+            if (declaration.getAnnotationEntries().any { it.getTypeReference()?.getText()?.endsWith("native") ?: false }) return false
+
             val lightElement: PsiElement? = when (declaration) {
                 is KtClassOrObject -> declaration.toLightClass()
                 is KtNamedFunction, is KtSecondaryConstructor -> LightClassUtil.getLightClassMethod(declaration as KtFunction)

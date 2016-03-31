@@ -29,10 +29,6 @@ abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestBase() {
         doTest(path, "STEP_OUT")
     }
 
-    protected fun doStepOverTest(path: String) {
-        doTest(path, "STEP_OVER")
-    }
-
     protected fun doSmartStepIntoTest(path: String) {
         doTest(path, "SMART_STEP_INTO")
     }

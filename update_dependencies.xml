@@ -1,7 +1,7 @@
 <project name="Update Dependencies" default="update" xmlns:if="ant:if" xmlns:unless="ant:unless">
 
     <property name="automerge_dummy" value="This property is used to trick git merge. Do not delete empty lines around."/>
-    <property name="ideaVersion" value="143.2287.1"/>
+    <property name="ideaVersion" value="141.2735.5"/>
     <property name="idea.kotlin.branch" value="rc"/>
 
 
@@ -12,7 +12,7 @@
 
     <property name="markdown.locator" value="buildType:IntelliJMarkdownParser_Build,status:SUCCESS,tag:forKotlin"/>
 
-    <property name="bootstrap.build.no.tests" value="false"/>
+    <property name="bootstrap.build.no.tests" value="true"/>
 
     <!--<property name="use.ultimate.by.default" value="true"/>-->
 
@@ -20,7 +20,9 @@
     <property name="sdk.version.prefix" value="IC" unless:set="use.ultimate.by.default"/>
 
     <!-- Uncomment to enable force version increment in branch. Set override.version.disabled to temporary disable feature without commits -->
+    <!--
     <property name="override.version.url" value="https://teamcity.jetbrains.com/guestAuth/app/rest/builds/?locator=buildType:bt345,count:1${kotlin.bootstrap.branch.locator}"/>
+    -->
     <!--<property name="override.version.disabled" value="true"/>-->
 
     <condition property="isWindows">
@@ -60,12 +62,6 @@
             base.url="https://www.jetbrains.com/intellij-repository/releases/com/jetbrains/intellij/idea"
             idea.maven.version="${ideaVersion}"/>
     </target>
-
-    <!--<target name="update_teamcity" depends="fetch-third-party,fetch-annotations">-->
-        <!--<execute_update_with_idea_teamcity_artifacts-->
-            <!--teamcity.server.url="https://teamcity.jetbrains.com"-->
-            <!--build.locator.request="buildType:bt410,status:SUCCESS,branch:idea/${ideaVersion}-${idea.kotlin.branch}"/>-->
-    <!--</target>-->
 
     <target name="jb_update" depends="fetch-third-party,fetch-annotations" description="Update dependencies for JB local network">
         <execute_update_with_idea_maven_artifacts
@@ -521,39 +517,6 @@
         </sequential>
     </macrodef>
 
-    <macrodef name="execute_update_with_idea_teamcity_artifacts">
-        <attribute name="teamcity.server.url"/>
-        <attribute name="build.locator.request"/>
-
-        <sequential>
-            <loadresource property="execute.build.id">
-                <url url="@{teamcity.server.url}/guestAuth/app/rest/builds/?locator=@{build.locator.request},count:1"/>
-                <filterchain>
-                    <tokenfilter>
-                        <filetokenizer/>
-                        <replaceregex pattern="^(.*)\sid=&quot;(\d+)&quot;(.*)$" replace="\2" flags="s"/>
-                    </tokenfilter>
-                </filterchain>
-            </loadresource>
-
-            <local name="idea.already.downloaded"/>
-            <condition property="idea.already.downloaded">
-                <equals arg1="${dependencies.info.prev.idea.build.id}" arg2="${execute.build.id}"/>
-            </condition>
-
-            <echo message="IDEA build id: ${execute.build.id}. Already downloaded." if:set="idea.already.downloaded"/>
-
-            <sequential unless:set="idea.already.downloaded">
-                <echo message="IDEA build id: ${execute.build.id}, previous build id: ${dependencies.info.prev.idea.build.id}"/>
-                <download_and_update_idea_teamcity base.url="@{teamcity.server.url}/guestAuth/app/rest/builds/id:${execute.build.id}"/>
-
-                <propertyfile file="${dependencies.info.file}">
-                    <entry key="idea.build.id" value="${execute.build.id}"/>
-                </propertyfile>
-            </sequential>
-        </sequential>
-    </macrodef>
-
     <macrodef name="download_teamcity_artifact">
         <attribute name="teamcity.server.url"/>
         <attribute name="build.locator.request"/>
@@ -670,8 +633,8 @@
                 Avoid depending on old runtime during build phase but attach original runtime when idea starts.
                 -->
                 <mkdir dir="@{idea.dir}/idea-kotlin-runtime"/>
-                <move file="@{idea.dir}/lib/kotlin-runtime.jar" todir="@{idea.dir}/idea-kotlin-runtime"/>
-                <move file="@{idea.dir}/lib/kotlin-reflect.jar" todir="@{idea.dir}/idea-kotlin-runtime"/>
+                <!--<move file="@{idea.dir}/lib/kotlin-runtime.jar" todir="@{idea.dir}/idea-kotlin-runtime"/>-->
+                <!--<move file="@{idea.dir}/lib/kotlin-reflect.jar" todir="@{idea.dir}/idea-kotlin-runtime"/>-->
 
                 <delete dir="@{idea.dir}/plugins/Kotlin"/>
 
@@ -758,8 +721,12 @@
                 url="@{base.repository.url}/intellij-core/@{idea.maven.version}/intellij-core-@{idea.maven.version}.zip"
                 usetimestamp="true"/>
 
-            <get src="@{base.repository.url}/jps-build-test/@{idea.maven.version}/jps-build-test-@{idea.maven.version}.jar"
-                 dest="@{download.dir}/jps-build-test-@{idea.maven.version}.jar" usetimestamp="true"/>
+            <!--<get src="@{base.repository.url}/jps-build-test/@{idea.maven.version}/jps-build-test-@{idea.maven.version}.jar"-->
+            <!--dest="@{download.dir}/jps-build-test-@{idea.maven.version}.jar" usetimestamp="true"/>-->
+            <!-- Temporary get jps test artifact built with a newer Kotlin -->
+            <get
+                src="https://teamcity.jetbrains.com/guestAuth/repository/download/bt410/690172:id/jps/jps-build-test-IC-143.SNAPSHOT.jar"
+                dest="@{download.dir}/jps-build-test-@{idea.maven.version}.jar" usetimestamp="true"/>
 
             <download_and_unzip
                 dir="@{download.dir}/jps-standalone-@{idea.maven.version}"
@@ -775,73 +742,6 @@
                 download.file.archive.idea="@{download.dir}/${idea.id}-@{idea.maven.version}.zip"
                 download.file.archive.sources="@{download.dir}/ideaIC-@{idea.maven.version}-sources.jar"
                 download.file.archive.jps-build-test="@{download.dir}/jps-build-test-@{idea.maven.version}.jar"/>
-        </sequential>
-    </macrodef>
-
-    <macrodef name="download_and_update_idea_teamcity">
-        <attribute name="base.url"/>
-
-        <sequential>
-            <loadresource property="idea.build.number">
-                <url url="@{base.url}/artifacts/children"/>
-                <filterchain>
-                    <tokenfilter>
-                        <filetokenizer/>
-
-                        <replaceregex pattern="^(.*)ideaIC-([\w\.]+)\.win\.zip(.*)$" replace="\2" flags="s"/>
-                    </tokenfilter>
-                </filterchain>
-            </loadresource>
-
-            <property name="idea.archive.name" value="ideaIC-${idea.build.number}.zip"/>
-
-            <echo message="IDEA build number: ${idea.build.number}"/>
-            <echo message="IDEA archive file: ${idea.archive.name}"/>
-
-            <property name="content.base.url" value="@{base.url}/artifacts/content"/>
-            <property name="idea.download.dir" value="dependencies/idea" />
-            <property name="jps.extracted.dir" value="${idea.download.dir}/standalone-jps"/>
-            <property name="core.dir" value="${idea.download.dir}/core"/>
-
-            <sequential if:true="${idea.sdk.fetch.needed}">
-                <delete dir="${idea.download.dir}"/>
-                <mkdir dir="${idea.download.dir}"/>
-
-                <get src="${content.base.url}/jps/standalone-jps-IC-${idea.build.number}.zip"
-                     dest="${idea.download.dir}/standalone-jps.zip"/>
-                <unzip src="${idea.download.dir}/standalone-jps.zip"
-                       dest="${jps.extracted.dir}"/>
-
-                <delete file="${idea.download.dir}/${idea.archive.name}" failonerror="false"/>
-                <get src="${content.base.url}/${idea.archive.name}"
-                     dest="${idea.download.dir}/${idea.archive.name}"/>
-
-                <get src="${content.base.url}/jps/jps-build-test-IC-${idea.build.number}.jar"
-                     dest="${idea.download.dir}/jps-build-test.jar"
-                     usetimestamp="true"/>
-
-                <mkdir dir="${core.dir}"/>
-                <get src="${content.base.url}/core/intellij-core.jar" dest="${core.dir}/intellij-core.jar"/>
-                <get src="${content.base.url}/core/annotations.jar" dest="${core.dir}/annotations.jar"/>
-                <get src="${content.base.url}/core/guava-17.0.jar" dest="${core.dir}/guava-17.0.jar"/>
-                <get src="${content.base.url}/core/picocontainer.jar" dest="${core.dir}/picocontainer.jar"/>
-                <get src="${content.base.url}/core/trove4j.jar" dest="${core.dir}/trove4j.jar"/>
-
-                <get src="${content.base.url}/core/intellij-core-analysis.jar" dest="${core.dir}/intellij-core-analysis.jar"/>
-
-                <delete file="${idea.download.dir}/idea-sdk-sources.jar" failonerror="false"/>
-                <get src="${content.base.url}/sources.zip" dest="${idea.download.dir}/idea-sdk-sources.jar"/>
-            </sequential>
-
-            <configure_idea_sdk_dir
-                idea.dir="${idea.dir}"
-                idea.sdk.fetch.needed="${idea.sdk.fetch.needed}"
-
-                download.dir.intellij-core="${core.dir}"
-                download.dir.jps-standalone="${jps.extracted.dir}"
-                download.file.archive.idea="${idea.download.dir}/${idea.archive.name}"
-                download.file.archive.sources="${idea.download.dir}/idea-sdk-sources.jar"
-                download.file.archive.jps-build-test="${idea.download.dir}/jps-build-test.jar"/>
         </sequential>
     </macrodef>
 

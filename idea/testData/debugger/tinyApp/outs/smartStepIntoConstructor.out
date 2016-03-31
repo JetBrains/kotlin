@@ -9,7 +9,7 @@ LineBreakpoint created at smartStepIntoConstructor.kt:35
 LineBreakpoint created at smartStepIntoConstructor.kt:39
 LineBreakpoint created at smartStepIntoConstructor.kt:43
 LineBreakpoint created at smartStepIntoConstructor.kt:47
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! smartStepIntoConstructor.SmartStepIntoConstructorKt
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! smartStepIntoConstructor.SmartStepIntoConstructorKt
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 smartStepIntoConstructor.kt:7
 smartStepIntoConstructor.kt:51

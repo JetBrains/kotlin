@@ -22,7 +22,8 @@ import java.util.ArrayList
 import java.util.LinkedHashSet
 
 private object ClassTraversalCache {
-    private val cache = ContainerUtil.createConcurrentWeakKeySoftValueMap<Class<*>, ClassInfo>()
+    private val cache = ContainerUtil.createConcurrentWeakKeySoftValueMap<Class<*>, ClassInfo>(
+            100, 0.75f, Runtime.getRuntime().availableProcessors(), ContainerUtil.canonicalStrategy())
 
     fun getClassInfo(c: Class<*>): ClassInfo {
         val classInfo = cache.get(c)

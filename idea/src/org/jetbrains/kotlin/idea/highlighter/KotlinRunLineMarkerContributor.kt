@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.highlighter
 
+/*
 import com.intellij.execution.lineMarker.ExecutorAction
 import com.intellij.execution.lineMarker.RunLineMarkerContributor
 import com.intellij.psi.PsiElement
@@ -44,3 +45,4 @@ class KotlinRunLineMarkerContributor : RunLineMarkerContributor() {
         return null
     }
 }
+*/

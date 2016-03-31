@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.codeInsight
 
+/*
 import com.intellij.lang.ExpressionTypeProvider
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.actions.ShowExpressionTypeAction
@@ -39,3 +40,4 @@ class KotlinExpressionTypeProvider : ExpressionTypeProvider<KtExpression>() {
 
     override fun getErrorHint(): String = "No expression found"
 }
+*/

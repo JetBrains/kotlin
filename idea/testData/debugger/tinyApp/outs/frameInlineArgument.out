@@ -1,5 +1,5 @@
 LineBreakpoint created at frameInlineArgument.kt:7
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! frameInlineArgument.FrameInlineArgumentKt
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! frameInlineArgument.FrameInlineArgumentKt
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 frameInlineArgument.kt:7
 Compile bytecode for element
@@ -33,7 +33,9 @@ class A {
    local    = element: int = 1 (sp = frameInlineArgument.kt, 4)
    local    = this_$iv: frameInlineArgument.A = {frameInlineArgument.A@uniqueID} (sp = null)
      field    = prop: int = 1 (sp = frameInlineArgument.kt, 17)
+   local    = $i$f$inlineFun: int = 0 (sp = null)
    local    = element$iv: double = 1.0 (sp = frameInlineArgument.kt, 4)
+   local    = $i$a$1: int = 0 (sp = null)
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0

@@ -41,7 +41,7 @@ class KotlinOverridingMethodReferenceSearcher : MethodUsagesSearcher() {
         super.processQuery(p, consumer)
 
         val method = p.method
-        p.project.runReadActionInSmartMode {
+        method.project.runReadActionInSmartMode {
             val containingClass = method.containingClass ?: return@runReadActionInSmartMode
 
             val searchScope = p.effectiveSearchScope

@@ -508,7 +508,7 @@
 
                 <zipgroupfileset dir="${basedir}/lib" includes="*.jar"/>
                 <zipgroupfileset dir="${basedir}/ideaSDK/core" includes="*.jar" excludes="util.jar"/>
-                <zipfileset src="${idea.sdk}/lib/jna-platform.jar"/>
+                <zipfileset src="${idea.sdk}/lib/jna-utils.jar"/>
                 <zipfileset src="${idea.sdk}/lib/oromatcher.jar"/>
                 <zipfileset src="${idea.sdk}/jps/jps-model.jar"/>
                 <zipfileset src="${dependencies.dir}/jline.jar"/>
@@ -667,7 +667,7 @@
                 <pathelement path="${bootstrap.runtime}"/>
                 <pathelement path="${bootstrap.reflect}"/>
                 <pathelement path="${bootstrap.kotlin.test}"/>
-                <pathelement path="${idea.sdk}/lib/junit-4.12.jar"/>
+                <pathelement path="${idea.sdk}/lib/junit-4.11.jar"/>
                 <pathelement path="${idea.sdk}/lib/guava-17.0.jar"/>
                 <pathelement path="${kotlin-home}/lib/kotlin-build-common.jar"/>
                 <pathelement path="${kotlin-home}/lib/kotlin-compiler.jar"/>

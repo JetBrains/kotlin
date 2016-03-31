@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.debugger.breakpoints
 
 import com.intellij.debugger.SourcePosition
-import com.intellij.debugger.ui.breakpoints.JavaLineBreakpointType
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -70,12 +69,12 @@ fun canPutAt(file: VirtualFile, line: Int, project: Project, breakpointTypeClass
                 result = KotlinFieldBreakpointType::class.java
             }
             else {
-                result = KotlinLineBreakpointType::class.java
+                result = null
             }
             return false
         }
         else {
-            result = KotlinLineBreakpointType::class.java
+            result = null
         }
 
         return true
@@ -84,6 +83,7 @@ fun canPutAt(file: VirtualFile, line: Int, project: Project, breakpointTypeClass
     return result == breakpointTypeClass
 }
 
+/*
 fun computeVariants(
         project: Project, position: XSourcePosition,
         kotlinBreakpointType: KotlinLineBreakpointType
@@ -113,6 +113,7 @@ fun computeVariants(
 
     return result
 }
+*/
 
 fun getLambdasAtLineIfAny(sourcePosition: SourcePosition): List<KtFunction> {
     val file = sourcePosition.file as? KtFile ?: return emptyList()

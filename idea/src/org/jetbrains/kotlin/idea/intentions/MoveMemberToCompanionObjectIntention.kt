@@ -110,7 +110,7 @@ class MoveMemberToCompanionObjectIntention : SelfTargetingRangeIntention<KtNamed
             val templateBuilder = TemplateBuilderImpl(restoredElement)
             templateBuilder.replaceElement(restoredParam.nameIdentifier!!, "ParamName", ChooseStringExpression(nameSuggestions), true)
             paramRefs.forEach { templateBuilder.replaceElement(it, "ParamName", "ParamRef", false) }
-            templateBuilder.run(editor, true)
+            templateBuilder.run(editor, false)
         }
     }
 

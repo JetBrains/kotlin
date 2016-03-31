@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.debugger
 
+/*
 import com.sun.jdi.Method
 
 class MockMethod : Method {
@@ -57,3 +58,4 @@ class MockMethod : Method {
     override fun modifiers() = throw UnsupportedOperationException()
     override fun virtualMachine() = throw UnsupportedOperationException()
 }
+*/

@@ -10,7 +10,7 @@ LineBreakpoint created at smartStepIntoInterfaceImpl.kt:138
 LineBreakpoint created at smartStepIntoInterfaceImpl.kt:143
 LineBreakpoint created at smartStepIntoInterfaceImpl.kt:148
 LineBreakpoint created at smartStepIntoInterfaceImpl.kt:154
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! smartStepIntoInterfaceImpl.SmartStepIntoInterfaceImplKt
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! smartStepIntoInterfaceImpl.SmartStepIntoInterfaceImplKt
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 smartStepIntoInterfaceImpl.kt:90
 smartStepIntoInterfaceImpl.kt:95

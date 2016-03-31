@@ -16,11 +16,14 @@
 
 package org.jetbrains.kotlin.idea.configuration
 
-import com.intellij.openapi.components.*
-import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider
+import com.intellij.openapi.components.PersistentStateComponent
+import com.intellij.openapi.components.State
+import com.intellij.openapi.components.Storage
+import com.intellij.openapi.components.StoragePathMacros
 import com.intellij.openapi.module.Module
 import org.jdom.Element
 import org.jetbrains.idea.maven.importing.MavenImporter
+import org.jetbrains.idea.maven.importing.MavenModifiableModelsProvider
 import org.jetbrains.idea.maven.importing.MavenRootModelAdapter
 import org.jetbrains.idea.maven.model.MavenPlugin
 import org.jetbrains.idea.maven.project.MavenProject
@@ -37,10 +40,10 @@ private val KotlinPluginArtifactId = "kotlin-maven-plugin"
 private val KotlinPluginSourceDirsConfig = "sourceDirs"
 
 class KotlinMavenImporter : MavenImporter(KotlinPluginGroupId, KotlinPluginArtifactId) {
-    override fun preProcess(module: Module, mavenProject: MavenProject, changes: MavenProjectChanges, modifiableModelsProvider: IdeModifiableModelsProvider) {
+    override fun preProcess(module: Module, mavenProject: MavenProject, changes: MavenProjectChanges, modifiableModelsProvider: MavenModifiableModelsProvider) {
     }
 
-    override fun process(modifiableModelsProvider: IdeModifiableModelsProvider,
+    override fun process(modifiableModelsProvider: MavenModifiableModelsProvider,
                          module: Module,
                          rootModel: MavenRootModelAdapter,
                          mavenModel: MavenProjectsTree,

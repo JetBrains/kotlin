@@ -167,7 +167,9 @@ class KotlinConsoleRunner(
         val placeholderAttrs = TextAttributes()
         placeholderAttrs.foregroundColor = ReplColors.PLACEHOLDER_COLOR
         placeholderAttrs.fontType = Font.ITALIC
+/*
         editor.setPlaceholderAttributes(placeholderAttrs)
+*/
     }
 
     private fun disableCompletion(consoleView: LanguageConsoleView) {
@@ -180,7 +182,9 @@ class KotlinConsoleRunner(
         fun configureEditorGutter(editor: EditorEx, color: Color, iconWithTooltip: IconWithTooltip): RangeHighlighter {
             editor.settings.isLineMarkerAreaShown = true // hack to show gutter
             editor.settings.isFoldingOutlineShown = true
+/*
             editor.gutterComponentEx.setPaintBackground(true)
+*/
             val editorColorScheme = editor.colorsScheme
             editorColorScheme.setColor(EditorColors.GUTTER_BACKGROUND, color)
             editor.colorsScheme = editorColorScheme

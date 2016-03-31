@@ -7,7 +7,11 @@ class A private constructor()
 fun foo() {
     loop@
     for (i in 1..100) {
-        val v = bar(i + 2)
+        // Can't replace oldFun2 because previous fix invalidates element
+        val v = oldFun2(i as Int)
+
+        val other = bar(i + 2)
+
         /* comment */
         continue@loop
     }

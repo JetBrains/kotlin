@@ -124,7 +124,7 @@ object KotlinEvaluationBuilder: EvaluatorBuilder {
 class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: SourcePosition): Evaluator {
     override fun evaluate(context: EvaluationContextImpl): Any? {
         if (codeFragment.text.isEmpty()) {
-            return context.debugProcess.virtualMachineProxy.mirrorOfVoid()
+            return context.debugProcess.virtualMachineProxy.mirrorOf()
         }
 
         var isCompiledDataFromCache = true

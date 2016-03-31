@@ -30,8 +30,6 @@ class KotlinLambdaSmartStepTarget(
         lines: Range<Int>,
         val isInline: Boolean
 ): SmartStepTarget(label, highlightElement, true, lines) {
-    override fun getIcon() = KotlinIcons.LAMBDA
-
     fun getLambda() = highlightElement as KtFunction
 
     companion object {

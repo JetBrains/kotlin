@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.search.ideaExtensions
 
+/*
 import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ClassesWithAnnotatedMembersSearch
@@ -47,3 +48,4 @@ class KotlinClassesWithAnnotatedMembersSearcher : ScopedQueryExecutor<PsiClass, 
         }
     }
 }
+*/

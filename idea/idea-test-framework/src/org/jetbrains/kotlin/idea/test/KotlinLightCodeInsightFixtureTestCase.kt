@@ -72,14 +72,7 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
         KotlinInternalMode.enabled = kotlinInternalModeOriginalValue
         VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
 
-        unInvalidateBuiltinsAndStdLib(project) {
-            super.tearDown()
-        }
-
-        if (exceptions.isNotEmpty()) {
-            exceptions.forEach { it.printStackTrace() }
-            throw AssertionError("Exceptions in other threads happened")
-        }
+        super.tearDown()
     }
 
     override fun getProjectDescriptor(): LightProjectDescriptor

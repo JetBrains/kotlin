@@ -30,6 +30,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScopesCore
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testIntegration.createTest.CreateTestAction
 import com.intellij.testIntegration.createTest.TestGenerators
 import org.jetbrains.kotlin.asJava.KtLightClass
@@ -114,17 +115,17 @@ class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtNamedDeclaration
                 val propertiesComponent = PropertiesComponent.getInstance()
                 val testFolders = HashSet<VirtualFile>()
                 CreateTestAction.checkForTestRoots(srcModule, testFolders)
-                if (testFolders.isEmpty() && !propertiesComponent.getBoolean("create.test.in.the.same.root")) {
+                if (testFolders.isEmpty() && !propertiesComponent.getBoolean("create.test.in.the.same.root", false)) {
                     if (Messages.showOkCancelDialog(
                             project,
                             "Create test in the same source root?",
                             "No Test Roots Found",
                             Messages.getQuestionIcon()) != Messages.OK) return
 
-                    propertiesComponent.setValue("create.test.in.the.same.root", true)
+                    propertiesComponent.setValue("create.test.in.the.same.root", java.lang.Boolean.TRUE.toString())
                 }
 
-                val srcClass = CreateTestAction.getContainingClass(element) ?: return
+                val srcClass = getContainingClass(element) ?: return
 
                 val srcDir = element.containingFile.containingDirectory
                 val srcPackage = JavaDirectoryService.getInstance().getPackage(srcDir)
@@ -187,5 +188,19 @@ class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtNamedDeclaration
                 }
             }
         }.invoke(element.project, editor, lightClass)
+    }
+
+    private fun getContainingClass(element: PsiElement): PsiClass? {
+        val psiClass = PsiTreeUtil.getParentOfType(element, PsiClass::class.java, false)
+        if (psiClass == null) {
+            val containingFile = element.containingFile
+            if (containingFile is PsiClassOwner) {
+                val classes = containingFile.classes
+                if (classes.size == 1) {
+                    return classes[0]
+                }
+            }
+        }
+        return psiClass
     }
 }

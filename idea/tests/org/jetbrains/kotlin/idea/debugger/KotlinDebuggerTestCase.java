@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.debugger;
 
 import com.intellij.debugger.impl.DescriptorTestCase;
 import com.intellij.debugger.impl.OutputChecker;
-import com.intellij.execution.configurations.JavaParameters;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ModifiableRootModel;
@@ -28,16 +27,14 @@ import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEdito
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
-import com.intellij.pom.java.LanguageLevel;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.testFramework.EdtTestUtil;
-import com.intellij.testFramework.IdeaTestUtil;
 import com.intellij.util.ThrowableRunnable;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.xdebugger.XDebugSession;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.EdtTestUtil;
 import org.jetbrains.kotlin.asJava.FakeLightClassForFileOfPackage;
 import org.jetbrains.kotlin.asJava.KtLightClassForFacade;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
@@ -69,7 +66,7 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
 
     @Override
     protected OutputChecker initOutputChecker() {
-        return new KotlinOutputChecker(getTestAppPath(), getAppOutputPath());
+        return new KotlinOutputChecker(TINY_APP);
     }
 
     @NotNull
@@ -110,18 +107,14 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
 
     @SuppressWarnings("AssignmentToStaticFieldFromInstanceMethod")
     @Override
-    protected void setUpModule() {
-        super.setUpModule();
-
-        IdeaTestUtil.setModuleLanguageLevel(myModule, LanguageLevel.JDK_1_6);
-
+    protected void ensureCompiledAppExists() throws Exception {
         if (!IS_TINY_APP_COMPILED) {
             String modulePath = getTestAppPath();
 
             CUSTOM_LIBRARY_JAR = MockLibraryUtil.compileLibraryToJar(CUSTOM_LIBRARY_SOURCES.getPath(), "debuggerCustomLibrary", false,
                                                                      false);
 
-            String outputDir = getAppOutputPath();
+            String outputDir = modulePath + File.separator + "classes";
             String sourcesDir = modulePath + File.separator + "src";
 
             MockLibraryUtil.compileKotlin(sourcesDir, new File(outputDir), CUSTOM_LIBRARY_JAR.getPath());
@@ -136,6 +129,11 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
 
             IS_TINY_APP_COMPILED = true;
         }
+    }
+
+    @Override
+    protected void setUpModule() {
+        super.setUpModule();
 
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             @Override
@@ -168,31 +166,27 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
 
     private static class KotlinOutputChecker extends OutputChecker {
 
-        public KotlinOutputChecker(@NotNull String appPath, @NotNull String outputPath) {
-            super(appPath, outputPath);
+        public KotlinOutputChecker(@NotNull String appPath) {
+            super(appPath);
         }
 
         @Override
         protected String replaceAdditionalInOutput(String str) {
             //noinspection ConstantConditions
-            try {
-                return super.replaceAdditionalInOutput(
-                        str.replace(ForTestCompileRuntime.runtimeJarForTests().getCanonicalPath(), "!KOTLIN_RUNTIME!")
-                           .replace(CUSTOM_LIBRARY_JAR.getCanonicalPath(), "!CUSTOM_LIBRARY!")
-                );
-            }
-            catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            String jdkPath = PluginTestCaseBase.fullJdk().getHomePath().replace('/', File.separatorChar);
+            return super.replaceAdditionalInOutput(
+                    str.replace(ForTestCompileRuntime.runtimeJarForTests().getPath(), "!KOTLIN_RUNTIME!")
+                            .replace(CUSTOM_LIBRARY_JAR.getPath(), "!CUSTOM_LIBRARY!")
+                            .replace(jdkPath, "!JDK_HOME!")
+            );
         }
     }
 
     @Override
-    protected JavaParameters createJavaParameters(String mainClass) {
-        JavaParameters parameters = super.createJavaParameters(mainClass);
-        parameters.getClassPath().add(ForTestCompileRuntime.runtimeJarForTests());
-        parameters.getClassPath().add(CUSTOM_LIBRARY_JAR);
-        return parameters;
+    protected String getAppClassesPath() {
+        return super.getAppClassesPath() + File.pathSeparator +
+                    ForTestCompileRuntime.runtimeJarForTests().getPath() + File.pathSeparator +
+                    CUSTOM_LIBRARY_JAR.getPath();
     }
 
     @Override

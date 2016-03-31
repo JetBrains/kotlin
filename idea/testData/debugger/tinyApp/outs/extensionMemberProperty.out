@@ -14,7 +14,7 @@ LineBreakpoint created at extensionMemberProperty.kt:102
 LineBreakpoint created at extensionMemberProperty.kt:107
 LineBreakpoint created at extensionMemberProperty.kt:112
 LineBreakpoint created at extensionMemberProperty.kt:117
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! extensionMemberProperty.ExtensionMemberPropertyKt
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! extensionMemberProperty.ExtensionMemberPropertyKt
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 extensionMemberProperty.kt:13
 Compile bytecode for extClass.testPublic

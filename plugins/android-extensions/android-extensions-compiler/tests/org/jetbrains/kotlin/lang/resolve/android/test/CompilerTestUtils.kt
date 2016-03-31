@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.lang.resolve.android.test
 
+import com.intellij.openapi.components.ComponentManager
 import com.intellij.testFramework.UsefulTestCase
-import com.intellij.testFramework.registerServiceInstance
 import org.jetbrains.kotlin.android.synthetic.AndroidConfigurationKeys
 import org.jetbrains.kotlin.android.synthetic.AndroidExtensionPropertiesComponentContainerContributor
 import org.jetbrains.kotlin.android.synthetic.codegen.AndroidExpressionCodegenExtension
@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
+import org.picocontainer.MutablePicoContainer
 import java.io.File
 
 fun UsefulTestCase.createAndroidTestEnvironment(configuration: CompilerConfiguration, resDirectories: List<String>): KotlinCoreEnvironment {
@@ -55,4 +56,11 @@ fun UsefulTestCase.createAndroidTestEnvironment(configuration: CompilerConfigura
 
 fun getResPaths(path: String): List<String> {
     return File(path).listFiles { it -> it.name.startsWith("res") && it.isDirectory }!!.map { "$path${it.name}/" }
+}
+
+fun <T> ComponentManager.registerServiceInstance(interfaceClass: Class<T>, instance: T) {
+    val picoContainer = picoContainer as MutablePicoContainer
+    val key = interfaceClass.name
+    picoContainer.unregisterComponent(key)
+    picoContainer.registerComponentInstance(key, instance)
 }

@@ -108,7 +108,7 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
         }
         assert tool != null : "Could not find inspection tool for class: " + klass;
 
-        enableInspectionTools(tool);
+        enableInspectionTool(tool);
     }
 
     @Override

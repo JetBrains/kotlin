@@ -30,6 +30,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.extensions.ExtensionsArea
+import com.intellij.openapi.fileTypes.ContentBasedFileSubstitutor
 import com.intellij.openapi.fileTypes.FileTypeExtensionPoint
 import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.project.Project
@@ -39,19 +40,17 @@ import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.PersistentFSConstants
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.impl.ZipHandler
 import com.intellij.psi.FileContextProvider
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.augment.PsiAugmentProvider
 import com.intellij.psi.compiled.ClassFileDecompilers
-import com.intellij.psi.impl.JavaClassSupersImpl
 import com.intellij.psi.impl.PsiElementFinderImpl
 import com.intellij.psi.impl.PsiTreeChangePreprocessor
 import com.intellij.psi.impl.compiled.ClsCustomNavigationPolicy
+import com.intellij.psi.impl.compiled.ClsStubBuilderFactory
 import com.intellij.psi.impl.file.impl.JavaFileManager
 import com.intellij.psi.meta.MetaDataContributor
 import com.intellij.psi.stubs.BinaryFileStubBuilders
-import com.intellij.psi.util.JavaClassSupers
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.JavaElementFinder
 import org.jetbrains.kotlin.asJava.KtLightClassForFacade
@@ -321,7 +320,6 @@ class KotlinCoreEnvironment private constructor(
                 val environment = ourApplicationEnvironment ?: return
                 ourApplicationEnvironment = null
                 Disposer.dispose(environment.parentDisposable)
-                ZipHandler.clearFileAccessorCache()
             }
         }
 
@@ -342,10 +340,12 @@ class KotlinCoreEnvironment private constructor(
         }
 
         private fun registerAppExtensionPoints() {
+            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), ContentBasedFileSubstitutor.EP_NAME, ContentBasedFileSubstitutor::class.java)
             CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), BinaryFileStubBuilders.EP_NAME, FileTypeExtensionPoint::class.java)
             CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), FileContextProvider.EP_NAME, FileContextProvider::class.java)
             //
             CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), MetaDataContributor.EP_NAME, MetaDataContributor::class.java)
+            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), ClsStubBuilderFactory.EP_NAME, ClsStubBuilderFactory::class.java)
             CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), PsiAugmentProvider.EP_NAME, PsiAugmentProvider::class.java)
             CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), JavaMainMethodProvider.EP_NAME, JavaMainMethodProvider::class.java)
             //
@@ -384,7 +384,6 @@ class KotlinCoreEnvironment private constructor(
                 registerFileType(KotlinFileType.INSTANCE, KotlinParserDefinition.STD_SCRIPT_SUFFIX)
                 registerParserDefinition(KotlinParserDefinition())
                 application.registerService(KotlinBinaryClassCache::class.java, KotlinBinaryClassCache())
-                application.registerService(JavaClassSupers::class.java, JavaClassSupersImpl::class.java)
             }
         }
 

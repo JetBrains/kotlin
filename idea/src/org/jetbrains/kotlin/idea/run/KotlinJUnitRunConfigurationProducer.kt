@@ -44,7 +44,7 @@ class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUnitConfig
 
     override fun isConfigurationFromContext(configuration: JUnitConfiguration,
                                             context: ConfigurationContext): Boolean {
-        if (RunConfigurationProducer.getInstance(PatternConfigurationProducer::class.java).isMultipleElementsSelected(context)) {
+        if (PatternConfigurationProducer.isMultipleElementsSelected(context)) {
             return false
         }
 
@@ -116,6 +116,7 @@ class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUnitConfig
         return false
     }
 
+    /*
     override fun onFirstRun(fromContext: ConfigurationFromContext, context: ConfigurationContext, performRunnable: Runnable) {
         val leaf = fromContext.sourceElement
         getTestClass(leaf)?.let { testClass ->
@@ -135,6 +136,7 @@ class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUnitConfig
 
         super.onFirstRun(fromContext, context, performRunnable)
     }
+    */
 
     private fun getTestMethodLocation(leaf: PsiElement): Location<PsiMethod>? {
         val function = leaf.getParentOfType<KtNamedFunction>(false) ?: return null

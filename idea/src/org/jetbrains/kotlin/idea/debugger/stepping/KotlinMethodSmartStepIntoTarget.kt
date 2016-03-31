@@ -17,13 +17,6 @@ class KotlinMethodSmartStepTarget(
         highlightElement: PsiElement,
         lines: Range<Int>
 ): SmartStepTarget(label, highlightElement, false, lines) {
-    override fun getIcon(): Icon? {
-        return when {
-            resolvedElement is KtNamedFunction && resolvedElement.receiverTypeReference != null -> KotlinIcons.EXTENSION_FUNCTION
-            else -> KotlinIcons.FUNCTION
-        }
-    }
-
     companion object {
         private val renderer = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.withOptions {
             parameterNameRenderingPolicy = ParameterNameRenderingPolicy.NONE

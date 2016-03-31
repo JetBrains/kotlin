@@ -353,7 +353,9 @@ class QuickFixRegistrar : QuickFixContributor {
 
         DEPRECATED_TYPE_PARAMETER_SYNTAX.registerFactory(MigrateTypeParameterListFix)
 
+/*
         UNRESOLVED_REFERENCE.registerFactory(KotlinAddOrderEntryActionFactory)
+*/
 
         UNRESOLVED_REFERENCE.registerFactory(RenameUnresolvedReferenceActionFactory)
         EXPRESSION_EXPECTED_PACKAGE_FOUND.registerFactory(RenameUnresolvedReferenceActionFactory)

@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.daemon
 
-import com.intellij.openapi.vfs.impl.ZipHandler
-import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
@@ -487,8 +485,32 @@ class CompileServiceImpl(
     }
 
     private fun clearJarCache() {
+        /*
         ZipHandler.clearFileAccessorCache()
         (KotlinCoreEnvironment.applicationEnvironment?.jarFileSystem as? CoreJarFileSystem)?.clearHandlersCache()
+        */
+        val classloader = javaClass.classLoader
+        // TODO: replace the following code with direct call to CoreJarFileSystem.<clearCache> as soon as it will be available (hopefully in 15.02)
+        try {
+            KotlinCoreEnvironment.applicationEnvironment?.jarFileSystem.let { jarfs ->
+                val jarfsClass = classloader.loadClass("com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem")
+                val privateHandlersField = jarfsClass.getDeclaredField("myHandlers")
+                privateHandlersField.isAccessible = true
+                privateHandlersField.get(jarfs)?.let {
+                    val clearMethod = privateHandlersField.type.getMethod("clear")
+                    if (clearMethod != null) {
+                        clearMethod.invoke(it)
+                        log.info("successfully cleared com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem.myHandlers")
+                    }
+                    else {
+                        log.info("unable to access com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem.myHandlers.clear")
+                    }
+                } ?: log.info("unable to access CoreJarFileSystem.myHandlers (${privateHandlersField.get(jarfs)})")
+            }
+        }
+        catch (e: Exception) {
+            log.log(Level.SEVERE, "error clearing CoreJarFileSystem", e)
+        }
     }
 
     // copied (with edit) from gradle plugin

@@ -39,7 +39,9 @@ import java.util.regex.Pattern
 // TODO: We can reuse JavaTestFinder if Kotlin classes have their isPhysical() return true
 class KotlinTestFinder : JavaTestFinder() {
     override fun findSourceElement(from: PsiElement): PsiClass? {
+/*
         super.findSourceElement(from)?.let { return it }
+*/
 
         from.parentsWithSelf.filterIsInstance<KtClassOrObject>().firstOrNull { !it.isLocal() }?.let {
             return if (it.resolveToDescriptorIfAny() == null) null else it.toLightClass()

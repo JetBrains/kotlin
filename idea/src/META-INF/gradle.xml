@@ -2,7 +2,9 @@
   <extensions defaultExtensionNs="org.jetbrains.kotlin">
     <projectConfigurator implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleModuleConfigurator"/>
   </extensions>
+  <!--
   <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
       <frameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.GradleKotlinJavaFrameworkSupportProvider"/>
   </extensions>
+  -->
 </idea-plugin>
