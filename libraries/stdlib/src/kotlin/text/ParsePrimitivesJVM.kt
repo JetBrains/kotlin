@@ -114,16 +114,16 @@ public fun String.toIntOrNull(radix: Int = 10): Int? {
     }
 
 
-    val multmin = limit / 10
+    val multmin = limit / radix
     var result = 0
     for (i in start..len - 1) {
         // Accumulating negatively avoids surprises near MAX_VALUE
-        val digit = Character.digit(this[i], 10)
+        val digit = Character.digit(this[i], radix)
 
         if (digit < 0) return null
         if (result < multmin) return null
 
-        result *= 10
+        result *= radix
 
         if (result < limit + digit) return null
 
@@ -172,16 +172,16 @@ public fun String.toLongOrNull(radix: Int = 10): Long? {
     }
 
 
-    val multmin = limit / 10L
+    val multmin = limit / radix
     var result = 0L
     for (i in start..len - 1) {
         // Accumulating negatively avoids surprises near MAX_VALUE
-        val digit = Character.digit(this[i], 10)
+        val digit = Character.digit(this[i], radix)
 
         if (digit < 0) return null
         if (result < multmin) return null
 
-        result *= 10
+        result *= radix
 
         if (result < limit + digit) return null
 
