@@ -227,6 +227,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
 
+    @TestMetadata("IndexingOperator.kt")
+    public void testIndexingOperator() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/IndexingOperator.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("InfixCall.kt")
     public void testInfixCall() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/InfixCall.kt");
