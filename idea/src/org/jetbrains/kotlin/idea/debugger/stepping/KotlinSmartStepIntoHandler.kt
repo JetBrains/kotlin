@@ -44,15 +44,11 @@ class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
     override fun isAvailable(position: SourcePosition?) = position?.file is KtFile
 
     override fun findSmartStepTargets(position: SourcePosition): List<SmartStepTarget> {
-        if (position.line < 0) return emptyList()
-
         val file = position.file
 
-        val lineStart = CodeInsightUtils.getStartLineOffset(file, position.line) ?: return emptyList()
+        val elementAtOffset = position.elementAt ?: return emptyList()
 
-        val elementAtOffset = file.findElementAt(lineStart) ?: return emptyList()
-
-        val element = CodeInsightUtils.getTopmostElementAtOffset(elementAtOffset, lineStart)
+        val element = CodeInsightUtils.getTopmostElementAtOffset(elementAtOffset, elementAtOffset.textRange.startOffset)
         if (element !is KtElement) return emptyList()
 
         val elementTextRange = element.textRange ?: return emptyList()
