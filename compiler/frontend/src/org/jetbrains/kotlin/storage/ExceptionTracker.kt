@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.storage
 
 import com.intellij.openapi.util.ModificationTracker
+import org.jetbrains.kotlin.util.ReenteringLazyValueComputationException
 import java.util.concurrent.atomic.AtomicLong
 import org.jetbrains.kotlin.utils.rethrow
 
@@ -24,7 +25,10 @@ open class ExceptionTracker : ModificationTracker, LockBasedStorageManager.Excep
     private val cancelledTracker: AtomicLong = AtomicLong()
 
     override fun handleException(throwable: Throwable): RuntimeException {
-        incCounter()
+        // should not increment counter when ReenteringLazyValueComputationException is thrown since it implements correct frontend behaviour
+        if (throwable !is ReenteringLazyValueComputationException) {
+            incCounter()
+        }
         throw rethrow(throwable)
     }
 
