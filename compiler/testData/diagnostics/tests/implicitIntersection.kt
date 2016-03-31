@@ -14,6 +14,8 @@ class My(b: B) {
     val <!IMPLICIT_INTERSECTION_TYPE!>x<!> = if (b is A && b is C) b else null
     // Ok: given explicitly
     val y: C? = if (b is A && b is C) <!DEBUG_INFO_SMARTCAST!>b<!> else null
+    // Error!
+    fun <!IMPLICIT_INTERSECTION_TYPE!>foo<!>(b: B) = if (b is A && b is C) b else null
 }
 
 fun bar(b: B): String {

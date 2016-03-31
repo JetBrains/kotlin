@@ -9112,6 +9112,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/regressions/kt948.kt");
                     doTest(fileName);
                 }
+
+                @TestMetadata("noRecursionOnCallingPureKotlinFunctionAsSyntheticJavaAccessor.kt")
+                public void testNoRecursionOnCallingPureKotlinFunctionAsSyntheticJavaAccessor() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/regressions/noRecursionOnCallingPureKotlinFunctionAsSyntheticJavaAccessor.kt");
+                    doTest(fileName);
+                }
             }
 
             @TestMetadata("compiler/testData/diagnostics/tests/inference/reportingImprovements")
@@ -10284,6 +10290,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("protectedStaticSamePackage.kt")
             public void testProtectedStaticSamePackage() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/protectedStaticSamePackage.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("recursionWithJavaSyntheticProperty.kt")
+            public void testRecursionWithJavaSyntheticProperty() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/recursionWithJavaSyntheticProperty.kt");
                 doTest(fileName);
             }
 

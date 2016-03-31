@@ -2,10 +2,16 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
 import org.gradle.api.tasks.compile.AbstractCompile
+import java.util.*
 
 fun mapKotlinTaskProperties(project: Project, task: AbstractCompile) {
-    for (mapping in propertyMappings) {
-        mapping.apply(project, task)
+    propertyMappings.forEach { it.apply(project, task) }
+
+    val localPropertiesFile = project.rootProject.file("local.properties")
+    if (localPropertiesFile.isFile) {
+        val properties = Properties()
+        properties.load(localPropertiesFile.inputStream())
+        propertyMappings.forEach { it.apply(properties, task) }
     }
 }
 
@@ -21,7 +27,16 @@ private class KotlinPropertyMapping<T>(
     fun apply(project: Project, task: AbstractCompile) {
         if (!project.hasProperty(projectPropName)) return
 
-        val value = project.property(projectPropName) as? String ?: return
+        setPropertyValue(task, project.property(projectPropName))
+    }
+
+    fun apply(properties: Properties, task: AbstractCompile) {
+        setPropertyValue(task, properties.getProperty(projectPropName))
+    }
+
+    private fun setPropertyValue(task: AbstractCompile, value: Any?) {
+        if (value !is String) return
+
         val transformedValue = transform(value) ?: return
         task.setProperty(taskPropName, transformedValue)
     }

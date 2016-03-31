@@ -53,6 +53,7 @@ const val ANNOTATIONS_PLUGIN_NAME = "org.jetbrains.kotlin.kapt"
 const val KOTLIN_BUILD_DIR_NAME = "kotlin"
 const val CACHES_DIR_NAME = "caches"
 const val DIRTY_SOURCES_FILE_NAME = "dirty-sources.txt"
+const val USING_EXPERIMENTAL_INCREMENTAL_MESSAGE = "Using experimental kotlin incremental compilation"
 
 abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCompile() {
     abstract protected val compiler: CLICompiler<T>
@@ -360,7 +361,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
             return
         }
 
-        logger.warn("Using experimental kotlin incremental compilation")
+        logger.warn(USING_EXPERIMENTAL_INCREMENTAL_MESSAGE)
         anyClassesCompiled = false
         // TODO: decide what to do if no files are considered dirty - rebuild or skip the module
         var (sourcesToCompile, isIncrementalDecided) = calculateSourcesToCompile()
