@@ -130,6 +130,11 @@ public inline fun <T> Enumeration<T>.toList(): List<T> = Collections.list(this)
 @kotlin.internal.InlineOnly
 public inline fun <@kotlin.internal.OnlyInputTypes T> Collection<T>.containsAll(elements: Collection<T>): Boolean = this.containsAll(elements)
 
+internal fun <T> List<T>.optimizeReadOnlyList() = when (size) {
+    0 -> emptyList()
+    1 -> listOf(this[0])
+    else -> this
+}
 
 // copies typed varargs array to array of objects
 @JvmVersion

@@ -6308,63 +6308,99 @@ public fun CharArray.toHashSet(): HashSet<Char> {
  * Returns a [List] containing all elements.
  */
 public fun <T> Array<out T>.toList(): List<T> {
-    return this.toMutableList()
+    return when (size) {
+        0 -> emptyList()
+        1 -> listOf(this[0])
+        else -> this.toMutableList()
+    }
 }
 
 /**
  * Returns a [List] containing all elements.
  */
 public fun ByteArray.toList(): List<Byte> {
-    return this.toMutableList()
+    return when (size) {
+        0 -> emptyList()
+        1 -> listOf(this[0])
+        else -> this.toMutableList()
+    }
 }
 
 /**
  * Returns a [List] containing all elements.
  */
 public fun ShortArray.toList(): List<Short> {
-    return this.toMutableList()
+    return when (size) {
+        0 -> emptyList()
+        1 -> listOf(this[0])
+        else -> this.toMutableList()
+    }
 }
 
 /**
  * Returns a [List] containing all elements.
  */
 public fun IntArray.toList(): List<Int> {
-    return this.toMutableList()
+    return when (size) {
+        0 -> emptyList()
+        1 -> listOf(this[0])
+        else -> this.toMutableList()
+    }
 }
 
 /**
  * Returns a [List] containing all elements.
  */
 public fun LongArray.toList(): List<Long> {
-    return this.toMutableList()
+    return when (size) {
+        0 -> emptyList()
+        1 -> listOf(this[0])
+        else -> this.toMutableList()
+    }
 }
 
 /**
  * Returns a [List] containing all elements.
  */
 public fun FloatArray.toList(): List<Float> {
-    return this.toMutableList()
+    return when (size) {
+        0 -> emptyList()
+        1 -> listOf(this[0])
+        else -> this.toMutableList()
+    }
 }
 
 /**
  * Returns a [List] containing all elements.
  */
 public fun DoubleArray.toList(): List<Double> {
-    return this.toMutableList()
+    return when (size) {
+        0 -> emptyList()
+        1 -> listOf(this[0])
+        else -> this.toMutableList()
+    }
 }
 
 /**
  * Returns a [List] containing all elements.
  */
 public fun BooleanArray.toList(): List<Boolean> {
-    return this.toMutableList()
+    return when (size) {
+        0 -> emptyList()
+        1 -> listOf(this[0])
+        else -> this.toMutableList()
+    }
 }
 
 /**
  * Returns a [List] containing all elements.
  */
 public fun CharArray.toList(): List<Char> {
-    return this.toMutableList()
+    return when (size) {
+        0 -> emptyList()
+        1 -> listOf(this[0])
+        else -> this.toMutableList()
+    }
 }
 
 /**
@@ -6450,63 +6486,99 @@ public fun CharArray.toMutableList(): MutableList<Char> {
  * Returns a [Set] of all elements.
  */
 public fun <T> Array<out T>.toSet(): Set<T> {
-    return toCollection(LinkedHashSet<T>(mapCapacity(size)))
+    return when (size) {
+        0 -> emptySet()
+        1 -> setOf(this[0])
+        else -> toCollection(LinkedHashSet<T>(mapCapacity(size)))
+    }
 }
 
 /**
  * Returns a [Set] of all elements.
  */
 public fun ByteArray.toSet(): Set<Byte> {
-    return toCollection(LinkedHashSet<Byte>(mapCapacity(size)))
+    return when (size) {
+        0 -> emptySet()
+        1 -> setOf(this[0])
+        else -> toCollection(LinkedHashSet<Byte>(mapCapacity(size)))
+    }
 }
 
 /**
  * Returns a [Set] of all elements.
  */
 public fun ShortArray.toSet(): Set<Short> {
-    return toCollection(LinkedHashSet<Short>(mapCapacity(size)))
+    return when (size) {
+        0 -> emptySet()
+        1 -> setOf(this[0])
+        else -> toCollection(LinkedHashSet<Short>(mapCapacity(size)))
+    }
 }
 
 /**
  * Returns a [Set] of all elements.
  */
 public fun IntArray.toSet(): Set<Int> {
-    return toCollection(LinkedHashSet<Int>(mapCapacity(size)))
+    return when (size) {
+        0 -> emptySet()
+        1 -> setOf(this[0])
+        else -> toCollection(LinkedHashSet<Int>(mapCapacity(size)))
+    }
 }
 
 /**
  * Returns a [Set] of all elements.
  */
 public fun LongArray.toSet(): Set<Long> {
-    return toCollection(LinkedHashSet<Long>(mapCapacity(size)))
+    return when (size) {
+        0 -> emptySet()
+        1 -> setOf(this[0])
+        else -> toCollection(LinkedHashSet<Long>(mapCapacity(size)))
+    }
 }
 
 /**
  * Returns a [Set] of all elements.
  */
 public fun FloatArray.toSet(): Set<Float> {
-    return toCollection(LinkedHashSet<Float>(mapCapacity(size)))
+    return when (size) {
+        0 -> emptySet()
+        1 -> setOf(this[0])
+        else -> toCollection(LinkedHashSet<Float>(mapCapacity(size)))
+    }
 }
 
 /**
  * Returns a [Set] of all elements.
  */
 public fun DoubleArray.toSet(): Set<Double> {
-    return toCollection(LinkedHashSet<Double>(mapCapacity(size)))
+    return when (size) {
+        0 -> emptySet()
+        1 -> setOf(this[0])
+        else -> toCollection(LinkedHashSet<Double>(mapCapacity(size)))
+    }
 }
 
 /**
  * Returns a [Set] of all elements.
  */
 public fun BooleanArray.toSet(): Set<Boolean> {
-    return toCollection(LinkedHashSet<Boolean>(mapCapacity(size)))
+    return when (size) {
+        0 -> emptySet()
+        1 -> setOf(this[0])
+        else -> toCollection(LinkedHashSet<Boolean>(mapCapacity(size)))
+    }
 }
 
 /**
  * Returns a [Set] of all elements.
  */
 public fun CharArray.toSet(): Set<Char> {
-    return toCollection(LinkedHashSet<Char>(mapCapacity(size)))
+    return when (size) {
+        0 -> emptySet()
+        1 -> setOf(this[0])
+        else -> toCollection(LinkedHashSet<Char>(mapCapacity(size)))
+    }
 }
 
 /**
