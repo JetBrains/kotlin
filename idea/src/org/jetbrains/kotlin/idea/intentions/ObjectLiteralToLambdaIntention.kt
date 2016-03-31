@@ -79,7 +79,7 @@ class ObjectLiteralToLambdaIntention : SelfTargetingRangeIntention<KtObjectLiter
             return null
         }
 
-        return TextRange(element.objectDeclaration.getObjectKeyword().startOffset, baseTypeRef.endOffset)
+        return TextRange(element.objectDeclaration.getObjectKeyword()!!.startOffset, baseTypeRef.endOffset)
     }
 
     override fun applyTo(element: KtObjectLiteralExpression, editor: Editor?) {

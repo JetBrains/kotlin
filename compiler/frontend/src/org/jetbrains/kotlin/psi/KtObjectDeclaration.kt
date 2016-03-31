@@ -45,8 +45,8 @@ class KtObjectDeclaration : KtClassOrObject {
     override fun setName(@NonNls name: String): PsiElement {
         if (nameIdentifier == null) {
             val psiFactory = KtPsiFactory(project)
-            val result = addAfter(psiFactory.createIdentifier(name), getObjectKeyword())
-            addAfter(psiFactory.createWhiteSpace(), getObjectKeyword())
+            val result = addAfter(psiFactory.createIdentifier(name), getObjectKeyword()!!)
+            addAfter(psiFactory.createWhiteSpace(), getObjectKeyword()!!)
 
             return result
         }
@@ -58,7 +58,7 @@ class KtObjectDeclaration : KtClassOrObject {
     fun isCompanion(): Boolean = _stub?.isCompanion() ?: hasModifier(KtTokens.COMPANION_KEYWORD)
 
     override fun getTextOffset(): Int = nameIdentifier?.textRange?.startOffset
-                                        ?: getObjectKeyword().textRange.startOffset
+                                        ?: getObjectKeyword()!!.textRange.startOffset
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R {
         return visitor.visitObjectDeclaration(this, data)
@@ -66,5 +66,5 @@ class KtObjectDeclaration : KtClassOrObject {
 
     fun isObjectLiteral(): Boolean = _stub?.isObjectLiteral() ?: (parent is KtObjectLiteralExpression)
 
-    fun getObjectKeyword(): PsiElement = findChildByType(KtTokens.OBJECT_KEYWORD)!!
+    fun getObjectKeyword(): PsiElement? = findChildByType(KtTokens.OBJECT_KEYWORD)
 }
