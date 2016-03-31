@@ -13,7 +13,7 @@ class ParsePrimitivesJVMTest {
     }
 
     @test fun toByte() {
-        CompareBehaviorContext(String::toByte, String::toByteOrNull).apply {
+        CompareBehaviorContext({it.toByte()}, {it.toByteOrNull()}).apply {
 
             assertProduce("+77", 77.toByte())
             assertProduce("-128", Byte.MIN_VALUE)
@@ -22,7 +22,7 @@ class ParsePrimitivesJVMTest {
     }
 
     @test fun toShort() {
-        CompareBehaviorContext(String::toShort, String::toShortOrNull).apply {
+        CompareBehaviorContext({it.toShort()}, {it.toShortOrNull()}).apply {
 
             assertProduce("77", 77.toShort())
             assertProduce("-32768", Short.MIN_VALUE)
@@ -31,7 +31,7 @@ class ParsePrimitivesJVMTest {
     }
 
     @test fun toInt() {
-        CompareBehaviorContext(String::toInt, String::toIntOrNull).apply {
+        CompareBehaviorContext({it.toInt()}, {it.toIntOrNull()}).apply {
 
             assertProduce("77", 77)
             assertProduce("+2147483647", Int.MAX_VALUE)
@@ -44,7 +44,7 @@ class ParsePrimitivesJVMTest {
     }
 
     @test fun toLong() {
-        CompareBehaviorContext(String::toLong, String::toLongOrNull).apply {
+        CompareBehaviorContext({it.toLong()}, {it.toLongOrNull()}).apply {
 
             assertProduce("77", 77.toLong())
             assertProduce("+9223372036854775807", Long.MAX_VALUE)
@@ -60,7 +60,7 @@ class ParsePrimitivesJVMTest {
     }
 
     @test fun toFloat() {
-        CompareBehaviorContext(String::toFloat, String::toFloatOrNull).apply {
+        CompareBehaviorContext({it.toFloat()}, {it.toFloatOrNull()}).apply {
 
             assertProduce("77.0", 77.0f)
             assertProduce("-1e39", Float.NEGATIVE_INFINITY)
@@ -70,7 +70,7 @@ class ParsePrimitivesJVMTest {
     }
 
     @test fun toDouble() {
-        CompareBehaviorContext(String::toDouble, String::toDoubleOrNull).apply {
+        CompareBehaviorContext({it.toDouble()}, {it.toDoubleOrNull()}).apply {
 
             assertProduce("-77", -77.0)
             assertProduce("77.", 77.0)
