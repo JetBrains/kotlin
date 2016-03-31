@@ -16,6 +16,7 @@
 package org.jetbrains.uast
 
 import org.jetbrains.uast.kinds.UastImportKind
+import org.jetbrains.uast.visitor.UastVisitor
 
 interface UImportStatement : UElement {
     val fqNameToImport: String?
@@ -25,7 +26,10 @@ interface UImportStatement : UElement {
     /* Returns null if isStarImport = true */
     fun resolve(context: UastContext): UDeclaration?
 
-    override fun traverse(callback: UastCallback) {}
+    override fun accept(visitor: UastVisitor) {
+        visitor.visitImportStatement(this)
+    }
+
     override fun logString() = "UImport ($fqNameToImport)"
     override fun renderString() = "import ${fqNameToImport ?: ""}"
 }

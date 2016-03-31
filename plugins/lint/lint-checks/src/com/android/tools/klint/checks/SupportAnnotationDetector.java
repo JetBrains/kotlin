@@ -388,7 +388,7 @@ public class SupportAnnotationDetector extends Detector implements UastScanner {
                 UFunction methodNode = UastUtils.getContainingFunction(node);
                 if (methodNode != null) {
                     CheckPermissionVisitor visitor = new CheckPermissionVisitor(node);
-                    visitor.process(methodNode);
+                    methodNode.accept(visitor);
                     handlesMissingPermission = visitor.checksPermission();
                 }
             }
@@ -466,10 +466,8 @@ public class SupportAnnotationDetector extends Detector implements UastScanner {
         }
 
         @Override
-        public void process(@NotNull UElement element) {
-            if (!mDone) {
-                super.process(element);
-            }
+        public boolean visitElement(@NotNull UElement node) {
+            return mDone;
         }
 
         @Override

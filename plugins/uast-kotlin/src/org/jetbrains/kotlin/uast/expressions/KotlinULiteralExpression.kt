@@ -40,8 +40,7 @@ class KotlinStringULiteralExpression(
         override val parent: UElement
 ) : KotlinAbstractUElement(), ULiteralExpression, PsiElementBacked, KotlinUElementWithType, KotlinEvaluatableUElement {
     override val isNull = false
-    override val asString: String
-        get() = '"' + psi.text + '"'
+    override fun asString(): String = '"' + psi.text + '"'
 
     override val value: String
         get() = psi.text

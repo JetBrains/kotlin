@@ -15,7 +15,9 @@
  */
 package org.jetbrains.uast
 
-interface UType : UElement, UNamed, UFqNamed, UAnnotated, UResolvable, LeafUElement {
+import org.jetbrains.uast.visitor.UastVisitor
+
+interface UType : UElement, UNamed, UFqNamed, UAnnotated, UResolvable {
     override fun matchesName(name: String) = this.name == name || this.name.endsWith(".$name")
 
     /* The simple type name is only for the debug purposes. Do not check against it in the production code */
@@ -36,12 +38,13 @@ interface UType : UElement, UNamed, UFqNamed, UAnnotated, UResolvable, LeafUElem
     override fun resolve(context: UastContext): UClass?
     override fun resolveOrEmpty(context: UastContext) = resolve(context) ?: UClassNotResolved
 
-    override fun traverse(callback: UastCallback) {
-        annotations.handleTraverseList(callback)
+    override fun accept(visitor: UastVisitor) {
+        if (visitor.visitType(this)) return
+        annotations.acceptList(visitor)
     }
 }
 
-interface UTypeReference : UDeclaration, UResolvable, LeafUElement {
+interface UTypeReference : UDeclaration, UResolvable {
     override fun renderString() = ""
     override fun logString() = log("UTypeReference")
 

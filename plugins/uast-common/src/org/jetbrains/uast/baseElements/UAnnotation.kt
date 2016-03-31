@@ -15,10 +15,12 @@
  */
 package org.jetbrains.uast
 
-interface UAnnotation : UElement, UNamed, UFqNamed, LeafUElement {
-    fun resolve(context: UastContext): UClass?
+import org.jetbrains.uast.visitor.UastVisitor
 
+interface UAnnotation : UElement, UNamed, UFqNamed {
     val valueArguments: List<UNamedExpression>
+
+    fun resolve(context: UastContext): UClass?
     fun getValue(name: String) = valueArguments.firstOrNull { it.name == name }?.expression?.evaluate()
 
     fun getValues() = valueArguments.map { Pair(it.name, it.expression.evaluate()) }
@@ -26,6 +28,11 @@ interface UAnnotation : UElement, UNamed, UFqNamed, LeafUElement {
     override fun logString() = log("UAnnotation ($name)")
     override fun renderString() = if (valueArguments.isEmpty()) "@$name" else "@$name(" +
             valueArguments.joinToString { it.renderString() } + ")"
+
+    override fun accept(visitor: UastVisitor) {
+        if (visitor.visitAnnotation(this)) return
+        valueArguments.acceptList(visitor)
+    }
 }
 
 interface UAnnotated : UElement {

@@ -38,26 +38,10 @@ interface UastAndroidContext : UastContext {
 }
 
 object UastChecker {
-    fun checkWithCustomHandler(
-            project: Project,
-            file: File,
-            context: UastAndroidContext,
-            visitor: UastVisitor) {
-        check(project, file, context, UastCallback { visitor.handle(it) })
-    }
-
-    fun check(project: Project, file: File, context: UastAndroidContext, callback: UastCallback) {
+    fun check(project: Project, file: File, context: UastAndroidContext, visitor: UastVisitor) {
         val vfile = VirtualFileManager.getInstance().findFileByUrl("file://" + file.absolutePath) ?: return
 
         val plugins = context.languagePlugins
-        val additionalCheckers = plugins.fold(mutableListOf<UastAdditionalChecker>()) { list, plugin ->
-            for (checker in plugin.additionalCheckers) {
-                if (checker is AndroidUastAdditionalChecker) list += checker
-            }
-            list
-        }
-
-        val handlerWrapper = CallbackWrapper(callback, additionalCheckers, context)
 
         ApplicationManager.getApplication().runReadAction {
             val psiFile = PsiManager.getInstance(project).findFile(vfile)
@@ -66,29 +50,16 @@ object UastChecker {
                 when (psiFile) {
                     is PsiJavaFile -> {
                         val ufile = JavaUastLanguagePlugin.converter.convertWithParent(psiFile)
-                        ufile?.handleTraverse(handlerWrapper)
+                        ufile?.accept(visitor)
                     }
                     else -> for (plugin in plugins) {
                         val ufile = plugin.converter.convertWithParent(psiFile)
                         if (ufile != null) {
-                            ufile.handleTraverse(handlerWrapper)
+                            ufile.accept(visitor)
                             break
                         }
                     }
                 }
-            }
-        }
-    }
-
-    private class CallbackWrapper(
-            val original: UastCallback,
-            val additionalCheckers: List<UastAdditionalChecker>,
-            val context: UastAndroidContext
-    ) : UastCallback {
-        override fun invoke(element: UElement) {
-            original(element)
-            for (checker in additionalCheckers) {
-                checker(element, this, context)
             }
         }
     }
@@ -100,57 +71,64 @@ object UastChecker {
 
         val appliesToResourcesRefs = scanner.appliesToResourceRefs()
 
-        var callback: UastCallback?
-        callback = UastCallback { element ->
-            when (element) {
-                is UCallExpression -> {
-                    if (applicableFunctionNames.isNotEmpty()) {
-                        if (element.kind == FUNCTION_CALL && element.functionName in applicableFunctionNames) {
-                            scanner.visitFunctionCall(context, element)
-                        }
+        val visitor = object : UastVisitor() {
+            override fun visitCallExpression(node: UCallExpression): Boolean {
+                if (applicableFunctionNames.isNotEmpty()) {
+                    if (node.kind == FUNCTION_CALL && node.functionName in applicableFunctionNames) {
+                        scanner.visitFunctionCall(context, node)
                     }
+                }
 
-                    if (applicableConstructorTypes.isNotEmpty()) {
-                        if (element.kind == CONSTRUCTOR_CALL) {
-                            element.resolve(context)?.let { constructor ->
-                                if (constructor.getContainingClass()?.fqName in applicableConstructorTypes) {
-                                    scanner.visitConstructor(context, element, constructor)
-                                }
+                if (applicableConstructorTypes.isNotEmpty()) {
+                    if (node.kind == CONSTRUCTOR_CALL) {
+                        node.resolve(context)?.let { constructor ->
+                            if (constructor.getContainingClass()?.fqName in applicableConstructorTypes) {
+                                scanner.visitConstructor(context, node, constructor)
                             }
                         }
                     }
                 }
-                is UClass -> if (applicableSuperClasses.isNotEmpty()) {
-                    if (applicableSuperClasses.any { element.isSubclassOf(it) }) {
-                        scanner.visitClass(context, element)
+
+                return false
+            }
+
+            override fun visitClass(node: UClass): Boolean {
+                if (applicableSuperClasses.isNotEmpty()) {
+                    if (applicableSuperClasses.any { node.isSubclassOf(it) }) {
+                        scanner.visitClass(context, node)
                     }
                 }
-                is UQualifiedExpression -> {
-                    if (appliesToResourcesRefs && element.receiver is UQualifiedExpression) {
-                        val parentQualifiedExpr = element.receiver as UQualifiedExpression
-                        val resourceName = element.selector
-                        val resourceType = parentQualifiedExpr.selector
-                        val receiver = parentQualifiedExpr.receiver
 
-                        val receiverIsResourceClass = when (receiver) {
-                            is USimpleReferenceExpression -> receiver.identifier == "R"
-                            is UQualifiedExpression -> receiver.selectorMatches("R")
-                            else -> false
-                        }
+                return false
+            }
 
-                        if (resourceName is USimpleReferenceExpression && resourceType is USimpleReferenceExpression
-                                && receiverIsResourceClass && receiver is UResolvable) {
-                            val resolvedReceiver = receiver.resolve(context)
-                            val isFramework = (resolvedReceiver as? UClass)?.matchesFqName("android.R") ?: false
+            override fun visitQualifiedExpression(node: UQualifiedExpression): Boolean {
+                if (appliesToResourcesRefs && node.receiver is UQualifiedExpression) {
+                    val parentQualifiedExpr = node.receiver as UQualifiedExpression
+                    val resourceName = node.selector
+                    val resourceType = parentQualifiedExpr.selector
+                    val receiver = parentQualifiedExpr.receiver
 
-                            scanner.visitResourceReference(context, element, resourceType.identifier, resourceName.identifier, isFramework)
-                        }
+                    val receiverIsResourceClass = when (receiver) {
+                        is USimpleReferenceExpression -> receiver.identifier == "R"
+                        is UQualifiedExpression -> receiver.selectorMatches("R")
+                        else -> false
+                    }
+
+                    if (resourceName is USimpleReferenceExpression && resourceType is USimpleReferenceExpression
+                        && receiverIsResourceClass && receiver is UResolvable) {
+                        val resolvedReceiver = receiver.resolve(context)
+                        val isFramework = (resolvedReceiver as? UClass)?.matchesFqName("android.R") ?: false
+
+                        scanner.visitResourceReference(context, node, resourceType.identifier, resourceName.identifier, isFramework)
                     }
                 }
+
+                return false
             }
         }
 
-        check(project, file, context, callback)
+        check(project, file, context, visitor)
     }
 
 }

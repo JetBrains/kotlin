@@ -147,7 +147,7 @@ public class SharedPrefsDetector extends Detector implements UastScanner {
         }
 
         CommitFinder finder = new CommitFinder(context, node, allowCommitBeforeTarget);
-        finder.process(method);
+        method.accept(finder);
         if (!finder.isCommitCalled()) {
             context.report(ISSUE, method, UastAndroidUtils.getLocation(node),
                            "`SharedPreferences.edit()` without a corresponding `commit()` or `apply()` call");

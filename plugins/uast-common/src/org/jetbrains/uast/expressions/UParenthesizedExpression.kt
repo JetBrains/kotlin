@@ -15,11 +15,14 @@
  */
 package org.jetbrains.uast
 
+import org.jetbrains.uast.visitor.UastVisitor
+
 interface UParenthesizedExpression : UExpression {
     val expression: UExpression
 
-    override fun traverse(callback: UastCallback) {
-        expression.handleTraverse(callback)
+    override fun accept(visitor: UastVisitor) {
+        if (visitor.visitParenthesizedExpression(this)) return
+        expression.accept(visitor)
     }
 
     override fun evaluate() = expression.evaluate()

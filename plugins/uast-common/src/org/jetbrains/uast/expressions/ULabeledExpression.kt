@@ -15,12 +15,15 @@
  */
 package org.jetbrains.uast
 
+import org.jetbrains.uast.visitor.UastVisitor
+
 interface ULabeledExpression : UExpression {
     val label: String
     val expression: UExpression
 
-    override fun traverse(callback: UastCallback) {
-        expression.handleTraverse(callback)
+    override fun accept(visitor: UastVisitor) {
+        if (visitor.visitLabeledExpression(this)) return
+        expression.accept(visitor)
     }
 
     override fun evaluate() = expression.evaluate()

@@ -179,7 +179,7 @@ public class CutPasteDetector extends Detector implements UastScanner {
             @NonNull UCallExpression from,
             @NonNull UCallExpression to) {
         ReachableVisitor visitor = new ReachableVisitor(from, to);
-        visitor.process(method);
+        method.accept(visitor);
         return visitor.isReachable();
     }
 
@@ -214,16 +214,16 @@ public class CutPasteDetector extends Detector implements UastScanner {
             UExpression condition = node.getCondition();
             UExpression body = node.getThenBranch();
             UElement elseBody = node.getElseBranch();
-            process(condition);
+            condition.accept(this);
 
             if (body != null) {
                 boolean wasReachable = mReachable;
-                process(body);
+                body.accept(this);
                 mReachable = wasReachable;
             }
             if (elseBody != null) {
                 boolean wasReachable = mReachable;
-                process(elseBody);
+                elseBody.accept(this);
                 mReachable = wasReachable;
             }
 
@@ -231,10 +231,8 @@ public class CutPasteDetector extends Detector implements UastScanner {
         }
 
         @Override
-        public void process(@NotNull UElement element) {
-            if (!mSeenEnd) {
-                super.process(element);
-            }
+        public boolean visitElement(@NotNull UElement node) {
+            return mSeenEnd;
         }
     }
 }

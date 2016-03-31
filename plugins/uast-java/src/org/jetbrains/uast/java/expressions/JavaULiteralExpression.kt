@@ -24,7 +24,7 @@ class JavaULiteralExpression(
         override val psi: PsiLiteralExpression,
         override val parent: UElement
 ) : JavaAbstractUElement(), ULiteralExpression, PsiElementBacked, JavaUElementWithType {
-    override val asString by lz { psi.text }
+    override fun asString() = psi.text
     override fun evaluate() = psi.value
     override val value by lz { evaluate() }
 

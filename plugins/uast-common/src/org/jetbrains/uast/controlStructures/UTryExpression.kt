@@ -15,17 +15,20 @@
  */
 package org.jetbrains.uast
 
+import org.jetbrains.uast.visitor.UastVisitor
+
 interface UTryExpression : UExpression {
     val resources: List<UElement>?
     val tryClause: UExpression
     val catchClauses: List<UCatchClause>
     val finallyClause: UExpression?
 
-    override fun traverse(callback: UastCallback) {
-        resources?.handleTraverseList(callback)
-        tryClause.handleTraverse(callback)
-        catchClauses.handleTraverseList(callback)
-        finallyClause?.handleTraverse(callback)
+    override fun accept(visitor: UastVisitor) {
+        if (visitor.visitTryExpression(this)) return
+        resources?.acceptList(visitor)
+        tryClause.accept(visitor)
+        catchClauses.acceptList(visitor)
+        finallyClause?.accept(visitor)
     }
 
     override fun renderString() = buildString {
@@ -46,10 +49,11 @@ interface UCatchClause : UElement {
     val parameters: List<UVariable>
     val types: List<UType>
 
-    override fun traverse(callback: UastCallback) {
-        body.handleTraverse(callback)
-        parameters.handleTraverseList(callback)
-        types.handleTraverseList(callback)
+    override fun accept(visitor: UastVisitor) {
+        if (visitor.visitCatchClause(this)) return
+        body.accept(visitor)
+        parameters.acceptList(visitor)
+        types.acceptList(visitor)
     }
 
     override fun logString() = log("UCatchClause", body)

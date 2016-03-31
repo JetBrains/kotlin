@@ -269,7 +269,7 @@ public class CleanupDetector extends Detector implements UastScanner {
             }
         };
 
-        visitor.process(method);
+        method.accept(visitor);
         if (visitor.isCleanedUp() || visitor.variableEscapes()) {
             return;
         }
@@ -346,7 +346,7 @@ public class CleanupDetector extends Detector implements UastScanner {
                     }
                 };
 
-                commitVisitor.handle(method);
+                method.accept(commitVisitor);
                 if (commitVisitor.isCleanedUp() || commitVisitor.variableEscapes()) {
                     return true;
                 }
@@ -476,10 +476,8 @@ public class CleanupDetector extends Detector implements UastScanner {
         }
 
         @Override
-        public void process(@NotNull UElement element) {
-            if (!mContainsCleanup) {
-                super.process(element);
-            }
+        public boolean visitElement(@NotNull UElement node) {
+            return mContainsCleanup || super.visitElement(node);
         }
 
         protected abstract boolean isCleanupCall(@NonNull UCallExpression call);

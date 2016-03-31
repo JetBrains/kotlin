@@ -15,16 +15,19 @@
  */
 package org.jetbrains.uast
 
+import org.jetbrains.uast.visitor.UastVisitor
+
 interface UIfExpression : UExpression {
     val condition: UExpression
     val thenBranch: UExpression?
     val elseBranch: UExpression?
     val isTernary: Boolean
 
-    override fun traverse(callback: UastCallback) {
-        condition.handleTraverse(callback)
-        thenBranch?.handleTraverse(callback)
-        elseBranch?.handleTraverse(callback)
+    override fun accept(visitor: UastVisitor) {
+        if (visitor.visitIfExpression(this)) return
+        condition.accept(visitor)
+        thenBranch?.accept(visitor)
+        elseBranch?.accept(visitor)
     }
 
     override fun logString() = log("UIfExpression", condition, thenBranch, elseBranch)

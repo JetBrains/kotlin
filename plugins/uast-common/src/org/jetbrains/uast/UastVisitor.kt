@@ -18,108 +18,51 @@ package org.jetbrains.uast.visitor
 import org.jetbrains.uast.*
 
 abstract class UastVisitor {
-    open fun visitFile(node: UFile): Boolean = false
+    open fun visitElement(node: UElement): Boolean = false
+
+    open fun visitFile(node: UFile) = visitElement(node)
+    open fun visitImportStatement(node: UImportStatement) = visitElement(node)
+    open fun visitAnnotation(node: UAnnotation) = visitElement(node)
+    open fun visitCatchClause(node: UCatchClause) = visitElement(node)
+    open fun visitType(node: UType) = visitElement(node)
 
     // Declarations
-    open fun visitClass(node: UClass): Boolean = false
-    open fun visitFunction(node: UFunction): Boolean = false
-    open fun visitVariable(node: UVariable): Boolean = false
-    open fun visitImportStatement(node: UImportStatement): Boolean = false
-    open fun visitAnnotation(node: UAnnotation): Boolean = false
+    open fun visitClass(node: UClass) = visitElement(node)
+    open fun visitFunction(node: UFunction) = visitElement(node)
+    open fun visitVariable(node: UVariable) = visitElement(node)
+
 
     // Expressions
-    open fun visitLabeledExpression(node: ULabeledExpression): Boolean = false
-    open fun visitDeclarationsExpression(node: UDeclarationsExpression): Boolean = false
-    open fun visitBlockExpression(node: UBlockExpression): Boolean = false
-    open fun visitQualifiedExpression(node: UQualifiedExpression): Boolean = false
-    open fun visitSimpleReferenceExpression(node: USimpleReferenceExpression): Boolean = false
-    open fun visitCallExpression(node: UCallExpression): Boolean = false
-    open fun visitBinaryExpression(node: UBinaryExpression): Boolean = false
-    open fun visitBinaryExpressionWithType(node: UBinaryExpressionWithType): Boolean = false
-    open fun visitParenthesizedExpression(node: UParenthesizedExpression): Boolean = false
-    open fun visitPrefixExpression(node: UPrefixExpression): Boolean = false
-    open fun visitPostfixExpression(node: UPostfixExpression): Boolean = false
-    open fun visitSpecialExpressionList(node: USpecialExpressionList): Boolean = false
-    open fun visitExpressionList(node: UExpressionList): Boolean = false
-    open fun visitIfExpression(node: UIfExpression): Boolean = false
-    open fun visitSwitchExpression(node: USwitchExpression): Boolean = false
-    open fun visitSwitchClauseExpression(node: USwitchClauseExpression): Boolean = false
-    open fun visitWhileExpression(node: UWhileExpression): Boolean = false
-    open fun visitDoWhileExpression(node: UDoWhileExpression): Boolean = false
-    open fun visitForExpression(node: UForExpression): Boolean = false
-    open fun visitForEachExpression(node: UForEachExpression): Boolean = false
-    open fun visitTryExpression(node: UTryExpression): Boolean = false
-    open fun visitLiteralExpression(node: ULiteralExpression): Boolean = false
-    open fun visitThisExpression(node: UThisExpression): Boolean = false
-    open fun visitSuperExpression(node: USuperExpression): Boolean = false
-    open fun visitArrayAccessExpression(node: UArrayAccessExpression): Boolean = false
-    open fun visitCallableReferenceExpression(node: UCallableReferenceExpression): Boolean = false
-    open fun visitClassLiteralExpression(node: UClassLiteralExpression): Boolean = false
-    open fun visitLambdaExpression(node: ULambdaExpression): Boolean = false
-    open fun visitObjectLiteralExpression(node: UObjectLiteralExpression): Boolean = false
-
-    open fun beforeVisit(node: UElement) {}
-    open fun visitOther(node: UElement): Boolean = true
-    open fun afterVisit(node: UElement) {}
-
-    fun handle(node: UElement): Boolean {
-        beforeVisit(node)
-        val result = when (node) {
-            is UFile -> visitFile(node)
-
-            is UClass -> visitClass(node)
-            is UFunction -> visitFunction(node)
-            is UVariable -> visitVariable(node)
-            is UImportStatement -> visitImportStatement(node)
-            is UAnnotation -> visitAnnotation(node)
-
-            is ULabeledExpression -> visitLabeledExpression(node)
-            is UDeclarationsExpression -> visitDeclarationsExpression(node)
-            is UBlockExpression -> visitBlockExpression(node)
-            is UQualifiedExpression -> visitQualifiedExpression(node)
-            is USimpleReferenceExpression -> visitSimpleReferenceExpression(node)
-            is UCallExpression -> visitCallExpression(node)
-            is UBinaryExpression -> visitBinaryExpression(node)
-            is UBinaryExpressionWithType -> visitBinaryExpressionWithType(node)
-            is UParenthesizedExpression -> visitParenthesizedExpression(node)
-            is UPrefixExpression -> visitPrefixExpression(node)
-            is UPostfixExpression -> visitPostfixExpression(node)
-            is USpecialExpressionList -> visitSpecialExpressionList(node)
-            is UExpressionList -> visitExpressionList(node)
-            is UIfExpression -> visitIfExpression(node)
-            is USwitchExpression -> visitSwitchExpression(node)
-            is USwitchClauseExpression -> visitSwitchClauseExpression(node)
-            is UWhileExpression -> visitWhileExpression(node)
-            is UDoWhileExpression -> visitDoWhileExpression(node)
-            is UForExpression -> visitForExpression(node)
-            is UForEachExpression -> visitForEachExpression(node)
-            is UTryExpression -> visitTryExpression(node)
-            is ULiteralExpression -> visitLiteralExpression(node)
-            is UThisExpression -> visitThisExpression(node)
-            is USuperExpression -> visitSuperExpression(node)
-            is UArrayAccessExpression -> visitArrayAccessExpression(node)
-            is UCallableReferenceExpression -> visitCallableReferenceExpression(node)
-            is UClassLiteralExpression -> visitClassLiteralExpression(node)
-            is ULambdaExpression -> visitLambdaExpression(node)
-            is UObjectLiteralExpression -> visitObjectLiteralExpression(node)
-
-            else -> visitOther(node)
-        }
-        afterVisit(node)
-        return result
-    }
-    
-    open fun process(element: UElement) {
-        if (!handle(element)) {
-            processChildren(element)
-        }
-    }
-
-    fun processChildren(element: UElement) {
-        element.traverse(UastCallback { handle(it) })
-    }
+    open fun visitLabeledExpression(node: ULabeledExpression) = visitElement(node)
+    open fun visitDeclarationsExpression(node: UDeclarationsExpression) = visitElement(node)
+    open fun visitBlockExpression(node: UBlockExpression) = visitElement(node)
+    open fun visitQualifiedExpression(node: UQualifiedExpression) = visitElement(node)
+    open fun visitSimpleReferenceExpression(node: USimpleReferenceExpression) = visitElement(node)
+    open fun visitCallExpression(node: UCallExpression) = visitElement(node)
+    open fun visitBinaryExpression(node: UBinaryExpression) = visitElement(node)
+    open fun visitBinaryExpressionWithType(node: UBinaryExpressionWithType) = visitElement(node)
+    open fun visitParenthesizedExpression(node: UParenthesizedExpression) = visitElement(node)
+    open fun visitUnaryExpression(node: UUnaryExpression) = visitElement(node)
+    open fun visitPrefixExpression(node: UPrefixExpression) = visitElement(node)
+    open fun visitPostfixExpression(node: UPostfixExpression) = visitElement(node)
+    open fun visitSpecialExpressionList(node: USpecialExpressionList) = visitElement(node)
+    open fun visitExpressionList(node: UExpressionList) = visitElement(node)
+    open fun visitIfExpression(node: UIfExpression) = visitElement(node)
+    open fun visitSwitchExpression(node: USwitchExpression) = visitElement(node)
+    open fun visitSwitchClauseExpression(node: USwitchClauseExpression) = visitElement(node)
+    open fun visitWhileExpression(node: UWhileExpression) = visitElement(node)
+    open fun visitDoWhileExpression(node: UDoWhileExpression) = visitElement(node)
+    open fun visitForExpression(node: UForExpression) = visitElement(node)
+    open fun visitForEachExpression(node: UForEachExpression) = visitElement(node)
+    open fun visitTryExpression(node: UTryExpression) = visitElement(node)
+    open fun visitLiteralExpression(node: ULiteralExpression) = visitElement(node)
+    open fun visitThisExpression(node: UThisExpression) = visitElement(node)
+    open fun visitSuperExpression(node: USuperExpression) = visitElement(node)
+    open fun visitArrayAccessExpression(node: UArrayAccessExpression) = visitElement(node)
+    open fun visitCallableReferenceExpression(node: UCallableReferenceExpression) = visitElement(node)
+    open fun visitClassLiteralExpression(node: UClassLiteralExpression) = visitElement(node)
+    open fun visitLambdaExpression(node: ULambdaExpression) = visitElement(node)
+    open fun visitObjectLiteralExpression(node: UObjectLiteralExpression) = visitElement(node)
 }
 
-object EmptyUastVisitor : UastVisitor() {
-    override fun process(element: UElement) {}
-}
+object EmptyUastVisitor : UastVisitor()

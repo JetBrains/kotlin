@@ -1043,7 +1043,7 @@ public class StringFormatDetector extends ResourceXmlDetector implements UastSca
 
         JavaContext lintContext = context.getLintContext();
         UastStringTracker tracker = new UastStringTracker(lintContext, method, call, 0);
-        tracker.process(method);
+        method.accept(tracker);
         String name = tracker.getFormatStringName();
         if (name == null) {
             return;
@@ -1314,7 +1314,7 @@ public class StringFormatDetector extends ResourceXmlDetector implements UastSca
       @NonNull UElement call) {
         assert call instanceof UCallExpression;
         UastStringTracker tracker = new UastStringTracker(null, method, call, 0);
-        tracker.process(method);
+        method.accept(tracker);
 
         return tracker.getFormatStringName();
     }
@@ -1327,7 +1327,7 @@ public class StringFormatDetector extends ResourceXmlDetector implements UastSca
       int argIndex) {
         assert call instanceof UCallExpression;
         UastStringTracker tracker = new UastStringTracker(null, method, call, argIndex);
-        tracker.process(method);
+        method.accept(tracker);
 
         return tracker.getFormatStringName();
     }
@@ -1481,10 +1481,8 @@ public class StringFormatDetector extends ResourceXmlDetector implements UastSca
         }
 
         @Override
-        public void process(@NotNull UElement element) {
-            if (!mDone) {
-                super.process(element);
-            }
+        public boolean visitElement(@NotNull UElement node) {
+            return mDone || super.visitElement(node);
         }
 
         @Override

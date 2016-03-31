@@ -15,13 +15,16 @@
  */
 package org.jetbrains.uast
 
+import org.jetbrains.uast.visitor.UastVisitor
+
 interface UArrayAccessExpression : UExpression {
     val receiver: UExpression
     val indices: List<UExpression>
 
-    override fun traverse(callback: UastCallback) {
-        receiver.handleTraverse(callback)
-        indices.handleTraverseList(callback)
+    override fun accept(visitor: UastVisitor) {
+        if (visitor.visitArrayAccessExpression(this)) return
+        receiver.accept(visitor)
+        indices.acceptList(visitor)
     }
 
     override fun logString() = log("UArrayAccessExpression", receiver, indices)

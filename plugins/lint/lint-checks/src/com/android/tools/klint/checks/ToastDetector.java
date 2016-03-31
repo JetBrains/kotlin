@@ -105,7 +105,7 @@ public class ToastDetector extends Detector implements UastScanner {
 
         UExpression nodeWithPossibleQualifier = UastUtils.getQualifiedCallElement(node);
         ShowFinder finder = new ShowFinder(nodeWithPossibleQualifier);
-        finder.process(method);
+        method.accept(finder);
         if (!finder.isShowCalled()) {
             context.report(ISSUE, node, UastAndroidUtils.getLocation(node),
                            "Toast created but not shown: did you forget to call `show()` ?");

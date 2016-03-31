@@ -15,13 +15,16 @@
  */
 package org.jetbrains.uast
 
+import org.jetbrains.uast.visitor.UastVisitor
+
 interface ULambdaExpression : UExpression {
     val valueParameters: List<UVariable>
     val body: UExpression
 
-    override fun traverse(callback: UastCallback) {
-        valueParameters.handleTraverseList(callback)
-        body.handleTraverse(callback)
+    override fun accept(visitor: UastVisitor) {
+        if (visitor.visitLambdaExpression(this)) return
+        valueParameters.acceptList(visitor)
+        body.accept(visitor)
     }
 
     override fun logString() = log("ULambdaExpression", valueParameters, body)

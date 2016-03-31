@@ -15,11 +15,15 @@
  */
 package org.jetbrains.uast
 
+import org.jetbrains.uast.visitor.UastVisitor
+
 interface UExpressionList : UExpression {
     val expressions: List<UExpression>
 
-    override fun evaluate(): Any? = null
-    override fun traverse(callback: UastCallback) = expressions.forEach { it.handleTraverse(callback) }
+    override fun accept(visitor: UastVisitor) {
+        if (visitor.visitExpressionList(this)) return
+        expressions.acceptList(visitor)
+    }
 
     override fun logString() = log("UExpressionList", expressions)
     override fun renderString() = log("", expressions)

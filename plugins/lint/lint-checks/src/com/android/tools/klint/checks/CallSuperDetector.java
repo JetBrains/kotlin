@@ -177,7 +177,7 @@ public class CallSuperDetector extends Detector implements UastScanner {
                 @NonNull UFunction methodDeclaration,
                 @NonNull UFunction superMethod) {
             SuperCallVisitor visitor = new SuperCallVisitor(context, superMethod);
-            visitor.process(methodDeclaration);
+            methodDeclaration.accept(visitor);
             return visitor.mCallsSuper;
         }
 
@@ -203,10 +203,8 @@ public class CallSuperDetector extends Detector implements UastScanner {
         }
 
         @Override
-        public void process(@NotNull UElement element) {
-            if (!mCallsSuper) {
-                super.process(element);
-            }
+        public boolean visitElement(@NotNull UElement node) {
+            return mCallsSuper || super.visitElement(node);
         }
     }
 }

@@ -15,7 +15,13 @@
  */
 package org.jetbrains.uast
 
-interface UThisExpression : UExpression, LeafUElement {
+import org.jetbrains.uast.visitor.UastVisitor
+
+interface UThisExpression : UExpression {
     override fun logString() = "UThisExpression"
     override fun renderString() = "this"
+
+    override fun accept(visitor: UastVisitor) {
+        visitor.visitThisExpression(this)
+    }
 }

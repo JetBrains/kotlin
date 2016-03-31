@@ -1985,7 +1985,7 @@ public class IconDetector extends ResourceXmlDetector implements UastScanner {
         public boolean visitFunction(@NotNull UFunction node) {
             if (node.matchesName(ON_CREATE_OPTIONS_MENU)) {
                 // Gather any R.menu references found in this method
-                new MenuFinder().process(node);
+                node.accept(new MenuFinder());
             }
 
             return super.visitFunction(node);
@@ -2036,7 +2036,7 @@ public class IconDetector extends ResourceXmlDetector implements UastScanner {
                     UFunction method = UastUtils.getContainingFunction(node);
                     if (method != null) {
                         SetIconFinder finder = new SetIconFinder();
-                        finder.process(method);
+                        method.accept(finder);
                     }
                 }
             }

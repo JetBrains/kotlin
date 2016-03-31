@@ -15,14 +15,17 @@
  */
 package org.jetbrains.uast
 
+import org.jetbrains.uast.visitor.UastVisitor
+
 interface UBinaryExpression : UExpression {
     val leftOperand: UExpression
     val operator: UastBinaryOperator
     val rightOperand: UExpression
 
-    override fun traverse(callback: UastCallback) {
-        leftOperand.handleTraverse(callback)
-        rightOperand.handleTraverse(callback)
+    override fun accept(visitor: UastVisitor) {
+        if (visitor.visitBinaryExpression(this)) return
+        leftOperand.accept(visitor)
+        rightOperand.accept(visitor)
     }
 
     override fun logString() =

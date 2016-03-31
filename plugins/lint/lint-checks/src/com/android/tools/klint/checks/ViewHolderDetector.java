@@ -95,7 +95,7 @@ public class ViewHolderDetector extends Detector implements UastScanner {
         public boolean visitFunction(@NotNull UFunction node) {
             if (isViewAdapterMethod(node)) {
                 InflationVisitor visitor = new InflationVisitor(mContext);
-                visitor.process(node);
+                node.accept(visitor);
                 visitor.finish();
             }
             return false;

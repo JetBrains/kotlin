@@ -15,11 +15,14 @@
  */
 package org.jetbrains.uast
 
+import org.jetbrains.uast.visitor.UastVisitor
+
 interface UObjectLiteralExpression : UExpression {
     val declaration: UClass
 
-    override fun traverse(callback: UastCallback) {
-        declaration.handleTraverse(callback)
+    override fun accept(visitor: UastVisitor) {
+        if (visitor.visitObjectLiteralExpression(this)) return
+        declaration.accept(visitor)
     }
 
     override fun logString() = log("UObjectLiteralExpression", declaration)

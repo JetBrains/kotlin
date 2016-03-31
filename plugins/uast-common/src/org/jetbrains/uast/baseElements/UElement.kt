@@ -15,6 +15,8 @@
  */
 package org.jetbrains.uast
 
+import org.jetbrains.uast.visitor.UastVisitor
+
 interface UElement {
     val parent: UElement?
 
@@ -23,7 +25,10 @@ interface UElement {
     
     fun logString(): String
     fun renderString(): String = logString()
-    fun traverse(callback: UastCallback)
+
+    fun accept(visitor: UastVisitor) {
+        visitor.visitElement(this)
+    }
 }
 
 interface UNamed {
@@ -40,10 +45,6 @@ interface UFqNamed : UNamed {
 
 interface UModifierOwner {
     fun hasModifier(modifier: UastModifier): Boolean
-}
-
-interface LeafUElement : UElement {
-    override fun traverse(callback: UastCallback) {}
 }
 
 interface UResolvable {

@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.uast
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.uast.UElement
+import org.jetbrains.uast.visitor.UastVisitor
 import java.io.File
 
 abstract class AbstractKotlinUastStructureTest : KotlinLightCodeInsightFixtureTestCase() {
@@ -28,6 +30,7 @@ abstract class AbstractKotlinUastStructureTest : KotlinLightCodeInsightFixtureTe
 
         val logFile = File(File(testDataPath, "log"), "$testName.txt")
         val renderFile = File(File(testDataPath, "render"), "$testName.txt")
+        val treeFile = File(File(testDataPath, "tree"), "$testName.txt")
 
         val psiFile = myFixture.file
         val uElement = KotlinUastLanguagePlugin.converter.convertWithParent(psiFile) ?: error("UFile was not created")
@@ -42,6 +45,24 @@ abstract class AbstractKotlinUastStructureTest : KotlinLightCodeInsightFixtureTe
             throw e
         }
         KotlinTestUtils.assertEqualsToFile(renderFile, renderActual)
+        KotlinTestUtils.assertEqualsToFile(treeFile, genTree(uElement))
+    }
+
+    private fun genTree(node: UElement): String {
+        val builder = StringBuilder()
+        val visitor = object : UastVisitor() {
+            private tailrec fun getParentCount(node: UElement): Int {
+                val parent = node.parent ?: return 0
+                return getParentCount(parent)
+            }
+
+            override fun visitElement(node: UElement): Boolean {
+                builder.appendln("    ".repeat(getParentCount(node)) + node.javaClass.name)
+                return super.visitElement(node)
+            }
+        }
+        visitor.visitElement(node)
+        return builder.toString()
     }
 
     override fun getTestDataPath() = "plugins/uast-kotlin/testData"

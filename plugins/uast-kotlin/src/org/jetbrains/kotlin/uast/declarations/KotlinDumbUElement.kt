@@ -17,14 +17,13 @@
 package org.jetbrains.kotlin.uast
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.uast.LeafUElement
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.psi.PsiElementBacked
 
 class KotlinDumbUElement(
         override val psi: PsiElement?,
         override val parent: UElement
-) : KotlinAbstractUElement(), UElement, PsiElementBacked, LeafUElement {
+) : KotlinAbstractUElement(), UElement, PsiElementBacked {
     override fun logString() = "KotlinDumbUElement"
     override fun renderString() = "<stub@$psi>"
 }

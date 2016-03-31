@@ -17,6 +17,7 @@
 package org.jetbrains.uast
 
 import org.jetbrains.uast.kinds.UastClassKind
+import org.jetbrains.uast.visitor.UastVisitor
 
 tailrec fun UElement?.getContainingClass(): UClass? {
     val parent = this?.parent ?: return null
@@ -44,11 +45,6 @@ tailrec fun UElement?.getContainingDeclaration(): UDeclaration? {
     return parent.getContainingDeclaration()
 }
 
-fun UElement.handleTraverse(callback: UastCallback) {
-    callback(this)
-    this.traverse(callback)
-}
-
 fun UDeclaration.isTopLevel() = parent is UFile
 
 fun UElement.log(firstLine: String, vararg nested: Any?): String {
@@ -67,10 +63,9 @@ fun UElement.log(firstLine: String, vararg nested: Any?): String {
 val String.withMargin: String
     get() = lines().joinToString("\n") { "    " + it }
 
-fun List<UElement>.handleTraverseList(callback: UastCallback) {
+fun List<UElement>.acceptList(visitor: UastVisitor) {
     for (element in this) {
-        callback(element)
-        element.traverse(callback)
+        element.accept(visitor)
     }
 }
 

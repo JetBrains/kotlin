@@ -144,7 +144,6 @@ class JavaArrayInitializerUCallExpression(
         get() = JavaUastCallKinds.ARRAY_INITIALIZER
 
     override fun resolve(context: UastContext) = null
-    override fun evaluate() = null
 }
 
 class JavaAnnotationArrayInitializerUCallExpression(
