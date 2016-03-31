@@ -59,4 +59,8 @@ public final class ClassObjectTest extends SingleFileTranslationTest {
     public void testObjectInCompanionObject() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testInvokeOperatorInCompanionObject() throws Exception {
+        checkFooBoxIsOk();
+    }
 }
