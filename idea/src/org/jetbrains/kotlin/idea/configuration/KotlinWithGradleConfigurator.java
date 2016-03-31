@@ -25,6 +25,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.DependencyScope;
 import com.intellij.openapi.roots.ExternalLibraryDescriptor;
+import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -303,9 +304,22 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
         return project.getBasePath() + "/" + GradleConstants.DEFAULT_SCRIPT_NAME;
     }
 
-    @NotNull
+    @Nullable
     private static String getModuleFilePath(@NotNull Module module) {
-        return new File(module.getModuleFilePath()).getParent() + "/" + GradleConstants.DEFAULT_SCRIPT_NAME;
+        String moduleDir = new File(module.getModuleFilePath()).getParent();
+        File buildGradleFile = new File(moduleDir + "/" + GradleConstants.DEFAULT_SCRIPT_NAME);
+        if (buildGradleFile.exists()) {
+            return buildGradleFile.getPath();
+        }
+
+        // since IDEA 145 module file is located in .idea directory
+        for (VirtualFile file : ModuleRootManager.getInstance(module).getContentRoots()) {
+            buildGradleFile = new File(file.getPath() + "/" + GradleConstants.DEFAULT_SCRIPT_NAME);
+            if (buildGradleFile.exists()) {
+                return buildGradleFile.getPath();
+            }
+        }
+        return null;
     }
 
     private static boolean isSnapshot(@NotNull String version) {
