@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.idea.core.ExpectedInfo
 import org.jetbrains.kotlin.idea.core.ExpectedInfos
 import org.jetbrains.kotlin.idea.core.SmartCastCalculator
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
-import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.getResolutionScope
+import org.jetbrains.kotlin.idea.util.toFuzzyType
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -55,6 +55,6 @@ class SuitableVariableMacro : BaseKotlinVariableMacro<SuitableVariableMacro.Stat
     override fun isSuitable(variableDescriptor: VariableDescriptor, project: Project, state: State?): Boolean {
         if (state == null) return true
         val types = state.smartCastCalculator.types(variableDescriptor)
-        return state.expectedInfos.any { expectedInfo -> types.any { expectedInfo.filter.matchingSubstitutor(FuzzyType(it, emptyList())) != null } }
+        return state.expectedInfos.any { expectedInfo -> types.any { expectedInfo.filter.matchingSubstitutor(it.toFuzzyType(emptyList())) != null } }
     }
 }

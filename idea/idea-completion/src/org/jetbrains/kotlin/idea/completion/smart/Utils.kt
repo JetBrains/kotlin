@@ -248,8 +248,7 @@ private fun MutableCollection<LookupElement>.addLookupElementsForNullable(factor
 
 fun CallableDescriptor.callableReferenceType(resolutionFacade: ResolutionFacade): FuzzyType? {
     if (!CallType.CALLABLE_REFERENCE.descriptorKindFilter.accepts(this)) return null // not supported by callable references
-    val type = getReflectionTypeForCandidateDescriptor(this, resolutionFacade.getFrontendService(ReflectionTypes::class.java)) ?: return null
-    return FuzzyType(type, emptyList())
+    return getReflectionTypeForCandidateDescriptor(this, resolutionFacade.getFrontendService(ReflectionTypes::class.java))?.toFuzzyType(emptyList())
 }
 
 enum class SmartCompletionItemPriority {
@@ -294,14 +293,14 @@ fun DeclarationDescriptor.fuzzyTypesForSmartCompletion(
         if (returnType.type.isNothing() || returnType.isAlmostEverything()) return emptyList()
 
         if (this is VariableDescriptor) { //TODO: generic properties!
-            return smartCastCalculator.types(this).map { FuzzyType(it, emptyList()) }
+            return smartCastCalculator.types(this).map { it.toFuzzyType(emptyList()) }
         }
         else {
             return listOf(returnType)
         }
     }
     else if (this is ClassDescriptor && kind.isSingleton) {
-        return listOf(FuzzyType(defaultType, emptyList()))
+        return listOf(defaultType.toFuzzyType(emptyList()))
     }
     else {
         return emptyList()

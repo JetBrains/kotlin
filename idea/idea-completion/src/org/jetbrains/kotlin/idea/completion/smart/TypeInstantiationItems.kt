@@ -38,10 +38,7 @@ import org.jetbrains.kotlin.idea.core.Tail
 import org.jetbrains.kotlin.idea.core.multipleFuzzyTypes
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
-import org.jetbrains.kotlin.idea.util.FuzzyType
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.idea.util.makeNotNullable
-import org.jetbrains.kotlin.idea.util.presentationType
+import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
@@ -316,7 +313,7 @@ class TypeInstantiationItems(
 
         private val baseHasTypeArgs = classDescriptor.declaredTypeParameters.isNotEmpty()
         private val expectedType = KotlinTypeImpl.create(Annotations.EMPTY, classDescriptor, false, typeArgs)
-        private val expectedFuzzyType = FuzzyType(expectedType, freeParameters)
+        private val expectedFuzzyType = expectedType.toFuzzyType(freeParameters)
 
         override fun search(nameFilter: (String) -> Boolean, consumer: (LookupElement) -> Unit) {
             val parameters = ClassInheritorsSearch.SearchParameters(psiClass, inheritorSearchScope, true, true, false, nameFilter)
@@ -327,13 +324,13 @@ class TypeInstantiationItems(
                 ) ?: continue
                 if (!visibilityFilter(descriptor)) continue
 
-                var inheritorFuzzyType = FuzzyType(descriptor.defaultType, descriptor.typeConstructor.parameters)
+                var inheritorFuzzyType = descriptor.defaultType.toFuzzyType(descriptor.typeConstructor.parameters)
                 val hasTypeArgs = descriptor.declaredTypeParameters.isNotEmpty()
                 if (hasTypeArgs || baseHasTypeArgs) {
                     val substitutor = inheritorFuzzyType.checkIsSubtypeOf(expectedFuzzyType) ?: continue
                     if (!substitutor.isEmpty) {
                         val inheritorTypeSubstituted = substitutor.substitute(inheritorFuzzyType.type, Variance.INVARIANT)!!
-                        inheritorFuzzyType = FuzzyType(inheritorTypeSubstituted, freeParameters + inheritorFuzzyType.freeParameters)
+                        inheritorFuzzyType = inheritorTypeSubstituted.toFuzzyType(freeParameters + inheritorFuzzyType.freeParameters)
                     }
                 }
 

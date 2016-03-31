@@ -100,15 +100,15 @@ class ExpectedInfo(
         : this(ByExpectedTypeFilter(fuzzyType), expectedName, tail, itemOptions, additionalData)
 
     constructor(type: KotlinType, expectedName: String?, tail: Tail?, itemOptions: ItemOptions = ItemOptions.DEFAULT, additionalData: ExpectedInfo.AdditionalData? = null)
-        : this(FuzzyType(type, emptyList()), expectedName, tail, itemOptions, additionalData)
+        : this(type.toFuzzyType(emptyList()), expectedName, tail, itemOptions, additionalData)
 
     fun matchingSubstitutor(descriptorType: FuzzyType): TypeSubstitutor? = filter.matchingSubstitutor(descriptorType)
 
-    fun matchingSubstitutor(descriptorType: KotlinType): TypeSubstitutor? = matchingSubstitutor(FuzzyType(descriptorType, emptyList()))
+    fun matchingSubstitutor(descriptorType: KotlinType): TypeSubstitutor? = matchingSubstitutor(descriptorType.toFuzzyType(emptyList()))
 
     companion object {
         fun createForArgument(type: KotlinType, expectedName: String?, tail: Tail?, argumentData: ArgumentPositionData, itemOptions: ItemOptions = ItemOptions.DEFAULT): ExpectedInfo {
-            return ExpectedInfo(FuzzyType(type, argumentData.function.typeParameters), expectedName, tail, itemOptions, argumentData)
+            return ExpectedInfo(type.toFuzzyType(argumentData.function.typeParameters), expectedName, tail, itemOptions, argumentData)
         }
 
         fun createForNamedArgumentExpected(argumentData: ArgumentPositionData): ExpectedInfo {
@@ -116,7 +116,7 @@ class ExpectedInfo(
         }
 
         fun createForReturnValue(type: KotlinType?, callable: CallableDescriptor): ExpectedInfo {
-            val filter = if (type != null) ByExpectedTypeFilter(FuzzyType(type, emptyList())) else ByTypeFilter.All
+            val filter = if (type != null) ByExpectedTypeFilter(type.toFuzzyType(emptyList())) else ByTypeFilter.All
             return ExpectedInfo(filter, callable.name.asString(), null, additionalData = ReturnValueAdditionalData(callable))
         }
     }
@@ -494,7 +494,7 @@ class ExpectedInfos(
                     .filter { it.type.isFunctionType }
                     .map {
                         val returnType = getReturnTypeFromFunctionType(it.type)
-                        ExpectedInfo(FuzzyType(returnType, it.freeParameters), null, Tail.RBRACE)
+                        ExpectedInfo(returnType.toFuzzyType(it.freeParameters), null, Tail.RBRACE)
                     }
         }
         else {
@@ -611,8 +611,8 @@ class ExpectedInfos(
 
         val scope = expressionWithType.getResolutionScope(bindingContext, resolutionFacade)
         val propertyOwnerType = property.fuzzyExtensionReceiverType()
-                            ?: property.dispatchReceiverParameter?.type?.let { FuzzyType(it, emptyList()) }
-                            ?: FuzzyType(property.builtIns.nullableNothingType, emptyList())
+                            ?: property.dispatchReceiverParameter?.type?.toFuzzyType(emptyList())
+                            ?: property.builtIns.nullableNothingType.toFuzzyType(emptyList())
 
         val explicitPropertyType = property.fuzzyReturnType()?.check { propertyDeclaration.typeReference != null }
         val typesWithGetDetector = TypesWithGetValueDetector(scope, indicesHelper, propertyOwnerType, explicitPropertyType)
@@ -624,11 +624,11 @@ class ExpectedInfos(
 
                 if (typesWithSetDetector == null) return getOperatorSubstitutor
 
-                val substitutedType = FuzzyType(getOperatorSubstitutor.substitute(descriptorType.type, Variance.INVARIANT)!!, descriptorType.freeParameters)
+                val substitutedType = getOperatorSubstitutor.substitute(descriptorType.type, Variance.INVARIANT)!!.toFuzzyType(descriptorType.freeParameters)
 
                 val (setValueOperator, setOperatorSubstitutor) = typesWithSetDetector.findOperator(substitutedType) ?: return null
                 val propertyType = explicitPropertyType ?: getValueOperator.fuzzyReturnType()!!
-                val setParamType = FuzzyType(setValueOperator.valueParameters.last().type, setValueOperator.typeParameters)
+                val setParamType = setValueOperator.valueParameters.last().type.toFuzzyType(setValueOperator.typeParameters)
                 val setParamTypeSubstitutor = setParamType.checkIsSuperTypeOf(propertyType) ?: return null
                 return getOperatorSubstitutor
                         .combineIfNoConflicts(setOperatorSubstitutor, descriptorType.freeParameters)
@@ -641,14 +641,14 @@ class ExpectedInfos(
                 for (classDescriptor in typesWithGetDetector.classesWithMemberOperators) {
                     val type = classDescriptor.defaultType
                     val typeParameters = classDescriptor.declaredTypeParameters
-                    val substitutor = matchingSubstitutor(FuzzyType(type, typeParameters)) ?: continue
-                    result.add(FuzzyType(substitutor.substitute(type, Variance.INVARIANT)!!, typeParameters))
+                    val substitutor = matchingSubstitutor(type.toFuzzyType(typeParameters)) ?: continue
+                    result.add(substitutor.substitute(type, Variance.INVARIANT)!!.toFuzzyType(typeParameters))
                 }
 
                 for (extensionOperator in typesWithGetDetector.extensionOperators) {
                     val receiverType = extensionOperator.fuzzyExtensionReceiverType()!!
                     val substitutor = matchingSubstitutor(receiverType) ?: continue
-                    result.add(FuzzyType(substitutor.substitute(receiverType.type, Variance.INVARIANT)!!, receiverType.freeParameters))
+                    result.add(substitutor.substitute(receiverType.type, Variance.INVARIANT)!!.toFuzzyType(receiverType.freeParameters))
                 }
 
                 result

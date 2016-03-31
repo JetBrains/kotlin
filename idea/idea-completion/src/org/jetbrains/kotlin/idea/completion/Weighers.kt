@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.idea.core.completion.PackageLookupObject
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.FuzzyType
+import org.jetbrains.kotlin.idea.util.toFuzzyType
 import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.findOriginalTopMostOverriddenDescriptors
 
@@ -231,7 +232,7 @@ class SmartCompletionInBasicWeigher(
                 descriptor.fuzzyTypesForSmartCompletion(smartCastCalculator, callType, resolutionFacade) to descriptor.name
             }
 
-            is ThisItemLookupObject -> smartCastCalculator.types(o.receiverParameter).map { FuzzyType(it, emptyList()) } to null
+            is ThisItemLookupObject -> smartCastCalculator.types(o.receiverParameter).map { it.toFuzzyType(emptyList()) } to null
 
             else -> return NO_MATCH_WEIGHT
         }

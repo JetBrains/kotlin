@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.idea.core
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.idea.util.FuzzyType
-import org.jetbrains.kotlin.idea.util.combineIfNoConflicts
-import org.jetbrains.kotlin.idea.util.fuzzyExtensionReceiverType
-import org.jetbrains.kotlin.idea.util.nullability
+import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
@@ -119,7 +116,7 @@ class TypesWithContainsDetector(
 
     override fun checkIsSuitableByType(operator: FunctionDescriptor, freeTypeParams: Collection<TypeParameterDescriptor>): TypeSubstitutor? {
         val parameter = operator.valueParameters.single()
-        val fuzzyParameterType = FuzzyType(parameter.type, operator.typeParameters + freeTypeParams)
+        val fuzzyParameterType = parameter.type.toFuzzyType(operator.typeParameters + freeTypeParams)
         return fuzzyParameterType.checkIsSuperTypeOf(argumentType)
     }
 }
@@ -132,12 +129,12 @@ class TypesWithGetValueDetector(
 ) : TypesWithOperatorDetector(OperatorNameConventions.GET_VALUE, scope, indicesHelper) {
 
     override fun checkIsSuitableByType(operator: FunctionDescriptor, freeTypeParams: Collection<TypeParameterDescriptor>): TypeSubstitutor? {
-        val paramType = FuzzyType(operator.valueParameters.first().type, freeTypeParams)
+        val paramType = operator.valueParameters.first().type.toFuzzyType(freeTypeParams)
         val substitutor = paramType.checkIsSuperTypeOf(propertyOwnerType) ?: return null
 
         if (propertyType == null) return substitutor
 
-        val fuzzyReturnType = FuzzyType(operator.returnType ?: return null, freeTypeParams)
+        val fuzzyReturnType = operator.returnType?.toFuzzyType(freeTypeParams) ?: return null
         val substitutorFromPropertyType = fuzzyReturnType.checkIsSubtypeOf(propertyType) ?: return null
         return substitutor.combineIfNoConflicts(substitutorFromPropertyType, freeTypeParams)
     }
@@ -150,7 +147,7 @@ class TypesWithSetValueDetector(
 ) : TypesWithOperatorDetector(OperatorNameConventions.SET_VALUE, scope, indicesHelper) {
 
     override fun checkIsSuitableByType(operator: FunctionDescriptor, freeTypeParams: Collection<TypeParameterDescriptor>): TypeSubstitutor? {
-        val paramType = FuzzyType(operator.valueParameters.first().type, freeTypeParams)
+        val paramType = operator.valueParameters.first().type.toFuzzyType(freeTypeParams)
         return paramType.checkIsSuperTypeOf(propertyOwnerType)
     }
 }

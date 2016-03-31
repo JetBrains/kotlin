@@ -29,18 +29,11 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.*
 import java.util.*
 
-fun CallableDescriptor.fuzzyReturnType(): FuzzyType? {
-    val returnType = returnType ?: return null
-    return FuzzyType(returnType, typeParameters)
-}
+fun CallableDescriptor.fuzzyReturnType() = returnType?.toFuzzyType(typeParameters)
+fun CallableDescriptor.fuzzyExtensionReceiverType() = extensionReceiverParameter?.type?.toFuzzyType(typeParameters)
 
-fun CallableDescriptor.fuzzyExtensionReceiverType(): FuzzyType? {
-    val receiverParameter = extensionReceiverParameter
-    return if (receiverParameter != null) FuzzyType(receiverParameter.type, typeParameters) else null
-}
-
-fun FuzzyType.makeNotNullable() = FuzzyType(type.makeNotNullable(), freeParameters)
-fun FuzzyType.makeNullable() = FuzzyType(type.makeNullable(), freeParameters)
+fun FuzzyType.makeNotNullable() = type.makeNotNullable().toFuzzyType(freeParameters)
+fun FuzzyType.makeNullable() = type.makeNullable().toFuzzyType(freeParameters)
 fun FuzzyType.nullability() = type.nullability()
 
 fun FuzzyType.isAlmostEverything(): Boolean {
@@ -69,6 +62,8 @@ fun FuzzyType.presentationType(): KotlinType {
     val substitutor = TypeSubstitutor.create(map)
     return substitutor.substitute(type, Variance.INVARIANT)!!
 }
+
+fun KotlinType.toFuzzyType(freeParameters: Collection<TypeParameterDescriptor>) = FuzzyType(this, freeParameters)
 
 class FuzzyType(
         val type: KotlinType,
@@ -122,10 +117,10 @@ class FuzzyType(
             = matchedSubstitutor(otherType, MatchKind.IS_SUPERTYPE)
 
     fun checkIsSubtypeOf(otherType: KotlinType): TypeSubstitutor?
-            = checkIsSubtypeOf(FuzzyType(otherType, emptyList()))
+            = checkIsSubtypeOf(otherType.toFuzzyType(emptyList()))
 
     fun checkIsSuperTypeOf(otherType: KotlinType): TypeSubstitutor?
-            = checkIsSuperTypeOf(FuzzyType(otherType, emptyList()))
+            = checkIsSuperTypeOf(otherType.toFuzzyType(emptyList()))
 
     private enum class MatchKind {
         IS_SUBTYPE,

@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.idea.completion.handlers.GenerateLambdaInfo
 import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.lambdaPresentation
 import org.jetbrains.kotlin.idea.util.CallType
-import org.jetbrains.kotlin.idea.util.FuzzyType
+import org.jetbrains.kotlin.idea.util.toFuzzyType
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
@@ -121,7 +121,7 @@ class LookupElementFactory(
             if (isSingleParameter) {
                 //TODO: also ::function? at least for local functions
                 //TODO: order for them
-                val fuzzyParameterType = FuzzyType(parameterType, descriptor.typeParameters)
+                val fuzzyParameterType = parameterType.toFuzzyType(descriptor.typeParameters)
                 for ((variable, substitutor) in contextVariablesProvider.functionTypeVariables(fuzzyParameterType)) {
                     val substitutedDescriptor = descriptor.substitute(substitutor)
                     add(createFunctionCallElementWithArguments(substitutedDescriptor, variable.name.render(), useReceiverTypes))

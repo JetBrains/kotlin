@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.isAlmostEverything
+import org.jetbrains.kotlin.idea.util.toFuzzyType
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -277,7 +278,7 @@ class SmartCompletion(
         if (shouldCompleteThisItems(prefixMatcher)) {
             val items = thisExpressionItems(bindingContext, place, prefixMatcher.prefix, resolutionFacade)
             for (item in items) {
-                val types = smartCastCalculator.types(item.receiverParameter).map { FuzzyType(it, emptyList()) }
+                val types = smartCastCalculator.types(item.receiverParameter).map { it.toFuzzyType(emptyList()) }
                 val matcher = { expectedInfo: ExpectedInfo -> types.matchExpectedInfo(expectedInfo) }
                 addLookupElements(null, expectedInfos, matcher) {
                     item.createLookupElement().assignSmartCompletionPriority(SmartCompletionItemPriority.THIS).singletonList()

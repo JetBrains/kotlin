@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.idea.core.WhenEntryAdditionalData
 import org.jetbrains.kotlin.idea.core.fuzzyType
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
-import org.jetbrains.kotlin.idea.util.FuzzyType
+import org.jetbrains.kotlin.idea.util.toFuzzyType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.KotlinTypeImpl
@@ -98,7 +98,7 @@ object KeywordValues {
             if (qualifierType != null) {
                 val kClassDescriptor = resolutionFacade.getFrontendService(ReflectionTypes::class.java).kClass
                 val classLiteralType = KotlinTypeImpl.create(Annotations.EMPTY, kClassDescriptor, false, listOf(TypeProjectionImpl(qualifierType)))
-                val kClassTypes = listOf(FuzzyType(classLiteralType, emptyList()))
+                val kClassTypes = listOf(classLiteralType.toFuzzyType(emptyList()))
                 val kClassMatcher = { info: ExpectedInfo -> kClassTypes.matchExpectedInfo(info) }
                 consumer.consume("class", kClassMatcher, SmartCompletionItemPriority.CLASS_LITERAL) {
                     LookupElementBuilder.create(KeywordLookupObject(), "class").bold()
@@ -110,7 +110,7 @@ object KeywordValues {
 
                     if (javaLangClassDescriptor != null) {
                         val javaLangClassType = KotlinTypeImpl.create(Annotations.EMPTY, javaLangClassDescriptor, false, listOf(TypeProjectionImpl(qualifierType)))
-                        val javaClassTypes = listOf(FuzzyType(javaLangClassType, emptyList()))
+                        val javaClassTypes = listOf(javaLangClassType.toFuzzyType(emptyList()))
                         val javaClassMatcher = { info: ExpectedInfo -> javaClassTypes.matchExpectedInfo(info) }
                         consumer.consume("class", javaClassMatcher, SmartCompletionItemPriority.CLASS_LITERAL) {
                             LookupElementBuilder.create(KeywordLookupObject(), "class.java")
