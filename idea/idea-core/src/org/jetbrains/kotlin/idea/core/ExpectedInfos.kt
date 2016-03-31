@@ -612,11 +612,11 @@ class ExpectedInfos(
         val property = resolutionFacade.resolveToDescriptor(propertyDeclaration) as? PropertyDescriptor ?: return null
 
         val scope = expressionWithType.getResolutionScope(bindingContext, resolutionFacade)
-        val propertyOwnerType = property.extensionReceiverParameter?.type
-                            ?: property.dispatchReceiverParameter?.type
+        val propertyOwnerType = property.fuzzyExtensionReceiverType()
+                            ?: property.dispatchReceiverParameter?.type?.let { FuzzyType(it, emptyList()) }
                             ?: return null
 
-        val explicitPropertyType = property.returnType?.check { propertyDeclaration.typeReference != null }
+        val explicitPropertyType = property.fuzzyReturnType()?.check { propertyDeclaration.typeReference != null }
         val typesWithGetDetector = TypesWithGetValueDetector(scope, indicesHelper, propertyOwnerType, explicitPropertyType)
         val typesWithSetDetector = if (property.isVar) TypesWithSetValueDetector(scope, indicesHelper, propertyOwnerType) else null
 
@@ -629,10 +629,7 @@ class ExpectedInfos(
                 val substitutedType = FuzzyType(getOperatorSubstitutor.substitute(descriptorType.type, Variance.INVARIANT)!!, descriptorType.freeParameters)
 
                 val (setValueOperator, setOperatorSubstitutor) = typesWithSetDetector.findOperator(substitutedType) ?: return null
-                val propertyType = if (explicitPropertyType != null)
-                    FuzzyType(explicitPropertyType, emptyList())
-                else
-                    getValueOperator.fuzzyReturnType()!!
+                val propertyType = explicitPropertyType ?: getValueOperator.fuzzyReturnType()!!
                 val setParamType = FuzzyType(setValueOperator.valueParameters.last().type, setValueOperator.typeParameters)
                 val setParamTypeSubstitutor = setParamType.checkIsSuperTypeOf(propertyType) ?: return null
                 return TypeSubstitutor.createChainedSubstitutor(getOperatorSubstitutor.substitution,

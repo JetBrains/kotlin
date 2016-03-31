@@ -119,8 +119,8 @@ class TypesWithContainsDetector(
 class TypesWithGetValueDetector(
         scope: LexicalScope,
         indicesHelper: KotlinIndicesHelper?,
-        private val propertyOwnerType: KotlinType,
-        private val propertyType: KotlinType?
+        private val propertyOwnerType: FuzzyType,
+        private val propertyType: FuzzyType?
 ) : TypesWithOperatorDetector(OperatorNameConventions.GET_VALUE, scope, indicesHelper) {
 
     override fun checkIsSuitableByType(operator: FunctionDescriptor, freeTypeParams: Collection<TypeParameterDescriptor>): TypeSubstitutor? {
@@ -138,7 +138,7 @@ class TypesWithGetValueDetector(
 class TypesWithSetValueDetector(
         scope: LexicalScope,
         indicesHelper: KotlinIndicesHelper?,
-        private val propertyOwnerType: KotlinType
+        private val propertyOwnerType: FuzzyType
 ) : TypesWithOperatorDetector(OperatorNameConventions.SET_VALUE, scope, indicesHelper) {
 
     override fun checkIsSuitableByType(operator: FunctionDescriptor, freeTypeParams: Collection<TypeParameterDescriptor>): TypeSubstitutor? {
