@@ -1450,6 +1450,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/smart/propertyDelegate"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("ConflictingSubstitutors.kt")
+        public void testConflictingSubstitutors() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/ConflictingSubstitutors.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("DelegatesDot.kt")
         public void testDelegatesDot() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/DelegatesDot.kt");
@@ -1519,6 +1525,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         @TestMetadata("GenericVar.kt")
         public void testGenericVar() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/GenericVar.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NonConflictingSubstitutors.kt")
+        public void testNonConflictingSubstitutors() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/NonConflictingSubstitutors.kt");
             doTest(fileName);
         }
 

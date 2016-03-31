@@ -184,3 +184,18 @@ class FuzzyType(
         return TypeSubstitutor.create(TypeConstructorSubstitution.createByConstructorsMap(substitution))
     }
 }
+
+
+fun TypeSubstitution.hasConflictWith(other: TypeSubstitution, freeParameters: Collection<TypeParameterDescriptor>): Boolean {
+    return freeParameters.any { parameter ->
+        val type = parameter.defaultType
+        val substituted1 = this[type] ?: return@any false
+        val substituted2 = other[type] ?: return@any false
+        !KotlinTypeChecker.FLEXIBLE_UNEQUAL_TO_INFLEXIBLE.equalTypes(substituted1.type, substituted2.type) || substituted1.projectionKind != substituted2.projectionKind
+    }
+}
+
+fun TypeSubstitutor.combineIfNoConflicts(other: TypeSubstitutor, freeParameters: Collection<TypeParameterDescriptor>): TypeSubstitutor? {
+    if (this.substitution.hasConflictWith(other.substitution, freeParameters)) return null
+    return TypeSubstitutor.createChainedSubstitutor(this.substitution, other.substitution)
+}

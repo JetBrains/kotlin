@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.idea.util.FuzzyType
+import org.jetbrains.kotlin.idea.util.combineIfNoConflicts
 import org.jetbrains.kotlin.idea.util.fuzzyExtensionReceiverType
 import org.jetbrains.kotlin.idea.util.nullability
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -138,7 +139,7 @@ class TypesWithGetValueDetector(
 
         val fuzzyReturnType = FuzzyType(operator.returnType ?: return null, freeTypeParams)
         val substitutorFromPropertyType = fuzzyReturnType.checkIsSubtypeOf(propertyType) ?: return null
-        return TypeSubstitutor.createChainedSubstitutor(substitutor.substitution, substitutorFromPropertyType.substitution)
+        return substitutor.combineIfNoConflicts(substitutorFromPropertyType, freeTypeParams)
     }
 }
 

@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.ideService
-import org.jetbrains.kotlin.idea.util.FuzzyType
-import org.jetbrains.kotlin.idea.util.fuzzyExtensionReceiverType
-import org.jetbrains.kotlin.idea.util.fuzzyReturnType
-import org.jetbrains.kotlin.idea.util.getResolutionScope
+import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -632,9 +629,9 @@ class ExpectedInfos(
                 val propertyType = explicitPropertyType ?: getValueOperator.fuzzyReturnType()!!
                 val setParamType = FuzzyType(setValueOperator.valueParameters.last().type, setValueOperator.typeParameters)
                 val setParamTypeSubstitutor = setParamType.checkIsSuperTypeOf(propertyType) ?: return null
-                return TypeSubstitutor.createChainedSubstitutor(getOperatorSubstitutor.substitution,
-                                                                TypeSubstitutor.createChainedSubstitutor(setOperatorSubstitutor.substitution,
-                                                                                                         setParamTypeSubstitutor.substitution).substitution)
+                return getOperatorSubstitutor
+                        .combineIfNoConflicts(setOperatorSubstitutor, descriptorType.freeParameters)
+                        ?.combineIfNoConflicts(setParamTypeSubstitutor, descriptorType.freeParameters)
             }
 
             override val multipleFuzzyTypes: Collection<FuzzyType> by lazy {
