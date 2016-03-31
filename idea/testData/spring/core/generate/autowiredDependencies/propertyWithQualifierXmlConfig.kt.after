@@ -1,0 +1,16 @@
+// ACTION_CLASS: org.jetbrains.kotlin.idea.spring.generate.GenerateKotlinAutowiredDependencyAction
+// CONFIG_FILE:
+// CHOOSE_BEAN: barBean
+package a
+
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
+
+open class FooBean {
+    @Qualifier("barBean") @Autowired lateinit var barBean: BarBean
+
+}
+
+open class BarBean
+
+open class BarBeanChild : BarBean()

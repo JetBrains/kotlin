@@ -43,7 +43,7 @@ abstract class AbstractGenerateSpringDependencyActionTest : AbstractCodeInsightA
         val springFileSet = TestFixtureExtension
                 .getFixture<SpringTestFixtureExtension>()!!
                 .configureFileSet(myFixture, listOf(configFilePath!!))
-        if (configFilePath != mainFilePath) {
+        if (configFilePath != mainFilePath && PathUtil.getFileName(configFilePath!!) != "spring-config.xml") {
             configFile = springFileSet.files.single().file!!
         }
 
