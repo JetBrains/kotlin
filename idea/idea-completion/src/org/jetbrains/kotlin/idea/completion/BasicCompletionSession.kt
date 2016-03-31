@@ -247,7 +247,7 @@ class BasicCompletionSession(
                 completeNonImported(lookupElementFactory)
                 flushToResultSet()
 
-                if (position.containingFile is KtCodeFragment) {
+                if (isDebuggerContext) {
                     val variantsAndFactory = getRuntimeReceiverTypeReferenceVariants(lookupElementFactory)
                     if (variantsAndFactory != null) {
                         val variants = variantsAndFactory.first

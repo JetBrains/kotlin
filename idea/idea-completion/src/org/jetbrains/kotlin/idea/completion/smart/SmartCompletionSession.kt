@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptorKindExclude
 import org.jetbrains.kotlin.psi.LambdaArgument
-import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.ValueArgumentName
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
@@ -140,7 +139,7 @@ class SmartCompletionSession(
                     }
                 }
 
-                if (position.containingFile is KtCodeFragment) {
+                if (isDebuggerContext) {
                     val variantsAndFactory = getRuntimeReceiverTypeReferenceVariants(lookupElementFactory)
                     if (variantsAndFactory != null) {
                         val variants = variantsAndFactory.first
