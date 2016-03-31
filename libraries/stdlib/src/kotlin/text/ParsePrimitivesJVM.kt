@@ -59,8 +59,8 @@ public inline fun String.toDouble(radix: Int = 10): Double = java.lang.Double.pa
  * Parses the string as a signed [Byte] number and returns the result
  * or `null` if the string is not a valid representation of a number.
  */
-public fun String.toByteOrNull(): Byte? {
-    val int = this.toIntOrNull() ?: return null
+public fun String.toByteOrNull(radix: Int = 10): Byte? {
+    val int = this.toIntOrNull(radix) ?: return null
     if (int < Byte.MIN_VALUE || int > Byte.MAX_VALUE) return null
     return int.toByte()
 }
@@ -69,8 +69,8 @@ public fun String.toByteOrNull(): Byte? {
  * Parses the string as a [Short] number and returns the result
  * or `null` if the string is not a valid representation of a number.
  */
-public fun String.toShortOrNull(): Short? {
-    val int = this.toIntOrNull() ?: return null
+public fun String.toShortOrNull(radix: Int = 10): Short? {
+    val int = this.toIntOrNull(radix) ?: return null
     if (int < Short.MIN_VALUE || int > Short.MAX_VALUE) return null
     return int.toShort()
 }
@@ -79,7 +79,7 @@ public fun String.toShortOrNull(): Short? {
  * Parses the string as an [Int] number and returns the result
  * or `null` if the string is not a valid representation of a number.
  */
-public fun String.toIntOrNull(): Int? {
+public fun String.toIntOrNull(radix: Int = 10): Int? {
     /* the code is somewhat ugly in order to achieve maximum performance */
 
     val len = this.length
@@ -134,7 +134,7 @@ public fun String.toIntOrNull(): Int? {
  * Parses the string as a [Long] number and returns the result
  * or `null` if the string is not a valid representation of a number.
  */
-public fun String.toLongOrNull(): Long? {
+public fun String.toLongOrNull(radix: Int = 10): Long? {
     /* the code is somewhat ugly in order to achieve maximum performance */
 
     val len = this.length
@@ -222,13 +222,12 @@ private object ScreenFloatValueRegEx {
 }
 
 private inline fun <T> screenFloatValue(str: String, parse: (String) -> T): T? {
-    // they say the RegEx screens all invalid cases, but who knows..
     return try {
         if (ScreenFloatValueRegEx.value.matches(str))
             parse(str)
         else
             null
-    } catch(e: NumberFormatException) {
+    } catch(e: NumberFormatException) {  // overflow
         null
     }
 }
