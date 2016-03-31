@@ -3,7 +3,7 @@ java.lang.Exception: hi there
 >>> fun foo() = 2
 >>> foo()
 2
->>> fun bar() = throw AssertionError()
+>>> fun bar(): Nothing = throw AssertionError()
 >>> bar()
 java.lang.AssertionError
 	at Line4.bar(Unknown Source)
