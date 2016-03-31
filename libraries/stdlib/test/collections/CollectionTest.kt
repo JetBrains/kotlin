@@ -854,4 +854,11 @@ class CollectionTest {
         // we need toString() inside pattern because of KT-8666
         assertEquals("[1, a, null, ${Long.MAX_VALUE.toString()}]", listOf(1, "a", null, Long.MAX_VALUE).toString())
     }
+
+    @test fun randomAccess() {
+        assertTrue(arrayListOf(1) is RandomAccess, "ArrayList is RandomAccess")
+        assertTrue(listOf(1, 2) is RandomAccess, "Default read-only list implementation is RandomAccess")
+        assertTrue(listOf(1) is RandomAccess, "Default singleton list is RandomAccess")
+        assertTrue(emptyList<Int>() is RandomAccess, "Empty list is RandomAccess")
+    }
 }

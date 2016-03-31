@@ -404,31 +404,31 @@ public fun <K, V, M : MutableMap<in K, in V>> Sequence<Pair<K, V>>.toMap(destina
 /**
  * Creates a new read-only map by replacing or adding an entry to this map from a given key-value [pair].
  */
-public operator fun <K, V> Map<K, V>.plus(pair: Pair<K, V>): Map<K, V>
+public operator fun <K, V> Map<out K, V>.plus(pair: Pair<K, V>): Map<K, V>
         = LinkedHashMap(this).apply { put(pair.first, pair.second) }
 
 /**
  * Creates a new read-only map by replacing or adding entries to this map from a given collection of key-value [pairs].
  */
-public operator fun <K, V> Map<K, V>.plus(pairs: Iterable<Pair<K, V>>): Map<K, V>
+public operator fun <K, V> Map<out K, V>.plus(pairs: Iterable<Pair<K, V>>): Map<K, V>
         = LinkedHashMap(this).apply { putAll(pairs) }
 
 /**
  * Creates a new read-only map by replacing or adding entries to this map from a given array of key-value [pairs].
  */
-public operator fun <K, V> Map<K, V>.plus(pairs: Array<out Pair<K, V>>): Map<K, V>
+public operator fun <K, V> Map<out K, V>.plus(pairs: Array<out Pair<K, V>>): Map<K, V>
         = LinkedHashMap(this).apply { putAll(pairs) }
 
 /**
  * Creates a new read-only map by replacing or adding entries to this map from a given sequence of key-value [pairs].
  */
-public operator fun <K, V> Map<K, V>.plus(pairs: Sequence<Pair<K, V>>): Map<K, V>
+public operator fun <K, V> Map<out K, V>.plus(pairs: Sequence<Pair<K, V>>): Map<K, V>
         = LinkedHashMap(this).apply { putAll(pairs) }
 
 /**
  * Creates a new read-only map by replacing or adding entries to this map from another [map].
  */
-public operator fun <K, V> Map<K, V>.plus(map: Map<K, V>): Map<K, V>
+public operator fun <K, V> Map<out K, V>.plus(map: Map<out K, V>): Map<K, V>
         = LinkedHashMap(this).apply { putAll(map) }
 
 

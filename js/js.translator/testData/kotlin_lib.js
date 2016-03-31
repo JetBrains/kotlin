@@ -350,6 +350,8 @@
         }
     );
 
+    Kotlin.RandomAccess = Kotlin.createTraitNow(null);
+
     Kotlin.PropertyMetadata = Kotlin.createClassNow(null,
         function (name) {
             this.name = name;
@@ -566,7 +568,7 @@
     //TODO: should be JS Array-like (https://developer.mozilla.org/en-US/docs/JavaScript/Guide/Predefined_Core_Objects#Working_with_Array-like_objects)
     lazyInitClasses.ArrayList = Kotlin.createClass(
         function () {
-            return [Kotlin.AbstractList];
+            return [Kotlin.AbstractList, Kotlin.RandomAccess];
         },
         function () {
             this.array = [];

@@ -337,6 +337,22 @@ class MapTest {
 
     @test fun plusMap() = testPlus { it + mapOf("C" to 3, "B" to 4) }
 
+    @test fun plusAny() {
+        testPlusAny(emptyMap<String, String>(), 1 to "A")
+        testPlusAny(mapOf("A" to null), "A" as CharSequence to 2)
+    }
+
+    fun <K, V> testPlusAny(mapObject: Any, pair: Pair<K, V>) {
+        val map = mapObject as Map<*, *>
+        fun assertContains(map: Map<*, *>) = assertEquals(pair.second, map[pair.first])
+
+        assertContains(map + pair)
+        assertContains(map + listOf(pair))
+        assertContains(map + arrayOf(pair))
+        assertContains(map + sequenceOf(pair))
+        assertContains(map + mapOf(pair))
+    }
+
 
 
     fun testIdempotent(operation: (Map<String, Int>) -> Map<String, Int>) {

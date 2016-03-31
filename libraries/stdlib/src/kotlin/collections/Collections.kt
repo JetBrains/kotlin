@@ -16,7 +16,7 @@ internal object EmptyIterator : ListIterator<Nothing> {
     override fun previous(): Nothing = throw NoSuchElementException()
 }
 
-internal object EmptyList : List<Nothing>, Serializable {
+internal object EmptyList : List<Nothing>, Serializable, RandomAccess {
     override fun equals(other: Any?): Boolean = other is List<*> && other.isEmpty()
     override fun hashCode(): Int = 1
     override fun toString(): String = "[]"
