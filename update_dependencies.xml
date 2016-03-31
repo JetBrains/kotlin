@@ -14,7 +14,7 @@
 
     <property name="bootstrap.build.no.tests" value="false"/>
 
-    <!--<property name="use.ultimate.by.default" value="true"/>-->
+    <property name="use.ultimate.by.default" value="true"/>
 
     <property name="sdk.version.prefix" value="IU" if:set="use.ultimate.by.default"/>
     <property name="sdk.version.prefix" value="IC" unless:set="use.ultimate.by.default"/>

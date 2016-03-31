@@ -34,5 +34,6 @@
     <orderEntry type="library" scope="TEST" name="kotlin-test" level="project" />
     <orderEntry type="module" module-name="build-common" scope="TEST" />
     <orderEntry type="module" module-name="idea-android" scope="TEST" />
+    <orderEntry type="module" module-name="idea-ultimate" scope="TEST" />
   </component>
 </module>
