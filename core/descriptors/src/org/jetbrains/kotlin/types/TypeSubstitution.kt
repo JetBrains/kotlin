@@ -47,10 +47,16 @@ abstract class TypeConstructorSubstitution : TypeSubstitution() {
     abstract fun get(key: TypeConstructor): TypeProjection?
 
     companion object {
-        @JvmStatic fun createByConstructorsMap(map: Map<TypeConstructor, TypeProjection>): TypeConstructorSubstitution =
+        @JvmStatic
+        @JvmOverloads
+        fun createByConstructorsMap(
+                map: Map<TypeConstructor, TypeProjection>,
+                approximateCapturedTypes: Boolean = false
+        ): TypeConstructorSubstitution =
             object : TypeConstructorSubstitution() {
                 override fun get(key: TypeConstructor) = map[key]
                 override fun isEmpty() = map.isEmpty()
+                override fun approximateCapturedTypes() = approximateCapturedTypes
             }
 
         @JvmStatic fun createByParametersMap(map: Map<TypeParameterDescriptor, TypeProjection>): TypeConstructorSubstitution =

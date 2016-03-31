@@ -169,7 +169,10 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : SyntheticScope 
 
             }
 
-            val sourceFunctionSubstitutor = TypeSubstitutor.create(substitutionMap)
+            val sourceFunctionSubstitutor =
+                    TypeConstructorSubstitution.createByConstructorsMap(
+                            substitutionMap, configuration.originalSubstitutor.substitution.approximateCapturedTypes()).buildSubstitutor()
+
             descriptor.sourceFunction = original.sourceFunction.substitute(sourceFunctionSubstitutor)
 
             return descriptor
