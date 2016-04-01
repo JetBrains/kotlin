@@ -34,7 +34,7 @@ class DefaultClassObjectIntrinsic(val fqName: FqName): ObjectIntrinsic {
 }
 
 class ObjectIntrinsics {
-    private val companionObjectMapping = CompanionObjectMapping(JsPlatform.builtIns)
+    private val companionObjectMapping = CompanionObjectMapping()
 
     fun getIntrinsic(classDescriptor: ClassDescriptor): ObjectIntrinsic {
         if (!companionObjectMapping.hasMappingToObject(classDescriptor)) return NO_OBJECT_INTRINSIC

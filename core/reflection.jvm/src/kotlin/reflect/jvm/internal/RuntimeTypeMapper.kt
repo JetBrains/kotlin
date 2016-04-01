@@ -16,6 +16,7 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -260,7 +261,7 @@ internal object RuntimeTypeMapper {
 
         val classId = klass.classId
         if (!classId.isLocal) {
-            JavaToKotlinClassMap.INSTANCE.mapJavaToKotlin(classId.asSingleFqName())?.let { return it.classId }
+            JavaToKotlinClassMap.INSTANCE.mapJavaToKotlin(classId.asSingleFqName(), DefaultBuiltIns.Instance)?.let { return it.classId }
         }
 
         return classId
