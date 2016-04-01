@@ -25,11 +25,11 @@ import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 public class KotlinJavaMavenConfigurator extends KotlinMavenConfigurator {
     private static final String NAME = "maven";
     public static final String STD_LIB_ID = "kotlin-stdlib";
-    private static final String TEST_LIB_ID = "kotlin-test-junit";
+    public static final String TEST_LIB_ID = "kotlin-test";
     private static final String PRESENTABLE_TEXT = "Maven";
 
     public KotlinJavaMavenConfigurator() {
-        super(STD_LIB_ID, TEST_LIB_ID, true, NAME, PRESENTABLE_TEXT);
+        super(STD_LIB_ID, TEST_LIB_ID, false, NAME, PRESENTABLE_TEXT);
     }
 
     @Override
