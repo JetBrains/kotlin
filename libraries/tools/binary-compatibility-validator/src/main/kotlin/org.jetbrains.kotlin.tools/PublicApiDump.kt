@@ -5,7 +5,6 @@ import org.objectweb.asm.tree.*
 import java.io.File
 import java.io.InputStream
 import java.util.jar.JarFile
-import kotlin.comparisons.compareBy
 
 fun main(args: Array<String>) {
     var src = args[0]
@@ -36,19 +35,13 @@ fun getBinaryAPI(classStreams: Sequence<InputStream>, visibilityMap: Map<String,
             val supertypes = listOf(superName) - "java/lang/Object" + interfaces.sorted()
 
             val memberSignatures = (
-                    fields
-                            .sortedBy { it.name }
-                            .map { with(it) { FieldBinarySignature(name, desc, isInlineExposed(), AccessFlags(access)) } } +
-                    methods
-                            .sortedWith(compareBy({ it.name }, { it.desc }))
-                            .map { with(it) { MethodBinarySignature(name, desc, isInlineExposed(), AccessFlags(access)) } }
+                    fields.map { with(it) { FieldBinarySignature(name, desc, isInlineExposed(), AccessFlags(access)) } } +
+                    methods.map { with(it) { MethodBinarySignature(name, desc, isInlineExposed(), AccessFlags(access)) } }
             ).filter {
                 it.isEffectivelyPublic(classAccess, classVisibility)
             }
-            val isEffectivelyPublic = it.isEffectivelyPublic(classVisibility)
-                                && !(isFileOrMultipartFacade() && memberSignatures.isEmpty())
 
-            ClassBinarySignature(name, superName, outerClassName, supertypes, memberSignatures, classAccess, isEffectivelyPublic)
+            ClassBinarySignature(name, superName, outerClassName, supertypes, memberSignatures, classAccess, isEffectivelyPublic(classVisibility), isFileOrMultipartFacade())
         }}
         .asIterable()
         .sortedBy { it.name }
@@ -79,14 +72,16 @@ fun List<ClassBinarySignature>.filterOutNonPublic(): List<ClassBinarySignature> 
         return this.copy(memberSignatures = memberSignatures + inheritedStaticSignatures, supertypes = supertypes - superName)
     }
 
-    return filter { it -> it.isPublicAndAccessible() }.map { it.flattenNonPublicBases() }
+    return filter { it.isPublicAndAccessible() }
+            .map { it.flattenNonPublicBases() }
+            .filterNot { it.isFileOrMultipartFacade && it.memberSignatures.isEmpty()}
 }
 
 fun List<ClassBinarySignature>.dump() = dump(to = System.out)
 
 fun <T: Appendable> List<ClassBinarySignature>.dump(to: T): T = to.apply { this@dump.forEach {
     append(it.signature).appendln(" {")
-    it.memberSignatures.forEach { append("\t").appendln(it.signature) }
+    it.memberSignatures.sortedWith(MEMBER_SORT_ORDER).forEach { append("\t").appendln(it.signature) }
     appendln("}\n")
 }}
 

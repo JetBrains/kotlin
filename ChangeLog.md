@@ -6,18 +6,29 @@
 ## 1.1
 
 ## 1.0.2
-- Show only changed files in notification "Kotlin not configured"
-- Configure Kotlin: restore all changed files in undo action
-- Enable precise incremental compilation by default
-- Report warning about unused anonymous functions
 
-### JVM
+### Compiler
+
+- Report warning about unused anonymous functions
 - Remove the compiler option "Xmultifile-facades-open"
 
 ### JS
+
 - Safe calls (`x?.let { it }`) are now inlined
 
-### Tools. J2K
+### IDE
+
+- Enable precise incremental compilation by default in non-Maven/Gradle projects
+- Debugger can distinguish nested inline arguments
+- Add `kotlinClassName()` and `kotlinFunctionName()` macros for use in live templates
+- Complete private members from libraries in Evaluate Expression dialog
+- Show error message when debug info for some local variable is corrupted
+- [KT-11638](https://youtrack.jetbrains.com/issue/KT-11638) Fixed hashCode() implementation in "Generate equals/hashCode" action
+- Configure Kotlin: show only changed files in the notification "Kotlin not configured"
+- Configure Kotlin: restore all changed files in undo action
+
+### Java to Kotlin converter
+
 - Protected members used outside of inheritors are converted as public
 - Support conversion for annotation constructor calls
 - Place comments from the middle of the call to the end
@@ -25,18 +36,13 @@
 - Add non-null assertions on call site for non-null parameters
 - Specify type for variables with anonymous type if they have write accesses
 
-### Tools. Android
+### Android
+
 - Fixed sequential build with kapt and stubs enabled when Kotlin source file was modified and no Java source files were modified
 
-### IDE
-- Debugger can distinguish nested inline arguments
-- Add kotlinClassName() and kotlinFunctionName() macros for use in live templates
-- Complete private members from libraries in Evaluate Expression dialog
-- Show error message when debug info for some local variable is corrupted
-- [KT-11638](https://youtrack.jetbrains.com/issue/KT-11638) Fixed hashCode() implementation in "Generate equals/hashCode" action
+### Gradle
 
-### Tools.Gradle
-- Added project property 'kotlin.incremental'
+- Experimental support for incremental compilation with project property 'kotlin.incremental'
 - Fixed a bug causing Java rebuild when both Java and Kotlin are up-to-date
 
 ## 1.0.1-2
