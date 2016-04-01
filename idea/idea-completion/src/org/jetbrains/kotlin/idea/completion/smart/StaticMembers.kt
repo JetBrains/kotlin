@@ -108,7 +108,7 @@ class StaticMembers(
         val members = classDescriptor.defaultType.memberScope.getContributedDescriptors().filter { member ->
             when (classDescriptor.kind) {
                 ClassKind.ENUM_CLASS -> member is ClassDescriptor // enum member
-                ClassKind.OBJECT -> true
+                ClassKind.OBJECT -> member is CallableMemberDescriptor || DescriptorUtils.isNonCompanionObject(member)
                 else -> DescriptorUtils.isNonCompanionObject(member)
             }
         }
