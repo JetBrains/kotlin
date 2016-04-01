@@ -1528,6 +1528,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("GenericOperator.kt")
+        public void testGenericOperator() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/GenericOperator.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("GenericVal.kt")
         public void testGenericVal() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/GenericVal.kt");
