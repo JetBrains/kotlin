@@ -185,6 +185,18 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
 
+    @TestMetadata("ImplicitlyTypedOverrideFunBody.kt")
+    public void testImplicitlyTypedOverrideFunBody() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/ImplicitlyTypedOverrideFunBody.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ImplicitlyTypedOverrideValInitializer.kt")
+    public void testImplicitlyTypedOverrideValInitializer() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/ImplicitlyTypedOverrideValInitializer.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ImplicitlyTypedValInitializer1.kt")
     public void testImplicitlyTypedValInitializer1() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/ImplicitlyTypedValInitializer1.kt");

@@ -527,10 +527,11 @@ class ExpectedInfos(
         if (expressionWithType != property.initializer) return null
         val propertyDescriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, property] as? VariableDescriptor ?: return null
         val expectedName = propertyDescriptor.name.asString()
-        val expectedInfo = if (property.typeReference != null)
-            ExpectedInfo(propertyDescriptor.type, expectedName, null)
+        val returnTypeToUse = returnTypeToUse(propertyDescriptor, hasExplicitReturnType = property.typeReference != null)
+        val expectedInfo = if (returnTypeToUse != null)
+            ExpectedInfo(returnTypeToUse, expectedName, null)
         else
-            ExpectedInfo(ByTypeFilter.All, expectedName, null) // no explicit type - only expected name known
+            ExpectedInfo(ByTypeFilter.All, expectedName, null) // no explicit type or type from base - only expected name known
         return listOf(expectedInfo)
     }
 
@@ -538,31 +539,36 @@ class ExpectedInfos(
         val declaration = expressionWithType.parent as? KtDeclarationWithBody ?: return null
         if (expressionWithType != declaration.bodyExpression || declaration.hasBlockBody()) return null
         val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration] as? FunctionDescriptor ?: return null
-        return functionReturnValueExpectedInfo(descriptor, expectType = declaration.hasDeclaredReturnType()).singletonOrEmptyList()
+        return functionReturnValueExpectedInfo(descriptor, hasExplicitReturnType = declaration.hasDeclaredReturnType()).singletonOrEmptyList()
     }
 
     private fun calculateForReturn(expressionWithType: KtExpression): Collection<ExpectedInfo>? {
         val returnExpression = expressionWithType.parent as? KtReturnExpression ?: return null
         val descriptor = returnExpression.getTargetFunctionDescriptor(bindingContext) ?: return null
-        return functionReturnValueExpectedInfo(descriptor, expectType = true).singletonOrEmptyList()
+        return functionReturnValueExpectedInfo(descriptor, hasExplicitReturnType = true).singletonOrEmptyList()
     }
 
-    private fun functionReturnValueExpectedInfo(descriptor: FunctionDescriptor, expectType: Boolean): ExpectedInfo? {
+    private fun functionReturnValueExpectedInfo(descriptor: FunctionDescriptor, hasExplicitReturnType: Boolean): ExpectedInfo? {
         return when (descriptor) {
             is SimpleFunctionDescriptor -> {
-                val expectedType = if (expectType) descriptor.returnType else null
-                ExpectedInfo.createForReturnValue(expectedType, descriptor)
+                ExpectedInfo.createForReturnValue(returnTypeToUse(descriptor, hasExplicitReturnType), descriptor)
             }
 
             is PropertyGetterDescriptor -> {
                 if (descriptor !is PropertyGetterDescriptor) return null
                 val property = descriptor.correspondingProperty
-                val expectedType = if (expectType) property.type else null
-                ExpectedInfo.createForReturnValue(expectedType, property)
+                ExpectedInfo.createForReturnValue(returnTypeToUse(property, hasExplicitReturnType), property)
             }
 
             else -> null
         }
+    }
+
+    private fun returnTypeToUse(descriptor: CallableDescriptor, hasExplicitReturnType: Boolean): KotlinType? {
+        return if (hasExplicitReturnType)
+            descriptor.returnType
+        else
+            descriptor.overriddenDescriptors.singleOrNull()?.returnType
     }
 
     private fun calculateForLoopRange(expressionWithType: KtExpression): Collection<ExpectedInfo>? {
