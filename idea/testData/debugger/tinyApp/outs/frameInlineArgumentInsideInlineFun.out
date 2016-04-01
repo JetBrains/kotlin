@@ -54,7 +54,7 @@ fun main(args: Array<String>) {
    local    = $i$f$inlineFun: int = 0 (sp = null)
    local    = element$iv$iv: double = 1.0 (sp = frameInlineArgumentInsideInlineFun.kt, 13)
    local    = it$iv: int = 1 (sp = null)
-   local    = $i$a$1: int = 0 (sp = null)
+   local    = $i$a$1$inlineFun: int = 0 (sp = null)
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0
