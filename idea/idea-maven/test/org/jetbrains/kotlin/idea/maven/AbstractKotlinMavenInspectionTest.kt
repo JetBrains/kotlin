@@ -62,9 +62,12 @@ abstract class AbstractKotlinMavenInspectionTest : MavenImportingTestCase() {
             mkJavaFile()
         }
 
+        val inspectionClassName = "<!--\\s*inspection:\\s*([\\S]+)\\s-->".toRegex().find(pomText)?.groups?.get(1)?.value ?: KotlinMavenPluginPhaseInspection::class.qualifiedName !!
+        val inspectionClass = Class.forName(inspectionClassName)
+
         val matcher = "<!--\\s*problem:\\s*on\\s*([^,]+),\\s*title\\s*(.+)\\s*-->".toRegex()
         val expected = pomText.lines().mapNotNull { matcher.find(it) }.map { SimplifiedProblemDescription(it.groups[2]!!.value.trim(), it.groups[1]!!.value.trim()) }
-        val actual = runInspection<KotlinMavenPluginPhaseInspection>().sortedBy { it.first.text }
+        val actual = runInspection(inspectionClass).sortedBy { it.first.text }
 
         assertEquals(expected.sortedBy { it.text }, actual.map { it.first })
 
@@ -147,9 +150,7 @@ abstract class AbstractKotlinMavenInspectionTest : MavenImportingTestCase() {
         assertTrue(FileTypeIndex.containsFileOfType(JavaFileType.INSTANCE, myProject.allModules().single().moduleScope))
     }
 
-    private inline fun <reified T : LocalInspectionTool> runInspection(): List<Pair<SimplifiedProblemDescription, ProblemDescriptorBase>> {
-        val inspectionClass = T::class.java
-
+    private fun runInspection(inspectionClass: Class<*>): List<Pair<SimplifiedProblemDescription, ProblemDescriptorBase>> {
         val toolWrapper = LocalInspectionToolWrapper(inspectionClass.newInstance() as LocalInspectionTool)
 
         val scope = AnalysisScope(myProject)
