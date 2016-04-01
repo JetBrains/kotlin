@@ -61,17 +61,17 @@ public abstract class KotlinBuiltIns {
     );
 
     protected final ModuleDescriptorImpl builtInsModule;
-    private final BuiltInsPackageFragment builtInsPackageFragment;
-    private final BuiltInsPackageFragment collectionsPackageFragment;
-    private final BuiltInsPackageFragment rangesPackageFragment;
-    private final BuiltInsPackageFragment annotationPackageFragment;
+    private final PackageFragmentDescriptor builtInsPackageFragment;
+    private final PackageFragmentDescriptor collectionsPackageFragment;
+    private final PackageFragmentDescriptor rangesPackageFragment;
+    private final PackageFragmentDescriptor annotationPackageFragment;
 
-    private final Set<BuiltInsPackageFragment> builtInsPackageFragments;
+    private final Set<PackageFragmentDescriptor> builtInsPackageFragments;
 
     private final Map<PrimitiveType, KotlinType> primitiveTypeToArrayKotlinType;
     private final Map<KotlinType, KotlinType> primitiveKotlinTypeToKotlinArrayType;
     private final Map<KotlinType, KotlinType> kotlinArrayTypeToPrimitiveKotlinType;
-    private final Map<FqName, BuiltInsPackageFragment> packageNameToPackageFragment;
+    private final Map<FqName, PackageFragmentDescriptor> packageNameToPackageFragment;
 
     public static final FqNames FQ_NAMES = new FqNames();
 
@@ -96,14 +96,14 @@ public abstract class KotlinBuiltIns {
         builtInsModule.initialize(packageFragmentProvider);
         builtInsModule.setDependencies(builtInsModule);
 
-        packageNameToPackageFragment = new LinkedHashMap<FqName, BuiltInsPackageFragment>();
+        packageNameToPackageFragment = new LinkedHashMap<FqName, PackageFragmentDescriptor>();
 
         builtInsPackageFragment = createPackage(packageFragmentProvider, packageNameToPackageFragment, BUILT_INS_PACKAGE_FQ_NAME);
         collectionsPackageFragment = createPackage(packageFragmentProvider, packageNameToPackageFragment, COLLECTIONS_PACKAGE_FQ_NAME);
         rangesPackageFragment = createPackage(packageFragmentProvider, packageNameToPackageFragment, RANGES_PACKAGE_FQ_NAME);
         annotationPackageFragment = createPackage(packageFragmentProvider, packageNameToPackageFragment, ANNOTATION_PACKAGE_FQ_NAME);
 
-        builtInsPackageFragments = new LinkedHashSet<BuiltInsPackageFragment>(packageNameToPackageFragment.values());
+        builtInsPackageFragments = new LinkedHashSet<PackageFragmentDescriptor>(packageNameToPackageFragment.values());
 
         primitiveTypeToArrayKotlinType = new EnumMap<PrimitiveType, KotlinType>(PrimitiveType.class);
         primitiveKotlinTypeToKotlinArrayType = new HashMap<KotlinType, KotlinType>();
@@ -129,12 +129,12 @@ public abstract class KotlinBuiltIns {
 
 
     @NotNull
-    private static BuiltInsPackageFragment createPackage(
+    private static PackageFragmentDescriptor createPackage(
             @NotNull PackageFragmentProvider fragmentProvider,
-            @NotNull Map<FqName, BuiltInsPackageFragment> packageNameToPackageFragment,
+            @NotNull Map<FqName, PackageFragmentDescriptor> packageNameToPackageFragment,
             @NotNull FqName packageFqName
     ) {
-        BuiltInsPackageFragment packageFragment = (BuiltInsPackageFragment) single(fragmentProvider.getPackageFragments(packageFqName));
+        PackageFragmentDescriptor packageFragment = single(fragmentProvider.getPackageFragments(packageFqName));
         packageNameToPackageFragment.put(packageFqName, packageFragment);
         return packageFragment;
     }
@@ -248,7 +248,7 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
-    public Set<BuiltInsPackageFragment> getBuiltInsPackageFragments() {
+    public Set<PackageFragmentDescriptor> getBuiltInsPackageFragments() {
         return builtInsPackageFragments;
     }
 
@@ -292,7 +292,7 @@ public abstract class KotlinBuiltIns {
     public ClassDescriptor getBuiltInClassByFqNameNullable(@NotNull FqName fqName) {
         if (!fqName.isRoot()) {
             FqName parent = fqName.parent();
-            BuiltInsPackageFragment packageFragment = packageNameToPackageFragment.get(parent);
+            PackageFragmentDescriptor packageFragment = packageNameToPackageFragment.get(parent);
             if (packageFragment != null) {
                 ClassDescriptor descriptor = getBuiltInClassByNameNullable(fqName.shortName(), packageFragment);
                 if (descriptor != null) {

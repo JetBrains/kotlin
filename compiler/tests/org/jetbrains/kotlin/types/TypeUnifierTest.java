@@ -24,9 +24,9 @@ import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
@@ -68,9 +68,9 @@ public class TypeUnifierTest extends KotlinTestWithEnvironment {
         builtIns = module.getBuiltIns();
         builtinsImportingScope = ScopeUtilsKt.chainImportingScopes(
                 // builtIns.builtinsPackageFragments.map { it.memberScope.memberScopeAsImportingScope() }
-                CollectionsKt.map(builtIns.getBuiltInsPackageFragments(), new Function1<BuiltInsPackageFragment, ImportingScope>() {
+                CollectionsKt.map(builtIns.getBuiltInsPackageFragments(), new Function1<PackageFragmentDescriptor, ImportingScope>() {
                     @Override
-                    public ImportingScope invoke(BuiltInsPackageFragment packageFragment) {
+                    public ImportingScope invoke(PackageFragmentDescriptor packageFragment) {
                         return ScopeUtilsKt.memberScopeAsImportingScope(packageFragment.getMemberScope());
                     }
                 }), null);
