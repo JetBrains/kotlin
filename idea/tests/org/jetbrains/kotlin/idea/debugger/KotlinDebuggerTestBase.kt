@@ -342,7 +342,12 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
             val properties = javaBreakpoint.xBreakpoint.properties as? JavaLineBreakpointProperties ?: return
             var suffix = ""
             if (lambdaOrdinal != null) {
-                properties.lambdaOrdinal = lambdaOrdinal
+                if (lambdaOrdinal != -1) {
+                    properties.lambdaOrdinal = lambdaOrdinal - 1
+                }
+                else {
+                    properties.lambdaOrdinal = lambdaOrdinal
+                }
                 suffix += " lambdaOrdinal = $lambdaOrdinal"
             }
             if (condition != null) {

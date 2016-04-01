@@ -1,12 +1,12 @@
 LineBreakpoint created at multipleBreakpointsAtLine.kt:9 lambdaOrdinal = -1
-LineBreakpoint created at multipleBreakpointsAtLine.kt:14 lambdaOrdinal = 0
-LineBreakpoint created at multipleBreakpointsAtLine.kt:19 lambdaOrdinal = 1
+LineBreakpoint created at multipleBreakpointsAtLine.kt:14 lambdaOrdinal = 1
+LineBreakpoint created at multipleBreakpointsAtLine.kt:19 lambdaOrdinal = 2
 LineBreakpoint created at multipleBreakpointsAtLine.kt:30
 LineBreakpoint created at multipleBreakpointsAtLine.kt:38 lambdaOrdinal = -1
-LineBreakpoint created at multipleBreakpointsAtLine.kt:43 lambdaOrdinal = 0
-LineBreakpoint created at multipleBreakpointsAtLine.kt:48 lambdaOrdinal = 1
+LineBreakpoint created at multipleBreakpointsAtLine.kt:43 lambdaOrdinal = 1
+LineBreakpoint created at multipleBreakpointsAtLine.kt:48 lambdaOrdinal = 2
 LineBreakpoint created at multipleBreakpointsAtLine.kt:62
-LineBreakpoint created at multipleBreakpointsAtLine.kt:67 lambdaOrdinal = 1
+LineBreakpoint created at multipleBreakpointsAtLine.kt:67 lambdaOrdinal = 2
 !JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! multipleBreakpointsAtLine.MultipleBreakpointsAtLineKt
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 multipleBreakpointsAtLine.kt:9
