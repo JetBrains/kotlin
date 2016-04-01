@@ -58,9 +58,9 @@ class VarianceChecker(private val trace: BindingTrace) {
         for (jetClassOrObject in c.declaredClasses!!.keys) {
             if (jetClassOrObject is KtClass) {
                 for (specifier in jetClassOrObject.getSuperTypeListEntries()) {
-                    specifier.getTypeReference()?.checkTypePosition(trace.bindingContext, OUT_VARIANCE, trace)
+                    specifier.typeReference?.checkTypePosition(trace.bindingContext, OUT_VARIANCE, trace)
                 }
-                jetClassOrObject.checkTypeParameters(trace.getBindingContext(), OUT_VARIANCE, trace)
+                jetClassOrObject.checkTypeParameters(trace.bindingContext, OUT_VARIANCE, trace)
             }
         }
     }
@@ -128,7 +128,7 @@ class VarianceChecker(private val trace: BindingTrace) {
             noError = noError and declaration.receiverTypeReference?.checkTypePosition(trace, IN_VARIANCE, diagnosticSink)
 
             for (parameter in declaration.valueParameters) {
-                noError = noError and parameter.getTypeReference()?.checkTypePosition(trace, IN_VARIANCE, diagnosticSink)
+                noError = noError and parameter.typeReference?.checkTypePosition(trace, IN_VARIANCE, diagnosticSink)
             }
 
             val returnTypePosition = if (descriptor is VariableDescriptor && descriptor.isVar) INVARIANT else OUT_VARIANCE
@@ -144,10 +144,10 @@ class VarianceChecker(private val trace: BindingTrace) {
         ): Boolean {
             var noError = true
             for (typeParameter in typeParameters) {
-                noError = noError and typeParameter.getExtendsBound()?.checkTypePosition(trace, typePosition, diagnosticSink)
+                noError = noError and typeParameter.extendsBound?.checkTypePosition(trace, typePosition, diagnosticSink)
             }
             for (typeConstraint in typeConstraints) {
-                noError = noError and typeConstraint.getBoundTypeReference()?.checkTypePosition(trace, typePosition, diagnosticSink)
+                noError = noError and typeConstraint.boundTypeReference?.checkTypePosition(trace, typePosition, diagnosticSink)
             }
             return noError
         }
