@@ -6,6 +6,15 @@
   <extensions defaultExtensionNs="org.jetbrains.idea.maven">
     <importer implementation="org.jetbrains.kotlin.idea.configuration.KotlinMavenImporter" />
     <archetypesProvider implementation="org.jetbrains.kotlin.idea.configuration.KotlinMavenArchetypesProvider" />
+
+    <pluginDescriptor mavenId="org.jetbrains.kotlin:kotlin-maven-plugin">
+      <param name="sourceDirs/dir" refProvider="org.jetbrains.idea.maven.plugins.api.common.MavenCommonParamReferenceProviders$DirPath"/>
+      <param name="sourceDirs/sourceDir" refProvider="org.jetbrains.idea.maven.plugins.api.common.MavenCommonParamReferenceProviders$DirPath"/>
+
+      <param name="defaultSourceDirs/defaultSourceDir" refProvider="org.jetbrains.idea.maven.plugins.api.common.MavenCommonParamReferenceProviders$DirPath"/>
+      <param name="defaultSourceDirs/sourceDir" refProvider="org.jetbrains.idea.maven.plugins.api.common.MavenCommonParamReferenceProviders$DirPath"/>
+      <param name="defaultSourceDirs/dir" refProvider="org.jetbrains.idea.maven.plugins.api.common.MavenCommonParamReferenceProviders$DirPath"/>
+    </pluginDescriptor>
   </extensions>
   <extensions defaultExtensionNs="com.intellij">
     <localInspection implementationClass="org.jetbrains.kotlin.idea.configuration.KotlinMavenPluginPhaseInspection"
