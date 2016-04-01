@@ -86,6 +86,8 @@ internal class DeadCodeElimination(private val root: JsStatement) {
             EliminationVisitor().accept(x.initVars)
             EliminationVisitor().accept(x.incrementExpression)
 
+            // TODO: We may also check if condition is `true` constant or missing, which means this loop is infinite, i.e.
+            // code after this loop can be safely deleted when loop does not contain break statements.
             visitLoop(x.body) { true }
         }
 
