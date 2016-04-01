@@ -21,7 +21,7 @@ import java.io.File
 
 abstract class AbstractBlackBoxInlineCodegenTest : AbstractBlackBoxCodegenTest() {
     override fun doMultiFileTest(file: File, files: List<TestFile>, javaFilesDir: File?) {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL)
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL, files)
         loadMultiFiles(files)
         blackBox()
 

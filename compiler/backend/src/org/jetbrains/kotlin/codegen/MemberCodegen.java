@@ -336,20 +336,29 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
     }
 
     @NotNull
-    protected ExpressionCodegen createOrGetClInitCodegen() {
-        DeclarationDescriptor descriptor = context.getContextDescriptor();
+    protected final ExpressionCodegen createOrGetClInitCodegen() {
         if (clInit == null) {
-            MethodVisitor mv = v.newMethod(JvmDeclarationOriginKt.OtherOrigin(descriptor), ACC_STATIC, "<clinit>", "()V", null, null);
-            SimpleFunctionDescriptorImpl clInit =
-                    SimpleFunctionDescriptorImpl.create(descriptor, Annotations.Companion.getEMPTY(), Name.special("<clinit>"), SYNTHESIZED,
-                                                        KotlinSourceElementKt.toSourceElement(element));
-            clInit.initialize(null, null, Collections.<TypeParameterDescriptor>emptyList(),
-                              Collections.<ValueParameterDescriptor>emptyList(),
-                              DescriptorUtilsKt.getModule(descriptor).getBuiltIns().getUnitType(),
-                              null, Visibilities.PRIVATE);
-
-            this.clInit = new ExpressionCodegen(mv, new FrameMap(), Type.VOID_TYPE, context.intoFunction(clInit), state, this);
+            DeclarationDescriptor contextDescriptor = context.getContextDescriptor();
+            SimpleFunctionDescriptorImpl clInitDescriptor = createClInitFunctionDescriptor(contextDescriptor);
+            MethodVisitor mv = createClInitMethodVisitor(contextDescriptor);
+            clInit = new ExpressionCodegen(mv, new FrameMap(), Type.VOID_TYPE, context.intoFunction(clInitDescriptor), state, this);
         }
+        return clInit;
+    }
+
+    @NotNull
+    protected MethodVisitor createClInitMethodVisitor(@NotNull DeclarationDescriptor contextDescriptor) {
+        return v.newMethod(JvmDeclarationOriginKt.OtherOrigin(contextDescriptor), ACC_STATIC, "<clinit>", "()V", null, null);
+    }
+
+    @NotNull
+    protected SimpleFunctionDescriptorImpl createClInitFunctionDescriptor(@NotNull DeclarationDescriptor descriptor) {
+        SimpleFunctionDescriptorImpl clInit = SimpleFunctionDescriptorImpl.create(descriptor, Annotations.Companion.getEMPTY(),
+                Name.special("<clinit>"), SYNTHESIZED, KotlinSourceElementKt.toSourceElement(element));
+        clInit.initialize(null, null, Collections.<TypeParameterDescriptor>emptyList(),
+                          Collections.<ValueParameterDescriptor>emptyList(),
+                          DescriptorUtilsKt.getModule(descriptor).getBuiltIns().getUnitType(),
+                          null, Visibilities.PRIVATE);
         return clInit;
     }
 
@@ -370,6 +379,9 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
         }
     }
 
+    public void beforeMethodBody(@NotNull MethodVisitor mv) {
+    }
+
     private void initializeProperty(@NotNull ExpressionCodegen codegen, @NotNull KtProperty property) {
         PropertyDescriptor propertyDescriptor = (PropertyDescriptor) bindingContext.get(VARIABLE, property);
         assert propertyDescriptor != null;
@@ -382,7 +394,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
         propValue.store(codegen.gen(initializer), codegen.v);
     }
 
-    private boolean shouldInitializeProperty(@NotNull KtProperty property) {
+    protected boolean shouldInitializeProperty(@NotNull KtProperty property) {
         if (!property.hasDelegateExpressionOrInitializer()) return false;
 
         PropertyDescriptor propertyDescriptor = (PropertyDescriptor) bindingContext.get(VARIABLE, property);

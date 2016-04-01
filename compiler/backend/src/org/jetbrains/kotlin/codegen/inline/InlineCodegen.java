@@ -66,9 +66,7 @@ import java.util.*;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.getMethodAsmFlags;
 import static org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive;
-import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.API;
-import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.addInlineMarker;
-import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.getConstant;
+import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.*;
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionLiteral;
 
 public class InlineCodegen extends CallGenerator {
@@ -395,6 +393,7 @@ public class InlineCodegen extends CallGenerator {
 
         List<MethodInliner.PointForExternalFinallyBlocks> infos = MethodInliner.processReturns(adapter, labelOwner, true, null);
         generateAndInsertFinallyBlocks(adapter, infos, ((StackValue.Local)remapper.remap(parameters.getArgsSizeOnStack() + 1).value).index);
+        removeStaticInitializationTrigger(adapter);
         removeFinallyMarkers(adapter);
 
         adapter.accept(new MethodBodyVisitor(codegen.v));
@@ -402,6 +401,21 @@ public class InlineCodegen extends CallGenerator {
         addInlineMarker(codegen.v, false);
 
         return result;
+    }
+
+    private static void removeStaticInitializationTrigger(MethodNode methodNode) {
+        InsnList insnList = methodNode.instructions;
+        AbstractInsnNode insn = insnList.getFirst();
+        while (insn != null) {
+            if (MultifileClassPartCodegen.isStaticInitTrigger(insn)) {
+                AbstractInsnNode clinitTriggerCall = insn;
+                insn = insn.getNext();
+                insnList.remove(clinitTriggerCall);
+            }
+            else {
+                insn = insn.getNext();
+            }
+        }
     }
 
     private InlineCallSiteInfo getInlineCallSiteInfo() {

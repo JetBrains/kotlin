@@ -18,12 +18,15 @@ package org.jetbrains.kotlin.fileClasses
 
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.getImplClassNameForDeserialized
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 
 object JvmFileClassUtil {
@@ -84,13 +87,20 @@ object JvmFileClassUtil {
                 it.calleeExpression?.constructorReferenceExpression?.getReferencedName() == shortName
             }
 
-    @JvmStatic
-    private fun getLiteralStringFromRestrictedConstExpression(argumentExpression: KtExpression?): String? {
+    @JvmStatic private fun getLiteralStringFromRestrictedConstExpression(argumentExpression: KtExpression?): String? {
         val stringTemplate = argumentExpression as? KtStringTemplateExpression ?: return null
         val stringTemplateEntries = stringTemplate.entries
         if (stringTemplateEntries.size != 1) return null
         val singleEntry = stringTemplateEntries[0] as? KtLiteralStringTemplateEntry ?: return null
         return singleEntry.text
+    }
+
+    @JvmStatic fun isFromMultifileClass(declarationElement: KtElement, descriptor: DeclarationDescriptor): Boolean {
+        if (DescriptorUtils.isTopLevelDeclaration(descriptor)) {
+            val fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(declarationElement.getContainingKtFile())
+            return fileClassInfo.withJvmMultifileClass
+        }
+        return false
     }
 }
 

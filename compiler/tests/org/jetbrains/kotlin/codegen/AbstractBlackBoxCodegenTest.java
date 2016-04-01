@@ -47,7 +47,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.kotlin.test.KotlinTestUtils.compilerConfigurationForTests;
 import static org.jetbrains.kotlin.test.KotlinTestUtils.getAnnotationsJar;
 
 public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
@@ -87,9 +86,11 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
             @NotNull TestJdkKind jdkKind,
             @NotNull List<String> javacOptions
     ) {
-        CompilerConfiguration configuration = compilerConfigurationForTests(
-                configurationKind, jdkKind, Collections.singletonList(getAnnotationsJar()),
-                ArraysKt.filterNotNull(new File[] {javaSourceDir})
+        CompilerConfiguration configuration = createCompilerConfigurationForTests(
+                configurationKind, jdkKind,
+                Collections.singletonList(getAnnotationsJar()),
+                ArraysKt.filterNotNull(new File[] {javaSourceDir}),
+                files
         );
 
         myEnvironment = KotlinCoreEnvironment.createForTests(
@@ -99,7 +100,8 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         loadMultiFiles(files);
 
         classFileFactory = GenerationUtils.compileManyFilesGetGenerationStateForTest(
-                myEnvironment.getProject(), myFiles.getPsiFiles(), new JvmPackagePartProvider(myEnvironment)
+                myEnvironment.getProject(), myFiles.getPsiFiles(), new JvmPackagePartProvider(myEnvironment),
+                myEnvironment.getConfiguration()
         ).getFactory();
 
         if (javaSourceDir != null) {

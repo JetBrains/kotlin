@@ -14,7 +14,10 @@
 			{"visibility": "internal",	"declaration": "fun <get-internalVar>(): kotlin.Long", "name": "getInternalVar", "desc": "()J"},
 			{"visibility": "internal",	"declaration": "fun <set-internalVar>(<set-?>: kotlin.Long): kotlin.Unit", "name": "setInternalVar", "desc": "(J)V"},
 			{"visibility": "private",	"declaration": "val privateVal: kotlin.Any?", "name": "privateVal", "desc": "Ljava/lang/Object;"},
+			{"visibility": "private",	"declaration": "fun <get-privateVal>(): kotlin.Any?", "name": "getPrivateVal$Part1_kt", "desc": "()Ljava/lang/Object;"},
 			{"visibility": "private",	"declaration": "var privateVar: kotlin.Any?", "name": "privateVar", "desc": "Ljava/lang/Object;"},
+			{"visibility": "private",	"declaration": "fun <get-privateVar>(): kotlin.Any?", "name": "getPrivateVar$Part1_kt", "desc": "()Ljava/lang/Object;"},
+			{"visibility": "private",	"declaration": "fun <set-privateVar>(<set-?>: kotlin.Any?): kotlin.Unit", "name": "setPrivateVar$Part1_kt", "desc": "(Ljava/lang/Object;)V"},
 			{"declaration": "package-fragment ", "name": "<clinit>", "desc": "()V"}
 		]
 	},
@@ -33,7 +36,7 @@
 		"members": [
 			{"visibility": "public",	"declaration": "fun publicFun(): kotlin.Unit", "name": "publicFun", "desc": "()V"},
 			{"visibility": "internal",	"declaration": "fun internalFun(param1: kotlin.Int): kotlin.Unit", "name": "internalFun", "desc": "(I)V"},
-			{"visibility": "private",	"declaration": "fun privateFun(x: kotlin.Any): kotlin.Unit", "name": "privateFun", "desc": "(Ljava/lang/Object;)V"},
+			{"visibility": "private",	"declaration": "fun privateFun(x: kotlin.Any): kotlin.Unit", "name": "privateFun$Part2_kt", "desc": "(Ljava/lang/Object;)V"},
 			{"visibility": "private",	"declaration": "fun privateFun(x: kotlin.Any): kotlin.Unit", "name": "access$privateFun", "desc": "(Ljava/lang/Object;)V"},
 			{"visibility": "private",	"declaration": "fun <get-privateConst>(): kotlin.Int", "name": "access$getPrivateConst$p", "desc": "()I"}
 		]

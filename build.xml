@@ -877,7 +877,7 @@
     </target>
 
     <target name="stdlib">
-        <new-kotlinc output="${output}/classes/stdlib" moduleName="kotlin-stdlib" additionalOptions="-Xdump-declarations-to ${output}/declarations/stdlib-declarations.json">
+        <new-kotlinc output="${output}/classes/stdlib" moduleName="kotlin-stdlib" additionalOptions="-Xmultifile-parts-inherit -Xdump-declarations-to ${output}/declarations/stdlib-declarations.json">
             <src>
                 <include name="libraries/stdlib/src"/>
             </src>
@@ -926,7 +926,7 @@
     </target>
 
     <target name="reflection">
-        <new-kotlinc output="${output}/classes/reflection" moduleName="kotlin-reflection" additionalOptions="-Xdump-declarations-to ${output}/declarations/reflect-declarations.json">
+        <new-kotlinc output="${output}/classes/reflection" moduleName="kotlin-reflection">
             <src>
                 <include name="core/reflection.jvm/src"/>
             </src>

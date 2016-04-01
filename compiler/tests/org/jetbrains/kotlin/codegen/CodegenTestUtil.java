@@ -57,14 +57,18 @@ public class CodegenTestUtil {
         AnalyzingUtils.throwExceptionOnErrors(analysisResult.getBindingContext());
         CompilerConfiguration configuration = environment.getConfiguration();
         GenerationState state = new GenerationState(
-                environment.getProject(), ClassBuilderFactories.TEST,
-                analysisResult.getModuleDescriptor(), analysisResult.getBindingContext(), files.getPsiFiles(),
+                environment.getProject(),
+                ClassBuilderFactories.TEST,
+                analysisResult.getModuleDescriptor(),
+                analysisResult.getBindingContext(),
+                files.getPsiFiles(),
                 configuration.get(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS, false),
                 configuration.get(JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS, false),
                 GenerationState.GenerateClassFilter.GENERATE_ALL,
                 configuration.get(JVMConfigurationKeys.DISABLE_INLINE, false),
                 configuration.get(JVMConfigurationKeys.DISABLE_OPTIMIZATION, false),
-                /* useTypeTableInSerializer = */ false
+                /* useTypeTableInSerializer = */ false,
+                configuration.get(JVMConfigurationKeys.INHERIT_MULTIFILE_PARTS, false)
         );
         KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
 

@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.codegen;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
@@ -28,15 +30,19 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.checkers.CheckerTestUtil;
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootsKt;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
+import org.jetbrains.kotlin.config.CompilerConfigurationKey;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.ConfigurationKind;
+import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
@@ -54,6 +60,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -61,6 +68,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.jetbrains.kotlin.codegen.CodegenTestUtil.*;
 import static org.jetbrains.kotlin.test.KotlinTestUtils.compilerConfigurationForTests;
@@ -79,18 +88,119 @@ public abstract class CodegenTestCase extends UsefulTestCase {
             @NotNull ConfigurationKind configurationKind,
             @Nullable File... javaSourceRoots
     ) {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(configurationKind, Collections.<TestFile>emptyList(), javaSourceRoots);
+    }
+
+    protected final void createEnvironmentWithMockJdkAndIdeaAnnotations(
+            @NotNull ConfigurationKind configurationKind,
+            @NotNull List<TestFile> testFilesWithConfigurationDirectives,
+            @Nullable File... javaSourceRoots
+    ) {
         if (myEnvironment != null) {
             throw new IllegalStateException("must not set up myEnvironment twice");
         }
 
-        CompilerConfiguration configuration = compilerConfigurationForTests(
-                configurationKind, TestJdkKind.MOCK_JDK, Collections.singletonList(getAnnotationsJar()),
-                ArraysKt.filterNotNull(javaSourceRoots)
+        CompilerConfiguration configuration = createCompilerConfigurationForTests(
+                configurationKind,
+                TestJdkKind.MOCK_JDK,
+                Collections.singletonList(getAnnotationsJar()),
+                ArraysKt.filterNotNull(javaSourceRoots),
+                testFilesWithConfigurationDirectives
         );
 
         myEnvironment = KotlinCoreEnvironment.createForTests(
                 getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES
         );
+    }
+
+    @NotNull
+    protected static CompilerConfiguration createCompilerConfigurationForTests(
+            @NotNull ConfigurationKind kind,
+            @NotNull TestJdkKind jdkKind,
+            @NotNull List<File> classpath,
+            @NotNull List<File> javaSource,
+            @NotNull List<TestFile> testFilesWithConfigurationDirectives
+    ) {
+        CompilerConfiguration configuration = compilerConfigurationForTests(kind, jdkKind, classpath, javaSource);
+
+        updateConfigurationByDirectivesInTestFiles(testFilesWithConfigurationDirectives, configuration);
+
+        return configuration;
+    }
+
+    private static void updateConfigurationByDirectivesInTestFiles(
+            @NotNull List<TestFile> testFilesWithConfigurationDirectives,
+            @NotNull CompilerConfiguration configuration
+    ) {
+        List<String> kotlinConfigurationFlags = new ArrayList<String>(0);
+        for (TestFile testFile : testFilesWithConfigurationDirectives) {
+            kotlinConfigurationFlags.addAll(InTextDirectivesUtils.findListWithPrefixes(testFile.content, "// KOTLIN_CONFIGURATION_FLAGS:"));
+        }
+
+        updateConfigurationWithFlags(configuration, kotlinConfigurationFlags);
+    }
+
+    private static final Map<String, Class<?>> FLAG_NAMESPACE_TO_CLASS = ImmutableMap.of(
+            "CLI", CLIConfigurationKeys.class,
+            "JVM", JVMConfigurationKeys.class
+    );
+
+    private static final List<Class<?>> FLAG_CLASSES = ImmutableList.of(CLIConfigurationKeys.class, JVMConfigurationKeys.class);
+
+    private static final Pattern BOOLEAN_FLAG_PATTERN = Pattern.compile("([+-])(([a-zA-Z_0-9]*)\\.)?([a-zA-Z_0-9]*)");
+
+    private static void updateConfigurationWithFlags(@NotNull CompilerConfiguration configuration, @NotNull List<String> flags) {
+        for (String flag : flags) {
+            Matcher m = BOOLEAN_FLAG_PATTERN.matcher(flag);
+            if (m.matches()) {
+                boolean flagEnabled = !"-".equals(m.group(1));
+                String flagNamespace = m.group(3);
+                String flagName = m.group(4);
+
+                tryApplyBooleanFlag(configuration, flag, flagEnabled, flagNamespace, flagName);
+            }
+        }
+    }
+
+    private static void tryApplyBooleanFlag(
+            @NotNull CompilerConfiguration configuration,
+            @NotNull String flag,
+            boolean flagEnabled,
+            @Nullable String flagNamespace,
+            @NotNull String flagName
+    ) {
+        Class<?> configurationKeysClass;
+        Field configurationKeyField = null;
+        if (flagNamespace == null) {
+            for (Class<?> flagClass : FLAG_CLASSES) {
+                try {
+                    configurationKeyField = flagClass.getField(flagName);
+                    break;
+                }
+                catch (Exception ignored) {
+                }
+            }
+        }
+        else {
+            configurationKeysClass = FLAG_NAMESPACE_TO_CLASS.get(flagNamespace);
+            assert configurationKeysClass != null : "Expected [+|-][namespace.]configurationKey, got: " + flag;
+            try {
+                configurationKeyField = configurationKeysClass.getField(flagName);
+            }
+            catch (Exception e) {
+                configurationKeyField = null;
+            }
+        }
+        assert configurationKeyField != null : "Expected [+|-][namespace.]configurationKey, got: " + flag;
+
+        try {
+            //noinspection unchecked
+            CompilerConfigurationKey<Boolean> configurationKey = (CompilerConfigurationKey<Boolean>) configurationKeyField.get(null);
+            configuration.put(configurationKey, flagEnabled);
+        }
+        catch (Exception e) {
+            assert false : "Expected [+|-][namespace.]configurationKey, got: " + flag;
+        }
     }
 
     @Override
@@ -187,9 +297,8 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     protected GeneratedClassLoader createClassLoader() {
         return new GeneratedClassLoader(
                 generateClassesInFile(),
-                configurationKind.getWithReflection()
-                ? ForTestCompileRuntime.runtimeAndReflectJarClassLoader()
-                : ForTestCompileRuntime.runtimeJarClassLoader(),
+                configurationKind.getWithReflection() ? ForTestCompileRuntime.runtimeAndReflectJarClassLoader()
+                                                      : ForTestCompileRuntime.runtimeJarClassLoader(),
                 getClassPathURLs()
         );
     }
@@ -378,34 +487,38 @@ public abstract class CodegenTestCase extends UsefulTestCase {
         String expectedText = KotlinTestUtils.doLoadFile(file);
         final Ref<File> javaFilesDir = Ref.create();
 
-        List<TestFile> testFiles =
-                KotlinTestUtils.createTestFiles(file.getName(), expectedText, new KotlinTestUtils.TestFileFactoryNoModules<TestFile>() {
-                    @NotNull
-                    @Override
-                    public TestFile create(@NotNull String fileName, @NotNull String text, @NotNull Map<String, String> directives) {
-                        if (fileName.endsWith(".java")) {
-                            if (javaFilesDir.isNull()) {
-                                try {
-                                    javaFilesDir.set(KotlinTestUtils.tmpDir("java-files"));
-                                }
-                                catch (IOException e) {
-                                    throw ExceptionUtilsKt.rethrow(e);
-                                }
-                            }
-                            writeSourceFile(fileName, text, javaFilesDir.get());
-                        }
-
-                        return new TestFile(fileName, text);
-                    }
-
-                    private void writeSourceFile(@NotNull String fileName, @NotNull String content, @NotNull File targetDir) {
-                        File file = new File(targetDir, fileName);
-                        KotlinTestUtils.mkdirs(file.getParentFile());
-                        FilesKt.writeText(file, content, Charsets.UTF_8);
-                    }
-                });
+        List<TestFile> testFiles = createTestFiles(file, expectedText, javaFilesDir);
 
         doMultiFileTest(file, testFiles, javaFilesDir.get());
+    }
+
+    @NotNull
+    private List<TestFile> createTestFiles(File file, String expectedText, final Ref<File> javaFilesDir) {
+        return KotlinTestUtils.createTestFiles(file.getName(), expectedText, new KotlinTestUtils.TestFileFactoryNoModules<TestFile>() {
+            @NotNull
+            @Override
+            public TestFile create(@NotNull String fileName, @NotNull String text, @NotNull Map<String, String> directives) {
+                if (fileName.endsWith(".java")) {
+                    if (javaFilesDir.isNull()) {
+                        try {
+                            javaFilesDir.set(KotlinTestUtils.tmpDir("java-files"));
+                        }
+                        catch (IOException e) {
+                            throw ExceptionUtilsKt.rethrow(e);
+                        }
+                    }
+                    writeSourceFile(fileName, text, javaFilesDir.get());
+                }
+
+                return new TestFile(fileName, text);
+            }
+
+            private void writeSourceFile(@NotNull String fileName, @NotNull String content, @NotNull File targetDir) {
+                File file = new File(targetDir, fileName);
+                KotlinTestUtils.mkdirs(file.getParentFile());
+                FilesKt.writeText(file, content, Charsets.UTF_8);
+            }
+        });
     }
 
     protected void doMultiFileTest(@NotNull File wholeFile, @NotNull List<TestFile> files, @Nullable File javaFilesDir) throws Exception {
