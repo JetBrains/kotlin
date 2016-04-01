@@ -39,7 +39,8 @@ class KotlinMavenArchetypesProviderTest {
 
         assertEquals(
                 listOf(
-                        MavenArchetype("org.jetbrains.kotlin", "kotlin-archetype-jvm", "1.0.1-2", null, null)
+                        MavenArchetype("org.jetbrains.kotlin", "kotlin-archetype-jvm", "1.0.1-2", null, null),
+                        MavenArchetype("org.jetbrains.kotlin", "kotlin-archetype-js", "1.0.0", null, null)
                 ).sortedBy { it.artifactId + "." + it.version },
                 versions.sortedBy { it.artifactId + "." + it.version }
         )

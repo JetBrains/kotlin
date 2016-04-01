@@ -61,8 +61,13 @@ class KotlinMavenArchetypesProvider(val kotlinPluginVersion: String) : MavenArch
             .map { it.asJsonObject }
             .map { MavenArchetype(it.get("g").asString, it.get("a").asString, it.get("v").asString, null, null) }
             .filter { it.version?.startsWith(versionPrefix) ?: false }
-            .maxBy { MavenVersionComparable(it.version) }
-            .let { listOfNotNull(it) }
+            .groupBy { it.groupId + ":" + it.artifactId }
+            .mapValues { chooseVersion(it.value) }
+            .mapNotNull { it.value }
+
+    private fun chooseVersion(versions: List<MavenArchetype>): MavenArchetype? {
+        return versions.maxBy { MavenVersionComparable(it.version) }
+    }
 
     private fun mavenSearchUrl(group: String, artifactId: String? = null, version: String? = null, packaging: String? = null, rowsLimit: Int = 20): String {
         val q = listOf(
