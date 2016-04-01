@@ -20,6 +20,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns;
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
 import org.jetbrains.kotlin.cli.common.messages.*;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
@@ -30,7 +31,6 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.ContentRootsKt;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.platform.JvmBuiltIns;
 import org.jetbrains.kotlin.script.KotlinScriptDefinition;
 import org.jetbrains.kotlin.script.ScriptParameter;
 import org.jetbrains.kotlin.test.ConfigurationKind;
@@ -105,6 +105,6 @@ public class ScriptTest {
 
     @NotNull
     private static List<ScriptParameter> numIntParam() {
-        return Collections.singletonList(new ScriptParameter(Name.identifier("num"), JvmBuiltIns.getInstance().getIntType()));
+        return Collections.singletonList(new ScriptParameter(Name.identifier("num"), DefaultBuiltIns.getInstance().getIntType()));
     }
 }

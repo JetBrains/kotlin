@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.resolve.typeApproximation
 
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Severity
-import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.inference.createCapturedType
@@ -65,7 +65,7 @@ class CapturedTypeApproximationTest : KotlinTestWithEnvironment() {
         }
 
         fun createTestSubstitutions(typeParameters: List<TypeParameterDescriptor>) = run {
-            val builtIns = JvmBuiltIns.Instance
+            val builtIns = DefaultBuiltIns.Instance
             val intType = builtIns.intType
             val stringType = builtIns.stringType
             val t = typeParameters[0]

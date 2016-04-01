@@ -21,10 +21,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiErrorElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.checkers.CheckerTestUtil;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.platform.JvmBuiltIns;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.AnalyzingUtils;
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider;
@@ -136,7 +136,7 @@ public class CodegenTestFiles {
                 Object value;
 
                 KotlinType jetType;
-                KotlinBuiltIns builtIns = JvmBuiltIns.getInstance();
+                KotlinBuiltIns builtIns = DefaultBuiltIns.getInstance();
                 if (type.equals("kotlin.String")) {
                     value = valueString;
                     jetType = builtIns.getStringType();

@@ -16,14 +16,14 @@
 
 package org.jetbrains.kotlin.jvm.compiler
 
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.load.java.lazy.types.LazyJavaTypeResolver
-import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironmentManagement
 
 class FlexibleTypeAssertionsEnabledTest : KotlinTestWithEnvironmentManagement() {
 
     fun testAssertionsAreOn() {
-        val builtIns = JvmBuiltIns.Instance
+        val builtIns = DefaultBuiltIns.Instance
 
         try {
             LazyJavaTypeResolver.FlexibleJavaClassifierTypeFactory.create(

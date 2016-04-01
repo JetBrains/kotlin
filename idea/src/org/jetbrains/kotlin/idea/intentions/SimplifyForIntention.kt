@@ -25,11 +25,11 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
-import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import kotlin.collections.forEach as forEachStdLib
 
 class SimplifyForInspection : IntentionBasedInspection<KtForExpression>(SimplifyForIntention())
@@ -75,7 +75,7 @@ class SimplifyForIntention : SelfTargetingRangeIntention<KtForExpression>(
         var removeSelectorInLoopRange = false
         val propertiesToRemove: Array<KtProperty?>
 
-        if (DescriptorUtils.isSubclass(classDescriptor, JvmBuiltIns.Instance.mapEntry)) {
+        if (DescriptorUtils.isSubclass(classDescriptor, classDescriptor.builtIns.mapEntry)) {
             val loopRangeDescriptorName = element.loopRange.getResolvedCall(context)?.resultingDescriptor?.name
             if (loopRangeDescriptorName != null &&
                 (loopRangeDescriptorName.asString().equals("entries") || loopRangeDescriptorName.asString().equals("entrySet"))) {

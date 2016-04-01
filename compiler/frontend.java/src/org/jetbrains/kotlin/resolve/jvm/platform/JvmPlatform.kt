@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.resolve.jvm.platform
 
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.descriptors.ModuleParameters
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
-import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.ImportPath
@@ -56,7 +56,7 @@ private val DEFAULT_IMPORTS_FOR_JVM: List<ImportPath> = ArrayList<ImportPath>().
         }
     }
 
-    val builtIns = JvmBuiltIns.Instance
+    val builtIns = DefaultBuiltIns.Instance
     for (builtinPackageFragment in builtIns.builtInsPackageFragments) {
         addAllClassifiersFromScope(builtinPackageFragment.getMemberScope())
     }

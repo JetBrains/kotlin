@@ -25,6 +25,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
@@ -32,7 +33,6 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.platform.JvmBuiltIns;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
@@ -334,10 +334,10 @@ public abstract class ExpectedResolveData {
         ClassifierDescriptor expectedClass;
 
         if (nameOrFqName.indexOf('.') >= 0) {
-            expectedClass = JvmBuiltIns.getInstance().getBuiltInClassByFqNameNullable(FqName.fromSegments(Arrays.asList(nameOrFqName.split("\\."))));
+            expectedClass = DefaultBuiltIns.getInstance().getBuiltInClassByFqNameNullable(FqName.fromSegments(Arrays.asList(nameOrFqName.split("\\."))));
         }
         else {
-            expectedClass = JvmBuiltIns.getInstance().getBuiltInClassByNameNullable(Name.identifier(nameOrFqName));
+            expectedClass = DefaultBuiltIns.getInstance().getBuiltInClassByNameNullable(Name.identifier(nameOrFqName));
         }
         assertNotNull("Expected class not found: " + nameOrFqName, expectedClass);
 
