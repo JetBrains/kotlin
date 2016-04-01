@@ -16,13 +16,12 @@
 
 package org.jetbrains.kotlin.generators.evaluate
 
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
-import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.Printer
@@ -50,7 +49,7 @@ fun generate(): String {
     val unaryOperationsMap = arrayListOf<Triple<String, List<KotlinType>, Boolean>>()
     val binaryOperationsMap = arrayListOf<Pair<String, List<KotlinType>>>()
 
-    val builtIns = TargetPlatform.Default.builtIns
+    val builtIns = DefaultBuiltIns.Instance
     @Suppress("UNCHECKED_CAST")
     val allPrimitiveTypes = builtIns.builtInsPackageScope.getContributedDescriptors()
             .filter { it is ClassDescriptor && KotlinBuiltIns.isPrimitiveType(it.defaultType) } as List<ClassDescriptor>

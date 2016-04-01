@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.platform.JvmBuiltIns;
 import org.jetbrains.kotlin.resolve.FunctionTypeResolveUtilsKt;
 import org.jetbrains.kotlin.resolve.TargetPlatformKt;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
@@ -43,8 +44,8 @@ public class JvmRuntimeTypes {
         ModuleDescriptorImpl module = TargetPlatformKt.createModule(
                 JvmPlatform.INSTANCE,
                 Name.special("<jvm functions impl>"),
-                LockBasedStorageManager.NO_LOCKS
-        );
+                LockBasedStorageManager.NO_LOCKS,
+                JvmBuiltIns.getInstance());
         PackageFragmentDescriptor kotlinJvmInternal = new MutablePackageFragmentDescriptor(module, new FqName("kotlin.jvm.internal"));
 
         this.lambda = createClass(kotlinJvmInternal, "Lambda");

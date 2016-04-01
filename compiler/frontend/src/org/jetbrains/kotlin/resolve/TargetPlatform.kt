@@ -108,6 +108,7 @@ abstract class PlatformConfigurator(
 fun TargetPlatform.createModule(
         name: Name,
         storageManager: StorageManager,
+        builtIns: KotlinBuiltIns,
         capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap()
 ) = ModuleDescriptorImpl(name, storageManager, defaultModuleParameters, builtIns, capabilities)
 

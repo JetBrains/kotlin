@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
@@ -92,6 +93,7 @@ class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
                 { ModuleContent(files, GlobalSearchScope.EMPTY_SCOPE) },
                 JvmPlatformParameters { throw IllegalStateException() },
                 CompilerEnvironment,
+                builtIns = JvmBuiltIns.Instance,
                 packagePartProviderFactory = { module, content -> JvmPackagePartProvider(environment) }
         )
 

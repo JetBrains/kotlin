@@ -27,6 +27,7 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.SLRUCache
 import org.jetbrains.kotlin.analyzer.EmptyResolverForProject
 import org.jetbrains.kotlin.asJava.outOfBlockModificationCount
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.container.getService
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.js.resolve.JsPlatform
+import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.TargetPlatform
@@ -238,10 +240,17 @@ private fun globalResolveSessionProvider(
                                 ?.withCompositeExceptionTrackerUnderSameLock()
                         ?: GlobalContext(logProcessCanceled)
 
+    val builtIns: KotlinBuiltIns = when (platform) {
+        is JsPlatform -> JsPlatform.builtIns
+        is JvmPlatform -> JvmBuiltIns.Instance
+        else -> DefaultBuiltIns.Instance
+    }
+
     val moduleResolverProvider = createModuleResolverProvider(
             debugName, project, globalContext,
             AnalyzerFacadeProvider.getAnalyzerFacade(platform),
-            syntheticFiles, delegateResolverForProject, moduleFilter
+            syntheticFiles, delegateResolverForProject, moduleFilter,
+            builtIns
     )
     val allDependencies = dependencies + listOf(moduleResolverProvider.exceptionTracker)
     return CachedValueProvider.Result.create(moduleResolverProvider, allDependencies)

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
@@ -40,7 +41,8 @@ fun createResolveSessionForFiles(
             projectContext, listOf(testModule),
             { ModuleContent(syntheticFiles, GlobalSearchScope.allScope(project)) },
             JvmPlatformParameters { testModule },
-            CompilerEnvironment
+            CompilerEnvironment,
+            JvmBuiltIns.Instance
     )
     return resolverForProject.resolverForModule(testModule).componentProvider.get<ResolveSession>()
 }

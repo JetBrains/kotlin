@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.analyzer
 
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.ProjectContext
@@ -152,6 +153,7 @@ abstract class AnalyzerFacade<in P : PlatformAnalysisParameters> {
             modulesContent: (M) -> ModuleContent,
             platformParameters: P,
             targetEnvironment: TargetEnvironment,
+            builtIns: KotlinBuiltIns,
             delegateResolver: ResolverForProject<M> = EmptyResolverForProject(),
             packagePartProviderFactory: (M, ModuleContent) -> PackagePartProvider = { module, content -> PackagePartProvider.EMPTY }
     ): ResolverForProject<M> {
@@ -160,7 +162,8 @@ abstract class AnalyzerFacade<in P : PlatformAnalysisParameters> {
             val descriptorByModule = HashMap<M, ModuleDescriptorImpl>()
             modules.forEach {
                 module ->
-                descriptorByModule[module] = targetPlatform.createModule(module.name, storageManager, module.capabilities)
+                descriptorByModule[module] =
+                        targetPlatform.createModule(module.name, storageManager, builtIns, module.capabilities)
             }
             return ResolverForProjectImpl(debugName, descriptorByModule, delegateResolver)
         }
@@ -172,9 +175,8 @@ abstract class AnalyzerFacade<in P : PlatformAnalysisParameters> {
                 dependencyInfo ->
                 resolverForProject.descriptorForModule(dependencyInfo as M)
             }
-
-            val builtinsModule = targetPlatform.builtIns.builtInsModule
-            module.dependencyOnBuiltIns().adjustDependencies(builtinsModule, dependenciesDescriptors)
+            module.dependencyOnBuiltIns().adjustDependencies(
+                    resolverForProject.descriptorForModule(module).builtIns.builtInsModule, dependenciesDescriptors)
             return dependenciesDescriptors
         }
 

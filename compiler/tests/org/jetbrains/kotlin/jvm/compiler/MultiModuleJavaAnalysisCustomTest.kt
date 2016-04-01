@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -69,6 +70,7 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
                     modules.first { it._name == moduleName }
                 },
                 CompilerEnvironment,
+                JvmBuiltIns.Instance,
                 packagePartProviderFactory = { a, b -> JvmPackagePartProvider(environment) }
         )
 

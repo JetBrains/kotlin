@@ -24,6 +24,7 @@ import com.intellij.openapi.roots.ModuleRootManager
 import org.jetbrains.kotlin.analyzer.AnalyzerFacade
 import org.jetbrains.kotlin.analyzer.ModuleContent
 import org.jetbrains.kotlin.analyzer.ResolverForProject
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.context.GlobalContextImpl
 import org.jetbrains.kotlin.context.withProject
 import org.jetbrains.kotlin.idea.project.IdeaEnvironment
@@ -40,7 +41,8 @@ fun createModuleResolverProvider(
         analyzerFacade: AnalyzerFacade<JvmPlatformParameters>,
         syntheticFiles: Collection<KtFile>,
         delegateResolver: ResolverForProject<IdeaModuleInfo>,
-        moduleFilter: (IdeaModuleInfo) -> Boolean
+        moduleFilter: (IdeaModuleInfo) -> Boolean,
+        builtIns: KotlinBuiltIns
 ): ModuleResolverProvider {
 
     val allModuleInfos = collectAllModuleInfosFromIdeaModel(project).toHashSet()
@@ -64,8 +66,8 @@ fun createModuleResolverProvider(
 
         val resolverForProject = analyzerFacade.setupResolverForProject(
                 debugName, globalContext.withProject(project), modulesToCreateResolversFor, modulesContent,
-                jvmPlatformParameters, IdeaEnvironment, delegateResolver,
-                { m, c -> IDEPackagePartProvider(c.moduleContentScope) }
+                jvmPlatformParameters, IdeaEnvironment, builtIns,
+                delegateResolver, { m, c -> IDEPackagePartProvider(c.moduleContentScope) }
         )
         return resolverForProject
     }

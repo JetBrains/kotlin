@@ -72,7 +72,8 @@ public abstract class AbstractDiagnosticsTestWithJsStdLib extends AbstractDiagno
     @NotNull
     @Override
     protected ModuleDescriptorImpl createModule(@NotNull String moduleName, @NotNull StorageManager storageManager) {
-        return TargetPlatformKt.createModule(JsPlatform.INSTANCE, Name.special(moduleName), storageManager);
+        return TargetPlatformKt.createModule(
+                JsPlatform.INSTANCE, Name.special(moduleName), storageManager, JsPlatform.INSTANCE.getBuiltIns());
     }
 
     @NotNull

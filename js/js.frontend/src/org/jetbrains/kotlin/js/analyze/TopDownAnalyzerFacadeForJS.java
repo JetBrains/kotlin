@@ -48,7 +48,8 @@ public final class TopDownAnalyzerFacadeForJS {
         BindingTrace trace = new BindingTraceContext();
 
         MutableModuleContext newModuleContext = ContextKt.ContextForNewModule(
-                config.getProject(), Name.special("<" + config.getModuleId() + ">"), JsPlatform.INSTANCE
+                config.getProject(), Name.special("<" + config.getModuleId() + ">"), JsPlatform.INSTANCE,
+                JsPlatform.INSTANCE.getBuiltIns()
         );
         newModuleContext.setDependencies(computeDependencies(newModuleContext.getModule(), config));
         return analyzeFilesWithGivenTrace(files, trace, newModuleContext, config);

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.serialization.builtins
 
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.createBuiltInPackageFragmentProvider
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil.TEST_PACKAGE_FQNAME
@@ -39,7 +40,7 @@ class BuiltInsSerializerTest : TestCaseWithTmpdir() {
         )
 
         val platform = TargetPlatform.Default
-        val module = KotlinTestUtils.createEmptyModule("<module>", platform)
+        val module = KotlinTestUtils.createEmptyModule("<module>", platform, DefaultBuiltIns.Instance)
 
         val packageFragmentProvider = createBuiltInPackageFragmentProvider(
                 LockBasedStorageManager(), module, setOf(TEST_PACKAGE_FQNAME), ClassDescriptorFactory.EMPTY
