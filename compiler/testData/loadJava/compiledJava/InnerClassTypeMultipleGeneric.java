@@ -1,3 +1,5 @@
+// SKIP_IN_RUNTIME_TEST
+
 package test;
 public class InnerClassTypeMultipleGeneric {
     public class BaseOuter<H1, H2> {
