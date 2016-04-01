@@ -95,7 +95,7 @@ public class ChooseModulePanel {
             });
         }
         else {
-            allModulesWithKtNames.setText(StringUtil.join(modules, new Function<Module, String>() {
+            allModulesWithKtNames.setText(StringUtil.join(modulesWithKtFiles, new Function<Module, String>() {
                 @Override
                 public String fun(Module module) {
                     return module.getName();
