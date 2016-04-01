@@ -26,11 +26,11 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.platform.JvmBuiltIns;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeImpl;
@@ -55,7 +55,7 @@ public class ExpectedResolveDataUtil {
     }
 
     public static Map<String, DeclarationDescriptor> prepareDefaultNameToDescriptors(Project project, KotlinCoreEnvironment environment) {
-        KotlinBuiltIns builtIns = JvmPlatform.INSTANCE.getBuiltIns();
+        KotlinBuiltIns builtIns = JvmBuiltIns.getInstance();
 
         Map<String, DeclarationDescriptor> nameToDescriptor = new HashMap<String, DeclarationDescriptor>();
         nameToDescriptor.put("kotlin::Int.plus(Int)", standardFunction(builtIns.getInt(), "plus", project, builtIns.getIntType()));

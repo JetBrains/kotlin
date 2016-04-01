@@ -19,12 +19,12 @@ package org.jetbrains.kotlin.types;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
+import org.jetbrains.kotlin.platform.JvmBuiltIns;
 import org.jetbrains.kotlin.psi.KtNamedFunction;
 import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
 import org.jetbrains.kotlin.resolve.FunctionDescriptorResolver;
 import org.jetbrains.kotlin.resolve.OverloadUtil;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory;
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
@@ -163,7 +163,7 @@ public class KotlinOverloadTest extends KotlinTestWithEnvironment {
 
     private FunctionDescriptor makeFunction(String funDecl) {
         KtNamedFunction function = KtPsiFactoryKt.KtPsiFactory(getProject()).createFunction(funDecl);
-        LexicalScope scope = TypeTestUtilsKt.builtInPackageAsLexicalScope(JvmPlatform.INSTANCE.getBuiltIns());
+        LexicalScope scope = TypeTestUtilsKt.builtInPackageAsLexicalScope(JvmBuiltIns.getInstance());
         return functionDescriptorResolver.resolveFunctionDescriptor(root, scope, function, KotlinTestUtils.DUMMY_TRACE, DataFlowInfoFactory.EMPTY);
     }
 }

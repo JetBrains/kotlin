@@ -44,6 +44,6 @@ object JsPlatform : TargetPlatform("JS") {
 
     override val platformConfigurator: PlatformConfigurator = JsPlatformConfigurator
 
-    override val builtIns: KotlinBuiltIns
+    val builtIns: KotlinBuiltIns
         get() = DefaultBuiltIns.Instance
 }

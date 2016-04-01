@@ -21,10 +21,10 @@ import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeImpl
 import org.jetbrains.kotlin.cfg.pseudocode.TypePredicate
 import org.jetbrains.kotlin.cfg.pseudocode.getExpectedTypePredicate
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.InstructionWithValue
+import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import java.util.*
 
 abstract class AbstractPseudoValueTest : AbstractPseudocodeTest() {
@@ -51,7 +51,7 @@ abstract class AbstractPseudoValueTest : AbstractPseudocodeTest() {
 
         fun valueDecl(value: PseudoValue): String {
             val typePredicate = expectedTypePredicateMap.getOrPut(value) {
-                getExpectedTypePredicate(value, bindingContext, JvmPlatform.builtIns)
+                getExpectedTypePredicate(value, bindingContext, JvmBuiltIns.Instance)
             }
             return "${value.debugName}: $typePredicate"
         }

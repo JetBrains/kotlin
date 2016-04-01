@@ -32,9 +32,9 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.platform.JvmBuiltIns;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -334,10 +334,10 @@ public abstract class ExpectedResolveData {
         ClassifierDescriptor expectedClass;
 
         if (nameOrFqName.indexOf('.') >= 0) {
-            expectedClass = JvmPlatform.INSTANCE.getBuiltIns().getBuiltInClassByFqNameNullable(FqName.fromSegments(Arrays.asList(nameOrFqName.split("\\."))));
+            expectedClass = JvmBuiltIns.getInstance().getBuiltInClassByFqNameNullable(FqName.fromSegments(Arrays.asList(nameOrFqName.split("\\."))));
         }
         else {
-            expectedClass = JvmPlatform.INSTANCE.getBuiltIns().getBuiltInClassByNameNullable(Name.identifier(nameOrFqName));
+            expectedClass = JvmBuiltIns.getInstance().getBuiltInClassByNameNullable(Name.identifier(nameOrFqName));
         }
         assertNotNull("Expected class not found: " + nameOrFqName, expectedClass);
 

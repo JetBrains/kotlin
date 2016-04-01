@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
+import org.jetbrains.kotlin.platform.JvmBuiltIns;
 import org.jetbrains.kotlin.script.KotlinScriptDefinition;
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider;
 import org.jetbrains.kotlin.script.ScriptParameter;
@@ -37,7 +37,7 @@ public class ScriptGenTest extends CodegenTestCase {
     private static final KotlinScriptDefinition FIB_SCRIPT_DEFINITION =
             new TestScriptDefinition(
                     ".lang.kt",
-                    singletonList(new ScriptParameter(Name.identifier("num"), JvmPlatform.INSTANCE.getBuiltIns().getIntType()))
+                    singletonList(new ScriptParameter(Name.identifier("num"), JvmBuiltIns.getInstance().getIntType()))
             );
     private static final KotlinScriptDefinition NO_PARAM_SCRIPT_DEFINITION =
             new TestScriptDefinition(

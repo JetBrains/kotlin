@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.jvm.platform
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ModuleParameters
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.platform.JvmBuiltIns
@@ -36,9 +35,6 @@ object JvmPlatform : TargetPlatform("JVM") {
         override val defaultImports: List<ImportPath>
             get() = DEFAULT_IMPORTS_FOR_JVM
     }
-
-    override val builtIns: KotlinBuiltIns
-        get() = JvmBuiltIns.Instance
 
     override val platformConfigurator: PlatformConfigurator = JvmPlatformConfigurator
 }
@@ -60,7 +56,7 @@ private val DEFAULT_IMPORTS_FOR_JVM: List<ImportPath> = ArrayList<ImportPath>().
         }
     }
 
-    val builtIns = JvmPlatform.builtIns
+    val builtIns = JvmBuiltIns.Instance
     for (builtinPackageFragment in builtIns.builtInsPackageFragments) {
         addAllClassifiersFromScope(builtinPackageFragment.getMemberScope())
     }

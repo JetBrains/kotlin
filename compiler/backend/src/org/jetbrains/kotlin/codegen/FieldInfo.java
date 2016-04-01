@@ -21,15 +21,15 @@ import org.jetbrains.kotlin.builtins.CompanionObjectMapping;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.load.java.JvmAbi;
+import org.jetbrains.kotlin.platform.JvmBuiltIns;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isNonCompanionObject;
 
 public class FieldInfo {
 
-    private static final CompanionObjectMapping COMPANION_OBJECT_MAPPING = new CompanionObjectMapping(JvmPlatform.INSTANCE.getBuiltIns());
+    private static final CompanionObjectMapping COMPANION_OBJECT_MAPPING = new CompanionObjectMapping(JvmBuiltIns.getInstance());
 
     @NotNull
     public static FieldInfo createForSingleton(@NotNull ClassDescriptor classDescriptor, @NotNull KotlinTypeMapper typeMapper) {

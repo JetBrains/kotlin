@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve
 
-import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
@@ -41,12 +40,9 @@ abstract class TargetPlatform(
     }
 
     abstract val platformConfigurator: PlatformConfigurator
-    abstract val builtIns: KotlinBuiltIns
     abstract val defaultModuleParameters: ModuleParameters
 
     object Default : TargetPlatform("Default") {
-        override val builtIns: KotlinBuiltIns
-            get() = DefaultBuiltIns.Instance
         override val defaultModuleParameters = ModuleParameters.Empty
         override val platformConfigurator =
                 object : PlatformConfigurator(DynamicTypesSettings(), listOf(), listOf(), listOf(), listOf(), listOf(),

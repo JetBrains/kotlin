@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.ContentRootsKt;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
+import org.jetbrains.kotlin.platform.JvmBuiltIns;
 import org.jetbrains.kotlin.script.KotlinScriptDefinition;
 import org.jetbrains.kotlin.script.ScriptParameter;
 import org.jetbrains.kotlin.test.ConfigurationKind;
@@ -105,6 +105,6 @@ public class ScriptTest {
 
     @NotNull
     private static List<ScriptParameter> numIntParam() {
-        return Collections.singletonList(new ScriptParameter(Name.identifier("num"), JvmPlatform.INSTANCE.getBuiltIns().getIntType()));
+        return Collections.singletonList(new ScriptParameter(Name.identifier("num"), JvmBuiltIns.getInstance().getIntType()));
     }
 }
