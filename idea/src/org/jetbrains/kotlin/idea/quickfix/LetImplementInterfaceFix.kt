@@ -30,12 +30,12 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isInterface
-import org.jetbrains.kotlin.types.typeUtil.supertypes
 
 private fun KotlinType.renderShort() = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(this)
 
-private fun KotlinType.getSuperTypesRecursive() = constructor.supertypes.let { it + it.flatMap { it.supertypes() } }
+private fun KotlinType.getSuperTypesRecursive() = TypeUtils.getAllSupertypes(this)
 
 class LetImplementInterfaceFix(
         element: KtExpression,
