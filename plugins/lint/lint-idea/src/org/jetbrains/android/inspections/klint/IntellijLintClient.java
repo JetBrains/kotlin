@@ -382,9 +382,9 @@ public class IntellijLintClient extends com.android.tools.klint.client.api.LintC
     Module module = getModule();
     if (module != null) {
       AndroidFacet facet = AndroidFacet.getInstance(module);
-      return facet != null && facet.isGradleProject();
+      return facet != null && IntellijLintUtils.isGradleModule(facet);
     }
-    return Projects.isGradleProject(myProject);
+    return false;
   }
 
   @Override
