@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,6 @@ import org.jetbrains.idea.maven.model.MavenPlugin;
 import org.jetbrains.idea.maven.project.MavenProject;
 import org.jetbrains.idea.maven.project.MavenProjectsManager;
 import org.jetbrains.idea.maven.utils.MavenArtifactScope;
-import org.jetbrains.idea.maven.utils.MavenUtil;
 import org.jetbrains.kotlin.idea.KotlinPluginUtil;
 import org.jetbrains.kotlin.idea.framework.ui.ConfigureDialogWithModulesAndVersion;
 
