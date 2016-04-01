@@ -631,7 +631,7 @@ Let's see the example of how group priorities are determined:
 
 * Function go before property of the same category, so a top-level extension named `foo` has higher priority then a top-level extension property `foo` of function type.
 
-* Both the property and the `invoke` function matter.
+* The priority of both the property and the `invoke` function matters.
 Thus if the `invoke` function is declared as an extension, the member property with this function goes after the group "extensions functions".
 
 [source,kotlin]
