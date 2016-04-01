@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.idea.decompiler.js
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DeserializerForDecompilerBase
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.LoggingErrorReporter
@@ -48,6 +50,7 @@ class KotlinJavaScriptDeserializerForDecompiler(
     }
 
     override val targetPlatform: TargetPlatform get() = JsPlatform
+    override val builtIns: KotlinBuiltIns get() = DefaultBuiltIns.Instance
 
     private val classDataFinder = KotlinJavascriptClassDataFinder(nameResolver) { path ->
         packageDirectory.findChild(path.substringAfterLast("/"))?.inputStream
@@ -61,7 +64,7 @@ class KotlinJavaScriptDeserializerForDecompiler(
 
         deserializationComponents = DeserializationComponents(
                 storageManager, moduleDescriptor, classDataFinder, annotationAndConstantLoader, packageFragmentProvider,
-                ResolveEverythingToKotlinAnyLocalClassResolver(targetPlatform.builtIns), LoggingErrorReporter(LOG),
+                ResolveEverythingToKotlinAnyLocalClassResolver(builtIns), LoggingErrorReporter(LOG),
                 LookupTracker.DO_NOTHING, DynamicTypeFactory, ClassDescriptorFactory.EMPTY,
                 notFoundClasses
         )

@@ -40,6 +40,7 @@ abstract class DeserializerForDecompilerBase(
     protected abstract val deserializationComponents: DeserializationComponents
 
     protected abstract val targetPlatform: TargetPlatform
+    protected abstract val builtIns: KotlinBuiltIns
 
     protected val storageManager: StorageManager = LockBasedStorageManager.NO_LOCKS
 
@@ -60,7 +61,7 @@ abstract class DeserializerForDecompilerBase(
     protected fun createDummyPackageFragment(fqName: FqName): MutablePackageFragmentDescriptor =
             MutablePackageFragmentDescriptor(moduleDescriptor, fqName)
 
-    private fun createDummyModule(name: String) = ModuleDescriptorImpl(Name.special("<$name>"), storageManager, ModuleParameters.Empty, targetPlatform.builtIns)
+    private fun createDummyModule(name: String) = ModuleDescriptorImpl(Name.special("<$name>"), storageManager, ModuleParameters.Empty, builtIns)
 
     init {
         moduleDescriptor.initialize(packageFragmentProvider)
