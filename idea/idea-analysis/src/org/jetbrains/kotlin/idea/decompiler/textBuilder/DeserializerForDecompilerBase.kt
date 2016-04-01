@@ -64,7 +64,7 @@ abstract class DeserializerForDecompilerBase(
 
     init {
         moduleDescriptor.initialize(packageFragmentProvider)
-        moduleDescriptor.setDependencies(moduleDescriptor, targetPlatform.builtIns.builtInsModule)
+        moduleDescriptor.setDependencies(moduleDescriptor, moduleDescriptor.builtIns.builtInsModule)
     }
 }
 

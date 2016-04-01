@@ -38,7 +38,6 @@ import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.kotlin.asJava.LightClassUtilsKt;
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns;
 import org.jetbrains.kotlin.codegen.binding.PsiCodegenPredictor;
 import org.jetbrains.kotlin.context.ContextKt;
@@ -250,7 +249,7 @@ public class SourceNavigationHelper {
                 DefaultBuiltIns.getInstance()
         );
 
-        newModuleContext.setDependencies(newModuleContext.getModule(), platform.getBuiltIns().getBuiltInsModule());
+        newModuleContext.setDependencies(newModuleContext.getModule(), newModuleContext.getModule().getBuiltIns().getBuiltInsModule());
 
         FileBasedDeclarationProviderFactory providerFactory = new FileBasedDeclarationProviderFactory(
                 newModuleContext.getStorageManager(),

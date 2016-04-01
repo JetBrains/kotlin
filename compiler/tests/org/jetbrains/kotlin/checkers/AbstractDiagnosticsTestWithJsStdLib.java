@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.js.resolve.JsPlatform;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.resolve.TargetPlatform;
 import org.jetbrains.kotlin.resolve.TargetPlatformKt;
 import org.jetbrains.kotlin.storage.StorageManager;
 
@@ -88,7 +87,7 @@ public abstract class AbstractDiagnosticsTestWithJsStdLib extends AbstractDiagno
             dependencies.add(moduleDescriptor);
         }
 
-        dependencies.add(getPlatform().getBuiltIns().getBuiltInsModule());
+        dependencies.add(module.getBuiltIns().getBuiltInsModule());
         module.setDependencies(dependencies);
 
         return module;
@@ -96,11 +95,5 @@ public abstract class AbstractDiagnosticsTestWithJsStdLib extends AbstractDiagno
 
     protected Config getConfig() {
         return config;
-    }
-
-    @NotNull
-    @Override
-    protected TargetPlatform getPlatform() {
-        return JsPlatform.INSTANCE;
     }
 }

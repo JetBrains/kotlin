@@ -163,7 +163,7 @@ public enum TopDownAnalyzerFacadeForJVM {
         MutableModuleContext context = ContextKt.ContextForNewModule(
                 project, Name.special("<" + moduleName + ">"), JvmPlatform.INSTANCE
         );
-        context.setDependencies(context.getModule(), JvmPlatform.INSTANCE.getBuiltIns().getBuiltInsModule());
+        context.setDependencies(context.getModule(), context.getBuiltIns().getBuiltInsModule());
         return context;
     }
 }
