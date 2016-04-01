@@ -30,23 +30,23 @@ fun collectFunctionReferencesInside(scope: JsNode): List<JsName> =
 private fun collectReferencedNames(scope: JsNode): Set<JsName> {
     val references = IdentitySet<JsName>()
 
-    object : JsVisitorWithContextImpl() {
-        override fun visit(x: JsBreak, ctx: JsContext<*>) = false
+    object : RecursiveJsVisitor() {
+        override fun visitBreak(x: JsBreak) { }
 
-        override fun visit(x: JsContinue, ctx: JsContext<*>) = false
+        override fun visitContinue(x: JsContinue) { }
 
-        override fun visit(x: JsVars.JsVar, ctx: JsContext<*>): Boolean {
+        override fun visit(x: JsVars.JsVar) {
             val initializer = x.initExpression
             if (initializer != null) {
                 accept(initializer)
             }
-            return false
         }
 
-        override fun endVisit(x: JsNameRef, ctx: JsContext<*>) {
-            val name = x.name
+        override fun visitNameRef(nameRef: JsNameRef) {
+            super.visitNameRef(nameRef)
+            val name = nameRef.name
             if (name != null) {
-                references.add(name)
+                references += name
             }
         }
     }.accept(scope)
@@ -57,29 +57,28 @@ private fun collectReferencedNames(scope: JsNode): Set<JsName> {
 fun collectUsedNames(scope: JsNode): Set<JsName> {
     val references = IdentitySet<JsName>()
 
-    object : JsVisitorWithContextImpl() {
-        override fun visit(x: JsBreak, ctx: JsContext<*>) = false
+    object : RecursiveJsVisitor() {
+        override fun visitBreak(x: JsBreak) { }
 
-        override fun visit(x: JsContinue, ctx: JsContext<*>) = false
+        override fun visitContinue(x: JsContinue) { }
 
-        override fun visit(x: JsVars.JsVar, ctx: JsContext<*>): Boolean {
+        override fun visit(x: JsVars.JsVar) {
             val initializer = x.initExpression
             if (initializer != null) {
                 accept(initializer)
             }
-            return false
         }
 
-        override fun endVisit(x: JsNameRef, ctx: JsContext<*>) {
-            val name = x.name
-            if (name != null && x.qualifier == null) {
+        override fun visitNameRef(nameRef: JsNameRef) {
+            super.visitNameRef(nameRef)
+            val name = nameRef.name
+            if (name != null && nameRef.qualifier == null) {
                 references.add(name)
             }
         }
 
-        override fun visit(x: JsFunction, ctx: JsContext<*>): Boolean {
+        override fun visitFunction(x: JsFunction) {
             references += x.collectFreeVariables()
-            return false
         }
     }.accept(scope)
 

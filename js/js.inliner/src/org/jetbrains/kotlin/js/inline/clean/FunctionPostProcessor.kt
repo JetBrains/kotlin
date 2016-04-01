@@ -19,16 +19,19 @@ package org.jetbrains.kotlin.js.inline.clean
 import com.google.dart.compiler.backend.js.ast.JsBlock
 
 class FunctionPostProcessor(private val root: JsBlock) {
+    val optimizations = listOf(
+        { TemporaryAssignmentElimination(root).apply() },
+        { RedundantLabelRemoval(root).apply() },
+        { TemporaryVariableElimination(root).apply() },
+        { IfStatementReduction(root).apply() },
+        { DeadCodeElimination(root).apply() },
+        { RedundantVariableDeclarationElimination(root).apply() }
+    )
+    // TODO: reduce to A || B, A && B if possible
+
     fun apply() {
         do {
-            var hasChanges = false
-            hasChanges = hasChanges or TemporaryAssignmentElimination(root).apply()
-            hasChanges = hasChanges or RedundantLabelRemoval(root).apply()
-            hasChanges = hasChanges or TemporaryVariableElimination(root).apply()
-            hasChanges = hasChanges or IfStatementReduction(root).apply()
-            // TODO: reduce to A || B, A && B if possible
-            hasChanges = hasChanges or DeadCodeElimination(root).apply()
-            hasChanges = hasChanges or RedundantVariableDeclarationElimination(root).apply()
+            val hasChanges = optimizations.fold(false) { existing, f -> existing or f() }
         } while (hasChanges)
     }
 }

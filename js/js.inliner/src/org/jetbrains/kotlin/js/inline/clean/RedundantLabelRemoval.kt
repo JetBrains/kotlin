@@ -100,7 +100,7 @@ internal class RedundantLabelRemoval(private val root: JsStatement) {
             }
         is JsIf -> {
             val thenRemoved = perform(statement.thenStatement, name) == null
-            val elseRemoved = statement.elseStatement?.let { perform(it, name) } == null && statement.elseStatement != null
+            val elseRemoved = statement.elseStatement?.let { perform(it, name) == null } ?: false
             when {
                 thenRemoved && elseRemoved -> null
                 elseRemoved -> {
@@ -119,6 +119,7 @@ internal class RedundantLabelRemoval(private val root: JsStatement) {
             }
         }
         is JsTry -> {
+            // TODO: optimize finally and catch blocks
             val finallyBlock = statement.finallyBlock
             val result = perform(statement.tryBlock, name)
             if (result != null) {
