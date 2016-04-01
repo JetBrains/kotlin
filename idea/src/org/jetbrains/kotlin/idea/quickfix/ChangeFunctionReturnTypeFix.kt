@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
-import org.jetbrains.kotlin.idea.project.platform
+import org.jetbrains.kotlin.idea.project.builtIns
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.psi.*
@@ -178,14 +178,14 @@ class ChangeFunctionReturnTypeFix(element: KtFunction, type: KotlinType) : Kotli
     object ChangingReturnTypeToUnitFactory : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val function = QuickFixUtil.getParentElementOfType(diagnostic, KtFunction::class.java) ?: return null
-            return ChangeFunctionReturnTypeFix(function, function.platform.builtIns.unitType)
+            return ChangeFunctionReturnTypeFix(function, function.builtIns.unitType)
         }
     }
 
     object ChangingReturnTypeToNothingFactory : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val function = QuickFixUtil.getParentElementOfType(diagnostic, KtFunction::class.java) ?: return null
-            return ChangeFunctionReturnTypeFix(function, function.platform.builtIns.nothingType)
+            return ChangeFunctionReturnTypeFix(function, function.builtIns.nothingType)
         }
     }
 

@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.idea.project.platform
+import org.jetbrains.kotlin.idea.project.builtIns
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.CallableInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.FunctionInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.ParameterInfo
@@ -38,7 +38,7 @@ object CreateInvokeFunctionActionFactory : CreateCallableMemberFromUsageFactory<
 
         val receiverType = TypeInfo(expectedType, Variance.IN_VARIANCE)
 
-        val anyType = element.platform.builtIns.nullableAnyType
+        val anyType = element.builtIns.nullableAnyType
         val parameters = element.valueArguments.map {
             ParameterInfo(
                     it.getArgumentExpression()?.let { TypeInfo(it, Variance.IN_VARIANCE) } ?: TypeInfo(anyType, Variance.IN_VARIANCE),

@@ -16,8 +16,13 @@
 
 package org.jetbrains.kotlin.idea.project
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.TargetPlatform
 
 val KtElement.platform: TargetPlatform
     get() = TargetPlatformDetector.getPlatform(getContainingKtFile())
+
+val KtElement.builtIns: KotlinBuiltIns
+    get() = getResolutionFacade().moduleDescriptor.builtIns

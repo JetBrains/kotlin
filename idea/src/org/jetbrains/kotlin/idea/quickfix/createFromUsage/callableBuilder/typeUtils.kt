@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.*
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.idea.project.platform
+import org.jetbrains.kotlin.idea.project.builtIns
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -261,7 +261,7 @@ fun KtCallElement.getTypeInfoForTypeArguments(): List<TypeInfo> {
 }
 
 fun KtCallExpression.getParameterInfos(): List<ParameterInfo> {
-    val anyType = this.platform.builtIns.nullableAnyType
+    val anyType = this.builtIns.nullableAnyType
     return valueArguments.map {
         ParameterInfo(
                 it.getArgumentExpression()?.let { TypeInfo(it, Variance.IN_VARIANCE) } ?: TypeInfo(anyType, Variance.IN_VARIANCE),

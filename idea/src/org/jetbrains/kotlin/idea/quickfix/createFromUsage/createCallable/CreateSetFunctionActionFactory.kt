@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
-import org.jetbrains.kotlin.idea.project.platform
+import org.jetbrains.kotlin.idea.project.builtIns
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.CallableInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.FunctionInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.ParameterInfo
@@ -43,7 +43,7 @@ object CreateSetFunctionActionFactory : CreateCallableMemberFromUsageFactory<KtA
         val arrayExpr = element.arrayExpression ?: return null
         val arrayType = TypeInfo(arrayExpr, Variance.IN_VARIANCE)
 
-        val builtIns = element.platform.builtIns
+        val builtIns = element.builtIns
 
         val parameters = element.indexExpressions.mapTo(ArrayList<ParameterInfo>()) {
             ParameterInfo(TypeInfo(it, Variance.IN_VARIANCE))

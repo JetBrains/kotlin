@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.idea.project.platform
+import org.jetbrains.kotlin.idea.project.builtIns
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -46,7 +46,7 @@ object CreateBinaryOperationActionFactory: CreateCallableMemberFromUsageFactory<
         val receiverExpr = if (inOperation) rightExpr else leftExpr
         val argumentExpr = if (inOperation) leftExpr else rightExpr
 
-        val builtIns = element.platform.builtIns
+        val builtIns = element.builtIns
         val receiverType = TypeInfo(receiverExpr, Variance.IN_VARIANCE)
         val returnType = when {
             inOperation -> TypeInfo.ByType(builtIns.booleanType, Variance.INVARIANT).noSubstitutions()

@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
-import org.jetbrains.kotlin.idea.project.platform
+import org.jetbrains.kotlin.idea.project.builtIns
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.psi.*
@@ -123,7 +123,7 @@ class ChangeFunctionLiteralReturnTypeFix(
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val functionLiteralExpression = QuickFixUtil.getParentElementOfType(diagnostic, KtLambdaExpression::class.java) ?: return null
-            return ChangeFunctionLiteralReturnTypeFix(functionLiteralExpression, functionLiteralExpression.platform.builtIns.unitType)
+            return ChangeFunctionLiteralReturnTypeFix(functionLiteralExpression, functionLiteralExpression.builtIns.unitType)
         }
     }
 }

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
-import org.jetbrains.kotlin.idea.project.platform
+import org.jetbrains.kotlin.idea.project.builtIns
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.CallableInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.FunctionInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
@@ -37,7 +37,7 @@ object CreateHasNextFunctionActionFactory : CreateCallableMemberFromUsageFactory
         val diagnosticWithParameters =
                 DiagnosticFactory.cast(diagnostic, Errors.HAS_NEXT_MISSING, Errors.HAS_NEXT_FUNCTION_NONE_APPLICABLE)
         val ownerType = TypeInfo(diagnosticWithParameters.a, Variance.IN_VARIANCE)
-        val returnType = TypeInfo(element.platform.builtIns.booleanType, Variance.OUT_VARIANCE)
+        val returnType = TypeInfo(element.builtIns.booleanType, Variance.OUT_VARIANCE)
         return FunctionInfo(OperatorNameConventions.HAS_NEXT.asString(), ownerType, returnType, isOperator = true)
     }
 }
