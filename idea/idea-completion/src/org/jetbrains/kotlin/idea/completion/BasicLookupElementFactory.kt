@@ -140,7 +140,11 @@ class BasicLookupElementFactory(
         }
         val name = nameAndIconDescriptor.name.asString()
 
-        val lookupObject = object : DeclarationLookupObjectImpl(descriptor, declaration) {
+        val psiElement = declaration
+                         ?: (descriptor as? SyntheticJavaPropertyDescriptor)
+                                 ?.getMethod
+                                 ?.let { DescriptorToSourceUtilsIde.getAnyDeclaration(project, it) }
+        val lookupObject = object : DeclarationLookupObjectImpl(descriptor, psiElement) {
             override fun getIcon(flags: Int) = KotlinDescriptorIconProvider.getIcon(nameAndIconDescriptor, iconDeclaration, flags)
         }
         var element = LookupElementBuilder.create(lookupObject, name)
