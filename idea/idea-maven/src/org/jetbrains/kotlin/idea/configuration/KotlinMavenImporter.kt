@@ -16,22 +16,21 @@
 
 package org.jetbrains.kotlin.idea.configuration
 
-import com.intellij.openapi.components.PersistentStateComponent
-import com.intellij.openapi.components.State
-import com.intellij.openapi.components.Storage
-import com.intellij.openapi.components.StoragePathMacros
+import com.intellij.openapi.components.*
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.roots.OrderEnumerator
+import com.intellij.openapi.roots.OrderRootType
+import com.intellij.openapi.roots.libraries.Library
+import com.intellij.openapi.util.AsyncResult
 import org.jdom.Element
 import org.jetbrains.idea.maven.importing.MavenImporter
 import org.jetbrains.idea.maven.importing.MavenRootModelAdapter
 import org.jetbrains.idea.maven.model.MavenPlugin
-import org.jetbrains.idea.maven.project.MavenProject
-import org.jetbrains.idea.maven.project.MavenProjectChanges
-import org.jetbrains.idea.maven.project.MavenProjectsProcessorTask
-import org.jetbrains.idea.maven.project.MavenProjectsTree
+import org.jetbrains.idea.maven.project.*
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
+import org.jetbrains.kotlin.idea.util.projectStructure.findLibrary
 import java.io.File
 import java.util.*
 
@@ -54,6 +53,29 @@ class KotlinMavenImporter : MavenImporter(KotlinPluginGroupId, KotlinPluginArtif
 
         if (changes.plugins) {
             contributeSourceDirectories(mavenProject, module, rootModel)
+        }
+    }
+
+    override fun postProcess(module: Module, mavenProject: MavenProject, changes: MavenProjectChanges, modifiableModelsProvider: IdeModifiableModelsProvider) {
+        super.postProcess(module, mavenProject, changes, modifiableModelsProvider)
+
+        if (changes.dependencies) {
+            // TODO: here we have to process all kotlin libraries but for now we only handle standard libraries
+            val artifacts = mavenProject.dependencyArtifactIndex.data[KotlinPluginGroupId]?.values?.flatMap { it.filter { it.isResolved } } ?: emptyList()
+
+            val librariesWithNoSources = ArrayList<Library>()
+            OrderEnumerator.orderEntries(module).forEachLibrary { library ->
+                if (library.modifiableModel.getFiles(OrderRootType.SOURCES).isEmpty()) {
+                    librariesWithNoSources.add(library)
+                }
+                true
+            }
+            val libraryNames = librariesWithNoSources.mapTo(HashSet()) { it.name }
+            val toBeDownloaded = artifacts.filter { it.libraryName in libraryNames }
+
+            if (toBeDownloaded.isNotEmpty()) {
+                MavenProjectsManager.getInstance(module.project).scheduleArtifactsDownloading(listOf(mavenProject), toBeDownloaded, true, false, AsyncResult())
+            }
         }
     }
 
