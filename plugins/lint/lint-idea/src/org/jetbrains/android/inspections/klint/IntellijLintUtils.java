@@ -22,7 +22,11 @@ import com.android.builder.model.SourceProvider;
 import com.android.tools.klint.client.api.LintRequest;
 import com.google.common.base.Splitter;
 import com.intellij.debugger.engine.JVMNameUtil;
+import com.intellij.facet.Facet;
 import com.intellij.ide.util.JavaAnonymousClassesHelper;
+import com.intellij.openapi.externalSystem.model.ProjectSystemId;
+import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
@@ -60,6 +64,8 @@ public class IntellijLintUtils {
   public static final String SUPPRESS_LINT_FQCN = "android.annotation.SuppressLint";
   @NonNls
   public static final String SUPPRESS_WARNINGS_FQCN = "java.lang.SuppressWarnings";
+
+  private static final ProjectSystemId GRADLE_ID = new ProjectSystemId("GRADLE");
 
   /**
    * Gets the location of the given element
@@ -362,13 +368,33 @@ public class IntellijLintUtils {
     return true;
   }
 
+  public static boolean isProjectReady(AndroidFacet facet) {
+    try {
+       return AndroidFacet.class.getMethod("getIdeaAndroidProject", AndroidFacet.class).invoke(facet) != null;
+    } catch (Exception e) {
+      try {
+        return AndroidFacet.class.getMethod("getAndroidModel", AndroidFacet.class).invoke(facet) != null;
+      } catch (Exception ignored) {}
+    }
+    return false;
+  }
+
+  public static AndroidModelFacade getModelFacade(AndroidFacet facet) {
+    return new AndroidModelFacade(facet);
+  }
+
+  public static boolean isGradleModule(Facet<?> facet) {
+    Module module = facet.getModule();
+    return ExternalSystemApiUtil.isExternalSystemAwareModule(GRADLE_ID, module);
+  }
+
   /** Returns the resource directories to use for the given module */
   @NotNull
   public static List<File> getResourceDirectories(@NotNull AndroidFacet facet) {
-    if (facet.isGradleProject()) {
+    if (isGradleModule(facet)) {
       List<File> resDirectories = new ArrayList<File>();
       resDirectories.addAll(facet.getMainSourceProvider().getResDirectories());
-      List<SourceProvider> flavorSourceProviders = facet.getFlavorSourceProviders();
+      List<SourceProvider> flavorSourceProviders = getModelFacade(facet).getFlavorSourceProviders();
       if (flavorSourceProviders != null) {
         for (SourceProvider provider : flavorSourceProviders) {
           for (File file : provider.getResDirectories()) {
@@ -379,7 +405,7 @@ public class IntellijLintUtils {
         }
       }
 
-      SourceProvider buildTypeSourceProvider = facet.getBuildTypeSourceProvider();
+      SourceProvider buildTypeSourceProvider = getModelFacade(facet).getBuildTypeSourceProvider();
       if (buildTypeSourceProvider != null) {
         for (File file : buildTypeSourceProvider.getResDirectories()) {
           if (file.isDirectory()) {

@@ -9,6 +9,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="android-annotations" />
     <orderEntry type="module" module-name="lint-api" />
+    <orderEntry type="module" module-name="lint-idea" />
     <orderEntry type="library" name="android-plugin" level="project" />
     <orderEntry type="library" name="guava" level="project" />
     <orderEntry type="module" module-name="uast-android" />
