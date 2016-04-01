@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERRIDE
 import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl
+import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -37,7 +38,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProv
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.resolve.varianceChecker.VarianceChecker
+import org.jetbrains.kotlin.resolve.VarianceCheckerCore
 import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.storage.NullableLazyValue
 import org.jetbrains.kotlin.types.DeferredType
@@ -192,7 +193,7 @@ open class LazyClassMemberScope(
             if (descriptor.kind != FAKE_OVERRIDE && descriptor.kind != DELEGATION) {
                 OverridingUtil.resolveUnknownVisibilityForMember(descriptor, OverrideResolver.createCannotInferVisibilityReporter(trace))
             }
-            VarianceChecker.recordPrivateToThisIfNeeded(trace, descriptor);
+            VarianceCheckerCore(trace.bindingContext, DiagnosticSink.DO_NOTHING).recordPrivateToThisIfNeeded(descriptor);
         }
     }
 
