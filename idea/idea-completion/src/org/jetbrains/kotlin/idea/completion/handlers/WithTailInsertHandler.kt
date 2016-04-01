@@ -21,6 +21,7 @@ import com.intellij.codeInsight.completion.InsertHandler
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.codeInsight.lookup.LookupElement
+import com.intellij.openapi.editor.Document
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.idea.completion.KEEP_OLD_ARGUMENT_LIST_ON_TAB_KEY
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletion
@@ -55,8 +56,11 @@ class WithTailInsertHandler(val tailText: String,
         //TODO: analyze parenthesis balance to decide whether to replace or not
         var insert = true
         if (overwriteText) {
-            var offset = document.charsSequence.skipSpacesAndLineBreaks(tailOffset)
-            if (document.isTextAt(offset, tailText)) {
+            var offset = tailOffset
+            if (tailText != " ") {
+                offset = document.charsSequence.skipSpacesAndLineBreaks(offset)
+            }
+            if (shouldOverwriteChar(document, offset)) {
                 insert = false
                 offset += tailText.length
                 tailOffset = offset
@@ -85,6 +89,12 @@ class WithTailInsertHandler(val tailText: String,
         }
     }
 
+    private fun shouldOverwriteChar(document: Document, offset: Int): Boolean {
+        if (!document.isTextAt(offset, tailText)) return false
+        if (tailText == " " && document.charsSequence.isCharAt(offset + 1, '}')) return false // do not overwrite last space before '}'
+        return true
+    }
+
     companion object {
         val COMMA = WithTailInsertHandler(",", spaceBefore = false, spaceAfter = true /*TODO: use code style option*/)
         val RPARENTH = WithTailInsertHandler(")", spaceBefore = false, spaceAfter = false)
@@ -92,6 +102,6 @@ class WithTailInsertHandler(val tailText: String,
         val RBRACE = WithTailInsertHandler("}", spaceBefore = true, spaceAfter = false)
         val ELSE = WithTailInsertHandler("else", spaceBefore = true, spaceAfter = true)
         val EQ = WithTailInsertHandler("=", spaceBefore = true, spaceAfter = true) /*TODO: use code style options*/
-        val SPACE = WithTailInsertHandler(" ", spaceBefore = false, spaceAfter = false, overwriteText = false)
+        val SPACE = WithTailInsertHandler(" ", spaceBefore = false, spaceAfter = false, overwriteText = true)
     }
 }
