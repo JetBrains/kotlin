@@ -140,7 +140,7 @@ object ExpectedCompletionUtils {
 
     fun itemsShouldExist(fileText: String, platform: TargetPlatform?): Array<CompletionProposal> {
         return when (platform) {
-            JvmPlatform -> processProposalAssertions(fileText, EXIST_LINE_PREFIX, EXIST_JAVA_ONLY_LINE_PREFIX)
+            is JvmPlatform -> processProposalAssertions(fileText, EXIST_LINE_PREFIX, EXIST_JAVA_ONLY_LINE_PREFIX)
             JsPlatform -> processProposalAssertions(fileText, EXIST_LINE_PREFIX, EXIST_JS_ONLY_LINE_PREFIX)
             null -> processProposalAssertions(fileText, EXIST_LINE_PREFIX)
             else -> throw IllegalArgumentException(UNSUPPORTED_PLATFORM_MESSAGE)
@@ -149,7 +149,7 @@ object ExpectedCompletionUtils {
 
     fun itemsShouldAbsent(fileText: String, platform: TargetPlatform?): Array<CompletionProposal> {
         return when (platform) {
-            JvmPlatform -> processProposalAssertions(fileText, ABSENT_LINE_PREFIX, ABSENT_JAVA_LINE_PREFIX, EXIST_JS_ONLY_LINE_PREFIX)
+            is JvmPlatform -> processProposalAssertions(fileText, ABSENT_LINE_PREFIX, ABSENT_JAVA_LINE_PREFIX, EXIST_JS_ONLY_LINE_PREFIX)
             JsPlatform -> processProposalAssertions(fileText, ABSENT_LINE_PREFIX, ABSENT_JS_LINE_PREFIX, EXIST_JAVA_ONLY_LINE_PREFIX)
             null -> processProposalAssertions(fileText, ABSENT_LINE_PREFIX)
             else -> throw IllegalArgumentException(UNSUPPORTED_PLATFORM_MESSAGE)
@@ -185,7 +185,7 @@ object ExpectedCompletionUtils {
     fun getExpectedNumber(fileText: String, platform: TargetPlatform?): Int? {
         return when (platform) {
             null -> InTextDirectivesUtils.getPrefixedInt(fileText, NUMBER_LINE_PREFIX)
-            JvmPlatform -> getPlatformExpectedNumber(fileText, NUMBER_JAVA_LINE_PREFIX)
+            is JvmPlatform -> getPlatformExpectedNumber(fileText, NUMBER_JAVA_LINE_PREFIX)
             JsPlatform -> getPlatformExpectedNumber(fileText, NUMBER_JS_LINE_PREFIX)
             else -> throw IllegalArgumentException(UNSUPPORTED_PLATFORM_MESSAGE)
         }

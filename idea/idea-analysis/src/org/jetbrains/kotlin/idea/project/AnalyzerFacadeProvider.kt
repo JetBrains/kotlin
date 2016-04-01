@@ -29,7 +29,7 @@ object AnalyzerFacadeProvider {
     // otherwise we would be forced to add casts on the call site of setupResolverForProject
     fun getAnalyzerFacade(targetPlatform: TargetPlatform): AnalyzerFacade<JvmPlatformParameters> {
         return when (targetPlatform) {
-            JvmPlatform -> JvmAnalyzerFacade
+            is JvmPlatform -> JvmAnalyzerFacade
             JsPlatform -> JsAnalyzerFacade
             else -> throw IllegalArgumentException("Unsupported platform: $targetPlatform")
         }

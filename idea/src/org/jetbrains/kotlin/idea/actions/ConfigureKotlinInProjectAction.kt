@@ -60,6 +60,6 @@ class ConfigureKotlinJsInProjectAction: ConfigureKotlinInProjectAction() {
 
 class ConfigureKotlinJavaInProjectAction: ConfigureKotlinInProjectAction() {
     override fun getApplicableConfigurators(project: Project) = getAbleToRunConfigurators(project).filter {
-        it.targetPlatform == JvmPlatform
+        it.targetPlatform is JvmPlatform
     }
 }
