@@ -475,12 +475,10 @@ class A { fun foo() = 1 }
 class B { fun foo() = 2 }
 
 fun test(a: A, b: B) {
-    with (b) { with (a) { foo() } }  <1>
-    with (a) { with (b) { foo() } }  <2>
+    with (b) { with (a) { foo() } }
+    with (a) { with (b) { foo() } }
 }
 ----
-<1> first `b`, then `a`
-<2> vice versa
 
 These `foo` calls look very similar, they differ only in the order of implicit receivers available in the context.
 However, the different functions are called: the function #1 in the first case and the function #2 in the second one.
@@ -555,7 +553,7 @@ fun test(f: MyFunction) {
     val i: Int = f("a")     <1>
 }
 ----
-<1> the call `f.invoke("a")` by convention can be simplified to `f("a")`
+<1> the call `f.invoke("a")` by convention is simplified to `f("a")`
 
 The `invoke` function should be applicable on the arguments passed.
 
@@ -586,16 +584,23 @@ That means the call `1.f()` might be rewritten as `f(1)`, which is the short for
 
 The Kotlin compiler has to take this convention into account every time when it resolves a call `a.foo()`, because `foo` might be either a regular function, or a value that is called via the `invoke` convention.
 
-Earlier we described how the call with an explicit receiver `a.foo()` is resolved.
-Just to remind you, the compiler builds several groups of possibly applicable functions according to different categories of functions: members, local extension functions, member extensions, top-level extension functions.
+Earlier we described how the calls `a.foo()` and `foo()` are resolved.
+Just to remind you, the compiler builds several groups of possibly applicable functions according to different categories of functions.
 These groups are ordered: functions from different groups have different priorities.
 The applicable function with the highest priority is the result.
 
 You can see now that this description ignores the `invoke` convention: only regular functions are considered.
-In fact, local variables and properties that can be called by this convention are divided into similar groups.
+In fact, the algorithm doesn't change at all for the `invoke` convention.
+Local variables and properties that can be called by this convention are divided into similar groups.
+Thus more groups are created, while all the rest stays the same.
+
 The property is considered together with the `invoke` function.
 Groups of properties with `invoke` functions are mixed with groups of regular functions, in a sense that a group of properties can have higher priority than a group of functions and vice versa.
-As you can see in the example below, a member property of function type has higher priority than an extension function with the same name:
+However, functions and properties can't go in one group: the function always surpasses the property of the same category.
+Both the property and the `invoke` function determine the priority of the group: we compare the priority of the property and of the `invoke` function and the "lowest" one becomes the group priority.
+The examples below will illustrate that.
+
+A member property of function type has higher priority than an extension function with the same name:
 
 [source,kotlin]
 ----
@@ -613,21 +618,21 @@ fun test(a: A) {
 
 In this case the Kotlin compiler constructs the following groups:
 
-1. Members; properties with invoke functions.
-The group containing a property `foo` and the `invoke` function is created.
+1. The first group contains a property `foo` with the `invoke` function.
 Note that both the property and the `invoke` function are members.
 The property is a member of the `A` class.
 The `invoke` function is a member of the `Function0` interface from the standard library, which is similar to `Function1` interface shown above.
 
-2. Top-level extensions; regular functions.
-No local extensions or member extensions with the name `foo` are declared, so the top-level extension `foo` goes next.
+2. No local extensions or member extensions with the name `foo` are declared, so the top-level extension `foo` goes next.
 
 Note that there is no member function named `foo`, but if it was present, it would be put into a separate group with the highest priority.
-Functions and properties can't go in one group: the function always surpasses the property of the same category.
-For example, a top-level extension named `foo` has higher priority then top-level extension property `foo` of function type.
 
-The property and the `invoke` function both determine the priority of the group.
-If the `invoke` function is declared as an extension, the member property with this function goes after the group "extensions functions", as demonstrated in the example below.
+Let's see the example of how group priorities are determined:
+
+* Function go before property of the same category, so a top-level extension named `foo` has higher priority then a top-level extension property `foo` of function type.
+
+* Both the property and the `invoke` function matter.
+Thus if the `invoke` function is declared as an extension, the member property with this function goes after the group "extensions functions".
 
 [source,kotlin]
 ----
@@ -650,23 +655,17 @@ fun test(a: A, foo: A.() -> Int) {
 
 The following groups are created to resolve the call `a.foo()`:
 
-0. Local extensions; properties with invoke functions.
-We say "properties with invoke functions", but also consider here local variables that can be called using the `invoke` convention.
-The parameter `foo` of the function `test` that has the type `A.() -> Int` can be called as extension function and goes in the first group.
+0. The parameter `foo` of the function `test` that has the type `A.() -> Int` can be called as extension function and goes in the first group.
 This parameter will actually be called in the example above.
 
-1. Top-level extensions; functions.
-Here goes the function #1.
+1. The top-level extension function #1 goes next.
 
-2. Top-level extensions; properties with invoke functions.
-The first group in this category contains the member property `val foo: CallableFoo` together with the function `fun CallableFoo.invoke()`.
-The second group contains the property `val A.foo: () -> Int` together with a member function `invoke` of the class `Function0<Int>`.
+2. We have two top-level extension properties named `foo` in the context, for each of them the `invoke` function is available.
+Two group are created.
+The first one contains the member property `val foo: CallableFoo` together with the function `fun CallableFoo.invoke()`.
+The second group contains the property `val A.foo: () -> Int` together with the member function `invoke` of the class `Function0<Int>`.
 These properties belong to different groups with different priorities, because the first property is a member, while the second one is an extension.
 Note that despite being a member, property `foo` of the type `CallableFoo` goes after regular extension functions, because only the extension function `invoke` is available in the context.
-
-
-We've discussed how taking into account the `invoke` convention changes the resolution of the call with explicit receiver: more groups are created, including groups of properties combined with `invoke` functions.
-The resolution for a call with an implicit receiver changes in the same way.
 
 Note that to resolve a call with implicit receiver we still prioritize groups by their receivers.
 Thus the functions and properties of closer receiver have higher priority:
