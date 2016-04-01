@@ -47,6 +47,12 @@ public class KotlinMavenInspectionTestGenerated extends AbstractKotlinMavenInspe
         doTest(fileName);
     }
 
+    @TestMetadata("kotlinTestWithJunit.xml")
+    public void testKotlinTestWithJunit() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-maven/testData/maven-inspections/kotlinTestWithJunit.xml");
+        doTest(fileName);
+    }
+
     @TestMetadata("missingDependencies.xml")
     public void testMissingDependencies() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-maven/testData/maven-inspections/missingDependencies.xml");
