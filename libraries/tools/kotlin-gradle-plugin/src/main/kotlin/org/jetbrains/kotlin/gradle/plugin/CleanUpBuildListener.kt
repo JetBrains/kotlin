@@ -129,7 +129,6 @@ class CompilerServicesCleanup(private var pluginClassLoader: ClassLoader?) {
             if (it < comparableVersionStr("2.4")!!) {
                 // TODO: remove ZipFileCache cleanup after switching to recent idea libs
                 stopZipFileCache()
-                stopJobScheduler()
             }
         }
 
@@ -139,18 +138,6 @@ class CompilerServicesCleanup(private var pluginClassLoader: ClassLoader?) {
     private fun stopZipFileCache() {
         callVoidStaticMethod("com.intellij.openapi.util.io.ZipFileCache", "stopBackgroundThread")
         log.kotlinDebug("ZipFileCache finished successfully")
-    }
-
-    private fun stopJobScheduler() {
-        log.kotlinDebug("Stop JobScheduler")
-
-        val jobSchedulerClass = Class.forName("com.intellij.concurrency.JobScheduler", false, pluginClassLoader)
-
-        val getSchedulerMethod = jobSchedulerClass.getMethod("getScheduler")
-        val executorService = getSchedulerMethod.invoke(this) as ScheduledExecutorService
-
-        executorService.shutdown()
-        log.kotlinDebug("JobScheduler stopped")
     }
 
     private fun callVoidStaticMethod(classFqName: String, methodName: String) {
