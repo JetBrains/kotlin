@@ -1,0 +1,5 @@
+// "Add 'out' variance" "true"
+abstract class AbstractOut<out T> {
+    abstract val foo: T
+    private var bar = foo
+}

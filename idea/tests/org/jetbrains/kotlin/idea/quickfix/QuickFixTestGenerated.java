@@ -509,6 +509,33 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/addVarianceModifier")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddVarianceModifier extends AbstractQuickFixTest {
+        @TestMetadata("abstractIn.kt")
+        public void testAbstractIn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addVarianceModifier/abstractIn.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("abstractOut.kt")
+        public void testAbstractOut() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addVarianceModifier/abstractOut.kt");
+            doTest(fileName);
+        }
+
+        public void testAllFilesPresentInAddVarianceModifier() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addVarianceModifier"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("empty.kt")
+        public void testEmpty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addVarianceModifier/empty.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/asyncUnsupported")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -7368,8 +7395,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
         @TestMetadata("letClassImplementInterfaceNullable.kt")
         public void testLetClassImplementInterfaceNullable() throws Exception {
-            String fileName =
-                    KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/letClassImplementInterfaceNullable.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/letClassImplementInterfaceNullable.kt");
             doTest(fileName);
         }
 
