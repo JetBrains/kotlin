@@ -9,7 +9,7 @@ fun main(args: Array<String>) {
 inline fun <reified T: Bar> List<T>.foo(key: Int): T? {
     // EXPRESSION: it.i
     // RESULT: 1: I
-    //Breakpoint! (lambdaOrdinal = 0)
+    //Breakpoint! (lambdaOrdinal = 1)
     return this.firstOrNull { it.i == key }
 }
 
