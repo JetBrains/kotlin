@@ -33,7 +33,6 @@
     <orderEntry type="library" scope="PROVIDED" name="properties" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="java-i18n" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="gradle-and-groovy-plugin" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="maven" level="project" />
     <orderEntry type="module" module-name="eval4j" />
     <orderEntry type="module" module-name="idea-core" />
     <orderEntry type="module" module-name="idea-analysis" exported="" />
@@ -53,5 +52,6 @@
     <orderEntry type="library" scope="TEST" name="kotlin-test" level="project" />
     <orderEntry type="module" module-name="lint-idea" scope="PROVIDED" />
     <orderEntry type="module" module-name="formatter" />
+    <orderEntry type="module" module-name="idea-maven" />
   </component>
 </module>
