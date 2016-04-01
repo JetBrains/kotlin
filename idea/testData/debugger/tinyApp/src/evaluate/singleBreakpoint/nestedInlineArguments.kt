@@ -8,7 +8,7 @@ fun main(args: Array<String>) {
 
 inline fun <reified T: Bar> List<T>.foo(key: Int): T? {
     // EXPRESSION: it.i
-    // RESULT: 1: I
+    // RESULT: Unresolved reference: it
     //Breakpoint! (lambdaOrdinal = 0)
     return this.firstOrNull { it.i == key }
 }
