@@ -2801,12 +2801,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("inheritedWithoutOperatorModifier.kt")
-            public void testInheritedWithoutOperatorModifier() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceContains/inheritedWithoutOperatorModifier.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("invalidArgument.kt")
             public void testInvalidArgument() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceContains/invalidArgument.kt");
@@ -2876,12 +2870,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             @TestMetadata("withoutOperatorModifier.kt")
             public void testWithoutOperatorModifier() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceContains/withoutOperatorModifier.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("withoutOperatorModifierDifferentFiles.kt")
-            public void testWithoutOperatorModifierDifferentFiles() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceContains/withoutOperatorModifierDifferentFiles.kt");
                 doTest(fileName);
             }
         }

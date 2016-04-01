@@ -1,3 +1,5 @@
+// IS_APPLICABLE: false
+
 fun test() {
     class Test{
         fun contains(a: Int) : Boolean = true

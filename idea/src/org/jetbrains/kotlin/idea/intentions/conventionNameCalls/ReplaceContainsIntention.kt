@@ -51,8 +51,7 @@ class ReplaceContainsIntention : SelfTargetingRangeIntention<KtDotQualifiedExpre
         if (!element.isReceiverExpressionWithValue()) return null
 
         val functionDescriptor = getFunctionDescriptor(element) ?: return null
-        val isOperator = functionDescriptor.isOperator && OperatorChecks.checkOperator(functionDescriptor).isSuccess
-        if (!isOperator && !canRefactor(element.project, functionDescriptor)) return null
+        if (!functionDescriptor.isOperator || !OperatorChecks.checkOperator(functionDescriptor).isSuccess) return null
 
         return element.callExpression!!.calleeExpression!!.textRange
     }
@@ -60,8 +59,6 @@ class ReplaceContainsIntention : SelfTargetingRangeIntention<KtDotQualifiedExpre
     override fun applyTo(element: KtDotQualifiedExpression, editor: Editor?) {
         val argument = element.callExpression!!.valueArguments.single().getArgumentExpression()!!
         val receiver = element.receiverExpression
-
-        addOperatorModifier(element)
 
         val psiFactory = KtPsiFactory(element)
 
@@ -82,17 +79,6 @@ class ReplaceContainsIntention : SelfTargetingRangeIntention<KtDotQualifiedExpre
                 previousElement.parent!!.addAfter(psiFactory.createSemicolon(), previousElement)
             }
         }
-    }
-
-    private fun canRefactor(project: Project, functionDescriptor: FunctionDescriptor): Boolean {
-        val declaration = getAnyDeclaration(project, functionDescriptor)
-        return declaration?.canRefactor() ?: false
-    }
-
-    private fun addOperatorModifier(element: KtDotQualifiedExpression) {
-        val functionDescriptor = getFunctionDescriptor(element) ?: return
-        val declaration = getAnyDeclaration(element.project, functionDescriptor)
-        (declaration as? KtNamedFunction)?.addModifier(KtTokens.OPERATOR_KEYWORD)
     }
 
     private fun getFunctionDescriptor(element: KtDotQualifiedExpression) : FunctionDescriptor? {
