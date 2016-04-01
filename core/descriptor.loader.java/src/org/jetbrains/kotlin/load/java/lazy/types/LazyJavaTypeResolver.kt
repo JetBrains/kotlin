@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.Flexibility.SpecificityRelation
 import org.jetbrains.kotlin.types.Variance.*
+import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.createProjection
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
@@ -143,13 +144,13 @@ class LazyJavaTypeResolver(
 
                 // This case has to be checked before isMarkedReadOnly/isMarkedMutable, because those two are slow
                 // not mapped, we don't care about being marked mutable/read-only
-                javaToKotlin.mapPlatformClass(fqName).isEmpty() -> attr.howThisTypeIsUsed
+                javaToKotlin.mapPlatformClass(fqName, c.module.builtIns).isEmpty() -> attr.howThisTypeIsUsed
 
                 // Read (possibly external) annotations
                 else -> attr.howThisTypeIsUsedAccordingToAnnotations
             }
 
-            val kotlinDescriptor = javaToKotlin.mapJavaToKotlin(fqName) ?: return null
+            val kotlinDescriptor = javaToKotlin.mapJavaToKotlin(fqName, c.module.builtIns) ?: return null
 
             if (javaToKotlin.isReadOnly(kotlinDescriptor)) {
                 if (howThisTypeIsUsedEffectively == MEMBER_SIGNATURE_COVARIANT

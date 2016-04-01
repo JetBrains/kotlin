@@ -20,6 +20,7 @@ import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -242,7 +243,9 @@ data class DataForConversion private constructor(
                         else {
                             val fqName = FqNameUnsafe(qualifiedName)
                             // skip explicit imports of platform classes mapped into Kotlin classes
-                            if (fqName.isSafe && JavaToKotlinClassMap.INSTANCE.mapPlatformClass(fqName.toSafe()).isNotEmpty()) continue
+                            if (fqName.isSafe
+                                    && JavaToKotlinClassMap.INSTANCE.mapPlatformClass(
+                                    fqName.toSafe(), DefaultBuiltIns.Instance).isNotEmpty()) continue
                             append("import $qualifiedName\n")
                         }
                     }

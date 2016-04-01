@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.util.*
 import javax.swing.Icon
@@ -456,7 +457,10 @@ open class KtLightClassForExplicitDeclaration(
             if (qualifiedName == DescriptorUtils.getFqName(classDescriptor).asString()) return true
 
             val fqName = FqNameUnsafe(qualifiedName)
-            val mappedDescriptor = if (fqName.isSafe()) JavaToKotlinClassMap.INSTANCE.mapJavaToKotlin(fqName.toSafe()) else null
+            val mappedDescriptor =
+                    if (fqName.isSafe)
+                        JavaToKotlinClassMap.INSTANCE.mapJavaToKotlin(fqName.toSafe(), classDescriptor.builtIns)
+                    else null
             val mappedQName = if (mappedDescriptor == null) null else DescriptorUtils.getFqName(mappedDescriptor).asString()
             if (qualifiedName == mappedQName) return true
 

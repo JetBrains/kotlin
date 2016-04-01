@@ -165,10 +165,12 @@ public abstract class KotlinBuiltIns {
 
 
         public final FqName throwable = fqName("Throwable");
+        public final FqName comparable = fqName("Comparable");
 
         public final FqName deprecated = fqName("Deprecated");
         public final FqName deprecationLevel = fqName("DeprecationLevel");
         public final FqName extensionFunctionType = fqName("ExtensionFunctionType");
+        public final FqName annotation = fqName("Annotation");
         public final FqName target = annotationName("Target");
         public final FqName annotationTarget = annotationName("AnnotationTarget");
         public final FqName annotationRetention = annotationName("AnnotationRetention");
@@ -292,10 +294,26 @@ public abstract class KotlinBuiltIns {
             FqName parent = fqName.parent();
             BuiltInsPackageFragment packageFragment = packageNameToPackageFragment.get(parent);
             if (packageFragment != null) {
-                return getBuiltInClassByNameNullable(fqName.shortName(), packageFragment);
+                ClassDescriptor descriptor = getBuiltInClassByNameNullable(fqName.shortName(), packageFragment);
+                if (descriptor != null) {
+                    return descriptor;
+                }
+            }
+
+            ClassDescriptor possiblyOuterClass = getBuiltInClassByFqNameNullable(parent);
+            if (possiblyOuterClass != null) {
+                return (ClassDescriptor) possiblyOuterClass.getUnsubstitutedInnerClassesScope().getContributedClassifier(
+                        fqName.shortName(), NoLookupLocation.FROM_BUILTINS);
             }
         }
         return null;
+    }
+
+    @NotNull
+    public ClassDescriptor getBuiltInClassByFqName(@NotNull FqName fqName) {
+        ClassDescriptor descriptor = getBuiltInClassByFqNameNullable(fqName);
+        assert descriptor != null : "Can't find built-in class " + fqName;
+        return descriptor;
     }
 
     @Nullable
@@ -406,6 +424,11 @@ public abstract class KotlinBuiltIns {
     @NotNull
     public static String getFunctionName(int parameterCount) {
         return "Function" + parameterCount;
+    }
+
+    @NotNull
+    public static FqName getFunctionFqName(int parameterCount) {
+        return BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier(getFunctionName(parameterCount)));
     }
 
     @NotNull
@@ -913,6 +936,10 @@ public abstract class KotlinBuiltIns {
         }
 
         return false;
+    }
+
+    public static FqName getPrimitiveFqName(@NotNull PrimitiveType primitiveType) {
+        return BUILT_INS_PACKAGE_FQ_NAME.child(primitiveType.getTypeName());
     }
 
     public static boolean isSuppressAnnotation(@NotNull AnnotationDescriptor annotationDescriptor) {

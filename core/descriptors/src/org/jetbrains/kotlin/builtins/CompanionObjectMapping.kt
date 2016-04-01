@@ -17,25 +17,29 @@
 package org.jetbrains.kotlin.builtins
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import java.util.*
 
-class CompanionObjectMapping(private val builtIns: KotlinBuiltIns) {
-    private val classes = linkedSetOf<ClassDescriptor>()
+class CompanionObjectMapping {
+    private val classesFqNames = linkedSetOf<FqName>()
 
     init {
         for (type in PrimitiveType.NUMBER_TYPES) {
-            classes.add(builtIns.getPrimitiveClassDescriptor(type))
+            classesFqNames.add(KotlinBuiltIns.getPrimitiveFqName(type))
         }
-        classes.add(builtIns.string)
-        classes.add(builtIns.enum)
+        classesFqNames.add(KotlinBuiltIns.FQ_NAMES.string.toSafe())
+        classesFqNames.add(KotlinBuiltIns.FQ_NAMES._enum.toSafe())
     }
 
-    fun allClassesWithIntrinsicCompanions(): Set<ClassDescriptor> =
-            Collections.unmodifiableSet(classes)
+    fun allClassesWithIntrinsicCompanions(): Set<FqName> =
+            Collections.unmodifiableSet(classesFqNames)
 
     fun hasMappingToObject(classDescriptor: ClassDescriptor): Boolean {
-        return DescriptorUtils.isCompanionObject(classDescriptor) &&
-               classDescriptor.containingDeclaration in classes
+        if (!DescriptorUtils.isCompanionObject(classDescriptor)) return false
+        val fqName = DescriptorUtils.getFqName(classDescriptor.containingDeclaration)
+        if (!fqName.isSafe) return false
+
+        return fqName.toSafe() in classesFqNames
     }
 }

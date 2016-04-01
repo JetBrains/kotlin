@@ -21,6 +21,7 @@ import com.intellij.psi.PsiImportStatementBase
 import com.intellij.psi.PsiJavaCodeReferenceElement
 import org.jetbrains.kotlin.asJava.KtLightClass
 import org.jetbrains.kotlin.asJava.KtLightClassForFacade
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.j2k.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
@@ -68,7 +69,7 @@ private fun Converter.filterImport(name: String, ref: PsiJavaCodeReferenceElemen
     if (annotationConverter.isImportNotRequired(name)) return null
 
     // If imported class has a kotlin analog, drop the import
-    if (!JavaToKotlinClassMap.INSTANCE.mapPlatformClass(FqName(name)).isEmpty()) return null
+    if (!JavaToKotlinClassMap.INSTANCE.mapPlatformClass(FqName(name), DefaultBuiltIns.Instance).isEmpty()) return null
 
     val target = ref.resolve()
     if (target is KtLightClassForFacade) {

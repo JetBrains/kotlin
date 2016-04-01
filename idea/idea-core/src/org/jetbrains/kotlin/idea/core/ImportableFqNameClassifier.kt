@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.core
 
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.load.java.components.JavaAnnotationMapper
 import org.jetbrains.kotlin.name.FqName
@@ -66,7 +67,7 @@ class ImportableFqNameClassifier(private val file: KtFile) {
         }
 
         return when {
-            JavaToKotlinClassMap.INSTANCE.mapPlatformClass(fqName).isNotEmpty()
+            JavaToKotlinClassMap.INSTANCE.mapPlatformClass(fqName, DefaultBuiltIns.Instance).isNotEmpty()
                     || JavaAnnotationMapper.javaToKotlinNameMap[fqName] != null -> Classification.notToBeUsedInKotlin
 
             fqName.parent() == file.packageFqName -> Classification.fromCurrentPackage
