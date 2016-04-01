@@ -1540,6 +1540,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("OverrideVal.kt")
+        public void testOverrideVal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/OverrideVal.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("TopLevelVal.kt")
         public void testTopLevelVal() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/TopLevelVal.kt");

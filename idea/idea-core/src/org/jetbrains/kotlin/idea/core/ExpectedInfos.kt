@@ -615,6 +615,7 @@ class ExpectedInfos(
                             ?: property.builtIns.nullableNothingType.toFuzzyType(emptyList())
 
         val explicitPropertyType = property.fuzzyReturnType()?.check { propertyDeclaration.typeReference != null }
+                                   ?: property.overriddenDescriptors.singleOrNull()?.fuzzyReturnType() // for override properties use super property type as explicit (if not specified)
         val typesWithGetDetector = TypesWithGetValueDetector(scope, indicesHelper, propertyOwnerType, explicitPropertyType)
         val typesWithSetDetector = if (property.isVar) TypesWithSetValueDetector(scope, indicesHelper, propertyOwnerType) else null
 
