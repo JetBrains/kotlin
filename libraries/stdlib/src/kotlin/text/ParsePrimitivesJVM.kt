@@ -16,28 +16,28 @@ public inline fun String.toBoolean(): Boolean = java.lang.Boolean.parseBoolean(t
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
 @kotlin.internal.InlineOnly
-public inline fun String.toByte(): Byte = java.lang.Byte.parseByte(this)
+public inline fun String.toByte(): Byte = java.lang.Byte.parseByte(this.removePrefix("+"))
 
 /**
  * Parses the string as a [Short] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
 @kotlin.internal.InlineOnly
-public inline fun String.toShort(): Short = java.lang.Short.parseShort(this)
+public inline fun String.toShort(): Short = java.lang.Short.parseShort(this.removePrefix("+"))
 
 /**
  * Parses the string as an [Int] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
 @kotlin.internal.InlineOnly
-public inline fun String.toInt(): Int = java.lang.Integer.parseInt(this)
+public inline fun String.toInt(): Int = java.lang.Integer.parseInt(this.removePrefix("+"))
 
 /**
  * Parses the string as a [Long] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
 @kotlin.internal.InlineOnly
-public inline fun String.toLong(): Long = java.lang.Long.parseLong(this)
+public inline fun String.toLong(): Long = java.lang.Long.parseLong(this.removePrefix("+"))
 
 /**
  * Parses the string as a [Float] number and returns the result.
