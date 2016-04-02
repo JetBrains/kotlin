@@ -24,7 +24,8 @@ class ParsePrimitivesJVMTest {
     @test fun toShort() {
         CompareBehaviorContext(String::toShort, String::toShortOrNull).apply {
 
-            assertProduce("77", 77.toShort())
+            assertProduce("+77", 77.toShort())
+            assertProduce("32767", Short.MAX_VALUE)
             assertProduce("-32768", Short.MIN_VALUE)
             assertFailsOrNull("+32768")
         }
@@ -33,8 +34,8 @@ class ParsePrimitivesJVMTest {
     @test fun toInt() {
         CompareBehaviorContext(String::toInt, String::toIntOrNull).apply {
 
-            assertProduce("77", 77)
-            assertProduce("+2147483647", Int.MAX_VALUE)
+            assertProduce("+77", 77)
+            assertProduce("2147483647", Int.MAX_VALUE)
             assertProduce("-2147483648", Int.MIN_VALUE)
 
             assertFailsOrNull("2147483648")
@@ -62,7 +63,7 @@ class ParsePrimitivesJVMTest {
     @test fun toFloat() {
         CompareBehaviorContext(String::toFloat, String::toFloatOrNull).apply {
 
-            assertProduce("77.0", 77.0f)
+            assertProduce("+77.0", 77.0f)
             assertProduce("-1e39", Float.NEGATIVE_INFINITY)
             assertProduce("1000000000000000000000000000000000000000", Float.POSITIVE_INFINITY)
             assertFailsOrNull("dark side")
