@@ -21,6 +21,7 @@ import com.google.common.collect.Multimap
 import com.google.common.collect.Sets
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -55,6 +56,9 @@ class DeclarationResolver(
             val descriptorMap = HashMultimap.create<Name, DeclarationDescriptor>()
             for (desc in classDescriptor.unsubstitutedMemberScope.getContributedDescriptors()) {
                 if (desc is ClassDescriptor || desc is PropertyDescriptor) {
+                    if ((desc is ClassDescriptor) && desc.kind == ClassKind.ENUM_ENTRY) {
+                        continue
+                    }
                     descriptorMap.put(desc.name, desc)
                 }
             }
