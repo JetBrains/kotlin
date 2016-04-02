@@ -33,6 +33,14 @@
                      hasStaticDescription="true"
                      level="WARNING" />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.configuration.SameVersionInspection"
+                     displayName="Kotlin Maven: kotlin-test-junit inspection"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     language="XML"
+                     hasStaticDescription="true"
+                     level="WARNING" />
+
     <intentionAction>
       <className>org.jetbrains.kotlin.idea.configuration.MavenPluginSourcesMoveToBuild</className>
       <category>Kotlin</category>
