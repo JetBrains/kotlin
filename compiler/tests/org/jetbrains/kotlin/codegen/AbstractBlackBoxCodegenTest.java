@@ -55,12 +55,10 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
 
     @Override
     protected void doMultiFileTest(@NotNull File wholeFile, @NotNull List<TestFile> files, @Nullable File javaFilesDir) throws Exception {
-        TestJdkKind jdkKind = TestJdkKind.MOCK_JDK;
+        TestJdkKind jdkKind = getJdkKind(files);
+
         List<String> javacOptions = new ArrayList<String>(0);
         for (TestFile file : files) {
-            if (InTextDirectivesUtils.isDirectiveDefined(file.content, "FULL_JDK")) {
-                jdkKind = TestJdkKind.FULL_JDK;
-            }
             if (InTextDirectivesUtils.isDirectiveDefined(file.content, "WITH_RUNTIME")) {
                 addRuntime = true;
             }
