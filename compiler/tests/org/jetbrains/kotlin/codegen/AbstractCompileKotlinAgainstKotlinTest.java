@@ -69,10 +69,10 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
         assert files.size() == 2 : "There should be exactly two files in this test";
         TestFile fileA = files.get(0);
         TestFile fileB = files.get(1);
-        ClassFileFactory factoryA = compileA(fileA.name, fileA.content);
+        ClassFileFactory factoryA = compileA(fileA.name, fileA.content, files);
         ClassFileFactory factoryB = null;
         try {
-            factoryB = compileB(fileB.name, fileB.content);
+            factoryB = compileB(fileB.name, fileB.content, files);
             invokeBox(PackagePartClassUtils.getFilePartShortName(new File(fileB.name).getName()));
         }
         catch (Throwable e) {
@@ -101,16 +101,16 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
     }
 
     @NotNull
-    protected ClassFileFactory compileA(@NotNull String fileName, @NotNull String content) throws IOException {
+    protected ClassFileFactory compileA(@NotNull String fileName, @NotNull String content, List<TestFile> files) throws IOException {
         KotlinCoreEnvironment environment =
-                KotlinTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(getTestRootDisposable(), ConfigurationKind.ALL);
+                KotlinTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(getTestRootDisposable(), ConfigurationKind.ALL, getJdkKind(files));
         return compileKotlin(fileName, content, aDir, environment, getTestRootDisposable());
     }
 
     @NotNull
-    protected ClassFileFactory compileB(@NotNull String fileName, @NotNull String content) throws IOException {
+    protected ClassFileFactory compileB(@NotNull String fileName, @NotNull String content, List<TestFile> files) throws IOException {
         CompilerConfiguration configurationWithADirInClasspath = KotlinTestUtils
-                .compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, KotlinTestUtils.getAnnotationsJar(), aDir);
+                .compilerConfigurationForTests(ConfigurationKind.ALL, getJdkKind(files), KotlinTestUtils.getAnnotationsJar(), aDir);
 
         KotlinCoreEnvironment environment =
                 KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configurationWithADirInClasspath, EnvironmentConfigFiles.JVM_CONFIG_FILES);

@@ -1,5 +1,5 @@
 // FILE: 1.kt
-
+// WITH_RUNTIME
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("TestKt")
 package test

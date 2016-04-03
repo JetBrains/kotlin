@@ -1,5 +1,5 @@
 // FILE: 1.kt
-
+// WITH_REFLECT
 package test
 
 interface F<T> {
