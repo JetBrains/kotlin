@@ -7,6 +7,7 @@ public fun baz(): kotlin.Nothing
 public fun check(): kotlin.Unit
 public fun foo(): kotlin.Nothing
 public fun gav(): kotlin.Any
+public fun nonLocalReturn(): kotlin.Nothing
 
 public interface Base {
     public abstract val x: kotlin.Int
