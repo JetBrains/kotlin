@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.util
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
+import com.intellij.psi.impl.source.PostprocessReformattingAspect
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
@@ -235,10 +236,16 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
         fun shortenElements(elementSetToUpdate: MutableSet<KtElement>) {
             for (element in elementsToShorten) {
                 if (!element.isValid) continue
-                val newElement = shortenElement(element)
+
+                var newElement: KtElement? = null
+                // we never want any reformatting to happen because sometimes it causes strange effects (see KT-11633)
+                PostprocessReformattingAspect.getInstance(element.project).disablePostprocessFormattingInside {
+                    newElement = shortenElement(element)
+                }
+
                 if (element in elementSetToUpdate && newElement != element) {
                     elementSetToUpdate.remove(element)
-                    elementSetToUpdate.add(newElement)
+                    elementSetToUpdate.add(newElement!!)
                 }
             }
         }
