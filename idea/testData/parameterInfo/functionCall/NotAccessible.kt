@@ -6,6 +6,7 @@ class C {
 fun f(c: C) {
     c.foo(<caret>1)
 }
+// TODO: wrong name resolution. see: KT-11763
 /*
-Text: (<no parameters>), Disabled: true, Strikeout: false, Green: true
+Text: (<no parameters>), Disabled: true, Strikeout: false, Green: false
 */
