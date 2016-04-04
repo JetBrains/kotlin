@@ -21,7 +21,7 @@ fun call(): String {
 }
 
 inline fun nonLocal(): String {
-    mysynchronized(Object()) {
+    mysynchronized("__LOCK__") {
         return "nonLocal"
     }
     return "local"

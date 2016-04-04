@@ -13,6 +13,8 @@ inline fun foo(f: () -> Unit) {
 
 // FILE: 2.kt
 
+// TODO: enabled when KT-6397 gets fixed
+// TARGET_BACKEND: JVM
 import test.*
 
 var p = "fail"
