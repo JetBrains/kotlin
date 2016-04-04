@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.configuration
+package org.jetbrains.kotlin.idea.maven.inspections
 
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.util.xml.DomFileElement

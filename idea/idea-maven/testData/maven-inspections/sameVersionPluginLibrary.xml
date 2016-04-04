@@ -32,6 +32,6 @@
     </build>
 </project>
 
-<!-- inspection: org.jetbrains.kotlin.idea.configuration.SameVersionInspection -->
+<!-- inspection: org.jetbrains.kotlin.idea.maven.inspections.SameVersionInspection -->
 <!-- problem: on ${kotlin.version.1}, title Plugin version (1.0.1) is not the same as library version (1.0.1-2) -->
 <!-- problem: on ${kotlin.version.2}, title Plugin version (1.0.1) is not the same as library version (1.0.1-2) -->

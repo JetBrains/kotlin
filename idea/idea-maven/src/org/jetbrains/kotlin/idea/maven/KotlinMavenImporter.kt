@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.configuration
+package org.jetbrains.kotlin.idea.maven
 
 import com.intellij.openapi.components.*
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider
@@ -148,15 +148,15 @@ class KotlinImporterComponent : PersistentStateComponent<KotlinImporterComponent
 
     val addedSources = Collections.synchronizedSet(HashSet<String>())
 
-    override fun loadState(state: KotlinImporterComponent.State?) {
+    override fun loadState(state: State?) {
         addedSources.clear()
         if (state != null) {
             addedSources.addAll(state.directories)
         }
     }
 
-    override fun getState(): KotlinImporterComponent.State {
-        return KotlinImporterComponent.State(addedSources.sorted())
+    override fun getState(): State {
+        return State(addedSources.sorted())
     }
 }
 

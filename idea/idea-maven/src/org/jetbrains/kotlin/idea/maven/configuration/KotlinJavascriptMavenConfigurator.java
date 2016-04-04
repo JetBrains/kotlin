@@ -14,32 +14,35 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.configuration;
+package org.jetbrains.kotlin.idea.maven.configuration;
 
 import com.intellij.openapi.module.Module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.dom.model.MavenDomPlugin;
+import org.jetbrains.kotlin.idea.maven.PomFile;
+import org.jetbrains.kotlin.js.resolve.JsPlatform;
 import org.jetbrains.kotlin.resolve.TargetPlatform;
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 
-public class KotlinJavaMavenConfigurator extends KotlinMavenConfigurator {
-    private static final String NAME = "maven";
-    public static final String STD_LIB_ID = "kotlin-stdlib";
-    public static final String TEST_LIB_ID = "kotlin-test";
-    private static final String PRESENTABLE_TEXT = "Maven";
+public class KotlinJavascriptMavenConfigurator extends KotlinMavenConfigurator {
+    private static final String NAME = "js maven";
+    public static final String STD_LIB_ID = "kotlin-js-library";
+    private static final String JS_GOAL = "js";
+    private static final String JS_TEST_GOAL = "test-js";
+    private static final String JS_EXECUTION_ID = "js";
+    private static final String PRESENTABLE_TEXT = "JavaScript Maven - experimental";
 
-    public KotlinJavaMavenConfigurator() {
-        super(STD_LIB_ID, TEST_LIB_ID, false, NAME, PRESENTABLE_TEXT);
+    public KotlinJavascriptMavenConfigurator() {
+        super(STD_LIB_ID, null, false, NAME, PRESENTABLE_TEXT);
     }
 
     @Override
     protected boolean isKotlinModule(@NotNull Module module) {
-        return ConfigureKotlinInProjectUtilsKt.hasKotlinJvmRuntimeInScope(module);
+        return ConfigureKotlinInProjectUtilsKt.hasKotlinJsRuntimeInScope(module);
     }
 
     @Override
     protected boolean isRelevantGoal(@NotNull String goalName) {
-        return goalName.equals(PomFile.KotlinGoals.INSTANCE.getCompile());
+        return goalName.equals(PomFile.KotlinGoals.INSTANCE.getJs());
     }
 
     @Override
@@ -50,13 +53,19 @@ public class KotlinJavaMavenConfigurator extends KotlinMavenConfigurator {
 
     @NotNull
     @Override
+    protected String getExecutionId(boolean isTest) {
+        return JS_EXECUTION_ID + (isTest ? "-test" : "");
+    }
+
+    @NotNull
+    @Override
     protected String getGoal(boolean isTest) {
-        return isTest ? PomFile.KotlinGoals.INSTANCE.getTestCompile() : PomFile.KotlinGoals.INSTANCE.getCompile();
+        return isTest ? JS_TEST_GOAL : JS_GOAL;
     }
 
     @NotNull
     @Override
     public TargetPlatform getTargetPlatform() {
-        return JvmPlatform.INSTANCE;
+        return JsPlatform.INSTANCE;
     }
 }

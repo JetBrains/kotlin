@@ -35,7 +35,7 @@ import com.intellij.testFramework.InspectionTestUtil
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.util.indexing.FileBasedIndex
 import org.jetbrains.jps.model.java.JavaSourceRootType
-import org.jetbrains.kotlin.idea.configuration.KotlinMavenPluginPhaseInspection
+import org.jetbrains.kotlin.idea.maven.inspections.KotlinMavenPluginPhaseInspection
 import org.jetbrains.kotlin.idea.refactoring.toPsiDirectory
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import java.io.File
