@@ -1317,6 +1317,22 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
             """
     )
 
+    fun testClassInit() = doFileTest(
+            """
+            class Foo {
+                init<caret>
+            }
+            """
+            ,
+            """
+            class Foo {
+                init {
+                    <caret>
+                }
+            }
+            """
+    )
+
     fun doFunTest(before: String, after: String) {
         fun String.withFunContext(): String {
             val bodyText = "//----\n${this.trimIndent()}\n//----"
