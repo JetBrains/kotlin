@@ -635,6 +635,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         protected final Type asmElementType;
 
         protected int loopParameterVar;
+        protected Type loopParameterType;
 
         private AbstractForLoopGenerator(@NotNull KtForExpression forExpression) {
             this.forExpression = forExpression;
@@ -658,14 +659,14 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             if (loopParameter != null) {
                 // E e = tmp<iterator>.next()
                 final VariableDescriptor parameterDescriptor = bindingContext.get(VALUE_PARAMETER, loopParameter);
-                @SuppressWarnings("ConstantConditions") final Type asmTypeForParameter = asmType(parameterDescriptor.getType());
-                loopParameterVar = myFrameMap.enter(parameterDescriptor, asmTypeForParameter);
+                loopParameterType = asmType(parameterDescriptor.getType());
+                loopParameterVar = myFrameMap.enter(parameterDescriptor, loopParameterType);
                 scheduleLeaveVariable(new Runnable() {
                     @Override
                     public void run() {
                         myFrameMap.leave(parameterDescriptor);
                         v.visitLocalVariable(parameterDescriptor.getName().asString(),
-                                             asmTypeForParameter.getDescriptor(), null,
+                                             loopParameterType.getDescriptor(), null,
                                              bodyStart, bodyEnd,
                                              loopParameterVar);
                     }
@@ -676,6 +677,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 assert multiParameter != null;
 
                 // E tmp<e> = tmp<iterator>.next()
+                loopParameterType = asmElementType;
                 loopParameterVar = createLoopTempVariable(asmElementType);
             }
         }
@@ -843,7 +845,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                     makeFakeCall(new TransientReceiver(iteratorCall.getResultingDescriptor().getReturnType()));
             StackValue value = invokeFunction(fakeCall, nextCall, StackValue.local(iteratorVarIndex, asmTypeForIterator));
             //noinspection ConstantConditions
-            StackValue.local(loopParameterVar, asmType(nextCall.getResultingDescriptor().getReturnType())).store(value, v);
+            StackValue.local(loopParameterVar, loopParameterType).store(value, v);
         }
 
         @Override
