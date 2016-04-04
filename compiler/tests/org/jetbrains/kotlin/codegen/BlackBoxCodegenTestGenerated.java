@@ -3517,6 +3517,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("forArrayList.kt")
+        public void testForArrayList() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forArrayList.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("forArrayListMultiDecl.kt")
+        public void testForArrayListMultiDecl() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forArrayListMultiDecl.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("forInSmartCastToArray.kt")
         public void testForInSmartCastToArray() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forInSmartCastToArray.kt");
