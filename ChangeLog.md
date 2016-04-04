@@ -28,6 +28,7 @@
 - Configure Kotlin: restore all changed files in undo action
 - Convert java expression to kotlin when open Evaluate Expression dialog from Variables View
 - Fix Evaluate Expression for expression created for array element
+- Avoid 1s delay in completion in debugger fields if session is not stopped on a breakpoint
 
 ### Java to Kotlin converter
 
