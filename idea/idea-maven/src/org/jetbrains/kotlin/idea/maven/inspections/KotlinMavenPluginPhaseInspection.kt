@@ -36,7 +36,6 @@ import org.jetbrains.idea.maven.model.MavenId
 import org.jetbrains.idea.maven.model.MavenPlugin
 import org.jetbrains.idea.maven.project.MavenProjectsManager
 import org.jetbrains.idea.maven.utils.MavenArtifactScope
-import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.maven.PomFile
 import org.jetbrains.kotlin.idea.maven.configuration.KotlinJavaMavenConfigurator
 import org.jetbrains.kotlin.idea.maven.configuration.KotlinJavascriptMavenConfigurator
@@ -99,8 +98,8 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
                     }
                 }
 
-                val stdlibDependencies  = mavenProject.findDependencies(KotlinJavaMavenConfigurator.GROUP_ID, KotlinJavaMavenConfigurator.STD_LIB_ID)
-                val jsDependencies  = mavenProject.findDependencies(KotlinJavaMavenConfigurator.GROUP_ID, KotlinJavascriptMavenConfigurator.STD_LIB_ID)
+                val stdlibDependencies  = mavenProject.findDependencies(KotlinMavenConfigurator.GROUP_ID, KotlinJavaMavenConfigurator.STD_LIB_ID)
+                val jsDependencies  = mavenProject.findDependencies(KotlinMavenConfigurator.GROUP_ID, KotlinJavascriptMavenConfigurator.STD_LIB_ID)
 
                 if (hasJvmExecution && stdlibDependencies.isEmpty()) {
                     holder.createProblem(kotlinPlugin.artifactId.createStableCopy(),
@@ -117,7 +116,7 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
             }
         }
 
-        val stdlibDependencies = pom.findDependencies(MavenId(KotlinJavaMavenConfigurator.GROUP_ID, KotlinJavaMavenConfigurator.STD_LIB_ID, null))
+        val stdlibDependencies = pom.findDependencies(MavenId(KotlinMavenConfigurator.GROUP_ID, KotlinJavaMavenConfigurator.STD_LIB_ID, null))
         if (!hasJvmExecution && stdlibDependencies.isNotEmpty()) {
             stdlibDependencies.forEach { dep ->
                 holder.createProblem(dep.artifactId.createStableCopy(),
@@ -127,7 +126,7 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
             }
         }
 
-        val stdlibJsDependencies = pom.findDependencies(MavenId(KotlinJavaMavenConfigurator.GROUP_ID, KotlinJavascriptMavenConfigurator.STD_LIB_ID, null))
+        val stdlibJsDependencies = pom.findDependencies(MavenId(KotlinMavenConfigurator.GROUP_ID, KotlinJavascriptMavenConfigurator.STD_LIB_ID, null))
         if (!hasJsExecution && stdlibJsDependencies.isNotEmpty()) {
             stdlibJsDependencies.forEach { dep ->
                 holder.createProblem(dep.artifactId.createStableCopy(),
@@ -175,7 +174,7 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val file = PomFile(pomFile)
-            file.addDependency(MavenId(KotlinJavaMavenConfigurator.GROUP_ID, id, version), MavenArtifactScope.COMPILE)
+            file.addDependency(MavenId(KotlinMavenConfigurator.GROUP_ID, id, version), MavenArtifactScope.COMPILE)
         }
     }
 
