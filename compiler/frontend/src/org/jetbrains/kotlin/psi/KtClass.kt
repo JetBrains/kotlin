@@ -62,7 +62,7 @@ open class KtClass : KtClassOrObject {
     }
 
     protected fun getQualifiedName(): String? {
-        val stub = getStub()
+        val stub = stub
         if (stub != null) {
             val fqName = stub.getFqName()
             return fqName?.asString()
@@ -71,12 +71,12 @@ open class KtClass : KtClassOrObject {
         val parts = ArrayList<String>()
         var current: KtClassOrObject? = this
         while (current != null) {
-            parts.add(current.getName()!!)
+            parts.add(current.name!!)
             current = PsiTreeUtil.getParentOfType<KtClassOrObject>(current, KtClassOrObject::class.java)
         }
-        val file = getContainingFile()
+        val file = containingFile
         if (file !is KtFile) return null
-        val fileQualifiedName = file.getPackageFqName().asString()
+        val fileQualifiedName = file.packageFqName.asString()
         if (!fileQualifiedName.isEmpty()) {
             parts.add(fileQualifiedName)
         }

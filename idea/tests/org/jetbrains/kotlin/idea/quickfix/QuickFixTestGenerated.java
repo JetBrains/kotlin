@@ -7492,6 +7492,38 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @TestMetadata("idea/testData/quickfix/typeMismatch/letImplement")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class LetImplement extends AbstractQuickFixTest {
+            public void testAllFilesPresentInLetImplement() throws Exception {
+                KotlinTestUtils
+                        .assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch/letImplement"),
+                                                         Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+            }
+
+            @TestMetadata("letClassImplementInterface.kt")
+            public void testLetClassImplementInterface() throws Exception {
+                String fileName = KotlinTestUtils
+                        .navigationMetadata("idea/testData/quickfix/typeMismatch/letImplement/letClassImplementInterface.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("letImplementImpossible.kt")
+            public void testLetImplementImpossible() throws Exception {
+                String fileName =
+                        KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/letImplement/letImplementImpossible.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("letInterfaceExtendInterface.kt")
+            public void testLetInterfaceExtendInterface() throws Exception {
+                String fileName = KotlinTestUtils
+                        .navigationMetadata("idea/testData/quickfix/typeMismatch/letImplement/letInterfaceExtendInterface.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("idea/testData/quickfix/typeMismatch/numberConversion")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
