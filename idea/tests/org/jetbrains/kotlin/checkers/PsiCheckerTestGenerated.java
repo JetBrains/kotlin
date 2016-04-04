@@ -526,6 +526,12 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             doTest(fileName);
         }
 
+        @TestMetadata("InitializerInInterface.kt")
+        public void testInitializerInInterface() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/InitializerInInterface.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("InterfaceDeclarationAsExpression.kt")
         public void testInterfaceDeclarationAsExpression() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/InterfaceDeclarationAsExpression.kt");
