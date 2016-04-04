@@ -56,6 +56,8 @@ public class KtStringTemplateExpression extends KtExpressionImpl implements PsiL
 
     @Override
     public PsiLanguageInjectionHost updateText(@NotNull String text) {
+        KtExpression newExpression = new KtPsiFactory(getProject()).createExpressionIfPossible(text);
+        if (newExpression instanceof KtStringTemplateExpression) return (KtStringTemplateExpression) replace(newExpression);
         return ElementManipulators.handleContentChange(this, text);
     }
 

@@ -18,9 +18,10 @@ package org.jetbrains.kotlin.idea.refactoring.rename
 
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
-import com.intellij.codeInsight.TargetElementUtilBase
+import com.intellij.codeInsight.TargetElementUtil
 import com.intellij.lang.properties.psi.PropertiesFile
 import com.intellij.lang.properties.psi.Property
+import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.module.Module
@@ -32,6 +33,7 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.psi.*
+import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException
 import com.intellij.refactoring.MultiFileTestCase
@@ -46,10 +48,7 @@ import org.jetbrains.kotlin.idea.jsonUtils.getNullableString
 import org.jetbrains.kotlin.idea.jsonUtils.getString
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.search.allScope
-import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
-import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
-import org.jetbrains.kotlin.idea.test.KotlinMultiFileTestCase
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.KtFile
@@ -93,7 +92,11 @@ abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
             ConfigLibraryUtil.configureKotlinRuntimeAndSdk(myModule, PluginTestCaseBase.mockJdk())
         }
 
+        val fixtureClasses = renameObject.getAsJsonArray("fixtureClasses")?.map { it.asString } ?: emptyList()
+
         try {
+            fixtureClasses.forEach { TestFixtureExtension.loadFixture(it, module) }
+
             val context = TestContext()
 
             when (RenameType.valueOf(renameTypeStr)) {
@@ -137,6 +140,13 @@ abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
                 Assert.fail("""Unexpected "hint: $hintExceptionUnquoted" """)
             }
         }
+        finally {
+            fixtureClasses.forEach { TestFixtureExtension.unloadFixture(it) }
+        }
+    }
+
+    protected open fun configExtra(rootDir: VirtualFile, renameParamsObject: JsonObject) {
+
     }
 
     private fun renameMarkedElement(renameParamsObject: JsonObject, context: TestContext) {
@@ -144,21 +154,34 @@ abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
         val newName = renameParamsObject.getString("newName")
 
         doTestCommittingDocuments { rootDir, rootAfter ->
-            val mainFile = rootDir.findChild(mainFilePath)!!
+            configExtra(rootDir, renameParamsObject)
+
+            val mainFile = rootDir.findFileByRelativePath(mainFilePath)!!
             val psiFile = PsiManager.getInstance(context.project).findFile(mainFile)!!
 
             val doc = PsiDocumentManager.getInstance(project).getDocument(psiFile)!!
             val marker = doc.extractMarkerOffset(project, "/*rename*/")
             assert(marker != -1)
 
-            val toRename = if (renameParamsObject["byRef"]?.asBoolean ?: false) {
-                val editor = createEditor(mainFile)
-                editor.caretModel.moveToOffset(marker)
-                TargetElementUtilBase.findTargetElement(editor, TargetElementUtilBase.getInstance().allAccepted)!!
+            val isByRef = renameParamsObject["byRef"]?.asBoolean ?: false
+            val isInjected = renameParamsObject["injected"]?.asBoolean ?: false
+            var currentEditor: Editor? = null
+            var currentFile: PsiFile = psiFile
+            if (isByRef || isInjected) {
+                currentEditor = createEditor(mainFile)
+                currentEditor.caretModel.moveToOffset(marker)
+                if (isInjected) {
+                    currentFile = InjectedLanguageUtil.findInjectedPsiNoCommit(psiFile, marker)!!
+                    currentEditor = InjectedLanguageUtil.getInjectedEditorForInjectedFile(currentEditor, currentFile)
+                }
+            }
+            val toRename = if (isByRef) {
+                TargetElementUtil.findTargetElement(currentEditor, TargetElementUtil.getInstance().allAccepted)!!
             }
             else {
-                psiFile.findElementAt(marker)!!.getNonStrictParentOfType<PsiNamedElement>()!!
+                currentFile.findElementAt(marker)!!.getNonStrictParentOfType<PsiNamedElement>()!!
             }
+
             val substitution = RenamePsiElementProcessor.forElement(toRename).substituteElementToRename(toRename, null)
 
             runRenameProcessor(context, newName, substitution, true, true)

@@ -33,6 +33,7 @@
 package org.jetbrains.kotlin.asJava
 
 import com.intellij.psi.ClassFileViewProvider
+import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.impl.compiled.ClsFileImpl
 import com.intellij.psi.stubs.PsiClassHolderFileStub
 import org.jetbrains.kotlin.name.FqName
@@ -51,4 +52,9 @@ open class FakeFileForLightClass(
     override fun getClasses() = arrayOf(lightClass())
 
     override fun getNavigationElement() = ktFile
+
+    override fun accept(visitor: PsiElementVisitor) {
+        // Prevent access to compiled PSI
+        // TODO: More complex traversal logic may be implemented when necessary
+    }
 }
