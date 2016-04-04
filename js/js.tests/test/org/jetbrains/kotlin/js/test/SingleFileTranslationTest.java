@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,9 @@ import org.jetbrains.kotlin.js.config.EcmaVersion;
 import org.jetbrains.kotlin.js.facade.MainCallParameters;
 import org.jetbrains.kotlin.js.test.rhino.RhinoFunctionResultChecker;
 import org.jetbrains.kotlin.js.test.rhino.RhinoSystemOutputChecker;
+
+import java.util.Collections;
+import java.util.List;
 
 import static org.jetbrains.kotlin.js.test.utils.JsTestUtils.readFile;
 
@@ -50,15 +53,27 @@ public abstract class SingleFileTranslationTest extends BasicTest {
         runFunctionOutputTestByPath(ecmaVersions, getInputFilePath(kotlinFilename), packageName, functionName, expectedResult);
     }
 
-    private void runFunctionOutputTestByPath(
+    protected void runFunctionOutputTestByPath(
             @NotNull Iterable<EcmaVersion> ecmaVersions,
             @NotNull String kotlinFilePath,
             @NotNull String packageName,
             @NotNull String functionName,
             @NotNull Object expectedResult
     ) throws Exception {
-        generateJavaScriptFiles(kotlinFilePath, MainCallParameters.noCall(), ecmaVersions);
-        runRhinoTests(getBaseName(kotlinFilePath), ecmaVersions, new RhinoFunctionResultChecker(TEST_MODULE, packageName, functionName, expectedResult));
+        runFunctionOutputTestByPaths(ecmaVersions, Collections.singletonList(kotlinFilePath), packageName, functionName, expectedResult);
+    }
+
+    protected void runFunctionOutputTestByPaths(
+            @NotNull Iterable<EcmaVersion> ecmaVersions,
+            @NotNull List<String> kotlinFilePaths,
+            @NotNull String packageName,
+            @NotNull String functionName,
+            @NotNull Object expectedResult
+    ) throws Exception {
+        String testName = getTestName(true);
+        generateJavaScriptFiles(kotlinFilePaths, testName, MainCallParameters.noCall(), ecmaVersions);
+        RhinoFunctionResultChecker checker = new RhinoFunctionResultChecker(TEST_MODULE, packageName, functionName, expectedResult);
+        runRhinoTests(testName, ecmaVersions, checker);
     }
 
     private void checkFooBoxIsTrue(@NotNull String filename, @NotNull Iterable<EcmaVersion> ecmaVersions) throws Exception {
@@ -88,6 +103,10 @@ public abstract class SingleFileTranslationTest extends BasicTest {
 
     protected void checkBlackBoxIsOkByPath(@NotNull String filePath) throws Exception {
         runFunctionOutputTestByPath(DEFAULT_ECMA_VERSIONS, filePath, getPackageName(filePath), TEST_FUNCTION, "OK");
+    }
+
+    protected void checkBlackBoxIsOkByPaths(@NotNull List<String> filePaths) throws Exception {
+        runFunctionOutputTestByPaths(DEFAULT_ECMA_VERSIONS, filePaths, getPackageName(filePaths.get(0)), TEST_FUNCTION, "OK");
     }
 
     protected void checkOutput(@NotNull String kotlinFilename,
