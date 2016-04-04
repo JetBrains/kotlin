@@ -6172,6 +6172,39 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/simplifyComparison")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class SimplifyComparison extends AbstractQuickFixTest {
+        public void testAllFilesPresentInSimplifyComparison() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/simplifyComparison"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("doubleNull.kt")
+        public void testDoubleNull() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/simplifyComparison/doubleNull.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notNull.kt")
+        public void testNotNull() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/simplifyComparison/notNull.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nullOrNotNull.kt")
+        public void testNullOrNotNull() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/simplifyComparison/nullOrNotNull.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("somethingAndNotNull.kt")
+        public void testSomethingAndNotNull() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/simplifyComparison/somethingAndNotNull.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/supercalls")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -7272,6 +7305,54 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("hasNextFunctionReturnTypeMismatch.kt")
         public void testHasNextFunctionReturnTypeMismatch() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/hasNextFunctionReturnTypeMismatch.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("letClassImplementAdditionalInterface.kt")
+        public void testLetClassImplementAdditionalInterface() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/letClassImplementAdditionalInterface.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("letClassImplementGenericInterface.kt")
+        public void testLetClassImplementGenericInterface() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/letClassImplementGenericInterface.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("letClassImplementGenericInterfaceTwice.kt")
+        public void testLetClassImplementGenericInterfaceTwice() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/letClassImplementGenericInterfaceTwice.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("letClassImplementGenericStarInterface.kt")
+        public void testLetClassImplementGenericStarInterface() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/letClassImplementGenericStarInterface.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("letClassImplementIndirectlyInheritedInterface.kt")
+        public void testLetClassImplementIndirectlyInheritedInterface() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/letClassImplementIndirectlyInheritedInterface.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("letClassImplementInterface.kt")
+        public void testLetClassImplementInterface() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/letClassImplementInterface.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("letInterfaceExtendInterface.kt")
+        public void testLetInterfaceExtendInterface() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/letInterfaceExtendInterface.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("letStringImplementInterface.kt")
+        public void testLetStringImplementInterface() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/letStringImplementInterface.kt");
             doTest(fileName);
         }
 

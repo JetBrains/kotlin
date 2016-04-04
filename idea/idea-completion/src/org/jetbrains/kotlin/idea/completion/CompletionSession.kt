@@ -78,6 +78,7 @@ abstract class CompletionSession(
     protected val moduleDescriptor = resolutionFacade.moduleDescriptor
     protected val project = position.project
     protected val isJvmModule = !ProjectStructureUtil.isJsKotlinModule(parameters.originalFile as KtFile)
+    protected val isDebuggerContext = file is KtCodeFragment
 
     protected val nameExpression: KtSimpleNameExpression?
     protected val expression: KtExpression?
@@ -191,7 +192,7 @@ abstract class CompletionSession(
         if (descriptor is DeclarationDescriptorWithVisibility) {
             val visible = descriptor.isVisible(position, callTypeAndReceiver.receiver as? KtExpression, bindingContext, resolutionFacade)
             if (visible) return true
-            return completeNonAccessible && (!descriptor.isFromLibrary() || file is KtCodeFragment)
+            return completeNonAccessible && (!descriptor.isFromLibrary() || isDebuggerContext)
         }
 
         return true
@@ -450,7 +451,7 @@ abstract class CompletionSession(
                 bindingContext, nameExpression, moduleDescriptor, resolutionFacade,
                 predictableSmartCastsOnly = true /* we don't include smart cast receiver types for "unpredictable" receiver value to mark members grayed */)
 
-        if (callTypeAndReceiver is CallTypeAndReceiver.SAFE) {
+        if (callTypeAndReceiver is CallTypeAndReceiver.SAFE || isDebuggerContext) {
             receiverTypes = receiverTypes!!.map { it.makeNotNullable() }
         }
 

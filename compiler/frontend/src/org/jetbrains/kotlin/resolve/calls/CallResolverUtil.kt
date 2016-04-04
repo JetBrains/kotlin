@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.resolve.validation.InfixValidator
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 enum class ResolveArgumentsMode {
@@ -47,7 +48,7 @@ enum class ResolveArgumentsMode {
 fun hasUnknownFunctionParameter(type: KotlinType): Boolean {
     assert(ReflectionTypes.isCallableType(type)) { "type $type is not a function or property" }
     return getParameterArgumentsOfCallableType(type).any {
-        TypeUtils.contains(it.type, DONT_CARE) || ErrorUtils.containsUninferredParameter(it.type)
+        it.type.contains { TypeUtils.isDontCarePlaceholder(it) } || ErrorUtils.containsUninferredParameter(it.type)
     }
 }
 

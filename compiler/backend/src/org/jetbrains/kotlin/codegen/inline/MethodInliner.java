@@ -292,8 +292,8 @@ public class MethodInliner {
                         super.visitMethodInsn(opcode, changeOwnerForExternalPackage(owner, opcode), name, desc, itf);
                     }
                 }
-                else if (ReifiedTypeInliner.isNeedClassReificationMarker(new MethodInsnNode(opcode, owner, name, desc, false))) {
-                    // we will put it if needed in anew processing
+                else if (!inliningContext.isInliningLambda && ReifiedTypeInliner.isNeedClassReificationMarker(new MethodInsnNode(opcode, owner, name, desc, false))) {
+                    //we shouldn't process here content of inlining lambda it should be reified at external level
                 }
                 else {
                     super.visitMethodInsn(opcode, changeOwnerForExternalPackage(owner, opcode), name, desc, itf);

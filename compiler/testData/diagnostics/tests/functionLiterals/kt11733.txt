@@ -1,0 +1,11 @@
+package
+
+public fun </*0*/ T> Predicate(/*0*/ x: (T?) -> kotlin.Boolean): Predicate<T>
+public fun foo(): kotlin.Unit
+public fun process(/*0*/ x: Predicate<kotlin.String>): kotlin.Unit
+
+public interface Predicate</*0*/ T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

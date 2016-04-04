@@ -6735,6 +6735,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("kt11733.kt")
+            public void testKt11733() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/kt11733.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt11733_1.kt")
+            public void testKt11733_1() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/kt11733_1.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kt2906.kt")
             public void testKt2906() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/kt2906.kt");

@@ -21,6 +21,7 @@ import com.intellij.debugger.engine.evaluation.CodeFragmentFactory
 import com.intellij.debugger.engine.evaluation.CodeFragmentKind
 import com.intellij.debugger.engine.evaluation.TextWithImports
 import com.intellij.debugger.jdi.StackFrameProxyImpl
+import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
@@ -28,6 +29,8 @@ import com.intellij.openapi.util.Key
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.PsiTypesUtil
+import com.intellij.util.IncorrectOperationException
 import com.intellij.util.concurrency.Semaphore
 import com.intellij.xdebugger.XDebuggerManager
 import com.intellij.xdebugger.impl.XDebugSessionImpl
@@ -40,10 +43,13 @@ import org.jetbrains.eval4j.jdi.asValue
 import org.jetbrains.kotlin.asJava.KtLightClass
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
+import org.jetbrains.kotlin.idea.debugger.KotlinEditorTextProvider
+import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
 import org.jetbrains.kotlin.idea.refactoring.j2kText
 import org.jetbrains.kotlin.idea.refactoring.quoteIfNeeded
-import org.jetbrains.kotlin.idea.debugger.KotlinEditorTextProvider
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
+import org.jetbrains.kotlin.j2k.AfterConversionPass
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
@@ -66,7 +72,7 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
                     project,
                     "fragment.kt",
                     item.text,
-                    item.imports,
+                    initImports(item.imports),
                     contextElement
             )
         }
@@ -75,7 +81,7 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
                     project,
                     "fragment.kt",
                     item.text,
-                    item.imports,
+                    initImports(item.imports),
                     contextElement
             )
         }
@@ -85,7 +91,7 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
 
             val debuggerContext = DebuggerManagerEx.getInstanceEx(project).context
             val debuggerSession = debuggerContext.debuggerSession
-            if (debuggerSession == null) {
+            if (debuggerSession == null ||  debuggerContext.suspendContext == null) {
                 null
             }
             else {
@@ -113,11 +119,73 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
         return codeFragment
     }
 
+    private fun initImports(imports: String?): String? {
+        if (imports != null && !imports.isEmpty()) {
+            return imports.split(KtCodeFragment.IMPORT_SEPARATOR)
+                    .mapNotNull { fixImportIfNeeded(it) }
+                    .joinToString(KtCodeFragment.IMPORT_SEPARATOR)
+        }
+        return null
+    }
+
+    private fun fixImportIfNeeded(import: String): String? {
+        // skip arrays
+        if (import.endsWith("[]")) {
+            return fixImportIfNeeded(import.removeSuffix("[]").trim())
+        }
+
+        // skip primitive types
+        if (PsiTypesUtil.boxIfPossible(import) != import) {
+            return null
+        }
+        return import
+    }
+
     private fun getWrappedContextElement(project: Project, context: PsiElement?)
             = wrapContextIfNeeded(project, getContextElement(context))
 
     override fun createPresentationCodeFragment(item: TextWithImports, context: PsiElement?, project: Project): JavaCodeFragment {
-        return createCodeFragment(item, context, project)
+        val kotlinCodeFragment = createCodeFragment(item, context, project)
+        if (PsiTreeUtil.hasErrorElements(kotlinCodeFragment) && kotlinCodeFragment is KtExpressionCodeFragment) {
+            val javaExpression = try {
+                PsiElementFactory.SERVICE.getInstance(project).createExpressionFromText(item.text, context)
+            }
+            catch(e: IncorrectOperationException) {
+                null
+            }
+
+            val importList = try {
+                kotlinCodeFragment.importsAsImportList()?.let {
+                    (PsiFileFactory.getInstance(project).createFileFromText(
+                            "dummy.java", JavaFileType.INSTANCE, it.text
+                    ) as? PsiJavaFile)?.importList
+                }
+            }
+            catch(e: IncorrectOperationException) {
+                null
+            }
+
+            if (javaExpression != null) {
+                var convertedFragment: KtExpressionCodeFragment? = null
+                project.executeWriteCommand("Convert java expression to kotlin in Evaluate Expression") {
+                    val newText = javaExpression.j2kText()
+                    val newImports = importList?.j2kText()
+                    if (newText != null) {
+                        convertedFragment = KtExpressionCodeFragment(
+                                project,
+                                kotlinCodeFragment.name,
+                                newText,
+                                newImports,
+                                kotlinCodeFragment.context
+                        )
+
+                        AfterConversionPass(project, J2kPostProcessor(formatCode = false)).run(convertedFragment!!, range = null)
+                    }
+                }
+                return convertedFragment ?: kotlinCodeFragment
+            }
+        }
+        return kotlinCodeFragment
     }
 
     override fun isContextAccepted(contextElement: PsiElement?): Boolean {

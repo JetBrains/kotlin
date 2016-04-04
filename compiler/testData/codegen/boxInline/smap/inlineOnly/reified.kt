@@ -1,5 +1,5 @@
 // FILE: 1.kt
-
+// WITH_REFLECT
 package test
 
 inline fun <reified T : Any> className() =  T::class.java.simpleName

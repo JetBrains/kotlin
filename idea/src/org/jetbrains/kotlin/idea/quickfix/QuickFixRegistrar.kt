@@ -179,6 +179,8 @@ class QuickFixRegistrar : QuickFixContributor {
 
         UNUSED_VARIABLE.registerFactory(RemovePsiElementSimpleFix.RemoveVariableFactory)
 
+        SENSELESS_COMPARISON.registerFactory(SimplifyComparisonFix)
+
         UNNECESSARY_SAFE_CALL.registerFactory(ReplaceWithDotCallFix)
         UNSAFE_CALL.registerFactory(ReplaceWithSafeCallFix)
 

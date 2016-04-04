@@ -1,7 +1,7 @@
 package stepOutInlinedLambdaArgumentOneLine
 
 fun main(args: Array<String>) {
-    //Breakpoint! (lambdaOrdinal = 0)
+    //Breakpoint! (lambdaOrdinal = 1)
     dive(3) { x -> x + 4 }
 }
 

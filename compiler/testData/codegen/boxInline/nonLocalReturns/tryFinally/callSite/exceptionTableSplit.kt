@@ -1,5 +1,5 @@
 // FILE: 1.kt
-
+// WITH_RUNTIME
 package test
 
 public class Holder(var value: String = "") {

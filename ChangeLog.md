@@ -26,6 +26,9 @@
 - [KT-11638](https://youtrack.jetbrains.com/issue/KT-11638) Fixed hashCode() implementation in "Generate equals/hashCode" action
 - Configure Kotlin: show only changed files in the notification "Kotlin not configured"
 - Configure Kotlin: restore all changed files in undo action
+- Convert java expression to kotlin when open Evaluate Expression dialog from Variables View
+- Fix Evaluate Expression for expression created for array element
+- Avoid 1s delay in completion in debugger fields if session is not stopped on a breakpoint
 
 ### Java to Kotlin converter
 

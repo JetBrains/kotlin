@@ -1,0 +1,38 @@
+LineBreakpoint created at createExpressionWithArray.kt:9
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! createExpressionWithArray.CreateExpressionWithArrayKt
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+createExpressionWithArray.kt:9
+package createExpressionWithArray
+
+import forTests.MyJavaClass
+
+fun main(args: Array<String>) {
+    val baseArray = arrayOf(MyJavaClass().getBaseClassValue())
+    val innerArray = arrayOf(MyJavaClass().getInnerClassValue())
+    //Breakpoint!
+    val a = 1
+}
+
+// PRINT_FRAME
+// DESCRIPTOR_VIEW_OPTIONS: NAME_EXPRESSION_RESULT
+
+Compile bytecode for args
+Compile bytecode for baseArray
+Compile bytecode for baseArray[0]
+Compile bytecode for baseArray[0].i2
+Compile bytecode for innerArray
+Compile bytecode for innerArray[0]
+Compile bytecode for (innerArray[0] as InnerClass).i
+Compile bytecode for (innerArray[0] as InnerClass).i2
+ frame    = main
+   local    = args (expression = args)
+   local    = baseArray (expression = baseArray)
+     element  = 0 (expression = baseArray[0])
+       field    = i2 (expression = baseArray[0].i2)
+   local    = innerArray (expression = innerArray)
+     element  = 0 (expression = innerArray[0])
+       field    = i (expression = (innerArray[0] as InnerClass).i)
+       field    = i2 (expression = (innerArray[0] as InnerClass).i2)
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0

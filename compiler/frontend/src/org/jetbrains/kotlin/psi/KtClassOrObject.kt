@@ -34,7 +34,7 @@ abstract class KtClassOrObject :
     constructor(stub: KotlinClassOrObjectStub<out KtClassOrObject>, nodeType: IStubElementType<*, *>) : super(stub, nodeType)
 
     fun getSuperTypeList(): KtSuperTypeList? = getStubOrPsiChild(KtStubElementTypes.SUPER_TYPE_LIST)
-    open fun getSuperTypeListEntries(): List<KtSuperTypeListEntry> = getSuperTypeList()?.getEntries().orEmpty()
+    open fun getSuperTypeListEntries(): List<KtSuperTypeListEntry> = getSuperTypeList()?.entries.orEmpty()
 
     fun addSuperTypeListEntry(superTypeListEntry: KtSuperTypeListEntry): KtSuperTypeListEntry {
         getSuperTypeList()?.let {
@@ -42,16 +42,16 @@ abstract class KtClassOrObject :
         }
 
         val psiFactory = KtPsiFactory(this)
-        val specifierListToAdd = psiFactory.createSuperTypeCallEntry("A()").replace(superTypeListEntry).getParent()
+        val specifierListToAdd = psiFactory.createSuperTypeCallEntry("A()").replace(superTypeListEntry).parent
         val colon = addBefore(psiFactory.createColon(), getBody())
-        return (addAfter(specifierListToAdd, colon) as KtSuperTypeList).getEntries().first()
+        return (addAfter(specifierListToAdd, colon) as KtSuperTypeList).entries.first()
     }
 
     fun removeSuperTypeListEntry(superTypeListEntry: KtSuperTypeListEntry) {
         val specifierList = getSuperTypeList() ?: return
-        assert(superTypeListEntry.getParent() === specifierList)
+        assert(superTypeListEntry.parent === specifierList)
 
-        if (specifierList.getEntries().size > 1) {
+        if (specifierList.entries.size > 1) {
             EditCommaSeparatedListHelper.removeItem<KtElement>(superTypeListEntry)
         }
         else {
@@ -65,33 +65,33 @@ abstract class KtClassOrObject :
 
     fun addDeclaration(declaration: KtDeclaration): KtDeclaration {
         val body = getOrCreateBody()
-        val anchor = PsiTreeUtil.skipSiblingsBackward(body.rBrace ?: body.getLastChild()!!, PsiWhiteSpace::class.java)
+        val anchor = PsiTreeUtil.skipSiblingsBackward(body.rBrace ?: body.lastChild!!, PsiWhiteSpace::class.java)
         return body.addAfter(declaration, anchor) as KtDeclaration
     }
 
     fun addDeclarationAfter(declaration: KtDeclaration, anchor: PsiElement?): KtDeclaration {
-        val anchorBefore = anchor ?: getDeclarations().lastOrNull() ?: return addDeclaration(declaration)
+        val anchorBefore = anchor ?: declarations.lastOrNull() ?: return addDeclaration(declaration)
         return getOrCreateBody().addAfter(declaration, anchorBefore) as KtDeclaration
     }
 
     fun addDeclarationBefore(declaration: KtDeclaration, anchor: PsiElement?): KtDeclaration {
-        val anchorAfter = anchor ?: getDeclarations().firstOrNull() ?: return addDeclaration(declaration)
+        val anchorAfter = anchor ?: declarations.firstOrNull() ?: return addDeclaration(declaration)
         return getOrCreateBody().addBefore(declaration, anchorAfter) as KtDeclaration
     }
 
-    fun isTopLevel(): Boolean = getStub()?.isTopLevel() ?: (getParent() is KtFile)
+    fun isTopLevel(): Boolean = stub?.isTopLevel() ?: (parent is KtFile)
 
-    fun isLocal(): Boolean = getStub()?.isLocal() ?: KtPsiUtil.isLocal(this)
+    fun isLocal(): Boolean = stub?.isLocal() ?: KtPsiUtil.isLocal(this)
     
-    override fun getDeclarations() = getBody()?.getDeclarations().orEmpty()
+    override fun getDeclarations() = getBody()?.declarations.orEmpty()
 
     override fun getPresentation(): ItemPresentation? = ItemPresentationProviders.getItemPresentation(this)
 
     fun getPrimaryConstructor(): KtPrimaryConstructor? = getStubOrPsiChild(KtStubElementTypes.PRIMARY_CONSTRUCTOR)
 
-    fun getPrimaryConstructorModifierList(): KtModifierList? = getPrimaryConstructor()?.getModifierList()
-    fun getPrimaryConstructorParameterList(): KtParameterList? = getPrimaryConstructor()?.getValueParameterList()
-    fun getPrimaryConstructorParameters(): List<KtParameter> = getPrimaryConstructorParameterList()?.getParameters().orEmpty()
+    fun getPrimaryConstructorModifierList(): KtModifierList? = getPrimaryConstructor()?.modifierList
+    fun getPrimaryConstructorParameterList(): KtParameterList? = getPrimaryConstructor()?.valueParameterList
+    fun getPrimaryConstructorParameters(): List<KtParameter> = getPrimaryConstructorParameterList()?.parameters.orEmpty()
 
     fun hasExplicitPrimaryConstructor(): Boolean = getPrimaryConstructor() != null
 
@@ -106,7 +106,7 @@ abstract class KtClassOrObject :
         CheckUtil.checkWritable(this);
 
         val file = getContainingKtFile();
-        if (!isTopLevel() || file.getDeclarations().size > 1) {
+        if (!isTopLevel() || file.declarations.size > 1) {
             super.delete()
         }
         else {

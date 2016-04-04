@@ -1,4 +1,5 @@
 // FILE: 1.kt
+// WITH_RUNTIME
 
 class My(val value: Int)
 

@@ -91,6 +91,16 @@ public abstract class CodegenTestCase extends UsefulTestCase {
         createEnvironmentWithMockJdkAndIdeaAnnotations(configurationKind, Collections.<TestFile>emptyList(), javaSourceRoots);
     }
 
+    @NotNull
+    protected static TestJdkKind getJdkKind(@NotNull List<TestFile> files) {
+        for (TestFile file : files) {
+            if (InTextDirectivesUtils.isDirectiveDefined(file.content, "FULL_JDK")) {
+                return TestJdkKind.FULL_JDK;
+            }
+        }
+        return TestJdkKind.MOCK_JDK;
+    }
+
     protected final void createEnvironmentWithMockJdkAndIdeaAnnotations(
             @NotNull ConfigurationKind configurationKind,
             @NotNull List<TestFile> testFilesWithConfigurationDirectives,
