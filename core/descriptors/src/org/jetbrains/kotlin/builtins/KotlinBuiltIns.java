@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
-import org.jetbrains.kotlin.serialization.deserialization.AdditionalSupertypes;
+import org.jetbrains.kotlin.serialization.deserialization.AdditionalClassPartsProvider;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
@@ -84,7 +84,7 @@ public abstract class KotlinBuiltIns {
         PackageFragmentProvider packageFragmentProvider = BuiltInsPackageFragmentProviderKt.createBuiltInPackageFragmentProvider(
                 storageManager, builtInsModule, BUILT_INS_PACKAGE_FQ_NAMES,
                 new BuiltInFictitiousFunctionClassFactory(storageManager, builtInsModule),
-                getAdditionalSupertypesProvider(),
+                getAdditionalClassPartsProvider(),
                 new Function1<String, InputStream>() {
                     @Override
                     public InputStream invoke(String path) {
@@ -114,8 +114,8 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
-    protected AdditionalSupertypes getAdditionalSupertypesProvider() {
-        return AdditionalSupertypes.None.INSTANCE;
+    protected AdditionalClassPartsProvider getAdditionalClassPartsProvider() {
+        return AdditionalClassPartsProvider.None.INSTANCE;
     }
 
     private void makePrimitive(@NotNull PrimitiveType primitiveType) {

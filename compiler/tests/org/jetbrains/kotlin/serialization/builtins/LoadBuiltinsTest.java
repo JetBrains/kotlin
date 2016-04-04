@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRendererOptions;
 import org.jetbrains.kotlin.renderer.OverrideRenderingPolicy;
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor;
-import org.jetbrains.kotlin.serialization.deserialization.AdditionalSupertypes;
+import org.jetbrains.kotlin.serialization.deserialization.AdditionalClassPartsProvider;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
@@ -112,7 +112,7 @@ public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
         PackageFragmentProvider packageFragmentProvider = createBuiltInPackageFragmentProvider(
                 storageManager, builtInsModule, BUILT_INS_PACKAGE_FQ_NAMES,
                 new BuiltInFictitiousFunctionClassFactory(storageManager, builtInsModule),
-                AdditionalSupertypes.None.INSTANCE,
+                AdditionalClassPartsProvider.None.INSTANCE,
                 new Function1<String, InputStream>() {
                     @Override
                     public InputStream invoke(String path) {

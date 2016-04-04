@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.serialization.deserialization.AdditionalSupertypes
+import org.jetbrains.kotlin.serialization.deserialization.AdditionalClassPartsProvider
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.types.DelegatingType
 import org.jetbrains.kotlin.types.KotlinType
@@ -37,7 +37,7 @@ import java.io.Serializable
 
 class BuiltInClassesAreSerializableOnJvm(
         private val moduleDescriptor: ModuleDescriptor
-) : AdditionalSupertypes {
+) : AdditionalClassPartsProvider {
 
     private val mockSerializableType = createMockJavaIoSerializableType()
 
@@ -61,7 +61,7 @@ class BuiltInClassesAreSerializableOnJvm(
         return mockSerializableClass.defaultType
     }
 
-    override fun forClass(classDescriptor: DeserializedClassDescriptor): Collection<KotlinType> {
+    override fun getSupertypes(classDescriptor: DeserializedClassDescriptor): Collection<KotlinType> {
         if (isSerializableInJava(classDescriptor.fqNameSafe)) {
             return listOf(mockSerializableType)
         }

@@ -152,7 +152,7 @@ class DeserializedClassDescriptor(
         override fun computeSupertypes(): Collection<KotlinType> {
             val result = classProto.supertypes(c.typeTable).map { supertypeProto ->
                 c.typeDeserializer.type(supertypeProto)
-            } + c.components.additionalSupertypes.forClass(this@DeserializedClassDescriptor)
+            } + c.components.additionalClassPartsProvider.getSupertypes(this@DeserializedClassDescriptor)
 
             val unresolved = result.mapNotNull { supertype ->
                 supertype.constructor.declarationDescriptor as? NotFoundClasses.MockClassDescriptor

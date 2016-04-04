@@ -19,10 +19,10 @@ package org.jetbrains.kotlin.serialization.deserialization
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 
-interface AdditionalSupertypes {
-    fun forClass(classDescriptor: DeserializedClassDescriptor): Collection<KotlinType>
+interface AdditionalClassPartsProvider {
+    fun getSupertypes(classDescriptor: DeserializedClassDescriptor): Collection<KotlinType>
 
-    object None : AdditionalSupertypes {
-        override fun forClass(classDescriptor: DeserializedClassDescriptor): Collection<KotlinType> = emptyList()
+    object None : AdditionalClassPartsProvider {
+        override fun getSupertypes(classDescriptor: DeserializedClassDescriptor): Collection<KotlinType> = emptyList()
     }
 }

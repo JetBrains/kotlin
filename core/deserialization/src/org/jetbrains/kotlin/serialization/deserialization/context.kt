@@ -39,7 +39,7 @@ class DeserializationComponents(
         val fictitiousClassDescriptorFactory: ClassDescriptorFactory,
         val notFoundClasses: NotFoundClasses,
         val typeCapabilitiesLoader: TypeCapabilitiesLoader = TypeCapabilitiesLoader.NONE,
-        val additionalSupertypes: AdditionalSupertypes = AdditionalSupertypes.None
+        val additionalClassPartsProvider: AdditionalClassPartsProvider = AdditionalClassPartsProvider.None
 ) {
     val classDeserializer: ClassDeserializer = ClassDeserializer(this)
 
