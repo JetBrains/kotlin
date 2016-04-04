@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.js.translate.declaration.propertyTranslator
+package org.jetbrains.kotlin.js.translate.declaration
 
 import com.google.dart.compiler.backend.js.ast.*
 import com.intellij.util.SmartList
@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.js.translate.context.Namer.getReceiverParameterName
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator
 import org.jetbrains.kotlin.js.translate.general.Translation
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.fqnWithoutSideEffects
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.assignmentToBackingField
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.backingFieldReference
@@ -135,8 +135,8 @@ private class PropertyTranslator(
     }
 
     private fun generateDelegatedGetterFunction(
-        getterDescriptor: PropertyGetterDescriptor,
-        delegatedCall: ResolvedCall<FunctionDescriptor>
+            getterDescriptor: PropertyGetterDescriptor,
+            delegatedCall: ResolvedCall<FunctionDescriptor>
     ): JsFunction {
         val scope = context().getScopeForDescriptor(getterDescriptor.containingDeclaration)
         val function = JsFunction(scope, JsBlock(), accessorDescription(getterDescriptor))
@@ -165,7 +165,8 @@ private class PropertyTranslator(
         val fakeArgumentExpression =
                 (delegatedCall.valueArgumentsByIndex!![1] as ExpressionValueArgument).valueArgument!!.getArgumentExpression()
         return context.innerContextWithAliasesForExpressions(mapOf(
-                fakeArgumentExpression to JsNew(JsAstUtils.fqn("PropertyMetadata", Namer.kotlinObject()), listOf(propertyNameLiteral))
+                fakeArgumentExpression to JsNew(fqnWithoutSideEffects("PropertyMetadata", Namer.kotlinObject()),
+                                                listOf(propertyNameLiteral))
         ))
     }
 

@@ -43,6 +43,7 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.*;
 import static org.jetbrains.kotlin.js.translate.utils.FunctionBodyTranslator.setDefaultValueForArguments;
+import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.fqnWithoutSideEffects;
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.getPrimaryConstructorParameters;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.getClassDescriptorForType;
 
@@ -127,8 +128,8 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
         JsName outerName = initFunction.getScope().declareName(Namer.OUTER_FIELD_NAME);
         initFunction.getParameters().add(0, new JsParameter(outerName));
 
-        JsExpression paramRef = JsAstUtils.fqn(outerName, null);
-        JsExpression assignment = JsAstUtils.assignment(JsAstUtils.fqn(outerName, JsLiteral.THIS), paramRef);
+        JsExpression paramRef = fqnWithoutSideEffects(outerName, null);
+        JsExpression assignment = JsAstUtils.assignment(fqnWithoutSideEffects(outerName, JsLiteral.THIS), paramRef);
         initFunction.getBody().getStatements().add(new JsExpressionStatement(assignment));
     }
 
@@ -165,7 +166,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
                 assert superDescriptor != null : "This class is expected to have super class: "
                                                  + PsiUtilsKt.getTextWithLocation(classDeclaration);
                 if (superDescriptor.isInner() && descriptor.isInner()) {
-                    arguments.add(0, JsAstUtils.fqn(Namer.OUTER_FIELD_NAME, JsLiteral.THIS));
+                    arguments.add(0, fqnWithoutSideEffects(Namer.OUTER_FIELD_NAME, JsLiteral.THIS));
                 }
                 addCallToSuperMethod(arguments, initializer);
             }

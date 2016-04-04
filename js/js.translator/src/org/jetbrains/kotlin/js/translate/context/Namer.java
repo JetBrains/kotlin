@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import java.util.Arrays;
 
 import static com.google.dart.compiler.backend.js.ast.JsScopesKt.JsObjectScope;
+import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.fqnWithoutSideEffects;
 import static org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getModuleName;
 import static org.jetbrains.kotlin.js.translate.utils.ManglingUtils.getStableMangledNameForDescriptor;
 import static org.jetbrains.kotlin.js.translate.utils.ManglingUtils.getSuggestedName;
@@ -137,7 +138,7 @@ public final class Namer {
 
     @NotNull
     public static JsNameRef superMethodNameRef(@NotNull JsName superClassJsName) {
-        return JsAstUtils.fqn(SUPER_METHOD_NAME, superClassJsName.makeRef());
+        return fqnWithoutSideEffects(SUPER_METHOD_NAME, superClassJsName.makeRef());
     }
 
     @NotNull
@@ -171,7 +172,7 @@ public final class Namer {
 
     @NotNull
     public static JsExpression getCompanionObjectAccessor(@NotNull JsExpression referenceToClass) {
-        return JsAstUtils.fqn(COMPANION_OBJECT_GETTER, referenceToClass);
+        return fqnWithoutSideEffects(COMPANION_OBJECT_GETTER, referenceToClass);
     }
 
     @NotNull
@@ -186,7 +187,7 @@ public final class Namer {
 
     @NotNull
     public static JsNameRef getRefToPrototype(@NotNull JsExpression classOrTraitExpression) {
-        return JsAstUtils.fqn(getPrototypeName(), classOrTraitExpression);
+        return fqnWithoutSideEffects(getPrototypeName(), classOrTraitExpression);
     }
 
     @NotNull
@@ -211,12 +212,12 @@ public final class Namer {
 
     @NotNull
     public static JsNameRef getFunctionCallRef(@NotNull JsExpression functionExpression) {
-        return JsAstUtils.fqn(CALL_FUNCTION, functionExpression);
+        return fqnWithoutSideEffects(CALL_FUNCTION, functionExpression);
     }
 
     @NotNull
     public static JsNameRef getFunctionApplyRef(@NotNull JsExpression functionExpression) {
-        return JsAstUtils.fqn(APPLY_FUNCTION, functionExpression);
+        return fqnWithoutSideEffects(APPLY_FUNCTION, functionExpression);
     }
 
     @NotNull
@@ -226,7 +227,7 @@ public final class Namer {
 
     @NotNull
     public static JsNameRef getCapturedVarAccessor(@NotNull JsExpression ref) {
-        return JsAstUtils.fqn(CAPTURED_VAR_FIELD, ref);
+        return fqnWithoutSideEffects(CAPTURED_VAR_FIELD, ref);
     }
 
     @NotNull
@@ -379,7 +380,7 @@ public final class Namer {
 
     @NotNull
     public static JsNameRef kotlin(@NotNull JsName name) {
-        return JsAstUtils.fqn(name, kotlinObject());
+        return fqnWithoutSideEffects(name, kotlinObject());
     }
 
     @NotNull
@@ -389,7 +390,7 @@ public final class Namer {
 
     @NotNull
     public static JsNameRef kotlinObject() {
-        return JsAstUtils.fqn(KOTLIN_NAME, null);
+        return fqnWithoutSideEffects(KOTLIN_NAME, null);
     }
 
     @NotNull
@@ -468,11 +469,11 @@ public final class Namer {
     }
 
     public static JsNameRef kotlinLong() {
-        return JsAstUtils.fqn("Long", kotlinObject());
+        return fqnWithoutSideEffects("Long", kotlinObject());
     }
 
     @NotNull
     public static JsNameRef createInlineFunction() {
-        return JsAstUtils.fqn(DEFINE_INLINE_FUNCTION, kotlinObject());
+        return fqnWithoutSideEffects(DEFINE_INLINE_FUNCTION, kotlinObject());
     }
 }

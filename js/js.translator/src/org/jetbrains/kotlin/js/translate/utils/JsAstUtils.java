@@ -32,12 +32,12 @@ import java.util.Collections;
 import java.util.List;
 
 public final class JsAstUtils {
-    private static final JsNameRef DEFINE_PROPERTY = fqn("defineProperty", null);
-    public static final JsNameRef CREATE_OBJECT = fqn("create", null);
+    private static final JsNameRef DEFINE_PROPERTY = fqnWithoutSideEffects("defineProperty", null);
+    public static final JsNameRef CREATE_OBJECT = fqnWithoutSideEffects("create", null);
 
     private static final JsNameRef VALUE = new JsNameRef("value");
-    private static final JsPropertyInitializer WRITABLE = new JsPropertyInitializer(fqn("writable", null), JsLiteral.TRUE);
-    private static final JsPropertyInitializer ENUMERABLE = new JsPropertyInitializer(fqn("enumerable", null), JsLiteral.TRUE);
+    private static final JsPropertyInitializer WRITABLE = new JsPropertyInitializer(fqnWithoutSideEffects("writable", null), JsLiteral.TRUE);
+    private static final JsPropertyInitializer ENUMERABLE = new JsPropertyInitializer(fqnWithoutSideEffects("enumerable", null), JsLiteral.TRUE);
 
     public static final String LENDS_JS_DOC_TAG = "lends";
 
@@ -128,7 +128,7 @@ public final class JsAstUtils {
 
     @NotNull
     public static JsInvocation invokeMethod(@NotNull JsExpression thisObject, @NotNull String name, @NotNull JsExpression... arguments) {
-        return new JsInvocation(fqn(name, thisObject), arguments);
+        return new JsInvocation(fqnWithoutSideEffects(name, thisObject), arguments);
     }
 
     @NotNull
@@ -173,7 +173,7 @@ public final class JsAstUtils {
 
     @NotNull
     private static JsExpression rangeTo(@NotNull String rangeClassName, @NotNull JsExpression rangeStart, @NotNull JsExpression rangeEnd) {
-        JsNameRef expr = fqn(rangeClassName, Namer.kotlinObject());
+        JsNameRef expr = fqnWithoutSideEffects(rangeClassName, Namer.kotlinObject());
         JsNew numberRangeConstructorInvocation = new JsNew(expr);
         setArguments(numberRangeConstructorInvocation, rangeStart, rangeEnd);
         return numberRangeConstructorInvocation;
@@ -488,14 +488,14 @@ public final class JsAstUtils {
     }
 
     @NotNull
-    public static JsNameRef fqn(@NotNull String identifier, @Nullable JsExpression qualifier) {
+    public static JsNameRef fqnWithoutSideEffects(@NotNull String identifier, @Nullable JsExpression qualifier) {
         JsNameRef result = new JsNameRef(identifier, qualifier);
         MetadataProperties.setSideEffects(result, false);
         return result;
     }
 
     @NotNull
-    public static JsNameRef fqn(@NotNull JsName identifier, @Nullable JsExpression qualifier) {
+    public static JsNameRef fqnWithoutSideEffects(@NotNull JsName identifier, @Nullable JsExpression qualifier) {
         JsNameRef result = new JsNameRef(identifier, qualifier);
         MetadataProperties.setSideEffects(result, false);
         return result;

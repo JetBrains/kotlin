@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 
 import java.util.List;
 
+import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.fqnWithoutSideEffects;
+
 //TODO: find should be usages
 public final class BuiltInPropertyIntrinsic extends FunctionIntrinsic {
 
@@ -40,6 +42,6 @@ public final class BuiltInPropertyIntrinsic extends FunctionIntrinsic {
                               @NotNull TranslationContext context) {
         assert receiver != null;
         assert arguments.isEmpty() : "Properties can't have arguments.";
-        return JsAstUtils.fqn(propertyName, receiver);
+        return fqnWithoutSideEffects(propertyName, receiver);
     }
 }

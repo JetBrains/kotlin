@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import java.util.Map;
 
 import static org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.*;
+import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.fqnWithoutSideEffects;
 import static org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.*;
 import static org.jetbrains.kotlin.js.translate.utils.ManglingUtils.getMangledName;
 import static org.jetbrains.kotlin.js.translate.utils.ManglingUtils.getSuggestedName;
@@ -186,7 +187,7 @@ public final class StaticContext {
     @NotNull
     public JsNameRef getQualifiedReference(@NotNull FqName packageFqName) {
         JsName packageName = getNameForPackage(packageFqName);
-        return JsAstUtils.fqn(packageName, packageFqName.isRoot() ? null : getQualifierForParentPackage(packageFqName.parent()));
+        return fqnWithoutSideEffects(packageName, packageFqName.isRoot() ? null : getQualifierForParentPackage(packageFqName.parent()));
     }
 
     @NotNull
@@ -215,7 +216,7 @@ public final class StaticContext {
         FqName fqName = packageFqName;
 
         while (true) {
-            JsNameRef ref = JsAstUtils.fqn(getNameForPackage(fqName), null);
+            JsNameRef ref = fqnWithoutSideEffects(getNameForPackage(fqName), null);
 
             if (qualifier == null) {
                 result = ref;
@@ -471,7 +472,7 @@ public final class StaticContext {
                     if (!standardClasses.isStandardObject(descriptor)) {
                         return null;
                     }
-                    return namer.kotlinObject();
+                    return Namer.kotlinObject();
                 }
             };
             //TODO: review and refactor
@@ -514,7 +515,7 @@ public final class StaticContext {
                 @Override
                 public JsExpression apply(@NotNull DeclarationDescriptor descriptor) {
                     if (isLibraryObject(descriptor)) {
-                        return namer.kotlinObject();
+                        return Namer.kotlinObject();
                     }
                     return null;
                 }

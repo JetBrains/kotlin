@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.backend.common.CodegenUtilKt
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
-import org.jetbrains.kotlin.js.translate.declaration.propertyTranslator.addGetterAndSetter
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator
 import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils
