@@ -18,9 +18,12 @@ package org.jetbrains.kotlin.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface FunctionDescriptor extends CallableMemberDescriptor {
     @Override
@@ -71,4 +74,57 @@ public interface FunctionDescriptor extends CallableMemberDescriptor {
     boolean isTailrec();
 
     boolean isExternal();
+
+    @NotNull
+    CopyBuilder<? extends FunctionDescriptor> newCopyBuilder();
+
+    interface CopyBuilder<D extends FunctionDescriptor> {
+        @NotNull
+        CopyBuilder<D> setOwner(@NotNull DeclarationDescriptor owner);
+
+        @NotNull
+        CopyBuilder<D> setModality(@NotNull Modality modality);
+
+        @NotNull
+        CopyBuilder<D> setVisibility(@NotNull Visibility visibility);
+
+        @NotNull
+        CopyBuilder<D> setKind(@NotNull Kind kind);
+
+        @NotNull
+        CopyBuilder<D> setCopyOverrides(boolean copyOverrides);
+
+        @NotNull
+        CopyBuilder<D> setName(@NotNull Name name);
+
+        @NotNull
+        CopyBuilder<D> setValueParameters(@NotNull List<ValueParameterDescriptor> parameters);
+
+        @NotNull
+        CopyBuilder<D> setTypeParameters(@NotNull List<TypeParameterDescriptor> parameters);
+
+        @NotNull
+        CopyBuilder<D> setReturnType(@NotNull KotlinType type);
+
+        @NotNull
+        CopyBuilder<D> setExtensionReceiverType(@Nullable KotlinType type);
+
+        @NotNull
+        CopyBuilder<D> setOriginal(@NotNull FunctionDescriptor original);
+
+        @NotNull
+        CopyBuilder<D> setSignatureChange();
+
+        @NotNull
+        CopyBuilder<D> setPreserveSourceElement();
+
+        @NotNull
+        CopyBuilder<D> setDropOriginalInContainingParts();
+
+        @NotNull
+        CopyBuilder<D> setHiddenToOvercomeSignatureClash();
+
+        @Nullable
+        D build();
+    }
 }

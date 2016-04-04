@@ -293,7 +293,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         return extensionReceiverParameter.getType();
     }
 
-    public class CopyConfiguration {
+    public class CopyConfiguration implements SimpleFunctionDescriptor.CopyBuilder<FunctionDescriptor> {
         protected @NotNull TypeSubstitutor originalSubstitutor;
         protected @NotNull DeclarationDescriptor newOwner;
         protected @NotNull Modality newModality;
@@ -334,94 +334,112 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             this.isHiddenToOvercomeSignatureClash = isHiddenToOvercomeSignatureClash();
         }
 
+        @Override
         @NotNull
-        protected CopyConfiguration setOwner(@NotNull DeclarationDescriptor owner) {
+        public CopyConfiguration setOwner(@NotNull DeclarationDescriptor owner) {
             this.newOwner = owner;
             return this;
         }
 
+        @Override
         @NotNull
         public CopyConfiguration setModality(@NotNull Modality modality) {
             this.newModality = modality;
             return this;
         }
 
+        @Override
         @NotNull
         public CopyConfiguration setVisibility(@NotNull Visibility visibility) {
             this.newVisibility = visibility;
             return this;
         }
 
+        @Override
         @NotNull
         public CopyConfiguration setKind(@NotNull Kind kind) {
             this.kind = kind;
             return this;
         }
 
+        @Override
         @NotNull
         public CopyConfiguration setCopyOverrides(boolean copyOverrides) {
             this.copyOverrides = copyOverrides;
             return this;
         }
 
+        @Override
         @NotNull
         public CopyConfiguration setName(@NotNull Name name) {
             this.name = name;
             return this;
         }
 
+        @Override
         @NotNull
         public CopyConfiguration setValueParameters(@NotNull List<ValueParameterDescriptor> parameters) {
             this.newValueParameterDescriptors = parameters;
             return this;
         }
 
+        @Override
         @NotNull
         public CopyConfiguration setTypeParameters(@NotNull List<TypeParameterDescriptor> parameters) {
             this.newTypeParameters = parameters;
             return this;
         }
 
+        @NotNull
+        @Override
         public CopyConfiguration setReturnType(@NotNull KotlinType type) {
             this.newReturnType = type;
             return this;
         }
 
+        @NotNull
+        @Override
         public CopyConfiguration setExtensionReceiverType(@Nullable KotlinType type) {
             this.newExtensionReceiverParameterType = type;
             return this;
         }
 
+        @Override
         @NotNull
         public CopyConfiguration setOriginal(@NotNull FunctionDescriptor original) {
             this.original = original;
             return this;
         }
 
+        @Override
         @NotNull
         public CopyConfiguration setSignatureChange() {
             this.signatureChange = true;
             return this;
         }
 
+        @Override
         @NotNull
         public CopyConfiguration setPreserveSourceElement() {
             this.preserveSourceElement = true;
             return this;
         }
 
+        @Override
         @NotNull
         public CopyConfiguration setDropOriginalInContainingParts() {
             this.dropOriginalInContainingParts = true;
             return this;
         }
 
+        @Override
         @NotNull
-        public CopyConfiguration setHidden() {
+        public CopyConfiguration setHiddenToOvercomeSignatureClash() {
             isHiddenToOvercomeSignatureClash = true;
             return this;
         }
 
+        @Override
         @Nullable
         public FunctionDescriptor build() {
             return doSubstitute(this);
@@ -438,8 +456,9 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         }
     }
 
+    @Override
     @NotNull
-    public CopyConfiguration newCopyBuilder() {
+    public CopyBuilder<? extends FunctionDescriptor> newCopyBuilder() {
         return newCopyBuilder(TypeSubstitutor.EMPTY);
     }
 
