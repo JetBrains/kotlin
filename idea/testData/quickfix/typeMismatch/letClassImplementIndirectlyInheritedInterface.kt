@@ -1,6 +1,7 @@
-// "Let 'B' implement interface 'A'" "false"
-// ACTION: Add 'a =' to argument
+// "Let 'B' implement interface 'A<Int>'" "false"
+// ACTION: Change parameter 'a' type of function 'let.implement.foo' to 'B'
 // ACTION: Convert to expression body
+// ERROR: Type mismatch: inferred type is B but A<Int> was expected
 package let.implement
 
 fun bar() {
@@ -8,9 +9,9 @@ fun bar() {
 }
 
 
-fun foo(a: A) {
+fun foo(a: A<Int>) {
 }
 
-interface A
-interface InBetween : A
+interface A<T>
+interface InBetween : A<String>
 class B : InBetween
