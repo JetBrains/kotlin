@@ -1,6 +1,6 @@
 
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@
 package org.jetbrains.kotlin.idea.framework
 
 import com.intellij.openapi.roots.OrderRootType
+import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.roots.libraries.Library
-import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.caches.JarUserDataManager
@@ -27,8 +27,11 @@ import org.jetbrains.kotlin.js.JavaScript
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 
 object KotlinJavaScriptLibraryDetectionUtil {
-    @JvmStatic fun isKotlinJavaScriptLibrary(library: Library): Boolean =
-            isKotlinJavaScriptLibrary(library.getFiles(OrderRootType.CLASSES).toList())
+    @JvmStatic fun isKotlinJavaScriptLibrary(library: Library): Boolean {
+        if (library is LibraryEx && library.isDisposed) return false
+
+        return isKotlinJavaScriptLibrary(library.getFiles(OrderRootType.CLASSES).toList())
+    }
 
     @JvmStatic fun isKotlinJavaScriptLibrary(classesRoots: List<VirtualFile>): Boolean {
         // Prevent clashing with java runtime
