@@ -26,7 +26,6 @@ import com.intellij.diagnostic.LogMessageEx
 import com.intellij.openapi.diagnostic.Attachment
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProcessCanceledException
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiDocumentManager
@@ -552,7 +551,7 @@ private fun SuspendContext.getInvokePolicy(): Int {
     return if (suspendPolicy == EventRequest.SUSPEND_EVENT_THREAD) ObjectReference.INVOKE_SINGLE_THREADED else 0
 }
 
-fun Type.getClassDescriptor(project: Project): ClassDescriptor? {
+fun Type.getClassDescriptor(scope: GlobalSearchScope): ClassDescriptor? {
     if (AsmUtil.isPrimitive(this)) return null
 
     val jvmName = JvmClassName.byInternalName(internalName).fqNameForClassNameWithoutDollars
@@ -561,7 +560,7 @@ fun Type.getClassDescriptor(project: Project): ClassDescriptor? {
     if (platformClasses.isNotEmpty()) return platformClasses.first()
 
     return runReadAction {
-        val classes = JavaPsiFacade.getInstance(project).findClasses(jvmName.asString(), GlobalSearchScope.allScope(project))
+        val classes = JavaPsiFacade.getInstance(scope.project).findClasses(jvmName.asString(), scope)
         if (classes.isEmpty()) null
         else {
             classes.first().getJavaClassDescriptor()

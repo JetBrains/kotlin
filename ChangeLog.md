@@ -189,6 +189,7 @@ Issues fixed:
 - [KT-6805](https://youtrack.jetbrains.com/issue/KT-6805) Convert Java expression to Kotlin when opening Evaluate Expression from Variables view
 - Show error message when debug info for some local variable is corrupted
 - Avoid 1s delay in completion in debugger fields if session is not stopped on a breakpoint
+- Avoid cast to runtime type unavailable in current scope
 
 ### Java to Kotlin converter
 
