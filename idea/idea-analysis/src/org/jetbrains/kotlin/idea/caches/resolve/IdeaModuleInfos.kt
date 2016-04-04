@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import com.intellij.openapi.module.impl.scopes.LibraryScopeBase
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.*
+import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
@@ -77,6 +78,8 @@ interface IdeaModuleInfo : ModuleInfo {
 
 private fun orderEntryToModuleInfo(project: Project, orderEntry: OrderEntry, productionOnly: Boolean): List<IdeaModuleInfo> {
     fun Module.toInfos() = if (productionOnly) listOf(productionSourceInfo()) else listOf(testSourceInfo(), productionSourceInfo())
+
+    if (!orderEntry.isValid) return emptyList()
 
     return when (orderEntry) {
         is ModuleSourceOrderEntry -> {
@@ -214,7 +217,7 @@ data class LibraryInfo(val project: Project, val library: Library) : IdeaModuleI
         val (libraries, sdks) = LibraryDependenciesCache(project).getLibrariesAndSdksUsedWith(library)
 
         sdks.mapTo(result) { SdkInfo(project, it) }
-        libraries.mapTo(result) { LibraryInfo(project, it) }
+        libraries.filter { it is LibraryEx && !it.isDisposed }.mapTo(result) { LibraryInfo(project, it) }
 
         return result.toList()
     }
