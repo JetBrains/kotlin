@@ -51,7 +51,7 @@ class SameVersionInspection : DomElementsInspection<MavenDomProjectModel>(MavenD
                                  "Plugin version (${plugin.version}) is not the same as library version (${stdlibVersion.joinToString(",", "", "")})")
         }
 
-        pomFile.findDependencies(MavenId(KotlinJavaMavenConfigurator.GROUP_ID, KotlinJavaMavenConfigurator.STD_LIB_ID, null))
+        pomFile.findDependencies(MavenId(KotlinMavenConfigurator.GROUP_ID, KotlinJavaMavenConfigurator.STD_LIB_ID, null))
             .filter { it.version.stringValue != pluginVersion }
             .forEach { dependency ->
                 holder.createProblem(dependency.version, HighlightSeverity.WARNING, "Plugin version ($pluginVersion) is not the same as library version (${dependency.version})")
