@@ -236,7 +236,8 @@ public abstract class ExpectedResolveData {
                 KtTypeReference typeReference = getAncestorOfType(KtTypeReference.class, element);
                 if (expectedDescriptor != null) {
                     DeclarationDescriptor actual = bindingContext.get(REFERENCE_TARGET, reference);
-                    assertSame("Expected: " + name, expectedDescriptor.getOriginal(), actual == null
+
+                    assertDescriptorsEqual("Expected: " + name, expectedDescriptor.getOriginal(), actual == null
                                                                                       ? null
                                                                                       : actual.getOriginal());
                     continue;
@@ -245,7 +246,7 @@ public abstract class ExpectedResolveData {
                 KotlinType actualType = bindingContext.get(BindingContext.TYPE, typeReference);
                 assertNotNull("Type " + name + " not resolved for reference " + name, actualType);
                 ClassifierDescriptor expectedClass = getBuiltinClass(name.substring(STANDARD_PREFIX.length()));
-                assertSame("Type resolution mismatch: ", expectedClass.getTypeConstructor(), actualType.getConstructor());
+                assertTypeConstructorEquals("Type resolution mismatch: ", expectedClass.getTypeConstructor(), actualType.getConstructor());
                 continue;
             }
             assert expected != null : "No declaration for " + name;
@@ -325,8 +326,25 @@ public abstract class ExpectedResolveData {
             }
 
             assertNotNull(expression.getText() + " type is null", expressionType);
-            assertSame("At " + position + ": ", expectedTypeConstructor, expressionType.getConstructor());
+            assertTypeConstructorEquals("At " + position + ": ", expectedTypeConstructor, expressionType.getConstructor());
         }
+    }
+
+    private static void assertTypeConstructorEquals(String message, TypeConstructor expected, TypeConstructor actual) {
+        assertDescriptorsEqual(message, expected.getDeclarationDescriptor(), actual.getDeclarationDescriptor());
+    }
+
+    private static void assertDescriptorsEqual(String message, DeclarationDescriptor expected, DeclarationDescriptor actual) {
+        if (DescriptorEquivalenceForOverrides.INSTANCE.areEquivalent(expected, actual)) {
+            return;
+        }
+        String formatted = "";
+        if (message != null) {
+            formatted = message + " ";
+        }
+
+        fail(formatted + "expected same:<" + expected + "> was not:<" + actual
+             + ">");
     }
 
     @NotNull
