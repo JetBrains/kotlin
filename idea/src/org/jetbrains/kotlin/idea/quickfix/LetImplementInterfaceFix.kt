@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isInterface
 
 class LetImplementInterfaceFix(
@@ -52,7 +53,7 @@ class LetImplementInterfaceFix(
         validExpectedType = with (expectedType) {
             isInterface() &&
             !containsStarProjections() &&
-            constructor !in expressionType.constructor.supertypes.map(KotlinType::getConstructor)
+            constructor !in TypeUtils.getAllSupertypes(expressionType).map(KotlinType::getConstructor)
         }
     }
 
