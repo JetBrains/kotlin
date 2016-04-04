@@ -8,8 +8,9 @@ open class B {}
 fun test(a: A, b: B) {
     with (a) {
         with (b) {
-            // at first we try b.foo, so 'Int.foo' should have less priority to be thrown away
-            `A.foo`foo(1.0)
+            // candidates with errors for receiver b going before candidates with errors for receiver a
+            // resolved to Int.foo with error: UNRESOLVED_REFERENCE_WRONG_RECEIVER
+            `!`foo(1.0)
         }
     }
 }

@@ -436,6 +436,18 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             doTest(fileName);
         }
 
+        @TestMetadata("callVariableAsFunctionWithAnonymousObjectArg.kt")
+        public void testCallVariableAsFunctionWithAnonymousObjectArg() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/callVariableAsFunctionWithAnonymousObjectArg.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("callVariableAsFunctionWithLambdaArg.kt")
+        public void testCallVariableAsFunctionWithLambdaArg() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/callVariableAsFunctionWithLambdaArg.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ClassDeclarationAfterDot.kt")
         public void testClassDeclarationAfterDot() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/ClassDeclarationAfterDot.kt");

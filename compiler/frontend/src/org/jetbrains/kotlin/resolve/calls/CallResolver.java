@@ -575,7 +575,7 @@ public class CallResolver {
             @NotNull TracingStrategy tracing
     ) {
         if (context.checkArguments == CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS) {
-            argumentTypeResolver.analyzeArgumentsAndRecordTypes(context);
+            argumentTypeResolver.analyzeArgumentsAndRecordTypes(context, ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS);
         }
 
         List<KtTypeProjection> typeArguments = context.call.getTypeArguments();
