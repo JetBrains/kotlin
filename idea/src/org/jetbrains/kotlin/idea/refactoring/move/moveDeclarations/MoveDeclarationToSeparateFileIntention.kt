@@ -25,7 +25,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.refactoring.move.MoveCallback
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
-import org.jetbrains.kotlin.idea.quickfix.moveCaret
+import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.refactoring.createKotlinFile
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.MoveKotlinTopLevelDeclarationsDialog
 import org.jetbrains.kotlin.lexer.KtTokens

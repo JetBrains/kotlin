@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.quickfix.CleanupFix
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
-import org.jetbrains.kotlin.idea.quickfix.moveCaret
+import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny

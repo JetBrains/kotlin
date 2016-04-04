@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.expressionComparedToNull
-import org.jetbrains.kotlin.idea.quickfix.moveCaret
+import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.lexer.KtTokens

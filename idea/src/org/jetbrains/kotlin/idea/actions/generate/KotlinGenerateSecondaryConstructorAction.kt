@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.appendElement
 import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.core.util.DescriptorMemberChooserObject
-import org.jetbrains.kotlin.idea.quickfix.insertMembersAfter
+import org.jetbrains.kotlin.idea.core.insertMembersAfter
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.siblings

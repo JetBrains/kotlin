@@ -48,7 +48,7 @@ import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.ClassKind
-import org.jetbrains.kotlin.idea.quickfix.insertMember
+import org.jetbrains.kotlin.idea.core.insertMember
 import org.jetbrains.kotlin.idea.refactoring.*
 import org.jetbrains.kotlin.idea.util.DialogWithEditor
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers

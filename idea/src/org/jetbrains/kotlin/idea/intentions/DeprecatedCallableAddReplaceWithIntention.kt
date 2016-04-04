@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
-import org.jetbrains.kotlin.idea.quickfix.moveCaret
-import org.jetbrains.kotlin.idea.quickfix.unblockDocument
+import org.jetbrains.kotlin.idea.core.moveCaret
+import org.jetbrains.kotlin.idea.core.unblockDocument
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.psi.*

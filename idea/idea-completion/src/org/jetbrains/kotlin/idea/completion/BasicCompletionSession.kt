@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.idea.completion.smart.SmartCompletion
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletionItemPriority
 import org.jetbrains.kotlin.idea.core.ExpectedInfo
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
-import org.jetbrains.kotlin.idea.quickfix.moveCaret
+import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.lexer.KtTokens

@@ -35,8 +35,8 @@ import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMembersHandler
 import org.jetbrains.kotlin.idea.core.overrideImplement.generateMember
 import org.jetbrains.kotlin.idea.core.replaced
-import org.jetbrains.kotlin.idea.quickfix.moveCaret
-import org.jetbrains.kotlin.idea.quickfix.moveCaretIntoGeneratedElement
+import org.jetbrains.kotlin.idea.core.moveCaret
+import org.jetbrains.kotlin.idea.core.moveCaretIntoGeneratedElement
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.psi.KtClassOrObject

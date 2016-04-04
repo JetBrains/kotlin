@@ -20,8 +20,8 @@ import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.replaced
-import org.jetbrains.kotlin.idea.quickfix.moveCaret
-import org.jetbrains.kotlin.idea.quickfix.unblockDocument
+import org.jetbrains.kotlin.idea.core.moveCaret
+import org.jetbrains.kotlin.idea.core.unblockDocument
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.matches
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
