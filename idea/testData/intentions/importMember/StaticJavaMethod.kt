@@ -1,6 +1,5 @@
 // INTENTION_TEXT: "Add import for 'javax.swing.SwingUtilities.invokeLater'"
 // WITH_RUNTIME
-// ERROR: No value passed for parameter p0
 // ERROR: Unresolved reference: SomethingElse
 // ERROR: Unresolved reference: somethingElse
 // SKIP_ERRORS_AFTER
@@ -8,7 +7,7 @@
 import javax.swing.SwingUtilities
 
 fun foo() {
-    SwingUtilities.<caret>invokeLater()
+    SwingUtilities.<caret>invokeLater {}
 }
 
 fun bar() {
