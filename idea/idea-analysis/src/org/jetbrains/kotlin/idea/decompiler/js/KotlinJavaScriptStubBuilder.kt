@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.decompiler.js
 
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.compiled.ClsStubBuilder
 import com.intellij.psi.impl.compiled.ClassFileStubBuilder
@@ -41,7 +42,8 @@ class KotlinJavaScriptStubBuilder : ClsStubBuilder() {
     override fun buildFileStub(content: FileContent): PsiFileStub<*>? {
         val file = content.file
 
-        if (JsMetaFileUtils.isKotlinJavaScriptInternalCompiledFile(file)) return null
+        if (file.fileSystem.protocol != StandardFileSystems.JAR_PROTOCOL ||
+            JsMetaFileUtils.isKotlinJavaScriptInternalCompiledFile(file)) return null
 
         return doBuildFileStub(file)
     }
@@ -54,10 +56,9 @@ class KotlinJavaScriptStubBuilder : ClsStubBuilder() {
 
         val moduleDirectory = JsMetaFileUtils.getModuleDirectory(file)
         val stringsFileName = KotlinJavascriptSerializedResourcePaths.getStringTableFilePath(packageFqName)
-        val stringsFile = moduleDirectory.findFileByRelativePath(stringsFileName)
-        assert(stringsFile != null) { "strings file not found: $stringsFileName" }
+        val stringsFile = moduleDirectory.findFileByRelativePath(stringsFileName) ?: error("strings file not found: $stringsFileName")
 
-        val nameResolver = NameResolverImpl.read(ByteArrayInputStream(stringsFile!!.contentsToByteArray(false)))
+        val nameResolver = NameResolverImpl.read(ByteArrayInputStream(stringsFile.contentsToByteArray(false)))
         val components = createStubBuilderComponents(file, nameResolver)
 
         if (isPackageHeader) {
