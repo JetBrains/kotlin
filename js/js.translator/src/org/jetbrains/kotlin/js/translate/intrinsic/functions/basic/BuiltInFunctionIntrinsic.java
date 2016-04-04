@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 
 import java.util.List;
 
+import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.fqnWithoutSideEffects;
+
 public final class BuiltInFunctionIntrinsic extends FunctionIntrinsic {
 
     @NotNull
@@ -42,6 +44,6 @@ public final class BuiltInFunctionIntrinsic extends FunctionIntrinsic {
             @NotNull TranslationContext context
     ) {
         assert receiver != null;
-        return new JsInvocation(JsAstUtils.fqn(functionName, receiver), arguments);
+        return new JsInvocation(fqnWithoutSideEffects(functionName, receiver), arguments);
     }
 }
