@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.configuration;
+package org.jetbrains.kotlin.idea.maven.configuration;
 
 import com.intellij.codeInsight.CodeInsightUtilCore;
 import com.intellij.ide.actions.OpenFileAction;
@@ -43,7 +43,10 @@ import org.jetbrains.idea.maven.project.MavenProject;
 import org.jetbrains.idea.maven.project.MavenProjectsManager;
 import org.jetbrains.idea.maven.utils.MavenArtifactScope;
 import org.jetbrains.kotlin.idea.KotlinPluginUtil;
+import org.jetbrains.kotlin.idea.configuration.*;
 import org.jetbrains.kotlin.idea.framework.ui.ConfigureDialogWithModulesAndVersion;
+import org.jetbrains.kotlin.idea.maven.MavenModulesRelationshipKt;
+import org.jetbrains.kotlin.idea.maven.PomFile;
 
 import java.util.Collection;
 import java.util.Collections;

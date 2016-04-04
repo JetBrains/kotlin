@@ -1,10 +1,10 @@
 <idea-plugin>
   <extensions defaultExtensionNs="org.jetbrains.kotlin">
-    <projectConfigurator implementation="org.jetbrains.kotlin.idea.configuration.KotlinJavaMavenConfigurator"/>
-    <projectConfigurator implementation="org.jetbrains.kotlin.idea.configuration.KotlinJavascriptMavenConfigurator"/>
+    <projectConfigurator implementation="org.jetbrains.kotlin.idea.maven.configuration.KotlinJavaMavenConfigurator"/>
+    <projectConfigurator implementation="org.jetbrains.kotlin.idea.maven.configuration.KotlinJavascriptMavenConfigurator"/>
   </extensions>
   <extensions defaultExtensionNs="org.jetbrains.idea.maven">
-    <importer implementation="org.jetbrains.kotlin.idea.configuration.KotlinMavenImporter" />
+    <importer implementation="org.jetbrains.kotlin.idea.maven.KotlinMavenImporter" />
     <archetypesProvider implementation="org.jetbrains.kotlin.idea.configuration.KotlinMavenArchetypesProvider" />
 
     <pluginDescriptor mavenId="org.jetbrains.kotlin:kotlin-maven-plugin">
@@ -33,7 +33,7 @@
                      hasStaticDescription="true"
                      level="WARNING" />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.configuration.SameVersionInspection"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.maven.inspections.SameVersionInspection"
                      displayName="Kotlin Maven: library and plugin inspection"
                      groupName="Kotlin"
                      enabledByDefault="true"
@@ -50,20 +50,20 @@
                      level="WARNING" />
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.configuration.MavenPluginSourcesMoveToBuild</className>
+      <className>org.jetbrains.kotlin.idea.maven.actions.MavenPluginSourcesMoveToBuild</className>
       <category>Kotlin</category>
     </intentionAction>
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.configuration.MavenPluginSourcesMoveToExecutionIntention</className>
+      <className>org.jetbrains.kotlin.idea.maven.actions.MavenPluginSourcesMoveToExecutionIntention</className>
       <category>Kotlin</category>
     </intentionAction>
     <codeInsight.unresolvedReferenceQuickFixProvider
-        implementation="org.jetbrains.kotlin.idea.configuration.KotlinMavenUnresolvedReferenceQuickFixProvider" />
+        implementation="org.jetbrains.kotlin.idea.maven.inspections.KotlinMavenUnresolvedReferenceQuickFixProvider" />
   </extensions>
 
   <module-components>
     <component>
-      <implementation-class>org.jetbrains.kotlin.idea.configuration.KotlinImporterComponent</implementation-class>
+      <implementation-class>org.jetbrains.kotlin.idea.maven.KotlinImporterComponent</implementation-class>
     </component>
   </module-components>
 
@@ -73,17 +73,17 @@
 
       <action id="KotlinGenerateMavenCompileExecutionAction"
               icon="/org/jetbrains/kotlin/idea/icons/kotlin13.png"
-              class="org.jetbrains.kotlin.idea.configuration.GenerateMavenCompileExecutionAction"
+              class="org.jetbrains.kotlin.idea.maven.actions.GenerateMavenCompileExecutionAction"
               text="Kotlin compile execution" />
 
       <action id="KotlinGenerateMavenTestCompileExecutionAction"
               icon="/org/jetbrains/kotlin/idea/icons/kotlin13.png"
-              class="org.jetbrains.kotlin.idea.configuration.GenerateMavenTestCompileExecutionAction"
+              class="org.jetbrains.kotlin.idea.maven.actions.GenerateMavenTestCompileExecutionAction"
               text="Kotlin test-compile execution" />
 
       <action id="KotlinGenerateMavenPluginAction"
               icon="/org/jetbrains/kotlin/idea/icons/kotlin13.png"
-              class="org.jetbrains.kotlin.idea.configuration.GenerateMavenPluginAction"
+              class="org.jetbrains.kotlin.idea.maven.actions.GenerateMavenPluginAction"
               text="Kotlin plugin" />
 
       <add-to-group group-id="GenerateGroup" anchor="last" />

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.configuration
+package org.jetbrains.kotlin.idea.maven.inspections
 
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.util.xml.DomFileElement
@@ -23,6 +23,9 @@ import com.intellij.util.xml.highlighting.DomElementsInspection
 import org.jetbrains.idea.maven.dom.model.MavenDomProjectModel
 import org.jetbrains.idea.maven.model.MavenId
 import org.jetbrains.idea.maven.project.MavenProjectsManager
+import org.jetbrains.kotlin.idea.maven.PomFile
+import org.jetbrains.kotlin.idea.maven.configuration.KotlinJavaMavenConfigurator
+import org.jetbrains.kotlin.idea.maven.configuration.KotlinMavenConfigurator
 
 class SameVersionInspection : DomElementsInspection<MavenDomProjectModel>(MavenDomProjectModel::class.java) {
     override fun checkFileElement(domFileElement: DomFileElement<MavenDomProjectModel>?, holder: DomElementAnnotationHolder?) {

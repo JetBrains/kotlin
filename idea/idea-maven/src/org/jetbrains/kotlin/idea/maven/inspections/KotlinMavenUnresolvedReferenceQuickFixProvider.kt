@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.configuration
+package org.jetbrains.kotlin.idea.maven.inspections
 
 import com.intellij.codeInsight.daemon.HighlightDisplayKey
 import com.intellij.codeInsight.daemon.QuickFixActionRegistrar
@@ -36,6 +36,7 @@ import org.jetbrains.idea.maven.indices.MavenArtifactSearchDialog
 import org.jetbrains.idea.maven.project.MavenProjectsManager
 import org.jetbrains.idea.maven.utils.MavenArtifactScope
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.maven.PomFile
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.idea.quickfix.IntentionActionPriority
 import org.jetbrains.kotlin.idea.quickfix.KotlinIntentionActionFactoryWithDelegate
@@ -128,7 +129,7 @@ object PlatformUnresolvedProvider : KotlinIntentionActionFactoryWithDelegate<KtN
         originalElementPointer.element?.references?.filterIsInstance<KtSimpleNameReference>()?.firstOrNull()?.let { reference ->
             UnresolvedReferenceQuickFixProvider.registerReferenceFixes(reference, object: QuickFixActionRegistrar {
                 override fun register(action: IntentionAction) {
-                    result.add(QuickFixWithDelegateFactory(IntentionActionPriority.LOW) { action } )
+                    result.add(QuickFixWithDelegateFactory(IntentionActionPriority.LOW) { action })
                 }
 
                 override fun register(fixRange: TextRange, action: IntentionAction, key: HighlightDisplayKey?) {

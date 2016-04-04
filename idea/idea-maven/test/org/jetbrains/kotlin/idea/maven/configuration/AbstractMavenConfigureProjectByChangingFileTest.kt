@@ -14,11 +14,16 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.configuration
+package org.jetbrains.kotlin.idea.maven.configuration
 
 import com.intellij.openapi.module.Module
 import com.intellij.psi.PsiFile
 import org.jetbrains.idea.maven.model.MavenConstants
+import org.jetbrains.kotlin.idea.configuration.AbstractConfigureProjectByChangingFileTest
+import org.jetbrains.kotlin.idea.configuration.NotificationMessageCollector
+import org.jetbrains.kotlin.idea.maven.configuration.KotlinJavaMavenConfigurator
+import org.jetbrains.kotlin.idea.maven.configuration.KotlinJavascriptMavenConfigurator
+import org.jetbrains.kotlin.idea.maven.configuration.KotlinMavenConfigurator
 
 abstract class AbstractMavenConfigureProjectByChangingFileTest : AbstractConfigureProjectByChangingFileTest<KotlinMavenConfigurator>() {
     fun doTestWithMaven(path: String) {

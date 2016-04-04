@@ -31,5 +31,5 @@
     </build>
 </project>
 
-<!-- inspection: org.jetbrains.kotlin.idea.configuration.SameVersionIDEPluginInspection -->
+<!-- inspection: org.jetbrains.kotlin.idea.maven.inspections.SameVersionIDEPluginInspection -->
 <!-- problem: on ${kotlin.version}, title You use different IDE and Maven plugins' versions so you code's behaviour may be different -->

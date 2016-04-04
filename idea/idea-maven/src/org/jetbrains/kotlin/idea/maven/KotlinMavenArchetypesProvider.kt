@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.configuration
+package org.jetbrains.kotlin.idea.maven
 
 import com.google.gson.JsonElement
 import com.google.gson.JsonParser

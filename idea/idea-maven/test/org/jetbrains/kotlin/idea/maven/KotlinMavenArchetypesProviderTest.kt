@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.configuration
+package org.jetbrains.kotlin.idea.maven
 
 import com.google.gson.JsonParser
 import org.jetbrains.idea.maven.model.MavenArchetype
+import org.jetbrains.kotlin.idea.maven.KotlinMavenArchetypesProvider
 import org.junit.Test
 
 import org.junit.Assert.*
