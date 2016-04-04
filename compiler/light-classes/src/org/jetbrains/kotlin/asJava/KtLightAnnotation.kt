@@ -74,6 +74,7 @@ class KtLightAnnotation(
         override fun getReference() = references.singleOrNull()
         override fun getReferences() = ReferenceProvidersRegistry.getReferencesFromProviders(delegate, PsiReferenceService.Hints.NO_HINTS)
         override fun getLanguage() = KotlinLanguage.INSTANCE
+        override fun getNavigationElement() = originalExpression
     }
 
     inner class LightArrayInitializerValue(private val delegate: PsiArrayInitializerMemberValue) : PsiArrayInitializerMemberValue by delegate {
