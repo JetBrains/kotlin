@@ -38,15 +38,19 @@ class LetImplementInterfaceFix(
 
     private fun KotlinType.renderShort() = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(this)
 
-    private val expectedTypeName = expectedType.renderShort()
+    private val expectedTypeName: String
 
-    private val expectedTypeNameSourceCode = IdeDescriptorRenderers.SOURCE_CODE.renderType(expectedType)
+    private val expectedTypeNameSourceCode: String
 
     private val prefix: String
 
     private val validExpectedType: Boolean
 
     init {
+        val expectedTypeNotNullable = TypeUtils.makeNotNullable(expectedType)
+        expectedTypeName = expectedTypeNotNullable.renderShort()
+        expectedTypeNameSourceCode = IdeDescriptorRenderers.SOURCE_CODE.renderType(expectedTypeNotNullable)
+
         val verb = if (expressionType.isInterface()) "extend" else "implement"
         prefix = "Let '${expressionType.renderShort()}' $verb"
 
