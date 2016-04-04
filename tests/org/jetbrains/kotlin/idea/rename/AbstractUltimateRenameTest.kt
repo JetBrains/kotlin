@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.tests
+package org.jetbrains.kotlin.idea.rename
 
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.idea.refactoring.rename.AbstractRenameTest
+import org.jetbrains.kotlin.tests.ULTIMATE_TEST_DATA_DIR
 
-val ULTIMATE_TEST_ROOT: String
-    get() = "${KotlinTestUtils.getHomeDirectory()}/ultimate"
-
-val ULTIMATE_TEST_DATA_DIR: String
-    get() = "$ULTIMATE_TEST_ROOT/testData"
+abstract class AbstractUltimateRenameTest : AbstractRenameTest() {
+    override fun getTestDataPath() = ULTIMATE_TEST_DATA_DIR
+}

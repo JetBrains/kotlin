@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.idea.spring.tests.gutter.AbstractSpringClassAnnotato
 import org.jetbrains.kotlin.idea.spring.tests.references.AbstractSpringReferenceCompletionHandlerTest
 import org.jetbrains.kotlin.idea.spring.tests.references.AbstractSpringReferenceCompletionTest
 import org.jetbrains.kotlin.idea.spring.tests.references.AbstractSpringReferenceNavigationTest
+import org.jetbrains.kotlin.idea.spring.tests.rename.AbstractSpringRenameTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -55,6 +56,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractGenerateSpringDependencyActionTest>() {
             model("spring/core/generate", pattern = "^([\\w]+)\\.kt$", singleClass = true)
+        }
+
+        testClass<AbstractSpringRenameTest>() {
+            model("spring/core/rename", extension = "test", singleClass = true)
         }
     }
 }
