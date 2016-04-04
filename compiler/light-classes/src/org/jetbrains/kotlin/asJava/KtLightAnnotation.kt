@@ -22,7 +22,6 @@ import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
-import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -37,7 +36,7 @@ class KtLightAnnotation(
         private val owner: PsiAnnotationOwner
 ) : PsiAnnotation by clsDelegate, KtLightElement<KtAnnotationEntry, PsiAnnotation> {
     inner class LightExpressionValue(private val delegate: PsiExpression) : PsiAnnotationMemberValue, PsiExpression by delegate {
-        val originalExpression: KtExpression? by lazy {
+        val originalExpression: PsiElement? by lazy {
             val nameAndValue = getStrictParentOfType<PsiNameValuePair>() ?: return@lazy null
             val annotationEntry = this@KtLightAnnotation.kotlinOrigin
             val context = LightClassGenerationSupport.getInstance(project).analyze(annotationEntry)
@@ -49,7 +48,12 @@ class KtLightAnnotation(
             val resolvedArgument = resolvedCall.valueArguments[parameter] ?: return@lazy null
             when (resolvedArgument) {
                 is DefaultValueArgument -> {
-                    (parameter.source.getPsi() as? KtParameter)?.defaultValue
+                    val psi = parameter.source.getPsi()
+                    when (psi) {
+                        is KtParameter -> psi.defaultValue
+                        is PsiAnnotationMethod -> psi.defaultValue
+                        else -> null
+                    }
                 }
 
                 is ExpressionValueArgument -> {
