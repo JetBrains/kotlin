@@ -62,16 +62,10 @@ class LetImplementInterfaceFix(
     }
 
     override fun getFamilyName() = "Let type implement interface"
-    override fun getText(): String {
-        return "$prefix interface '$expectedTypeName'"
-    }
+    override fun getText() = "$prefix interface '$expectedTypeName'"
 
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
-        if (!super.isAvailable(project, editor, file)) return false
-        if (!validExpectedType) return false
-
-        return true
-    }
+    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile) =
+            super.isAvailable(project, editor, file) && validExpectedType
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val superTypeEntry = KtPsiFactory(element).createSuperTypeEntry(expectedTypeNameSourceCode)
