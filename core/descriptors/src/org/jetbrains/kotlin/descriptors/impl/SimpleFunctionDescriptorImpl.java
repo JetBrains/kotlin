@@ -104,31 +104,8 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
 
     @NotNull
     @Override
-    public SimpleFunctionDescriptor createRenamedCopy(@NotNull Name name) {
-        //noinspection ConstantConditions
-        return (SimpleFunctionDescriptor) newCopyBuilder().setName(name).setSignatureChange().setPreserveSourceElement().build();
-    }
-
-    @NotNull
-    @Override
-    public SimpleFunctionDescriptor createCopyWithNewValueParameters(@NotNull List<ValueParameterDescriptor> valueParameters) {
-        //noinspection ConstantConditions
-        return (SimpleFunctionDescriptor) newCopyBuilder()
-                                            .setValueParameters(valueParameters)
-                                            .setSignatureChange().setPreserveSourceElement().build();
-    }
-
-    @NotNull
-    @Override
-    public SimpleFunctionDescriptor createCopyWithNewTypeParameters(@NotNull List<TypeParameterDescriptor> typeParameters) {
-        //noinspection ConstantConditions
-        return (SimpleFunctionDescriptor) newCopyBuilder().setTypeParameters(typeParameters).build();
-    }
-
-    @NotNull
-    @Override
-    public SimpleFunctionDescriptor createHiddenCopyToOvercomeSignatureClash() {
-        //noinspection ConstantConditions
-        return (SimpleFunctionDescriptor) newCopyBuilder().setHidden().build();
+    public CopyBuilder<? extends SimpleFunctionDescriptor> newCopyBuilder() {
+        //noinspection unchecked
+        return (CopyBuilder<? extends SimpleFunctionDescriptor>) super.newCopyBuilder();
     }
 }

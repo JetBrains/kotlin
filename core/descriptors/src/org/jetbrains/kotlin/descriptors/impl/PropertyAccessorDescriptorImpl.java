@@ -152,6 +152,12 @@ public abstract class PropertyAccessorDescriptorImpl extends DeclarationDescript
 
     @NotNull
     @Override
+    public CopyBuilder<? extends FunctionDescriptor> newCopyBuilder() {
+        throw new UnsupportedOperationException("Accessors must be copied by the corresponding property");
+    }
+
+    @NotNull
+    @Override
     public PropertyAccessorDescriptor copy(
             DeclarationDescriptor newOwner,
             Modality modality,

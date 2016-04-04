@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.ErrorUtils;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.Collection;
 import java.util.List;
@@ -58,26 +59,104 @@ public class ErrorSimpleFunctionDescriptorImpl extends SimpleFunctionDescriptorI
 
     @NotNull
     @Override
-    public SimpleFunctionDescriptor createRenamedCopy(@NotNull Name name) {
-        return this;
-    }
+    public CopyBuilder<? extends SimpleFunctionDescriptor> newCopyBuilder() {
+        return new CopyBuilder<SimpleFunctionDescriptor>() {
+            @NotNull
+            @Override
+            public CopyBuilder<SimpleFunctionDescriptor> setOwner(@NotNull DeclarationDescriptor owner) {
+                return this;
+            }
 
-    @NotNull
-    @Override
-    public SimpleFunctionDescriptor createCopyWithNewValueParameters(@NotNull List<ValueParameterDescriptor> valueParameters) {
-        return this;
-    }
+            @NotNull
+            @Override
+            public CopyBuilder<SimpleFunctionDescriptor> setModality(@NotNull Modality modality) {
+                return this;
+            }
 
-    @NotNull
-    @Override
-    public SimpleFunctionDescriptor createCopyWithNewTypeParameters(@NotNull List<TypeParameterDescriptor> typeParameters) {
-        return this;
-    }
+            @NotNull
+            @Override
+            public CopyBuilder<SimpleFunctionDescriptor> setVisibility(@NotNull Visibility visibility) {
+                return this;
+            }
 
-    @NotNull
-    @Override
-    public SimpleFunctionDescriptor createHiddenCopyToOvercomeSignatureClash() {
-        return this;
+            @NotNull
+            @Override
+            public CopyBuilder<SimpleFunctionDescriptor> setKind(@NotNull Kind kind) {
+                return this;
+            }
+
+            @NotNull
+            @Override
+            public CopyBuilder<SimpleFunctionDescriptor> setCopyOverrides(boolean copyOverrides) {
+                return this;
+            }
+
+            @NotNull
+            @Override
+            public CopyBuilder<SimpleFunctionDescriptor> setName(@NotNull Name name) {
+                return this;
+            }
+
+            @NotNull
+            @Override
+            public CopyBuilder<SimpleFunctionDescriptor> setValueParameters(@NotNull List<ValueParameterDescriptor> parameters) {
+                return this;
+            }
+
+            @NotNull
+            @Override
+            public CopyBuilder<SimpleFunctionDescriptor> setTypeParameters(@NotNull List<TypeParameterDescriptor> parameters) {
+                return this;
+            }
+
+            @NotNull
+            @Override
+            public CopyBuilder<SimpleFunctionDescriptor> setReturnType(@NotNull KotlinType type) {
+                return this;
+            }
+
+            @NotNull
+            @Override
+            public CopyBuilder<SimpleFunctionDescriptor> setExtensionReceiverType(@Nullable KotlinType type) {
+                return this;
+            }
+
+            @NotNull
+            @Override
+            public CopyBuilder<SimpleFunctionDescriptor> setOriginal(@NotNull FunctionDescriptor original) {
+                return this;
+            }
+
+            @NotNull
+            @Override
+            public CopyBuilder<SimpleFunctionDescriptor> setSignatureChange() {
+                return this;
+            }
+
+            @NotNull
+            @Override
+            public CopyBuilder<SimpleFunctionDescriptor> setPreserveSourceElement() {
+                return this;
+            }
+
+            @NotNull
+            @Override
+            public CopyBuilder<SimpleFunctionDescriptor> setDropOriginalInContainingParts() {
+                return this;
+            }
+
+            @NotNull
+            @Override
+            public CopyBuilder<SimpleFunctionDescriptor> setHiddenToOvercomeSignatureClash() {
+                return this;
+            }
+
+            @Nullable
+            @Override
+            public SimpleFunctionDescriptor build() {
+                return ErrorSimpleFunctionDescriptorImpl.this;
+            }
+        };
     }
 
     @Override
