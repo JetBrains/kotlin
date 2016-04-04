@@ -58,4 +58,4 @@ abstract class AbstractClassesTest : AbstractBlackBoxTest("classes/")
 
 abstract class AbstractSuperTest : AbstractBlackBoxTest("super/")
 
-abstract class AbstractNonLocalReturnsTest : KotlinJSMutliFileTest("inline.generated/nonLocalReturns/")
+abstract class AbstractNonLocalReturnsTest : KotlinJSMultiFileTest("inline.generated/nonLocalReturns/")

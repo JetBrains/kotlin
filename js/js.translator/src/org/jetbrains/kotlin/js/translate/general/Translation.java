@@ -93,10 +93,6 @@ public final class Translation {
         context.moveVarsFrom(innerContext);
         block.getStatements().addAll(innerContext.dynamicContext().jsBlock().getStatements());
 
-        if (BindingContextUtilsKt.isUnreachableCode(expression, context.bindingContext())) {
-            return context.getEmptyExpression();
-        }
-
         return result;
     }
 

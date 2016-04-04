@@ -385,7 +385,13 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
         String content = FileUtil.loadFile(new File(filename), true);
         KtPsiFactory psiFactory = new KtPsiFactory(getProject());
         KtFile jetFile = psiFactory.createFile(content);
-        String packageName = jetFile.getPackageFqName().asString();
+        KtFile ktFile = psiFactory.createFile(content);
+        return getPackageName(ktFile);
+    }
+
+    @NotNull
+    protected static String getPackageName(KtFile ktFile) {
+        String packageName = ktFile.getPackageFqName().asString();
         return packageName.isEmpty() ? Namer.getRootPackageName() : packageName;
     }
 

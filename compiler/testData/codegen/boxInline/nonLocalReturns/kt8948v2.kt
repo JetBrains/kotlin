@@ -13,13 +13,11 @@ inline fun foo(f: () -> Unit) {
 
 // FILE: 2.kt
 
-// TODO: enabled when KT-6397 gets fixed
-// TARGET_BACKEND: JVM
 import test.*
 
 var p = "fail"
 
-fun test() {
+fun test1() {
     foo {
         try {
             p = "O"
@@ -33,6 +31,6 @@ fun test() {
 }
 
 fun box(): String {
-    test()
+    test1()
     return p
 }

@@ -47,6 +47,12 @@ public class LabelTestGenerated extends AbstractLabelTest {
         doTest(fileName);
     }
 
+    @TestMetadata("nestedInlineLabels.kt")
+    public void testNestedInlineLabels() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/labels/cases/nestedInlineLabels.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("nestedLabels.kt")
     public void testNestedLabels() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/labels/cases/nestedLabels.kt");
