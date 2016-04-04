@@ -31,12 +31,6 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class NonLocalReturnsTestGenerated extends AbstractNonLocalReturnsTest {
-    @TestMetadata("kt8948v2.kt")
-    public void ignoredKt8948v2() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/kt8948v2.kt");
-        doTest(fileName);
-    }
-
     public void testAllFilesPresentInNonLocalReturns() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns"), Pattern.compile("^(.+)\\.kt$"), true);
     }
@@ -62,6 +56,12 @@ public class NonLocalReturnsTestGenerated extends AbstractNonLocalReturnsTest {
     @TestMetadata("kt8948.kt")
     public void testKt8948() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/kt8948.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kt8948v2.kt")
+    public void testKt8948v2() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/kt8948v2.kt");
         doTest(fileName);
     }
 

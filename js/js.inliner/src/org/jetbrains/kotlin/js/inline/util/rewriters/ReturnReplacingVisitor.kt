@@ -17,11 +17,17 @@
 package org.jetbrains.kotlin.js.inline.util.rewriters
 
 import com.google.dart.compiler.backend.js.ast.*
+import com.google.dart.compiler.backend.js.ast.metadata.functionDescriptor
+import com.google.dart.compiler.backend.js.ast.metadata.returnTarget
 import com.google.dart.compiler.backend.js.ast.metadata.synthetic
 import org.jetbrains.kotlin.js.inline.util.canHaveSideEffect
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
-class ReturnReplacingVisitor(private val resultRef: JsNameRef?, private val breakLabel: JsNameRef?) : JsVisitorWithContextImpl() {
+class ReturnReplacingVisitor(
+        private val resultRef: JsNameRef?,
+        private val breakLabel: JsNameRef?,
+        private val function: JsFunction
+) : JsVisitorWithContextImpl() {
 
     /**
      * Prevents replacing returns in object literal
@@ -34,29 +40,27 @@ class ReturnReplacingVisitor(private val resultRef: JsNameRef?, private val brea
     override fun visit(x: JsFunction, ctx: JsContext<JsNode>): Boolean = false
 
     override fun endVisit(x: JsReturn, ctx: JsContext<JsNode>) {
+        if (x.returnTarget != null && function.functionDescriptor != x.returnTarget) return
+
         ctx.removeMe()
 
         val returnReplacement = getReturnReplacement(x.expression)
         if (returnReplacement != null) {
-            val statement = JsExpressionStatement(returnReplacement)
-            statement.synthetic = true
-            ctx.addNext(statement)
+            ctx.addNext(JsExpressionStatement(returnReplacement).apply { synthetic = true })
         }
 
         if (breakLabel != null) {
             ctx.addNext(JsBreak(breakLabel))
         }
-
     }
 
     private fun getReturnReplacement(returnExpression: JsExpression?): JsExpression? {
         if (returnExpression != null) {
             if (resultRef != null) {
-                return JsAstUtils.assignment(resultRef, returnExpression)
+                return JsAstUtils.assignment(resultRef, returnExpression).apply { synthetic = true }
             }
 
-            if (returnExpression.canHaveSideEffect())
-                return returnExpression
+            if (returnExpression.canHaveSideEffect()) return returnExpression
         }
 
         return null

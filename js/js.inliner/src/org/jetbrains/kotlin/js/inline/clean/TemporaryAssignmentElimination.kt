@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.js.inline.clean
 
 import com.google.dart.compiler.backend.js.ast.*
+import com.google.dart.compiler.backend.js.ast.metadata.HasMetadata
 import com.google.dart.compiler.backend.js.ast.metadata.synthetic
 import org.jetbrains.kotlin.js.inline.util.canHaveSideEffect
 import org.jetbrains.kotlin.js.inline.util.collectDefinedNames
@@ -183,7 +184,7 @@ internal class TemporaryAssignmentElimination(private val root: JsBlock) {
                     val usage = getUsage(name)
                     if (usage != null) {
                         val replacement = when (usage) {
-                            is Usage.Return -> JsReturn(value).source(x.expression.source)
+                            is Usage.Return -> JsReturn(value).apply { source(x.expression.source) }
                             is Usage.VariableAssignment -> {
                                 val expr = JsAstUtils.assignment(usage.target.makeRef(), value).source(x.expression.source)
                                 val statement = JsExpressionStatement(expr)

@@ -41,7 +41,6 @@ fun JsExpression.needToAlias(): Boolean =
 
 fun JsExpression.shouldHaveOwnAlias(): Boolean =
         when (this) {
-            is JsThisRef,
             is JsConditional,
             is JsBinaryOperation,
             is JsArrayLiteral -> true
