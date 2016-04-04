@@ -18,14 +18,21 @@ package org.jetbrains.kotlin.idea.intentions.conventionNameCalls
 
 import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde.getAnyDeclaration
 import org.jetbrains.kotlin.idea.intentions.*
+import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.util.OperatorChecks
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class ReplaceContainsIntention : SelfTargetingRangeIntention<KtDotQualifiedExpression>(KtDotQualifiedExpression::class.java, "Replace 'contains' call with 'in' operator"), HighPriorityAction {
@@ -42,6 +49,9 @@ class ReplaceContainsIntention : SelfTargetingRangeIntention<KtDotQualifiedExpre
         if (!target.builtIns.isBooleanOrSubtype(returnType)) return null
 
         if (!element.isReceiverExpressionWithValue()) return null
+
+        val functionDescriptor = getFunctionDescriptor(element) ?: return null
+        if (!functionDescriptor.isOperator || !OperatorChecks.checkOperator(functionDescriptor).isSuccess) return null
 
         return element.callExpression!!.calleeExpression!!.textRange
     }
@@ -69,5 +79,11 @@ class ReplaceContainsIntention : SelfTargetingRangeIntention<KtDotQualifiedExpre
                 previousElement.parent!!.addAfter(psiFactory.createSemicolon(), previousElement)
             }
         }
+    }
+
+    private fun getFunctionDescriptor(element: KtDotQualifiedExpression) : FunctionDescriptor? {
+        val bindingContext = element.analyze(BodyResolveMode.PARTIAL)
+        val resolvedCall = element.getResolvedCall(bindingContext) ?: return null
+        return resolvedCall.resultingDescriptor as? FunctionDescriptor
     }
 }
