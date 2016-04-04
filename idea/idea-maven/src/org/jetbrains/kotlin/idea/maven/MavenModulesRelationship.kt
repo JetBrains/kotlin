@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.configuration
+package org.jetbrains.kotlin.idea.maven
 
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project

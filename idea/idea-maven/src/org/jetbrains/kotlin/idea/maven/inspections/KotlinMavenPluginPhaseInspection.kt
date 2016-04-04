@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.configuration
+package org.jetbrains.kotlin.idea.maven.inspections
 
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
@@ -37,6 +37,10 @@ import org.jetbrains.idea.maven.model.MavenPlugin
 import org.jetbrains.idea.maven.project.MavenProjectsManager
 import org.jetbrains.idea.maven.utils.MavenArtifactScope
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.maven.PomFile
+import org.jetbrains.kotlin.idea.maven.configuration.KotlinJavaMavenConfigurator
+import org.jetbrains.kotlin.idea.maven.configuration.KotlinJavascriptMavenConfigurator
+import org.jetbrains.kotlin.idea.maven.configuration.KotlinMavenConfigurator
 import java.util.*
 
 class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectModel>(MavenDomProjectModel::class.java) {

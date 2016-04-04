@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.configuration
+package org.jetbrains.kotlin.idea.maven.inspections
 
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
@@ -26,6 +26,8 @@ import com.intellij.util.xml.highlighting.DomElementsInspection
 import org.jetbrains.idea.maven.dom.model.MavenDomDependency
 import org.jetbrains.idea.maven.dom.model.MavenDomProjectModel
 import org.jetbrains.idea.maven.project.MavenProjectsManager
+import org.jetbrains.kotlin.idea.maven.configuration.KotlinJavaMavenConfigurator
+import org.jetbrains.kotlin.idea.maven.configuration.KotlinMavenConfigurator
 
 class KotlinTestJUnitInspection : DomElementsInspection<MavenDomProjectModel>(MavenDomProjectModel::class.java) {
     override fun checkFileElement(domFileElement: DomFileElement<MavenDomProjectModel>?, holder: DomElementAnnotationHolder?) {

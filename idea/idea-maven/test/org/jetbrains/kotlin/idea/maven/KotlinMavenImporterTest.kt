@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.maven
 
-import org.jetbrains.kotlin.idea.configuration.KotlinImporterComponent
 import java.io.File
 
 class KotlinMavenImporterTest : MavenImportingTestCase() {
