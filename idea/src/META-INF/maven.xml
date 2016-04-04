@@ -34,7 +34,15 @@
                      level="WARNING" />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.configuration.SameVersionInspection"
-                     displayName="Kotlin Maven: kotlin-test-junit inspection"
+                     displayName="Kotlin Maven: library and plugin inspection"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     language="XML"
+                     hasStaticDescription="true"
+                     level="WARNING" />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.configuration.SameVersionIDEPluginInspection"
+                     displayName="Kotlin Maven: Maven and IDE plugins versions inspection"
                      groupName="Kotlin"
                      enabledByDefault="true"
                      language="XML"
