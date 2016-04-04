@@ -35,15 +35,27 @@ public class SpringReferenceCompletionTestGenerated extends AbstractSpringRefere
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("ultimate/testData/spring/core/references/completion/variants"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
-    @TestMetadata("scopeReference.kt")
-    public void testScopeReference() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("ultimate/testData/spring/core/references/completion/variants/scopeReference.kt");
+    @TestMetadata("beanWithDefaultName.kt")
+    public void testBeanWithDefaultName() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("ultimate/testData/spring/core/references/completion/variants/beanWithDefaultName.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("springBeanReference.kt")
-    public void testSpringBeanReference() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("ultimate/testData/spring/core/references/completion/variants/springBeanReference.kt");
+    @TestMetadata("beanWithExplicitName.kt")
+    public void testBeanWithExplicitName() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("ultimate/testData/spring/core/references/completion/variants/beanWithExplicitName.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("scopeReferenceXml.kt")
+    public void testScopeReferenceXml() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("ultimate/testData/spring/core/references/completion/variants/scopeReferenceXml.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("springBeanReferenceXml.kt")
+    public void testSpringBeanReferenceXml() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("ultimate/testData/spring/core/references/completion/variants/springBeanReferenceXml.kt");
         doTest(fileName);
     }
 }
