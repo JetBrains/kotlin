@@ -8,5 +8,5 @@ fun main(args: Array<String>) {
 }
 
 // PRINT_FRAME
-// SKIP: value, hash, hash32
+// SKIP: value, hash, hash32, offset, count
 // DESCRIPTOR_VIEW_OPTIONS: NAME_EXPRESSION_RESULT
