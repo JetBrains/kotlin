@@ -91,7 +91,7 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
 
             val debuggerContext = DebuggerManagerEx.getInstanceEx(project).context
             val debuggerSession = debuggerContext.debuggerSession
-            if (debuggerSession == null) {
+            if (debuggerSession == null ||  debuggerContext.suspendContext == null) {
                 null
             }
             else {
