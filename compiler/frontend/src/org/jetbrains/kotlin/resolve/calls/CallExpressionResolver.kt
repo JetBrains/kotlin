@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.bindingContextUtil.recordDataFlowInfo
 import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScope
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
@@ -64,6 +65,7 @@ import javax.inject.Inject
 class CallExpressionResolver(
         private val callResolver: CallResolver,
         private val constantExpressionEvaluator: ConstantExpressionEvaluator,
+        private val argumentTypeResolver: ArgumentTypeResolver,
         private val dataFlowAnalyzer: DataFlowAnalyzer,
         private val builtIns: KotlinBuiltIns,
         private val qualifiedExpressionResolver: QualifiedExpressionResolver,
@@ -247,6 +249,13 @@ class CallExpressionResolver(
                 temporaryForVariable.commit()
                 context.trace.report(FUNCTION_EXPECTED.on(calleeExpression, calleeExpression,
                                                           type ?: ErrorUtils.createErrorType("")))
+                argumentTypeResolver.analyzeArgumentsAndRecordTypes(
+                        BasicCallResolutionContext.create(
+                                context, call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
+                                DataFlowInfoForArgumentsImpl(initialDataFlowInfoForArguments, call)
+                        ),
+                        ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS
+                )
                 return noTypeInfo(context)
             }
         }
