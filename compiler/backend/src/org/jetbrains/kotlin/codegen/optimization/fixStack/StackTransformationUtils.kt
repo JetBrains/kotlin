@@ -41,13 +41,11 @@ inline fun InsnList.forEachInlineMarker(block: (String, MethodInsnNode) -> Unit)
     }
 }
 
-fun <V : Value> Frame<V>.top(): V? {
-    val stackSize = stackSize
-    if (stackSize == 0)
-        return null
-    else
-        return getStack(stackSize - 1)
-}
+fun <V : Value> Frame<V>.top(): V? =
+        peek(0)
+
+fun <V : Value> Frame<V>.peek(offset: Int): V? =
+        if (stackSize >= offset) getStack(stackSize - offset - 1) else null
 
 fun MethodNode.updateMaxLocals(newMaxLocals: Int) {
     maxLocals = Math.max(maxLocals, newMaxLocals)

@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil;
 import org.jetbrains.kotlin.codegen.optimization.boxing.RedundantBoxingMethodTransformer;
+import org.jetbrains.kotlin.codegen.optimization.boxing.RedundantCoercionToUnitTransformer;
 import org.jetbrains.kotlin.codegen.optimization.boxing.RedundantNullCheckMethodTransformer;
 import org.jetbrains.kotlin.codegen.optimization.common.UtilKt;
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer;
@@ -42,7 +43,8 @@ public class OptimizationMethodVisitor extends MethodVisitor {
             new RedundantNullCheckMethodTransformer(),
             new RedundantBoxingMethodTransformer(),
             new DeadCodeEliminationMethodTransformer(),
-            new RedundantGotoMethodTransformer()
+            new RedundantGotoMethodTransformer(),
+            new RedundantCoercionToUnitTransformer()
     };
 
     private final MethodNode methodNode;

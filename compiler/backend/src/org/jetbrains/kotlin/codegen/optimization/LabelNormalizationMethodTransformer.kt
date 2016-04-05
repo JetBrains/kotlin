@@ -150,13 +150,13 @@ class LabelNormalizationMethodTransformer : MethodTransformer() {
     }
 }
 
-private fun InsnList.replaceNodeGetNext(oldNode: AbstractInsnNode, newNode: AbstractInsnNode): AbstractInsnNode? {
+fun InsnList.replaceNodeGetNext(oldNode: AbstractInsnNode, newNode: AbstractInsnNode): AbstractInsnNode? {
     insertBefore(oldNode, newNode)
     remove(oldNode)
     return newNode.next
 }
 
-private fun InsnList.removeNodeGetNext(oldNode: AbstractInsnNode): AbstractInsnNode? {
+fun InsnList.removeNodeGetNext(oldNode: AbstractInsnNode): AbstractInsnNode? {
     val next = oldNode.next
     remove(oldNode)
     return next

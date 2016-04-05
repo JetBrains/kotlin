@@ -575,6 +575,51 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/bytecodeText/coercionToUnitOptimization")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class CoercionToUnitOptimization extends AbstractBytecodeTextTest {
+        public void testAllFilesPresentInCoercionToUnitOptimization() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/coercionToUnitOptimization"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("nopInlineFuns.kt")
+        public void testNopInlineFuns() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/coercionToUnitOptimization/nopInlineFuns.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("returnsUnit.kt")
+        public void testReturnsUnit() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/coercionToUnitOptimization/returnsUnit.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("safeCall.kt")
+        public void testSafeCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/coercionToUnitOptimization/safeCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("safeCallWithReturnValue.kt")
+        public void testSafeCallWithReturnValue() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/coercionToUnitOptimization/safeCallWithReturnValue.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("safeLet.kt")
+        public void testSafeLet() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/coercionToUnitOptimization/safeLet.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("tryInlined.kt")
+        public void testTryInlined() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/coercionToUnitOptimization/tryInlined.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/bytecodeText/conditions")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
