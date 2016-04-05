@@ -1,4 +1,4 @@
-<project name="Update Dependencies" default="update" xmlns:if="ant:if" xmlns:unless="ant:unless">
+<project name="Update Dependencies" default="update_continuous_br146" xmlns:if="ant:if" xmlns:unless="ant:unless">
 
     <property name="automerge_dummy" value="This property is used to trick git merge. Do not delete empty lines around."/>
     <property name="ideaVersion" value="2016.1.2"/>
@@ -94,6 +94,12 @@
         <execute_update_with_idea_maven_artifacts
             base.url="https://www.jetbrains.com/intellij-repository/snapshots/com/jetbrains/intellij/idea"
             idea.maven.version="144-SNAPSHOT"/>
+    </target>
+
+    <target name="update_continuous_br146" depends="fetch-third-party,fetch-annotations">
+        <execute_update_with_idea_maven_artifacts
+            base.url="https://www.jetbrains.com/intellij-repository/snapshots/com/jetbrains/intellij/idea"
+            idea.maven.version="146-SNAPSHOT"/>
     </target>
 
     <macrodef name="get-maven-library">
@@ -678,7 +684,6 @@
                         <file file="@{idea.dir}/lib/log4j.jar"/>
                         <file file="@{idea.dir}/lib/xstream-1.4.8.jar"/>
                         <file file="@{idea.dir}/lib/xpp3-1.1.4-min.jar"/>
-                        <file file="@{idea.dir}/lib/jsr166e.jar"/>
                         <file file="@{idea.dir}/lib/asm-all.jar"/>
                         <file file="@{idea.dir}/lib/snappy-in-java-0.3.1.jar"/>
 
