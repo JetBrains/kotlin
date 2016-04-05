@@ -17,10 +17,12 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.contentRange
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import java.util.*
 
@@ -46,7 +48,7 @@ class ConvertToForEachFunctionCallIntention : SelfTargetingIntention<KtForExpres
                 "$0.forEach{$1->$2}", element.loopRange!!, loopParameter, functionBodyArgument)
         val result = element.replace(foreachExpression) as KtElement
 
-        result.getContinuesWithLabel(labelName).forEach {
+        result.findDescendantOfType<KtFunctionLiteral>()!!.getContinuesWithLabel(labelName).forEach {
             it.replace(psiFactory.createExpression("return@forEach"))
         }
 
@@ -56,15 +58,14 @@ class ConvertToForEachFunctionCallIntention : SelfTargetingIntention<KtForExpres
     private fun KtElement.getContinuesWithLabel(labelName: String?): List<KtContinueExpression> {
         val continueElements = ArrayList<KtContinueExpression>()
 
-        forEachDescendantOfType<KtContinueExpression>({ it !is KtLoopExpression }) {
+        forEachDescendantOfType<KtContinueExpression>({ it.shouldEnterForUnqualified(this) }) {
             if (it.getLabelName() == null) {
                 continueElements += it
             }
         }
 
         if (labelName != null) {
-            forEachDescendantOfType<KtContinueExpression>(
-                    { it !is KtLoopExpression || it.getLabelName() != labelName }) {
+            forEachDescendantOfType<KtContinueExpression>({ it.shouldEnterForQualified(this, labelName) }) {
                 if (it.getLabelName() == labelName) {
                     continueElements += it
                 }
@@ -73,6 +74,20 @@ class ConvertToForEachFunctionCallIntention : SelfTargetingIntention<KtForExpres
 
         return continueElements
     }
+
+    private fun PsiElement.shouldEnterForUnqualified(allow: PsiElement): Boolean {
+        if (this == allow) return true
+        if (shouldNeverEnter()) return false
+        return this !is KtLoopExpression
+    }
+
+    private fun PsiElement.shouldEnterForQualified(allow: PsiElement, labelName: String): Boolean {
+        if (this == allow) return true
+        if (shouldNeverEnter()) return false
+        return this !is KtLoopExpression || getLabelName() != labelName
+    }
+
+    private fun PsiElement.shouldNeverEnter() = this is KtLambdaExpression || this is KtClassOrObject || this is KtFunction
 
     private fun KtLoopExpression.getLabelName() = (parent as? KtExpressionWithLabel)?.getLabelName()
 }
