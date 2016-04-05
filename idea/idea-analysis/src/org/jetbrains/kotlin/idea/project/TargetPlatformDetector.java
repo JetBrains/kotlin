@@ -22,6 +22,7 @@ import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.js.resolve.JsPlatform;
+import org.jetbrains.kotlin.psi.KtCodeFragment;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.TargetPlatform;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
@@ -35,6 +36,13 @@ public class TargetPlatformDetector {
 
     @NotNull
     public static TargetPlatform getPlatform(@NotNull KtFile file) {
+        if (file instanceof KtCodeFragment) {
+            KtFile contextFile = ((KtCodeFragment) file).getContextContainingFile();
+            if (contextFile != null) {
+                return getPlatform(contextFile);
+            }
+        }
+
         VirtualFile virtualFile = file.getOriginalFile().getVirtualFile();
         if (virtualFile == null) {
             return getDefaultPlatform();
