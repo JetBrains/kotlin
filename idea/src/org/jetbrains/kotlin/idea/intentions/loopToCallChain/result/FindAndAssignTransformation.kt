@@ -68,7 +68,7 @@ class FindAndAssignTransformation(
             if (state.statements.size != 2) return null
 
             val breakExpression = state.statements.last() as? KtBreakExpression ?: return null
-            if (!breakExpression.isBreakOrContinueOfLoop(state.loop)) return null
+            if (!breakExpression.isBreakOrContinueOfLoop(state.outerLoop)) return null
 
             val binaryExpression = state.statements.first() as? KtBinaryExpression ?: return null
             if (binaryExpression.operationToken != KtTokens.EQ) return null
@@ -76,16 +76,16 @@ class FindAndAssignTransformation(
             val right = binaryExpression.right ?: return null
 
             //TODO: support also assignment instead of declaration
-            val declarationBeforeLoop = state.loop.previousStatement() as? KtProperty ?: return null
+            val declarationBeforeLoop = state.outerLoop.previousStatement() as? KtProperty ?: return null
             val initializer = declarationBeforeLoop.initializer ?: return null
             if (!left.isVariableReference(declarationBeforeLoop)) return null
 
-            val usageCountInLoop = ReferencesSearch.search(declarationBeforeLoop, LocalSearchScope(state.loop)).count()
+            val usageCountInLoop = ReferencesSearch.search(declarationBeforeLoop, LocalSearchScope(state.outerLoop)).count()
             if (usageCountInLoop != 1) return null // this should be the only usage of this variable inside the loop
 
             val stdlibFunName = stdlibFunNameForFind(right, initializer, state.workingVariable) ?: return null
 
-            val transformation = FindAndAssignTransformation(state.loop, state.workingVariable, stdlibFunName, declarationBeforeLoop)
+            val transformation = FindAndAssignTransformation(state.outerLoop, state.workingVariable, stdlibFunName, declarationBeforeLoop)
             return ResultTransformationMatch(transformation)
         }
     }

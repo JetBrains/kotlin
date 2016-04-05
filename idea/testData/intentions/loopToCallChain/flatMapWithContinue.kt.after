@@ -1,0 +1,6 @@
+// WITH_RUNTIME
+fun foo(list: List<String>): String? {
+    <caret>return list
+            .flatMap { it.lines() }
+            .firstOrNull { !it.isBlank() }
+}

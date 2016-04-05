@@ -54,10 +54,11 @@ object MatcherRegistrar {
 fun match(loop: KtForExpression): ResultTransformationMatch? {
     val sequenceTransformations = ArrayList<SequenceTransformation>()
     var state = MatchingState(
+            outerLoop = loop,
+            innerLoop = loop,
             statements = listOf(loop.body ?: return null),
             workingVariable = loop.loopParameter ?: return null,
-            indexVariable = null,
-            loop = loop
+            indexVariable = null
     )
 
     MatchLoop@

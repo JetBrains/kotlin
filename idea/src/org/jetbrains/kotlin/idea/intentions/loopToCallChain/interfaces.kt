@@ -54,10 +54,11 @@ interface ResultTransformation : Transformation {
 data class FilterOrMap(val expression: KtExpression, val workingVariable: KtCallableDeclaration)
 
 data class MatchingState(
+        val outerLoop: KtForExpression,
+        val innerLoop: KtForExpression,
         val statements: Collection<KtExpression>,
         val workingVariable: KtCallableDeclaration,
-        val indexVariable: KtCallableDeclaration?,
-        val loop: KtForExpression
+        val indexVariable: KtCallableDeclaration?
 )
 
 interface SequenceTransformationMatcher {
