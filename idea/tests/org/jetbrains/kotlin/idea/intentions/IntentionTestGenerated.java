@@ -4578,15 +4578,13 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
         @TestMetadata("continueToReturnWithLabel.kt")
         public void testContinueToReturnWithLabel() throws Exception {
-            String fileName = KotlinTestUtils
-                    .navigationMetadata("idea/testData/intentions/convertToForEachFunctionCall/continueToReturnWithLabel.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToForEachFunctionCall/continueToReturnWithLabel.kt");
             doTest(fileName);
         }
 
         @TestMetadata("continueToReturnWithoutLabel.kt")
         public void testContinueToReturnWithoutLabel() throws Exception {
-            String fileName = KotlinTestUtils
-                    .navigationMetadata("idea/testData/intentions/convertToForEachFunctionCall/continueToReturnWithoutLabel.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToForEachFunctionCall/continueToReturnWithoutLabel.kt");
             doTest(fileName);
         }
 
