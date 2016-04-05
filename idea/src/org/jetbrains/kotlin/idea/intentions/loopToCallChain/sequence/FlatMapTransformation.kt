@@ -30,10 +30,6 @@ class FlatMapTransformation(
         private val transform: KtExpression
 ) : SequenceTransformation {
 
-    init {
-        assert(transform.isPhysical)
-    }
-
     override val affectsIndex: Boolean
         get() = true
 

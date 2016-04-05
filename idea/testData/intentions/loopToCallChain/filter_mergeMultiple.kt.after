@@ -1,0 +1,7 @@
+// WITH_RUNTIME
+fun foo(list: List<String>): String? {
+    return list
+            .filter { !it.isEmpty() && it.length < 10 && it != "abc" && it != "def" }
+            .map { it + "x" }
+            .firstOrNull()
+}

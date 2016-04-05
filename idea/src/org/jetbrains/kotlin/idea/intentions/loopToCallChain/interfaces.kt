@@ -30,6 +30,8 @@ interface Transformation {
 }
 
 interface SequenceTransformation : Transformation {
+    fun mergeWithPrevious(previousTransformation: SequenceTransformation): SequenceTransformation? = null
+
     val affectsIndex: Boolean
 
     fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression

@@ -29,11 +29,15 @@ class FilterTransformation(
         val isInverse: Boolean
 ) : SequenceTransformation {
 
-    init {
-        assert(condition.isPhysical)
-    }
-
     fun buildRealCondition() = if (isInverse) condition.negate() else condition
+
+    override fun mergeWithPrevious(previousTransformation: SequenceTransformation): SequenceTransformation? {
+        if (previousTransformation !is FilterTransformation) return null
+        assert(previousTransformation.inputVariable == inputVariable)
+        val mergedCondition = KtPsiFactory(condition).createExpressionByPattern(
+                "$0 && $1", previousTransformation.buildRealCondition(), buildRealCondition())
+        return FilterTransformation(inputVariable, mergedCondition, isInverse = false) //TODO: build filterNot in some cases?
+    }
 
     override val affectsIndex: Boolean
         get() = true
@@ -44,7 +48,6 @@ class FilterTransformation(
         return chainedCallGenerator.generate("$0$1:'{}'", name, lambda)
     }
 
-    //TODO: merge subsequent filters
     /**
      * Matches:
      *     for (...) {
