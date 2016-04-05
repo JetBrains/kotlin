@@ -19,16 +19,16 @@ package org.jetbrains.kotlin.kdoc
 import com.intellij.lang.TokenWrapper
 import com.intellij.lexer.Lexer
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.testFramework.UsefulTestCase
 import junit.framework.TestCase
 import org.jetbrains.kotlin.kdoc.lexer.KDocLexer
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import java.io.File
 
 abstract class AbstractKDocLexerTest : TestCase() {
     protected fun doTest(fileName: String) {
         val text = File(fileName).readText()
         val lexerResult = printTokens(text, 0, KDocLexer())
-        KtUsefulTestCase.assertSameLinesWithFile(fileName.replaceAfterLast(".", "txt"), lexerResult)
+        UsefulTestCase.assertSameLinesWithFile(fileName.replaceAfterLast(".", "txt"), lexerResult)
     }
 
     fun printTokens(text: CharSequence, start: Int, lexer: Lexer): String {
