@@ -190,6 +190,7 @@ Issues fixed:
 - Show error message when debug info for some local variable is corrupted
 - Avoid 1s delay in completion in debugger fields if session is not stopped on a breakpoint
 - Avoid cast to runtime type unavailable in current scope
+- Fix text with line breaks in popup with line breakpoint variants
 
 ### Java to Kotlin converter
 
