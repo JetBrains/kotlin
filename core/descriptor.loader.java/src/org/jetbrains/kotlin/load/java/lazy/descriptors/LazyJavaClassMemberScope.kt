@@ -622,18 +622,18 @@ class LazyJavaClassMemberScope(
         if (jNestedClass == null) {
             val field = enumEntryIndex()[name]
             if (field != null) {
-                val createLazyValue: NotNullLazyValue<Collection<Name>> = c.storageManager.createLazyValue {
+                val enumMemberNames: NotNullLazyValue<Collection<Name>> = c.storageManager.createLazyValue {
                     memberIndex().getAllFieldNames() + memberIndex().getMethodNames({ true })
                 }
-                EnumEntrySyntheticClassDescriptor.create(c.storageManager, ownerDescriptor, name,
-                                                         createLazyValue, c.resolveAnnotations(field), c.components.sourceElementFactory.source(field))
+                EnumEntrySyntheticClassDescriptor.create(
+                        c.storageManager, ownerDescriptor, name, enumMemberNames, c.resolveAnnotations(field),
+                        c.components.sourceElementFactory.source(field)
+                )
             }
             else null
         }
         else {
-            LazyJavaClassDescriptor(
-                    c, ownerDescriptor, DescriptorUtils.getFqName(ownerDescriptor).child(name).toSafe(), jNestedClass
-            )
+            LazyJavaClassDescriptor(c, ownerDescriptor, jNestedClass)
         }
     }
 
@@ -659,5 +659,5 @@ class LazyJavaClassMemberScope(
         }
     }
 
-    override fun toString() = "Lazy java member scope for " + jClass.fqName
+    override fun toString() = "Lazy Java member scope for " + jClass.fqName
 }

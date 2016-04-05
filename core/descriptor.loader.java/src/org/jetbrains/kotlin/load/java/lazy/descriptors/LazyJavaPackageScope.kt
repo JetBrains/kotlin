@@ -92,7 +92,7 @@ class LazyJavaPackageScope(
             is KotlinClassLookupResult.NotFound -> {
                 val javaClass = request.javaClass ?: c.components.finder.findClass(classId)
                 javaClass?.let { it ->
-                    LazyJavaClassDescriptor(c, ownerDescriptor, it.fqName!!, it)
+                    LazyJavaClassDescriptor(c, ownerDescriptor, it)
                 }
             }
         }
