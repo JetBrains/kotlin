@@ -66,7 +66,7 @@ interface SequenceTransformationMatcher {
 }
 
 class SequenceTransformationMatch(
-        val transformations: Collection<SequenceTransformation>,
+        val transformations: List<SequenceTransformation>,
         val newState: MatchingState
 ) {
     init {
@@ -82,5 +82,5 @@ interface ResultTransformationMatcher {
 
 class ResultTransformationMatch(
         val resultTransformation: ResultTransformation,
-        val sequenceTransformations: Collection<SequenceTransformation> = listOf()
+        val sequenceTransformations: List<SequenceTransformation> = listOf()
 )

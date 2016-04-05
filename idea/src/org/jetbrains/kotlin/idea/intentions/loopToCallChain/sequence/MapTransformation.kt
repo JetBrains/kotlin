@@ -38,6 +38,13 @@ class MapTransformation(
         return chainedCallGenerator.generate("map$0:'{}'", lambda)
     }
 
+    /**
+     * Matches:
+     *     for (...) {
+     *         val v = ...
+     *         ...
+     *     }
+     */
     object Matcher : SequenceTransformationMatcher {
         override fun match(state: MatchingState): SequenceTransformationMatch? {
             if (state.indexVariable != null) return null //TODO?

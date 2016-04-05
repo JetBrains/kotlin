@@ -94,7 +94,7 @@ fun match(loop: KtForExpression): ResultTransformationMatch? {
 fun convertLoop(loop: KtForExpression, matchResult: ResultTransformationMatch): KtExpression {
     val commentSaver = CommentSaver(matchResult.resultTransformation.commentSavingRange)
 
-    var callChain = matchResult.generateCallChain(loop)
+    val callChain = matchResult.generateCallChain(loop)
 
     val result = matchResult.resultTransformation.convertLoop(callChain)
 
@@ -158,11 +158,11 @@ private fun ResultTransformationMatch.generateCallChain(loop: KtForExpression): 
     var sequenceTransformations = sequenceTransformations
     val last = sequenceTransformations.lastOrNull()
     var lastFilter: FilterOrMap? = null
-    var lastMap: FilterOrMap? = null //TODO
+    val lastMap: FilterOrMap? = null //TODO
     if (last is FilterTransformation && resultTransformation.canIncludeFilter) {
         val condition = if (last.isInverse) last.condition.negate() else last.condition
         lastFilter = FilterOrMap(condition, last.inputVariable)
-        sequenceTransformations = sequenceTransformations.take(sequenceTransformations.size - 1)
+        sequenceTransformations = sequenceTransformations.dropLast(1)
     }
 
     val lineBreak = if (sequenceTransformations.isNotEmpty()) "\n" else ""
@@ -170,20 +170,18 @@ private fun ResultTransformationMatch.generateCallChain(loop: KtForExpression): 
     var callChain = loop.loopRange!!
 
     val psiFactory = KtPsiFactory(loop)
-    fun chainedCallGenerator(): ChainedCallGenerator {
-        return object : ChainedCallGenerator {
-            override fun generate(pattern: String, vararg args: Any): KtExpression {
-                val newPattern = "\$${args.size}$lineBreak.$pattern"
-                return psiFactory.createExpressionByPattern(newPattern, *args, callChain)
-            }
+    val chainedCallGenerator = object : ChainedCallGenerator {
+        override fun generate(pattern: String, vararg args: Any): KtExpression {
+            val newPattern = "\$${args.size}$lineBreak.$pattern"
+            return psiFactory.createExpressionByPattern(newPattern, *args, callChain)
         }
     }
 
     for (transformation in sequenceTransformations) {
-        callChain = transformation.generateCode(chainedCallGenerator())
+        callChain = transformation.generateCode(chainedCallGenerator)
     }
 
-    callChain = resultTransformation.generateCode(chainedCallGenerator(), lastFilter, lastMap)
+    callChain = resultTransformation.generateCode(chainedCallGenerator, lastFilter, lastMap)
     return callChain
 }
 

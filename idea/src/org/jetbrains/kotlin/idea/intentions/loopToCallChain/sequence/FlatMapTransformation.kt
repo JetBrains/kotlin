@@ -42,6 +42,15 @@ class FlatMapTransformation(
         return chainedCallGenerator.generate("flatMap$0:'{}'", lambda)
     }
 
+    /**
+     * Matches:
+     *     for (...) {
+     *         ...
+     *         for (...) {
+     *             ...
+     *         }
+     *     }
+     */
     object Matcher : SequenceTransformationMatcher {
         override fun match(state: MatchingState): SequenceTransformationMatch? {
             if (state.indexVariable != null) return null

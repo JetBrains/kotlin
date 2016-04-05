@@ -60,6 +60,15 @@ class FindAndAssignTransformation(
         return initialDeclaration
     }
 
+    /**
+     * Matches:
+     *     val variable = ...
+     *     for (...) {
+     *         ...
+     *         variable = ...
+     *         break
+     *     }
+     */
     object Matcher : ResultTransformationMatcher {
         override fun match(state: MatchingState): ResultTransformationMatch? {
             //TODO: pass indexVariable as null if not used
