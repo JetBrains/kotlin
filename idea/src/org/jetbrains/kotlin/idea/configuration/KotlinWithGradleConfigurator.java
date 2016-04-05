@@ -81,7 +81,13 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
 
     private boolean isFileConfigured(GroovyFile projectGradleFile) {
         String fileText = projectGradleFile.getText();
-        return fileText.contains(getApplyPluginDirective()) && fileText.contains(LIBRARY);
+        return containsDirective(fileText, getApplyPluginDirective()) && fileText.contains(LIBRARY);
+    }
+
+    private static boolean containsDirective(@NotNull String fileText, @NotNull String directive) {
+        return fileText.contains(directive)
+               || fileText.contains(directive.replace("\"", "'"))
+               || fileText.contains(directive.replace("'", "\""));
     }
 
     @Override
@@ -160,7 +166,8 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
 
                     String dependencyString = String.format(
                             "%s \"%s:%s:%s\"",
-                            groovyScope, libraryDescriptor.getLibraryGroupId(), libraryDescriptor.getLibraryArtifactId(), libraryDescriptor.getMaxVersion());
+                            groovyScope, libraryDescriptor.getLibraryGroupId(), libraryDescriptor.getLibraryArtifactId(),
+                            libraryDescriptor.getMaxVersion());
 
                     GrClosableBlock dependenciesBlock = getDependenciesBlock(gradleFile);
                     addLastExpressionInBlockIfNeeded(dependencyString, dependenciesBlock);
@@ -228,7 +235,7 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
     protected boolean addElementsToModuleFile(@NotNull GroovyFile file, @NotNull String version) {
         boolean wasModified = false;
 
-        if (!file.getText().contains(getApplyPluginDirective())) {
+        if (!containsDirective(file.getText(), getApplyPluginDirective())) {
             GrExpression apply = GroovyPsiElementFactory.getInstance(file.getProject()).createExpressionFromText(getApplyPluginDirective());
             GrApplicationStatement applyStatement = getApplyStatement(file);
             if (applyStatement != null) {
