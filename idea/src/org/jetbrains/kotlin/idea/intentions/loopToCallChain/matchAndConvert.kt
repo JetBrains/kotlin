@@ -71,8 +71,9 @@ fun match(loop: KtForExpression): ResultTransformationMatch? {
             val match = matcher.match(state)
             if (match != null) {
                 sequenceTransformations.addAll(match.sequenceTransformations)
-                val resultMatch = ResultTransformationMatch(match.resultTransformation, sequenceTransformations)
-                return resultMatch.check { checkSmartCastsPreserved(loop, it) }
+                return ResultTransformationMatch(match.resultTransformation, sequenceTransformations)
+                        .let { mergeTransformations(it) }
+                        .check { checkSmartCastsPreserved(loop, it) }
             }
         }
 
@@ -180,5 +181,31 @@ private fun ResultTransformationMatch.generateCallChain(loop: KtForExpression): 
 
     callChain = resultTransformation.generateCode(chainedCallGenerator)
     return callChain
+}
+
+private fun mergeTransformations(match: ResultTransformationMatch): ResultTransformationMatch {
+    val transformations = ArrayList<Transformation>().apply { addAll(match.sequenceTransformations); add(match.resultTransformation) }
+
+    var anyChange: Boolean
+    do {
+        anyChange = false
+        for (index in 0..transformations.lastIndex - 1) {
+            val transformation = transformations[index] as SequenceTransformation
+            val next = transformations[index + 1]
+            val merged = when (next) {
+                is SequenceTransformation -> next.mergeWithPrevious(transformation)
+                is ResultTransformation -> next.mergeWithPrevious(transformation)
+                else -> error("Unknown transformation type: $next")
+            } ?: continue
+
+            transformations[index] = merged
+            transformations.removeAt(index + 1)
+            anyChange = true
+            break
+        }
+    } while(anyChange)
+
+    @Suppress("UNCHECKED_CAST")
+    return ResultTransformationMatch(transformations.last() as ResultTransformation, transformations.dropLast(1) as List<SequenceTransformation>)
 }
 

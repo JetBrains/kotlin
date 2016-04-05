@@ -26,10 +26,6 @@ class MapTransformation(
         val mapping: KtExpression
 ) : SequenceTransformation {
 
-    init {
-        assert(mapping.isPhysical)
-    }
-
     override val affectsIndex: Boolean
         get() = false
 
