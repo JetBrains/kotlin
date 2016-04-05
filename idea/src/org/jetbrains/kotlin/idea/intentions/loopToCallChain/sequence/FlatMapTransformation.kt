@@ -64,12 +64,14 @@ class FlatMapTransformation(
             val iterableType = FuzzyType(builtIns.iterableType, builtIns.iterable.declaredTypeParameters)
             if (iterableType.checkIsSuperTypeOf(nestedSequenceType) == null) return null
 
+            val nestedLoopBody = nestedLoop.body ?: return null
+            if (state.workingVariable.hasUsages(listOf(nestedLoopBody))) return null // workingVariable is still needed - cannot transform
+
             val newWorkingVariable = nestedLoop.loopParameter ?: return null
-            val loopBody = nestedLoop.body ?: return null
             val transformation = FlatMapTransformation(state.workingVariable, transform)
             val newState = state.copy(
                     innerLoop = nestedLoop,
-                    statements = listOf(loopBody),
+                    statements = listOf(nestedLoopBody),
                     workingVariable = newWorkingVariable
             )
             return SequenceTransformationMatch(transformation, newState)
