@@ -36,7 +36,9 @@ import org.jetbrains.kotlin.idea.refactoring.getLineNumber
 import org.jetbrains.kotlin.idea.refactoring.getLineStartOffset
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import java.util.*
 
 fun canPutAt(file: VirtualFile, line: Int, project: Project, breakpointTypeClass: Class<*>): Boolean {
@@ -96,11 +98,12 @@ fun computeVariants(
 
     val result = LinkedList<JavaLineBreakpointType.JavaBreakpointVariant>()
 
-    val mainMethod = KotlinLineBreakpointType.getContainingMethod(pos.elementAt)
+    val elementAt = pos.elementAt.parentsWithSelf.firstIsInstance<KtElement>()
+    val mainMethod = KotlinLineBreakpointType.getContainingMethod(elementAt)
     if (mainMethod != null) {
         result.add(kotlinBreakpointType.KotlinLineBreakpointVariant(
                 XSourcePositionImpl.createByElement(mainMethod),
-                CodeInsightUtils.getTopmostElementAtOffset(pos.elementAt, pos.offset) ?: mainMethod))
+                CodeInsightUtils.getTopmostElementAtOffset(elementAt, pos.offset) ?: mainMethod))
     }
 
     lambdas.forEachIndexed { ordinal, lambda ->

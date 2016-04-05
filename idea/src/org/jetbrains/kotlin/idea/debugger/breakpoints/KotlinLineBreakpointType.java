@@ -30,6 +30,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.breakpoints.XBreakpoint;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
+import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.java.debugger.breakpoints.properties.JavaBreakpointProperties;
@@ -153,6 +154,11 @@ public class KotlinLineBreakpointType extends JavaLineBreakpointType {
     public class KotlinLineBreakpointVariant extends ExactJavaBreakpointVariant {
         public KotlinLineBreakpointVariant(XSourcePosition position, PsiElement element) {
             super(position, element, -1);
+        }
+
+        @Override
+        public String getText() {
+            return StringsKt.replace(super.getText(), "  ", "", true);
         }
 
         @Override
