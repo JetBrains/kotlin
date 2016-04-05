@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
-import org.jetbrains.kotlin.idea.util.ShortenReferences.Options
+import org.jetbrains.kotlin.idea.core.ShortenReferences.Options
 
 abstract class KotlinImplicitReceiverUsage(callElement: KtElement): KotlinUsageInfo<KtElement>(callElement) {
     protected abstract fun getNewReceiverText(): String

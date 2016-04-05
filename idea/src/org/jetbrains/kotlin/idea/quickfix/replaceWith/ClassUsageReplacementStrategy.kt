@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.quickfix.replaceWith
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.core.replaced
-import org.jetbrains.kotlin.idea.util.ShortenReferences
+import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.utils.addToStdlib.check

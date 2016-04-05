@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.shortenRefs
 
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.idea.util.ShortenReferences
+import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.AbstractImportsTest
 
 abstract class AbstractShortenRefsTest : AbstractImportsTest() {
