@@ -377,7 +377,7 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
 
     private inline fun <reified T> findBreakpointType(javaClass: Class<T>): T {
         val kotlinFieldBreakpointTypeClass = javaClass as Class<out XBreakpointType<XBreakpoint<XBreakpointProperties<*>>, XBreakpointProperties<*>>>
-        return XDebuggerUtil.getInstance().findBreakpointType<XBreakpoint<XBreakpointProperties<*>>>(kotlinFieldBreakpointTypeClass) as T
+        return XDebuggerUtil.getInstance().findBreakpointType(kotlinFieldBreakpointTypeClass) as T
     }
 
     protected fun createAdditionalBreakpoints(fileText: String) {
