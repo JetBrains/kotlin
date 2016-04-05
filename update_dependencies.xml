@@ -748,13 +748,12 @@
             <mkdir dir="@{download.dir}"/>
 
             <!-- For running compiler tests with Java 1.6 -->
-            <get src="@{base.repository.url}/ideaIC/15.0.5/ideaIC-15.0.5.zip" dest="@{download.dir}/ideaIC-15.0.5.zip" usetimestamp="true"/>
-            <unzip src="@{download.dir}/ideaIC-15.0.5.zip" dest="@{download.dir}/idea-15-for-tests">
-                <patternset>
-                    <include name="**/lib/openapi.jar"/>
-                    <include name="**/lib/idea_rt.jar"/>
-                </patternset>
-            </unzip>
+            <mkdir dir="@{download.dir}/idea-for-compiler-test"/>
+            <local name="idea.for.compiler.testing.base.url"/>
+            <property name="idea.for.compiler.testing.base.url"
+                      value="https://teamcity.jetbrains.com/guestAuth/repository/download/IntelliJIdeaCe_OpenapiJar/idea-15.0.5"/>
+            <get src="${idea.for.compiler.testing.base.url}/idea_rt.jar" dest="@{download.dir}/idea-for-compiler-test/idea_rt.jar" usetimestamp="true"/>
+            <get src="${idea.for.compiler.testing.base.url}/openapi.jar" dest="@{download.dir}/idea-for-compiler-test/openapi.jar" usetimestamp="true"/>
 
             <property name="idea.id" value="idea${sdk.version.prefix}"/>
 

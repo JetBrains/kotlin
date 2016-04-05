@@ -50,7 +50,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../dependencies/idea/idea-15-for-tests/lib/idea_rt.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../dependencies/idea/idea-for-compiler-test/idea_rt.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -59,7 +59,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../dependencies/idea/idea-15-for-tests/lib/openapi.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../dependencies/idea/idea-for-compiler-test/openapi.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
