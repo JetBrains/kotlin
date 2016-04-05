@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.intentions.loopToCallChain.result
 
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.*
+import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.FilterTransformation
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtForExpression
@@ -27,25 +28,26 @@ class FindAndReturnTransformation(
         private val loop: KtForExpression,
         override val inputVariable: KtCallableDeclaration,
         private val stdlibFunName: String,
-        private val endReturn: KtReturnExpression
+        private val endReturn: KtReturnExpression,
+        private val filter: KtExpression? = null
 ) : ResultTransformation {
+
+    override fun mergeWithPrevious(previousTransformation: SequenceTransformation): ResultTransformation? {
+        if (previousTransformation !is FilterTransformation) return null
+        if (filter != null) return null //TODO
+        return FindAndReturnTransformation(loop, previousTransformation.inputVariable, stdlibFunName, endReturn, previousTransformation.buildRealCondition())
+    }
 
     override val commentSavingRange = PsiChildRange(loop.unwrapIfLabeled(), endReturn)
 
     override val commentRestoringRange = commentSavingRange.withoutFirstStatement()
 
-    override val canIncludeFilter: Boolean
-        get() = true
-
-    override val canIncludeMap: Boolean
-        get() = false
-
-    override fun generateCode(chainedCallGenerator: ChainedCallGenerator, filter: FilterOrMap?, map: FilterOrMap?): KtExpression {
+    override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
         return if (filter == null) {
             chainedCallGenerator.generate("$stdlibFunName()")
         }
         else {
-            val lambda = generateLambda(filter.workingVariable, filter.expression)
+            val lambda = generateLambda(inputVariable, filter)
             chainedCallGenerator.generate("$stdlibFunName $0:'{}'", lambda)
         }
     }

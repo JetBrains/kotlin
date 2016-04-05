@@ -36,22 +36,15 @@ interface SequenceTransformation : Transformation {
 }
 
 interface ResultTransformation : Transformation {
-    val canIncludeFilter: Boolean
-    val canIncludeMap: Boolean
+    fun mergeWithPrevious(previousTransformation: SequenceTransformation): ResultTransformation? = null
 
     val commentSavingRange: PsiChildRange
     val commentRestoringRange: PsiChildRange
 
-    fun generateCode(
-            chainedCallGenerator: ChainedCallGenerator,
-            filter: FilterOrMap?,
-            map: FilterOrMap?
-    ): KtExpression
+    fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression
 
     fun convertLoop(resultCallChain: KtExpression): KtExpression
 }
-
-data class FilterOrMap(val expression: KtExpression, val workingVariable: KtCallableDeclaration)
 
 data class MatchingState(
         val outerLoop: KtForExpression,

@@ -33,6 +33,8 @@ class FilterTransformation(
         assert(condition.isPhysical)
     }
 
+    fun buildRealCondition() = if (isInverse) condition.negate() else condition
+
     override val affectsIndex: Boolean
         get() = true
 

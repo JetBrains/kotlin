@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.idea.intentions.loopToCallChain.result.FindAndReturn
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.FilterTransformation
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.FlatMapTransformation
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.MapTransformation
-import org.jetbrains.kotlin.idea.intentions.negate
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.*
@@ -156,12 +155,10 @@ private fun checkSmartCastsPreserved(loop: KtForExpression, matchResult: ResultT
 
 private fun ResultTransformationMatch.generateCallChain(loop: KtForExpression): KtExpression {
     var sequenceTransformations = sequenceTransformations
-    val last = sequenceTransformations.lastOrNull()
-    var lastFilter: FilterOrMap? = null
-    val lastMap: FilterOrMap? = null //TODO
-    if (last is FilterTransformation && resultTransformation.canIncludeFilter) {
-        val condition = if (last.isInverse) last.condition.negate() else last.condition
-        lastFilter = FilterOrMap(condition, last.inputVariable)
+    var resultTransformation = resultTransformation
+    while(true) {
+        val last = sequenceTransformations.lastOrNull() ?: break
+        resultTransformation = resultTransformation.mergeWithPrevious(last) ?: break
         sequenceTransformations = sequenceTransformations.dropLast(1)
     }
 
@@ -181,7 +178,7 @@ private fun ResultTransformationMatch.generateCallChain(loop: KtForExpression): 
         callChain = transformation.generateCode(chainedCallGenerator)
     }
 
-    callChain = resultTransformation.generateCode(chainedCallGenerator, lastFilter, lastMap)
+    callChain = resultTransformation.generateCode(chainedCallGenerator)
     return callChain
 }
 
