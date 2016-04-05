@@ -194,7 +194,7 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
 
     private fun createWatchesView(): XWatchesViewImpl {
         val session = myDebuggerSession.xDebugSession  as XDebugSessionImpl
-        val watchesView = XWatchesViewImpl(session)
+        val watchesView = XWatchesViewImpl(session, false)
         Disposer.register(testRootDisposable, watchesView)
         session.addSessionListener(XDebugViewSessionListener(watchesView), testRootDisposable)
         return watchesView
