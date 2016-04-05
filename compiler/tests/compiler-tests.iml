@@ -32,15 +32,6 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../ideaSDK/lib/asm4-all.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
           <root url="jar://$MODULE_DIR$/../../ideaSDK/lib/commons-httpclient-3.1-patched.jar!/" />
         </CLASSES>
         <JAVADOC />
@@ -60,6 +51,15 @@
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../../dependencies/idea/idea-for-compiler-test/openapi.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../ideaSDK/core/asm-all.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
