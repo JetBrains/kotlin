@@ -16,15 +16,17 @@
 
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptorKindExclude
-import org.jetbrains.kotlin.load.java.lazy.KotlinClassLookupResult
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
-import org.jetbrains.kotlin.load.java.lazy.resolveKotlinBinaryClass
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -82,13 +84,12 @@ class LazyJavaPackageScope(
                 else
                     c.components.kotlinClassFinder.findKotlinClass(classId)
 
-        val kotlinResult = c.resolveKotlinBinaryClass(kotlinBinaryClass)
+        val kotlinResult = resolveKotlinBinaryClass(kotlinBinaryClass)
 
         when (kotlinResult) {
             is KotlinClassLookupResult.Found -> kotlinResult.descriptor
             is KotlinClassLookupResult.SyntheticClass -> null
             is KotlinClassLookupResult.NotFound -> {
-
                 val javaClass = request.javaClass ?: c.components.finder.findClass(classId)
                 javaClass?.let { it ->
                     LazyJavaClassDescriptor(c, ownerDescriptor, it.fqName!!, it)
@@ -97,21 +98,37 @@ class LazyJavaPackageScope(
         }
     }
 
+    private sealed class KotlinClassLookupResult {
+        class Found(val descriptor: ClassDescriptor) : KotlinClassLookupResult()
+        object NotFound : KotlinClassLookupResult()
+        object SyntheticClass : KotlinClassLookupResult()
+    }
+
+    private fun resolveKotlinBinaryClass(kotlinClass: KotlinJvmBinaryClass?): KotlinClassLookupResult {
+        if (kotlinClass == null) return KotlinClassLookupResult.NotFound
+
+        val header = kotlinClass.classHeader
+        return when {
+            !header.metadataVersion.isCompatible() -> {
+                c.components.errorReporter.reportIncompatibleMetadataVersion(kotlinClass.classId, kotlinClass.location, header.metadataVersion)
+                KotlinClassLookupResult.NotFound
+            }
+            header.kind == KotlinClassHeader.Kind.CLASS -> {
+                val descriptor = c.components.deserializedDescriptorResolver.resolveClass(kotlinClass)
+                if (descriptor != null) KotlinClassLookupResult.Found(descriptor) else KotlinClassLookupResult.NotFound
+            }
+            else -> {
+                // This is a package or interface DefaultImpls or something like that
+                KotlinClassLookupResult.SyntheticClass
+            }
+        }
+    }
+
     // javaClass here is only for sake of optimizations
     private class FindClassRequest(val name: Name, val javaClass: JavaClass?) {
-        override fun equals(other: Any?): Boolean{
-            if (this === other) return true
+        override fun equals(other: Any?) = other is FindClassRequest && name == other.name
 
-            other as FindClassRequest
-
-            if (name != other.name) return false
-
-            return true
-        }
-
-        override fun hashCode(): Int{
-            return name.hashCode()
-        }
+        override fun hashCode() = name.hashCode()
     }
 
     override fun getContributedClassifier(name: Name, location: LookupLocation) = findClassifier(name, null, location)

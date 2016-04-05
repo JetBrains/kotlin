@@ -23,8 +23,6 @@ import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaTypeParameterDesc
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameterListOwner
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
-import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.utils.mapToIndex
 
 //TODO: (module refactoring) usages of this interface should be replaced by ModuleClassResolver
@@ -57,31 +55,5 @@ class LazyJavaTypeParameterResolver(
 
     override fun resolveTypeParameter(javaTypeParameter: JavaTypeParameter): TypeParameterDescriptor? {
         return resolve(javaTypeParameter) ?: c.typeParameterResolver.resolveTypeParameter(javaTypeParameter)
-    }
-}
-
-sealed class KotlinClassLookupResult {
-    class Found(val descriptor: ClassDescriptor): KotlinClassLookupResult()
-    object NotFound : KotlinClassLookupResult()
-    object SyntheticClass : KotlinClassLookupResult()
-}
-
-fun LazyJavaResolverContext.resolveKotlinBinaryClass(kotlinClass: KotlinJvmBinaryClass?): KotlinClassLookupResult {
-    if (kotlinClass == null) return KotlinClassLookupResult.NotFound
-
-    val header = kotlinClass.classHeader
-    return when {
-        !header.metadataVersion.isCompatible() -> {
-            components.errorReporter.reportIncompatibleMetadataVersion(kotlinClass.classId, kotlinClass.location, header.metadataVersion)
-            KotlinClassLookupResult.NotFound
-        }
-        header.kind == KotlinClassHeader.Kind.CLASS -> {
-            val descriptor = components.deserializedDescriptorResolver.resolveClass(kotlinClass)
-            if (descriptor != null) KotlinClassLookupResult.Found(descriptor) else KotlinClassLookupResult.NotFound
-        }
-        else -> {
-            // This is a package or trait-impl or something like that
-            KotlinClassLookupResult.SyntheticClass
-        }
     }
 }
