@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.intentions.loopToCallChain.result
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.*
+import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.FilterTransformation
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
@@ -27,24 +28,25 @@ class FindAndAssignTransformation(
         private val loop: KtForExpression,
         override val inputVariable: KtCallableDeclaration,
         private val stdlibFunName: String,
-        private val initialDeclaration: KtProperty
+        private val initialDeclaration: KtProperty,
+        private val filter: KtExpression? = null
 ) : ResultTransformation {
+
+    override fun mergeWithPrevious(previousTransformation: SequenceTransformation): ResultTransformation? {
+        if (previousTransformation !is FilterTransformation) return null
+        if (filter != null) return null //TODO
+        return FindAndAssignTransformation(loop, previousTransformation.inputVariable, stdlibFunName, initialDeclaration, previousTransformation.buildRealCondition())
+    }
 
     override val commentSavingRange = PsiChildRange(initialDeclaration, loop.unwrapIfLabeled())
     override val commentRestoringRange = commentSavingRange.withoutLastStatement()
 
-    override val canIncludeFilter: Boolean
-        get() = true
-
-    override val canIncludeMap: Boolean
-        get() = false
-
-    override fun generateCode(chainedCallGenerator: ChainedCallGenerator, filter: FilterOrMap?, map: FilterOrMap?): KtExpression {
+    override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
         return if (filter == null) {
             chainedCallGenerator.generate("$stdlibFunName()")
         }
         else {
-            val lambda = generateLambda(filter.workingVariable, filter.expression)
+            val lambda = generateLambda(inputVariable, filter)
             chainedCallGenerator.generate("$stdlibFunName $0:'{}'", lambda)
         }
     }
