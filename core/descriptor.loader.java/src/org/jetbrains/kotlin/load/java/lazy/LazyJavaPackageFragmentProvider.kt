@@ -52,7 +52,7 @@ class LazyJavaPackageFragmentProvider(
     override fun getPackageFragments(fqName: FqName) = emptyOrSingletonList(getPackageFragment(fqName))
 
     override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean) =
-            getPackageFragment(fqName)?.javaScope?.getSubPackages().orEmpty()
+            getPackageFragment(fqName)?.getSubPackageFqNames().orEmpty()
 
     fun getClass(javaClass: JavaClass): ClassDescriptor? = c.javaClassResolver.resolveClass(javaClass)
 
@@ -70,7 +70,7 @@ class LazyJavaPackageFragmentProvider(
 
             if (fqName == null) return null
 
-            return getPackageFragment(fqName.parent())?.javaScope?.findClassifierByJavaClass(javaClass, NoLookupLocation.FROM_JAVA_LOADER)
+            return getPackageFragment(fqName.parent())?.findClassifierByJavaClass(javaClass)
         }
     }
 }

@@ -21,15 +21,11 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.structure.JavaMethod
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 
 abstract class LazyJavaStaticScope(c: LazyJavaResolverContext) : LazyJavaScope(c) {
-
     override fun getDispatchReceiverParameter() = null
-
-    abstract fun getSubPackages(): Collection<FqName>
 
     override fun resolveMethodSignature(
             method: JavaMethod, methodTypeParameters: List<TypeParameterDescriptor>, returnType: KotlinType,

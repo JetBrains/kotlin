@@ -118,7 +118,8 @@ class LazyJavaPackageScope(
         return classes(FindClassRequest(name, javaClass))
     }
 
-    fun findClassifierByJavaClass(javaClass: JavaClass, location: LookupLocation) = findClassifier(javaClass.name, javaClass, location)
+    internal fun findClassifierByJavaClass(javaClass: JavaClass) =
+            findClassifier(javaClass.name, javaClass, NoLookupLocation.FROM_JAVA_LOADER)
 
     override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> = emptyList()
 
@@ -143,21 +144,11 @@ class LazyJavaPackageScope(
         return super.getFunctionNames(kindFilter, nameFilter)
     }
 
-    private val subPackages = c.storageManager.createRecursionTolerantLazyValue(
-            {
-                jPackage.subPackages.map { sp -> sp.fqName }
-            },
-            // This breaks infinite recursion between loading Java descriptors and building light classes
-            onRecursiveCall = listOf()
-    )
-
     override fun computeNonDeclaredFunctions(result: MutableCollection<SimpleFunctionDescriptor>, name: Name) {
         c.components.samConversionResolver.resolveSamConstructor(ownerDescriptor) {
             getContributedClassifier(name, NoLookupLocation.FOR_ALREADY_TRACKED)
         }?.let { result.add(it) }
     }
-
-    override fun getSubPackages() = subPackages()
 
     override fun getPropertyNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean) = listOf<Name>()
 

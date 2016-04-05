@@ -16,13 +16,16 @@
 
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
+import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryPackageSourceElement
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope
 import org.jetbrains.kotlin.resolve.scopes.LazyScopeAdapter
@@ -39,7 +42,7 @@ class LazyJavaPackageFragment(
         }.toMap()
     }
 
-    internal val javaScope by c.storageManager.createLazyValue {
+    private val javaScope by c.storageManager.createLazyValue {
         LazyJavaPackageScope(c, jPackage, this)
     }
 
@@ -50,6 +53,16 @@ class LazyJavaPackageFragment(
             })
         }))
     }
+
+    private val subPackages = c.storageManager.createRecursionTolerantLazyValue(
+            { jPackage.subPackages.map(JavaPackage::fqName) },
+            // This breaks infinite recursion between loading Java descriptors and building light classes
+            onRecursiveCall = listOf()
+    )
+
+    internal fun getSubPackageFqNames(): List<FqName> = subPackages()
+
+    internal fun findClassifierByJavaClass(jClass: JavaClass): ClassDescriptor? = javaScope.findClassifierByJavaClass(jClass)
 
     private val partToFacade by c.storageManager.createLazyValue {
         val result = hashMapOf<String, String>()
