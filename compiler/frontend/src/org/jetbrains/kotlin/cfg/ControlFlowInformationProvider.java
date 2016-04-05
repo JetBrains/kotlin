@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1006,7 +1006,7 @@ public class ControlFlowInformationProvider {
             KindAndCall kindAndCall = entry.getValue();
             switch (kindAndCall.kind) {
                 case TAIL_CALL:
-                    trace.record(TAIL_RECURSION_CALL, kindAndCall.call, TailRecursionKind.TAIL_CALL);
+                    trace.record(TAIL_RECURSION_CALL, kindAndCall.call.getCall(), TailRecursionKind.TAIL_CALL);
                     hasTailCalls = true;
                     break;
                 case IN_TRY:
