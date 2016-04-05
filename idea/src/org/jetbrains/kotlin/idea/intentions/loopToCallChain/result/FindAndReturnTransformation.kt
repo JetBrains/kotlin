@@ -56,6 +56,14 @@ class FindAndReturnTransformation(
         return endReturn
     }
 
+    /**
+     * Matches:
+     *     for (...) {
+     *         ...
+     *         return ...
+     *     }
+     *     return ...
+     */
     object Matcher : ResultTransformationMatcher {
         override fun match(state: MatchingState): ResultTransformationMatch? {
             //TODO: pass indexVariable as null if not used
