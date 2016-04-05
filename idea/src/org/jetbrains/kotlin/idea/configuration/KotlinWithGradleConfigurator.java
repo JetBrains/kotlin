@@ -289,7 +289,10 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
     }
 
     @Nullable
-    private static GroovyFile getBuildGradleFile(Project project, String path) {
+    private static GroovyFile getBuildGradleFile(Project project, @Nullable String path) {
+        if (path == null) {
+            return null;
+        }
         VirtualFile file = VfsUtil.findFileByIoFile(new File(path), true);
         if (file == null) {
             return null;
