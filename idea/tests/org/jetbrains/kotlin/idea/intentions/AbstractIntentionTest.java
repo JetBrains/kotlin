@@ -171,7 +171,7 @@ public abstract class AbstractIntentionTest extends KotlinCodeInsightTestCase {
                         }
                 );
                 // Don't bother checking if it should have failed.
-                if (shouldFailString == null) {
+                if (shouldFailString.isEmpty()) {
                     for (Map.Entry<String, PsiFile> entry: pathToFiles.entrySet()) {
                         String filePath = entry.getKey();
                         String canonicalPathToExpectedFile = PathUtil.getCanonicalPath(filePath + ".after");
