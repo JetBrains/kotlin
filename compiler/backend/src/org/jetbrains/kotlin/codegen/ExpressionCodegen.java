@@ -3667,6 +3667,11 @@ The "returned" value of try expression with no finally is either the last expres
                     Label clauseStart = new Label();
                     v.mark(clauseStart);
 
+                    KtExpression catchBody = clause.getCatchBody();
+                    if (catchBody != null) {
+                        markLineNumber(catchBody, false);
+                    }
+
                     VariableDescriptor descriptor = bindingContext.get(VALUE_PARAMETER, clause.getCatchParameter());
                     assert descriptor != null;
                     Type descriptorType = asmType(descriptor.getType());
@@ -3674,7 +3679,7 @@ The "returned" value of try expression with no finally is either the last expres
                     int index = lookupLocalIndex(descriptor);
                     v.store(index, descriptorType);
 
-                    gen(clause.getCatchBody(), expectedAsmType);
+                    gen(catchBody, expectedAsmType);
 
                     if (!isStatement) {
                         v.store(savedValue, expectedAsmType);

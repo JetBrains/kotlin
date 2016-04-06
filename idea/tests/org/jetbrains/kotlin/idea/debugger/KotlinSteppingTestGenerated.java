@@ -379,6 +379,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             doStepOverTest(fileName);
         }
 
+        @TestMetadata("stepOverCatchClause.kt")
+        public void testStepOverCatchClause() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stepOverCatchClause.kt");
+            doStepOverTest(fileName);
+        }
+
         @TestMetadata("stepOverForWithInline.kt")
         public void testStepOverForWithInline() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stepOverForWithInline.kt");
