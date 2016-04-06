@@ -130,9 +130,7 @@ class Kotlin2JvmSourceSetProcessor(
     }
 
     override fun doTargetSpecificProcessing() {
-        // store kotlin classes in separate directory. They will serve as class-path to java compiler
-        val kotlinDestinationDir = File(project.buildDir, "kotlin-classes/${sourceSetName}")
-        kotlinTask.setProperty("kotlinDestinationDir", kotlinDestinationDir)
+        kotlinTask.kotlinDestinationDir = File(project.buildDir, "kotlin-classes/$sourceSetName")
 
         val javaTask = project.tasks.findByName(sourceSet.compileJavaTaskName) as AbstractCompile?
         if (javaTask != null) {
@@ -166,7 +164,7 @@ class Kotlin2JvmSourceSetProcessor(
                             aptConfiguration.resolve(), aptOutputDir, aptWorkingDir, tasksProvider.tasksLoader)
 
                     val kotlinAfterJavaTask = project.initKapt(kotlinTask, javaTask, kaptManager,
-                            sourceSetName, kotlinDestinationDir, null, subpluginEnvironment) {
+                            sourceSetName, null, subpluginEnvironment) {
                         createKotlinCompileTask(it)
                     }
 
@@ -200,7 +198,7 @@ class Kotlin2JsSourceSetProcessor(
     val build = project.tasks.findByName("build")
 
     val defaultKotlinDestinationDir = File(project.buildDir, "kotlin2js/${sourceSetName}")
-    private fun kotlinTaskDestinationDir(): File? = kotlinTask.property("kotlinDestinationDir") as File?
+    private fun kotlinTaskDestinationDir(): File? = kotlinTask.kotlinDestinationDir
     private fun kotlinJsDestinationDir(): File? = (kotlinTask.property("outputFile") as String).let { File(it) }.let { if (it.isDirectory) it else it.parentFile }
 
     private fun kotlinSourcePathsForSourceMap() = sourceSet.getAllSource()
@@ -211,7 +209,7 @@ class Kotlin2JsSourceSetProcessor(
     private fun shouldGenerateSourceMap() = kotlinTask.property("sourceMap")
 
     override fun doTargetSpecificProcessing() {
-        kotlinTask.setProperty("kotlinDestinationDir", defaultKotlinDestinationDir)
+        kotlinTask.kotlinDestinationDir = defaultKotlinDestinationDir
         build?.dependsOn(kotlinTaskName)
         clean?.dependsOn("clean" + kotlinTaskName.capitalize())
 
@@ -366,8 +364,7 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
             }
 
             // store kotlin classes in separate directory. They will serve as class-path to java compiler
-            val kotlinOutputDir = File(project.buildDir, "tmp/kotlin-classes/${variantDataName}")
-            kotlinTask.setProperty("kotlinDestinationDir", kotlinOutputDir)
+            kotlinTask.kotlinDestinationDir = File(project.buildDir, "tmp/kotlin-classes/$variantDataName")
             kotlinTask.destinationDir = javaTask.destinationDir
             kotlinTask.description = "Compiles the ${variantDataName} kotlin."
             kotlinTask.classpath = javaTask.classpath
@@ -413,7 +410,7 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
 
             kotlinTask.doFirst {
                 val androidRT = project.files(AndroidGradleWrapper.getRuntimeJars(androidPlugin, androidExt))
-                val fullClasspath = (javaTask.classpath + androidRT) - project.files(kotlinTask.property("kotlinDestinationDir"))
+                val fullClasspath = (javaTask.classpath + androidRT) - project.files(kotlinTask.kotlinDestinationDir)
                 (it as AbstractCompile).classpath = fullClasspath
 
                 for (task in project.getTasksByName(kotlinTaskName + KOTLIN_AFTER_JAVA_TASK_SUFFIX, false)) {
@@ -430,8 +427,7 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
 
                 kotlinTask.storeKaptAnnotationsFile(kaptManager)
 
-                project.initKapt(kotlinTask, javaTask, kaptManager, variantDataName,
-                        kotlinOutputDir, kotlinOptions, subpluginEnvironment) {
+                project.initKapt(kotlinTask, javaTask, kaptManager, variantDataName, kotlinOptions, subpluginEnvironment) {
                     tasksProvider.createKotlinJVMTask(project, kotlinTaskName + KOTLIN_AFTER_JAVA_TASK_SUFFIX)
                 }
             }
@@ -456,16 +452,15 @@ private fun setUpKotlinToJavaDependency(project: Project, kotlinTask: AbstractCo
     // Since we cannot update classpath statically, java not able to detect changes in the classpath after kotlin compiler.
     // Therefore this (probably inefficient since java cannot decide "uptodateness" by the list of changed class files, but told
     // explicitly being out of date whenever any kotlin files are compiled
-    if (kotlinTask.hasProperty("anyClassesCompiled")) {
-        kotlinTask.property("anyClassesCompiled")?.let {
-            kotlinTask.setProperty("anyClassesCompiled", false)
-            javaTask.outputs.upToDateWhen { task ->
-                val kotlinClassesCompiled = kotlinTask.property("anyClassesCompiled") as? Boolean ?: false
-                if (kotlinClassesCompiled) {
-                    logger.info("Marking $task out of date, because kotlin classes are changed")
-                }
-                !kotlinClassesCompiled
+    if (kotlinTask.anyClassesCompiled != null) {
+        kotlinTask.anyClassesCompiled = false
+
+        javaTask.outputs.upToDateWhen { task ->
+            val kotlinClassesCompiled = kotlinTask.anyClassesCompiled ?: false
+            if (kotlinClassesCompiled) {
+                logger.info("Marking $task out of date, because kotlin classes are changed")
             }
+            !kotlinClassesCompiled
         }
     }
 
