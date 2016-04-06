@@ -27,6 +27,7 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.spring.constants.SpringAnnotationsConstants
 import com.intellij.spring.model.jam.stereotype.SpringComponent
 import com.intellij.spring.model.jam.stereotype.SpringConfiguration
+import com.intellij.spring.model.jam.transaction.SpringTransactionalComponent
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
@@ -58,12 +59,16 @@ class KotlinFinalClassOrFunSpringInspection : AbstractKotlinInspection() {
                 when {
                     SpringConfiguration.META.getJamElement(lightClass) != null -> return "@Configuration class should be declared open"
                     SpringComponent.META.getJamElement(lightClass) != null -> return "@Component class should be declared open"
+                    SpringTransactionalComponent.META.getJamElement(lightClass) != null -> return "@Transactional class should be declared open"
                 }
             }
 
             is KtNamedFunction -> {
                 val lightMethod = declaration.toLightMethods().firstOrNull() ?: return null
-                if (lightMethod.isAnnotatedWith(SpringAnnotationsConstants.JAVA_SPRING_BEAN)) return "@Bean function should be declared open"
+                when {
+                    lightMethod.isAnnotatedWith(SpringAnnotationsConstants.JAVA_SPRING_BEAN) -> return "@Bean function should be declared open"
+                    lightMethod.isAnnotatedWith(SpringAnnotationsConstants.TRANSACTIONAL) -> return "@Transactional function should be declared open"
+                }
             }
         }
         return null
