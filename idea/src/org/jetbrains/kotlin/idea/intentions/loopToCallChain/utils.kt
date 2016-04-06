@@ -21,12 +21,14 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isNullExpression
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -36,6 +38,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import org.jetbrains.kotlin.types.typeUtil.nullability
@@ -246,6 +249,9 @@ fun KtExpression.detectInitializationBeforeLoop(loop: KtForExpression): Variable
     val variable = this.mainReference.resolve() as? KtProperty ?: return null
     val statementBeforeLoop = loop.previousStatement() //TODO: support initialization not right before the loop
 
+    // do not allow any other usages of this variable inside the loop
+    if (ReferencesSearch.search(variable, LocalSearchScope(loop)).count() > 1) return null
+
     if (statementBeforeLoop == variable) {
         val initializer = variable.initializer ?: return null
         return VariableInitialization(variable, variable, initializer)
@@ -253,13 +259,14 @@ fun KtExpression.detectInitializationBeforeLoop(loop: KtForExpression): Variable
 
     val assignment = statementBeforeLoop?.asAssignment() ?: return null
     if (!assignment.left.isVariableReference(variable)) return null
+
     val initializer = assignment.right ?: return null
     return VariableInitialization(variable, assignment, initializer)
 }
 
-abstract class ReplaceLoopTransformation(
-        protected val loop: KtForExpression,
-        override val inputVariable: KtCallableDeclaration
+abstract class ReplaceLoopResultTransformation(
+        override val loop: KtForExpression,
+        final override val inputVariable: KtCallableDeclaration
 ): ResultTransformation {
 
     override val commentSavingRange = PsiChildRange.singleElement(loop.unwrapIfLabeled())
@@ -268,5 +275,58 @@ abstract class ReplaceLoopTransformation(
 
     override fun convertLoop(resultCallChain: KtExpression): KtExpression {
         return loop.unwrapIfLabeled().replaced(resultCallChain)
+    }
+}
+
+abstract class AssignToVariableResultTransformation(
+        override val loop: KtForExpression,
+        final override val inputVariable: KtCallableDeclaration,
+        protected val initialization: VariableInitialization
+) : ResultTransformation {
+
+    override val commentSavingRange = PsiChildRange(initialization.initializationStatement, loop.unwrapIfLabeled())
+
+    private val commentRestoringRange = commentSavingRange.withoutLastStatement()
+
+    override fun commentRestoringRange(convertLoopResult: KtExpression) = commentRestoringRange
+
+    override fun convertLoop(resultCallChain: KtExpression): KtExpression {
+        initialization.initializer.replace(resultCallChain)
+        loop.deleteWithLabels()
+
+        if (initialization.variable.isVar && !initialization.variable.hasWriteUsages()) { // change variable to 'val' if possible
+            initialization.variable.valOrVarKeyword.replace(KtPsiFactory(initialization.variable).createValKeyword())
+        }
+
+        return initialization.initializationStatement
+    }
+}
+
+class AssignSequenceTransformationResultTransformation(
+        private val sequenceTransformation: SequenceTransformation,
+        initialization: VariableInitialization
+) : AssignToVariableResultTransformation(sequenceTransformation.loop, sequenceTransformation.inputVariable, initialization) {
+
+    override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
+        return sequenceTransformation.generateCode(chainedCallGenerator)
+    }
+}
+
+enum class CollectionKind {
+    LIST, SET/*, MAP*/
+}
+
+fun KtExpression.isSimpleCollectionInstantiation(): CollectionKind? {
+    val callExpression = this as? KtCallExpression ?: return null //TODO: it can be qualified too
+    if (callExpression.valueArguments.isNotEmpty()) return null
+    val bindingContext = callExpression.analyze(BodyResolveMode.PARTIAL)
+    val resolvedCall = callExpression.getResolvedCall(bindingContext) ?: return null
+    val constructorDescriptor = resolvedCall.resultingDescriptor as? ConstructorDescriptor ?: return null
+    val classDescriptor = constructorDescriptor.containingDeclaration
+    val classFqName = classDescriptor.importableFqName?.asString()
+    return when (classFqName) {
+        "java.util.ArrayList" -> CollectionKind.LIST
+        "java.util.HashSet", "java.util.LinkedHashSet" -> CollectionKind.SET
+        else -> null
     }
 }

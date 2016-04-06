@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class FlatMapTransformation(
+        override val loop: KtForExpression,
         override val inputVariable: KtCallableDeclaration,
         val transform: KtExpression
 ) : SequenceTransformation {
@@ -63,7 +64,7 @@ class FlatMapTransformation(
             val nestedLoopBody = nestedLoop.body ?: return null
 
             val newWorkingVariable = nestedLoop.loopParameter ?: return null
-            val transformation = FlatMapTransformation(state.inputVariable, transform)
+            val transformation = FlatMapTransformation(state.outerLoop, state.inputVariable, transform)
             val newState = state.copy(
                     innerLoop = nestedLoop,
                     statements = listOf(nestedLoopBody),
