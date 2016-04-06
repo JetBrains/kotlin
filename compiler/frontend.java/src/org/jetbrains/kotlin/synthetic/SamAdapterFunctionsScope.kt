@@ -163,7 +163,7 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : SyntheticScope 
 
             val substitutionMap = HashMap<TypeConstructor, TypeProjection>()
             for (typeParameter in original.typeParameters) {
-                val typeProjection = configuration.originalSubstitutor.substitution[typeParameter.defaultType] ?: continue
+                val typeProjection = configuration.substitution[typeParameter.defaultType] ?: continue
                 val sourceTypeParameter = original.toSourceFunctionTypeParameters!![typeParameter]!!
                 substitutionMap[sourceTypeParameter.typeConstructor] = typeProjection
 
@@ -171,7 +171,7 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : SyntheticScope 
 
             val sourceFunctionSubstitutor =
                     TypeConstructorSubstitution.createByConstructorsMap(
-                            substitutionMap, configuration.originalSubstitutor.substitution.approximateCapturedTypes()).buildSubstitutor()
+                            substitutionMap, configuration.substitution.approximateCapturedTypes()).buildSubstitutor()
 
             descriptor.sourceFunction = original.sourceFunction.substitute(sourceFunctionSubstitutor)
 
