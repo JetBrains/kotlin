@@ -43,7 +43,7 @@ class KotlinJavascriptPackageFragment(
             loadResourceSure(KotlinJavascriptSerializedResourcePaths.getPackageFilePath(fqName)).use { packageStream ->
                 val packageProto = ProtoBuf.Package.parseFrom(packageStream, JsSerializerProtocol.extensionRegistry)
                 DeserializedPackageMemberScope(
-                        this, packageProto, nameResolver, packagePartSource = null, components = components,
+                        this, packageProto, nameResolver, containerSource = null, components = components,
                         classNames = { loadClassNames() }
                 )
             }

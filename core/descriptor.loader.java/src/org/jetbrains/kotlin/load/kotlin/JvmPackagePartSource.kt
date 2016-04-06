@@ -19,9 +19,9 @@ package org.jetbrains.kotlin.load.kotlin
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.PackagePartSource
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.BinarySource
 
-class JvmPackagePartSource(val className: JvmClassName, val facadeClassName: JvmClassName?) : PackagePartSource {
+class JvmPackagePartSource(val className: JvmClassName, val facadeClassName: JvmClassName?) : BinarySource {
     constructor(kotlinClass: KotlinJvmBinaryClass) : this(
             JvmClassName.byClassId(kotlinClass.classId),
             kotlinClass.classHeader.multifileClassName?.let {

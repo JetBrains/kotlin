@@ -81,7 +81,7 @@ class KotlinJavaScriptDeserializerForDecompiler(
         val content = file.contentsToByteArray(false)
         val packageProto = ProtoBuf.Package.parseFrom(content, JsSerializerProtocol.extensionRegistry)
         val membersScope = DeserializedPackageMemberScope(
-                createDummyPackageFragment(packageFqName), packageProto, nameResolver, packagePartSource = null,
+                createDummyPackageFragment(packageFqName), packageProto, nameResolver, containerSource = null,
                 components = deserializationComponents
         ) { emptyList() }
         return membersScope.getContributedDescriptors().toList()

@@ -47,7 +47,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
                 proto,
                 c.nameResolver,
                 c.typeTable,
-                c.packagePartSource
+                c.containerSource
         )
 
         val local = c.childContext(property, proto.typeParameterList)
@@ -147,7 +147,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
         else Annotations.EMPTY
         val function = DeserializedSimpleFunctionDescriptor(
                 c.containingDeclaration, /* original = */ null, annotations, c.nameResolver.getName(proto.name),
-                Deserialization.memberKind(Flags.MEMBER_KIND.get(flags)), proto, c.nameResolver, c.typeTable, c.packagePartSource
+                Deserialization.memberKind(Flags.MEMBER_KIND.get(flags)), proto, c.nameResolver, c.typeTable, c.containerSource
         )
         val local = c.childContext(function, proto.typeParameterList)
         function.initialize(
@@ -175,7 +175,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
         val classDescriptor = c.containingDeclaration as ClassDescriptor
         val descriptor = DeserializedConstructorDescriptor(
                 classDescriptor, null, getAnnotations(proto, proto.flags, AnnotatedCallableKind.FUNCTION),
-                isPrimary, CallableMemberDescriptor.Kind.DECLARATION, proto, c.nameResolver, c.typeTable, c.packagePartSource
+                isPrimary, CallableMemberDescriptor.Kind.DECLARATION, proto, c.nameResolver, c.typeTable, c.containerSource
         )
         val local = c.childContext(descriptor, listOf())
         descriptor.initialize(
@@ -240,7 +240,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
     }
 
     private fun DeclarationDescriptor.asProtoContainer(): ProtoContainer? = when (this) {
-        is PackageFragmentDescriptor -> ProtoContainer.Package(fqName, c.nameResolver, c.typeTable, c.packagePartSource)
+        is PackageFragmentDescriptor -> ProtoContainer.Package(fqName, c.nameResolver, c.typeTable, c.containerSource)
         is DeserializedClassDescriptor -> thisAsProtoContainer
         else -> null // TODO: support annotations on lambdas and their parameters
     }

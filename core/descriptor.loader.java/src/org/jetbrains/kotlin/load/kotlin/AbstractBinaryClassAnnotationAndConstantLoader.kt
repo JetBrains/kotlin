@@ -233,14 +233,14 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any, 
             }
             if (isConst!! && container is ProtoContainer.Package) {
                 // Const properties in multifile classes are generated into the facade class
-                val facadeClassName = (container.packagePartSource as? JvmPackagePartSource)?.facadeClassName
+                val facadeClassName = (container.source as? JvmPackagePartSource)?.facadeClassName
                 if (facadeClassName != null) {
                     // Converting '/' to '.' is fine here because the facade class has a top level ClassId
                     return ClassId.topLevel(FqName(facadeClassName.internalName.replace('/', '.')))
                 }
             }
         }
-        return ((container as? ProtoContainer.Package)?.packagePartSource as? JvmPackagePartSource)?.classId
+        return ((container as? ProtoContainer.Package)?.source as? JvmPackagePartSource)?.classId
     }
 
     private fun loadAnnotationsAndInitializers(kotlinClass: KotlinJvmBinaryClass): Storage<A, C> {

@@ -36,11 +36,11 @@ open class DeserializedPackageMemberScope(
         packageDescriptor: PackageFragmentDescriptor,
         proto: ProtoBuf.Package,
         nameResolver: NameResolver,
-        packagePartSource: PackagePartSource?,
+        containerSource: BinarySource?,
         components: DeserializationComponents,
         classNames: () -> Collection<Name>
 ) : DeserializedMemberScope(
-        components.createContext(packageDescriptor, nameResolver, TypeTable(proto.typeTable), packagePartSource),
+        components.createContext(packageDescriptor, nameResolver, TypeTable(proto.typeTable), containerSource),
         proto.functionList, proto.propertyList
 ) {
     private val packageFqName = packageDescriptor.fqName

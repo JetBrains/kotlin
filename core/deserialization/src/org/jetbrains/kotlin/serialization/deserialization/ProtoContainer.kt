@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.PackagePartSource
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.BinarySource
 
 sealed class ProtoContainer(
         val nameResolver: NameResolver,
@@ -45,7 +45,7 @@ sealed class ProtoContainer(
             val fqName: FqName,
             nameResolver: NameResolver,
             typeTable: TypeTable,
-            val packagePartSource: PackagePartSource?
+            val source: BinarySource?
     ) : ProtoContainer(nameResolver, typeTable) {
         override fun debugFqName(): FqName = fqName
     }

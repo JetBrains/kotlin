@@ -125,7 +125,7 @@ internal sealed class JvmPropertySignature {
                 return "$" + JvmAbi.sanitizeAsJavaIdentifier(moduleName)
             }
             if (descriptor.visibility == Visibilities.PRIVATE && containingDeclaration is PackageFragmentDescriptor) {
-                val packagePartSource = (descriptor as DeserializedPropertyDescriptor).packagePartSource
+                val packagePartSource = (descriptor as DeserializedPropertyDescriptor).containerSource
                 if (packagePartSource is JvmPackagePartSource && packagePartSource.facadeClassName != null) {
                     return "$" + packagePartSource.simpleName.asString()
                 }

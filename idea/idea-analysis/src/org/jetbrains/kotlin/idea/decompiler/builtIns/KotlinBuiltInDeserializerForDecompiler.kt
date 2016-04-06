@@ -59,7 +59,7 @@ class KotlinBuiltInDeserializerForDecompiler(
         }
 
         val membersScope = DeserializedPackageMemberScope(
-                createDummyPackageFragment(facadeFqName), proto.`package`, nameResolver, packagePartSource = null,
+                createDummyPackageFragment(facadeFqName), proto.`package`, nameResolver, containerSource = null,
                 components = deserializationComponents
         ) { emptyList() }
 
