@@ -193,6 +193,12 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             doTest(fileName);
         }
 
+        @TestMetadata("MultipleModality.kt")
+        public void testMultipleModality() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/MultipleModality.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("NestedObjects.kt")
         public void testNestedObjects() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/NestedObjects.kt");
