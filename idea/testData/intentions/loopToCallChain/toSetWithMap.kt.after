@@ -1,0 +1,9 @@
+// WITH_RUNTIME
+import java.util.HashSet
+
+fun foo(map: Map<Int, String>): Collection<Int> {
+    <caret>val result = map.values
+            .map { it.length }
+            .toSet()
+    return result
+}

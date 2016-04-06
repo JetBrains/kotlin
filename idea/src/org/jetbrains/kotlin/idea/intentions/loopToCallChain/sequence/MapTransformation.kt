@@ -19,9 +19,11 @@ package org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.*
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.psi.KtProperty
 
 class MapTransformation(
+        override val loop: KtForExpression,
         override val inputVariable: KtCallableDeclaration,
         val mapping: KtExpression
 ) : SequenceTransformation {
@@ -50,7 +52,7 @@ class MapTransformation(
             if (declaration.hasWriteUsages()) return null
             val restStatements = state.statements.drop(1)
 
-            val transformation = MapTransformation(state.inputVariable, initializer)
+            val transformation = MapTransformation(state.outerLoop, state.inputVariable, initializer)
             val newState = state.copy(statements = restStatements, inputVariable = declaration)
             return SequenceTransformationMatch(transformation, newState)
         }

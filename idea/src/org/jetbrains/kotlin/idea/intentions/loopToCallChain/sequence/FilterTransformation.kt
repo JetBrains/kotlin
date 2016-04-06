@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.blockExpressionsOrSingle
 
 class FilterTransformation(
+        override val loop: KtForExpression,
         override val inputVariable: KtCallableDeclaration,
         val condition: KtExpression,
         val isInverse: Boolean
@@ -36,7 +37,7 @@ class FilterTransformation(
         assert(previousTransformation.inputVariable == inputVariable)
         val mergedCondition = KtPsiFactory(condition).createExpressionByPattern(
                 "$0 && $1", previousTransformation.effectiveCondition(), effectiveCondition())
-        return FilterTransformation(inputVariable, mergedCondition, isInverse = false) //TODO: build filterNot in some cases?
+        return FilterTransformation(loop, inputVariable, mergedCondition, isInverse = false) //TODO: build filterNot in some cases?
     }
 
     override val affectsIndex: Boolean
@@ -73,14 +74,14 @@ class FilterTransformation(
             val then = ifStatement.then ?: return null
 
             if (state.statements.size == 1) {
-                val transformation = createFilterTransformation(state.inputVariable, condition, isInverse = false)
+                val transformation = createFilterTransformation(state.outerLoop, state.inputVariable, condition, isInverse = false)
                 val newState = state.copy(statements = listOf(then))
                 return SequenceTransformationMatch(transformation, newState)
             }
             else {
                 val continueExpression = then.blockExpressionsOrSingle().singleOrNull() as? KtContinueExpression ?: return null
                 if (!continueExpression.isBreakOrContinueOfLoop(state.innerLoop)) return null
-                val transformation = createFilterTransformation(state.inputVariable, condition, isInverse = true)
+                val transformation = createFilterTransformation(state.outerLoop, state.inputVariable, condition, isInverse = true)
                 val newState = state.copy(statements = state.statements.drop(1))
                 return SequenceTransformationMatch(transformation, newState)
             }
@@ -88,6 +89,7 @@ class FilterTransformation(
 
         //TODO: choose filter or filterNot depending on condition
         private fun createFilterTransformation(
+                loop: KtForExpression,
                 inputVariable: KtCallableDeclaration,
                 condition: KtExpression,
                 isInverse: Boolean): SequenceTransformation {
@@ -100,7 +102,7 @@ class FilterTransformation(
             ) {
                 val typeRef = effectiveCondition.typeReference
                 if (typeRef != null) {
-                    return FilterIsInstanceTransformation(inputVariable, typeRef)
+                    return FilterIsInstanceTransformation(loop, inputVariable, typeRef)
                 }
             }
 
@@ -109,15 +111,16 @@ class FilterTransformation(
                 && effectiveCondition.right.isNullExpression()
                 && effectiveCondition.left.isSimpleName(inputVariable.nameAsSafeName)
             ) {
-                return FilterNotNullTransformation(inputVariable)
+                return FilterNotNullTransformation(loop, inputVariable)
             }
 
-            return FilterTransformation(inputVariable, condition, isInverse)
+            return FilterTransformation(loop, inputVariable, condition, isInverse)
         }
     }
 }
 
 class FilterIsInstanceTransformation(
+        override val loop: KtForExpression,
         override val inputVariable: KtCallableDeclaration,
         private val type: KtTypeReference
 ) : SequenceTransformation {
@@ -131,6 +134,7 @@ class FilterIsInstanceTransformation(
 }
 
 class FilterNotNullTransformation(
+        override val loop: KtForExpression,
         override val inputVariable: KtCallableDeclaration
 ) : SequenceTransformation {
 

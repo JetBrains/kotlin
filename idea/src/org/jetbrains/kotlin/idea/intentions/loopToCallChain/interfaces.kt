@@ -38,6 +38,9 @@ interface ChainedCallGenerator {
  */
 interface Transformation {
     val inputVariable: KtCallableDeclaration
+    val loop: KtForExpression
+
+    fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression
 }
 
 /**
@@ -48,7 +51,6 @@ interface SequenceTransformation : Transformation {
 
     val affectsIndex: Boolean
 
-    fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression
 }
 
 /**
@@ -59,8 +61,6 @@ interface ResultTransformation : Transformation {
 
     val commentSavingRange: PsiChildRange
     fun commentRestoringRange(convertLoopResult: KtExpression): PsiChildRange
-
-    fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression
 
     fun convertLoop(resultCallChain: KtExpression): KtExpression
 }
@@ -104,5 +104,8 @@ interface ResultTransformationMatcher {
 
 class ResultTransformationMatch(
         val resultTransformation: ResultTransformation,
-        val sequenceTransformations: List<SequenceTransformation> = listOf()
-)
+        val sequenceTransformations: List<SequenceTransformation>
+) {
+    constructor(resultTransformation: ResultTransformation, vararg sequenceTransformations: SequenceTransformation)
+    : this(resultTransformation, sequenceTransformations.asList())
+}

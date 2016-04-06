@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.intentions.loopToCallChain.result
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.*
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.FilterTransformation
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.FlatMapTransformation
+import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.MapTransformation
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getCallNameExpression
 
@@ -26,7 +27,7 @@ class AddToCollectionTransformation(
         loop: KtForExpression,
         inputVariable: KtCallableDeclaration,
         private val targetCollection: KtExpression
-) : ReplaceLoopTransformation(loop, inputVariable) {
+) : ReplaceLoopResultTransformation(loop, inputVariable) {
 
     override fun mergeWithPrevious(previousTransformation: SequenceTransformation): ResultTransformation? {
         return when (previousTransformation) {
@@ -68,10 +69,42 @@ class AddToCollectionTransformation(
             //TODO: check that it's MutableCollection's add
             val argument = callExpression.valueArguments.singleOrNull() ?: return null
             val argumentValue = argument.getArgumentExpression() ?: return null
+            val argumentIsInputVariable = argumentValue.isVariableReference(state.inputVariable)
 
-            //TODO: if variable is initialized with new collection than generate toList(), toSet()
+            //TODO: collection can be used as mutable collection or even ArrayList!
+            val collectionInitialization = targetCollection.detectInitializationBeforeLoop(state.outerLoop)
+            if (collectionInitialization != null) {
+                val collectionKind = collectionInitialization.initializer.isSimpleCollectionInstantiation()
+                when (collectionKind) {
+                    CollectionKind.LIST -> {
+                        val transformation = if (argumentIsInputVariable) {
+                            AssignToListTransformation(state.outerLoop, state.inputVariable, collectionInitialization)
+                        }
+                        else {
+                            val mapTransformation = MapTransformation(state.outerLoop, state.inputVariable, argumentValue)
+                            AssignSequenceTransformationResultTransformation(mapTransformation, collectionInitialization)
+                        }
+                        return ResultTransformationMatch(transformation)
+                    }
 
-            val transformation = if (argumentValue.isVariableReference(state.inputVariable)) {
+                    CollectionKind.SET -> {
+                        if (argumentIsInputVariable) {
+                            val transformation = AssignToSetTransformation(state.outerLoop, state.inputVariable, collectionInitialization)
+                            return ResultTransformationMatch(transformation)
+                        }
+                        else {
+                            val mapTransformation = MapTransformation(state.outerLoop, state.inputVariable, argumentValue)
+                            val transformation = AssignToSetTransformation(
+                                    state.outerLoop,
+                                    state.inputVariable/*TODO: it's not correct and it looks like not all transformations should have inputVariable*/,
+                                    collectionInitialization)
+                            return ResultTransformationMatch(transformation, mapTransformation)
+                        }
+                    }
+                }
+            }
+
+            val transformation = if (argumentIsInputVariable) {
                 AddToCollectionTransformation(state.outerLoop, state.inputVariable, targetCollection)
             }
             else {
@@ -87,7 +120,7 @@ class FilterToTransformation(
         inputVariable: KtCallableDeclaration,
         private val targetCollection: KtExpression,
         private val filter: KtExpression
-) : ReplaceLoopTransformation(loop, inputVariable) {
+) : ReplaceLoopResultTransformation(loop, inputVariable) {
 
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
         val lambda = generateLambda(inputVariable, filter)
@@ -100,7 +133,7 @@ class MapToTransformation(
         inputVariable: KtCallableDeclaration,
         private val targetCollection: KtExpression,
         private val mapping: KtExpression
-) : ReplaceLoopTransformation(loop, inputVariable) {
+) : ReplaceLoopResultTransformation(loop, inputVariable) {
 
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
         val lambda = generateLambda(inputVariable, mapping)
@@ -113,10 +146,37 @@ class FlatMapToTransformation(
         inputVariable: KtCallableDeclaration,
         private val targetCollection: KtExpression,
         private val transform: KtExpression
-) : ReplaceLoopTransformation(loop, inputVariable) {
+) : ReplaceLoopResultTransformation(loop, inputVariable) {
 
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
         val lambda = generateLambda(inputVariable, transform)
         return chainedCallGenerator.generate("flatMapTo($0) $1:'{}'", targetCollection, lambda)
+    }
+}
+
+class AssignToListTransformation(
+        loop: KtForExpression,
+        inputVariable: KtCallableDeclaration,
+        initialization: VariableInitialization
+) : AssignToVariableResultTransformation(loop, inputVariable, initialization) {
+
+    override fun mergeWithPrevious(previousTransformation: SequenceTransformation): ResultTransformation? {
+        if (previousTransformation !is FilterTransformation) return null
+        return AssignSequenceTransformationResultTransformation(previousTransformation, initialization)
+    }
+
+    override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
+        return chainedCallGenerator.generate("toList()")
+    }
+}
+
+class AssignToSetTransformation(
+        loop: KtForExpression,
+        inputVariable: KtCallableDeclaration,
+        initialization: VariableInitialization
+) : AssignToVariableResultTransformation(loop, inputVariable, initialization) {
+
+    override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
+        return chainedCallGenerator.generate("toSet()")
     }
 }

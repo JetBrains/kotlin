@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.KtReturnExpression
 import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
 
 class FindAndReturnTransformation(
-        private val loop: KtForExpression,
+        override val loop: KtForExpression,
         override val inputVariable: KtCallableDeclaration,
         private val generator: (chainedCallGenerator: ChainedCallGenerator, filter: KtExpression?) -> KtExpression,
         private val endReturn: KtReturnExpression,

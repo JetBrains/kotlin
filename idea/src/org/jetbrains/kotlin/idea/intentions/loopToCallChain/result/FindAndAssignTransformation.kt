@@ -23,17 +23,16 @@ import org.jetbrains.kotlin.idea.intentions.loopToCallChain.*
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.FilterTransformation
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class FindAndAssignTransformation(
-        private val loop: KtForExpression,
-        override val inputVariable: KtCallableDeclaration,
+        loop: KtForExpression,
+        inputVariable: KtCallableDeclaration,
         private val generator: (chainedCallGenerator: ChainedCallGenerator, filter: KtExpression?) -> KtExpression,
-        private val initialization: VariableInitialization,
+        initialization: VariableInitialization,
         private val filter: KtExpression? = null
-) : ResultTransformation {
+) : AssignToVariableResultTransformation(loop, inputVariable, initialization) {
 
     override fun mergeWithPrevious(previousTransformation: SequenceTransformation): ResultTransformation? {
         if (previousTransformation !is FilterTransformation) return null
@@ -41,25 +40,8 @@ class FindAndAssignTransformation(
         return FindAndAssignTransformation(loop, previousTransformation.inputVariable, generator, initialization, previousTransformation.effectiveCondition())
     }
 
-    override val commentSavingRange = PsiChildRange(initialization.initializationStatement, loop.unwrapIfLabeled())
-
-    private val commentRestoringRange = commentSavingRange.withoutLastStatement()
-
-    override fun commentRestoringRange(convertLoopResult: KtExpression) = commentRestoringRange
-
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
         return generator(chainedCallGenerator, filter)
-    }
-
-    override fun convertLoop(resultCallChain: KtExpression): KtExpression {
-        initialization.initializer.replace(resultCallChain)
-        loop.deleteWithLabels()
-
-        if (!initialization.variable.hasWriteUsages()) { // change variable to 'val' if possible
-            initialization.variable.valOrVarKeyword.replace(KtPsiFactory(initialization.variable).createValKeyword())
-        }
-
-        return initialization.initializationStatement
     }
 
     /**
