@@ -123,13 +123,32 @@ fun buildFindOperationGenerator(
         }
     }
 
+    val workingVariableCanHoldNull = (workingVariable.resolveToDescriptor() as VariableDescriptor).type.nullability() != TypeNullability.NOT_NULL
 
-    val stdlibFunName = when {
-        valueIfNotFound.isNullExpression() && valueIfFound.isVariableReference(workingVariable) -> if (findFirst) "firstOrNull" else "lastOrNull" //TODO: ?: if not null
+    when {
+        valueIfFound.isVariableReference(workingVariable) -> {
+            val stdlibFunName = if (findFirst) "firstOrNull" else "lastOrNull"
+            val nullIfNotFound = valueIfNotFound.isNullExpression()
 
-        valueIfFound.isTrueConstant() && valueIfNotFound.isFalseConstant() -> "any"
+            // we cannot use ?: if found value can be null
+            if (!nullIfNotFound && workingVariableCanHoldNull) return null
 
-        valueIfFound.isFalseConstant() && valueIfNotFound.isTrueConstant() -> "none"
+            return { chainedCallGenerator, filter ->
+                val chainedCall = generateChainedCall(stdlibFunName, chainedCallGenerator, filter)
+                if (nullIfNotFound)
+                    chainedCall
+                else
+                    KtPsiFactory(chainedCall).createExpressionByPattern("$0 ?: $1", chainedCall, valueIfNotFound)
+            }
+        }
+
+        valueIfFound.isTrueConstant() && valueIfNotFound.isFalseConstant() -> {
+            return { chainedCallGenerator, filter -> generateChainedCall("any", chainedCallGenerator, filter) }
+        }
+
+        valueIfFound.isFalseConstant() && valueIfNotFound.isTrueConstant() -> {
+            return { chainedCallGenerator, filter -> generateChainedCall("none", chainedCallGenerator, filter) }
+        }
 
         workingVariable.hasUsages(valueIfFound) -> {
             if (!valueIfNotFound.isNullExpression()) return null //TODO
@@ -149,7 +168,7 @@ fun buildFindOperationGenerator(
             }
 
             // in case of nullable working variable we cannot distinguish by the result of "firstOrNull" whether nothing was found or 'null' was found
-            if ((workingVariable.resolveToDescriptor() as VariableDescriptor).type.nullability() != TypeNullability.NOT_NULL) return null
+            if (workingVariableCanHoldNull) return null
 
             return { chainedCallGenerator, filter ->
                 val findFirstCall = generateChainedCall("firstOrNull", chainedCallGenerator, filter)
@@ -163,11 +182,8 @@ fun buildFindOperationGenerator(
                 val chainedCall = generateChainedCall("any", chainedCallGenerator, filter)
                 KtPsiFactory(chainedCall).createExpressionByPattern("if ($0) $1 else $2", chainedCall, valueIfFound, valueIfNotFound)
             }
-
         }
     }
-
-    return { chainedCallGenerator, filter -> generateChainedCall(stdlibFunName, chainedCallGenerator, filter) }
 }
 
 fun KtExpressionWithLabel.isBreakOrContinueOfLoop(loop: KtLoopExpression): Boolean {
@@ -184,13 +200,13 @@ fun KtExpressionWithLabel.isBreakOrContinueOfLoop(loop: KtLoopExpression): Boole
 }
 
 fun KtExpression.previousStatement(): KtExpression? {
-    var statement = unwrapIfLabeled()
+    val statement = unwrapIfLabeled()
     if (statement.parent !is KtBlockExpression) return null
     return statement.siblings(forward = false, withItself = false).firstIsInstanceOrNull<KtExpression>()
 }
 
 fun KtExpression.nextStatement(): KtExpression? {
-    var statement = unwrapIfLabeled()
+    val statement = unwrapIfLabeled()
     if (statement.parent !is KtBlockExpression) return null
     return statement.siblings(forward = true, withItself = false).firstIsInstanceOrNull<KtExpression>()
 }
