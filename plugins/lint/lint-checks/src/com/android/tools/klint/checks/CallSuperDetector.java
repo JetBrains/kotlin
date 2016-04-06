@@ -38,6 +38,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.uast.*;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
+import org.jetbrains.uast.visitor.AbstractUastVisitor;
 import org.jetbrains.uast.visitor.UastVisitor;
 
 /**
@@ -84,7 +85,7 @@ public class CallSuperDetector extends Detector implements UastScanner {
 
     @Override
     public UastVisitor createUastVisitor(final UastAndroidContext context) {
-        return new UastVisitor() {
+        return new AbstractUastVisitor() {
             @Override
             public boolean visitFunction(@NotNull UFunction node) {
                 checkCallSuper(context, node);
@@ -166,7 +167,7 @@ public class CallSuperDetector extends Detector implements UastScanner {
     }
 
     /** Visits a method and determines whether the method calls its super method */
-    private static class SuperCallVisitor extends UastVisitor {
+    private static class SuperCallVisitor extends AbstractUastVisitor {
         private final UastAndroidContext mContext;
         private final String mMethodContainingClassFqName;
         private final String mMethodName;

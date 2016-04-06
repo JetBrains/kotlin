@@ -76,6 +76,12 @@ interface UElement {
 }
 
 /**
+ * An interface for the [UElement] which was synthesized by an [UastExtendableVisitor].
+ * A synthesized element is not processed by an [UastExtendableVisitor].
+ */
+interface SynthesizedUElement : UElement
+
+/**
  * An interface for the [UElement] which has a name.
  */
 interface UNamed {

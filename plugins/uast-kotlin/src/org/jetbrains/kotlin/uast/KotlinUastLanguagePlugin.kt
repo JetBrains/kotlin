@@ -28,12 +28,12 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.uast.expressions.KotlinUBreakExpression
 import org.jetbrains.kotlin.uast.expressions.KotlinUContinueExpression
 import org.jetbrains.kotlin.uast.kinds.KotlinSpecialExpressionKinds
-import org.jetbrains.kotlin.uast.lint.PropertyAsCallAndroidUastAdditionalChecker
+import org.jetbrains.kotlin.uast.extensions.PropertyAsCallAndroidUastVisitorExtension
 import org.jetbrains.uast.*
 
 object KotlinUastLanguagePlugin : UastLanguagePlugin {
     override val converter: UastConverter = KotlinConverter
-    override val additionalCheckers = listOf(PropertyAsCallAndroidUastAdditionalChecker())
+    override val visitorExtensions = listOf(PropertyAsCallAndroidUastVisitorExtension())
 }
 
 internal object KotlinConverter : UastConverter {

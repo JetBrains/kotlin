@@ -40,6 +40,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.uast.*;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
+import org.jetbrains.uast.visitor.AbstractUastVisitor;
 import org.jetbrains.uast.visitor.UastVisitor;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
@@ -477,7 +478,7 @@ public class OverdrawDetector extends LayoutDetector implements UastScanner {
         return new OverdrawVisitor();
     }
 
-    private class OverdrawVisitor extends UastVisitor {
+    private class OverdrawVisitor extends AbstractUastVisitor {
         private static final String ACTIVITY = "Activity"; //$NON-NLS-1$
         private String mClassFqn;
 

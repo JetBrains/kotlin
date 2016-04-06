@@ -44,14 +44,12 @@ import com.sun.istack.internal.NotNull;
 import org.jetbrains.uast.*;
 import org.jetbrains.uast.check.UastChecker;
 import org.jetbrains.uast.check.UastScanner;
-import org.jetbrains.uast.java.JavaUastCallKinds;
 import org.jetbrains.uast.visitor.UastVisitor;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 import java.io.File;
 import java.io.IOException;

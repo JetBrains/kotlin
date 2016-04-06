@@ -40,7 +40,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.uast.*;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.java.JavaUastLanguagePlugin;
-import org.jetbrains.uast.visitor.UastVisitor;
+import org.jetbrains.uast.visitor.AbstractUastVisitor;
 
 /**
  * A permission requirement is a boolean expression of permission names that a
@@ -590,7 +590,7 @@ public abstract class PermissionRequirement {
 
             if (node != null) {
                 final AtomicReference<UExpression> reference = new AtomicReference<UExpression>();
-                node.accept(new UastVisitor() {
+                node.accept(new AbstractUastVisitor() {
                     @Override
                     public boolean visitVariable(@NotNull UVariable node) {
                         reference.set(node.getInitializer());

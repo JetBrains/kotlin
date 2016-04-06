@@ -73,6 +73,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.uast.*;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
+import org.jetbrains.uast.visitor.AbstractUastVisitor;
 import org.jetbrains.uast.visitor.UastVisitor;
 import org.w3c.dom.Element;
 
@@ -1975,7 +1976,7 @@ public class IconDetector extends ResourceXmlDetector implements UastScanner {
         return new NotificationFinder(context);
     }
 
-    private final class NotificationFinder extends UastVisitor {
+    private final class NotificationFinder extends AbstractUastVisitor {
         private UastAndroidContext mContext;
 
         public NotificationFinder(UastAndroidContext mContext) {
@@ -2066,7 +2067,7 @@ public class IconDetector extends ResourceXmlDetector implements UastScanner {
         return false;
     }
 
-    private final class SetIconFinder extends UastVisitor {
+    private final class SetIconFinder extends AbstractUastVisitor {
         @Override
         public boolean visitCallExpression(@NotNull UCallExpression node) {
             if (SET_SMALL_ICON.equals(node.getFunctionName())) {
@@ -2080,7 +2081,7 @@ public class IconDetector extends ResourceXmlDetector implements UastScanner {
         }
     }
 
-    private final class MenuFinder extends UastVisitor {
+    private final class MenuFinder extends AbstractUastVisitor {
         @Override
         public boolean visitQualifiedExpression(@NotNull UQualifiedExpression node) {
             // R.type.name

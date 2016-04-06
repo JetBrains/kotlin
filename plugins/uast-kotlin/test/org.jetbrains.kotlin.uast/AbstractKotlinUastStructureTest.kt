@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.uast.UElement
-import org.jetbrains.uast.visitor.UastVisitor
+import org.jetbrains.uast.visitor.AbstractUastVisitor
 import java.io.File
 
 abstract class AbstractKotlinUastStructureTest : KotlinLightCodeInsightFixtureTestCase() {
@@ -50,7 +50,7 @@ abstract class AbstractKotlinUastStructureTest : KotlinLightCodeInsightFixtureTe
 
     private fun genTree(node: UElement): String {
         val builder = StringBuilder()
-        val visitor = object : UastVisitor() {
+        val visitor = object : AbstractUastVisitor() {
             private tailrec fun getParentCount(node: UElement): Int {
                 val parent = node.parent ?: return 0
                 return getParentCount(parent)

@@ -21,5 +21,5 @@ import org.jetbrains.kotlin.uast.KotlinUastLanguagePlugin
 
 class KotlinLintLanguageExtension : LintLanguageExtension() {
     override val converter = KotlinUastLanguagePlugin.converter
-    override val additionalCheckers = KotlinUastLanguagePlugin.additionalCheckers
+    override val visitorExtensions = KotlinUastLanguagePlugin.visitorExtensions
 }

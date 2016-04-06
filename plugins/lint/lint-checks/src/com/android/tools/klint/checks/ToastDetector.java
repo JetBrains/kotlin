@@ -33,7 +33,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.uast.*;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
-import org.jetbrains.uast.visitor.UastVisitor;
+import org.jetbrains.uast.visitor.AbstractUastVisitor;
 
 /** Detector looking for Toast.makeText() without a corresponding show() call */
 public class ToastDetector extends Detector implements UastScanner {
@@ -110,7 +110,7 @@ public class ToastDetector extends Detector implements UastScanner {
         }
     }
 
-    private static class ShowFinder extends UastVisitor {
+    private static class ShowFinder extends AbstractUastVisitor {
         /** The target makeText call */
         private final UExpression mTarget;
         /** Whether we've found the show method */

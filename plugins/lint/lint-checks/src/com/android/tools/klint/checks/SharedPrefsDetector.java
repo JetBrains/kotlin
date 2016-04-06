@@ -36,7 +36,7 @@ import org.jetbrains.uast.*;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
 import org.jetbrains.uast.java.JavaUAssertExpression;
-import org.jetbrains.uast.visitor.UastVisitor;
+import org.jetbrains.uast.visitor.AbstractUastVisitor;
 
 /**
  * Detector looking for SharedPreferences.edit() calls without a corresponding
@@ -169,7 +169,7 @@ public class SharedPrefsDetector extends Detector implements UastScanner {
         return null;
     }
 
-    private static class CommitFinder extends UastVisitor {
+    private static class CommitFinder extends AbstractUastVisitor {
         /** The target edit call */
         private final UCallExpression mTarget;
         /** whether it allows the commit call to be seen before the target node */
