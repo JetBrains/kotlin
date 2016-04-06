@@ -78,7 +78,7 @@ class FindAndReturnTransformation(
             val returnValueInLoop = returnInLoop.returnedExpression ?: return null
             val returnValueAfterLoop = returnAfterLoop.returnedExpression ?: return null
 
-            val stdlibFunName = stdlibFunNameForFind(returnValueInLoop, returnValueAfterLoop, state.workingVariable) ?: return null
+            val stdlibFunName = stdlibFunNameForFind(returnValueInLoop, returnValueAfterLoop, state.workingVariable, findFirst = true) ?: return null
 
             val transformation = FindAndReturnTransformation(state.outerLoop, state.workingVariable, stdlibFunName, returnAfterLoop)
             return ResultTransformationMatch(transformation)

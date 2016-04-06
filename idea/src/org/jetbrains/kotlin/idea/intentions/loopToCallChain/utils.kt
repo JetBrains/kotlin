@@ -95,9 +95,9 @@ fun KtProperty.hasWriteUsages(): Boolean {
     }
 }
 
-fun stdlibFunNameForFind(valueIfFound: KtExpression, valueIfNotFound: KtExpression, workingVariable: KtCallableDeclaration): String? {
+fun stdlibFunNameForFind(valueIfFound: KtExpression, valueIfNotFound: KtExpression, workingVariable: KtCallableDeclaration, findFirst: Boolean): String? {
     return when {
-        valueIfNotFound.isNullExpression() && valueIfFound.isVariableReference(workingVariable) -> "firstOrNull"
+        valueIfNotFound.isNullExpression() && valueIfFound.isVariableReference(workingVariable) -> if (findFirst) "firstOrNull" else "lastOrNull"
 
         valueIfFound.isTrueConstant() && valueIfNotFound.isFalseConstant() -> "any"
 
