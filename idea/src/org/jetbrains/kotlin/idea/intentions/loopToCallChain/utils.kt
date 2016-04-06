@@ -21,9 +21,11 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isNullExpression
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
@@ -36,6 +38,8 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.types.typeUtil.TypeNullability
+import org.jetbrains.kotlin.types.typeUtil.nullability
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
@@ -123,7 +127,19 @@ fun buildFindOperationGenerator(
 
         valueIfFound.isFalseConstant() && valueIfNotFound.isTrueConstant() -> "none"
 
-        workingVariable.hasUsages(listOf(valueIfFound)) -> /*TODO*/ return null
+        workingVariable.hasUsages(listOf(valueIfFound)) -> {
+            if (!valueIfNotFound.isNullExpression()) return null //TODO
+            if (!findFirst) return null // too dangerous because of side effects
+
+            // in case of nullable working variable we cannot distinguish by the result of "firstOrNull" whether nothing was found or 'null' was found
+            if ((workingVariable.resolveToDescriptor() as VariableDescriptor).type.nullability() != TypeNullability.NOT_NULL) return null
+
+            return { chainedCallGenerator, filter ->
+                val findFirstCall = generateChainedCall("firstOrNull", chainedCallGenerator, filter)
+                val letBody = generateLambda(workingVariable, valueIfFound)
+                KtPsiFactory(findFirstCall).createExpressionByPattern("$0?.let $1:'{}'", findFirstCall, letBody)
+            }
+        }
 
         // initial value is compile-time constant
         ConstantExpressionEvaluator.getConstant(valueIfNotFound, valueIfNotFound.analyze(BodyResolveMode.PARTIAL)) != null -> {
