@@ -132,7 +132,6 @@ object ModifierCheckerCore {
         result += incompatibilityRegister(DATA_KEYWORD, SEALED_KEYWORD)
         // open is redundant to abstract & override
         result += redundantRegister(ABSTRACT_KEYWORD, OPEN_KEYWORD)
-        result += redundantRegister(OVERRIDE_KEYWORD, OPEN_KEYWORD)
         // abstract is redundant to sealed
         result += redundantRegister(SEALED_KEYWORD, ABSTRACT_KEYWORD)
 
