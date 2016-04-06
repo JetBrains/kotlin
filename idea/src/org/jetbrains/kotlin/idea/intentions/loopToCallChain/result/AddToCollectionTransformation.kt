@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.intentions.loopToCallChain.result
 
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.*
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.FilterTransformation
+import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.FlatMapTransformation
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getCallNameExpression
 
@@ -28,8 +29,17 @@ class AddToCollectionTransformation(
 ) : ReplaceLoopTransformation(loop, inputVariable) {
 
     override fun mergeWithPrevious(previousTransformation: SequenceTransformation): ResultTransformation? {
-        if (previousTransformation !is FilterTransformation) return null
-        return FilterToTransformation(loop, inputVariable, targetCollection, previousTransformation.effectiveCondition()) //TODO: use filterNotTo?
+        return when (previousTransformation) {
+            is FilterTransformation -> {
+                FilterToTransformation(loop, inputVariable, targetCollection, previousTransformation.effectiveCondition()) //TODO: use filterNotTo?
+            }
+
+            is FlatMapTransformation -> {
+                FlatMapToTransformation(loop, previousTransformation.inputVariable, targetCollection, previousTransformation.transform)
+            }
+
+            else -> null
+        }
     }
 
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
@@ -95,5 +105,18 @@ class MapToTransformation(
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
         val lambda = generateLambda(inputVariable, mapping)
         return chainedCallGenerator.generate("mapTo($0) $1:'{}'", targetCollection, lambda)
+    }
+}
+
+class FlatMapToTransformation(
+        loop: KtForExpression,
+        inputVariable: KtCallableDeclaration,
+        private val targetCollection: KtExpression,
+        private val transform: KtExpression
+) : ReplaceLoopTransformation(loop, inputVariable) {
+
+    override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
+        val lambda = generateLambda(inputVariable, transform)
+        return chainedCallGenerator.generate("flatMapTo($0) $1:'{}'", targetCollection, lambda)
     }
 }
