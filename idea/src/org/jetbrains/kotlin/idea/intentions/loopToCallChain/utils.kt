@@ -87,6 +87,10 @@ fun KtExpression?.isSimpleName(name: Name): Boolean {
     return this is KtNameReferenceExpression && this.getQualifiedExpressionForSelector() == null && this.getReferencedNameAsName() == name
 }
 
+fun KtCallableDeclaration.hasUsages(inElement: KtElement): Boolean {
+    return hasUsages(listOf(inElement))
+}
+
 fun KtCallableDeclaration.hasUsages(inElements: Collection<KtElement>): Boolean {
     // TODO: it's a temporary workaround about strange dead-lock when running inspections
     return inElements.any { ReferencesSearch.search(this, LocalSearchScope(it)).any() }
@@ -127,9 +131,22 @@ fun buildFindOperationGenerator(
 
         valueIfFound.isFalseConstant() && valueIfNotFound.isTrueConstant() -> "none"
 
-        workingVariable.hasUsages(listOf(valueIfFound)) -> {
+        workingVariable.hasUsages(valueIfFound) -> {
             if (!valueIfNotFound.isNullExpression()) return null //TODO
             if (!findFirst) return null // too dangerous because of side effects
+
+            // specially handle the case when the result expression is "<working variable>.<some call>" or "<working variable>?.<some call>"
+            val qualifiedExpression = valueIfFound as? KtQualifiedExpression
+            if (qualifiedExpression != null) {
+                val receiver = qualifiedExpression.receiverExpression
+                val selector = qualifiedExpression.selectorExpression
+                if (receiver.isVariableReference(workingVariable) && selector != null && !workingVariable.hasUsages(selector)) {
+                    return { chainedCallGenerator, filter ->
+                        val findFirstCall = generateChainedCall("firstOrNull", chainedCallGenerator, filter)
+                        KtPsiFactory(findFirstCall).createExpressionByPattern("$0?.$1", findFirstCall, selector)
+                    }
+                }
+            }
 
             // in case of nullable working variable we cannot distinguish by the result of "firstOrNull" whether nothing was found or 'null' was found
             if ((workingVariable.resolveToDescriptor() as VariableDescriptor).type.nullability() != TypeNullability.NOT_NULL) return null
