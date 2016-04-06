@@ -80,6 +80,7 @@ class A {
     fun f() {
         foo() <1>
     }
+}
 ----
 <1> This member function is called via implicit receiver `this`
 
@@ -155,7 +156,7 @@ class B: A() {
     companion object { ... }
 }
 ----
-<1> Implicit receivers: this@B, B (companion object to the class B), A (companion object to the class B)
+<1> Implicit receivers: this@B, B (companion object to the class B), A (companion object to the class A)
 
 In the further discussion we'll rely a lot on the concept of implicit receivers available in any given context.
 As a summary, you may think of them as a list of all available `this` references together with references to companion objects, e.g. `[this@with, this@B, B]`.
@@ -578,7 +579,7 @@ If a value has extension function type, it can be called as extension function:
 >>> 1.f()
 ----
 
-The resolution of such call work though the `invoke` convention as well, but in this case the receiver becomes the first argument of the `invoke` function.
+The resolution of such call works through the `invoke` convention as well, but in this case the receiver becomes the first argument of the `invoke` function.
 That means the call `1.f()` might be rewritten as `f(1)`, which is the short form for `f.invoke(1)`.
 
 
@@ -661,7 +662,7 @@ This parameter will actually be called in the example above.
 1. The top-level extension function #1 goes next.
 
 2. We have two top-level extension properties named `foo` in the context, for each of them the `invoke` function is available.
-Two group are created.
+Two groups are created.
 The first one contains the member property `val foo: CallableFoo` together with the function `fun CallableFoo.invoke()`.
 The second group contains the property `val A.foo: () -> Int` together with the member function `invoke` of the class `Function0<Int>`.
 These properties belong to different groups with different priorities, because the first property is a member, while the second one is an extension.
