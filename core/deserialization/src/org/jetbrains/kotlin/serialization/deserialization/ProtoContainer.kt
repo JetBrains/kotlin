@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -33,7 +32,7 @@ sealed class ProtoContainer(
             nameResolver: NameResolver,
             typeTable: TypeTable,
             source: SourceElement?,
-            val outerClassKind: ClassKind?
+            val outerClass: ProtoContainer.Class?
     ) : ProtoContainer(nameResolver, typeTable, source) {
         val classId: ClassId = nameResolver.getClassId(classProto.fqName)
 

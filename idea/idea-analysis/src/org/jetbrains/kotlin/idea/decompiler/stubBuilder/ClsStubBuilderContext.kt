@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.AnnotationAndConstantLoader
-import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
-import org.jetbrains.kotlin.serialization.deserialization.NameResolver
-import org.jetbrains.kotlin.serialization.deserialization.TypeTable
+import org.jetbrains.kotlin.serialization.deserialization.*
 
 data class ClassIdWithTarget(val classId: ClassId, val target: AnnotationUseSiteTarget?)
 
@@ -39,7 +36,7 @@ class ClsStubBuilderComponents(
             packageFqName: FqName,
             typeTable: TypeTable
     ): ClsStubBuilderContext {
-        return ClsStubBuilderContext(this, nameResolver, packageFqName, EmptyTypeParameters, typeTable, classKind = null)
+        return ClsStubBuilderContext(this, nameResolver, packageFqName, EmptyTypeParameters, typeTable, protoContainer = null)
     }
 }
 
@@ -70,15 +67,15 @@ class ClsStubBuilderContext(
         val containerFqName: FqName,
         val typeParameters: TypeParameters,
         val typeTable: TypeTable,
-        val classKind: ProtoBuf.Class.Kind?
+        val protoContainer: ProtoContainer.Class?
 )
 
 internal fun ClsStubBuilderContext.child(
         typeParameterList: List<ProtoBuf.TypeParameter>,
-        classKind: ProtoBuf.Class.Kind? = null,
         name: Name? = null,
         nameResolver: NameResolver = this.nameResolver,
-        typeTable: TypeTable = this.typeTable
+        typeTable: TypeTable = this.typeTable,
+        protoContainer: ProtoContainer.Class? = this.protoContainer
 ): ClsStubBuilderContext {
     return ClsStubBuilderContext(
             this.components,
@@ -86,6 +83,6 @@ internal fun ClsStubBuilderContext.child(
             if (name != null) this.containerFqName.child(name) else this.containerFqName,
             this.typeParameters.child(nameResolver, typeParameterList),
             typeTable,
-            classKind
+            protoContainer
     )
 }

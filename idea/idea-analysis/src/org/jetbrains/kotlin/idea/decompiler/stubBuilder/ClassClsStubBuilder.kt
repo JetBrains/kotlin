@@ -37,7 +37,10 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinObjectStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderStubImpl
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.*
+import org.jetbrains.kotlin.serialization.deserialization.NameResolver
+import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
+import org.jetbrains.kotlin.serialization.deserialization.TypeTable
+import org.jetbrains.kotlin.serialization.deserialization.supertypes
 
 fun createClassStub(
         parent: StubElement<out PsiElement>,
@@ -58,9 +61,14 @@ private class ClassClsStubBuilder(
         private val source: SourceElement?,
         private val outerContext: ClsStubBuilderContext
 ) {
-    private val classKind = Flags.CLASS_KIND[classProto.flags]
-    private val c = outerContext.child(classProto.typeParameterList, classKind, classId.shortClassName, nameResolver,
-                                       TypeTable(classProto.typeTable))
+    private val thisAsProtoContainer = ProtoContainer.Class(
+            classProto, nameResolver, TypeTable(classProto.typeTable), source, outerContext.protoContainer
+    )
+    private val classKind = thisAsProtoContainer.kind
+
+    private val c = outerContext.child(
+            classProto.typeParameterList, classId.shortClassName, nameResolver, thisAsProtoContainer.typeTable, thisAsProtoContainer
+    )
     private val typeStubBuilder = TypeClsStubBuilder(c)
     private val supertypeIds = run {
         val supertypeIds = classProto.supertypes(c.typeTable).map { c.nameResolver.getClassId(it.className) }
@@ -75,10 +83,6 @@ private class ClassClsStubBuilder(
 
     private val companionObjectName =
             if (classProto.hasCompanionObjectName()) c.nameResolver.getName(classProto.companionObjectName) else null
-
-    private val thisAsProtoContainer = ProtoContainer.Class(
-            classProto, c.nameResolver, c.typeTable, source, outerContext.classKind?.let { Deserialization.classKind(it) }
-    )
 
     private val classOrObjectStub = createClassOrObjectStubAndModifierListStub()
 

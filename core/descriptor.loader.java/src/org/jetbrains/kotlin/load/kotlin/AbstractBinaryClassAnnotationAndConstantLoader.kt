@@ -215,10 +215,12 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any, 
                 return kotlinClassFinder.findKotlinClass(implClassName)
             }
 
-            if (field && container.kind == ProtoBuf.Class.Kind.COMPANION_OBJECT &&
-                (container.outerClassKind == ClassKind.CLASS || container.outerClassKind == ClassKind.ENUM_CLASS)) {
-                // Backing fields of properties of a companion object in a class are generated in the outer class
-                return kotlinClassFinder.findKotlinClass(container.classId.outerClassId)
+            if (field && container.kind == ProtoBuf.Class.Kind.COMPANION_OBJECT) {
+                val outerClass = container.outerClass
+                if (outerClass != null && (outerClass.kind == ProtoBuf.Class.Kind.CLASS || outerClass.kind == ProtoBuf.Class.Kind.ENUM_CLASS)) {
+                    // Backing fields of properties of a companion object in a class are generated in the outer class
+                    return outerClass.toBinaryClass()
+                }
             }
 
             return containerBinaryClass
