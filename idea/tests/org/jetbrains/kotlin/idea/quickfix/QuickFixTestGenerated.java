@@ -680,6 +680,33 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/canBeParameter")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class CanBeParameter extends AbstractQuickFixTest {
+        public void testAllFilesPresentInCanBeParameter() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/canBeParameter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("usedInDerivedClass.kt")
+        public void testUsedInDerivedClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/canBeParameter/usedInDerivedClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("usedInProperty.kt")
+        public void testUsedInProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/canBeParameter/usedInProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("usedPrivateInInitializer.kt")
+        public void testUsedPrivateInInitializer() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/canBeParameter/usedPrivateInInitializer.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/changeSignature")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

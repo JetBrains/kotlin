@@ -1436,6 +1436,13 @@
                      level="WEAK WARNING"
     />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.CanBeParameterInspection"
+                     displayName="Constructor parameter is never used as a property"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     level="WARNING"
+    />
+
     <referenceImporter implementation="org.jetbrains.kotlin.idea.quickfix.KotlinReferenceImporter"/>
 
     <fileType.fileViewProviderFactory filetype="KJSM" implementationClass="com.intellij.psi.ClassFileViewProviderFactory"/>

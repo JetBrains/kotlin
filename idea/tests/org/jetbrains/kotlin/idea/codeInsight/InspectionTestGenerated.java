@@ -124,6 +124,12 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("canBeParameter/inspectionData/inspections.test")
+        public void testCanBeParameter_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/canBeParameter/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
         @TestMetadata("canBeVal/inspectionData/inspections.test")
         public void testCanBeVal_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/canBeVal/inspectionData/inspections.test");
