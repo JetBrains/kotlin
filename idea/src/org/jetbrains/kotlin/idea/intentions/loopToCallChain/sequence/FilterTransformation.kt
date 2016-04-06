@@ -29,13 +29,13 @@ class FilterTransformation(
         val isInverse: Boolean
 ) : SequenceTransformation {
 
-    fun buildRealCondition() = if (isInverse) condition.negate() else condition
+    fun effectiveCondition() = if (isInverse) condition.negate() else condition
 
     override fun mergeWithPrevious(previousTransformation: SequenceTransformation): SequenceTransformation? {
         if (previousTransformation !is FilterTransformation) return null
         assert(previousTransformation.inputVariable == inputVariable)
         val mergedCondition = KtPsiFactory(condition).createExpressionByPattern(
-                "$0 && $1", previousTransformation.buildRealCondition(), buildRealCondition())
+                "$0 && $1", previousTransformation.effectiveCondition(), effectiveCondition())
         return FilterTransformation(inputVariable, mergedCondition, isInverse = false) //TODO: build filterNot in some cases?
     }
 
@@ -92,22 +92,22 @@ class FilterTransformation(
                 condition: KtExpression,
                 isInverse: Boolean): SequenceTransformation {
 
-            val realCondition = if (isInverse) condition.negate() else condition
+            val effectiveCondition = if (isInverse) condition.negate() else condition
 
-            if (realCondition is KtIsExpression
-                && !realCondition.isNegated
-                && realCondition.leftHandSide.isSimpleName(inputVariable.nameAsSafeName) // we cannot use isVariableReference here because expression can be non-physical
+            if (effectiveCondition is KtIsExpression
+                && !effectiveCondition.isNegated
+                && effectiveCondition.leftHandSide.isSimpleName(inputVariable.nameAsSafeName) // we cannot use isVariableReference here because expression can be non-physical
             ) {
-                val typeRef = realCondition.typeReference
+                val typeRef = effectiveCondition.typeReference
                 if (typeRef != null) {
                     return FilterIsInstanceTransformation(inputVariable, typeRef)
                 }
             }
 
-            if (realCondition is KtBinaryExpression
-                && realCondition.operationToken == KtTokens.EXCLEQ
-                && realCondition.right.isNullExpression()
-                && realCondition.left.isSimpleName(inputVariable.nameAsSafeName)
+            if (effectiveCondition is KtBinaryExpression
+                && effectiveCondition.operationToken == KtTokens.EXCLEQ
+                && effectiveCondition.right.isNullExpression()
+                && effectiveCondition.left.isSimpleName(inputVariable.nameAsSafeName)
             ) {
                 return FilterNotNullTransformation(inputVariable)
             }

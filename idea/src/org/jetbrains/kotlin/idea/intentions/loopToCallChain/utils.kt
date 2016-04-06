@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import org.jetbrains.kotlin.types.typeUtil.nullability
@@ -256,4 +255,18 @@ fun KtExpression.detectInitializationBeforeLoop(loop: KtForExpression): Variable
     if (!assignment.left.isVariableReference(variable)) return null
     val initializer = assignment.right ?: return null
     return VariableInitialization(variable, assignment, initializer)
+}
+
+abstract class ReplaceLoopTransformation(
+        protected val loop: KtForExpression,
+        override val inputVariable: KtCallableDeclaration
+): ResultTransformation {
+
+    override val commentSavingRange = PsiChildRange.singleElement(loop.unwrapIfLabeled())
+
+    override fun commentRestoringRange(convertLoopResult: KtExpression) = PsiChildRange.singleElement(convertLoopResult)
+
+    override fun convertLoop(resultCallChain: KtExpression): KtExpression {
+        return loop.unwrapIfLabeled().replaced(resultCallChain)
+    }
 }

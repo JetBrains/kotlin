@@ -1,0 +1,4 @@
+// WITH_RUNTIME
+fun foo(list: List<String>, target: MutableList<String>) {
+    list.filterTo(target) { it.length > 0 }
+}
