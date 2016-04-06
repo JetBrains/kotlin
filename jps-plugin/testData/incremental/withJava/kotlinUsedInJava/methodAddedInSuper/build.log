@@ -17,4 +17,5 @@ Compiling files:
   src/Sub.java
 End of files
 COMPILATION FAILED
-y() in Sub cannot override y() in Super; overridden method is final
+y() in Sub cannot override y() in Super
+  overridden method is final
