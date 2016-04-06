@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.serialization.deserialization.descriptors
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.ClassId
@@ -36,7 +37,7 @@ open class DeserializedPackageMemberScope(
         packageDescriptor: PackageFragmentDescriptor,
         proto: ProtoBuf.Package,
         nameResolver: NameResolver,
-        containerSource: BinarySource?,
+        containerSource: SourceElement?,
         components: DeserializationComponents,
         classNames: () -> Collection<Name>
 ) : DeserializedMemberScope(

@@ -74,7 +74,7 @@ class DeserializedClassDescriptor(
     private val companionObjectDescriptor = c.storageManager.createNullableLazyValue { computeCompanionObjectDescriptor() }
 
     internal val thisAsProtoContainer = ProtoContainer.Class(
-            classProto, c.nameResolver, c.typeTable, sourceElement as? BinarySource, (containingDeclaration as? ClassDescriptor)?.kind
+            classProto, c.nameResolver, c.typeTable, sourceElement, (containingDeclaration as? ClassDescriptor)?.kind
     )
 
     private val annotations =

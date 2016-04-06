@@ -16,12 +16,13 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
+import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.BinarySource
 
-class JvmPackagePartSource(val className: JvmClassName, val facadeClassName: JvmClassName?) : BinarySource {
+class JvmPackagePartSource(val className: JvmClassName, val facadeClassName: JvmClassName?) : SourceElement {
     constructor(kotlinClass: KotlinJvmBinaryClass) : this(
             JvmClassName.byClassId(kotlinClass.classId),
             kotlinClass.classHeader.multifileClassName?.let {
@@ -32,4 +33,8 @@ class JvmPackagePartSource(val className: JvmClassName, val facadeClassName: Jvm
     val simpleName: Name get() = Name.identifier(className.internalName.substringAfterLast('/'))
 
     val classId: ClassId get() = ClassId(className.packageFqName, simpleName)
+
+    override fun toString() = "${javaClass.simpleName}: $className"
+
+    override fun getContainingFile(): SourceFile = SourceFile.NO_SOURCE_FILE
 }

@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.idea.stubindex.KotlinFileStubForIde
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -40,13 +41,12 @@ import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.TypeTable
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.BinarySource
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 
 fun createTopLevelClassStub(
         classId: ClassId,
         classProto: ProtoBuf.Class,
-        source: BinarySource?,
+        source: SourceElement?,
         context: ClsStubBuilderContext
 ): KotlinFileStubImpl {
     val fileStub = createFileStub(classId.packageFqName)

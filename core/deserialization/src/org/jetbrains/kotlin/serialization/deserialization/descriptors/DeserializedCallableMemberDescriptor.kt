@@ -36,10 +36,8 @@ interface DeserializedCallableMemberDescriptor : CallableMemberDescriptor {
     val typeTable: TypeTable
 
     // Information about the origin of this callable's container (class or package part on JVM) or null if there's no such information.
-    val containerSource: BinarySource?
+    val containerSource: SourceElement?
 }
-
-interface BinarySource
 
 class DeserializedSimpleFunctionDescriptor(
         containingDeclaration: DeclarationDescriptor,
@@ -50,7 +48,7 @@ class DeserializedSimpleFunctionDescriptor(
         override val proto: ProtoBuf.Function,
         override val nameResolver: NameResolver,
         override val typeTable: TypeTable,
-        override val containerSource: BinarySource?
+        override val containerSource: SourceElement?
 ) : DeserializedCallableMemberDescriptor,
         SimpleFunctionDescriptorImpl(containingDeclaration, original, annotations, name, kind, SourceElement.NO_SOURCE) {
 
@@ -82,7 +80,7 @@ class DeserializedPropertyDescriptor(
         override val proto: ProtoBuf.Property,
         override val nameResolver: NameResolver,
         override val typeTable: TypeTable,
-        override val containerSource: BinarySource?
+        override val containerSource: SourceElement?
 ) : DeserializedCallableMemberDescriptor,
         PropertyDescriptorImpl(containingDeclaration, original, annotations,
                                modality, visibility, isVar, name, kind, SourceElement.NO_SOURCE, isLateInit, isConst) {
@@ -110,7 +108,7 @@ class DeserializedConstructorDescriptor(
         override val proto: ProtoBuf.Constructor,
         override val nameResolver: NameResolver,
         override val typeTable: TypeTable,
-        override val containerSource: BinarySource?
+        override val containerSource: SourceElement?
 ) : DeserializedCallableMemberDescriptor,
         ConstructorDescriptorImpl(containingDeclaration, original, annotations, isPrimary, kind, SourceElement.NO_SOURCE) {
 

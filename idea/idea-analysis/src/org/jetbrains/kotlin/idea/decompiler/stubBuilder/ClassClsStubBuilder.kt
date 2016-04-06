@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.isNumberedFunctionClassFqName
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.FlagsToModifiers.*
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -37,14 +38,13 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderStubImpl
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.*
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.BinarySource
 
 fun createClassStub(
         parent: StubElement<out PsiElement>,
         classProto: ProtoBuf.Class,
         nameResolver: NameResolver,
         classId: ClassId,
-        source: BinarySource?,
+        source: SourceElement?,
         context: ClsStubBuilderContext
 ) {
     ClassClsStubBuilder(parent, classProto, nameResolver, classId, source, context).build()
@@ -55,7 +55,7 @@ private class ClassClsStubBuilder(
         private val classProto: ProtoBuf.Class,
         private val nameResolver: NameResolver,
         private val classId: ClassId,
-        private val source: BinarySource?,
+        private val source: SourceElement?,
         private val outerContext: ClsStubBuilderContext
 ) {
     private val classKind = Flags.CLASS_KIND[classProto.flags]
@@ -253,7 +253,7 @@ private class ClassClsStubBuilder(
             return
         }
         val (nameResolver, classProto) = classDataWithSource.classData
-        createClassStub(classBody, classProto, nameResolver, nestedClassId, classDataWithSource.sourceElement as? BinarySource, c)
+        createClassStub(classBody, classProto, nameResolver, nestedClassId, classDataWithSource.sourceElement, c)
     }
 
     companion object {
