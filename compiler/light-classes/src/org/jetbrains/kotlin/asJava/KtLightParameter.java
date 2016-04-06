@@ -170,4 +170,14 @@ public class KtLightParameter extends LightParameter implements KtLightDeclarati
     public PsiElement getParent() {
         return getMethod().getParameterList();
     }
+
+    @Override
+    public boolean isEquivalentTo(PsiElement another) {
+        KtParameter kotlinOrigin = getKotlinOrigin();
+        if (another instanceof KtLightParameter && kotlinOrigin != null) {
+            KtLightParameter anotherParam = (KtLightParameter) another;
+            return kotlinOrigin.equals(anotherParam.getKotlinOrigin()) && getClsDelegate().equals(anotherParam.getClsDelegate());
+        }
+        return super.isEquivalentTo(another);
+    }
 }

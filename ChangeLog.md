@@ -131,6 +131,7 @@ New features:
 - [KT-11604](https://youtrack.jetbrains.com/issue/KT-11604) Support "Configure Spring facet" inspection on Kotlin classes
 - [KT-11407](https://youtrack.jetbrains.com/issue/KT-11407) Implemented "Generate Spring Dependency..." actions
 - [KT-11408](https://youtrack.jetbrains.com/issue/KT-11408) Implemented "Generate @Autowired Dependency..." action
+- [KT-11652](https://youtrack.jetbrains.com/issue/KT-11652) Rename bean attributes mentioned in Spring XML config together with corresponding Kotlin declarations
 
 Issues fixed:
 
@@ -164,6 +165,7 @@ Issues fixed:
 - [KT-11689](https://youtrack.jetbrains.com/issue/KT-11689) Fixed exception on attempt to navigate to Kotlin file from Spring notification balloon
 - [KT-11725](https://youtrack.jetbrains.com/issue/KT-11725) Fixed renaming of injected SpEL references
 - [KT-11720](https://youtrack.jetbrains.com/issue/KT-11720) Fixed renaming of Kotlin beans through SpEL references
+- [KT-11719](https://youtrack.jetbrains.com/issue/KT-11719) Fixed renaming of Kotlin parameters references in XML files
 
 #### Debugger
 

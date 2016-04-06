@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.tests
 import org.jetbrains.kotlin.generators.tests.testGroup
 import org.jetbrains.kotlin.idea.codeInsight.AbstractInspectionTest
 import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixTest
+import org.jetbrains.kotlin.idea.spring.tests.findUsages.AbstractSpringFindUsagesTest
 import org.jetbrains.kotlin.idea.spring.tests.generate.AbstractGenerateSpringDependencyActionTest
 import org.jetbrains.kotlin.idea.spring.tests.gutter.AbstractSpringClassAnnotatorTest
 import org.jetbrains.kotlin.idea.spring.tests.references.AbstractSpringReferenceCompletionHandlerTest
@@ -60,6 +61,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractSpringRenameTest>() {
             model("spring/core/rename", extension = "test", singleClass = true)
+        }
+
+        testClass<AbstractSpringFindUsagesTest>() {
+            model("spring/core/findUsages", pattern = """^(.+)\.kt$""")
         }
     }
 }
