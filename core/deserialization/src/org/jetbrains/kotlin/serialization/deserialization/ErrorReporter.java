@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.serialization.deserialization;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.name.ClassId;
@@ -30,8 +29,6 @@ public interface ErrorReporter {
     void reportIncompleteHierarchy(@NotNull ClassDescriptor descriptor, @NotNull List<String> unresolvedSuperClasses);
 
     void reportCannotInferVisibility(@NotNull CallableMemberDescriptor descriptor);
-
-    void reportLoadingError(@NotNull String message, @Nullable Exception exception);
 
     ErrorReporter DO_NOTHING = new ErrorReporter() {
         @Override
@@ -46,10 +43,6 @@ public interface ErrorReporter {
 
         @Override
         public void reportCannotInferVisibility(@NotNull CallableMemberDescriptor descriptor) {
-        }
-
-        @Override
-        public void reportLoadingError(@NotNull String message, @Nullable Exception exception) {
         }
     };
 }

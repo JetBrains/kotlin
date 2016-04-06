@@ -24,10 +24,6 @@ import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
 
 class LoggingErrorReporter(private val log: Logger) : ErrorReporter {
-    override fun reportLoadingError(message: String, exception: Exception?) {
-        log.error(message, exception)
-    }
-
     override fun reportIncompleteHierarchy(descriptor: ClassDescriptor, unresolvedSuperClasses: List<String>) {
         // This is absolutely fine for the decompiler
     }

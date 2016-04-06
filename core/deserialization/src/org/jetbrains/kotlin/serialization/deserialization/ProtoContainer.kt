@@ -25,14 +25,16 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.BinarySour
 
 sealed class ProtoContainer(
         val nameResolver: NameResolver,
-        val typeTable: TypeTable
+        val typeTable: TypeTable,
+        val source: BinarySource?
 ) {
     class Class(
             val classProto: ProtoBuf.Class,
             nameResolver: NameResolver,
             typeTable: TypeTable,
+            source: BinarySource?,
             val outerClassKind: ClassKind?
-    ) : ProtoContainer(nameResolver, typeTable) {
+    ) : ProtoContainer(nameResolver, typeTable, source) {
         val classId: ClassId = nameResolver.getClassId(classProto.fqName)
 
         val kind: ProtoBuf.Class.Kind = Flags.CLASS_KIND.get(classProto.flags) ?: ProtoBuf.Class.Kind.CLASS
@@ -45,8 +47,8 @@ sealed class ProtoContainer(
             val fqName: FqName,
             nameResolver: NameResolver,
             typeTable: TypeTable,
-            val source: BinarySource?
-    ) : ProtoContainer(nameResolver, typeTable) {
+            source: BinarySource?
+    ) : ProtoContainer(nameResolver, typeTable, source) {
         override fun debugFqName(): FqName = fqName
     }
 

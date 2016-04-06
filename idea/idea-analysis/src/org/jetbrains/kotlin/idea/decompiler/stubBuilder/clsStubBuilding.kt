@@ -40,11 +40,17 @@ import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.TypeTable
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.BinarySource
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 
-fun createTopLevelClassStub(classId: ClassId, classProto: ProtoBuf.Class, context: ClsStubBuilderContext): KotlinFileStubImpl {
+fun createTopLevelClassStub(
+        classId: ClassId,
+        classProto: ProtoBuf.Class,
+        source: BinarySource?,
+        context: ClsStubBuilderContext
+): KotlinFileStubImpl {
     val fileStub = createFileStub(classId.packageFqName)
-    createClassStub(fileStub, classProto, context.nameResolver, classId, context)
+    createClassStub(fileStub, classProto, context.nameResolver, classId, source, context)
     return fileStub
 }
 

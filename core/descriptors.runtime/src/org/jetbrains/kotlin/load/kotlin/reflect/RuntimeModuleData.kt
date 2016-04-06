@@ -68,7 +68,7 @@ class RuntimeModuleData private constructor(val deserialization: Deserialization
             val javaClassDataFinder = JavaClassDataFinder(reflectKotlinClassFinder, deserializedDescriptorResolver)
             val notFoundClasses = NotFoundClasses(storageManager, module)
             val binaryClassAnnotationAndConstantLoader = BinaryClassAnnotationAndConstantLoaderImpl(
-                    module, notFoundClasses, storageManager, reflectKotlinClassFinder, RuntimeErrorReporter
+                    module, notFoundClasses, storageManager, reflectKotlinClassFinder
             )
             val deserializationComponentsForJava = DeserializationComponentsForJava(
                     storageManager, module, javaClassDataFinder, binaryClassAnnotationAndConstantLoader,

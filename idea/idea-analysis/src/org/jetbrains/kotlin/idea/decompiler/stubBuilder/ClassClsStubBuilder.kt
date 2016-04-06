@@ -37,15 +37,17 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderStubImpl
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.*
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.BinarySource
 
 fun createClassStub(
         parent: StubElement<out PsiElement>,
         classProto: ProtoBuf.Class,
         nameResolver: NameResolver,
         classId: ClassId,
+        source: BinarySource?,
         context: ClsStubBuilderContext
 ) {
-    ClassClsStubBuilder(parent, classProto, nameResolver, classId, context).build()
+    ClassClsStubBuilder(parent, classProto, nameResolver, classId, source, context).build()
 }
 
 private class ClassClsStubBuilder(
@@ -53,6 +55,7 @@ private class ClassClsStubBuilder(
         private val classProto: ProtoBuf.Class,
         private val nameResolver: NameResolver,
         private val classId: ClassId,
+        private val source: BinarySource?,
         private val outerContext: ClsStubBuilderContext
 ) {
     private val classKind = Flags.CLASS_KIND[classProto.flags]
@@ -73,8 +76,9 @@ private class ClassClsStubBuilder(
     private val companionObjectName =
             if (classProto.hasCompanionObjectName()) c.nameResolver.getName(classProto.companionObjectName) else null
 
-    private val thisAsProtoContainer =
-            ProtoContainer.Class(classProto, c.nameResolver, c.typeTable, outerContext.classKind?.let { Deserialization.classKind(it) })
+    private val thisAsProtoContainer = ProtoContainer.Class(
+            classProto, c.nameResolver, c.typeTable, source, outerContext.classKind?.let { Deserialization.classKind(it) }
+    )
 
     private val classOrObjectStub = createClassOrObjectStubAndModifierListStub()
 
@@ -249,7 +253,7 @@ private class ClassClsStubBuilder(
             return
         }
         val (nameResolver, classProto) = classDataWithSource.classData
-        createClassStub(classBody, classProto, nameResolver, nestedClassId, c)
+        createClassStub(classBody, classProto, nameResolver, nestedClassId, classDataWithSource.sourceElement as? BinarySource, c)
     }
 
     companion object {

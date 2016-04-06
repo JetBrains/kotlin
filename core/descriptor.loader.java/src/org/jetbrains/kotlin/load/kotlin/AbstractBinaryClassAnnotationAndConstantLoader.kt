@@ -38,8 +38,7 @@ import java.util.*
 
 abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any, T : Any>(
         storageManager: StorageManager,
-        private val kotlinClassFinder: KotlinClassFinder,
-        private val errorReporter: ErrorReporter
+        private val kotlinClassFinder: KotlinClassFinder
 ) : AnnotationAndConstantLoader<A, C, T> {
     private val storage = storageManager.createMemoizedFunction<KotlinJvmBinaryClass, Storage<A, C>> {
         kotlinClass ->
@@ -66,14 +65,11 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any, 
         return loadAnnotation(annotationClassId, source, result)
     }
 
+    private fun ProtoContainer.Class.toBinaryClass(): KotlinJvmBinaryClass? =
+            (source as? KotlinJvmBinarySourceElement)?.binaryClass
+
     override fun loadClassAnnotations(container: ProtoContainer.Class): List<A> {
-        val kotlinClass = kotlinClassFinder.findKotlinClass(container.classId)
-        if (kotlinClass == null) {
-            // This means that the resource we're constructing the descriptor from is no longer present: KotlinClassFinder had found the
-            // class earlier, but it can't now
-            errorReporter.reportLoadingError("Kotlin class for loading class annotations is not found: ${container.debugFqName()}", null)
-            return listOf()
-        }
+        val kotlinClass = container.toBinaryClass() ?: error("Class for loading annotations is not found: ${container.debugFqName()}")
 
         val result = ArrayList<A>(1)
 
@@ -208,18 +204,28 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any, 
     private fun findClassWithAnnotationsAndInitializers(
             container: ProtoContainer, implClassName: ClassId?, field: Boolean
     ): KotlinJvmBinaryClass? {
-        if (implClassName != null) {
-            return kotlinClassFinder.findKotlinClass(implClassName)
-        }
-
         if (container is ProtoContainer.Class) {
+            val containerBinaryClass = container.toBinaryClass()
+
+            if (implClassName == container.classId) {
+                return containerBinaryClass
+            }
+
+            if (implClassName != null) {
+                return kotlinClassFinder.findKotlinClass(implClassName)
+            }
+
             if (field && container.kind == ProtoBuf.Class.Kind.COMPANION_OBJECT &&
                 (container.outerClassKind == ClassKind.CLASS || container.outerClassKind == ClassKind.ENUM_CLASS)) {
                 // Backing fields of properties of a companion object in a class are generated in the outer class
                 return kotlinClassFinder.findKotlinClass(container.classId.outerClassId)
             }
 
-            return kotlinClassFinder.findKotlinClass(container.classId)
+            return containerBinaryClass
+        }
+
+        if (implClassName != null) {
+            return kotlinClassFinder.findKotlinClass(implClassName)
         }
 
         return null

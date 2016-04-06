@@ -57,14 +57,13 @@ class DeserializerForClassfileDecompiler(
 
     init {
         val classDataFinder = DirectoryBasedDataFinder(classFinder, LOG)
-        val errorReporter = LoggingErrorReporter(LOG)
         val notFoundClasses = NotFoundClasses(storageManager, moduleDescriptor)
         val annotationAndConstantLoader =
-                BinaryClassAnnotationAndConstantLoaderImpl(moduleDescriptor, notFoundClasses, storageManager, classFinder, errorReporter)
+                BinaryClassAnnotationAndConstantLoaderImpl(moduleDescriptor, notFoundClasses, storageManager, classFinder)
 
         deserializationComponents = DeserializationComponents(
                 storageManager, moduleDescriptor, classDataFinder, annotationAndConstantLoader, packageFragmentProvider,
-                ResolveEverythingToKotlinAnyLocalClassResolver(targetPlatform.builtIns), errorReporter,
+                ResolveEverythingToKotlinAnyLocalClassResolver(targetPlatform.builtIns), LoggingErrorReporter(LOG),
                 LookupTracker.DO_NOTHING, JavaFlexibleTypeCapabilitiesDeserializer, ClassDescriptorFactory.EMPTY, notFoundClasses
         )
     }
