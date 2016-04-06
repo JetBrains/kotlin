@@ -1,4 +1,4 @@
 // WITH_RUNTIME
 fun foo(list: List<String>): Int? {
-    <caret>return list.firstOrNull { it.isNotEmpty() }?.let { it.length }
+    <caret>return list.firstOrNull { it.isNotEmpty() }?.length
 }
