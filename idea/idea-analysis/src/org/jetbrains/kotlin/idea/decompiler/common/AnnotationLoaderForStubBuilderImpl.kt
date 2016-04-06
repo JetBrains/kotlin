@@ -31,10 +31,8 @@ class AnnotationLoaderForStubBuilderImpl(
         private val protocol: SerializerExtensionProtocol
 ) : AnnotationAndConstantLoader<ClassId, Unit, ClassIdWithTarget> {
 
-    override fun loadClassAnnotations(
-            classProto: ProtoBuf.Class, nameResolver: NameResolver
-    ): List<ClassId> =
-         classProto.getExtension(protocol.classAnnotation).orEmpty().map { nameResolver.getClassId(it.id) }
+    override fun loadClassAnnotations(container: ProtoContainer.Class): List<ClassId> =
+         container.classProto.getExtension(protocol.classAnnotation).orEmpty().map { container.nameResolver.getClassId(it.id) }
 
     override fun loadCallableAnnotations(
             container: ProtoContainer,

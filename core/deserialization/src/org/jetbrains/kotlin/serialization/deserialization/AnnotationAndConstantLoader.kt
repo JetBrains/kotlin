@@ -24,8 +24,7 @@ import org.jetbrains.kotlin.types.KotlinType
 // TODO: simplify this interface
 interface AnnotationAndConstantLoader<A : Any, C : Any, T : Any> {
     fun loadClassAnnotations(
-            classProto: ProtoBuf.Class,
-            nameResolver: NameResolver
+            container: ProtoContainer.Class
     ): List<A>
 
     fun loadCallableAnnotations(

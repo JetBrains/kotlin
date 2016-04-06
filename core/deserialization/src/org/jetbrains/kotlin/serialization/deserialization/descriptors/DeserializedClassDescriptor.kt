@@ -73,12 +73,15 @@ class DeserializedClassDescriptor(
     private val constructors = c.storageManager.createLazyValue { computeConstructors() }
     private val companionObjectDescriptor = c.storageManager.createNullableLazyValue { computeCompanionObjectDescriptor() }
 
+    internal val thisAsProtoContainer =
+            ProtoContainer.Class(classProto, c.nameResolver, c.typeTable, (containingDeclaration as? ClassDescriptor)?.kind)
+
     private val annotations =
             if (!Flags.HAS_ANNOTATIONS.get(classProto.flags)) {
                 Annotations.EMPTY
             }
             else DeserializedAnnotations(c.storageManager) {
-                c.components.annotationAndConstantLoader.loadClassAnnotations(classProto, c.nameResolver)
+                c.components.annotationAndConstantLoader.loadClassAnnotations(thisAsProtoContainer)
             }
 
     override fun getContainingDeclaration(): DeclarationDescriptor = containingDeclaration
@@ -284,8 +287,6 @@ class DeserializedClassDescriptor(
 
     private inner class EnumEntryClassDescriptors {
         private val enumEntryProtos = classProto.enumEntryList.associateBy { c.nameResolver.getName(it.name) }
-        private val protoContainer =
-                ProtoContainer.Class(classProto, c.nameResolver, c.typeTable, (containingDeclaration as? ClassDescriptor)?.kind)
 
         val enumEntryByName = c.storageManager.createMemoizedFunctionWithNullableValues<Name, ClassDescriptor> {
             name ->
@@ -294,7 +295,7 @@ class DeserializedClassDescriptor(
                 EnumEntrySyntheticClassDescriptor.create(
                         c.storageManager, this@DeserializedClassDescriptor, name, enumMemberNames,
                         DeserializedAnnotations(c.storageManager) {
-                            c.components.annotationAndConstantLoader.loadEnumEntryAnnotations(protoContainer, proto)
+                            c.components.annotationAndConstantLoader.loadEnumEntryAnnotations(thisAsProtoContainer, proto)
                         },
                         SourceElement.NO_SOURCE
                 )

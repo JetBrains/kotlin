@@ -241,9 +241,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
 
     private fun DeclarationDescriptor.asProtoContainer(): ProtoContainer? = when (this) {
         is PackageFragmentDescriptor -> ProtoContainer.Package(fqName, c.nameResolver, c.typeTable, c.packagePartSource)
-        is DeserializedClassDescriptor -> ProtoContainer.Class(
-                classProto, c.nameResolver, c.typeTable, (containingDeclaration as? ClassDescriptor)?.kind
-        )
+        is DeserializedClassDescriptor -> thisAsProtoContainer
         else -> null // TODO: support annotations on lambdas and their parameters
     }
 }

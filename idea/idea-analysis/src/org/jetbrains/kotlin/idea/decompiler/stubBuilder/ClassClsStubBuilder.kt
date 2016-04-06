@@ -90,7 +90,7 @@ private class ClassClsStubBuilder(
         val classOrObjectStub = doCreateClassOrObjectStub()
         val modifierList = createModifierListForClass(classOrObjectStub)
         if (Flags.HAS_ANNOTATIONS.get(classProto.flags)) {
-            createAnnotationStubs(c.components.annotationLoader.loadClassAnnotations(classProto, c.nameResolver), modifierList)
+            createAnnotationStubs(c.components.annotationLoader.loadClassAnnotations(thisAsProtoContainer), modifierList)
         }
         return classOrObjectStub
     }

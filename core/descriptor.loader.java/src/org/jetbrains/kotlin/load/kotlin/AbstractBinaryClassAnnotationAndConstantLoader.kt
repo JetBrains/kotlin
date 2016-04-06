@@ -66,13 +66,12 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any, 
         return loadAnnotation(annotationClassId, source, result)
     }
 
-    override fun loadClassAnnotations(classProto: ProtoBuf.Class, nameResolver: NameResolver): List<A> {
-        val classId = nameResolver.getClassId(classProto.fqName)
-        val kotlinClass = kotlinClassFinder.findKotlinClass(classId)
+    override fun loadClassAnnotations(container: ProtoContainer.Class): List<A> {
+        val kotlinClass = kotlinClassFinder.findKotlinClass(container.classId)
         if (kotlinClass == null) {
             // This means that the resource we're constructing the descriptor from is no longer present: KotlinClassFinder had found the
             // class earlier, but it can't now
-            errorReporter.reportLoadingError("Kotlin class for loading class annotations is not found: ${classId.asSingleFqName()}", null)
+            errorReporter.reportLoadingError("Kotlin class for loading class annotations is not found: ${container.debugFqName()}", null)
             return listOf()
         }
 

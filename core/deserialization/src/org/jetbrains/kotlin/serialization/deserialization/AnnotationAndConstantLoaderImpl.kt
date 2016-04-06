@@ -32,12 +32,9 @@ class AnnotationAndConstantLoaderImpl(
 ) : AnnotationAndConstantLoader<AnnotationDescriptor, ConstantValue<*>, AnnotationWithTarget> {
     private val deserializer = AnnotationDeserializer(module, notFoundClasses)
 
-    override fun loadClassAnnotations(
-            classProto: ProtoBuf.Class,
-            nameResolver: NameResolver
-    ): List<AnnotationDescriptor> {
-        val annotations = classProto.getExtension(protocol.classAnnotation).orEmpty()
-        return annotations.map { proto -> deserializer.deserializeAnnotation(proto, nameResolver) }
+    override fun loadClassAnnotations(container: ProtoContainer.Class): List<AnnotationDescriptor> {
+        val annotations = container.classProto.getExtension(protocol.classAnnotation).orEmpty()
+        return annotations.map { proto -> deserializer.deserializeAnnotation(proto, container.nameResolver) }
     }
 
     override fun loadCallableAnnotations(
