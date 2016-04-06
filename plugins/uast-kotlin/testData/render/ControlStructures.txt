@@ -1,6 +1,31 @@
 public static class ControlStructures {
-    public fun <init>() = EmptyExpression
+    public fun <init>()
+
+    public immutable var prop: Int = 3
+
+    public fun nullFun(): String? = null
+
     public fun test(): Boolean {
+        " "
+        "Z"
+        "Z Z"
+        'c'
+        5
+        5.0
+        5.0
+        -5
+        +5
+        0.0
+        -0.0
+        1.0E10
+        1.0E-10
+        public immutable var qwe: Int = 2
+
+        " " + qwe + " "
+        "a" + "\"" + "b"
+        "a'b" + "\r" + "\n"
+        "5" + "\n" + " 2"
+        "\t" + "\t" + "\t"
         if (5 > 3) {
             println("5 > 3")
         }
@@ -13,7 +38,8 @@ public static class ControlStructures {
             println(c.toByte())
         }
 
-        var i: Int = 5
+        public var i: Int = 5
+
         while (i > 0) {
             i--
             if (i == 3) break
@@ -23,6 +49,25 @@ public static class ControlStructures {
 
         }
 
+        "" !is String
+        ("" as Any) as String?
+        super.equals(this)
+        this.equals(this)
+        this.equals(this)
+        ControlStructures::test
+        ControlStructures::prop
+        ControlStructures::class.java
+        outer@ for (outerVal : 1 .. 2) {
+            inner@ for (innerVal : 3 .. 4) {
+                continue@outer
+            }
+
+            break@outer
+        }
+
+        nullFun()?.let({
+            println(it)
+        })
         i = 5
         do {
             i -= 1
@@ -35,13 +80,19 @@ public static class ControlStructures {
         "ABC".zip("DEF").forEach({
             println(it.first + " " + it.second)
         })
-        var var1496943053: <error> = "ABC".zip("DEF")
-        var a: Pair<Char, Char> = var1496943053.component1()
-        var b: Pair<Char, Char> = var1496943053.component2()
-        var value: String = if (5 > 3) "a" else "b"
-        var list: List<String> = listOf("A")
-        var list2: List<String> = listOf("A")
-        var type: String = switch (value)  {
+        public immutable var arr: Array<String> = arrayOf("A", "B", "C")
+
+        println(arr[2])
+        local var var1496943053: <error> = "ABC".zip("DEF")
+        local immutable var a: Pair<Char, Char> = var1496943053.component1()
+        local immutable var b: Pair<Char, Char> = var1496943053.component2()
+        public immutable var value: String = if (5 > 3) "a" else "b"
+
+        public immutable var list: List<String> = listOf("A")
+
+        public immutable var list2: List<String> = listOf("A")
+
+        public immutable var type: String = switch (value)  {
             it in list -> {
                 "inlist"
                 break
@@ -52,24 +103,25 @@ public static class ControlStructures {
                 break
             }
 
-            (it) is null -> {
+            it is String -> {
                 "string"
                 break
             }
 
-            (it) is null -> {
+            it is CharSequence -> {
                 "cs"
                 break
             }
 
-            else -> {
+             -> {
                 "unknown"
                 break
             }
 
         }
 
-        var x: String = switch  {
+
+        public immutable var x: String = switch  {
             value == "b" -> {
                 "B"
                 break
@@ -86,14 +138,27 @@ public static class ControlStructures {
                 break
             }
 
-            else -> {
+             -> {
                 "A"
                 break
             }
 
         }
 
+
+        try {
+            5 + 1
+            throw <init>()
+        }
+        catch (e) {
+            e.printStackTrace()
+        }
+        catch (e) {
+            System.out.println("error!")
+        }
+        finally {
+            System.out.println("finally")
+        }
         return false
     }
-
 }

@@ -1,17 +1,17 @@
-default class _Dummy_ {
-    default class Lambda {
-        default fun example(): void {
+package_local class _Dummy_ {
+    package_local class Lambda {
+        package_local fun example(): void {
             doJob({ arg: String ->
                 arg + arg
             }, "Mary")
         }
 
-        default fun doJob(job: Job, arg: String): void {
+        package_local fun doJob(job: Job, arg: String): void {
             System.out.println(job.doJob(arg))
         }
-
     }
-    default abstract static interface Job {
-        public fun doJob(arg: String): String = EmptyExpression
+
+    package_local abstract static interface Job {
+        public abstract fun doJob(arg: String): String
     }
 }

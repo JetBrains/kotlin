@@ -1,14 +1,13 @@
-default class _Dummy_ {
-    default class NestedClasses {
+package_local class _Dummy_ {
+    package_local class NestedClasses {
         public static class Nested {
-            default fun func1(): void {
+            package_local fun func1(): void {
             }
-
         }
-        public class Inner {
-            default fun func2(): void {
-            }
 
+        public class Inner {
+            package_local fun func2(): void {
+            }
         }
     }
 }

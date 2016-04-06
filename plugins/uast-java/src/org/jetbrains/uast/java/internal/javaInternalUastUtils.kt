@@ -52,6 +52,7 @@ internal fun PsiModifierListOwner.getVisibility(): UastVisibility {
     if (hasModifierProperty(PsiModifier.PUBLIC)) return UastVisibility.PUBLIC
     if (hasModifierProperty(PsiModifier.PROTECTED)) return UastVisibility.PROTECTED
     if (hasModifierProperty(PsiModifier.PRIVATE)) return UastVisibility.PRIVATE
+    if (this is PsiLocalVariable) return UastVisibility.LOCAL
     return JavaUastVisibilities.PACKAGE_LOCAL
 }
 

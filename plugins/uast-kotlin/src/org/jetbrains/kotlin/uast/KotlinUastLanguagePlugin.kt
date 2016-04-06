@@ -117,7 +117,7 @@ internal object KotlinConverter : UastConverter {
 
         is KtStringTemplateExpression -> {
             if (expression.entries.isEmpty())
-                KotlinStringULiteralExpression(expression, parent)
+                KotlinStringULiteralExpression(expression, parent, "")
             else if (expression.entries.size == 1)
                 convert(expression.entries[0], parent)
             else

@@ -1,4 +1,4 @@
-UFile (package = null)
+UFile (package = )
     UClass (_Dummy_, kind = class)
         UClass (Lambda, kind = class)
             UFunction (example, kind = function, paramCount = 0)
@@ -27,4 +27,4 @@ UFile (package = null)
                                     USimpleReferenceExpression (arg)
         UClass (Job, kind = interface)
             UFunction (doJob, kind = function, paramCount = 1)
-                EmptyExpression
+                <no element>

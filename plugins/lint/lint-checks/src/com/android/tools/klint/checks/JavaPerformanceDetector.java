@@ -211,16 +211,22 @@ public class JavaPerformanceDetector extends Detector implements UastScanner {
             }
 
             if (mCheckValueOf) {
+                UType type = UastErrorType.INSTANCE;
                 if (typeName == null) {
-                    typeName = classReference.getIdentifier();
+                    UDeclaration resolvedDeclaration = classReference.resolve(mContext);
+                    if (resolvedDeclaration instanceof UClass) {
+                        type = ((UClass) resolvedDeclaration).getDefaultType();
+                        typeName = type.getName();
+                    }
                 }
-                if ((typeName.equals(INTEGER)
-                        || typeName.equals(BOOLEAN)
-                        || typeName.equals(FLOAT)
-                        || typeName.equals(CHARACTER)
-                        || typeName.equals(LONG)
-                        || typeName.equals(DOUBLE)
-                        || typeName.equals(BYTE))
+                if ((type.isInt()
+                        || type.isBoolean()
+                        || type.isFloat()
+                        || type.isChar()
+                        || type.isLong()
+                        || type.isDouble()
+                        || type.isShort()
+                        || type.isByte())
                         && node.getValueArgumentCount() == 1) {
                     String argument = node.getValueArguments().get(0).renderString();
                     mContext.report(USE_VALUE_OF, node, mContext.getLocation(node), getUseValueOfErrorMessage(

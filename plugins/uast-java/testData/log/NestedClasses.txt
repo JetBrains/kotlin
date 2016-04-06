@@ -1,4 +1,4 @@
-UFile (package = null)
+UFile (package = )
     UClass (_Dummy_, kind = class)
         UClass (NestedClasses, kind = class)
             UClass (Nested, kind = class)

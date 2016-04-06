@@ -15,7 +15,6 @@
  */
 package org.jetbrains.uast.java
 
-import com.intellij.psi.PsiKeyword
 import com.intellij.psi.PsiLiteralExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.ULiteralExpression
@@ -25,10 +24,6 @@ class JavaULiteralExpression(
         override val psi: PsiLiteralExpression,
         override val parent: UElement
 ) : JavaAbstractUElement(), ULiteralExpression, PsiElementBacked, JavaUElementWithType {
-    override fun asString() = psi.text
     override fun evaluate() = psi.value
     override val value by lz { evaluate() }
-
-    override val isNull: Boolean
-        get() = asString() == PsiKeyword.NULL
 }

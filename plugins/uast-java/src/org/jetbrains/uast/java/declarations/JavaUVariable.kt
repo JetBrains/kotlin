@@ -16,6 +16,7 @@
 package org.jetbrains.uast.java
 
 import com.intellij.psi.PsiField
+import com.intellij.psi.PsiLocalVariable
 import com.intellij.psi.PsiVariable
 import org.jetbrains.uast.*
 import org.jetbrains.uast.psi.PsiElementBacked
@@ -34,6 +35,7 @@ class JavaUVariable(
 
     override val kind = when (psi) {
         is PsiField -> UastVariableKind.MEMBER
+        is PsiLocalVariable -> UastVariableKind.LOCAL_VARIABLE
         else -> UastVariableKind.LOCAL_VARIABLE
     }
 

@@ -1,9 +1,57 @@
-UFile (package = null)
+UFile (package = )
     UClass (ControlStructures, kind = class)
-        UFunction (<init>, kind = CONSTRUCTOR, paramCount = 0)
-            EmptyExpression
+        UFunction (<init>, kind = constructor, paramCount = 0)
+            <no element>
+        UVariable (prop, kind = member)
+            ULiteralExpression (3)
+        UFunction (nullFun, kind = function, paramCount = 0)
+            ULiteralExpression (null)
         UFunction (test, kind = function, paramCount = 0)
             UBlockExpression
+                ULiteralExpression (" ")
+                ULiteralExpression ("Z")
+                ULiteralExpression ("Z Z")
+                ULiteralExpression ('c')
+                ULiteralExpression (5)
+                ULiteralExpression (5.0)
+                ULiteralExpression (5.0)
+                UPrefixExpression (-)
+                    ULiteralExpression (5)
+                UPrefixExpression (+)
+                    ULiteralExpression (5)
+                ULiteralExpression (0.0)
+                UPrefixExpression (-)
+                    ULiteralExpression (0.0)
+                ULiteralExpression (1.0E10)
+                ULiteralExpression (1.0E-10)
+                UDeclarationsExpression
+                    UVariable (qwe, kind = local)
+                        ULiteralExpression (2)
+                UBinaryExpression (+)
+                    UBinaryExpression (+)
+                        ULiteralExpression (" ")
+                        USimpleReferenceExpression (qwe)
+                    ULiteralExpression (" ")
+                UBinaryExpression (+)
+                    UBinaryExpression (+)
+                        ULiteralExpression ("a")
+                        ULiteralExpression ("\"")
+                    ULiteralExpression ("b")
+                UBinaryExpression (+)
+                    UBinaryExpression (+)
+                        ULiteralExpression ("a'b")
+                        ULiteralExpression ("\r")
+                    ULiteralExpression ("\n")
+                UBinaryExpression (+)
+                    UBinaryExpression (+)
+                        ULiteralExpression ("5")
+                        ULiteralExpression ("\n")
+                    ULiteralExpression (" 2")
+                UBinaryExpression (+)
+                    UBinaryExpression (+)
+                        ULiteralExpression ("\t")
+                        ULiteralExpression ("\t")
+                    ULiteralExpression ("\t")
                 UIfExpression
                     UBinaryExpression (>)
                         ULiteralExpression (5)
@@ -13,13 +61,17 @@ UFile (package = null)
                             USimpleReferenceExpression (println)
                             ULiteralExpression ("5 > 3")
                     <no element>
-                UForEachExpression (c)
+                UForEachExpression
+                    UVariable (c, kind = parameter)
+                    <no initializer>
                     ULiteralExpression ("ABC")
                     UBlockExpression
                         UFunctionCallExpression (UastCallKind(name='function_call'), argCount = 1)
                             USimpleReferenceExpression (println)
                             USimpleReferenceExpression (c)
-                UForEachExpression (c)
+                UForEachExpression
+                    UVariable (c, kind = parameter)
+                    <no initializer>
                     ULiteralExpression ("DEF")
                     UBlockExpression
                         UFunctionCallExpression (UastCallKind(name='function_call'), argCount = 1)
@@ -43,17 +95,71 @@ UFile (package = null)
                             UBinaryExpression (==)
                                 USimpleReferenceExpression (i)
                                 ULiteralExpression (3)
-                            USpecialExpressionList (break)
-
+                            UBreakExpression (<no label>)
                             <no element>
                         UIfExpression
                             UBinaryExpression (==)
                                 USimpleReferenceExpression (i)
                                 ULiteralExpression (2)
                             UBlockExpression
-                                USpecialExpressionList (continue)
-
+                                UContinueExpression (<no label>)
                             <no element>
+                UBinaryExpressionWithType (null, !is)
+                    ULiteralExpression ("")
+                UBinaryExpressionWithType (null, as)
+                    UParenthesizedExpression
+                        UBinaryExpressionWithType (null, as)
+                            ULiteralExpression ("")
+                UQualifiedExpression
+                    USuperExpression
+                    UFunctionCallExpression (UastCallKind(name='function_call'), argCount = 1)
+                        USimpleReferenceExpression (equals)
+                        UThisExpression
+                UQualifiedExpression
+                    UThisExpression
+                    UFunctionCallExpression (UastCallKind(name='function_call'), argCount = 1)
+                        USimpleReferenceExpression (equals)
+                        UThisExpression
+                UQualifiedExpression
+                    UThisExpression
+                    UFunctionCallExpression (UastCallKind(name='function_call'), argCount = 1)
+                        USimpleReferenceExpression (equals)
+                        UThisExpression
+                UCallableReferenceExpression
+                UCallableReferenceExpression
+                UQualifiedExpression
+                    UClassLiteralExpression
+                    USimpleReferenceExpression (java)
+                ULabeledExpression (outer)
+                    UForEachExpression
+                        UVariable (outerVal, kind = parameter)
+                        <no initializer>
+                        UBinaryExpression (..)
+                            ULiteralExpression (1)
+                            ULiteralExpression (2)
+                        UBlockExpression
+                            ULabeledExpression (inner)
+                                UForEachExpression
+                                    UVariable (innerVal, kind = parameter)
+                                    <no initializer>
+                                    UBinaryExpression (..)
+                                        ULiteralExpression (3)
+                                        ULiteralExpression (4)
+                                    UBlockExpression
+                                        UContinueExpression (outer)
+                            UBreakExpression (outer)
+                UQualifiedExpression
+                    UFunctionCallExpression (UastCallKind(name='function_call'), argCount = 0)
+                        USimpleReferenceExpression (nullFun)
+
+                    UFunctionCallExpression (UastCallKind(name='function_call'), argCount = 1)
+                        USimpleReferenceExpression (let)
+                        ULambdaExpression
+
+                            UBlockExpression
+                                UFunctionCallExpression (UastCallKind(name='function_call'), argCount = 1)
+                                    USimpleReferenceExpression (println)
+                                    USimpleReferenceExpression (it)
                 UBinaryExpression (=)
                     USimpleReferenceExpression (i)
                     ULiteralExpression (5)
@@ -104,6 +210,18 @@ UFile (package = null)
                                             USimpleReferenceExpression (it)
                                             USimpleReferenceExpression (second)
                 UDeclarationsExpression
+                    UVariable (arr, kind = local)
+                        UFunctionCallExpression (UastCallKind(name='function_call'), argCount = 3)
+                            USimpleReferenceExpression (arrayOf)
+                            ULiteralExpression ("A")
+                            ULiteralExpression ("B")
+                            ULiteralExpression ("C")
+                UFunctionCallExpression (UastCallKind(name='function_call'), argCount = 1)
+                    USimpleReferenceExpression (println)
+                    UArrayAccessExpression
+                        USimpleReferenceExpression (arr)
+                        ULiteralExpression (2)
+                UDeclarationsExpression
                     UVariable (var1496943053, kind = local)
                         UQualifiedExpression
                             ULiteralExpression ("ABC")
@@ -145,58 +263,101 @@ UFile (package = null)
                         USwitchExpression
                             USimpleReferenceExpression (value)
                             USpecialExpressionList (when)
-                                KotlinUSwitchEntry
+                                USwitchClauseExpressionWithBody
+                                    UBinaryExpression (in)
+                                        USimpleReferenceExpression (it)
+                                        USimpleReferenceExpression (list)
                                     USpecialExpressionList (when_entry)
                                         ULiteralExpression ("inlist")
-                                        USpecialExpressionList (break)
-
-                                KotlinUSwitchEntry
+                                        UBreakExpression (<no label>)
+                                USwitchClauseExpressionWithBody
+                                    UBinaryExpression (in)
+                                        USimpleReferenceExpression (it)
+                                        USimpleReferenceExpression (list2)
                                     USpecialExpressionList (when_entry)
                                         ULiteralExpression ("notinlist2")
-                                        USpecialExpressionList (break)
-
-                                KotlinUSwitchEntry
+                                        UBreakExpression (<no label>)
+                                USwitchClauseExpressionWithBody
+                                    UBinaryExpressionWithType (null, is)
+                                        USimpleReferenceExpression (it)
                                     USpecialExpressionList (when_entry)
                                         ULiteralExpression ("string")
-                                        USpecialExpressionList (break)
-
-                                KotlinUSwitchEntry
+                                        UBreakExpression (<no label>)
+                                USwitchClauseExpressionWithBody
+                                    UBinaryExpressionWithType (null, is)
+                                        USimpleReferenceExpression (it)
                                     USpecialExpressionList (when_entry)
                                         ULiteralExpression ("cs")
-                                        USpecialExpressionList (break)
+                                        UBreakExpression (<no label>)
+                                USwitchClauseExpressionWithBody
 
-                                KotlinUSwitchEntry
                                     USpecialExpressionList (when_entry)
                                         ULiteralExpression ("unknown")
-                                        USpecialExpressionList (break)
-
+                                        UBreakExpression (<no label>)
                 UDeclarationsExpression
                     UVariable (x, kind = local)
                         USwitchExpression
                             <no element>
                             USpecialExpressionList (when)
-                                KotlinUSwitchEntry
+                                USwitchClauseExpressionWithBody
+                                    UBinaryExpression (==)
+                                        USimpleReferenceExpression (value)
+                                        ULiteralExpression ("b")
                                     USpecialExpressionList (when_entry)
                                         ULiteralExpression ("B")
-                                        USpecialExpressionList (break)
-
-                                KotlinUSwitchEntry
+                                        UBreakExpression (<no label>)
+                                USwitchClauseExpressionWithBody
+                                    UBinaryExpression (==)
+                                        UBinaryExpression (%)
+                                            ULiteralExpression (5)
+                                            ULiteralExpression (2)
+                                        ULiteralExpression (0)
                                     USpecialExpressionList (when_entry)
                                         UFunctionCallExpression (UastCallKind(name='function_call'), argCount = 1)
                                             USimpleReferenceExpression (println)
                                             ULiteralExpression ("A")
                                         ULiteralExpression ("Q")
-                                        USpecialExpressionList (break)
-
-                                KotlinUSwitchEntry
+                                        UBreakExpression (<no label>)
+                                USwitchClauseExpressionWithBody
+                                    ULiteralExpression (false)
                                     USpecialExpressionList (when_entry)
                                         ULiteralExpression ("!")
-                                        USpecialExpressionList (break)
+                                        UBreakExpression (<no label>)
+                                USwitchClauseExpressionWithBody
 
-                                KotlinUSwitchEntry
                                     USpecialExpressionList (when_entry)
                                         ULiteralExpression ("A")
-                                        USpecialExpressionList (break)
+                                        UBreakExpression (<no label>)
+                UTryExpression
+                    UBlockExpression
+                        UBinaryExpression (+)
+                            ULiteralExpression (5)
+                            ULiteralExpression (1)
+                        UThrowExpression
+                            UFunctionCallExpression (UastCallKind(name='constructor_call'), argCount = 0)
+                                USimpleReferenceExpression (Exception)
+                                UCatchClause
+                        UBlockExpression
+                            UQualifiedExpression
+                                USimpleReferenceExpression (e)
+                                UFunctionCallExpression (UastCallKind(name='function_call'), argCount = 0)
+                                    USimpleReferenceExpression (printStackTrace)
 
-                USpecialExpressionList (return)
+                    UCatchClause
+                        UBlockExpression
+                            UQualifiedExpression
+                                UQualifiedExpression
+                                    USimpleReferenceExpression (System)
+                                    USimpleReferenceExpression (out)
+                                UFunctionCallExpression (UastCallKind(name='function_call'), argCount = 1)
+                                    USimpleReferenceExpression (println)
+                                    ULiteralExpression ("error!")    UBlockExpression
+                        UQualifiedExpression
+                            UQualifiedExpression
+                                USimpleReferenceExpression (System)
+                                USimpleReferenceExpression (out)
+                            UFunctionCallExpression (UastCallKind(name='function_call'), argCount = 1)
+                                USimpleReferenceExpression (println)
+                                ULiteralExpression ("finally")
+                UReturnExpression
                     ULiteralExpression (false)

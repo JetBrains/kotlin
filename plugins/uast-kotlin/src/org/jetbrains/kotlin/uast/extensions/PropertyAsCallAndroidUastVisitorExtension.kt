@@ -47,7 +47,7 @@ class PropertyAsCallAndroidUastVisitorExtension : UastVisitorExtension {
         else
             null
 
-        val callExpression: UCallExpression = object : UCallExpression, PsiElementBacked, SynthetizedUElement {
+        val callExpression: UCallExpression = object : UCallExpression, PsiElementBacked, SynthesizedUElement {
             override val parent = element.parent
             override val psi = ktElement
 

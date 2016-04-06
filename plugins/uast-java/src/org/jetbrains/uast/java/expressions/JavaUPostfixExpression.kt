@@ -28,7 +28,7 @@ class JavaUPostfixExpression(
 ) : JavaAbstractUElement(), UPostfixExpression, PsiElementBacked, JavaUElementWithType, JavaEvaluatableUElement {
     override val operand by lz { JavaConverter.convertOrEmpty(psi.operand, this) }
 
-    override val operator = when (psi.operationSign) {
+    override val operator = when (psi.operationTokenType) {
         JavaTokenType.PLUSPLUS -> UastPostfixOperator.INC
         JavaTokenType.MINUSMINUS -> UastPostfixOperator.DEC
         else -> UastPostfixOperator.UNKNOWN

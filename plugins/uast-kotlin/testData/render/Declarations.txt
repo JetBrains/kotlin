@@ -1,5 +1,5 @@
 public static class Declarations {
-    public fun <init>() = EmptyExpression
+    public fun <init>()
 
     public immutable var a: String = "a"
 
@@ -13,25 +13,25 @@ public static class Declarations {
     public immutable var c: String
 
     public static class NestedClass {
-        public fun <init>() = EmptyExpression
+        public fun <init>()
 
         public immutable var b: String = "b"
     }
 
     public class InnerClass {
-        public fun <init>() = EmptyExpression
+        public fun <init>()
 
         public immutable var c: CharSequence = a
     }
 
     public static companion object Companion {
-        public fun <init>() = EmptyExpression
+        public fun <init>()
 
         public immutable var CONST_VAL: Int = 1
     }
 
     public static companion object A {
-        public fun <init>() = EmptyExpression
+        public fun <init>()
 
         public fun b(): Boolean = true
     }

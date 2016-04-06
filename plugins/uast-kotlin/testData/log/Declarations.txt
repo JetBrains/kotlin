@@ -1,7 +1,7 @@
 UFile (package = )
     UClass (Declarations, kind = class)
         UFunction (<init>, kind = constructor, paramCount = 0)
-            EmptyExpression
+            <no element>
         UVariable (a, kind = member)
             ULiteralExpression ("a")
         UVariable (b, kind = member)
@@ -10,22 +10,22 @@ UFile (package = )
             EmptyExpression
         UClass (NestedClass, kind = class)
             UFunction (<init>, kind = constructor, paramCount = 0)
-                EmptyExpression
+                <no element>
             UVariable (b, kind = member)
                 ULiteralExpression ("b")
         UClass (InnerClass, kind = class)
             UFunction (<init>, kind = constructor, paramCount = 0)
-                EmptyExpression
+                <no element>
             UVariable (c, kind = member)
                 USimpleReferenceExpression (a)
         UClass (Companion, kind = companion object)
             UFunction (<init>, kind = constructor, paramCount = 0)
-                EmptyExpression
+                <no element>
             UVariable (CONST_VAL, kind = member)
                 ULiteralExpression (1)
         UClass (A, kind = companion object)
             UFunction (<init>, kind = constructor, paramCount = 0)
-                EmptyExpression
+                <no element>
             UFunction (b, kind = function, paramCount = 0)
                 ULiteralExpression (true)
         UFunction (func, kind = function, paramCount = 2)

@@ -1,6 +1,6 @@
-default class _Dummy_ {
-    default class Simple {
-        var name: String
+package_local class _Dummy_ {
+    package_local class Simple {
+        private var name: String
 
         public fun <init>(name: String) {
             this.name = name
@@ -13,6 +13,5 @@ default class _Dummy_ {
         public fun setName(name: String): void {
             this.name = name
         }
-
     }
 }

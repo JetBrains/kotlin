@@ -51,17 +51,17 @@ abstract class AbstractKotlinUastStructureTest : KotlinLightCodeInsightFixtureTe
     private fun genTree(node: UElement): String {
         val builder = StringBuilder()
         val visitor = object : AbstractUastVisitor() {
-            private tailrec fun getParentCount(node: UElement): Int {
-                val parent = node.parent ?: return 0
-                return getParentCount(parent)
+            private tailrec fun height(node: UElement, current: Int): Int {
+                val parent = node.parent ?: return current
+                return height(parent, current + 1)
             }
 
             override fun visitElement(node: UElement): Boolean {
-                builder.appendln("    ".repeat(getParentCount(node)) + node.javaClass.name)
+                builder.appendln("    ".repeat(height(node, 0)) + node.javaClass.simpleName)
                 return super.visitElement(node)
             }
         }
-        visitor.visitElement(node)
+        node.accept(visitor)
         return builder.toString()
     }
 

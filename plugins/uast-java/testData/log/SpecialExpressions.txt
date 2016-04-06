@@ -1,28 +1,27 @@
-UFile (package = null)
+UFile (package = )
     UClass (_Dummy_, kind = class)
         UClass (SpecialExpressions, kind = class)
             UFunction (test, kind = function, paramCount = 0)
                 UBlockExpression
-                    USpecialExpressionList (assert)
+                    UFunctionCallExpression (UastCallKind(name='assert'), argCount = 1)
+                        <no element>
                         UBinaryExpression (>)
                             ULiteralExpression (5)
                             ULiteralExpression (3)
-                        EmptyExpression
-                    USpecialExpressionList (assert)
+                    UFunctionCallExpression (UastCallKind(name='assert'), argCount = 2)
+                        <no element>
                         UBinaryExpression (>)
                             ULiteralExpression (5)
                             ULiteralExpression (3)
                         ULiteralExpression ("Message")
-                    USpecialExpressionList (synchronized)
-                        UThisExpression
-                        UBlockExpression
+                    UBlockExpression
+                        UQualifiedExpression
                             UQualifiedExpression
-                                UQualifiedExpression
-                                    USimpleReferenceExpression (System)
-                                    USimpleReferenceExpression (out)
-                                UFunctionCallExpression (UastCallKind(name='function_call'), argCount = 1)
-                                    USimpleReferenceExpression (println)
-                                    ULiteralExpression ("A")
+                                USimpleReferenceExpression (System)
+                                USimpleReferenceExpression (out)
+                            UFunctionCallExpression (UastCallKind(name='function_call'), argCount = 1)
+                                USimpleReferenceExpression (println)
+                                ULiteralExpression ("A")
                     UDeclarationsExpression
                         UVariable (a, kind = local)
                             ULiteralExpression (5)
@@ -40,8 +39,7 @@ UFile (package = null)
                                     USimpleReferenceExpression (a)
                                     ULiteralExpression (3)
                                 UBlockExpression
-                                    USpecialExpressionList (break)
-
+                                    UBreakExpression (<no label>)
                                 EmptyExpression
                             UIfExpression
                                 UBinaryExpression (===)
@@ -50,8 +48,7 @@ UFile (package = null)
                                         ULiteralExpression (5)
                                     ULiteralExpression (0)
                                 UBlockExpression
-                                    USpecialExpressionList (continue)
-
+                                    UContinueExpression (<no label>)
                                 EmptyExpression
                             UPostfixExpression (--)
                                 USimpleReferenceExpression (a)
@@ -71,26 +68,25 @@ UFile (package = null)
                     USwitchExpression
                         USimpleReferenceExpression (a)
                         UBlockExpression
-                            UExpressionSwitchClauseExpression
+                            USwitchClauseExpression
                                 ULiteralExpression (1)
                             UBlockExpression
-                                UAssignmentExpression (=)
+                                UBinaryExpression (=)
                                     USimpleReferenceExpression (x)
                                     ULiteralExpression ("1")
-                                USpecialExpressionList (break)
-
-                            UExpressionSwitchClauseExpression
+                                UBreakExpression (<no label>)
+                            USwitchClauseExpression
                                 ULiteralExpression (3)
-                            UAssignmentExpression (=)
+                            UBinaryExpression (=)
                                 USimpleReferenceExpression (x)
                                 ULiteralExpression ("3")
-                            UExpressionSwitchClauseExpression
+                            USwitchClauseExpression
                                 ULiteralExpression (4)
-                            UAssignmentExpression (=)
+                            UBinaryExpression (=)
                                 USimpleReferenceExpression (x)
                                 ULiteralExpression ("4")
-                            UDefaultSwitchClause
-                            UAssignmentExpression (=)
+                            DefaultUSwitchClauseExpression
+                            UBinaryExpression (=)
                                 USimpleReferenceExpression (x)
                                 ULiteralExpression ("")
                     UIfExpression
@@ -105,7 +101,7 @@ UFile (package = null)
                                 USimpleReferenceExpression (equals)
                                 ULiteralExpression ("1")
                         UBlockExpression
-                            USpecialExpressionList (throw)
+                            UThrowExpression
                                 UFunctionCallExpression (UastCallKind(name='constructor_call'), argCount = 1)
                                     <no element>
                                     ULiteralExpression ("Err")
@@ -119,12 +115,12 @@ UFile (package = null)
                                     ULiteralExpression (1000)    UCatchClause
                             UBlockExpression
                                 UBlockExpression
-                            UAssignmentExpression (=)
+                            UBinaryExpression (=)
                                 USimpleReferenceExpression (a)
                                 ULiteralExpression (3)
                     UBlockExpression
-                        UAssignmentExpression (=)
+                        UBinaryExpression (=)
                             USimpleReferenceExpression (a)
                             ULiteralExpression (5)
-                    USpecialExpressionList (return)
+                    UReturnExpression
                         ULiteralExpression (true)

@@ -30,7 +30,8 @@ interface ULiteralExpression : UExpression {
     /**
      * Returns true if the literal is a `null`-literal, false otherwise.
      */
-    val isNull: Boolean
+    open val isNull: Boolean
+        get() = value == null
 
     /**
      * Returns true if the literal is a [String] literal, false otherwise.
@@ -44,24 +45,23 @@ interface ULiteralExpression : UExpression {
     val isBoolean: Boolean
         get() = evaluate() is Boolean
 
-    /**
-     * Returns the string representation of the literal expression.
-     *
-     * @return the string representation, or "null" if the literal is a "null"-literal.
-     */
-    fun asString(): String {
-        val value = value
-        return if (value == null)
-            "null"
-        else
-            value.toString()
-    }
-
     override fun accept(visitor: UastVisitor) {
         visitor.visitLiteralExpression(this)
         visitor.afterVisitLiteralExpression(this)
     }
 
-    override fun logString() = "ULiteralExpression (${asString()})"
-    override fun renderString() = if (value is String) "\"$value\"" else asString()
+    override fun renderString(): String {
+        val value = value
+        return when (value) {
+            null -> "null"
+            is Char -> "'$value'"
+            is String -> '"' + value.replace("\\", "\\\\")
+                    .replace("\r", "\\r").replace("\n", "\\n")
+                    .replace("\t", "\\t").replace("\b", "\\b")
+                    .replace("\"", "\\\"") + '"'
+            else -> value.toString()
+        }
+    }
+
+    override fun logString() = "ULiteralExpression (${renderString()})"
 }

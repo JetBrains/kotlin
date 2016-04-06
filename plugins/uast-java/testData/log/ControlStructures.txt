@@ -1,4 +1,4 @@
-UFile (package = null)
+UFile (package = )
     UClass (_Dummy_, kind = class)
         UClass (ControlStructures, kind = class)
             UFunction (main, kind = function, paramCount = 1)
@@ -10,8 +10,8 @@ UFile (package = null)
                                 USimpleReferenceExpression (length)
                             ULiteralExpression (0)
                         UBlockExpression
-                            USpecialExpressionList (return)
-
+                            UReturnExpression
+                                <no element>
                         EmptyExpression
                     UDeclarationsExpression
                         UVariable (mode, kind = local)
@@ -23,7 +23,9 @@ UFile (package = null)
                                     ULiteralExpression (1)
                                 ULiteralExpression ("singleArg")
                                 ULiteralExpression ("multiArgs")
-                    UForEachExpression (arg)
+                    UForEachExpression
+                        UVariable (arg, kind = parameter)
+                        <no initializer>
                         USimpleReferenceExpression (args)
                         UBlockExpression
                             UQualifiedExpression
@@ -79,7 +81,7 @@ UFile (package = null)
                                         USimpleReferenceExpression (i)
                             UPostfixExpression (++)
                                 USimpleReferenceExpression (i)
-                    UAssignmentExpression (=)
+                    UBinaryExpression (=)
                         USimpleReferenceExpression (i)
                         ULiteralExpression (0)
                     UDoWhileExpression
@@ -96,6 +98,6 @@ UFile (package = null)
                                 UFunctionCallExpression (UastCallKind(name='function_call'), argCount = 1)
                                     USimpleReferenceExpression (println)
                                     USimpleReferenceExpression (i)
-                            UAssignmentExpression (+=)
+                            UBinaryExpression (+=)
                                 USimpleReferenceExpression (i)
                                 ULiteralExpression (1)
