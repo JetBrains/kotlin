@@ -49,7 +49,6 @@ class MapTransformation(
             val initializer = declaration.initializer ?: return null
             if (declaration.hasWriteUsages()) return null
             val restStatements = state.statements.drop(1)
-            if (state.workingVariable.hasUsages(restStatements)) return null // workingVariable is still needed - cannot transform to map()
 
             val transformation = MapTransformation(state.workingVariable, initializer)
             val newState = state.copy(statements = restStatements, workingVariable = declaration)

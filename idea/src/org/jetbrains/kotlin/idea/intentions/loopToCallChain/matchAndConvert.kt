@@ -82,8 +82,12 @@ fun match(loop: KtForExpression): ResultTransformationMatch? {
         for (matcher in MatcherRegistrar.sequenceMatchers) {
             val match = matcher.match(state)
             if (match != null) {
+                val newState = match.newState
+                // check that old working variable is not needed anymore
+                if (state.workingVariable != newState.workingVariable && state.workingVariable.hasUsages(newState.statements)) return null
+
                 sequenceTransformations.addAll(match.transformations)
-                state = match.newState
+                state = newState
                 continue@MatchLoop
             }
         }

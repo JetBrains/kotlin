@@ -61,7 +61,6 @@ class FlatMapTransformation(
             if (iterableType.checkIsSuperTypeOf(nestedSequenceType) == null) return null
 
             val nestedLoopBody = nestedLoop.body ?: return null
-            if (state.workingVariable.hasUsages(nestedLoopBody)) return null // workingVariable is still needed - cannot transform
 
             val newWorkingVariable = nestedLoop.loopParameter ?: return null
             val transformation = FlatMapTransformation(state.workingVariable, transform)
