@@ -14,41 +14,37 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
 import static com.android.SdkConstants.CLASS_VIEW;
-import static com.android.tools.lint.checks.JavaPerformanceDetector.ON_DRAW;
-import static com.android.tools.lint.checks.JavaPerformanceDetector.ON_LAYOUT;
-import static com.android.tools.lint.checks.JavaPerformanceDetector.ON_MEASURE;
+import static com.android.tools.klint.checks.JavaPerformanceDetector.ON_DRAW;
+import static com.android.tools.klint.checks.JavaPerformanceDetector.ON_LAYOUT;
+import static com.android.tools.klint.checks.JavaPerformanceDetector.ON_MEASURE;
 
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
-import com.android.tools.lint.client.api.JavaParser;
-import com.android.tools.lint.detector.api.Category;
-import com.android.tools.lint.detector.api.Detector;
-import com.android.tools.lint.detector.api.Implementation;
-import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.JavaContext;
-import com.android.tools.lint.detector.api.LintUtils;
-import com.android.tools.lint.detector.api.Scope;
-import com.android.tools.lint.detector.api.Severity;
-import com.android.tools.lint.detector.api.Speed;
-import com.android.tools.lint.detector.api.TextFormat;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.Detector;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.LintUtils;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
+import com.android.tools.klint.detector.api.Speed;
+import com.android.tools.klint.detector.api.TextFormat;
 
 import java.util.Arrays;
 import java.util.List;
 
-import lombok.ast.AstVisitor;
-import lombok.ast.Expression;
-import lombok.ast.MethodDeclaration;
-import lombok.ast.MethodInvocation;
-import lombok.ast.Node;
-import lombok.ast.Super;
+import org.jetbrains.uast.*;
+import org.jetbrains.uast.check.UastAndroidUtils;
+import org.jetbrains.uast.check.UastAndroidContext;
+import org.jetbrains.uast.check.UastScanner;
 
 /**
  * Checks for cases where the wrong call is being made
  */
-public class WrongCallDetector extends Detector implements Detector.JavaScanner {
+public class WrongCallDetector extends Detector implements UastScanner {
     /** Calling the wrong method */
     public static final Issue ISSUE = Issue.create(
             "WrongCall", //$NON-NLS-1$
@@ -74,57 +70,67 @@ public class WrongCallDetector extends Detector implements Detector.JavaScanner 
         return Speed.FAST;
     }
 
-    // ---- Implements JavaScanner ----
+    // ---- Implements UastScanner ----
+
 
     @Override
-    @Nullable
-    public List<String> getApplicableMethodNames() {
+    public List<String> getApplicableFunctionNames() {
         return Arrays.asList(
-                ON_DRAW,
-                ON_MEASURE,
-                ON_LAYOUT
+          ON_DRAW,
+          ON_MEASURE,
+          ON_LAYOUT
         );
     }
 
     @Override
-    public void visitMethod(@NonNull JavaContext context, @Nullable AstVisitor visitor,
-            @NonNull MethodInvocation node) {
-
+    public void visitFunctionCall(UastAndroidContext context, UCallExpression node) {
         // Call is only allowed if it is both only called on the super class (invoke special)
         // as well as within the same overriding method (e.g. you can't call super.onLayout
         // from the onMeasure method)
-        Expression operand = node.astOperand();
-        if (!(operand instanceof Super)) {
-            report(context, node);
+        if (node.getKind() != UastCallKind.FUNCTION_CALL) {
             return;
         }
 
-        Node method = StringFormatDetector.getParentMethod(node);
-        if (!(method instanceof MethodDeclaration) ||
-                !((MethodDeclaration)method).astMethodName().astValue().equals(
-                        node.astName().astValue())) {
-            report(context, node);
-        }
-    }
-
-    private static void report(JavaContext context, MethodInvocation node) {
-        // Make sure the call is on a view
-        JavaParser.ResolvedNode resolved = context.resolve(node);
-        if (resolved instanceof JavaParser.ResolvedMethod) {
-            JavaParser.ResolvedMethod method = (JavaParser.ResolvedMethod) resolved;
-            JavaParser.ResolvedClass containingClass = method.getContainingClass();
-            if (!containingClass.isSubclassOf(CLASS_VIEW, false)) {
+        UElement referenceExpression = node.getParent();
+        if (referenceExpression instanceof UQualifiedExpression) {
+            UExpression operand = ((UQualifiedExpression)referenceExpression).getReceiver();
+            if (!(operand instanceof USuperExpression)) {
+                report(context, node);
                 return;
             }
         }
 
-        String name = node.astName().astValue();
+        UFunction containingFunction = UastUtils.getContainingFunction(node);
+        if (containingFunction == null) {
+            return;
+        }
+
+        if (containingFunction.getKind() == UastFunctionKind.CONSTRUCTOR || !containingFunction.matchesName(node.getFunctionName())) {
+            report(context, node);
+        }
+    }
+
+    private static void report(UastAndroidContext context, UCallExpression node) {
+        // Make sure the call is on a view
+        UFunction resolved = node.resolve(context);
+        if (resolved != null && resolved.getKind() != UastFunctionKind.CONSTRUCTOR) {
+            UClass containingClass = UastUtils.getContainingClass(resolved);
+            if (containingClass == null || !containingClass.isSubclassOf(CLASS_VIEW)) {
+                return;
+            }
+        }
+
+        String name = node.getFunctionName();
+        if (name == null) {
+            return;
+        }
+
         String suggestion = Character.toLowerCase(name.charAt(2)) + name.substring(3);
         String message = String.format(
                 // Keep in sync with {@link #getOldValue} and {@link #getNewValue} below!
                 "Suspicious method call; should probably call \"`%1$s`\" rather than \"`%2$s`\"",
                 suggestion, name);
-        context.report(ISSUE, node, context.getLocation(node.astName()), message);
+        context.report(ISSUE, node, UastAndroidUtils.getLocation(node.getFunctionReference()), message);
     }
 
     /**

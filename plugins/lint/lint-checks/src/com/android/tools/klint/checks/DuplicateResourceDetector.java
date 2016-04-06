@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
 
 import static com.android.SdkConstants.ATTR_NAME;
@@ -27,19 +27,19 @@ import com.android.annotations.Nullable;
 import com.android.ide.common.resources.ResourceUrl;
 import com.android.resources.ResourceFolderType;
 import com.android.resources.ResourceType;
-import com.android.tools.lint.detector.api.Category;
-import com.android.tools.lint.detector.api.Context;
-import com.android.tools.lint.detector.api.Implementation;
-import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.LintUtils;
-import com.android.tools.lint.detector.api.Location;
-import com.android.tools.lint.detector.api.Location.Handle;
-import com.android.tools.lint.detector.api.ResourceXmlDetector;
-import com.android.tools.lint.detector.api.Scope;
-import com.android.tools.lint.detector.api.Severity;
-import com.android.tools.lint.detector.api.Speed;
-import com.android.tools.lint.detector.api.TextFormat;
-import com.android.tools.lint.detector.api.XmlContext;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.Context;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.LintUtils;
+import com.android.tools.klint.detector.api.Location;
+import com.android.tools.klint.detector.api.Location.Handle;
+import com.android.tools.klint.detector.api.ResourceXmlDetector;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
+import com.android.tools.klint.detector.api.Speed;
+import com.android.tools.klint.detector.api.TextFormat;
+import com.android.tools.klint.detector.api.XmlContext;
 import com.android.utils.Pair;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;

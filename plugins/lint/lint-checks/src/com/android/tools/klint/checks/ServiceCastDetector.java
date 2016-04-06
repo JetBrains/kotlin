@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
-import com.android.tools.lint.detector.api.Category;
-import com.android.tools.lint.detector.api.Context;
-import com.android.tools.lint.detector.api.Detector;
-import com.android.tools.lint.detector.api.Implementation;
-import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.JavaContext;
-import com.android.tools.lint.detector.api.Scope;
-import com.android.tools.lint.detector.api.Severity;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.Context;
+import com.android.tools.klint.detector.api.Detector;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
 import com.google.common.collect.Maps;
 
 import java.io.File;
@@ -33,16 +32,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import lombok.ast.AstVisitor;
-import lombok.ast.Cast;
-import lombok.ast.Expression;
-import lombok.ast.MethodInvocation;
-import lombok.ast.StrictListAccessor;
+import org.jetbrains.uast.*;
+import org.jetbrains.uast.check.UastAndroidUtils;
+import org.jetbrains.uast.check.UastAndroidContext;
+import org.jetbrains.uast.check.UastScanner;
 
 /**
  * Detector looking for casts on th result of context.getSystemService which are suspect
  */
-public class ServiceCastDetector extends Detector implements Detector.JavaScanner {
+public class ServiceCastDetector extends Detector implements UastScanner {
     /** The main issue discovered by this detector */
     public static final Issue ISSUE = Issue.create(
             "ServiceCast", //$NON-NLS-1$
@@ -68,41 +66,45 @@ public class ServiceCastDetector extends Detector implements Detector.JavaScanne
         return true;
     }
 
-    // ---- Implements JavaScanner ----
+    // ---- Implements UastScanner ----
+
 
     @Override
-    public List<String> getApplicableMethodNames() {
+    public List<String> getApplicableFunctionNames() {
         return Collections.singletonList("getSystemService"); //$NON-NLS-1$
     }
 
     @Override
-    public void visitMethod(@NonNull JavaContext context, @Nullable AstVisitor visitor,
-            @NonNull MethodInvocation node) {
-        if (node.getParent() instanceof Cast) {
-            Cast cast = (Cast) node.getParent();
-            StrictListAccessor<Expression, MethodInvocation> args = node.astArguments();
-            if (args.size() == 1) {
-                String name = stripPackage(args.first().toString());
-                String expectedClass = getExpectedType(name);
-                if (expectedClass != null) {
-                    String castType = cast.astTypeReference().getTypeName();
-                    if (castType.indexOf('.') == -1) {
-                        expectedClass = stripPackage(expectedClass);
-                    }
-                    if (!castType.equals(expectedClass)) {
-                        // It's okay to mix and match
-                        // android.content.ClipboardManager and android.text.ClipboardManager
-                        if (isClipboard(castType) && isClipboard(expectedClass)) {
-                            return;
-                        }
+    public void visitFunctionCall(UastAndroidContext context, UCallExpression node) {
+        UExpression receiver = UastUtils.getQualifiedCallElement(node);
+        UElement parent = receiver.getParent();
+        if (!(parent instanceof UBinaryExpressionWithType)
+                || ((UBinaryExpressionWithType)parent).getOperationKind() != UastBinaryExpressionWithTypeKind.TYPE_CAST) {
+            return;
+        }
 
-                        String message = String.format(
-                                "Suspicious cast to `%1$s` for a `%2$s`: expected `%3$s`",
-                                stripPackage(castType), name, stripPackage(expectedClass));
-                        context.report(ISSUE, node, context.getLocation(cast), message);
-                    }
+        UBinaryExpressionWithType cast = (UBinaryExpressionWithType) parent;
+        List<UExpression> args = node.getValueArguments();
+        if (args.size() == 1) {
+            String name = stripPackage(args.get(0).renderString());
+            String expectedClass = getExpectedType(name);
+            if (expectedClass != null) {
+                String castType = cast.getType().getName();
+                if (castType.indexOf('.') == -1) {
+                    expectedClass = stripPackage(expectedClass);
                 }
+                if (!castType.equals(expectedClass)) {
+                    // It's okay to mix and match
+                    // android.content.ClipboardManager and android.text.ClipboardManager
+                    if (isClipboard(castType) && isClipboard(expectedClass)) {
+                        return;
+                    }
 
+                    String message = String.format(
+                      "Suspicious cast to `%1$s` for a `%2$s`: expected `%3$s`",
+                      stripPackage(castType), name, stripPackage(expectedClass));
+                    context.report(ISSUE, node, UastAndroidUtils.getLocation(cast), message);
+                }
             }
         }
     }

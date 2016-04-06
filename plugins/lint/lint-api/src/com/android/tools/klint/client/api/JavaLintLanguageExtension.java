@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.lint
+package com.android.tools.klint.client.api;
 
-import com.android.tools.lint.client.api.LintLanguageExtension
-import org.jetbrains.kotlin.uast.KotlinConverter
+import org.jetbrains.uast.UastConverter;
+import org.jetbrains.uast.java.JavaConverter;
 
-class KotlinLintLanguageExtension : LintLanguageExtension() {
-    override fun getConverter() = KotlinConverter
+public class JavaLintLanguageExtension extends LintLanguageExtension {
+    @Override
+    public UastConverter getConverter() {
+        return JavaConverter.INSTANCE;
+    }
 }

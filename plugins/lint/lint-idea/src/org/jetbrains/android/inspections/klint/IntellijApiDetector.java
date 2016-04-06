@@ -13,33 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jetbrains.android.inspections.lint;
+package org.jetbrains.android.inspections.klint;
 
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.android.sdklib.SdkVersionInfo;
-import com.android.tools.lint.checks.ApiDetector;
-import com.android.tools.lint.checks.ApiLookup;
-import com.android.tools.lint.detector.api.*;
-import com.intellij.codeInsight.ExceptionUtil;
+import com.android.tools.klint.checks.ApiDetector;
+import com.android.tools.klint.checks.ApiLookup;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.PsiClassReferenceType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.MethodSignatureUtil;
 import com.intellij.psi.util.PsiTreeUtil;
-import lombok.ast.AstVisitor;
-import lombok.ast.CompilationUnit;
-import lombok.ast.ForwardingAstVisitor;
-import lombok.ast.Node;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.uast.UFile;
+import org.jetbrains.uast.check.UastAndroidContext;
+import org.jetbrains.uast.visitor.UastVisitor;
 
-import java.util.Collections;
 import java.util.EnumSet;
-import java.util.List;
 
-import static org.jetbrains.android.inspections.lint.IntellijLintUtils.SUPPRESS_LINT_FQCN;
-import static org.jetbrains.android.inspections.lint.IntellijLintUtils.SUPPRESS_WARNINGS_FQCN;
+import static org.jetbrains.android.inspections.klint.IntellijLintUtils.SUPPRESS_LINT_FQCN;
+import static org.jetbrains.android.inspections.klint.IntellijLintUtils.SUPPRESS_WARNINGS_FQCN;
 
 /**
  * Intellij-specific version of the {@link ApiDetector} which uses the PSI structure
@@ -52,40 +48,36 @@ import static org.jetbrains.android.inspections.lint.IntellijLintUtils.SUPPRESS_
  */
 public class IntellijApiDetector extends ApiDetector {
   @SuppressWarnings("unchecked")
-  static final Implementation IMPLEMENTATION = new Implementation(
-    IntellijApiDetector.class,
-    EnumSet.of(Scope.RESOURCE_FILE, Scope.MANIFEST, Scope.JAVA_FILE),
-    Scope.MANIFEST_SCOPE,
-    Scope.RESOURCE_FILE_SCOPE,
-    Scope.JAVA_FILE_SCOPE
+  static final com.android.tools.klint.detector.api.Implementation IMPLEMENTATION = new com.android.tools.klint.detector.api.Implementation(
+          IntellijApiDetector.class,
+          EnumSet.of(com.android.tools.klint.detector.api.Scope.RESOURCE_FILE, com.android.tools.klint.detector.api.Scope.MANIFEST, com.android.tools.klint.detector.api.Scope.SOURCE_FILE),
+          com.android.tools.klint.detector.api.Scope.MANIFEST_SCOPE,
+          com.android.tools.klint.detector.api.Scope.RESOURCE_FILE_SCOPE,
+          com.android.tools.klint.detector.api.Scope.JAVA_FILE_SCOPE
   );
 
   @NonNls
   private static final String TARGET_API_FQCN = "android.annotation.TargetApi";
   private static final String SDK_INT = "SDK_INT";
 
-  @Nullable
   @Override
-  public List<Class<? extends Node>> getApplicableNodeTypes() {
-    return Collections.<Class<? extends Node>>singletonList(CompilationUnit.class);
+  public UastVisitor createUastVisitor(final UastAndroidContext context) {
+      return new UastVisitor() {
+          @Override
+          public boolean visitFile(@NotNull UFile node) {
+              check(context);
+              return true;
+          }
+      };
   }
 
-  @Nullable
-  @Override
-  public AstVisitor createJavaVisitor(@NonNull final JavaContext context) {
-    return new ForwardingAstVisitor() {
-      @Override
-      public boolean visitCompilationUnit(CompilationUnit node) {
-        check(context);
-        return true;
-      }
-    };
-  }
-
-  private void check(final JavaContext context) {
+  private void check(final UastAndroidContext uastContext) {
     if (mApiDatabase == null) {
       return;
     }
+
+    final com.android.tools.klint.detector.api.JavaContext context = uastContext.getLintContext();
+
     ApplicationManager.getApplication().runReadAction(new Runnable() {
       @Override
       public void run() {
@@ -166,7 +158,7 @@ public class IntellijApiDetector extends ApiDetector {
   }
 
   private class ApiCheckVisitor extends JavaRecursiveElementVisitor {
-    private final Context myContext;
+    private final com.android.tools.klint.detector.api.Context myContext;
     private boolean mySeenSuppress;
     private boolean mySeenTargetApi;
     private final PsiClass myClass;
@@ -175,7 +167,7 @@ public class IntellijApiDetector extends ApiDetector {
     private boolean myCheckOverride;
     private String myFrameworkParent;
 
-    public ApiCheckVisitor(Context context, PsiClass clz, PsiFile file) {
+    public ApiCheckVisitor(com.android.tools.klint.detector.api.Context context, PsiClass clz, PsiFile file) {
       myContext = context;
       myClass = clz;
       myFile = file;
@@ -194,7 +186,7 @@ public class IntellijApiDetector extends ApiDetector {
               || fqcn.startsWith("java.")        //$NON-NLS-1$
               || fqcn.startsWith("javax.")) {    //$NON-NLS-1$
             if (!fqcn.equals(CommonClassNames.JAVA_LANG_OBJECT)) {
-              myFrameworkParent = ClassContext.getInternalName(fqcn);
+              myFrameworkParent = com.android.tools.klint.detector.api.ClassContext.getInternalName(fqcn);
             }
             break;
           }
@@ -268,7 +260,7 @@ public class IntellijApiDetector extends ApiDetector {
         if (locationNode == null) {
           locationNode = method;
         }
-        Location location = IntellijLintUtils.getLocation(myContext.file, locationNode);
+        com.android.tools.klint.detector.api.Location location = IntellijLintUtils.getLocation(myContext.file, locationNode);
         myContext.report(OVERRIDE, location, message);
       }
     }
@@ -307,7 +299,7 @@ public class IntellijApiDetector extends ApiDetector {
           continue;
         }
 
-        Location location;
+        com.android.tools.klint.detector.api.Location location;
         if (type instanceof PsiClassReferenceType) {
           PsiReference reference = ((PsiClassReferenceType)type).getReference();
           PsiElement element = reference.getElement();
@@ -359,13 +351,13 @@ public class IntellijApiDetector extends ApiDetector {
             return;
           }
 
-          Location location = IntellijLintUtils.getLocation(myContext.file, expression);
+          com.android.tools.klint.detector.api.Location location = IntellijLintUtils.getLocation(myContext.file, expression);
           String fqcn = containingClass.getQualifiedName();
           String message = String.format(
               "Field requires API level %1$d (current min is %2$d): %3$s",
               api, minSdk, fqcn + '#' + name);
 
-          Issue issue = UNSUPPORTED;
+          com.android.tools.klint.detector.api.Issue issue = UNSUPPORTED;
           // When accessing primitive types or Strings, the values get copied into
           // the class files (e.g. get inlined) which has a separate issue type:
           // INLINED.
@@ -398,7 +390,7 @@ public class IntellijApiDetector extends ApiDetector {
         if (isSuppressed(api, statement, minSdk)) {
           return;
         }
-        Location location = IntellijLintUtils.getLocation(myContext.file, resourceList);
+        com.android.tools.klint.detector.api.Location location = IntellijLintUtils.getLocation(myContext.file, resourceList);
         String message = String.format("Try-with-resources requires API level %1$d (current min is %2$d)", api, minSdk);
         myContext.report(UNSUPPORTED, location, message);
       }
@@ -447,7 +439,7 @@ public class IntellijApiDetector extends ApiDetector {
               continue;
             }
 
-            Location location;
+            com.android.tools.klint.detector.api.Location location;
             location = IntellijLintUtils.getLocation(myContext.file, reference);
             String fqcn = resolved.getName();
             String message = String.format("Class requires API level %1$d (current min is %2$d): %3$s", api, minSdk, fqcn);
@@ -669,7 +661,7 @@ public class IntellijApiDetector extends ApiDetector {
         if (locationNode == null) {
           locationNode = expression;
         }
-        Location location = IntellijLintUtils.getLocation(myContext.file, locationNode);
+        com.android.tools.klint.detector.api.Location location = IntellijLintUtils.getLocation(myContext.file, locationNode);
         String message = String.format("Call requires API level %1$d (current min is %2$d): %3$s", api, minSdk,
                                        fqcn + '#' + method.getName());
 
@@ -772,7 +764,7 @@ public class IntellijApiDetector extends ApiDetector {
         return isAndedWithConditional(inner.getLOperand(), api, before) ||
                inner.getROperand() != before &&  isAndedWithConditional(inner.getROperand(), api, before);
       } else  if (inner.getLOperand() instanceof PsiReferenceExpression &&
-          SDK_INT.equals(((PsiReferenceExpression)inner.getLOperand()).getReferenceName())) {
+                  SDK_INT.equals(((PsiReferenceExpression)inner.getLOperand()).getReferenceName())) {
         int level = -1;
         IElementType tokenType = inner.getOperationTokenType();
         PsiExpression right = inner.getROperand();

@@ -1,7 +1,27 @@
-package org.jetbrains.android.inspections.lint;
+/*
+ * Copyright 2010-2016 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.jetbrains.android.inspections.klint;
 
 import com.android.annotations.concurrency.GuardedBy;
-import com.android.tools.lint.detector.api.*;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
 import com.intellij.analysis.AnalysisScope;
 import com.intellij.codeHighlighting.HighlightDisplayLevel;
 import com.intellij.codeInsight.daemon.HighlightDisplayKey;
@@ -21,7 +41,6 @@ import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.HashMap;
-import com.intellij.xml.CommonXmlStrings;
 import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -31,8 +50,8 @@ import org.jetbrains.annotations.TestOnly;
 import java.io.File;
 import java.util.*;
 
-import static com.android.tools.lint.detector.api.TextFormat.HTML;
-import static com.android.tools.lint.detector.api.TextFormat.RAW;
+import static com.android.tools.klint.detector.api.TextFormat.HTML;
+import static com.android.tools.klint.detector.api.TextFormat.RAW;
 import static com.intellij.xml.CommonXmlStrings.HTML_END;
 import static com.intellij.xml.CommonXmlStrings.HTML_START;
 
@@ -40,7 +59,7 @@ import static com.intellij.xml.CommonXmlStrings.HTML_START;
  * @author Eugene.Kudelevsky
  */
 public abstract class AndroidLintInspectionBase extends GlobalInspectionTool {
-  private static final Logger LOG = Logger.getInstance("#org.jetbrains.android.inspections.lint.AndroidLintInspectionBase");
+  private static final Logger LOG = Logger.getInstance("#org.jetbrains.android.inspections.klint.AndroidLintInspectionBase");
 
   private static final Object ISSUE_MAP_LOCK = new Object();
 
@@ -199,7 +218,8 @@ public abstract class AndroidLintInspectionBase extends GlobalInspectionTool {
     if (AndroidLintExternalAnnotator.INCLUDE_IDEA_SUPPRESS_ACTIONS) {
       final List<SuppressQuickFix> result = new ArrayList<SuppressQuickFix>();
       result.add(suppressLintQuickFix);
-      result.addAll(Arrays.asList(BatchSuppressManager.SERVICE.getInstance().createBatchSuppressActions(HighlightDisplayKey.find(getShortName()))));
+      result.addAll(Arrays.asList(
+              BatchSuppressManager.SERVICE.getInstance().createBatchSuppressActions(HighlightDisplayKey.find(getShortName()))));
       result.addAll(Arrays.asList(new XmlSuppressableInspectionTool.SuppressTagStatic(getShortName()),
                                   new XmlSuppressableInspectionTool.SuppressForFile(getShortName())));
       return result.toArray(new SuppressQuickFix[result.size()]);
@@ -257,7 +277,7 @@ public abstract class AndroidLintInspectionBase extends GlobalInspectionTool {
         for (InspectionToolWrapper e : profile.getInspectionTools(null)) {
           final String shortName = e.getShortName();
 
-          if (shortName.startsWith("AndroidLint")) {
+          if (shortName.startsWith("AndroidKLint")) {
             final InspectionProfileEntry entry = e.getTool();
             if (entry instanceof AndroidLintInspectionBase) {
               final Issue s = ((AndroidLintInspectionBase)entry).getIssue();
@@ -387,7 +407,7 @@ public abstract class AndroidLintInspectionBase extends GlobalInspectionTool {
       return false;
     }
     final Scope scope = scopes.iterator().next();
-    return scope == Scope.JAVA_FILE || scope == Scope.RESOURCE_FILE || scope == Scope.MANIFEST
+    return scope == Scope.SOURCE_FILE || scope == Scope.RESOURCE_FILE || scope == Scope.MANIFEST
            || scope == Scope.PROGUARD_FILE || scope == Scope.OTHER;
   }
 
@@ -437,9 +457,9 @@ public abstract class AndroidLintInspectionBase extends GlobalInspectionTool {
   }
 
   /**
-   * A {@link com.intellij.codeInspection.ProblemDescriptor} for image and directory files. This is
+   * A {@link ProblemDescriptor} for image and directory files. This is
    * necessary because the {@link InspectionManager}'s createProblemDescriptor methods
-   * all use {@link com.intellij.codeInspection.ProblemDescriptorBase} where in the constructor
+   * all use {@link ProblemDescriptorBase} where in the constructor
    * it insists that the start and end {@link PsiElement} instances must have a valid
    * <b>text</b> range, which does not apply for images.
    * <p>

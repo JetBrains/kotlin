@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jetbrains.android.inspections.lint;
+package org.jetbrains.android.inspections.klint;
 
 import com.android.annotations.NonNull;
 import com.android.builder.model.*;
@@ -23,8 +23,8 @@ import com.android.tools.idea.gradle.IdeaAndroidProject;
 import com.android.tools.idea.gradle.util.GradleUtil;
 import com.android.tools.idea.model.AndroidModuleInfo;
 import com.android.tools.idea.model.ManifestInfo;
-import com.android.tools.lint.client.api.LintClient;
-import com.android.tools.lint.detector.api.Project;
+import com.android.tools.klint.client.api.LintClient;
+import com.android.tools.klint.detector.api.Project;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -146,7 +146,7 @@ class IntellijLintProject extends Project {
     client.setModuleMap(projectMap);
 
     //noinspection ConstantConditions
-    return Pair.<Project,Project>create(project,main);
+    return Pair.<Project,Project>create(project, main);
   }
 
   /** Find an Android module that depends on this module; prefer app modules over library modules */
@@ -898,7 +898,7 @@ class IntellijLintProject extends Project {
       } else {
         // Some other (not yet directly cached result)
         if (myFacet.isGradleProject() && myFacet.getIdeaAndroidProject() != null
-           && GradleUtil.dependsOn(myFacet.getIdeaAndroidProject(), artifact)) {
+            && GradleUtil.dependsOn(myFacet.getIdeaAndroidProject(), artifact)) {
           return true;
         }
 

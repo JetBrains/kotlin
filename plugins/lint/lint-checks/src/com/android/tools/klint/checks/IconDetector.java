@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
 import static com.android.SdkConstants.ANDROID_MANIFEST_XML;
 import static com.android.SdkConstants.ANDROID_URI;
@@ -43,7 +43,7 @@ import static com.android.SdkConstants.TAG_ITEM;
 import static com.android.SdkConstants.TAG_PROVIDER;
 import static com.android.SdkConstants.TAG_RECEIVER;
 import static com.android.SdkConstants.TAG_SERVICE;
-import static com.android.tools.lint.detector.api.LintUtils.endsWith;
+import static com.android.tools.klint.detector.api.LintUtils.endsWith;
 
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
@@ -51,26 +51,29 @@ import com.android.builder.model.ProductFlavor;
 import com.android.builder.model.ProductFlavorContainer;
 import com.android.resources.Density;
 import com.android.resources.ResourceFolderType;
-import com.android.tools.lint.detector.api.Category;
-import com.android.tools.lint.detector.api.Context;
-import com.android.tools.lint.detector.api.Detector;
-import com.android.tools.lint.detector.api.Implementation;
-import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.JavaContext;
-import com.android.tools.lint.detector.api.LintUtils;
-import com.android.tools.lint.detector.api.Location;
-import com.android.tools.lint.detector.api.Project;
-import com.android.tools.lint.detector.api.ResourceXmlDetector;
-import com.android.tools.lint.detector.api.Scope;
-import com.android.tools.lint.detector.api.Severity;
-import com.android.tools.lint.detector.api.Speed;
-import com.android.tools.lint.detector.api.XmlContext;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.Context;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.LintUtils;
+import com.android.tools.klint.detector.api.Location;
+import com.android.tools.klint.detector.api.Project;
+import com.android.tools.klint.detector.api.ResourceXmlDetector;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
+import com.android.tools.klint.detector.api.Speed;
+import com.android.tools.klint.detector.api.XmlContext;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.uast.*;
+import org.jetbrains.uast.check.UastAndroidContext;
+import org.jetbrains.uast.check.UastScanner;
+import org.jetbrains.uast.visitor.UastVisitor;
 import org.w3c.dom.Element;
 
 import java.awt.Dimension;
@@ -99,24 +102,11 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 
-import lombok.ast.AstVisitor;
-import lombok.ast.ConstructorInvocation;
-import lombok.ast.Expression;
-import lombok.ast.ForwardingAstVisitor;
-import lombok.ast.MethodDeclaration;
-import lombok.ast.MethodInvocation;
-import lombok.ast.Node;
-import lombok.ast.Select;
-import lombok.ast.StrictListAccessor;
-import lombok.ast.TypeReference;
-import lombok.ast.TypeReferencePart;
-import lombok.ast.VariableReference;
-
 /**
  * Checks for common icon problems, such as wrong icon sizes, placing icons in the
  * density independent drawable folder, etc.
  */
-public class IconDetector extends ResourceXmlDetector implements Detector.JavaScanner {
+public class IconDetector extends ResourceXmlDetector implements UastScanner {
 
     private static final boolean INCLUDE_LDPI;
     static {
@@ -158,7 +148,7 @@ public class IconDetector extends ResourceXmlDetector implements Detector.JavaSc
      * the manifest, menu files etc to see how icons are used
      */
     private static final EnumSet<Scope> ICON_TYPE_SCOPE = EnumSet.of(Scope.ALL_RESOURCE_FILES,
-            Scope.JAVA_FILE, Scope.MANIFEST);
+                                                                     Scope.SOURCE_FILE, Scope.MANIFEST);
 
     private static final Implementation IMPLEMENTATION_JAVA = new Implementation(
             IconDetector.class,
@@ -1965,53 +1955,67 @@ public class IconDetector extends ResourceXmlDetector implements Detector.JavaSc
         }
     }
 
-    // ---- Implements JavaScanner ----
+    // ---- Implements UastScanner ----
 
     private static final String NOTIFICATION_CLASS = "Notification";              //$NON-NLS-1$
-    private static final String NOTIFICATION_COMPAT_CLASS = "NotificationCompat"; //$NON-NLS-1$
+
+    private static final String NOTIFICATION_CLASS_FQNAME =
+            "android.app.Notification";                                           //$NON-NLS-1$
+
+    private static final String NOTIFICATION_COMPAT_CLASS_FQNAME =
+            "android.support.v4.app.NotificationCompat";                          //$NON-NLS-1$
+
     private static final String BUILDER_CLASS = "Builder";                        //$NON-NLS-1$
     private static final String SET_SMALL_ICON = "setSmallIcon";                  //$NON-NLS-1$
     private static final String ON_CREATE_OPTIONS_MENU = "onCreateOptionsMenu";   //$NON-NLS-1$
 
     @Override
-    @Nullable
-    public AstVisitor createJavaVisitor(@NonNull JavaContext context) {
-        return new NotificationFinder();
+    public UastVisitor createUastVisitor(UastAndroidContext context) {
+        return new NotificationFinder(context);
     }
 
-    @Override
-    @Nullable
-    public List<Class<? extends Node>> getApplicableNodeTypes() {
-        List<Class<? extends Node>> types = new ArrayList<Class<? extends Node>>(3);
-        types.add(MethodDeclaration.class);
-        types.add(ConstructorInvocation.class);
-        return types;
-    }
+    private final class NotificationFinder extends UastVisitor {
+        private UastAndroidContext mContext;
 
-    private final class NotificationFinder extends ForwardingAstVisitor {
-        @Override
-        public boolean visitMethodDeclaration(MethodDeclaration node) {
-            if (ON_CREATE_OPTIONS_MENU.equals(node.astMethodName().astValue())) {
-                // Gather any R.menu references found in this method
-                node.accept(new MenuFinder());
-            }
-
-            return super.visitMethodDeclaration(node);
+        public NotificationFinder(UastAndroidContext mContext) {
+            this.mContext = mContext;
         }
 
         @Override
-        public boolean visitConstructorInvocation(ConstructorInvocation node) {
-            TypeReference reference = node.astTypeReference();
-            StrictListAccessor<TypeReferencePart, TypeReference> parts = reference.astParts();
-            String typeName = parts.last().astIdentifier().astValue();
+        public boolean visitFunction(@NotNull UFunction node) {
+            if (node.matchesName(ON_CREATE_OPTIONS_MENU)) {
+                // Gather any R.menu references found in this method
+                new MenuFinder().process(node);
+            }
+
+            return super.visitFunction(node);
+        }
+
+        @Override
+        public boolean visitCallExpression(@NotNull UCallExpression node) {
+            if (node.getKind() == UastCallKind.CONSTRUCTOR_CALL) {
+                visitConstructorInvocation(node);
+            }
+
+            return super.visitCallExpression(node);
+        }
+
+        private void visitConstructorInvocation(UCallExpression node) {
+            USimpleReferenceExpression reference = node.getClassReference();
+            if (reference == null) {
+                return;
+            }
+
+            String typeName = reference.getIdentifier();
             if (NOTIFICATION_CLASS.equals(typeName)) {
-                StrictListAccessor<Expression, ConstructorInvocation> args = node.astArguments();
+                List<UExpression> args = node.getValueArguments();
                 if (args.size() == 3) {
-                    if (args.first() instanceof Select && handleSelect((Select) args.first())) {
-                        return super.visitConstructorInvocation(node);
+                    if (args.get(0) instanceof UQualifiedExpression
+                            && handleSelect((UQualifiedExpression) args.get(0))) {
+                        return;
                     }
 
-                    Node method = StringFormatDetector.getParentMethod(node);
+                    UFunction method = UastUtils.getContainingFunction(node);
                     if (method != null) {
                         // Must track local types
                         String name = StringFormatDetector.getResourceForFirstArg(method, node);
@@ -2024,31 +2028,24 @@ public class IconDetector extends ResourceXmlDetector implements Detector.JavaSc
                     }
                 }
             } else if (BUILDER_CLASS.equals(typeName)) {
-                boolean isBuilder = false;
-                if (parts.size() == 1) {
-                    isBuilder = true;
-                } else if (parts.size() == 2) {
-                    String clz = parts.first().astIdentifier().astValue();
-                    if (NOTIFICATION_CLASS.equals(clz) || NOTIFICATION_COMPAT_CLASS.equals(clz)) {
-                        isBuilder = true;
-                    }
-                }
+                UClass resolvedClass = reference.resolveClass(mContext);
+                boolean isBuilder = resolvedClass != null
+                                    && (resolvedClass.matchesFqName(NOTIFICATION_CLASS_FQNAME)
+                                        || resolvedClass.matchesFqName(NOTIFICATION_COMPAT_CLASS_FQNAME));
                 if (isBuilder) {
-                    Node method = StringFormatDetector.getParentMethod(node);
+                    UFunction method = UastUtils.getContainingFunction(node);
                     if (method != null) {
                         SetIconFinder finder = new SetIconFinder();
-                        method.accept(finder);
+                        finder.process(method);
                     }
                 }
             }
-
-            return super.visitConstructorInvocation(node);
         }
     }
 
-    private boolean handleSelect(Select select) {
-        if (select.toString().startsWith(R_DRAWABLE_PREFIX)) {
-            String name = select.astIdentifier().astValue();
+    private boolean handleSelect(UQualifiedExpression select) {
+        if (select.renderString().startsWith(R_DRAWABLE_PREFIX)) {
+            String name = select.getSelector().renderString();
             if (mNotificationIcons == null) {
                 mNotificationIcons = Sets.newHashSet();
             }
@@ -2060,32 +2057,31 @@ public class IconDetector extends ResourceXmlDetector implements Detector.JavaSc
         return false;
     }
 
-    private final class SetIconFinder extends ForwardingAstVisitor {
+    private final class SetIconFinder extends UastVisitor {
         @Override
-        public boolean visitMethodInvocation(MethodInvocation node) {
-            if (SET_SMALL_ICON.equals(node.astName().astValue())) {
-                StrictListAccessor<Expression,MethodInvocation> arguments = node.astArguments();
-                if (arguments.size() == 1 && arguments.first() instanceof Select) {
-                    handleSelect((Select) arguments.first());
+        public boolean visitCallExpression(@NotNull UCallExpression node) {
+            if (SET_SMALL_ICON.equals(node.getFunctionName())) {
+                List<UExpression> args = node.getValueArguments();
+                if (args.size() == 1 && args.get(0) instanceof UQualifiedExpression) {
+                    handleSelect((UQualifiedExpression) args.get(0));
                 }
             }
-            return super.visitMethodInvocation(node);
+
+            return super.visitCallExpression(node);
         }
     }
 
-    private final class MenuFinder extends ForwardingAstVisitor {
+    private final class MenuFinder extends UastVisitor {
         @Override
-        public boolean visitSelect(Select node) {
+        public boolean visitQualifiedExpression(@NotNull UQualifiedExpression node) {
             // R.type.name
-            if (node.astOperand() instanceof Select) {
-                Select select = (Select) node.astOperand();
-                if (select.astOperand() instanceof VariableReference) {
-                    VariableReference reference = (VariableReference) select.astOperand();
-                    if (reference.astIdentifier().astValue().equals(R_CLASS)) {
-                        String type = select.astIdentifier().astValue();
-
-                        if (type.equals(MENU_TYPE)) {
-                            String name = node.astIdentifier().astValue();
+            if (node.getReceiver() instanceof UQualifiedExpression) {
+                UQualifiedExpression select = (UQualifiedExpression) node.getReceiver();
+                if (select.getReceiver() instanceof USimpleReferenceExpression) {
+                    USimpleReferenceExpression reference = (USimpleReferenceExpression) select.getReceiver();
+                    if (R_CLASS.equals(reference.getIdentifier())) {
+                        if (select.selectorMatches(MENU_TYPE)) {
+                            String name = node.getSelector().renderString();
                             // Reclassify icons in the given menu as action bar icons
                             if (mMenuToIcons != null) {
                                 Collection<String> icons = mMenuToIcons.get(name);
@@ -2101,7 +2097,7 @@ public class IconDetector extends ResourceXmlDetector implements Detector.JavaSc
                 }
             }
 
-            return super.visitSelect(node);
+            return super.visitQualifiedExpression(node);
         }
     }
 }

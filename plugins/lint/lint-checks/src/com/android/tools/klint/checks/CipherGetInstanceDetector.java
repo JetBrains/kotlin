@@ -14,36 +14,31 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
 import com.android.annotations.NonNull;
-import com.android.annotations.Nullable;
-import com.android.tools.lint.client.api.JavaParser;
-import com.android.tools.lint.detector.api.Category;
-import com.android.tools.lint.detector.api.Detector;
-import com.android.tools.lint.detector.api.Implementation;
-import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.JavaContext;
-import com.android.tools.lint.detector.api.Scope;
-import com.android.tools.lint.detector.api.Severity;
-import com.android.tools.lint.detector.api.Speed;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.Detector;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
+import com.android.tools.klint.detector.api.Speed;
 import com.google.common.collect.Sets;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import lombok.ast.AstVisitor;
-import lombok.ast.Expression;
-import lombok.ast.MethodInvocation;
-import lombok.ast.Node;
-import lombok.ast.StrictListAccessor;
-import lombok.ast.StringLiteral;
+import org.jetbrains.uast.*;
+import org.jetbrains.uast.check.UastAndroidContext;
+import org.jetbrains.uast.check.UastAndroidUtils;
+import org.jetbrains.uast.check.UastScanner;
 
 /**
  * Ensures that Cipher.getInstance is not called with AES as the parameter.
  */
-public class CipherGetInstanceDetector extends Detector implements Detector.JavaScanner {
+public class CipherGetInstanceDetector extends Detector implements UastScanner {
     public static final Issue ISSUE = Issue.create(
             "GetInstance", //$NON-NLS-1$
             "Cipher.getInstance with ECB",
@@ -69,59 +64,56 @@ public class CipherGetInstanceDetector extends Detector implements Detector.Java
         return Speed.FAST;
     }
 
-    // ---- Implements JavaScanner ----
+    // ---- Implements UastScanner ----
 
-    @Nullable
     @Override
-    public List<String> getApplicableMethodNames() {
+    public List<String> getApplicableFunctionNames() {
         return Collections.singletonList(GET_INSTANCE);
     }
 
     @Override
-    public void visitMethod(@NonNull JavaContext context, @Nullable AstVisitor visitor,
-            @NonNull MethodInvocation node) {
-        // Ignore if the method doesn't fit our description.
-        JavaParser.ResolvedNode resolved = context.resolve(node);
-        if (!(resolved instanceof JavaParser.ResolvedMethod)) {
+    public void visitFunctionCall(UastAndroidContext context, UCallExpression node) {
+        UClass containingClass = UastUtils.getContainingClass(node);
+        if (containingClass == null || !containingClass.isSubclassOf(CIPHER)) {
             return;
         }
-        JavaParser.ResolvedMethod method = (JavaParser.ResolvedMethod) resolved;
-        if (!method.getContainingClass().isSubclassOf(CIPHER, false)) {
-            return;
-        }
-        StrictListAccessor<Expression, MethodInvocation> argumentList = node.astArguments();
-        if (argumentList != null && argumentList.size() == 1) {
-            Expression expression = argumentList.first();
-            if (expression instanceof StringLiteral) {
-                StringLiteral argument = (StringLiteral)expression;
-                String parameter = argument.astValue();
+
+        List<UExpression> argumentList = node.getValueArguments();
+        if (argumentList.size() == 1) {
+            UExpression expression = argumentList.get(0);
+            if (expression instanceof ULiteralExpression) {
+                ULiteralExpression argument = (ULiteralExpression)expression;
+                String parameter = argument.getText();
                 checkParameter(context, node, argument, parameter, false);
-            } else {
-                JavaParser.ResolvedNode resolve = context.resolve(expression);
-                if (resolve instanceof JavaParser.ResolvedField) {
-                    JavaParser.ResolvedField field = (JavaParser.ResolvedField) resolve;
-                    Object value = field.getValue();
-                    if (value instanceof String) {
-                        checkParameter(context, node, expression, (String)value, true);
+            } else if (expression instanceof UResolvable) {
+                UDeclaration declaration = ((UResolvable)expression).resolve(context);
+                if (declaration instanceof UVariable) {
+                    UVariable field = (UVariable) declaration;
+                    UExpression initializer = field.getInitializer();
+                    if (initializer != null) {
+                        Object value = initializer.evaluate();
+                        if (value instanceof String) {
+                            checkParameter(context, node, expression, (String)value, true);
+                        }
                     }
                 }
             }
         }
     }
 
-    private static void checkParameter(@NonNull JavaContext context,
-            @NonNull MethodInvocation call, @NonNull Node node, @NonNull String value,
-            boolean includeValue) {
+    private static void checkParameter(@NonNull UastAndroidContext context,
+                                       @NonNull UCallExpression call, @NonNull UExpression arg, @NonNull String value,
+                                       boolean includeValue) {
         if (ALGORITHM_ONLY.contains(value)) {
             String message = "`Cipher.getInstance` should not be called without setting the"
                     + " encryption mode and padding";
-            context.report(ISSUE, call, context.getLocation(node), message);
+            context.report(ISSUE, call, UastAndroidUtils.getLocation(arg), message);
         } else if (value.contains(ECB)) {
             String message = "ECB encryption mode should not be used";
             if (includeValue) {
                 message += " (was \"" + value + "\")";
             }
-            context.report(ISSUE, call, context.getLocation(node), message);
+            context.report(ISSUE, call, UastAndroidUtils.getLocation(arg), message);
         }
     }
 }

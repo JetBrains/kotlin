@@ -14,53 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.client.api;
-
-import static com.android.SdkConstants.ABSOLUTE_LAYOUT;
-import static com.android.SdkConstants.ABS_LIST_VIEW;
-import static com.android.SdkConstants.ABS_SEEK_BAR;
-import static com.android.SdkConstants.ABS_SPINNER;
-import static com.android.SdkConstants.ADAPTER_VIEW;
-import static com.android.SdkConstants.AUTO_COMPLETE_TEXT_VIEW;
-import static com.android.SdkConstants.BUTTON;
-import static com.android.SdkConstants.CHECKABLE;
-import static com.android.SdkConstants.CHECKED_TEXT_VIEW;
-import static com.android.SdkConstants.CHECK_BOX;
-import static com.android.SdkConstants.COMPOUND_BUTTON;
-import static com.android.SdkConstants.EDIT_TEXT;
-import static com.android.SdkConstants.EXPANDABLE_LIST_VIEW;
-import static com.android.SdkConstants.FRAME_LAYOUT;
-import static com.android.SdkConstants.GALLERY;
-import static com.android.SdkConstants.GRID_VIEW;
-import static com.android.SdkConstants.HORIZONTAL_SCROLL_VIEW;
-import static com.android.SdkConstants.IMAGE_BUTTON;
-import static com.android.SdkConstants.IMAGE_VIEW;
-import static com.android.SdkConstants.LINEAR_LAYOUT;
-import static com.android.SdkConstants.LIST_VIEW;
-import static com.android.SdkConstants.MULTI_AUTO_COMPLETE_TEXT_VIEW;
-import static com.android.SdkConstants.PROGRESS_BAR;
-import static com.android.SdkConstants.RADIO_BUTTON;
-import static com.android.SdkConstants.RADIO_GROUP;
-import static com.android.SdkConstants.RELATIVE_LAYOUT;
-import static com.android.SdkConstants.SCROLL_VIEW;
-import static com.android.SdkConstants.SEEK_BAR;
-import static com.android.SdkConstants.SPINNER;
-import static com.android.SdkConstants.SURFACE_VIEW;
-import static com.android.SdkConstants.SWITCH;
-import static com.android.SdkConstants.TABLE_LAYOUT;
-import static com.android.SdkConstants.TABLE_ROW;
-import static com.android.SdkConstants.TAB_HOST;
-import static com.android.SdkConstants.TAB_WIDGET;
-import static com.android.SdkConstants.TEXT_VIEW;
-import static com.android.SdkConstants.TOGGLE_BUTTON;
-import static com.android.SdkConstants.VIEW;
-import static com.android.SdkConstants.VIEW_ANIMATOR;
-import static com.android.SdkConstants.VIEW_GROUP;
-import static com.android.SdkConstants.VIEW_PKG_PREFIX;
-import static com.android.SdkConstants.VIEW_STUB;
-import static com.android.SdkConstants.VIEW_SWITCHER;
-import static com.android.SdkConstants.WEB_VIEW;
-import static com.android.SdkConstants.WIDGET_PKG_PREFIX;
+package com.android.tools.klint.client.api;
 
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
@@ -71,6 +25,8 @@ import com.google.common.collect.Sets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
+import static com.android.SdkConstants.*;
 
 /**
  * Default simple implementation of an {@link SdkInfo}

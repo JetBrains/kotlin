@@ -14,33 +14,20 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.detector.api;
-
-import static com.android.SdkConstants.CONSTRUCTOR_NAME;
-import static com.android.SdkConstants.DOT_CLASS;
-import static com.android.SdkConstants.DOT_JAVA;
-import static com.android.tools.lint.detector.api.Location.SearchDirection.BACKWARD;
-import static com.android.tools.lint.detector.api.Location.SearchDirection.EOL_BACKWARD;
-import static com.android.tools.lint.detector.api.Location.SearchDirection.FORWARD;
+package com.android.tools.klint.detector.api;
 
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
-import com.android.tools.lint.client.api.LintDriver;
-import com.android.tools.lint.detector.api.Location.SearchDirection;
-import com.android.tools.lint.detector.api.Location.SearchHints;
+import com.android.tools.klint.client.api.LintDriver;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Splitter;
-
 import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldNode;
-import org.objectweb.asm.tree.LineNumberNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.*;
 
 import java.io.File;
 import java.util.List;
+
+import static com.android.SdkConstants.*;
 
 /**
  * A {@link Context} used when checking .class files.
@@ -261,7 +248,7 @@ public class ClassContext extends Context {
      */
     @NonNull
     public Location getLocationForLine(int line, @Nullable String patternStart,
-            @Nullable String patternEnd, @Nullable SearchHints hints) {
+            @Nullable String patternEnd, @Nullable Location.SearchHints hints) {
         File sourceFile = getSourceFile();
         if (sourceFile != null) {
             // ASM line numbers are 1-based, and lint line numbers are 0-based
@@ -515,7 +502,7 @@ public class ClassContext extends Context {
         }
 
         return getLocationForLine(findLineNumber(classNode), pattern, null,
-                SearchHints.create(BACKWARD).matchJavaSymbol());
+                Location.SearchHints.create(Location.SearchDirection.BACKWARD).matchJavaSymbol());
     }
 
     @Nullable
@@ -556,21 +543,21 @@ public class ClassContext extends Context {
         // to find a method, look up the corresponding line number then search
         // around it for a suitable tag, such as the class name.
         String pattern;
-        SearchDirection searchMode;
+        Location.SearchDirection searchMode;
         if (methodNode.name.equals(CONSTRUCTOR_NAME)) {
-            searchMode = EOL_BACKWARD;
+            searchMode = Location.SearchDirection.EOL_BACKWARD;
             if (isAnonymousClass(classNode.name)) {
                 pattern = classNode.superName.substring(classNode.superName.lastIndexOf('/') + 1);
             } else {
                 pattern = classNode.name.substring(classNode.name.lastIndexOf('$') + 1);
             }
         } else {
-            searchMode = BACKWARD;
+            searchMode = Location.SearchDirection.BACKWARD;
             pattern = methodNode.name;
         }
 
         return getLocationForLine(findLineNumber(methodNode), pattern, null,
-                SearchHints.create(searchMode).matchJavaSymbol());
+                Location.SearchHints.create(searchMode).matchJavaSymbol());
     }
 
     /**
@@ -582,7 +569,7 @@ public class ClassContext extends Context {
      */
     @NonNull
     public Location getLocation(@NonNull AbstractInsnNode instruction) {
-        SearchHints hints = SearchHints.create(FORWARD).matchJavaSymbol();
+        Location.SearchHints hints = Location.SearchHints.create(Location.SearchDirection.FORWARD).matchJavaSymbol();
         String pattern = null;
         if (instruction instanceof MethodInsnNode) {
             MethodInsnNode call = (MethodInsnNode) instruction;

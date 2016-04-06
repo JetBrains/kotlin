@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jetbrains.android.inspections.lint;
+package org.jetbrains.android.inspections.klint;
 
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
-import com.android.tools.lint.client.api.LintRequest;
-import com.android.tools.lint.detector.api.Scope;
+import com.android.tools.klint.client.api.LintRequest;
+import com.android.tools.klint.detector.api.Scope;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
@@ -35,7 +35,7 @@ public class IntellijLintRequest extends LintRequest {
   @NonNull private final List<Module> myModules;
   @NonNull private final IntellijLintClient mLintClient;
   @Nullable private final List<VirtualFile> myFileList;
-  @Nullable private com.android.tools.lint.detector.api.Project myMainProject;
+  @Nullable private com.android.tools.klint.detector.api.Project myMainProject;
   private final boolean myIncremental;
 
   /**
@@ -68,13 +68,13 @@ public class IntellijLintRequest extends LintRequest {
   @Override
   public EnumSet<Scope> getScope() {
     if (mScope == null) {
-      Collection<com.android.tools.lint.detector.api.Project> projects = getProjects();
+      Collection<com.android.tools.klint.detector.api.Project> projects = getProjects();
       if (projects != null) {
         mScope = Scope.infer(projects);
 
         //noinspection ConstantConditions
-        if (!IntellijLintProject.SUPPORT_CLASS_FILES && (mScope.contains(Scope.CLASS_FILE) || mScope.contains(Scope.ALL_CLASS_FILES)
-                                                         || mScope.contains(Scope.JAVA_LIBRARIES))) {
+        if (!org.jetbrains.android.inspections.klint.IntellijLintProject.SUPPORT_CLASS_FILES && (mScope.contains(Scope.CLASS_FILE) || mScope.contains(Scope.ALL_CLASS_FILES)
+                                                                                                 || mScope.contains(Scope.JAVA_LIBRARIES))) {
           mScope = EnumSet.copyOf(mScope); // make mutable
           // Can't run class file based checks
           mScope.remove(Scope.CLASS_FILE);
@@ -89,20 +89,20 @@ public class IntellijLintRequest extends LintRequest {
 
   @Nullable
   @Override
-  public Collection<com.android.tools.lint.detector.api.Project> getProjects() {
+  public Collection<com.android.tools.klint.detector.api.Project> getProjects() {
     if (mProjects == null) {
       if (myIncremental && myFileList != null && myFileList.size() == 1 && myModules.size() == 1) {
-        Pair<com.android.tools.lint.detector.api.Project,com.android.tools.lint.detector.api.Project> pair =
-          IntellijLintProject.createForSingleFile(mLintClient, myFileList.get(0), myModules.get(0));
+        Pair<com.android.tools.klint.detector.api.Project, com.android.tools.klint.detector.api.Project> pair =
+          org.jetbrains.android.inspections.klint.IntellijLintProject.createForSingleFile(mLintClient, myFileList.get(0), myModules.get(0));
         mProjects = pair.first != null ? Collections.singletonList(pair.first)
-                                       : Collections.<com.android.tools.lint.detector.api.Project>emptyList();
+                                       : Collections.<com.android.tools.klint.detector.api.Project>emptyList();
         myMainProject = pair.second;
       } else if (!myModules.isEmpty()) {
         // Make one project for each module, mark each one as a library,
         // and add projects for the gradle libraries and set error reporting to
         // false on those
         //mProjects = computeProjects()
-        mProjects = IntellijLintProject.create(mLintClient, myFileList, myModules.toArray(new Module[myModules.size()]));
+        mProjects = org.jetbrains.android.inspections.klint.IntellijLintProject.create(mLintClient, myFileList, myModules.toArray(new Module[myModules.size()]));
       } else {
         mProjects = super.getProjects();
       }
@@ -113,7 +113,7 @@ public class IntellijLintRequest extends LintRequest {
 
   @NonNull
   @Override
-  public com.android.tools.lint.detector.api.Project getMainProject(@NonNull com.android.tools.lint.detector.api.Project project) {
+  public com.android.tools.klint.detector.api.Project getMainProject(@NonNull com.android.tools.klint.detector.api.Project project) {
     if (myMainProject != null) {
       return myMainProject;
     }

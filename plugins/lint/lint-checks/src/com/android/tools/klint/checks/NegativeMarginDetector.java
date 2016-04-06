@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
 import static com.android.SdkConstants.ATTR_LAYOUT_MARGIN;
 import static com.android.SdkConstants.ATTR_LAYOUT_MARGIN_BOTTOM;
@@ -38,17 +38,17 @@ import com.android.ide.common.res2.ResourceFile;
 import com.android.ide.common.res2.ResourceItem;
 import com.android.ide.common.resources.ResourceUrl;
 import com.android.resources.ResourceFolderType;
-import com.android.tools.lint.client.api.LintClient;
-import com.android.tools.lint.detector.api.Category;
-import com.android.tools.lint.detector.api.Implementation;
-import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.LayoutDetector;
-import com.android.tools.lint.detector.api.Location;
-import com.android.tools.lint.detector.api.Project;
-import com.android.tools.lint.detector.api.Scope;
-import com.android.tools.lint.detector.api.Severity;
-import com.android.tools.lint.detector.api.Speed;
-import com.android.tools.lint.detector.api.XmlContext;
+import com.android.tools.klint.client.api.LintClient;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.LayoutDetector;
+import com.android.tools.klint.detector.api.Location;
+import com.android.tools.klint.detector.api.Project;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
+import com.android.tools.klint.detector.api.Speed;
+import com.android.tools.klint.detector.api.XmlContext;
 
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;

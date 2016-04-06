@@ -14,25 +14,16 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.client.api;
+package com.android.tools.klint.client.api;
 
 import com.android.annotations.NonNull;
-import com.android.tools.lint.detector.api.ClassContext;
-import com.android.tools.lint.detector.api.Detector;
-import com.android.tools.lint.detector.api.Detector.ClassScanner;
+import com.android.tools.klint.detector.api.ClassContext;
+import com.android.tools.klint.detector.api.Detector;
+import com.android.tools.klint.detector.api.Detector.ClassScanner;
 import com.google.common.annotations.Beta;
+import org.objectweb.asm.tree.*;
 
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Specialized visitor for running detectors on a class object model.
@@ -90,9 +81,9 @@ class AsmVisitor {
             if (names != null) {
                 checkFullClass = false;
                 for (String element : names) {
-                    List<Detector.ClassScanner> list = mMethodNameToChecks.get(element);
+                    List<ClassScanner> list = mMethodNameToChecks.get(element);
                     if (list == null) {
-                        list = new ArrayList<Detector.ClassScanner>();
+                        list = new ArrayList<ClassScanner>();
                         mMethodNameToChecks.put(element, list);
                     }
                     list.add(scanner);
@@ -103,9 +94,9 @@ class AsmVisitor {
             if (owners != null) {
                 checkFullClass = false;
                 for (String element : owners) {
-                    List<Detector.ClassScanner> list = mMethodOwnerToChecks.get(element);
+                    List<ClassScanner> list = mMethodOwnerToChecks.get(element);
                     if (list == null) {
-                        list = new ArrayList<Detector.ClassScanner>();
+                        list = new ArrayList<ClassScanner>();
                         mMethodOwnerToChecks.put(element, list);
                     }
                     list.add(scanner);

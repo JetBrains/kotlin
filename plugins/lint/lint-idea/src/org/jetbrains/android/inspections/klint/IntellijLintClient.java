@@ -1,4 +1,20 @@
-package org.jetbrains.android.inspections.lint;
+/*
+ * Copyright 2010-2016 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.jetbrains.android.inspections.klint;
 
 import com.android.annotations.NonNull;
 import com.android.builder.model.AndroidProject;
@@ -12,9 +28,8 @@ import com.android.tools.idea.gradle.util.Projects;
 import com.android.tools.idea.rendering.AppResourceRepository;
 import com.android.tools.idea.rendering.LocalResourceRepository;
 import com.android.tools.idea.sdk.IdeSdks;
-import com.android.tools.lint.checks.ApiLookup;
-import com.android.tools.lint.client.api.*;
-import com.android.tools.lint.detector.api.*;
+import com.android.tools.klint.client.api.*;
+import com.android.tools.klint.checks.ApiLookup;
 import com.intellij.analysis.AnalysisScope;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
@@ -48,6 +63,7 @@ import org.jetbrains.android.sdk.AndroidSdkData;
 import org.jetbrains.android.sdk.AndroidSdkType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.uast.UastConverter;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,27 +74,31 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static com.android.tools.lint.detector.api.TextFormat.RAW;
+import static com.android.tools.klint.detector.api.TextFormat.RAW;
 
 /**
- * Implementation of the {@linkplain LintClient} API for executing lint within the IDE:
+ * Implementation of the {@linkplain com.android.tools.klint.client.api.LintClient} API for executing lint within the IDE:
  * reading files, reporting issues, logging errors, etc.
  */
-public class IntellijLintClient extends LintClient implements Disposable {
+public class IntellijLintClient extends com.android.tools.klint.client.api.LintClient implements Disposable {
   protected static final Logger LOG = Logger.getInstance("#org.jetbrains.android.inspections.IntellijLintClient");
 
   @NonNull protected Project myProject;
-  @Nullable protected Map<com.android.tools.lint.detector.api.Project, Module> myModuleMap;
+  @Nullable protected Map<com.android.tools.klint.detector.api.Project, Module> myModuleMap;
+
+  @NonNull
+  private List<UastConverter> myConverters;
 
   protected IntellijLintClient(@NonNull Project project) {
     myProject = project;
+    myConverters = LintLanguageExtension.getConverters(project);
   }
 
   /** Creates a lint client for batch inspections */
   public static IntellijLintClient forBatch(@NotNull Project project,
-                                            @NotNull Map<Issue, Map<File, List<ProblemData>>> problemMap,
+                                            @NotNull Map<com.android.tools.klint.detector.api.Issue, Map<File, List<org.jetbrains.android.inspections.klint.ProblemData>>> problemMap,
                                             @NotNull AnalysisScope scope,
-                                            @NotNull List<Issue> issues) {
+                                            @NotNull List<com.android.tools.klint.detector.api.Issue> issues) {
     return new BatchLintClient(project, problemMap, scope, issues);
   }
 
@@ -102,7 +122,7 @@ public class IntellijLintClient extends LintClient implements Disposable {
 
   @Nullable
   protected Module findModuleForLintProject(@NotNull Project project,
-                                            @NotNull com.android.tools.lint.detector.api.Project lintProject) {
+                                            @NotNull com.android.tools.klint.detector.api.Project lintProject) {
     if (myModuleMap != null) {
       Module module = myModuleMap.get(lintProject);
       if (module != null) {
@@ -114,12 +134,12 @@ public class IntellijLintClient extends LintClient implements Disposable {
     return vDir != null ? ModuleUtilCore.findModuleForFile(vDir, project) : null;
   }
 
-  void setModuleMap(@Nullable Map<com.android.tools.lint.detector.api.Project, Module> moduleMap) {
+  void setModuleMap(@Nullable Map<com.android.tools.klint.detector.api.Project, Module> moduleMap) {
     myModuleMap = moduleMap;
   }
 
   @Override
-  public Configuration getConfiguration(@NonNull com.android.tools.lint.detector.api.Project project) {
+  public com.android.tools.klint.client.api.Configuration getConfiguration(@NonNull com.android.tools.klint.detector.api.Project project) {
     if (project.isGradleProject() && project.isAndroidProject() && !project.isLibrary()) {
       AndroidProject model = project.getGradleProjectModel();
       if (model != null) {
@@ -127,30 +147,30 @@ public class IntellijLintClient extends LintClient implements Disposable {
           LintOptions lintOptions = model.getLintOptions();
           final Map<String, Integer> overrides = lintOptions.getSeverityOverrides();
           if (overrides != null && !overrides.isEmpty()) {
-            return new DefaultConfiguration(this, project, null) {
+            return new com.android.tools.klint.client.api.DefaultConfiguration(this, project, null) {
               @NonNull
               @Override
-              public Severity getSeverity(@NonNull Issue issue) {
+              public com.android.tools.klint.detector.api.Severity getSeverity(@NonNull com.android.tools.klint.detector.api.Issue issue) {
                 Integer severity = overrides.get(issue.getId());
                 if (severity != null) {
                   switch (severity.intValue()) {
                     case LintOptions.SEVERITY_FATAL:
-                      return Severity.FATAL;
+                      return com.android.tools.klint.detector.api.Severity.FATAL;
                     case LintOptions.SEVERITY_ERROR:
-                      return Severity.ERROR;
+                      return com.android.tools.klint.detector.api.Severity.ERROR;
                     case LintOptions.SEVERITY_WARNING:
-                      return Severity.WARNING;
+                      return com.android.tools.klint.detector.api.Severity.WARNING;
                     case LintOptions.SEVERITY_INFORMATIONAL:
-                      return Severity.INFORMATIONAL;
+                      return com.android.tools.klint.detector.api.Severity.INFORMATIONAL;
                     case LintOptions.SEVERITY_IGNORE:
                     default:
-                      return Severity.IGNORE;
+                      return com.android.tools.klint.detector.api.Severity.IGNORE;
                   }
                 }
 
                 // This is a LIST lookup. I should make this faster!
                 if (!getIssues().contains(issue)) {
-                  return Severity.IGNORE;
+                  return com.android.tools.klint.detector.api.Severity.IGNORE;
                 }
 
                 return super.getSeverity(issue);
@@ -162,25 +182,25 @@ public class IntellijLintClient extends LintClient implements Disposable {
         }
       }
     }
-    return new DefaultConfiguration(this, project, null) {
+    return new com.android.tools.klint.client.api.DefaultConfiguration(this, project, null) {
       @Override
-      public boolean isEnabled(@NonNull Issue issue) {
+      public boolean isEnabled(@NonNull com.android.tools.klint.detector.api.Issue issue) {
         return getIssues().contains(issue) && super.isEnabled(issue);
       }
     };
   }
 
   @Override
-  public void report(@NonNull Context context,
-                     @NonNull Issue issue,
-                     @NonNull Severity severity,
-                     @Nullable Location location,
+  public void report(@NonNull com.android.tools.klint.detector.api.Context context,
+                     @NonNull com.android.tools.klint.detector.api.Issue issue,
+                     @NonNull com.android.tools.klint.detector.api.Severity severity,
+                     @Nullable com.android.tools.klint.detector.api.Location location,
                      @NonNull String message,
-                     @NonNull TextFormat format) {
+                     @NonNull com.android.tools.klint.detector.api.TextFormat format) {
     assert false : message;
   }
 
-  @NonNull protected List<Issue> getIssues() {
+  @NonNull protected List<com.android.tools.klint.detector.api.Issue> getIssues() {
     return Collections.emptyList();
   }
 
@@ -194,9 +214,9 @@ public class IntellijLintClient extends LintClient implements Disposable {
    * linked location, and so on.This is necessary since IntelliJ problems don't have secondary locations; instead, we create one
    * problem for each location associated with the lint error.
    */
-  protected void reportSecondary(@NonNull Context context, @NonNull Issue issue, @NonNull Severity severity, @NonNull Location location,
-                                 @NonNull String message, @NonNull TextFormat format) {
-    Location secondary = location.getSecondary();
+  protected void reportSecondary(@NonNull com.android.tools.klint.detector.api.Context context, @NonNull com.android.tools.klint.detector.api.Issue issue, @NonNull com.android.tools.klint.detector.api.Severity severity, @NonNull com.android.tools.klint.detector.api.Location location,
+                                 @NonNull String message, @NonNull com.android.tools.klint.detector.api.TextFormat format) {
+    com.android.tools.klint.detector.api.Location secondary = location.getSecondary();
     if (secondary != null) {
       if (secondary.getMessage() != null) {
         message = message + " (" + secondary.getMessage() + ")";
@@ -206,14 +226,14 @@ public class IntellijLintClient extends LintClient implements Disposable {
   }
 
   @Override
-  public void log(@NonNull Severity severity, @Nullable Throwable exception, @Nullable String format, @Nullable Object... args) {
-    if (severity == Severity.ERROR || severity == Severity.FATAL) {
+  public void log(@NonNull com.android.tools.klint.detector.api.Severity severity, @Nullable Throwable exception, @Nullable String format, @Nullable Object... args) {
+    if (severity == com.android.tools.klint.detector.api.Severity.ERROR || severity == com.android.tools.klint.detector.api.Severity.FATAL) {
       if (format != null) {
         LOG.error(String.format(format, args), exception);
       } else if (exception != null) {
         LOG.error(exception);
       }
-    } else if (severity == Severity.WARNING) {
+    } else if (severity == com.android.tools.klint.detector.api.Severity.WARNING) {
       if (format != null) {
         LOG.warn(String.format(format, args), exception);
       } else if (exception != null) {
@@ -229,26 +249,20 @@ public class IntellijLintClient extends LintClient implements Disposable {
   }
 
   @Override
-  public XmlParser getXmlParser() {
+  public com.android.tools.klint.client.api.XmlParser getXmlParser() {
     return new DomPsiParser(this);
-  }
-
-  @Nullable
-  @Override
-  public JavaParser getJavaParser(@Nullable com.android.tools.lint.detector.api.Project project) {
-    return new LombokPsiParser(this);
   }
 
   @NonNull
   @Override
-  public List<File> getJavaClassFolders(@NonNull com.android.tools.lint.detector.api.Project project) {
+  public List<File> getJavaClassFolders(@NonNull com.android.tools.klint.detector.api.Project project) {
     // todo: implement when class files checking detectors will be available
     return Collections.emptyList();
   }
 
   @NonNull
   @Override
-  public List<File> getJavaLibraries(@NonNull com.android.tools.lint.detector.api.Project project) {
+  public List<File> getJavaLibraries(@NonNull com.android.tools.klint.detector.api.Project project) {
     // todo: implement
     return Collections.emptyList();
   }
@@ -364,13 +378,23 @@ public class IntellijLintClient extends LintClient implements Disposable {
   }
 
   @Override
-  public boolean isGradleProject(com.android.tools.lint.detector.api.Project project) {
+  public boolean isGradleProject(com.android.tools.klint.detector.api.Project project) {
     Module module = getModule();
     if (module != null) {
       AndroidFacet facet = AndroidFacet.getInstance(module);
       return facet != null && facet.isGradleProject();
     }
     return Projects.isGradleProject(myProject);
+  }
+
+  @Override
+  public Project getProject() {
+    return myProject;
+  }
+
+  @Override
+  public List<UastConverter> getConverters() {
+    return myConverters;
   }
 
   // Overridden such that lint doesn't complain about missing a bin dir property in the event
@@ -429,35 +453,35 @@ public class IntellijLintClient extends LintClient implements Disposable {
 
     @NonNull
     @Override
-    protected List<Issue> getIssues() {
+    protected List<com.android.tools.klint.detector.api.Issue> getIssues() {
       return myState.getIssues();
     }
 
     @Override
-    public void report(@NonNull Context context,
-                       @NonNull Issue issue,
-                       @NonNull Severity severity,
-                       @Nullable Location location,
+    public void report(@NonNull com.android.tools.klint.detector.api.Context context,
+                       @NonNull com.android.tools.klint.detector.api.Issue issue,
+                       @NonNull com.android.tools.klint.detector.api.Severity severity,
+                       @Nullable com.android.tools.klint.detector.api.Location location,
                        @NonNull String message,
-                       @NonNull TextFormat format) {
+                       @NonNull com.android.tools.klint.detector.api.TextFormat format) {
       if (location != null) {
         final File file = location.getFile();
         final VirtualFile vFile = LocalFileSystem.getInstance().findFileByIoFile(file);
 
         if (myState.getMainFile().equals(vFile)) {
-          final Position start = location.getStart();
-          final Position end = location.getEnd();
+          final com.android.tools.klint.detector.api.Position start = location.getStart();
+          final com.android.tools.klint.detector.api.Position end = location.getEnd();
 
           final TextRange textRange = start != null && end != null && start.getOffset() <= end.getOffset()
                                       ? new TextRange(start.getOffset(), end.getOffset())
                                       : TextRange.EMPTY_RANGE;
 
-          Severity configuredSeverity = severity != issue.getDefaultSeverity() ? severity : null;
+          com.android.tools.klint.detector.api.Severity configuredSeverity = severity != issue.getDefaultSeverity() ? severity : null;
           message = format.convertTo(message, RAW);
-          myState.getProblems().add(new ProblemData(issue, message, textRange, configuredSeverity));
+          myState.getProblems().add(new org.jetbrains.android.inspections.klint.ProblemData(issue, message, textRange, configuredSeverity));
         }
 
-        Location secondary = location.getSecondary();
+        com.android.tools.klint.detector.api.Location secondary = location.getSecondary();
         if (secondary != null && myState.getMainFile().equals(LocalFileSystem.getInstance().findFileByIoFile(secondary.getFile()))) {
           reportSecondary(context, issue, severity, location, message, format);
         }
@@ -521,7 +545,7 @@ public class IntellijLintClient extends LintClient implements Disposable {
 
     @NonNull
     @Override
-    public List<File> getJavaSourceFolders(@NonNull com.android.tools.lint.detector.api.Project project) {
+    public List<File> getJavaSourceFolders(@NonNull com.android.tools.klint.detector.api.Project project) {
       final VirtualFile[] sourceRoots = ModuleRootManager.getInstance(myState.getModule()).getSourceRoots(false);
       final List<File> result = new ArrayList<File>(sourceRoots.length);
 
@@ -533,10 +557,10 @@ public class IntellijLintClient extends LintClient implements Disposable {
 
     @NonNull
     @Override
-    public List<File> getResourceFolders(@NonNull com.android.tools.lint.detector.api.Project project) {
+    public List<File> getResourceFolders(@NonNull com.android.tools.klint.detector.api.Project project) {
       AndroidFacet facet = AndroidFacet.getInstance(myState.getModule());
       if (facet != null) {
-        return IntellijLintUtils.getResourceDirectories(facet);
+        return org.jetbrains.android.inspections.klint.IntellijLintUtils.getResourceDirectories(facet);
       }
       return super.getResourceFolders(project);
     }
@@ -544,14 +568,14 @@ public class IntellijLintClient extends LintClient implements Disposable {
 
   /** Lint client used for batch operations */
   private static class BatchLintClient extends IntellijLintClient {
-    private final Map<Issue, Map<File, List<ProblemData>>> myProblemMap;
+    private final Map<com.android.tools.klint.detector.api.Issue, Map<File, List<org.jetbrains.android.inspections.klint.ProblemData>>> myProblemMap;
     private final AnalysisScope myScope;
-    private final List<Issue> myIssues;
+    private final List<com.android.tools.klint.detector.api.Issue> myIssues;
 
     public BatchLintClient(@NotNull Project project,
-                           @NotNull Map<Issue, Map<File, List<ProblemData>>> problemMap,
+                           @NotNull Map<com.android.tools.klint.detector.api.Issue, Map<File, List<org.jetbrains.android.inspections.klint.ProblemData>>> problemMap,
                            @NotNull AnalysisScope scope,
-                           @NotNull List<Issue> issues) {
+                           @NotNull List<com.android.tools.klint.detector.api.Issue> issues) {
       super(project);
       myProblemMap = problemMap;
       myScope = scope;
@@ -567,17 +591,17 @@ public class IntellijLintClient extends LintClient implements Disposable {
 
     @NonNull
     @Override
-    protected List<Issue> getIssues() {
+    protected List<com.android.tools.klint.detector.api.Issue> getIssues() {
       return myIssues;
     }
 
     @Override
-    public void report(@NonNull Context context,
-                       @NonNull Issue issue,
-                       @NonNull Severity severity,
-                       @Nullable Location location,
+    public void report(@NonNull com.android.tools.klint.detector.api.Context context,
+                       @NonNull com.android.tools.klint.detector.api.Issue issue,
+                       @NonNull com.android.tools.klint.detector.api.Severity severity,
+                       @Nullable com.android.tools.klint.detector.api.Location location,
                        @NonNull String message,
-                       @NonNull TextFormat format) {
+                       @NonNull com.android.tools.klint.detector.api.TextFormat format) {
       VirtualFile vFile = null;
       File file = null;
 
@@ -607,7 +631,7 @@ public class IntellijLintClient extends LintClient implements Disposable {
         if (myScope.getScopeType() == AnalysisScope.PROJECT) {
           inScope = true;
         } else if (myScope.getScopeType() == AnalysisScope.MODULE ||
-          myScope.getScopeType() == AnalysisScope.MODULES) {
+                   myScope.getScopeType() == AnalysisScope.MODULES) {
           final Module module = findModuleForLintProject(myProject, context.getProject());
           if (module != null && myScope.containsModule(module)) {
             inScope = true;
@@ -618,31 +642,31 @@ public class IntellijLintClient extends LintClient implements Disposable {
       if (inScope) {
         file = new File(PathUtil.getCanonicalPath(file.getPath()));
 
-        Map<File, List<ProblemData>> file2ProblemList = myProblemMap.get(issue);
+        Map<File, List<org.jetbrains.android.inspections.klint.ProblemData>> file2ProblemList = myProblemMap.get(issue);
         if (file2ProblemList == null) {
-          file2ProblemList = new HashMap<File, List<ProblemData>>();
+          file2ProblemList = new HashMap<File, List<org.jetbrains.android.inspections.klint.ProblemData>>();
           myProblemMap.put(issue, file2ProblemList);
         }
 
-        List<ProblemData> problemList = file2ProblemList.get(file);
+        List<org.jetbrains.android.inspections.klint.ProblemData> problemList = file2ProblemList.get(file);
         if (problemList == null) {
-          problemList = new ArrayList<ProblemData>();
+          problemList = new ArrayList<org.jetbrains.android.inspections.klint.ProblemData>();
           file2ProblemList.put(file, problemList);
         }
 
         TextRange textRange = TextRange.EMPTY_RANGE;
 
         if (location != null) {
-          final Position start = location.getStart();
-          final Position end = location.getEnd();
+          final com.android.tools.klint.detector.api.Position start = location.getStart();
+          final com.android.tools.klint.detector.api.Position end = location.getEnd();
 
           if (start != null && end != null && start.getOffset() <= end.getOffset()) {
             textRange = new TextRange(start.getOffset(), end.getOffset());
           }
         }
-        Severity configuredSeverity = severity != issue.getDefaultSeverity() ? severity : null;
+        com.android.tools.klint.detector.api.Severity configuredSeverity = severity != issue.getDefaultSeverity() ? severity : null;
         message = format.convertTo(message, RAW);
-        problemList.add(new ProblemData(issue, message, textRange, configuredSeverity));
+        problemList.add(new org.jetbrains.android.inspections.klint.ProblemData(issue, message, textRange, configuredSeverity));
 
         if (location != null && location.getSecondary() != null) {
           reportSecondary(context, issue, severity, location, message, format);
@@ -652,7 +676,7 @@ public class IntellijLintClient extends LintClient implements Disposable {
 
     @NonNull
     @Override
-    public List<File> getJavaSourceFolders(@NonNull com.android.tools.lint.detector.api.Project project) {
+    public List<File> getJavaSourceFolders(@NonNull com.android.tools.klint.detector.api.Project project) {
       final Module module = findModuleForLintProject(myProject, project);
       if (module == null) {
         return Collections.emptyList();
@@ -668,12 +692,12 @@ public class IntellijLintClient extends LintClient implements Disposable {
 
     @NonNull
     @Override
-    public List<File> getResourceFolders(@NonNull com.android.tools.lint.detector.api.Project project) {
+    public List<File> getResourceFolders(@NonNull com.android.tools.klint.detector.api.Project project) {
       final Module module = findModuleForLintProject(myProject, project);
       if (module != null) {
         AndroidFacet facet = AndroidFacet.getInstance(module);
         if (facet != null) {
-          return IntellijLintUtils.getResourceDirectories(facet);
+          return org.jetbrains.android.inspections.klint.IntellijLintUtils.getResourceDirectories(facet);
         }
       }
       return super.getResourceFolders(project);
@@ -692,7 +716,7 @@ public class IntellijLintClient extends LintClient implements Disposable {
 
   @Nullable
   @Override
-  public AbstractResourceRepository getProjectResources(com.android.tools.lint.detector.api.Project project, boolean includeDependencies) {
+  public AbstractResourceRepository getProjectResources(com.android.tools.klint.detector.api.Project project, boolean includeDependencies) {
     final Module module = findModuleForLintProject(myProject, project);
     if (module != null) {
       AndroidFacet facet = AndroidFacet.getInstance(module);
@@ -712,7 +736,7 @@ public class IntellijLintClient extends LintClient implements Disposable {
 
   @NonNull
   @Override
-  public Location.Handle createResourceItemHandle(@NonNull ResourceItem item) {
+  public com.android.tools.klint.detector.api.Location.Handle createResourceItemHandle(@NonNull ResourceItem item) {
     XmlTag tag = LocalResourceRepository.getItemTag(myProject, item);
     if (tag != null) {
       ResourceFile source = item.getSource();
@@ -738,7 +762,7 @@ public class IntellijLintClient extends LintClient implements Disposable {
     return super.getResourceVisibilityProvider();
   }
 
-  private static class LocationHandle implements Location.Handle, Computable<Location> {
+  private static class LocationHandle implements com.android.tools.klint.detector.api.Location.Handle, Computable<com.android.tools.klint.detector.api.Location> {
     private final File myFile;
     private final XmlElement myNode;
     private Object myClientData;
@@ -750,7 +774,7 @@ public class IntellijLintClient extends LintClient implements Disposable {
 
     @NonNull
     @Override
-    public Location resolve() {
+    public com.android.tools.klint.detector.api.Location resolve() {
       if (!ApplicationManager.getApplication().isReadAccessAllowed()) {
         return ApplicationManager.getApplication().runReadAction(this);
       }
@@ -767,13 +791,13 @@ public class IntellijLintClient extends LintClient implements Disposable {
         }
       }
 
-      Position start = new DefaultPosition(-1, -1, textRange.getStartOffset());
-      Position end = new DefaultPosition(-1, -1, textRange.getEndOffset());
-      return Location.create(myFile, start, end);
+      com.android.tools.klint.detector.api.Position start = new com.android.tools.klint.detector.api.DefaultPosition(-1, -1, textRange.getStartOffset());
+      com.android.tools.klint.detector.api.Position end = new com.android.tools.klint.detector.api.DefaultPosition(-1, -1, textRange.getEndOffset());
+      return com.android.tools.klint.detector.api.Location.create(myFile, start, end);
     }
 
     @Override
-    public Location compute() {
+    public com.android.tools.klint.detector.api.Location compute() {
       return resolve();
     }
 

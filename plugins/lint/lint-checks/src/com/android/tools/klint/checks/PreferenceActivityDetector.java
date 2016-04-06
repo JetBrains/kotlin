@@ -14,29 +14,30 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
 import static com.android.SdkConstants.ANDROID_URI;
 import static com.android.SdkConstants.ATTR_NAME;
 import static com.android.SdkConstants.ATTR_PACKAGE;
 import static com.android.SdkConstants.TAG_ACTIVITY;
-import static com.android.tools.lint.client.api.JavaParser.TYPE_STRING;
+import static com.android.tools.klint.client.api.JavaParser.TYPE_STRING;
 
 import com.android.annotations.NonNull;
-import com.android.annotations.Nullable;
-import com.android.tools.lint.client.api.JavaParser.ResolvedClass;
-import com.android.tools.lint.client.api.JavaParser.ResolvedMethod;
-import com.android.tools.lint.detector.api.Category;
-import com.android.tools.lint.detector.api.Detector;
-import com.android.tools.lint.detector.api.Implementation;
-import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.JavaContext;
-import com.android.tools.lint.detector.api.Location;
-import com.android.tools.lint.detector.api.Scope;
-import com.android.tools.lint.detector.api.Severity;
-import com.android.tools.lint.detector.api.Speed;
-import com.android.tools.lint.detector.api.XmlContext;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.Detector;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.Location;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
+import com.android.tools.klint.detector.api.Speed;
+import com.android.tools.klint.detector.api.XmlContext;
 
+import org.jetbrains.uast.UClass;
+import org.jetbrains.uast.UFunction;
+import org.jetbrains.uast.UastUtils;
+import org.jetbrains.uast.check.UastAndroidContext;
+import org.jetbrains.uast.check.UastScanner;
 import org.w3c.dom.Element;
 
 import java.util.Collection;
@@ -46,14 +47,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import lombok.ast.ClassDeclaration;
-import lombok.ast.Node;
-
 /**
  * Ensures that PreferenceActivity and its subclasses are never exported.
  */
 public class PreferenceActivityDetector extends Detector
-        implements Detector.XmlScanner, Detector.JavaScanner {
+        implements Detector.XmlScanner, UastScanner {
     public static final Issue ISSUE = Issue.create(
             "ExportedPreferenceActivity", //$NON-NLS-1$
             "PreferenceActivity should not be exported",
@@ -64,7 +62,7 @@ public class PreferenceActivityDetector extends Detector
             Severity.WARNING,
             new Implementation(
                     PreferenceActivityDetector.class,
-                    EnumSet.of(Scope.MANIFEST, Scope.JAVA_FILE)))
+                    EnumSet.of(Scope.MANIFEST, Scope.SOURCE_FILE)))
             .addMoreInfo("http://securityintelligence.com/"
                     + "new-vulnerability-android-framework-fragment-injection");
     private static final String PREFERENCE_ACTIVITY = "android.preference.PreferenceActivity"; //$NON-NLS-1$
@@ -122,45 +120,43 @@ public class PreferenceActivityDetector extends Detector
         return activityClassName;
     }
 
-    // ---- Implements JavaScanner ----
+    // ---- Implements UastScanner ----
 
-    @Nullable
+
     @Override
-    public List<String> applicableSuperClasses() {
+    public List<String> getApplicableSuperClasses() {
         return Collections.singletonList(PREFERENCE_ACTIVITY);
     }
 
     @Override
-    public void checkClass(@NonNull JavaContext context, @Nullable ClassDeclaration node,
-            @NonNull Node declarationOrAnonymous, @NonNull ResolvedClass resolvedClass) {
-        if (!context.getProject().getReportIssues()) {
+    public void visitClass(UastAndroidContext context, UClass node) {
+        if (!context.getLintContext().getProject().getReportIssues()) {
             return;
         }
-        String className = resolvedClass.getName();
-        if (resolvedClass.isSubclassOf(PREFERENCE_ACTIVITY, false)
-                && mExportedActivities.containsKey(className)) {
+        String className = node.getName();
+        if (node.isSubclassOf(PREFERENCE_ACTIVITY)
+            && mExportedActivities.containsKey(className)) {
 
             // Ignore the issue if we target an API greater than 19 and the class in
             // question specifically overrides isValidFragment() and thus knowingly white-lists
             // valid fragments.
-            if (context.getMainProject().getTargetSdk() >= 19
-                    && overridesIsValidFragment(resolvedClass)) {
+            if (context.getLintContext().getMainProject().getTargetSdk() >= 19
+                && overridesIsValidFragment(node)) {
                 return;
             }
 
             String message = String.format(
-                    "`PreferenceActivity` subclass `%1$s` should not be exported",
-                    className);
-            context.report(ISSUE, mExportedActivities.get(className).resolve(), message);
+              "`PreferenceActivity` subclass `%1$s` should not be exported",
+              className);
+            context.report(ISSUE, node, mExportedActivities.get(className).resolve(), message);
         }
     }
 
-    private static boolean overridesIsValidFragment(ResolvedClass resolvedClass) {
-        Iterable<ResolvedMethod> resolvedMethods = resolvedClass.getMethods(IS_VALID_FRAGMENT,
-                false);
-        for (ResolvedMethod resolvedMethod : resolvedMethods) {
-            if (resolvedMethod.getArgumentCount() == 1
-                    && resolvedMethod.getArgumentType(0).getName().equals(TYPE_STRING)) {
+    private static boolean overridesIsValidFragment(UClass resolvedClass) {
+        List<UFunction> functions = UastUtils.findFunctions(resolvedClass, IS_VALID_FRAGMENT);
+        for (UFunction func : functions) {
+            if (func.getValueParameterCount() == 1
+                    && func.getValueParameters().get(0).getType().matchesFqName(TYPE_STRING)) {
                 return true;
             }
         }

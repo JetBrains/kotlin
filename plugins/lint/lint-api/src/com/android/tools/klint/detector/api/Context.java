@@ -14,25 +14,22 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.detector.api;
-
-import static com.android.SdkConstants.DOT_GRADLE;
-import static com.android.SdkConstants.DOT_JAVA;
-import static com.android.SdkConstants.DOT_XML;
-import static com.android.SdkConstants.SUPPRESS_ALL;
+package com.android.tools.klint.detector.api;
 
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
-import com.android.tools.lint.client.api.Configuration;
-import com.android.tools.lint.client.api.LintClient;
-import com.android.tools.lint.client.api.LintDriver;
-import com.android.tools.lint.client.api.SdkInfo;
+import com.android.tools.klint.client.api.Configuration;
+import com.android.tools.klint.client.api.LintClient;
+import com.android.tools.klint.client.api.LintDriver;
+import com.android.tools.klint.client.api.SdkInfo;
 import com.google.common.annotations.Beta;
 
 import java.io.File;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.android.SdkConstants.*;
 
 /**
  * Context passed to the detectors during an analysis run. It provides

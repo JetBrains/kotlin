@@ -14,13 +14,20 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
 import com.android.annotations.NonNull;
 import com.android.ide.common.resources.configuration.LocaleQualifier;
 import com.android.resources.ResourceFolderType;
-import com.android.tools.lint.checks.PluralsDatabase.Quantity;
-import com.android.tools.lint.detector.api.*;
+import com.android.tools.klint.checks.PluralsDatabase.Quantity;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.LintUtils;
+import com.android.tools.klint.detector.api.ResourceXmlDetector;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
+import com.android.tools.klint.detector.api.XmlContext;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -38,7 +45,8 @@ import static com.android.SdkConstants.*;
  * 53015: lint could report incorrect usage of Resource.getQuantityString
  */
 public class PluralsDetector extends ResourceXmlDetector {
-    private static final Implementation IMPLEMENTATION = new Implementation(
+    private static final Implementation
+            IMPLEMENTATION = new Implementation(
             PluralsDetector.class,
             Scope.RESOURCE_FILE_SCOPE);
 

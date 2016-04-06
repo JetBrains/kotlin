@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.android.resources.ResourceFolderType;
-import com.android.tools.lint.detector.api.Category;
-import com.android.tools.lint.detector.api.Detector.JavaScanner;
-import com.android.tools.lint.detector.api.Implementation;
-import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.ResourceXmlDetector;
-import com.android.tools.lint.detector.api.Scope;
-import com.android.tools.lint.detector.api.Severity;
-import com.android.tools.lint.detector.api.Speed;
-import com.android.tools.lint.detector.api.XmlContext;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.ResourceXmlDetector;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
+import com.android.tools.klint.detector.api.Speed;
+import com.android.tools.klint.detector.api.XmlContext;
 
+import org.jetbrains.uast.check.UastScanner;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -40,7 +40,7 @@ import java.util.Collections;
  * Check which makes sure NFC tech lists do not include spaces around {@code <tech>} values
  * since that's not handled correctly by the inflater
  */
-public class NfcTechListDetector extends ResourceXmlDetector implements JavaScanner {
+public class NfcTechListDetector extends ResourceXmlDetector implements UastScanner {
     /** The main issue discovered by this detector */
     public static final Issue ISSUE = Issue.create(
             "NfcTechWhitespace", //$NON-NLS-1$

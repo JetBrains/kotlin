@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.detector.api;
+package com.android.tools.klint.detector.api;
 
 import com.android.SdkConstants;
 import com.android.annotations.NonNull;
@@ -28,10 +28,10 @@ import com.android.resources.ResourceFolderType;
 import com.android.sdklib.AndroidVersion;
 import com.android.sdklib.IAndroidTarget;
 import com.android.sdklib.SdkVersionInfo;
-import com.android.tools.lint.client.api.CircularDependencyException;
-import com.android.tools.lint.client.api.Configuration;
-import com.android.tools.lint.client.api.LintClient;
-import com.android.tools.lint.client.api.SdkInfo;
+import com.android.tools.klint.client.api.CircularDependencyException;
+import com.android.tools.klint.client.api.Configuration;
+import com.android.tools.klint.client.api.LintClient;
+import com.android.tools.klint.client.api.SdkInfo;
 import com.google.common.annotations.Beta;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Charsets;

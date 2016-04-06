@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
 import static com.android.SdkConstants.CONSTRUCTOR_NAME;
 

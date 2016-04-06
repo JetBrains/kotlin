@@ -13,25 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jetbrains.android.inspections.lint;
+package org.jetbrains.android.inspections.klint;
 
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.android.ide.common.res2.AbstractResourceRepository;
 import com.android.ide.common.res2.ResourceItem;
 import com.android.tools.idea.rendering.LocalResourceRepository;
-import com.android.tools.lint.checks.ViewTypeDetector;
-import com.android.tools.lint.detector.api.Context;
-import com.android.tools.lint.detector.api.Implementation;
-import com.android.tools.lint.detector.api.Scope;
+import com.android.tools.klint.checks.ViewTypeDetector;
+import com.android.tools.klint.detector.api.Context;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Scope;
 
 import java.util.Collection;
 import java.util.Collections;
 
 public class IntellijViewTypeDetector extends ViewTypeDetector {
   static final Implementation IMPLEMENTATION = new Implementation(
-    IntellijViewTypeDetector.class,
-    Scope.JAVA_FILE_SCOPE);
+          IntellijViewTypeDetector.class,
+          Scope.JAVA_FILE_SCOPE);
 
   @Nullable
   @Override

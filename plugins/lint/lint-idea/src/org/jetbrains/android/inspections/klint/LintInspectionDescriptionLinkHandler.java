@@ -13,25 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jetbrains.android.inspections.lint;
+package org.jetbrains.android.inspections.klint;
 
-import com.android.tools.lint.checks.BuiltinIssueRegistry;
-import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.TextFormat;
+import com.android.tools.klint.checks.BuiltinIssueRegistry;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.TextFormat;
 import com.intellij.codeInsight.highlighting.TooltipLinkHandler;
-import com.intellij.codeInspection.InspectionProfile;
 import com.intellij.codeInspection.InspectionsBundle;
-import com.intellij.codeInspection.ex.InspectionToolWrapper;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.profile.codeInspection.InspectionProfileManager;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
 public class LintInspectionDescriptionLinkHandler extends TooltipLinkHandler {
-  private static final Logger LOG = Logger.getInstance("#org.jetbrains.android.inspections.lint.LintInspectionDescriptionLinkHandler");
+  private static final Logger LOG = Logger.getInstance("#org.jetbrains.android.inspections.klint.LintInspectionDescriptionLinkHandler");
 
   @Override
   public String getDescription(@NotNull final String refSuffix, @NotNull final Editor editor) {

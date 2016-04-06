@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
 import static com.android.SdkConstants.DOT_XML;
-import static com.android.tools.lint.detector.api.LintUtils.assertionsEnabled;
+import static com.android.tools.klint.detector.api.LintUtils.assertionsEnabled;
 
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.android.annotations.VisibleForTesting;
-import com.android.tools.lint.client.api.LintClient;
-import com.android.tools.lint.detector.api.LintUtils;
+import com.android.tools.klint.client.api.LintClient;
+import com.android.tools.klint.detector.api.LintUtils;
 import com.google.common.base.Charsets;
 import com.google.common.base.Splitter;
 import com.google.common.io.Files;

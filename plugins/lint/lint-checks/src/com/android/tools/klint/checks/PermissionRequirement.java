@@ -13,21 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
 
 import static com.android.SdkConstants.ATTR_VALUE;
-import static com.android.tools.lint.checks.SupportAnnotationDetector.ATTR_ALL_OF;
-import static com.android.tools.lint.checks.SupportAnnotationDetector.ATTR_ANY_OF;
-import static com.android.tools.lint.checks.SupportAnnotationDetector.ATTR_CONDITIONAL;
+import static com.android.tools.klint.checks.SupportAnnotationDetector.ATTR_ALL_OF;
+import static com.android.tools.klint.checks.SupportAnnotationDetector.ATTR_ANY_OF;
+import static com.android.tools.klint.checks.SupportAnnotationDetector.ATTR_CONDITIONAL;
 
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.android.annotations.VisibleForTesting;
-import com.android.tools.lint.client.api.JavaParser;
-import com.android.tools.lint.client.api.JavaParser.ResolvedAnnotation;
-import com.android.tools.lint.detector.api.Context;
-import com.android.tools.lint.detector.api.JavaContext;
+import com.android.tools.klint.detector.api.Context;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -37,13 +34,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
-import lombok.ast.BinaryExpression;
-import lombok.ast.BinaryOperator;
-import lombok.ast.Expression;
-import lombok.ast.ForwardingAstVisitor;
-import lombok.ast.Node;
-import lombok.ast.Select;
-import lombok.ast.VariableDefinitionEntry;
+import com.intellij.psi.JavaPsiFacade;
+import com.intellij.psi.PsiElementFactory;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.uast.*;
+import org.jetbrains.uast.check.UastAndroidContext;
+import org.jetbrains.uast.java.JavaConverter;
+import org.jetbrains.uast.visitor.UastVisitor;
 
 /**
  * A permission requirement is a boolean expression of permission names that a
@@ -53,7 +50,7 @@ public abstract class PermissionRequirement {
     public static final String ATTR_PROTECTION_LEVEL = "protectionLevel"; //$NON-NLS-1$
     public static final String VALUE_DANGEROUS = "dangerous"; //$NON-NLS-1$
 
-    private final ResolvedAnnotation annotation;
+    private final UAnnotation annotation;
 
     @SuppressWarnings("ConstantConditions")
     public static final PermissionRequirement NONE = new PermissionRequirement(null) {
@@ -89,7 +86,7 @@ public abstract class PermissionRequirement {
 
         @Nullable
         @Override
-        public BinaryOperator getOperator() {
+        public UastBinaryOperator getOperator() {
             return null;
         }
 
@@ -100,14 +97,14 @@ public abstract class PermissionRequirement {
         }
     };
 
-    private PermissionRequirement(@NonNull ResolvedAnnotation annotation) {
+    private PermissionRequirement(@NonNull UAnnotation annotation) {
         this.annotation = annotation;
     }
 
     @NonNull
     public static PermissionRequirement create(
-            @Nullable Context context,
-            @NonNull ResolvedAnnotation annotation) {
+      @Nullable UastAndroidContext context,
+      @NonNull UAnnotation annotation) {
         String value = (String)annotation.getValue(ATTR_VALUE);
         if (value != null && !value.isEmpty()) {
             for (int i = 0, n = value.length(); i < n; i++) {
@@ -126,11 +123,11 @@ public abstract class PermissionRequirement {
             if (v instanceof String[]) {
                 String[] anyOf = (String[])v;
                 if (anyOf.length > 0) {
-                    return new Many(annotation, BinaryOperator.LOGICAL_OR, anyOf);
+                    return new Many(annotation, UastBinaryOperator.LOGICAL_OR, anyOf);
                 }
             } else if (v instanceof String) {
                 String[] anyOf = new String[] { (String)v };
-                return new Many(annotation, BinaryOperator.LOGICAL_OR, anyOf);
+                return new Many(annotation, UastBinaryOperator.LOGICAL_OR, anyOf);
             }
         }
 
@@ -139,11 +136,11 @@ public abstract class PermissionRequirement {
             if (v instanceof String[]) {
                 String[] allOf = (String[])v;
                 if (allOf.length > 0) {
-                    return new Many(annotation, BinaryOperator.LOGICAL_AND, allOf);
+                    return new Many(annotation, UastBinaryOperator.LOGICAL_AND, allOf);
                 }
             } else if (v instanceof String) {
                 String[] allOf = new String[] { (String)v };
-                return new Many(annotation, BinaryOperator.LOGICAL_AND, allOf);
+                return new Many(annotation, UastBinaryOperator.LOGICAL_AND, allOf);
             }
         }
 
@@ -231,7 +228,7 @@ public abstract class PermissionRequirement {
      * for leaf nodes
      */
     @Nullable
-    public abstract BinaryOperator getOperator();
+    public abstract UastBinaryOperator getOperator();
 
     /**
      * Returns nested requirements, combined via {@link #getOperator()}
@@ -243,7 +240,7 @@ public abstract class PermissionRequirement {
     private static class Single extends PermissionRequirement {
         public final String name;
 
-        public Single(@NonNull ResolvedAnnotation annotation, @NonNull String name) {
+        public Single(@NonNull UAnnotation annotation, @NonNull String name) {
             super(annotation);
             this.name = name;
         }
@@ -255,7 +252,7 @@ public abstract class PermissionRequirement {
 
         @Nullable
         @Override
-        public BinaryOperator getOperator() {
+        public UastBinaryOperator getOperator() {
             return null;
         }
 
@@ -302,14 +299,14 @@ public abstract class PermissionRequirement {
         }
     }
 
-    protected static void appendOperator(StringBuilder sb, BinaryOperator operator) {
+    protected static void appendOperator(StringBuilder sb, UastBinaryOperator operator) {
         sb.append(' ');
-        if (operator == BinaryOperator.LOGICAL_AND) {
+        if (operator == UastBinaryOperator.LOGICAL_AND) {
             sb.append("and");
-        } else if (operator == BinaryOperator.LOGICAL_OR) {
+        } else if (operator == UastBinaryOperator.LOGICAL_OR) {
             sb.append("or");
         } else {
-            assert operator == BinaryOperator.BITWISE_XOR : operator;
+            assert operator == UastBinaryOperator.BITWISE_XOR : operator;
             sb.append("xor");
         }
         sb.append(' ');
@@ -319,16 +316,16 @@ public abstract class PermissionRequirement {
      * Require a series of permissions, all with the same operator.
      */
     private static class Many extends PermissionRequirement {
-        public final BinaryOperator operator;
+        public final UastBinaryOperator operator;
         public final List<PermissionRequirement> permissions;
 
         public Many(
-                @NonNull ResolvedAnnotation annotation,
-                BinaryOperator operator,
+                @NonNull UAnnotation annotation,
+                UastBinaryOperator operator,
                 String[] names) {
             super(annotation);
-            assert operator == BinaryOperator.LOGICAL_OR
-                    || operator == BinaryOperator.LOGICAL_AND : operator;
+            assert operator == UastBinaryOperator.LOGICAL_OR
+                    || operator == UastBinaryOperator.LOGICAL_AND : operator;
             assert names.length >= 2;
             this.operator = operator;
             this.permissions = Lists.newArrayListWithExpectedSize(names.length);
@@ -358,7 +355,7 @@ public abstract class PermissionRequirement {
 
         @Override
         public boolean isSatisfied(@NonNull PermissionHolder available) {
-            if (operator == BinaryOperator.LOGICAL_AND) {
+            if (operator == UastBinaryOperator.LOGICAL_AND) {
                 for (PermissionRequirement requirement : permissions) {
                     if (!requirement.isSatisfied(available)) {
                         return false;
@@ -366,7 +363,7 @@ public abstract class PermissionRequirement {
                 }
                 return true;
             } else {
-                assert operator == BinaryOperator.LOGICAL_OR : operator;
+                assert operator == UastBinaryOperator.LOGICAL_OR : operator;
                 for (PermissionRequirement requirement : permissions) {
                     if (requirement.isSatisfied(available)) {
                         return true;
@@ -428,7 +425,7 @@ public abstract class PermissionRequirement {
 
         @Nullable
         @Override
-        public BinaryOperator getOperator() {
+        public UastBinaryOperator getOperator() {
             return operator;
         }
 
@@ -444,13 +441,13 @@ public abstract class PermissionRequirement {
      * associated boolean logic, such as "B or (C and (D or E))".
      */
     private static class Complex extends PermissionRequirement {
-        public final BinaryOperator operator;
+        public final UastBinaryOperator operator;
         public final PermissionRequirement left;
         public final PermissionRequirement right;
 
         public Complex(
-                @NonNull ResolvedAnnotation annotation,
-                BinaryOperator operator,
+                @NonNull UAnnotation annotation,
+                UastBinaryOperator operator,
                 PermissionRequirement left,
                 PermissionRequirement right) {
             super(annotation);
@@ -469,7 +466,7 @@ public abstract class PermissionRequirement {
             StringBuilder sb = new StringBuilder();
 
             boolean needsParentheses = left instanceof Complex &&
-                    ((Complex) left).operator != BinaryOperator.LOGICAL_AND;
+                    ((Complex) left).operator != UastBinaryOperator.LOGICAL_AND;
             if (needsParentheses) {
                 sb.append('(');
             }
@@ -481,7 +478,7 @@ public abstract class PermissionRequirement {
             appendOperator(sb, operator);
 
             needsParentheses = right instanceof Complex &&
-                    ((Complex) right).operator != BinaryOperator.LOGICAL_AND;
+                    ((Complex) right).operator != UastBinaryOperator.LOGICAL_AND;
             if (needsParentheses) {
                 sb.append('(');
             }
@@ -497,12 +494,12 @@ public abstract class PermissionRequirement {
         public boolean isSatisfied(@NonNull PermissionHolder available) {
             boolean satisfiedLeft = left.isSatisfied(available);
             boolean satisfiedRight = right.isSatisfied(available);
-            if (operator == BinaryOperator.LOGICAL_AND) {
+            if (operator == UastBinaryOperator.LOGICAL_AND) {
                 return satisfiedLeft && satisfiedRight;
-            } else if (operator == BinaryOperator.LOGICAL_OR) {
+            } else if (operator == UastBinaryOperator.LOGICAL_OR) {
                 return satisfiedLeft || satisfiedRight;
             } else {
-                assert operator == BinaryOperator.BITWISE_XOR : operator;
+                assert operator == UastBinaryOperator.BITWISE_XOR : operator;
                 return satisfiedLeft ^ satisfiedRight;
             }
         }
@@ -511,7 +508,7 @@ public abstract class PermissionRequirement {
         public String describeMissingPermissions(@NonNull PermissionHolder available) {
             boolean satisfiedLeft = left.isSatisfied(available);
             boolean satisfiedRight = right.isSatisfied(available);
-            if (operator == BinaryOperator.LOGICAL_AND || operator == BinaryOperator.LOGICAL_OR) {
+            if (operator == UastBinaryOperator.LOGICAL_AND || operator == UastBinaryOperator.LOGICAL_OR) {
                 if (satisfiedLeft) {
                     if (satisfiedRight) {
                         return "";
@@ -527,7 +524,7 @@ public abstract class PermissionRequirement {
                     return sb.toString();
                 }
             } else {
-                assert operator == BinaryOperator.BITWISE_XOR : operator;
+                assert operator == UastBinaryOperator.BITWISE_XOR : operator;
                 return toString();
             }
         }
@@ -537,7 +534,7 @@ public abstract class PermissionRequirement {
           @NonNull Set<String> missing) {
             boolean satisfiedLeft = left.isSatisfied(available);
             boolean satisfiedRight = right.isSatisfied(available);
-            if (operator == BinaryOperator.LOGICAL_AND || operator == BinaryOperator.LOGICAL_OR) {
+            if (operator == UastBinaryOperator.LOGICAL_AND || operator == UastBinaryOperator.LOGICAL_OR) {
                 if (satisfiedLeft) {
                     if (satisfiedRight) {
                         return;
@@ -550,7 +547,7 @@ public abstract class PermissionRequirement {
                     right.addMissingPermissions(available, missing);
                 }
             } else {
-                assert operator == BinaryOperator.BITWISE_XOR : operator;
+                assert operator == UastBinaryOperator.BITWISE_XOR : operator;
                 left.addMissingPermissions(available, missing);
                 right.addMissingPermissions(available, missing);
             }
@@ -571,66 +568,56 @@ public abstract class PermissionRequirement {
         }
 
         @NonNull
-        public static PermissionRequirement parse(@NonNull ResolvedAnnotation annotation,
-                @Nullable Context context, @NonNull final String value) {
+        public static PermissionRequirement parse(@NonNull UAnnotation annotation,
+                @Nullable UastAndroidContext uastContext, @NonNull final String value) {
             // Parse an expression of the form (A op1 B op2 C) op3 (D op4 E) etc.
             // We'll just use the Java parser to handle this to ensure that operator
             // precedence etc is correct.
-            if (context == null) {
+            if (uastContext == null) {
                 return NONE;
             }
-            JavaParser javaParser = context.getClient().getJavaParser(null);
-            if (javaParser == null) {
-                return NONE;
-            }
-            try {
-                JavaContext javaContext = new JavaContext(context.getDriver(),
-                        context.getProject(), context.getMainProject(), context.file,
-                        javaParser) {
-                    @Nullable
-                    @Override
-                    public String getContents() {
-                        return ""
-                                + "class Test { void test() {\n"
-                                + "boolean result=" + value
-                                + ";\n}\n}";
-                    }
-                };
-                Node node = javaParser.parseJava(javaContext);
-                if (node != null) {
-                    final AtomicReference<Expression> reference = new AtomicReference<Expression>();
-                    node.accept(new ForwardingAstVisitor() {
-                        @Override
-                        public boolean visitVariableDefinitionEntry(VariableDefinitionEntry node) {
-                            reference.set(node.astInitializer());
-                            return true;
-                        }
-                    });
-                    Expression expression = reference.get();
-                    if (expression != null) {
-                        return parse(annotation, expression);
-                    }
-                }
+            Context context = uastContext.getLintContext();
 
-                return NONE;
-            } finally {
-                javaParser.dispose();
+            PsiElementFactory factory = JavaPsiFacade.getInstance(
+              context.getClient().getProject()).getElementFactory();
+
+            UElement node = JavaConverter.INSTANCE.convertWithParent(factory.createClassFromText(
+              "class Test { void test() {\n"
+              + "boolean result = " + value
+              + ";\n}\n}"
+              , null).getContainingFile());
+
+            if (node != null) {
+                final AtomicReference<UExpression> reference = new AtomicReference<UExpression>();
+                new UastVisitor() {
+                    @Override
+                    public boolean visitVariable(@NotNull UVariable node) {
+                        reference.set(node.getInitializer());
+                        return true;
+                    }
+                }.process(node);
+                UExpression expression = reference.get();
+                if (expression != null) {
+                    return parse(annotation, expression);
+                }
             }
+
+            return NONE;
         }
 
         private static PermissionRequirement parse(
-                @NonNull ResolvedAnnotation annotation,
-                @NonNull Expression expression) {
-            if (expression instanceof Select) {
-                return new Single(annotation, expression.toString());
-            } else if (expression instanceof BinaryExpression) {
-                BinaryExpression binaryExpression = (BinaryExpression) expression;
-                BinaryOperator operator = binaryExpression.astOperator();
-                if (operator == BinaryOperator.LOGICAL_AND
-                        || operator == BinaryOperator.LOGICAL_OR
-                        || operator == BinaryOperator.BITWISE_XOR) {
-                    PermissionRequirement left = parse(annotation, binaryExpression.astLeft());
-                    PermissionRequirement right = parse(annotation, binaryExpression.astRight());
+                @NonNull UAnnotation annotation,
+                @NonNull UExpression expression) {
+            if (expression instanceof UQualifiedExpression) {
+                return new Single(annotation, expression.renderString());
+            } else if (expression instanceof UBinaryExpression) {
+                UBinaryExpression binaryExpression = (UBinaryExpression) expression;
+                UastBinaryOperator operator = binaryExpression.getOperator();
+                if (operator == UastBinaryOperator.LOGICAL_AND
+                        || operator == UastBinaryOperator.LOGICAL_OR
+                        || operator == UastBinaryOperator.BITWISE_XOR) {
+                    PermissionRequirement left = parse(annotation, binaryExpression.getLeftOperand());
+                    PermissionRequirement right = parse(annotation, binaryExpression.getRightOperand());
                     return new Complex(annotation, operator, left, right);
                 }
             }
@@ -639,7 +626,7 @@ public abstract class PermissionRequirement {
 
         @Nullable
         @Override
-        public BinaryOperator getOperator() {
+        public UastBinaryOperator getOperator() {
             return operator;
         }
 

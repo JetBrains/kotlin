@@ -14,57 +14,36 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
-
-import static com.android.tools.lint.client.api.JavaParser.ResolvedMethod;
-import static com.android.tools.lint.client.api.JavaParser.ResolvedNode;
-import static com.android.tools.lint.client.api.JavaParser.TypeDescriptor;
+package com.android.tools.klint.checks;
 
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
-import com.android.tools.lint.client.api.JavaParser;
-import com.android.tools.lint.detector.api.Category;
-import com.android.tools.lint.detector.api.Context;
-import com.android.tools.lint.detector.api.Detector;
-import com.android.tools.lint.detector.api.Implementation;
-import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.JavaContext;
-import com.android.tools.lint.detector.api.LintUtils;
-import com.android.tools.lint.detector.api.Scope;
-import com.android.tools.lint.detector.api.Severity;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.Context;
+import com.android.tools.klint.detector.api.Detector;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.LintUtils;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
 
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
-import lombok.ast.Assert;
-import lombok.ast.AstVisitor;
-import lombok.ast.Block;
-import lombok.ast.Case;
-import lombok.ast.ClassDeclaration;
-import lombok.ast.ConstructorDeclaration;
-import lombok.ast.DoWhile;
-import lombok.ast.Expression;
-import lombok.ast.ExpressionStatement;
-import lombok.ast.For;
-import lombok.ast.ForwardingAstVisitor;
-import lombok.ast.If;
-import lombok.ast.MethodDeclaration;
-import lombok.ast.MethodInvocation;
-import lombok.ast.Node;
-import lombok.ast.NormalTypeBody;
-import lombok.ast.Return;
-import lombok.ast.Statement;
-import lombok.ast.VariableDeclaration;
-import lombok.ast.VariableDefinition;
-import lombok.ast.VariableReference;
-import lombok.ast.While;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.uast.*;
+import org.jetbrains.uast.check.UastAndroidContext;
+import org.jetbrains.uast.check.UastAndroidUtils;
+import org.jetbrains.uast.check.UastScanner;
+import org.jetbrains.uast.java.JavaSpecialExpressionKinds;
+import org.jetbrains.uast.visitor.UastVisitor;
 
 /**
  * Detector looking for SharedPreferences.edit() calls without a corresponding
  * commit() or apply() call
  */
-public class SharedPrefsDetector extends Detector implements Detector.JavaScanner {
+public class SharedPrefsDetector extends Detector implements UastScanner {
     /** The main issue discovered by this detector */
     public static final Issue ISSUE = Issue.create(
             "CommitPrefEdits", //$NON-NLS-1$
@@ -95,70 +74,47 @@ public class SharedPrefsDetector extends Detector implements Detector.JavaScanne
     }
 
 
-    // ---- Implements JavaScanner ----
+    // ---- Implements UastScanner ----
 
     @Override
-    public List<String> getApplicableMethodNames() {
+    public List<String> getApplicableFunctionNames() {
         return Collections.singletonList("edit"); //$NON-NLS-1$
     }
 
-    @Nullable
-    private static NormalTypeBody findSurroundingTypeBody(Node scope) {
-        while (scope != null) {
-            Class<? extends Node> type = scope.getClass();
-            // The Lombok AST uses a flat hierarchy of node type implementation classes
-            // so no need to do instanceof stuff here.
-            if (type == NormalTypeBody.class) {
-                return (NormalTypeBody) scope;
-            }
-
-            scope = scope.getParent();
-        }
-
-        return null;
-    }
-
-
     @Override
-    public void visitMethod(@NonNull JavaContext context, @Nullable AstVisitor visitor,
-            @NonNull MethodInvocation node) {
-        assert node.astName().astValue().equals("edit");
+    public void visitFunctionCall(UastAndroidContext context, UCallExpression node) {
+        assert "edit".equals(node.getFunctionName());
 
         boolean verifiedType = false;
-        ResolvedNode resolve = context.resolve(node);
-        if (resolve instanceof ResolvedMethod) {
-            ResolvedMethod method = (ResolvedMethod) resolve;
-            TypeDescriptor returnType = method.getReturnType();
+        UFunction resolve = node.resolve(context);
+        if (resolve != null) {
+            UType returnType = resolve.getReturnType();
             if (returnType == null ||
-                    !returnType.matchesName(ANDROID_CONTENT_SHARED_PREFERENCES_EDITOR)) {
+                !returnType.matchesFqName(ANDROID_CONTENT_SHARED_PREFERENCES_EDITOR)) {
                 return;
             }
             verifiedType = true;
         }
 
-        Expression operand = node.astOperand();
-        if (operand == null) {
+        UElement parent = node.getParent();
+        if (!(parent instanceof UQualifiedExpression)) {
             return;
         }
+        UElement operand = ((UQualifiedExpression)parent).getReceiver();
 
         // Looking for the specific pattern where you assign the edit() result
         // to a local variable; this means we won't recognize some other usages
         // of the API (e.g. assigning it to a previously declared variable) but
         // is needed until we have type attribution in the AST itself.
-        Node parent = node.getParent();
 
-        VariableDefinition definition = getLhs(parent);
+        UVariable definition = getLhs(parent);
         boolean allowCommitBeforeTarget;
         if (definition == null) {
-            if (operand instanceof VariableReference) {
-                if (!verifiedType) {
-                    NormalTypeBody body = findSurroundingTypeBody(parent);
-                    if (body == null) {
-                        return;
-                    }
-                    String variableName = ((VariableReference) operand).astIdentifier().astValue();
-                    String type = getFieldType(body, variableName);
-                    if (type == null || !type.equals("SharedPreferences")) { //$NON-NLS-1$
+            if (operand instanceof USimpleReferenceExpression) {
+                UDeclaration resolvedDeclaration = (((USimpleReferenceExpression)operand).resolve(context));
+                if (resolvedDeclaration instanceof UVariable) {
+                    String type = ((UVariable)resolvedDeclaration).getType().getName();
+                    if (!type.equals("SharedPreferences")) { //$NON-NLS-1$
                         return;
                     }
                 }
@@ -168,11 +124,12 @@ public class SharedPrefsDetector extends Detector implements Detector.JavaScanne
             }
         } else {
             if (!verifiedType) {
-                String type = definition.astTypeReference().toString();
-                if (!type.endsWith("SharedPreferences.Editor")) {  //$NON-NLS-1$
-                    if (!type.equals("Editor") ||                  //$NON-NLS-1$
-                            !LintUtils.isImported(context.getCompilationUnit(),
-                                    ANDROID_CONTENT_SHARED_PREFERENCES_EDITOR)) {
+                UType type = definition.getType();
+                String possiblefqName = type.resolveOrEmpty(context).getFqNameOrName();
+                if (possiblefqName.endsWith("SharedPreferences.Editor")) { //$NON-NLS-1$
+                    if (!type.matchesFqName("Editor") ||                  //$NON-NLS-1$
+                        !LintUtils.isImported(context.getLintContext().getCompilationUnit(),
+                                              ANDROID_CONTENT_SHARED_PREFERENCES_EDITOR)) {
                         return;
                     }
                 }
@@ -180,44 +137,27 @@ public class SharedPrefsDetector extends Detector implements Detector.JavaScanne
             allowCommitBeforeTarget = false;
         }
 
-        Node method = JavaContext.findSurroundingMethod(parent);
+        UFunction method = UastUtils.getContainingFunction(parent);
         if (method == null) {
             return;
         }
 
         CommitFinder finder = new CommitFinder(context, node, allowCommitBeforeTarget);
-        method.accept(finder);
+        finder.process(method);
         if (!finder.isCommitCalled()) {
-            context.report(ISSUE, method, context.getLocation(node),
-                "`SharedPreferences.edit()` without a corresponding `commit()` or `apply()` call");
+            context.report(ISSUE, method, UastAndroidUtils.getLocation(node),
+                           "`SharedPreferences.edit()` without a corresponding `commit()` or `apply()` call");
         }
     }
 
     @Nullable
-    private static String getFieldType(@NonNull NormalTypeBody cls, @NonNull String name) {
-        List<Node> children = cls.getChildren();
-        for (Node child : children) {
-            if (child.getClass() == VariableDeclaration.class) {
-                VariableDeclaration declaration = (VariableDeclaration) child;
-                VariableDefinition definition = declaration.astDefinition();
-                return definition.astTypeReference().toString();
-            }
-        }
-
-        return null;
-    }
-
-    @Nullable
-    private static VariableDefinition getLhs(@NonNull Node node) {
+    private static UVariable getLhs(@NonNull UElement node) {
         while (node != null) {
-            Class<? extends Node> type = node.getClass();
-            // The Lombok AST uses a flat hierarchy of node type implementation classes
-            // so no need to do instanceof stuff here.
-            if (type == MethodDeclaration.class || type == ConstructorDeclaration.class) {
+            if (node instanceof UFunction) {
                 return null;
             }
-            if (type == VariableDefinition.class) {
-                return (VariableDefinition) node;
+            if (node instanceof UVariable) {
+                return ((UVariable)node);
             }
 
             node = node.getParent();
@@ -226,96 +166,98 @@ public class SharedPrefsDetector extends Detector implements Detector.JavaScanne
         return null;
     }
 
-    private static class CommitFinder extends ForwardingAstVisitor {
+    private static class CommitFinder extends UastVisitor {
         /** The target edit call */
-        private final MethodInvocation mTarget;
+        private final UCallExpression mTarget;
         /** whether it allows the commit call to be seen before the target node */
         private final boolean mAllowCommitBeforeTarget;
 
-        private final JavaContext mContext;
+        private final UastAndroidContext mContext;
 
         /** Whether we've found one of the commit/cancel methods */
         private boolean mFound;
         /** Whether we've seen the target edit node yet */
         private boolean mSeenTarget;
 
-        private CommitFinder(JavaContext context, MethodInvocation target,
-                boolean allowCommitBeforeTarget) {
+        private CommitFinder(UastAndroidContext context, UCallExpression target,
+                             boolean allowCommitBeforeTarget) {
             mContext = context;
             mTarget = target;
             mAllowCommitBeforeTarget = allowCommitBeforeTarget;
         }
 
         @Override
-        public boolean visitMethodInvocation(MethodInvocation node) {
+        public boolean visitCallExpression(@NotNull UCallExpression node) {
+            UElement qualifiedElement = UastUtils.getQualifiedCallElement(node);
+
             if (node == mTarget) {
                 mSeenTarget = true;
-            } else if (mAllowCommitBeforeTarget || mSeenTarget || node.astOperand() == mTarget) {
-                String name = node.astName().astValue();
+            } else if (mAllowCommitBeforeTarget || mSeenTarget ||
+                    (qualifiedElement instanceof UQualifiedExpression &&
+                    ((UQualifiedExpression)qualifiedElement).getReceiver() == mTarget)) {
+                String name = node.getFunctionName();
                 boolean isCommit = "commit".equals(name);
                 if (isCommit || "apply".equals(name)) { //$NON-NLS-1$ //$NON-NLS-2$
                     // TODO: Do more flow analysis to see whether we're really calling commit/apply
                     // on the right type of object?
                     mFound = true;
 
-                    ResolvedNode resolved = mContext.resolve(node);
-                    if (resolved instanceof JavaParser.ResolvedMethod) {
-                        ResolvedMethod method = (ResolvedMethod) resolved;
-                        JavaParser.ResolvedClass clz = method.getContainingClass();
-                        if (clz.isSubclassOf("android.content.SharedPreferences.Editor", false)
-                                && mContext.getProject().getMinSdkVersion().getApiLevel() >= 9) {
+                    UFunction method = node.resolve(mContext);
+                    if (method != null) {
+                        UClass clz = UastUtils.getContainingClassOrEmpty(method);
+                        if (clz.isSubclassOf("android.content.SharedPreferences.Editor")
+                            && mContext.getLintContext().getProject().getMinSdkVersion().getApiLevel() >= 9) {
                             // See if the return value is read: can only replace commit with
                             // apply if the return value is not considered
-                            Node parent = node.getParent();
                             boolean returnValueIgnored = false;
-                            if (parent instanceof MethodDeclaration ||
-                                    parent instanceof ConstructorDeclaration ||
-                                    parent instanceof ClassDeclaration ||
-                                    parent instanceof Block ||
-                                    parent instanceof ExpressionStatement) {
+                            if (qualifiedElement instanceof UFunction ||
+                                qualifiedElement instanceof UClass ||
+                                qualifiedElement instanceof UBlockExpression) {
                                 returnValueIgnored = true;
-                            } else if (parent instanceof Statement) {
-                                if (parent instanceof If) {
-                                    returnValueIgnored = ((If) parent).astCondition() != node;
-                                } else if (parent instanceof Return) {
-                                    returnValueIgnored = false;
-                                } else if (parent instanceof VariableDeclaration) {
-                                    returnValueIgnored = false;
-                                } else if (parent instanceof For) {
-                                    returnValueIgnored = ((For) parent).astCondition() != node;
-                                } else if (parent instanceof While) {
-                                    returnValueIgnored = ((While) parent).astCondition() != node;
-                                } else if (parent instanceof DoWhile) {
-                                    returnValueIgnored = ((DoWhile) parent).astCondition() != node;
-                                } else if (parent instanceof Case) {
-                                    returnValueIgnored = ((Case) parent).astCondition() != node;
-                                } else if (parent instanceof Assert) {
-                                    returnValueIgnored = ((Assert) parent).astAssertion() != node;
-                                } else {
-                                    returnValueIgnored = true;
-                                }
+                            } else if (qualifiedElement instanceof UIfExpression) {
+                                returnValueIgnored = ((UIfExpression) qualifiedElement).getCondition() != node;
+                            } else if (qualifiedElement instanceof USpecialExpressionList &&
+                                       ((USpecialExpressionList)qualifiedElement).getKind() == UastSpecialExpressionKind.RETURN) {
+                                returnValueIgnored = false;
+                            } else if (qualifiedElement instanceof UVariable) {
+                                returnValueIgnored = false;
+                            } else if (qualifiedElement instanceof UForExpression) {
+                                returnValueIgnored = ((UForExpression) qualifiedElement).getCondition() != node;
+                            } else if (qualifiedElement instanceof UWhileExpression) {
+                                returnValueIgnored = ((UWhileExpression) qualifiedElement).getCondition() != node;
+                            } else if (qualifiedElement instanceof UDoWhileExpression) {
+                                returnValueIgnored = ((UDoWhileExpression) qualifiedElement).getCondition() != node;
+                            } else if (qualifiedElement instanceof UExpressionSwitchClauseExpression) {
+                                returnValueIgnored = ((UExpressionSwitchClauseExpression) qualifiedElement).getCaseValue() != node;
+                            } else if (qualifiedElement instanceof USpecialExpressionList &&
+                                       ((USpecialExpressionList)qualifiedElement).getKind() == JavaSpecialExpressionKinds.ASSERT) {
+                                returnValueIgnored = !((USpecialExpressionList) qualifiedElement).getExpressions().contains(node);
+                            } else {
+                                returnValueIgnored = true;
                             }
                             if (returnValueIgnored && isCommit) {
                                 String message = "Consider using `apply()` instead; `commit` writes "
-                                        + "its data to persistent storage immediately, whereas "
-                                        + "`apply` will handle it in the background";
-                                mContext.report(ISSUE, node, mContext.getLocation(node), message);
+                                                 + "its data to persistent storage immediately, whereas "
+                                                 + "`apply` will handle it in the background";
+                                mContext.report(ISSUE, node, UastAndroidUtils.getLocation(node), message);
                             }
                         }
                     }
                 }
             }
 
-            return super.visitMethodInvocation(node);
+            return false;
         }
 
         @Override
-        public boolean visitReturn(Return node) {
-            if (node.astValue() == mTarget) {
-                // If you just do "return editor.commit() don't warn
-                mFound = true;
+        public boolean visitSpecialExpressionList(@NotNull USpecialExpressionList node) {
+            if (node.getKind() == UastSpecialExpressionKind.RETURN) {
+                if (node.getExpressions().contains(mTarget)) {
+                    mFound = true;
+                }
             }
-            return super.visitReturn(node);
+
+            return false;
         }
 
         boolean isCommitCalled() {

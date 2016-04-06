@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
 import static com.android.SdkConstants.ANDROID_URI;
 import static com.android.SdkConstants.ATTR_CLASS;
@@ -23,6 +23,7 @@ import static com.android.SdkConstants.DOT_XML;
 import static com.android.SdkConstants.ID_PREFIX;
 import static com.android.SdkConstants.NEW_ID_PREFIX;
 import static com.android.SdkConstants.VIEW_TAG;
+import static org.jetbrains.uast.UastBinaryExpressionWithTypeUtils.*;
 
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
@@ -31,19 +32,18 @@ import com.android.ide.common.res2.ResourceFile;
 import com.android.ide.common.res2.ResourceItem;
 import com.android.resources.ResourceFolderType;
 import com.android.resources.ResourceType;
-import com.android.tools.lint.client.api.LintClient;
-import com.android.tools.lint.detector.api.Category;
-import com.android.tools.lint.detector.api.Context;
-import com.android.tools.lint.detector.api.Detector;
-import com.android.tools.lint.detector.api.Implementation;
-import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.JavaContext;
-import com.android.tools.lint.detector.api.LintUtils;
-import com.android.tools.lint.detector.api.ResourceXmlDetector;
-import com.android.tools.lint.detector.api.Scope;
-import com.android.tools.lint.detector.api.Severity;
-import com.android.tools.lint.detector.api.Speed;
-import com.android.tools.lint.detector.api.XmlContext;
+import com.android.tools.klint.client.api.LintClient;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.Context;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.JavaContext;
+import com.android.tools.klint.detector.api.LintUtils;
+import com.android.tools.klint.detector.api.ResourceXmlDetector;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
+import com.android.tools.klint.detector.api.Speed;
+import com.android.tools.klint.detector.api.XmlContext;
 import com.android.utils.XmlUtils;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ArrayListMultimap;
@@ -52,6 +52,10 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
+import org.jetbrains.uast.*;
+import org.jetbrains.uast.check.UastAndroidContext;
+import org.jetbrains.uast.check.UastAndroidUtils;
+import org.jetbrains.uast.check.UastScanner;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -68,13 +72,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import lombok.ast.AstVisitor;
-import lombok.ast.Cast;
-import lombok.ast.Expression;
-import lombok.ast.MethodInvocation;
-import lombok.ast.Select;
-import lombok.ast.StrictListAccessor;
-
 /** Detector for finding inconsistent usage of views and casts
  * <p>
  * TODO: Check findFragmentById
@@ -87,7 +84,7 @@ import lombok.ast.StrictListAccessor;
  * check its name or class attributes to make sure the cast is compatible with
  * the named fragment class!
  */
-public class ViewTypeDetector extends ResourceXmlDetector implements Detector.JavaScanner {
+public class ViewTypeDetector extends ResourceXmlDetector implements UastScanner {
     /** Mismatched view types */
     @SuppressWarnings("unchecked")
     public static final Issue ISSUE = Issue.create(
@@ -100,7 +97,7 @@ public class ViewTypeDetector extends ResourceXmlDetector implements Detector.Ja
             Severity.FATAL,
             new Implementation(
                     ViewTypeDetector.class,
-                    EnumSet.of(Scope.ALL_RESOURCE_FILES, Scope.ALL_JAVA_FILES),
+                    EnumSet.of(Scope.ALL_RESOURCE_FILES, Scope.ALL_SOURCE_FILES),
                     Scope.JAVA_FILE_SCOPE));
 
     /** Flag used to do no work if we're running in incremental mode in a .java file without
@@ -163,76 +160,88 @@ public class ViewTypeDetector extends ResourceXmlDetector implements Detector.Ja
         }
     }
 
-    // ---- Implements Detector.JavaScanner ----
+    // ---- Implements Detector.UastScanner ----
 
     @Override
-    public List<String> getApplicableMethodNames() {
+    public List<String> getApplicableFunctionNames() {
         return Collections.singletonList("findViewById"); //$NON-NLS-1$
     }
 
     @Override
-    public void visitMethod(@NonNull JavaContext context, @Nullable AstVisitor visitor,
-            @NonNull MethodInvocation node) {
-        LintClient client = context.getClient();
+    public void visitFunctionCall(UastAndroidContext context, UCallExpression node) {
+        JavaContext lintContext = context.getLintContext();
+        LintClient client = lintContext.getClient();
         if (mIgnore == Boolean.TRUE) {
             return;
         } else if (mIgnore == null) {
-            mIgnore = !context.getScope().contains(Scope.ALL_RESOURCE_FILES) &&
-                    !client.supportsProjectResources();
+            mIgnore = !lintContext.getScope().contains(Scope.ALL_RESOURCE_FILES) &&
+                      !client.supportsProjectResources();
             if (mIgnore) {
                 return;
             }
         }
-        assert node.astName().astValue().equals("findViewById");
-        if (node.getParent() instanceof Cast) {
-            Cast cast = (Cast) node.getParent();
-            String castType = cast.astTypeReference().getTypeName();
-            StrictListAccessor<Expression, MethodInvocation> args = node.astArguments();
-            if (args.size() == 1) {
-                Expression first = args.first();
-                // TODO: Do flow analysis as in the StringFormatDetector in order
-                // to handle variable references too
-                if (first instanceof Select) {
-                    String resource = first.toString();
-                    if (resource.startsWith("R.id.")) { //$NON-NLS-1$
-                        String id = ((Select) first).astIdentifier().astValue();
+        assert "findViewById".equals(node.getFunctionName());
+        UBinaryExpressionWithType cast = findContainingTypeCast(node.getParent());
+        if (cast == null) {
+            return;
+        }
 
-                        if (client.supportsProjectResources()) {
-                            AbstractResourceRepository resources = client
-                                    .getProjectResources(context.getMainProject(), true);
-                            if (resources == null) {
-                                return;
-                            }
+        String castType = cast.getType().getFqName();
+        List<UExpression> args = node.getValueArguments();
+        if (args.size() == 1) {
+            UExpression first = args.get(0);
+            // TODO: Do flow analysis as in the StringFormatDetector in order
+            // to handle variable references too
+            if (first instanceof UQualifiedExpression) {
+                String resource = first.renderString();
+                if (resource.startsWith("R.id.")) { //$NON-NLS-1$
+                    String id = ((UQualifiedExpression) first).getSelector().renderString();
 
-                            List<ResourceItem> items = resources.getResourceItem(ResourceType.ID,
-                                    id);
-                            if (items != null && !items.isEmpty()) {
-                                Set<String> compatible = Sets.newHashSet();
-                                for (ResourceItem item : items) {
-                                    Collection<String> tags = getViewTags(context, item);
-                                    if (tags != null) {
-                                       compatible.addAll(tags);
-                                    }
-                                }
-                                if (!compatible.isEmpty()) {
-                                    ArrayList<String> layoutTypes = Lists.newArrayList(compatible);
-                                    checkCompatible(context, castType, null, layoutTypes, cast);
+                    if (client.supportsProjectResources()) {
+                        AbstractResourceRepository resources = client
+                          .getProjectResources(lintContext.getMainProject(), true);
+                        if (resources == null) {
+                            return;
+                        }
+
+                        List<ResourceItem> items = resources.getResourceItem(ResourceType.ID,
+                                                                             id);
+                        if (items != null && !items.isEmpty()) {
+                            Set<String> compatible = Sets.newHashSet();
+                            for (ResourceItem item : items) {
+                                Collection<String> tags = getViewTags(lintContext, item);
+                                if (tags != null) {
+                                    compatible.addAll(tags);
                                 }
                             }
-                        } else {
-                            Object types = mIdToViewTag.get(id);
-                            if (types instanceof String) {
-                                String layoutType = (String) types;
-                                checkCompatible(context, castType, layoutType, null, cast);
-                            } else if (types instanceof List<?>) {
-                                @SuppressWarnings("unchecked")
-                                List<String> layoutTypes = (List<String>) types;
-                                checkCompatible(context, castType, null, layoutTypes, cast);
+                            if (!compatible.isEmpty()) {
+                                ArrayList<String> layoutTypes = Lists.newArrayList(compatible);
+                                checkCompatible(lintContext, castType, null, layoutTypes, cast);
                             }
+                        }
+                    } else {
+                        Object types = mIdToViewTag.get(id);
+                        if (types instanceof String) {
+                            String layoutType = (String) types;
+                            checkCompatible(lintContext, castType, layoutType, null, cast);
+                        } else if (types instanceof List<?>) {
+                            @SuppressWarnings("unchecked")
+                            List<String> layoutTypes = (List<String>) types;
+                            checkCompatible(lintContext, castType, null, layoutTypes, cast);
                         }
                     }
                 }
             }
+        }
+    }
+
+    private UBinaryExpressionWithType findContainingTypeCast(UElement expression) {
+        if (isTypeCast(expression)) {
+            return (UBinaryExpressionWithType) expression;
+        } else if (expression instanceof UQualifiedExpression) {
+            return findContainingTypeCast(expression.getParent());
+        } else {
+            return null;
         }
     }
 
@@ -301,7 +310,7 @@ public class ViewTypeDetector extends ResourceXmlDetector implements Detector.Ja
 
     /** Check if the view and cast type are compatible */
     private static void checkCompatible(JavaContext context, String castType, String layoutType,
-            List<String> layoutTypes, Cast node) {
+            List<String> layoutTypes, UBinaryExpressionWithType node) {
         assert layoutType == null || layoutTypes == null; // Should only specify one or the other
         boolean compatible = true;
         if (layoutType != null) {
@@ -328,7 +337,7 @@ public class ViewTypeDetector extends ResourceXmlDetector implements Detector.Ja
             String message = String.format(
                     "Unexpected cast to `%1$s`: layout tag was `%2$s`",
                     castType, layoutType);
-            context.report(ISSUE, node, context.getLocation(node), message);
+            context.report(ISSUE, node, UastAndroidUtils.getLocation(node), message);
         }
     }
 }

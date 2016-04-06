@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
 import static com.android.SdkConstants.ANDROID_URI;
 import static com.android.SdkConstants.ATTR_DRAWABLE_END;
@@ -58,22 +58,26 @@ import static com.android.SdkConstants.TAG_APPLICATION;
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.android.annotations.VisibleForTesting;
-import com.android.tools.lint.client.api.JavaParser;
-import com.android.tools.lint.detector.api.Category;
-import com.android.tools.lint.detector.api.Context;
-import com.android.tools.lint.detector.api.Detector;
-import com.android.tools.lint.detector.api.Implementation;
-import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.JavaContext;
-import com.android.tools.lint.detector.api.LayoutDetector;
-import com.android.tools.lint.detector.api.LintUtils;
-import com.android.tools.lint.detector.api.Location;
-import com.android.tools.lint.detector.api.Project;
-import com.android.tools.lint.detector.api.Scope;
-import com.android.tools.lint.detector.api.Severity;
-import com.android.tools.lint.detector.api.Speed;
-import com.android.tools.lint.detector.api.XmlContext;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.Context;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.LayoutDetector;
+import com.android.tools.klint.detector.api.LintUtils;
+import com.android.tools.klint.detector.api.Location;
+import com.android.tools.klint.detector.api.Project;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
+import com.android.tools.klint.detector.api.Speed;
+import com.android.tools.klint.detector.api.XmlContext;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.uast.*;
+import org.jetbrains.uast.check.UastAndroidUtils;
+import org.jetbrains.uast.check.UastAndroidContext;
+import org.jetbrains.uast.check.UastScanner;
+import org.jetbrains.uast.visitor.EmptyUastVisitor;
+import org.jetbrains.uast.visitor.UastVisitor;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 
@@ -85,25 +89,15 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
 
-import lombok.ast.AstVisitor;
-import lombok.ast.EnumConstant;
-import lombok.ast.ForwardingAstVisitor;
-import lombok.ast.Identifier;
-import lombok.ast.ImportDeclaration;
-import lombok.ast.Node;
-import lombok.ast.Select;
-import lombok.ast.VariableDefinitionEntry;
-import lombok.ast.VariableReference;
-
 /**
  * Check which looks for RTL issues (right-to-left support) in layouts
  */
-public class RtlDetector extends LayoutDetector implements Detector.JavaScanner {
+public class RtlDetector extends LayoutDetector implements UastScanner {
 
     @SuppressWarnings("unchecked")
     private static final Implementation IMPLEMENTATION = new Implementation(
             RtlDetector.class,
-            EnumSet.of(Scope.RESOURCE_FILE, Scope.JAVA_FILE, Scope.MANIFEST),
+            EnumSet.of(Scope.RESOURCE_FILE, Scope.SOURCE_FILE, Scope.MANIFEST),
             Scope.RESOURCE_FILE_SCOPE,
             Scope.JAVA_FILE_SCOPE,
             Scope.MANIFEST_SCOPE
@@ -562,7 +556,7 @@ public class RtlDetector extends LayoutDetector implements Detector.JavaScanner 
         return name.startsWith(ATTR_PADDING);
     }
 
-    // ---- Implements JavaScanner ----
+    // ---- Implements UastScanner ----
 
     @Override
     public boolean appliesTo(@NonNull Context context, @NonNull File file) {
@@ -570,73 +564,67 @@ public class RtlDetector extends LayoutDetector implements Detector.JavaScanner 
     }
 
     @Override
-    public List<Class<? extends Node>> getApplicableNodeTypes() {
-        return Collections.<Class<? extends Node>>singletonList(Identifier.class);
-    }
-
-    @Override
-    public AstVisitor createJavaVisitor(@NonNull JavaContext context) {
-        if (rtlApplies(context)) {
+    public UastVisitor createUastVisitor(UastAndroidContext context) {
+        if (rtlApplies(context.getLintContext())) {
             return new IdentifierChecker(context);
         }
 
-        return new ForwardingAstVisitor() { };
+        return EmptyUastVisitor.INSTANCE;
     }
 
-    private static class IdentifierChecker extends ForwardingAstVisitor {
-        private final JavaContext mContext;
+    private static class IdentifierChecker extends UastVisitor {
+        private final UastAndroidContext mContext;
 
-        public IdentifierChecker(JavaContext context) {
+        public IdentifierChecker(UastAndroidContext context) {
             mContext = context;
         }
 
         @Override
-        public boolean visitIdentifier(Identifier node) {
-            String identifier = node.astValue();
+        public boolean visitSimpleReferenceExpression(@NotNull USimpleReferenceExpression node) {
+            String identifier = node.getIdentifier();
             boolean isLeft = LEFT_FIELD.equals(identifier);
             boolean isRight = RIGHT_FIELD.equals(identifier);
             if (!isLeft && !isRight) {
                 return false;
             }
 
-            Node parent = node.getParent();
-            if (parent instanceof ImportDeclaration || parent instanceof EnumConstant
-                    || parent instanceof VariableDefinitionEntry) {
+            UElement parent = node.getParent();
+            if (parent instanceof UImportStatement || parent instanceof UVariable) {
                 return false;
             }
 
-            JavaParser.ResolvedNode resolved = mContext.resolve(node);
+            UElement resolved = node.resolve(mContext);
             if (resolved != null) {
-                if (!(resolved instanceof JavaParser.ResolvedField)) {
+                if (!(resolved instanceof UVariable)) {
                     return false;
                 } else {
-                    JavaParser.ResolvedField field = (JavaParser.ResolvedField) resolved;
-                    if (!field.getContainingClass().matches(FQCN_GRAVITY)) {
+                    UClass containingClass = UastUtils.getContainingClass(resolved);
+                    if (containingClass == null || !containingClass.matchesFqName(FQCN_GRAVITY)) {
                         return false;
                     }
                 }
             } else {
                 // Can't resolve types (for example while editing code with errors):
                 // rely on heuristics like import statements and class qualifiers
-                if (parent instanceof Select &&
-                        !(GRAVITY_CLASS.equals(((Select) parent).astOperand().toString()))) {
+                if (parent instanceof UQualifiedExpression &&
+                    !(GRAVITY_CLASS.equals(((UQualifiedExpression) parent).getReceiver().renderString()))) {
                     return false;
                 }
-                if (parent instanceof VariableReference) {
+                if (parent instanceof USimpleReferenceExpression) {
                     // No operand: make sure it's statically imported
-                    if (!LintUtils.isImported(mContext.getCompilationUnit(),
-                            FQCN_GRAVITY_PREFIX + identifier)) {
+                    if (!LintUtils.isImported(mContext.getLintContext().getCompilationUnit(),
+                                              FQCN_GRAVITY_PREFIX + identifier)) {
                         return false;
                     }
                 }
             }
 
             String message = String.format(
-                    "Use \"`Gravity.%1$s`\" instead of \"`Gravity.%2$s`\" to ensure correct "
-                            + "behavior in right-to-left locales",
-                    (isLeft ? GRAVITY_VALUE_START : GRAVITY_VALUE_END).toUpperCase(Locale.US),
-                    (isLeft ? GRAVITY_VALUE_LEFT : GRAVITY_VALUE_RIGHT).toUpperCase(Locale.US));
-            Location location = mContext.getLocation(node);
+              "Use \"`Gravity.%1$s`\" instead of \"`Gravity.%2$s`\" to ensure correct "
+              + "behavior in right-to-left locales",
+              (isLeft ? GRAVITY_VALUE_START : GRAVITY_VALUE_END).toUpperCase(Locale.US),
+              (isLeft ? GRAVITY_VALUE_LEFT : GRAVITY_VALUE_RIGHT).toUpperCase(Locale.US));
+            Location location = UastAndroidUtils.getLocation(node);
             mContext.report(USE_START, node, location, message);
 
             return true;

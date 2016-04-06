@@ -14,36 +14,30 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
 import com.android.annotations.NonNull;
-import com.android.annotations.Nullable;
-import com.android.tools.lint.client.api.JavaParser.ResolvedMethod;
-import com.android.tools.lint.client.api.JavaParser.ResolvedNode;
-import com.android.tools.lint.detector.api.Category;
-import com.android.tools.lint.detector.api.ConstantEvaluator;
-import com.android.tools.lint.detector.api.Context;
-import com.android.tools.lint.detector.api.Detector;
-import com.android.tools.lint.detector.api.Implementation;
-import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.JavaContext;
-import com.android.tools.lint.detector.api.Scope;
-import com.android.tools.lint.detector.api.Severity;
-import com.android.tools.lint.detector.api.Speed;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.Context;
+import com.android.tools.klint.detector.api.Detector;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
+import com.android.tools.klint.detector.api.Speed;
 
 import java.io.File;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
-import lombok.ast.AstVisitor;
-import lombok.ast.Expression;
-import lombok.ast.MethodInvocation;
+import org.jetbrains.uast.*;
+import org.jetbrains.uast.check.UastAndroidContext;
+import org.jetbrains.uast.check.UastScanner;
 
 /**
  * Makes sure that alarms are handled correctly
  */
-public class AlarmDetector extends Detector implements Detector.JavaScanner {
+public class AlarmDetector extends Detector implements UastScanner {
 
     private static final Implementation IMPLEMENTATION = new Implementation(
             AlarmDetector.class,
@@ -82,51 +76,38 @@ public class AlarmDetector extends Detector implements Detector.JavaScanner {
         return Speed.FAST;
     }
 
-    // ---- Implements JavaScanner ----
+    // ---- Implements UastScanner ----
 
     @Override
-    public List<String> getApplicableMethodNames() {
+    public List<String> getApplicableFunctionNames() {
         return Collections.singletonList("setRepeating");
     }
 
     @Override
-    public void visitMethod(@NonNull JavaContext context, @Nullable AstVisitor visitor,
-            @NonNull MethodInvocation node) {
-        ResolvedNode resolved = context.resolve(node);
-        if (resolved instanceof ResolvedMethod) {
-            ResolvedMethod method = (ResolvedMethod) resolved;
-            if (method.getContainingClass().matches("android.app.AlarmManager")
-                    && method.getArgumentCount() == 4) {
-                ensureAtLeast(context, node, 1, 5000L);
-                ensureAtLeast(context, node, 2, 60000L);
-            }
+    public void visitFunctionCall(UastAndroidContext context, UCallExpression node) {
+        UFunction setRepeatingFunction = node.resolve(context);
+        UClass containingClass = UastUtils.getContainingClassOrEmpty(setRepeatingFunction);
+
+        if (containingClass.matchesFqName("android.app.AlarmManager")
+                && node.getValueArgumentCount() == 4) {
+            ensureAtLeast(context, node, 1, 5000L);
+            ensureAtLeast(context, node, 2, 60000L);
         }
     }
 
-    private static void ensureAtLeast(@NonNull JavaContext context,
-            @NonNull MethodInvocation node, int parameter, long min) {
-        Iterator<Expression> iterator = node.astArguments().iterator();
-        Expression argument = null;
-        for (int i = 0; i <= parameter; i++) {
-            if (!iterator.hasNext()) {
-                return;
-            }
-            argument = iterator.next();
-        }
-        if (argument == null) {
-            return;
-        }
-
-        long value = getLongValue(context, argument);
+    private static void ensureAtLeast(@NonNull UastAndroidContext context,
+            @NonNull UCallExpression node, int parameter, long min) {
+        UExpression arg = node.getValueArguments().get(parameter);
+        long value = getLongValue(arg);
         if (value < min) {
             String message = String.format("Value will be forced up to %d as of Android 5.1; "
                     + "don't rely on this to be exact", min);
-            context.report(ISSUE, argument, context.getLocation(argument), message);
+            context.report(ISSUE, arg, context.getLocation(arg), message);
         }
     }
 
-    private static long getLongValue(@NonNull JavaContext context, @NonNull Expression argument) {
-        Object value = ConstantEvaluator.evaluate(context, argument);
+    private static long getLongValue(@NonNull UExpression argument) {
+        Object value = argument.evaluate();
         if (value instanceof Number) {
             return ((Number)value).longValue();
         }

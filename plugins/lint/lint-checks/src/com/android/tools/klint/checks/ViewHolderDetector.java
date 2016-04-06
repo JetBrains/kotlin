@@ -14,42 +14,34 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
-import static com.android.SdkConstants.VIEW;
-import static com.android.SdkConstants.VIEW_GROUP;
-import static com.android.tools.lint.client.api.JavaParser.TYPE_INT;
+import static com.android.SdkConstants.*;
 
 import com.android.annotations.NonNull;
-import com.android.tools.lint.detector.api.Category;
-import com.android.tools.lint.detector.api.Detector;
-import com.android.tools.lint.detector.api.Implementation;
-import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.JavaContext;
-import com.android.tools.lint.detector.api.Scope;
-import com.android.tools.lint.detector.api.Severity;
-import com.android.tools.lint.detector.api.Speed;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.Detector;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
+import com.android.tools.klint.detector.api.Speed;
 import com.google.common.collect.Lists;
 
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import lombok.ast.AstVisitor;
-import lombok.ast.ForwardingAstVisitor;
-import lombok.ast.If;
-import lombok.ast.InlineIfExpression;
-import lombok.ast.MethodDeclaration;
-import lombok.ast.MethodInvocation;
-import lombok.ast.Node;
-import lombok.ast.StrictListAccessor;
-import lombok.ast.Switch;
-import lombok.ast.VariableDefinition;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.uast.*;
+import org.jetbrains.uast.check.UastAndroidContext;
+import org.jetbrains.uast.check.UastAndroidUtils;
+import org.jetbrains.uast.check.UastScanner;
+import org.jetbrains.uast.visitor.UastVisitor;
 
 /**
  * Looks for ListView scrolling performance: should use view holder pattern
  */
-public class ViewHolderDetector extends Detector implements Detector.JavaScanner {
+public class ViewHolderDetector extends Detector implements UastScanner {
 
     private static final Implementation IMPLEMENTATION = new Implementation(
             ViewHolderDetector.class,
@@ -85,62 +77,45 @@ public class ViewHolderDetector extends Detector implements Detector.JavaScanner
         return Speed.NORMAL;
     }
 
-    // ---- Implements JavaScanner ----
+    // ---- Implements UastScanner ----
 
     @Override
-    public List<Class<? extends Node>> getApplicableNodeTypes() {
-        return Collections.<Class<? extends Node>>singletonList(MethodDeclaration.class);
-    }
-
-    @Override
-    public AstVisitor createJavaVisitor(@NonNull JavaContext context) {
+    public UastVisitor createUastVisitor(UastAndroidContext context) {
         return new ViewAdapterVisitor(context);
     }
 
-    private static class ViewAdapterVisitor extends ForwardingAstVisitor {
-        private final JavaContext mContext;
+    private static class ViewAdapterVisitor extends UastVisitor {
+        private final UastAndroidContext mContext;
 
-        public ViewAdapterVisitor(JavaContext context) {
+        public ViewAdapterVisitor(UastAndroidContext context) {
             mContext = context;
         }
 
         @Override
-        public boolean visitMethodDeclaration(MethodDeclaration node) {
+        public boolean visitFunction(@NotNull UFunction node) {
             if (isViewAdapterMethod(node)) {
                 InflationVisitor visitor = new InflationVisitor(mContext);
-                node.accept(visitor);
+                visitor.process(node);
                 visitor.finish();
             }
-            return super.visitMethodDeclaration(node);
+            return false;
         }
 
         /**
          * Returns true if this method looks like it's overriding android.widget.Adapter's getView
          * method: getView(int position, View convertView, ViewGroup parent)
          */
-        private static boolean isViewAdapterMethod(MethodDeclaration node) {
-            if (GET_VIEW.equals(node.astMethodName().astValue())) {
-                StrictListAccessor<VariableDefinition, MethodDeclaration> parameters =
-                        node.astParameters();
-                if (parameters != null && parameters.size() == 3) {
-                    Iterator<VariableDefinition> iterator = parameters.iterator();
+        private static boolean isViewAdapterMethod(UFunction node) {
+            if (GET_VIEW.equals(node.getName())) {
+                List<UVariable> parameters = node.getValueParameters();
+                if (parameters.size() == 3) {
+                    Iterator<UVariable> iterator = parameters.iterator();
                     if (!iterator.hasNext()) {
                         return false;
                     }
 
-                    VariableDefinition first = iterator.next();
-                    if (!first.astTypeReference().astParts().last().getTypeName().equals(
-                            TYPE_INT)) {
-                        return false;
-                    }
-
-                    if (!iterator.hasNext()) {
-                        return false;
-                    }
-
-                    VariableDefinition second = iterator.next();
-                    if (!second.astTypeReference().astParts().last().getTypeName().equals(
-                            VIEW)) {
+                    UVariable first = iterator.next();
+                    if (!first.getType().isInt()) {
                         return false;
                     }
 
@@ -148,10 +123,18 @@ public class ViewHolderDetector extends Detector implements Detector.JavaScanner
                         return false;
                     }
 
-                    VariableDefinition third = iterator.next();
+                    UVariable second = iterator.next();
+                    if (!second.getType().matchesFqName(CLASS_VIEW)) {
+                        return false;
+                    }
+
+                    if (!iterator.hasNext()) {
+                        return false;
+                    }
+
+                    UVariable third = iterator.next();
                     //noinspection RedundantIfStatement
-                    if (!third.astTypeReference().astParts().last().getTypeName().equals(
-                            VIEW_GROUP)) {
+                    if (!third.getType().matchesFqName(CLASS_VIEWGROUP)) {
                         return false;
                     }
 
@@ -163,26 +146,26 @@ public class ViewHolderDetector extends Detector implements Detector.JavaScanner
         }
     }
 
-    private static class InflationVisitor extends ForwardingAstVisitor {
-        private final JavaContext mContext;
-        private List<Node> mNodes;
+    private static class InflationVisitor extends UastVisitor {
+        private final UastAndroidContext mContext;
+        private List<UElement> mNodes;
         private boolean mHaveConditional;
 
-        public InflationVisitor(JavaContext context) {
+        public InflationVisitor(UastAndroidContext context) {
             mContext = context;
         }
 
         @Override
-        public boolean visitMethodInvocation(MethodInvocation node) {
-            if (node.astOperand() != null) {
-                String methodName = node.astName().astValue();
-                if (methodName.equals(INFLATE) && node.astArguments().size() >= 1) {
+        public boolean visitCallExpression(@NotNull UCallExpression node) {
+            UElement parent = node.getParent();
+            if (parent instanceof UQualifiedExpression) {
+                String methodName = node.getFunctionName();
+                if (INFLATE.equals(methodName) && node.getValueArgumentCount() >= 1) {
                     // See if we're inside a conditional
                     boolean insideIf = false;
-                    Node p = node.getParent();
+                    UElement p = parent.getParent();
                     while (p != null) {
-                        if (p instanceof If || p instanceof InlineIfExpression
-                                || p instanceof Switch) {
+                        if (p instanceof UIfExpression || p instanceof USwitchExpression) {
                             insideIf = true;
                             mHaveConditional = true;
                             break;
@@ -209,17 +192,17 @@ public class ViewHolderDetector extends Detector implements Detector.JavaScanner
                 }
             }
 
-            return super.visitMethodInvocation(node);
+            return false;
         }
 
         public void finish() {
             if (!mHaveConditional && mNodes != null) {
-                for (Node node : mNodes) {
+                for (UElement node : mNodes) {
                     String message = "Unconditional layout inflation from view adapter: "
                             + "Should use View Holder pattern (use recycled view passed "
                             + "into this method as the second parameter) for smoother "
                             + "scrolling";
-                    mContext.report(ISSUE, node, mContext.getLocation(node), message);
+                    mContext.report(ISSUE, node, UastAndroidUtils.getLocation(node), message);
                 }
             }
         }

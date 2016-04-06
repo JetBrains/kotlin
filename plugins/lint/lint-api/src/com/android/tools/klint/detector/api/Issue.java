@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.detector.api;
-
-import static com.android.tools.lint.detector.api.TextFormat.RAW;
+package com.android.tools.klint.detector.api;
 
 import com.android.annotations.NonNull;
-import com.android.tools.lint.client.api.Configuration;
 import com.google.common.annotations.Beta;
 
 import java.util.ArrayList;
@@ -142,7 +139,7 @@ public final class Issue implements Comparable<Issue> {
      */
     @NonNull
     public String getBriefDescription(@NonNull TextFormat format) {
-        return RAW.convertTo(mBriefDescription, format);
+        return TextFormat.RAW.convertTo(mBriefDescription, format);
     }
 
     /**
@@ -156,7 +153,7 @@ public final class Issue implements Comparable<Issue> {
      */
     @NonNull
     public String getExplanation(@NonNull TextFormat format) {
-        return RAW.convertTo(mExplanation, format);
+        return TextFormat.RAW.convertTo(mExplanation, format);
     }
 
     /**

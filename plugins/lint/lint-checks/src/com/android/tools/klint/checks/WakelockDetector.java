@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
 import static com.android.SdkConstants.ANDROID_APP_ACTIVITY;
 
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
-import com.android.tools.lint.checks.ControlFlowGraph.Node;
-import com.android.tools.lint.detector.api.Category;
-import com.android.tools.lint.detector.api.ClassContext;
-import com.android.tools.lint.detector.api.Context;
-import com.android.tools.lint.detector.api.Detector;
-import com.android.tools.lint.detector.api.Detector.ClassScanner;
-import com.android.tools.lint.detector.api.Implementation;
-import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.LintUtils;
-import com.android.tools.lint.detector.api.Scope;
-import com.android.tools.lint.detector.api.Severity;
+import com.android.tools.klint.checks.ControlFlowGraph.Node;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.ClassContext;
+import com.android.tools.klint.detector.api.Context;
+import com.android.tools.klint.detector.api.Detector;
+import com.android.tools.klint.detector.api.Detector.ClassScanner;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.LintUtils;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -305,7 +305,7 @@ public class WakelockDetector extends Detector implements ClassScanner {
      * @return true if the target was reached
      *    XXX RETURN VALUES ARE WRONG AS OF RIGHT NOW
      */
-    protected static int dfs(ControlFlowGraph.Node node) {
+    protected static int dfs(Node node) {
         AbstractInsnNode instruction = node.instruction;
         if (instruction.getType() == AbstractInsnNode.JUMP_INSN) {
             int opcode = instruction.getOpcode();

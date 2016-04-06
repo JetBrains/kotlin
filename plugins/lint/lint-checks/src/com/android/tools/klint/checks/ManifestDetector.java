@@ -14,14 +14,25 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.android.builder.model.*;
 import com.android.ide.common.res2.AbstractResourceRepository;
 import com.android.ide.common.resources.ResourceUrl;
-import com.android.tools.lint.detector.api.*;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.Context;
+import com.android.tools.klint.detector.api.Detector;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.LintUtils;
+import com.android.tools.klint.detector.api.Location;
+import com.android.tools.klint.detector.api.Project;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
+import com.android.tools.klint.detector.api.Speed;
+import com.android.tools.klint.detector.api.XmlContext;
 import com.google.common.collect.Maps;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
@@ -38,8 +49,10 @@ import static com.android.xml.AndroidManifest.*;
  * Checks for issues in AndroidManifest files such as declaring elements in the
  * wrong order.
  */
-public class ManifestDetector extends Detector implements Detector.XmlScanner {
-    private static final Implementation IMPLEMENTATION = new Implementation(
+public class ManifestDetector extends Detector
+        implements Detector.XmlScanner {
+    private static final Implementation
+            IMPLEMENTATION = new Implementation(
             ManifestDetector.class,
             Scope.MANIFEST_SCOPE
     );

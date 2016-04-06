@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.detector.api;
+package com.android.tools.klint.detector.api;
 
 import com.android.annotations.NonNull;
 import com.android.utils.SdkUtils;

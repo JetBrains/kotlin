@@ -14,24 +14,23 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
 import static com.android.SdkConstants.SUPPORT_LIB_ARTIFACT;
-import static com.android.tools.lint.client.api.JavaParser.TYPE_BOOLEAN;
-import static com.android.tools.lint.client.api.JavaParser.TYPE_INT;
 
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
-import com.android.tools.lint.detector.api.Category;
-import com.android.tools.lint.detector.api.Context;
-import com.android.tools.lint.detector.api.Detector;
-import com.android.tools.lint.detector.api.Implementation;
-import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.JavaContext;
-import com.android.tools.lint.detector.api.Scope;
-import com.android.tools.lint.detector.api.Severity;
-import com.android.tools.lint.detector.api.Speed;
-import com.android.tools.lint.detector.api.TextFormat;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.Context;
+import com.android.tools.klint.detector.api.Detector;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.JavaContext;
+import com.android.tools.klint.detector.api.Project;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
+import com.android.tools.klint.detector.api.Speed;
+import com.android.tools.klint.detector.api.TextFormat;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
 
@@ -42,33 +41,20 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-import lombok.ast.AstVisitor;
-import lombok.ast.BinaryExpression;
-import lombok.ast.BinaryOperator;
-import lombok.ast.ConstructorInvocation;
-import lombok.ast.Expression;
-import lombok.ast.ForwardingAstVisitor;
-import lombok.ast.If;
-import lombok.ast.MethodDeclaration;
-import lombok.ast.MethodInvocation;
-import lombok.ast.Node;
-import lombok.ast.Select;
-import lombok.ast.StrictListAccessor;
-import lombok.ast.This;
-import lombok.ast.Throw;
-import lombok.ast.TypeReference;
-import lombok.ast.TypeReferencePart;
-import lombok.ast.UnaryExpression;
-import lombok.ast.VariableDefinition;
-import lombok.ast.VariableReference;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.uast.*;
+import org.jetbrains.uast.check.UastAndroidContext;
+import org.jetbrains.uast.check.UastScanner;
+import org.jetbrains.uast.visitor.UastVisitor;
 
 /**
  * Looks for performance issues in Java files, such as memory allocations during
  * drawing operations and using HashMap instead of SparseArray.
  */
-public class JavaPerformanceDetector extends Detector implements Detector.JavaScanner {
+public class JavaPerformanceDetector extends Detector implements UastScanner {
 
-    private static final Implementation IMPLEMENTATION = new Implementation(
+    private static final Implementation
+            IMPLEMENTATION = new Implementation(
             JavaPerformanceDetector.class,
             Scope.JAVA_FILE_SCOPE);
 
@@ -159,65 +145,73 @@ public class JavaPerformanceDetector extends Detector implements Detector.JavaSc
         return Speed.FAST;
     }
 
-    // ---- Implements JavaScanner ----
+    // ---- Implements UastScanner ----
 
     @Override
-    public List<Class<? extends Node>> getApplicableNodeTypes() {
-        List<Class<? extends Node>> types = new ArrayList<Class<? extends Node>>(3);
-        types.add(ConstructorInvocation.class);
-        types.add(MethodDeclaration.class);
-        types.add(MethodInvocation.class);
-        return types;
-    }
-
-    @Override
-    public AstVisitor createJavaVisitor(@NonNull JavaContext context) {
+    public UastVisitor createUastVisitor(UastAndroidContext context) {
         return new PerformanceVisitor(context);
     }
 
-    private static class PerformanceVisitor extends ForwardingAstVisitor {
-        private final JavaContext mContext;
+    private static class PerformanceVisitor extends UastVisitor {
+        private final UastAndroidContext mContext;
         private final boolean mCheckMaps;
         private final boolean mCheckAllocations;
         private final boolean mCheckValueOf;
         /** Whether allocations should be "flagged" in the current method */
         private boolean mFlagAllocations;
 
-        public PerformanceVisitor(JavaContext context) {
+        public PerformanceVisitor(UastAndroidContext context) {
             mContext = context;
 
-            mCheckAllocations = context.isEnabled(PAINT_ALLOC);
-            mCheckMaps = context.isEnabled(USE_SPARSE_ARRAY);
-            mCheckValueOf = context.isEnabled(USE_VALUE_OF);
+            JavaContext lintContext = context.getLintContext();
+            mCheckAllocations = lintContext.isEnabled(PAINT_ALLOC);
+            mCheckMaps = lintContext.isEnabled(USE_SPARSE_ARRAY);
+            mCheckValueOf = lintContext.isEnabled(USE_VALUE_OF);
         }
 
         @Override
-        public boolean visitMethodDeclaration(MethodDeclaration node) {
+        public boolean visitFunction(@NotNull UFunction node) {
             mFlagAllocations = isBlockedAllocationMethod(node);
-
-            return super.visitMethodDeclaration(node);
+            return super.visitFunction(node);
         }
 
         @Override
-        public boolean visitConstructorInvocation(ConstructorInvocation node) {
+        public boolean visitCallExpression(@NotNull UCallExpression node) {
+            UastCallKind kind = node.getKind();
+            if (kind == UastCallKind.CONSTRUCTOR_CALL) {
+                visitConstructorInvocation(node);
+            } else if (kind == UastCallKind.FUNCTION_CALL) {
+                visitFunctionInvocation(node);
+            }
+
+            return super.visitCallExpression(node);
+        }
+
+        private void visitConstructorInvocation(UCallExpression node) {
+            USimpleReferenceExpression classReference = node.getClassReference();
+            if (classReference == null) {
+                return;
+            }
+
             String typeName = null;
             if (mCheckMaps) {
-                TypeReference reference = node.astTypeReference();
-                typeName = reference.astParts().last().astIdentifier().astValue();
-                // TODO: Should we handle factory method constructions of HashMaps as well,
-                // e.g. via Guava? This is a bit trickier since we need to infer the type
-                // arguments from the calling context.
-                if (typeName.equals(HASH_MAP)) {
-                    checkHashMap(node, reference);
-                } else if (typeName.equals(SPARSE_ARRAY)) {
-                    checkSparseArray(node, reference);
+                UClass clazz = classReference.resolveClass(mContext);
+                if (clazz != null) {
+                    typeName = clazz.getName();
+                    // TODO: Should we handle factory method constructions of HashMaps as well,
+                    // e.g. via Guava? This is a bit trickier since we need to infer the type
+                    // arguments from the calling context.
+                    if (clazz.matchesFqName(HASH_MAP)) {
+                        checkHashMap(node);
+                    } else if (clazz.matchesFqName(SPARSE_ARRAY)) {
+                        checkSparseArray(node);
+                    }
                 }
             }
 
             if (mCheckValueOf) {
                 if (typeName == null) {
-                    TypeReference reference = node.astTypeReference();
-                    typeName = reference.astParts().last().astIdentifier().astValue();
+                    typeName = classReference.getIdentifier();
                 }
                 if ((typeName.equals(INTEGER)
                         || typeName.equals(BOOLEAN)
@@ -226,65 +220,63 @@ public class JavaPerformanceDetector extends Detector implements Detector.JavaSc
                         || typeName.equals(LONG)
                         || typeName.equals(DOUBLE)
                         || typeName.equals(BYTE))
-                        && node.astTypeReference().astParts().size() == 1
-                        && node.astArguments().size() == 1) {
-                    String argument = node.astArguments().first().toString();
+                        && node.getValueArgumentCount() == 1) {
+                    String argument = node.getValueArguments().get(0).renderString();
                     mContext.report(USE_VALUE_OF, node, mContext.getLocation(node), getUseValueOfErrorMessage(
                             typeName, argument));
                 }
             }
 
-            if (mFlagAllocations && !(node.getParent() instanceof Throw) && mCheckAllocations) {
+            if (mFlagAllocations && !(UastUtils.isThrow(node.getParent())) && mCheckAllocations) {
                 // Make sure we're still inside the method declaration that marked
                 // mInDraw as true, in case we've left it and we're in a static
                 // block or something:
-                Node method = node;
+                UElement method = node;
                 while (method != null) {
-                    if (method instanceof MethodDeclaration) {
+                    if (method instanceof UFunction) {
                         break;
                     }
                     method = method.getParent();
                 }
-                if (method != null && isBlockedAllocationMethod(((MethodDeclaration) method))
+                if (method != null && isBlockedAllocationMethod(((UFunction) method))
                         && !isLazilyInitialized(node)) {
                     reportAllocation(node);
                 }
             }
-
-            return super.visitConstructorInvocation(node);
         }
 
-        private void reportAllocation(Node node) {
+        private void reportAllocation(UElement node) {
             mContext.report(PAINT_ALLOC, node, mContext.getLocation(node),
                 "Avoid object allocations during draw/layout operations (preallocate and " +
                 "reuse instead)");
         }
 
-        @Override
-        public boolean visitMethodInvocation(MethodInvocation node) {
-            if (mFlagAllocations && node.astOperand() != null) {
+        private void visitFunctionInvocation(UCallExpression node) {
+            UExpression operand = UastUtils.getReceiver(node);
+
+            if (mFlagAllocations && operand != null) {
                 // Look for forbidden methods
-                String methodName = node.astName().astValue();
-                if (methodName.equals("createBitmap")                              //$NON-NLS-1$
-                        || methodName.equals("createScaledBitmap")) {              //$NON-NLS-1$
-                    String operand = node.astOperand().toString();
-                    if (operand.equals("Bitmap")                                   //$NON-NLS-1$
-                            || operand.equals("android.graphics.Bitmap")) {        //$NON-NLS-1$
+                String methodName = node.getFunctionName();
+                if ("createBitmap".equals(methodName)                              //$NON-NLS-1$
+                    || "createScaledBitmap".equals(methodName)) {                  //$NON-NLS-1$
+                    String operandText = operand.renderString();
+                    if (operandText.equals("Bitmap")                                   //$NON-NLS-1$
+                            || operandText.equals("android.graphics.Bitmap")) {        //$NON-NLS-1$
                         if (!isLazilyInitialized(node)) {
                             reportAllocation(node);
                         }
                     }
-                } else if (methodName.startsWith("decode")) {                      //$NON-NLS-1$
+                } else if (methodName != null && methodName.startsWith("decode")) { //$NON-NLS-1$
                     // decodeFile, decodeByteArray, ...
-                    String operand = node.astOperand().toString();
-                    if (operand.equals("BitmapFactory")                            //$NON-NLS-1$
-                            || operand.equals("android.graphics.BitmapFactory")) { //$NON-NLS-1$
+                    String operandText = operand.renderString();
+                    if (operandText.equals("BitmapFactory")                            //$NON-NLS-1$
+                            || operandText.equals("android.graphics.BitmapFactory")) { //$NON-NLS-1$
                         if (!isLazilyInitialized(node)) {
                             reportAllocation(node);
                         }
                     }
-                } else if (methodName.equals("getClipBounds")) {                   //$NON-NLS-1$
-                    if (node.astArguments().isEmpty()) {
+                } else if ("getClipBounds".equals(methodName)) {                   //$NON-NLS-1$
+                    if (node.getValueArgumentCount() == 0) {
                         mContext.report(PAINT_ALLOC, node, mContext.getLocation(node),
                                 "Avoid object allocations during draw operations: Use " +
                                 "`Canvas.getClipBounds(Rect)` instead of `Canvas.getClipBounds()` " +
@@ -292,8 +284,6 @@ public class JavaPerformanceDetector extends Detector implements Detector.JavaSc
                     }
                 }
             }
-
-            return super.visitMethodInvocation(node);
         }
 
         /**
@@ -316,13 +306,13 @@ public class JavaPerformanceDetector extends Detector implements Detector.JavaSc
          *    }
          * </pre>
          */
-        private static boolean isLazilyInitialized(Node node) {
-            Node curr = node.getParent();
+        private static boolean isLazilyInitialized(UElement node) {
+            UElement curr = node.getParent();
             while (curr != null) {
-                if (curr instanceof MethodDeclaration) {
+                if (curr instanceof UFunction) {
                     return false;
-                } else if (curr instanceof If) {
-                    If ifNode = (If) curr;
+                } else if (curr instanceof UIfExpression) {
+                    UIfExpression ifNode = (UIfExpression) curr;
                     // See if the if block represents a lazy initialization:
                     // compute all variable names seen in the condition
                     // (e.g. for "if (foo == null || bar != foo)" the result is "foo,bar"),
@@ -331,11 +321,14 @@ public class JavaPerformanceDetector extends Detector implements Detector.JavaSc
                     // guarded (so lazily initialized and an allocation we won't complain
                     // about.)
                     List<String> assignments = new ArrayList<String>();
-                    AssignmentTracker visitor = new AssignmentTracker(assignments);
-                    ifNode.astStatement().accept(visitor);
+                    UExpression thenBranch = ifNode.getThenBranch();
+                    if (thenBranch != null) {
+                        AssignmentTracker visitor = new AssignmentTracker(assignments);
+                        visitor.process(thenBranch);
+                    }
                     if (!assignments.isEmpty()) {
                         List<String> references = new ArrayList<String>();
-                        addReferencedVariables(references, ifNode.astCondition());
+                        addReferencedVariables(references, ifNode.getCondition());
                         if (!references.isEmpty()) {
                             SetView<String> intersection = Sets.intersection(
                                     new HashSet<String>(assignments),
@@ -354,21 +347,21 @@ public class JavaPerformanceDetector extends Detector implements Detector.JavaSc
 
         /** Adds any variables referenced in the given expression into the given list */
         private static void addReferencedVariables(Collection<String> variables,
-                Expression expression) {
-            if (expression instanceof BinaryExpression) {
-                BinaryExpression binary = (BinaryExpression) expression;
-                addReferencedVariables(variables, binary.astLeft());
-                addReferencedVariables(variables, binary.astRight());
-            } else if (expression instanceof UnaryExpression) {
-                UnaryExpression unary = (UnaryExpression) expression;
-                addReferencedVariables(variables, unary.astOperand());
-            } else if (expression instanceof VariableReference) {
-                VariableReference reference = (VariableReference) expression;
-                variables.add(reference.astIdentifier().astValue());
-            } else if (expression instanceof Select) {
-                Select select = (Select) expression;
-                if (select.astOperand() instanceof This) {
-                    variables.add(select.astIdentifier().astValue());
+                UExpression expression) {
+            if (expression instanceof UBinaryExpression) {
+                UBinaryExpression binary = (UBinaryExpression) expression;
+                addReferencedVariables(variables, binary.getLeftOperand());
+                addReferencedVariables(variables, binary.getRightOperand());
+            } else if (expression instanceof UUnaryExpression) {
+                UUnaryExpression unary = (UUnaryExpression) expression;
+                addReferencedVariables(variables, unary.getOperand());
+            } else if (expression instanceof USimpleReferenceExpression) {
+                USimpleReferenceExpression reference = (USimpleReferenceExpression) expression;
+                variables.add(reference.getIdentifier());
+            } else if (expression instanceof UQualifiedExpression) {
+                UQualifiedExpression select = (UQualifiedExpression) expression;
+                if (select.getReceiver() instanceof UThisExpression && select.getSelector() instanceof USimpleReferenceExpression) {
+                    variables.add(((USimpleReferenceExpression) select.getSelector()).getIdentifier());
                 }
             }
         }
@@ -377,7 +370,7 @@ public class JavaPerformanceDetector extends Detector implements Detector.JavaSc
          * Returns whether the given method declaration represents a method
          * where allocating objects is not allowed for performance reasons
          */
-        private static boolean isBlockedAllocationMethod(MethodDeclaration node) {
+        private static boolean isBlockedAllocationMethod(UFunction node) {
             return isOnDrawMethod(node) || isOnMeasureMethod(node) || isOnLayoutMethod(node)
                     || isLayoutMethod(node);
         }
@@ -386,15 +379,12 @@ public class JavaPerformanceDetector extends Detector implements Detector.JavaSc
          * Returns true if this method looks like it's overriding android.view.View's
          * {@code protected void onDraw(Canvas canvas)}
          */
-        private static boolean isOnDrawMethod(MethodDeclaration node) {
-            if (ON_DRAW.equals(node.astMethodName().astValue())) {
-                StrictListAccessor<VariableDefinition, MethodDeclaration> parameters =
-                        node.astParameters();
-                if (parameters != null && parameters.size() == 1) {
-                    VariableDefinition arg0 = parameters.first();
-                    TypeReferencePart type = arg0.astTypeReference().astParts().last();
-                    String typeName = type.getTypeName();
-                    if (typeName.equals(CANVAS)) {
+        private static boolean isOnDrawMethod(UFunction node) {
+            if (ON_DRAW.equals(node.getName())) {
+                List<UVariable> parameters = node.getValueParameters();
+                if (parameters.size() == 1) {
+                    UVariable arg0 = parameters.get(0);
+                    if (arg0.getType().matchesName(CANVAS)) {
                         return true;
                     }
                 }
@@ -409,24 +399,23 @@ public class JavaPerformanceDetector extends Detector implements Detector.JavaSc
          * {@code protected void onLayout(boolean changed, int left, int top,
          *      int right, int bottom)}
          */
-        private static boolean isOnLayoutMethod(MethodDeclaration node) {
-            if (ON_LAYOUT.equals(node.astMethodName().astValue())) {
-                StrictListAccessor<VariableDefinition, MethodDeclaration> parameters =
-                        node.astParameters();
-                if (parameters != null && parameters.size() == 5) {
-                    Iterator<VariableDefinition> iterator = parameters.iterator();
+        private static boolean isOnLayoutMethod(UFunction node) {
+            if (ON_LAYOUT.equals(node.getName())) {
+                List<UVariable> parameters = node.getValueParameters();
+                if (parameters.size() == 5) {
+                    Iterator<UVariable> iterator = parameters.iterator();
                     if (!iterator.hasNext()) {
                         return false;
                     }
 
                     // Ensure that the argument list matches boolean, int, int, int, int
-                    TypeReferencePart type = iterator.next().astTypeReference().astParts().last();
-                    if (!type.getTypeName().equals(TYPE_BOOLEAN) || !iterator.hasNext()) {
+                    UType type = iterator.next().getType();
+                    if (!type.isBoolean() || !iterator.hasNext()) {
                         return false;
                     }
                     for (int i = 0; i < 4; i++) {
-                        type = iterator.next().astTypeReference().astParts().last();
-                        if (!type.getTypeName().equals(TYPE_INT)) {
+                        type = iterator.next().getType();
+                        if (!type.isInt()) {
                             return false;
                         }
                         if (!iterator.hasNext()) {
@@ -443,17 +432,13 @@ public class JavaPerformanceDetector extends Detector implements Detector.JavaSc
          * Returns true if this method looks like it's overriding android.view.View's
          * {@code protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec)}
          */
-        private static boolean isOnMeasureMethod(MethodDeclaration node) {
-            if (ON_MEASURE.equals(node.astMethodName().astValue())) {
-                StrictListAccessor<VariableDefinition, MethodDeclaration> parameters =
-                        node.astParameters();
-                if (parameters != null && parameters.size() == 2) {
-                    VariableDefinition arg0 = parameters.first();
-                    VariableDefinition arg1 = parameters.last();
-                    TypeReferencePart type1 = arg0.astTypeReference().astParts().last();
-                    TypeReferencePart type2 = arg1.astTypeReference().astParts().last();
-                    return TYPE_INT.equals(type1.getTypeName())
-                            && TYPE_INT.equals(type2.getTypeName());
+        private static boolean isOnMeasureMethod(UFunction node) {
+            if (ON_MEASURE.equals(node.getName())) {
+                List<UVariable> parameters = node.getValueParameters();
+                if (parameters.size() == 2) {
+                    UVariable arg0 = parameters.get(0);
+                    UVariable arg1 = parameters.get(parameters.size() - 1);
+                    return arg0.getType().isInt() && arg1.getType().isInt();
                 }
             }
 
@@ -464,19 +449,17 @@ public class JavaPerformanceDetector extends Detector implements Detector.JavaSc
          * Returns true if this method looks like it's overriding android.view.View's
          * {@code public void layout(int l, int t, int r, int b)}
          */
-        private static boolean isLayoutMethod(MethodDeclaration node) {
-            if (LAYOUT.equals(node.astMethodName().astValue())) {
-                StrictListAccessor<VariableDefinition, MethodDeclaration> parameters =
-                        node.astParameters();
-                if (parameters != null && parameters.size() == 4) {
-                    Iterator<VariableDefinition> iterator = parameters.iterator();
+        private static boolean isLayoutMethod(UFunction node) {
+            if (LAYOUT.equals(node.getName())) {
+                List<UVariable> parameters = node.getValueParameters();
+                if (parameters.size() == 4) {
+                    Iterator<UVariable> iterator = parameters.iterator();
                     for (int i = 0; i < 4; i++) {
                         if (!iterator.hasNext()) {
                             return false;
                         }
-                        VariableDefinition next = iterator.next();
-                        TypeReferencePart type = next.astTypeReference().astParts().last();
-                        if (!TYPE_INT.equals(type.getTypeName())) {
+                        UVariable next = iterator.next();
+                        if (!next.getType().isInt()) {
                             return false;
                         }
                     }
@@ -493,15 +476,18 @@ public class JavaPerformanceDetector extends Detector implements Detector.JavaSc
          * to a HashMap constructor call that is eligible for replacement by a
          * SparseArray call instead
          */
-        private void checkHashMap(ConstructorInvocation node, TypeReference reference) {
+        private void checkHashMap(UCallExpression node) {
             // reference.hasTypeArguments returns false where it should not
-            StrictListAccessor<TypeReference, TypeReference> types = reference.getTypeArguments();
-            if (types != null && types.size() == 2) {
-                TypeReference first = types.first();
-                String typeName = first.getTypeName();
-                int minSdk = mContext.getMainProject().getMinSdk();
+            List<UType> types = node.getTypeArguments();
+            if (types.size() == 2) {
+                UType first = types.get(0);
+                String typeName = first.getName();
+
+                Project mainProject = mContext.getLintContext().getMainProject();
+                int minSdk = mainProject.getMinSdk();
+
                 if (typeName.equals(INTEGER) || typeName.equals(BYTE)) {
-                    String valueType = types.last().getTypeName();
+                    String valueType = types.get(1).getName();
                     if (valueType.equals(INTEGER)) {
                         mContext.report(USE_SPARSE_ARRAY, node, mContext.getLocation(node),
                             "Use new `SparseIntArray(...)` instead for better performance");
@@ -518,7 +504,7 @@ public class JavaPerformanceDetector extends Detector implements Detector.JavaSc
                               valueType));
                     }
                 } else if (typeName.equals(LONG) && (minSdk >= 16 ||
-                        Boolean.TRUE == mContext.getMainProject().dependsOn(
+                                                     Boolean.TRUE == mainProject.dependsOn(
                                 SUPPORT_LIB_ARTIFACT))) {
                     boolean useBuiltin = minSdk >= 16;
                     String message = useBuiltin ?
@@ -530,12 +516,12 @@ public class JavaPerformanceDetector extends Detector implements Detector.JavaSc
             }
         }
 
-        private void checkSparseArray(ConstructorInvocation node, TypeReference reference) {
+        private void checkSparseArray(UCallExpression node) {
             // reference.hasTypeArguments returns false where it should not
-            StrictListAccessor<TypeReference, TypeReference> types = reference.getTypeArguments();
-            if (types != null && types.size() == 1) {
-                TypeReference first = types.first();
-                String valueType = first.getTypeName();
+            List<UType> types = node.getTypeArguments();
+            if (types.size() == 1) {
+                UType first = types.get(0);
+                String valueType = first.getName();
                 if (valueType.equals(INTEGER)) {
                     mContext.report(USE_SPARSE_ARRAY, node, mContext.getLocation(node),
                         "Use `new SparseIntArray(...)` instead for better performance");
@@ -567,7 +553,7 @@ public class JavaPerformanceDetector extends Detector implements Detector.JavaSc
     }
 
     /** Visitor which records variable names assigned into */
-    private static class AssignmentTracker extends ForwardingAstVisitor {
+    private static class AssignmentTracker extends UastVisitor {
         private final Collection<String> mVariables;
 
         public AssignmentTracker(Collection<String> variables) {
@@ -575,17 +561,22 @@ public class JavaPerformanceDetector extends Detector implements Detector.JavaSc
         }
 
         @Override
-        public boolean visitBinaryExpression(BinaryExpression node) {
-            BinaryOperator operator = node.astOperator();
-            if (operator == BinaryOperator.ASSIGN || operator == BinaryOperator.OR_ASSIGN) {
-                Expression left = node.astLeft();
-                String variable;
-                if (left instanceof Select && ((Select) left).astOperand() instanceof This) {
-                    variable = ((Select) left).astIdentifier().astValue();
-                } else {
-                    variable = left.toString();
+        public boolean visitBinaryExpression(@NotNull UBinaryExpression node) {
+            UastBinaryOperator operator = node.getOperator();
+            if (operator == UastBinaryOperator.ASSIGN || operator == UastBinaryOperator.OR_ASSIGN) {
+                UExpression left = node.getLeftOperand();
+                String variable = null;
+                if (left instanceof UQualifiedExpression && ((UQualifiedExpression) left).getReceiver() instanceof UThisExpression) {
+                    UExpression selector = ((UQualifiedExpression) left).getSelector();
+                    if (selector instanceof USimpleReferenceExpression) {
+                        variable = ((USimpleReferenceExpression) selector).getIdentifier();
+                    }
+                } else if (left instanceof USimpleReferenceExpression) {
+                    variable = ((USimpleReferenceExpression) left).getIdentifier();
                 }
-                mVariables.add(variable);
+                if (variable != null) {
+                    mVariables.add(variable);
+                }
             }
 
             return super.visitBinaryExpression(node);

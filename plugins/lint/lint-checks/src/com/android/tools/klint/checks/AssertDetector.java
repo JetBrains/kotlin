@@ -14,35 +14,33 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
 import com.android.annotations.NonNull;
-import com.android.tools.lint.detector.api.Category;
-import com.android.tools.lint.detector.api.Context;
-import com.android.tools.lint.detector.api.Detector;
-import com.android.tools.lint.detector.api.Implementation;
-import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.JavaContext;
-import com.android.tools.lint.detector.api.Scope;
-import com.android.tools.lint.detector.api.Severity;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.Context;
+import com.android.tools.klint.detector.api.Detector;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.List;
 
-import lombok.ast.Assert;
-import lombok.ast.AstVisitor;
-import lombok.ast.BinaryExpression;
-import lombok.ast.BooleanLiteral;
-import lombok.ast.Expression;
-import lombok.ast.ForwardingAstVisitor;
-import lombok.ast.Node;
-import lombok.ast.NullLiteral;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.uast.*;
+import org.jetbrains.uast.check.UastAndroidContext;
+import org.jetbrains.uast.check.UastAndroidUtils;
+import org.jetbrains.uast.check.UastScanner;
+import org.jetbrains.uast.java.JavaSpecialExpressionKinds;
+import org.jetbrains.uast.visitor.UastVisitor;
+
+import static org.jetbrains.uast.UastLiteralUtils.isNullLiteral;
 
 /**
  * Looks for assertion usages.
  */
-public class AssertDetector extends Detector implements Detector.JavaScanner {
+public class AssertDetector extends Detector implements UastScanner {
     /** Using assertions */
     public static final Issue ISSUE = Issue.create(
             "Assert", //$NON-NLS-1$
@@ -80,28 +78,30 @@ public class AssertDetector extends Detector implements Detector.JavaScanner {
         return true;
     }
 
-    // ---- Implements JavaScanner ----
+    // ---- Implements UastScanner ----
 
     @Override
-    public List<Class<? extends Node>> getApplicableNodeTypes() {
-        return Collections.<Class<? extends Node>>singletonList(Assert.class);
-    }
-
-    @Override
-    public AstVisitor createJavaVisitor(@NonNull final JavaContext context) {
-        return new ForwardingAstVisitor() {
+    public UastVisitor createUastVisitor(final UastAndroidContext context) {
+        return new UastVisitor() {
             @Override
-            public boolean visitAssert(Assert node) {
-                if (!context.getMainProject().isAndroidProject()) {
+            public boolean visitSpecialExpressionList(@NotNull USpecialExpressionList node) {
+                if (node.getKind() != JavaSpecialExpressionKinds.ASSERT) {
                     return true;
                 }
 
-                Expression assertion = node.astAssertion();
+                if (!context.getLintContext().getMainProject().isAndroidProject()) {
+                    return true;
+                }
+
+                UExpression assertion = node.firstOrNull();
                 // Allow "assert true"; it's basically a no-op
-                if (assertion instanceof BooleanLiteral) {
-                    Boolean b = ((BooleanLiteral) assertion).astValue();
-                    if (b != null && b) {
-                        return false;
+                if (assertion instanceof ULiteralExpression) {
+                    ULiteralExpression literal = (ULiteralExpression) assertion;
+                    if (literal.isBoolean()) {
+                        Boolean b = ((Boolean)literal.getValue());
+                        if (b != null && b) {
+                            return false;
+                        }
                     }
                 } else {
                     // Allow assertions of the form "assert foo != null" because they are often used
@@ -114,8 +114,8 @@ public class AssertDetector extends Detector implements Detector.JavaScanner {
                     }
                 }
                 String message
-                        = "Assertions are unreliable. Use `BuildConfig.DEBUG` conditional checks instead.";
-                context.report(ISSUE, node, context.getLocation(node), message);
+                  = "Assertions are unreliable. Use `BuildConfig.DEBUG` conditional checks instead.";
+                context.report(ISSUE, node, UastAndroidUtils.getLocation(node), message);
                 return false;
             }
         };
@@ -126,14 +126,14 @@ public class AssertDetector extends Detector implements Detector.JavaScanner {
      * true for expressions like "a != null" and "a != null && b != null" and
      * "b == null || c != null".
      */
-    private static boolean isNullCheck(Expression expression) {
-        if (expression instanceof BinaryExpression) {
-            BinaryExpression binExp = (BinaryExpression) expression;
-            if (binExp.astLeft() instanceof NullLiteral ||
-                    binExp.astRight() instanceof NullLiteral) {
+    private static boolean isNullCheck(UExpression expression) {
+        if (expression instanceof UBinaryExpression) {
+            UBinaryExpression binExp = (UBinaryExpression) expression;
+            if (isNullLiteral(binExp.getLeftOperand()) ||
+                    isNullLiteral(binExp.getRightOperand())) {
                 return true;
             } else {
-                return isNullCheck(binExp.astLeft()) && isNullCheck(binExp.astRight());
+                return isNullCheck(binExp.getLeftOperand()) && isNullCheck(binExp.getRightOperand());
             }
         } else {
             return false;

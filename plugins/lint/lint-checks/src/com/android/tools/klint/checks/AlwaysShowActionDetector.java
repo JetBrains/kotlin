@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
 import static com.android.SdkConstants.ATTR_SHOW_AS_ACTION;
 import static com.android.SdkConstants.VALUE_ALWAYS;
@@ -22,19 +22,26 @@ import static com.android.SdkConstants.VALUE_IF_ROOM;
 
 import com.android.annotations.NonNull;
 import com.android.resources.ResourceFolderType;
-import com.android.tools.lint.detector.api.Category;
-import com.android.tools.lint.detector.api.Context;
-import com.android.tools.lint.detector.api.Detector.JavaScanner;
-import com.android.tools.lint.detector.api.Implementation;
-import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.JavaContext;
-import com.android.tools.lint.detector.api.Location;
-import com.android.tools.lint.detector.api.ResourceXmlDetector;
-import com.android.tools.lint.detector.api.Scope;
-import com.android.tools.lint.detector.api.Severity;
-import com.android.tools.lint.detector.api.Speed;
-import com.android.tools.lint.detector.api.XmlContext;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.Context;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.JavaContext;
+import com.android.tools.klint.detector.api.Location;
+import com.android.tools.klint.detector.api.ResourceXmlDetector;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
+import com.android.tools.klint.detector.api.Speed;
+import com.android.tools.klint.detector.api.XmlContext;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.uast.UElement;
+import org.jetbrains.uast.UQualifiedExpression;
+import org.jetbrains.uast.USimpleReferenceExpression;
+import org.jetbrains.uast.check.UastAndroidUtils;
+import org.jetbrains.uast.check.UastAndroidContext;
+import org.jetbrains.uast.check.UastScanner;
+import org.jetbrains.uast.visitor.UastVisitor;
 import org.w3c.dom.Attr;
 
 import java.util.ArrayList;
@@ -42,17 +49,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import lombok.ast.AstVisitor;
-import lombok.ast.ForwardingAstVisitor;
-import lombok.ast.Node;
-import lombok.ast.Select;
-
 /**
  * Check which looks for usage of showAsAction="always" in menus (or
  * MenuItem.SHOW_AS_ACTION_ALWAYS in code), which is usually a style guide violation.
  * (Use ifRoom instead).
  */
-public class AlwaysShowActionDetector extends ResourceXmlDetector implements JavaScanner {
+public class AlwaysShowActionDetector extends ResourceXmlDetector implements UastScanner {
 
     /** The main issue discovered by this detector */
     @SuppressWarnings("unchecked")
@@ -78,7 +80,7 @@ public class AlwaysShowActionDetector extends ResourceXmlDetector implements Jav
             Severity.WARNING,
             new Implementation(
                     AlwaysShowActionDetector.class,
-                    Scope.JAVA_AND_RESOURCE_FILES,
+                    Scope.SOURCE_AND_RESOURCE_FILES,
                     Scope.RESOURCE_FILE_SCOPE))
             .addMoreInfo("http://developer.android.com/design/patterns/actionbar.html"); //$NON-NLS-1$
 
@@ -193,47 +195,47 @@ public class AlwaysShowActionDetector extends ResourceXmlDetector implements Jav
         mFileAttributes.add(attribute);
     }
 
-    // ---- Implements JavaScanner ----
+    // ---- Implements UastScanner ----
 
     @Override
-    public
-    List<Class<? extends Node>> getApplicableNodeTypes() {
-        return Collections.<Class<? extends Node>>singletonList(Select.class);
-    }
-
-    @Override
-    public AstVisitor createJavaVisitor(@NonNull JavaContext context) {
+    public UastVisitor createUastVisitor(UastAndroidContext context) {
         return new FieldAccessChecker(context);
     }
 
-    private class FieldAccessChecker extends ForwardingAstVisitor {
-        private final JavaContext mContext;
+    private class FieldAccessChecker extends UastVisitor {
+        private final UastAndroidContext mContext;
 
-        public FieldAccessChecker(JavaContext context) {
+        public FieldAccessChecker(UastAndroidContext context) {
             mContext = context;
         }
 
         @Override
-        public boolean visitSelect(Select node) {
-            String description = node.astIdentifier().astValue();
+        public boolean visitQualifiedExpression(@NotNull UQualifiedExpression node) {
+            UElement selector = node.getSelector();
+            if (!(selector instanceof USimpleReferenceExpression)) {
+                return false;
+            }
+
+            String description = ((USimpleReferenceExpression)selector).getIdentifier();
             boolean isIfRoom = description.equals("SHOW_AS_ACTION_IF_ROOM"); //$NON-NLS-1$
             boolean isAlways = description.equals("SHOW_AS_ACTION_ALWAYS");  //$NON-NLS-1$
             if ((isIfRoom || isAlways)
-                    && node.astOperand().toString().equals("MenuItem")) { //$NON-NLS-1$
+                && node.getReceiver().renderString().equals("MenuItem")) { //$NON-NLS-1$
                 if (isAlways) {
-                    if (mContext.getDriver().isSuppressed(mContext, ISSUE, node)) {
-                        return super.visitSelect(node);
+                    JavaContext lintContext = mContext.getLintContext();
+                    if (lintContext.getDriver().isSuppressed(lintContext, ISSUE, node)) {
+                        return false;
                     }
                     if (mAlwaysFields == null) {
                         mAlwaysFields = new ArrayList<Location>();
                     }
-                    mAlwaysFields.add(mContext.getLocation(node));
+                    mAlwaysFields.add(UastAndroidUtils.getLocation(node));
                 } else {
                     mHasIfRoomRefs = true;
                 }
             }
 
-            return super.visitSelect(node);
+            return false;
         }
     }
 }

@@ -14,34 +14,30 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
 import com.android.annotations.NonNull;
-import com.android.annotations.Nullable;
-import com.android.tools.lint.detector.api.Category;
-import com.android.tools.lint.detector.api.Context;
-import com.android.tools.lint.detector.api.Detector;
-import com.android.tools.lint.detector.api.Implementation;
-import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.JavaContext;
-import com.android.tools.lint.detector.api.Scope;
-import com.android.tools.lint.detector.api.Severity;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.Context;
+import com.android.tools.klint.detector.api.Detector;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
 
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
-import lombok.ast.AstVisitor;
-import lombok.ast.Expression;
-import lombok.ast.ForwardingAstVisitor;
-import lombok.ast.IntegralLiteral;
-import lombok.ast.MethodInvocation;
-import lombok.ast.Node;
-import lombok.ast.Return;
-import lombok.ast.StrictListAccessor;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.uast.*;
+import org.jetbrains.uast.check.UastAndroidUtils;
+import org.jetbrains.uast.check.UastAndroidContext;
+import org.jetbrains.uast.check.UastScanner;
+import org.jetbrains.uast.visitor.UastVisitor;
 
 /** Detector looking for Toast.makeText() without a corresponding show() call */
-public class ToastDetector extends Detector implements Detector.JavaScanner {
+public class ToastDetector extends Detector implements UastScanner {
     /** The main issue discovered by this detector */
     public static final Issue ISSUE = Issue.create(
             "ShowToast", //$NON-NLS-1$
@@ -68,23 +64,23 @@ public class ToastDetector extends Detector implements Detector.JavaScanner {
     }
 
 
-    // ---- Implements JavaScanner ----
+    // ---- Implements UastScanner ----
 
     @Override
-    public List<String> getApplicableMethodNames() {
+    public List<String> getApplicableFunctionNames() {
         return Collections.singletonList("makeText"); //$NON-NLS-1$
     }
 
     @Override
-    public void visitMethod(@NonNull JavaContext context, @Nullable AstVisitor visitor,
-            @NonNull MethodInvocation node) {
-        assert node.astName().astValue().equals("makeText");
-        if (node.astOperand() == null) {
-            // "makeText()" in the code with no operand
+    public void visitFunctionCall(UastAndroidContext context, UCallExpression node) {
+        assert "makeText".equals(node.getFunctionName());
+
+        UElement qualifiedExpression = node.getParent();
+        if (!(qualifiedExpression instanceof UQualifiedExpression)) {
             return;
         }
 
-        String operand = node.astOperand().toString();
+        String operand = ((UQualifiedExpression)qualifiedExpression).getReceiver().renderString();
         if (!(operand.equals("Toast") || operand.endsWith(".Toast"))) {
             return;
         }
@@ -92,47 +88,47 @@ public class ToastDetector extends Detector implements Detector.JavaScanner {
         // Make sure you pass the right kind of duration: it's not a delay, it's
         //  LENGTH_SHORT or LENGTH_LONG
         // (see http://code.google.com/p/android/issues/detail?id=3655)
-        StrictListAccessor<Expression, MethodInvocation> args = node.astArguments();
+        List<UExpression> args = node.getValueArguments();
         if (args.size() == 3) {
-            Expression duration = args.last();
-            if (duration instanceof IntegralLiteral) {
+            UExpression duration = args.get(2);
+            if (duration instanceof ULiteralExpression && ((ULiteralExpression)duration).getValue() instanceof Number) {
                 context.report(ISSUE, duration, context.getLocation(duration),
-                        "Expected duration `Toast.LENGTH_SHORT` or `Toast.LENGTH_LONG`, a custom " +
-                        "duration value is not supported");
+                               "Expected duration `Toast.LENGTH_SHORT` or `Toast.LENGTH_LONG`, a custom " +
+                               "duration value is not supported");
             }
         }
 
-        Node method = JavaContext.findSurroundingMethod(node.getParent());
+        UFunction method = UastUtils.getContainingFunction(node.getParent());
         if (method == null) {
             return;
         }
 
-        ShowFinder finder = new ShowFinder(node);
-        method.accept(finder);
+        UExpression nodeWithPossibleQualifier = UastUtils.getQualifiedCallElement(node);
+        ShowFinder finder = new ShowFinder(nodeWithPossibleQualifier);
+        finder.process(method);
         if (!finder.isShowCalled()) {
-            context.report(ISSUE, node, context.getLocation(node),
-                    "Toast created but not shown: did you forget to call `show()` ?");
+            context.report(ISSUE, node, UastAndroidUtils.getLocation(node),
+                           "Toast created but not shown: did you forget to call `show()` ?");
         }
     }
 
-    private static class ShowFinder extends ForwardingAstVisitor {
+    private static class ShowFinder extends UastVisitor {
         /** The target makeText call */
-        private final MethodInvocation mTarget;
+        private final UExpression mTarget;
         /** Whether we've found the show method */
         private boolean mFound;
         /** Whether we've seen the target makeText node yet */
         private boolean mSeenTarget;
 
-        private ShowFinder(MethodInvocation target) {
+        private ShowFinder(UExpression target) {
             mTarget = target;
         }
 
         @Override
-        public boolean visitMethodInvocation(MethodInvocation node) {
+        public boolean visitCallExpression(@NotNull UCallExpression node) {
             if (node == mTarget) {
                 mSeenTarget = true;
-            } else if ((mSeenTarget || node.astOperand() == mTarget)
-                    && "show".equals(node.astName().astValue())) { //$NON-NLS-1$
+            } else if (mSeenTarget && node.functionNameMatches("show")) { //$NON-NLS-1$
                 // TODO: Do more flow analysis to see whether we're really calling show
                 // on the right type of object?
                 mFound = true;
@@ -142,16 +138,26 @@ public class ToastDetector extends Detector implements Detector.JavaScanner {
         }
 
         @Override
-        public boolean visitReturn(Return node) {
-            if (node.astValue() == mTarget) {
+        public boolean visitQualifiedExpression(@NotNull UQualifiedExpression node) {
+            if (node == mTarget) {
+                mSeenTarget = true;
+            }
+
+            return false;
+        }
+
+        @Override
+        public boolean visitSpecialExpressionList(@NotNull USpecialExpressionList node) {
+            if (node.getKind() == UastSpecialExpressionKind.RETURN && node.firstOrNull() == mTarget) {
                 // If you just do "return Toast.makeText(...) don't warn
                 mFound = true;
             }
-            return super.visitReturn(node);
+
+            return false;
         }
 
         boolean isShowCalled() {
-            return mFound;
+            return mFound && mSeenTarget;
         }
     }
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android.tools.lint.detector.api;
+package com.android.tools.klint.detector.api;
 
 import com.android.annotations.NonNull;
 import com.google.common.annotations.Beta;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
 import static com.android.SdkConstants.ATTR_NAME;
 import static com.android.SdkConstants.ATTR_REF_PREFIX;
@@ -32,7 +32,7 @@ import static com.android.SdkConstants.TAG_STRING_ARRAY;
 import static com.android.SdkConstants.TAG_STYLE;
 import static com.android.SdkConstants.TOOLS_URI;
 import static com.android.SdkConstants.VALUE_TRUE;
-import static com.android.tools.lint.detector.api.LintUtils.getBaseName;
+import static com.android.tools.klint.detector.api.LintUtils.getBaseName;
 import static com.android.utils.SdkUtils.getResourceFieldName;
 
 import com.android.annotations.NonNull;
@@ -44,23 +44,25 @@ import com.android.ide.common.resources.ResourceUrl;
 import com.android.resources.FolderTypeRelationship;
 import com.android.resources.ResourceFolderType;
 import com.android.resources.ResourceType;
-import com.android.tools.lint.detector.api.Category;
-import com.android.tools.lint.detector.api.Context;
-import com.android.tools.lint.detector.api.Detector.JavaScanner;
-import com.android.tools.lint.detector.api.Implementation;
-import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.JavaContext;
-import com.android.tools.lint.detector.api.LintUtils;
-import com.android.tools.lint.detector.api.Location;
-import com.android.tools.lint.detector.api.Project;
-import com.android.tools.lint.detector.api.ResourceXmlDetector;
-import com.android.tools.lint.detector.api.Scope;
-import com.android.tools.lint.detector.api.Severity;
-import com.android.tools.lint.detector.api.Speed;
-import com.android.tools.lint.detector.api.XmlContext;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.Context;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.LintUtils;
+import com.android.tools.klint.detector.api.Location;
+import com.android.tools.klint.detector.api.Project;
+import com.android.tools.klint.detector.api.ResourceXmlDetector;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
+import com.android.tools.klint.detector.api.Speed;
+import com.android.tools.klint.detector.api.XmlContext;
 
+import org.jetbrains.uast.UElement;
+import org.jetbrains.uast.check.UastAndroidContext;
+import org.jetbrains.uast.check.UastScanner;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.io.File;
@@ -68,20 +70,17 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import lombok.ast.AstVisitor;
-import lombok.ast.Node;
-
 /**
  * Check which looks for access of private resources.
  */
-public class PrivateResourceDetector extends ResourceXmlDetector implements JavaScanner {
+public class PrivateResourceDetector extends ResourceXmlDetector implements UastScanner {
     /** Attribute for overriding a resource */
     private static final String ATTR_OVERRIDE = "override";
 
     @SuppressWarnings("unchecked")
     private static final Implementation IMPLEMENTATION = new Implementation(
             PrivateResourceDetector.class,
-            Scope.JAVA_AND_RESOURCE_FILES,
+            Scope.SOURCE_AND_RESOURCE_FILES,
             Scope.JAVA_FILE_SCOPE,
             Scope.RESOURCE_FILE_SCOPE);
 
@@ -110,7 +109,7 @@ public class PrivateResourceDetector extends ResourceXmlDetector implements Java
         return Speed.FAST;
     }
 
-    // ---- Implements JavaScanner ----
+    // ---- Implements UastScanner ----
 
     @Override
     public boolean appliesToResourceRefs() {
@@ -119,19 +118,20 @@ public class PrivateResourceDetector extends ResourceXmlDetector implements Java
 
     @Override
     public void visitResourceReference(
-            @NonNull JavaContext context,
-            @Nullable AstVisitor visitor,
-            @NonNull Node node,
-            @NonNull String type,
-            @NonNull String name,
-            boolean isFramework) {
-        if (context.getProject().isGradleProject() && !isFramework) {
-            Project project = context.getProject();
+            UastAndroidContext uastContext,
+            UElement element,
+            String type,
+            String name,
+            boolean isFramework
+    ) {
+        Context context = uastContext.getLintContext();
+        Project project = context.getProject();
+        if (project.isGradleProject() && !isFramework) {
             if (project.getGradleProjectModel() != null && project.getCurrentVariant() != null) {
                 ResourceType resourceType = ResourceType.getEnum(type);
                 if (resourceType != null && isPrivate(context, resourceType, name)) {
                     String message = createUsageErrorMessage(context, resourceType, name);
-                    context.report(ISSUE, node, context.getLocation(node), message);
+                    context.report(ISSUE, uastContext.getLocation(element), message);
                 }
             }
         }
@@ -227,8 +227,8 @@ public class PrivateResourceDetector extends ResourceXmlDetector implements Java
         // Look for ?attr/ and @dimen/foo etc references in the item children
         NodeList childNodes = item.getChildNodes();
         for (int i = 0, n = childNodes.getLength(); i < n; i++) {
-            org.w3c.dom.Node child = childNodes.item(i);
-            if (child.getNodeType() == org.w3c.dom.Node.TEXT_NODE) {
+            Node child = childNodes.item(i);
+            if (child.getNodeType() == Node.TEXT_NODE) {
                 String text = child.getNodeValue();
 
                 int index = text.indexOf(ATTR_REF_PREFIX);
@@ -259,7 +259,7 @@ public class PrivateResourceDetector extends ResourceXmlDetector implements Java
     }
 
     @Override
-    public void beforeCheckFile(@NonNull Context context) {
+    public void beforeCheckProject(@NonNull Context context) {
         File file = context.file;
         boolean isXmlFile = LintUtils.isXmlFile(file);
         if (!isXmlFile && !LintUtils.isBitmapFile(file)) {
@@ -288,7 +288,7 @@ public class PrivateResourceDetector extends ResourceXmlDetector implements Java
     }
 
     private static String createOverrideErrorMessage(@NonNull Context context,
-            @NonNull ResourceType type, @NonNull String name) {
+                                                     @NonNull ResourceType type, @NonNull String name) {
         String libraryName = getLibraryName(context, type, name);
         return String.format("Overriding `@%1$s/%2$s` which is marked as private in %3$s. If "
                         + "deliberate, use tools:override=\"true\", otherwise pick a "

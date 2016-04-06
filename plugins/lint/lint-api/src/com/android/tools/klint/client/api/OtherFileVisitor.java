@@ -13,30 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android.tools.lint.client.api;
-
-import static com.android.SdkConstants.ANDROID_MANIFEST_XML;
-import static com.android.SdkConstants.DOT_CLASS;
-import static com.android.SdkConstants.DOT_JAVA;
-import static com.android.SdkConstants.DOT_XML;
-import static com.android.SdkConstants.FD_ASSETS;
-import static com.android.tools.lint.detector.api.Detector.OtherFileScanner;
+package com.android.tools.klint.client.api;
 
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
-import com.android.tools.lint.detector.api.Context;
-import com.android.tools.lint.detector.api.Detector;
-import com.android.tools.lint.detector.api.Project;
-import com.android.tools.lint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Context;
+import com.android.tools.klint.detector.api.Detector;
+import com.android.tools.klint.detector.api.Project;
+import com.android.tools.klint.detector.api.Scope;
 import com.android.utils.SdkUtils;
 import com.google.common.collect.Lists;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import static com.android.SdkConstants.*;
+import static com.android.tools.klint.detector.api.Detector.OtherFileScanner;
 
 /**
  * Visitor for "other" files: files that aren't java sources,
@@ -102,7 +94,7 @@ class OtherFileVisitor {
             }
         }
 
-        if (scopes.contains(Scope.JAVA_FILE)) {
+        if (scopes.contains(Scope.SOURCE_FILE)) {
             if (subset != null && !subset.isEmpty()) {
                 List<File> files = new ArrayList<File>(subset.size());
                 for (File file : subset) {
@@ -111,7 +103,7 @@ class OtherFileVisitor {
                     }
                 }
                 if (!files.isEmpty()) {
-                    mFiles.put(Scope.JAVA_FILE, files);
+                    mFiles.put(Scope.SOURCE_FILE, files);
                 }
             } else {
                 List<File> files = Lists.newArrayListWithExpectedSize(100);
@@ -119,7 +111,7 @@ class OtherFileVisitor {
                     collectFiles(files, srcFolder);
                 }
                 if (!files.isEmpty()) {
-                    mFiles.put(Scope.JAVA_FILE, files);
+                    mFiles.put(Scope.SOURCE_FILE, files);
                 }
             }
         }

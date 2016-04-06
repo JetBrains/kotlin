@@ -14,36 +14,25 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
-import com.android.annotations.NonNull;
-import com.android.annotations.Nullable;
-import com.android.tools.lint.client.api.JavaParser;
-import com.android.tools.lint.client.api.JavaParser.ResolvedField;
-import com.android.tools.lint.client.api.JavaParser.ResolvedMethod;
-import com.android.tools.lint.client.api.JavaParser.ResolvedNode;
-import com.android.tools.lint.client.api.JavaParser.TypeDescriptor;
-import com.android.tools.lint.detector.api.Category;
-import com.android.tools.lint.detector.api.Detector;
-import com.android.tools.lint.detector.api.Implementation;
-import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.JavaContext;
-import com.android.tools.lint.detector.api.Scope;
-import com.android.tools.lint.detector.api.Severity;
+import com.android.tools.klint.client.api.JavaParser;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.Detector;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
 
 import java.util.Collections;
 import java.util.List;
 
-import lombok.ast.AstVisitor;
-import lombok.ast.BinaryExpression;
-import lombok.ast.BinaryOperator;
-import lombok.ast.Expression;
-import lombok.ast.IntegralLiteral;
-import lombok.ast.MethodInvocation;
-import lombok.ast.StrictListAccessor;
-import lombok.ast.StringLiteral;
+import org.jetbrains.uast.*;
+import org.jetbrains.uast.check.UastAndroidContext;
+import org.jetbrains.uast.check.UastAndroidUtils;
+import org.jetbrains.uast.check.UastScanner;
 
-public class GetSignaturesDetector extends Detector implements Detector.JavaScanner  {
+public class GetSignaturesDetector extends Detector implements UastScanner {
     public static final Issue ISSUE = Issue.create(
             "PackageManagerGetSignatures", //$NON-NLS-1$
             "Potential Multiple Certificate Exploit",
@@ -65,92 +54,83 @@ public class GetSignaturesDetector extends Detector implements Detector.JavaScan
     private static final String GET_PACKAGE_INFO = "getPackageInfo"; //$NON-NLS-1$
     private static final int GET_SIGNATURES_FLAG = 0x00000040; //$NON-NLS-1$
 
-    // ---- Implements JavaScanner ----
+    // ---- Implements UastScanner ----
+
 
     @Override
-    @Nullable
-    public List<String> getApplicableMethodNames() {
+    public List<String> getApplicableFunctionNames() {
         return Collections.singletonList(GET_PACKAGE_INFO);
     }
 
     @Override
-    public void visitMethod(@NonNull JavaContext context, @Nullable AstVisitor visitor,
-            @NonNull MethodInvocation node) {
-        ResolvedNode resolved = context.resolve(node);
+    public void visitFunctionCall(UastAndroidContext context, UCallExpression node) {
+        UFunction resolved = node.resolve(context);
 
-        if (!(resolved instanceof ResolvedMethod) ||
-                !((ResolvedMethod) resolved).getContainingClass()
-                        .isSubclassOf(PACKAGE_MANAGER_CLASS, false)) {
+        if (resolved == null ||
+                !UastUtils.getContainingClassOrEmpty(resolved).isSubclassOf(PACKAGE_MANAGER_CLASS)) {
             return;
         }
-        StrictListAccessor<Expression, MethodInvocation> argumentList = node.astArguments();
+
+        List<UExpression> argumentList = node.getValueArguments();
 
         // Ignore if the method doesn't fit our description.
-        if (argumentList != null && argumentList.size() == 2) {
-            TypeDescriptor firstParameterType = context.getType(argumentList.first());
+        if (argumentList.size() == 2) {
+            UType firstParameterType = argumentList.get(0).getExpressionType();
             if (firstParameterType != null
-                && firstParameterType.matchesSignature(JavaParser.TYPE_STRING)) {
-                maybeReportIssue(calculateValue(context, argumentList.last()), context, node);
+                && firstParameterType.matchesFqName(JavaParser.TYPE_STRING)) {
+                maybeReportIssue(calculateValue(context, argumentList.get(1)), context, node);
             }
         }
     }
 
     private static void maybeReportIssue(
-            int flagValue, JavaContext context, MethodInvocation node) {
+            int flagValue, UastAndroidContext context, UCallExpression node) {
         if ((flagValue & GET_SIGNATURES_FLAG) != 0) {
-            context.report(ISSUE, node, context.getLocation(node.astArguments().last()),
+            context.report(ISSUE, node, UastAndroidUtils.getLocation(node.getValueArguments().get(1)),
                 "Reading app signatures from getPackageInfo: The app signatures "
                     + "could be exploited if not validated properly; "
                     + "see issue explanation for details.");
         }
     }
 
-    private static int calculateValue(JavaContext context, Expression expression) {
+    private static int calculateValue(UastAndroidContext context, UExpression expression) {
         // This function assumes that the only inputs to the expression are static integer
         // flags that combined via bitwise operands.
-        if (expression instanceof IntegralLiteral) {
-            return ((IntegralLiteral) expression).astIntValue();
+        if (UastLiteralUtils.isIntegralLiteral(expression)) {
+            return (int) UastLiteralUtils.getLongValue((ULiteralExpression) expression);
         }
 
-        ResolvedNode resolvedNode = context.resolve(expression);
-        if (resolvedNode instanceof ResolvedField) {
-            Object value = ((ResolvedField) resolvedNode).getValue();
-            if (value instanceof Integer) {
-                return (Integer) value;
+        if (expression instanceof UResolvable) {
+            UDeclaration resolvedNode = ((UResolvable) expression).resolve(context);
+            if (resolvedNode instanceof UVariable) {
+                UExpression initializer = ((UVariable)resolvedNode).getInitializer();
+                if (initializer != null) {
+                    Object value = initializer.evaluate();
+                    if (value instanceof Integer) {
+                        return (Integer)value;
+                    }
+                }
             }
         }
-        if (expression instanceof BinaryExpression) {
-            BinaryExpression binaryExpression = (BinaryExpression) expression;
-            BinaryOperator operator = binaryExpression.astOperator();
-            int leftValue = calculateValue(context, binaryExpression.astLeft());
-            int rightValue = calculateValue(context, binaryExpression.astRight());
 
-            if (operator == BinaryOperator.BITWISE_OR) {
+
+        if (expression instanceof UBinaryExpression) {
+            UBinaryExpression binaryExpression = (UBinaryExpression) expression;
+            UastBinaryOperator operator = binaryExpression.getOperator();
+            int leftValue = calculateValue(context, binaryExpression.getLeftOperand());
+            int rightValue = calculateValue(context, binaryExpression.getRightOperand());
+
+            if (operator == UastBinaryOperator.BITWISE_OR) {
                 return leftValue | rightValue;
             }
-            if (operator == BinaryOperator.BITWISE_AND) {
+            if (operator == UastBinaryOperator.BITWISE_AND) {
                 return leftValue & rightValue;
             }
-            if (operator == BinaryOperator.BITWISE_XOR) {
+            if (operator == UastBinaryOperator.BITWISE_XOR) {
                 return leftValue ^ rightValue;
             }
         }
 
         return 0;
-    }
-
-    private static boolean isStringParameter(
-            @NonNull Expression expression, @NonNull JavaContext context) {
-        if (expression instanceof StringLiteral) {
-            return true;
-        } else {
-            ResolvedNode resolvedNode = context.resolve(expression);
-            if (resolvedNode instanceof ResolvedField) {
-                if (((ResolvedField) resolvedNode).getValue() instanceof String) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 }

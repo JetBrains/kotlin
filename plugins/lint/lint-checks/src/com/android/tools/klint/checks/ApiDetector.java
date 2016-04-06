@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
 import static com.android.SdkConstants.ANDROID_PREFIX;
 import static com.android.SdkConstants.ANDROID_THEME_PREFIX;
@@ -34,7 +34,6 @@ import static com.android.SdkConstants.CHECK_BOX;
 import static com.android.SdkConstants.CLASS_CONSTRUCTOR;
 import static com.android.SdkConstants.CONSTRUCTOR_NAME;
 import static com.android.SdkConstants.PREFIX_ANDROID;
-import static com.android.SdkConstants.R_CLASS;
 import static com.android.SdkConstants.SWITCH;
 import static com.android.SdkConstants.TAG;
 import static com.android.SdkConstants.TAG_ITEM;
@@ -42,12 +41,10 @@ import static com.android.SdkConstants.TAG_STYLE;
 import static com.android.SdkConstants.TARGET_API;
 import static com.android.SdkConstants.TOOLS_URI;
 import static com.android.SdkConstants.VIEW_TAG;
-import static com.android.tools.lint.detector.api.ClassContext.getFqcn;
-import static com.android.tools.lint.detector.api.ClassContext.getInternalName;
-import static com.android.tools.lint.detector.api.LintUtils.getNextInstruction;
-import static com.android.tools.lint.detector.api.Location.SearchDirection.BACKWARD;
-import static com.android.tools.lint.detector.api.Location.SearchDirection.FORWARD;
-import static com.android.tools.lint.detector.api.Location.SearchDirection.NEAREST;
+import static com.android.tools.klint.detector.api.LintUtils.getNextInstruction;
+import static com.android.tools.klint.detector.api.Location.SearchDirection.BACKWARD;
+import static com.android.tools.klint.detector.api.Location.SearchDirection.FORWARD;
+import static com.android.tools.klint.detector.api.Location.SearchDirection.NEAREST;
 import static com.android.utils.SdkUtils.getResourceFieldName;
 
 import com.android.SdkConstants;
@@ -56,32 +53,27 @@ import com.android.annotations.Nullable;
 import com.android.resources.ResourceFolderType;
 import com.android.sdklib.AndroidVersion;
 import com.android.sdklib.SdkVersionInfo;
-import com.android.tools.lint.client.api.IssueRegistry;
-import com.android.tools.lint.client.api.JavaParser;
-import com.android.tools.lint.client.api.LintDriver;
-import com.android.tools.lint.detector.api.Category;
-import com.android.tools.lint.detector.api.ClassContext;
-import com.android.tools.lint.detector.api.Context;
-import com.android.tools.lint.detector.api.DefaultPosition;
-import com.android.tools.lint.detector.api.Detector;
-import com.android.tools.lint.detector.api.Implementation;
-import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.JavaContext;
-import com.android.tools.lint.detector.api.LintUtils;
-import com.android.tools.lint.detector.api.Location;
-import com.android.tools.lint.detector.api.Location.SearchHints;
-import com.android.tools.lint.detector.api.Position;
-import com.android.tools.lint.detector.api.ResourceXmlDetector;
-import com.android.tools.lint.detector.api.Scope;
-import com.android.tools.lint.detector.api.Severity;
-import com.android.tools.lint.detector.api.Speed;
-import com.android.tools.lint.detector.api.TextFormat;
-import com.android.tools.lint.detector.api.XmlContext;
+import com.android.tools.klint.client.api.IssueRegistry;
+import com.android.tools.klint.client.api.LintDriver;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.ClassContext;
+import com.android.tools.klint.detector.api.Context;
+import com.android.tools.klint.detector.api.Detector;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.LintUtils;
+import com.android.tools.klint.detector.api.Location;
+import com.android.tools.klint.detector.api.Location.SearchHints;
+import com.android.tools.klint.detector.api.ResourceXmlDetector;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
+import com.android.tools.klint.detector.api.Speed;
+import com.android.tools.klint.detector.api.TextFormat;
+import com.android.tools.klint.detector.api.XmlContext;
 import com.android.utils.Pair;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
+import org.jetbrains.uast.*;
+import org.jetbrains.uast.check.UastScanner;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -91,64 +83,29 @@ import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.IntInsnNode;
-import org.objectweb.asm.tree.JumpInsnNode;
 import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.LocalVariableNode;
 import org.objectweb.asm.tree.LookupSwitchInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import lombok.ast.Annotation;
-import lombok.ast.AnnotationElement;
-import lombok.ast.AnnotationValue;
-import lombok.ast.AstVisitor;
-import lombok.ast.BinaryExpression;
-import lombok.ast.Case;
-import lombok.ast.Catch;
-import lombok.ast.ClassDeclaration;
-import lombok.ast.ConstructorDeclaration;
-import lombok.ast.ConstructorInvocation;
-import lombok.ast.Expression;
-import lombok.ast.ForwardingAstVisitor;
-import lombok.ast.If;
-import lombok.ast.ImportDeclaration;
-import lombok.ast.InlineIfExpression;
-import lombok.ast.IntegralLiteral;
-import lombok.ast.MethodDeclaration;
-import lombok.ast.MethodInvocation;
-import lombok.ast.Modifiers;
-import lombok.ast.Select;
-import lombok.ast.StrictListAccessor;
-import lombok.ast.StringLiteral;
-import lombok.ast.SuperConstructorInvocation;
-import lombok.ast.Switch;
-import lombok.ast.Try;
-import lombok.ast.TypeReference;
-import lombok.ast.VariableDefinition;
-import lombok.ast.VariableDefinitionEntry;
-import lombok.ast.VariableReference;
 
 /**
  * Looks for usages of APIs that are not supported in all the versions targeted
  * by this application (according to its minimum API requirement in the manifest).
  */
 public class ApiDetector extends ResourceXmlDetector
-        implements Detector.ClassScanner, Detector.JavaScanner {
+        implements Detector.ClassScanner, UastScanner {
 
     /**
      * Whether we flag variable, field, parameter and return type declarations of a type
@@ -1386,9 +1343,9 @@ public class ApiDetector extends ResourceXmlDetector
         super.afterCheckProject(context);
     }
 
-// ---- Implements JavaScanner ----
+// ---- Implements UastScanner ----
 
-    @Nullable
+/*    @Nullable
     @Override
     public AstVisitor createJavaVisitor(@NonNull JavaContext context) {
         if (mApiDatabase == null) {
@@ -1413,7 +1370,7 @@ public class ApiDetector extends ResourceXmlDetector
         return types;
     }
 
-    /**
+    *//**
      * Checks whether the given instruction is a benign usage of a constant defined in
      * a later version of Android than the application's {@code minSdkVersion}.
      *
@@ -1422,7 +1379,18 @@ public class ApiDetector extends ResourceXmlDetector
      * @param owner the field owner
      * @return true if the given usage is safe on older versions than the introduction
      *              level of the constant
-     */
+     *//*
+
+    */
+
+    public static boolean isBenignConstantUsage(
+      @Nullable UElement node,
+      @NonNull String name,
+      @NonNull String owner) {
+        return true;
+    }
+
+    /*
     public static boolean isBenignConstantUsage(
             @Nullable lombok.ast.Node node,
             @NonNull String name,
@@ -1811,10 +1779,10 @@ public class ApiDetector extends ResourceXmlDetector
             super.endVisit(node);
         }
 
-        /**
+        *//**
          * Checks a Java source field reference. Returns true if the field is known
          * regardless of whether it's an invalid field or not
-         */
+         *//*
         private boolean checkField(
                 @NonNull lombok.ast.Node node,
                 @NonNull String name,
@@ -1902,12 +1870,12 @@ public class ApiDetector extends ResourceXmlDetector
             return false;
         }
 
-        /**
+        *//**
          * Returns the minimum SDK to use according to the given AST node, or null
          * if no {@code TargetApi} annotations were found
          *
          * @return the API level to use for this node, or -1
-         */
+         *//*
         public int getLocalMinSdk(@Nullable lombok.ast.Node scope) {
             while (scope != null) {
                 Class<? extends lombok.ast.Node> type = scope.getClass();
@@ -1952,13 +1920,13 @@ public class ApiDetector extends ResourceXmlDetector
         }
     }
 
-    /**
+    *//**
      * Returns the API level for the given AST node if specified with
      * an {@code @TargetApi} annotation.
      *
      * @param modifiers the modifier to check
      * @return the target API level, or -1 if not specified
-     */
+     *//*
     public static int getTargetApi(@Nullable Modifiers modifiers) {
         if (modifiers == null) {
             return -1;
@@ -2001,6 +1969,36 @@ public class ApiDetector extends ResourceXmlDetector
         }
 
         return -1;
+    }*/
+
+    public static int getTargetApi(List<UAnnotation> annotations) {
+        if (annotations == null) {
+            return -1;
+        }
+
+        for (UAnnotation annotation : annotations) {
+            if (annotation.matchesName(TARGET_API)) {
+                for (UNamedExpression element : annotation.getValueArguments()) {
+                    UExpression valueNode = element.getExpression();
+                    if (UastLiteralUtils.isIntegralLiteral(valueNode)) {
+                        return (int) UastLiteralUtils.getLongValue((ULiteralExpression) valueNode);
+                    } else if (UastLiteralUtils.isStringLiteral(valueNode)) {
+                        String value = (String) ((ULiteralExpression) valueNode).getValue();
+                        return SdkVersionInfo.getApiByBuildCode(value, true);
+                    } else if (valueNode instanceof UQualifiedExpression) {
+                        UQualifiedExpression select = (UQualifiedExpression) valueNode;
+                        String codename = select.getSelector().renderString();
+                        return SdkVersionInfo.getApiByBuildCode(codename, true);
+                    } else if (valueNode instanceof USimpleReferenceExpression) {
+                        USimpleReferenceExpression reference = (USimpleReferenceExpression) valueNode;
+                        String codename = reference.getIdentifier();
+                        return SdkVersionInfo.getApiByBuildCode(codename, true);
+                    }
+                }
+            }
+        }
+
+        return -1;
     }
 
     public static int getRequiredVersion(@NonNull Issue issue, @NonNull String errorMessage,
@@ -2023,7 +2021,7 @@ public class ApiDetector extends ResourceXmlDetector
             @NonNull ClassNode classNode,
             @NonNull MethodNode method,
             @NonNull AbstractInsnNode call,
-            int requiredApi) {
+            int requiredApi) { return false; } /*
         assert requiredApi != -1;
 
         if (!containsSimpleSdkCheck(method)) {
@@ -2126,10 +2124,10 @@ public class ApiDetector extends ResourceXmlDetector
         return false;
     }
 
-    /**
+    *//**
      * Control flow graph which skips control flow edges that check
      * a given SDK_VERSION requirement that is not met by a given call
-     */
+     *//*
     private static class ApiCheckGraph extends ControlFlowGraph {
         private final int mRequiredApi;
 
@@ -2177,5 +2175,5 @@ public class ApiDetector extends ResourceXmlDetector
 
             super.add(from, to);
         }
-    }
+    }*/
 }

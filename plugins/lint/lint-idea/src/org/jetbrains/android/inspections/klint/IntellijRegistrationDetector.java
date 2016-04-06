@@ -13,80 +13,71 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jetbrains.android.inspections.lint;
+package org.jetbrains.android.inspections.klint;
 
-import com.android.annotations.NonNull;
-import com.android.annotations.Nullable;
-import com.android.tools.lint.checks.RegistrationDetector;
-import com.android.tools.lint.detector.api.*;
+import com.android.tools.klint.checks.RegistrationDetector;
+import com.android.tools.klint.detector.api.ClassContext;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Location;
+import com.android.tools.klint.detector.api.Scope;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.psi.*;
-import lombok.ast.AstVisitor;
-import lombok.ast.CompilationUnit;
-import lombok.ast.ForwardingAstVisitor;
-import lombok.ast.Node;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.uast.UClass;
+import org.jetbrains.uast.UFile;
+import org.jetbrains.uast.UastModifier;
+import org.jetbrains.uast.UastUtils;
+import org.jetbrains.uast.check.UastAndroidContext;
+import org.jetbrains.uast.check.UastAndroidUtils;
+import org.jetbrains.uast.check.UastScanner;
+import org.jetbrains.uast.visitor.UastVisitor;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.EnumSet;
-import java.util.List;
 
 import static com.android.SdkConstants.*;
 
 /**
- * Intellij-specific version of the {@link com.android.tools.lint.checks.RegistrationDetector} which uses the PSI structure
+ * Intellij-specific version of the {@link RegistrationDetector} which uses the PSI structure
  * to check classes.
  * <p>
  * <ul>
  *   <li>Unit tests, and compare to the bytecode based results</li>
  * </ul>
  */
-public class IntellijRegistrationDetector extends RegistrationDetector implements Detector.JavaScanner {
+public class IntellijRegistrationDetector extends RegistrationDetector implements UastScanner {
   static final Implementation IMPLEMENTATION = new Implementation(
     IntellijRegistrationDetector.class,
-    EnumSet.of(Scope.MANIFEST, Scope.JAVA_FILE));
+    EnumSet.of(Scope.MANIFEST, Scope.SOURCE_FILE));
 
-  @Nullable
   @Override
-  public List<Class<? extends Node>> getApplicableNodeTypes() {
-    return Collections.<Class<? extends Node>>singletonList(CompilationUnit.class);
-  }
-
-  @Nullable
-  @Override
-  public AstVisitor createJavaVisitor(@NonNull final JavaContext context) {
-    return new ForwardingAstVisitor() {
+  public UastVisitor createUastVisitor(final UastAndroidContext context) {
+    return new UastVisitor() {
       @Override
-      public boolean visitCompilationUnit(CompilationUnit node) {
-        check(context);
+      public boolean visitFile(@NotNull UFile file) {
+        check(context, file);
         return true;
       }
     };
   }
 
-  private void check(final JavaContext context) {
+  private void check(final UastAndroidContext context, final UFile file) {
     ApplicationManager.getApplication().runReadAction(new Runnable() {
       @Override
       public void run() {
-        final PsiFile psiFile = IntellijLintUtils.getPsiFile(context);
-        if (!(psiFile instanceof PsiJavaFile)) {
-          return;
-        }
-        PsiJavaFile javaFile = (PsiJavaFile)psiFile;
-        for (PsiClass clz : javaFile.getClasses()) {
+        for (UClass clz : file.getClasses()) {
           check(context, clz);
         }
       }
     });
   }
 
-  private void check(JavaContext context, PsiClass clz) {
-    for (PsiClass current = clz.getSuperClass(); current != null; current = current.getSuperClass()) {
+  private void check(UastAndroidContext context, UClass clz) {
+    for (UClass current = clz.getSuperClass(context); current != null; current = current.getSuperClass(context)) {
       // Ignore abstract classes
-      if (clz.hasModifierProperty(PsiModifier.ABSTRACT) || clz instanceof PsiAnonymousClass) {
+      if (clz.hasModifier(UastModifier.ABSTRACT) || clz.isObject() || clz.isInterface() || clz.isEnum() || clz.isAnnotation()) {
         continue;
       }
-      String fqcn = current.getQualifiedName();
+      String fqcn = current.getFqName();
       if (fqcn == null) {
         continue;
       }
@@ -94,7 +85,10 @@ public class IntellijRegistrationDetector extends RegistrationDetector implement
           || CLASS_SERVICE.equals(fqcn)
           || CLASS_CONTENTPROVIDER.equals(fqcn)) {
 
-        String internalName = IntellijLintUtils.getInternalName(clz);
+        String internalName = clz.getInternalName();
+        if (internalName == null) {
+          internalName = IntellijLintUtils.getInternalName(clz);
+        }
         if (internalName == null) {
           continue;
         }
@@ -107,24 +101,24 @@ public class IntellijRegistrationDetector extends RegistrationDetector implement
       }
     }
 
-    for (PsiClass innerClass : clz.getInnerClasses()) {
+    for (UClass innerClass : clz.getNestedClasses()) {
       check(context, innerClass);
     }
   }
 
-  private static void report(JavaContext context, PsiClass clz, String internalName) {
+  private static void report(UastAndroidContext context, UClass clz, String internalName) {
     // Unlike the superclass, we don't have to check that the tags are compatible;
     // IDEA already checks that as part of its XML validation
 
-    if (IntellijLintUtils.isSuppressed(clz, clz.getContainingFile(), ISSUE)) {
+    if (IntellijLintUtils.isSuppressed(clz, UastUtils.getContainingFile(clz), ISSUE)) {
       return;
     }
     String tag = classToTag(internalName);
-    Location location = IntellijLintUtils.getLocation(context.file, clz);
-    String fqcn = clz.getQualifiedName();
+    Location location = UastAndroidUtils.getLocation(clz);
+    String fqcn = clz.getFqName();
     if (fqcn == null) {
       fqcn = clz.getName();
     }
-    context.report(ISSUE, location, String.format("The <%1$s> %2$s is not registered in the manifest", tag, fqcn), null);
+    context.report(ISSUE, clz, location, String.format("The <%1$s> %2$s is not registered in the manifest", tag, fqcn));
   }
 }

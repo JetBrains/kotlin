@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
-import static com.android.tools.lint.checks.PluralsDatabase.Quantity.few;
-import static com.android.tools.lint.checks.PluralsDatabase.Quantity.many;
-import static com.android.tools.lint.checks.PluralsDatabase.Quantity.one;
-import static com.android.tools.lint.checks.PluralsDatabase.Quantity.two;
-import static com.android.tools.lint.checks.PluralsDatabase.Quantity.zero;
+import static com.android.tools.klint.checks.PluralsDatabase.Quantity.few;
+import static com.android.tools.klint.checks.PluralsDatabase.Quantity.many;
+import static com.android.tools.klint.checks.PluralsDatabase.Quantity.one;
+import static com.android.tools.klint.checks.PluralsDatabase.Quantity.two;
+import static com.android.tools.klint.checks.PluralsDatabase.Quantity.zero;
 
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
-import com.android.tools.lint.detector.api.LintUtils;
+import com.android.tools.klint.detector.api.LintUtils;
 import com.google.common.collect.Maps;
 
 import java.util.ArrayList;
@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Database used by the {@link com.android.tools.lint.checks.PluralsDetector} to get information
+ * Database used by the {@link PluralsDetector} to get information
  * about plural forms for a given language
  */
 public class PluralsDatabase {

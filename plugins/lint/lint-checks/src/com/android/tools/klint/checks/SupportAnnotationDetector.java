@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
 import static com.android.SdkConstants.ANDROID_URI;
 import static com.android.SdkConstants.ATTR_NAME;
@@ -29,74 +29,42 @@ import static com.android.SdkConstants.TYPE_DEF_FLAG_ATTRIBUTE;
 import static com.android.resources.ResourceType.COLOR;
 import static com.android.resources.ResourceType.DRAWABLE;
 import static com.android.resources.ResourceType.MIPMAP;
-import static com.android.tools.lint.checks.PermissionRequirement.ATTR_PROTECTION_LEVEL;
-import static com.android.tools.lint.checks.PermissionRequirement.VALUE_DANGEROUS;
-import static com.android.tools.lint.detector.api.JavaContext.findSurroundingMethod;
-import static com.android.tools.lint.detector.api.JavaContext.getParentOfType;
 
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.android.resources.ResourceType;
-import com.android.tools.lint.checks.PermissionHolder.SetPermissionLookup;
-import com.android.tools.lint.client.api.JavaParser.ResolvedAnnotation;
-import com.android.tools.lint.client.api.JavaParser.ResolvedClass;
-import com.android.tools.lint.client.api.JavaParser.ResolvedField;
-import com.android.tools.lint.client.api.JavaParser.ResolvedMethod;
-import com.android.tools.lint.client.api.JavaParser.ResolvedNode;
-import com.android.tools.lint.client.api.JavaParser.TypeDescriptor;
-import com.android.tools.lint.client.api.LintClient;
-import com.android.tools.lint.detector.api.Category;
-import com.android.tools.lint.detector.api.ConstantEvaluator;
-import com.android.tools.lint.detector.api.Detector;
-import com.android.tools.lint.detector.api.Implementation;
-import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.JavaContext;
-import com.android.tools.lint.detector.api.Project;
-import com.android.tools.lint.detector.api.Scope;
-import com.android.tools.lint.detector.api.Severity;
+import com.android.tools.klint.client.api.LintClient;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.Detector;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.JavaContext;
+import com.android.tools.klint.detector.api.Project;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
 import com.android.utils.XmlUtils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.uast.*;
+import org.jetbrains.uast.check.UastAndroidContext;
+import org.jetbrains.uast.check.UastScanner;
+import org.jetbrains.uast.java.JavaUFunction;
+import org.jetbrains.uast.java.JavaUastCallKinds;
+import org.jetbrains.uast.kinds.UastOperator;
+import org.jetbrains.uast.visitor.UastVisitor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.io.File;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Set;
-
-import lombok.ast.ArrayCreation;
-import lombok.ast.ArrayInitializer;
-import lombok.ast.AstVisitor;
-import lombok.ast.BinaryExpression;
-import lombok.ast.BinaryOperator;
-import lombok.ast.Catch;
-import lombok.ast.Expression;
-import lombok.ast.ExpressionStatement;
-import lombok.ast.FloatingPointLiteral;
-import lombok.ast.ForwardingAstVisitor;
-import lombok.ast.InlineIfExpression;
-import lombok.ast.IntegralLiteral;
-import lombok.ast.MethodDeclaration;
-import lombok.ast.MethodInvocation;
-import lombok.ast.Node;
-import lombok.ast.NullLiteral;
-import lombok.ast.Select;
-import lombok.ast.Statement;
-import lombok.ast.StringLiteral;
-import lombok.ast.Try;
-import lombok.ast.TypeReference;
-import lombok.ast.UnaryExpression;
-import lombok.ast.UnaryOperator;
-import lombok.ast.VariableDeclaration;
-import lombok.ast.VariableDefinition;
-import lombok.ast.VariableDefinitionEntry;
-import lombok.ast.VariableReference;
 
 /**
  * Looks up annotations on method calls and enforces the various things they
@@ -107,7 +75,7 @@ import lombok.ast.VariableReference;
  * specifying toInclusive without setting to, combining @ColorInt with any @ResourceTypeRes,
  * using @CheckResult on a void method, etc.
  */
-public class SupportAnnotationDetector extends Detector implements Detector.JavaScanner {
+public class SupportAnnotationDetector extends Detector implements UastScanner {
 
     public static final Implementation IMPLEMENTATION
             = new Implementation(SupportAnnotationDetector.class, Scope.JAVA_FILE_SCOPE);
@@ -271,11 +239,15 @@ public class SupportAnnotationDetector extends Detector implements Detector.Java
     }
 
     private void checkMethodAnnotation(
-            @NonNull JavaContext context,
-            @NonNull ResolvedMethod method,
-            @NonNull MethodInvocation node,
-            @NonNull ResolvedAnnotation annotation) {
-        String signature = annotation.getSignature();
+            @NonNull UastAndroidContext context,
+            @NonNull UFunction method,
+            @NonNull UCallExpression node,
+            @NonNull UAnnotation annotation) {
+        String signature = annotation.getFqName();
+        if (signature == null) {
+            return;
+        }
+
         if (CHECK_RESULT_ANNOTATION.equals(signature)
                 || signature.endsWith(".CheckReturnValue")) { // support findbugs annotation too
             checkResult(context, node, annotation);
@@ -288,10 +260,13 @@ public class SupportAnnotationDetector extends Detector implements Detector.Java
     }
 
     private static void checkParameterAnnotation(
-            @NonNull JavaContext context,
-            @NonNull Node argument,
-            @NonNull ResolvedAnnotation annotation) {
-        String signature = annotation.getSignature();
+            @NonNull UastAndroidContext context,
+            @NonNull UElement argument,
+            @NonNull UAnnotation annotation) {
+        String signature = annotation.getFqName();
+        if (signature == null) {
+            return;
+        }
 
         if (COLOR_INT_ANNOTATION.equals(signature)) {
             checkColor(context, argument);
@@ -325,11 +300,13 @@ public class SupportAnnotationDetector extends Detector implements Detector.Java
         }
     }
 
-    private static void checkColor(@NonNull JavaContext context, @NonNull Node argument) {
-        if (argument instanceof InlineIfExpression) {
-            InlineIfExpression expression = (InlineIfExpression) argument;
-            checkColor(context, expression.astIfTrue());
-            checkColor(context, expression.astIfFalse());
+    private static void checkColor(@NonNull UastAndroidContext context, @NonNull UElement argument) {
+        if (argument instanceof UIfExpression) {
+            UIfExpression expression = (UIfExpression) argument;
+            if (expression.isTernary()) {
+                checkColor(context, expression.getThenBranch());
+                checkColor(context, expression.getElseBranch());
+            }
             return;
         }
 
@@ -344,43 +321,45 @@ public class SupportAnnotationDetector extends Detector implements Detector.Java
     }
 
     private void checkPermission(
-            @NonNull JavaContext context,
-            @NonNull MethodInvocation node,
-            @NonNull ResolvedMethod method,
-            @NonNull ResolvedAnnotation annotation) {
+            @NonNull UastAndroidContext context,
+            @NonNull UCallExpression node,
+            @NonNull UFunction method,
+            @NonNull UAnnotation annotation) {
         PermissionRequirement requirement = PermissionRequirement.create(context, annotation);
         if (requirement.isConditional()) {
             return;
         }
-        PermissionHolder permissions = getPermissions(context);
+        PermissionHolder permissions = getPermissions(context.getLintContext());
         if (!requirement.isSatisfied(permissions)) {
             // See if it looks like we're holding the permission implicitly by @RequirePermission
             // annotations in the surrounding context
             permissions  = addLocalPermissions(context, permissions, node);
             if (!requirement.isSatisfied(permissions)) {
-                String name = method.getContainingClass().getSimpleName() + "." + method.getName();
-                String message = getMissingPermissionMessage(requirement, name, permissions);
-                context.report(MISSING_PERMISSION, node, context.getLocation(node), message);
+                UClass containingClass = UastUtils.getContainingClass(method);
+                if (containingClass != null) {
+                    String name = containingClass.getName() + "." + method.getName();
+                    String message = getMissingPermissionMessage(requirement, name, permissions);
+                    context.report(MISSING_PERMISSION, node, context.getLocation(node), message);
+                }
             }
         } else if (requirement.isRevocable(permissions) &&
-                context.getMainProject().getTargetSdkVersion().getFeatureLevel() >= 23) {
+                context.getLintContext().getMainProject().getTargetSdkVersion().getFeatureLevel() >= 23) {
             // Ensure that the caller is handling a security exception
             // First check to see if we're inside a try/catch which catches a SecurityException
             // (or some wider exception than that). Check for nested try/catches too.
             boolean handlesMissingPermission = false;
-            Node parent = node;
+            UElement parent = node;
             while (true) {
-                Try tryCatch = getParentOfType(parent, Try.class);
+                UTryExpression tryCatch = UastUtils.getParentOfType(parent, UTryExpression.class);
                 if (tryCatch == null) {
                     break;
                 } else {
-                    for (Catch aCatch : tryCatch.astCatches()) {
-                        TypeReference catchType = aCatch.astExceptionDeclaration().
-                                astTypeReference();
-                        if (isSecurityException(context,
-                                catchType)) {
-                            handlesMissingPermission = true;
-                            break;
+                    for (UCatchClause aCatch : tryCatch.getCatchClauses()) {
+                        for (UType catchType : aCatch.getTypes()) {
+                            if (isSecurityException(catchType)) {
+                                handlesMissingPermission = true;
+                                break;
+                            }
                         }
                     }
                     parent = tryCatch;
@@ -390,10 +369,11 @@ public class SupportAnnotationDetector extends Detector implements Detector.Java
             // If not, check to see if the method itself declares that it throws a
             // SecurityException or something wider.
             if (!handlesMissingPermission) {
-                MethodDeclaration declaration = getParentOfType(parent, MethodDeclaration.class);
-                if (declaration != null) {
-                    for (TypeReference typeReference : declaration.astThrownTypeReferences()) {
-                        if (isSecurityException(context, typeReference)) {
+                UFunction declaration = UastUtils.getParentOfType(parent, UFunction.class);
+                if (declaration instanceof JavaUFunction) {
+                    List<UType> thrownExceptions = ((JavaUFunction)declaration).getThrownExceptions();
+                    for (UType typeReference : thrownExceptions) {
+                        if (isSecurityException(typeReference)) {
                             handlesMissingPermission = true;
                             break;
                         }
@@ -404,10 +384,10 @@ public class SupportAnnotationDetector extends Detector implements Detector.Java
             // If not, check to see if the code is deliberately checking to see if the
             // given permission is available.
             if (!handlesMissingPermission) {
-                Node methodNode = JavaContext.findSurroundingMethod(node);
+                UFunction methodNode = UastUtils.getContainingFunction(node);
                 if (methodNode != null) {
                     CheckPermissionVisitor visitor = new CheckPermissionVisitor(node);
-                    methodNode.accept(visitor);
+                    visitor.process(methodNode);
                     handlesMissingPermission = visitor.checksPermission();
                 }
             }
@@ -421,34 +401,29 @@ public class SupportAnnotationDetector extends Detector implements Detector.Java
 
     @NonNull
     private static PermissionHolder addLocalPermissions(
-            @NonNull JavaContext context,
+            @NonNull UastAndroidContext context,
             @NonNull PermissionHolder permissions,
-            @NonNull Node node) {
+            @NonNull UElement node) {
         // Accumulate @RequirePermissions available in the local context
-        Node methodNode = JavaContext.findSurroundingMethod(node);
-        if (methodNode == null) {
+        UFunction method = UastUtils.getContainingFunction(node);
+        if (method == null) {
             return permissions;
         }
-        ResolvedNode resolved = context.resolve(methodNode);
-        if (!(resolved instanceof ResolvedMethod)) {
-            return permissions;
-        }
-        ResolvedMethod method = (ResolvedMethod) resolved;
-        ResolvedAnnotation annotation = method.getAnnotation(PERMISSION_ANNOTATION);
+        UAnnotation annotation = UastUtils.findAnnotation(method, PERMISSION_ANNOTATION);
         permissions = mergeAnnotationPermissions(context, permissions, annotation);
-        annotation = method.getContainingClass().getAnnotation(PERMISSION_ANNOTATION);
+        annotation = UastUtils.findAnnotation(UastUtils.getContainingClassOrEmpty(method), PERMISSION_ANNOTATION);
         permissions = mergeAnnotationPermissions(context, permissions, annotation);
         return permissions;
     }
 
     @NonNull
     private static PermissionHolder mergeAnnotationPermissions(
-            @NonNull JavaContext context,
+            @NonNull UastAndroidContext context,
             @NonNull PermissionHolder permissions,
-            @Nullable ResolvedAnnotation annotation) {
+            @Nullable UAnnotation annotation) {
         if (annotation != null) {
             PermissionRequirement requirement = PermissionRequirement.create(context, annotation);
-            permissions = SetPermissionLookup.join(permissions, requirement);
+            permissions = PermissionHolder.SetPermissionLookup.join(permissions, requirement);
         }
 
         return permissions;
@@ -480,33 +455,39 @@ public class SupportAnnotationDetector extends Detector implements Detector.Java
      * or whether the check return value (== PERMISSION_GRANTED vs != PERMISSION_GRANTED)
      * is handled correctly, etc.
      */
-    private static class CheckPermissionVisitor extends ForwardingAstVisitor {
+    private static class CheckPermissionVisitor extends UastVisitor {
         private boolean mChecksPermission;
         private boolean mDone;
-        private final Node mTarget;
+        private final UElement mTarget;
 
-        public CheckPermissionVisitor(@NonNull Node target) {
+        public CheckPermissionVisitor(@NonNull UElement target) {
             mTarget = target;
         }
 
         @Override
-        public boolean visitNode(Node node) {
-            return mDone;
+        public void process(@NotNull UElement element) {
+            if (!mDone) {
+                super.process(element);
+            }
         }
 
         @Override
-        public boolean visitMethodInvocation(MethodInvocation node) {
-            if (node == mTarget) {
-                mDone = true;
+        public boolean visitCallExpression(@NotNull UCallExpression node) {
+            if (node.getKind() == UastCallKind.FUNCTION_CALL) {
+                if (node == mTarget) {
+                    mDone = true;
+                }
+
+                String name = node.getFunctionName();
+                if (name != null &&
+                    (name.startsWith("check") || name.startsWith("enforce"))
+                    && name.endsWith("Permission")) {
+                    mChecksPermission = true;
+                    mDone = true;
+                }
             }
 
-            String name = node.astName().astValue();
-            if ((name.startsWith("check") || name.startsWith("enforce"))
-                    && name.endsWith("Permission")) {
-                mChecksPermission = true;
-                mDone = true;
-            }
-            return super.visitMethodInvocation(node);
+            return super.visitCallExpression(node);
         }
 
         public boolean checksPermission() {
@@ -514,27 +495,25 @@ public class SupportAnnotationDetector extends Detector implements Detector.Java
         }
     }
 
-    private static boolean isSecurityException(
-            @NonNull JavaContext context,
-            @NonNull TypeReference typeReference) {
-        TypeDescriptor type = context.getType(typeReference);
-        return type != null && (type.matchesSignature("java.lang.SecurityException") ||
-                type.matchesSignature("java.lang.RuntimeException") ||
-                type.matchesSignature("java.lang.Exception") ||
-                type.matchesSignature("java.lang.Throwable"));
+    private static boolean isSecurityException(@NonNull UType type) {
+        return type != null && (type.matchesFqName("java.lang.SecurityException") ||
+                type.matchesFqName("java.lang.RuntimeException") ||
+                type.matchesFqName("java.lang.Exception") ||
+                type.matchesFqName("java.lang.Throwable"));
     }
 
     private PermissionHolder mPermissions;
 
     private PermissionHolder getPermissions(
-            @NonNull JavaContext context) {
+            @NonNull UastAndroidContext context) {
         if (mPermissions == null) {
             Set<String> permissions = Sets.newHashSetWithExpectedSize(30);
             Set<String> revocable = Sets.newHashSetWithExpectedSize(4);
-            LintClient client = context.getClient();
+            JavaContext lintContext = context.getLintContext();
+            LintClient client = lintContext.getClient();
             // Gather permissions from all projects that contribute to the
             // main project.
-            Project mainProject = context.getMainProject();
+            Project mainProject = lintContext.getMainProject();
             for (File manifest : mainProject.getManifestFiles()) {
                 addPermissions(client, permissions, revocable, manifest);
             }
@@ -544,7 +523,7 @@ public class SupportAnnotationDetector extends Detector implements Detector.Java
                 }
             }
 
-            mPermissions = new SetPermissionLookup(permissions, revocable);
+            mPermissions = new PermissionHolder.SetPermissionLookup(permissions, revocable);
         }
 
         return mPermissions;
@@ -564,8 +543,8 @@ public class SupportAnnotationDetector extends Detector implements Detector.Java
         }
         NodeList children = root.getChildNodes();
         for (int i = 0, n = children.getLength(); i < n; i++) {
-            org.w3c.dom.Node item = children.item(i);
-            if (item.getNodeType() != org.w3c.dom.Node.ELEMENT_NODE) {
+            Node item = children.item(i);
+            if (item.getNodeType() != Node.ELEMENT_NODE) {
                 continue;
             }
             String nodeName = item.getNodeName();
@@ -578,8 +557,8 @@ public class SupportAnnotationDetector extends Detector implements Detector.Java
             } else if (nodeName.equals(TAG_PERMISSION)) {
                 Element element = (Element)item;
                 String protectionLevel = element.getAttributeNS(ANDROID_URI,
-                        ATTR_PROTECTION_LEVEL);
-                if (VALUE_DANGEROUS.equals(protectionLevel)) {
+                                                                PermissionRequirement.ATTR_PROTECTION_LEVEL);
+                if (PermissionRequirement.VALUE_DANGEROUS.equals(protectionLevel)) {
                     String name = element.getAttributeNS(ANDROID_URI, ATTR_NAME);
                     if (!name.isEmpty()) {
                         revocable.add(name);
@@ -589,10 +568,13 @@ public class SupportAnnotationDetector extends Detector implements Detector.Java
         }
     }
 
-    private static void checkResult(@NonNull JavaContext context, @NonNull MethodInvocation node,
-            @NonNull ResolvedAnnotation annotation) {
-        if (node.getParent() instanceof ExpressionStatement) {
-            String methodName = node.astName().astValue();
+    private static void checkResult(
+            @NonNull UastAndroidContext context,
+            @NonNull UCallExpression node,
+            @NonNull UAnnotation annotation) {
+        if (node.getParent() instanceof UExpression) {
+            String methodName = node.getFunctionName();
+            assert methodName != null;
             Object suggested = annotation.getValue(ATTR_SUGGEST);
 
             // Failing to check permissions is a potential security issue (and had an existing
@@ -618,9 +600,9 @@ public class SupportAnnotationDetector extends Detector implements Detector.Java
     }
 
     private static void checkThreading(
-            @NonNull JavaContext context,
-            @NonNull MethodInvocation node,
-            @NonNull ResolvedMethod method,
+            @NonNull UastAndroidContext context,
+            @NonNull UCallExpression node,
+            @NonNull UFunction method,
             @NonNull String annotation) {
         String threadContext = getThreadContext(context, node);
         if (threadContext != null && !isCompatibleThread(threadContext, annotation)) {
@@ -670,37 +652,40 @@ public class SupportAnnotationDetector extends Detector implements Detector.Java
 
     /** Attempts to infer the current thread context at the site of the given method call */
     @Nullable
-    private static String getThreadContext(@NonNull JavaContext context,
-            @NonNull MethodInvocation methodCall) {
-        Node node = findSurroundingMethod(methodCall);
-        if (node != null) {
-            ResolvedNode resolved = context.resolve(node);
-            if (resolved instanceof ResolvedMethod) {
-                ResolvedMethod method = (ResolvedMethod) resolved;
-                ResolvedClass cls = method.getContainingClass();
+    private static String getThreadContext(@NonNull UastAndroidContext context,
+            @NonNull UCallExpression methodCall) {
+        UFunction method = UastUtils.getContainingFunction(methodCall);
+        if (method != null) {
+            UClass cls = UastUtils.getContainingClass(method);
 
-                while (method != null) {
-                    for (ResolvedAnnotation annotation : method.getAnnotations()) {
-                        String name = annotation.getSignature();
-                        if (name.startsWith(SUPPORT_ANNOTATIONS_PREFIX)
-                                && name.endsWith(THREAD_SUFFIX)) {
-                            return name;
-                        }
+            while (method != null) {
+                for (UAnnotation annotation : method.getAnnotations()) {
+                    String name = annotation.getFqName();
+                    if (name != null
+                        && name.startsWith(SUPPORT_ANNOTATIONS_PREFIX)
+                        && name.endsWith(THREAD_SUFFIX)) {
+                        return name;
                     }
-                    method = method.getSuperMethod();
                 }
+                List<UFunction> superFunctions = method.getSuperFunctions(context);
+                if (superFunctions.isEmpty()) {
+                    method = null;
+                } else {
+                    method = superFunctions.get(0);
+                }
+            }
 
-                // See if we're extending a class with a known threading context
-                while (cls != null) {
-                    for (ResolvedAnnotation annotation : cls.getAnnotations()) {
-                        String name = annotation.getSignature();
-                        if (name.startsWith(SUPPORT_ANNOTATIONS_PREFIX)
-                                && name.endsWith(THREAD_SUFFIX)) {
-                            return name;
-                        }
+            // See if we're extending a class with a known threading context
+            while (cls != null) {
+                for (UAnnotation annotation : cls.getAnnotations()) {
+                    String name = annotation.getFqName();
+                    if (name != null
+                        && name.startsWith(SUPPORT_ANNOTATIONS_PREFIX)
+                        && name.endsWith(THREAD_SUFFIX)) {
+                        return name;
                     }
-                    cls = cls.getSuperClass();
                 }
+                cls = cls.getSuperClass(context);
             }
         }
 
@@ -713,28 +698,28 @@ public class SupportAnnotationDetector extends Detector implements Detector.Java
         return null;
     }
 
-    private static boolean isNumber(@NonNull Node argument) {
-        return argument instanceof IntegralLiteral || argument instanceof UnaryExpression
-                && ((UnaryExpression) argument).astOperator() == UnaryOperator.UNARY_MINUS
-                && ((UnaryExpression) argument).astOperand() instanceof IntegralLiteral;
+    private static boolean isNumber(@NonNull UElement argument) {
+        return UastLiteralUtils.isIntegralLiteral(argument) || argument instanceof UPrefixExpression
+                && ((UPrefixExpression) argument).getOperator() == UastPrefixOperator.UNARY_MINUS
+                && UastLiteralUtils.isIntegralLiteral(((UPrefixExpression) argument).getOperand());
     }
 
-    private static boolean isZero(@NonNull Node argument) {
-        return argument instanceof IntegralLiteral
-                && ((IntegralLiteral) argument).astIntValue() == 0;
+    private static boolean isZero(@NonNull UElement argument) {
+        return UastLiteralUtils.isIntegralLiteral(argument)
+                && UastLiteralUtils.getLongValue((ULiteralExpression) argument) == 0;
     }
 
-    private static boolean isMinusOne(@NonNull Node argument) {
-        return argument instanceof UnaryExpression
-                && ((UnaryExpression) argument).astOperator() == UnaryOperator.UNARY_MINUS
-                && ((UnaryExpression) argument).astOperand() instanceof IntegralLiteral
-                && ((IntegralLiteral) ((UnaryExpression) argument).astOperand()).astIntValue()
-                == 1;
+    private static boolean isMinusOne(@NonNull UElement argument) {
+        return argument instanceof UUnaryExpression
+                && ((UUnaryExpression) argument).getOperator() == UastPrefixOperator.UNARY_MINUS
+                && UastLiteralUtils.isIntegralLiteral(((UUnaryExpression) argument).getOperand())
+                && UastLiteralUtils.getLongValue((ULiteralExpression) ((UUnaryExpression) argument).getOperand())
+                   == 1;
     }
 
     private static void checkResourceType(
-            @NonNull JavaContext context,
-            @NonNull Node argument,
+            @NonNull UastAndroidContext context,
+            @NonNull UElement argument,
             @Nullable ResourceType expectedType) {
         List<ResourceType> actual = getResourceTypes(context, argument);
         if (actual == null && (!isNumber(argument) || isZero(argument) || isMinusOne(argument)) ) {
@@ -761,24 +746,24 @@ public class SupportAnnotationDetector extends Detector implements Detector.Java
     }
 
     @Nullable
-    private static List<ResourceType> getResourceTypes(@NonNull JavaContext context,
-            @NonNull Node argument) {
-        if (argument instanceof Select) {
-            Select node = (Select) argument;
-            if (node.astOperand() instanceof Select) {
-                Select select = (Select) node.astOperand();
-                if (select.astOperand() instanceof Select) { // android.R....
-                    Select innerSelect = (Select) select.astOperand();
-                    if (innerSelect.astIdentifier().astValue().equals(R_CLASS)) {
-                        String typeName = select.astIdentifier().astValue();
+    private static List<ResourceType> getResourceTypes(@NonNull UastAndroidContext context,
+            @NonNull UElement argument) {
+        if (argument instanceof UQualifiedExpression) {
+            UQualifiedExpression node = (UQualifiedExpression) argument;
+            if (node.getReceiver() instanceof UQualifiedExpression) {
+                UQualifiedExpression select = (UQualifiedExpression) node.getReceiver();
+                if (select.getReceiver() instanceof UQualifiedExpression) { // android.R....
+                    UQualifiedExpression innerSelect = (UQualifiedExpression) select.getReceiver();
+                    if (innerSelect.getSelector().renderString().equals(R_CLASS)) {
+                        String typeName = select.getSelector().renderString();
                         ResourceType type = ResourceType.getEnum(typeName);
                         return type != null ? Collections.singletonList(type) : null;
                     }
                 }
-                if (select.astOperand() instanceof VariableReference) {
-                    VariableReference reference = (VariableReference) select.astOperand();
-                    if (reference.astIdentifier().astValue().equals(R_CLASS)) {
-                        String typeName = select.astIdentifier().astValue();
+                if (select.getReceiver() instanceof USimpleReferenceExpression) {
+                    USimpleReferenceExpression reference = (USimpleReferenceExpression) select.getReceiver();
+                    if (reference.getIdentifier().equals(R_CLASS)) {
+                        String typeName = select.getSelector().renderString();
                         ResourceType type = ResourceType.getEnum(typeName);
                         return type != null ? Collections.singletonList(type) : null;
                     }
@@ -786,71 +771,34 @@ public class SupportAnnotationDetector extends Detector implements Detector.Java
             }
 
             // Arbitrary packages -- android.R.type.name, foo.bar.R.type.name
-            if (node.astIdentifier().astValue().equals(R_CLASS)) {
-                Node parent = node.getParent();
-                if (parent instanceof Select) {
-                    Node grandParent = parent.getParent();
-                    if (grandParent instanceof Select) {
-                        Select select = (Select) grandParent;
-                        Expression typeOperand = select.astOperand();
-                        if (typeOperand instanceof Select) {
-                            Select typeSelect = (Select) typeOperand;
-                            String typeName = typeSelect.astIdentifier().astValue();
+            if (node.getSelector().renderString().equals(R_CLASS)) {
+                UElement parent = node.getParent();
+                if (parent instanceof UQualifiedExpression) {
+                    UElement grandParent = parent.getParent();
+                    if (grandParent instanceof UQualifiedExpression) {
+                        UQualifiedExpression select = (UQualifiedExpression) grandParent;
+                        UExpression typeOperand = select.getReceiver();
+                        if (typeOperand instanceof UQualifiedExpression) {
+                            UQualifiedExpression typeSelect = (UQualifiedExpression) typeOperand;
+                            String typeName = typeSelect.getSelector().renderString();
                             ResourceType type = ResourceType.getEnum(typeName);
                             return type != null ? Collections.singletonList(type) : null;
                         }
                     }
                 }
             }
-        } else if (argument instanceof VariableReference) {
-            Statement statement = getParentOfType(argument, Statement.class, false);
-            if (statement != null) {
-                ListIterator<Node> iterator = statement.getParent().getChildren().listIterator();
-                while (iterator.hasNext()) {
-                    if (iterator.next() == statement) {
-                        if (iterator.hasPrevious()) { // should always be true
-                            iterator.previous();
-                        }
-                        break;
-                    }
-                }
-
-                String targetName = ((VariableReference)argument).astIdentifier().astValue();
-                while (iterator.hasPrevious()) {
-                    Node previous = iterator.previous();
-                    if (previous instanceof VariableDeclaration) {
-                        VariableDeclaration declaration = (VariableDeclaration) previous;
-                        VariableDefinition definition = declaration.astDefinition();
-                        for (VariableDefinitionEntry entry : definition
-                                .astVariables()) {
-                            if (entry.astInitializer() != null
-                                    && entry.astName().astValue().equals(targetName)) {
-                                return getResourceTypes(context, entry.astInitializer());
-                            }
-                        }
-                    } else if (previous instanceof ExpressionStatement) {
-                        ExpressionStatement expressionStatement = (ExpressionStatement) previous;
-                        Expression expression = expressionStatement.astExpression();
-                        if (expression instanceof BinaryExpression &&
-                                ((BinaryExpression) expression).astOperator()
-                                        == BinaryOperator.ASSIGN) {
-                            BinaryExpression binaryExpression = (BinaryExpression) expression;
-                            if (targetName.equals(binaryExpression.astLeft().toString())) {
-                                return getResourceTypes(context, binaryExpression.astRight());
-                            }
-                        }
-                    }
-                }
-            }
-        } else if (argument instanceof MethodInvocation) {
-            ResolvedNode resolved = context.resolve(argument);
-            if (resolved != null) {
-                for (ResolvedAnnotation annotation : resolved.getAnnotations()) {
-                    String signature = annotation.getSignature();
-                    if (signature.equals(COLOR_INT_ANNOTATION)) {
+        } else if (argument instanceof UCallExpression) {
+            UDeclaration resolved = ((UCallExpression)argument).resolve(context);
+            //noinspection ConstantConditions
+            if (resolved instanceof UAnnotated) {
+                List<UAnnotation> annotations = ((UAnnotated) resolved).getAnnotations();
+                for (UAnnotation annotation : annotations) {
+                    String signature = annotation.getFqName();
+                    if (COLOR_INT_ANNOTATION.equals(signature)) {
                         return Collections.singletonList(COLOR_INT_MARKER_TYPE);
                     }
-                    if (signature.endsWith(RES_SUFFIX)
+                    if (signature != null
+                            && signature.endsWith(RES_SUFFIX)
                             && signature.startsWith(SUPPORT_ANNOTATIONS_PREFIX)) {
                         String typeString = signature.substring(SUPPORT_ANNOTATIONS_PREFIX.length(),
                                 signature.length() - RES_SUFFIX.length()).toLowerCase(Locale.US);
@@ -878,10 +826,13 @@ public class SupportAnnotationDetector extends Detector implements Detector.Java
     }
 
     private static void checkIntRange(
-            @NonNull JavaContext context,
-            @NonNull ResolvedAnnotation annotation,
-            @NonNull Node argument) {
-        Object object = ConstantEvaluator.evaluate(context, argument);
+            @NonNull UastAndroidContext context,
+            @NonNull UAnnotation annotation,
+            @NonNull UElement argument) {
+        Object object = null;
+        if (argument instanceof UExpression) {
+            object = ((UExpression) argument).evaluate();
+        }
         if (!(object instanceof Number)) {
             return;
         }
@@ -918,10 +869,13 @@ public class SupportAnnotationDetector extends Detector implements Detector.Java
     }
 
     private static void checkFloatRange(
-            @NonNull JavaContext context,
-            @NonNull ResolvedAnnotation annotation,
-            @NonNull Node argument) {
-        Object object = ConstantEvaluator.evaluate(context, argument);
+            @NonNull UastAndroidContext context,
+            @NonNull UAnnotation annotation,
+            @NonNull UElement argument) {
+        Object object = null;
+        if (argument instanceof UExpression) {
+            object = ((UExpression) argument).evaluate();
+        }
         if (!(object instanceof Number)) {
             return;
         }
@@ -943,7 +897,7 @@ public class SupportAnnotationDetector extends Detector implements Detector.Java
      */
     @Nullable
     private static String getFloatRangeError(double value, double from, double to,
-            boolean fromInclusive, boolean toInclusive, @NonNull Node node) {
+            boolean fromInclusive, boolean toInclusive, @NonNull UElement node) {
         if (!((fromInclusive && value >= from || !fromInclusive && value > from) &&
                 (toInclusive && value <= to || !toInclusive && value < to))) {
             StringBuilder sb = new StringBuilder(20);
@@ -990,15 +944,13 @@ public class SupportAnnotationDetector extends Detector implements Detector.Java
                 sb.append(Double.toString(to));
             }
             sb.append(" (was ");
-            if (node instanceof FloatingPointLiteral || node instanceof IntegralLiteral) {
+            if (UastLiteralUtils.isNumberLiteral(node)) {
                 // Use source text instead to avoid rounding errors involved in conversion, e.g
                 //    Error: Value must be > 2.5 (was 2.490000009536743) [Range]
                 //    printAtLeastExclusive(2.49f); // ERROR
                 //                          ~~~~~
-                String str = node.toString();
-                if (str.endsWith("f") || str.endsWith("F")) {
-                    str = str.substring(0, str.length() - 1);
-                }
+                //noinspection ConstantConditions
+                String str = ((ULiteralExpression)node).getValue().toString();
                 sb.append(str);
             } else {
                 sb.append(value);
@@ -1010,22 +962,20 @@ public class SupportAnnotationDetector extends Detector implements Detector.Java
     }
 
     private static void checkSize(
-            @NonNull JavaContext context,
-            @NonNull ResolvedAnnotation annotation,
-            @NonNull Node argument) {
+            @NonNull UastAndroidContext context,
+            @NonNull UAnnotation annotation,
+            @NonNull UElement argument) {
         int actual;
-        if (argument instanceof StringLiteral) {
+        if (UastLiteralUtils.isStringLiteral(argument)) {
             // Check string length
-            StringLiteral literal = (StringLiteral) argument;
-            String s = literal.astValue();
+            ULiteralExpression literal = (ULiteralExpression) argument;
+            String s = (String) literal.getValue();
+            assert s != null;
             actual = s.length();
-        } else if (argument instanceof ArrayCreation) {
-            ArrayCreation literal = (ArrayCreation) argument;
-            ArrayInitializer initializer = literal.astInitializer();
-            if (initializer == null) {
-                return;
-            }
-            actual = initializer.astExpressions().size();
+        } else if (argument instanceof UCallExpression
+                   && ((UCallExpression)argument).getKind() == JavaUastCallKinds.ARRAY_INITIALIZER) {
+            UCallExpression initializer = (UCallExpression) argument;
+            actual = initializer.getValueArgumentCount();
         } else {
             // TODO: Collections syntax, e.g. Arrays.asList => param count, emptyList=0, singleton=1, etc
             // TODO: Flow analysis
@@ -1038,7 +988,7 @@ public class SupportAnnotationDetector extends Detector implements Detector.Java
         long multiple = getLongAttribute(annotation, ATTR_MULTIPLE, 1);
 
         String unit;
-        boolean isString = argument instanceof StringLiteral;
+        boolean isString = argument instanceof ULiteralExpression;
         if (isString) {
             unit = "length";
         } else {
@@ -1084,145 +1034,93 @@ public class SupportAnnotationDetector extends Detector implements Detector.Java
     }
 
     private static void checkTypeDefConstant(
-            @NonNull JavaContext context,
-            @NonNull ResolvedAnnotation annotation,
-            @NonNull Node argument,
-            @Nullable Node errorNode,
+            @NonNull UastAndroidContext context,
+            @NonNull UAnnotation annotation,
+            @NonNull UElement argument,
+            @Nullable UElement errorNode,
             boolean flag) {
-        if (argument instanceof NullLiteral) {
+        if (UastLiteralUtils.isNullLiteral(argument)) {
             // Accepted for @StringDef
             return;
         }
 
-        if (argument instanceof StringLiteral) {
-            StringLiteral string = (StringLiteral) argument;
-            checkTypeDefConstant(context, annotation, argument, errorNode, false, string.astValue());
-        } else if (argument instanceof IntegralLiteral) {
-            IntegralLiteral literal = (IntegralLiteral) argument;
-            int value = literal.astIntValue();
+        if (UastLiteralUtils.isStringLiteral(argument)) {
+            ULiteralExpression string = (ULiteralExpression) argument;
+            checkTypeDefConstant(context, annotation, argument, errorNode, false, string.getValue());
+        } else if (UastLiteralUtils.isIntegralLiteral(argument)) {
+            ULiteralExpression literal = (ULiteralExpression) argument;
+            long value = UastLiteralUtils.getLongValue(literal);
             if (flag && value == 0) {
                 // Accepted for a flag @IntDef
                 return;
             }
-            checkTypeDefConstant(context, annotation, argument, errorNode, flag, value);
+            checkTypeDefConstant(context, annotation, argument, errorNode, flag, (int) value);
         } else if (isMinusOne(argument)) {
             // -1 is accepted unconditionally for flags
             if (!flag) {
                 reportTypeDef(context, annotation, argument, errorNode);
             }
-        } else if (argument instanceof InlineIfExpression) {
-            InlineIfExpression expression = (InlineIfExpression) argument;
-            if (expression.astIfTrue() != null) {
-                checkTypeDefConstant(context, annotation, expression.astIfTrue(), errorNode, flag);
+        } else if (argument instanceof UIfExpression && ((UIfExpression) argument).isTernary()) {
+            UIfExpression expression = (UIfExpression) argument;
+            if (expression.getThenBranch() != null) {
+                checkTypeDefConstant(context, annotation, expression.getThenBranch(), errorNode, flag);
             }
-            if (expression.astIfFalse() != null) {
-                checkTypeDefConstant(context, annotation, expression.astIfFalse(), errorNode, flag);
+            if (expression.getElseBranch() != null) {
+                checkTypeDefConstant(context, annotation, expression.getElseBranch(), errorNode, flag);
             }
-        } else if (argument instanceof UnaryExpression) {
-            UnaryExpression expression = (UnaryExpression) argument;
-            UnaryOperator operator = expression.astOperator();
+        } else if (argument instanceof UUnaryExpression) {
+            UUnaryExpression expression = (UUnaryExpression) argument;
+            UastOperator operator = expression.getOperator();
             if (flag) {
-                checkTypeDefConstant(context, annotation, expression.astOperand(), errorNode, true);
-            } else if (operator == UnaryOperator.BINARY_NOT) {
+                checkTypeDefConstant(context, annotation, expression.getOperand(), errorNode, true);
+            } else if (operator == UastPrefixOperator.BITWISE_NOT) {
                 context.report(TYPE_DEF, expression, context.getLocation(expression),
                         "Flag not allowed here");
             }
-        } else if (argument instanceof BinaryExpression) {
+        } else if (argument instanceof UBinaryExpression) {
             // If it's ?: then check both the if and else clauses
-            BinaryExpression expression = (BinaryExpression) argument;
+            UBinaryExpression expression = (UBinaryExpression) argument;
             if (flag) {
-                checkTypeDefConstant(context, annotation, expression.astLeft(), errorNode, true);
-                checkTypeDefConstant(context, annotation, expression.astRight(), errorNode, true);
+                checkTypeDefConstant(context, annotation, expression.getLeftOperand(), errorNode, true);
+                checkTypeDefConstant(context, annotation, expression.getRightOperand(), errorNode, true);
             } else {
-                BinaryOperator operator = expression.astOperator();
-                if (operator == BinaryOperator.BITWISE_AND
-                        || operator == BinaryOperator.BITWISE_OR
-                        || operator == BinaryOperator.BITWISE_XOR) {
+                UastOperator operator = expression.getOperator();
+                if (operator == UastBinaryOperator.BITWISE_AND
+                        || operator == UastBinaryOperator.BITWISE_OR
+                        || operator == UastBinaryOperator.BITWISE_XOR) {
                     context.report(TYPE_DEF, expression, context.getLocation(expression),
                             "Flag not allowed here");
                 }
             }
-        } else {
-            ResolvedNode resolved = context.resolve(argument);
-            if (resolved instanceof ResolvedField) {
+        } else if (argument instanceof UResolvable) {
+            UDeclaration resolved = ((UResolvable)argument).resolve(context);
+            if (resolved instanceof UVariable) {
                 checkTypeDefConstant(context, annotation, argument, errorNode, flag, resolved);
-            } else if (argument instanceof VariableReference) {
-                Statement statement = getParentOfType(argument, Statement.class, false);
-                if (statement != null) {
-                    ListIterator<Node> iterator = statement.getParent().getChildren().listIterator();
-                    while (iterator.hasNext()) {
-                        if (iterator.next() == statement) {
-                            if (iterator.hasPrevious()) { // should always be true
-                                iterator.previous();
-                            }
-                            break;
-                        }
-                    }
-
-                    String targetName = ((VariableReference)argument).astIdentifier().astValue();
-                    while (iterator.hasPrevious()) {
-                        Node previous = iterator.previous();
-                        if (previous instanceof VariableDeclaration) {
-                            VariableDeclaration declaration = (VariableDeclaration) previous;
-                            VariableDefinition definition = declaration.astDefinition();
-                            for (VariableDefinitionEntry entry : definition
-                                    .astVariables()) {
-                                if (entry.astInitializer() != null
-                                        && entry.astName().astValue().equals(targetName)) {
-                                    checkTypeDefConstant(context, annotation,
-                                            entry.astInitializer(),
-                                            errorNode != null ? errorNode : argument, flag);
-                                    return;
-                                }
-                            }
-                        } else if (previous instanceof ExpressionStatement) {
-                            ExpressionStatement expressionStatement = (ExpressionStatement) previous;
-                            Expression expression = expressionStatement.astExpression();
-                            if (expression instanceof BinaryExpression &&
-                                    ((BinaryExpression) expression).astOperator()
-                                            == BinaryOperator.ASSIGN) {
-                                BinaryExpression binaryExpression = (BinaryExpression) expression;
-                                if (targetName.equals(binaryExpression.astLeft().toString())) {
-                                    checkTypeDefConstant(context, annotation,
-                                            binaryExpression.astRight(),
-                                            errorNode != null ? errorNode : argument, flag);
-                                    return;
-                                }
-                            }
-                        }
-                    }
-                }
             }
         }
     }
 
-    private static void checkTypeDefConstant(@NonNull JavaContext context,
-            @NonNull ResolvedAnnotation annotation, @NonNull Node argument,
-            @Nullable Node errorNode, boolean flag, Object value) {
-        Object allowed = annotation.getValue();
-        if (allowed instanceof Object[]) {
-            Object[] allowedValues = (Object[]) allowed;
-            for (Object o : allowedValues) {
-                if (o.equals(value)) {
-                    return;
-                }
+    private static void checkTypeDefConstant(@NonNull UastAndroidContext context,
+            @NonNull UAnnotation annotation, @NonNull UElement argument,
+            @Nullable UElement errorNode, boolean flag, Object value) {
+        List<Object> valueArguments = annotation.getValues();
+        for (Object o : valueArguments) {
+            if (o.equals(value)) {
+                return;
             }
-            reportTypeDef(context, argument, errorNode, flag, allowedValues);
         }
+        reportTypeDef(context, argument, errorNode, flag, valueArguments);
     }
 
-    private static void reportTypeDef(@NonNull JavaContext context,
-            @NonNull ResolvedAnnotation annotation, @NonNull Node argument,
-            @Nullable Node errorNode) {
-        Object allowed = annotation.getValue();
-        if (allowed instanceof Object[]) {
-            Object[] allowedValues = (Object[]) allowed;
-            reportTypeDef(context, argument, errorNode, false, allowedValues);
-        }
+    private static void reportTypeDef(@NonNull UastAndroidContext context,
+            @NonNull UAnnotation annotation, @NonNull UElement argument,
+            @Nullable UElement errorNode) {
+        List<Object> allowed = annotation.getValues();
+        reportTypeDef(context, argument, errorNode, false, allowed);
     }
 
-    private static void reportTypeDef(@NonNull JavaContext context, @NonNull Node node,
-            @Nullable Node errorNode, boolean flag, @NonNull Object[] allowedValues) {
+    private static void reportTypeDef(@NonNull UastAndroidContext context, @NonNull UElement node,
+            @Nullable UElement errorNode, boolean flag, @NonNull List<Object> allowedValues) {
         String values = listAllowedValues(allowedValues);
         String message;
         if (flag) {
@@ -1236,21 +1134,27 @@ public class SupportAnnotationDetector extends Detector implements Detector.Java
         context.report(TYPE_DEF, errorNode, context.getLocation(errorNode), message);
     }
 
-    private static String listAllowedValues(@NonNull Object[] allowedValues) {
+    private static String listAllowedValues(@NonNull List<Object> allowedValues) {
         StringBuilder sb = new StringBuilder();
         for (Object allowedValue : allowedValues) {
             String s;
             if (allowedValue instanceof Integer) {
                 s = allowedValue.toString();
-            } else if (allowedValue instanceof ResolvedNode) {
-                ResolvedNode node = (ResolvedNode) allowedValue;
-                if (node instanceof ResolvedField) {
-                    ResolvedField field = (ResolvedField) node;
-                    String containingClassName = field.getContainingClassName();
-                    containingClassName = containingClassName.substring(containingClassName.lastIndexOf('.') + 1);
-                    s = containingClassName + "." + field.getName();
+            } else if (allowedValue instanceof UVariable) {
+                UVariable variable = (UVariable) allowedValue;
+                UClass containingClass = UastUtils.getContainingClassOrEmpty(variable);
+                String containingClassName = containingClass.getFqName();
+                if (containingClassName == null) {
+                    continue;
+                }
+                containingClassName = containingClassName.substring(containingClassName.lastIndexOf('.') + 1);
+                s = containingClassName + "." + variable.getName();
+            } else if (allowedValue instanceof UFqNamed) {
+                String fqName = ((UFqNamed)allowedValue).getFqName();
+                if (fqName != null) {
+                    s = fqName;
                 } else {
-                    s = node.getSignature();
+                    continue;
                 }
             } else {
                 continue;
@@ -1263,7 +1167,7 @@ public class SupportAnnotationDetector extends Detector implements Detector.Java
         return sb.toString();
     }
 
-    private static double getDoubleAttribute(@NonNull ResolvedAnnotation annotation,
+    private static double getDoubleAttribute(@NonNull UAnnotation annotation,
             @NonNull String name, double defaultValue) {
         Object value = annotation.getValue(name);
         if (value instanceof Number) {
@@ -1273,7 +1177,7 @@ public class SupportAnnotationDetector extends Detector implements Detector.Java
         return defaultValue;
     }
 
-    private static long getLongAttribute(@NonNull ResolvedAnnotation annotation,
+    private static long getLongAttribute(@NonNull UAnnotation annotation,
             @NonNull String name, long defaultValue) {
         Object value = annotation.getValue(name);
         if (value instanceof Number) {
@@ -1283,7 +1187,7 @@ public class SupportAnnotationDetector extends Detector implements Detector.Java
         return defaultValue;
     }
 
-    private static boolean getBoolean(@NonNull ResolvedAnnotation annotation,
+    private static boolean getBoolean(@NonNull UAnnotation annotation,
             @NonNull String name, boolean defaultValue) {
         Object value = annotation.getValue(name);
         if (value instanceof Boolean) {
@@ -1294,8 +1198,15 @@ public class SupportAnnotationDetector extends Detector implements Detector.Java
     }
 
     @Nullable
-    static ResolvedAnnotation getRelevantAnnotation(@NonNull ResolvedAnnotation annotation) {
-        String signature = annotation.getSignature();
+    static UAnnotation getRelevantAnnotation(
+            @NonNull UAnnotation annotation,
+            @NonNull UastAndroidContext context
+    ) {
+        String signature = annotation.getFqName();
+        if (signature == null) {
+            return null;
+        }
+
         if (signature.startsWith(SUPPORT_ANNOTATIONS_PREFIX)) {
             // Bail on the nullness annotations early since they're the most commonly
             // defined ones. They're not analyzed in lint yet.
@@ -1317,12 +1228,12 @@ public class SupportAnnotationDetector extends Detector implements Detector.Java
         // annotate it with @IntDef, and then use @foo.bar.Baz in your signatures.
         // Here we want to map from @foo.bar.Baz to the corresponding int def.
         // Don't need to compute this if performing @IntDef or @StringDef lookup
-        ResolvedClass type = annotation.getClassType();
+        UClass type = annotation.resolve(context);
         if (type != null) {
-            for (ResolvedAnnotation inner : type.getAnnotations()) {
-                if (inner.matches(INT_DEF_ANNOTATION)
-                        || inner.matches(STRING_DEF_ANNOTATION)
-                        || inner.matches(PERMISSION_ANNOTATION)) {
+            for (UAnnotation inner : type.getAnnotations()) {
+                if (inner.matchesFqName(INT_DEF_ANNOTATION)
+                        || inner.matchesFqName(STRING_DEF_ANNOTATION)
+                        || inner.matchesFqName(PERMISSION_ANNOTATION)) {
                     return inner;
                 }
             }
@@ -1331,35 +1242,76 @@ public class SupportAnnotationDetector extends Detector implements Detector.Java
         return null;
     }
 
-    // ---- Implements JavaScanner ----
+    @Nullable
+    static UAnnotation getRelevantAnnotation(
+            @NonNull UastAndroidContext context,
+            @NonNull UAnnotation annotation
+    ) {
+        String signature = annotation.getFqName();
+        if (signature != null && signature.startsWith(SUPPORT_ANNOTATIONS_PREFIX)) {
+            // Bail on the nullness annotations early since they're the most commonly
+            // defined ones. They're not analyzed in lint yet.
+            if (signature.endsWith(".Nullable") || signature.endsWith(".NonNull")) {
+                return null;
+            }
 
-    @Override
-    public
-    List<Class<? extends Node>> getApplicableNodeTypes() {
-        return Collections.<Class<? extends Node>>singletonList(MethodInvocation.class);
+
+            return annotation;
+        }
+
+        if (signature != null && signature.startsWith("java.")) {
+            // @Override, @SuppressWarnings etc. Ignore
+            return null;
+        }
+
+        // Special case @IntDef and @StringDef: These are used on annotations
+        // themselves. For example, you create a new annotation named @foo.bar.Baz,
+        // annotate it with @IntDef, and then use @foo.bar.Baz in your signatures.
+        // Here we want to map from @foo.bar.Baz to the corresponding int def.
+        // Don't need to compute this if performing @IntDef or @StringDef lookup
+        UClass type = annotation.resolve(context);
+        if (type != null) {
+            for (UAnnotation inner : type.getAnnotations()) {
+                if (INT_DEF_ANNOTATION.equals(inner.getFqName())
+                    || STRING_DEF_ANNOTATION.equals(inner.getFqName())
+                    || PERMISSION_ANNOTATION.equals(inner.getFqName())) {
+                    return inner;
+                }
+            }
+        }
+
+        return null;
     }
 
-    @Nullable
+    // ---- Implements UastScanner ----
+
     @Override
-    public AstVisitor createJavaVisitor(@NonNull JavaContext context) {
+    public UastVisitor createUastVisitor(UastAndroidContext context) {
         return new CallVisitor(context);
     }
 
-    private class CallVisitor extends ForwardingAstVisitor {
-        private final JavaContext mContext;
+    private class CallVisitor extends UastVisitor {
+        private final UastAndroidContext mContext;
 
-        public CallVisitor(JavaContext context) {
+        public CallVisitor(UastAndroidContext context) {
             mContext = context;
         }
 
         @Override
-        public boolean visitMethodInvocation(@NonNull MethodInvocation call) {
-            ResolvedNode resolved = mContext.resolve(call);
-            if (resolved instanceof ResolvedMethod) {
-                ResolvedMethod method = (ResolvedMethod) resolved;
-                Iterable<ResolvedAnnotation> annotations = method.getAnnotations();
-                for (ResolvedAnnotation annotation : annotations) {
-                    annotation = getRelevantAnnotation(annotation);
+        public boolean visitCallExpression(@NotNull UCallExpression node) {
+            if (node.getKind() == UastCallKind.FUNCTION_CALL) {
+                visitFunctionInvocation(node);
+            }
+
+            return super.visitCallExpression(node);
+        }
+
+        private boolean visitFunctionInvocation(@NonNull UCallExpression call) {
+            UFunction method = call.resolve(mContext);
+            if (method != null) {
+                List<UAnnotation> annotations = method.getAnnotations();
+                for (UAnnotation annotation : annotations) {
+                    annotation = getRelevantAnnotation(annotation, mContext);
                     if (annotation != null) {
                         checkMethodAnnotation(mContext, method, call, annotation);
                     }
@@ -1367,24 +1319,26 @@ public class SupportAnnotationDetector extends Detector implements Detector.Java
 
                 // Look for annotations on the class as well: these trickle
                 // down to all the methods in the class
-                ResolvedClass containingClass = method.getContainingClass();
-                annotations = containingClass.getAnnotations();
-                for (ResolvedAnnotation annotation : annotations) {
-                    annotation = getRelevantAnnotation(annotation);
-                    if (annotation != null) {
-                        checkMethodAnnotation(mContext, method, call, annotation);
+                UClass containingClass = UastUtils.getContainingClass(method);
+                if (containingClass != null) {
+                    annotations = containingClass.getAnnotations();
+                    for (UAnnotation annotation : annotations) {
+                        annotation = getRelevantAnnotation(annotation, mContext);
+                        if (annotation != null) {
+                            checkMethodAnnotation(mContext, method, call, annotation);
+                        }
                     }
                 }
 
-                Iterator<Expression> arguments = call.astArguments().iterator();
-                for (int i = 0, n = method.getArgumentCount();
+                Iterator<UExpression> arguments = call.getValueArguments().iterator();
+                for (int i = 0, n = method.getValueParameterCount();
                         i < n && arguments.hasNext();
                         i++) {
-                    Expression argument = arguments.next();
+                    UExpression argument = arguments.next();
 
-                    annotations = method.getParameterAnnotations(i);
-                    for (ResolvedAnnotation annotation : annotations) {
-                        annotation = getRelevantAnnotation(annotation);
+                    annotations = method.getValueParameters().get(i).getAnnotations();
+                    for (UAnnotation annotation : annotations) {
+                        annotation = getRelevantAnnotation(annotation, mContext);
                         if (annotation != null) {
                             checkParameterAnnotation(mContext, argument, annotation);
                         }

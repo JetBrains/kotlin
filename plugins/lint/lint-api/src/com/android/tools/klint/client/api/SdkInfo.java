@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.client.api;
+package com.android.tools.klint.client.api;
 
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
