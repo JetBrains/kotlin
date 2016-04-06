@@ -1,7 +1,7 @@
 <problems>
     <problem>
         <file>test.kt</file>
-        <line>18</line>
+        <line>22</line>
         <module>light_idea_test_case</module>
         <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Final Kotlin class or function with Spring annotation</problem_class>
@@ -9,7 +9,7 @@
     </problem>
     <problem>
         <file>test.kt</file>
-        <line>21</line>
+        <line>25</line>
         <module>light_idea_test_case</module>
         <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Final Kotlin class or function with Spring annotation</problem_class>
@@ -17,7 +17,7 @@
     </problem>
     <problem>
         <file>test.kt</file>
-        <line>32</line>
+        <line>36</line>
         <module>light_idea_test_case</module>
         <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Final Kotlin class or function with Spring annotation</problem_class>
@@ -25,7 +25,7 @@
     </problem>
     <problem>
         <file>test.kt</file>
-        <line>41</line>
+        <line>45</line>
         <module>light_idea_test_case</module>
         <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Final Kotlin class or function with Spring annotation</problem_class>
@@ -33,7 +33,7 @@
     </problem>
     <problem>
         <file>test.kt</file>
-        <line>44</line>
+        <line>48</line>
         <module>light_idea_test_case</module>
         <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Final Kotlin class or function with Spring annotation</problem_class>
@@ -41,7 +41,7 @@
     </problem>
     <problem>
         <file>test.kt</file>
-        <line>47</line>
+        <line>51</line>
         <module>light_idea_test_case</module>
         <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Final Kotlin class or function with Spring annotation</problem_class>
@@ -49,7 +49,7 @@
     </problem>
     <problem>
         <file>test.kt</file>
-        <line>50</line>
+        <line>54</line>
         <module>light_idea_test_case</module>
         <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Final Kotlin class or function with Spring annotation</problem_class>
@@ -57,7 +57,7 @@
     </problem>
     <problem>
         <file>test.kt</file>
-        <line>55</line>
+        <line>59</line>
         <module>light_idea_test_case</module>
         <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Final Kotlin class or function with Spring annotation</problem_class>
@@ -65,10 +65,66 @@
     </problem>
     <problem>
         <file>test.kt</file>
-        <line>58</line>
+        <line>62</line>
         <module>light_idea_test_case</module>
         <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Final Kotlin class or function with Spring annotation</problem_class>
         <description>@Bean function should be declared open</description>
+    </problem>
+    <problem>
+        <file>test.kt</file>
+        <line>74</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Final Kotlin class or function with Spring annotation</problem_class>
+        <description>@Transactional class should be declared open</description>
+    </problem>
+    <problem>
+        <file>test.kt</file>
+        <line>76</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Final Kotlin class or function with Spring annotation</problem_class>
+        <description>@Transactional function should be declared open</description>
+    </problem>
+    <problem>
+        <file>test.kt</file>
+        <line>79</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Final Kotlin class or function with Spring annotation</problem_class>
+        <description>@Transactional function should be declared open</description>
+    </problem>
+    <problem>
+        <file>test.kt</file>
+        <line>82</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Final Kotlin class or function with Spring annotation</problem_class>
+        <description>@Transactional function should be declared open</description>
+    </problem>
+    <problem>
+        <file>test.kt</file>
+        <line>85</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Final Kotlin class or function with Spring annotation</problem_class>
+        <description>@Transactional function should be declared open</description>
+    </problem>
+    <problem>
+        <file>test.kt</file>
+        <line>91</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Final Kotlin class or function with Spring annotation</problem_class>
+        <description>@Transactional function should be declared open</description>
+    </problem>
+    <problem>
+        <file>test.kt</file>
+        <line>94</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Final Kotlin class or function with Spring annotation</problem_class>
+        <description>@Transactional function should be declared open</description>
     </problem>
 </problems>
