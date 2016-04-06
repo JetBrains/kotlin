@@ -529,9 +529,9 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addVarianceModifier"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
-        @TestMetadata("empty.kt")
-        public void testEmpty() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addVarianceModifier/empty.kt");
+        @TestMetadata("emptyTest.kt")
+        public void testEmptyTest() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addVarianceModifier/emptyTest.kt");
             doTest(fileName);
         }
     }
