@@ -28,13 +28,13 @@ import com.android.tools.klint.detector.api.Severity;
 import com.android.tools.klint.detector.api.Speed;
 import com.google.common.collect.Lists;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.uast.*;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
+import org.jetbrains.uast.visitor.AbstractUastVisitor;
 import org.jetbrains.uast.visitor.UastVisitor;
 
 /**
@@ -83,7 +83,7 @@ public class ViewHolderDetector extends Detector implements UastScanner {
         return new ViewAdapterVisitor(context);
     }
 
-    private static class ViewAdapterVisitor extends UastVisitor {
+    private static class ViewAdapterVisitor extends AbstractUastVisitor {
         private final UastAndroidContext mContext;
 
         public ViewAdapterVisitor(UastAndroidContext context) {
@@ -121,7 +121,7 @@ public class ViewHolderDetector extends Detector implements UastScanner {
         }
     }
 
-    private static class InflationVisitor extends UastVisitor {
+    private static class InflationVisitor extends AbstractUastVisitor {
         private final UastAndroidContext mContext;
         private List<UElement> mNodes;
         private boolean mHaveConditional;

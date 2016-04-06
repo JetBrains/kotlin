@@ -66,7 +66,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.uast.*;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
-import org.jetbrains.uast.visitor.UastVisitor;
+import org.jetbrains.uast.visitor.AbstractUastVisitor;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -1353,7 +1353,7 @@ public class StringFormatDetector extends ResourceXmlDetector implements UastSca
      * certain argument types are valid. Note however that it does not do full-blown
      * type analysis by checking method call signatures and so on.
      */
-    private static class UastStringTracker extends UastVisitor {
+    private static class UastStringTracker extends AbstractUastVisitor {
         /** Method we're searching within */
         private final UElement mTop;
         /** The argument index in the method we're targeting */

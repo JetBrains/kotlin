@@ -39,7 +39,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.uast.*;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
-import org.jetbrains.uast.visitor.UastVisitor;
+import org.jetbrains.uast.visitor.AbstractUastVisitor;
 
 /**
  * Detector looking for cut & paste issues
@@ -182,7 +182,7 @@ public class CutPasteDetector extends Detector implements UastScanner {
         return visitor.isReachable();
     }
 
-    private static class ReachableVisitor extends UastVisitor {
+    private static class ReachableVisitor extends AbstractUastVisitor {
         @NonNull private final UCallExpression mFrom;
         @NonNull private final UCallExpression mTo;
         private boolean mReachable;

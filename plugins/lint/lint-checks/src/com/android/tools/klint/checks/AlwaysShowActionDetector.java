@@ -39,9 +39,9 @@ import org.jetbrains.uast.UElement;
 import org.jetbrains.uast.UQualifiedExpression;
 import org.jetbrains.uast.USimpleReferenceExpression;
 import org.jetbrains.uast.UastUtils;
-import org.jetbrains.uast.check.UastAndroidUtils;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
+import org.jetbrains.uast.visitor.AbstractUastVisitor;
 import org.jetbrains.uast.visitor.UastVisitor;
 import org.w3c.dom.Attr;
 
@@ -203,7 +203,7 @@ public class AlwaysShowActionDetector extends ResourceXmlDetector implements Uas
         return new FieldAccessChecker(context);
     }
 
-    private class FieldAccessChecker extends UastVisitor {
+    private class FieldAccessChecker extends AbstractUastVisitor {
         private final UastAndroidContext mContext;
 
         public FieldAccessChecker(UastAndroidContext context) {

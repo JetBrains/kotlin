@@ -45,6 +45,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.uast.*;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
+import org.jetbrains.uast.visitor.AbstractUastVisitor;
 import org.jetbrains.uast.visitor.UastVisitor;
 
 /**
@@ -152,7 +153,7 @@ public class JavaPerformanceDetector extends Detector implements UastScanner {
         return new PerformanceVisitor(context);
     }
 
-    private static class PerformanceVisitor extends UastVisitor {
+    private static class PerformanceVisitor extends AbstractUastVisitor {
         private final UastAndroidContext mContext;
         private final boolean mCheckMaps;
         private final boolean mCheckAllocations;
@@ -552,7 +553,7 @@ public class JavaPerformanceDetector extends Detector implements UastScanner {
     }
 
     /** Visitor which records variable names assigned into */
-    private static class AssignmentTracker extends UastVisitor {
+    private static class AssignmentTracker extends AbstractUastVisitor {
         private final Collection<String> mVariables;
 
         public AssignmentTracker(Collection<String> variables) {

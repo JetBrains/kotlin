@@ -36,7 +36,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.uast.*;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
-import org.jetbrains.uast.visitor.UastVisitor;
+import org.jetbrains.uast.visitor.AbstractUastVisitor;
 
 /**
  * Checks for missing {@code recycle} calls on resources that encourage it, and
@@ -455,7 +455,7 @@ public class CleanupDetector extends Detector implements UastScanner {
      * case of a TypedArray we're looking for a "recycle", call, in the
      * case of a database cursor we're looking for a "close" call, etc.
      */
-    private abstract static class FinishVisitor extends UastVisitor {
+    private abstract static class FinishVisitor extends AbstractUastVisitor {
         protected final UastAndroidContext mContext;
         protected final List<UVariable> mVariables;
         private boolean mContainsCleanup;

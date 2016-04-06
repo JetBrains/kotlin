@@ -36,7 +36,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.uast.*;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
-import org.jetbrains.uast.java.JavaUastCallKinds;
+import org.jetbrains.uast.visitor.AbstractUastVisitor;
 import org.jetbrains.uast.visitor.UastVisitor;
 
 /**
@@ -85,7 +85,7 @@ public class AnnotationDetector extends Detector implements UastScanner {
         return new AnnotationChecker(context);
     }
 
-    private static class AnnotationChecker extends UastVisitor {
+    private static class AnnotationChecker extends AbstractUastVisitor {
         private final UastAndroidContext mContext;
 
         public AnnotationChecker(UastAndroidContext context) {

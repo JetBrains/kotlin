@@ -60,7 +60,7 @@ import org.jetbrains.uast.UElement;
 import org.jetbrains.uast.UVariable;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
-import org.jetbrains.uast.visitor.UastVisitor;
+import org.jetbrains.uast.visitor.AbstractUastVisitor;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -530,7 +530,7 @@ public class UnusedResourceDetector extends ResourceXmlDetector implements UastS
     }
 
     @Override
-    public UastVisitor createUastVisitor(@NonNull UastAndroidContext context) {
+    public AbstractUastVisitor createUastVisitor(@NonNull UastAndroidContext context) {
         if (mReferences != null) {
             return new UnusedResourceVisitor();
         } else {
@@ -540,7 +540,7 @@ public class UnusedResourceDetector extends ResourceXmlDetector implements UastS
     }
 
     // Look for references and declarations
-    private class UnusedResourceVisitor extends UastVisitor {
+    private class UnusedResourceVisitor extends AbstractUastVisitor {
         @Override
         public boolean visitClass(@NotNull UClass node) {
             // Look for declarations of R class fields and store them in

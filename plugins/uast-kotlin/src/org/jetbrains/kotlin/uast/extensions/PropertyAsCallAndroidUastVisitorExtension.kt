@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.uast.lint
+package org.jetbrains.kotlin.uast.extensions
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -26,9 +26,10 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.uast.*
 import org.jetbrains.uast.*
 import org.jetbrains.uast.psi.PsiElementBacked
+import org.jetbrains.uast.visitor.UastVisitor
 
-class PropertyAsCallAndroidUastAdditionalChecker : UastAdditionalChecker {
-    override fun invoke(element: UElement, callback: UastCallback, context: UastContext) {
+class PropertyAsCallAndroidUastVisitorExtension : UastVisitorExtension {
+    override fun invoke(element: UElement, visitor: UastVisitor, context: UastContext) {
         val expr = element as? KotlinUSimpleReferenceExpression ?: return
         if (expr is KotlinNameUSimpleReferenceExpression) return
 
@@ -46,7 +47,7 @@ class PropertyAsCallAndroidUastAdditionalChecker : UastAdditionalChecker {
         else
             null
 
-        val callExpression: UCallExpression = object : UCallExpression, PsiElementBacked {
+        val callExpression: UCallExpression = object : UCallExpression, PsiElementBacked, SynthetizedUElement {
             override val parent = element.parent
             override val psi = ktElement
 
@@ -85,7 +86,7 @@ class PropertyAsCallAndroidUastAdditionalChecker : UastAdditionalChecker {
             }
         }
 
-        callback(callExpression)
+        visitor.visitCallExpression(callExpression)
     }
 
     private tailrec fun findAssignment(prev: PsiElement?, element: PsiElement?): KtBinaryExpression? = when (element) {

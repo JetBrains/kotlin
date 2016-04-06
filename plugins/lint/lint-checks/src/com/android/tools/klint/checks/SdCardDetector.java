@@ -33,6 +33,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.uast.ULiteralExpression;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
+import org.jetbrains.uast.visitor.AbstractUastVisitor;
 import org.jetbrains.uast.visitor.UastVisitor;
 
 /**
@@ -82,7 +83,7 @@ public class SdCardDetector extends Detector implements UastScanner {
         return new StringChecker(context);
     }
 
-    private static class StringChecker extends UastVisitor {
+    private static class StringChecker extends AbstractUastVisitor {
         private final UastAndroidContext mContext;
 
         public StringChecker(UastAndroidContext context) {

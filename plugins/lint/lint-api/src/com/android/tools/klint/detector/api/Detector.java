@@ -25,6 +25,7 @@ import org.jetbrains.uast.UClass;
 import org.jetbrains.uast.UElement;
 import org.jetbrains.uast.UFunction;
 import org.jetbrains.uast.check.UastAndroidContext;
+import org.jetbrains.uast.visitor.AbstractUastVisitor;
 import org.jetbrains.uast.visitor.UastVisitor;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;

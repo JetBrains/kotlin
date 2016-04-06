@@ -15,6 +15,8 @@
  */
 package org.jetbrains.uast
 
+import org.jetbrains.uast.visitor.UastVisitor
+
 interface UastConverter {
     fun convert(element: Any?, parent: UElement): UElement?
     fun convertWithParent(element: Any?): UElement?
@@ -24,11 +26,11 @@ interface UastConverter {
 
 interface UastLanguagePlugin {
     val converter: UastConverter
-    val additionalCheckers: List<UastAdditionalChecker>
+    val visitorExtensions: List<UastVisitorExtension>
 }
 
-interface UastAdditionalChecker {
-    operator fun invoke(element: UElement, callback: UastCallback, context: UastContext)
+interface UastVisitorExtension {
+    operator fun invoke(element: UElement, visitor: UastVisitor, context: UastContext)
 }
 
 object UastConverterUtils {

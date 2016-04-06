@@ -76,6 +76,7 @@ import org.jetbrains.uast.*;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
 import org.jetbrains.uast.visitor.EmptyUastVisitor;
+import org.jetbrains.uast.visitor.AbstractUastVisitor;
 import org.jetbrains.uast.visitor.UastVisitor;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
@@ -571,7 +572,7 @@ public class RtlDetector extends LayoutDetector implements UastScanner {
         return EmptyUastVisitor.INSTANCE;
     }
 
-    private static class IdentifierChecker extends UastVisitor {
+    private static class IdentifierChecker extends AbstractUastVisitor {
         private final UastAndroidContext mContext;
 
         public IdentifierChecker(UastAndroidContext context) {

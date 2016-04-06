@@ -35,7 +35,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.uast.*;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
-import org.jetbrains.uast.visitor.UastVisitor;
+import org.jetbrains.uast.visitor.AbstractUastVisitor;
 
 /**
  * Looks for addJavascriptInterface calls on interfaces have been properly annotated
@@ -182,7 +182,7 @@ public class JavaScriptInterfaceDetector extends Detector implements UastScanner
         return false;
     }
 
-    private static class ConcreteTypeVisitor extends UastVisitor {
+    private static class ConcreteTypeVisitor extends AbstractUastVisitor {
         private final UastAndroidContext mContext;
         private final UCallExpression mTargetCall;
         private boolean mFoundCall;

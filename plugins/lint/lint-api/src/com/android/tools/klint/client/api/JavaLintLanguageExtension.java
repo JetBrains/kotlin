@@ -17,7 +17,7 @@
 package com.android.tools.klint.client.api;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.uast.UastAdditionalChecker;
+import org.jetbrains.uast.UastVisitorExtension;
 import org.jetbrains.uast.UastConverter;
 import org.jetbrains.uast.java.JavaUastLanguagePlugin;
 
@@ -32,7 +32,7 @@ public class JavaLintLanguageExtension extends LintLanguageExtension {
 
     @NotNull
     @Override
-    public List<UastAdditionalChecker> getAdditionalCheckers() {
-        return JavaUastLanguagePlugin.INSTANCE.getAdditionalCheckers();
+    public List<UastVisitorExtension> getVisitorExtensions() {
+        return JavaUastLanguagePlugin.INSTANCE.getVisitorExtensions();
     }
 }

@@ -22,7 +22,8 @@ import org.jetbrains.uast.java.expressions.JavaUSynchronizedExpression
 
 object JavaUastLanguagePlugin : UastLanguagePlugin {
     override val converter: UastConverter = JavaConverter
-    override val additionalCheckers = emptyList<UastAdditionalChecker>()
+    override val visitorExtensions: List<UastVisitorExtension>
+        get() = emptyList()
 }
 
 internal object JavaConverter : UastConverter {

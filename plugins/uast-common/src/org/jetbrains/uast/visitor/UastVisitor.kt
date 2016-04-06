@@ -17,8 +17,8 @@ package org.jetbrains.uast.visitor
 
 import org.jetbrains.uast.*
 
-abstract class UastVisitor {
-    open fun visitElement(node: UElement): Boolean = false
+interface UastVisitor {
+    open fun visitElement(node: UElement): Boolean
 
     open fun visitFile(node: UFile) = visitElement(node)
     open fun visitImportStatement(node: UImportStatement) = visitElement(node)
@@ -30,7 +30,6 @@ abstract class UastVisitor {
     open fun visitClass(node: UClass) = visitElement(node)
     open fun visitFunction(node: UFunction) = visitElement(node)
     open fun visitVariable(node: UVariable) = visitElement(node)
-
 
     // Expressions
     open fun visitLabeledExpression(node: ULabeledExpression) = visitElement(node)
@@ -82,7 +81,6 @@ abstract class UastVisitor {
     open fun afterVisitFunction(node: UFunction) {}
     open fun afterVisitVariable(node: UVariable) {}
 
-
     // Expressions
     open fun afterVisitLabeledExpression(node: ULabeledExpression) {}
     open fun afterVisitDeclarationsExpression(node: UDeclarationsExpression) {}
@@ -119,4 +117,8 @@ abstract class UastVisitor {
     open fun afterVisitObjectLiteralExpression(node: UObjectLiteralExpression) {}
 }
 
-object EmptyUastVisitor : UastVisitor()
+abstract class AbstractUastVisitor : UastVisitor {
+    override fun visitElement(node: UElement): Boolean = false
+}
+
+object EmptyUastVisitor : AbstractUastVisitor()

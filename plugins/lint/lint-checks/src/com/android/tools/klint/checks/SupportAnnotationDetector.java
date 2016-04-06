@@ -52,7 +52,7 @@ import org.jetbrains.uast.*;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
 import org.jetbrains.uast.java.JavaUFunction;
-import org.jetbrains.uast.java.JavaUastCallKinds;
+import org.jetbrains.uast.visitor.AbstractUastVisitor;
 import org.jetbrains.uast.visitor.UastVisitor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -455,7 +455,7 @@ public class SupportAnnotationDetector extends Detector implements UastScanner {
      * or whether the check return value (== PERMISSION_GRANTED vs != PERMISSION_GRANTED)
      * is handled correctly, etc.
      */
-    private static class CheckPermissionVisitor extends UastVisitor {
+    private static class CheckPermissionVisitor extends AbstractUastVisitor {
         private boolean mChecksPermission;
         private boolean mDone;
         private final UElement mTarget;
@@ -1251,7 +1251,7 @@ public class SupportAnnotationDetector extends Detector implements UastScanner {
         return new CallVisitor(context);
     }
 
-    private class CallVisitor extends UastVisitor {
+    private class CallVisitor extends AbstractUastVisitor {
         private final UastAndroidContext mContext;
 
         public CallVisitor(UastAndroidContext context) {

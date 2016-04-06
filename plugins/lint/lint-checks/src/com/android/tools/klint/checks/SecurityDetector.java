@@ -54,6 +54,7 @@ import org.jetbrains.uast.UCallExpression;
 import org.jetbrains.uast.USimpleReferenceExpression;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
+import org.jetbrains.uast.visitor.AbstractUastVisitor;
 import org.jetbrains.uast.visitor.UastVisitor;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
@@ -358,10 +359,10 @@ public class SecurityDetector extends Detector implements Detector.XmlScanner, U
         return new IdentifierVisitor(context);
     }
 
-    private static class IdentifierVisitor extends UastVisitor {
+    private static class IdentifierVisitor extends AbstractUastVisitor {
         private final UastAndroidContext mContext;
 
-        private final UastVisitor identifierHandler = new UastVisitor() {
+        private final AbstractUastVisitor identifierHandler = new AbstractUastVisitor() {
             @Override
             public boolean visitSimpleReferenceExpression(@NotNull USimpleReferenceExpression node) {
                 if ("MODE_WORLD_WRITEABLE".equals(node.getIdentifier())) { //$NON-NLS-1$

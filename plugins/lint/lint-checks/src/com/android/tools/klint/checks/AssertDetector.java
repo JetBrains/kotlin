@@ -32,6 +32,7 @@ import org.jetbrains.uast.*;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
 import org.jetbrains.uast.java.JavaUAssertExpression;
+import org.jetbrains.uast.visitor.AbstractUastVisitor;
 import org.jetbrains.uast.visitor.UastVisitor;
 
 import static org.jetbrains.uast.UastLiteralUtils.isNullLiteral;
@@ -81,7 +82,7 @@ public class AssertDetector extends Detector implements UastScanner {
 
     @Override
     public UastVisitor createUastVisitor(final UastAndroidContext context) {
-        return new UastVisitor() {
+        return new AbstractUastVisitor() {
             @Override
             public boolean visitCallExpression(@NotNull UCallExpression node) {
                 if (!(node instanceof JavaUAssertExpression)) {

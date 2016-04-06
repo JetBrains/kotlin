@@ -27,6 +27,8 @@ import org.jetbrains.uast.*
 import org.jetbrains.uast.UastCallKind.Companion.CONSTRUCTOR_CALL
 import org.jetbrains.uast.UastCallKind.Companion.FUNCTION_CALL
 import org.jetbrains.uast.java.JavaUastLanguagePlugin
+import org.jetbrains.uast.visitor.AbstractUastVisitor
+import org.jetbrains.uast.visitor.UastExtendableVisitor
 import org.jetbrains.uast.visitor.UastVisitor
 import java.io.File
 
@@ -42,6 +44,7 @@ object UastChecker {
         val vfile = VirtualFileManager.getInstance().findFileByUrl("file://" + file.absolutePath) ?: return
 
         val plugins = context.languagePlugins
+        val extendableVisitor = UastExtendableVisitor(visitor, context, plugins.flatMap { it.visitorExtensions })
 
         ApplicationManager.getApplication().runReadAction {
             val psiFile = PsiManager.getInstance(project).findFile(vfile)
@@ -50,12 +53,12 @@ object UastChecker {
                 when (psiFile) {
                     is PsiJavaFile -> {
                         val ufile = JavaUastLanguagePlugin.converter.convertWithParent(psiFile)
-                        ufile?.accept(visitor)
+                        ufile?.accept(extendableVisitor)
                     }
                     else -> for (plugin in plugins) {
                         val ufile = plugin.converter.convertWithParent(psiFile)
                         if (ufile != null) {
-                            ufile.accept(visitor)
+                            ufile.accept(extendableVisitor)
                             break
                         }
                     }
@@ -71,7 +74,7 @@ object UastChecker {
 
         val appliesToResourcesRefs = scanner.appliesToResourceRefs()
 
-        val visitor = object : UastVisitor() {
+        val visitor = object : AbstractUastVisitor() {
             override fun visitCallExpression(node: UCallExpression): Boolean {
                 if (applicableFunctionNames.isNotEmpty()) {
                     if (node.kind == FUNCTION_CALL && node.functionName in applicableFunctionNames) {

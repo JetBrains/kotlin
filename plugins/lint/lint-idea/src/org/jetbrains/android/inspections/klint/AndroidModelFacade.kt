@@ -49,7 +49,7 @@ class AndroidModelFacade(val facet: AndroidFacet) {
     fun getDependsOn(artifact: String): Boolean {
         val model = model ?: return false
         return GradleUtil::class.staticFunctions.firstOrNull {
-            val type = it.parameters[0].type.toString()
+            val type = it.parameters.firstOrNull()?.type?.toString() ?: ""
             it.parameters.size == 2 && "IdeaAndroidProject" in type || "AndroidGradleModel" in type
         }?.call(model, artifact) as? Boolean ?: false
     }

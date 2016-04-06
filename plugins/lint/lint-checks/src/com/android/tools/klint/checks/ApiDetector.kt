@@ -24,6 +24,7 @@ import com.android.tools.klint.detector.api.*
 import org.jetbrains.uast.*
 import org.jetbrains.uast.check.UastAndroidContext
 import org.jetbrains.uast.check.UastScanner
+import org.jetbrains.uast.visitor.AbstractUastVisitor
 import org.jetbrains.uast.visitor.UastVisitor
 import java.util.*
 
@@ -55,7 +56,7 @@ open class ApiDetector : Detector(), UastScanner {
         return ApiVersionVisitor(context)
     }
 
-    private inner class ApiVersionVisitor(val context: UastAndroidContext) : UastVisitor() {
+    private inner class ApiVersionVisitor(val context: UastAndroidContext) : AbstractUastVisitor() {
         private var mMinApi = -1
 
         override fun visitCallExpression(node: UCallExpression): Boolean {
