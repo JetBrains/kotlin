@@ -125,21 +125,25 @@ fun buildFindOperationGenerator(
 
     val workingVariableCanHoldNull = (workingVariable.resolveToDescriptor() as VariableDescriptor).type.nullability() != TypeNullability.NOT_NULL
 
+    fun ((chainedCallGenerator: ChainedCallGenerator, filter: KtExpression?) -> KtExpression).useElvisOperatorIfNeeded(): ((chainedCallGenerator: ChainedCallGenerator, filter: KtExpression?) -> KtExpression)? {
+        if (valueIfNotFound.isNullExpression()) return this
+
+        // we cannot use ?: if found value can be null
+        if (workingVariableCanHoldNull) return null
+
+        return { chainedCallGenerator, filter ->
+            val generated = this(chainedCallGenerator, filter)
+            KtPsiFactory(generated).createExpressionByPattern("$0 ?: $1", generated, valueIfNotFound)
+        }
+    }
+
     when {
         valueIfFound.isVariableReference(workingVariable) -> {
             val stdlibFunName = if (findFirst) "firstOrNull" else "lastOrNull"
-            val nullIfNotFound = valueIfNotFound.isNullExpression()
-
-            // we cannot use ?: if found value can be null
-            if (!nullIfNotFound && workingVariableCanHoldNull) return null
-
-            return { chainedCallGenerator, filter ->
-                val chainedCall = generateChainedCall(stdlibFunName, chainedCallGenerator, filter)
-                if (nullIfNotFound)
-                    chainedCall
-                else
-                    KtPsiFactory(chainedCall).createExpressionByPattern("$0 ?: $1", chainedCall, valueIfNotFound)
+            val generator = { chainedCallGenerator: ChainedCallGenerator, filter: KtExpression? ->
+                generateChainedCall(stdlibFunName, chainedCallGenerator, filter)
             }
+            return generator.useElvisOperatorIfNeeded()
         }
 
         valueIfFound.isTrueConstant() && valueIfNotFound.isFalseConstant() -> {
@@ -151,7 +155,6 @@ fun buildFindOperationGenerator(
         }
 
         workingVariable.hasUsages(valueIfFound) -> {
-            if (!valueIfNotFound.isNullExpression()) return null //TODO
             if (!findFirst) return null // too dangerous because of side effects
 
             // specially handle the case when the result expression is "<working variable>.<some call>" or "<working variable>?.<some call>"
@@ -160,21 +163,21 @@ fun buildFindOperationGenerator(
                 val receiver = qualifiedExpression.receiverExpression
                 val selector = qualifiedExpression.selectorExpression
                 if (receiver.isVariableReference(workingVariable) && selector != null && !workingVariable.hasUsages(selector)) {
-                    return { chainedCallGenerator, filter ->
+                    return { chainedCallGenerator: ChainedCallGenerator, filter: KtExpression? ->
                         val findFirstCall = generateChainedCall("firstOrNull", chainedCallGenerator, filter)
                         KtPsiFactory(findFirstCall).createExpressionByPattern("$0?.$1", findFirstCall, selector)
-                    }
+                    }.useElvisOperatorIfNeeded()
                 }
             }
 
             // in case of nullable working variable we cannot distinguish by the result of "firstOrNull" whether nothing was found or 'null' was found
             if (workingVariableCanHoldNull) return null
 
-            return { chainedCallGenerator, filter ->
+            return { chainedCallGenerator: ChainedCallGenerator, filter: KtExpression? ->
                 val findFirstCall = generateChainedCall("firstOrNull", chainedCallGenerator, filter)
                 val letBody = generateLambda(workingVariable, valueIfFound)
                 KtPsiFactory(findFirstCall).createExpressionByPattern("$0?.let $1:'{}'", findFirstCall, letBody)
-            }
+            }.useElvisOperatorIfNeeded()
         }
 
         else -> {
