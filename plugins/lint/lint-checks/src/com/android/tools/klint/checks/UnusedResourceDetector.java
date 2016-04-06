@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
 import static com.android.SdkConstants.ANDROID_URI;
 import static com.android.SdkConstants.ATTR_NAME;
@@ -38,24 +38,29 @@ import static com.android.SdkConstants.TAG_STYLE;
 import static com.android.utils.SdkUtils.getResourceFieldName;
 
 import com.android.annotations.NonNull;
-import com.android.annotations.Nullable;
 import com.android.resources.ResourceType;
-import com.android.tools.lint.detector.api.Category;
-import com.android.tools.lint.detector.api.Context;
-import com.android.tools.lint.detector.api.Detector;
-import com.android.tools.lint.detector.api.Implementation;
-import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.JavaContext;
-import com.android.tools.lint.detector.api.LintUtils;
-import com.android.tools.lint.detector.api.Location;
-import com.android.tools.lint.detector.api.Project;
-import com.android.tools.lint.detector.api.ResourceXmlDetector;
-import com.android.tools.lint.detector.api.Scope;
-import com.android.tools.lint.detector.api.Severity;
-import com.android.tools.lint.detector.api.Speed;
-import com.android.tools.lint.detector.api.XmlContext;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.Context;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.LintUtils;
+import com.android.tools.klint.detector.api.Location;
+import com.android.tools.klint.detector.api.Project;
+import com.android.tools.klint.detector.api.ResourceXmlDetector;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
+import com.android.tools.klint.detector.api.Speed;
+import com.android.tools.klint.detector.api.XmlContext;
 import com.google.common.collect.Lists;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.uast.UClass;
+import org.jetbrains.uast.UDeclaration;
+import org.jetbrains.uast.UElement;
+import org.jetbrains.uast.UVariable;
+import org.jetbrains.uast.check.UastAndroidContext;
+import org.jetbrains.uast.check.UastScanner;
+import org.jetbrains.uast.visitor.UastVisitor;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -74,13 +79,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import lombok.ast.AstVisitor;
-import lombok.ast.ClassDeclaration;
-import lombok.ast.ForwardingAstVisitor;
-import lombok.ast.NormalTypeBody;
-import lombok.ast.VariableDeclaration;
-import lombok.ast.VariableDefinition;
-
 /**
  * Finds unused resources.
  * <p>
@@ -89,11 +87,11 @@ import lombok.ast.VariableDefinition;
  * BCEL for bytecode analysis etc) and once it does this should be updated to
  * use it.
  */
-public class UnusedResourceDetector extends ResourceXmlDetector implements Detector.JavaScanner {
+public class UnusedResourceDetector extends ResourceXmlDetector implements UastScanner {
 
     private static final Implementation IMPLEMENTATION = new Implementation(
             UnusedResourceDetector.class,
-            EnumSet.of(Scope.MANIFEST, Scope.ALL_RESOURCE_FILES, Scope.ALL_JAVA_FILES,
+            EnumSet.of(Scope.MANIFEST, Scope.ALL_RESOURCE_FILES, Scope.ALL_SOURCE_FILES,
                     Scope.TEST_SOURCES));
 
     /** Unused resources (other than ids). */
@@ -148,7 +146,7 @@ public class UnusedResourceDetector extends ResourceXmlDetector implements Detec
         }
     }
 
-    // ---- Implements JavaScanner ----
+    // ---- Implements UastScanner ----
 
     @Override
     public void beforeCheckFile(@NonNull Context context) {
@@ -519,19 +517,12 @@ public class UnusedResourceDetector extends ResourceXmlDetector implements Detec
     }
 
     @Override
-    public List<Class<? extends lombok.ast.Node>> getApplicableNodeTypes() {
-        return Collections.<Class<? extends lombok.ast.Node>>singletonList(ClassDeclaration.class);
-    }
-
-    @Override
     public boolean appliesToResourceRefs() {
         return true;
     }
 
     @Override
-    public void visitResourceReference(@NonNull JavaContext context, @Nullable AstVisitor visitor,
-            @NonNull lombok.ast.Node node, @NonNull String type, @NonNull String name,
-            boolean isFramework) {
+    public void visitResourceReference(UastAndroidContext context, UElement element, String type, String name, boolean isFramework) {
         if (mReferences != null && !isFramework) {
             String reference = R_PREFIX + type + '.' + name;
             mReferences.add(reference);
@@ -539,7 +530,7 @@ public class UnusedResourceDetector extends ResourceXmlDetector implements Detec
     }
 
     @Override
-    public AstVisitor createJavaVisitor(@NonNull JavaContext context) {
+    public UastVisitor createUastVisitor(@NonNull UastAndroidContext context) {
         if (mReferences != null) {
             return new UnusedResourceVisitor();
         } else {
@@ -549,47 +540,17 @@ public class UnusedResourceDetector extends ResourceXmlDetector implements Detec
     }
 
     // Look for references and declarations
-    private class UnusedResourceVisitor extends ForwardingAstVisitor {
+    private class UnusedResourceVisitor extends UastVisitor {
         @Override
-        public boolean visitClassDeclaration(ClassDeclaration node) {
+        public boolean visitClass(@NotNull UClass node) {
             // Look for declarations of R class fields and store them in
             // mDeclarations
-            String description = node.astName().astValue();
+            String description = node.getName();
             if (description.equals(R_CLASS)) {
-                // This is an R class. We can process this class very deliberately.
-                // The R class has a very specific AST format:
-                // ClassDeclaration ("R")
-                //    NormalTypeBody
-                //        ClassDeclaration (e.g. "drawable")
-                //             NormalTypeBody
-                //                 VariableDeclaration
-                //                     VariableDefinition (e.g. "ic_launcher")
-                for (lombok.ast.Node body : node.getChildren()) {
-                    if (body instanceof NormalTypeBody) {
-                        for (lombok.ast.Node subclass : body.getChildren()) {
-                            if (subclass instanceof ClassDeclaration) {
-                                String className = ((ClassDeclaration) subclass).astName().astValue();
-                                for (lombok.ast.Node innerBody : subclass.getChildren()) {
-                                    if (innerBody instanceof NormalTypeBody) {
-                                        for (lombok.ast.Node field : innerBody.getChildren()) {
-                                            if (field instanceof VariableDeclaration) {
-                                                for (lombok.ast.Node child : field.getChildren()) {
-                                                    if (child instanceof VariableDefinition) {
-                                                        VariableDefinition def =
-                                                                (VariableDefinition) child;
-                                                        String name = def.astVariables().first()
-                                                                .astName().astValue();
-                                                        String resource = R_PREFIX + className
-                                                                + '.' + name;
-                                                        mDeclarations.add(resource);
-                                                    } // Else: It could be a comment node
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                for (UDeclaration subclass : node.getNestedClasses()) {
+                    for (UVariable variable : node.getProperties()) {
+                        String resource = R_PREFIX + subclass.getName() + '.' + variable.getName();
+                        mDeclarations.add(resource);
                     }
                 }
 

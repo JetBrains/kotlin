@@ -1,4 +1,6 @@
-<idea-plugin>
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+    <xi:include href="android-lint.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
     <extensions defaultExtensionNs="com.intellij">
         <gotoDeclarationHandler implementation="org.jetbrains.kotlin.android.navigation.KotlinAndroidGotoDeclarationHandler"/>
 

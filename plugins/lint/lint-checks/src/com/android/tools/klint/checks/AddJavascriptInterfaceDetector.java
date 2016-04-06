@@ -14,35 +14,34 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
 
-import static com.android.tools.lint.client.api.JavaParser.ResolvedMethod;
-import static com.android.tools.lint.client.api.JavaParser.ResolvedNode;
-import static com.android.tools.lint.client.api.JavaParser.TYPE_OBJECT;
-import static com.android.tools.lint.client.api.JavaParser.TYPE_STRING;
+import static com.android.tools.klint.client.api.JavaParser.TYPE_OBJECT;
+import static com.android.tools.klint.client.api.JavaParser.TYPE_STRING;
 
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
-import com.android.tools.lint.detector.api.Category;
-import com.android.tools.lint.detector.api.Detector;
-import com.android.tools.lint.detector.api.Implementation;
-import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.JavaContext;
-import com.android.tools.lint.detector.api.Scope;
-import com.android.tools.lint.detector.api.Severity;
-import com.android.tools.lint.detector.api.Speed;
 
 import java.util.Collections;
 import java.util.List;
 
-import lombok.ast.AstVisitor;
-import lombok.ast.MethodInvocation;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.Detector;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
+import com.android.tools.klint.detector.api.Speed;
+import org.jetbrains.uast.*;
+import org.jetbrains.uast.check.UastAndroidUtils;
+import org.jetbrains.uast.check.UastAndroidContext;
+import org.jetbrains.uast.check.UastScanner;
 
 /**
  * Ensures that addJavascriptInterface is not called for API levels below 17.
  */
-public class AddJavascriptInterfaceDetector extends Detector implements Detector.JavaScanner {
+public class AddJavascriptInterfaceDetector extends Detector implements UastScanner {
     public static final Issue ISSUE = Issue.create(
             "AddJavascriptInterface", //$NON-NLS-1$
             "addJavascriptInterface Called",
@@ -62,45 +61,40 @@ public class AddJavascriptInterfaceDetector extends Detector implements Detector
     private static final String WEB_VIEW = "android.webkit.WebView"; //$NON-NLS-1$
     private static final String ADD_JAVASCRIPT_INTERFACE = "addJavascriptInterface"; //$NON-NLS-1$
 
+    // ---- Implements UastScanner ----
+
     @NonNull
     @Override
     public Speed getSpeed() {
         return Speed.FAST;
     }
 
-    // ---- Implements JavaScanner ----
-
     @Nullable
     @Override
-    public List<String> getApplicableMethodNames() {
+    public List<String> getApplicableFunctionNames() {
         return Collections.singletonList(ADD_JAVASCRIPT_INTERFACE);
     }
 
     @Override
-    public void visitMethod(@NonNull JavaContext context, @Nullable AstVisitor visitor,
-            @NonNull MethodInvocation node) {
-        // Ignore the issue if we never build for any API less than 17.
-        if (context.getMainProject().getMinSdk() >= 17) {
+    public void visitFunctionCall(UastAndroidContext context, UCallExpression node) {
+        if (context.getLintContext().getMainProject().getMinSdk() >= 17) {
             return;
         }
 
-        // Ignore if the method doesn't fit our description.
-        ResolvedNode resolved = context.resolve(node);
-        if (!(resolved instanceof ResolvedMethod)) {
+        UFunction resolvedFunction = node.resolveOrEmpty(context);
+        UClass containingClass = UastUtils.getContainingClassOrEmpty(resolvedFunction);
+        if (!containingClass.isSubclassOf(WEB_VIEW)) {
             return;
         }
-        ResolvedMethod method = (ResolvedMethod) resolved;
-        if (!method.getContainingClass().isSubclassOf(WEB_VIEW, false)) {
-            return;
-        }
-        if (method.getArgumentCount() != 2
-                || !method.getArgumentType(0).matchesName(TYPE_OBJECT)
-                || !method.getArgumentType(1).matchesName(TYPE_STRING)) {
+        List<UVariable> valueParameters = resolvedFunction.getValueParameters();
+        if (node.getValueArgumentCount() != 2
+            || !valueParameters.get(0).getType().matchesFqName(TYPE_OBJECT)
+            || !valueParameters.get(1).getType().matchesFqName(TYPE_STRING)) {
             return;
         }
 
         String message = "`WebView.addJavascriptInterface` should not be called with minSdkVersion < 17 for security reasons: " +
                          "JavaScript can use reflection to manipulate application";
-        context.report(ISSUE, node, context.getLocation(node.astName()), message);
+        context.report(ISSUE, node, UastAndroidUtils.getLocation(node), message);
     }
 }

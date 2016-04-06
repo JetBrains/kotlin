@@ -14,33 +14,33 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
-import com.android.tools.lint.client.api.JavaParser.ResolvedMethod;
-import com.android.tools.lint.client.api.JavaParser.TypeDescriptor;
-import com.android.tools.lint.detector.api.Category;
-import com.android.tools.lint.detector.api.Detector;
-import com.android.tools.lint.detector.api.Detector.JavaScanner;
-import com.android.tools.lint.detector.api.Implementation;
-import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.JavaContext;
-import com.android.tools.lint.detector.api.Location;
-import com.android.tools.lint.detector.api.Scope;
-import com.android.tools.lint.detector.api.Severity;
-import com.android.tools.lint.detector.api.Speed;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.Detector;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.Location;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
+import com.android.tools.klint.detector.api.Speed;
 
 import java.util.Collections;
 import java.util.List;
 
-import lombok.ast.AstVisitor;
-import lombok.ast.ConstructorInvocation;
+import org.jetbrains.uast.UFunction;
+import org.jetbrains.uast.UCallExpression;
+import org.jetbrains.uast.UType;
+import org.jetbrains.uast.check.UastAndroidContext;
+import org.jetbrains.uast.check.UastAndroidUtils;
+import org.jetbrains.uast.check.UastScanner;
 
 /**
  * Checks for errors related to Date Formats
  */
-public class DateFormatDetector extends Detector implements JavaScanner {
+public class DateFormatDetector extends Detector implements UastScanner {
 
     private static final Implementation IMPLEMENTATION = new Implementation(
             DateFormatDetector.class,
@@ -82,7 +82,7 @@ public class DateFormatDetector extends Detector implements JavaScanner {
         return Speed.FAST;
     }
 
-    // ---- Implements JavaScanner ----
+    // ---- Implements UastScanner ----
 
     @Nullable
     @Override
@@ -91,22 +91,21 @@ public class DateFormatDetector extends Detector implements JavaScanner {
     }
 
     @Override
-    public void visitConstructor(@NonNull JavaContext context, @Nullable AstVisitor visitor,
-            @NonNull ConstructorInvocation node, @NonNull ResolvedMethod constructor) {
+    public void visitConstructor(UastAndroidContext context, UCallExpression functionCall, UFunction constructor) {
         if (!specifiesLocale(constructor)) {
-            Location location = context.getLocation(node);
+            Location location = UastAndroidUtils.getLocation(functionCall);
             String message =
-                    "To get local formatting use `getDateInstance()`, `getDateTimeInstance()`, " +
-                    "or `getTimeInstance()`, or use `new SimpleDateFormat(String template, " +
-                    "Locale locale)` with for example `Locale.US` for ASCII dates.";
-            context.report(DATE_FORMAT, node, location, message);
+              "To get local formatting use `getDateInstance()`, `getDateTimeInstance()`, " +
+              "or `getTimeInstance()`, or use `new SimpleDateFormat(String template, " +
+              "Locale locale)` with for example `Locale.US` for ASCII dates.";
+            context.report(DATE_FORMAT, functionCall, location, message);
         }
     }
 
-    private static boolean specifiesLocale(@NonNull ResolvedMethod method) {
-        for (int i = 0, n = method.getArgumentCount(); i < n; i++) {
-            TypeDescriptor argumentType = method.getArgumentType(i);
-            if (argumentType.matchesSignature(LOCALE_CLS)) {
+    private static boolean specifiesLocale(@NonNull UFunction method) {
+        for (int i = 0, n = method.getValueParameterCount(); i < n; i++) {
+            UType parameterType = method.getValueParameters().get(i).getType();
+            if (parameterType.matchesFqName(LOCALE_CLS)) {
                 return true;
             }
         }

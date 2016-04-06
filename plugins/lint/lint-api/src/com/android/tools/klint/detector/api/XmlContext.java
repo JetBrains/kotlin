@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.detector.api;
+package com.android.tools.klint.detector.api;
 
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.android.resources.ResourceFolderType;
-import com.android.tools.lint.client.api.LintDriver;
-import com.android.tools.lint.client.api.XmlParser;
+import com.android.tools.klint.client.api.LintDriver;
+import com.android.tools.klint.client.api.XmlParser;
 import com.google.common.annotations.Beta;
-
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;

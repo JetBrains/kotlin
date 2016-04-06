@@ -14,51 +14,36 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
 import static com.android.SdkConstants.FQCN_SUPPRESS_LINT;
 import static com.android.SdkConstants.SUPPRESS_LINT;
 
 import com.android.annotations.NonNull;
-import com.android.tools.lint.client.api.IssueRegistry;
-import com.android.tools.lint.detector.api.Category;
-import com.android.tools.lint.detector.api.Context;
-import com.android.tools.lint.detector.api.Detector;
-import com.android.tools.lint.detector.api.Implementation;
-import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.JavaContext;
-import com.android.tools.lint.detector.api.Scope;
-import com.android.tools.lint.detector.api.Severity;
-import com.android.tools.lint.detector.api.Speed;
+import com.android.tools.klint.client.api.IssueRegistry;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.Context;
+import com.android.tools.klint.detector.api.Detector;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
+import com.android.tools.klint.detector.api.Speed;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
 
-import lombok.ast.Annotation;
-import lombok.ast.AnnotationElement;
-import lombok.ast.AnnotationValue;
-import lombok.ast.ArrayInitializer;
-import lombok.ast.AstVisitor;
-import lombok.ast.Block;
-import lombok.ast.ConstructorDeclaration;
-import lombok.ast.Expression;
-import lombok.ast.ForwardingAstVisitor;
-import lombok.ast.MethodDeclaration;
-import lombok.ast.Modifiers;
-import lombok.ast.Node;
-import lombok.ast.Select;
-import lombok.ast.StrictListAccessor;
-import lombok.ast.StringLiteral;
-import lombok.ast.TypeBody;
-import lombok.ast.VariableDefinition;
-import lombok.ast.VariableDefinitionEntry;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.uast.*;
+import org.jetbrains.uast.check.UastAndroidContext;
+import org.jetbrains.uast.check.UastAndroidUtils;
+import org.jetbrains.uast.check.UastScanner;
+import org.jetbrains.uast.java.JavaUastCallKinds;
+import org.jetbrains.uast.visitor.UastVisitor;
 
 /**
  * Checks annotations to make sure they are valid
  */
-public class AnnotationDetector extends Detector implements Detector.JavaScanner {
+public class AnnotationDetector extends Detector implements UastScanner {
     /** Placing SuppressLint on a local variable doesn't work for class-file based checks */
     public static final Issue ISSUE = Issue.create(
             "LocalSuppress", //$NON-NLS-1$
@@ -94,59 +79,45 @@ public class AnnotationDetector extends Detector implements Detector.JavaScanner
         return Speed.FAST;
     }
 
-    // ---- Implements JavaScanner ----
+    // ---- Implements UastScanner ----
 
     @Override
-    public List<Class<? extends Node>> getApplicableNodeTypes() {
-        return Collections.<Class<? extends Node>>singletonList(Annotation.class);
-    }
-
-    @Override
-    public AstVisitor createJavaVisitor(@NonNull JavaContext context) {
+    public UastVisitor createUastVisitor(UastAndroidContext context) {
         return new AnnotationChecker(context);
     }
 
-    private static class AnnotationChecker extends ForwardingAstVisitor {
-        private final JavaContext mContext;
+    private static class AnnotationChecker extends UastVisitor {
+        private final UastAndroidContext mContext;
 
-        public AnnotationChecker(JavaContext context) {
+        public AnnotationChecker(UastAndroidContext context) {
             mContext = context;
         }
 
         @Override
-        public boolean visitAnnotation(Annotation node) {
-            String type = node.astAnnotationTypeReference().getTypeName();
+        public boolean visitAnnotation(@NotNull UAnnotation node) {
+            String type = node.getName();
             if (SUPPRESS_LINT.equals(type) || FQCN_SUPPRESS_LINT.equals(type)) {
-                Node parent = node.getParent();
-                if (parent instanceof Modifiers) {
-                    parent = parent.getParent();
-                    if (parent instanceof VariableDefinition) {
-                        for (AnnotationElement element : node.astElements()) {
-                            AnnotationValue valueNode = element.astValue();
-                            if (valueNode == null) {
+                UElement parent = node.getParent();
+                if (parent instanceof UVariable) {
+                    for (UNamedExpression element : node.getValueArguments()) {
+                        UExpression valueNode = element.getExpression();
+                        if (UastLiteralUtils.isStringLiteral(valueNode)) {
+                            ULiteralExpression literal = (ULiteralExpression) valueNode;
+                            String id = ((String)literal.getValue());
+                            if (!checkId(node, id)) {
+                                return super.visitAnnotation(node);
+                            }
+                        } else if (valueNode instanceof UCallExpression &&
+                                   ((UCallExpression) valueNode).getKind() == JavaUastCallKinds.ARRAY_INITIALIZER) {
+                            UCallExpression array = (UCallExpression) valueNode;
+                            if (array.getValueArgumentCount() == 0) {
                                 continue;
                             }
-                            if (valueNode instanceof StringLiteral) {
-                                StringLiteral literal = (StringLiteral) valueNode;
-                                String id = literal.astValue();
-                                if (!checkId(node, id)) {
-                                    return super.visitAnnotation(node);
-                                }
-                            } else if (valueNode instanceof ArrayInitializer) {
-                                ArrayInitializer array = (ArrayInitializer) valueNode;
-                                StrictListAccessor<Expression, ArrayInitializer> expressions =
-                                        array.astExpressions();
-                                if (expressions == null) {
-                                    continue;
-                                }
-                                Iterator<Expression> arrayIterator = expressions.iterator();
-                                while (arrayIterator.hasNext()) {
-                                    Expression arrayElement = arrayIterator.next();
-                                    if (arrayElement instanceof StringLiteral) {
-                                        String id = ((StringLiteral) arrayElement).astValue();
-                                        if (!checkId(node, id)) {
-                                            return super.visitAnnotation(node);
-                                        }
+                            for (UExpression arrayElement : array.getValueArguments()) {
+                                if (UastLiteralUtils.isStringLiteral(arrayElement)) {
+                                    String id = ((String)((ULiteralExpression)arrayElement).getValue());
+                                    if (!checkId(node, id)) {
+                                        return super.visitAnnotation(node);
                                     }
                                 }
                             }
@@ -155,32 +126,26 @@ public class AnnotationDetector extends Detector implements Detector.JavaScanner
                 }
             }
 
-            return super.visitAnnotation(node);
+            return false;
         }
 
-        private boolean checkId(Annotation node, String id) {
-            IssueRegistry registry = mContext.getDriver().getRegistry();
+        private boolean checkId(UAnnotation node, String id) {
+            IssueRegistry registry = mContext.getLintContext().getDriver().getRegistry();
             Issue issue = registry.getIssue(id);
             // Special-case the ApiDetector issue, since it does both source file analysis
             // only on field references, and class file analysis on the rest, so we allow
             // annotations outside of methods only on fields
-            if (issue != null && !issue.getImplementation().getScope().contains(Scope.JAVA_FILE)
+            if (issue != null && !issue.getImplementation().getScope().contains(Scope.SOURCE_FILE)
                     || issue == ApiDetector.UNSUPPORTED) {
                 // Ensure that this isn't a field
-                Node parent = node.getParent();
+                UElement parent = node.getParent();
                 while (parent != null) {
-                    if (parent instanceof MethodDeclaration
-                            || parent instanceof ConstructorDeclaration
-                            || parent instanceof Block) {
+                    if (parent instanceof UFunction || parent instanceof UBlockExpression) {
                         break;
-                    } else if (parent instanceof TypeBody) { // It's a field
-                        return true;
-                    } else if (issue == ApiDetector.UNSUPPORTED
-                            && parent instanceof VariableDefinition) {
-                        VariableDefinition definition = (VariableDefinition) parent;
-                        for (VariableDefinitionEntry entry : definition.astVariables()) {
-                            Expression initializer = entry.astInitializer();
-                            if (initializer instanceof Select) {
+                    } else if (issue == ApiDetector.UNSUPPORTED && parent instanceof UDeclarationsExpression) {
+                        UDeclarationsExpression declarations = (UDeclarationsExpression)parent;
+                        for (UVariable var : declarations.getVariables()) {
+                            if (var.getKind() != UastVariableKind.MEMBER && var.getInitializer() instanceof UQualifiedExpression) {
                                 return true;
                             }
                         }
@@ -193,7 +158,7 @@ public class AnnotationDetector extends Detector implements Detector.JavaScanner
 
                 // This issue doesn't have AST access: annotations are not
                 // available for local variables or parameters
-                mContext.report(ISSUE, node, mContext.getLocation(node), String.format(
+                mContext.report(ISSUE, node, UastAndroidUtils.getLocation(node), String.format(
                     "The `@SuppressLint` annotation cannot be used on a local " +
                     "variable with the lint check '%1$s': move out to the " +
                     "surrounding method", id));

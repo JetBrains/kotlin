@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
 import com.android.annotations.NonNull;
 import com.android.annotations.VisibleForTesting;
-import com.android.tools.lint.client.api.IssueRegistry;
-import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.Scope;
+import com.android.tools.klint.client.api.IssueRegistry;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.Scope;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -283,7 +283,7 @@ public class BuiltinIssueRegistry extends IssueRegistry {
                 initialSize += 10;
             }
 
-            if (scope.contains(Scope.JAVA_FILE)) {
+            if (scope.contains(Scope.SOURCE_FILE)) {
                 initialSize += 55;
             } else if (scope.contains(Scope.CLASS_FILE)) {
                 initialSize += 15;

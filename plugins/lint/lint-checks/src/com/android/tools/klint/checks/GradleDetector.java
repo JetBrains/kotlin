@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
 import static com.android.SdkConstants.FD_BUILD_TOOLS;
 import static com.android.SdkConstants.GRADLE_PLUGIN_MINIMUM_VERSION;
 import static com.android.SdkConstants.GRADLE_PLUGIN_RECOMMENDED_VERSION;
 import static com.android.ide.common.repository.GradleCoordinate.COMPARE_PLUS_HIGHER;
-import static com.android.tools.lint.checks.ManifestDetector.TARGET_NEWER;
-import static com.android.tools.lint.detector.api.LintUtils.findSubstring;
+import static com.android.tools.klint.detector.api.LintUtils.findSubstring;
 import static com.google.common.base.Charsets.UTF_8;
 
 import com.android.SdkConstants;
@@ -35,18 +34,18 @@ import com.android.ide.common.repository.GradleCoordinate;
 import com.android.ide.common.repository.GradleCoordinate.RevisionComponent;
 import com.android.ide.common.repository.SdkMavenRepository;
 import com.android.sdklib.repository.PreciseRevision;
-import com.android.tools.lint.client.api.LintClient;
-import com.android.tools.lint.detector.api.Category;
-import com.android.tools.lint.detector.api.Context;
-import com.android.tools.lint.detector.api.Detector;
-import com.android.tools.lint.detector.api.Implementation;
-import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.LintUtils;
-import com.android.tools.lint.detector.api.Location;
-import com.android.tools.lint.detector.api.Scope;
-import com.android.tools.lint.detector.api.Severity;
-import com.android.tools.lint.detector.api.Speed;
-import com.android.tools.lint.detector.api.TextFormat;
+import com.android.tools.klint.client.api.LintClient;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.Context;
+import com.android.tools.klint.detector.api.Detector;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.LintUtils;
+import com.android.tools.klint.detector.api.Location;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
+import com.android.tools.klint.detector.api.Speed;
+import com.android.tools.klint.detector.api.TextFormat;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
@@ -336,7 +335,7 @@ public class GradleDetector extends Detector implements Detector.GradleScanner {
                             "Not targeting the latest versions of Android; compatibility " +
                             "modes apply. Consider testing and updating this version. " +
                            "Consult the android.os.Build.VERSION_CODES javadoc for details.";
-                    report(context, valueCookie, TARGET_NEWER, message);
+                    report(context, valueCookie, ManifestDetector.TARGET_NEWER, message);
                 }
                 if (version > 0) {
                     mTargetSdkVersion = version;

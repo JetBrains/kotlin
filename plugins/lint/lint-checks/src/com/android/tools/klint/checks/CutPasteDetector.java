@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
 import static com.android.SdkConstants.RESOURCE_CLZ_ID;
 
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
-import com.android.tools.lint.detector.api.Category;
-import com.android.tools.lint.detector.api.Context;
-import com.android.tools.lint.detector.api.Detector;
-import com.android.tools.lint.detector.api.Implementation;
-import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.JavaContext;
-import com.android.tools.lint.detector.api.Location;
-import com.android.tools.lint.detector.api.Scope;
-import com.android.tools.lint.detector.api.Severity;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.Context;
+import com.android.tools.klint.detector.api.Detector;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.Location;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
 import com.google.common.collect.Maps;
 
 import java.io.File;
@@ -36,24 +35,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import lombok.ast.ArrayAccess;
-import lombok.ast.AstVisitor;
-import lombok.ast.BinaryExpression;
-import lombok.ast.Cast;
-import lombok.ast.Expression;
-import lombok.ast.ForwardingAstVisitor;
-import lombok.ast.If;
-import lombok.ast.MethodInvocation;
-import lombok.ast.Node;
-import lombok.ast.Select;
-import lombok.ast.Statement;
-import lombok.ast.VariableDefinitionEntry;
-import lombok.ast.VariableReference;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.uast.*;
+import org.jetbrains.uast.check.UastAndroidContext;
+import org.jetbrains.uast.check.UastAndroidUtils;
+import org.jetbrains.uast.check.UastScanner;
+import org.jetbrains.uast.visitor.UastVisitor;
 
 /**
  * Detector looking for cut & paste issues
  */
-public class CutPasteDetector extends Detector implements Detector.JavaScanner {
+public class CutPasteDetector extends Detector implements UastScanner {
     /** The main issue discovered by this detector */
     public static final Issue ISSUE = Issue.create(
             "CutPasteId", //$NON-NLS-1$
@@ -73,8 +65,8 @@ public class CutPasteDetector extends Detector implements Detector.JavaScanner {
                     CutPasteDetector.class,
                     Scope.JAVA_FILE_SCOPE));
 
-    private Node mLastMethod;
-    private Map<String, MethodInvocation> mIds;
+    private UFunction mLastMethod;
+    private Map<String, UCallExpression> mIds;
     private Map<String, String> mLhs;
     private Map<String, String> mCallOperands;
 
@@ -87,22 +79,22 @@ public class CutPasteDetector extends Detector implements Detector.JavaScanner {
         return true;
     }
 
-    // ---- Implements JavaScanner ----
+    // ---- Implements UastScanner ----
+
 
     @Override
-    public List<String> getApplicableMethodNames() {
+    public List<String> getApplicableFunctionNames() {
         return Collections.singletonList("findViewById"); //$NON-NLS-1$
     }
 
     @Override
-    public void visitMethod(@NonNull JavaContext context, @Nullable AstVisitor visitor,
-            @NonNull MethodInvocation call) {
-        String lhs = getLhs(call);
+    public void visitFunctionCall(UastAndroidContext context, UCallExpression node) {
+        String lhs = getLhs(node);
         if (lhs == null) {
             return;
         }
 
-        Node method = JavaContext.findSurroundingMethod(call);
+        UFunction method = UastUtils.getContainingFunction(node);
         if (method == null) {
             return;
         } else if (method != mLastMethod) {
@@ -112,16 +104,20 @@ public class CutPasteDetector extends Detector implements Detector.JavaScanner {
             mLastMethod = method;
         }
 
-        String callOperand = call.astOperand() != null ? call.astOperand().toString() : "";
+        UElement parent = node.getParent();
+        String callOperand = "";
+        if (parent instanceof UQualifiedExpression) {
+            callOperand = ((UQualifiedExpression)parent).getReceiver().renderString();
+        }
 
-        Expression first = call.astArguments().first();
-        if (first instanceof Select) {
-            Select select = (Select) first;
-            String id = select.astIdentifier().astValue();
-            Expression operand = select.astOperand();
-            if (operand instanceof Select) {
-                Select type = (Select) operand;
-                if (type.astIdentifier().astValue().equals(RESOURCE_CLZ_ID)) {
+        UExpression first = node.getValueArguments().get(0);
+        if (first instanceof UQualifiedExpression) {
+            UQualifiedExpression select = (UQualifiedExpression) first;
+            String id = select.getSelector().renderString();
+            UExpression operand = select.getReceiver();
+            if (operand instanceof UQualifiedExpression) {
+                UQualifiedExpression type = (UQualifiedExpression) operand;
+                if (type.getSelector().renderString().equals(RESOURCE_CLZ_ID)) {
                     if (mIds.containsKey(id)) {
                         if (lhs.equals(mLhs.get(id))) {
                             return;
@@ -129,45 +125,49 @@ public class CutPasteDetector extends Detector implements Detector.JavaScanner {
                         if (!callOperand.equals(mCallOperands.get(id))) {
                             return;
                         }
-                        MethodInvocation earlierCall = mIds.get(id);
-                        if (!isReachableFrom(method, earlierCall, call)) {
+                        UCallExpression earlierCall = mIds.get(id);
+                        if (!isReachableFrom(method, earlierCall, node)) {
                             return;
                         }
-                        Location location = context.getLocation(call);
-                        Location secondary = context.getLocation(earlierCall);
-                        secondary.setMessage("First usage here");
-                        location.setSecondary(secondary);
-                        context.report(ISSUE, call, location, String.format(
-                            "The id `%1$s` has already been looked up in this method; possible " +
-                            "cut & paste error?", first.toString()));
+                        Location location = UastAndroidUtils.getLocation(node);
+                        Location secondary = UastAndroidUtils.getLocation(earlierCall);
+                        if (location != null && secondary != null) {
+                            secondary.setMessage("First usage here");
+                            location.setSecondary(secondary);
+                            context.report(ISSUE, node, location, String.format(
+                              "The id `%1$s` has already been looked up in this method; possible " +
+                              "cut & paste error?", first.toString()));
+                        }
                     } else {
-                        mIds.put(id, call);
+                        mIds.put(id, node);
                         mLhs.put(id, lhs);
                         mCallOperands.put(id, callOperand);
                     }
                 }
             }
         }
-    }
 
+    }
+    
     @Nullable
-    private static String getLhs(@NonNull MethodInvocation call) {
-        Node parent = call.getParent();
-        if (parent instanceof Cast) {
+    private static String getLhs(@NonNull UCallExpression call) {
+        UElement parent = call.getParent();
+        if (UastBinaryExpressionWithTypeUtils.isTypeCast(parent)) {
+            assert parent != null;
             parent = parent.getParent();
         }
 
-        if (parent instanceof VariableDefinitionEntry) {
-            VariableDefinitionEntry vde = (VariableDefinitionEntry) parent;
-            return vde.astName().astValue();
-        } else if (parent instanceof BinaryExpression) {
-            BinaryExpression be = (BinaryExpression) parent;
-            Expression left = be.astLeft();
-            if (left instanceof VariableReference || left instanceof Select) {
-                return be.astLeft().toString();
-            } else if (left instanceof ArrayAccess) {
-                ArrayAccess aa = (ArrayAccess) left;
-                return aa.astOperand().toString();
+        if (parent instanceof UVariable) {
+            UVariable vde = (UVariable) parent;
+            return vde.getName();
+        } else if (parent instanceof UBinaryExpression) {
+            UBinaryExpression be = (UBinaryExpression) parent;
+            UExpression left = be.getLeftOperand();
+            if (left instanceof USimpleReferenceExpression || left instanceof UQualifiedExpression) {
+                return be.getLeftOperand().toString();
+            } else if (left instanceof UArrayAccessExpression) {
+                UArrayAccessExpression aa = (UArrayAccessExpression) left;
+                return aa.getReceiver().toString();
             }
         }
 
@@ -175,22 +175,21 @@ public class CutPasteDetector extends Detector implements Detector.JavaScanner {
     }
 
     private static boolean isReachableFrom(
-            @NonNull Node method,
-            @NonNull MethodInvocation from,
-            @NonNull MethodInvocation to) {
+            @NonNull UElement method,
+            @NonNull UCallExpression from,
+            @NonNull UCallExpression to) {
         ReachableVisitor visitor = new ReachableVisitor(from, to);
-        method.accept(visitor);
-
+        visitor.process(method);
         return visitor.isReachable();
     }
 
-    private static class ReachableVisitor extends ForwardingAstVisitor {
-        @NonNull private final MethodInvocation mFrom;
-        @NonNull private final MethodInvocation mTo;
+    private static class ReachableVisitor extends UastVisitor {
+        @NonNull private final UCallExpression mFrom;
+        @NonNull private final UCallExpression mTo;
         private boolean mReachable;
         private boolean mSeenEnd;
 
-        public ReachableVisitor(@NonNull MethodInvocation from, @NonNull MethodInvocation to) {
+        public ReachableVisitor(@NonNull UCallExpression from, @NonNull UCallExpression to) {
             mFrom = from;
             mTo = to;
         }
@@ -200,43 +199,42 @@ public class CutPasteDetector extends Detector implements Detector.JavaScanner {
         }
 
         @Override
-        public boolean visitMethodInvocation(MethodInvocation node) {
+        public boolean visitCallExpression(@NotNull UCallExpression node) {
             if (node == mFrom) {
                 mReachable = true;
             } else if (node == mTo) {
                 mSeenEnd = true;
 
             }
-            return super.visitMethodInvocation(node);
+            return false;
         }
 
         @Override
-        public boolean visitIf(If node) {
-            Expression condition = node.astCondition();
-            Statement body = node.astStatement();
-            Statement elseBody = node.astElseStatement();
-            if (condition != null) {
-                condition.accept(this);
-            }
+        public boolean visitIfExpression(@NotNull UIfExpression node) {
+            UExpression condition = node.getCondition();
+            UExpression body = node.getThenBranch();
+            UElement elseBody = node.getElseBranch();
+            process(condition);
+
             if (body != null) {
                 boolean wasReachable = mReachable;
-                body.accept(this);
+                process(body);
                 mReachable = wasReachable;
             }
             if (elseBody != null) {
                 boolean wasReachable = mReachable;
-                elseBody.accept(this);
+                process(elseBody);
                 mReachable = wasReachable;
             }
-
-            endVisit(node);
 
             return false;
         }
 
         @Override
-        public boolean visitNode(Node node) {
-            return mSeenEnd;
+        public void process(@NotNull UElement element) {
+            if (!mSeenEnd) {
+                super.process(element);
+            }
         }
     }
 }

@@ -13,17 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jetbrains.android.inspections.lint;
+package org.jetbrains.android.inspections.klint;
 
 import com.android.annotations.NonNull;
-import com.android.tools.lint.checks.*;
-import com.android.tools.lint.detector.api.*;
+import com.android.tools.klint.checks.*;
+import com.android.tools.klint.detector.api.Detector;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.Scope;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
-
-import static org.jetbrains.android.inspections.lint.IntellijLintProject.*;
 
 /**
  * Custom version of the {@link BuiltinIssueRegistry}. This
@@ -52,18 +53,16 @@ public class IntellijLintIssueRegistry extends BuiltinIssueRegistry {
           issue.setImplementation(IntellijApiDetector.IMPLEMENTATION);
         } else if (detectorClass == RegistrationDetector.class) {
           issue.setImplementation(IntellijRegistrationDetector.IMPLEMENTATION);
-        } else if (detectorClass == GradleDetector.class) {
-          issue.setImplementation(IntellijGradleDetector.IMPLEMENTATION);
         } else if (detectorClass == ViewTypeDetector.class) {
           issue.setImplementation(IntellijViewTypeDetector.IMPLEMENTATION);
         } else if (detectorClass == SupportAnnotationDetector.class) {
           // Handled by the ResourceTypeInspection
           continue;
         } else if (scope.contains(Scope.CLASS_FILE) ||
-            scope.contains(Scope.ALL_CLASS_FILES) ||
-            scope.contains(Scope.JAVA_LIBRARIES)) {
+                   scope.contains(Scope.ALL_CLASS_FILES) ||
+                   scope.contains(Scope.JAVA_LIBRARIES)) {
           //noinspection ConstantConditions
-          assert !SUPPORT_CLASS_FILES; // When enabled, adjust this to include class detector based issues
+          assert !IntellijLintProject.SUPPORT_CLASS_FILES; // When enabled, adjust this to include class detector based issues
 
           boolean isOk = false;
           for (EnumSet<Scope> analysisScope : implementation.getAnalysisScopes()) {

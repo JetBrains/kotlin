@@ -14,36 +14,37 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
 import static com.android.SdkConstants.ANDROID_PREFIX;
 import static com.android.SdkConstants.ANDROID_URI;
 import static com.android.SdkConstants.ATTR_ID;
-import static com.android.tools.lint.detector.api.LintUtils.stripIdPrefix;
+import static com.android.tools.klint.detector.api.LintUtils.stripIdPrefix;
 
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.android.resources.ResourceFolderType;
 import com.android.resources.ResourceType;
-import com.android.tools.lint.client.api.LintDriver;
-import com.android.tools.lint.detector.api.Category;
-import com.android.tools.lint.detector.api.Context;
-import com.android.tools.lint.detector.api.Detector;
-import com.android.tools.lint.detector.api.Implementation;
-import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.JavaContext;
-import com.android.tools.lint.detector.api.LayoutDetector;
-import com.android.tools.lint.detector.api.LintUtils;
-import com.android.tools.lint.detector.api.Location;
-import com.android.tools.lint.detector.api.Scope;
-import com.android.tools.lint.detector.api.Severity;
-import com.android.tools.lint.detector.api.Speed;
-import com.android.tools.lint.detector.api.XmlContext;
+import com.android.tools.klint.client.api.LintDriver;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.Context;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.LayoutDetector;
+import com.android.tools.klint.detector.api.LintUtils;
+import com.android.tools.klint.detector.api.Location;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
+import com.android.tools.klint.detector.api.Speed;
+import com.android.tools.klint.detector.api.XmlContext;
 import com.android.utils.Pair;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import org.jetbrains.uast.UElement;
+import org.jetbrains.uast.check.UastAndroidContext;
+import org.jetbrains.uast.check.UastScanner;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -61,12 +62,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import lombok.ast.AstVisitor;
-
 /**
  * Checks for consistency in layouts across different resource folders
  */
-public class LayoutConsistencyDetector extends LayoutDetector implements Detector.JavaScanner {
+public class LayoutConsistencyDetector extends LayoutDetector implements UastScanner {
 
     /** Map from layout resource names to a list of files defining that resource,
      * and within each file the value is a map from string ids to the widget type
@@ -113,7 +112,7 @@ public class LayoutConsistencyDetector extends LayoutDetector implements Detecto
             Severity.WARNING,
             new Implementation(
                     LayoutConsistencyDetector.class,
-                    Scope.JAVA_AND_RESOURCE_FILES));
+                    Scope.SOURCE_AND_RESOURCE_FILES));
 
     /** Constructs a consistency check */
     public LayoutConsistencyDetector() {
@@ -436,9 +435,7 @@ public class LayoutConsistencyDetector extends LayoutDetector implements Detecto
     }
 
     @Override
-    public void visitResourceReference(@NonNull JavaContext context, @Nullable AstVisitor visitor,
-            @NonNull lombok.ast.Node node, @NonNull String type, @NonNull String name,
-            boolean isFramework) {
+    public void visitResourceReference(UastAndroidContext context, UElement element, String type, String name, boolean isFramework) {
         if (!isFramework && type.equals(ResourceType.ID.getName())) {
             mRelevantIds.add(name);
         }

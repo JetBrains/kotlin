@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
-import com.google.common.collect.Sets;
 
 import java.util.Collections;
 import java.util.Set;

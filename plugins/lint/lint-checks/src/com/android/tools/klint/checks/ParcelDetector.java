@@ -13,39 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android.tools.lint.checks;
-
-import static com.android.tools.lint.client.api.JavaParser.ResolvedClass;
-import static com.android.tools.lint.client.api.JavaParser.ResolvedField;
+package com.android.tools.klint.checks;
 
 import com.android.annotations.NonNull;
-import com.android.annotations.Nullable;
-import com.android.tools.lint.client.api.JavaParser;
-import com.android.tools.lint.detector.api.Category;
-import com.android.tools.lint.detector.api.Detector;
-import com.android.tools.lint.detector.api.Implementation;
-import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.JavaContext;
-import com.android.tools.lint.detector.api.Location;
-import com.android.tools.lint.detector.api.Scope;
-import com.android.tools.lint.detector.api.Severity;
-import com.android.tools.lint.detector.api.Speed;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.Detector;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.Location;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
+import com.android.tools.klint.detector.api.Speed;
 
-import org.objectweb.asm.Opcodes;
-
-import java.util.Collections;
-import java.util.List;
-
-import lombok.ast.AstVisitor;
-import lombok.ast.ClassDeclaration;
-import lombok.ast.ForwardingAstVisitor;
-import lombok.ast.Node;
-import lombok.ast.TypeReference;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.uast.*;
+import org.jetbrains.uast.check.UastAndroidUtils;
+import org.jetbrains.uast.check.UastAndroidContext;
+import org.jetbrains.uast.check.UastScanner;
+import org.jetbrains.uast.visitor.UastVisitor;
 
 /**
  * Looks for Parcelable classes that are missing a CREATOR field
  */
-public class ParcelDetector extends Detector implements Detector.JavaScanner {
+public class ParcelDetector extends Detector implements UastScanner {
 
     /** The main issue discovered by this detector */
     public static final Issue ISSUE = Issue.create(
@@ -65,7 +55,7 @@ public class ParcelDetector extends Detector implements Detector.JavaScanner {
                     Scope.JAVA_FILE_SCOPE))
             .addMoreInfo("http://developer.android.com/reference/android/os/Parcelable.html");
 
-    /** Constructs a new {@link com.android.tools.lint.checks.ParcelDetector} check */
+    /** Constructs a new {@link ParcelDetector} check */
     public ParcelDetector() {
     }
 
@@ -75,64 +65,50 @@ public class ParcelDetector extends Detector implements Detector.JavaScanner {
         return Speed.FAST;
     }
 
-    // ---- Implements JavaScanner ----
+    // ---- Implements UastScanner ----
 
-    @Nullable
     @Override
-    public List<Class<? extends Node>> getApplicableNodeTypes() {
-        return Collections.<Class<? extends Node>>singletonList(ClassDeclaration.class);
-    }
-
-    @Nullable
-    @Override
-    public AstVisitor createJavaVisitor(@NonNull final JavaContext context) {
+    public UastVisitor createUastVisitor(UastAndroidContext context) {
         return new ParcelVisitor(context);
     }
 
-    private static class ParcelVisitor extends ForwardingAstVisitor {
-        private final JavaContext mContext;
+    private static class ParcelVisitor extends UastVisitor {
+        private final UastAndroidContext mContext;
 
-        public ParcelVisitor(JavaContext context) {
+        public ParcelVisitor(UastAndroidContext context) {
             mContext = context;
         }
 
         @Override
-        public boolean visitClassDeclaration(ClassDeclaration node) {
+        public boolean visitClass(@NotNull UClass node) {
             // Only applies to concrete classes
-            int flags = node.astModifiers().getExplicitModifierFlags();
-            if ((flags & (Opcodes.ACC_INTERFACE | Opcodes.ACC_ABSTRACT)) != 0) {
+            if (node.isInterface() || node.hasModifier(UastModifier.ABSTRACT)) {
                 return true;
             }
 
-            if (node.astImplementing() != null)
-                for (TypeReference reference : node.astImplementing()) {
-                    String name = reference.astParts().last().astIdentifier().astValue();
-                    if (name.equals("Parcelable")) {
-                        JavaParser.ResolvedNode resolved = mContext.resolve(node);
-                        if (resolved instanceof ResolvedClass) {
-                            ResolvedClass cls = (ResolvedClass) resolved;
-                            ResolvedField field = cls.getField("CREATOR", false);
-                            if (field == null) {
-                                // Make doubly sure that we're really implementing
-                                // android.os.Parcelable
-                                JavaParser.ResolvedNode r = mContext.resolve(reference);
-                                if (r instanceof ResolvedClass) {
-                                    ResolvedClass parcelable = (ResolvedClass) r;
-                                    if (!parcelable.isSubclassOf("android.os.Parcelable", false)) {
-                                        return true;
-                                    }
-                                }
-                                Location location = mContext.getLocation(node.astName());
-                                mContext.report(ISSUE, node, location,
-                                        "This class implements `Parcelable` but does not "
-                                                + "provide a `CREATOR` field");
+            for (UType reference : node.getSuperTypes()) {
+                String name = reference.getName();
+                if (name.equals("Parcelable")) {
+                    UVariable field = UastUtils.findProperty(node, "CREATOR");
+                    if (field == null) {
+                        // Make doubly sure that we're really implementing
+                        // android.os.Parcelable
+                        UClass parcelable = reference.resolve(mContext);
+                        if (parcelable != null) {
+                            if (!parcelable.isSubclassOf("android.os.Parcelable")) {
+                                return true;
                             }
                         }
-                        break;
+                        Location location = UastAndroidUtils.getLocation(node.getNameElement());
+                        mContext.report(ISSUE, node, location,
+                                        "This class implements `Parcelable` but does not "
+                                        + "provide a `CREATOR` field");
                     }
                 }
+            }
 
             return true;
         }
+
     }
 }

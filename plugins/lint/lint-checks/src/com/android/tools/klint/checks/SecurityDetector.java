@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
 import static com.android.SdkConstants.ANDROID_MANIFEST_XML;
 import static com.android.SdkConstants.ANDROID_URI;
@@ -37,42 +37,37 @@ import static com.android.SdkConstants.TAG_SERVICE;
 import static com.android.xml.AndroidManifest.NODE_ACTION;
 
 import com.android.annotations.NonNull;
-import com.android.annotations.Nullable;
-import com.android.tools.lint.detector.api.Category;
-import com.android.tools.lint.detector.api.Context;
-import com.android.tools.lint.detector.api.Detector;
-import com.android.tools.lint.detector.api.Implementation;
-import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.JavaContext;
-import com.android.tools.lint.detector.api.LintUtils;
-import com.android.tools.lint.detector.api.Location;
-import com.android.tools.lint.detector.api.Scope;
-import com.android.tools.lint.detector.api.Severity;
-import com.android.tools.lint.detector.api.Speed;
-import com.android.tools.lint.detector.api.XmlContext;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.Context;
+import com.android.tools.klint.detector.api.Detector;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.LintUtils;
+import com.android.tools.klint.detector.api.Location;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
+import com.android.tools.klint.detector.api.Speed;
+import com.android.tools.klint.detector.api.XmlContext;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.uast.UCallExpression;
+import org.jetbrains.uast.USimpleReferenceExpression;
+import org.jetbrains.uast.check.UastAndroidUtils;
+import org.jetbrains.uast.check.UastAndroidContext;
+import org.jetbrains.uast.check.UastScanner;
+import org.jetbrains.uast.visitor.UastVisitor;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
-
-import lombok.ast.AstVisitor;
-import lombok.ast.Expression;
-import lombok.ast.ForwardingAstVisitor;
-import lombok.ast.Identifier;
-import lombok.ast.MethodInvocation;
-import lombok.ast.StrictListAccessor;
 
 /**
  * Checks that exported services request a permission.
  */
-public class SecurityDetector extends Detector implements Detector.XmlScanner,
-        Detector.JavaScanner {
+public class SecurityDetector extends Detector implements Detector.XmlScanner, UastScanner {
 
     private static final Implementation IMPLEMENTATION_MANIFEST = new Implementation(
             SecurityDetector.class,
@@ -357,52 +352,44 @@ public class SecurityDetector extends Detector implements Detector.XmlScanner,
         }
     }
 
-    // ---- Implements Detector.JavaScanner ----
+    // ---- Implements UastScanner ----
 
     @Override
-    public List<String> getApplicableMethodNames() {
-        // These are the API calls that can accept a MODE_WORLD_READABLE/MODE_WORLD_WRITABLE
-        // argument.
-        List<String> values = new ArrayList<String>(2);
-        values.add("openFileOutput"); //$NON-NLS-1$
-        values.add("getSharedPreferences"); //$NON-NLS-1$
-        return values;
-    }
-
-    @Override
-    public void visitMethod(@NonNull JavaContext context, @Nullable AstVisitor visitor,
-            @NonNull MethodInvocation node) {
-        StrictListAccessor<Expression,MethodInvocation> args = node.astArguments();
-        for (Expression arg : args) {
-            arg.accept(visitor);
-        }
-    }
-
-    @Override
-    public AstVisitor createJavaVisitor(@NonNull JavaContext context) {
+    public UastVisitor createUastVisitor(UastAndroidContext context) {
         return new IdentifierVisitor(context);
     }
 
-    private static class IdentifierVisitor extends ForwardingAstVisitor {
-        private final JavaContext mContext;
+    private static class IdentifierVisitor extends UastVisitor {
+        private final UastAndroidContext mContext;
 
-        public IdentifierVisitor(JavaContext context) {
-            super();
+        private final UastVisitor identifierHandler = new UastVisitor() {
+            @Override
+            public boolean visitSimpleReferenceExpression(@NotNull USimpleReferenceExpression node) {
+                if ("MODE_WORLD_WRITEABLE".equals(node.getIdentifier())) { //$NON-NLS-1$
+                    Location location = UastAndroidUtils.getLocation(node);
+                    mContext.report(WORLD_WRITEABLE, node, location,
+                                    "Using `MODE_WORLD_WRITEABLE` when creating files can be " +
+                                    "risky, review carefully");
+                } else if ("MODE_WORLD_READABLE".equals(node.getIdentifier())) { //$NON-NLS-1$
+                    Location location = UastAndroidUtils.getLocation(node);
+                    mContext.report(WORLD_READABLE, node, location,
+                                    "Using `MODE_WORLD_READABLE` when creating files can be " +
+                                    "risky, review carefully");
+                }
+
+                return false;
+            }
+        };
+
+        public IdentifierVisitor(UastAndroidContext context) {
             mContext = context;
         }
 
         @Override
-        public boolean visitIdentifier(Identifier node) {
-            if ("MODE_WORLD_WRITEABLE".equals(node.astValue())) { //$NON-NLS-1$
-                Location location = mContext.getLocation(node);
-                mContext.report(WORLD_WRITEABLE, node, location,
-                        "Using `MODE_WORLD_WRITEABLE` when creating files can be " +
-                                "risky, review carefully");
-            } else if ("MODE_WORLD_READABLE".equals(node.astValue())) { //$NON-NLS-1$
-                Location location = mContext.getLocation(node);
-                mContext.report(WORLD_READABLE, node, location,
-                        "Using `MODE_WORLD_READABLE` when creating files can be " +
-                                "risky, review carefully");
+        public boolean visitCallExpression(@NotNull UCallExpression node) {
+            String name = node.getFunctionName();
+            if ("openFileOutput".equals(name) || "getSharedPreferences".equals(name)) {
+                identifierHandler.processChildren(node);
             }
 
             return false;

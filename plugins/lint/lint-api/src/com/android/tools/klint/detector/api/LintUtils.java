@@ -14,25 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.detector.api;
-
-import static com.android.SdkConstants.ANDROID_MANIFEST_XML;
-import static com.android.SdkConstants.ANDROID_PREFIX;
-import static com.android.SdkConstants.ANDROID_URI;
-import static com.android.SdkConstants.ATTR_LOCALE;
-import static com.android.SdkConstants.BIN_FOLDER;
-import static com.android.SdkConstants.DOT_GIF;
-import static com.android.SdkConstants.DOT_JPEG;
-import static com.android.SdkConstants.DOT_JPG;
-import static com.android.SdkConstants.DOT_PNG;
-import static com.android.SdkConstants.DOT_WEBP;
-import static com.android.SdkConstants.DOT_XML;
-import static com.android.SdkConstants.ID_PREFIX;
-import static com.android.SdkConstants.NEW_ID_PREFIX;
-import static com.android.SdkConstants.TOOLS_URI;
-import static com.android.SdkConstants.UTF_8;
-import static com.android.ide.common.resources.configuration.FolderConfiguration.QUALIFIER_SPLITTER;
-import static com.android.ide.common.resources.configuration.LocaleQualifier.BCP_47_PREFIX;
+package com.android.tools.klint.detector.api;
 
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
@@ -53,7 +35,7 @@ import com.android.sdklib.AndroidVersion;
 import com.android.sdklib.IAndroidTarget;
 import com.android.sdklib.SdkVersionInfo;
 import com.android.sdklib.repository.FullRevision;
-import com.android.tools.lint.client.api.LintClient;
+import com.android.tools.klint.client.api.LintClient;
 import com.android.utils.PositionXmlParser;
 import com.android.utils.SdkUtils;
 import com.google.common.annotations.Beta;
@@ -61,7 +43,8 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-
+import org.jetbrains.uast.UFile;
+import org.jetbrains.uast.UImportStatement;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
@@ -74,19 +57,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import lombok.ast.ImportDeclaration;
-
+import static com.android.SdkConstants.*;
+import static com.android.ide.common.resources.configuration.FolderConfiguration.QUALIFIER_SPLITTER;
+import static com.android.ide.common.resources.configuration.LocaleQualifier.BCP_47_PREFIX;
 
 /**
  * Useful utility methods related to lint.
@@ -796,7 +774,7 @@ public class LintUtils {
      *         qualified name
      */
     public static boolean isImported(
-            @Nullable lombok.ast.Node compilationUnit,
+            @Nullable UFile compilationUnit,
             @NonNull String fullyQualifiedName) {
         if (compilationUnit == null) {
             return false;
@@ -805,26 +783,27 @@ public class LintUtils {
         int dotLength = fullyQualifiedName.length() - dotIndex;
 
         boolean imported = false;
-        for (lombok.ast.Node rootNode : compilationUnit.getChildren()) {
-            if (rootNode instanceof ImportDeclaration) {
-                ImportDeclaration importDeclaration = (ImportDeclaration) rootNode;
-                String fqn = importDeclaration.asFullyQualifiedName();
-                if (fqn.equals(fullyQualifiedName)) {
-                    return true;
-                } else if (fullyQualifiedName.regionMatches(dotIndex, fqn,
-                        fqn.length() - dotLength, dotLength)) {
-                    // This import is importing the class name using some other prefix, so there
-                    // fully qualified class name cannot be imported under that name
-                    return false;
-                } else if (importDeclaration.astStarImport()
-                        && fqn.regionMatches(0, fqn, 0, dotIndex + 1)) {
-                    imported = true;
-                    // but don't break -- keep searching in case there's a non-wildcard
-                    // import of the specific class name, e.g. if we're looking for
-                    // android.content.SharedPreferences.Editor, don't match on the following:
-                    //   import android.content.SharedPreferences.*;
-                    //   import foo.bar.Editor;
-                }
+        for (UImportStatement importStatement : compilationUnit.getImportStatements()) {
+            String fqn = importStatement.getNameToImport();
+            if (fqn == null) {
+                continue;
+            }
+
+            if (fqn.equals(fullyQualifiedName)) {
+                return true;
+            } else if (fullyQualifiedName.regionMatches(dotIndex, fqn,
+                                                        fqn.length() - dotLength, dotLength)) {
+                // This import is importing the class name using some other prefix, so there
+                // fully qualified class name cannot be imported under that name
+                return false;
+            } else if (importStatement.isStarImport()
+                       && fqn.regionMatches(0, fqn, 0, dotIndex + 1)) {
+                imported = true;
+                // but don't break -- keep searching in case there's a non-wildcard
+                // import of the specific class name, e.g. if we're looking for
+                // android.content.SharedPreferences.Editor, don't match on the following:
+                //   import android.content.SharedPreferences.*;
+                //   import foo.bar.Editor;
             }
         }
 

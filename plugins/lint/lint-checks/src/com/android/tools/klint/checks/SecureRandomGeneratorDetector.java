@@ -14,25 +14,24 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
 import static com.android.SdkConstants.CONSTRUCTOR_NAME;
-import static com.android.tools.lint.checks.SecureRandomDetector.OWNER_SECURE_RANDOM;
 
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.android.annotations.VisibleForTesting;
-import com.android.tools.lint.detector.api.Category;
-import com.android.tools.lint.detector.api.ClassContext;
-import com.android.tools.lint.detector.api.Context;
-import com.android.tools.lint.detector.api.Detector;
-import com.android.tools.lint.detector.api.Detector.ClassScanner;
-import com.android.tools.lint.detector.api.Implementation;
-import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.LintUtils;
-import com.android.tools.lint.detector.api.Location;
-import com.android.tools.lint.detector.api.Scope;
-import com.android.tools.lint.detector.api.Severity;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.ClassContext;
+import com.android.tools.klint.detector.api.Context;
+import com.android.tools.klint.detector.api.Detector;
+import com.android.tools.klint.detector.api.Detector.ClassScanner;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.LintUtils;
+import com.android.tools.klint.detector.api.Location;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -106,7 +105,7 @@ public class SecureRandomGeneratorDetector extends Detector implements ClassScan
                 JAVAX_CRYPTO_KEY_GENERATOR,
                 JAVA_SECURITY_KEY_PAIR_GENERATOR,
                 JAVAX_CRYPTO_KEY_AGREEMENT,
-                OWNER_SECURE_RANDOM,
+                SecureRandomDetector.OWNER_SECURE_RANDOM,
                 JAVAX_NET_SSL_SSLENGINE,
                 JAVAX_CRYPTO_SIGNATURE,
                 JAVAX_CRYPTO_CIPHER
@@ -160,7 +159,7 @@ public class SecureRandomGeneratorDetector extends Detector implements ClassScan
         assert owner.equals(JAVAX_CRYPTO_KEY_GENERATOR)
                 || owner.equals(JAVA_SECURITY_KEY_PAIR_GENERATOR)
                 || owner.equals(JAVAX_CRYPTO_KEY_AGREEMENT)
-                || owner.equals(OWNER_SECURE_RANDOM)
+                || owner.equals(SecureRandomDetector.OWNER_SECURE_RANDOM)
                 || owner.equals(JAVAX_CRYPTO_CIPHER)
                 || owner.equals(JAVAX_CRYPTO_SIGNATURE)
                 || owner.equals(JAVAX_NET_SSL_SSLENGINE) : owner;

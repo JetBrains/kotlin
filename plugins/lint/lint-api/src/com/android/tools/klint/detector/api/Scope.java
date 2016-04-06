@@ -14,26 +14,18 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.detector.api;
-
-import static com.android.SdkConstants.ANDROID_MANIFEST_XML;
-import static com.android.SdkConstants.DOT_CLASS;
-import static com.android.SdkConstants.DOT_GRADLE;
-import static com.android.SdkConstants.DOT_JAVA;
-import static com.android.SdkConstants.DOT_PNG;
-import static com.android.SdkConstants.DOT_PROPERTIES;
-import static com.android.SdkConstants.DOT_XML;
-import static com.android.SdkConstants.FN_PROJECT_PROGUARD_FILE;
-import static com.android.SdkConstants.OLD_PROGUARD_FILE;
-import static com.android.SdkConstants.RES_FOLDER;
+package com.android.tools.klint.detector.api;
 
 import com.android.annotations.NonNull;
 import com.google.common.annotations.Beta;
+import org.jetbrains.uast.UastConverterUtils;
 
 import java.io.File;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
+
+import static com.android.SdkConstants.*;
 
 /**
  * The scope of a detector is the set of files a detector must consider when
@@ -80,14 +72,14 @@ public enum Scope {
      * Issues which are only affected by a single Java source file can be
      * checked for incrementally when a Java source file is edited.
      */
-    JAVA_FILE,
+    SOURCE_FILE,
 
     /**
      * The analysis considers <b>all</b> the Java source files together.
      * <p>
-     * This flag is mutually exclusive with {@link #JAVA_FILE}.
+     * This flag is mutually exclusive with {@link #SOURCE_FILE}.
      */
-    ALL_JAVA_FILES,
+    ALL_SOURCE_FILES,
 
     /**
      * The analysis only considers a single Java class file at a time.
@@ -143,10 +135,10 @@ public enum Scope {
         if (size == 2) {
             // When single checking a Java source file, we check both its Java source
             // and the associated class files
-            return scopes.contains(JAVA_FILE) && scopes.contains(CLASS_FILE);
+            return scopes.contains(SOURCE_FILE) && scopes.contains(CLASS_FILE);
         } else {
             return size == 1 &&
-                (scopes.contains(JAVA_FILE)
+                (scopes.contains(SOURCE_FILE)
                         || scopes.contains(CLASS_FILE)
                         || scopes.contains(RESOURCE_FILE)
                         || scopes.contains(PROGUARD_FILE)
@@ -192,7 +184,7 @@ public enum Scope {
                     } else if (name.endsWith(DOT_XML)) {
                         scope.add(RESOURCE_FILE);
                     } else if (name.endsWith(DOT_JAVA)) {
-                        scope.add(JAVA_FILE);
+                        scope.add(SOURCE_FILE);
                     } else if (name.endsWith(DOT_CLASS)) {
                         scope.add(CLASS_FILE);
                     } else if (name.endsWith(DOT_GRADLE)) {
@@ -210,6 +202,9 @@ public enum Scope {
                         scope.add(RESOURCE_FILE);
                         scope.add(BINARY_RESOURCE_FILE);
                         scope.add(RESOURCE_FOLDER);
+                    } else if (UastConverterUtils.isFileSupported(
+                            project.getClient().getConverters(), name)) {
+                        scope.add(SOURCE_FILE);
                     }
                 }
             } else {
@@ -231,7 +226,7 @@ public enum Scope {
     /** Scope-set used for detectors which scan all resources */
     public static final EnumSet<Scope> ALL_RESOURCES_SCOPE = EnumSet.of(ALL_RESOURCE_FILES);
     /** Scope-set used for detectors which are affected by a single Java source file */
-    public static final EnumSet<Scope> JAVA_FILE_SCOPE = EnumSet.of(JAVA_FILE);
+    public static final EnumSet<Scope> JAVA_FILE_SCOPE = EnumSet.of(SOURCE_FILE);
     /** Scope-set used for detectors which are affected by a single Java class file */
     public static final EnumSet<Scope> CLASS_FILE_SCOPE = EnumSet.of(CLASS_FILE);
     /** Scope-set used for detectors which are affected by a single Gradle build file */
@@ -248,8 +243,8 @@ public enum Scope {
     public static final EnumSet<Scope> MANIFEST_AND_RESOURCE_SCOPE =
             EnumSet.of(Scope.MANIFEST, Scope.RESOURCE_FILE);
     /** Scope-set used for detectors which are affected by single XML and Java source files */
-    public static final EnumSet<Scope> JAVA_AND_RESOURCE_FILES =
-            EnumSet.of(RESOURCE_FILE, JAVA_FILE);
+    public static final EnumSet<Scope> SOURCE_AND_RESOURCE_FILES =
+            EnumSet.of(RESOURCE_FILE, SOURCE_FILE);
     /** Scope-set used for analyzing individual class files and all resource files */
     public static final EnumSet<Scope> CLASS_AND_ALL_RESOURCE_FILES =
             EnumSet.of(ALL_RESOURCE_FILES, CLASS_FILE);

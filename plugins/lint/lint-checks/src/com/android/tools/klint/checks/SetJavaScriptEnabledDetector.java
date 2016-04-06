@@ -14,28 +14,27 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
-import com.android.annotations.NonNull;
-import com.android.annotations.Nullable;
-import com.android.tools.lint.detector.api.Category;
-import com.android.tools.lint.detector.api.Detector;
-import com.android.tools.lint.detector.api.Implementation;
-import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.JavaContext;
-import com.android.tools.lint.detector.api.Scope;
-import com.android.tools.lint.detector.api.Severity;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.Detector;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
 
 import java.util.Collections;
 import java.util.List;
 
-import lombok.ast.AstVisitor;
-import lombok.ast.MethodInvocation;
+import org.jetbrains.uast.UCallExpression;
+import org.jetbrains.uast.check.UastAndroidUtils;
+import org.jetbrains.uast.check.UastAndroidContext;
+import org.jetbrains.uast.check.UastScanner;
 
 /**
  * Looks for invocations of android.webkit.WebSettings.setJavaScriptEnabled.
  */
-public class SetJavaScriptEnabledDetector extends Detector implements Detector.JavaScanner {
+public class SetJavaScriptEnabledDetector extends Detector implements UastScanner {
     /** Invocations of setJavaScriptEnabled */
     public static final Issue ISSUE = Issue.create("SetJavaScriptEnabled", //$NON-NLS-1$
             "Using `setJavaScriptEnabled`",
@@ -56,21 +55,24 @@ public class SetJavaScriptEnabledDetector extends Detector implements Detector.J
     public SetJavaScriptEnabledDetector() {
     }
 
-    // ---- Implements JavaScanner ----
+    // ---- Implements UastScanner ----
 
     @Override
-    public void visitMethod(@NonNull JavaContext context, @Nullable AstVisitor visitor,
-            @NonNull MethodInvocation node) {
-        if (node.astArguments().size() == 1
-                && !node.astArguments().first().toString().equals("false")) { //$NON-NLS-1$
-            context.report(ISSUE, node, context.getLocation(node),
-                    "Using `setJavaScriptEnabled` can introduce XSS vulnerabilities " +
-                            "into you application, review carefully.");
+    public void visitFunctionCall(UastAndroidContext context, UCallExpression node) {
+        if (node.getValueArgumentCount() != 1) {
+            return;
+        }
+
+        Object value = node.getValueArguments().get(0).evaluate();
+        if (value instanceof Boolean && (Boolean) value) {
+            context.report(ISSUE, node, UastAndroidUtils.getLocation(node),
+                           "Using `setJavaScriptEnabled` can introduce XSS vulnerabilities " +
+                           "into you application, review carefully.");
         }
     }
 
     @Override
-    public List<String> getApplicableMethodNames() {
+    public List<String> getApplicableFunctionNames() {
         return Collections.singletonList("setJavaScriptEnabled");
     }
 }

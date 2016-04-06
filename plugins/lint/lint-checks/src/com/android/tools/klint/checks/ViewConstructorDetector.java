@@ -14,38 +14,35 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
 import static com.android.SdkConstants.CLASS_ATTRIBUTE_SET;
 import static com.android.SdkConstants.CLASS_CONTEXT;
-import static com.android.tools.lint.client.api.JavaParser.ResolvedClass;
-import static com.android.tools.lint.client.api.JavaParser.ResolvedMethod;
 
 import com.android.SdkConstants;
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
-import com.android.tools.lint.detector.api.Category;
-import com.android.tools.lint.detector.api.Detector;
-import com.android.tools.lint.detector.api.Implementation;
-import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.JavaContext;
-import com.android.tools.lint.detector.api.Location;
-import com.android.tools.lint.detector.api.Scope;
-import com.android.tools.lint.detector.api.Severity;
-import com.android.tools.lint.detector.api.Speed;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.Detector;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.Location;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
+import com.android.tools.klint.detector.api.Speed;
 
-import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.List;
 
-import lombok.ast.ClassDeclaration;
-import lombok.ast.Node;
-import lombok.ast.NormalTypeBody;
+import org.jetbrains.uast.*;
+import org.jetbrains.uast.check.UastAndroidUtils;
+import org.jetbrains.uast.check.UastAndroidContext;
+import org.jetbrains.uast.check.UastScanner;
 
 /**
  * Looks for custom views that do not define the view constructors needed by UI builders
  */
-public class ViewConstructorDetector extends Detector implements Detector.JavaScanner {
+public class ViewConstructorDetector extends Detector implements UastScanner {
     /** The main issue discovered by this detector */
     public static final Issue ISSUE = Issue.create(
             "ViewConstructor", //$NON-NLS-1$
@@ -79,62 +76,56 @@ public class ViewConstructorDetector extends Detector implements Detector.JavaSc
         return Speed.FAST;
     }
 
-    // ---- Implements JavaScanner ----
+    // ---- Implements UastScanner ----
 
-    private static boolean isXmlConstructor(ResolvedMethod method) {
+    private static boolean isXmlConstructor(UFunction method) {
         // Accept
         //   android.content.Context
         //   android.content.Context,android.util.AttributeSet
         //   android.content.Context,android.util.AttributeSet,int
-        int argumentCount = method.getArgumentCount();
-        if (argumentCount == 0 || argumentCount > 3) {
+        List<UVariable> valueParameters = method.getValueParameters();
+        int valueParameterCount = valueParameters.size();
+        if (valueParameterCount == 0 || valueParameterCount > 3) {
             return false;
         }
-        if (!method.getArgumentType(0).matchesName(CLASS_CONTEXT)) {
+
+        if (!valueParameters.get(0).getType().matchesFqName(CLASS_CONTEXT)) {
             return false;
         }
-        if (argumentCount == 1) {
+        if (valueParameterCount == 1) {
             return true;
         }
-        if (!method.getArgumentType(1).matchesName(CLASS_ATTRIBUTE_SET)) {
+        if (!valueParameters.get(1).getType().matchesFqName(CLASS_ATTRIBUTE_SET)) {
             return false;
         }
         //noinspection SimplifiableIfStatement
-        if (argumentCount == 2) {
+        if (valueParameterCount == 2) {
             return true;
         }
-        return method.getArgumentType(2).matchesName("int");
+        return valueParameters.get(2).getType().isInt();
     }
 
     @Nullable
     @Override
-    public List<String> applicableSuperClasses() {
+    public List<String> getApplicableSuperClasses() {
         return Collections.singletonList(SdkConstants.CLASS_VIEW);
     }
 
     @Override
-    public void checkClass(@NonNull JavaContext context, @Nullable ClassDeclaration node,
-            @NonNull Node declarationOrAnonymous, @NonNull ResolvedClass resolvedClass) {
-        if (node == null) {
+    public void visitClass(UastAndroidContext context, UClass node) {
+        // Only applies to concrete and not abstract classes
+        if (node.isObject() || node.isInterface() || node.isEnum() || node.hasModifier(UastModifier.ABSTRACT)) {
             return;
         }
 
-        // Only applies to concrete classes
-        int flags = node.astModifiers().getEffectiveModifierFlags();
-        // Ignore abstract classes
-        if ((flags & Modifier.ABSTRACT) != 0) {
-            return;
-        }
-
-        if (node.getParent() instanceof NormalTypeBody
-                && ((flags & Modifier.STATIC) == 0)) {
+        if (UastUtils.getContainingClass(node) != null && node.hasModifier(UastModifier.INNER)) {
             // Ignore inner classes that aren't static: we can't create these
             // anyway since we'd need the outer instance
             return;
         }
 
         boolean found = false;
-        for (ResolvedMethod constructor : resolvedClass.getConstructors()) {
+        for (UFunction constructor : node.getConstructors()) {
             if (isXmlConstructor(constructor)) {
                 found = true;
                 break;
@@ -143,11 +134,11 @@ public class ViewConstructorDetector extends Detector implements Detector.JavaSc
 
         if (!found) {
             String message = String.format(
-                    "Custom view `%1$s` is missing constructor used by tools: "
-                            + "`(Context)` or `(Context,AttributeSet)` "
-                            + "or `(Context,AttributeSet,int)`",
-                    node.astName().astValue());
-            Location location = context.getLocation(node.astName());
+              "Custom view `%1$s` is missing constructor used by tools: "
+              + "`(Context)` or `(Context,AttributeSet)` "
+              + "or `(Context,AttributeSet,int)`",
+              node.getFqName());
+            Location location = UastAndroidUtils.getLocation(node.getNameElement());
             context.report(ISSUE, node, location, message  /*data*/);
         }
     }

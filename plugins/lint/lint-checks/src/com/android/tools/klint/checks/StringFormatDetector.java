@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
 import static com.android.SdkConstants.ATTR_NAME;
 import static com.android.SdkConstants.DOT_JAVA;
@@ -23,19 +23,17 @@ import static com.android.SdkConstants.GET_STRING_METHOD;
 import static com.android.SdkConstants.R_CLASS;
 import static com.android.SdkConstants.R_PREFIX;
 import static com.android.SdkConstants.TAG_STRING;
-import static com.android.tools.lint.checks.SharedPrefsDetector.ANDROID_CONTENT_SHARED_PREFERENCES;
-import static com.android.tools.lint.client.api.JavaParser.TYPE_BOOLEAN;
-import static com.android.tools.lint.client.api.JavaParser.TYPE_BYTE;
-import static com.android.tools.lint.client.api.JavaParser.TYPE_CHAR;
-import static com.android.tools.lint.client.api.JavaParser.TYPE_DOUBLE;
-import static com.android.tools.lint.client.api.JavaParser.TYPE_FLOAT;
-import static com.android.tools.lint.client.api.JavaParser.TYPE_INT;
-import static com.android.tools.lint.client.api.JavaParser.TYPE_LONG;
-import static com.android.tools.lint.client.api.JavaParser.TYPE_NULL;
-import static com.android.tools.lint.client.api.JavaParser.TYPE_OBJECT;
-import static com.android.tools.lint.client.api.JavaParser.TYPE_SHORT;
-import static com.android.tools.lint.client.api.JavaParser.TYPE_STRING;
-import static com.android.tools.lint.client.api.JavaParser.TypeDescriptor;
+import static com.android.tools.klint.client.api.JavaParser.TYPE_BOOLEAN;
+import static com.android.tools.klint.client.api.JavaParser.TYPE_BYTE;
+import static com.android.tools.klint.client.api.JavaParser.TYPE_CHAR;
+import static com.android.tools.klint.client.api.JavaParser.TYPE_DOUBLE;
+import static com.android.tools.klint.client.api.JavaParser.TYPE_FLOAT;
+import static com.android.tools.klint.client.api.JavaParser.TYPE_INT;
+import static com.android.tools.klint.client.api.JavaParser.TYPE_LONG;
+import static com.android.tools.klint.client.api.JavaParser.TYPE_NULL;
+import static com.android.tools.klint.client.api.JavaParser.TYPE_OBJECT;
+import static com.android.tools.klint.client.api.JavaParser.TYPE_SHORT;
+import static com.android.tools.klint.client.api.JavaParser.TYPE_STRING;
 
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
@@ -45,27 +43,30 @@ import com.android.ide.common.res2.AbstractResourceRepository;
 import com.android.ide.common.res2.ResourceItem;
 import com.android.resources.ResourceFolderType;
 import com.android.resources.ResourceType;
-import com.android.tools.lint.client.api.JavaParser;
-import com.android.tools.lint.client.api.LintClient;
-import com.android.tools.lint.detector.api.Category;
-import com.android.tools.lint.detector.api.Context;
-import com.android.tools.lint.detector.api.Detector;
-import com.android.tools.lint.detector.api.Implementation;
-import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.JavaContext;
-import com.android.tools.lint.detector.api.LintUtils;
-import com.android.tools.lint.detector.api.Location;
-import com.android.tools.lint.detector.api.Location.Handle;
-import com.android.tools.lint.detector.api.Position;
-import com.android.tools.lint.detector.api.ResourceXmlDetector;
-import com.android.tools.lint.detector.api.Scope;
-import com.android.tools.lint.detector.api.Severity;
-import com.android.tools.lint.detector.api.XmlContext;
+import com.android.tools.klint.client.api.LintClient;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.Context;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.JavaContext;
+import com.android.tools.klint.detector.api.LintUtils;
+import com.android.tools.klint.detector.api.Location;
+import com.android.tools.klint.detector.api.Location.Handle;
+import com.android.tools.klint.detector.api.Position;
+import com.android.tools.klint.detector.api.ResourceXmlDetector;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
+import com.android.tools.klint.detector.api.XmlContext;
 import com.android.utils.Pair;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.uast.*;
+import org.jetbrains.uast.check.UastAndroidContext;
+import org.jetbrains.uast.check.UastScanner;
+import org.jetbrains.uast.visitor.UastVisitor;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -85,24 +86,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import lombok.ast.AstVisitor;
-import lombok.ast.BooleanLiteral;
-import lombok.ast.CharLiteral;
-import lombok.ast.ConstructorDeclaration;
-import lombok.ast.ConstructorInvocation;
-import lombok.ast.Expression;
-import lombok.ast.FloatingPointLiteral;
-import lombok.ast.ForwardingAstVisitor;
-import lombok.ast.IntegralLiteral;
-import lombok.ast.MethodDeclaration;
-import lombok.ast.MethodInvocation;
-import lombok.ast.NullLiteral;
-import lombok.ast.Select;
-import lombok.ast.StrictListAccessor;
-import lombok.ast.StringLiteral;
-import lombok.ast.VariableDefinitionEntry;
-import lombok.ast.VariableReference;
-
 /**
  * Check which looks for problems with formatting strings such as inconsistencies between
  * translations or between string declaration and string usage in Java.
@@ -110,7 +93,7 @@ import lombok.ast.VariableReference;
  * TODO: Verify booleans!
  * TODO: Handle Resources.getQuantityString as well
  */
-public class StringFormatDetector extends ResourceXmlDetector implements Detector.JavaScanner {
+public class StringFormatDetector extends ResourceXmlDetector implements UastScanner {
     private static final Implementation IMPLEMENTATION_XML = new Implementation(
             StringFormatDetector.class,
             Scope.ALL_RESOURCES_SCOPE);
@@ -118,7 +101,7 @@ public class StringFormatDetector extends ResourceXmlDetector implements Detecto
     @SuppressWarnings("unchecked")
     private static final Implementation IMPLEMENTATION_XML_AND_JAVA = new Implementation(
             StringFormatDetector.class,
-            EnumSet.of(Scope.ALL_RESOURCE_FILES, Scope.JAVA_FILE),
+            EnumSet.of(Scope.ALL_RESOURCE_FILES, Scope.SOURCE_FILE),
             Scope.JAVA_FILE_SCOPE);
 
 
@@ -995,25 +978,29 @@ public class StringFormatDetector extends ResourceXmlDetector implements Detecto
         return false;
     }
 
+    // ---- Implements UastScanner ----
+
+
     @Override
-    public List<String> getApplicableMethodNames() {
+    public List<String> getApplicableFunctionNames() {
         return Arrays.asList(FORMAT_METHOD, GET_STRING_METHOD);
     }
 
     @Override
-    public void visitMethod(@NonNull JavaContext context, @Nullable AstVisitor visitor,
-            @NonNull MethodInvocation node) {
-        if (mFormatStrings == null && !context.getClient().supportsProjectResources()) {
+    public void visitFunctionCall(UastAndroidContext context, UCallExpression node) {
+        if (mFormatStrings == null && !context.getLintContext().getClient().supportsProjectResources()) {
             return;
         }
 
-        String methodName = node.astName().astValue();
-        if (methodName.equals(FORMAT_METHOD)) {
+        UExpression receiver = UastUtils.getReceiver(node);
+
+        String methodName = node.getFunctionName();
+        if (FORMAT_METHOD.equals(methodName)) {
             // String.format(getResources().getString(R.string.foo), arg1, arg2, ...)
             // Check that the arguments in R.string.foo match arg1, arg2, ...
-            if (node.astOperand() instanceof VariableReference) {
-                VariableReference ref = (VariableReference) node.astOperand();
-                if ("String".equals(ref.astIdentifier().astValue())) { //$NON-NLS-1$
+            if (receiver instanceof USimpleReferenceExpression) {
+                USimpleReferenceExpression ref = (USimpleReferenceExpression) receiver;
+                if ("String".equals(ref.getIdentifier())) { //$NON-NLS-1$
                     // Found a String.format call
                     // Look inside to see if we can find an R string
                     // Find surrounding method
@@ -1023,14 +1010,14 @@ public class StringFormatDetector extends ResourceXmlDetector implements Detecto
         } else {
             // getResources().getString(R.string.foo, arg1, arg2, ...)
             // Check that the arguments in R.string.foo match arg1, arg2, ...
-            if (node.astArguments().size() > 1 && node.astOperand() != null ) {
+            if (node.getValueArgumentCount() > 1 && receiver != null ) {
                 checkFormatCall(context, node);
             }
         }
     }
 
-    private void checkFormatCall(JavaContext context, MethodInvocation node) {
-        lombok.ast.Node current = getParentMethod(node);
+    private void checkFormatCall(UastAndroidContext context, UCallExpression node) {
+        UFunction current = UastUtils.getContainingFunction(node);
         if (current != null) {
             checkStringFormatCall(context, current, node);
         }
@@ -1045,17 +1032,18 @@ public class StringFormatDetector extends ResourceXmlDetector implements Detecto
      * @param call the AST node for the {@link String#format}
      */
     private void checkStringFormatCall(
-            JavaContext context,
-            lombok.ast.Node method,
-            MethodInvocation call) {
+            UastAndroidContext context,
+            UFunction method,
+            UCallExpression call) {
 
-        StrictListAccessor<Expression, MethodInvocation> args = call.astArguments();
+        List<UExpression> args = call.getValueArguments();
         if (args.isEmpty()) {
             return;
         }
 
-        StringTracker tracker = new StringTracker(context, method, call, 0);
-        method.accept(tracker);
+        JavaContext lintContext = context.getLintContext();
+        UastStringTracker tracker = new UastStringTracker(lintContext, method, call, 0);
+        tracker.process(method);
         String name = tracker.getFormatStringName();
         if (name == null) {
             return;
@@ -1069,7 +1057,7 @@ public class StringFormatDetector extends ResourceXmlDetector implements Detecto
             Handle handle = mNotFormatStrings.get(name);
             Object clientData = handle.getClientData();
             if (clientData instanceof Node) {
-                if (context.getDriver().isSuppressed(null, INVALID, (Node) clientData)) {
+                if (lintContext.getDriver().isSuppressed(null, INVALID, (Node) clientData)) {
                     return;
                 }
             }
@@ -1082,36 +1070,36 @@ public class StringFormatDetector extends ResourceXmlDetector implements Detecto
             return;
         }
 
-        Iterator<Expression> argIterator = args.iterator();
-        Expression first = argIterator.next();
-        Expression second = argIterator.hasNext() ? argIterator.next() : null;
+        Iterator<UExpression> argIterator = args.iterator();
+        UExpression first = argIterator.next();
+        UExpression second = argIterator.hasNext() ? argIterator.next() : null;
 
         boolean specifiesLocale;
-        TypeDescriptor parameterType = context.getType(first);
+        UType parameterType = first.getExpressionType();
         if (parameterType != null) {
             specifiesLocale = isLocaleReference(parameterType.getName());
-        } else if (!call.astName().astValue().equals(FORMAT_METHOD)) {
+        } else if (!FORMAT_METHOD.equals(call.getFunctionName())) {
             specifiesLocale = false;
         } else {
             // No type information with this AST; use string patterns instead to make
             // an educated guess
-            String firstName = first.toString();
+            String firstName = first.renderString();
             specifiesLocale = firstName.startsWith("Locale.")                     //$NON-NLS-1$
                     || firstName.contains("locale")                               //$NON-NLS-1$
                     || firstName.equals("null")                                   //$NON-NLS-1$
-                    || (second != null && second.toString().contains("getString") //$NON-NLS-1$
+                    || (second != null && second.renderString().contains("getString") //$NON-NLS-1$
                         && !firstName.contains("getString")                       //$NON-NLS-1$
                         && !firstName.contains(R_PREFIX)
-                        && !(first instanceof StringLiteral));
+                        && !(UastLiteralUtils.isStringLiteral(first)));
         }
 
         List<Pair<Handle, String>> list = mFormatStrings != null ? mFormatStrings.get(name) : null;
         if (list == null) {
-            LintClient client = context.getClient();
+            LintClient client = lintContext.getClient();
             if (client.supportsProjectResources() &&
-                    !context.getScope().contains(Scope.RESOURCE_FILE)) {
+                    !lintContext.getScope().contains(Scope.RESOURCE_FILE)) {
                 AbstractResourceRepository resources = client
-                        .getProjectResources(context.getMainProject(), true);
+                        .getProjectResources(lintContext.getMainProject(), true);
                 List<ResourceItem> items = resources
                         .getResourceItem(ResourceType.STRING, name);
                 if (items != null) {
@@ -1184,18 +1172,21 @@ public class StringFormatDetector extends ResourceXmlDetector implements Detecto
 
                     Location location = context.getLocation(call);
                     Location secondary = handle.resolve();
-                    secondary.setMessage(String.format("This definition requires %1$d arguments",
-                            count));
-                    location.setSecondary(secondary);
-                    String message = String.format(
-                            "Wrong argument count, format string `%1$s` requires `%2$d` but format " +
-                            "call supplies `%3$d`",
-                            name, count, args.size() - 1 - (specifiesLocale ? 1 : 0));
-                    context.report(ARG_TYPES, method, location, message);
-                    if (reported == null) {
-                        reported = Sets.newHashSet();
+
+                    if (location != null && secondary != null) {
+                        secondary.setMessage(String.format("This definition requires %1$d arguments",
+                                                           count));
+                        location.setSecondary(secondary);
+                        String message = String.format(
+                          "Wrong argument count, format string `%1$s` requires `%2$d` but format " +
+                          "call supplies `%3$d`",
+                          name, count, args.size() - 1 - (specifiesLocale ? 1 : 0));
+                        context.report(ARG_TYPES, method, location, message);
+                        if (reported == null) {
+                            reported = Sets.newHashSet();
+                        }
+                        reported.add(s);
                     }
-                    reported.add(s);
                 } else {
                     for (int i = 1; i <= count; i++) {
                         int argumentIndex = i + (specifiesLocale ? 1 : 0);
@@ -1265,23 +1256,25 @@ public class StringFormatDetector extends ResourceXmlDetector implements Detecto
                                     continue;
                                 }
 
-                                Expression argument = tracker.getArgument(argumentIndex);
+                                UExpression argument = tracker.getArgument(argumentIndex);
                                 Location location = context.getLocation(argument);
                                 Location secondary = handle.resolve();
-                                secondary.setMessage("Conflicting argument declaration here");
-                                location.setSecondary(secondary);
+                                if (location != null && secondary != null) {
+                                    secondary.setMessage("Conflicting argument declaration here");
+                                    location.setSecondary(secondary);
 
-                                String message = String.format(
-                                        "Wrong argument type for formatting argument '#%1$d' " +
-                                        "in `%2$s`: conversion is '`%3$s`', received `%4$s` " +
-                                        "(argument #%5$d in method call)",
-                                        i, name, formatType, type.getSimpleName(),
-                                        argumentIndex + 1);
-                                context.report(ARG_TYPES, method, location, message);
-                                if (reported == null) {
-                                    reported = Sets.newHashSet();
+                                    String message = String.format(
+                                      "Wrong argument type for formatting argument '#%1$d' " +
+                                      "in `%2$s`: conversion is '`%3$s`', received `%4$s` " +
+                                      "(argument #%5$d in method call)",
+                                      i, name, formatType, type.getSimpleName(),
+                                      argumentIndex + 1);
+                                    context.report(ARG_TYPES, method, location, message);
+                                    if (reported == null) {
+                                        reported = Sets.newHashSet();
+                                    }
+                                    reported.add(s);
                                 }
-                                reported.add(s);
                             }
                         }
                     }
@@ -1290,23 +1283,22 @@ public class StringFormatDetector extends ResourceXmlDetector implements Detecto
         }
     }
 
-    private static boolean isSharedPreferenceGetString(@NonNull JavaContext context,
-            @NonNull MethodInvocation call) {
-        if (!GET_STRING_METHOD.equals(call.astName().astValue())) {
+    private static boolean isSharedPreferenceGetString(@NonNull UastAndroidContext context,
+            @NonNull UCallExpression call) {
+        if (!GET_STRING_METHOD.equals(call.getFunctionName())) {
             return false;
         }
 
-        JavaParser.ResolvedNode resolved = context.resolve(call);
-        if (resolved instanceof JavaParser.ResolvedMethod) {
-            JavaParser.ResolvedMethod resolvedMethod = (JavaParser.ResolvedMethod) resolved;
-            JavaParser.ResolvedClass containingClass = resolvedMethod.getContainingClass();
-            return containingClass.isSubclassOf(ANDROID_CONTENT_SHARED_PREFERENCES, false);
+        UFunction resolvedMethod = call.resolve(context);
+        if (resolvedMethod != null) {
+            UClass containingClass = UastUtils.getContainingClassOrEmpty(resolvedMethod);
+            return containingClass.isSubclassOf(SharedPrefsDetector.ANDROID_CONTENT_SHARED_PREFERENCES);
         }
 
         return false; // not certain
     }
 
-    private static boolean isLocaleReference(@Nullable TypeDescriptor reference) {
+    private static boolean isLocaleReference(@Nullable UType reference) {
         return reference != null && isLocaleReference(reference.getName());
     }
 
@@ -1315,27 +1307,14 @@ public class StringFormatDetector extends ResourceXmlDetector implements Detecto
                 || typeName.equals("java.util.Locale"));                 //$NON-NLS-1$
     }
 
-    /** Returns the parent method of the given AST node */
-    @Nullable
-    public static lombok.ast.Node getParentMethod(@NonNull lombok.ast.Node node) {
-        lombok.ast.Node current = node.getParent();
-        while (current != null
-                && !(current instanceof MethodDeclaration)
-                && !(current instanceof ConstructorDeclaration)) {
-            current = current.getParent();
-        }
-
-        return current;
-    }
-
     /** Returns the resource name corresponding to the first argument in the given call */
     @Nullable
     public static String getResourceForFirstArg(
-            @NonNull lombok.ast.Node method,
-            @NonNull lombok.ast.Node call) {
-        assert call instanceof MethodInvocation || call instanceof ConstructorInvocation;
-        StringTracker tracker = new StringTracker(null, method, call, 0);
-        method.accept(tracker);
+      @NonNull UElement method,
+      @NonNull UElement call) {
+        assert call instanceof UCallExpression;
+        UastStringTracker tracker = new UastStringTracker(null, method, call, 0);
+        tracker.process(method);
 
         return tracker.getFormatStringName();
     }
@@ -1343,12 +1322,12 @@ public class StringFormatDetector extends ResourceXmlDetector implements Detecto
     /** Returns the resource name corresponding to the given argument in the given call */
     @Nullable
     public static String getResourceArg(
-            @NonNull lombok.ast.Node method,
-            @NonNull lombok.ast.Node call,
-            int argIndex) {
-        assert call instanceof MethodInvocation || call instanceof ConstructorInvocation;
-        StringTracker tracker = new StringTracker(null, method, call, argIndex);
-        method.accept(tracker);
+      @NonNull UElement method,
+      @NonNull UElement call,
+      int argIndex) {
+        assert call instanceof UCallExpression;
+        UastStringTracker tracker = new UastStringTracker(null, method, call, argIndex);
+        tracker.process(method);
 
         return tracker.getFormatStringName();
     }
@@ -1374,9 +1353,9 @@ public class StringFormatDetector extends ResourceXmlDetector implements Detecto
      * certain argument types are valid. Note however that it does not do full-blown
      * type analysis by checking method call signatures and so on.
      */
-    private static class StringTracker extends ForwardingAstVisitor {
+    private static class UastStringTracker extends UastVisitor {
         /** Method we're searching within */
-        private final lombok.ast.Node mTop;
+        private final UElement mTop;
         /** The argument index in the method we're targeting */
         private final int mArgIndex;
         /** Map from variable name to corresponding string resource name */
@@ -1384,7 +1363,7 @@ public class StringFormatDetector extends ResourceXmlDetector implements Detecto
         /** Map from variable name to corresponding type */
         private final Map<String, Class<?>> mTypes = new HashMap<String, Class<?>>();
         /** The AST node for the String.format we're interested in */
-        private final lombok.ast.Node mTargetNode;
+        private final UElement mTargetNode;
         private boolean mDone;
         @Nullable
         private JavaContext mContext;
@@ -1395,7 +1374,7 @@ public class StringFormatDetector extends ResourceXmlDetector implements Detecto
          */
         private String mName;
 
-        public StringTracker(@Nullable JavaContext context, lombok.ast.Node top, lombok.ast.Node targetNode, int argIndex) {
+        public UastStringTracker(@Nullable JavaContext context, UElement top, UElement targetNode, int argIndex) {
             mContext = context;
             mTop = top;
             mArgIndex = argIndex;
@@ -1415,7 +1394,7 @@ public class StringFormatDetector extends ResourceXmlDetector implements Detecto
          * @return the class (such as {@link Integer#TYPE} etc) or null if not known
          */
         public Class<?> getArgumentType(int argument) {
-            Expression arg = getArgument(argument);
+            UExpression arg = getArgument(argument);
             if (arg != null) {
                 // Look up type based on the source code literals
                 Class<?> type = getType(arg);
@@ -1426,14 +1405,14 @@ public class StringFormatDetector extends ResourceXmlDetector implements Detecto
                 // If the AST supports type resolution, use that for other types
                 // of expressions
                 if (mContext != null) {
-                    return getTypeClass(mContext.getType(arg));
+                    return getTypeClass(arg.getExpressionType());
                 }
             }
 
             return null;
         }
 
-        private static Class<?> getTypeClass(@Nullable TypeDescriptor type) {
+        private static Class<?> getTypeClass(@Nullable UType type) {
             if (type != null) {
                 return getTypeClass(type.getName());
             }
@@ -1460,27 +1439,27 @@ public class StringFormatDetector extends ResourceXmlDetector implements Detecto
             } else if (fqcn.equals(TYPE_CHAR)) {
                 return Character.TYPE;
             } else if (fqcn.equals("BigDecimal")                //$NON-NLS-1$
-                    || fqcn.equals("java.math.BigDecimal")) {   //$NON-NLS-1$
+                       || fqcn.equals("java.math.BigDecimal")) {   //$NON-NLS-1$
                 return Float.TYPE;
             } else if (fqcn.equals("BigInteger")                //$NON-NLS-1$
-                    || fqcn.equals("java.math.BigInteger")) {   //$NON-NLS-1$
+                       || fqcn.equals("java.math.BigInteger")) {   //$NON-NLS-1$
                 return Integer.TYPE;
             } else if (fqcn.equals(TYPE_OBJECT)) {
-              return null;
-            } else if (fqcn.startsWith("java.lang.")) {
-              if (fqcn.equals("java.lang.Integer")
-                  || fqcn.equals("java.lang.Short")
-                  || fqcn.equals("java.lang.Byte")
-                  || fqcn.equals("java.lang.Long")) {
-                return Integer.TYPE;
-              } else if (fqcn.equals("java.lang.Float")
-                || fqcn.equals("java.lang.Double")) {
-                return Float.TYPE;
-              } else {
                 return null;
-              }
+            } else if (fqcn.startsWith("java.lang.")) {
+                if (fqcn.equals("java.lang.Integer")
+                    || fqcn.equals("java.lang.Short")
+                    || fqcn.equals("java.lang.Byte")
+                    || fqcn.equals("java.lang.Long")) {
+                    return Integer.TYPE;
+                } else if (fqcn.equals("java.lang.Float")
+                           || fqcn.equals("java.lang.Double")) {
+                    return Float.TYPE;
+                } else {
+                    return null;
+                }
             } else if (fqcn.equals(TYPE_BYTE)) {
-              return Byte.TYPE;
+                return Byte.TYPE;
             } else if (fqcn.equals(TYPE_SHORT)) {
                 return Short.TYPE;
             } else {
@@ -1488,45 +1467,37 @@ public class StringFormatDetector extends ResourceXmlDetector implements Detecto
             }
         }
 
-        public Expression getArgument(int argument) {
-            if (!(mTargetNode instanceof MethodInvocation)) {
+        public UExpression getArgument(int argument) {
+            if (!(mTargetNode instanceof UCallExpression)) {
                 return null;
             }
-            MethodInvocation call = (MethodInvocation) mTargetNode;
-            StrictListAccessor<Expression, MethodInvocation> args = call.astArguments();
-            if (argument >= args.size()) {
+            UCallExpression call = (UCallExpression) mTargetNode;
+            List<UExpression> args = call.getValueArguments();
+            if (argument < 0 || argument >= args.size()) {
                 return null;
             }
 
-            Iterator<Expression> iterator = args.iterator();
-            int index = 0;
-            while (iterator.hasNext()) {
-                Expression arg = iterator.next();
-                if (index++ == argument) {
-                    return arg;
-                }
-            }
-
-            return null;
+            return args.get(argument);
         }
 
         @Override
-        public boolean visitNode(lombok.ast.Node node) {
-            return mDone || super.visitNode(node);
-
+        public void process(@NotNull UElement element) {
+            if (!mDone) {
+                super.process(element);
+            }
         }
 
         @Override
-        public boolean visitVariableReference(VariableReference node) {
-            if (node.astIdentifier().astValue().equals(R_CLASS) &&   //$NON-NLS-1$
-                    node.getParent() instanceof Select &&
-                    node.getParent().getParent() instanceof Select) {
+        public boolean visitQualifiedExpression(@NotNull UQualifiedExpression node) {
+            if (node.selectorMatches(R_CLASS) &&   //$NON-NLS-1$
+                node.getParent() instanceof UQualifiedExpression &&
+                node.getParent().getParent() instanceof UQualifiedExpression) {
 
                 // See if we're on the right hand side of an assignment
-                lombok.ast.Node current = node.getParent().getParent();
-                String reference = ((Select) current).astIdentifier().astValue();
+                UElement current = node.getParent().getParent();
+                String reference = ((UQualifiedExpression) current).getSelector().renderString();
 
-                while (current != mTop && !(current instanceof VariableDefinitionEntry)) {
+                while (current != null && current != mTop && !(current instanceof UVariable)) {
                     if (current == mTargetNode) {
                         mName = reference;
                         mDone = true;
@@ -1534,9 +1505,9 @@ public class StringFormatDetector extends ResourceXmlDetector implements Detecto
                     }
                     current = current.getParent();
                 }
-                if (current instanceof VariableDefinitionEntry) {
-                    VariableDefinitionEntry entry = (VariableDefinitionEntry) current;
-                    String variable = entry.astName().astValue();
+                if (current instanceof UVariable) {
+                    UVariable entry = (UVariable) current;
+                    String variable = entry.getName();
                     mMap.put(variable, reference);
                 }
             }
@@ -1545,12 +1516,10 @@ public class StringFormatDetector extends ResourceXmlDetector implements Detecto
         }
 
         @Nullable
-        private Expression getTargetArgument() {
-            Iterator<Expression> iterator;
-            if (mTargetNode instanceof MethodInvocation) {
-                iterator = ((MethodInvocation) mTargetNode).astArguments().iterator();
-            } else if (mTargetNode instanceof ConstructorInvocation) {
-                iterator = ((ConstructorInvocation) mTargetNode).astArguments().iterator();
+        private UExpression getTargetArgument() {
+            Iterator<UExpression> iterator;
+            if (mTargetNode instanceof UCallExpression) {
+                iterator = ((UCallExpression) mTargetNode).getValueArguments().iterator();
             } else {
                 return null;
             }
@@ -1560,13 +1529,13 @@ public class StringFormatDetector extends ResourceXmlDetector implements Detecto
                 i++;
             }
             if (iterator.hasNext()) {
-                Expression next = iterator.next();
+                UExpression next = iterator.next();
                 if (next != null && mContext != null && iterator.hasNext()) {
-                    TypeDescriptor type = mContext.getType(next);
+                    UType type = next.getExpressionType();
                     if (isLocaleReference(type)) {
                         next = iterator.next();
                     } else if (type == null
-                            && next.toString().startsWith("Locale.")) { //$NON-NLS-1$
+                               && next.renderString().startsWith("Locale.")) { //$NON-NLS-1$
                         next = iterator.next();
                     }
                 }
@@ -1577,45 +1546,27 @@ public class StringFormatDetector extends ResourceXmlDetector implements Detecto
         }
 
         @Override
-        public boolean visitMethodInvocation(MethodInvocation node) {
+        public boolean visitCallExpression(@NotNull UCallExpression node) {
             if (node == mTargetNode) {
-                Expression arg = getTargetArgument();
-                if (arg instanceof VariableReference) {
-                      VariableReference reference = (VariableReference) arg;
-                      String variable = reference.astIdentifier().astValue();
-                      mName = mMap.get(variable);
-                      mDone = true;
-                      return true;
+                UExpression arg = getTargetArgument();
+                if (arg instanceof USimpleReferenceExpression) {
+                    USimpleReferenceExpression reference = (USimpleReferenceExpression) arg;
+                    String variable = reference.getIdentifier();
+                    mName = mMap.get(variable);
+                    mDone = true;
+                    return true;
                 }
             }
 
             // Is this a getString() call? On a resource object? If so,
             // promote the resource argument up to the left hand side
-            return super.visitMethodInvocation(node);
+            return false;
         }
 
         @Override
-        public boolean visitConstructorInvocation(ConstructorInvocation node) {
-            if (node == mTargetNode) {
-                Expression arg = getTargetArgument();
-                if (arg instanceof VariableReference) {
-                      VariableReference reference = (VariableReference) arg;
-                      String variable = reference.astIdentifier().astValue();
-                      mName = mMap.get(variable);
-                      mDone = true;
-                      return true;
-                }
-            }
-
-            // Is this a getString() call? On a resource object? If so,
-            // promote the resource argument up to the left hand side
-            return super.visitConstructorInvocation(node);
-        }
-
-        @Override
-        public boolean visitVariableDefinitionEntry(VariableDefinitionEntry node) {
-            String name = node.astName().astValue();
-            Expression rhs = node.astInitializer();
+        public boolean visitVariable(@NotNull UVariable node) {
+            String name = node.getName();
+            UExpression rhs = node.getInitializer();
             Class<?> type = getType(rhs);
             if (type != null) {
                 mTypes.put(name, type);
@@ -1629,50 +1580,59 @@ public class StringFormatDetector extends ResourceXmlDetector implements Detecto
                 }
             }
 
-            return super.visitVariableDefinitionEntry(node);
+            return false;
         }
 
-        private Class<?> getType(Expression expression) {
+        private Class<?> getType(UExpression expression) {
             if (expression == null) {
-              return null;
+                return null;
             }
 
-            if (expression instanceof VariableReference) {
-                VariableReference reference = (VariableReference) expression;
-                String variable = reference.astIdentifier().astValue();
+            if (expression instanceof USimpleReferenceExpression) {
+                USimpleReferenceExpression reference = (USimpleReferenceExpression)expression;
+                String variable = reference.getIdentifier();
                 Class<?> type = mTypes.get(variable);
                 if (type != null) {
                     return type;
                 }
-            } else if (expression instanceof MethodInvocation) {
-                MethodInvocation method = (MethodInvocation) expression;
-                String methodName = method.astName().astValue();
-                if (methodName.equals(GET_STRING_METHOD)) {
+            } else if (expression instanceof UCallExpression) {
+                UCallExpression method = (UCallExpression)expression;
+                String methodName = method.getFunctionName();
+                if (GET_STRING_METHOD.equals(methodName)) {
                     return String.class;
                 }
-            } else if (expression instanceof StringLiteral) {
-                return String.class;
-            } else if (expression instanceof IntegralLiteral) {
-                return Integer.TYPE;
-            } else if (expression instanceof FloatingPointLiteral) {
-                return Float.TYPE;
-            } else if (expression instanceof CharLiteral) {
-                return Character.TYPE;
-            } else if (expression instanceof BooleanLiteral) {
-                return Boolean.TYPE;
-            } else if (expression instanceof NullLiteral) {
-                return Object.class;
+            } else if (expression instanceof ULiteralExpression) {
+                Object value = ((ULiteralExpression)expression).getValue();
+                if (value == null) {
+                    return Object.class;
+                } else if (value instanceof String) {
+                    return String.class;
+                } else if (value instanceof Integer) {
+                    return Integer.TYPE;
+                } else if (value instanceof Long) {
+                    return Long.TYPE;
+                } else if (value instanceof Byte) {
+                    return Byte.TYPE;
+                } else if (value instanceof Short) {
+                    return Short.TYPE;
+                } else if (value instanceof Float) {
+                    return Float.TYPE;
+                } else if (value instanceof Double) {
+                    return Double.TYPE;
+                } else if (value instanceof Character) {
+                    return Character.TYPE;
+                } else if (value instanceof Boolean) {
+                    return Boolean.TYPE;
+                }
             }
 
-            if (mContext != null) {
-                TypeDescriptor type = mContext.getType(expression);
-                if (type != null) {
-                    Class<?> typeClass = getTypeClass(type);
-                    if (typeClass != null) {
-                        return typeClass;
-                    } else {
-                        return Object.class;
-                    }
+            UType type = expression.getExpressionType();
+            if (type != null) {
+                Class<?> typeClass = getTypeClass(type);
+                if (typeClass != null) {
+                    return typeClass;
+                } else {
+                    return Object.class;
                 }
             }
 

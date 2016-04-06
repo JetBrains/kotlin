@@ -14,33 +14,26 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
 import com.android.annotations.NonNull;
-import com.android.tools.lint.detector.api.Category;
-import com.android.tools.lint.detector.api.Context;
-import com.android.tools.lint.detector.api.Detector;
-import com.android.tools.lint.detector.api.Implementation;
-import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.JavaContext;
-import com.android.tools.lint.detector.api.Location;
-import com.android.tools.lint.detector.api.Scope;
-import com.android.tools.lint.detector.api.Severity;
-import com.android.tools.lint.detector.api.Speed;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.Context;
+import com.android.tools.klint.detector.api.Detector;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
+import com.android.tools.klint.detector.api.Speed;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.List;
 
-import lombok.ast.AstVisitor;
-import lombok.ast.Comment;
-import lombok.ast.ForwardingAstVisitor;
-import lombok.ast.Node;
+import org.jetbrains.uast.check.UastScanner;
 
 /**
  * Looks for issues in Java comments
  */
-public class CommentDetector extends Detector implements Detector.JavaScanner {
+public class CommentDetector extends Detector implements UastScanner {
     private static final String STOPSHIP_COMMENT = "STOPSHIP"; //$NON-NLS-1$
 
     private static final Implementation IMPLEMENTATION = new Implementation(
@@ -96,7 +89,7 @@ public class CommentDetector extends Detector implements Detector.JavaScanner {
         return Speed.NORMAL;
     }
 
-    @Override
+    /*@Override
     public List<Class<? extends Node>> getApplicableNodeTypes() {
         if (USE_AST) {
             return Collections.<Class<? extends Node>>singletonList(Comment.class);
@@ -135,7 +128,7 @@ public class CommentDetector extends Detector implements Detector.JavaScanner {
                     } else if (next == '*') {
                         // Block comment
                         int start = i + 2;
-                        int end = source.indexOf("*/", start);
+                        int end = source.indexOf("*//*", start);
                         if (end == -1) {
                             end = n;
                         }
@@ -195,5 +188,5 @@ public class CommentDetector extends Detector implements Detector.JavaScanner {
                         "to release");
             }
         }
-    }
+    }*/
 }

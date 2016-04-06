@@ -14,30 +14,20 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.client.api;
+package com.android.tools.klint.client.api;
 
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
-import com.android.tools.lint.detector.api.Detector;
-import com.android.tools.lint.detector.api.Detector.XmlScanner;
-import com.android.tools.lint.detector.api.LintUtils;
-import com.android.tools.lint.detector.api.ResourceContext;
-import com.android.tools.lint.detector.api.XmlContext;
+import com.android.tools.klint.detector.api.Detector;
+import com.android.tools.klint.detector.api.Detector.XmlScanner;
+import com.android.tools.klint.detector.api.LintUtils;
+import com.android.tools.klint.detector.api.ResourceContext;
+import com.android.tools.klint.detector.api.XmlContext;
 import com.google.common.annotations.Beta;
-
-import org.w3c.dom.Attr;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.RandomAccess;
+import java.util.*;
 
 /**
  * Specialized visitor for running detectors on resources: typically XML documents,

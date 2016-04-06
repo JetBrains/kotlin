@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
 import static com.android.SdkConstants.ANDROID_URI;
 import static com.android.SdkConstants.ATTR_BACKGROUND;
@@ -28,23 +28,25 @@ import static com.android.SdkConstants.R_LAYOUT_RESOURCE_PREFIX;
 import static com.android.SdkConstants.VIEW_INCLUDE;
 
 import com.android.annotations.NonNull;
-import com.android.annotations.Nullable;
-import com.android.tools.lint.detector.api.Category;
-import com.android.tools.lint.detector.api.Context;
-import com.android.tools.lint.detector.api.Detector;
-import com.android.tools.lint.detector.api.Implementation;
-import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.JavaContext;
-import com.android.tools.lint.detector.api.LayoutDetector;
-import com.android.tools.lint.detector.api.LintUtils;
-import com.android.tools.lint.detector.api.Location;
-import com.android.tools.lint.detector.api.Location.Handle;
-import com.android.tools.lint.detector.api.Scope;
-import com.android.tools.lint.detector.api.Severity;
-import com.android.tools.lint.detector.api.Speed;
-import com.android.tools.lint.detector.api.XmlContext;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.Context;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.LayoutDetector;
+import com.android.tools.klint.detector.api.LintUtils;
+import com.android.tools.klint.detector.api.Location;
+import com.android.tools.klint.detector.api.Location.Handle;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
+import com.android.tools.klint.detector.api.Speed;
+import com.android.tools.klint.detector.api.XmlContext;
 import com.android.utils.Pair;
 
+import org.jetbrains.uast.UExpression;
+import org.jetbrains.uast.UCallExpression;
+import org.jetbrains.uast.UQualifiedExpression;
+import org.jetbrains.uast.check.UastAndroidContext;
+import org.jetbrains.uast.check.UastScanner;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -58,16 +60,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import lombok.ast.AstVisitor;
-import lombok.ast.Expression;
-import lombok.ast.MethodInvocation;
-import lombok.ast.Select;
-import lombok.ast.StrictListAccessor;
-
 /**
  * Checks whether a root FrameLayout can be replaced with a {@code <merge>} tag.
  */
-public class MergeRootFrameLayoutDetector extends LayoutDetector implements Detector.JavaScanner {
+public class MergeRootFrameLayoutDetector extends LayoutDetector implements UastScanner {
     /**
      * Set of layouts that we want to enable the warning for. We only warn for
      * {@code <FrameLayout>}'s that are the root of a layout included from
@@ -98,7 +94,7 @@ public class MergeRootFrameLayoutDetector extends LayoutDetector implements Dete
             Severity.WARNING,
             new Implementation(
                     MergeRootFrameLayoutDetector.class,
-                    EnumSet.of(Scope.ALL_RESOURCE_FILES, Scope.JAVA_FILE)))
+                    EnumSet.of(Scope.ALL_RESOURCE_FILES, Scope.SOURCE_FILE)))
             .addMoreInfo(
             "http://android-developers.blogspot.com/2009/03/android-layout-tricks-3-optimize-by.html"); //$NON-NLS-1$
 
@@ -191,26 +187,26 @@ public class MergeRootFrameLayoutDetector extends LayoutDetector implements Dete
         mWhitelistedLayouts.add(layout);
     }
 
-    // Implements JavaScanner
+    // Implements UastScanner
+
 
     @Override
-    public List<String> getApplicableMethodNames() {
+    public List<String> getApplicableFunctionNames() {
         return Collections.singletonList("setContentView"); //$NON-NLS-1$
     }
 
     @Override
-    public void visitMethod(
-            @NonNull JavaContext context,
-            @Nullable AstVisitor visitor,
-            @NonNull MethodInvocation node) {
-        StrictListAccessor<Expression, MethodInvocation> argumentList = node.astArguments();
-        if (argumentList != null && argumentList.size() == 1) {
-            Expression argument = argumentList.first();
-            if (argument instanceof Select) {
-                String expression = argument.toString();
-                if (expression.startsWith(R_LAYOUT_RESOURCE_PREFIX)) {
-                    whiteListLayout(expression.substring(R_LAYOUT_RESOURCE_PREFIX.length()));
-                }
+    public void visitFunctionCall(UastAndroidContext context, UCallExpression node) {
+        if (node.getValueArgumentCount() != 1) {
+            return;
+        }
+
+        List<UExpression> argumentList = node.getValueArguments();
+        UExpression argument = argumentList.get(0);
+        if (argument instanceof UQualifiedExpression) {
+            String expression = argument.renderString();
+            if (expression.startsWith(R_LAYOUT_RESOURCE_PREFIX)) {
+                whiteListLayout(expression.substring(R_LAYOUT_RESOURCE_PREFIX.length()));
             }
         }
     }

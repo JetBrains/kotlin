@@ -14,16 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.client.api;
-
-import static com.android.SdkConstants.CLASS_FOLDER;
-import static com.android.SdkConstants.DOT_AAR;
-import static com.android.SdkConstants.DOT_JAR;
-import static com.android.SdkConstants.GEN_FOLDER;
-import static com.android.SdkConstants.LIBS_FOLDER;
-import static com.android.SdkConstants.RES_FOLDER;
-import static com.android.SdkConstants.SRC_FOLDER;
-import static com.android.tools.lint.detector.api.LintUtils.endsWith;
+package com.android.tools.klint.client.api;
 
 import com.android.SdkConstants;
 import com.android.annotations.NonNull;
@@ -35,21 +26,21 @@ import com.android.prefs.AndroidLocation;
 import com.android.sdklib.IAndroidTarget;
 import com.android.sdklib.SdkVersionInfo;
 import com.android.sdklib.repository.local.LocalSdk;
-import com.android.tools.lint.detector.api.Context;
-import com.android.tools.lint.detector.api.Detector;
-import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.LintUtils;
-import com.android.tools.lint.detector.api.Location;
-import com.android.tools.lint.detector.api.Project;
-import com.android.tools.lint.detector.api.Severity;
-import com.android.tools.lint.detector.api.TextFormat;
+import com.android.tools.klint.detector.api.Context;
+import com.android.tools.klint.detector.api.Detector;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.LintUtils;
+import com.android.tools.klint.detector.api.Location;
+import com.android.tools.klint.detector.api.Project;
+import com.android.tools.klint.detector.api.Severity;
+import com.android.tools.klint.detector.api.TextFormat;
 import com.android.utils.XmlUtils;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.io.Files;
-
+import org.jetbrains.uast.UastConverter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -59,13 +50,10 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
+import static com.android.SdkConstants.*;
+import static com.android.tools.klint.detector.api.LintUtils.endsWith;
 
 /**
  * Information about the tool embedding the lint analyzer. IDEs and other tools
@@ -152,19 +140,6 @@ public abstract class LintClient {
      */
     @Nullable
     public abstract XmlParser getXmlParser();
-
-    /**
-     * Returns a {@link JavaParser} to use to parse Java
-     *
-     * @param project the project to parse, if known (this can be used to look up
-     *                the class path for type attribution etc, and it can also be used
-     *                to more efficiently process a set of files, for example to
-     *                perform type attribution for multiple units in a single pass)
-     * @return a new {@link JavaParser}, or null if this client does not
-     *         support Java analysis
-     */
-    @Nullable
-    public abstract JavaParser getJavaParser(@Nullable Project project);
 
     /**
      * Returns an optimal detector, if applicable. By default, just returns the
@@ -404,6 +379,15 @@ public abstract class LintClient {
         }
 
         return false;
+    }
+
+    @Nullable
+    public com.intellij.openapi.project.Project getProject() {
+        return null;
+    }
+
+    public List<UastConverter> getConverters() {
+        return Collections.emptyList();
     }
 
     /**

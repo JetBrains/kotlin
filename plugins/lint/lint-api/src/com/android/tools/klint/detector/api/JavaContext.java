@@ -14,28 +14,19 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.detector.api;
-
-import static com.android.SdkConstants.CLASS_CONTEXT;
-import static com.android.tools.lint.client.api.JavaParser.ResolvedNode;
-import static com.android.tools.lint.client.api.JavaParser.TypeDescriptor;
+package com.android.tools.klint.detector.api;
 
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
-import com.android.tools.lint.client.api.JavaParser;
-import com.android.tools.lint.client.api.JavaParser.ResolvedClass;
-import com.android.tools.lint.client.api.LintDriver;
+import com.android.tools.klint.client.api.LintDriver;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.uast.*;
+import org.jetbrains.uast.check.UastAndroidContext;
 
 import java.io.File;
-import java.util.Iterator;
+import java.util.List;
 
-import lombok.ast.ClassDeclaration;
-import lombok.ast.ConstructorDeclaration;
-import lombok.ast.Expression;
-import lombok.ast.MethodDeclaration;
-import lombok.ast.MethodInvocation;
-import lombok.ast.Node;
-import lombok.ast.Position;
+import static com.android.SdkConstants.CLASS_CONTEXT;
 
 /**
  * A {@link Context} used when checking Java files.
@@ -43,14 +34,11 @@ import lombok.ast.Position;
  * <b>NOTE: This is not a public or final API; if you rely on this be prepared
  * to adjust your code for the next tools release.</b>
  */
-public class JavaContext extends Context {
+public class JavaContext extends Context implements UastAndroidContext {
     static final String SUPPRESS_COMMENT_PREFIX = "//noinspection "; //$NON-NLS-1$
 
     /** The parse tree */
-    private Node mCompilationUnit;
-
-    /** The parser which produced the parse tree */
-    private final JavaParser mParser;
+    private UFile mCompilationUnit;
 
     /**
      * Constructs a {@link JavaContext} for running lint on the given file, with
@@ -70,10 +58,8 @@ public class JavaContext extends Context {
             @NonNull LintDriver driver,
             @NonNull Project project,
             @Nullable Project main,
-            @NonNull File file,
-            @NonNull JavaParser parser) {
+            @NonNull File file) {
         super(driver, project, main, file);
-        mParser = parser;
     }
 
     /**
@@ -82,18 +68,13 @@ public class JavaContext extends Context {
      * @param node the AST node to get a location for
      * @return a location for the given node
      */
-    @NonNull
-    public Location getLocation(@NonNull Node node) {
-        return mParser.getLocation(this, node);
-    }
-
-    @NonNull
-    public JavaParser getParser() {
-        return mParser;
+    @Override
+    public Location getLocation(@NotNull UElement element) {
+        return UastAndroidContext.DefaultImpls.getLocation(this, element);
     }
 
     @Nullable
-    public Node getCompilationUnit() {
+    public UFile getCompilationUnit() {
         return mCompilationUnit;
     }
 
@@ -103,7 +84,7 @@ public class JavaContext extends Context {
      *
      * @param compilationUnit the parse tree
      */
-    public void setCompilationUnit(@Nullable Node compilationUnit) {
+    public void setCompilationUnit(@Nullable UFile compilationUnit) {
         mCompilationUnit = compilationUnit;
     }
 
@@ -127,105 +108,22 @@ public class JavaContext extends Context {
      * @param location the location of the issue, or null if not known
      * @param message the message for this warning
      */
+    @Override
     public void report(
-            @NonNull Issue issue,
-            @Nullable Node scope,
-            @Nullable Location location,
-            @NonNull String message) {
+      @NonNull Issue issue,
+      @Nullable UElement scope,
+      @Nullable Location location,
+      @NonNull String message) {
         if (scope != null && mDriver.isSuppressed(this, issue, scope)) {
             return;
         }
         super.report(issue, location, message);
     }
 
-    /**
-     * Report an error.
-     * Like {@link #report(Issue, Node, Location, String)} but with
-     * a now-unused data parameter at the end.
-     *
-     * @deprecated Use {@link #report(Issue, Node, Location, String)} instead;
-     *    this method is here for custom rule compatibility
-     */
-    @SuppressWarnings("UnusedDeclaration") // Potentially used by external existing custom rules
-    @Deprecated
-    public void report(
-            @NonNull Issue issue,
-            @Nullable Node scope,
-            @Nullable Location location,
-            @NonNull String message,
-            @SuppressWarnings("UnusedParameters") @Nullable Object data) {
-        report(issue, scope, location, message);
-    }
-
-    @Nullable
-    public static Node findSurroundingMethod(Node scope) {
-        while (scope != null) {
-            Class<? extends Node> type = scope.getClass();
-            // The Lombok AST uses a flat hierarchy of node type implementation classes
-            // so no need to do instanceof stuff here.
-            if (type == MethodDeclaration.class || type == ConstructorDeclaration.class) {
-                return scope;
-            }
-
-            scope = scope.getParent();
-        }
-
-        return null;
-    }
-
-    @Nullable
-    public static ClassDeclaration findSurroundingClass(@Nullable Node scope) {
-        while (scope != null) {
-            Class<? extends Node> type = scope.getClass();
-            // The Lombok AST uses a flat hierarchy of node type implementation classes
-            // so no need to do instanceof stuff here.
-            if (type == ClassDeclaration.class) {
-                return (ClassDeclaration) scope;
-            }
-
-            scope = scope.getParent();
-        }
-
-        return null;
-    }
-
     @Override
     @Nullable
     protected String getSuppressCommentPrefix() {
         return SUPPRESS_COMMENT_PREFIX;
-    }
-
-    public boolean isSuppressedWithComment(@NonNull Node scope, @NonNull Issue issue) {
-        // Check whether there is a comment marker
-        String contents = getContents();
-        assert contents != null; // otherwise we wouldn't be here
-        Position position = scope.getPosition();
-        if (position == null) {
-            return false;
-        }
-
-        int start = position.getStart();
-        return isSuppressedWithComment(start, issue);
-    }
-
-    @NonNull
-    public Location.Handle createLocationHandle(@NonNull Node node) {
-        return mParser.createLocationHandle(this, node);
-    }
-
-    @Nullable
-    public ResolvedNode resolve(@NonNull Node node) {
-        return mParser.resolve(this, node);
-    }
-
-    @Nullable
-    public ResolvedClass findClass(@NonNull String fullyQualifiedName) {
-        return mParser.findClass(this, fullyQualifiedName);
-    }
-
-    @Nullable
-    public TypeDescriptor getType(@NonNull Node node) {
-        return mParser.getType(this, node);
     }
 
     /**
@@ -235,160 +133,35 @@ public class JavaContext extends Context {
      * @param node the method call node
      * @return true iff the method call is on a class extending context
      */
-    public boolean isContextMethod(@NonNull MethodInvocation node) {
+    public boolean isContextMethod(@NonNull UCallExpression node) {
         // Method name used in many other contexts where it doesn't have the
         // same semantics; only use this one if we can resolve types
         // and we're certain this is the Context method
-        ResolvedNode resolved = resolve(node);
-        if (resolved instanceof JavaParser.ResolvedMethod) {
-            JavaParser.ResolvedMethod method = (JavaParser.ResolvedMethod) resolved;
-            ResolvedClass containingClass = method.getContainingClass();
-            if (containingClass.isSubclassOf(CLASS_CONTEXT, false)) {
+        UFunction resolved = node.resolve(this);
+        UClass containingClass = UastUtils.getContainingClass(resolved);
+        if (resolved != null && containingClass != null) {
+            if (containingClass.isSubclassOf(CLASS_CONTEXT)) {
                 return true;
             }
         }
         return false;
     }
 
-    /**
-     * Returns the first ancestor node of the given type
-     *
-     * @param element the element to search from
-     * @param clz     the target node type
-     * @param <T>     the target node type
-     * @return the nearest ancestor node in the parent chain, or null if not found
-     */
-    @Nullable
-    public static <T extends Node> T getParentOfType(
-            @Nullable Node element,
-            @NonNull Class<T> clz) {
-        return getParentOfType(element, clz, true);
+    @NotNull
+    @Override
+    public JavaContext getLintContext() {
+        return this;
     }
 
-    /**
-     * Returns the first ancestor node of the given type
-     *
-     * @param element the element to search from
-     * @param clz     the target node type
-     * @param strict  if true, do not consider the element itself, only its parents
-     * @param <T>     the target node type
-     * @return the nearest ancestor node in the parent chain, or null if not found
-     */
-    @Nullable
-    public static <T extends Node> T getParentOfType(
-            @Nullable Node element,
-            @NonNull Class<T> clz,
-            boolean strict) {
-        if (element == null) {
-            return null;
-        }
-
-        if (strict) {
-            element = element.getParent();
-        }
-
-        while (element != null) {
-            if (clz.isInstance(element)) {
-                //noinspection unchecked
-                return (T) element;
-            }
-            element = element.getParent();
-        }
-
-        return null;
+    @NotNull
+    @Override
+    public List<UastConverter> getConverters() {
+        return getClient().getConverters();
     }
 
-    /**
-     * Returns the first ancestor node of the given type, stopping at the given type
-     *
-     * @param element     the element to search from
-     * @param clz         the target node type
-     * @param strict      if true, do not consider the element itself, only its parents
-     * @param terminators optional node types to terminate the search at
-     * @param <T>         the target node type
-     * @return the nearest ancestor node in the parent chain, or null if not found
-     */
-    @Nullable
-    public static <T extends Node> T getParentOfType(@Nullable Node element,
-            @NonNull Class<T> clz,
-            boolean strict,
-            @NonNull Class<? extends Node>... terminators) {
-        if (element == null) {
-            return null;
-        }
-        if (strict) {
-            element = element.getParent();
-        }
-
-        while (element != null && !clz.isInstance(element)) {
-            for (Class<?> terminator : terminators) {
-                if (terminator.isInstance(element)) {
-                    return null;
-                }
-            }
-            element = element.getParent();
-        }
-
-        //noinspection unchecked
-        return (T) element;
-    }
-
-    /**
-     * Returns the first sibling of the given node that is of the given class
-     *
-     * @param sibling the sibling to search from
-     * @param clz     the type to look for
-     * @param <T>     the type
-     * @return the first sibling of the given type, or null
-     */
-    @Nullable
-    public static <T extends Node> T getNextSiblingOfType(@Nullable Node sibling,
-            @NonNull Class<T> clz) {
-        if (sibling == null) {
-            return null;
-        }
-        Node parent = sibling.getParent();
-        if (parent == null) {
-            return null;
-        }
-
-        Iterator<Node> iterator = parent.getChildren().iterator();
-        while (iterator.hasNext()) {
-            if (iterator.next() == sibling) {
-                break;
-            }
-        }
-
-        while (iterator.hasNext()) {
-            Node child = iterator.next();
-            if (clz.isInstance(child)) {
-                //noinspection unchecked
-                return (T) child;
-            }
-
-        }
-
-        return null;
-    }
-
-
-    /**
-     * Returns the given argument of the given call
-     *
-     * @param call the call containing arguments
-     * @param index the index of the target argument
-     * @return the argument at the given index
-     * @throws IllegalArgumentException if index is outside the valid range
-     */
-    @NonNull
-    public static Node getArgumentNode(@NonNull MethodInvocation call, int index) {
-        int i = 0;
-        for (Expression parameter : call.astArguments()) {
-            if (i == index) {
-                return parameter;
-            }
-            i++;
-        }
-        throw new IllegalArgumentException(Integer.toString(index));
+    @org.jetbrains.annotations.Nullable
+    @Override
+    public UElement convert(@Nullable Object element) {
+        return UastContext.DefaultImpls.convert(this, element);
     }
 }

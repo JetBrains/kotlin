@@ -14,49 +14,35 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
 import com.android.annotations.NonNull;
-import com.android.annotations.Nullable;
-import com.android.tools.lint.client.api.JavaParser.ResolvedAnnotation;
-import com.android.tools.lint.client.api.JavaParser.ResolvedClass;
-import com.android.tools.lint.client.api.JavaParser.ResolvedMethod;
-import com.android.tools.lint.client.api.JavaParser.ResolvedNode;
-import com.android.tools.lint.client.api.JavaParser.ResolvedVariable;
-import com.android.tools.lint.client.api.JavaParser.TypeDescriptor;
-import com.android.tools.lint.detector.api.Category;
-import com.android.tools.lint.detector.api.Detector;
-import com.android.tools.lint.detector.api.Implementation;
-import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.JavaContext;
-import com.android.tools.lint.detector.api.Location;
-import com.android.tools.lint.detector.api.Scope;
-import com.android.tools.lint.detector.api.Severity;
-import com.android.tools.lint.detector.api.Speed;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.Detector;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.Location;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
+import com.android.tools.klint.detector.api.Speed;
 import com.google.common.collect.Maps;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import lombok.ast.AstVisitor;
-import lombok.ast.BinaryExpression;
-import lombok.ast.BinaryOperator;
-import lombok.ast.Cast;
-import lombok.ast.ConstructorInvocation;
-import lombok.ast.Expression;
-import lombok.ast.ForwardingAstVisitor;
-import lombok.ast.InlineIfExpression;
-import lombok.ast.MethodInvocation;
-import lombok.ast.Node;
-import lombok.ast.VariableDefinitionEntry;
-import lombok.ast.VariableReference;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.uast.*;
+import org.jetbrains.uast.check.UastAndroidContext;
+import org.jetbrains.uast.check.UastAndroidUtils;
+import org.jetbrains.uast.check.UastScanner;
+import org.jetbrains.uast.visitor.UastVisitor;
 
 /**
  * Looks for addJavascriptInterface calls on interfaces have been properly annotated
  * with {@code @JavaScriptInterface}
  */
-public class JavaScriptInterfaceDetector extends Detector implements Detector.JavaScanner {
+public class JavaScriptInterfaceDetector extends Detector implements UastScanner {
     /** The main issue discovered by this detector */
     public static final Issue ISSUE = Issue.create(
             "JavascriptInterface", //$NON-NLS-1$
@@ -88,34 +74,31 @@ public class JavaScriptInterfaceDetector extends Detector implements Detector.Ja
         return Speed.SLOW; // because it relies on class loading referenced javascript interface
     }
 
-    // ---- Implements JavaScanner ----
+    // ---- Implements UastScanner ----
 
-    @Nullable
+
     @Override
-    public List<String> getApplicableMethodNames() {
+    public List<String> getApplicableFunctionNames() {
         return Collections.singletonList(ADD_JAVASCRIPT_INTERFACE);
     }
 
     @Override
-    public void visitMethod(
-            @NonNull JavaContext context,
-            @Nullable AstVisitor visitor,
-            @NonNull MethodInvocation call) {
-        if (context.getMainProject().getTargetSdk() < 17) {
+    public void visitFunctionCall(UastAndroidContext context, UCallExpression node) {
+        if (context.getLintContext().getMainProject().getTargetSdk() < 17) {
             return;
         }
 
-        if (call.astArguments().size() != 2) {
+        if (node.getValueArgumentCount() != 2) {
             return;
         }
 
-        if (!isCallOnWebView(context, call)) {
+        if (!isCallOnWebView(context, node)) {
             return;
         }
 
-        Expression first = call.astArguments().first();
-        ResolvedNode resolved = context.resolve(first);
-        if (resolved instanceof ResolvedVariable) {
+        UExpression first = node.getValueArguments().get(0);
+        UElement resolved = node.resolve(context);
+        if (resolved instanceof UVariable) {
             // We're passing in a variable to the addJavaScriptInterface method;
             // the variable may be of a more generic type than the actual
             // value assigned to it. For example, we may have a scenario like this:
@@ -123,10 +106,10 @@ public class JavaScriptInterfaceDetector extends Detector implements Detector.Ja
             //    addJavaScriptInterface(object, ...)
             // Here the type of the variable is Object, but we know that it can
             // contain objects of type SpecificType, so we should check that type instead.
-            Node method = JavaContext.findSurroundingMethod(call);
+            UFunction method = UastUtils.getContainingFunction(node);
             if (method != null) {
-                ConcreteTypeVisitor v = new ConcreteTypeVisitor(context, call);
-                method.accept(v);
+                ConcreteTypeVisitor v = new ConcreteTypeVisitor(context, node);
+                v.process(method);
                 resolved = v.getType();
                 if (resolved == null) {
                     return;
@@ -134,91 +117,93 @@ public class JavaScriptInterfaceDetector extends Detector implements Detector.Ja
             } else {
                 return;
             }
-        } else if (resolved instanceof ResolvedMethod) {
-            ResolvedMethod method = (ResolvedMethod) resolved;
-            if (method.isConstructor()) {
-                resolved = method.getContainingClass();
+        } else if (resolved instanceof UFunction) {
+            UFunction method = (UFunction) resolved;
+            if (method.getKind() == UastFunctionKind.CONSTRUCTOR) {
+                resolved = UastUtils.getContainingClass(method);
             } else {
-                TypeDescriptor returnType = method.getReturnType();
+                UType returnType = method.getReturnType();
                 if (returnType != null) {
-                    resolved = returnType.getTypeClass();
+                    UClass resolvedClass = returnType.resolve(context);
+                    if (resolvedClass != null) {
+                        resolved = resolvedClass;
+                    }
                 }
             }
         } else {
-            TypeDescriptor type = context.getType(first);
+            UType type = first.getExpressionType();
             if (type != null) {
-                resolved = type.getTypeClass();
+                UClass resolvedClass = type.resolve(context);
+                if (resolvedClass != null) {
+                    resolved = resolvedClass;
+                }
             }
         }
 
-        if (resolved instanceof ResolvedClass) {
-            ResolvedClass cls = (ResolvedClass) resolved;
-            if (isJavaScriptAnnotated(cls)) {
+        if (resolved instanceof UClass) {
+            UClass cls = (UClass) resolved;
+            if (isJavaScriptAnnotated(context, cls)) {
                 return;
             }
 
-            Location location = context.getLocation(call.astName());
+            Location location = UastAndroidUtils.getLocation(node.getFunctionNameElement());
             String message = String.format(
-                    "None of the methods in the added interface (%1$s) have been annotated " +
-                    "with `@android.webkit.JavascriptInterface`; they will not " +
-                    "be visible in API 17", cls.getSimpleName());
-            context.report(ISSUE, call, location, message);
+              "None of the methods in the added interface (%1$s) have been annotated " +
+              "with `@android.webkit.JavascriptInterface`; they will not " +
+              "be visible in API 17", cls.getName());
+            context.report(ISSUE, node, location, message);
         }
     }
 
-    private static boolean isCallOnWebView(JavaContext context, MethodInvocation call) {
-        ResolvedNode resolved = context.resolve(call);
-        if (!(resolved instanceof ResolvedMethod)) {
-            return false;
-        }
-        ResolvedMethod method = (ResolvedMethod) resolved;
-        return method.getContainingClass().matches(WEB_VIEW_CLS);
+    private static boolean isCallOnWebView(UastAndroidContext context, UCallExpression call) {
+        UFunction resolved = call.resolve(context);
+        return UastUtils.getContainingClassOrEmpty(resolved).matchesFqName(WEB_VIEW_CLS);
 
     }
 
-    private static boolean isJavaScriptAnnotated(ResolvedClass clz) {
+    private static boolean isJavaScriptAnnotated(UastAndroidContext context, UClass clz) {
         while (clz != null) {
-            for (ResolvedAnnotation annotation : clz.getAnnotations()) {
-                if (annotation.getType().matchesSignature(JAVASCRIPT_INTERFACE_CLS)) {
+            for (UAnnotation annotation : clz.getAnnotations()) {
+                if (JAVASCRIPT_INTERFACE_CLS.equals(annotation.getFqName())) {
                     return true;
                 }
             }
 
-            for (ResolvedMethod method : clz.getMethods(false)) {
-                for (ResolvedAnnotation annotation : method.getAnnotations()) {
-                    if (annotation.getType().matchesSignature(JAVASCRIPT_INTERFACE_CLS)) {
+            for (UFunction method : clz.getFunctions()) {
+                for (UAnnotation annotation : method.getAnnotations()) {
+                    if (JAVASCRIPT_INTERFACE_CLS.equals(annotation.getFqName())) {
                         return true;
                     }
                 }
             }
 
-            clz = clz.getSuperClass();
+            clz = clz.getSuperClass(context);
         }
 
         return false;
     }
 
-    private static class ConcreteTypeVisitor extends ForwardingAstVisitor {
-        private final JavaContext mContext;
-        private final MethodInvocation mTargetCall;
+    private static class ConcreteTypeVisitor extends UastVisitor {
+        private final UastAndroidContext mContext;
+        private final UCallExpression mTargetCall;
         private boolean mFoundCall;
-        private Map<Node, ResolvedClass> mTypes = Maps.newIdentityHashMap();
-        private Map<ResolvedVariable, ResolvedClass> mVariableTypes = Maps.newHashMap();
+        private Map<UElement, UClass> mTypes = Maps.newIdentityHashMap();
+        private Map<UVariable, UClass> mVariableTypes = Maps.newHashMap();
 
-        public ConcreteTypeVisitor(JavaContext context, MethodInvocation call) {
+        public ConcreteTypeVisitor(UastAndroidContext context, UCallExpression call) {
             mContext = context;
             mTargetCall = call;
         }
 
-        public ResolvedClass getType() {
-            Expression first = mTargetCall.astArguments().first();
-            ResolvedClass resolvedClass = mTypes.get(first);
-            if (resolvedClass == null) {
-                ResolvedNode resolved = mContext.resolve(first);
-                if (resolved instanceof ResolvedVariable) {
+        public UClass getType() {
+            UExpression first = mTargetCall.getValueArguments().get(0);
+            UClass resolvedClass = mTypes.get(first);
+            if (resolvedClass == null && first instanceof UResolvable) {
+                UElement resolved = ((UResolvable) first).resolve(mContext);
+                if (resolved instanceof UVariable) {
                     resolvedClass = mVariableTypes.get(resolved);
                     if (resolvedClass == null) {
-                        return ((ResolvedVariable)resolved).getType().getTypeClass();
+                        return ((UVariable) resolved).getType().resolve(mContext);
                     }
                 }
             }
@@ -226,96 +211,101 @@ public class JavaScriptInterfaceDetector extends Detector implements Detector.Ja
         }
 
         @Override
-        public boolean visitNode(Node node) {
-            return mFoundCall || super.visitNode(node);
-        }
-
-        @Override
-        public void afterVisitMethodInvocation(MethodInvocation node) {
-            if (node == mTargetCall) {
-                mFoundCall = true;
+        public void process(@NotNull UElement element) {
+            if (!mFoundCall) {
+                super.process(element);
             }
         }
 
         @Override
-        public void afterVisitConstructorInvocation(@NonNull ConstructorInvocation node) {
-            ResolvedNode resolved = mContext.resolve(node);
-            if (resolved instanceof ResolvedMethod) {
-                ResolvedMethod method = (ResolvedMethod) resolved;
-                mTypes.put(node, method.getContainingClass());
-            } else {
-                // Implicit constructor?
-                TypeDescriptor type = mContext.getType(node);
-                if (type != null) {
-                    ResolvedClass typeClass = type.getTypeClass();
-                    if (typeClass != null) {
-                        mTypes.put(node, typeClass);
+        public boolean visitCallExpression(@NotNull UCallExpression node) {
+            if (node.getKind() == UastCallKind.FUNCTION_CALL && node == mTargetCall) {
+                mFoundCall = true;
+            } else if (node.getKind() == UastCallKind.CONSTRUCTOR_CALL) {
+                UFunction resolved = node.resolve(mContext);
+                if (resolved != null) {
+                    mTypes.put(node, UastUtils.getContainingClass(resolved));
+                } else {
+                    // Implicit constructor?
+                    UType type = node.getExpressionType();
+                    if (type != null) {
+                        UClass typeClass = type.resolve(mContext);
+                        if (typeClass != null) {
+                            mTypes.put(node, typeClass);
+                        }
                     }
                 }
             }
+            return false;
         }
 
         @Override
-        public void afterVisitVariableReference(VariableReference node) {
+        public boolean visitSimpleReferenceExpression(@NotNull USimpleReferenceExpression node) {
             if (mTypes.get(node) == null) {
-                ResolvedNode resolved = mContext.resolve(node);
-                if (resolved instanceof ResolvedVariable) {
-                    ResolvedClass resolvedClass = mVariableTypes.get(resolved);
+                UElement resolved = node.resolve(mContext);
+                if (resolved instanceof UVariable) {
+                    UClass resolvedClass = mVariableTypes.get(resolved);
                     if (resolvedClass != null) {
                         mTypes.put(node, resolvedClass);
                     }
                 }
             }
+            return false;
         }
 
         @Override
-        public void afterVisitBinaryExpression(BinaryExpression node) {
-            if (node.astOperator() == BinaryOperator.ASSIGN) {
-                Expression rhs = node.astRight();
-                ResolvedClass resolvedClass = mTypes.get(rhs);
+        public boolean visitBinaryExpression(@NotNull UBinaryExpression node) {
+            if (node.getOperator() == UastBinaryOperator.ASSIGN) {
+                UExpression rhs = node.getRightOperand();
+                UClass resolvedClass = mTypes.get(rhs);
                 if (resolvedClass != null) {
-                    Expression lhs = node.astLeft();
+                    UExpression lhs = node.getLeftOperand();
                     mTypes.put(lhs, resolvedClass);
-                    ResolvedNode variable = mContext.resolve(lhs);
-                    if (variable instanceof ResolvedVariable) {
-                        mVariableTypes.put((ResolvedVariable) variable, resolvedClass);
+                    if (lhs instanceof UResolvable) {
+                        UDeclaration variable = ((UResolvable) lhs).resolve(mContext);
+                        if (variable instanceof UVariable) {
+                            mVariableTypes.put((UVariable) variable, resolvedClass);
+                        }
                     }
                 }
             }
+            return false;
         }
 
         @Override
-        public void afterVisitInlineIfExpression(InlineIfExpression node) {
-            ResolvedClass resolvedClass = mTypes.get(node.astIfTrue());
-            if (resolvedClass == null) {
-                resolvedClass = mTypes.get(node.astIfFalse());
-            }
-            if (resolvedClass != null) {
-                mTypes.put(node, resolvedClass);
-            }
-        }
-
-        @Override
-        public void afterVisitVariableDefinitionEntry(VariableDefinitionEntry node) {
-            Expression initializer = node.astInitializer();
-            if (initializer != null) {
-                ResolvedClass resolvedClass = mTypes.get(initializer);
+        public boolean visitIfExpression(@NotNull UIfExpression node) {
+            if (node.isTernary()) {
+                UClass resolvedClass = mTypes.get(node.getThenBranch());
+                if (resolvedClass == null) {
+                    resolvedClass = mTypes.get(node.getElseBranch());
+                }
                 if (resolvedClass != null) {
                     mTypes.put(node, resolvedClass);
-                    ResolvedNode variable = mContext.resolve(node);
-                    if (variable instanceof ResolvedVariable) {
-                        mVariableTypes.put((ResolvedVariable) variable, resolvedClass);
-                    }
                 }
             }
+            return false;
         }
 
         @Override
-        public void afterVisitCast(Cast node) {
-            ResolvedClass resolvedClass = mTypes.get(node);
+        public boolean visitVariable(@NotNull UVariable node) {
+            UExpression initializer = node.getInitializer();
+            if (initializer != null) {
+                UClass resolvedClass = mTypes.get(initializer);
+                if (resolvedClass != null) {
+                    mTypes.put(node, resolvedClass);
+                    mVariableTypes.put(node, resolvedClass);
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public boolean visitBinaryExpressionWithType(@NotNull UBinaryExpressionWithType node) {
+            UClass resolvedClass = mTypes.get(node);
             if (resolvedClass != null) {
                 mTypes.put(node, resolvedClass);
             }
+            return false;
         }
     }
 }

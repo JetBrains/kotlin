@@ -14,50 +14,36 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
 import static com.android.SdkConstants.CLASS_CONTEXT;
 
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
-import com.android.tools.lint.client.api.JavaParser.ResolvedClass;
-import com.android.tools.lint.client.api.JavaParser.ResolvedField;
-import com.android.tools.lint.client.api.JavaParser.ResolvedMethod;
-import com.android.tools.lint.client.api.JavaParser.ResolvedNode;
-import com.android.tools.lint.client.api.JavaParser.ResolvedVariable;
-import com.android.tools.lint.client.api.JavaParser.TypeDescriptor;
-import com.android.tools.lint.detector.api.Category;
-import com.android.tools.lint.detector.api.Detector;
-import com.android.tools.lint.detector.api.Detector.JavaScanner;
-import com.android.tools.lint.detector.api.Implementation;
-import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.JavaContext;
-import com.android.tools.lint.detector.api.Location;
-import com.android.tools.lint.detector.api.Scope;
-import com.android.tools.lint.detector.api.Severity;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.Detector;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.Location;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
 import com.google.common.collect.Lists;
 
 import java.util.Arrays;
 import java.util.List;
 
-import lombok.ast.AstVisitor;
-import lombok.ast.BinaryExpression;
-import lombok.ast.BinaryOperator;
-import lombok.ast.ConstructorInvocation;
-import lombok.ast.Expression;
-import lombok.ast.ForwardingAstVisitor;
-import lombok.ast.MethodInvocation;
-import lombok.ast.Node;
-import lombok.ast.Return;
-import lombok.ast.StrictListAccessor;
-import lombok.ast.VariableDefinitionEntry;
-import lombok.ast.VariableReference;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.uast.*;
+import org.jetbrains.uast.check.UastAndroidContext;
+import org.jetbrains.uast.check.UastAndroidUtils;
+import org.jetbrains.uast.check.UastScanner;
+import org.jetbrains.uast.visitor.UastVisitor;
 
 /**
  * Checks for missing {@code recycle} calls on resources that encourage it, and
  * for missing {@code commit} calls on FragmentTransactions, etc.
  */
-public class CleanupDetector extends Detector implements JavaScanner {
+public class CleanupDetector extends Detector implements UastScanner {
 
     private static final Implementation IMPLEMENTATION = new Implementation(
             CleanupDetector.class,
@@ -140,26 +126,26 @@ public class CleanupDetector extends Detector implements JavaScanner {
     public CleanupDetector() {
     }
 
-    // ---- Implements JavaScanner ----
+    // ---- Implements UastScanner ----
 
-    @Nullable
+
     @Override
-    public List<String> getApplicableMethodNames() {
+    public List<String> getApplicableFunctionNames() {
         return Arrays.asList(
-                // FragmentManager commit check
-                BEGIN_TRANSACTION,
+          // FragmentManager commit check
+          BEGIN_TRANSACTION,
 
-                // Recycle check
-                OBTAIN, OBTAIN_NO_HISTORY,
-                OBTAIN_STYLED_ATTRIBUTES,
-                OBTAIN_ATTRIBUTES,
-                OBTAIN_TYPED_ARRAY,
+          // Recycle check
+          OBTAIN, OBTAIN_NO_HISTORY,
+          OBTAIN_STYLED_ATTRIBUTES,
+          OBTAIN_ATTRIBUTES,
+          OBTAIN_TYPED_ARRAY,
 
-                // Release check
-                ACQUIRE_CPC,
+          // Release check
+          ACQUIRE_CPC,
 
-                // Cursor close check
-                QUERY, RAW_QUERY, QUERY_WITH_FACTORY, RAW_QUERY_WITH_FACTORY
+          // Cursor close check
+          QUERY, RAW_QUERY, QUERY_WITH_FACTORY, RAW_QUERY_WITH_FACTORY
         );
     }
 
@@ -170,10 +156,8 @@ public class CleanupDetector extends Detector implements JavaScanner {
     }
 
     @Override
-    public void visitMethod(@NonNull JavaContext context, @Nullable AstVisitor visitor,
-            @NonNull MethodInvocation node) {
-
-        String name = node.astName().astValue();
+    public void visitFunctionCall(UastAndroidContext context, UCallExpression node) {
+        String name = node.getFunctionName();
         if (BEGIN_TRANSACTION.equals(name)) {
             checkTransactionCommits(context, node);
         } else {
@@ -182,48 +166,53 @@ public class CleanupDetector extends Detector implements JavaScanner {
     }
 
     @Override
-    public void visitConstructor(@NonNull JavaContext context, @Nullable AstVisitor visitor,
-            @NonNull ConstructorInvocation node, @NonNull ResolvedMethod constructor) {
-        checkRecycled(context, node, constructor.getContainingClass().getSignature(), RELEASE);
+    public void visitConstructor(UastAndroidContext context, UCallExpression functionCall, UFunction constructor) {
+        UClass containingClass = UastUtils.getContainingClass(constructor);
+        if (containingClass != null) {
+            checkRecycled(context, functionCall, containingClass.getFqName(), RELEASE);
+        }
     }
 
-    private static void checkResourceRecycled(@NonNull JavaContext context,
-            @NonNull MethodInvocation node, @NonNull String name) {
+    private static void checkResourceRecycled(@NonNull UastAndroidContext context,
+            @NonNull UCallExpression node, @NonNull String name) {
         // Recycle detector
-        ResolvedNode resolved = context.resolve(node);
-        if (!(resolved instanceof ResolvedMethod)) {
+        UFunction method = node.resolve(context);
+        if (method == null) {
             return;
         }
-        ResolvedMethod method = (ResolvedMethod) resolved;
-        ResolvedClass containingClass = method.getContainingClass();
+        UClass containingClass = UastUtils.getContainingClass(method);
+        if (containingClass == null) {
+            return;
+        }
+
         if ((OBTAIN.equals(name) || OBTAIN_NO_HISTORY.equals(name)) &&
-                containingClass.isSubclassOf(MOTION_EVENT_CLS, false)) {
+                containingClass.isSubclassOf(MOTION_EVENT_CLS)) {
             checkRecycled(context, node, MOTION_EVENT_CLS, RECYCLE);
-        } else if (OBTAIN.equals(name) && containingClass.isSubclassOf(PARCEL_CLS, false)) {
+        } else if (OBTAIN.equals(name) && containingClass.isSubclassOf(PARCEL_CLS)) {
             checkRecycled(context, node, PARCEL_CLS, RECYCLE);
         } else if (OBTAIN.equals(name) &&
-                containingClass.isSubclassOf(VELOCITY_TRACKER_CLS, false)) {
+                containingClass.isSubclassOf(VELOCITY_TRACKER_CLS)) {
             checkRecycled(context, node, VELOCITY_TRACKER_CLS, RECYCLE);
         } else if ((OBTAIN_STYLED_ATTRIBUTES.equals(name)
                 || OBTAIN_ATTRIBUTES.equals(name)
                 || OBTAIN_TYPED_ARRAY.equals(name)) &&
-                (containingClass.isSubclassOf(CLASS_CONTEXT, false) ||
-                        containingClass.isSubclassOf(RESOURCES_CLS, false))) {
-            TypeDescriptor returnType = method.getReturnType();
-            if (returnType != null && returnType.matchesSignature(TYPED_ARRAY_CLS)) {
+                (containingClass.isSubclassOf(CLASS_CONTEXT) ||
+                        containingClass.isSubclassOf(RESOURCES_CLS))) {
+            UType returnType = method.getReturnType();
+            if (returnType != null && returnType.matchesFqName(TYPED_ARRAY_CLS)) {
                 checkRecycled(context, node, TYPED_ARRAY_CLS, RECYCLE);
             }
         } else if (ACQUIRE_CPC.equals(name) && containingClass.isSubclassOf(
-                CONTENT_RESOLVER_CLS, false)) {
+                CONTENT_RESOLVER_CLS)) {
             checkRecycled(context, node, CONTENT_PROVIDER_CLIENT_CLS, RELEASE);
         } else if ((QUERY.equals(name)
                 || RAW_QUERY.equals(name)
                 || QUERY_WITH_FACTORY.equals(name)
                 || RAW_QUERY_WITH_FACTORY.equals(name))
-                && (containingClass.isSubclassOf(SQLITE_DATABASE_CLS, false) ||
-                    containingClass.isSubclassOf(CONTENT_RESOLVER_CLS, false) ||
-                    containingClass.isSubclassOf(CONTENT_PROVIDER_CLS, false) ||
-                    containingClass.isSubclassOf(CONTENT_PROVIDER_CLIENT_CLS, false))) {
+                && (containingClass.isSubclassOf(SQLITE_DATABASE_CLS) ||
+                    containingClass.isSubclassOf(CONTENT_RESOLVER_CLS) ||
+                    containingClass.isSubclassOf(CONTENT_PROVIDER_CLS) ||
+                    containingClass.isSubclassOf(CONTENT_PROVIDER_CLIENT_CLS))) {
             // Other potential cursors-returning methods that should be tracked:
             //    android.app.DownloadManager#query
             //    android.content.ContentProviderClient#query
@@ -242,34 +231,35 @@ public class CleanupDetector extends Detector implements JavaScanner {
         }
     }
 
-    private static void checkRecycled(@NonNull final JavaContext context, @NonNull Node node,
+    private static void checkRecycled(@NonNull final UastAndroidContext context, @NonNull UElement node,
             @NonNull final String recycleType, @NonNull final String recycleName) {
-        ResolvedVariable boundVariable = getVariable(context, node);
+        UVariable boundVariable = getVariable(context, node);
         if (boundVariable == null) {
             return;
         }
 
-        Node method = JavaContext.findSurroundingMethod(node);
+        UFunction method = UastUtils.getContainingFunction(node);
         if (method == null) {
             return;
         }
 
         FinishVisitor visitor = new FinishVisitor(context, boundVariable) {
             @Override
-            protected boolean isCleanupCall(@NonNull MethodInvocation call) {
-                String methodName = call.astName().astValue();
+            protected boolean isCleanupCall(@NonNull UCallExpression call) {
+                String methodName = call.getFunctionName();
                 if (!recycleName.equals(methodName)) {
                     return false;
                 }
-                ResolvedNode resolved = mContext.resolve(call);
-                if (resolved instanceof ResolvedMethod) {
-                    ResolvedClass containingClass = ((ResolvedMethod) resolved).getContainingClass();
-                    if (containingClass.isSubclassOf(recycleType, false)) {
+                UDeclaration resolved = call.resolve(mContext);
+                if (resolved != null) {
+                    UClass containingClass = UastUtils.getContainingClassOrEmpty(resolved);
+                    if (containingClass.isSubclassOf(recycleType)) {
                         // Yes, called the right recycle() method; now make sure
                         // we're calling it on the right variable
-                        Expression operand = call.astOperand();
-                        if (operand != null) {
-                            resolved = mContext.resolve(operand);
+                        UElement parent = call.getParent();
+                        if (parent instanceof UQualifiedExpression) {
+                            UExpression operand = ((UQualifiedExpression) parent).getReceiver();
+                            resolved = UastUtils.resolveIfCan(operand, mContext);
                             //noinspection SuspiciousMethodCalls
                             if (resolved != null && mVariables.contains(resolved)) {
                                 return true;
@@ -281,7 +271,7 @@ public class CleanupDetector extends Detector implements JavaScanner {
             }
         };
 
-        method.accept(visitor);
+        visitor.process(method);
         if (visitor.isCleanedUp() || visitor.variableEscapes()) {
             return;
         }
@@ -296,46 +286,46 @@ public class CleanupDetector extends Detector implements JavaScanner {
                     "This `%1$s` should be freed up after use with `#%2$s()`", className,
                     recycleName);
         }
-        Node locationNode = node instanceof MethodInvocation ?
-                ((MethodInvocation) node).astName() : node;
-        Location location = context.getLocation(locationNode);
+        UElement locationNode = node instanceof UCallExpression ?
+                ((UCallExpression) node).getFunctionNameElement() : node;
+        Location location = UastAndroidUtils.getLocation(locationNode);
         context.report(RECYCLE_RESOURCE, node, location, message);
     }
 
-    private static boolean checkTransactionCommits(@NonNull JavaContext context,
-            @NonNull MethodInvocation node) {
+    private static boolean checkTransactionCommits(@NonNull UastAndroidContext context,
+            @NonNull UCallExpression node) {
         if (isBeginTransaction(context, node)) {
-            ResolvedVariable boundVariable = getVariable(context, node);
+            UVariable boundVariable = getVariable(context, node);
             if (boundVariable == null && isCommittedInChainedCalls(context, node)) {
                 return true;
             }
 
             if (boundVariable != null) {
-                Node method = JavaContext.findSurroundingMethod(node);
+                UFunction method = UastUtils.getContainingFunction(node);
                 if (method == null) {
                     return true;
                 }
 
                 FinishVisitor commitVisitor = new FinishVisitor(context, boundVariable) {
                     @Override
-                    protected boolean isCleanupCall(@NonNull MethodInvocation call) {
+                    protected boolean isCleanupCall(@NonNull UCallExpression call) {
                         if (isTransactionCommitMethodCall(mContext, call)) {
-                            Expression operand = call.astOperand();
-                            if (operand != null) {
-                                ResolvedNode resolved = mContext.resolve(operand);
+                            UExpression operand = UastUtils.getReceiver(call);
+                            if (operand instanceof UResolvable) {
+                                UDeclaration resolved = ((UResolvable) operand).resolve(mContext);
                                 //noinspection SuspiciousMethodCalls
                                 if (resolved != null && mVariables.contains(resolved)) {
                                     return true;
-                                } else if (resolved instanceof ResolvedMethod
-                                        && operand instanceof MethodInvocation
-                                        && isCommittedInChainedCalls(mContext,(MethodInvocation) operand)) {
+                                } else if (resolved instanceof UFunction
+                                           && operand instanceof UCallExpression
+                                           && isCommittedInChainedCalls(mContext, (UCallExpression) operand)) {
                                     // Check that the target of the committed chains is the
                                     // right variable!
-                                    while (operand instanceof MethodInvocation) {
-                                        operand = ((MethodInvocation)operand).astOperand();
+                                    while (operand instanceof UCallExpression) {
+                                        operand = UastUtils.getReceiver((UCallExpression)operand);
                                     }
-                                    if (operand instanceof VariableReference) {
-                                        resolved = mContext.resolve(operand);
+                                    if (operand instanceof USimpleReferenceExpression) {
+                                        resolved = ((USimpleReferenceExpression)operand).resolve(mContext);
                                         //noinspection SuspiciousMethodCalls
                                         if (resolved != null && mVariables.contains(resolved)) {
                                             return true;
@@ -344,11 +334,10 @@ public class CleanupDetector extends Detector implements JavaScanner {
                                 }
                             }
                         } else if (isShowFragmentMethodCall(mContext, call)) {
-                            StrictListAccessor<Expression, MethodInvocation> arguments =
-                                    call.astArguments();
+                            List<UExpression> arguments = call.getValueArguments();
                             if (arguments.size() == 2) {
-                                Expression first = arguments.first();
-                                ResolvedNode resolved = mContext.resolve(first);
+                                UExpression first = arguments.get(0);
+                                UDeclaration resolved = UastUtils.resolveIfCan(first, mContext);
                                 //noinspection SuspiciousMethodCalls
                                 if (resolved != null && mVariables.contains(resolved)) {
                                     return true;
@@ -359,29 +348,29 @@ public class CleanupDetector extends Detector implements JavaScanner {
                     }
                 };
 
-                method.accept(commitVisitor);
+                commitVisitor.handle(method);
                 if (commitVisitor.isCleanedUp() || commitVisitor.variableEscapes()) {
                     return true;
                 }
             }
 
             String message = "This transaction should be completed with a `commit()` call";
-            context.report(COMMIT_FRAGMENT, node, context.getLocation(node.astName()),
-                    message);
+            context.report(COMMIT_FRAGMENT, node, UastAndroidUtils.getLocation(node.getFunctionReference()),
+                           message);
         }
         return false;
     }
 
-    private static boolean isCommittedInChainedCalls(@NonNull JavaContext context,
-            @NonNull MethodInvocation node) {
+    private static boolean isCommittedInChainedCalls(@NonNull UastAndroidContext context,
+            @NonNull UCallExpression node) {
         // Look for chained calls since the FragmentManager methods all return "this"
         // to allow constructor chaining, e.g.
         //    getFragmentManager().beginTransaction().addToBackStack("test")
         //            .disallowAddToBackStack().hide(mFragment2).setBreadCrumbShortTitle("test")
         //            .show(mFragment2).setCustomAnimations(0, 0).commit();
-        Node parent = node.getParent();
-        while (parent instanceof MethodInvocation) {
-            MethodInvocation methodInvocation = (MethodInvocation) parent;
+        UElement parent = node.getParent();
+        while (parent instanceof UCallExpression) {
+            UCallExpression methodInvocation = (UCallExpression) parent;
             if (isTransactionCommitMethodCall(context, methodInvocation)
                     || isShowFragmentMethodCall(context, methodInvocation)) {
                 return true;
@@ -393,74 +382,71 @@ public class CleanupDetector extends Detector implements JavaScanner {
         return false;
     }
 
-    private static boolean isTransactionCommitMethodCall(@NonNull JavaContext context,
-            @NonNull MethodInvocation call) {
+    private static boolean isTransactionCommitMethodCall(@NonNull UastAndroidContext context,
+            @NonNull UCallExpression call) {
 
-        String methodName = call.astName().astValue();
+        String methodName = call.getFunctionName();
         return (COMMIT.equals(methodName) || COMMIT_ALLOWING_LOSS.equals(methodName)) &&
                 isMethodOnFragmentClass(context, call,
                         FRAGMENT_TRANSACTION_CLS,
                         FRAGMENT_TRANSACTION_V4_CLS);
     }
 
-    private static boolean isShowFragmentMethodCall(@NonNull JavaContext context,
-            @NonNull MethodInvocation call) {
-        String methodName = call.astName().astValue();
+    private static boolean isShowFragmentMethodCall(@NonNull UastAndroidContext context,
+            @NonNull UCallExpression call) {
+        String methodName = call.getFunctionName();
         return SHOW.equals(methodName)
                 && isMethodOnFragmentClass(context, call,
                 DIALOG_FRAGMENT, DIALOG_V4_FRAGMENT);
     }
 
     private static boolean isMethodOnFragmentClass(
-            @NonNull JavaContext context,
-            @NonNull MethodInvocation call,
+            @NonNull UastAndroidContext context,
+            @NonNull UCallExpression call,
             @NonNull String fragmentClass,
             @NonNull String v4FragmentClass) {
-        ResolvedNode resolved = context.resolve(call);
-        if (resolved instanceof ResolvedMethod) {
-            ResolvedClass containingClass = ((ResolvedMethod) resolved).getContainingClass();
-            return containingClass.isSubclassOf(fragmentClass, false) ||
-                    containingClass.isSubclassOf(v4FragmentClass, false);
+        UFunction resolved = call.resolve(context);
+        if (resolved != null) {
+            UClass containingClass = UastUtils.getContainingClassOrEmpty(resolved);
+            return containingClass.isSubclassOf(fragmentClass) ||
+                    containingClass.isSubclassOf(v4FragmentClass);
         }
 
         return false;
     }
 
     @Nullable
-    public static ResolvedVariable getVariable(@NonNull JavaContext context,
-            @NonNull Node expression) {
-        Node parent = expression.getParent();
-        if (parent instanceof BinaryExpression) {
-            BinaryExpression binaryExpression = (BinaryExpression) parent;
-            if (binaryExpression.astOperator() == BinaryOperator.ASSIGN) {
-                Expression lhs = binaryExpression.astLeft();
-                ResolvedNode resolved = context.resolve(lhs);
-                if (resolved instanceof ResolvedVariable) {
-                    return (ResolvedVariable) resolved;
+    public static UVariable getVariable(@NonNull UastAndroidContext context,
+            @NonNull UElement expression) {
+        UElement parent = expression.getParent();
+        if (parent instanceof UBinaryExpression) {
+            UBinaryExpression binaryExpression = (UBinaryExpression) parent;
+            if (binaryExpression.getOperator() == UastBinaryOperator.ASSIGN) {
+                UExpression lhs = binaryExpression.getLeftOperand();
+                if (lhs instanceof UResolvable) {
+                    UDeclaration resolved = ((UResolvable) lhs).resolve(context);
+                    if (resolved instanceof UVariable) {
+                        return (UVariable) resolved;
+                    }
                 }
             }
-        } else if (parent instanceof VariableDefinitionEntry) {
-            ResolvedNode resolved = context.resolve(parent);
-            if (resolved instanceof ResolvedVariable) {
-                return (ResolvedVariable) resolved;
-            }
+        } else if (parent instanceof UVariable) {
+            return (UVariable) parent;
         }
 
         return null;
     }
 
-    private static boolean isBeginTransaction(@NonNull JavaContext context,
-            @NonNull MethodInvocation node) {
-        String methodName = node.astName().astValue();
-        assert methodName.equals(BEGIN_TRANSACTION) : methodName;
+    private static boolean isBeginTransaction(@NonNull UastAndroidContext context,
+            @NonNull UCallExpression node) {
+        String methodName = node.getFunctionName();
+        assert BEGIN_TRANSACTION.equals(methodName) : methodName;
         if (BEGIN_TRANSACTION.equals(methodName)) {
-            ResolvedNode resolved = context.resolve(node);
-            if (resolved instanceof ResolvedMethod) {
-                ResolvedMethod method = (ResolvedMethod) resolved;
-                ResolvedClass containingClass = method.getContainingClass();
-                if (containingClass.isSubclassOf(FRAGMENT_MANAGER_CLS, false)
-                        || containingClass.isSubclassOf(FRAGMENT_MANAGER_V4_CLS,
-                        false)) {
+            UFunction method = node.resolve(context);
+            if (method != null) {
+                UClass containingClass = UastUtils.getContainingClassOrEmpty(method);
+                if (containingClass.isSubclassOf(FRAGMENT_MANAGER_CLS)
+                        || containingClass.isSubclassOf(FRAGMENT_MANAGER_V4_CLS)) {
                     return true;
                 }
             }
@@ -475,13 +461,13 @@ public class CleanupDetector extends Detector implements JavaScanner {
      * case of a TypedArray we're looking for a "recycle", call, in the
      * case of a database cursor we're looking for a "close" call, etc.
      */
-    private abstract static class FinishVisitor extends ForwardingAstVisitor {
-        protected final JavaContext mContext;
-        protected final List<ResolvedVariable> mVariables;
+    private abstract static class FinishVisitor extends UastVisitor {
+        protected final UastAndroidContext mContext;
+        protected final List<UVariable> mVariables;
         private boolean mContainsCleanup;
         private boolean mEscapes;
 
-        public FinishVisitor(JavaContext context, @NonNull ResolvedVariable variable) {
+        public FinishVisitor(UastAndroidContext context, @NonNull UVariable variable) {
             mContext = context;
             mVariables = Lists.newArrayList(variable);
         }
@@ -495,25 +481,25 @@ public class CleanupDetector extends Detector implements JavaScanner {
         }
 
         @Override
-        public boolean visitNode(Node node) {
-            return mContainsCleanup || super.visitNode(node);
+        public void process(@NotNull UElement element) {
+            if (!mContainsCleanup) {
+                super.process(element);
+            }
         }
 
-        protected abstract boolean isCleanupCall(@NonNull MethodInvocation call);
+        protected abstract boolean isCleanupCall(@NonNull UCallExpression call);
 
         @Override
-        public boolean visitMethodInvocation(MethodInvocation call) {
+        public boolean visitCallExpression(@NotNull UCallExpression call) {
             if (mContainsCleanup) {
                 return true;
             }
 
-            super.visitMethodInvocation(call);
-
             // Look for escapes
             if (!mEscapes) {
-                for (Expression expression : call.astArguments()) {
-                    if (expression instanceof VariableReference) {
-                        ResolvedNode resolved = mContext.resolve(expression);
+                for (UExpression expression : call.getValueArguments()) {
+                    if (expression instanceof USimpleReferenceExpression) {
+                        UDeclaration resolved = ((USimpleReferenceExpression) expression).resolve(mContext);
                         //noinspection SuspiciousMethodCalls
                         if (resolved != null && mVariables.contains(resolved)) {
                             mEscapes = true;
@@ -521,12 +507,11 @@ public class CleanupDetector extends Detector implements JavaScanner {
                             // Special case: MotionEvent.obtain(MotionEvent): passing in an
                             // event here does not recycle the event, and we also know it
                             // doesn't escape
-                            if (OBTAIN.equals(call.astName().astValue())) {
-                                ResolvedNode r = mContext.resolve(call);
-                                if (r instanceof ResolvedMethod) {
-                                    ResolvedMethod method = (ResolvedMethod) r;
-                                    ResolvedClass cls = method.getContainingClass();
-                                    if (cls.matches(MOTION_EVENT_CLS)) {
+                            if (OBTAIN.equals(call.getFunctionName())) {
+                                UFunction method = call.resolve(mContext);
+                                if (method != null) {
+                                    UClass cls = UastUtils.getContainingClassOrEmpty(method);
+                                    if (cls.matchesFqName(MOTION_EVENT_CLS)) {
                                         mEscapes = false;
                                     }
                                 }
@@ -545,57 +530,61 @@ public class CleanupDetector extends Detector implements JavaScanner {
         }
 
         @Override
-        public boolean visitVariableDefinitionEntry(VariableDefinitionEntry node) {
-            Expression initializer = node.astInitializer();
-            if (initializer instanceof VariableReference) {
-                ResolvedNode resolved = mContext.resolve(initializer);
+        public boolean visitVariable(@NotNull UVariable node) {
+            UExpression initializer = node.getInitializer();
+            if (initializer instanceof USimpleReferenceExpression) {
+                UDeclaration resolved = ((USimpleReferenceExpression) initializer).resolve(mContext);
                 //noinspection SuspiciousMethodCalls
                 if (resolved != null && mVariables.contains(resolved)) {
-                    ResolvedNode resolvedVariable = mContext.resolve(node);
-                    if (resolvedVariable instanceof ResolvedVariable) {
-                        ResolvedVariable variable = (ResolvedVariable) resolvedVariable;
-                        mVariables.add(variable);
-                    } else if (resolvedVariable instanceof ResolvedField) {
+                    if (node.getKind() == UastVariableKind.LOCAL_VARIABLE) {
+                        mVariables.add(node);
+                    } else if (node.getKind() == UastVariableKind.MEMBER) {
                         mEscapes = true;
                     }
                 }
             }
-            return super.visitVariableDefinitionEntry(node);
+            return false;
         }
 
         @Override
-        public boolean visitBinaryExpression(BinaryExpression node) {
-            if (node.astOperator() == BinaryOperator.ASSIGN) {
-                Expression rhs = node.astRight();
-                if (rhs instanceof VariableReference) {
-                    ResolvedNode resolved = mContext.resolve(rhs);
+        public boolean visitBinaryExpression(@NotNull UBinaryExpression node) {
+            if (node.getOperator() == UastBinaryOperator.ASSIGN) {
+                UExpression rhs = node.getRightOperand();
+                if (rhs instanceof USimpleReferenceExpression) {
+                    UDeclaration resolved = ((USimpleReferenceExpression) rhs).resolve(mContext);
+                    UExpression leftOperand = node.getLeftOperand();
                     //noinspection SuspiciousMethodCalls
-                    if (resolved != null && mVariables.contains(resolved)) {
-                        ResolvedNode resolvedLhs = mContext.resolve(node.astLeft());
-                        if (resolvedLhs instanceof ResolvedVariable) {
-                            ResolvedVariable variable = (ResolvedVariable) resolvedLhs;
-                            mVariables.add(variable);
-                        } else if (resolvedLhs instanceof ResolvedField) {
-                            mEscapes = true;
+                    if (resolved != null && mVariables.contains(resolved) && leftOperand instanceof UResolvable) {
+                        UDeclaration resolvedLhs = ((UResolvable) leftOperand).resolve(mContext);
+                        if (resolvedLhs instanceof UVariable) {
+                            UVariable variable = (UVariable) resolvedLhs;
+                            if (variable.getKind() == UastVariableKind.LOCAL_VARIABLE) {
+                                mVariables.add(variable);
+                            } else if (variable.getKind() == UastVariableKind.MEMBER) {
+                                mEscapes = true;
+                            }
                         }
                     }
                 }
             }
-            return super.visitBinaryExpression(node);
+
+            return false;
         }
 
         @Override
-        public boolean visitReturn(Return node) {
-            Expression value = node.astValue();
-            if (value instanceof VariableReference) {
-                ResolvedNode resolved = mContext.resolve(value);
-                //noinspection SuspiciousMethodCalls
-                if (resolved != null && mVariables.contains(resolved)) {
-                    mEscapes = true;
+        public boolean visitSpecialExpressionList(@NotNull USpecialExpressionList node) {
+            if (node.getKind() == UastSpecialExpressionKind.RETURN) {
+                UExpression value = node.firstOrNull();
+                if (value instanceof USimpleReferenceExpression) {
+                    UDeclaration resolved = ((USimpleReferenceExpression) value).resolve(mContext);
+                    //noinspection SuspiciousMethodCalls
+                    if (resolved != null && mVariables.contains(resolved)) {
+                        mEscapes = true;
+                    }
                 }
             }
 
-            return super.visitReturn(node);
+            return false;
         }
     }
 }

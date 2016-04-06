@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jetbrains.android.inspections.lint;
+package org.jetbrains.android.inspections.klint;
 
 import com.android.SdkConstants;
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.android.builder.model.SourceProvider;
-import com.android.tools.lint.client.api.LintRequest;
-import com.android.tools.lint.detector.api.*;
+import com.android.tools.klint.client.api.LintRequest;
 import com.google.common.base.Splitter;
 import com.intellij.debugger.engine.JVMNameUtil;
 import com.intellij.ide.util.JavaAnonymousClassesHelper;
@@ -37,6 +36,10 @@ import com.intellij.psi.util.TypeConversionUtil;
 import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.uast.UClass;
+import org.jetbrains.uast.UElement;
+import org.jetbrains.uast.UFile;
+import org.jetbrains.uast.java.JavaUClass;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -66,7 +69,7 @@ public class IntellijLintUtils {
    * @return the location of the given element
    */
   @NonNull
-  public static Location getLocation(@NonNull File file, @NonNull PsiElement element) {
+  public static com.android.tools.klint.detector.api.Location getLocation(@NonNull File file, @NonNull PsiElement element) {
     //noinspection ConstantConditions
     assert element.getContainingFile().getVirtualFile() == null
            || FileUtil.filesEqual(VfsUtilCore.virtualToIoFile(element.getContainingFile().getVirtualFile()), file);
@@ -81,19 +84,19 @@ public class IntellijLintUtils {
     }
 
     TextRange textRange = element.getTextRange();
-    Position start = new DefaultPosition(-1, -1, textRange.getStartOffset());
-    Position end = new DefaultPosition(-1, -1, textRange.getEndOffset());
-    return Location.create(file, start, end);
+    com.android.tools.klint.detector.api.Position start = new com.android.tools.klint.detector.api.DefaultPosition(-1, -1, textRange.getStartOffset());
+    com.android.tools.klint.detector.api.Position end = new com.android.tools.klint.detector.api.DefaultPosition(-1, -1, textRange.getEndOffset());
+    return com.android.tools.klint.detector.api.Location.create(file, start, end);
   }
 
   /**
-   * Returns the {@link PsiFile} associated with a given lint {@link Context}
+   * Returns the {@link PsiFile} associated with a given lint {@link com.android.tools.klint.detector.api.Context}
    *
    * @param context the context to look up the file for
    * @return the corresponding {@link PsiFile}, or null
    */
   @Nullable
-  public static PsiFile getPsiFile(@NonNull Context context) {
+  public static PsiFile getPsiFile(@NonNull com.android.tools.klint.detector.api.Context context) {
     VirtualFile file = VfsUtil.findFileByIoFile(context.file, false);
     if (file == null) {
       return null;
@@ -106,6 +109,11 @@ public class IntellijLintUtils {
     return PsiManager.getInstance(project).findFile(file);
   }
 
+  public static boolean isSuppressed(@NonNull UElement element, @NonNull UFile file, @NonNull com.android.tools.klint.detector.api.Issue issue) {
+    //TODO
+    return true;
+  }
+
   /**
    * Returns true if the given issue is suppressed at the given element within the given file
    *
@@ -114,7 +122,7 @@ public class IntellijLintUtils {
    * @param issue the issue to check
    * @return true if the given issue is suppressed
    */
-  public static boolean isSuppressed(@NonNull PsiElement element, @NonNull PsiFile file, @NonNull Issue issue) {
+  public static boolean isSuppressed(@NonNull PsiElement element, @NonNull PsiFile file, @NonNull com.android.tools.klint.detector.api.Issue issue) {
     // Search upwards for suppress lint and suppress warnings annotations
     // Search upwards for target api annotations
     while (element != null && element != file) { // otherwise it will keep going into directories!
@@ -200,7 +208,7 @@ public class IntellijLintUtils {
    *
    * @param psiClass the class to look up the internal name for
    * @return the internal class name
-   * @see ClassContext#getInternalName(String)
+   * @see com.android.tools.klint.detector.api.ClassContext#getInternalName(String)
    */
   @Nullable
   public static String getInternalName(@NonNull PsiClass psiClass) {
@@ -218,15 +226,23 @@ public class IntellijLintUtils {
     if (sig == null) {
       String qualifiedName = psiClass.getQualifiedName();
       if (qualifiedName != null) {
-        return ClassContext.getInternalName(qualifiedName);
+        return com.android.tools.klint.detector.api.ClassContext.getInternalName(qualifiedName);
       }
       return null;
     } else if (sig.indexOf('.') != -1) {
       // Workaround -- ClassUtil doesn't treat this correctly!
       // .replace('.', '/');
-      sig = ClassContext.getInternalName(sig);
+      sig = com.android.tools.klint.detector.api.ClassContext.getInternalName(sig);
     }
     return sig;
+  }
+
+  public static String getInternalName(@NotNull UClass clazz) {
+    if (clazz instanceof JavaUClass) {
+      return getInternalName(((JavaUClass) clazz).getPsi());
+    } else {
+      return null;
+    }
   }
 
   /**
@@ -235,7 +251,7 @@ public class IntellijLintUtils {
    *
    * @param psiClassType the class type to look up the internal name for
    * @return the internal class name
-   * @see ClassContext#getInternalName(String)
+   * @see com.android.tools.klint.detector.api.ClassContext#getInternalName(String)
    */
   @Nullable
   public static String getInternalName(@NonNull PsiClassType psiClassType) {
@@ -246,7 +262,7 @@ public class IntellijLintUtils {
 
     String className = psiClassType.getClassName();
     if (className != null) {
-      return ClassContext.getInternalName(className);
+      return com.android.tools.klint.detector.api.ClassContext.getInternalName(className);
     }
 
     return null;

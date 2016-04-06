@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
 import static com.android.SdkConstants.ANDROID_PKG;
 import static com.android.SdkConstants.DOT_XML;
@@ -26,8 +26,8 @@ import com.android.sdklib.repository.FullRevision;
 import com.android.sdklib.repository.descriptors.PkgType;
 import com.android.sdklib.repository.local.LocalPkgInfo;
 import com.android.sdklib.repository.local.LocalSdk;
-import com.android.tools.lint.client.api.LintClient;
-import com.android.tools.lint.detector.api.LintUtils;
+import com.android.tools.klint.client.api.LintClient;
+import com.android.tools.klint.detector.api.LintUtils;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;

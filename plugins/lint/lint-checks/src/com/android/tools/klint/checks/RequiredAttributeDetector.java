@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
 import static com.android.SdkConstants.ANDROID_NS_NAME_PREFIX;
 import static com.android.SdkConstants.ANDROID_STYLE_RESOURCE_PREFIX;
@@ -40,26 +40,27 @@ import static com.android.SdkConstants.VIEW_INCLUDE;
 import static com.android.SdkConstants.VIEW_MERGE;
 import static com.android.resources.ResourceFolderType.LAYOUT;
 import static com.android.resources.ResourceFolderType.VALUES;
-import static com.android.tools.lint.detector.api.LintUtils.getLayoutName;
+import static com.android.tools.klint.detector.api.LintUtils.getLayoutName;
 
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.android.annotations.VisibleForTesting;
 import com.android.resources.ResourceFolderType;
-import com.android.tools.lint.detector.api.Category;
-import com.android.tools.lint.detector.api.Context;
-import com.android.tools.lint.detector.api.Detector;
-import com.android.tools.lint.detector.api.Implementation;
-import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.JavaContext;
-import com.android.tools.lint.detector.api.LayoutDetector;
-import com.android.tools.lint.detector.api.Scope;
-import com.android.tools.lint.detector.api.Severity;
-import com.android.tools.lint.detector.api.Speed;
-import com.android.tools.lint.detector.api.XmlContext;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.Context;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.LayoutDetector;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
+import com.android.tools.klint.detector.api.Speed;
+import com.android.tools.klint.detector.api.XmlContext;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import org.jetbrains.uast.*;
+import org.jetbrains.uast.check.UastAndroidContext;
+import org.jetbrains.uast.check.UastScanner;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -72,18 +73,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import lombok.ast.AstVisitor;
-import lombok.ast.Expression;
-import lombok.ast.MethodInvocation;
-import lombok.ast.NullLiteral;
-import lombok.ast.Select;
-import lombok.ast.StrictListAccessor;
-import lombok.ast.VariableReference;
-
 /**
  * Ensures that layout width and height attributes are specified
  */
-public class RequiredAttributeDetector extends LayoutDetector implements Detector.JavaScanner {
+public class RequiredAttributeDetector extends LayoutDetector implements UastScanner {
     /** The main issue discovered by this detector */
     public static final Issue ISSUE = Issue.create(
             "RequiredSize", //$NON-NLS-1$
@@ -100,7 +93,7 @@ public class RequiredAttributeDetector extends LayoutDetector implements Detecto
             Severity.ERROR,
             new Implementation(
                     RequiredAttributeDetector.class,
-                    EnumSet.of(Scope.JAVA_FILE, Scope.ALL_RESOURCE_FILES)));
+                    EnumSet.of(Scope.SOURCE_FILE, Scope.ALL_RESOURCE_FILES)));
 
     /** Map from each style name to parent style */
     @Nullable private Map<String, String> mStyleParents;
@@ -538,38 +531,43 @@ public class RequiredAttributeDetector extends LayoutDetector implements Detecto
 
     // ---- Implements JavaScanner ----
 
+
     @Override
-    @Nullable
-    public List<String> getApplicableMethodNames() {
+    public List<String> getApplicableFunctionNames() {
         return Collections.singletonList("inflate"); //$NON-NLS-1$
     }
 
     @Override
-    public void visitMethod(
-            @NonNull JavaContext context,
-            @Nullable AstVisitor visitor,
-            @NonNull MethodInvocation call) {
+    public void visitFunctionCall(UastAndroidContext context, UCallExpression node) {
         // Handle
         //    View#inflate(Context context, int resource, ViewGroup root)
         //    LayoutInflater#inflate(int resource, ViewGroup root)
         //    LayoutInflater#inflate(int resource, ViewGroup root, boolean attachToRoot)
-        StrictListAccessor<Expression, MethodInvocation> args = call.astArguments();
+        List<UExpression> args = node.getValueArguments();
 
         String layout = null;
         int index = 0;
-        for (Iterator<Expression> iterator = args.iterator(); iterator.hasNext(); index++) {
-            Expression expression = iterator.next();
-            if (expression instanceof Select) {
-                Select outer = (Select) expression;
-                Expression operand = outer.astOperand();
-                if (operand instanceof Select) {
-                    Select inner = (Select) operand;
-                    if (inner.astOperand() instanceof VariableReference) {
-                        VariableReference reference = (VariableReference) inner.astOperand();
-                        if (FN_RESOURCE_BASE.equals(reference.astIdentifier().astValue())
-                                // TODO: constant
-                                && "layout".equals(inner.astIdentifier().astValue())) {
-                            layout = LAYOUT_RESOURCE_PREFIX + outer.astIdentifier().astValue();
+        for (Iterator<UExpression> iterator = args.iterator(); iterator.hasNext(); index++) {
+            UExpression expression = iterator.next();
+            if (expression instanceof UQualifiedExpression) {
+                UQualifiedExpression outer = (UQualifiedExpression) expression;
+                UExpression operand = outer.getReceiver();
+                if (operand instanceof UQualifiedExpression) {
+                    UQualifiedExpression inner = (UQualifiedExpression) operand;
+                    if (inner.getReceiver() instanceof USimpleReferenceExpression) {
+                        USimpleReferenceExpression reference = (USimpleReferenceExpression) inner.getReceiver();
+                        if (FN_RESOURCE_BASE.equals(reference.getIdentifier())
+                            // TODO: constant
+                            && inner.selectorMatches("layout")) {
+                            layout = LAYOUT_RESOURCE_PREFIX + outer.getSelector().renderString();
+                            break;
+                        }
+                    } else if (inner.getReceiver() instanceof UQualifiedExpression) {
+                        UQualifiedExpression reference = (UQualifiedExpression) inner.getReceiver();
+                        if (reference.selectorMatches(FN_RESOURCE_BASE)
+                            // TODO: constant
+                            && inner.selectorMatches("layout")) {
+                            layout = LAYOUT_RESOURCE_PREFIX + outer.getSelector().renderString();
                             break;
                         }
                     }
@@ -578,14 +576,14 @@ public class RequiredAttributeDetector extends LayoutDetector implements Detecto
         }
 
         if (layout == null) {
-            lombok.ast.Node method = StringFormatDetector.getParentMethod(call);
-            if (method != null) {
+            UFunction containingFunction = UastUtils.getContainingFunction(node);
+            if (containingFunction != null) {
                 // Must track local types
                 index = 0;
-                String name = StringFormatDetector.getResourceArg(method, call, index);
+                String name = StringFormatDetector.getResourceArg(containingFunction, node, index);
                 if (name == null) {
                     index = 1;
-                    name = StringFormatDetector.getResourceArg(method, call, index);
+                    name = StringFormatDetector.getResourceArg(containingFunction, node, index);
                 }
                 if (name != null) {
                     layout = LAYOUT_RESOURCE_PREFIX + name;
@@ -602,14 +600,15 @@ public class RequiredAttributeDetector extends LayoutDetector implements Detecto
         int viewRootPos = index + 1;
         if (viewRootPos < args.size()) {
             int i = 0;
-            Iterator<Expression> iterator = args.iterator();
+            Iterator<UExpression> iterator = args.iterator();
             while (iterator.hasNext() && i < viewRootPos) {
                 iterator.next();
                 i++;
             }
             if (iterator.hasNext()) {
-                Expression viewRoot = iterator.next();
-                if (viewRoot instanceof NullLiteral) {
+                UExpression viewRoot = iterator.next();
+                if (viewRoot instanceof ULiteralExpression &&
+                        ((ULiteralExpression)viewRoot).isNull()) {
                     // Yep, this one inflates the given view with a null parent:
                     // Tag it as such. For now just use the include data structure since
                     // it has the same net effect

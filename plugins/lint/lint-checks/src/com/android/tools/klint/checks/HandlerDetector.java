@@ -14,35 +14,31 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
 import com.android.annotations.NonNull;
-import com.android.annotations.Nullable;
-import com.android.tools.lint.client.api.JavaParser.ResolvedClass;
-import com.android.tools.lint.client.api.JavaParser.ResolvedMethod;
-import com.android.tools.lint.client.api.JavaParser.TypeDescriptor;
-import com.android.tools.lint.detector.api.Category;
-import com.android.tools.lint.detector.api.Detector;
-import com.android.tools.lint.detector.api.Implementation;
-import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.JavaContext;
-import com.android.tools.lint.detector.api.Location;
-import com.android.tools.lint.detector.api.Scope;
-import com.android.tools.lint.detector.api.Severity;
-import com.android.tools.lint.detector.api.Speed;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.Detector;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.Location;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
+import com.android.tools.klint.detector.api.Speed;
 
-import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.List;
 
-import lombok.ast.ClassDeclaration;
-import lombok.ast.Node;
+import org.jetbrains.uast.*;
+import org.jetbrains.uast.check.UastAndroidContext;
+import org.jetbrains.uast.check.UastAndroidUtils;
+import org.jetbrains.uast.check.UastScanner;
 
 /**
  * Checks that Handler implementations are top level classes or static.
  * See the corresponding check in the android.os.Handler source code.
  */
-public class HandlerDetector extends Detector implements Detector.JavaScanner {
+public class HandlerDetector extends Detector implements UastScanner {
 
     /** Potentially leaking handlers */
     public static final Issue ISSUE = Issue.create(
@@ -78,58 +74,39 @@ public class HandlerDetector extends Detector implements Detector.JavaScanner {
         return Speed.FAST;
     }
 
-    // ---- Implements JavaScanner ----
+    // ---- Implements UastScanner ----
 
-    @Nullable
+
     @Override
-    public List<String> applicableSuperClasses() {
+    public List<String> getApplicableSuperClasses() {
         return Collections.singletonList(HANDLER_CLS);
     }
 
     @Override
-    public void checkClass(@NonNull JavaContext context, @Nullable ClassDeclaration declaration,
-            @NonNull Node node, @NonNull ResolvedClass cls) {
-        if (!isInnerClass(declaration)) {
-            return;
-        }
-
-        if (isStaticClass(declaration)) {
+    public void visitClass(UastAndroidContext context, UClass node) {
+        boolean x = node.hasModifier(UastModifier.INNER);
+        if (!node.hasModifier(UastModifier.INNER)) {
             return;
         }
 
         // Only flag handlers using the default looper
-        if (hasLooperConstructorParameter(cls)) {
+        if (hasLooperConstructorParameter(node)) {
             return;
         }
 
-        Node locationNode = node instanceof ClassDeclaration
-                ? ((ClassDeclaration) node).astName() : node;
-        Location location = context.getLocation(locationNode);
-        context.report(ISSUE, location, String.format(
-                "This Handler class should be static or leaks might occur (%1$s)",
-                cls.getName()));
+        UElement locationNode = node.getNameElement();
+        Location location = UastAndroidUtils.getLocation(locationNode);
+        context.report(ISSUE, node, location, String.format(
+          "This Handler class should be static or leaks might occur (%1$s)",
+          node.getName()));
+
     }
 
-    private static boolean isInnerClass(@Nullable ClassDeclaration node) {
-        return node == null || // null class declarations means anonymous inner class
-                JavaContext.getParentOfType(node, ClassDeclaration.class, true) != null;
-    }
-
-    private static boolean isStaticClass(@Nullable ClassDeclaration node) {
-        if (node == null) {
-            // A null class declaration means anonymous inner class, and these can't be static
-            return false;
-        }
-
-        int flags = node.astModifiers().getEffectiveModifierFlags();
-        return (flags & Modifier.STATIC) != 0;
-    }
-
-    private static boolean hasLooperConstructorParameter(@NonNull ResolvedClass cls) {
-        for (ResolvedMethod constructor : cls.getConstructors()) {
-            for (int i = 0, n = constructor.getArgumentCount(); i < n; i++) {
-                TypeDescriptor type = constructor.getArgumentType(i);
-                if (type.matchesSignature(LOOPER_CLS)) {
+    private static boolean hasLooperConstructorParameter(@NonNull UClass cls) {
+        for (UFunction constructor : cls.getConstructors()) {
+            for (int i = 0, n = constructor.getValueParameterCount(); i < n; i++) {
+                UType type = constructor.getValueParameters().get(i).getType();
+                if (type.matchesFqName(LOOPER_CLS)) {
                     return true;
                 }
             }

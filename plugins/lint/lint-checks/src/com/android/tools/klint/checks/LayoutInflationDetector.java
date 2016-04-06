@@ -14,39 +14,41 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.checks;
+package com.android.tools.klint.checks;
 
 import static com.android.SdkConstants.ANDROID_URI;
 import static com.android.SdkConstants.ATTR_LAYOUT_RESOURCE_PREFIX;
-import static com.android.tools.lint.checks.ViewHolderDetector.INFLATE;
+import static org.jetbrains.uast.UastLiteralUtils.*;
 
 import com.android.SdkConstants;
 import com.android.annotations.NonNull;
-import com.android.annotations.Nullable;
 import com.android.annotations.VisibleForTesting;
 import com.android.ide.common.res2.AbstractResourceRepository;
 import com.android.ide.common.res2.ResourceFile;
 import com.android.ide.common.res2.ResourceItem;
 import com.android.resources.ResourceType;
-import com.android.tools.lint.client.api.LintClient;
-import com.android.tools.lint.detector.api.Category;
-import com.android.tools.lint.detector.api.Context;
-import com.android.tools.lint.detector.api.Detector;
-import com.android.tools.lint.detector.api.Implementation;
-import com.android.tools.lint.detector.api.Issue;
-import com.android.tools.lint.detector.api.JavaContext;
-import com.android.tools.lint.detector.api.LayoutDetector;
-import com.android.tools.lint.detector.api.LintUtils;
-import com.android.tools.lint.detector.api.Location;
-import com.android.tools.lint.detector.api.Project;
-import com.android.tools.lint.detector.api.Scope;
-import com.android.tools.lint.detector.api.Severity;
-import com.android.tools.lint.detector.api.Speed;
-import com.android.tools.lint.detector.api.XmlContext;
+import com.android.tools.klint.client.api.LintClient;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.Context;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.JavaContext;
+import com.android.tools.klint.detector.api.LayoutDetector;
+import com.android.tools.klint.detector.api.LintUtils;
+import com.android.tools.klint.detector.api.Location;
+import com.android.tools.klint.detector.api.Project;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
+import com.android.tools.klint.detector.api.Speed;
+import com.android.tools.klint.detector.api.XmlContext;
 import com.android.utils.Pair;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import org.jetbrains.uast.*;
+import org.jetbrains.uast.check.UastAndroidUtils;
+import org.jetbrains.uast.check.UastAndroidContext;
+import org.jetbrains.uast.check.UastScanner;
 import org.kxml2.io.KXmlParser;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -64,22 +66,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import lombok.ast.AstVisitor;
-import lombok.ast.Expression;
-import lombok.ast.MethodInvocation;
-import lombok.ast.NullLiteral;
-import lombok.ast.Select;
-import lombok.ast.StrictListAccessor;
-
 /**
  * Looks for layout inflation calls passing null as the view root
  */
-public class LayoutInflationDetector extends LayoutDetector implements Detector.JavaScanner {
+public class LayoutInflationDetector extends LayoutDetector implements UastScanner {
 
     @SuppressWarnings("unchecked")
     private static final Implementation IMPLEMENTATION = new Implementation(
             LayoutInflationDetector.class,
-            Scope.JAVA_AND_RESOURCE_FILES,
+            Scope.SOURCE_AND_RESOURCE_FILES,
             Scope.JAVA_FILE_SCOPE);
 
     /** Passing in a null parent to a layout inflater */
@@ -150,55 +145,55 @@ public class LayoutInflationDetector extends LayoutDetector implements Detector.
         }
     }
 
-    // ---- Implements JavaScanner ----
+    // ---- Implements UastScanner ----
 
-    @Nullable
     @Override
-    public List<String> getApplicableMethodNames() {
-        return Collections.singletonList(INFLATE);
+    public List<String> getApplicableFunctionNames() {
+        return Collections.singletonList(ViewHolderDetector.INFLATE);
     }
 
     @Override
-    public void visitMethod(@NonNull JavaContext context, @Nullable AstVisitor visitor,
-            @NonNull MethodInvocation node) {
-        assert node.astName().astValue().equals(INFLATE);
-        if (node.astOperand() == null) {
+    public void visitFunctionCall(UastAndroidContext context, UCallExpression node) {
+        assert ViewHolderDetector.INFLATE.equals(node.getFunctionName());
+        if (node instanceof USimpleReferenceExpression) {
             return;
         }
-        StrictListAccessor<Expression, MethodInvocation> arguments = node.astArguments();
+        List<UExpression> arguments = node.getValueArguments();
         if (arguments.size() < 2) {
             return;
         }
-        Iterator<Expression> iterator = arguments.iterator();
-        Expression first = iterator.next();
-        Expression second = iterator.next();
-        if (!(second instanceof NullLiteral) || !(first instanceof Select)) {
+        Iterator<UExpression> iterator = arguments.iterator();
+        UExpression first = iterator.next();
+        UExpression second = iterator.next();
+        if (!isNullLiteral(second) || !(first instanceof UQualifiedExpression)) {
             return;
         }
-        Select select = (Select) first;
-        Expression operand = select.astOperand();
-        if (operand instanceof Select) {
-            Select rLayout = (Select) operand;
-            if (rLayout.astIdentifier().astValue().equals(ResourceType.LAYOUT.getName()) &&
-                    rLayout.astOperand().toString().endsWith(SdkConstants.R_CLASS)) {
-                String layoutName = select.astIdentifier().astValue();
-                if (context.getScope().contains(Scope.RESOURCE_FILE)) {
+        UQualifiedExpression select = (UQualifiedExpression) first;
+        UExpression selector = select.getSelector();
+        UExpression receiver = select.getReceiver();
+        if (receiver instanceof UQualifiedExpression && selector instanceof USimpleReferenceExpression) {
+            UQualifiedExpression rLayout = (UQualifiedExpression) receiver;
+            if (rLayout.selectorMatches(ResourceType.LAYOUT.getName()) &&
+                rLayout.getReceiver().renderString().endsWith(SdkConstants.R_CLASS)) {
+                String layoutName = ((USimpleReferenceExpression)selector).getIdentifier();
+
+                JavaContext lintContext = context.getLintContext();
+
+                if (lintContext.getScope().contains(Scope.RESOURCE_FILE)) {
                     // We're doing a full analysis run: we can gather this information
                     // incrementally
-                    if (!context.getDriver().isSuppressed(context, ISSUE, node)) {
+                    if (!lintContext.getDriver().isSuppressed(lintContext, ISSUE, node)) {
                         if (mPendingErrors == null) {
                             mPendingErrors = Lists.newArrayList();
                         }
-                        Location location = context.getLocation(second);
+                        Location location = UastAndroidUtils.getLocation(second);
                         mPendingErrors.add(Pair.of(layoutName, location));
                     }
-                } else if (hasLayoutParams(context, layoutName)) {
-                    context.report(ISSUE, node, context.getLocation(second), ERROR_MESSAGE);
+                } else if (hasLayoutParams(lintContext, layoutName)) {
+                    context.report(ISSUE, node, UastAndroidUtils.getLocation(second), ERROR_MESSAGE);
                 }
             }
         }
-
-        super.visitMethod(context, visitor, node);
     }
 
     private static boolean hasLayoutParams(@NonNull JavaContext context, String name) {
