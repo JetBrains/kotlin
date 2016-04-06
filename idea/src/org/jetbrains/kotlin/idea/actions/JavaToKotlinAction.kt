@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.idea.actions
 
+import com.intellij.ide.scratch.ScratchFileService
+import com.intellij.ide.scratch.ScratchRootType
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
@@ -32,6 +34,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.PsiManager
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.refactoring.toPsiFile
 import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
 import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
@@ -61,11 +64,17 @@ class JavaToKotlinAction : AnAction() {
             val result = ArrayList<VirtualFile>()
             for ((psiFile, text) in javaFiles.zip(convertedTexts)) {
                 val virtualFile = psiFile.virtualFile
-                val fileName = uniqueKotlinFileName(virtualFile)
                 try {
-                    virtualFile.rename(this, fileName)
                     virtualFile.setBinaryContent(CharsetToolkit.getUtf8Bytes(text))
-                    result.add(virtualFile)
+
+                    if (ScratchRootType.getInstance().containsFile(virtualFile)) {
+                        val mapping = ScratchFileService.getInstance().scratchesMapping
+                        mapping.setMapping(virtualFile, KotlinFileType.INSTANCE.language)
+                    }
+                    else {
+                        val fileName = uniqueKotlinFileName(virtualFile)
+                        virtualFile.rename(this, fileName)
+                    }
                 }
                 catch (e: IOException) {
                     MessagesEx.error(psiFile.project, e.message).showLater()
