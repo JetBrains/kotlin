@@ -16,20 +16,27 @@
 
 package org.jetbrains.kotlin.idea.refactoring.rename
 
-import com.intellij.refactoring.rename.RenamePsiElementProcessor
 import com.intellij.psi.PsiElement
-import com.intellij.usageView.UsageInfo
+import com.intellij.psi.PsiReference
+import com.intellij.psi.search.searches.MethodReferencesSearch
+import com.intellij.refactoring.rename.RenamePsiElementProcessor
+import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.utils.SmartList
 
 abstract class RenameKotlinPsiProcessor : RenamePsiElementProcessor() {
     override fun canProcessElement(element: PsiElement): Boolean = element is KtNamedDeclaration
 
-    override fun findCollisions(
-            element: PsiElement?,
-            newName: String?,
-            allRenames: Map<out PsiElement?, String>,
-            result: MutableList<UsageInfo>
-    ) {
-        checkConflictsAndReplaceUsageInfos(result)
+    override fun findReferences(element: PsiElement): Collection<PsiReference> {
+        val references = SmartList<PsiReference>(super.findReferences(element))
+        if (element is KtNamedFunction
+            || (element is KtProperty && !element.isLocal)
+            || (element is KtParameter && element.hasValOrVar())) {
+            element.toLightMethods().flatMapTo(references) { MethodReferencesSearch.search(it) }
+        }
+        return references
     }
 }

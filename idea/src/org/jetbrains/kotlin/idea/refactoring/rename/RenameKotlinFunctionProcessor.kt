@@ -40,6 +40,15 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
         return element is KtNamedFunction || (element is KtLightMethod && element.kotlinOrigin is KtNamedFunction)
     }
 
+    override fun findCollisions(
+            element: PsiElement?,
+            newName: String?,
+            allRenames: Map<out PsiElement?, String>,
+            result: MutableList<UsageInfo>
+    ) {
+        checkConflictsAndReplaceUsageInfos(result)
+    }
+
     override fun substituteElementToRename(element: PsiElement?, editor: Editor?): PsiElement?  {
         val wrappedMethod = wrapPsiMethod(element) ?: return element
 
