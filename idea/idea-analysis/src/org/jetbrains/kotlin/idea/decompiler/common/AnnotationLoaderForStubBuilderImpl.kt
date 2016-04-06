@@ -57,7 +57,7 @@ class AnnotationLoaderForStubBuilderImpl(
 
     override fun loadValueParameterAnnotations(
             container: ProtoContainer,
-            message: MessageLite,
+            callableProto: MessageLite,
             kind: AnnotatedCallableKind,
             parameterIndex: Int,
             proto: ProtoBuf.ValueParameter
@@ -66,7 +66,7 @@ class AnnotationLoaderForStubBuilderImpl(
 
     override fun loadExtensionReceiverParameterAnnotations(
             container: ProtoContainer,
-            message: MessageLite,
+            proto: MessageLite,
             kind: AnnotatedCallableKind
     ): List<ClassId> = emptyList()
 

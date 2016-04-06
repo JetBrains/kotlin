@@ -14,70 +14,58 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.serialization.deserialization;
+package org.jetbrains.kotlin.serialization.deserialization
 
-import com.google.protobuf.MessageLite;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.serialization.ProtoBuf;
-import org.jetbrains.kotlin.types.KotlinType;
-
-import java.util.List;
+import com.google.protobuf.MessageLite
+import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.types.KotlinType
 
 // The MessageLite instance everywhere should be Constructor, Function or Property
 // TODO: simplify this interface
-public interface AnnotationAndConstantLoader<A, C, T> {
-    @NotNull
-    List<A> loadClassAnnotations(
-            @NotNull ProtoBuf.Class classProto,
-            @NotNull NameResolver nameResolver
-    );
+interface AnnotationAndConstantLoader<A : Any, C : Any, T : Any> {
+    fun loadClassAnnotations(
+            classProto: ProtoBuf.Class,
+            nameResolver: NameResolver
+    ): List<A>
 
-    @NotNull
-    List<T> loadCallableAnnotations(
-            @NotNull ProtoContainer container,
-            @NotNull MessageLite message,
-            @NotNull AnnotatedCallableKind kind
-    );
+    fun loadCallableAnnotations(
+            container: ProtoContainer,
+            proto: MessageLite,
+            kind: AnnotatedCallableKind
+    ): List<T>
 
-    @NotNull
-    List<A> loadEnumEntryAnnotations(
-            @NotNull ProtoContainer container,
-            @NotNull ProtoBuf.EnumEntry proto
-    );
+    fun loadEnumEntryAnnotations(
+            container: ProtoContainer,
+            proto: ProtoBuf.EnumEntry
+    ): List<A>
 
-    @NotNull
-    List<A> loadValueParameterAnnotations(
-            @NotNull ProtoContainer container,
-            @NotNull MessageLite message,
-            @NotNull AnnotatedCallableKind kind,
-            int parameterIndex,
-            @NotNull ProtoBuf.ValueParameter proto
-    );
+    fun loadValueParameterAnnotations(
+            container: ProtoContainer,
+            callableProto: MessageLite,
+            kind: AnnotatedCallableKind,
+            parameterIndex: Int,
+            proto: ProtoBuf.ValueParameter
+    ): List<A>
 
-    @NotNull
-    List<A> loadExtensionReceiverParameterAnnotations(
-            @NotNull ProtoContainer container,
-            @NotNull MessageLite message,
-            @NotNull AnnotatedCallableKind kind
-    );
+    fun loadExtensionReceiverParameterAnnotations(
+            container: ProtoContainer,
+            proto: MessageLite,
+            kind: AnnotatedCallableKind
+    ): List<A>
 
-    @NotNull
-    List<A> loadTypeAnnotations(
-            @NotNull ProtoBuf.Type type,
-            @NotNull NameResolver nameResolver
-    );
+    fun loadTypeAnnotations(
+            proto: ProtoBuf.Type,
+            nameResolver: NameResolver
+    ): List<A>
 
-    @NotNull
-    List<A> loadTypeParameterAnnotations(
-            @NotNull ProtoBuf.TypeParameter typeParameter,
-            @NotNull NameResolver nameResolver
-    );
+    fun loadTypeParameterAnnotations(
+            proto: ProtoBuf.TypeParameter,
+            nameResolver: NameResolver
+    ): List<A>
 
-    @Nullable
-    C loadPropertyConstant(
-            @NotNull ProtoContainer container,
-            @NotNull ProtoBuf.Property proto,
-            @NotNull KotlinType expectedType
-    );
+    fun loadPropertyConstant(
+            container: ProtoContainer,
+            proto: ProtoBuf.Property,
+            expectedType: KotlinType
+    ): C?
 }

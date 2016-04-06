@@ -146,14 +146,14 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any, 
 
     override fun loadValueParameterAnnotations(
             container: ProtoContainer,
-            message: MessageLite,
+            callableProto: MessageLite,
             kind: AnnotatedCallableKind,
             parameterIndex: Int,
             proto: ProtoBuf.ValueParameter
     ): List<A> {
-        val methodSignature = getCallableSignature(message, container.nameResolver, container.typeTable, kind)
+        val methodSignature = getCallableSignature(callableProto, container.nameResolver, container.typeTable, kind)
         if (methodSignature != null) {
-            val index = parameterIndex + computeJvmParameterIndexShift(container, message)
+            val index = parameterIndex + computeJvmParameterIndexShift(container, callableProto)
             val paramSignature = MemberSignature.fromMethodSignatureAndParameterIndex(methodSignature, index)
             return findClassAndLoadMemberAnnotations(container, paramSignature)
         }
@@ -176,10 +176,10 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any, 
 
     override fun loadExtensionReceiverParameterAnnotations(
             container: ProtoContainer,
-            message: MessageLite,
+            proto: MessageLite,
             kind: AnnotatedCallableKind
     ): List<A> {
-        val methodSignature = getCallableSignature(message, container.nameResolver, container.typeTable, kind)
+        val methodSignature = getCallableSignature(proto, container.nameResolver, container.typeTable, kind)
         if (methodSignature != null) {
             val paramSignature = MemberSignature.fromMethodSignatureAndParameterIndex(methodSignature, 0)
             return findClassAndLoadMemberAnnotations(container, paramSignature)
@@ -188,12 +188,12 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any, 
         return emptyList()
     }
 
-    override fun loadTypeAnnotations(type: ProtoBuf.Type, nameResolver: NameResolver): List<A> {
-        return type.getExtension(JvmProtoBuf.typeAnnotation).map { loadTypeAnnotation(it, nameResolver) }
+    override fun loadTypeAnnotations(proto: ProtoBuf.Type, nameResolver: NameResolver): List<A> {
+        return proto.getExtension(JvmProtoBuf.typeAnnotation).map { loadTypeAnnotation(it, nameResolver) }
     }
 
-    override fun loadTypeParameterAnnotations(typeParameter: ProtoBuf.TypeParameter, nameResolver: NameResolver): List<A> {
-        return typeParameter.getExtension(JvmProtoBuf.typeParameterAnnotation).map { loadTypeAnnotation(it, nameResolver) }
+    override fun loadTypeParameterAnnotations(proto: ProtoBuf.TypeParameter, nameResolver: NameResolver): List<A> {
+        return proto.getExtension(JvmProtoBuf.typeParameterAnnotation).map { loadTypeAnnotation(it, nameResolver) }
     }
 
     override fun loadPropertyConstant(container: ProtoContainer, proto: ProtoBuf.Property, expectedType: KotlinType): C? {

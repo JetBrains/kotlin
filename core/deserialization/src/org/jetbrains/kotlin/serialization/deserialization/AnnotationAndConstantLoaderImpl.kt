@@ -64,7 +64,7 @@ class AnnotationAndConstantLoaderImpl(
 
     override fun loadValueParameterAnnotations(
             container: ProtoContainer,
-            message: MessageLite,
+            callableProto: MessageLite,
             kind: AnnotatedCallableKind,
             parameterIndex: Int,
             proto: ProtoBuf.ValueParameter
@@ -75,7 +75,7 @@ class AnnotationAndConstantLoaderImpl(
 
     override fun loadExtensionReceiverParameterAnnotations(
             container: ProtoContainer,
-            message: MessageLite,
+            proto: MessageLite,
             kind: AnnotatedCallableKind
     ): List<AnnotationDescriptor> = emptyList()
 

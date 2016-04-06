@@ -14,74 +14,63 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.load.kotlin;
+package org.jetbrains.kotlin.load.kotlin
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.SourceElement;
-import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
-import org.jetbrains.kotlin.name.ClassId;
-import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 
-public interface KotlinJvmBinaryClass {
-    @NotNull
-    ClassId getClassId();
+interface KotlinJvmBinaryClass {
+    val classId: ClassId
 
     /**
      * @return path to the class file (to be reported to the user upon error)
      */
-    @NotNull
-    String getLocation();
+    val location: String
 
-    void loadClassAnnotations(@NotNull AnnotationVisitor visitor);
+    fun loadClassAnnotations(visitor: AnnotationVisitor)
 
-    void visitMembers(@NotNull MemberVisitor visitor);
+    fun visitMembers(visitor: MemberVisitor)
 
-    @NotNull
-    KotlinClassHeader getClassHeader();
+    val classHeader: KotlinClassHeader
 
     interface MemberVisitor {
         // TODO: abstract signatures for methods and fields instead of ASM 'desc' strings?
 
-        @Nullable
-        MethodAnnotationVisitor visitMethod(@NotNull Name name, @NotNull String desc);
+        fun visitMethod(name: Name, desc: String): MethodAnnotationVisitor?
 
-        @Nullable
-        AnnotationVisitor visitField(@NotNull Name name, @NotNull String desc, @Nullable Object initializer);
+        fun visitField(name: Name, desc: String, initializer: Any?): AnnotationVisitor?
     }
 
     interface AnnotationVisitor {
-        @Nullable
-        AnnotationArgumentVisitor visitAnnotation(@NotNull ClassId classId, @NotNull SourceElement source);
+        fun visitAnnotation(classId: ClassId, source: SourceElement): AnnotationArgumentVisitor?
 
-        void visitEnd();
+        fun visitEnd()
     }
 
-    interface MethodAnnotationVisitor extends AnnotationVisitor {
-        @Nullable
-        AnnotationArgumentVisitor visitParameterAnnotation(int index, @NotNull ClassId classId, @NotNull SourceElement source);
+    interface MethodAnnotationVisitor : AnnotationVisitor {
+        fun visitParameterAnnotation(index: Int, classId: ClassId, source: SourceElement): AnnotationArgumentVisitor?
     }
 
     interface AnnotationArgumentVisitor {
         // TODO: class literals
-        void visit(@Nullable Name name, @Nullable Object value);
+        fun visit(name: Name?, value: Any?)
 
-        void visitEnum(@NotNull Name name, @NotNull ClassId enumClassId, @NotNull Name enumEntryName);
+        fun visitEnum(name: Name, enumClassId: ClassId, enumEntryName: Name)
 
-        @Nullable
-        AnnotationArgumentVisitor visitAnnotation(@NotNull Name name, @NotNull ClassId classId);
+        fun visitAnnotation(name: Name, classId: ClassId): AnnotationArgumentVisitor?
 
-        @Nullable
-        AnnotationArrayArgumentVisitor visitArray(@NotNull Name name);
+        fun visitArray(name: Name): AnnotationArrayArgumentVisitor?
 
-        void visitEnd();
+        fun visitEnd()
     }
 
     interface AnnotationArrayArgumentVisitor {
-        void visit(@Nullable Object value);
+        fun visit(value: Any?)
 
-        void visitEnum(@NotNull ClassId enumClassId, @NotNull Name enumEntryName);
+        fun visitEnum(enumClassId: ClassId, enumEntryName: Name)
 
-        void visitEnd();
+        fun visitEnd()
     }
 }
