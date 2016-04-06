@@ -63,7 +63,7 @@ class KotlinExceptionFilter(private val searchScope: GlobalSearchScope) : Filter
         val internalName = fullyQualifiedName.replace('.', '/')
         val jvmClassName = JvmClassName.byInternalName(internalName)
 
-        val file = DebuggerUtils.findSourceFileForClass(project, searchScope, jvmClassName, fileName) ?: return null
+        val file = DebuggerUtils.findSourceFileForClassIncludeLibrarySources(project, searchScope, jvmClassName, fileName) ?: return null
 
         val virtualFile = file.virtualFile ?: return null
 
@@ -121,7 +121,7 @@ class KotlinExceptionFilter(private val searchScope: GlobalSearchScope) : Filter
         } ?: return null
 
         val newJvmName = JvmClassName.byInternalName(mappingInfo.path)
-        val newSourceFile = DebuggerUtils.findSourceFileForClass(project, searchScope, newJvmName, mappingInfo.name) ?: return null
+        val newSourceFile = DebuggerUtils.findSourceFileForClassIncludeLibrarySources(project, searchScope, newJvmName, mappingInfo.name) ?: return null
         return OpenFileHyperlinkInfo(project, newSourceFile.virtualFile, mappingInfo.getIntervalIfContains(line)!!.map(line) - 1)
     }
 

@@ -191,6 +191,7 @@ Issues fixed:
 - Avoid 1s delay in completion in debugger fields if session is not stopped on a breakpoint
 - Avoid cast to runtime type unavailable in current scope
 - Fix text with line breaks in popup with line breakpoint variants
+- Fix breakpoints inside inline functions in libraries sources
 
 ### Java to Kotlin converter
 
