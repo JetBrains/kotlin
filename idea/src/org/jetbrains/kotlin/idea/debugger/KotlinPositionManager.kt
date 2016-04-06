@@ -34,6 +34,7 @@ import com.intellij.openapi.ui.MessageType
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.compiled.ClsFileImpl
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ThreeState
@@ -63,6 +64,7 @@ import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.Computed
 import org.jetbrains.kotlin.idea.decompiler.classFile.KtClsFile
 import org.jetbrains.kotlin.idea.refactoring.getLineStartOffset
 import org.jetbrains.kotlin.idea.search.usagesSearch.isImportUsage
+import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.DebuggerUtils
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -80,6 +82,11 @@ import java.util.*
 import com.intellij.debugger.engine.DebuggerUtils as JDebuggerUtils
 
 class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiRequestPositionManager, PositionManagerEx() {
+
+    private val scopes = listOf(
+            myDebugProcess.searchScope,
+            KotlinSourceFilterScope.librarySources(GlobalSearchScope.allScope(myDebugProcess.project), myDebugProcess.project)
+    )
 
     override fun evaluateCondition(context: EvaluationContext, frame: StackFrameProxyImpl, location: Location, expression: String): ThreeState? {
         return ThreeState.UNSURE
@@ -106,7 +113,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
                     val javaClassName = JvmClassName.byInternalName(defaultInternalName(location))
                     val project = myDebugProcess.project
 
-                    val defaultPsiFile = DebuggerUtils.findSourceFileForClass(project, myDebugProcess.searchScope, javaClassName, javaSourceFileName)
+                    val defaultPsiFile = DebuggerUtils.findSourceFileForClass(project, scopes, javaClassName, javaSourceFileName)
                     if (defaultPsiFile != null) {
                         return SourcePosition.createFromLine(defaultPsiFile, 0)
                     }
@@ -218,7 +225,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
 
         val project = myDebugProcess.project
 
-        return DebuggerUtils.findSourceFileForClass(project, myDebugProcess.searchScope, className, sourceName)
+        return DebuggerUtils.findSourceFileForClass(project, scopes, className, sourceName)
     }
 
     private fun defaultInternalName(location: Location): String {
@@ -450,7 +457,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
             val functionName = function.readAction { it.name }
 
             val task = Runnable {
-                ReferencesSearch.search(function, myDebugProcess.searchScope).forEach {
+                ReferencesSearch.search(function, getScopeForInlineFunctionUsages(function)).forEach {
                     if (!it.readAction { it.isImportUsage() }) {
                         val usage = (it.element as? KtElement)?.let { getElementToCalculateClassName(it) }
                         if (usage != null) {
@@ -527,7 +534,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         val result = hashSetOf<String>()
         val inlineFunction = parameter.containingDeclaration.source.getPsi() as? KtNamedFunction ?: return emptySet()
 
-        ReferencesSearch.search(inlineFunction, myDebugProcess.searchScope).forEach {
+        ReferencesSearch.search(inlineFunction, getScopeForInlineFunctionUsages(inlineFunction)).forEach {
             runReadAction {
                 if (!it.isImportUsage()) {
                     val call = (it.element as? KtExpression)?.let { KtPsiUtil.getParentCallIfPresent(it) }
@@ -546,6 +553,16 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         }
 
         return result
+    }
+
+    private fun getScopeForInlineFunctionUsages(inlineFunction: KtNamedFunction): GlobalSearchScope {
+        val virtualFile = runReadAction { inlineFunction.containingFile.virtualFile }
+        if (virtualFile != null && ProjectRootsUtil.isLibraryFile(myDebugProcess.project, virtualFile)) {
+            return GlobalSearchScope.union(scopes.toTypedArray())
+        }
+        else {
+            return myDebugProcess.searchScope
+        }
     }
 
     private fun getArgumentExpression(it: ValueArgument) = (it.getArgumentExpression() as? KtLambdaExpression)?.functionLiteral ?: it.getArgumentExpression()
