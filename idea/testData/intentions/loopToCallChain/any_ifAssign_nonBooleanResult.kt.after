@@ -1,0 +1,4 @@
+// WITH_RUNTIME
+fun foo(list: List<String>) {
+    <caret>val result = if (list.any { it.length > 0 }) 1 else 0
+}
