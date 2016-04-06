@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,48 +17,24 @@
 package org.jetbrains.kotlin.cli.jvm.repl.di
 
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.cli.jvm.repl.ReplFileScopeProvider
+import org.jetbrains.kotlin.cli.jvm.repl.ReplLastLineScopeProvider
 import org.jetbrains.kotlin.container.*
 import org.jetbrains.kotlin.context.ModuleContext
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.frontend.di.configureModule
 import org.jetbrains.kotlin.frontend.java.di.configureJavaTopDownAnalysis
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
 import org.jetbrains.kotlin.load.java.lazy.SingleModuleClassResolver
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtImportsFactory
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzerForTopLevel
-import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
 import org.jetbrains.kotlin.resolve.jvm.JavaClassFinderPostConstruct
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
-import org.jetbrains.kotlin.resolve.lazy.FileScopeProviderImpl
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
-import org.jetbrains.kotlin.resolve.lazy.TopLevelDescriptorProvider
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
-import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.storage.StorageManager
-
-interface ReplLastLineScopeProvider {
-    val lastLineScope: LexicalScope?
-}
-
-class ReplFileScopeProvider(
-        private val lastLineScopeProvider: ReplLastLineScopeProvider,
-        topLevelDescriptorProvider: TopLevelDescriptorProvider,
-        storageManager: StorageManager,
-        moduleDescriptor: ModuleDescriptor,
-        qualifiedExpressionResolver: QualifiedExpressionResolver,
-        bindingTrace: BindingTrace,
-        ktImportsFactory: KtImportsFactory
-) : FileScopeProviderImpl(topLevelDescriptorProvider, storageManager, moduleDescriptor, qualifiedExpressionResolver, bindingTrace, ktImportsFactory) {
-
-    override fun getFileResolutionScope(file: KtFile): LexicalScope
-            = lastLineScopeProvider.lastLineScope ?: super.getFileResolutionScope(file)
-}
 
 fun createContainerForReplWithJava(
         moduleContext: ModuleContext,
