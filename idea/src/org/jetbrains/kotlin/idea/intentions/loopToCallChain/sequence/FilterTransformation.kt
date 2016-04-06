@@ -73,14 +73,14 @@ class FilterTransformation(
             val then = ifStatement.then ?: return null
 
             if (state.statements.size == 1) {
-                val transformation = createFilterTransformation(state.workingVariable, condition, isInverse = false)
+                val transformation = createFilterTransformation(state.inputVariable, condition, isInverse = false)
                 val newState = state.copy(statements = listOf(then))
                 return SequenceTransformationMatch(transformation, newState)
             }
             else {
                 val continueExpression = then.blockExpressionsOrSingle().singleOrNull() as? KtContinueExpression ?: return null
                 if (!continueExpression.isBreakOrContinueOfLoop(state.innerLoop)) return null
-                val transformation = createFilterTransformation(state.workingVariable, condition, isInverse = true)
+                val transformation = createFilterTransformation(state.inputVariable, condition, isInverse = true)
                 val newState = state.copy(statements = state.statements.drop(1))
                 return SequenceTransformationMatch(transformation, newState)
             }

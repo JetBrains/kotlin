@@ -61,11 +61,11 @@ class AddToCollectionTransformation(
 
             //TODO: if variable is initialized with new collection than generate toList(), toSet()
 
-            val transformation = if (argumentValue.isVariableReference(state.workingVariable)) {
-                AddToCollectionTransformation(state.outerLoop, state.workingVariable, targetCollection)
+            val transformation = if (argumentValue.isVariableReference(state.inputVariable)) {
+                AddToCollectionTransformation(state.outerLoop, state.inputVariable, targetCollection)
             }
             else {
-                MapToTransformation(state.outerLoop, state.workingVariable, targetCollection, argumentValue)
+                MapToTransformation(state.outerLoop, state.inputVariable, targetCollection, argumentValue)
             }
             return ResultTransformationMatch(transformation)
         }

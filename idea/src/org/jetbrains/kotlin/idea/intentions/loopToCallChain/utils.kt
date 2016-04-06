@@ -42,10 +42,10 @@ import org.jetbrains.kotlin.types.typeUtil.nullability
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
-fun generateLambda(workingVariable: KtCallableDeclaration, expression: KtExpression): KtLambdaExpression {
+fun generateLambda(inputVariable: KtCallableDeclaration, expression: KtExpression): KtLambdaExpression {
     val psiFactory = KtPsiFactory(expression)
 
-    val lambdaExpression = psiFactory.createExpressionByPattern("{ $0 -> $1 }", workingVariable.nameAsSafeName, expression) as KtLambdaExpression
+    val lambdaExpression = psiFactory.createExpressionByPattern("{ $0 -> $1 }", inputVariable.nameAsSafeName, expression) as KtLambdaExpression
 
     val isItUsedInside = expression.anyDescendantOfType<KtNameReferenceExpression> {
         it.getQualifiedExpressionForSelector() == null && it.getReferencedName() == "it"
@@ -53,8 +53,8 @@ fun generateLambda(workingVariable: KtCallableDeclaration, expression: KtExpress
 
     if (isItUsedInside) return lambdaExpression
 
-    val resolutionScope = workingVariable.getResolutionScope(workingVariable.analyze(BodyResolveMode.FULL), workingVariable.getResolutionFacade())
-    val bindingContext = lambdaExpression.analyzeInContext(resolutionScope, contextExpression = workingVariable)
+    val resolutionScope = inputVariable.getResolutionScope(inputVariable.analyze(BodyResolveMode.FULL), inputVariable.getResolutionFacade())
+    val bindingContext = lambdaExpression.analyzeInContext(resolutionScope, contextExpression = inputVariable)
     val lambdaParam = lambdaExpression.valueParameters.single()
     val lambdaParamDescriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, lambdaParam]
     val usages = lambdaExpression.collectDescendantsOfType<KtNameReferenceExpression> {
@@ -106,7 +106,7 @@ fun KtProperty.hasWriteUsages(): Boolean {
 fun buildFindOperationGenerator(
         valueIfFound: KtExpression,
         valueIfNotFound: KtExpression,
-        workingVariable: KtCallableDeclaration,
+        inputVariable: KtCallableDeclaration,
         findFirst: Boolean
 ): ((chainedCallGenerator: ChainedCallGenerator, filter: KtExpression?) -> KtExpression)?  {
     assert(valueIfFound.isPhysical)
@@ -117,18 +117,18 @@ fun buildFindOperationGenerator(
             chainedCallGenerator.generate("$stdlibFunName()")
         }
         else {
-            val lambda = generateLambda(workingVariable, filter)
+            val lambda = generateLambda(inputVariable, filter)
             chainedCallGenerator.generate("$stdlibFunName $0:'{}'", lambda)
         }
     }
 
-    val workingVariableCanHoldNull = (workingVariable.resolveToDescriptor() as VariableDescriptor).type.nullability() != TypeNullability.NOT_NULL
+    val inputVariableCanHoldNull = (inputVariable.resolveToDescriptor() as VariableDescriptor).type.nullability() != TypeNullability.NOT_NULL
 
     fun ((chainedCallGenerator: ChainedCallGenerator, filter: KtExpression?) -> KtExpression).useElvisOperatorIfNeeded(): ((chainedCallGenerator: ChainedCallGenerator, filter: KtExpression?) -> KtExpression)? {
         if (valueIfNotFound.isNullExpression()) return this
 
         // we cannot use ?: if found value can be null
-        if (workingVariableCanHoldNull) return null
+        if (inputVariableCanHoldNull) return null
 
         return { chainedCallGenerator, filter ->
             val generated = this(chainedCallGenerator, filter)
@@ -137,7 +137,7 @@ fun buildFindOperationGenerator(
     }
 
     when {
-        valueIfFound.isVariableReference(workingVariable) -> {
+        valueIfFound.isVariableReference(inputVariable) -> {
             val stdlibFunName = if (findFirst) "firstOrNull" else "lastOrNull"
             val generator = { chainedCallGenerator: ChainedCallGenerator, filter: KtExpression? ->
                 generateChainedCall(stdlibFunName, chainedCallGenerator, filter)
@@ -153,15 +153,15 @@ fun buildFindOperationGenerator(
             return { chainedCallGenerator, filter -> generateChainedCall("none", chainedCallGenerator, filter) }
         }
 
-        workingVariable.hasUsages(valueIfFound) -> {
+        inputVariable.hasUsages(valueIfFound) -> {
             if (!findFirst) return null // too dangerous because of side effects
 
-            // specially handle the case when the result expression is "<working variable>.<some call>" or "<working variable>?.<some call>"
+            // specially handle the case when the result expression is "<input variable>.<some call>" or "<input variable>?.<some call>"
             val qualifiedExpression = valueIfFound as? KtQualifiedExpression
             if (qualifiedExpression != null) {
                 val receiver = qualifiedExpression.receiverExpression
                 val selector = qualifiedExpression.selectorExpression
-                if (receiver.isVariableReference(workingVariable) && selector != null && !workingVariable.hasUsages(selector)) {
+                if (receiver.isVariableReference(inputVariable) && selector != null && !inputVariable.hasUsages(selector)) {
                     return { chainedCallGenerator: ChainedCallGenerator, filter: KtExpression? ->
                         val findFirstCall = generateChainedCall("firstOrNull", chainedCallGenerator, filter)
                         KtPsiFactory(findFirstCall).createExpressionByPattern("$0?.$1", findFirstCall, selector)
@@ -169,12 +169,12 @@ fun buildFindOperationGenerator(
                 }
             }
 
-            // in case of nullable working variable we cannot distinguish by the result of "firstOrNull" whether nothing was found or 'null' was found
-            if (workingVariableCanHoldNull) return null
+            // in case of nullable input variable we cannot distinguish by the result of "firstOrNull" whether nothing was found or 'null' was found
+            if (inputVariableCanHoldNull) return null
 
             return { chainedCallGenerator: ChainedCallGenerator, filter: KtExpression? ->
                 val findFirstCall = generateChainedCall("firstOrNull", chainedCallGenerator, filter)
-                val letBody = generateLambda(workingVariable, valueIfFound)
+                val letBody = generateLambda(inputVariable, valueIfFound)
                 KtPsiFactory(findFirstCall).createExpressionByPattern("$0?.let $1:'{}'", findFirstCall, letBody)
             }.useElvisOperatorIfNeeded()
         }

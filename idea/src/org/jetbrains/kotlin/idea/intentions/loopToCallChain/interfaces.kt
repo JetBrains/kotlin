@@ -72,7 +72,7 @@ data class MatchingState(
         val outerLoop: KtForExpression,
         val innerLoop: KtForExpression,
         val statements: Collection<KtExpression>,
-        val workingVariable: KtCallableDeclaration,
+        val inputVariable: KtCallableDeclaration,
         val indexVariable: KtCallableDeclaration?
 )
 
