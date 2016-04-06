@@ -1,15 +1,15 @@
-default class _Dummy_ {
-    default class SpecialExpressions {
-        default fun test(): boolean {
-            assert 5 > 3 : EmptyExpression
-            assert 5 > 3 : "Message"
-            synchronized this : {
+package_local class _Dummy_ {
+    package_local class SpecialExpressions {
+        package_local fun test(): boolean {
+            <assert>(5 > 3)
+            <assert>(5 > 3, "Message")
+            {
                 System.out.println("A")
             }
 
-            var a: int = 5
-            var b: int = 7
-            var c: int
+            local var a: int = 5
+            local var b: int = 7
+            local var c: int
             while (a > 0) {
                 if (a === 3) {
                     break
@@ -24,7 +24,7 @@ default class _Dummy_ {
 
             this.test()
             super.hashCode()
-            var x: String
+            local var x: String
             switch (a)
             {
                 1 ->
@@ -49,20 +49,16 @@ default class _Dummy_ {
             try {
                 Thread.sleep(1000)
             }
-
             catch (e) {
             }
-
             finally {
                 a = 3
             }
-
             {
                 a = 5
             }
 
             return true
         }
-
     }
 }

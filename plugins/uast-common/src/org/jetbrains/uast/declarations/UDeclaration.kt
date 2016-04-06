@@ -37,7 +37,7 @@ interface UDeclaration : UElement, UNamed {
      */
     open fun matchesNameWithContaining(containingClassFqName: String, name: String): Boolean {
         if (!matchesName(name)) return false
-        val containingClass = parent as? UClass ?: return false
+        val containingClass = this.getContainingClass() ?: return false
         return containingClass.matchesFqName(containingClassFqName)
     }
 

@@ -1,7 +1,7 @@
 UFile (package = )
     UClass (Simple, kind = class)
         UFunction (<init>, kind = constructor, paramCount = 0)
-            EmptyExpression
+            <no element>
         UVariable (a, kind = member)
             UBinaryExpression (+)
                 UBinaryExpression (+)
@@ -21,5 +21,5 @@ UFile (package = )
                     UFunctionCallExpression (UastCallKind(name='function_call'), argCount = 1)
                         USimpleReferenceExpression (println)
                         UBinaryExpression (/)
-                            ULiteralExpression (5.0f)
+                            ULiteralExpression (5.0)
                             ULiteralExpression (2)

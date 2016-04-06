@@ -49,7 +49,8 @@ internal fun KtModifierListOwner.hasModifier(modifier: UastModifier): Boolean {
         if (this is KtClassOrObject && !hasModifier(KtTokens.INNER_KEYWORD)) {
             return true
         }
-        if (this is KtDeclaration && parent is KtObjectDeclaration) {
+        if (this is KtDeclaration && (parent is KtObjectDeclaration ||
+                                      parent is KtClassBody && parent?.parent is KtObjectDeclaration)) {
             return true
         }
         return false

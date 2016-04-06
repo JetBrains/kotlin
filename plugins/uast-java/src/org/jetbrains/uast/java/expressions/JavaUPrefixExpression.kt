@@ -28,7 +28,7 @@ class JavaUPrefixExpression(
 ) : JavaAbstractUElement(), UPrefixExpression, PsiElementBacked, JavaUElementWithType, JavaEvaluatableUElement {
     override val operand by lz { JavaConverter.convertOrEmpty(psi.operand, this) }
 
-    override val operator = when (psi.operationSign) {
+    override val operator = when (psi.operationTokenType) {
         JavaTokenType.PLUS -> UastPrefixOperator.UNARY_PLUS
         JavaTokenType.MINUS -> UastPrefixOperator.UNARY_MINUS
         JavaTokenType.PLUSPLUS -> UastPrefixOperator.INC

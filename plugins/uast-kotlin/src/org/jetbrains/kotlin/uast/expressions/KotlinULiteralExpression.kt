@@ -39,8 +39,6 @@ class KotlinStringULiteralExpression(
         override val parent: UElement,
         val text: String? = null
 ) : KotlinAbstractUElement(), ULiteralExpression, PsiElementBacked, KotlinUElementWithType{
-    override val isNull = false
-
     override val value: String
         get() = text ?: StringUtil.unescapeStringCharacters(psi.text)
 
