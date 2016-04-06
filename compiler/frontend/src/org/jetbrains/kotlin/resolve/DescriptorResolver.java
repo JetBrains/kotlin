@@ -758,8 +758,7 @@ public class DescriptorResolver {
         return propertyDescriptor;
     }
 
-    /*package*/
-    static boolean hasBody(KtProperty property) {
+    public static boolean hasBody(KtProperty property) {
         boolean hasBody = property.hasDelegateExpressionOrInitializer();
         if (!hasBody) {
             KtPropertyAccessor getter = property.getGetter();

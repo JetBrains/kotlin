@@ -1,0 +1,4 @@
+// "Remove redundant modality modifier" "true"
+open class C {
+    fun foo(){}
+}

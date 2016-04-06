@@ -18,21 +18,21 @@ package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.codeInspection.*
 import com.intellij.psi.PsiElementVisitor
-import org.jetbrains.kotlin.idea.core.implicitVisibility
+import org.jetbrains.kotlin.idea.core.implicitModality
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtVisitorVoid
-import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
+import org.jetbrains.kotlin.psi.psiUtil.modalityModifier
 
-class RedundantVisibilityModifierInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
+class RedundantModalityModifierInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return object : KtVisitorVoid() {
             override fun visitDeclaration(declaration: KtDeclaration) {
-                val visibilityModifier = declaration.visibilityModifier() ?: return
-                if (visibilityModifier.node.elementType == declaration.implicitVisibility()) {
-                    holder.registerProblem(visibilityModifier,
-                                           "Redundant visibility modifier",
+                val modalityModifier = declaration.modalityModifier() ?: return
+                if (modalityModifier.node.elementType == declaration.implicitModality()) {
+                    holder.registerProblem(modalityModifier,
+                                           "Redundant modality modifier",
                                            ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                                           RemoveModifierFix("Remove redundant visibility modifier"))
+                                           RemoveModifierFix("Remove redundant modality modifier"))
                 }
             }
         }
