@@ -35,12 +35,14 @@ class FindAndReturnTransformation(
     override fun mergeWithPrevious(previousTransformation: SequenceTransformation): ResultTransformation? {
         if (previousTransformation !is FilterTransformation) return null
         assert(filter == null) { "Should not happen because no 2 consecutive FilterTransformation's possible"}
-        return FindAndReturnTransformation(loop, previousTransformation.inputVariable, generator, endReturn, previousTransformation.buildRealCondition())
+        return FindAndReturnTransformation(loop, previousTransformation.inputVariable, generator, endReturn, previousTransformation.effectiveCondition())
     }
 
     override val commentSavingRange = PsiChildRange(loop.unwrapIfLabeled(), endReturn)
 
-    override val commentRestoringRange = commentSavingRange.withoutFirstStatement()
+    private val commentRestoringRange = commentSavingRange.withoutFirstStatement()
+
+    override fun commentRestoringRange(convertLoopResult: KtExpression) = commentRestoringRange
 
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
         return generator(chainedCallGenerator, filter)

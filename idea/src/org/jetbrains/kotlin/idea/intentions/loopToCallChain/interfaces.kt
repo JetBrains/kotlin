@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
  * An abstraction for generating a chained call that knows about receiver expression and handles proper formatting
  */
 interface ChainedCallGenerator {
+    val receiver: KtExpression
+
     /**
      * @param pattern pattern string for generating the part of the call to the right from the dot
      */
@@ -56,7 +58,7 @@ interface ResultTransformation : Transformation {
     fun mergeWithPrevious(previousTransformation: SequenceTransformation): ResultTransformation? = null
 
     val commentSavingRange: PsiChildRange
-    val commentRestoringRange: PsiChildRange
+    fun commentRestoringRange(convertLoopResult: KtExpression): PsiChildRange
 
     fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression
 
