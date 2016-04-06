@@ -16,12 +16,20 @@
 
 package org.jetbrains.kotlin.idea.injection
 
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.InjectedLanguagePlaces
 import com.intellij.psi.LanguageInjector
 import com.intellij.psi.PsiLanguageInjectionHost
+import com.intellij.psi.PsiMethod
+import com.intellij.psi.util.PsiTreeUtil
+import org.intellij.plugins.intelliLang.Configuration
 import org.intellij.plugins.intelliLang.inject.InjectorUtils
+import org.intellij.plugins.intelliLang.inject.java.JavaLanguageInjectionSupport
+import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtValueArgument
+import org.jetbrains.kotlin.psi.KtValueArgumentList
 import java.util.*
 
 class KotlinLanguageInjector : LanguageInjector {
@@ -30,14 +38,51 @@ class KotlinLanguageInjector : LanguageInjector {
     }
 
     override fun getLanguagesToInject(host: PsiLanguageInjectionHost, injectionPlacesRegistrar: InjectedLanguagePlaces) {
-        if (host !is KtElement) return
         if (!host.isValidHost) return
-        val support = kotlinSupport ?: return
+        val ktHost: KtElement = host as? KtElement ?: return
 
-        val languageId = support.findAnnotationInjectionLanguageId(host) ?: return
+        val injectionInfo =
+                injectWithExplicitCodeInstruction(ktHost)
+                ?: injectWithCall(ktHost)
+                ?: return
 
-        val language = InjectorUtils.getLanguageByString(languageId) ?: return
-
-        injectionPlacesRegistrar.addPlace(language, TextRange.from(0, host.getTextLength()), null, null)
+        val language = InjectorUtils.getLanguageByString(injectionInfo.languageId) ?: return
+        injectionPlacesRegistrar.addPlace(language, TextRange.from(0, ktHost.textLength), injectionInfo.prefix, injectionInfo.suffix)
     }
+
+    private fun injectWithExplicitCodeInstruction(host: KtElement): InjectionInfo? {
+        val support = kotlinSupport ?: return null
+        val languageId = support.findAnnotationInjectionLanguageId(host) ?: return null
+        return InjectionInfo(languageId, null, null)
+    }
+
+    private fun injectWithCall(host: KtElement): InjectionInfo? {
+        val ktHost: KtElement = host
+        val argument = ktHost.parent as? KtValueArgument ?: return null
+
+        val callExpression = PsiTreeUtil.getParentOfType(ktHost, KtCallExpression::class.java) ?: return null
+        val callee = callExpression.calleeExpression ?: return null
+
+        for (reference in callee.references) {
+            ProgressManager.checkCanceled()
+
+            val javaMethod = reference.resolve()
+            if (javaMethod !is PsiMethod) continue
+
+            val argumentIndex = (argument.parent as KtValueArgumentList).arguments.indexOf(argument)
+            val psiParameter = javaMethod.parameterList.parameters.getOrNull(argumentIndex) ?: continue
+
+            val injections = Configuration.getInstance().getInjections(JavaLanguageInjectionSupport.JAVA_SUPPORT_ID)
+
+            for (injection in injections) {
+                if (injection.acceptsPsiElement(psiParameter)) {
+                    return InjectionInfo(injection.injectedLanguageId, injection.prefix, injection.suffix)
+                }
+            }
+        }
+
+        return null
+    }
+
+    private class InjectionInfo(val languageId: String?, val prefix: String?, val suffix: String?)
 }
