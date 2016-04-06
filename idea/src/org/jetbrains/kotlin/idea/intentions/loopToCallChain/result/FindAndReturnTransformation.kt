@@ -74,9 +74,9 @@ class FindAndReturnTransformation(
             val returnValueInLoop = returnInLoop.returnedExpression ?: return null
             val returnValueAfterLoop = returnAfterLoop.returnedExpression ?: return null
 
-            val generator = buildFindOperationGenerator(returnValueInLoop, returnValueAfterLoop, state.workingVariable, findFirst = true) ?: return null
+            val generator = buildFindOperationGenerator(returnValueInLoop, returnValueAfterLoop, state.inputVariable, findFirst = true) ?: return null
 
-            val transformation = FindAndReturnTransformation(state.outerLoop, state.workingVariable, generator, returnAfterLoop)
+            val transformation = FindAndReturnTransformation(state.outerLoop, state.inputVariable, generator, returnAfterLoop)
             return ResultTransformationMatch(transformation)
         }
     }

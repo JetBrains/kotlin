@@ -109,9 +109,9 @@ class FindAndAssignTransformation(
                     initialization.initializer, initialization.initializer.analyze(BodyResolveMode.PARTIAL)) != null
             if (!initializerIsConstant) return null
 
-            val generator = buildFindOperationGenerator(right, initialization.initializer, state.workingVariable, findFirst) ?: return null
+            val generator = buildFindOperationGenerator(right, initialization.initializer, state.inputVariable, findFirst) ?: return null
 
-            val transformation = FindAndAssignTransformation(state.outerLoop, state.workingVariable, generator, initialization)
+            val transformation = FindAndAssignTransformation(state.outerLoop, state.inputVariable, generator, initialization)
             return ResultTransformationMatch(transformation)
         }
     }

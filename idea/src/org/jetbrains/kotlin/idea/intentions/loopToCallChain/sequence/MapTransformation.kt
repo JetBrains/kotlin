@@ -50,8 +50,8 @@ class MapTransformation(
             if (declaration.hasWriteUsages()) return null
             val restStatements = state.statements.drop(1)
 
-            val transformation = MapTransformation(state.workingVariable, initializer)
-            val newState = state.copy(statements = restStatements, workingVariable = declaration)
+            val transformation = MapTransformation(state.inputVariable, initializer)
+            val newState = state.copy(statements = restStatements, inputVariable = declaration)
             return SequenceTransformationMatch(transformation, newState)
         }
     }

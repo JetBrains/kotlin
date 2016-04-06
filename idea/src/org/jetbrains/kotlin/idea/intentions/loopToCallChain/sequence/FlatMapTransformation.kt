@@ -63,11 +63,11 @@ class FlatMapTransformation(
             val nestedLoopBody = nestedLoop.body ?: return null
 
             val newWorkingVariable = nestedLoop.loopParameter ?: return null
-            val transformation = FlatMapTransformation(state.workingVariable, transform)
+            val transformation = FlatMapTransformation(state.inputVariable, transform)
             val newState = state.copy(
                     innerLoop = nestedLoop,
                     statements = listOf(nestedLoopBody),
-                    workingVariable = newWorkingVariable
+                    inputVariable = newWorkingVariable
             )
             return SequenceTransformationMatch(transformation, newState)
         }
