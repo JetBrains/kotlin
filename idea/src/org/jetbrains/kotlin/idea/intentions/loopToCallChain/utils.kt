@@ -240,12 +240,20 @@ data class VariableInitialization(
         val initializationStatement: KtExpression,
         val initializer: KtExpression)
 
+//TODO: we need more correctness checks (if variable is non-local or is local but can be changed by some local functions)
 fun KtExpression.detectInitializationBeforeLoop(loop: KtForExpression): VariableInitialization? {
     if (this !is KtNameReferenceExpression) return null
     if (getQualifiedExpressionForSelector() != null) return null
     val variable = this.mainReference.resolve() as? KtProperty ?: return null
-    if (variable != loop.previousStatement()) return null //TODO: support initializer not right before the loop
-    //TODO: support assignment instead of initializer
-    val initializer = variable.initializer ?: return null
-    return VariableInitialization(variable, variable, initializer)
+    val statementBeforeLoop = loop.previousStatement() //TODO: support initialization not right before the loop
+
+    if (statementBeforeLoop == variable) {
+        val initializer = variable.initializer ?: return null
+        return VariableInitialization(variable, variable, initializer)
+    }
+
+    val assignment = statementBeforeLoop?.asAssignment() ?: return null
+    if (!assignment.left.isVariableReference(variable)) return null
+    val initializer = assignment.right ?: return null
+    return VariableInitialization(variable, assignment, initializer)
 }
