@@ -1,0 +1,6 @@
+// WITH_RUNTIME
+fun foo(list: List<String>): Int {
+    <caret>return if (list.any { it.length > 0 }) -1 else takeInt()
+}
+
+fun takeInt(): Int = 0
