@@ -158,16 +158,13 @@ fun buildFindOperationGenerator(
             }
         }
 
-        // initial value is compile-time constant
-        ConstantExpressionEvaluator.getConstant(valueIfNotFound, valueIfNotFound.analyze(BodyResolveMode.PARTIAL)) != null -> {
+        else -> {
             return { chainedCallGenerator, filter ->
                 val chainedCall = generateChainedCall("any", chainedCallGenerator, filter)
                 KtPsiFactory(chainedCall).createExpressionByPattern("if ($0) $1 else $2", chainedCall, valueIfFound, valueIfNotFound)
             }
 
         }
-
-        else -> return null
     }
 
     return { chainedCallGenerator, filter -> generateChainedCall(stdlibFunName, chainedCallGenerator, filter) }

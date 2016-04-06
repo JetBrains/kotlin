@@ -18,11 +18,14 @@ package org.jetbrains.kotlin.idea.intentions.loopToCallChain.result
 
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.*
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.FilterTransformation
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
+import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class FindAndAssignTransformation(
         private val loop: KtForExpression,
@@ -100,6 +103,9 @@ class FindAndAssignTransformation(
 
             val usageCountInLoop = ReferencesSearch.search(declarationBeforeLoop, LocalSearchScope(state.outerLoop)).count()
             if (usageCountInLoop != 1) return null // this should be the only usage of this variable inside the loop
+
+            // we do not try to convert anything if the initializer is not compile-time constant because of possible side-effects
+            if (ConstantExpressionEvaluator.getConstant(initializer, initializer.analyze(BodyResolveMode.PARTIAL)) == null) return null
 
             val generator = buildFindOperationGenerator(right, initializer, state.workingVariable, findFirst) ?: return null
 
