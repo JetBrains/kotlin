@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.imports.getImportableTargets
 import org.jetbrains.kotlin.idea.util.ShortenReferences.Options
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
@@ -286,7 +287,7 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
         override fun qualifier(element: KtUserType) = element.qualifier!!
 
         override fun shortenElement(element: KtUserType): KtElement {
-            element.deleteQualifier()
+            runWriteAction { element.deleteQualifier() }
             return element
         }
     }
