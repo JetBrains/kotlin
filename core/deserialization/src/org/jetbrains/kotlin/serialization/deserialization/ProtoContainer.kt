@@ -53,4 +53,6 @@ sealed class ProtoContainer(
     }
 
     abstract fun debugFqName(): FqName
+
+    override fun toString() = "${javaClass.simpleName}: ${debugFqName()}"
 }

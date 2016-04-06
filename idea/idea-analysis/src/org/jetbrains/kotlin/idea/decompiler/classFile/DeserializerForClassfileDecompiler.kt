@@ -131,7 +131,7 @@ class DirectoryBasedDataFinder(
             return null
         }
 
-        return ClassDataWithSource(JvmProtoBufUtil.readClassDataFrom(data, strings))
+        return ClassDataWithSource(JvmProtoBufUtil.readClassDataFrom(data, strings), KotlinJvmBinarySourceElement(binaryClass))
     }
 }
 

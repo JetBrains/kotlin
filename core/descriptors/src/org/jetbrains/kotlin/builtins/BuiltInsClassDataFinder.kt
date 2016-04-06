@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.builtins
 
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.ClassData
 import org.jetbrains.kotlin.serialization.ClassDataWithSource
@@ -36,6 +37,6 @@ class BuiltInsClassDataFinder(
 
     override fun findClassData(classId: ClassId): ClassDataWithSource? {
         val classProto = classIdToProto[classId] ?: return null
-        return ClassDataWithSource(ClassData(nameResolver, classProto))
+        return ClassDataWithSource(ClassData(nameResolver, classProto), SourceElement.NO_SOURCE)
     }
 }
