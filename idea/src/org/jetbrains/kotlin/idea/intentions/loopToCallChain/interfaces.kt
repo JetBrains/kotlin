@@ -21,14 +21,26 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
 
+/**
+ * An abstraction for generating a chained call that knows about receiver expression and handles proper formatting
+ */
 interface ChainedCallGenerator {
+    /**
+     * @param pattern pattern string for generating the part of the call to the right from the dot
+     */
     fun generate(pattern: String, vararg args: Any): KtExpression
 }
 
+/**
+ * Base interface for recognized transformations of the sequence. Should always be either [SequenceTransformation] or [ResultTransformation]
+ */
 interface Transformation {
     val inputVariable: KtCallableDeclaration
 }
 
+/**
+ * Represents a transformation of input sequence into another sequence
+ */
 interface SequenceTransformation : Transformation {
     fun mergeWithPrevious(previousTransformation: SequenceTransformation): SequenceTransformation? = null
 
@@ -37,6 +49,9 @@ interface SequenceTransformation : Transformation {
     fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression
 }
 
+/**
+ * Represents a final transformation of sequence which produces the result of the whole loop (for example, assigning a found value into a variable).
+ */
 interface ResultTransformation : Transformation {
     fun mergeWithPrevious(previousTransformation: SequenceTransformation): ResultTransformation? = null
 
@@ -48,6 +63,9 @@ interface ResultTransformation : Transformation {
     fun convertLoop(resultCallChain: KtExpression): KtExpression
 }
 
+/**
+ * Represents a state when matching a part of the loop against known transformations
+ */
 data class MatchingState(
         val outerLoop: KtForExpression,
         val innerLoop: KtForExpression,
@@ -56,6 +74,9 @@ data class MatchingState(
         val indexVariable: KtCallableDeclaration?
 )
 
+/**
+ * A matcher that can recognize one or more [SequenceTransformation]'s
+ */
 interface SequenceTransformationMatcher {
     fun match(state: MatchingState): SequenceTransformationMatch?
 }
@@ -71,6 +92,10 @@ class SequenceTransformationMatch(
     constructor(transformation: SequenceTransformation, newState: MatchingState) : this(listOf(transformation), newState)
 }
 
+/**
+ * A matcher that can recognize a [ResultTransformation] (optionally prepended by some [SequenceTransformation]'s).
+ * Should match the whole rest part of the loop.
+ */
 interface ResultTransformationMatcher {
     fun match(state: MatchingState): ResultTransformationMatch?
 }
