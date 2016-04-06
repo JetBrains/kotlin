@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
 class FindAndAssignTransformation(
         private val loop: KtForExpression,
         override val inputVariable: KtCallableDeclaration,
-        private val stdlibFunName: String,
+        private val generator: (chainedCallGenerator: ChainedCallGenerator, filter: KtExpression?) -> KtExpression,
         private val initialDeclaration: KtProperty,
         private val filter: KtExpression? = null
 ) : ResultTransformation {
@@ -35,20 +35,14 @@ class FindAndAssignTransformation(
     override fun mergeWithPrevious(previousTransformation: SequenceTransformation): ResultTransformation? {
         if (previousTransformation !is FilterTransformation) return null
         assert(filter == null) { "Should not happen because no 2 consecutive FilterTransformation's possible"}
-        return FindAndAssignTransformation(loop, previousTransformation.inputVariable, stdlibFunName, initialDeclaration, previousTransformation.buildRealCondition())
+        return FindAndAssignTransformation(loop, previousTransformation.inputVariable, generator, initialDeclaration, previousTransformation.buildRealCondition())
     }
 
     override val commentSavingRange = PsiChildRange(initialDeclaration, loop.unwrapIfLabeled())
     override val commentRestoringRange = commentSavingRange.withoutLastStatement()
 
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
-        return if (filter == null) {
-            chainedCallGenerator.generate("$stdlibFunName()")
-        }
-        else {
-            val lambda = generateLambda(inputVariable, filter)
-            chainedCallGenerator.generate("$stdlibFunName $0:'{}'", lambda)
-        }
+        return generator(chainedCallGenerator, filter)
     }
 
     override fun convertLoop(resultCallChain: KtExpression): KtExpression {
@@ -107,9 +101,9 @@ class FindAndAssignTransformation(
             val usageCountInLoop = ReferencesSearch.search(declarationBeforeLoop, LocalSearchScope(state.outerLoop)).count()
             if (usageCountInLoop != 1) return null // this should be the only usage of this variable inside the loop
 
-            val stdlibFunName = stdlibFunNameForFind(right, initializer, state.workingVariable, findFirst) ?: return null
+            val generator = buildFindOperationGenerator(right, initializer, state.workingVariable, findFirst) ?: return null
 
-            val transformation = FindAndAssignTransformation(state.outerLoop, state.workingVariable, stdlibFunName, declarationBeforeLoop)
+            val transformation = FindAndAssignTransformation(state.outerLoop, state.workingVariable, generator, declarationBeforeLoop)
             return ResultTransformationMatch(transformation)
         }
     }

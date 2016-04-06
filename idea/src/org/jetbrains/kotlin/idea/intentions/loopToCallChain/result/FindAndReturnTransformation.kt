@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
 class FindAndReturnTransformation(
         private val loop: KtForExpression,
         override val inputVariable: KtCallableDeclaration,
-        private val stdlibFunName: String,
+        private val generator: (chainedCallGenerator: ChainedCallGenerator, filter: KtExpression?) -> KtExpression,
         private val endReturn: KtReturnExpression,
         private val filter: KtExpression? = null
 ) : ResultTransformation {
@@ -35,7 +35,7 @@ class FindAndReturnTransformation(
     override fun mergeWithPrevious(previousTransformation: SequenceTransformation): ResultTransformation? {
         if (previousTransformation !is FilterTransformation) return null
         assert(filter == null) { "Should not happen because no 2 consecutive FilterTransformation's possible"}
-        return FindAndReturnTransformation(loop, previousTransformation.inputVariable, stdlibFunName, endReturn, previousTransformation.buildRealCondition())
+        return FindAndReturnTransformation(loop, previousTransformation.inputVariable, generator, endReturn, previousTransformation.buildRealCondition())
     }
 
     override val commentSavingRange = PsiChildRange(loop.unwrapIfLabeled(), endReturn)
@@ -43,13 +43,7 @@ class FindAndReturnTransformation(
     override val commentRestoringRange = commentSavingRange.withoutFirstStatement()
 
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
-        return if (filter == null) {
-            chainedCallGenerator.generate("$stdlibFunName()")
-        }
-        else {
-            val lambda = generateLambda(inputVariable, filter)
-            chainedCallGenerator.generate("$stdlibFunName $0:'{}'", lambda)
-        }
+        return generator(chainedCallGenerator, filter)
     }
 
     override fun convertLoop(resultCallChain: KtExpression): KtExpression {
@@ -78,9 +72,9 @@ class FindAndReturnTransformation(
             val returnValueInLoop = returnInLoop.returnedExpression ?: return null
             val returnValueAfterLoop = returnAfterLoop.returnedExpression ?: return null
 
-            val stdlibFunName = stdlibFunNameForFind(returnValueInLoop, returnValueAfterLoop, state.workingVariable, findFirst = true) ?: return null
+            val generator = buildFindOperationGenerator(returnValueInLoop, returnValueAfterLoop, state.workingVariable, findFirst = true) ?: return null
 
-            val transformation = FindAndReturnTransformation(state.outerLoop, state.workingVariable, stdlibFunName, returnAfterLoop)
+            val transformation = FindAndReturnTransformation(state.outerLoop, state.workingVariable, generator, returnAfterLoop)
             return ResultTransformationMatch(transformation)
         }
     }

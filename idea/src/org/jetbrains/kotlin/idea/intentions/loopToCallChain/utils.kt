@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -95,16 +96,48 @@ fun KtProperty.hasWriteUsages(): Boolean {
     }
 }
 
-fun stdlibFunNameForFind(valueIfFound: KtExpression, valueIfNotFound: KtExpression, workingVariable: KtCallableDeclaration, findFirst: Boolean): String? {
-    return when {
-        valueIfNotFound.isNullExpression() && valueIfFound.isVariableReference(workingVariable) -> if (findFirst) "firstOrNull" else "lastOrNull"
+fun buildFindOperationGenerator(
+        valueIfFound: KtExpression,
+        valueIfNotFound: KtExpression,
+        workingVariable: KtCallableDeclaration,
+        findFirst: Boolean
+): ((chainedCallGenerator: ChainedCallGenerator, filter: KtExpression?) -> KtExpression)?  {
+    assert(valueIfFound.isPhysical)
+    assert(valueIfNotFound.isPhysical)
+
+    fun generateChainedCall(stdlibFunName: String, chainedCallGenerator: ChainedCallGenerator, filter: KtExpression?): KtExpression {
+        return if (filter == null) {
+            chainedCallGenerator.generate("$stdlibFunName()")
+        }
+        else {
+            val lambda = generateLambda(workingVariable, filter)
+            chainedCallGenerator.generate("$stdlibFunName $0:'{}'", lambda)
+        }
+    }
+
+
+    val stdlibFunName = when {
+        valueIfNotFound.isNullExpression() && valueIfFound.isVariableReference(workingVariable) -> if (findFirst) "firstOrNull" else "lastOrNull" //TODO: ?: if not null
 
         valueIfFound.isTrueConstant() && valueIfNotFound.isFalseConstant() -> "any"
 
         valueIfFound.isFalseConstant() && valueIfNotFound.isTrueConstant() -> "none"
 
-        else -> /*TODO: allow other constants*/ null
+        workingVariable.hasUsages(listOf(valueIfFound)) -> /*TODO*/ return null
+
+        // initial value is compile-time constant
+        ConstantExpressionEvaluator.getConstant(valueIfNotFound, valueIfNotFound.analyze(BodyResolveMode.PARTIAL)) != null -> {
+            return { chainedCallGenerator, filter ->
+                val chainedCall = generateChainedCall("any", chainedCallGenerator, filter)
+                KtPsiFactory(chainedCall).createExpressionByPattern("if ($0) $1 else $2", chainedCall, valueIfFound, valueIfNotFound)
+            }
+
+        }
+
+        else -> return null
     }
+
+    return { chainedCallGenerator, filter -> generateChainedCall(stdlibFunName, chainedCallGenerator, filter) }
 }
 
 fun KtExpressionWithLabel.isBreakOrContinueOfLoop(loop: KtLoopExpression): Boolean {
