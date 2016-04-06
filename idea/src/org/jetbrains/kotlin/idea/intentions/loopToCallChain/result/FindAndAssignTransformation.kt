@@ -70,16 +70,29 @@ class FindAndAssignTransformation(
      *         variable = ...
      *         break
      *     }
+     * or
+     *     val variable = ...
+     *     for (...) {
+     *         ...
+     *         variable = ...
+     *     }
      */
     object Matcher : ResultTransformationMatcher {
         override fun match(state: MatchingState): ResultTransformationMatch? {
             //TODO: pass indexVariable as null if not used
             if (state.indexVariable != null) return null
 
-            if (state.statements.size != 2) return null
+            when (state.statements.size) {
+                1 -> {}
 
-            val breakExpression = state.statements.last() as? KtBreakExpression ?: return null
-            if (!breakExpression.isBreakOrContinueOfLoop(state.outerLoop)) return null
+                2 -> {
+                    val breakExpression = state.statements.last() as? KtBreakExpression ?: return null
+                    if (!breakExpression.isBreakOrContinueOfLoop(state.outerLoop)) return null
+                }
+
+                else -> return null
+            }
+            val findFirst = state.statements.size == 2
 
             val binaryExpression = state.statements.first() as? KtBinaryExpression ?: return null
             if (binaryExpression.operationToken != KtTokens.EQ) return null
@@ -94,7 +107,7 @@ class FindAndAssignTransformation(
             val usageCountInLoop = ReferencesSearch.search(declarationBeforeLoop, LocalSearchScope(state.outerLoop)).count()
             if (usageCountInLoop != 1) return null // this should be the only usage of this variable inside the loop
 
-            val stdlibFunName = stdlibFunNameForFind(right, initializer, state.workingVariable) ?: return null
+            val stdlibFunName = stdlibFunNameForFind(right, initializer, state.workingVariable, findFirst) ?: return null
 
             val transformation = FindAndAssignTransformation(state.outerLoop, state.workingVariable, stdlibFunName, declarationBeforeLoop)
             return ResultTransformationMatch(transformation)
