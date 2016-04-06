@@ -63,9 +63,8 @@ open class DeserializedPackageMemberScope(
         }
     }
 
-    override fun addNonDeclaredDescriptors(result: MutableCollection<DeclarationDescriptor>, location: LookupLocation) {
-        // Do nothing
-    }
+    override fun getNonDeclaredFunctionNames(location: LookupLocation): Set<Name> = emptySet()
+    override fun getNonDeclaredVariableNames(location: LookupLocation): Set<Name> = emptySet()
 
     override fun addEnumEntryDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean) {
         // Do nothing

@@ -226,17 +226,15 @@ class DeserializedClassDescriptor(
             })
         }
 
-        override fun addNonDeclaredDescriptors(result: MutableCollection<DeclarationDescriptor>, location: LookupLocation) {
-            for (supertype in classDescriptor.getTypeConstructor().supertypes) {
-                for (descriptor in supertype.memberScope.getContributedDescriptors()) {
-                    if (descriptor is FunctionDescriptor) {
-                        result.addAll(getContributedFunctions(descriptor.name, location))
-                    }
-                    else if (descriptor is PropertyDescriptor) {
-                        result.addAll(getContributedVariables(descriptor.name, location))
-                    }
-                    // Nothing else is inherited
-                }
+        override fun getNonDeclaredFunctionNames(location: LookupLocation): Set<Name> {
+            return classDescriptor.typeConstructor.supertypes.flatMapTo(LinkedHashSet()) {
+                it.memberScope.getContributedDescriptors().filterIsInstance<SimpleFunctionDescriptor>().map { it.name }
+            }
+        }
+
+        override fun getNonDeclaredVariableNames(location: LookupLocation): Set<Name> {
+            return classDescriptor.typeConstructor.supertypes.flatMapTo(LinkedHashSet()) {
+                it.memberScope.getContributedDescriptors().filterIsInstance<PropertyDescriptor>().map { it.name }
             }
         }
 

@@ -165,7 +165,13 @@ abstract class DeserializedMemberScope protected constructor(
         }
     }
 
-    protected abstract fun addNonDeclaredDescriptors(result: MutableCollection<DeclarationDescriptor>, location: LookupLocation)
+    protected fun addNonDeclaredDescriptors(result: MutableCollection<DeclarationDescriptor>, location: LookupLocation) {
+        result.addAll(getNonDeclaredFunctionNames(location).flatMap { getContributedFunctions(it, location) })
+        result.addAll(getNonDeclaredVariableNames(location).flatMap { getContributedVariables(it, location) })
+    }
+
+    protected abstract fun getNonDeclaredFunctionNames(location: LookupLocation): Set<Name>
+    protected abstract fun getNonDeclaredVariableNames(location: LookupLocation): Set<Name>
 
     protected abstract fun addEnumEntryDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean)
 
