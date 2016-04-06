@@ -234,3 +234,18 @@ fun PsiChildRange.withoutLastStatement(): PsiChildRange {
     val newLast = last!!.siblings(forward = false, withItself = false).first { it !is PsiWhiteSpace }
     return PsiChildRange(first, newLast)
 }
+
+data class VariableInitialization(
+        val variable: KtProperty,
+        val initializationStatement: KtExpression,
+        val initializer: KtExpression)
+
+fun KtExpression.detectInitializationBeforeLoop(loop: KtForExpression): VariableInitialization? {
+    if (this !is KtNameReferenceExpression) return null
+    if (getQualifiedExpressionForSelector() != null) return null
+    val variable = this.mainReference.resolve() as? KtProperty ?: return null
+    if (variable != loop.previousStatement()) return null //TODO: support initializer not right before the loop
+    //TODO: support assignment instead of initializer
+    val initializer = variable.initializer ?: return null
+    return VariableInitialization(variable, variable, initializer)
+}

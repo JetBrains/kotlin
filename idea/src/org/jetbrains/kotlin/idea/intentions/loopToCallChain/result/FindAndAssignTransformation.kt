@@ -31,17 +31,17 @@ class FindAndAssignTransformation(
         private val loop: KtForExpression,
         override val inputVariable: KtCallableDeclaration,
         private val generator: (chainedCallGenerator: ChainedCallGenerator, filter: KtExpression?) -> KtExpression,
-        private val initialDeclaration: KtProperty,
+        private val initialization: VariableInitialization,
         private val filter: KtExpression? = null
 ) : ResultTransformation {
 
     override fun mergeWithPrevious(previousTransformation: SequenceTransformation): ResultTransformation? {
         if (previousTransformation !is FilterTransformation) return null
         assert(filter == null) { "Should not happen because no 2 consecutive FilterTransformation's possible"}
-        return FindAndAssignTransformation(loop, previousTransformation.inputVariable, generator, initialDeclaration, previousTransformation.buildRealCondition())
+        return FindAndAssignTransformation(loop, previousTransformation.inputVariable, generator, initialization, previousTransformation.buildRealCondition())
     }
 
-    override val commentSavingRange = PsiChildRange(initialDeclaration, loop.unwrapIfLabeled())
+    override val commentSavingRange = PsiChildRange(initialization.initializationStatement, loop.unwrapIfLabeled())
     override val commentRestoringRange = commentSavingRange.withoutLastStatement()
 
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
@@ -49,14 +49,14 @@ class FindAndAssignTransformation(
     }
 
     override fun convertLoop(resultCallChain: KtExpression): KtExpression {
-        initialDeclaration.initializer!!.replace(resultCallChain)
+        initialization.initializer.replace(resultCallChain)
         loop.deleteWithLabels()
 
-        if (!initialDeclaration.hasWriteUsages()) { // change variable to 'val' if possible
-            initialDeclaration.valOrVarKeyword.replace(KtPsiFactory(initialDeclaration).createValKeyword())
+        if (!initialization.variable.hasWriteUsages()) { // change variable to 'val' if possible
+            initialization.variable.valOrVarKeyword.replace(KtPsiFactory(initialization.variable).createValKeyword())
         }
 
-        return initialDeclaration
+        return initialization.initializationStatement
     }
 
     /**
@@ -96,20 +96,19 @@ class FindAndAssignTransformation(
             val left = binaryExpression.left ?: return null
             val right = binaryExpression.right ?: return null
 
-            //TODO: support also assignment instead of declaration
-            val declarationBeforeLoop = state.outerLoop.previousStatement() as? KtProperty ?: return null
-            val initializer = declarationBeforeLoop.initializer ?: return null
-            if (!left.isVariableReference(declarationBeforeLoop)) return null
+            val initialization = left.detectInitializationBeforeLoop(state.outerLoop) ?: return null
 
-            val usageCountInLoop = ReferencesSearch.search(declarationBeforeLoop, LocalSearchScope(state.outerLoop)).count()
+            val usageCountInLoop = ReferencesSearch.search(initialization.variable, LocalSearchScope(state.outerLoop)).count()
             if (usageCountInLoop != 1) return null // this should be the only usage of this variable inside the loop
 
             // we do not try to convert anything if the initializer is not compile-time constant because of possible side-effects
-            if (ConstantExpressionEvaluator.getConstant(initializer, initializer.analyze(BodyResolveMode.PARTIAL)) == null) return null
+            val initializerIsConstant = ConstantExpressionEvaluator.getConstant(
+                    initialization.initializer, initialization.initializer.analyze(BodyResolveMode.PARTIAL)) != null
+            if (!initializerIsConstant) return null
 
-            val generator = buildFindOperationGenerator(right, initializer, state.workingVariable, findFirst) ?: return null
+            val generator = buildFindOperationGenerator(right, initialization.initializer, state.workingVariable, findFirst) ?: return null
 
-            val transformation = FindAndAssignTransformation(state.outerLoop, state.workingVariable, generator, declarationBeforeLoop)
+            val transformation = FindAndAssignTransformation(state.outerLoop, state.workingVariable, generator, initialization)
             return ResultTransformationMatch(transformation)
         }
     }
