@@ -96,7 +96,7 @@ public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
                         CollectionsKt.single(packageFragmentProvider.getPackageFragments(packageFqName));
                 RecursiveDescriptorComparator.validateAndCompareDescriptors(
                         fromLazyResolve, deserialized, configuration,
-                        new File("compiler/testData/builtin-classes-" + packageFqName.asString().replace('.', '-') + ".txt")
+                        new File("compiler/testData/builtin-classes/default/" + packageFqName.asString().replace('.', '-') + ".txt")
                 );
             }
         }
