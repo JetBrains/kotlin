@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.TypeSubstitution;
 
 import java.util.Collection;
 import java.util.List;
@@ -105,6 +106,12 @@ public class ErrorSimpleFunctionDescriptorImpl extends SimpleFunctionDescriptorI
 
             @NotNull
             @Override
+            public CopyBuilder<SimpleFunctionDescriptor> setSubstitution(@NotNull TypeSubstitution substitution) {
+                return this;
+            }
+
+            @NotNull
+            @Override
             public CopyBuilder<SimpleFunctionDescriptor> setTypeParameters(@NotNull List<TypeParameterDescriptor> parameters) {
                 return this;
             }
@@ -118,6 +125,12 @@ public class ErrorSimpleFunctionDescriptorImpl extends SimpleFunctionDescriptorI
             @NotNull
             @Override
             public CopyBuilder<SimpleFunctionDescriptor> setExtensionReceiverType(@Nullable KotlinType type) {
+                return this;
+            }
+
+            @NotNull
+            @Override
+            public CopyBuilder<SimpleFunctionDescriptor> setDispatchReceiverParameter(@Nullable ReceiverParameterDescriptor dispatchReceiverParameter) {
                 return this;
             }
 

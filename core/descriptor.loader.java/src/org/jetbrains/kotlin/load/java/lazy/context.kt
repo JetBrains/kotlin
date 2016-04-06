@@ -48,7 +48,15 @@ class JavaResolverComponents(
         val packageMapper: PackagePartProvider,
         val supertypeLoopChecker: SupertypeLoopChecker,
         val lookupTracker: LookupTracker
-)
+) {
+    fun replace(
+            javaResolverCache: JavaResolverCache = this.javaResolverCache
+    ) = JavaResolverComponents(
+            storageManager, finder, kotlinClassFinder, deserializedDescriptorResolver,
+            externalAnnotationResolver, signaturePropagator, errorReporter, javaResolverCache,
+            javaPropertyInitializerEvaluator, samConversionResolver, sourceElementFactory,
+            moduleClassResolver, packageMapper, supertypeLoopChecker, lookupTracker)
+}
 
 open class LazyJavaResolverContext(
         val components: JavaResolverComponents,
@@ -68,6 +76,9 @@ fun LazyJavaResolverContext.child(
         typeParameterResolver: TypeParameterResolver
 ) = LazyJavaResolverContext(components, packageFragmentProvider, javaClassResolver, module, reflectionTypes, typeParameterResolver)
 
+fun LazyJavaResolverContext.replaceComponents(
+        components: JavaResolverComponents
+) = LazyJavaResolverContext(components, packageFragmentProvider, javaClassResolver, module, reflectionTypes, typeParameterResolver)
 
 fun LazyJavaResolverContext.child(
         containingDeclaration: DeclarationDescriptor,

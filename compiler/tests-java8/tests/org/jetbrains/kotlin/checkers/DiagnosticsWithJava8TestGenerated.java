@@ -112,4 +112,25 @@ public class DiagnosticsWithJava8TestGenerated extends AbstractDiagnosticsWithFu
             doTest(fileName);
         }
     }
+
+    @TestMetadata("compiler/testData/diagnostics/testsWithJava8/targetedBuiltIns")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class TargetedBuiltIns extends AbstractDiagnosticsWithFullJdkTest {
+        public void testAllFilesPresentInTargetedBuiltIns() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJava8/targetedBuiltIns"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("removeIf.kt")
+        public void testRemoveIf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/targetedBuiltIns/removeIf.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("stream.kt")
+        public void testStream() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/targetedBuiltIns/stream.kt");
+            doTest(fileName);
+        }
+    }
 }

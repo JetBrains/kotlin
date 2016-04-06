@@ -362,8 +362,11 @@ fun main(args: Array<String>) {
         testClass<AbstractJvm8RuntimeDescriptorLoaderTest>() {
             model("loadJava8/compiledJava", extension = "java", excludeDirs = listOf("sam", "kotlinSignature/propagation"))
         }
-    }
 
+        testClass<AbstractCompileKotlinAgainstKotlinTest>() {
+            model("compileKotlinAgainstKotlinJava8")
+        }
+    }
 
     testGroup("idea/tests", "idea/testData") {
         testClass<AbstractAdditionalResolveDescriptorRendererTest>() {
@@ -873,6 +876,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractJvmBasicCompletionTest>("org.jetbrains.kotlin.idea.completion.test.KDocCompletionTestGenerated") {
             model("kdoc")
+        }
+
+        testClass<AbstractJava8BasicCompletionTest>() {
+            model("basic/java8")
         }
     }
 

@@ -17,27 +17,41 @@
 package org.jetbrains.kotlin.load.kotlin
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.load.java.components.JavaResolverCache
+import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaClassDescriptor
+import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaClassMemberScope
+import org.jetbrains.kotlin.load.java.lazy.replaceComponents
+import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
+import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
-import org.jetbrains.kotlin.platform.JvmBuiltIns
+import org.jetbrains.kotlin.platform.createMappedTypeParametersSubstitution
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
+import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.AdditionalClassPartsProvider
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.types.DelegatingType
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.SmartSet
+import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.io.Serializable
+import java.util.*
 
-class BuiltInClassesAreSerializableOnJvm(
-        private val moduleDescriptor: ModuleDescriptor
+open class BuiltInClassesAreSerializableOnJvm(
+        private val moduleDescriptor: ModuleDescriptor,
+        deferredOwnerModuleDescriptor: () -> ModuleDescriptor
 ) : AdditionalClassPartsProvider {
+
+    private val ownerModuleDescriptor: ModuleDescriptor by lazy(deferredOwnerModuleDescriptor)
 
     private val mockSerializableType = createMockJavaIoSerializableType()
 
@@ -49,7 +63,7 @@ class BuiltInClassesAreSerializableOnJvm(
         //NOTE: can't reference anyType right away, because this is sometimes called when JvmBuiltIns are initializing
         val superTypes = listOf(object : DelegatingType() {
             override fun getDelegate(): KotlinType {
-                return JvmBuiltIns.Instance.anyType
+                return moduleDescriptor.builtIns.anyType
             }
         })
 
@@ -68,6 +82,74 @@ class BuiltInClassesAreSerializableOnJvm(
         else return listOf()
     }
 
+    override fun getFunctions(name: Name, classDescriptor: DeserializedClassDescriptor): Collection<SimpleFunctionDescriptor> =
+            getAdditionalFunctions(classDescriptor) {
+                it.getContributedFunctions(name, NoLookupLocation.FROM_BUILTINS)
+            }
+            .map {
+                additionalMember ->
+                additionalMember.newCopyBuilder().apply {
+                    setOwner(classDescriptor)
+                    setDispatchReceiverParameter(classDescriptor.thisAsReceiverParameter)
+                    setPreserveSourceElement()
+                    setSubstitution(createMappedTypeParametersSubstitution(
+                            additionalMember.containingDeclaration as ClassDescriptor, classDescriptor))
+                }.build()!!
+            }
+
+    override fun getFunctionsNames(classDescriptor: DeserializedClassDescriptor): Collection<Name> =
+            getAdditionalFunctions(classDescriptor) {
+                it.getContributedDescriptors(DescriptorKindFilter.FUNCTIONS).filterIsInstance<SimpleFunctionDescriptor>()
+            }.map(SimpleFunctionDescriptor::getName)
+
+    private fun getAdditionalFunctions(
+            classDescriptor: DeserializedClassDescriptor,
+            functionsByScope: (MemberScope) -> Collection<SimpleFunctionDescriptor>
+    ): Collection<SimpleFunctionDescriptor> {
+        // Prevents recursive dependency: memberScope(Any) -> memberScope(Object) -> memberScope(Any)
+        // No additional members should be added to Any
+        if (classDescriptor.isAny) return emptyList()
+
+        val fqName = classDescriptor.fqNameUnsafe.check { it.isSafe }?.toSafe() ?: return emptyList()
+
+        val j2kClassMap = JavaToKotlinClassMap.INSTANCE
+        val javaAnalogueFqName = j2kClassMap.mapKotlinToJava(fqName.toUnsafe())?.asSingleFqName() ?: return emptyList()
+
+        if (javaAnalogueFqName in IGNORE_BY_DEFAULT_CLASS_FQ_NAMES) return emptyList()
+
+        val javaAnalogueDescriptor =
+                ownerModuleDescriptor.resolveClassByFqName(javaAnalogueFqName, NoLookupLocation.FROM_BUILTINS) as? LazyJavaClassDescriptor
+                ?: return emptyList()
+
+        val platformClassDescriptors = j2kClassMap.mapPlatformClass(javaAnalogueDescriptor.fqNameSafe, DefaultBuiltIns.Instance)
+        val kotlinMutableClassIfContainer = platformClassDescriptors.lastOrNull() ?: return emptyList()
+        val platformVersions = SmartSet.create(platformClassDescriptors.map { it.fqNameSafe })
+
+        val isMutable = j2kClassMap.isMutable(classDescriptor)
+
+        val fakeJavaClassDescriptor =
+                javaAnalogueDescriptor.copy(
+                        javaResolverCache = JavaResolverCache.EMPTY,
+                        additionalSupertypeClassDescriptor = kotlinMutableClassIfContainer)
+
+        val scope = fakeJavaClassDescriptor.unsubstitutedMemberScope
+
+        return functionsByScope(scope)
+                .filter { analogueMember ->
+                    if (analogueMember.kind != CallableMemberDescriptor.Kind.DECLARATION) return@filter false
+                    if (!analogueMember.visibility.isPublicAPI) return@filter false
+
+                    val methodFqName = analogueMember.fqNameSafe
+
+                    if (methodFqName in BLACK_LIST_METHODS_FQ_NAMES) return@filter false
+                    if ((methodFqName in MUTABLE_METHODS_FQ_NAMES) xor isMutable) return@filter false
+
+                    analogueMember.overriddenDescriptors.none {
+                        it.containingDeclaration.fqNameSafe in platformVersions
+                    }
+                }
+    }
+
     companion object {
         fun isSerializableInJava(classFqName: FqName): Boolean {
             val fqNameUnsafe = classFqName.toUnsafe()
@@ -84,5 +166,35 @@ class BuiltInClassesAreSerializableOnJvm(
             return Serializable::class.java.isAssignableFrom(classViaReflection)
         }
 
+        private val IGNORE_BY_DEFAULT_CLASS_FQ_NAMES =
+                setOf(FqName("java.lang.String")) +
+                JvmPrimitiveType.values().map { it.wrapperFqName }
+
+        private val BLACK_LIST_METHODS_FQ_NAMES =
+                buildPrimitiveValueMethodsSet() +
+                FqName("java.util.Collection.toArray") +
+                FqName("java.util.List.toArray") +
+                FqName("java.util.Set.toArray") +
+                FqName("java.lang.annotation.Annotation.annotationType")
+
+        private val MUTABLE_METHODS_FQ_NAMES =
+                inClass("java.util.Collection",
+                        "removeIf") +
+
+                inClass("java.util.List",
+                        "sort", "replaceAll") +
+
+                inClass("java.util.Map",
+                        "compute", "computeIfAbsent", "computeIfPresent", "remove", "merge", "putIfAbsent", "replace", "replaceAll")
+
+        private fun buildPrimitiveValueMethodsSet() =
+                JvmPrimitiveType.values().mapTo(LinkedHashSet()) {
+                    it.wrapperFqName.child(Name.identifier(it.javaKeywordName + "Value"))
+                }
+
+        private fun inClass(classFqName: String, vararg names: String) =
+                names.mapTo(LinkedHashSet()) { FqName(classFqName).child(Name.identifier(it)) }
     }
 }
+
+private val ClassDescriptor.isAny: Boolean get() = fqNameUnsafe == KotlinBuiltIns.FQ_NAMES.any

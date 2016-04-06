@@ -83,9 +83,21 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
         doTest(fileName);
     }
 
+    @TestMetadata("removeIf.kt")
+    public void testRemoveIf() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/removeIf.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("samOnInterfaceWithDefaultMethod.kt")
     public void testSamOnInterfaceWithDefaultMethod() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/samOnInterfaceWithDefaultMethod.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("stream.kt")
+    public void testStream() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/stream.kt");
         doTest(fileName);
     }
 

@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.TypeSubstitution;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 
 import java.util.Collection;
@@ -110,6 +111,9 @@ public interface FunctionDescriptor extends CallableMemberDescriptor {
         CopyBuilder<D> setExtensionReceiverType(@Nullable KotlinType type);
 
         @NotNull
+        CopyBuilder<D> setDispatchReceiverParameter(@Nullable ReceiverParameterDescriptor dispatchReceiverParameter);
+
+        @NotNull
         CopyBuilder<D> setOriginal(@NotNull FunctionDescriptor original);
 
         @NotNull
@@ -123,6 +127,9 @@ public interface FunctionDescriptor extends CallableMemberDescriptor {
 
         @NotNull
         CopyBuilder<D> setHiddenToOvercomeSignatureClash();
+
+        @NotNull
+        CopyBuilder<D> setSubstitution(@NotNull TypeSubstitution substitution);
 
         @Nullable
         D build();

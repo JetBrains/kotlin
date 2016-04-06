@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.serialization.deserialization.AdditionalClassPartsProvider;
-import org.jetbrains.kotlin.storage.LockBasedStorageManager;
+import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
@@ -71,12 +71,10 @@ public abstract class KotlinBuiltIns {
     private final Map<PrimitiveType, KotlinType> primitiveTypeToArrayKotlinType;
     private final Map<KotlinType, KotlinType> primitiveKotlinTypeToKotlinArrayType;
     private final Map<KotlinType, KotlinType> kotlinArrayTypeToPrimitiveKotlinType;
-    private final Map<FqName, PackageFragmentDescriptor> packageNameToPackageFragment;
 
     public static final FqNames FQ_NAMES = new FqNames();
 
-    protected KotlinBuiltIns() {
-        LockBasedStorageManager storageManager = new LockBasedStorageManager();
+    protected KotlinBuiltIns(@NotNull StorageManager storageManager) {
         builtInsModule = new ModuleDescriptorImpl(
                 Name.special("<built-ins module>"), storageManager, ModuleParameters.Empty.INSTANCE, this
         );
@@ -96,7 +94,7 @@ public abstract class KotlinBuiltIns {
         builtInsModule.initialize(packageFragmentProvider);
         builtInsModule.setDependencies(builtInsModule);
 
-        packageNameToPackageFragment = new LinkedHashMap<FqName, PackageFragmentDescriptor>();
+        Map<FqName, PackageFragmentDescriptor> packageNameToPackageFragment = new LinkedHashMap<FqName, PackageFragmentDescriptor>();
 
         builtInsPackageFragment = createPackage(packageFragmentProvider, packageNameToPackageFragment, BUILT_INS_PACKAGE_FQ_NAME);
         collectionsPackageFragment = createPackage(packageFragmentProvider, packageNameToPackageFragment, COLLECTIONS_PACKAGE_FQ_NAME);
@@ -290,23 +288,7 @@ public abstract class KotlinBuiltIns {
 
     @Nullable
     public ClassDescriptor getBuiltInClassByFqNameNullable(@NotNull FqName fqName) {
-        if (!fqName.isRoot()) {
-            FqName parent = fqName.parent();
-            PackageFragmentDescriptor packageFragment = packageNameToPackageFragment.get(parent);
-            if (packageFragment != null) {
-                ClassDescriptor descriptor = getBuiltInClassByNameNullable(fqName.shortName(), packageFragment);
-                if (descriptor != null) {
-                    return descriptor;
-                }
-            }
-
-            ClassDescriptor possiblyOuterClass = getBuiltInClassByFqNameNullable(parent);
-            if (possiblyOuterClass != null) {
-                return (ClassDescriptor) possiblyOuterClass.getUnsubstitutedInnerClassesScope().getContributedClassifier(
-                        fqName.shortName(), NoLookupLocation.FROM_BUILTINS);
-            }
-        }
-        return null;
+        return DescriptorUtilKt.resolveClassByFqName(builtInsModule, fqName, NoLookupLocation.FROM_BUILTINS);
     }
 
     @NotNull

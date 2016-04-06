@@ -16,7 +16,9 @@
 
 package org.jetbrains.kotlin.builtins
 
-class DefaultBuiltIns private constructor() : KotlinBuiltIns() {
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
+
+class DefaultBuiltIns private constructor() : KotlinBuiltIns(LockBasedStorageManager()) {
     companion object {
         private val initializer = BuiltInsInitializer {
             DefaultBuiltIns()

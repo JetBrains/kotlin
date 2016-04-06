@@ -29,4 +29,3 @@ class InstanceComponentDescriptor(val instance: Any) : ComponentDescriptor {
         return "Instance: ${instance.javaClass.simpleName}"
     }
 }
-

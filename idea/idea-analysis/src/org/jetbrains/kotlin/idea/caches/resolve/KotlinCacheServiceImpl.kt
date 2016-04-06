@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.psi.util.CachedValue
@@ -44,8 +45,8 @@ import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.diagnostics.KotlinSuppressCache
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.sumByLong
-import org.jetbrains.kotlin.utils.keysToMap
 
 internal val LOG = Logger.getInstance(KotlinCacheService::class.java)
 
@@ -56,14 +57,20 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
 
     override fun getSuppressionCache(): KotlinSuppressCache = kotlinSuppressCache.value
 
-    private val globalFacadesPerPlatform = listOf(JvmPlatform, JsPlatform).keysToMap { platform -> GlobalFacade(platform) }
+    private val globalFacadesPerPlatformAndSdk: SLRUCache<Pair<TargetPlatform, Sdk?>, GlobalFacade> =
+            object : SLRUCache<Pair<TargetPlatform, Sdk?>, GlobalFacade>(2 * 3, 2 * 3) {
+                override fun createValue(key: Pair<TargetPlatform, Sdk?>): GlobalFacade {
+                    return GlobalFacade(key.first, key.second)
+                }
+            }
 
-    private inner class GlobalFacade(platform: TargetPlatform) {
+    private inner class GlobalFacade(platform: TargetPlatform, sdk: Sdk?) {
         val facadeForLibraries = ProjectResolutionFacade(project) {
             globalResolveSessionProvider(
                     "project libraries for platform $platform",
                     project,
                     platform,
+                    sdk,
                     logProcessCanceled = true,
                     moduleFilter = { it.isLibraryClasses() },
                     dependencies = listOf(
@@ -78,6 +85,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
                     "project source roots and libraries for platform $platform",
                     project,
                     platform,
+                    sdk,
                     reuseDataFrom = facadeForLibraries,
                     moduleFilter = { !it.isLibraryClasses() },
                     dependencies = listOf(PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT))
@@ -86,17 +94,24 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
 
     @Deprecated("Use JetElement.getResolutionFacade(), please avoid introducing new usages")
     fun <T : Any> getProjectService(platform: TargetPlatform, ideaModuleInfo: IdeaModuleInfo, serviceClass: Class<T>): T {
-        return globalFacade(platform).resolverForModuleInfo(ideaModuleInfo).componentProvider.getService(serviceClass)
+        return globalFacade(platform, ideaModuleInfo.sdk).resolverForModuleInfo(ideaModuleInfo).componentProvider.getService(serviceClass)
     }
 
-    private fun globalFacade(platform: TargetPlatform) = globalFacadesPerPlatform[platform]!!.facadeForModules
+    private fun globalFacade(platform: TargetPlatform, sdk: Sdk?) =
+            getOrBuildGlobalFacade(platform, sdk).facadeForModules
 
-    private fun librariesFacade(platform: TargetPlatform) = globalFacadesPerPlatform[platform]!!.facadeForLibraries
+    private fun librariesFacade(platform: TargetPlatform, sdk: Sdk?) = getOrBuildGlobalFacade(platform, sdk).facadeForLibraries
+
+    @Synchronized
+    private fun getOrBuildGlobalFacade(platform: TargetPlatform, sdk: Sdk?) = globalFacadesPerPlatformAndSdk[Pair(platform, sdk)]
+
+    private val IdeaModuleInfo.sdk: Sdk? get() = dependencies().firstIsInstanceOrNull<SdkInfo>()?.sdk
 
     private fun createFacadeForSyntheticFiles(files: Set<KtFile>): ProjectResolutionFacade {
         // we assume that all files come from the same module
         val targetPlatform = files.map { TargetPlatformDetector.getPlatform(it) }.toSet().single()
         val syntheticFileModule = files.map { it.getModuleInfo() }.toSet().single()
+        val sdk = syntheticFileModule.sdk
         val filesModificationTracker = ModificationTracker {
             files.sumByLong { it.outOfBlockModificationCount }
         }
@@ -110,8 +125,9 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
                             debugName,
                             project,
                             targetPlatform,
+                            sdk,
                             syntheticFiles = files,
-                            reuseDataFrom = globalFacade(targetPlatform),
+                            reuseDataFrom = globalFacade(targetPlatform, sdk),
                             moduleFilter = { it in dependentModules },
                             dependencies = dependenciesForSyntheticFileCache
                     )
@@ -124,8 +140,9 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
                             debugName,
                             project,
                             targetPlatform,
+                            sdk,
                             syntheticFiles = files,
-                            reuseDataFrom = librariesFacade(targetPlatform),
+                            reuseDataFrom = librariesFacade(targetPlatform, sdk),
                             moduleFilter = { it == syntheticFileModule },
                             dependencies = dependenciesForSyntheticFileCache
                     )
@@ -142,6 +159,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
                             debugName,
                             project,
                             targetPlatform,
+                            sdk,
                             syntheticFiles = files,
                             moduleFilter = { true },
                             dependencies = dependenciesForSyntheticFileCache
@@ -201,13 +219,14 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
     private fun getFacadeToAnalyzeFiles(files: Collection<KtFile>): ResolutionFacade {
         val syntheticFiles = findSyntheticFiles(files)
         val file = files.first()
+        val moduleInfo = file.getModuleInfo()
         val projectFacade = if (syntheticFiles.isNotEmpty()) {
             getFacadeForSyntheticFiles(syntheticFiles)
         }
         else {
-            globalFacade(TargetPlatformDetector.getPlatform(file))
+            globalFacade(TargetPlatformDetector.getPlatform(file), moduleInfo.sdk)
         }
-        return ResolutionFacadeImpl(projectFacade, file.getModuleInfo())
+        return ResolutionFacadeImpl(projectFacade, moduleInfo)
     }
 
     private fun findSyntheticFiles(files: Collection<KtFile>) = files.mapNotNull {
@@ -228,6 +247,7 @@ private fun globalResolveSessionProvider(
         debugName: String,
         project: Project,
         platform: TargetPlatform,
+        sdk: Sdk?,
         dependencies: Collection<Any>,
         moduleFilter: (IdeaModuleInfo) -> Boolean,
         reuseDataFrom: ProjectResolutionFacade? = null,
@@ -242,16 +262,24 @@ private fun globalResolveSessionProvider(
 
     val builtIns: KotlinBuiltIns = when (platform) {
         is JsPlatform -> JsPlatform.builtIns
-        is JvmPlatform -> JvmBuiltIns.Instance
+        is JvmPlatform -> JvmBuiltIns(globalContext.storageManager)
         else -> DefaultBuiltIns.Instance
     }
 
     val moduleResolverProvider = createModuleResolverProvider(
-            debugName, project, globalContext,
+            debugName, project, globalContext, sdk,
             AnalyzerFacadeProvider.getAnalyzerFacade(platform),
             syntheticFiles, delegateResolverForProject, moduleFilter,
             builtIns
     )
+
+    if (builtIns is JvmBuiltIns) {
+        val moduleInfoToUse = sdk?.let { SdkInfo(project, it) } ?: moduleResolverProvider.resolverForProject.allModules.firstOrNull()
+        if (moduleInfoToUse != null) {
+            builtIns.setOwnerModuleDescriptor(moduleResolverProvider.resolverForProject.descriptorForModule(moduleInfoToUse))
+        }
+    }
+
     val allDependencies = dependencies + listOf(moduleResolverProvider.exceptionTracker)
     return CachedValueProvider.Result.create(moduleResolverProvider, allDependencies)
 }

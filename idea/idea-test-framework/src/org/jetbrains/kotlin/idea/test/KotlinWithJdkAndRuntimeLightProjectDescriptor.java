@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.test;
 
+import com.intellij.openapi.projectRoots.Sdk;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 
 public class KotlinWithJdkAndRuntimeLightProjectDescriptor extends KotlinJdkAndLibraryProjectDescriptor {
@@ -24,4 +25,10 @@ public class KotlinWithJdkAndRuntimeLightProjectDescriptor extends KotlinJdkAndL
     }
 
     public static final KotlinWithJdkAndRuntimeLightProjectDescriptor INSTANCE = new KotlinWithJdkAndRuntimeLightProjectDescriptor();
+    public static final KotlinWithJdkAndRuntimeLightProjectDescriptor INSTANCE_FULL_JDK = new KotlinWithJdkAndRuntimeLightProjectDescriptor() {
+        @Override
+        public Sdk getSdk() {
+            return PluginTestCaseBase.fullJdk();
+        }
+    };
 }

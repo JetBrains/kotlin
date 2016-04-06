@@ -17,12 +17,13 @@
 package org.jetbrains.kotlin.synthetic
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
 fun FunctionDescriptor.hasJavaOriginInHierarchy(): Boolean {
     return if (original.overriddenDescriptors.isEmpty())
-        containingDeclaration is JavaClassDescriptor
+        this is JavaCallableMemberDescriptor || containingDeclaration is JavaClassDescriptor
     else
         original.overriddenDescriptors.any { it.hasJavaOriginInHierarchy() }
 }

@@ -82,7 +82,7 @@ class LazyJavaClassMemberScope(
             result.add(descriptor)
             result.addIfNotNull(c.components.samConversionResolver.resolveSamAdapter(descriptor))
         }
-        
+
         enhanceSignatures(
                 result.ifEmpty { emptyOrSingletonList(createDefaultConstructor()) }
         ).toReadOnlyList()
@@ -346,10 +346,10 @@ class LazyJavaClassMemberScope(
     }
 
     private fun getFunctionsFromSupertypes(name: Name): Set<SimpleFunctionDescriptor> {
-          return ownerDescriptor.typeConstructor.supertypes.flatMapTo(LinkedHashSet()) {
-              it.memberScope.getContributedFunctions(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS)
-          }
-      }
+        return ownerDescriptor.typeConstructor.supertypes.flatMapTo(LinkedHashSet()) {
+            it.memberScope.getContributedFunctions(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS)
+        }
+    }
 
     override fun computeNonDeclaredProperties(name: Name, result: MutableCollection<PropertyDescriptor>) {
         if (jClass.isAnnotationType) {

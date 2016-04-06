@@ -16,24 +16,9 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import com.intellij.openapi.module.StdModuleTypes
-import com.intellij.openapi.roots.ModuleRootModificationUtil
-import org.jetbrains.kotlin.idea.project.PluginJetFilesProvider
-import com.intellij.codeInsight.daemon.DaemonAnalyzerTestCase
-import com.intellij.openapi.module.Module
-import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.openapi.command.WriteCommandAction
-import com.intellij.testFramework.PsiTestUtil
-import java.io.File
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.roots.DependencyScope
-import org.junit.Assert
 
-class MultiModuleHighlightingTest : DaemonAnalyzerTestCase() {
-
-    private val TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/multiModuleHighlighting/"
-
+class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
     fun testVisibility() {
         val module1 = module("m1")
         val module2 = module("m2")
@@ -73,43 +58,4 @@ class MultiModuleHighlightingTest : DaemonAnalyzerTestCase() {
 
         checkHighlightingInAllFiles()
     }
-
-    private fun checkHighlightingInAllFiles() {
-        var atLeastOneFile = false
-        PluginJetFilesProvider.allFilesInProject(myProject!!).forEach { file ->
-            atLeastOneFile = true
-            configureByExistingFile(file.virtualFile!!)
-            checkHighlighting(myEditor, true, false)
-        }
-        Assert.assertTrue(atLeastOneFile)
-    }
-
-    private fun module(name: String, hasTestRoot: Boolean = false): Module {
-        val srcDir = TEST_DATA_PATH + "${getTestName(true)}/$name"
-        val moduleWithSrcRootSet = createModuleFromTestData(srcDir, "$name", StdModuleTypes.JAVA, true)!!
-        if (hasTestRoot) {
-            setTestRoot(moduleWithSrcRootSet, name)
-        }
-        return moduleWithSrcRootSet
-    }
-
-    private fun setTestRoot(module: Module, name: String) {
-        val testDir = TEST_DATA_PATH + "${getTestName(true)}/${name}Test"
-        val testRootDirInTestData = File(testDir)
-        val testRootDir = createTempDirectory()!!
-        FileUtil.copyDir(testRootDirInTestData, testRootDir)
-        val testRoot = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(testRootDir)!!
-        object : WriteCommandAction.Simple<Unit>(project) {
-            override fun run() {
-                testRoot.refresh(false, true)
-            }
-        }.execute().throwException()
-        PsiTestUtil.addSourceRoot(module, testRoot, true)
-    }
-
-    private fun Module.addDependency(
-            other: Module,
-            dependencyScope: DependencyScope = DependencyScope.COMPILE,
-            exported: Boolean = false
-    ) = ModuleRootModificationUtil.addDependency(this, other, dependencyScope, exported)
 }

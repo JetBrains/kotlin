@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.createModule
+import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import java.util.*
 
 class ResolverForModule(
@@ -155,7 +156,8 @@ abstract class AnalyzerFacade<in P : PlatformAnalysisParameters> {
             targetEnvironment: TargetEnvironment,
             builtIns: KotlinBuiltIns,
             delegateResolver: ResolverForProject<M> = EmptyResolverForProject(),
-            packagePartProviderFactory: (M, ModuleContent) -> PackagePartProvider = { module, content -> PackagePartProvider.EMPTY }
+            packagePartProviderFactory: (M, ModuleContent) -> PackagePartProvider = { module, content -> PackagePartProvider.EMPTY },
+            firstDependency: M? = null
     ): ResolverForProject<M> {
         val storageManager = projectContext.storageManager
         fun createResolverForProject(): ResolverForProjectImpl<M> {
@@ -171,10 +173,11 @@ abstract class AnalyzerFacade<in P : PlatformAnalysisParameters> {
         val resolverForProject = createResolverForProject()
 
         fun computeDependencyDescriptors(module: M): List<ModuleDescriptorImpl> {
-            val dependenciesDescriptors = module.dependencies().mapTo(ArrayList<ModuleDescriptorImpl>()) {
-                dependencyInfo ->
-                resolverForProject.descriptorForModule(dependencyInfo as M)
-            }
+            val orderedDependencies = firstDependency.singletonOrEmptyList() + module.dependencies()
+            val dependenciesDescriptors = orderedDependencies.mapTo(ArrayList<ModuleDescriptorImpl>()) {
+                        dependencyInfo ->
+                        resolverForProject.descriptorForModule(dependencyInfo as M)
+                    }
             module.dependencyOnBuiltIns().adjustDependencies(
                     resolverForProject.descriptorForModule(module).builtIns.builtInsModule, dependenciesDescriptors)
             return dependenciesDescriptors

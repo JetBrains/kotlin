@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
+import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberScope
@@ -45,9 +46,10 @@ private fun validateDeserializedScope(scopeOwner: DeclarationDescriptor, scope: 
 }
 
 private fun checkSorted(descriptors: Collection<DeclarationDescriptor>, declaration: DeclarationDescriptor) {
+    val serializedOnly = descriptors.filterNot { it is JavaCallableMemberDescriptor }
     KtUsefulTestCase.assertOrderedEquals(
             "Members of $declaration should be sorted by serialization.",
-            descriptors,
-            descriptors.sortedWith(MemberComparator.INSTANCE)
+            serializedOnly,
+            serializedOnly.sortedWith(MemberComparator.INSTANCE)
     )
 }

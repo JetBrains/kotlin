@@ -299,6 +299,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         protected @NotNull Kind kind;
         protected @NotNull List<ValueParameterDescriptor> newValueParameterDescriptors;
         protected @Nullable KotlinType newExtensionReceiverParameterType;
+        protected @Nullable ReceiverParameterDescriptor dispatchReceiverParameter;
         protected @NotNull KotlinType newReturnType;
         protected @Nullable Name name;
         protected boolean copyOverrides = true;
@@ -326,6 +327,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             this.kind = kind;
             this.newValueParameterDescriptors = newValueParameterDescriptors;
             this.newExtensionReceiverParameterType = newExtensionReceiverParameterType;
+            this.dispatchReceiverParameter = FunctionDescriptorImpl.this.dispatchReceiverParameter;
             this.newReturnType = newReturnType;
             this.name = name;
             this.isHiddenToOvercomeSignatureClash = isHiddenToOvercomeSignatureClash();
@@ -403,6 +405,13 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
 
         @Override
         @NotNull
+        public CopyConfiguration setDispatchReceiverParameter(@Nullable ReceiverParameterDescriptor dispatchReceiverParameter) {
+            this.dispatchReceiverParameter = dispatchReceiverParameter;
+            return this;
+        }
+
+        @Override
+        @NotNull
         public CopyConfiguration setOriginal(@NotNull FunctionDescriptor original) {
             this.original = original;
             return this;
@@ -433,6 +442,13 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         @NotNull
         public CopyConfiguration setHiddenToOvercomeSignatureClash() {
             isHiddenToOvercomeSignatureClash = true;
+            return this;
+        }
+
+        @NotNull
+        @Override
+        public CopyConfiguration setSubstitution(@NotNull TypeSubstitution substitution) {
+            this.substitution = substitution;
             return this;
         }
 
@@ -498,7 +514,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         }
 
         ReceiverParameterDescriptor substitutedExpectedThis = null;
-        if (dispatchReceiverParameter != null) {
+        if (configuration.dispatchReceiverParameter != null) {
             // When generating fake-overridden member it's dispatch receiver parameter has type of Base, and it's correct.
             // E.g.
             // class Base { fun foo() }
@@ -509,7 +525,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             //    // but it would if fake-overridden `foo` had `Derived` as it's dispatch receiver parameter type
             //    x.foo()
             // }
-            substitutedExpectedThis = dispatchReceiverParameter.substitute(substitutor);
+            substitutedExpectedThis = configuration.dispatchReceiverParameter.substitute(substitutor);
             if (substitutedExpectedThis == null) {
                 return null;
             }

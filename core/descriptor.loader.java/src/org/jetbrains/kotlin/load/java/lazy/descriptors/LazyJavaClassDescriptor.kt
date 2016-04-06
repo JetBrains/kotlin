@@ -23,17 +23,17 @@ import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorBase
 import org.jetbrains.kotlin.load.java.FakePureImplementationsProvider
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.load.java.components.JavaResolverCache
 import org.jetbrains.kotlin.load.java.components.TypeUsage
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
-import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
-import org.jetbrains.kotlin.load.java.lazy.child
-import org.jetbrains.kotlin.load.java.lazy.resolveAnnotations
+import org.jetbrains.kotlin.load.java.lazy.*
 import org.jetbrains.kotlin.load.java.lazy.types.toAttributes
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.JavaType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isValidJavaFqName
+import org.jetbrains.kotlin.platform.createMappedTypeParametersSubstitution
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
@@ -48,7 +48,8 @@ import java.util.*
 class LazyJavaClassDescriptor(
         private val outerContext: LazyJavaResolverContext,
         containingDeclaration: DeclarationDescriptor,
-        private val jClass: JavaClass
+        private val jClass: JavaClass,
+        private val additionalSupertypeClassDescriptor: ClassDescriptor? = null
 ) : ClassDescriptorBase(outerContext.storageManager, containingDeclaration, jClass.name,
                         outerContext.components.sourceElementFactory.source(jClass)), JavaClassDescriptor {
 
@@ -157,6 +158,14 @@ class LazyJavaClassDescriptor(
                 }
             }
 
+            // Add fake supertype kotlin.collection.Collection<E> to java.util.Collection<E> class if needed
+            // Only needed when calculating built-ins member scope
+            result.addIfNotNull(
+                    additionalSupertypeClassDescriptor?.let {
+                        createMappedTypeParametersSubstitution(it, this@LazyJavaClassDescriptor)
+                                .buildSubstitutor().substitute(it.defaultType, Variance.INVARIANT)
+                    })
+
             result.addIfNotNull(purelyImplementedSupertype)
 
             if (incomplete.isNotEmpty()) {
@@ -213,4 +222,11 @@ class LazyJavaClassDescriptor(
 
         override fun toString(): String = getName().asString()
     }
+
+    // Only needed when calculating built-ins member scope
+    internal fun copy(
+            javaResolverCache: JavaResolverCache, additionalSupertypeClassDescriptor: ClassDescriptor?
+    ) = LazyJavaClassDescriptor(
+            c.replaceComponents(c.components.replace(javaResolverCache = javaResolverCache)),
+            containingDeclaration, jClass, additionalSupertypeClassDescriptor)
 }

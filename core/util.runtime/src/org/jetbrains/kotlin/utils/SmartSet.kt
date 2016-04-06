@@ -33,7 +33,7 @@ class SmartSet<T> private constructor() : AbstractSet<T>() {
         fun <T> create() = SmartSet<T>()
 
         @JvmStatic
-        fun <T> create(set: Set<T>) = SmartSet<T>().apply { this.addAll(set) }
+        fun <T> create(set: Collection<T>) = SmartSet<T>().apply { this.addAll(set) }
     }
 
     // null if size = 0, object if size = 1, array of objects if size < threshold, linked hash set otherwise

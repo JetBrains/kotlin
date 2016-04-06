@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.JdkOrderEntry
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
@@ -38,6 +39,7 @@ fun createModuleResolverProvider(
         debugName: String,
         project: Project,
         globalContext: GlobalContextImpl,
+        sdk: Sdk?,
         analyzerFacade: AnalyzerFacade<JvmPlatformParameters>,
         syntheticFiles: Collection<KtFile>,
         delegateResolver: ResolverForProject<IdeaModuleInfo>,
@@ -67,7 +69,8 @@ fun createModuleResolverProvider(
         val resolverForProject = analyzerFacade.setupResolverForProject(
                 debugName, globalContext.withProject(project), modulesToCreateResolversFor, modulesContent,
                 jvmPlatformParameters, IdeaEnvironment, builtIns,
-                delegateResolver, { m, c -> IDEPackagePartProvider(c.moduleContentScope) }
+                delegateResolver, { m, c -> IDEPackagePartProvider(c.moduleContentScope) },
+                sdk?.let { SdkInfo(project, it) }
         )
         return resolverForProject
     }
