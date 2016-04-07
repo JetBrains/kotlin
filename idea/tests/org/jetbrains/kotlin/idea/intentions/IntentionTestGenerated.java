@@ -5364,6 +5364,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("ifStatementPriority.kt")
+        public void testIfStatementPriority() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/ifNullToElvis/ifStatementPriority.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("MultiStatementBlock.kt")
         public void testMultiStatementBlock() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/ifNullToElvis/MultiStatementBlock.kt");
