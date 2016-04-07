@@ -16,9 +16,7 @@
 
 package org.jetbrains.kotlin.codegen.optimization.boxing
 
-import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
-import org.jetbrains.kotlin.codegen.optimization.fixStack.peek
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.kotlin.codegen.optimization.removeNodeGetNext
 import org.jetbrains.kotlin.codegen.optimization.replaceNodeGetNext
@@ -39,55 +37,55 @@ class RedundantCoercionToUnitTransformer : MethodTransformer() {
     private class Transformer(val methodNode: MethodNode) {
         private val insnList = methodNode.instructions
 
-        private val frames: Array<Frame<SourceValue>?> = Analyzer<SourceValue>(SourceInterpreter()).analyze("fake", methodNode)
         private val insns = insnList.toArray()
 
         private val dontTouchInsns = hashSetOf<AbstractInsnNode>()
         private val transformations = hashMapOf<AbstractInsnNode, () -> Unit>()
         private val removableNops = hashSetOf<InsnNode>()
 
+        private val frames: Array<out Frame<SourceValue>?> = analyzeMethodBody()
+
         fun transform() {
-            computeDontTouchInsns()
             computeTransformations()
             transformations.values.forEach { it() }
             postprocessNops()
         }
 
-        private fun computeDontTouchInsns() {
-            for (i in 0..insns.lastIndex) {
-                val frame = frames[i] ?: continue
-                val insn = insns[i]
+        private fun analyzeMethodBody(): Array<out Frame<SourceValue>?> =
+                Analyzer<SourceValue>(object : SourceInterpreter() {
+                    override fun naryOperation(insn: AbstractInsnNode, values: MutableList<out SourceValue>): SourceValue {
+                        for (value in values) {
+                            dontTouchInsns.addAll(value.insns)
+                        }
+                        return super.naryOperation(insn, values)
+                    }
 
-                when (insn.opcode) {
-                    Opcodes.DUP ->
-                        dontTouchWordsOnTop(i, frame, 1)
-                    Opcodes.DUP_X1 ->
-                        dontTouchWordsOnTop(i, frame, 2)
-                    Opcodes.DUP_X2 ->
-                        dontTouchWordsOnTop(i, frame, 3)
-                    Opcodes.DUP2 ->
-                        dontTouchWordsOnTop(i, frame, 2)
-                    Opcodes.DUP2_X1 ->
-                        dontTouchWordsOnTop(i, frame, 3)
-                    Opcodes.DUP2_X2 ->
-                        dontTouchWordsOnTop(i, frame, 4)
-                    Opcodes.SWAP ->
-                        dontTouchWordsOnTop(i, frame, 2)
-                }
-            }
-        }
+                    override fun copyOperation(insn: AbstractInsnNode, value: SourceValue): SourceValue {
+                        dontTouchInsns.addAll(value.insns)
+                        return super.copyOperation(insn, value)
+                    }
 
-        private fun dontTouchWordsOnTop(at: Int, frame: Frame<SourceValue>, expectedWords: Int) {
-            var words = 0
-            var offset = 0
-            while (words < expectedWords) {
-                val value = frame.peek(offset) ?: throwIllegalStackInsn(at)
-                offset++
-                words += value.size
-                dontTouchInsns.addAll(value.insns)
-            }
-            if (words != expectedWords) throwIllegalStackInsn(at)
-        }
+                    override fun unaryOperation(insn: AbstractInsnNode, value: SourceValue): SourceValue {
+                        if (insn.opcode != Opcodes.CHECKCAST) {
+                            dontTouchInsns.addAll(value.insns)
+                        }
+                        return super.unaryOperation(insn, value)
+                    }
+
+                    override fun binaryOperation(insn: AbstractInsnNode, value1: SourceValue, value2: SourceValue): SourceValue {
+                        dontTouchInsns.addAll(value1.insns)
+                        dontTouchInsns.addAll(value2.insns)
+                        return super.binaryOperation(insn, value1, value2)
+                    }
+
+                    override fun ternaryOperation(insn: AbstractInsnNode, value1: SourceValue, value2: SourceValue, value3: SourceValue): SourceValue {
+                        dontTouchInsns.addAll(value1.insns)
+                        dontTouchInsns.addAll(value2.insns)
+                        dontTouchInsns.addAll(value3.insns)
+                        return super.ternaryOperation(insn, value1, value2, value3)
+                    }
+                }).analyze("fake", methodNode)
+
 
         private fun computeTransformations() {
             transformations.clear()

@@ -314,11 +314,21 @@ public class InlineCodegenUtil {
 
     //marked return could be either non-local or local in case of labeled lambda self-returns
     public static boolean isMarkedReturn(@NotNull AbstractInsnNode returnIns) {
-        if (!isReturnOpcode(returnIns.getOpcode())) {
-            return false;
+        return getMarkedReturnLabelOrNull(returnIns) != null;
+    }
+
+    public static @Nullable String getMarkedReturnLabelOrNull(@NotNull AbstractInsnNode returnInsn) {
+        if (!isReturnOpcode(returnInsn.getOpcode())) {
+            return null;
         }
-        AbstractInsnNode globalFlag = returnIns.getPrevious();
-        return globalFlag instanceof MethodInsnNode && NON_LOCAL_RETURN.equals(((MethodInsnNode)globalFlag).owner);
+        AbstractInsnNode previous = returnInsn.getPrevious();
+        if (previous instanceof MethodInsnNode) {
+            MethodInsnNode marker = (MethodInsnNode) previous;
+            if (NON_LOCAL_RETURN.equals(marker.owner)) {
+                return marker.name;
+            }
+        }
+        return null;
     }
 
     public static void generateGlobalReturnFlag(@NotNull InstructionAdapter iv, @NotNull String labelName) {
