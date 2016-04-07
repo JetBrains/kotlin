@@ -17,41 +17,64 @@
 package org.jetbrains.kotlin.script
 
 import com.intellij.openapi.components.AbstractProjectComponent
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.JDOMUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.xmlb.XmlSerializer
 import com.intellij.util.xmlb.annotations.AbstractCollection
 import com.intellij.util.xmlb.annotations.Tag
+import org.jdom.Document
+import org.jdom.Element
+import org.jdom.output.Format
+import org.jdom.output.XMLOutputter
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.types.KotlinType
 import java.io.File
+import java.io.StringWriter
 import java.util.*
 
-class KotlinScriptConfigurationManager(project: Project, scriptDefinitionProvider: KotlinScriptDefinitionProvider) : AbstractProjectComponent(project) {
-    private val LOG by lazy { Logger.getInstance(KotlinScriptConfigurationManager::class.java) }
 
+val SCRIPT_CONFIG_FILE_EXTENSION = ".ktscfg.xml"
+
+class KotlinScriptConfigurationManager(project: Project, scriptDefinitionProvider: KotlinScriptDefinitionProvider) : AbstractProjectComponent(project) {
     init {
-        val scriptDefs = arrayListOf<KotlinScriptDefinition>()
-        File(project.basePath ?: ".").listFiles().forEach {
-            if (it.name.endsWith(".ktscfg.xml")) {
-                val doc = JDOMUtil.loadDocument(it)
-                doc.rootElement.children.forEach {
-                    val def = XmlSerializer.deserialize(it, KotlinScriptConfig::class.java)
-                    if (def != null)
-                        scriptDefs.add(KotlinConfigurableScriptDefinition(def))
-                }
+        loadScriptDefinitionsFromDirectoryWithConfigs(File(project.basePath ?: ".")).let {
+            if (it.isNotEmpty()) {
+                scriptDefinitionProvider.setScriptDefinitions(it + StandardScriptDefinition)
             }
         }
-        if (scriptDefs.isNotEmpty()) {
-            scriptDefs.add(StandardScriptDefinition)
-            scriptDefinitionProvider.setScriptDefinitions(scriptDefs)
-        }
     }
+}
+
+fun loadScriptDefinitionsFromDirectoryWithConfigs(dir: File): List<KotlinConfigurableScriptDefinition> =
+    dir.listFiles { file -> file.name.endsWith(SCRIPT_CONFIG_FILE_EXTENSION, ignoreCase = true) }
+            .flatMap (::loadScriptDefinitionsFromConfig)
+
+fun loadScriptDefinitionsFromConfig(configFile: File): List<KotlinConfigurableScriptDefinition> =
+        JDOMUtil.loadDocument(configFile).rootElement.children.mapNotNull {
+            XmlSerializer.deserialize(it, KotlinScriptConfig::class.java)?.let {
+                KotlinConfigurableScriptDefinition(it)
+            }
+        }
+
+@Suppress("unused")
+fun generateSampleScriptConfig(): String {
+
+    val doc = Document(Element("KotlinScriptDefinitions"))
+    val element = XmlSerializer.serialize(
+            KotlinScriptConfig(name = "abc", fileNameMatch = ".*\\.kts", classpath = arrayListOf("aaa", "bbb"),
+                               parameters = arrayListOf(KotlinScriptParameterConfig("p1", "t1"))))
+    doc.rootElement.addContent(element)
+
+    val sw = StringWriter()
+    with (XMLOutputter()) {
+        format = Format.getPrettyFormat()
+        output(doc, sw)
+    }
+    return sw.toString()
 }
 
 @Tag("scriptParam")
