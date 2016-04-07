@@ -74,15 +74,6 @@ public class Flags {
 
     // ---
 
-    private static <E> int bitWidth(@NotNull E[] enumEntries) {
-        int length = enumEntries.length - 1;
-        if (length == 0) return 1;
-        for (int i = 31; i >= 0; i--) {
-            if ((length & (1 << i)) != 0) return i + 1;
-        }
-        throw new IllegalStateException("Empty enum: " + enumEntries.getClass());
-    }
-
     public static int getClassFlags(
             boolean hasAnnotations,
             Visibility visibility,
@@ -282,66 +273,71 @@ public class Flags {
             return new BooleanFlagField(offset);
         }
 
-        private final int offset;
-        private final int bitWidth;
+        protected final int offset;
+        protected final int bitWidth;
+
+        private FlagField(int offset, int bitWidth) {
+            this.offset = offset;
+            this.bitWidth = bitWidth;
+        }
+
+        public abstract E get(int flags);
+
+        public abstract int toFlags(E value);
+    }
+
+    @SuppressWarnings("WeakerAccess")
+    public static class BooleanFlagField extends FlagField<Boolean> {
+        public BooleanFlagField(int offset) {
+            super(offset, 1);
+        }
+
+        @Override
+        @NotNull
+        public Boolean get(int flags) {
+            return (flags & (1 << offset)) != 0;
+        }
+
+        @Override
+        public int toFlags(Boolean value) {
+            return value ? 1 << offset : 0;
+        }
+    }
+
+    private static class EnumLiteFlagField<E extends Internal.EnumLite> extends FlagField<E> {
         private final E[] values;
 
-        private FlagField(int offset, E[] values) {
-            this.offset = offset;
-            this.bitWidth = bitWidth(values);
+        public EnumLiteFlagField(int offset, E[] values) {
+            super(offset, bitWidth(values));
             this.values = values;
         }
 
+        private static <E> int bitWidth(@NotNull E[] enumEntries) {
+            int length = enumEntries.length - 1;
+            if (length == 0) return 1;
+            for (int i = 31; i >= 0; i--) {
+                if ((length & (1 << i)) != 0) return i + 1;
+            }
+            throw new IllegalStateException("Empty enum: " + enumEntries.getClass());
+        }
+
+        @Override
         @Nullable
         public E get(int flags) {
             int maskUnshifted = (1 << bitWidth) - 1;
             int mask = maskUnshifted << offset;
             int value = (flags & mask) >> offset;
             for (E e : values) {
-                if (getIntValue(e) == value) {
+                if (e.getNumber() == value) {
                     return e;
                 }
             }
             return null;
         }
 
+        @Override
         public int toFlags(E value) {
-            return getIntValue(value) << offset;
-        }
-
-        protected abstract int getIntValue(E value);
-
-    }
-
-    public static class BooleanFlagField extends FlagField<Boolean> {
-        private static final Boolean[] BOOLEAN = { false, true };
-
-        public BooleanFlagField(int offset) {
-            super(offset, BOOLEAN);
-        }
-
-        @Override
-        protected int getIntValue(Boolean value) {
-            return value ? 1 : 0;
-        }
-
-        @NotNull
-        @Override
-        public Boolean get(int flags) {
-            //noinspection ConstantConditions
-            return super.get(flags);
+            return value.getNumber() << offset;
         }
     }
-
-    private static class EnumLiteFlagField<E extends Internal.EnumLite> extends FlagField<E> {
-        public EnumLiteFlagField(int offset, E[] values) {
-            super(offset, values);
-        }
-
-        @Override
-        protected int getIntValue(E value) {
-            return value.getNumber();
-        }
-    }
-
 }
