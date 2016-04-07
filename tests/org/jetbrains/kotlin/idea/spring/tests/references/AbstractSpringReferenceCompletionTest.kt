@@ -16,27 +16,19 @@
 
 package org.jetbrains.kotlin.idea.spring.tests.references
 
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.idea.completion.test.AbstractJvmBasicCompletionTest
 import org.jetbrains.kotlin.idea.spring.tests.SpringTestFixtureExtension
+import org.jetbrains.kotlin.idea.spring.tests.loadConfigByMainFilePath
 import org.jetbrains.kotlin.idea.test.TestFixtureExtension
 
 abstract class AbstractSpringReferenceCompletionTest : AbstractJvmBasicCompletionTest() {
     override fun setUpFixture(testPath: String) {
-        val mainFileName = PathUtil.getFileName(testPath)
-        val baseName = FileUtil.getNameWithoutExtension(mainFileName)
-        val configFileName = if (baseName.endsWith("Xml")) "$baseName-config.xml" else mainFileName
-        TestFixtureExtension
-                .loadFixture<SpringTestFixtureExtension>(myModule)
-                .configureFileSet(myFixture, listOf(PathUtil.toSystemIndependentName("${PathUtil.getParentPath(testPath)}/$configFileName")))
-
+        TestFixtureExtension.loadFixture<SpringTestFixtureExtension>(myModule).loadConfigByMainFilePath(testPath, myFixture)
         super.setUpFixture(testPath)
     }
 
     override fun tearDownFixture() {
         TestFixtureExtension.unloadFixture<SpringTestFixtureExtension>()
-
         super.tearDownFixture()
     }
 }
