@@ -6777,6 +6777,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/moveLambdaOutsideParentheses/moveLambda6.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("noTwoConsequentLambdas.kt")
+        public void testNoTwoConsequentLambdas() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/moveLambdaOutsideParentheses/noTwoConsequentLambdas.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/intentions/moveOutOfCompanion")
