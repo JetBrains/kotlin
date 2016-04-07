@@ -6105,6 +6105,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("endOfLineCommentBug.kt")
+        public void testEndOfLineCommentBug() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/invertIfCondition/endOfLineCommentBug.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("forLoopWithMultipleExpressions.kt")
         public void testForLoopWithMultipleExpressions() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/invertIfCondition/forLoopWithMultipleExpressions.kt");

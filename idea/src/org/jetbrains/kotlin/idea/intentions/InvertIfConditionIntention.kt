@@ -117,7 +117,7 @@ class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>(KtIfEx
                         }
 
                         //TODO: no block if single?
-                        val newIf = factory.createExpressionByPattern("if ($0) { $1 }", newCondition, newIfBodyText)
+                        val newIf = factory.createExpressionByPattern("if ($0) { $1\n}", newCondition, newIfBodyText) // we need to insert '\n' because the text can end with an end-of-line comment
                         return updatedIf.replace(newIf) as KtIfExpression
                     }
                 }
