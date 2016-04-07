@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ public abstract class AbstractAntTaskTest extends KotlinIntegrationTestBase {
                 testDataDir,
                 "build.log",
                 "-jar", getAntHome() + File.separator + "lib" + File.separator + "ant-launcher.jar",
-                "-Dkotlin.lib=" + getCompilerLib(),
+                "-Dkotlin.lib=" + KotlinIntegrationTestBase.getCompilerLib(),
                 "-Dkotlin.runtime.jar=" + ForTestCompileRuntime.runtimeJarForTests().getAbsolutePath(),
                 "-Dkotlin.reflect.jar=" + ForTestCompileRuntime.reflectJarForTests().getAbsolutePath(),
                 "-Dtest.data=" + testDataDir,
@@ -47,6 +47,6 @@ public abstract class AbstractAntTaskTest extends KotlinIntegrationTestBase {
 
     @NotNull
     private static String getAntHome() {
-        return getKotlinProjectHome().getAbsolutePath() + File.separator + "dependencies" + File.separator + "ant-1.8";
+        return KotlinIntegrationTestBase.getKotlinProjectHome().getAbsolutePath() + File.separator + "dependencies" + File.separator + "ant-1.8";
     }
 }

@@ -17,13 +17,8 @@
 package org.jetbrains.kotlin.checkers;
 
 import com.google.common.collect.Lists;
-import com.intellij.openapi.fileEditor.impl.LoadTextUtil;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
-import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.checkers.CheckerTestUtil.DiagnosedRange;
@@ -53,28 +48,7 @@ public class CheckerTestUtilTest extends KotlinTestWithEnvironment {
 
     protected void doTest(TheTest theTest) throws Exception {
         String text = KotlinTestUtils.doLoadFile(getTestDataPath(), "test.kt");
-        theTest.test(createCheckAndReturnPsiFile("test.kt", text, getProject()));
-    }
-
-    @NotNull
-    public static KtFile createCheckAndReturnPsiFile(@NotNull String fileName, @NotNull String text, @NotNull Project project) {
-        KtFile myFile = KotlinTestUtils.createFile(fileName, text, project);
-        ensureParsed(myFile);
-        assertEquals("light virtual file text mismatch", text, ((LightVirtualFile) myFile.getVirtualFile()).getContent().toString());
-        assertEquals("virtual file text mismatch", text, LoadTextUtil.loadText(myFile.getVirtualFile()));
-        //noinspection ConstantConditions
-        assertEquals("doc text mismatch", text, myFile.getViewProvider().getDocument().getText());
-        assertEquals("psi text mismatch", text, myFile.getText());
-        return myFile;
-    }
-
-    private static void ensureParsed(PsiFile file) {
-        file.accept(new PsiElementVisitor() {
-            @Override
-            public void visitElement(@NotNull PsiElement element) {
-                element.acceptChildren(this);
-            }
-        });
+        theTest.test(TestCheckerUtil.createCheckAndReturnPsiFile("test.kt", text, getProject()));
     }
 
     public void testEquals() throws Exception {

@@ -17,11 +17,8 @@
 package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.resolve.scopes.BaseLexicalScope
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
-import org.jetbrains.kotlin.utils.Printer
 
 fun KotlinBuiltIns.builtInPackageAsLexicalScope()
         = LexicalScope.empty(builtInsPackageScope.memberScopeAsImportingScope(), builtInsModule)

@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.resolve.annotation
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import java.io.File
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import java.io.File
 
 abstract class AbstractAnnotationParameterTest : AbstractAnnotationDescriptorResolveTest() {
     fun doTest(path: String) {

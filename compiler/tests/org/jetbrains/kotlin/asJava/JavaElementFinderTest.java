@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.asJava;
 
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.GlobalSearchScope;
+import junit.framework.TestCase;
 
 import java.io.File;
 import java.util.Collections;
@@ -53,12 +54,12 @@ public class JavaElementFinderTest extends KotlinAsJavaTestBase {
 
     private void assertClass(String qualifiedName) {
         PsiClass psiClass = finder.findClass(qualifiedName, GlobalSearchScope.allScope(getProject()));
-        assertNotNull(String.format("Class with fqn='%s' wasn't found.", qualifiedName), psiClass);
-        assertTrue(String.format("Class with fqn='%s' is not valid.", qualifiedName), psiClass.isValid());
+        TestCase.assertNotNull(String.format("Class with fqn='%s' wasn't found.", qualifiedName), psiClass);
+        TestCase.assertTrue(String.format("Class with fqn='%s' is not valid.", qualifiedName), psiClass.isValid());
     }
 
     private void assertNoClass(String qualifiedName) {
-        assertNull(String.format("Class with fqn='%s' isn't expected to be found.", qualifiedName),
-                   finder.findClass(qualifiedName, GlobalSearchScope.allScope(getProject())));
+        TestCase.assertNull(String.format("Class with fqn='%s' isn't expected to be found.", qualifiedName),
+                            finder.findClass(qualifiedName, GlobalSearchScope.allScope(getProject())));
     }
 }

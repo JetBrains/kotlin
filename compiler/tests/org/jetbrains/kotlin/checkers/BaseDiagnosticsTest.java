@@ -271,7 +271,7 @@ public abstract class BaseDiagnosticsTest
                 this.expectedText = textWithMarkers;
                 String textWithExtras = addExtras(expectedText);
                 this.clearText = CheckerTestUtil.parseDiagnosedRanges(textWithExtras, diagnosedRanges);
-                this.jetFile = CheckerTestUtilTest.createCheckAndReturnPsiFile(fileName, clearText, getProject());
+                this.jetFile = TestCheckerUtil.createCheckAndReturnPsiFile(fileName, clearText, getProject());
                 for (CheckerTestUtil.DiagnosedRange diagnosedRange : diagnosedRanges) {
                     diagnosedRange.setFile(jetFile);
                 }

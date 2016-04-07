@@ -64,6 +64,7 @@
       <module fileurl="file://$PROJECT_DIR$/plugins/lint/lint-api/lint-api.iml" filepath="$PROJECT_DIR$/plugins/lint/lint-api/lint-api.iml" group="plugins/lint" />
       <module fileurl="file://$PROJECT_DIR$/plugins/lint/lint-checks/lint-checks.iml" filepath="$PROJECT_DIR$/plugins/lint/lint-checks/lint-checks.iml" group="plugins/lint" />
       <module fileurl="file://$PROJECT_DIR$/plugins/lint/lint-idea/lint-idea.iml" filepath="$PROJECT_DIR$/plugins/lint/lint-idea/lint-idea.iml" group="plugins/lint" />
+      <module fileurl="file://$PROJECT_DIR$/non-compiler-tests/non-compiler-tests.iml" filepath="$PROJECT_DIR$/non-compiler-tests/non-compiler-tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/compiler/plugin-api/plugin-api.iml" filepath="$PROJECT_DIR$/compiler/plugin-api/plugin-api.iml" group="compiler" />
       <module fileurl="file://$PROJECT_DIR$/plugins/plugins-tests/plugins-tests.iml" filepath="$PROJECT_DIR$/plugins/plugins-tests/plugins-tests.iml" group="plugins" />
       <module fileurl="file://$PROJECT_DIR$/compiler/preloader/preloader.iml" filepath="$PROJECT_DIR$/compiler/preloader/preloader.iml" group="compiler/cli" />
@@ -75,6 +76,7 @@
       <module fileurl="file://$PROJECT_DIR$/plugins/uast-common/uast-common.iml" filepath="$PROJECT_DIR$/plugins/uast-common/uast-common.iml" group="plugins/lint" />
       <module fileurl="file://$PROJECT_DIR$/plugins/uast-java/uast-java.iml" filepath="$PROJECT_DIR$/plugins/uast-java/uast-java.iml" group="plugins/lint" />
       <module fileurl="file://$PROJECT_DIR$/plugins/uast-kotlin/uast-kotlin.iml" filepath="$PROJECT_DIR$/plugins/uast-kotlin/uast-kotlin.iml" group="plugins/lint" />
+      <module fileurl="file://$PROJECT_DIR$/compiler/tests-common/tests-common.iml" filepath="$PROJECT_DIR$/compiler/tests-common/tests-common.iml" group="compiler" />
       <module fileurl="file://$PROJECT_DIR$/compiler/util/util.iml" filepath="$PROJECT_DIR$/compiler/util/util.iml" />
       <module fileurl="file://$PROJECT_DIR$/core/util.runtime/util.runtime.iml" filepath="$PROJECT_DIR$/core/util.runtime/util.runtime.iml" group="core" />
     </modules>

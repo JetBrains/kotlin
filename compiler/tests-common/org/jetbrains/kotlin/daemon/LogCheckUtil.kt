@@ -16,9 +16,6 @@
 
 package org.jetbrains.kotlin.daemon
 
-import kotlin.text.MatchResult
-import kotlin.text.Regex
-
 /**
  * holder of a [regex] and optional [matchCheck] for additional checks on match result
  */

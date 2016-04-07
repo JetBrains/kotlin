@@ -17,9 +17,6 @@
 package org.jetbrains.kotlin.test.testFramework
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.components.ComponentManager
-import com.intellij.openapi.vfs.VirtualFile
-import org.picocontainer.MutablePicoContainer
 
 fun <T> runWriteAction(action: () -> T): T {
     return ApplicationManager.getApplication().runWriteAction<T>(action)
