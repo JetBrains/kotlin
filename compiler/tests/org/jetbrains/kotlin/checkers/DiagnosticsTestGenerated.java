@@ -4767,6 +4767,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("nonDefaultAccessors.kt")
+            public void testNonDefaultAccessors() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/nonDefaultAccessors.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("propertyDefferedType.kt")
             public void testPropertyDefferedType() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/propertyDefferedType.kt");
