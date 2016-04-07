@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,12 @@ package org.jetbrains.kotlin.idea.highlighter
 import com.intellij.codeInsight.daemon.ProblemHighlightFilter
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.KotlinFileType
-import com.intellij.ide.projectView.impl.ProjectRootsUtil
 
 class KotlinProblemHighlightFilter : ProblemHighlightFilter() {
 
     override fun shouldHighlight(psiFile: PsiFile): Boolean {
-        return psiFile.fileType != KotlinFileType.INSTANCE || !ProjectRootsUtil.isOutsideSourceRoot(psiFile)
-    }
+        if (psiFile.fileType == KotlinFileType.INSTANCE && !KotlinHighlightingUtil.shouldHighlight(psiFile)) return false
 
+        return true
+    }
 }
