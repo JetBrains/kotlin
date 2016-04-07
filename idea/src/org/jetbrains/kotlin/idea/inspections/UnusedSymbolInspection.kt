@@ -27,7 +27,6 @@ import com.intellij.codeInspection.ex.EntryPointsManager
 import com.intellij.codeInspection.ex.EntryPointsManagerBase
 import com.intellij.codeInspection.ex.EntryPointsManagerImpl
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
@@ -96,10 +95,6 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             return false
         }
 
-        private fun KtObjectDeclaration.hasSerializationImplicitlyUsedField(): Boolean {
-            return declarations.any { it is KtProperty && it.isSerializationImplicitlyUsedField() }
-        }
-
         // variation of IDEA's AnnotationUtil.checkAnnotatedUsingPatterns()
         private fun checkAnnotatedUsingPatterns(annotated: Annotated, annotationPatterns: Collection<String>): Boolean {
             val annotationsPresent = annotated.annotations
@@ -140,7 +135,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
                 if (!ProjectRootsUtil.isInProjectSource(declaration)) return
 
                 // Simple PSI-based checks
-                val isCompanionObject = declaration is KtObjectDeclaration && declaration.isCompanion()
+                if (declaration is KtObjectDeclaration && declaration.isCompanion()) return // never mark companion object as unused (there are too many reasons it can be needed for)
                 if (declaration.name == null) return
                 if (declaration is KtEnumEntry) return
                 if (declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return
@@ -152,7 +147,6 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
                 if (declaration.resolveToDescriptorIfAny() == null) return
                 if (isEntryPoint(declaration)) return
                 if (declaration is KtProperty && declaration.isSerializationImplicitlyUsedField()) return
-                if (isCompanionObject && (declaration as KtObjectDeclaration).hasSerializationImplicitlyUsedField()) return
                 // properties can be referred by component1/component2, which is too expensive to search, don't mark them as unused
                 if (declaration is KtParameter && declaration.dataClassComponentFunction() != null) return
 
@@ -160,16 +154,9 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
                 if (hasNonTrivialUsages(declaration)) return
                 if (declaration is KtClassOrObject && classOrObjectHasTextUsages(declaration)) return
 
-                val (inspectionTarget, textRange) = if (isCompanionObject && declaration.nameIdentifier == null) {
-                    val objectKeyword = (declaration as KtObjectDeclaration).getObjectKeyword()!!
-                    Pair(declaration, TextRange(0, objectKeyword.startOffsetInParent + objectKeyword.textLength))
-                } else {
-                    Pair(declaration.nameIdentifier!!, null)
-                }
-
                 val problemDescriptor = holder.manager.createProblemDescriptor(
-                        inspectionTarget,
-                        textRange,
+                        declaration.nameIdentifier!!,
+                        null,
                         KotlinBundle.message(messageKey, declaration.name),
                         ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                         true,
