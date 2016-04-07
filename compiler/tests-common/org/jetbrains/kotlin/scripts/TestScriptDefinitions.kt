@@ -22,31 +22,59 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.script.*
 import org.jetbrains.kotlin.types.KotlinType
+import java.io.File
+import java.net.URLClassLoader
 import kotlin.reflect.KClass
 
-abstract class BaseScriptDefinition (val extension: String) : KotlinScriptDefinition {
+abstract class BaseScriptDefinition (val extension: String, val classpath: List<String>? = null) : KotlinScriptDefinition {
     override val name = "Test Kotlin Script"
     override fun isScript(file: VirtualFile): Boolean = file.name.endsWith(extension)
     override fun getScriptName(script: KtScript): Name = ScriptNameUtil.fileNameWithExtensionStripped(script, extension)
+    override fun getScriptDependenciesClasspath(): List<String> =
+            classpath ?: (classpathFromProperty() + classpathFromClassloader(BaseScriptDefinition::class.java.classLoader)).distinct()
 }
 
-open class SimpleParamsTestScriptDefinition(extension: String, val parameters: List<ScriptParameter>) : BaseScriptDefinition(extension) {
+open class SimpleParamsWithClasspathTestScriptDefinition(extension: String, val parameters: List<ScriptParameter>, classpath: List<String>? = null)
+    : BaseScriptDefinition(extension, classpath)
+{
     override fun getScriptParameters(scriptDescriptor: ScriptDescriptor) = parameters
 }
 
-class ReflectedParamClassTestScriptDefinition(extension: String, val paramName: String, val parameter: KClass<out Any>) : BaseScriptDefinition(extension) {
+open class SimpleParamsTestScriptDefinition(extension: String, parameters: List<ScriptParameter>) : SimpleParamsWithClasspathTestScriptDefinition(extension, parameters)
+
+class ReflectedParamClassTestScriptDefinition(extension: String, val paramName: String, val parameter: KClass<out Any>, classpath: List<String>? = null)
+    : BaseScriptDefinition(extension, classpath)
+{
     override fun getScriptParameters(scriptDescriptor: ScriptDescriptor) =
             listOf(makeReflectedClassScriptParameter(scriptDescriptor, Name.identifier(paramName), parameter))
 }
 
-open class ReflectedSuperclassTestScriptDefinition(extension: String, parameters: List<ScriptParameter>, val superclass: KClass<out Any>) : SimpleParamsTestScriptDefinition(extension, parameters) {
+open class ReflectedSuperclassTestScriptDefinition(extension: String, parameters: List<ScriptParameter>, val superclass: KClass<out Any>, classpath: List<String>? = null)
+    : SimpleParamsWithClasspathTestScriptDefinition(extension, parameters, classpath)
+{
     override fun getScriptSupertypes(scriptDescriptor: ScriptDescriptor): List<KotlinType> =
             listOf(getKotlinType(scriptDescriptor, superclass))
 }
 
-class ReflectedSuperclassWithParamsTestScriptDefinition(extension: String, parameters: List<ScriptParameter>, superclass: KClass<out Any>, val superclassParameters: List<ScriptParameter>)
-    : ReflectedSuperclassTestScriptDefinition(extension, parameters, superclass)
+class ReflectedSuperclassWithParamsTestScriptDefinition(extension: String,
+                                                        parameters: List<ScriptParameter>,
+                                                        superclass: KClass<out Any>,
+                                                        val superclassParameters: List<ScriptParameter>,
+                                                        classpath: List<String>? = null)
+    : ReflectedSuperclassTestScriptDefinition(extension, parameters, superclass, classpath)
 {
     override fun getScriptParametersToPassToSuperclass(scriptDescriptor: ScriptDescriptor): List<Name> =
             superclassParameters.map { it.name }
 }
+
+fun classpathFromProperty(): List<String> =
+    System.getProperty("java.class.path")?.let {
+        it.split(String.format("\\%s", File.pathSeparatorChar).toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                .map { File(it).canonicalPath }
+    } ?: emptyList()
+
+fun classpathFromClassloader(classLoader: ClassLoader): List<String> =
+    (classLoader as? URLClassLoader)?.urLs
+            ?.map { File(it.toURI()).canonicalPath }
+            ?: emptyList()
+
