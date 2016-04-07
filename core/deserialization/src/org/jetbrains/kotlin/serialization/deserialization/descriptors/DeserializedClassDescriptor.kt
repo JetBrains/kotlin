@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.types.AbstractClassTypeConstructor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
-import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.util.*
@@ -52,20 +51,14 @@ class DeserializedClassDescriptor(
 ) {
     private val modality = Deserialization.modality(Flags.MODALITY.get(classProto.flags))
     private val visibility = Deserialization.visibility(Flags.VISIBILITY.get(classProto.flags))
-    private val kindFromProto = Flags.CLASS_KIND.get(classProto.flags)
-    private val kind = Deserialization.classKind(kindFromProto)
-    private val isCompanion = kindFromProto == ProtoBuf.Class.Kind.COMPANION_OBJECT
-    private val isInner = Flags.IS_INNER.get(classProto.flags)
-    private val isData = Flags.IS_DATA.get(classProto.flags)
+    private val kind = Deserialization.classKind(Flags.CLASS_KIND.get(classProto.flags))
 
     val c = outerContext.childContext(this, classProto.typeParameterList, nameResolver, TypeTable(classProto.typeTable))
-
-    private val classId = nameResolver.getClassId(classProto.fqName)
 
     private val staticScope = if (kind == ClassKind.ENUM_CLASS) StaticScopeForKotlinEnum(c.storageManager, this) else MemberScope.Empty
     private val typeConstructor = DeserializedClassTypeConstructor()
     private val memberScope = DeserializedClassMemberScope()
-    private val nestedClasses = NestedClassDescriptors()
+    private val nestedClasses = if (classProto.nestedClassNameCount > 0) NestedClassDescriptors() else null
     private val enumEntries = if (kind == ClassKind.ENUM_CLASS) EnumEntryClassDescriptors() else null
 
     private val containingDeclaration = outerContext.containingDeclaration
@@ -96,9 +89,9 @@ class DeserializedClassDescriptor(
 
     override fun getVisibility() = visibility
 
-    override fun isInner() = isInner
+    override fun isInner() = Flags.IS_INNER.get(classProto.flags)
 
-    override fun isData() = isData
+    override fun isData() = Flags.IS_DATA.get(classProto.flags)
 
     override fun getAnnotations() = annotations
 
@@ -106,7 +99,7 @@ class DeserializedClassDescriptor(
 
     override fun getStaticScope() = staticScope
 
-    override fun isCompanionObject(): Boolean = isCompanion
+    override fun isCompanionObject(): Boolean = Flags.CLASS_KIND.get(classProto.flags) == ProtoBuf.Class.Kind.COMPANION_OBJECT
 
     private fun computePrimaryConstructor(): ConstructorDescriptor? {
         if (kind.isSingleton) {
@@ -141,9 +134,8 @@ class DeserializedClassDescriptor(
 
     override fun getCompanionObjectDescriptor(): ClassDescriptor? = companionObjectDescriptor()
 
-
     internal fun hasNestedClass(name: Name): Boolean {
-        return name in nestedClasses.nestedClassNames
+        return nestedClasses != null && name in nestedClasses.nestedClassNames
     }
 
     override fun toString() = "deserialized class ${getName().toString()}" // not using descriptor render to preserve laziness
@@ -249,10 +241,10 @@ class DeserializedClassDescriptor(
         }
 
         override fun getClassDescriptor(name: Name): ClassifierDescriptor? =
-                classDescriptor.enumEntries?.findEnumEntry(name) ?: classDescriptor.nestedClasses.findNestedClass(name)
+                classDescriptor.enumEntries?.findEnumEntry(name) ?: classDescriptor.nestedClasses?.findNestedClass(name)
 
         override fun addClassDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean) {
-            result.addAll(classDescriptor.nestedClasses.all())
+            result.addAll(classDescriptor.nestedClasses?.all().orEmpty())
         }
 
         override fun addEnumEntryDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean) {
@@ -261,9 +253,11 @@ class DeserializedClassDescriptor(
     }
 
     private inner class NestedClassDescriptors {
-        internal val nestedClassNames = nestedClassNames()
+        private val classId = c.nameResolver.getClassId(classProto.fqName)
 
-        internal val findNestedClass = c.storageManager.createMemoizedFunctionWithNullableValues<Name, ClassDescriptor> {
+        internal val nestedClassNames = classProto.nestedClassNameList.map { c.nameResolver.getName(it) }.toSet()
+
+        private val nestedClassByName = c.storageManager.createMemoizedFunctionWithNullableValues<Name, ClassDescriptor> {
             name ->
             if (name in nestedClassNames) {
                 c.components.deserializeClass(classId.createNestedClassId(name))
@@ -271,26 +265,16 @@ class DeserializedClassDescriptor(
             else null
         }
 
-        private fun nestedClassNames(): Set<Name> {
-            val result = LinkedHashSet<Name>()
-            val nameResolver = c.nameResolver
-            for (index in classProto.nestedClassNameList) {
-                result.add(nameResolver.getName(index!!))
-            }
-            return result
-        }
+        fun findNestedClass(name: Name): ClassDescriptor? = nestedClassByName(name)
 
-        fun all(): Collection<ClassDescriptor> {
-            val result = ArrayList<ClassDescriptor>(nestedClassNames.size)
-            nestedClassNames.forEach { name -> result.addIfNotNull(findNestedClass(name)) }
-            return result
-        }
+        fun all(): Collection<ClassDescriptor> =
+                nestedClassNames.mapNotNull { name -> nestedClassByName(name) }
     }
 
     private inner class EnumEntryClassDescriptors {
         private val enumEntryProtos = classProto.enumEntryList.associateBy { c.nameResolver.getName(it.name) }
 
-        val enumEntryByName = c.storageManager.createMemoizedFunctionWithNullableValues<Name, ClassDescriptor> {
+        private val enumEntryByName = c.storageManager.createMemoizedFunctionWithNullableValues<Name, ClassDescriptor> {
             name ->
 
             enumEntryProtos[name]?.let { proto ->

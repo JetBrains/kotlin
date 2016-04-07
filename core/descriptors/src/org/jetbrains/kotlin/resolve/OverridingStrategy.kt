@@ -39,5 +39,5 @@ abstract class NonReportingOverrideStrategy : OverridingStrategy() {
         conflict(first, second)
     }
 
-    protected abstract fun conflict(first: CallableMemberDescriptor, second: CallableMemberDescriptor)
+    protected abstract fun conflict(fromSuper: CallableMemberDescriptor, fromCurrent: CallableMemberDescriptor)
 }
