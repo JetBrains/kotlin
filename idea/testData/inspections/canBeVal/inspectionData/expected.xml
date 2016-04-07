@@ -52,4 +52,13 @@
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Local 'var' can be declared as 'val'</problem_class>
         <description>Can be declared as 'val'</description>
     </problem>
+
+    <problem>
+        <file>stackOverflowBug.kt</file>
+        <line>2</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="stackOverflowBug.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Local 'var' can be declared as 'val'</problem_class>
+        <description>Can be declared as 'val'</description>
+    </problem>
 </problems>
