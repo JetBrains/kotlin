@@ -18,9 +18,12 @@ package org.jetbrains.kotlin.idea.spring.tests
 
 import com.intellij.facet.impl.FacetUtil
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.spring.facet.SpringFacet
 import com.intellij.spring.facet.SpringFileSet
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
+import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
+import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.TestFixtureExtension
 import org.jetbrains.kotlin.tests.ULTIMATE_TEST_ROOT
@@ -79,4 +82,11 @@ class SpringTestFixtureExtension() : TestFixtureExtension {
             module = null
         }
     }
+}
+
+fun SpringTestFixtureExtension.loadConfigByMainFilePath(testPath: String, fixture: JavaCodeInsightTestFixture) {
+    val mainFileName = PathUtil.getFileName(testPath)
+    val baseName = FileUtil.getNameWithoutExtension(mainFileName)
+    val configFileName = if (baseName.endsWith("Xml")) "$baseName-config.xml" else mainFileName
+    configureFileSet(fixture, listOf(PathUtil.toSystemIndependentName("${PathUtil.getParentPath(testPath)}/$configFileName")))
 }
