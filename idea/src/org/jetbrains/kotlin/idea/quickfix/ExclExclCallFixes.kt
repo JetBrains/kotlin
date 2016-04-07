@@ -31,10 +31,7 @@ import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtPostfixExpression
-import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -85,7 +82,7 @@ class AddExclExclCallFix(val psiElement: PsiElement) : ExclExclCallFix() {
 
     override fun invoke(project: Project, editor: Editor?, file: PsiFile?) {
         val modifiedExpression = getExpressionForIntroduceCall() ?: return
-        val exclExclExpression = KtPsiFactory(project).createExpression(modifiedExpression.text + "!!")
+        val exclExclExpression = KtPsiFactory(project).createExpressionByPattern("$0!!", modifiedExpression)
         modifiedExpression.replace(exclExclExpression)
     }
 

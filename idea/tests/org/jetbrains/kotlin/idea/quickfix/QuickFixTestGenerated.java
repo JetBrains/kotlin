@@ -4473,6 +4473,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("kt11594.kt")
+        public void testKt11594() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/expressions/kt11594.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("removeUselessCast.kt")
         public void testRemoveUselessCast() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/expressions/removeUselessCast.kt");
