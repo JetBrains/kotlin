@@ -194,21 +194,33 @@ fun ImportingScope.withParent(newParent: ImportingScope?): ImportingScope {
 }
 
 fun LexicalScope.replaceImportingScopes(importingScopeChain: ImportingScope?): LexicalScope {
-    return LexicalScopeWrapper(this, importingScopeChain ?: ImportingScope.Empty)
+    val newImportingScopeChain = importingScopeChain ?: ImportingScope.Empty
+    if (this is LexicalScopeWrapper) {
+        return LexicalScopeWrapper(this.delegate, newImportingScopeChain)
+    }
+    return LexicalScopeWrapper(this, newImportingScopeChain)
 }
 
 private class LexicalScopeWrapper(val delegate: LexicalScope, val newImportingScopeChain: ImportingScope): LexicalScope by delegate {
+    init {
+        assert(delegate !is LexicalScopeWrapper) {
+            "Do not wrap again to avoid performance issues"
+        }
+    }
+
     override val parent: HierarchicalScope by lazy(LazyThreadSafetyMode.NONE) {
         assert(delegate !is ImportingScope)
 
         val parent = delegate.parent
         if (parent is LexicalScope) {
-            LexicalScopeWrapper(parent, newImportingScopeChain)
+            parent.replaceImportingScopes(newImportingScopeChain)
         }
         else {
             newImportingScopeChain
         }
     }
+
+    override fun toString() = kind.toString()
 }
 
 fun chainImportingScopes(scopes: List<ImportingScope>, tail: ImportingScope? = null): ImportingScope? {
