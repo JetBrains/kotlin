@@ -162,18 +162,18 @@ fun UCallExpression.getQualifiedCallElement(): UExpression {
 
 inline fun <reified T: UElement> UElement.getParentOfType(): T? = getParentOfType(T::class.java)
 
-fun <T: UElement> UElement.getParentOfType(clazz: Class<T>): T? {
-    tailrec fun findParent(element: UElement): UElement? {
-        val parent = element.parent
+@JvmOverloads
+fun <T: UElement> UElement.getParentOfType(clazz: Class<T>, strict: Boolean = true): T? {
+    tailrec fun findParent(element: UElement?): UElement? {
         return when {
-            parent == null -> null
-            clazz.isInstance(parent) -> parent
-            else -> findParent(parent)
+            element == null -> null
+            clazz.isInstance(element) -> element
+            else -> findParent(element.parent)
         }
     }
 
     @Suppress("UNCHECKED_CAST")
-    return findParent(this) as T
+    return findParent(if (!strict) this else parent) as? T
 }
 
 fun <T> UClass.findStaticMemberOfType(name: String, type: Class<out T>): T? {
