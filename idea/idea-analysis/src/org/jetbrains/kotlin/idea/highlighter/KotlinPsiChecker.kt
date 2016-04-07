@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,9 +56,9 @@ import java.util.*
 open class KotlinPsiChecker : Annotator, HighlightRangeExtension {
 
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
-        if (!(ProjectRootsUtil.isInProjectOrLibraryContent(element) || element.containingFile is KtCodeFragment)) return
+        val file = element.containingFile as? KtFile ?: return
 
-        val file = element.containingFile as KtFile
+        if (!KotlinHighlightingUtil.shouldHighlight(file)) return
 
         val analysisResult = file.analyzeFullyAndGetResult()
         if (analysisResult.isError()) {
@@ -88,7 +88,7 @@ open class KotlinPsiChecker : Annotator, HighlightRangeExtension {
 
         if (diagnosticsForElement.isEmpty()) return
 
-        if (ProjectRootsUtil.isInProjectSource(element) || element.containingFile is KtCodeFragment) {
+        if (KotlinHighlightingUtil.shouldHighlightErrors(element)) {
             ElementAnnotator(element, holder, { param -> shouldSuppressUnusedParameter(param) }).registerDiagnosticsAnnotations(diagnosticsForElement)
         }
     }
