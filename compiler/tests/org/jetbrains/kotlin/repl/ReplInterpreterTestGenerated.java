@@ -89,6 +89,12 @@ public class ReplInterpreterTestGenerated extends AbstractReplInterpreterTest {
         doTest(fileName);
     }
 
+    @TestMetadata("multipleImports.repl")
+    public void testMultipleImports() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/multipleImports.repl");
+        doTest(fileName);
+    }
+
     @TestMetadata("simple.repl")
     public void testSimple() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/simple.repl");
