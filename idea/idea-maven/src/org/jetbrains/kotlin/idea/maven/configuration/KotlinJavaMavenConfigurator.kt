@@ -34,12 +34,8 @@ class KotlinJavaMavenConfigurator : KotlinMavenConfigurator(KotlinJavaMavenConfi
     }
 
     override fun createExecutions(pomFile: PomFile, kotlinPlugin: MavenDomPlugin, module: Module) {
-        createExecution(pomFile, kotlinPlugin, module, false)
-        createExecution(pomFile, kotlinPlugin, module, true)
-    }
-
-    override fun getGoal(isTest: Boolean): String {
-        return if (isTest) PomFile.KotlinGoals.TestCompile else PomFile.KotlinGoals.Compile
+        createExecution(pomFile, kotlinPlugin, PomFile.DefaultPhases.Compile, PomFile.KotlinGoals.Compile, module, false)
+        createExecution(pomFile, kotlinPlugin, PomFile.DefaultPhases.TestCompile, PomFile.KotlinGoals.TestCompile, module, true)
     }
 
     override fun getTargetPlatform(): TargetPlatform {

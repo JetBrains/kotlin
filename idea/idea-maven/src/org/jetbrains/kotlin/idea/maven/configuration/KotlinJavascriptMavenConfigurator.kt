@@ -34,16 +34,8 @@ class KotlinJavascriptMavenConfigurator : KotlinMavenConfigurator(KotlinJavascri
     }
 
     override fun createExecutions(pomFile: PomFile, kotlinPlugin: MavenDomPlugin, module: Module) {
-        createExecution(pomFile, kotlinPlugin, module, false)
-        createExecution(pomFile, kotlinPlugin, module, true)
-    }
-
-    override fun getExecutionId(isTest: Boolean): String {
-        return JS_EXECUTION_ID + if (isTest) "-test" else ""
-    }
-
-    override fun getGoal(isTest: Boolean): String {
-        return if (isTest) JS_TEST_GOAL else JS_GOAL
+        createExecution(pomFile, kotlinPlugin, PomFile.DefaultPhases.Compile, PomFile.KotlinGoals.Js, module, false)
+        createExecution(pomFile, kotlinPlugin, PomFile.DefaultPhases.Compile, PomFile.KotlinGoals.TestJs, module, true)
     }
 
     override fun getTargetPlatform(): TargetPlatform {
@@ -53,9 +45,6 @@ class KotlinJavascriptMavenConfigurator : KotlinMavenConfigurator(KotlinJavascri
     companion object {
         private val NAME = "js maven"
         val STD_LIB_ID = "kotlin-js-library"
-        private val JS_GOAL = "js"
-        private val JS_TEST_GOAL = "test-js"
-        private val JS_EXECUTION_ID = "js"
         private val PRESENTABLE_TEXT = "JavaScript Maven - experimental"
     }
 }

@@ -33,8 +33,8 @@ import org.jetbrains.kotlin.idea.maven.configuration.KotlinJavaMavenConfigurator
 import org.jetbrains.kotlin.idea.maven.configuration.KotlinMavenConfigurator
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 
-class GenerateMavenCompileExecutionAction : PomFileActionBase(KotlinMavenExecutionProvider("compile", PomFile.DefaultPhases.Compile))
-class GenerateMavenTestCompileExecutionAction : PomFileActionBase(KotlinMavenExecutionProvider("test-compile", PomFile.DefaultPhases.TestCompile))
+class GenerateMavenCompileExecutionAction : PomFileActionBase(KotlinMavenExecutionProvider(PomFile.KotlinGoals.Compile, PomFile.DefaultPhases.Compile))
+class GenerateMavenTestCompileExecutionAction : PomFileActionBase(KotlinMavenExecutionProvider(PomFile.KotlinGoals.TestCompile, PomFile.DefaultPhases.TestCompile))
 class GenerateMavenPluginAction : PomFileActionBase(KotlinMavenPluginProvider())
 
 private val DefaultKotlinVersion = "\${kotlin.version}"
@@ -62,18 +62,10 @@ private class KotlinMavenPluginProvider : AbstractDomGenerateProvider<MavenDomPl
         }
 
         val pom = PomFile(DomUtil.getFile(parent))
-        val plugin = pom.addPlugin(MavenId(KotlinMavenConfigurator.GROUP_ID, KotlinMavenConfigurator.MAVEN_PLUGIN_ID, version))
-        val range = plugin.version.ensureTagExists().value.textRange
-
-        if (editor != null) {
-            editor.caretModel.moveToOffset(range.endOffset)
-            editor.selectionModel.setSelection(range.startOffset, range.endOffset)
-        }
-
-        return plugin
+        return pom.addPlugin(MavenId(KotlinMavenConfigurator.GROUP_ID, KotlinMavenConfigurator.MAVEN_PLUGIN_ID, version))
     }
 
-    override fun getElementToNavigate(t: MavenDomPlugin?) = null
+    override fun getElementToNavigate(t: MavenDomPlugin?) = t?.version
 
     override fun getParentDomElement(project: Project?, editor: Editor?, file: PsiFile?): DomElement? {
         if (project == null || editor == null || file == null) {
@@ -121,7 +113,7 @@ private class KotlinMavenExecutionProvider(val goal: String, val phase: String) 
         val plugin = contextElement.findPlugin()
         return plugin != null
                && plugin.isKotlinMavenPlugin()
-               && plugin.executions.executions.none { it.goals.goals.any { it.rawText == goal } }
+               && plugin.executions.executions.none { it.goals.goals.any { it.value == goal } }
     }
 
 }

@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.idea.maven.configuration.KotlinMavenConfigurator
 import java.util.*
 
 class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectModel>(MavenDomProjectModel::class.java) {
-    override fun getStaticDescription() = "The inspecition's purpose is to check Maven pom and kotlin maven plugin configuration"
+    override fun getStaticDescription() = "Reports kotlin-maven-plugin configuration issues"
 
     override fun checkFileElement(domFileElement: DomFileElement<MavenDomProjectModel>?, holder: DomElementAnnotationHolder?) {
         if (domFileElement == null || holder == null) {
@@ -149,7 +149,7 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
     private class AddExecutionLocalFix(val file: XmlFile, val module: Module, val kotlinPlugin: MavenDomPlugin, val goal: String) : LocalQuickFix {
         override fun getName() = "Create $goal execution"
 
-        override fun getFamilyName() = "Kotlin"
+        override fun getFamilyName() = "Create kotlin execution"
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val pom = PomFile(file)
@@ -161,7 +161,7 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
     private class FixExecutionPhaseLocalFix(val execution: MavenDomPluginExecution, val newPhase: String) : LocalQuickFix {
         override fun getName() = "Change phase to $newPhase"
 
-        override fun getFamilyName() = "Kotlin"
+        override fun getFamilyName() = "Change phase"
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             execution.phase.value = newPhase
@@ -170,7 +170,7 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
 
     private class FixAddStdlibLocalFix(val pomFile: XmlFile, val id: String, val version: String?) : LocalQuickFix {
         override fun getName() = "Add $id dependency"
-        override fun getFamilyName() = "Kotlin"
+        override fun getFamilyName() = "Add dependency"
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val file = PomFile(pomFile)
@@ -180,7 +180,7 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
 
     private class ConfigurePluginExecutionLocalFix(val module: Module, val xmlFile: XmlFile, val goal: String, val version: String?) : LocalQuickFix {
         override fun getName() = "Create $goal execution of kotlin-maven-compiler"
-        override fun getFamilyName() = "Kotlin"
+        override fun getFamilyName() = "Create kotlin execution"
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val pom = PomFile(xmlFile)
