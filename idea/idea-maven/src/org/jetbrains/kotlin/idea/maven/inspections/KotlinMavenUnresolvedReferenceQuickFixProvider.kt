@@ -88,8 +88,8 @@ class KotlinMavenUnresolvedReferenceQuickFixProvider : UnresolvedReferenceQuickF
 }
 
 class AddMavenDependencyQuickFix(val className: String, val smartPsiElementPointer: SmartPsiElementPointer<KtSimpleNameExpression>) : IntentionAction, LowPriorityAction {
-    override fun getText() = "Add dependency..."
-    override fun getFamilyName() = "Kotlin"
+    override fun getText() = "Add Maven dependency..."
+    override fun getFamilyName() = text
     override fun startInWriteAction() = false
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile?) =
             smartPsiElementPointer.element.let { it != null && it.isValid } && file != null && MavenDomUtil.findContainingProject(file) != null
@@ -119,29 +119,3 @@ class AddMavenDependencyQuickFix(val className: String, val smartPsiElementPoint
     }
 }
 
-object PlatformUnresolvedProvider : KotlinIntentionActionFactoryWithDelegate<KtNameReferenceExpression, String>() {
-    override fun getElementOfInterest(diagnostic: Diagnostic) = QuickFixUtil.getParentElementOfType(diagnostic, KtNameReferenceExpression::class.java)
-    override fun extractFixData(element: KtNameReferenceExpression, diagnostic: Diagnostic) = element.getReferencedName()
-
-    override fun createFixes(originalElementPointer: SmartPsiElementPointer<KtNameReferenceExpression>, diagnostic: Diagnostic, quickFixDataFactory: () -> String?): List<QuickFixWithDelegateFactory> {
-        val result = ArrayList<QuickFixWithDelegateFactory>()
-
-        originalElementPointer.element?.references?.filterIsInstance<KtSimpleNameReference>()?.firstOrNull()?.let { reference ->
-            UnresolvedReferenceQuickFixProvider.registerReferenceFixes(reference, object: QuickFixActionRegistrar {
-                override fun register(action: IntentionAction) {
-                    result.add(QuickFixWithDelegateFactory(IntentionActionPriority.LOW) { action })
-                }
-
-                override fun register(fixRange: TextRange, action: IntentionAction, key: HighlightDisplayKey?) {
-                    register(action)
-                }
-
-                override fun unregister(condition: Condition<IntentionAction>) {
-                }
-            })
-        }
-
-        return result
-    }
-
-}

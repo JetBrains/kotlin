@@ -54,7 +54,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public abstract class MavenTestCase extends UsefulTestCase {
-    protected static final MavenConsole NULL_MAVEN_CONSOLE = new NullMavenConsole();
+    protected static final MavenConsole NULL_MAVEN_CONSOLE = NullMavenConsole.INSTANCE;
     // should not be static
     protected static MavenProgressIndicator EMPTY_MAVEN_PROCESS = new MavenProgressIndicator(new EmptyProgressIndicator());
 

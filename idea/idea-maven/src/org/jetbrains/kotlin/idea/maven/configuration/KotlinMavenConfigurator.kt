@@ -49,9 +49,7 @@ abstract class KotlinMavenConfigurator protected constructor(private val stdlibA
         return KotlinPluginUtil.isMavenModule(module)
     }
 
-    override fun getPresentableText(): String {
-        return presentableText
-    }
+    override fun getPresentableText() = presentableText
 
     override fun getName(): String {
         return name
@@ -75,19 +73,7 @@ abstract class KotlinMavenConfigurator protected constructor(private val stdlibA
 
         val plugin = mavenProject.findPlugin(GROUP_ID, MAVEN_PLUGIN_ID) ?: return false
 
-        if (plugin.executions != null) {
-            for (execution in plugin.executions) {
-                if (execution.goals != null) {
-                    for (goal in execution.goals) {
-                        if (goal != null && isRelevantGoal(goal)) {
-                            return true
-                        }
-                    }
-                }
-            }
-        }
-
-        return false
+        return plugin.executions?.any { it.goals?.any { it != null && isRelevantGoal(it) } ?: false } ?: false
     }
 
     override fun configure(project: Project, excludeModules: Collection<Module>) {
@@ -114,12 +100,6 @@ abstract class KotlinMavenConfigurator protected constructor(private val stdlibA
     protected abstract fun isRelevantGoal(goalName: String): Boolean
 
     protected abstract fun createExecutions(pomFile: PomFile, kotlinPlugin: MavenDomPlugin, module: Module)
-
-    protected abstract fun getGoal(isTest: Boolean): String
-
-    protected open fun getExecutionId(isTest: Boolean): String {
-        return if (isTest) TEST_COMPILE_EXECUTION_ID else COMPILE_EXECUTION_ID
-    }
 
     fun changePomFile(
             module: Module,
@@ -163,10 +143,11 @@ abstract class KotlinMavenConfigurator protected constructor(private val stdlibA
     protected fun createExecution(
             pomFile: PomFile,
             kotlinPlugin: MavenDomPlugin,
+            executionId: String,
+            goalName: String,
             module: Module,
             isTest: Boolean) {
-        pomFile.addKotlinExecution(module, kotlinPlugin, getExecutionId(isTest), PomFile.getPhase(hasJavaFiles(module), isTest), isTest,
-                                   listOf(getGoal(isTest)))
+        pomFile.addKotlinExecution(module, kotlinPlugin, executionId, PomFile.getPhase(hasJavaFiles(module), isTest), isTest, listOf(goalName))
     }
 
     companion object {
@@ -178,9 +159,6 @@ abstract class KotlinMavenConfigurator protected constructor(private val stdlibA
         private val SNAPSHOT_REPOSITORY_ID = "sonatype.oss.snapshots"
         private val SONATYPE_OSS_REPOSITORY_NAME = "Sonatype OSS Snapshot Repository"
         private val SONATYPE_OSS_REPOSITORY_URL = "http://oss.sonatype.org/content/repositories/snapshots"
-
-        private val TEST_COMPILE_EXECUTION_ID = "test-compile"
-        private val COMPILE_EXECUTION_ID = "compile"
 
         private fun hasJavaFiles(module: Module): Boolean {
             return !FileTypeIndex.getFiles(JavaFileType.INSTANCE, GlobalSearchScope.moduleScope(module)).isEmpty()

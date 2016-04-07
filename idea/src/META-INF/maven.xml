@@ -5,7 +5,7 @@
   </extensions>
   <extensions defaultExtensionNs="org.jetbrains.idea.maven">
     <importer implementation="org.jetbrains.kotlin.idea.maven.KotlinMavenImporter" />
-    <archetypesProvider implementation="org.jetbrains.kotlin.idea.configuration.KotlinMavenArchetypesProvider" />
+    <archetypesProvider implementation="org.jetbrains.kotlin.idea.maven.KotlinMavenArchetypesProvider" />
 
     <pluginDescriptor mavenId="org.jetbrains.kotlin:kotlin-maven-plugin">
       <param name="sourceDirs/dir" refProvider="org.jetbrains.idea.maven.plugins.api.common.MavenCommonParamReferenceProviders$DirPath"/>
@@ -17,16 +17,16 @@
     </pluginDescriptor>
   </extensions>
   <extensions defaultExtensionNs="com.intellij">
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.configuration.KotlinMavenPluginPhaseInspection"
-                     displayName="Kotlin Maven Plugin inspection"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.maven.inspections.KotlinMavenPluginPhaseInspection"
+                     displayName="Kotlin Maven Plugin misconfigured"
                      groupName="Kotlin"
                      enabledByDefault="true"
                      language="XML"
                      hasStaticDescription="true"
                      level="WARNING" />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.configuration.KotlinTestJUnitInspection"
-                     displayName="Kotlin Maven: kotlin-test-junit inspection"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.maven.inspections.KotlinTestJUnitInspection"
+                     displayName="kotlin-test-junit could be used"
                      groupName="Kotlin"
                      enabledByDefault="true"
                      language="XML"
@@ -34,15 +34,15 @@
                      level="WARNING" />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.maven.inspections.SameVersionInspection"
-                     displayName="Kotlin Maven: library and plugin inspection"
+                     displayName="Library and maven plugin versions are different"
                      groupName="Kotlin"
                      enabledByDefault="true"
                      language="XML"
                      hasStaticDescription="true"
                      level="WARNING" />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.configuration.SameVersionIDEPluginInspection"
-                     displayName="Kotlin Maven: Maven and IDE plugins versions inspection"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.maven.inspections.SameVersionIDEPluginInspection"
+                     displayName="Maven and IDE plugins versions are different"
                      groupName="Kotlin"
                      enabledByDefault="true"
                      language="XML"
