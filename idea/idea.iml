@@ -51,5 +51,6 @@
     <orderEntry type="module" module-name="idea-live-templates" exported="" scope="RUNTIME" />
     <orderEntry type="module" module-name="compiler-tests" scope="TEST" />
     <orderEntry type="library" scope="TEST" name="kotlin-test" level="project" />
+    <orderEntry type="module" module-name="lint-idea" scope="PROVIDED" />
   </component>
 </module>
