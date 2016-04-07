@@ -225,7 +225,7 @@ open class ApiDetector : Detector(), UastScanner {
                             val value = (valueNode as ULiteralExpression).value as String
                             return SdkVersionInfo.getApiByBuildCode(value, true)
                         } else if (valueNode is UQualifiedExpression) {
-                            val codename = valueNode.getSelectorAsIdentifier();
+                            val codename = valueNode.getSelectorAsIdentifier() ?: return -1
                             return SdkVersionInfo.getApiByBuildCode(codename, true)
                         } else if (valueNode is USimpleReferenceExpression) {
                             val codename = valueNode.identifier;
