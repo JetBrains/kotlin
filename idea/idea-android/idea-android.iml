@@ -17,6 +17,5 @@
     <orderEntry type="module" module-name="util" />
     <orderEntry type="module" module-name="frontend" />
     <orderEntry type="module" module-name="frontend.java" />
-    <orderEntry type="module" module-name="compiler-tests" scope="TEST" />
   </component>
 </module>

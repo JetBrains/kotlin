@@ -9,7 +9,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="cli" />
-    <orderEntry type="module" module-name="compiler-tests" />
+    <orderEntry type="module" module-name="tests-common" />
     <orderEntry type="module" module-name="frontend" />
     <orderEntry type="module" module-name="backend" />
     <orderEntry type="library" name="jps-test" level="project" />

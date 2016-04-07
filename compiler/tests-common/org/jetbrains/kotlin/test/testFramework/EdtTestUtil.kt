@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.test.testFramework
 
-import com.intellij.util.ThrowableRunnable
 import org.jetbrains.annotations.TestOnly
 import java.lang.reflect.InvocationTargetException
 import javax.swing.SwingUtilities

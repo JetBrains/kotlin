@@ -12,7 +12,7 @@
     <orderEntry type="module" module-name="util.runtime" />
     <orderEntry type="module" module-name="cli-common" />
     <orderEntry type="module" module-name="util" />
-    <orderEntry type="module" module-name="compiler-tests" scope="TEST" />
+    <orderEntry type="module" module-name="tests-common" scope="TEST" />
     <orderEntry type="library" scope="TEST" name="idea-full" level="project" />
   </component>
 </module>

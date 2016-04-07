@@ -17,7 +17,7 @@
     <orderEntry type="module" module-name="idea-core" />
     <orderEntry type="module" module-name="frontend.java" />
     <orderEntry type="module" module-name="idea-test-framework" scope="TEST" />
-    <orderEntry type="module" module-name="compiler-tests" scope="TEST" />
+    <orderEntry type="module" module-name="tests-common" scope="TEST" />
     <orderEntry type="library" scope="RUNTIME" name="junit-plugin" level="project" />
     <orderEntry type="module" module-name="util" />
     <orderEntry type="module" module-name="js.frontend" />
