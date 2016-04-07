@@ -11,7 +11,7 @@ open class Super {
 }
 
 open class Middle : Super(), Trait {
-    override fun foo(/*rename*/aa: Int, b: String) {
+    override fun foo(aa: Int, b: String) {
     }
 }
 

@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinMultiFileTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.idea.test.extractMarkerOffset
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
@@ -80,7 +80,7 @@ abstract class AbstractMoveTest : KotlinMultiFileTestCase() {
             val document = FileDocumentManager.getInstance().getDocument(mainFile)!!
             val editor = EditorFactory.getInstance()!!.createEditor(document, project!!)!!
 
-            val caretOffset = extractCaretOffset(document)
+            val caretOffset = document.extractMarkerOffset(project)
             val elementAtCaret = if (caretOffset >= 0) {
                 TargetElementUtilBase.getInstance()!!.findTargetElement(
                         editor,

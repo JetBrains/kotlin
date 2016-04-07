@@ -147,17 +147,17 @@ abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
             val mainFile = rootDir.findChild(mainFilePath)!!
             val psiFile = PsiManager.getInstance(context.project).findFile(mainFile)!!
 
-            val MARKER_TEXT = "/*rename*/"
-            val marker = psiFile.text.indexOf(MARKER_TEXT)
+            val doc = PsiDocumentManager.getInstance(project).getDocument(psiFile)!!
+            val marker = doc.extractMarkerOffset(project, "/*rename*/")
             assert(marker != -1)
 
             val toRename = if (renameParamsObject["byRef"]?.asBoolean ?: false) {
                 val editor = createEditor(mainFile)
-                editor.caretModel.moveToOffset(marker + MARKER_TEXT.length)
+                editor.caretModel.moveToOffset(marker)
                 TargetElementUtilBase.findTargetElement(editor, TargetElementUtilBase.getInstance().allAccepted)!!
             }
             else {
-                psiFile.findElementAt(marker + MARKER_TEXT.length)!!.getNonStrictParentOfType<PsiNamedElement>()!!
+                psiFile.findElementAt(marker)!!.getNonStrictParentOfType<PsiNamedElement>()!!
             }
             val substitution = RenamePsiElementProcessor.forElement(toRename).substituteElementToRename(toRename, null)
 

@@ -17,11 +17,13 @@
 package org.jetbrains.kotlin.idea.test
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.editor.Document
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.roots.ModuleRootModificationUtil.updateModel
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiManagerEx
 import com.intellij.psi.impl.file.impl.FileManagerImpl
@@ -34,6 +36,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.LibraryModificationTracker
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.decompiler.KotlinDecompiledFileViewProvider
 import org.jetbrains.kotlin.idea.decompiler.KtDecompiledFile
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtFile
 import java.util.*
 
@@ -115,4 +118,23 @@ fun unInvalidateBuiltinsAndStdLib(project: Project, runnable: () -> Unit) {
 
 fun invalidateLibraryCache(project: Project) {
     LibraryModificationTracker.getInstance(project).incModificationCount()
+}
+
+fun Document.extractMarkerOffset(project: Project, caretMarker: String = "<caret>"): Int {
+    val offset = runWriteAction {
+        val text = StringBuilder(getText())
+        val offset = text.indexOf(caretMarker)
+
+        if (offset >= 0) {
+            text.delete(offset, offset + caretMarker.length)
+            setText(text.toString())
+        }
+
+        offset
+    }
+
+    PsiDocumentManager.getInstance(project).commitAllDocuments()
+    PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(this)
+
+    return offset
 }
