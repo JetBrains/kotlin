@@ -8137,6 +8137,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/replaceWithOperatorAssignment"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
+        @TestMetadata("flexibleTypeBug.kt")
+        public void testFlexibleTypeBug() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceWithOperatorAssignment/flexibleTypeBug.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("illegalMultipleOperators.kt")
         public void testIllegalMultipleOperators() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceWithOperatorAssignment/illegalMultipleOperators.kt");
@@ -8176,6 +8182,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("nonRepeatingAssignment.kt")
         public void testNonRepeatingAssignment() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceWithOperatorAssignment/nonRepeatingAssignment.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("plusAssignConflict.kt")
+        public void testPlusAssignConflict() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceWithOperatorAssignment/plusAssignConflict.kt");
             doTest(fileName);
         }
 
