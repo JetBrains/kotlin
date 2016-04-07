@@ -25,6 +25,7 @@ import org.apache.log4j.ConsoleAppender
 import org.apache.log4j.Level
 import org.apache.log4j.Logger
 import org.apache.log4j.PatternLayout
+import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.api.CanceledStatus
 import org.jetbrains.jps.builders.BuildResult
 import org.jetbrains.jps.builders.CompileScopeTestBuilder
@@ -34,16 +35,14 @@ import org.jetbrains.jps.builders.impl.logging.ProjectBuilderLoggerBase
 import org.jetbrains.jps.builders.java.dependencyView.Callbacks
 import org.jetbrains.jps.builders.logging.BuildLoggingManager
 import org.jetbrains.jps.cmdline.ProjectDescriptor
-import org.jetbrains.jps.incremental.BuilderRegistry
-import org.jetbrains.jps.incremental.IncProjectBuilder
-import org.jetbrains.jps.incremental.ModuleBuildTarget
-import org.jetbrains.jps.incremental.ModuleLevelBuilder
+import org.jetbrains.jps.incremental.*
 import org.jetbrains.jps.incremental.messages.BuildMessage
 import org.jetbrains.jps.model.JpsModuleRootModificationUtil
 import org.jetbrains.jps.model.java.JpsJavaDependencyScope
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.config.IncrementalCompilation
+import org.jetbrains.kotlin.incremental.CacheVersion
 import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.testingUtils.*
@@ -390,13 +389,13 @@ abstract class AbstractIncrementalJpsTest(
             preProcessSources(sourceDestinationDir)
         }
 
-        var moduleNames: Set<String>?
         JpsJavaExtensionService.getInstance().getOrCreateProjectExtension(myProject).outputUrl = JpsPathUtil.pathToUrl(getAbsolutePath("out"))
 
         val jdk = addJdk("my jdk")
         val moduleDependencies = readModuleDependencies()
         mapWorkingToOriginalFile = hashMapOf()
 
+        val moduleNames: Set<String>?
         if (moduleDependencies == null) {
             addModule("module", arrayOf(getAbsolutePath("src")), null, null, jdk)
             prepareModuleSources(moduleName = null)
@@ -436,8 +435,20 @@ abstract class AbstractIncrementalJpsTest(
 
         private val dirtyFiles = ArrayList<File>()
 
+        override fun actionsOnCacheVersionChanged(actions: List<CacheVersion.Action>) {
+            if (actions.size > 1 && actions.any { it != CacheVersion.Action.DO_NOTHING }) {
+                logLine("Actions after cache changed: $actions")
+            }
+        }
+
         override fun markedAsDirty(files: Iterable<File>) {
             dirtyFiles.addAll(files)
+        }
+
+        override fun buildStarted(context: CompileContext, chunk: ModuleChunk) {
+            if (context.projectDescriptor.project.modules.size > 1) {
+                logLine("Building ${chunk.modules.sortedBy { it.name }.joinToString { it.name }}")
+            }
         }
 
         override fun buildFinished(exitCode: ModuleLevelBuilder.ExitCode) {
