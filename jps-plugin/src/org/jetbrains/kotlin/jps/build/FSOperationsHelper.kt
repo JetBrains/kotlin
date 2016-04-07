@@ -31,7 +31,7 @@ class FSOperationsHelper(
     internal var hasMarkedDirty = false
         private set
 
-    private val buildLogger = compileContext.testingContext?.buildLogger ?: BuildLogger.DO_NOTHING
+    private val buildLogger = compileContext.testingContext?.buildLogger
 
     fun markChunk(recursively: Boolean, kotlinOnly: Boolean, excludeFiles: Set<File> = setOf()) {
         fun shouldMark(file: File): Boolean {
@@ -56,7 +56,7 @@ class FSOperationsHelper(
         filesToMark.removeAll(excludeFiles)
 
         log.debug("Mark dirty: $filesToMark")
-        buildLogger.markedAsDirty(filesToMark)
+        buildLogger?.markedAsDirty(filesToMark)
 
         for (file in filesToMark) {
             if (!file.exists()) continue

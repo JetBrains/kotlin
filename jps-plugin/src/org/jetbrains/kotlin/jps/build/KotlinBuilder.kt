@@ -103,6 +103,8 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     override fun chunkBuildStarted(context: CompileContext, chunk: ModuleChunk) {
         super.chunkBuildStarted(context, chunk)
 
+        context.testingContext?.buildLogger?.buildStarted(context, chunk)
+
         if (JavaBuilderUtil.isForcedRecompilationAllJavaModules(context)) return
 
         val targets = chunk.targets
@@ -142,9 +144,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
             LOG.info("Build result: " + actualExitCode)
 
-            context.testingContext?.run {
-                buildLogger.buildFinished(actualExitCode)
-            }
+            context.testingContext?.buildLogger?.buildFinished(actualExitCode)
 
             return actualExitCode
         }
@@ -294,7 +294,11 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val hasKotlin = HasKotlinMarker(dataManager)
         val rebuildAfterCacheVersionChanged = RebuildAfterCacheVersionChangeMarker(dataManager)
 
-        for (status in actions.sorted()) {
+        val sortedActions = actions.sorted()
+
+        context.testingContext?.buildLogger?.actionsOnCacheVersionChanged(sortedActions)
+
+        for (status in sortedActions) {
             when (status) {
                 CacheVersion.Action.REBUILD_ALL_KOTLIN -> {
                     LOG.info("Kotlin global lookup map format changed, so rebuild all kotlin")
@@ -879,8 +883,3 @@ private fun hasKotlinDirtyOrRemovedFiles(
     return chunk.targets.any { KotlinSourceFileCollector.getRemovedKotlinFiles(dirtyFilesHolder, it).isNotEmpty() }
 }
 
-private inline fun Logger.debug(message: ()->String) {
-    if (isDebugEnabled) {
-        debug(message())
-    }
-}
