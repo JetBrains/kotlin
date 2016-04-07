@@ -1,0 +1,1 @@
+abstract class C(<caret>val p: Int)

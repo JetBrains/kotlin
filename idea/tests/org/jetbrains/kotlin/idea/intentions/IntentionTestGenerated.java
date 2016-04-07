@@ -2528,9 +2528,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("constructorParameter.kt")
+            public void testConstructorParameter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/protected/constructorParameter.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("noModifier.kt")
             public void testNoModifier() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/protected/noModifier.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("notForNonValParameter.kt")
+            public void testNotForNonValParameter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/protected/notForNonValParameter.kt");
                 doTest(fileName);
             }
 

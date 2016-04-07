@@ -130,11 +130,12 @@ open class ChangeVisibilityModifierIntention protected constructor(
         }
 
         private fun canBeProtected(declaration: KtDeclaration): Boolean {
-            var parent = declaration.parent
-            if (parent is KtClassBody) {
-                parent = parent.parent
+            val parent = declaration.parent
+            return when (parent) {
+                is KtClassBody -> parent.parent is KtClass
+                is KtParameterList -> parent.parent is KtPrimaryConstructor
+                else -> false
             }
-            return parent is KtClass
         }
     }
 
