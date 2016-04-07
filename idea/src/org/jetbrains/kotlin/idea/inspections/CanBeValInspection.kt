@@ -117,7 +117,7 @@ class CanBeValInspection : AbstractKotlinInspection() {
                 val problemDescriptor = holder.manager.createProblemDescriptor(
                         declaration,
                         declaration.valOrVarKeyword!!,
-                        "Can be declared as 'val'",
+                        "Variable is never modified and can be declared immutable using 'val'",
                         ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                         isOnTheFly,
                         IntentionWrapper(ChangeVariableMutabilityFix(declaration, false), declaration.containingFile)
