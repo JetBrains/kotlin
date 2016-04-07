@@ -20,6 +20,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiReference
 import com.intellij.psi.search.searches.ReferencesSearch
+import com.intellij.util.Processor
 import com.intellij.util.Query
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -122,7 +123,8 @@ class SimplifyForIntention : SelfTargetingRangeIntention<KtForExpression>(
             process: (Int, KtProperty) -> Unit,
             cancel: () -> Unit
     ) {
-        forEach {
+        // TODO: Remove SAM-constructor when KT-11265 will be fixed
+        forEach(Processor forEach@{
             val applicableUsage = getDataIfUsageIsApplicable(it, context)
             if (applicableUsage != null) {
                 val (property, descriptor) = applicableUsage
@@ -138,7 +140,7 @@ class SimplifyForIntention : SelfTargetingRangeIntention<KtForExpression>(
 
             cancel()
             return@forEach false
-        }
+        })
     }
 
     private fun Query<PsiReference>.iterateOverDataClassPropertiesUsagesWithIndex(
@@ -149,7 +151,7 @@ class SimplifyForIntention : SelfTargetingRangeIntention<KtForExpression>(
     ) {
         val valueParameters = dataClass.unsubstitutedPrimaryConstructor?.valueParameters ?: return
 
-        forEach {
+        forEach(Processor forEach@{
             val applicableUsage = getDataIfUsageIsApplicable(it, context)
             if (applicableUsage != null) {
                 val (property, descriptor) = applicableUsage
@@ -163,7 +165,7 @@ class SimplifyForIntention : SelfTargetingRangeIntention<KtForExpression>(
 
             cancel()
             return@forEach false
-        }
+        })
     }
 
     private fun getDataIfUsageIsApplicable(usage: PsiReference, context: BindingContext): UsageData? {
