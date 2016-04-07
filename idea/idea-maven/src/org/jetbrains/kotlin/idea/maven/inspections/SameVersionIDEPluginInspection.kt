@@ -22,22 +22,19 @@ import com.intellij.util.xml.highlighting.DomElementAnnotationHolder
 import com.intellij.util.xml.highlighting.DomElementsInspection
 import org.jetbrains.idea.maven.dom.model.MavenDomPlugin
 import org.jetbrains.idea.maven.dom.model.MavenDomProjectModel
+import org.jetbrains.kotlin.idea.maven.PomFile
+import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 
 class SameVersionIDEPluginInspection : DomElementsInspection<MavenDomProjectModel>(MavenDomProjectModel::class.java) {
-    private val idePluginVersion by lazy {
-        SameVersionIDEPluginInspection::class.java.classLoader?.getResourceAsStream("META-INF/build.txt")?.bufferedReader()?.use { it.readText() }
-    }
+    private val idePluginVersion by lazy { bundledRuntimeVersion() }
 
     override fun checkFileElement(domFileElement: DomFileElement<MavenDomProjectModel>?, holder: DomElementAnnotationHolder?) {
         if (domFileElement == null || holder == null) {
             return
         }
 
-        domFileElement.rootElement.build.plugins.plugins.filter { it.version.exists() && it.version.stringValue != idePluginVersion }.forEach { plugin ->
-            createProblem(holder, plugin)
-        }
-
-        domFileElement.rootElement.build.pluginManagement.plugins.plugins.filter { it.version.exists() && it.version.stringValue != idePluginVersion }.forEach { plugin ->
+        val pomFile = PomFile(domFileElement.file)
+        pomFile.findKotlinPlugins().filter { it.version.exists() && it.version.stringValue != idePluginVersion }.forEach { plugin ->
             createProblem(holder, plugin)
         }
     }

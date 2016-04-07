@@ -58,7 +58,7 @@ class KotlinTestJUnitInspection : DomElementsInspection<MavenDomProjectModel>(Ma
 
     private class ReplaceToKotlinTest(val dependency: MavenDomDependency) : LocalQuickFix {
         override fun getName() = "Replace with kotlin-test-junit"
-        override fun getFamilyName() = "Kotlin"
+        override fun getFamilyName() = name
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             if (dependency.isValid) {

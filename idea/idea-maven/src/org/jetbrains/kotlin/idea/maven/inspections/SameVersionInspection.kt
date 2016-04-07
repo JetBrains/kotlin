@@ -16,12 +16,18 @@
 
 package org.jetbrains.kotlin.idea.maven.inspections
 
+import com.intellij.codeInspection.LocalQuickFix
+import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.lang.annotation.HighlightSeverity
+import com.intellij.openapi.project.Project
 import com.intellij.util.xml.DomFileElement
+import com.intellij.util.xml.GenericDomValue
 import com.intellij.util.xml.highlighting.DomElementAnnotationHolder
 import com.intellij.util.xml.highlighting.DomElementsInspection
+import org.jetbrains.idea.maven.dom.MavenVersionComparable
 import org.jetbrains.idea.maven.dom.model.MavenDomProjectModel
 import org.jetbrains.idea.maven.model.MavenId
+import org.jetbrains.idea.maven.project.MavenProject
 import org.jetbrains.idea.maven.project.MavenProjectsManager
 import org.jetbrains.kotlin.idea.maven.PomFile
 import org.jetbrains.kotlin.idea.maven.configuration.KotlinJavaMavenConfigurator
@@ -47,14 +53,49 @@ class SameVersionInspection : DomElementsInspection<MavenDomProjectModel>(MavenD
 
         val pomFile = PomFile(file)
         pomFile.findKotlinPlugins().filter { it.version.stringValue != stdlibVersion.singleOrNull() }.forEach { plugin ->
-            holder.createProblem(plugin.version, HighlightSeverity.WARNING,
-                                 "Plugin version (${plugin.version}) is not the same as library version (${stdlibVersion.joinToString(",", "", "")})")
+            val fixes = plugin.version.stringValue?.let { version ->
+                createFixes(project, plugin.version, stdlibVersion + version)
+            } ?: emptyList()
+
+            holder.createProblem(plugin.version,
+                                 HighlightSeverity.WARNING,
+                                 "Plugin version (${plugin.version}) is not the same as library version (${stdlibVersion.joinToString(",", "", "")})",
+                                 *fixes.toTypedArray()
+                                 )
         }
 
         pomFile.findDependencies(MavenId(KotlinMavenConfigurator.GROUP_ID, KotlinJavaMavenConfigurator.STD_LIB_ID, null))
             .filter { it.version.stringValue != pluginVersion }
             .forEach { dependency ->
-                holder.createProblem(dependency.version, HighlightSeverity.WARNING, "Plugin version ($pluginVersion) is not the same as library version (${dependency.version})")
+                val fixes = dependency.version.stringValue?.let { version ->
+                    createFixes(project, dependency.version, listOf(version, pluginVersion))
+                } ?: emptyList()
+
+                holder.createProblem(dependency.version,
+                                     HighlightSeverity.WARNING,
+                                     "Plugin version ($pluginVersion) is not the same as library version (${dependency.version})",
+                                     *fixes.toTypedArray())
             }
+    }
+
+    private fun createFixes(project: MavenProject, versionElement: GenericDomValue<*>, versions: List<String>): List<SetVersionQuickFix> {
+        val bestVersion = versions.maxBy { MavenVersionComparable(it) }!!
+        if (bestVersion == versionElement.stringValue) {
+            return emptyList()
+        }
+
+        val properties = project.properties.entries.filter { it.value == bestVersion }.map { "\${${it.key}}" }
+
+        return properties.map { SetVersionQuickFix(versionElement, it, bestVersion) } +
+            SetVersionQuickFix(versionElement, bestVersion, null)
+    }
+
+    private class SetVersionQuickFix(val versionElement: GenericDomValue<*>, val newVersion: String, val versionResolved: String?) : LocalQuickFix {
+        override fun getName() = if (versionResolved == null) "Change version to $newVersion" else "Change version to $newVersion ($versionResolved)"
+        override fun getFamilyName() = "Change version"
+
+        override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+            versionElement.value = newVersion
+        }
     }
 }
