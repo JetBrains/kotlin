@@ -17,8 +17,6 @@
 package org.jetbrains.kotlin.cli.jvm.repl.di
 
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.cli.jvm.repl.ReplFileScopeProvider
-import org.jetbrains.kotlin.cli.jvm.repl.ReplState
 import org.jetbrains.kotlin.container.*
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
@@ -41,15 +39,12 @@ fun createContainerForReplWithJava(
         bindingTrace: BindingTrace,
         declarationProviderFactory: DeclarationProviderFactory,
         moduleContentScope: GlobalSearchScope,
-        replState: ReplState,
         packagePartProvider: PackagePartProvider
 ): ContainerForReplWithJava = createContainer("ReplWithJava") {
     useInstance(packagePartProvider)
     configureModule(moduleContext, JvmPlatform, bindingTrace)
     configureJavaTopDownAnalysis(moduleContentScope, moduleContext.project, LookupTracker.DO_NOTHING)
 
-    useInstance(replState)
-    useImpl<ReplFileScopeProvider>()
     useInstance(declarationProviderFactory)
 
     CompilerEnvironment.configure(this)

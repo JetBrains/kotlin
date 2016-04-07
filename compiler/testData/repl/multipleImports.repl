@@ -1,0 +1,10 @@
+>>> val c = 3
+>>> import java.util.Date
+>>> Date(0).getTime()
+0
+>>> import java.io.ByteArrayOutputStream
+>>> val s = ByteArrayOutputStream()
+>>> s.javaClass!!.getName()
+java.io.ByteArrayOutputStream
+>>> c + 1
+4
