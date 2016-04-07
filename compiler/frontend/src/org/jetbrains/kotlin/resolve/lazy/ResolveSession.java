@@ -42,8 +42,8 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.PackageMemberDeclarationPr
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotations;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotationsContextImpl;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor;
-import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.storage.*;
 
 import javax.inject.Inject;
@@ -109,7 +109,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     }
 
     @Inject
-    public void setFileScopeProvider(@NotNull FileScopeProviderImpl fileScopeProvider) {
+    public void setFileScopeProvider(@NotNull FileScopeProvider fileScopeProvider) {
         this.fileScopeProvider = fileScopeProvider;
     }
 
