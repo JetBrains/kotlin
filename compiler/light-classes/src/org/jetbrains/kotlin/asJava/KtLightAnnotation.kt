@@ -105,6 +105,10 @@ class KtLightAnnotation(
 
     override fun getParent() = owner as? PsiElement
 
+    override fun delete() {
+        kotlinOrigin.delete()
+    }
+
     override fun toString() = "@$qualifiedName"
 
     override fun equals(other: Any?): Boolean {

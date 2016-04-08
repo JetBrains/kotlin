@@ -5,4 +5,5 @@
     <depends optional="true">com.intellij.database</depends>
     <depends optional="true">com.intellij.css</depends>
     <depends optional="true">com.intellij.jsp</depends>
+    <depends optional="true">com.intellij.diagram</depends>
 </idea-plugin>
