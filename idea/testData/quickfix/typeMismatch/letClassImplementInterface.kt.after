@@ -2,12 +2,18 @@
 package let.implement
 
 fun bar() {
-    foo(B()<caret>)
+    foo(B())
 }
 
 
 fun foo(a: A) {
 }
 
-interface A
-class B : A
+interface A {
+    fun gav()
+}
+class B : A {
+    override fun gav() {
+        throw UnsupportedOperationException()
+    }
+}
