@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.idea.core.setVisibility
 
 class IncreaseVisibilityFix(
         element: KtModifierListOwner,
@@ -46,7 +47,7 @@ class IncreaseVisibilityFix(
     override fun getFamilyName() = "Make $visibilityModifier"
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
-        element.addModifier(visibilityModifier)
+        element.setVisibility(visibilityModifier)
     }
 
     companion object : KotlinSingleIntentionActionFactory() {
@@ -54,17 +55,20 @@ class IncreaseVisibilityFix(
             val element = diagnostic.psiElement as? KtElement ?: return null
             val context = element.analyze(BodyResolveMode.PARTIAL)
             val usageModule = context.get(BindingContext.FILE_TO_PACKAGE_FRAGMENT, element.getContainingKtFile())?.module
-                              ?: return null
 
             @Suppress("UNCHECKED_CAST")
             val factory = diagnostic.factory as DiagnosticFactory3<*, DeclarationDescriptor, *, DeclarationDescriptor>
             val descriptor = factory.cast(diagnostic).c as? DeclarationDescriptorWithVisibility ?: return null
+            val declaration = DescriptorToSourceUtils.getSourceFromDescriptor(descriptor) as? KtModifierListOwner ?: return null
 
             val module = DescriptorUtils.getContainingModule(descriptor)
-            if (module != usageModule) return null
-            val declaration = DescriptorToSourceUtils.getSourceFromDescriptor(descriptor) as? KtModifierListOwner ?: return null
-            if (descriptor.visibility != Visibilities.PRIVATE) return null
-            return IncreaseVisibilityFix(declaration, descriptor.name.asString(), KtTokens.INTERNAL_KEYWORD)
+            val modifier = if (module != usageModule || descriptor.visibility != Visibilities.PRIVATE) {
+                KtTokens.PUBLIC_KEYWORD
+            }
+            else {
+                KtTokens.INTERNAL_KEYWORD
+            }
+            return IncreaseVisibilityFix(declaration, descriptor.name.asString(), modifier)
         }
     }
 }

@@ -162,16 +162,18 @@ fun PsiElement.deleteSingle() {
 
 fun KtClass.getOrCreateCompanionObject() : KtObjectDeclaration {
     getCompanionObjects().firstOrNull()?.let { return it }
-    return addDeclaration(KtPsiFactory(this).createCompanionObject()) as KtObjectDeclaration
+    return addDeclaration(KtPsiFactory(this).createCompanionObject())
 }
 
 //TODO: code style option whether to insert redundant 'public' keyword or not
-fun KtDeclaration.setVisibility(visibilityModifier: KtModifierKeywordToken) {
-    val defaultVisibilityKeyword = implicitVisibility()
+fun KtModifierListOwner.setVisibility(visibilityModifier: KtModifierKeywordToken) {
+    if (this is KtDeclaration) {
+        val defaultVisibilityKeyword = implicitVisibility()
 
-    if (visibilityModifier == defaultVisibilityKeyword) {
-        this.visibilityModifierType()?.let { removeModifier(it) }
-        return
+        if (visibilityModifier == defaultVisibilityKeyword) {
+            this.visibilityModifierType()?.let { removeModifier(it) }
+            return
+        }
     }
 
     addModifier(visibilityModifier)
