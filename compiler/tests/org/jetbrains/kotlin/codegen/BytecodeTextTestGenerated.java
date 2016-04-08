@@ -790,6 +790,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("loopVarInterval.kt")
+        public void testLoopVarInterval() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/loopVarInterval.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("primitiveLiteralRange1.kt")
         public void testPrimitiveLiteralRange1() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/primitiveLiteralRange1.kt");
