@@ -1,5 +1,7 @@
 ================ Step #1 =================
 
+Building module1
+Actions after cache changed: [REBUILD_ALL_KOTLIN, DO_NOTHING]
 Cleaning output files:
   out/production/module1/a/A.class
 End of files
@@ -13,6 +15,8 @@ Marked as dirty by Kotlin:
   module4/src/D.kt
 Exit code: OK
 ------------------------------------------
+Building module2
+Actions after cache changed: [REBUILD_CHUNK, DO_NOTHING]
 Cleaning output files:
   out/production/module2/b/B.class
 End of files
@@ -21,6 +25,8 @@ Compiling files:
 End of files
 Exit code: OK
 ------------------------------------------
+Building module3
+Actions after cache changed: [REBUILD_CHUNK, DO_NOTHING]
 Cleaning output files:
   out/production/module3/c/C.class
 End of files
@@ -29,6 +35,8 @@ Compiling files:
 End of files
 Exit code: OK
 ------------------------------------------
+Building module4
+Actions after cache changed: [REBUILD_CHUNK, DO_NOTHING]
 Cleaning output files:
   out/production/module4/D/D.class
 End of files

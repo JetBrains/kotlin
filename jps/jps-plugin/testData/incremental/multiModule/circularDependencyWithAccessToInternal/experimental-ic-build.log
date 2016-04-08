@@ -1,5 +1,6 @@
 ================ Step #1 =================
 
+Building module1, module2
 Cleaning output files:
   out/production/module1/META-INF/module1.kotlin_module
   out/production/module1/a/AKt.class
