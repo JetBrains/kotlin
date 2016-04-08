@@ -14,6 +14,7 @@
 #### Debugger
 
 - Do not step into inline lambda argument during step over inside inline function body
+- Fix step over for inline argument with non-local return
 
 ## 1.0.2
 

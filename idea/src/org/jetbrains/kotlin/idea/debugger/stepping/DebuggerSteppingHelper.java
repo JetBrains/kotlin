@@ -19,15 +19,32 @@ package org.jetbrains.kotlin.idea.debugger.stepping;
 import com.intellij.debugger.engine.DebugProcessImpl;
 import com.intellij.debugger.engine.SuspendContextImpl;
 import com.intellij.debugger.engine.evaluation.EvaluateException;
+import com.intellij.debugger.impl.DebuggerUtilsEx;
 import com.intellij.debugger.jdi.StackFrameProxyImpl;
+import com.intellij.debugger.jdi.ThreadReferenceProxyImpl;
+import com.intellij.debugger.settings.DebuggerSettings;
+import com.intellij.openapi.extensions.Extensions;
 import com.intellij.psi.PsiElement;
+import com.intellij.ui.classFilter.ClassFilter;
+import com.intellij.ui.classFilter.DebuggerClassFilterProvider;
+import com.sun.jdi.Location;
+import com.sun.jdi.ObjectCollectedException;
+import com.sun.jdi.ReferenceType;
+import com.sun.jdi.ThreadReference;
+import com.sun.jdi.request.EventRequest;
+import com.sun.jdi.request.EventRequestManager;
+import com.sun.jdi.request.StepRequest;
 import kotlin.ranges.IntRange;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtFunction;
 import org.jetbrains.kotlin.psi.KtFunctionLiteral;
 import org.jetbrains.kotlin.psi.KtNamedFunction;
 
+import java.util.ArrayList;
 import java.util.List;
+
 
 public class DebuggerSteppingHelper {
 
@@ -57,6 +74,11 @@ public class DebuggerSteppingHelper {
                         DebugProcessImpl.ResumeCommand command = action.createCommand(debugProcess, suspendContext, ignoreBreakpoints);
 
                         if (command != null) {
+                            createStepRequest(
+                                    suspendContext, getContextThread(),
+                                    debugProcess.getVirtualMachineProxy().eventRequestManager(),
+                                    StepRequest.STEP_LINE, StepRequest.STEP_OUT);
+
                             command.contextAction();
                             return;
                         }
@@ -93,6 +115,11 @@ public class DebuggerSteppingHelper {
                         DebugProcessImpl.ResumeCommand command = action.createCommand(debugProcess, suspendContext, ignoreBreakpoints);
 
                         if (command != null) {
+                            createStepRequest(
+                                    suspendContext, getContextThread(),
+                                    debugProcess.getVirtualMachineProxy().eventRequestManager(),
+                                    StepRequest.STEP_LINE, StepRequest.STEP_OUT);
+
                             command.contextAction();
                             return;
                         }
@@ -105,5 +132,90 @@ public class DebuggerSteppingHelper {
                 }
             }
         };
+    }
+
+    // copied from DebugProcessImpl.doStep
+    private static void createStepRequest(
+            @NotNull SuspendContextImpl suspendContext,
+            @Nullable ThreadReferenceProxyImpl stepThread,
+            @NotNull EventRequestManager requestManager,
+            int size, int depth
+    ) {
+        if (stepThread == null) {
+            return;
+        }
+        try {
+            ThreadReference stepThreadReference = stepThread.getThreadReference();
+
+            requestManager.deleteEventRequests(requestManager.stepRequests());
+
+            StepRequest stepRequest = requestManager.createStepRequest(stepThreadReference, size, depth);
+
+            List<ClassFilter> activeFilters = getActiveFilters();
+
+            if (!activeFilters.isEmpty()) {
+                String currentClassName = getCurrentClassName(stepThread);
+                if (currentClassName == null || !DebuggerUtilsEx.isFiltered(currentClassName, activeFilters)) {
+                    // add class filters
+                    for (ClassFilter filter : activeFilters) {
+                        stepRequest.addClassExclusionFilter(filter.getPattern());
+                    }
+                }
+            }
+
+            // suspend policy to match the suspend policy of the context:
+            // if all threads were suspended, then during stepping all the threads must be suspended
+            // if only event thread were suspended, then only this particular thread must be suspended during stepping
+            stepRequest.setSuspendPolicy(suspendContext.getSuspendPolicy() == EventRequest.SUSPEND_EVENT_THREAD
+                                         ? EventRequest.SUSPEND_EVENT_THREAD
+                                         : EventRequest.SUSPEND_ALL);
+
+            stepRequest.enable();
+        }
+        catch (ObjectCollectedException ignored) {
+
+        }
+    }
+
+    // copied from DebugProcessImpl.getActiveFilters
+    @NotNull
+    private static List<ClassFilter> getActiveFilters() {
+        List<ClassFilter> activeFilters = new ArrayList<ClassFilter>();
+        DebuggerSettings settings = DebuggerSettings.getInstance();
+        if (settings.TRACING_FILTERS_ENABLED) {
+            for (ClassFilter filter : settings.getSteppingFilters()) {
+                if (filter.isEnabled()) {
+                    activeFilters.add(filter);
+                }
+            }
+        }
+        for (DebuggerClassFilterProvider provider : Extensions.getExtensions(DebuggerClassFilterProvider.EP_NAME)) {
+            for (ClassFilter filter : provider.getFilters()) {
+                if (filter.isEnabled()) {
+                    activeFilters.add(filter);
+                }
+            }
+        }
+        return activeFilters;
+    }
+
+    // copied from DebugProcessImpl.getActiveFilters
+    @Nullable
+    private static String getCurrentClassName(ThreadReferenceProxyImpl thread) {
+        try {
+            if (thread != null && thread.frameCount() > 0) {
+                StackFrameProxyImpl stackFrame = thread.frame(0);
+                if (stackFrame != null) {
+                    Location location = stackFrame.location();
+                    ReferenceType referenceType = location == null ? null : location.declaringType();
+                    if (referenceType != null) {
+                        return referenceType.name();
+                    }
+                }
+            }
+        }
+        catch (EvaluateException ignored) {
+        }
+        return null;
     }
 }
