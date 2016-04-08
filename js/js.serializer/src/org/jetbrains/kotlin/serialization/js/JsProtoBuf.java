@@ -502,6 +502,36 @@ public final class JsProtoBuf {
      * <code>repeated .org.jetbrains.kotlin.serialization.js.Library.FileEntry entry = 1;</code>
      */
     int getEntryCount();
+
+    // optional .org.jetbrains.kotlin.serialization.js.Library.Kind kind = 2 [default = PLAIN];
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.Library.Kind kind = 2 [default = PLAIN];</code>
+     */
+    boolean hasKind();
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.Library.Kind kind = 2 [default = PLAIN];</code>
+     */
+    org.jetbrains.kotlin.serialization.js.JsProtoBuf.Library.Kind getKind();
+
+    // repeated string importedModules = 3;
+    /**
+     * <code>repeated string importedModules = 3;</code>
+     */
+    java.util.List<java.lang.String>
+    getImportedModulesList();
+    /**
+     * <code>repeated string importedModules = 3;</code>
+     */
+    int getImportedModulesCount();
+    /**
+     * <code>repeated string importedModules = 3;</code>
+     */
+    java.lang.String getImportedModules(int index);
+    /**
+     * <code>repeated string importedModules = 3;</code>
+     */
+    com.google.protobuf.ByteString
+        getImportedModulesBytes(int index);
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.js.Library}
@@ -554,6 +584,23 @@ public final class JsProtoBuf {
               entry_.add(input.readMessage(org.jetbrains.kotlin.serialization.js.JsProtoBuf.Library.FileEntry.PARSER, extensionRegistry));
               break;
             }
+            case 16: {
+              int rawValue = input.readEnum();
+              org.jetbrains.kotlin.serialization.js.JsProtoBuf.Library.Kind value = org.jetbrains.kotlin.serialization.js.JsProtoBuf.Library.Kind.valueOf(rawValue);
+              if (value != null) {
+                bitField0_ |= 0x00000001;
+                kind_ = value;
+              }
+              break;
+            }
+            case 26: {
+              if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+                importedModules_ = new com.google.protobuf.LazyStringArrayList();
+                mutable_bitField0_ |= 0x00000004;
+              }
+              importedModules_.add(input.readBytes());
+              break;
+            }
           }
         }
       } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -564,6 +611,9 @@ public final class JsProtoBuf {
       } finally {
         if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
           entry_ = java.util.Collections.unmodifiableList(entry_);
+        }
+        if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+          importedModules_ = new com.google.protobuf.UnmodifiableLazyStringList(importedModules_);
         }
         makeExtensionsImmutable();
       }
@@ -581,6 +631,71 @@ public final class JsProtoBuf {
     @java.lang.Override
     public org.jetbrains.kotlin.protobuf.Parser<Library> getParserForType() {
       return PARSER;
+    }
+
+    /**
+     * Protobuf enum {@code org.jetbrains.kotlin.serialization.js.Library.Kind}
+     */
+    public enum Kind
+        implements com.google.protobuf.Internal.EnumLite {
+      /**
+       * <code>PLAIN = 1;</code>
+       */
+      PLAIN(0, 1),
+      /**
+       * <code>AMD = 2;</code>
+       */
+      AMD(1, 2),
+      /**
+       * <code>COMMON_JS = 3;</code>
+       */
+      COMMON_JS(2, 3),
+      ;
+
+      /**
+       * <code>PLAIN = 1;</code>
+       */
+      public static final int PLAIN_VALUE = 1;
+      /**
+       * <code>AMD = 2;</code>
+       */
+      public static final int AMD_VALUE = 2;
+      /**
+       * <code>COMMON_JS = 3;</code>
+       */
+      public static final int COMMON_JS_VALUE = 3;
+
+
+      public final int getNumber() { return value; }
+
+      public static Kind valueOf(int value) {
+        switch (value) {
+          case 1: return PLAIN;
+          case 2: return AMD;
+          case 3: return COMMON_JS;
+          default: return null;
+        }
+      }
+
+      public static com.google.protobuf.Internal.EnumLiteMap<Kind>
+          internalGetValueMap() {
+        return internalValueMap;
+      }
+      private static com.google.protobuf.Internal.EnumLiteMap<Kind>
+          internalValueMap =
+            new com.google.protobuf.Internal.EnumLiteMap<Kind>() {
+              public Kind findValueByNumber(int number) {
+                return Kind.valueOf(number);
+              }
+            };
+
+      private final int value;
+
+      private Kind(int index, int value) {
+        this.value = value;
+      }
+
+      // @@protoc_insertion_point(enum_scope:org.jetbrains.kotlin.serialization.js.Library.Kind)
     }
 
     public interface FileEntryOrBuilder
@@ -1091,6 +1206,7 @@ public final class JsProtoBuf {
       // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.js.Library.FileEntry)
     }
 
+    private int bitField0_;
     // repeated .org.jetbrains.kotlin.serialization.js.Library.FileEntry entry = 1;
     public static final int ENTRY_FIELD_NUMBER = 1;
     private java.util.List<org.jetbrains.kotlin.serialization.js.JsProtoBuf.Library.FileEntry> entry_;
@@ -1127,8 +1243,56 @@ public final class JsProtoBuf {
       return entry_.get(index);
     }
 
+    // optional .org.jetbrains.kotlin.serialization.js.Library.Kind kind = 2 [default = PLAIN];
+    public static final int KIND_FIELD_NUMBER = 2;
+    private org.jetbrains.kotlin.serialization.js.JsProtoBuf.Library.Kind kind_;
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.Library.Kind kind = 2 [default = PLAIN];</code>
+     */
+    public boolean hasKind() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.Library.Kind kind = 2 [default = PLAIN];</code>
+     */
+    public org.jetbrains.kotlin.serialization.js.JsProtoBuf.Library.Kind getKind() {
+      return kind_;
+    }
+
+    // repeated string importedModules = 3;
+    public static final int IMPORTEDMODULES_FIELD_NUMBER = 3;
+    private com.google.protobuf.LazyStringList importedModules_;
+    /**
+     * <code>repeated string importedModules = 3;</code>
+     */
+    public java.util.List<java.lang.String>
+        getImportedModulesList() {
+      return importedModules_;
+    }
+    /**
+     * <code>repeated string importedModules = 3;</code>
+     */
+    public int getImportedModulesCount() {
+      return importedModules_.size();
+    }
+    /**
+     * <code>repeated string importedModules = 3;</code>
+     */
+    public java.lang.String getImportedModules(int index) {
+      return importedModules_.get(index);
+    }
+    /**
+     * <code>repeated string importedModules = 3;</code>
+     */
+    public com.google.protobuf.ByteString
+        getImportedModulesBytes(int index) {
+      return importedModules_.getByteString(index);
+    }
+
     private void initFields() {
       entry_ = java.util.Collections.emptyList();
+      kind_ = org.jetbrains.kotlin.serialization.js.JsProtoBuf.Library.Kind.PLAIN;
+      importedModules_ = com.google.protobuf.LazyStringArrayList.EMPTY;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -1151,6 +1315,12 @@ public final class JsProtoBuf {
       for (int i = 0; i < entry_.size(); i++) {
         output.writeMessage(1, entry_.get(i));
       }
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeEnum(2, kind_.getNumber());
+      }
+      for (int i = 0; i < importedModules_.size(); i++) {
+        output.writeBytes(3, importedModules_.getByteString(i));
+      }
     }
 
     private int memoizedSerializedSize = -1;
@@ -1162,6 +1332,19 @@ public final class JsProtoBuf {
       for (int i = 0; i < entry_.size(); i++) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(1, entry_.get(i));
+      }
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeEnumSize(2, kind_.getNumber());
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < importedModules_.size(); i++) {
+          dataSize += com.google.protobuf.CodedOutputStream
+            .computeBytesSizeNoTag(importedModules_.getByteString(i));
+        }
+        size += dataSize;
+        size += 1 * getImportedModulesList().size();
       }
       memoizedSerializedSize = size;
       return size;
@@ -1256,6 +1439,10 @@ public final class JsProtoBuf {
         super.clear();
         entry_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000001);
+        kind_ = org.jetbrains.kotlin.serialization.js.JsProtoBuf.Library.Kind.PLAIN;
+        bitField0_ = (bitField0_ & ~0x00000002);
+        importedModules_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000004);
         return this;
       }
 
@@ -1278,11 +1465,23 @@ public final class JsProtoBuf {
       public org.jetbrains.kotlin.serialization.js.JsProtoBuf.Library buildPartial() {
         org.jetbrains.kotlin.serialization.js.JsProtoBuf.Library result = new org.jetbrains.kotlin.serialization.js.JsProtoBuf.Library(this);
         int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
         if (((bitField0_ & 0x00000001) == 0x00000001)) {
           entry_ = java.util.Collections.unmodifiableList(entry_);
           bitField0_ = (bitField0_ & ~0x00000001);
         }
         result.entry_ = entry_;
+        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.kind_ = kind_;
+        if (((bitField0_ & 0x00000004) == 0x00000004)) {
+          importedModules_ = new com.google.protobuf.UnmodifiableLazyStringList(
+              importedModules_);
+          bitField0_ = (bitField0_ & ~0x00000004);
+        }
+        result.importedModules_ = importedModules_;
+        result.bitField0_ = to_bitField0_;
         return result;
       }
 
@@ -1295,6 +1494,19 @@ public final class JsProtoBuf {
           } else {
             ensureEntryIsMutable();
             entry_.addAll(other.entry_);
+          }
+          
+        }
+        if (other.hasKind()) {
+          setKind(other.getKind());
+        }
+        if (!other.importedModules_.isEmpty()) {
+          if (importedModules_.isEmpty()) {
+            importedModules_ = other.importedModules_;
+            bitField0_ = (bitField0_ & ~0x00000004);
+          } else {
+            ensureImportedModulesIsMutable();
+            importedModules_.addAll(other.importedModules_);
           }
           
         }
@@ -1452,6 +1664,135 @@ public final class JsProtoBuf {
         ensureEntryIsMutable();
         entry_.remove(index);
 
+        return this;
+      }
+
+      // optional .org.jetbrains.kotlin.serialization.js.Library.Kind kind = 2 [default = PLAIN];
+      private org.jetbrains.kotlin.serialization.js.JsProtoBuf.Library.Kind kind_ = org.jetbrains.kotlin.serialization.js.JsProtoBuf.Library.Kind.PLAIN;
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.Library.Kind kind = 2 [default = PLAIN];</code>
+       */
+      public boolean hasKind() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.Library.Kind kind = 2 [default = PLAIN];</code>
+       */
+      public org.jetbrains.kotlin.serialization.js.JsProtoBuf.Library.Kind getKind() {
+        return kind_;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.Library.Kind kind = 2 [default = PLAIN];</code>
+       */
+      public Builder setKind(org.jetbrains.kotlin.serialization.js.JsProtoBuf.Library.Kind value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        bitField0_ |= 0x00000002;
+        kind_ = value;
+        
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.Library.Kind kind = 2 [default = PLAIN];</code>
+       */
+      public Builder clearKind() {
+        bitField0_ = (bitField0_ & ~0x00000002);
+        kind_ = org.jetbrains.kotlin.serialization.js.JsProtoBuf.Library.Kind.PLAIN;
+        
+        return this;
+      }
+
+      // repeated string importedModules = 3;
+      private com.google.protobuf.LazyStringList importedModules_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      private void ensureImportedModulesIsMutable() {
+        if (!((bitField0_ & 0x00000004) == 0x00000004)) {
+          importedModules_ = new com.google.protobuf.LazyStringArrayList(importedModules_);
+          bitField0_ |= 0x00000004;
+         }
+      }
+      /**
+       * <code>repeated string importedModules = 3;</code>
+       */
+      public java.util.List<java.lang.String>
+          getImportedModulesList() {
+        return java.util.Collections.unmodifiableList(importedModules_);
+      }
+      /**
+       * <code>repeated string importedModules = 3;</code>
+       */
+      public int getImportedModulesCount() {
+        return importedModules_.size();
+      }
+      /**
+       * <code>repeated string importedModules = 3;</code>
+       */
+      public java.lang.String getImportedModules(int index) {
+        return importedModules_.get(index);
+      }
+      /**
+       * <code>repeated string importedModules = 3;</code>
+       */
+      public com.google.protobuf.ByteString
+          getImportedModulesBytes(int index) {
+        return importedModules_.getByteString(index);
+      }
+      /**
+       * <code>repeated string importedModules = 3;</code>
+       */
+      public Builder setImportedModules(
+          int index, java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureImportedModulesIsMutable();
+        importedModules_.set(index, value);
+        
+        return this;
+      }
+      /**
+       * <code>repeated string importedModules = 3;</code>
+       */
+      public Builder addImportedModules(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureImportedModulesIsMutable();
+        importedModules_.add(value);
+        
+        return this;
+      }
+      /**
+       * <code>repeated string importedModules = 3;</code>
+       */
+      public Builder addAllImportedModules(
+          java.lang.Iterable<java.lang.String> values) {
+        ensureImportedModulesIsMutable();
+        super.addAll(values, importedModules_);
+        
+        return this;
+      }
+      /**
+       * <code>repeated string importedModules = 3;</code>
+       */
+      public Builder clearImportedModules() {
+        importedModules_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000004);
+        
+        return this;
+      }
+      /**
+       * <code>repeated string importedModules = 3;</code>
+       */
+      public Builder addImportedModulesBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureImportedModulesIsMutable();
+        importedModules_.add(value);
+        
         return this;
       }
 

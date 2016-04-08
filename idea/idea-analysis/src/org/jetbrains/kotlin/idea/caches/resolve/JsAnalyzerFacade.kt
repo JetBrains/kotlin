@@ -65,7 +65,9 @@ object JsAnalyzerFacade : AnalyzerFacade<PlatformAnalysisParameters>() {
             val providers = moduleInfo.library.getFiles(OrderRootType.CLASSES)
                     .flatMap { KotlinJavascriptMetadataUtils.loadMetadata(PathUtil.getLocalPath(it)!!) }
                     .filter { it.isAbiVersionCompatible }
-                    .mapNotNull { KotlinJavascriptSerializationUtil.createPackageFragmentProvider(moduleDescriptor, it.body, moduleContext.storageManager) }
+                    .mapNotNull {
+                        KotlinJavascriptSerializationUtil.readModule(it.body, moduleContext.storageManager, moduleDescriptor).data
+                    }
 
             if (providers.isNotEmpty()) {
                 packageFragmentProvider = CompositePackageFragmentProvider(listOf(packageFragmentProvider) + providers)

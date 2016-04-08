@@ -31,12 +31,16 @@ import org.jetbrains.kotlin.js.resolve.JsPlatform;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.TargetPlatformKt;
+import org.jetbrains.kotlin.serialization.js.JsModuleDescriptor;
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil;
+import org.jetbrains.kotlin.serialization.js.ModuleKind;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadata;
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -47,8 +51,24 @@ public abstract class JsConfig {
     private final CompilerConfiguration configuration;
     private final LockBasedStorageManager storageManager = new LockBasedStorageManager();
     private final List<KtFile> sourceFilesFromLibraries = new SmartList<KtFile>();
+    @NotNull
+    private final EcmaVersion target;
+
+    @NotNull
+    private final String moduleId;
+
+    private final boolean sourcemap;
+    private final boolean metaInfo;
+    private final boolean kjsm;
+
+    @NotNull
     protected final List<KotlinJavascriptMetadata> metadata = new SmartList<KotlinJavascriptMetadata>();
-    private List<ModuleDescriptorImpl> moduleDescriptors = null;
+
+    @Nullable
+    private List<JsModuleDescriptor<ModuleDescriptorImpl>> moduleDescriptors = null;
+
+    @NotNull
+    private final ModuleKind moduleKind;
 
     private boolean initialized = false;
 
@@ -72,22 +92,34 @@ public abstract class JsConfig {
         return configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME);
     }
 
+    @NotNull
+    public ModuleKind getModuleKind() {
+        return moduleKind;
+    }
+
     public abstract boolean checkLibFilesAndReportErrors(@NotNull Function1<String, Unit> report);
 
     protected abstract void init(@NotNull List<KtFile> sourceFilesInLibraries, @NotNull List<KotlinJavascriptMetadata> metadata);
 
     @NotNull
-    public List<ModuleDescriptorImpl> getModuleDescriptors() {
+    public List<JsModuleDescriptor<ModuleDescriptorImpl>> getModuleDescriptors() {
         init();
         if (moduleDescriptors != null) return moduleDescriptors;
 
-        moduleDescriptors = new SmartList<ModuleDescriptorImpl>();
+        moduleDescriptors = new SmartList<JsModuleDescriptor<ModuleDescriptorImpl>>();
+        List<ModuleDescriptorImpl> kotlinModuleDescriptors = new ArrayList<ModuleDescriptorImpl>();
         for (KotlinJavascriptMetadata metadataEntry : metadata) {
-            moduleDescriptors.add(createModuleDescriptor(metadataEntry));
+            JsModuleDescriptor<ModuleDescriptorImpl> descriptor = createModuleDescriptor(metadataEntry);
+            moduleDescriptors.add(descriptor);
+            kotlinModuleDescriptors.add(descriptor.getData());
         }
-        for (ModuleDescriptorImpl module : moduleDescriptors) {
-            setDependencies(module, moduleDescriptors);
+
+        for (JsModuleDescriptor<ModuleDescriptorImpl> module : moduleDescriptors) {
+            // TODO: remove downcast
+            setDependencies(module.getData(), kotlinModuleDescriptors);
         }
+
+        moduleDescriptors = Collections.unmodifiableList(moduleDescriptors);
 
         return moduleDescriptors;
     }
@@ -105,7 +137,7 @@ public abstract class JsConfig {
         initialized = true;
     }
 
-    private ModuleDescriptorImpl createModuleDescriptor(KotlinJavascriptMetadata metadata) {
+    private JsModuleDescriptor<ModuleDescriptorImpl> createModuleDescriptor(KotlinJavascriptMetadata metadata) {
         assert metadata.isAbiVersionCompatible() :
                 "expected abi version " + KotlinJavascriptMetadataUtils.ABI_VERSION +
                 ", but metadata.abiVersion = " + metadata.getAbiVersion();
@@ -114,12 +146,13 @@ public abstract class JsConfig {
                 JsPlatform.INSTANCE, Name.special("<" + metadata.getModuleName() + ">"), storageManager,
                 JsPlatform.INSTANCE.getBuiltIns());
 
-        PackageFragmentProvider provider =
-                KotlinJavascriptSerializationUtil.createPackageFragmentProvider(moduleDescriptor, metadata.getBody(), storageManager);
 
+        JsModuleDescriptor<PackageFragmentProvider> rawDescriptor = KotlinJavascriptSerializationUtil.readModule(
+                metadata.getBody(), storageManager, moduleDescriptor);
+        PackageFragmentProvider provider = rawDescriptor.getData();
         moduleDescriptor.initialize(provider != null ? provider : PackageFragmentProvider.Empty.INSTANCE);
 
-        return moduleDescriptor;
+        return rawDescriptor.copy(moduleDescriptor);
     }
 
     private static void setDependencies(ModuleDescriptorImpl module, List<ModuleDescriptorImpl> modules) {
