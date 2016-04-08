@@ -30,7 +30,8 @@ import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
-class ChangePrivateTopLevelToInternalFix(element: KtModifierListOwner, private val elementName: String) : KotlinQuickFixAction<KtModifierListOwner>(element), CleanupFix {
+class IncreaseVisibilityFix(element: KtModifierListOwner, private val elementName: String) :
+        KotlinQuickFixAction<KtModifierListOwner>(element), CleanupFix {
     override fun getText() = "Make $elementName internal"
     override fun getFamilyName() = "Make top-level declaration internal"
 
@@ -48,7 +49,7 @@ class ChangePrivateTopLevelToInternalFix(element: KtModifierListOwner, private v
                 descriptor.visibility != Visibilities.PRIVATE) return null
 
             val declaration = DescriptorToSourceUtils.getSourceFromDescriptor(descriptor) as? KtModifierListOwner ?: return null
-            return ChangePrivateTopLevelToInternalFix(declaration, descriptor.name.asString())
+            return IncreaseVisibilityFix(declaration, descriptor.name.asString())
         }
     }
 }
