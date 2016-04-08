@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="diagram-support">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/ideaSDK/plugins/uml/lib" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/ideaSDK/plugins/uml/lib" recursive="false" />
+  </library>
+</component>
