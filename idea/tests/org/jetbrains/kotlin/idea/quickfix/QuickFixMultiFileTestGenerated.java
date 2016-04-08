@@ -1294,6 +1294,12 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/increaseVisibility"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), true);
         }
 
+        @TestMetadata("privateMemberToInternalMultiFile.before.Main.kt")
+        public void testPrivateMemberToInternalMultiFile() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/increaseVisibility/privateMemberToInternalMultiFile.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
         @TestMetadata("privateTopLevelFunInFile.before.Main.kt")
         public void testPrivateTopLevelFunInFile() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/increaseVisibility/privateTopLevelFunInFile.before.Main.kt");

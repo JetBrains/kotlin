@@ -4711,6 +4711,21 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/increaseVisibility")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class IncreaseVisibility extends AbstractQuickFixTest {
+        public void testAllFilesPresentInIncreaseVisibility() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/increaseVisibility"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("privateMemberToInternalSingleFile.kt")
+        public void testPrivateMemberToInternalSingleFile() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/increaseVisibility/privateMemberToInternalSingleFile.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/initializeWithConstructorParameter")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
