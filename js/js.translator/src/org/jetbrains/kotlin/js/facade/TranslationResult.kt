@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
 import org.jetbrains.kotlin.js.sourceMap.SourceMapBuilder
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
+import org.jetbrains.kotlin.serialization.js.JsModuleDescriptor
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import java.io.File
@@ -43,6 +44,7 @@ abstract class TranslationResult protected constructor(val diagnostics: Diagnost
             private val files: List<KtFile>,
             val program: JsProgram,
             diagnostics: Diagnostics,
+            private val importedModules: List<String>,
             private val moduleDescriptor: ModuleDescriptor
     ) : TranslationResult(diagnostics) {
         fun getCode(): String = getCode(TextOutputImpl(), sourceMapBuilder = null)
@@ -71,7 +73,13 @@ abstract class TranslationResult protected constructor(val diagnostics: Diagnost
 
             if (config.isMetaInfo) {
                 val metaFileName = KotlinJavascriptMetadataUtils.replaceSuffix(outputFile.name)
-                val metaFileContent = KotlinJavascriptSerializationUtil.metadataAsString(config.moduleId, moduleDescriptor)
+                val moduleDescription = JsModuleDescriptor(
+                    name = config.moduleId,
+                    data = moduleDescriptor,
+                    kind = config.moduleKind,
+                    imported = importedModules
+                );
+                val metaFileContent = KotlinJavascriptSerializationUtil.metadataAsString(moduleDescription)
                 val sourceFilesForMetaFile = ArrayList(sourceFiles)
                 val jsMetaFile = SimpleOutputFile(sourceFilesForMetaFile, metaFileName, metaFileContent)
                 outputFiles.add(jsMetaFile)

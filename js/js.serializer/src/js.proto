@@ -65,5 +65,13 @@ message Library {
     required bytes content = 2;
   }
 
+  enum Kind {
+      PLAIN = 1;
+      AMD = 2;
+      COMMON_JS = 3;
+  }
+
   repeated FileEntry entry = 1;
+  optional Kind kind = 2 [default = PLAIN];
+  repeated string importedModules = 3;
 }

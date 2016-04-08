@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.TargetPlatform;
 import org.jetbrains.kotlin.resolve.TargetPlatformKt;
+import org.jetbrains.kotlin.serialization.js.JsModuleDescriptor;
 import org.jetbrains.kotlin.storage.StorageManager;
 
 import java.util.ArrayList;
@@ -92,8 +93,8 @@ public abstract class AbstractDiagnosticsTestWithJsStdLib extends AbstractDiagno
         List<ModuleDescriptorImpl> dependencies = new ArrayList<ModuleDescriptorImpl>();
         dependencies.add(module);
 
-        for (ModuleDescriptorImpl moduleDescriptor : config.getModuleDescriptors()) {
-            dependencies.add(moduleDescriptor);
+        for (JsModuleDescriptor<ModuleDescriptorImpl> moduleDescriptor : config.getModuleDescriptors()) {
+            dependencies.add(moduleDescriptor.getData());
         }
 
         dependencies.add(getPlatform().getBuiltIns().getBuiltInsModule());

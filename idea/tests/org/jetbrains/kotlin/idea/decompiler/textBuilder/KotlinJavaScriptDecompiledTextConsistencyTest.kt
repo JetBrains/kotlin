@@ -52,7 +52,7 @@ class KotlinJavaScriptDecompiledTextConsistencyTest : TextConsistencyBaseTest() 
         val metadata = KotlinJavascriptMetadataUtils.loadMetadata(stdlibJar)
         assert(metadata.size == 1)
 
-        val provider = KotlinJavascriptSerializationUtil.createPackageFragmentProvider(module, metadata[0].body, LockBasedStorageManager())
+        val provider = KotlinJavascriptSerializationUtil.readModule(metadata[0].body, LockBasedStorageManager(), module).data
                 .sure { "No package fragment provider was created" }
 
         module.initialize(provider)

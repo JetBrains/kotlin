@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.StringTableImpl
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.utils.KotlinJavascriptMetadata
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -57,9 +56,16 @@ object KotlinJavascriptSerializationUtil {
         stream.toByteArray()
     }
 
-    @JvmStatic fun createPackageFragmentProvider(moduleDescriptor: ModuleDescriptor, metadata: ByteArray, storageManager: StorageManager): PackageFragmentProvider? {
-        val contentMap = metadata.toContentMap()
+    @JvmStatic fun readModule(metadata: ByteArray, storageManager: StorageManager,
+                              kotlinModule: ModuleDescriptor): JsModuleDescriptor<PackageFragmentProvider?> {
+        val prototype = metadata.toContentMap()
 
+        val packageFragmentProvider = createPackageFragmentProvider(kotlinModule, prototype.contentMap, storageManager);
+        return JsModuleDescriptor(kotlinModule.name.asString(), prototype.kind, prototype.imported, packageFragmentProvider)
+    }
+
+    @JvmStatic private fun createPackageFragmentProvider(moduleDescriptor: ModuleDescriptor, contentMap: Map<String, ByteArray>,
+                                                         storageManager: StorageManager): PackageFragmentProvider? {
         val packageFqNames = getPackages(contentMap).map { FqName(it) }.toSet()
         if (packageFqNames.isEmpty()) return null
 
@@ -77,27 +83,36 @@ object KotlinJavascriptSerializationUtil {
                         null
                 }
             }
-            else ByteArrayInputStream(contentMap.get(path))
+            else ByteArrayInputStream(contentMap[path])
         }
     }
 
-    fun contentMapToByteArray(contentMap: Map<String, ByteArray>): ByteArray {
+    fun contentMapToByteArray(contentMap: Map<String, ByteArray>, moduleKind: ModuleKind, importedModules: List<String>): ByteArray {
         val contentBuilder = JsProtoBuf.Library.newBuilder()
+
+        contentBuilder.kind = when (moduleKind) {
+            ModuleKind.PLAIN -> JsProtoBuf.Library.Kind.PLAIN
+            ModuleKind.AMD -> JsProtoBuf.Library.Kind.AMD
+            ModuleKind.COMMON_JS -> JsProtoBuf.Library.Kind.COMMON_JS
+        };
+
+        importedModules.forEach { contentBuilder.addImportedModules(it) }
+
         contentMap.forEach {
             val entry = JsProtoBuf.Library.FileEntry.newBuilder().setPath(it.key).setContent(ByteString.copyFrom(it.value)).build()
             contentBuilder.addEntry(entry)
         }
 
         val byteStream = ByteArrayOutputStream()
-        val gzipOutputStream = GZIPOutputStream(byteStream)
-        contentBuilder.build().writeTo(gzipOutputStream)
-        gzipOutputStream.close()
+        GZIPOutputStream(byteStream).use {
+            contentBuilder.build().writeTo(it)
+        }
 
         return byteStream.toByteArray()
     }
 
-    fun metadataAsString(moduleName: String, moduleDescriptor: ModuleDescriptor): String =
-        KotlinJavascriptMetadataUtils.formatMetadataAsString(moduleName, moduleDescriptor.toBinaryMetadata())
+    fun metadataAsString(jsDescriptor: JsModuleDescriptor<ModuleDescriptor>): String =
+        KotlinJavascriptMetadataUtils.formatMetadataAsString(jsDescriptor.name, jsDescriptor.toBinaryMetadata())
 
     fun serializePackage(module: ModuleDescriptor, fqName: FqName, writeFun: (String, ByteArray) -> Unit) {
         val packageView = module.getPackage(fqName)
@@ -107,7 +122,8 @@ object KotlinJavascriptSerializationUtil {
         val serializerExtension = KotlinJavascriptSerializerExtension()
         val serializer = DescriptorSerializer.createTopLevel(serializerExtension)
 
-        val classifierDescriptors = DescriptorSerializer.sort(packageView.memberScope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS))
+        val classifierDescriptors = DescriptorSerializer.sort(packageView.memberScope.getContributedDescriptors(
+                DescriptorKindFilter.CLASSIFIERS))
 
         ClassSerializationUtil.serializeClasses(classifierDescriptors, serializer, object : ClassSerializationUtil.Sink {
             override fun writeClass(classDescriptor: ClassDescriptor, classProto: ProtoBuf.Class) {
@@ -216,14 +232,10 @@ object KotlinJavascriptSerializationUtil {
         return result.map { it.substringAfter('/').replace('/', '.') }.toSet()
     }
 
-    private fun ModuleDescriptor.toBinaryMetadata(): ByteArray =
-            KotlinJavascriptSerializationUtil.contentMapToByteArray(toContentMap(this))
+    private fun JsModuleDescriptor<ModuleDescriptor>.toBinaryMetadata() = contentMapToByteArray(toContentMap(data), kind, imported)
 }
 
-fun KotlinJavascriptMetadata.forEachFile(operation: (filePath: String, fileContent: ByteArray) -> Unit): Unit =
-        this.body.toContentMap().forEach { operation(it.key, it.value) }
-
-private fun ByteArray.toContentMap(): Map<String, ByteArray> {
+private fun ByteArray.toContentMap(): JsModuleProto {
     val gzipInputStream = GZIPInputStream(ByteArrayInputStream(this))
     val content = JsProtoBuf.Library.parseFrom(gzipInputStream)
     gzipInputStream.close()
@@ -231,5 +243,15 @@ private fun ByteArray.toContentMap(): Map<String, ByteArray> {
     val contentMap: MutableMap<String, ByteArray> = hashMapOf()
     content.entryList.forEach { entry -> contentMap[entry.path] = entry.content.toByteArray() }
 
-    return contentMap
+    return JsModuleProto(
+            contentMap = contentMap,
+            kind = when (content.kind) {
+                null, JsProtoBuf.Library.Kind.PLAIN -> ModuleKind.PLAIN
+                JsProtoBuf.Library.Kind.AMD -> ModuleKind.AMD
+                JsProtoBuf.Library.Kind.COMMON_JS -> ModuleKind.COMMON_JS
+            },
+            imported = content.importedModulesList
+    )
 }
+
+private class JsModuleProto(val contentMap: Map<String, ByteArray>, val kind: ModuleKind, val imported: List<String>)
