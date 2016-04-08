@@ -137,19 +137,10 @@ abstract class AbstractOverrideImplementTest : KotlinLightCodeInsightFixtureTest
             filtered.single()
         }
         else {
-            var candidateToOverride: OverrideMemberChooserObject? = null
-            for (chooserObject in chooserObjects) {
-                if (chooserObject.descriptor.name.asString() == memberToOverride) {
-                    if (candidateToOverride != null) {
-                        throw IllegalStateException("more then one descriptor with name $memberToOverride")
-                    }
-                    candidateToOverride = chooserObject
-                }
+            chooserObjects.single {
+                chooserObject ->
+                chooserObject.descriptor.name.asString() == memberToOverride
             }
-            if (candidateToOverride == null) {
-                throw IllegalStateException("no chooserObjects to override with name $memberToOverride found")
-            }
-            candidateToOverride
         }
 
         performGenerateCommand(classOrObject, listOf(singleToOverride))
