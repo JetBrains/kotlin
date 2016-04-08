@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.completion.test
 
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import java.io.File
 
@@ -35,3 +36,5 @@ fun CodeInsightTestFixture.configureWithExtraFile(path: String, vararg extraName
 
     configureByFiles(*(listOf(path) + extraPaths).toTypedArray())
 }
+
+inline fun <reified T: Any> Any?.assertInstanceOf() = UsefulTestCase.assertInstanceOf(this, T::class.java)
