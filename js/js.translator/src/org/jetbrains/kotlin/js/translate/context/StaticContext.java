@@ -24,7 +24,7 @@ import com.google.dart.compiler.backend.js.ast.metadata.MetadataProperties;
 import com.google.dart.compiler.backend.js.ast.metadata.SideEffectKind;
 import com.intellij.openapi.util.Factory;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.HashMap;
+import com.intellij.util.containers.hash.LinkedHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.ReflectionTypes;
@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject;
 
 import java.util.List;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -109,6 +110,11 @@ public final class StaticContext {
     @NotNull
     private final JsConfig config;
 
+    @NotNull
+    private final Map<String, JsName> importedModules = new LinkedHashMap<String, JsName>();
+
+    private Map<String, JsName> importedModulesSafe;
+
     //TODO: too many parameters in constructor
     private StaticContext(
             @NotNull JsProgram program,
@@ -163,6 +169,14 @@ public final class StaticContext {
     @NotNull
     private JsScope getRootScope() {
         return rootScope;
+    }
+
+    @NotNull
+    public Map<String, JsName> getImportedModules() {
+        if (importedModulesSafe == null) {
+            importedModulesSafe = Collections.unmodifiableMap(importedModules);
+        }
+        return importedModulesSafe;
     }
 
     @NotNull
@@ -540,6 +554,13 @@ public final class StaticContext {
                         return null;
                     }
 
+                    JsName moduleId = importedModules.get(moduleName);
+                    if (moduleId == null) {
+                        moduleId = rootScope.declareFreshName(suggestedModuleName(moduleName));
+                        importedModules.put(moduleName, moduleId);
+                    }
+                    // TODO: use just generated moduleId to refer to module. This requires to rewrite how JS module is written
+
                     return JsAstUtils.replaceRootReference(
                             result, namer.getModuleReference(program.getStringLiteral(moduleName)));
                 }
@@ -633,6 +654,40 @@ public final class StaticContext {
             addRule(nestedClassesHaveContainerQualifier);
             addRule(localClassesHavePackageQualifier);
         }
+    }
+
+    private static String suggestedModuleName(String id) {
+        if (id.isEmpty()) {
+            return "_";
+        }
+
+        StringBuilder sb = new StringBuilder(id.length());
+        char c = id.charAt(0);
+        if (Character.isJavaIdentifierStart(c)) {
+            sb.append(c);
+        }
+        else {
+            sb.append('_');
+            if (Character.isJavaIdentifierPart(c)) {
+                sb.append(c);
+            }
+        }
+
+        sb.append(Character.isJavaIdentifierStart(c) ? c : '_');
+        for (int i = 1; i < id.length(); ++i) {
+            c = id.charAt(i);
+            sb.append(Character.isJavaIdentifierPart(c) ? c : '_');
+        }
+
+        return sb.toString();
+    }
+
+    @Nullable
+    private static ClassDescriptor getEnclosing(@Nullable DeclarationDescriptor descriptor) {
+        while (descriptor != null && !(descriptor instanceof ClassDescriptor)) {
+            descriptor = descriptor.getContainingDeclaration();
+        }
+        return (ClassDescriptor) descriptor;
     }
 
     private static JsExpression applySideEffects(JsExpression expression, DeclarationDescriptor descriptor) {

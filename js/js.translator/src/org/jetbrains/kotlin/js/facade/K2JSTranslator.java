@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.kotlin.diagnostics.DiagnosticUtils.hasError;
@@ -86,6 +87,8 @@ public final class K2JSTranslator {
 
         expandIsCalls(program, context);
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
-        return new TranslationResult.Success(config, files, program, diagnostics, moduleDescriptor);
+
+        List<String> importedModules = new ArrayList<String>(context.getImportedModules().keySet());
+        return new TranslationResult.Success(config, files, program, diagnostics, importedModules, moduleDescriptor);
     }
 }

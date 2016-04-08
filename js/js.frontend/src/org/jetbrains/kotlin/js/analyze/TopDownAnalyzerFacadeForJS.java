@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
+import org.jetbrains.kotlin.serialization.js.JsModuleDescriptor;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -58,7 +59,9 @@ public final class TopDownAnalyzerFacadeForJS {
     private static List<ModuleDescriptorImpl> computeDependencies(ModuleDescriptorImpl module, @NotNull JsConfig config) {
         List<ModuleDescriptorImpl> allDependencies = new ArrayList<ModuleDescriptorImpl>();
         allDependencies.add(module);
-        allDependencies.addAll(config.getModuleDescriptors());
+        for (JsModuleDescriptor<ModuleDescriptorImpl> descriptor : config.getModuleDescriptors()) {
+            allDependencies.add(descriptor.getData());
+        }
         allDependencies.add(JsPlatform.INSTANCE.getBuiltIns().getBuiltInsModule());
         return allDependencies;
     }

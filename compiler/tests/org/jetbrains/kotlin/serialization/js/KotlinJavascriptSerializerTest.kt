@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.serialization.builtins
+package org.jetbrains.kotlin.serialization.js
 
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.LibrarySourcesConfig
 import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil.TEST_PACKAGE_FQNAME
-import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
@@ -71,6 +70,12 @@ class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
             val files = environment.getSourceFiles()
             val config = LibrarySourcesConfig(environment.project, environment.configuration)
             val analysisResult = TopDownAnalyzerFacadeForJS.analyzeFiles(files, config)
+            val description = JsModuleDescriptor(
+                    name = MODULE_NAME,
+                    kind = ModuleKind.PLAIN,
+                    imported = listOf(),
+                    data = analysisResult.moduleDescriptor
+            );
             FileUtil.writeToFile(metaFile, KotlinJavascriptSerializationUtil.metadataAsString(
                     KotlinTestUtils.TEST_MODULE_NAME, analysisResult.moduleDescriptor
             ))
@@ -85,7 +90,7 @@ class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
         val metadata = KotlinJavascriptMetadataUtils.loadMetadata(metaFile)
         assert(metadata.size == 1)
 
-        val provider = KotlinJavascriptSerializationUtil.createPackageFragmentProvider(module, metadata[0].body, LockBasedStorageManager())
+        val provider = KotlinJavascriptSerializationUtil.readModule(metadata[0].body, LockBasedStorageManager(), module).data
                 .sure { "No package fragment provider was created" }
 
         module.initialize(provider)
