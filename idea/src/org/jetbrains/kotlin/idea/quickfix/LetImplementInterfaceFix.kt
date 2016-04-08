@@ -18,8 +18,10 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.containsStarProjections
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
@@ -73,5 +75,15 @@ class LetImplementInterfaceFix(
         val superTypeEntry = KtPsiFactory(element).createSuperTypeEntry(expectedTypeNameSourceCode)
         val entryElement = element.addSuperTypeListEntry(superTypeEntry)
         ShortenReferences.DEFAULT.process(entryElement)
+
+        val implementMembersHandler = ImplementMembersHandler()
+        if (implementMembersHandler.collectMembersToGenerate(element).isEmpty()) return
+
+        if (editor != null) {
+            editor.caretModel.moveToOffset(element.textRange.startOffset)
+            val containingFile = element.containingFile
+            FileEditorManager.getInstance(project).openFile(containingFile.virtualFile, true)
+            implementMembersHandler.invoke(project, editor, containingFile)
+        }
     }
 }
