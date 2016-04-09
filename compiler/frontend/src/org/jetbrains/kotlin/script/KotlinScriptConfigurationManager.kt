@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.types.KotlinType
 import java.io.File
+import java.io.InputStream
 import java.io.StringWriter
 import java.util.*
 
@@ -55,6 +56,14 @@ fun loadScriptDefinitionsFromDirectoryWithConfigs(dir: File): List<KotlinConfigu
 
 fun loadScriptDefinitionsFromConfig(configFile: File): List<KotlinConfigurableScriptDefinition> =
         JDOMUtil.loadDocument(configFile).rootElement.children.mapNotNull {
+            XmlSerializer.deserialize(it, KotlinScriptConfig::class.java)?.let {
+                KotlinConfigurableScriptDefinition(it)
+            }
+        }
+
+@Suppress("unused") // Used externally
+fun loadScriptDefinitionsFromConfig(configStream: InputStream): List<KotlinConfigurableScriptDefinition> =
+        JDOMUtil.loadDocument(configStream).rootElement.children.mapNotNull {
             XmlSerializer.deserialize(it, KotlinScriptConfig::class.java)?.let {
                 KotlinConfigurableScriptDefinition(it)
             }
