@@ -285,6 +285,8 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
                                                                   "<init>", constructorDescriptor,
                                                                   null, ArrayUtil.EMPTY_STRING_ARRAY);
 
+        final Label newBodyStartLabel = new Label();
+        constructorVisitor.visitLabel(newBodyStartLabel);
         //initialize captured fields
         List<NewJavaField> newFieldsWithSkipped = TransformationUtilsKt.getNewFieldsToGenerate(allCapturedBuilder.listCaptured());
         List<FieldInfo> fieldInfoWithSkipped = TransformationUtilsKt.transformToFieldInfo(
@@ -318,7 +320,20 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
             }
         }
 
-        inlineMethodAndUpdateGlobalResult(parentRemapper, capturedFieldInitializer, constructor, constructorInlineBuilder, true);
+        MethodNode intermediateMethodNode = new MethodNode(AsmUtil.NO_FLAG_PACKAGE_PRIVATE, "<init>", constructorDescriptor, null, ArrayUtil.EMPTY_STRING_ARRAY);
+        inlineMethodAndUpdateGlobalResult(parentRemapper, intermediateMethodNode, constructor, constructorInlineBuilder, true);
+
+        AbstractInsnNode first = intermediateMethodNode.instructions.getFirst();
+        final Label oldStartLabel = first instanceof LabelNode ? ((LabelNode) first).getLabel() : null;
+        intermediateMethodNode.accept(new MethodBodyVisitor(capturedFieldInitializer) {
+            @Override
+            public void visitLocalVariable(String name, String desc, String signature, Label start, Label end, int index) {
+                if (oldStartLabel == start) {
+                    start = newBodyStartLabel;//patch for jack&jill
+                }
+                super.visitLocalVariable(name, desc, signature, start, end, index);
+            }
+        });
         constructorVisitor.visitEnd();
         AsmUtil.genClosureFields(TransformationUtilsKt.toNameTypePair(TransformationUtilsKt.filterSkipped(newFieldsWithSkipped)), classBuilder);
     }
