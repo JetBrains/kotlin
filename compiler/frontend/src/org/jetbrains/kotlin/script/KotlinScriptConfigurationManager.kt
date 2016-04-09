@@ -51,8 +51,8 @@ class KotlinScriptConfigurationManager(project: Project, scriptDefinitionProvide
 }
 
 fun loadScriptDefinitionsFromDirectoryWithConfigs(dir: File): List<KotlinConfigurableScriptDefinition> =
-    dir.listFiles { file -> file.name.endsWith(SCRIPT_CONFIG_FILE_EXTENSION, ignoreCase = true) }
-            .flatMap (::loadScriptDefinitionsFromConfig)
+    dir.walk().filter { it.isFile && it.name.endsWith(SCRIPT_CONFIG_FILE_EXTENSION, ignoreCase = true) }.toList()
+            .flatMap ( ::loadScriptDefinitionsFromConfig )
 
 fun loadScriptDefinitionsFromConfig(configFile: File): List<KotlinConfigurableScriptDefinition> =
         JDOMUtil.loadDocument(configFile).rootElement.children.mapNotNull {
