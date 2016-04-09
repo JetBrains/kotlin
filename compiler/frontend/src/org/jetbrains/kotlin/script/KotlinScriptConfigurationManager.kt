@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.io.InputStream
 import java.io.StringWriter
@@ -41,8 +42,15 @@ import java.util.*
 val SCRIPT_CONFIG_FILE_EXTENSION = ".ktscfg.xml"
 
 class KotlinScriptConfigurationManager(project: Project, scriptDefinitionProvider: KotlinScriptDefinitionProvider) : AbstractProjectComponent(project) {
+
+    val kotlinEnvVars: Map<String, String> by lazy {
+        val paths = PathUtil.getKotlinPathsForIdeaPlugin()
+        mapOf("kotlin-runtime" to paths.runtimePath.canonicalPath,
+              "project-root" to (project.basePath ?: "."))
+    }
+
     init {
-        loadScriptDefinitionsFromDirectoryWithConfigs(File(project.basePath ?: ".")).let {
+        loadScriptDefinitionsFromDirectoryWithConfigs(File(project.basePath ?: "."), kotlinEnvVars).let {
             if (it.isNotEmpty()) {
                 scriptDefinitionProvider.setScriptDefinitions(it + StandardScriptDefinition)
             }
@@ -50,22 +58,22 @@ class KotlinScriptConfigurationManager(project: Project, scriptDefinitionProvide
     }
 }
 
-fun loadScriptDefinitionsFromDirectoryWithConfigs(dir: File): List<KotlinConfigurableScriptDefinition> =
+fun loadScriptDefinitionsFromDirectoryWithConfigs(dir: File, kotlinEnvVars: Map<String, String>? = null): List<KotlinConfigurableScriptDefinition> =
     dir.walk().filter { it.isFile && it.name.endsWith(SCRIPT_CONFIG_FILE_EXTENSION, ignoreCase = true) }.toList()
-            .flatMap ( ::loadScriptDefinitionsFromConfig )
+            .flatMap { loadScriptDefinitionsFromConfig(it, kotlinEnvVars) }
 
-fun loadScriptDefinitionsFromConfig(configFile: File): List<KotlinConfigurableScriptDefinition> =
+fun loadScriptDefinitionsFromConfig(configFile: File, kotlinEnvVars: Map<String, String>? = null): List<KotlinConfigurableScriptDefinition> =
         JDOMUtil.loadDocument(configFile).rootElement.children.mapNotNull {
             XmlSerializer.deserialize(it, KotlinScriptConfig::class.java)?.let {
-                KotlinConfigurableScriptDefinition(it)
+                KotlinConfigurableScriptDefinition(it, kotlinEnvVars)
             }
         }
 
 @Suppress("unused") // Used externally
-fun loadScriptDefinitionsFromConfig(configStream: InputStream): List<KotlinConfigurableScriptDefinition> =
+fun loadScriptDefinitionsFromConfig(configStream: InputStream, kotlinEnvVars: Map<String, String>? = null): List<KotlinConfigurableScriptDefinition> =
         JDOMUtil.loadDocument(configStream).rootElement.children.mapNotNull {
             XmlSerializer.deserialize(it, KotlinScriptConfig::class.java)?.let {
-                KotlinConfigurableScriptDefinition(it)
+                KotlinConfigurableScriptDefinition(it, kotlinEnvVars)
             }
         }
 
@@ -115,7 +123,7 @@ class KotlinScriptConfig(
         var superclassParamsMapping: MutableList<String> = ArrayList()
 )
 
-class KotlinConfigurableScriptDefinition(val config: KotlinScriptConfig) : KotlinScriptDefinition {
+class KotlinConfigurableScriptDefinition(val config: KotlinScriptConfig, val environmentVars: Map<String, String>?) : KotlinScriptDefinition {
     override val name = config.name
     override fun getScriptParameters(scriptDescriptor: ScriptDescriptor): List<ScriptParameter> =
         config.parameters.map { ScriptParameter(Name.identifier(it.name), getKotlinTypeByFqName(scriptDescriptor, it.type)) }
@@ -131,5 +139,11 @@ class KotlinConfigurableScriptDefinition(val config: KotlinScriptConfig) : Kotli
 
     override fun getScriptName(script: KtScript): Name = ScriptNameUtil.fileNameWithExtensionStripped(script, KotlinParserDefinition.STD_SCRIPT_EXT)
 
-    override fun getScriptDependenciesClasspath(): List<String> = config.classpath
+    override fun getScriptDependenciesClasspath(): List<String> =
+            if (environmentVars == null || environmentVars.isEmpty()) config.classpath
+            else config.classpath.map {
+                    environmentVars.entries.fold(it) { p, v ->
+                        p.replace("\${${v.key}}", v.value)
+                    }
+                }
 }
