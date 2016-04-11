@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.Errors;
+import org.jetbrains.kotlin.diagnostics.Severity;
 import org.jetbrains.kotlin.lexer.KtKeywordToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
@@ -41,9 +42,11 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.resolve.callableReferences.CallableReferencesResolutionUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode;
+import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache;
 import org.jetbrains.kotlin.resolve.calls.model.DataFlowInfoForArgumentsImpl;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallImpl;
@@ -58,6 +61,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
+import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject;
 import org.jetbrains.kotlin.resolve.constants.*;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
@@ -711,8 +715,77 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             return components.dataFlowAnalyzer.createCheckedTypeInfo(errorType, c, expression);
         }
 
-        KotlinType result = getCallableReferenceType(expression, receiverType, c);
+        TemporaryBindingTrace trace = TemporaryBindingTrace.create(c.trace, "Callable reference type");
+        KotlinType result = getCallableReferenceType(expression, receiverType, c.replaceBindingTrace(trace));
+        boolean hasErrors = hasErrors(trace); // Do not inline this local variable (execution order is important)
+        trace.commit();
+        if (!hasErrors && result != null) {
+            checkNoExpressionOnLHS(expression, c);
+        }
         return components.dataFlowAnalyzer.createCheckedTypeInfo(result, c, expression);
+    }
+
+    private static boolean hasErrors(TemporaryBindingTrace trace) {
+        for (Diagnostic diagnostic : trace.getBindingContext().getDiagnostics().all()) {
+            if (diagnostic.getSeverity() == Severity.ERROR) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void checkNoExpressionOnLHS(@NotNull KtCallableReferenceExpression expression, @NotNull ExpressionTypingContext c) {
+        KtTypeReference typeReference = expression.getTypeReference();
+        if (typeReference == null) return;
+        KtTypeElement typeElement = typeReference.getTypeElement();
+        if (!(typeElement instanceof KtUserType)) return;
+
+        KtUserType userType = (KtUserType) typeElement;
+        while (true) {
+            if (userType.getTypeArgumentList() != null) return;
+            KtUserType qualifier = userType.getQualifier();
+            if (qualifier == null) break;
+            userType = qualifier;
+        }
+
+        KtSimpleNameExpression simpleNameExpression = userType.getReferenceExpression();
+        if (simpleNameExpression == null) return;
+
+        TemporaryTraceAndCache traceAndCache =
+                TemporaryTraceAndCache.create(c, "Resolve expression on LHS of callable reference", simpleNameExpression);
+        OverloadResolutionResults<VariableDescriptor> resolutionResult =
+                components.callExpressionResolver.resolveSimpleName(c.replaceTraceAndCache(traceAndCache), simpleNameExpression);
+
+        Collection<? extends ResolvedCall<VariableDescriptor>> resultingCalls =
+                CollectionsKt.filter(resolutionResult.getResultingCalls(), new Function1<ResolvedCall<VariableDescriptor>, Boolean>() {
+                    @Override
+                    public Boolean invoke(ResolvedCall<VariableDescriptor> call) {
+                        return call.getStatus().possibleTransformToSuccess();
+                    }
+                });
+
+        if (resultingCalls.isEmpty()) return;
+
+        if (resultingCalls.size() == 1 &&
+            resultingCalls.iterator().next().getResultingDescriptor() instanceof FakeCallableDescriptorForObject) return;
+
+        ResolvedCall<?> originalResolvedCall = CallUtilKt.getResolvedCall(expression.getCallableReference(), c.trace.getBindingContext());
+        CallableDescriptor originalResult = originalResolvedCall == null ? null : originalResolvedCall.getResultingDescriptor();
+
+        throw new AssertionError(String.format(
+                "Expressions on left-hand side of callable reference are not supported yet.\n" +
+                "Resolution result: %s\n" +
+                "Original result: %s",
+                CollectionsKt.map(
+                        resultingCalls, new Function1<ResolvedCall<VariableDescriptor>, VariableDescriptor>() {
+                            @Override
+                            public VariableDescriptor invoke(ResolvedCall<VariableDescriptor> call) {
+                                return call.getResultingDescriptor();
+                            }
+                        }
+                ),
+                originalResult
+        ));
     }
 
     @Override
