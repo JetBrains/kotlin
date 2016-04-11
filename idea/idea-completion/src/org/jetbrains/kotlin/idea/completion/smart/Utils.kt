@@ -248,7 +248,9 @@ private fun MutableCollection<LookupElement>.addLookupElementsForNullable(factor
 
 fun CallableDescriptor.callableReferenceType(resolutionFacade: ResolutionFacade): FuzzyType? {
     if (!CallType.CALLABLE_REFERENCE.descriptorKindFilter.accepts(this)) return null // not supported by callable references
-    val type = getReflectionTypeForCandidateDescriptor(this, resolutionFacade.getFrontendService(ReflectionTypes::class.java)) ?: return null
+    val type = getReflectionTypeForCandidateDescriptor(
+            this, resolutionFacade.getFrontendService(ReflectionTypes::class.java), false
+    ) ?: return null
     return FuzzyType(type, emptyList())
 }
 

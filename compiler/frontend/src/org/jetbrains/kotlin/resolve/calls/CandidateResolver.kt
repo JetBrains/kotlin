@@ -157,8 +157,11 @@ class CandidateResolver(
     private fun <D : CallableDescriptor, F : D> CallCandidateResolutionContext<D>.checkExpectedCallableType()
             = check {
                 if (!noExpectedType(expectedType)) {
-                    val candidate = candidateCall.getCandidateDescriptor()
-                    val candidateReflectionType = getReflectionTypeForCandidateDescriptor(candidate, reflectionTypes);
+                    val candidate = candidateCall.candidateDescriptor
+                    val candidateReflectionType = getReflectionTypeForCandidateDescriptor(
+                            candidate, reflectionTypes,
+                            call.callElement.parent.let { it is KtCallableReferenceExpression && it.typeReference == null }
+                    );
                     if (candidateReflectionType != null) {
                         if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(candidateReflectionType, expectedType)) {
                             candidateCall.addStatus(OTHER_ERROR)
