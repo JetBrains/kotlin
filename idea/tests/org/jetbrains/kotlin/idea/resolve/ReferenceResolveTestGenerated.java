@@ -179,6 +179,18 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
         doTest(fileName);
     }
 
+    @TestMetadata("fileRefInRawStringLiteral.kt")
+    public void testFileRefInRawStringLiteral() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/references/fileRefInRawStringLiteral.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("fileRefInStringLiteral.kt")
+    public void testFileRefInStringLiteral() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/references/fileRefInStringLiteral.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("GenericFunctionParameter.kt")
     public void testGenericFunctionParameter() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/references/GenericFunctionParameter.kt");
