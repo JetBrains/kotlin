@@ -23,6 +23,7 @@ import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
@@ -51,24 +52,12 @@ public abstract class JsConfig {
     private final CompilerConfiguration configuration;
     private final LockBasedStorageManager storageManager = new LockBasedStorageManager();
     private final List<KtFile> sourceFilesFromLibraries = new SmartList<KtFile>();
-    @NotNull
-    private final EcmaVersion target;
-
-    @NotNull
-    private final String moduleId;
-
-    private final boolean sourcemap;
-    private final boolean metaInfo;
-    private final boolean kjsm;
 
     @NotNull
     protected final List<KotlinJavascriptMetadata> metadata = new SmartList<KotlinJavascriptMetadata>();
 
     @Nullable
     private List<JsModuleDescriptor<ModuleDescriptorImpl>> moduleDescriptors = null;
-
-    @NotNull
-    private final ModuleKind moduleKind;
 
     private boolean initialized = false;
 
@@ -94,7 +83,7 @@ public abstract class JsConfig {
 
     @NotNull
     public ModuleKind getModuleKind() {
-        return moduleKind;
+        return configuration.getNotNull(JSConfigurationKeys.MODULE_KIND);
     }
 
     public abstract boolean checkLibFilesAndReportErrors(@NotNull Function1<String, Unit> report);

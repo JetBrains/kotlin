@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.js.config;
 
 import org.jetbrains.kotlin.config.CompilerConfigurationKey;
+import org.jetbrains.kotlin.serialization.js.ModuleKind;
 
 import java.util.List;
 
@@ -36,4 +37,7 @@ public class JSConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> UNIT_TEST_CONFIG =
             CompilerConfigurationKey.create("unit test config");
+
+    public static final CompilerConfigurationKey<ModuleKind> MODULE_KIND =
+            CompilerConfigurationKey.create("module kind");
 }

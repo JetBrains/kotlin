@@ -443,18 +443,6 @@ public final class JsAstUtils {
     }
 
     @NotNull
-    public static JsFunction createPackage(@NotNull List<JsStatement> to, @NotNull JsObjectScope scope) {
-        JsFunction packageBlockFunction = createFunctionWithEmptyBody(scope);
-
-        JsName kotlinObjectAsParameter = packageBlockFunction.getScope().declareNameUnsafe(Namer.KOTLIN_NAME);
-        packageBlockFunction.getParameters().add(new JsParameter(kotlinObjectAsParameter));
-
-        to.add(new JsInvocation(packageBlockFunction, Namer.kotlinObject()).makeStmt());
-
-        return packageBlockFunction;
-    }
-
-    @NotNull
     public static JsObjectLiteral wrapValue(@NotNull JsExpression label, @NotNull JsExpression value) {
         return new JsObjectLiteral(Collections.singletonList(new JsPropertyInitializer(label, value)));
     }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-var Kotlin = {};
+var Kotlin = Kotlin || {};
 
 (function (Kotlin) {
     'use strict';

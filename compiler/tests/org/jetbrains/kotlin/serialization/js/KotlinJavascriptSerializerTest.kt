@@ -71,14 +71,12 @@ class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
             val config = LibrarySourcesConfig(environment.project, environment.configuration)
             val analysisResult = TopDownAnalyzerFacadeForJS.analyzeFiles(files, config)
             val description = JsModuleDescriptor(
-                    name = MODULE_NAME,
+                    name = KotlinTestUtils.TEST_MODULE_NAME,
                     kind = ModuleKind.PLAIN,
                     imported = listOf(),
                     data = analysisResult.moduleDescriptor
-            );
-            FileUtil.writeToFile(metaFile, KotlinJavascriptSerializationUtil.metadataAsString(
-                    KotlinTestUtils.TEST_MODULE_NAME, analysisResult.moduleDescriptor
-            ))
+            )
+            FileUtil.writeToFile(metaFile, KotlinJavascriptSerializationUtil.metadataAsString(description))
         }
         finally {
             Disposer.dispose(rootDisposable)

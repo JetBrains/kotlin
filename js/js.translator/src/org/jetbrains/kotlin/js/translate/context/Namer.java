@@ -106,6 +106,8 @@ public final class Namer {
     private static final JsNameRef JS_OBJECT = new JsNameRef("Object");
     private static final JsNameRef JS_OBJECT_CREATE_FUNCTION = new JsNameRef("create", JS_OBJECT);
 
+    public static final String LOCAL_MODULE_PREFIX = "$module$";
+
     public static boolean isUndefined(@NotNull JsExpression expr) {
         if (expr instanceof JsPrefixOperation) {
             JsUnaryOperator op = ((JsPrefixOperation) expr).getOperator();
@@ -510,5 +512,31 @@ public final class Namer {
     @NotNull
     public static JsNameRef createInlineFunction() {
         return pureFqn(DEFINE_INLINE_FUNCTION, kotlinObject());
+    }
+
+    @NotNull
+    public static String suggestedModuleName(@NotNull String id) {
+        if (id.isEmpty()) {
+            return "_";
+        }
+
+        StringBuilder sb = new StringBuilder(id.length());
+        char c = id.charAt(0);
+        if (Character.isJavaIdentifierStart(c)) {
+            sb.append(c);
+        }
+        else {
+            sb.append('_');
+            if (Character.isJavaIdentifierPart(c)) {
+                sb.append(c);
+            }
+        }
+
+        for (int i = 1; i < id.length(); ++i) {
+            c = id.charAt(i);
+            sb.append(Character.isJavaIdentifierPart(c) ? c : '_');
+        }
+
+        return sb.toString();
     }
 }
