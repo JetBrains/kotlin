@@ -157,6 +157,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             doSingleBreakpointTest(fileName);
         }
 
+        @TestMetadata("genericCrossinlineArgument.kt")
+        public void testGenericCrossinlineArgument() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/genericCrossinlineArgument.kt");
+            doSingleBreakpointTest(fileName);
+        }
+
         @TestMetadata("imports.kt")
         public void testImports() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/imports.kt");
