@@ -1,6 +1,6 @@
 package foo
 
-trait A
+interface A
 
 class AImpl: A
 

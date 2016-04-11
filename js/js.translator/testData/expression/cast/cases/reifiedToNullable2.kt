@@ -5,7 +5,7 @@ interface A
 class AImpl : A {}
 
 inline
-fun test<reified T>(x: Any?): T? = x as T?
+fun <reified T> test(x: Any?): T? = x as T?
 
 fun box(): String {
     var a: A? = AImpl()

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.js.test.semantics;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,108 +32,108 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class CastTestGenerated extends AbstractCastTest {
     public void testAllFilesPresentInCases() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/expression/cast/cases"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/expression/cast/cases"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
     @TestMetadata("castToAny.kt")
     public void testCastToAny() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/castToAny.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/castToAny.kt");
         doTest(fileName);
     }
 
     @TestMetadata("castToArray.kt")
     public void testCastToArray() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/castToArray.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/castToArray.kt");
         doTest(fileName);
     }
 
     @TestMetadata("castToFunction.kt")
     public void testCastToFunction() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/castToFunction.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/castToFunction.kt");
         doTest(fileName);
     }
 
     @TestMetadata("castToGenericType.kt")
     public void testCastToGenericType() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/castToGenericType.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/castToGenericType.kt");
         doTest(fileName);
     }
 
     @TestMetadata("castToGenericTypeWithUpperBound.kt")
     public void testCastToGenericTypeWithUpperBound() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/castToGenericTypeWithUpperBound.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/castToGenericTypeWithUpperBound.kt");
         doTest(fileName);
     }
 
     @TestMetadata("castToNotNull.kt")
     public void testCastToNotNull() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/castToNotNull.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/castToNotNull.kt");
         doTest(fileName);
     }
 
     @TestMetadata("castToNullable.kt")
     public void testCastToNullable() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/castToNullable.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/castToNullable.kt");
         doTest(fileName);
     }
 
     @TestMetadata("reifiedToNotNull.kt")
     public void testReifiedToNotNull() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/reifiedToNotNull.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/reifiedToNotNull.kt");
         doTest(fileName);
     }
 
     @TestMetadata("reifiedToNullable1.kt")
     public void testReifiedToNullable1() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/reifiedToNullable1.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/reifiedToNullable1.kt");
         doTest(fileName);
     }
 
     @TestMetadata("reifiedToNullable2.kt")
     public void testReifiedToNullable2() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/reifiedToNullable2.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/reifiedToNullable2.kt");
         doTest(fileName);
     }
 
     @TestMetadata("safeCastToGenericTypeWithUpperBound.kt")
     public void testSafeCastToGenericTypeWithUpperBound() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/safeCastToGenericTypeWithUpperBound.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/safeCastToGenericTypeWithUpperBound.kt");
         doTest(fileName);
     }
 
     @TestMetadata("safeCastToNotNull.kt")
     public void testSafeCastToNotNull() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/safeCastToNotNull.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/safeCastToNotNull.kt");
         doTest(fileName);
     }
 
     @TestMetadata("safeCastToNullable.kt")
     public void testSafeCastToNullable() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/safeCastToNullable.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/safeCastToNullable.kt");
         doTest(fileName);
     }
 
     @TestMetadata("safeCastToReifiedNotNull.kt")
     public void testSafeCastToReifiedNotNull() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/safeCastToReifiedNotNull.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/safeCastToReifiedNotNull.kt");
         doTest(fileName);
     }
 
     @TestMetadata("safeCastToReifiedNullable.kt")
     public void testSafeCastToReifiedNullable() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/safeCastToReifiedNullable.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/safeCastToReifiedNullable.kt");
         doTest(fileName);
     }
 
     @TestMetadata("smartCastInExtensionFunction.kt")
     public void testSmartCastInExtensionFunction() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/smartCastInExtensionFunction.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/smartCastInExtensionFunction.kt");
         doTest(fileName);
     }
 
     @TestMetadata("smartCastInFunction.kt")
     public void testSmartCastInFunction() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/smartCastInFunction.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/smartCastInFunction.kt");
         doTest(fileName);
     }
 }
