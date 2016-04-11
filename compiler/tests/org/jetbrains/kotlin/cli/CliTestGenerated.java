@@ -241,6 +241,12 @@ public class CliTestGenerated extends AbstractCliTest {
             doJvmTest(fileName);
         }
 
+        @TestMetadata("unknownExtraFlags.args")
+        public void testUnknownExtraFlags() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/unknownExtraFlags.args");
+            doJvmTest(fileName);
+        }
+
         @TestMetadata("version.args")
         public void testVersion() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/version.args");

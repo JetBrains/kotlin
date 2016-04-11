@@ -1,0 +1,4 @@
+warning: flag is not supported by this version of the compiler: -Xabcdefghijklm
+warning: flag is not supported by this version of the compiler: -Xnopqrstuvwxyz
+warning: flag is not supported by this version of the compiler: -XXxxxxxxxxxxxx
+OK
