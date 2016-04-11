@@ -490,7 +490,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
 
     private fun findCrossInlineArguments(argument: KtFunction, parameterDescriptor: ValueParameterDescriptor, context: BindingContext): Set<String> {
         return runReadAction {
-            val source = parameterDescriptor.source.getPsi() as? KtParameter
+            val source = parameterDescriptor.original.source.getPsi() as? KtParameter
             val functionName = source?.ownerFunction?.name
             if (functionName != null) {
                 return@runReadAction setOf(getCrossInlineArgumentClassName(argument, functionName, context))
