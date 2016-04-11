@@ -27,8 +27,16 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor;
+import org.jetbrains.kotlin.idea.test.TestUtilsKt;
 
 public class NavigateToLibraryRegressionTest extends LightCodeInsightFixtureTestCase {
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        TestUtilsKt.invalidateLibraryCache(getProject());
+    }
+
     /**
      * Regression test against KT-1652
      */

@@ -20,10 +20,16 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.testFramework.LightCodeInsightTestCase
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.invalidateLibraryCache
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 abstract class AbstractKotlinGotoImplementationTest : LightCodeInsightTestCase() {
+
+    override fun setUp() {
+        super.setUp()
+        invalidateLibraryCache(getProject())
+    }
 
     override fun getTestDataPath(): String = KotlinTestUtils.getHomeDirectory() + File.separator
 

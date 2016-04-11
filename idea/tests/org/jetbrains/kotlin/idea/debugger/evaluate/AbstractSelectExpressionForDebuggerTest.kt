@@ -20,10 +20,16 @@ import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.debugger.KotlinEditorTextProvider
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.invalidateLibraryCache
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.junit.Assert
 
 abstract class AbstractSelectExpressionForDebuggerTest : LightCodeInsightFixtureTestCase() {
+
+    override fun setUp() {
+        super.setUp()
+        invalidateLibraryCache(project)
+    }
 
     fun doTest(path: String) {
         doTest(path, true)
