@@ -197,7 +197,7 @@ public final class JsDescriptorUtils {
         return element.getContainingFile().getUserData(LibrarySourcesConfig.EXTERNAL_MODULE_NAME);
     }
 
-    private static String getModuleNameFromDescriptorName(DeclarationDescriptor descriptor) {
+    public static String getModuleNameFromDescriptorName(DeclarationDescriptor descriptor) {
         ModuleDescriptor moduleDescriptor = DescriptorUtils.getContainingModule(descriptor);
         String moduleName = moduleDescriptor.getName().asString();
         return moduleName.substring(1, moduleName.length() - 1);

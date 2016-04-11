@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.js.translate.test.JSTestGenerator;
 import org.jetbrains.kotlin.js.translate.test.JSTester;
 import org.jetbrains.kotlin.js.translate.test.QUnitTester;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
+import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils;
 import org.jetbrains.kotlin.js.translate.utils.mutator.AssignToExpressionMutator;
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody;
 import org.jetbrains.kotlin.psi.KtExpression;
@@ -51,6 +52,7 @@ import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -196,9 +198,8 @@ public final class Translation {
     ) {
         StaticContext staticContext = StaticContext.generateStaticContext(bindingTrace, config, moduleDescriptor);
         JsProgram program = staticContext.getProgram();
-        JsBlock block = program.getGlobalBlock();
 
-        JsFunction rootFunction = JsAstUtils.createPackage(block.getStatements(), program.getScope());
+        JsFunction rootFunction = JsAstUtils.createFunctionWithEmptyBody(program.getScope());
         JsBlock rootBlock = rootFunction.getBody();
         List<JsStatement> statements = rootBlock.getStatements();
         statements.add(program.getStringLiteral("use strict").makeStmt());
@@ -206,6 +207,31 @@ public final class Translation {
         TranslationContext context = TranslationContext.rootContext(staticContext, rootFunction);
         statements.addAll(PackageDeclarationTranslator.translateFiles(files, context));
         defineModule(context, statements, config.getModuleId());
+        statements.add(new JsReturn(program.getRootScope().declareName(Namer.getRootPackageName()).makeRef()));
+
+        mayBeGenerateTests(files, config, rootBlock, context);
+
+        JsBlock block = program.getGlobalBlock();
+
+        // Invoke function passing modules as arguments
+        // This should help minifier tool to recognize references to this modules as local variables and make them shorter.
+        List<JsExpression> invocationArgs = new ArrayList<JsExpression>(staticContext.getImportedModules().size() + 1);
+        JsName kotlinName = program.getScope().declareName(Namer.KOTLIN_NAME);
+        rootFunction.getParameters().add(new JsParameter((kotlinName)));
+        invocationArgs.add(kotlinName.makeRef());
+
+        for (String importedModule : staticContext.getImportedModules().keySet()) {
+            rootFunction.getParameters().add(new JsParameter(staticContext.getImportedModules().get(importedModule)));
+
+            JsName globalId = program.getScope().declareName(Namer.suggestedModuleName(importedModule));
+            invocationArgs.add(JsAstUtils.pureFqn(globalId, null));
+        }
+        JsInvocation invocation = new JsInvocation(rootFunction, invocationArgs);
+
+        String thisModuleName = JsDescriptorUtils.getModuleNameFromDescriptorName(moduleDescriptor);
+        JsName thisModuleId = program.getScope().declareName(Namer.suggestedModuleName(thisModuleName));
+        block.getStatements().add(JsAstUtils.newVar(thisModuleId,
+                                                    new JsBinaryOperation(JsBinaryOperator.OR, thisModuleId.makeRef(), invocation)));
 
         if (mainCallParameters.shouldBeGenerated()) {
             JsStatement statement = generateCallToMain(context, files, mainCallParameters.arguments());
@@ -213,7 +239,7 @@ public final class Translation {
                 statements.add(statement);
             }
         }
-        mayBeGenerateTests(files, config, rootBlock, context);
+
         return context;
     }
 

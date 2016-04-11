@@ -58,6 +58,7 @@ import org.jetbrains.kotlin.js.facade.TranslationResult;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
+import org.jetbrains.kotlin.serialization.js.ModuleKind;
 import org.jetbrains.kotlin.utils.PathUtil;
 
 import java.io.File;
@@ -243,8 +244,11 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
     @Override
     protected void setupPlatformSpecificArgumentsAndServices(
-            @NotNull CompilerConfiguration configuration, @NotNull K2JSCompilerArguments arguments, @NotNull Services services
+            @NotNull CompilerConfiguration configuration, @NotNull K2JSCompilerArguments arguments,
+            @NotNull Services services
     ) {
+        MessageCollector messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
+
         if (arguments.target != null) {
             assert arguments.target == "v5" : "Unsupported ECMA version: " + arguments.target;
         }
@@ -270,6 +274,27 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         }
 
         configuration.put(JSConfigurationKeys.LIBRARY_FILES, libraryFiles);
+        String moduleKindName = arguments.moduleKind;
+        ModuleKind moduleKind = ModuleKind.PLAIN;
+        if (moduleKindName != null) {
+            moduleKindName = moduleKindName.toLowerCase();
+            if (moduleKindName.equals("plain")) {
+                moduleKind = ModuleKind.PLAIN;
+            }
+            else if (moduleKindName.equals("amd")) {
+                moduleKind = ModuleKind.AMD;
+            }
+            else if (moduleKindName.equals("commonjs")) {
+                moduleKind = ModuleKind.COMMON_JS;
+            }
+            else {
+                messageCollector.report(CompilerMessageSeverity.ERROR, "Unknown module kind: " + moduleKindName + ". " +
+                                                                       "valid values are: plain, amd, commonjs",
+                                        CompilerMessageLocation.NO_LOCATION);
+            }
+        }
+
+        configuration.put(JSConfigurationKeys.MODULE_KIND, moduleKind);
     }
 
     private static MainCallParameters createMainCallParameters(String main) {

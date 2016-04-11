@@ -60,7 +60,7 @@ object KotlinJavascriptSerializationUtil {
                               kotlinModule: ModuleDescriptor): JsModuleDescriptor<PackageFragmentProvider?> {
         val prototype = metadata.toContentMap()
 
-        val packageFragmentProvider = createPackageFragmentProvider(kotlinModule, prototype.contentMap, storageManager);
+        val packageFragmentProvider = createPackageFragmentProvider(kotlinModule, prototype.contentMap, storageManager)
         return JsModuleDescriptor(kotlinModule.name.asString(), prototype.kind, prototype.imported, packageFragmentProvider)
     }
 
@@ -94,7 +94,7 @@ object KotlinJavascriptSerializationUtil {
             ModuleKind.PLAIN -> JsProtoBuf.Library.Kind.PLAIN
             ModuleKind.AMD -> JsProtoBuf.Library.Kind.AMD
             ModuleKind.COMMON_JS -> JsProtoBuf.Library.Kind.COMMON_JS
-        };
+        }
 
         importedModules.forEach { contentBuilder.addImportedModules(it) }
 

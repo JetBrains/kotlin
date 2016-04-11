@@ -197,8 +197,8 @@ public final class RhinoUtils {
             runFileWithRhino(TEST_DATA_DIR_PATH + "kotlin_lib.js", context, scope);
             runFileWithRhino(TEST_DATA_DIR_PATH + "maps.js", context, scope);
             runFileWithRhino(TEST_DATA_DIR_PATH + "long.js", context, scope);
-            runFileWithRhino(DIST_DIR_JS_PATH + STDLIB_JS_FILE_NAME, context, scope);
             runFileWithRhino(DIST_DIR_JS_PATH + BUILTINS_JS_FILE_NAME, context, scope);
+            runFileWithRhino(DIST_DIR_JS_PATH + STDLIB_JS_FILE_NAME, context, scope);
             //runFileWithRhino(pathToTestFilesRoot() + "jshint.js", context, scope);
             for (String jsLibrary : jsLibraries) {
                 runFileWithRhino(jsLibrary, context, scope);
