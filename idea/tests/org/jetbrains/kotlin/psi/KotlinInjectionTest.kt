@@ -17,33 +17,12 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.html.HTMLLanguage
-import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference
-import junit.framework.TestCase
 import org.intellij.lang.regexp.RegExpLanguage
 import org.intellij.plugins.intelliLang.Configuration
-import org.intellij.plugins.intelliLang.inject.InjectLanguageAction
-import org.intellij.plugins.intelliLang.inject.UnInjectLanguageAction
 import org.intellij.plugins.intelliLang.inject.config.BaseInjection
 import org.intellij.plugins.intelliLang.inject.config.InjectionPlace
-import org.intellij.plugins.intelliLang.references.FileReferenceInjector
 
 class KotlinInjectionTest : AbstractInjectionTest() {
-    fun testInjectUnInjectOnSimpleString() {
-        myFixture.configureByText("test.kt",
-                                  """val test = "<caret>simple" """)
-        TestCase.assertTrue(InjectLanguageAction().isAvailable(project, myFixture.editor, myFixture.file))
-        TestCase.assertFalse(UnInjectLanguageAction().isAvailable(project, myFixture.editor, myFixture.file))
-
-        InjectLanguageAction.invokeImpl(project, myFixture.editor, myFixture.file, FileReferenceInjector())
-        TestCase.assertTrue(myFixture.getReferenceAtCaretPosition() is FileReference)
-
-        TestCase.assertFalse(InjectLanguageAction().isAvailable(project, myFixture.editor, myFixture.file))
-        TestCase.assertTrue(UnInjectLanguageAction().isAvailable(project, myFixture.editor, myFixture.file))
-
-        UnInjectLanguageAction.invokeImpl(project, myFixture.editor, myFixture.file)
-        TestCase.assertNull(myFixture.getReferenceAtCaretPosition())
-    }
-
     fun testInjectionOnJavaPredefinedMethodWithAnnotation() = doInjectionPresentTest(
             """
             val test1 = java.util.regex.Pattern.compile("<caret>pattern")

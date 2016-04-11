@@ -85,6 +85,14 @@ class CompletionMultiFileHandlerTest : KotlinCompletionTestCase() {
         doTest('\t', "TestBundle.properties")
     }
 
+    fun testFileRefInStringLiteralEnter() {
+        doTest('\n', "foo.txt", "bar.txt")
+    }
+
+    fun testFileRefInStringLiteralTab() {
+        doTest('\t', "foo.txt", "bar.txt")
+    }
+
     fun testNotImportedExtension() {
         doTest()
     }

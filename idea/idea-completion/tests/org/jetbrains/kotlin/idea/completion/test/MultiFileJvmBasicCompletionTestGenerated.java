@@ -125,6 +125,18 @@ public class MultiFileJvmBasicCompletionTestGenerated extends AbstractMultiFileJ
         doTest(fileName);
     }
 
+    @TestMetadata("FileRefInStringLiteral")
+    public void testFileRefInStringLiteral() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/FileRefInStringLiteral/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("FileRefInStringLiteralNoPrefix")
+    public void testFileRefInStringLiteralNoPrefix() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/FileRefInStringLiteralNoPrefix/");
+        doTest(fileName);
+    }
+
     @TestMetadata("GroovyClassNameCompletionFromDefaultPackage")
     public void testGroovyClassNameCompletionFromDefaultPackage() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/GroovyClassNameCompletionFromDefaultPackage/");
