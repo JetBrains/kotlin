@@ -4,9 +4,9 @@ open class A
 class B : A()
 class C
 
-fun notNullToNullableT<T : A>(a: Any): T? = a as? T?
+fun <T : A> notNullToNullableT(a: Any): T? = a as? T?
 
-fun nullableToNullableT<T : A>(a: Any?): T? = a as? T?
+fun <T : A> nullableToNullableT(a: Any?): T? = a as? T?
 
 fun box(): String {
     val a = A()

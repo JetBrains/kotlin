@@ -507,11 +507,6 @@ public class TypeUtils {
         return typeParameterDescriptor != null && !typeParameterDescriptor.isReified();
     }
 
-    public static boolean isReifiedTypeParameter(@NotNull KotlinType type) {
-        TypeParameterDescriptor typeParameterDescriptor = getTypeParameterDescriptorOrNull(type);
-        return typeParameterDescriptor != null && typeParameterDescriptor.isReified();
-    }
-
     @Nullable
     public static TypeParameterDescriptor getTypeParameterDescriptorOrNull(@NotNull KotlinType type) {
         if (type.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor) {

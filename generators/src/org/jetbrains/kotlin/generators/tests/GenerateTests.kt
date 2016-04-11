@@ -1066,11 +1066,11 @@ fun main(args: Array<String>) {
             model("reified/cases")
         }
 
-        testClass(javaClass<AbstractRttiTest>()) {
+        testClass<AbstractRttiTest>() {
             model("rtti/cases")
         }
 
-        testClass(javaClass<AbstractCastTest>()) {
+        testClass<AbstractCastTest>() {
             model("expression/cast/cases")
         }
     }

@@ -4,7 +4,7 @@ package foo
 // CHECK_NULLS_COUNT: function=box count=8
 
 inline
-fun Any?.isTypeOfOrNull<reified T>() = this is T?
+fun <reified T> Any?.isTypeOfOrNull() = this is T?
 
 class A
 class B
