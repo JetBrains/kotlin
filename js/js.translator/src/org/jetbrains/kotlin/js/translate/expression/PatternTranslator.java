@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.js.translate.expression;
 
 import com.google.dart.compiler.backend.js.ast.*;
-import com.google.dart.compiler.backend.js.ast.metadata.MetadataProperties;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
@@ -25,9 +24,8 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
-import org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsKt;
 import org.jetbrains.kotlin.js.patterns.NamePredicate;
-import org.jetbrains.kotlin.js.patterns.typePredicates.TypePredicatesPackage;
+import org.jetbrains.kotlin.js.patterns.typePredicates.TypePredicatesKt;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TemporaryVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
@@ -42,16 +40,18 @@ import org.jetbrains.kotlin.psi.KtIsExpression;
 import org.jetbrains.kotlin.psi.KtTypeReference;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.TypeIntersector;
 
-import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.*;
-import static org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsPackage.getNameIfStandardType;
 import static org.jetbrains.kotlin.builtins.FunctionTypesKt.isFunctionTypeOrSubtype;
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isAnyOrNullableAny;
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isArray;
+import static org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsKt.getNameIfStandardType;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.equality;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.negated;
 import static org.jetbrains.kotlin.psi.KtPsiUtil.findChildByType;
-import static org.jetbrains.kotlin.types.TypeUtils.*;
+import static org.jetbrains.kotlin.types.TypeUtils.getTypeParameterDescriptorOrNull;
+import static org.jetbrains.kotlin.types.TypeUtils.isNullableType;
+import static org.jetbrains.kotlin.types.TypeUtils.isReifiedTypeParameter;
 
 public final class PatternTranslator extends AbstractTranslator {
 
@@ -143,7 +143,7 @@ public final class PatternTranslator extends AbstractTranslator {
                 return getIsTypeCheckCallableForReifiedType(typeParameterDescriptor);
             }
 
-            return doGetIsTypeCheckCallable(typeParameterDescriptor.getUpperBoundsAsType());
+            return doGetIsTypeCheckCallable(TypeIntersector.getUpperBoundsAsType(typeParameterDescriptor));
         }
 
         JsNameRef typeName = getClassNameReference(type);
@@ -154,18 +154,18 @@ public final class PatternTranslator extends AbstractTranslator {
     private JsExpression getIsTypeCheckCallableForBuiltin(@NotNull KotlinType type) {
         if (isAnyOrNullableAny(type)) return namer().isAny();
 
-        if (isFunctionOrExtensionFunctionType(type)) return namer().isTypeOf(program().getStringLiteral("function"));
+        if (isFunctionTypeOrSubtype(type)) return namer().isTypeOf(program().getStringLiteral("function"));
 
         if (isArray(type)) return Namer.IS_ARRAY_FUN_REF;
 
-        if (TypePredicatesPackage.getCOMPARABLE().apply(type)) return namer().isComparable();
+        if (TypePredicatesKt.getCOMPARABLE().apply(type)) return namer().isComparable();
 
         return null;
     }
 
     @Nullable
-    private JsExpression getIsTypeCheckCallableForBuiltin(@NotNull KotlinType type) {
-        Name typeName = DescriptorUtilsKt.getNameIfStandardType(type);
+    private JsExpression getIsTypeCheckCallableForPrimitiveBuiltin(@NotNull KotlinType type) {
+        Name typeName = getNameIfStandardType(type);
 
         if (NamePredicate.STRING.apply(typeName)) {
             return namer().isTypeOf(program().getStringLiteral("string"));
