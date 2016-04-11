@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.check
 //   then use this upper bound instead of star projection
 // - Otherwise no non-projection parametrization exists for such 'samType'
 //
-// See Non-wildcard parametrization in §9.9 of JLS 8 for clarification
+// See Non-wildcard parametrization in JLS 8 p.9.9 for clarification
 internal fun nonProjectionParametrization(samType: KotlinType): KotlinType? {
     if (samType.arguments.none { it.projectionKind != Variance.INVARIANT }) return samType
     val parameters = samType.constructor.parameters
