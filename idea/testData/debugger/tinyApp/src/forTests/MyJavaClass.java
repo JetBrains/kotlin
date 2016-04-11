@@ -1,6 +1,7 @@
 package forTests;
 
 import org.jetbrains.annotations.NotNull;
+import java.util.List;
 
 public class MyJavaClass {
     public void testFun() {
@@ -37,5 +38,15 @@ public class MyJavaClass {
 
     public static class InnerClass extends BaseClass {
         public final int i = 1;
+    }
+
+    public static class RawA<T> {
+        public int foo(List<T> p) {
+            return 1;
+        }
+    }
+
+    public static class RawADerived extends RawA {
+
     }
 }

@@ -71,7 +71,6 @@ import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.types.Flexibility
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.Opcodes.ASM5
 import org.jetbrains.org.objectweb.asm.Type
@@ -454,7 +453,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                 }
 
                 val filesToAnalyze = if (contextFile == null) listOf(this) else listOf(this, contextFile)
-                val resolutionFacade = KotlinCacheService.getInstance(project).getResolutionFacade(filesToAnalyze + createFlexibleTypesFile())
+                val resolutionFacade = KotlinCacheService.getInstance(project).getResolutionFacade(filesToAnalyze)
                 val analysisResult = resolutionFacade.analyzeFullyAndGetResult(filesToAnalyze)
 
                 if (analysisResult.isError()) {
@@ -525,16 +524,6 @@ private fun createFileForDebugger(codeFragment: KtCodeFragment,
     function.typeReference?.debugTypeInfo = extractedFunction.typeReference?.debugTypeInfo
 
     return jetFile
-}
-
-private fun PsiElement.createFlexibleTypesFile(): KtFile {
-    return createKtFile(
-            "FLEXIBLE_TYPES.kt",
-            """
-                package ${Flexibility.FLEXIBLE_TYPE_CLASSIFIER.packageFqName}
-                public class ${Flexibility.FLEXIBLE_TYPE_CLASSIFIER.relativeClassName}<L, U>
-            """
-    )
 }
 
 private fun PsiElement.createKtFile(fileName: String, fileText: String): KtFile {
