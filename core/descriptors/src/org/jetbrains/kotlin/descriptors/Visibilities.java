@@ -139,7 +139,7 @@ public class Visibilities {
                 if (companionOwner != null && DescriptorUtils.isSubclass(fromClass, companionOwner)) return true;
             }
 
-            // The rest part of method checks visibility similarly to Java does for protected (see JLS §6.6.2)
+            // The rest part of method checks visibility similarly to Java does for protected (see JLS p.6.6.2)
 
             // Protected fake overrides can have only one protected overridden (as protected is not allowed for interface members)
             DeclarationDescriptorWithVisibility whatDeclaration = DescriptorUtils.unwrapFakeOverrideToAnyDeclaration(what);
