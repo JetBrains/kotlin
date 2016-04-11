@@ -284,7 +284,7 @@ public class DescriptorUtils {
         return isKindOf(descriptor, ClassKind.OBJECT) && !((ClassDescriptor) descriptor).isCompanionObject();
     }
 
-    public static boolean isObject(@NotNull DeclarationDescriptor descriptor) {
+    public static boolean isObject(@Nullable DeclarationDescriptor descriptor) {
         return isKindOf(descriptor, ClassKind.OBJECT);
     }
 
