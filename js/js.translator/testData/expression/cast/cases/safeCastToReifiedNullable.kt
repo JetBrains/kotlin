@@ -6,7 +6,7 @@ class A
 class B
 
 inline
-fun Any?.castTo<reified T>(): T? = this as? T?
+fun <reified T> Any?.castTo(): T? = this as? T?
 
 fun box(): String {
     val a: Any? = A()

@@ -217,7 +217,7 @@ private fun RegExp.findNext(input: String, from: Int): MatchResult? {
             get() {
                 if (groupValues_ == null) {
                     groupValues_ = object : java.util.AbstractList<String>() {
-                        override val size: Int get() = match.size
+                        override val size: Int get() = match.length
                         override fun get(index: Int): String = match[index] ?: ""
                     }
                 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,13 +54,13 @@ class RegExpTest {
     @test fun regExpExec() {
         val string = "R2D2 beats A5D5 "
         var re = RegExp("""(\w\d)(\w\d)""", "g")
-        val m1: Array<out String?> = re.exec(string)!!
-        assertEquals(arrayOf("R2D2", "R2", "D2"), m1)
+        val m1 = re.exec(string)!!
+        assertEquals(arrayOf("R2D2", "R2", "D2"), m1.toArray())
         assertEquals(0, m1.index)
         assertEquals(4, re.lastIndex)
 
-        val m2: Array<out String?> = re.exec(string)!!
-        assertEquals(arrayOf("A5D5", "A5", "D5"), m2)
+        val m2 = re.exec(string)!!
+        assertEquals(arrayOf("A5D5", "A5", "D5"), m2.toArray())
         assertEquals(string.indexOf(m2[0]!!), m2.index)
 
         val noMatch = re.exec(string)
@@ -68,4 +68,9 @@ class RegExpTest {
         assertEquals(0, re.lastIndex)
     }
 
+    fun RegExpMatch.toArray(): Array<out String?> {
+        val array = arrayOfNulls<String>(length)
+        array.indices.forEach { array[it] = this[it] }
+        return array
+    }
 }

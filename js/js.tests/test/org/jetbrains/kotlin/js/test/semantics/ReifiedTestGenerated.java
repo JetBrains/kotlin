@@ -97,7 +97,7 @@ public class ReifiedTestGenerated extends AbstractReifiedTest {
 
     @TestMetadata("isTNullable.kt")
     public void testIsTNullable() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reified/cases/isTNullable.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/reified/cases/isTNullable.kt");
         doTest(fileName);
     }
 
@@ -145,7 +145,7 @@ public class ReifiedTestGenerated extends AbstractReifiedTest {
 
     @TestMetadata("withInlineTurnedOff.kt")
     public void testWithInlineTurnedOff() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reified/cases/withInlineTurnedOff.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/reified/cases/withInlineTurnedOff.kt");
         doTest(fileName);
     }
 }
