@@ -1,0 +1,6 @@
+-Xabcdefghijklm
+$TESTDATA_DIR$/simple.kt
+-Xnopqrstuvwxyz
+-d
+$TEMP_DIR$
+-XXxxxxxxxxxxxx

@@ -58,6 +58,8 @@ public abstract class CommonCompilerArguments {
 
     public List<String> freeArgs = new SmartList<String>();
 
+    public List<String> unknownExtraFlags = new SmartList<String>();
+
     @NotNull
     public String executableScriptFileName() {
         return "kotlinc";
