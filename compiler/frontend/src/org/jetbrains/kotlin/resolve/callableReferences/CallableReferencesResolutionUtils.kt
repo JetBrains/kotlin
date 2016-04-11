@@ -181,24 +181,6 @@ fun resolveCallableReferenceTarget(
     }
 }
 
-private fun createReflectionTypeForFunction(
-        descriptor: FunctionDescriptor,
-        receiverType: KotlinType?,
-        reflectionTypes: ReflectionTypes
-): KotlinType? {
-    val returnType = descriptor.returnType ?: return null
-    val valueParametersTypes = ExpressionTypingUtils.getValueParametersTypes(descriptor.valueParameters)
-    return reflectionTypes.getKFunctionType(Annotations.EMPTY, receiverType, valueParametersTypes, returnType)
-}
-
-private fun createReflectionTypeForProperty(
-        descriptor: PropertyDescriptor,
-        receiverType: KotlinType?,
-        reflectionTypes: ReflectionTypes
-): KotlinType {
-    return reflectionTypes.getKPropertyType(Annotations.EMPTY, receiverType, descriptor.type, descriptor.isVar)
-}
-
 private fun bindFunctionReference(expression: KtCallableReferenceExpression, type: KotlinType, context: ResolutionContext<*>) {
     val functionDescriptor = AnonymousFunctionDescriptor(
             context.scope.ownerDescriptor,
@@ -230,7 +212,8 @@ private fun createReflectionTypeForCallableDescriptor(
         lhsType: KotlinType?,
         reflectionTypes: ReflectionTypes,
         trace: BindingTrace?,
-        reportOn: KtExpression?
+        reportOn: KtExpression?,
+        ignoreReceiver: Boolean
 ): KotlinType? {
     val extensionReceiver = descriptor.extensionReceiverParameter
     val dispatchReceiver = descriptor.dispatchReceiverParameter?.let { dispatchReceiver ->
@@ -248,15 +231,19 @@ private fun createReflectionTypeForCallableDescriptor(
     }
 
     val receiverType =
-            if (extensionReceiver != null || dispatchReceiver != null)
+            if ((extensionReceiver != null || dispatchReceiver != null) && !ignoreReceiver)
                 lhsType ?: extensionReceiver?.type ?: dispatchReceiver?.type
             else null
 
     return when (descriptor) {
-        is FunctionDescriptor ->
-            createReflectionTypeForFunction(descriptor, receiverType, reflectionTypes)
-        is PropertyDescriptor ->
-            createReflectionTypeForProperty(descriptor, receiverType, reflectionTypes)
+        is FunctionDescriptor -> {
+            val returnType = descriptor.returnType ?: return null
+            val valueParametersTypes = ExpressionTypingUtils.getValueParametersTypes(descriptor.valueParameters)
+            return reflectionTypes.getKFunctionType(Annotations.EMPTY, receiverType, valueParametersTypes, returnType)
+        }
+        is PropertyDescriptor -> {
+            reflectionTypes.getKPropertyType(Annotations.EMPTY, receiverType, descriptor.type, descriptor.isVar)
+        }
         is VariableDescriptor -> {
             if (reportOn != null) {
                 trace?.report(UNSUPPORTED.on(reportOn, "References to variables aren't supported yet"))
@@ -270,9 +257,10 @@ private fun createReflectionTypeForCallableDescriptor(
 
 fun getReflectionTypeForCandidateDescriptor(
         descriptor: CallableDescriptor,
-        reflectionTypes: ReflectionTypes
+        reflectionTypes: ReflectionTypes,
+        ignoreReceiver: Boolean
 ): KotlinType? =
-        createReflectionTypeForCallableDescriptor(descriptor, null, reflectionTypes, null, null)
+        createReflectionTypeForCallableDescriptor(descriptor, null, reflectionTypes, null, null, ignoreReceiver)
 
 fun createReflectionTypeForResolvedCallableReference(
         reference: KtCallableReferenceExpression,
@@ -282,7 +270,7 @@ fun createReflectionTypeForResolvedCallableReference(
         reflectionTypes: ReflectionTypes
 ): KotlinType? {
     val type = createReflectionTypeForCallableDescriptor(
-            descriptor, lhsType, reflectionTypes, context.trace, reference.getCallableReference()
+            descriptor, lhsType, reflectionTypes, context.trace, reference.callableReference, reference.typeReference == null
     ) ?: return null
     when (descriptor) {
         is FunctionDescriptor -> {
@@ -310,7 +298,8 @@ fun getResolvedCallableReferenceShapeType(
                 null
             overloadResolutionResults.isSingleResult ->
                 OverloadResolutionResultsUtil.getResultingCall(overloadResolutionResults, context.contextDependency)?.let { call ->
-                    createReflectionTypeForCallableDescriptor(call.resultingDescriptor, lhsType, reflectionTypes, context.trace, reference)
+                    createReflectionTypeForCallableDescriptor(call.resultingDescriptor, lhsType, reflectionTypes, context.trace, reference,
+                                                              reference.typeReference == null)
                 }
             expectedTypeUnknown /* && overload resolution was ambiguous */ ->
                 functionPlaceholders.createFunctionPlaceholderType(emptyList(), false)

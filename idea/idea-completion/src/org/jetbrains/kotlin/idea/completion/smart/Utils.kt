@@ -248,7 +248,9 @@ private fun MutableCollection<LookupElement>.addLookupElementsForNullable(factor
 
 fun CallableDescriptor.callableReferenceType(resolutionFacade: ResolutionFacade): FuzzyType? {
     if (!CallType.CALLABLE_REFERENCE.descriptorKindFilter.accepts(this)) return null // not supported by callable references
-    return getReflectionTypeForCandidateDescriptor(this, resolutionFacade.getFrontendService(ReflectionTypes::class.java))?.toFuzzyType(emptyList())
+    return getReflectionTypeForCandidateDescriptor(
+            this, resolutionFacade.getFrontendService(ReflectionTypes::class.java), false
+    )?.toFuzzyType(emptyList())
 }
 
 enum class SmartCompletionItemPriority {

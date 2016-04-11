@@ -1,5 +1,7 @@
 package
 
+public fun explicitlyExpectFunction0(/*0*/ f: () -> kotlin.Unit): () -> kotlin.Unit
+public fun explicitlyExpectFunction1(/*0*/ f: (A) -> kotlin.Unit): (A) -> kotlin.Unit
 public fun foo(): kotlin.Unit
 
 public final class A {
