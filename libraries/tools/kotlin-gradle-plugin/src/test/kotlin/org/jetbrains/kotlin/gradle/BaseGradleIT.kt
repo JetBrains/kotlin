@@ -3,7 +3,6 @@ package org.jetbrains.kotlin.gradle
 import com.google.common.io.Files
 import com.intellij.openapi.util.io.FileUtil
 import org.gradle.api.logging.LogLevel
-import org.jetbrains.kotlin.gradle.plugin.ThreadTracker
 import org.jetbrains.kotlin.gradle.util.createGradleCommand
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.junit.After
@@ -71,10 +70,6 @@ abstract class BaseGradleIT {
             val withDaemon: Boolean = false,
             val daemonOptionSupported: Boolean = true,
             val incremental: Boolean? = null,
-            /**
-             * @see [ThreadTracker]
-             */
-            val assertThreadLeaks: Boolean = true,
             val androidHome: File? = null,
             val androidGradlePluginVersion: String? = null)
 
@@ -212,9 +207,6 @@ abstract class BaseGradleIT {
                 }
 
                 add("-PpathToKotlinPlugin=" + File("local-repo").absolutePath)
-                if (options.assertThreadLeaks) {
-                    add("-P${ThreadTracker.ASSERT_THREAD_LEAKS_PROPERTY}=true")
-                }
                 options.incremental?.let { add("-Pkotlin.incremental=$it") }
                 options.androidGradlePluginVersion?.let { add("-PandroidToolsVersion=$it")}
             }
