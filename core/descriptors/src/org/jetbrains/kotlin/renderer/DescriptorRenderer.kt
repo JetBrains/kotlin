@@ -136,10 +136,6 @@ abstract class DescriptorRenderer {
             modifiers = DescriptorRendererModifier.ALL
         }
 
-        @JvmField val FLEXIBLE_TYPES_FOR_CODE: DescriptorRenderer = withOptions {
-            flexibleTypesForCode = true
-        }
-
         @JvmField val HTML: DescriptorRenderer = withOptions {
             textFormat = RenderingFormat.HTML
             modifiers = DescriptorRendererModifier.ALL
@@ -187,7 +183,6 @@ interface DescriptorRendererOptions {
     var withoutSuperTypes: Boolean
     var typeNormalizer: (KotlinType) -> KotlinType
     var renderDefaultValues: Boolean
-    var flexibleTypesForCode: Boolean
     var secondaryConstructorsAsPrimary: Boolean
     var renderAccessors: Boolean
     var renderDefaultAnnotationArguments: Boolean
