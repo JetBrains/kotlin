@@ -35,6 +35,12 @@ public class MultiModuleTestGenerated extends AbstractMultiModuleTest {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/multiModule/cases"), Pattern.compile("^([^\\.]+)$"), false);
     }
 
+    @TestMetadata("moduleAndVariableNameClash")
+    public void testModuleAndVariableNameClash() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/multiModule/cases/moduleAndVariableNameClash/");
+        doTest(fileName);
+    }
+
     @TestMetadata("useElementsFromDefaultPackageInAnotherModule")
     public void testUseElementsFromDefaultPackageInAnotherModule() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/multiModule/cases/useElementsFromDefaultPackageInAnotherModule/");

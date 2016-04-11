@@ -367,18 +367,6 @@
                 <file name="long.js"/>
             </sources>
 
-            <sources dir="${js.stdlib.output.dir}">
-                <file name="${compiled.builtins.js}"/>
-            </sources>
-
-            <sources dir="${js.stdlib.output.dir}">
-                <file name="${compiled.stdlib.js}"/>
-            </sources>
-
-            <sources dir="${stdlib.js.dir}">
-                <file name="export_Kotlin_if_possible.js"/>
-            </sources>
-
             <externs dir="${stdlib.js.dir}">
                 <file name="externs.js"/>
             </externs>
@@ -388,6 +376,8 @@
             <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
             <zipfileset dir="${js.stdlib.output.dir}" prefix="">
                 <include name="kotlin.js"/>
+                <include name="${compiled.builtins.js}"/>
+                <include name="${compiled.stdlib.js}"/>
                 <include name="${compiled.stdlib.meta.js}"/>
                 <include name="stdlib/**"/>
             </zipfileset>

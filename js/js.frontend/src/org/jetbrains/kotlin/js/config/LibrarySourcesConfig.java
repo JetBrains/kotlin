@@ -66,6 +66,7 @@ public class LibrarySourcesConfig extends JsConfig {
     private LibrarySourcesConfig(
             @NotNull Project project,
             @NotNull String moduleId,
+            @NotNull ModuleKind moduleKind,
             @NotNull List<String> files,
             @NotNull EcmaVersion ecmaVersion,
             boolean sourceMap,
@@ -74,7 +75,7 @@ public class LibrarySourcesConfig extends JsConfig {
             boolean metaInfo,
             boolean kjsm
     ) {
-        super(project, moduleId, ecmaVersion, sourceMap, inlineEnabled, metaInfo, kjsm);
+        super(project, moduleId, moduleKind, ecmaVersion, sourceMap, inlineEnabled, metaInfo, kjsm);
         this.files = files;
         this.isUnitTestConfig = isUnitTestConfig;
     }
@@ -192,6 +193,8 @@ public class LibrarySourcesConfig extends JsConfig {
     public static class Builder {
         Project project;
         String moduleId;
+        @NotNull
+        ModuleKind moduleKind = ModuleKind.PLAIN;
         List<String> files;
         @NotNull
         EcmaVersion ecmaVersion = EcmaVersion.defaultVersion();
@@ -237,8 +240,15 @@ public class LibrarySourcesConfig extends JsConfig {
             return this;
         }
 
+        @NotNull
+        public Builder moduleKind(@NotNull ModuleKind moduleKind) {
+            this.moduleKind = moduleKind;
+            return this;
+        }
+
         public JsConfig build() {
-            return new LibrarySourcesConfig(project, moduleId, files, ecmaVersion, sourceMap, inlineEnabled, isUnitTestConfig, metaInfo, kjsm);
+            return new LibrarySourcesConfig(project, moduleId, moduleKind, files, ecmaVersion, sourceMap, inlineEnabled, isUnitTestConfig,
+                                            metaInfo, kjsm);
         }
     }
 

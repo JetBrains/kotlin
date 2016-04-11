@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.js.facade.TranslationResult;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
+import org.jetbrains.kotlin.serialization.js.ModuleKind;
 import org.jetbrains.kotlin.utils.PathUtil;
 
 import java.io.File;
@@ -125,8 +126,8 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
         File outputFile = new File(arguments.outputFile);
 
-        JsConfig config = getConfig(arguments, project);
-        if (config.checkLibFilesAndReportErrors(new Function1<String, Unit>() {
+        JsConfig config = getConfig(arguments, project, messageCollector);
+        if (config == null || config.checkLibFilesAndReportErrors(new Function1<String, Unit>() {
             @Override
             public Unit invoke(String message) {
                 messageCollector.report(CompilerMessageSeverity.ERROR, message, CompilerMessageLocation.NO_LOCATION);
@@ -243,8 +244,9 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         return analyzerWithCompilerReport;
     }
 
-    @NotNull
-    private static JsConfig getConfig(@NotNull K2JSCompilerArguments arguments, @NotNull Project project) {
+    @Nullable
+    private static JsConfig getConfig(@NotNull K2JSCompilerArguments arguments, @NotNull Project project,
+            @NotNull MessageCollector messageCollector) {
         if (arguments.target != null) {
             assert arguments.target == "v5" : "Unsupported ECMA version: " + arguments.target;
         }
@@ -261,11 +263,33 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             ContainerUtil.addAllNotNull(libraryFiles, arguments.libraryFiles);
         }
 
+        String moduleKindName = arguments.moduleKind;
+        ModuleKind moduleKind = ModuleKind.PLAIN;
+        if (moduleKindName != null) {
+            moduleKindName = moduleKindName.toLowerCase();
+            if (moduleKindName.equals("plain")) {
+                moduleKind = ModuleKind.PLAIN;
+            }
+            else if (moduleKindName.equals("amd")) {
+                moduleKind = ModuleKind.AMD;
+            }
+            else if (moduleKindName.equals("commonjs")) {
+                moduleKind = ModuleKind.COMMON_JS;
+            }
+            else {
+                messageCollector.report(CompilerMessageSeverity.ERROR, "Unknown module kind: " + moduleKindName + ". " +
+                                                                       "valid values are: plain, amd, commonjs",
+                                        CompilerMessageLocation.NO_LOCATION);
+                return null;
+            }
+        }
+
         return new LibrarySourcesConfig.Builder(project, moduleId, libraryFiles)
                 .ecmaVersion(ecmaVersion)
                 .sourceMap(arguments.sourceMap)
                 .inlineEnabled(inlineEnabled)
                 .metaInfo(arguments.metaInfo)
+                .moduleKind(moduleKind)
                 .kjsm(arguments.kjsm)
                 .build();
     }

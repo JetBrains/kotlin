@@ -31,7 +31,7 @@ fun expandIsCalls(node: JsNode, context: TranslationContext) {
 private class TypeCheckRewritingVisitor(private val context: TranslationContext) : JsVisitorWithContextImpl() {
 
     private val scopes = Stack<JsScope>()
-    private val localVars = Stack<MutableSet<JsName>>()
+    private val localVars = Stack<MutableSet<JsName>>().apply { push(mutableSetOf()) }
 
     override fun visit(x: JsFunction, ctx: JsContext<*>): Boolean {
         scopes.push(x.scope)

@@ -41,10 +41,7 @@ import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject;
 
-import java.util.List;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.*;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.pureFqn;
@@ -556,13 +553,11 @@ public final class StaticContext {
 
                     JsName moduleId = importedModules.get(moduleName);
                     if (moduleId == null) {
-                        moduleId = rootScope.declareFreshName(suggestedModuleName(moduleName));
+                        moduleId = rootScope.declareFreshName(Namer.LOCAL_MODULE_PREFIX + Namer.suggestedModuleName(moduleName));
                         importedModules.put(moduleName, moduleId);
                     }
-                    // TODO: use just generated moduleId to refer to module. This requires to rewrite how JS module is written
 
-                    return JsAstUtils.replaceRootReference(
-                            result, namer.getModuleReference(program.getStringLiteral(moduleName)));
+                    return JsAstUtils.replaceRootReference(result, JsAstUtils.pureFqn(moduleId, null));
                 }
             };
             Rule<JsExpression> constructorOrCompanionObjectHasTheSameQualifierAsTheClass = new Rule<JsExpression>() {
@@ -654,40 +649,6 @@ public final class StaticContext {
             addRule(nestedClassesHaveContainerQualifier);
             addRule(localClassesHavePackageQualifier);
         }
-    }
-
-    private static String suggestedModuleName(String id) {
-        if (id.isEmpty()) {
-            return "_";
-        }
-
-        StringBuilder sb = new StringBuilder(id.length());
-        char c = id.charAt(0);
-        if (Character.isJavaIdentifierStart(c)) {
-            sb.append(c);
-        }
-        else {
-            sb.append('_');
-            if (Character.isJavaIdentifierPart(c)) {
-                sb.append(c);
-            }
-        }
-
-        sb.append(Character.isJavaIdentifierStart(c) ? c : '_');
-        for (int i = 1; i < id.length(); ++i) {
-            c = id.charAt(i);
-            sb.append(Character.isJavaIdentifierPart(c) ? c : '_');
-        }
-
-        return sb.toString();
-    }
-
-    @Nullable
-    private static ClassDescriptor getEnclosing(@Nullable DeclarationDescriptor descriptor) {
-        while (descriptor != null && !(descriptor instanceof ClassDescriptor)) {
-            descriptor = descriptor.getContainingDeclaration();
-        }
-        return (ClassDescriptor) descriptor;
     }
 
     private static JsExpression applySideEffects(JsExpression expression, DeclarationDescriptor descriptor) {

@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.js.config;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.SmartList;
-import kotlin.collections.CollectionsKt;
 import kotlin.Unit;
+import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -59,6 +59,9 @@ public abstract class JsConfig {
     @NotNull
     private final String moduleId;
 
+    @NotNull
+    private final ModuleKind moduleKind;
+
     private final boolean sourcemap;
     private final boolean metaInfo;
     private final boolean kjsm;
@@ -74,6 +77,7 @@ public abstract class JsConfig {
     protected JsConfig(
             @NotNull Project project,
             @NotNull String moduleId,
+            @NotNull ModuleKind moduleKind,
             @NotNull EcmaVersion ecmaVersion,
             boolean sourcemap,
             boolean inlineEnabled,
@@ -83,6 +87,7 @@ public abstract class JsConfig {
         this.project = project;
         this.target = ecmaVersion;
         this.moduleId = moduleId;
+        this.moduleKind = moduleKind;
         this.sourcemap = sourcemap;
         this.inlineEnabled = inlineEnabled;
         this.metaInfo = metaInfo;
@@ -112,7 +117,7 @@ public abstract class JsConfig {
 
     @NotNull
     public String getModuleId() {
-        return configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME);
+        return moduleId;
     }
 
     @NotNull
