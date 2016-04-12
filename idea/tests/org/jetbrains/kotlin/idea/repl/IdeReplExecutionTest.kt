@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.console
+package org.jetbrains.kotlin.idea.repl
 
 import com.intellij.execution.console.LanguageConsoleImpl
 import com.intellij.testFramework.PlatformTestCase
@@ -22,14 +22,12 @@ import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.console.KotlinConsoleKeeper
 import org.jetbrains.kotlin.console.KotlinConsoleRunner
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.junit.FixMethodOrder
 import org.junit.Test
-import org.junit.runners.MethodSorters
 import kotlin.properties.Delegates
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-@FixMethodOrder(MethodSorters.JVM) class KotlinReplTest : PlatformTestCase() {
+class IdeReplExecutionTest : PlatformTestCase() {
     private var consoleRunner: KotlinConsoleRunner by Delegates.notNull()
     private var commandsSent = 0
 
