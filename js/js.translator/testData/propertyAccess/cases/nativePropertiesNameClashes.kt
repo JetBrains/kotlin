@@ -1,6 +1,6 @@
 package foo
 
-val PACKAGE = "Kotlin.modules.JS_TESTS.foo"
+val PACKAGE = "kotlin.modules.JS_TESTS.foo"
 
 class A
 @native val Any.__proto__: String get() = noImpl

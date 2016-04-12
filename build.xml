@@ -319,7 +319,7 @@
                 <arg value="-meta-info"/>
                 <arg value="-kjsm"/>
                 <arg line="-main noCall"/>
-                <arg line="-module-kind umd"/>
+                <arg line="-module-kind commonjs"/>
             </java>
         </sequential>
     </macrodef>
@@ -328,22 +328,22 @@
         <property name="compiled.builtins.js" value="builtins.js"/>
         <property name="compiled.builtins.meta.js" value="builtins.meta.js"/>
         <property name="compiled.stdlib.js" value="stdlib.js"/>
-        <property name="compiled.stdlib.meta.js" value="stdlib.meta.js"/>
+        <property name="compiled.stdlib.meta.js" value="kotlin.meta.js"/>
         <property name="stdlib.js.dir" value="${basedir}/js/js.translator/testData"/>
 
         <kotlin-pp src="libraries/stdlib/src" output="${intermediate-sources}/stdlib/js" profile="JS" />
 
-        <new-kotlin2js output="${js.stdlib.output.dir}/${compiled.builtins.js}">
+        <new-kotlin2js output="${js.stdlib.output.dir}/tmp/kotlin.js">
             <src>
-                <fileset refid="kotlin.builtin.files"/>
+                <union>
+                    <fileset refid="kotlin.builtin.files"/>
+                    <resources refid="js.lib.files"/>
+                </union>
             </src>
         </new-kotlin2js>
-
-        <new-kotlin2js output="${js.stdlib.output.dir}/${compiled.stdlib.js}">
-            <src>
-                <resources refid="js.lib.files"/>
-            </src>
-        </new-kotlin2js>
+        <move file="${js.stdlib.output.dir}/tmp/kotlin.js" tofile="${js.stdlib.output.dir}/${compiled.stdlib.js}" />
+        <move file="${js.stdlib.output.dir}/tmp/kotlin" todir="${js.stdlib.output.dir}" />
+        <move file="${js.stdlib.output.dir}/tmp/${compiled.stdlib.meta.js}" tofile="${js.stdlib.output.dir}/${compiled.stdlib.meta.js}" />
 
         <taskdef name="closure-compiler"
                  classname="com.google.javascript.jscomp.ant.CompileTask"
@@ -369,6 +369,17 @@
                 <file name="long.js"/>
             </sources>
 
+            <sources dir="${js.stdlib.output.dir}">
+                <file name="${compiled.stdlib.js}"/>
+            </sources>
+            <sources dir="${stdlib.js.dir}">
+                <file name="save-stdlib.js"/>
+            </sources>
+
+            <sources dir="${stdlib.js.dir}">
+                <file name="merge.js"/>
+            </sources>
+
             <externs dir="${stdlib.js.dir}">
                 <file name="externs.js"/>
             </externs>
@@ -378,10 +389,8 @@
             <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
             <zipfileset dir="${js.stdlib.output.dir}" prefix="">
                 <include name="kotlin.js"/>
-                <include name="${compiled.builtins.js}"/>
-                <include name="${compiled.stdlib.js}"/>
                 <include name="${compiled.stdlib.meta.js}"/>
-                <include name="stdlib/**"/>
+                <include name="kotlin/**"/>
             </zipfileset>
 
             <manifest>

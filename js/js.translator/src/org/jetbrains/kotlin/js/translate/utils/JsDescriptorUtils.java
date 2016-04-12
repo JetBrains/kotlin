@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.js.config.LibrarySourcesConfig;
 import org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsKt;
+import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtExpression;
@@ -38,7 +39,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import static org.jetbrains.kotlin.js.config.LibrarySourcesConfig.BUILTINS_JS_MODULE_NAME;
 import static org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isNativeObject;
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
@@ -185,7 +185,7 @@ public final class JsDescriptorUtils {
 
     @Nullable
     public static String getExternalModuleName(@NotNull DeclarationDescriptor descriptor) {
-        if (isBuiltin(descriptor)) return BUILTINS_JS_MODULE_NAME;
+        if (isBuiltin(descriptor)) return Namer.KOTLIN_LOWER_NAME;
 
         PsiElement element = descriptorToDeclaration(descriptor);
         if (element == null && descriptor instanceof PropertyAccessorDescriptor) {

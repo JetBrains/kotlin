@@ -141,7 +141,7 @@ public final class RhinoUtils {
             ScriptableObject scope = getScope(ecmaVersion, context, jsLibraries);
             putGlobalVariablesIntoScope(scope, variables);
 
-            context.evaluateString(scope, "Kotlin.out = new Kotlin.BufferedOutput();", "setup Kotlin.out", 0, null);
+            context.evaluateString(scope, "kotlin.out = new kotlin.BufferedOutput();", "setup Kotlin.out", 0, null);
 
             for (String filename : fileNames) {
                 runFileWithRhino(filename, context, scope);
@@ -172,20 +172,6 @@ public final class RhinoUtils {
             parentScope = initScope(version, context, jsLibraries);
             versionToScope.put(version, parentScope);
         }
-        else {
-            NativeObject kotlin = (NativeObject) parentScope.get("Kotlin");
-            assert kotlin != null;
-            NativeObject modules = (NativeObject) kotlin.get("modules");
-            assert modules != null;
-            NativeObject stdlibModule = (NativeObject) modules.get(STDLIB_JS_MODULE_NAME);
-            NativeObject builtinsModule = (NativeObject) modules.get(BUILTINS_JS_MODULE_NAME);
-
-            NativeObject newModules = new NativeObject();
-            newModules.put(STDLIB_JS_MODULE_NAME, newModules, stdlibModule);
-            newModules.put(BUILTINS_JS_MODULE_NAME, newModules, builtinsModule);
-
-            kotlin.put("modules", kotlin, newModules);
-        }
         return parentScope;
     }
 
@@ -193,13 +179,7 @@ public final class RhinoUtils {
     private static ScriptableObject initScope(@NotNull EcmaVersion version, @NotNull Context context, @NotNull List<String> jsLibraries) {
         ScriptableObject scope = context.initStandardObjects();
         try {
-            context.evaluateString(scope, "var Kotlin = {};", ".", 1, null);
-            runFileWithRhino(getKotlinLibFile(version), context, scope);
-            runFileWithRhino(TEST_DATA_DIR_PATH + "kotlin_lib.js", context, scope);
-            runFileWithRhino(TEST_DATA_DIR_PATH + "maps.js", context, scope);
-            runFileWithRhino(TEST_DATA_DIR_PATH + "long.js", context, scope);
-            runFileWithRhino(DIST_DIR_JS_PATH + BUILTINS_JS_FILE_NAME, context, scope);
-            runFileWithRhino(DIST_DIR_JS_PATH + STDLIB_JS_FILE_NAME, context, scope);
+            runFileWithRhino(DIST_DIR_JS_PATH + "kotlin.js", context, scope);
             //runFileWithRhino(pathToTestFilesRoot() + "jshint.js", context, scope);
             for (String jsLibrary : jsLibraries) {
                 runFileWithRhino(jsLibrary, context, scope);

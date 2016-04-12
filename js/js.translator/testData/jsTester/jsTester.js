@@ -32,7 +32,7 @@ var JsTests = (function () {
 
     var init = function () {
         init = function() {};
-        Kotlin.modules["JS_TESTS"].kotlin.test.init();
+        kotlin.modules.JS_TESTS.kotlin.test.init();
     };
 
     var test = function (testName, testFun) {

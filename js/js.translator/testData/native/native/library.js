@@ -1,7 +1,7 @@
 (function () {
     var c = 0;
 
-    Kotlin.A = Kotlin.createClassNow(null,
+    kotlin.A = kotlin.createClassNow(null,
                                      function () {
                                          this.f = function (i) {
                                              if (i === undefined && c === 0) {
@@ -13,7 +13,7 @@
                                          }
                                      }
     );
-    Kotlin.getResult = function () {
+    kotlin.getResult = function () {
         return c === 2;
     };
 })();
