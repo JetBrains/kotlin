@@ -193,6 +193,7 @@ public final class RhinoUtils {
     private static ScriptableObject initScope(@NotNull EcmaVersion version, @NotNull Context context, @NotNull List<String> jsLibraries) {
         ScriptableObject scope = context.initStandardObjects();
         try {
+            context.evaluateString(scope, "var Kotlin = {};", ".", 1, null);
             runFileWithRhino(getKotlinLibFile(version), context, scope);
             runFileWithRhino(TEST_DATA_DIR_PATH + "kotlin_lib.js", context, scope);
             runFileWithRhino(TEST_DATA_DIR_PATH + "maps.js", context, scope);
