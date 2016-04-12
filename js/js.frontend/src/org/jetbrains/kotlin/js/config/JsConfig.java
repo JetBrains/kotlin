@@ -83,7 +83,7 @@ public abstract class JsConfig {
 
     @NotNull
     public ModuleKind getModuleKind() {
-        return configuration.getNotNull(JSConfigurationKeys.MODULE_KIND);
+        return configuration.get(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN);
     }
 
     public abstract boolean checkLibFilesAndReportErrors(@NotNull Function1<String, Unit> report);
