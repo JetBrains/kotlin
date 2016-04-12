@@ -49,6 +49,7 @@ class KotlinGradleIT: BaseGradleIT() {
         val project = Project("kotlinProject", "2.4")
         val VARIANT_CONSTANT = "ForTest"
         val userVariantArg = "-Duser.variant=$VARIANT_CONSTANT"
+        val MEMORY_GROWTH_LIMIT_KB = 200
 
         fun exitTestDaemon() {
             project.build(userVariantArg, "exit", options = BaseGradleIT.BuildOptions(withDaemon = true)) {
@@ -57,24 +58,26 @@ class KotlinGradleIT: BaseGradleIT() {
             }
         }
 
+        fun buildAndGetMemoryAfterBuild(): Int {
+            var reportedMemory: Int? = null
+
+            project.build(userVariantArg, "clean", "build", options = BaseGradleIT.BuildOptions(withDaemon = true)) {
+                assertSuccessful()
+                val matches = "\\[PERF\\] Used memory after build: (\\d+) kb \\(difference since build start: ([+-]?\\d+) kb\\)".toRegex().find(output)
+                assert(matches != null && matches.groups.size == 3) { "Used memory after build is not reported by plugin" }
+                reportedMemory = matches!!.groupValues[1].toInt()
+            }
+
+            return reportedMemory!!
+        }
+
         exitTestDaemon()
 
         try {
-            // build to "warm up" the daemon, if it is not started yet
-            project.build(userVariantArg, "build", options = BaseGradleIT.BuildOptions(withDaemon = true)) {
-                assertSuccessful()
-            }
-
-            for (i in 1..3) {
-                project.build(userVariantArg, "clean", "build", options = BaseGradleIT.BuildOptions(withDaemon = true)) {
-                    assertSuccessful()
-                    val matches = "\\[PERF\\] Used memory after build: (\\d+) kb \\(difference since build start: ([+-]?\\d+) kb\\)".toRegex().find(output)
-                    assert(matches != null && matches.groups.size == 3) { "Used memory after build is not reported by plugin on attempt $i" }
-                    val reportedGrowth = matches!!.groups.get(2)!!.value.removePrefix("+").toInt()
-                    val expectedGrowthLimit = 2500
-                    assert(reportedGrowth <= expectedGrowthLimit) { "Used memory growth $reportedGrowth > $expectedGrowthLimit" }
-                }
-            }
+            val startMemory = buildAndGetMemoryAfterBuild()
+            val endMemory = (1..10).map { buildAndGetMemoryAfterBuild() }.last()
+            val growth = endMemory - startMemory
+            assert(growth <= MEMORY_GROWTH_LIMIT_KB) { "Used memory growth $growth kb > $MEMORY_GROWTH_LIMIT_KB kb" }
 
             // testing that nothing remains locked by daemon, see KT-9440
             project.build(userVariantArg, "clean", options = BaseGradleIT.BuildOptions(withDaemon = true)) {
