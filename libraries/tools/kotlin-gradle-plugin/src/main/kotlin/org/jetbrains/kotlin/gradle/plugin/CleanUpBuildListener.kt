@@ -21,7 +21,6 @@ import org.gradle.BuildAdapter
 import org.gradle.BuildResult
 import org.gradle.api.Project
 import org.gradle.api.logging.Logging
-import java.util.concurrent.ScheduledExecutorService
 
 
 private fun comparableVersionStr(version: String) =
