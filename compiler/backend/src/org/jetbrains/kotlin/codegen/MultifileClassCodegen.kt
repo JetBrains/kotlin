@@ -134,7 +134,7 @@ class MultifileClassCodegen(
                     J_L_OBJECT
 
         state.factory.newVisitor(declarationOrigin, facadeClassType, files).apply {
-            defineClass(singleSourceFile, Opcodes.V1_6, FACADE_CLASS_ATTRIBUTES,
+            defineClass(singleSourceFile, state.classFileVersion, FACADE_CLASS_ATTRIBUTES,
                         facadeClassType.internalName, null, superClassForFacade, ArrayUtil.EMPTY_STRING_ARRAY)
             if (singleSourceFile != null) {
                 visitSource(singleSourceFile.name, null)

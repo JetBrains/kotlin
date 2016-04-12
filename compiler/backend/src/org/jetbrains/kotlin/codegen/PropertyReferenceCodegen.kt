@@ -82,7 +82,7 @@ class PropertyReferenceCodegen(
     override fun generateDeclaration() {
         v.defineClass(
                 element,
-                V1_6,
+                state.classFileVersion,
                 ACC_FINAL or ACC_SUPER or AsmUtil.getVisibilityAccessFlagForClass(classDescriptor),
                 asmType.internalName,
                 null,

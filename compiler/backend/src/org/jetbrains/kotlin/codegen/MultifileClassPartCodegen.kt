@@ -64,7 +64,7 @@ class MultifileClassPartCodegen(
 
     private val staticInitClassBuilder = ClassBuilderOnDemand {
         state.factory.newVisitor(MultifileClass(file, packageFragment), staticInitClassType, file).apply {
-            defineClass(file, Opcodes.V1_6, STATE_INITIALIZER_CLASS_ATTRIBUTES,
+            defineClass(file, state.classFileVersion, STATE_INITIALIZER_CLASS_ATTRIBUTES,
                         staticInitClassType.internalName, null, "java/lang/Object", ArrayUtil.EMPTY_STRING_ARRAY)
 
             visitSource(file.name, null)
@@ -119,7 +119,7 @@ class MultifileClassPartCodegen(
     }
 
     override fun generateDeclaration() {
-        v.defineClass(element, Opcodes.V1_6, partClassAttributes, partType.internalName, null, superClassInternalName, ArrayUtil.EMPTY_STRING_ARRAY)
+        v.defineClass(element, state.classFileVersion, partClassAttributes, partType.internalName, null, superClassInternalName, ArrayUtil.EMPTY_STRING_ARRAY)
         v.visitSource(element.name, null)
 
         generatePropertyMetadataArrayFieldIfNeeded(partType)

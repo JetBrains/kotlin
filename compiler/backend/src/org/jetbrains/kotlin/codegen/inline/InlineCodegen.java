@@ -261,7 +261,7 @@ public class InlineCodegen extends CallGenerator {
                 }
             });
 
-            return InlineCodegenUtil.getMethodNode(bytes, asmMethod.getName(), asmMethod.getDescriptor(), classId);
+            return InlineCodegenUtil.getMethodNode(bytes, asmMethod.getName(), asmMethod.getDescriptor(), classId, state);
         }
 
         assert functionDescriptor instanceof DeserializedSimpleFunctionDescriptor : "Not a deserialized function: " + functionDescriptor;
@@ -287,7 +287,8 @@ public class InlineCodegen extends CallGenerator {
             }
         });
 
-        return InlineCodegenUtil.getMethodNode(bytes, asmMethod.getName(), asmMethod.getDescriptor(), containerId);
+
+        return InlineCodegenUtil.getMethodNode(bytes, asmMethod.getName(), asmMethod.getDescriptor(), containerId, state);
     }
 
     @NotNull
