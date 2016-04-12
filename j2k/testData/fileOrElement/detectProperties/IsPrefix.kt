@@ -1,6 +1,6 @@
-// ERROR: Abstract member cannot be accessed directly
-// ERROR: Abstract member cannot be accessed directly
-// ERROR: Abstract member cannot be accessed directly
+// ERROR: Property must be initialized
+// ERROR: Property must be initialized
+// ERROR: Property must be initialized
 internal interface I {
     val isSomething1: Boolean
 
@@ -23,17 +23,15 @@ internal abstract class C : I {
 
     override var isSomething4: Boolean
         get() = false
-        set(value: Boolean) {
-            super.isSomething4 = value
-        }
+        set
 
     override var isSomething5: Boolean
-        get() = super.isSomething5
+        get
         set(value) {
         }
 
     override var something6: Boolean
-        get() = super.something6
+        get
         set(value) {
         }
 }

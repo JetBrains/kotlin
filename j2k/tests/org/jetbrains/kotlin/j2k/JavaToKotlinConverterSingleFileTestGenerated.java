@@ -1368,6 +1368,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class DetectProperties extends AbstractJavaToKotlinConverterSingleFileTest {
+        @TestMetadata("AbstractPropertyPrivateSetter.java")
+        public void testAbstractPropertyPrivateSetter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/AbstractPropertyPrivateSetter.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("AccessInGetterWithThis.java")
         public void testAccessInGetterWithThis() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/AccessInGetterWithThis.java");
