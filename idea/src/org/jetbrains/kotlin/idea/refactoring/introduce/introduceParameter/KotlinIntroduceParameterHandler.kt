@@ -46,9 +46,11 @@ import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
+import org.jetbrains.kotlin.idea.refactoring.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.executeCommand
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.approximateWithResolvableType
 import org.jetbrains.kotlin.idea.util.getResolutionScope
@@ -263,7 +265,7 @@ open class KotlinIntroduceParameterHandler(
             addAll(KotlinNameSuggester.suggestNamesByType(replacementType, nameValidator, "p"))
         }
 
-        val parametersUsages = findInternalUsagesOfParametersAndReceiver(targetParent, functionDescriptor)
+        val parametersUsages = findInternalUsagesOfParametersAndReceiver(targetParent, functionDescriptor) ?: return
 
         val forbiddenRanges =
                 if (targetParent is KtClass) {
@@ -405,16 +407,21 @@ private fun DeclarationDescriptor?.toFunctionDescriptor(targetParent: KtNamedDec
 private fun findInternalUsagesOfParametersAndReceiver(
         targetParent: KtNamedDeclaration,
         targetDescriptor: FunctionDescriptor
-): MultiMap<KtElement, KtElement> {
+): MultiMap<KtElement, KtElement>? {
     val usages = MultiMap<KtElement, KtElement>()
-    targetParent.getValueParameters()
-            .filter { !it.hasValOrVar() }
-            .forEach {
-                val paramUsages = ReferencesSearch.search(it).map { it.element as KtElement }
-                if (paramUsages.isNotEmpty()) {
-                    usages.put(it, paramUsages)
-                }
-            }
+    val searchComplete = targetParent.project.runSynchronouslyWithProgress("Searching usages of '${targetParent.name}' parameter", true) {
+        runReadAction {
+            targetParent.getValueParameters()
+                    .filter { !it.hasValOrVar() }
+                    .forEach {
+                        val paramUsages = ReferencesSearch.search(it).map { it.element as KtElement }
+                        if (paramUsages.isNotEmpty()) {
+                            usages.put(it, paramUsages)
+                        }
+                    }
+        }
+    } != null
+    if (!searchComplete) return null
     val receiverTypeRef = (targetParent as? KtFunction)?.receiverTypeReference
     if (receiverTypeRef != null) {
         targetParent.acceptChildren(
@@ -458,11 +465,12 @@ open class KotlinIntroduceLambdaParameterHandler(
                 project: Project,
                 editor: Editor,
                 lambdaExtractionDescriptor: ExtractableCodeDescriptor
-        ): KotlinIntroduceParameterDialog {
+        ): KotlinIntroduceParameterDialog? {
             val callable = lambdaExtractionDescriptor.extractionData.targetSibling as KtNamedDeclaration
             val descriptor = callable.resolveToDescriptor()
             val callableDescriptor = descriptor.toFunctionDescriptor(callable)
             val originalRange = lambdaExtractionDescriptor.extractionData.originalRange
+            val parametersUsages = findInternalUsagesOfParametersAndReceiver(callable, callableDescriptor) ?: return null
             val introduceParameterDescriptor = IntroduceParameterDescriptor(
                     originalRange = originalRange,
                     callable = callable,
@@ -471,7 +479,7 @@ open class KotlinIntroduceLambdaParameterHandler(
                     newParameterTypeText = "", // to be chosen in the dialog
                     argumentValue = KtPsiFactory(project).createExpression("{}"), // substituted later
                     withDefaultValue = false,
-                    parametersUsages = findInternalUsagesOfParametersAndReceiver(callable, callableDescriptor),
+                    parametersUsages = parametersUsages,
                     occurrencesToReplace = listOf(originalRange),
                     parametersToRemove = listOf()
             )
@@ -491,7 +499,7 @@ open class KotlinIntroduceLambdaParameterHandler(
                 return
             }
 
-            val dialog = createDialog(project, editor, lambdaExtractionDescriptor)
+            val dialog = createDialog(project, editor, lambdaExtractionDescriptor) ?: return
             if (ApplicationManager.getApplication()!!.isUnitTestMode) {
                 dialog.performRefactoring()
             }
