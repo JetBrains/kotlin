@@ -43,6 +43,12 @@ public class ConfigureProjectByChangingFileTestGenerated extends AbstractConfigu
             doTestGradle(fileName);
         }
 
+        @TestMetadata("eapVersion_before.gradle")
+        public void testEapVersion() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/configuration/gradle/eapVersion_before.gradle");
+            doTestGradle(fileName);
+        }
+
         @TestMetadata("missedLibrary_before.gradle")
         public void testMissedLibrary() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/configuration/gradle/missedLibrary_before.gradle");
@@ -52,6 +58,12 @@ public class ConfigureProjectByChangingFileTestGenerated extends AbstractConfigu
         @TestMetadata("plugin_present_before.gradle")
         public void testPlugin_present() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/configuration/gradle/plugin_present_before.gradle");
+            doTestGradle(fileName);
+        }
+
+        @TestMetadata("rcVersion_before.gradle")
+        public void testRcVersion() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/configuration/gradle/rcVersion_before.gradle");
             doTestGradle(fileName);
         }
     }
@@ -79,6 +91,18 @@ public class ConfigureProjectByChangingFileTestGenerated extends AbstractConfigu
         @TestMetadata("simpleProject")
         public void testSimpleProject() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/configuration/maven/simpleProject/");
+            doTestWithMaven(fileName);
+        }
+
+        @TestMetadata("simpleProjectEAP")
+        public void testSimpleProjectEAP() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/configuration/maven/simpleProjectEAP/");
+            doTestWithMaven(fileName);
+        }
+
+        @TestMetadata("simpleProjectRc")
+        public void testSimpleProjectRc() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/configuration/maven/simpleProjectRc/");
             doTestWithMaven(fileName);
         }
 
