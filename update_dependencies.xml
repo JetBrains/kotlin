@@ -252,7 +252,7 @@
 
         <!-- Closure Compiler -->
         <!-- A download url taken from http://code.google.com/p/closure-compiler/wiki/BinaryDownloads -->
-        <get src="http://dl.google.com/closure-compiler/compiler-20131014.zip"
+        <get src="http://dl.google.com/closure-compiler/compiler-20160315.zip"
              dest="${dependencies}/download/closure-compiler.zip" usetimestamp="true"/>
 
         <delete file="${dependencies}/closure-compiler.jar" failonerror="false"/>

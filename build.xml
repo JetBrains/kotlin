@@ -319,6 +319,7 @@
                 <arg value="-meta-info"/>
                 <arg value="-kjsm"/>
                 <arg line="-main noCall"/>
+                <arg line="-module-kind umd"/>
             </java>
         </sequential>
     </macrodef>
@@ -358,7 +359,8 @@
             prettyprint="true"
             languagein="ECMASCRIPT5_STRICT"
             warning="${warningLevel}"
-            output="${js.stdlib.output.dir}/kotlin.js">
+            output="${js.stdlib.output.dir}/kotlin.js"
+            outputWrapperFile="${stdlib.js.dir}/closure-wrapper.txt">
 
             <sources dir="${stdlib.js.dir}">
                 <file name="kotlin_lib_ecma5.js"/>

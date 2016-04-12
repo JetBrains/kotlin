@@ -287,6 +287,9 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             else if (moduleKindName.equals("commonjs")) {
                 moduleKind = ModuleKind.COMMON_JS;
             }
+            else if (moduleKindName.equals("umd")) {
+                moduleKind = ModuleKind.UMD;
+            }
             else {
                 messageCollector.report(CompilerMessageSeverity.ERROR, "Unknown module kind: " + moduleKindName + ". " +
                                                                        "valid values are: plain, amd, commonjs",

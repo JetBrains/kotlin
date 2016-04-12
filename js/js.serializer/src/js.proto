@@ -66,9 +66,10 @@ message Library {
   }
 
   enum Kind {
-      PLAIN = 1;
-      AMD = 2;
-      COMMON_JS = 3;
+    PLAIN = 1;
+    AMD = 2;
+    COMMON_JS = 3;
+    UMD = 4;
   }
 
   repeated FileEntry entry = 1;

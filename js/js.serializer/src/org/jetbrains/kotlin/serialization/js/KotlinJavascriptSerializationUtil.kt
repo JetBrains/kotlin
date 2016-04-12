@@ -94,6 +94,7 @@ object KotlinJavascriptSerializationUtil {
             ModuleKind.PLAIN -> JsProtoBuf.Library.Kind.PLAIN
             ModuleKind.AMD -> JsProtoBuf.Library.Kind.AMD
             ModuleKind.COMMON_JS -> JsProtoBuf.Library.Kind.COMMON_JS
+            ModuleKind.UMD -> JsProtoBuf.Library.Kind.UMD
         }
 
         importedModules.forEach { contentBuilder.addImportedModules(it) }
@@ -249,6 +250,7 @@ private fun ByteArray.toContentMap(): JsModuleProto {
                 null, JsProtoBuf.Library.Kind.PLAIN -> ModuleKind.PLAIN
                 JsProtoBuf.Library.Kind.AMD -> ModuleKind.AMD
                 JsProtoBuf.Library.Kind.COMMON_JS -> ModuleKind.COMMON_JS
+                JsProtoBuf.Library.Kind.UMD -> ModuleKind.UMD
             },
             imported = content.importedModulesList
     )
