@@ -32,8 +32,8 @@ import kotlin.reflect.KProperty
 
 val KOTLIN_REFLECT_FQ_NAME = FqName("kotlin.reflect")
 
-class ReflectionTypes(private val module: ModuleDescriptor) {
-    private val kotlinReflectScope: MemberScope by lazy {
+class ReflectionTypes(module: ModuleDescriptor) {
+    private val kotlinReflectScope: MemberScope by lazy(LazyThreadSafetyMode.PUBLICATION) {
         module.getPackage(KOTLIN_REFLECT_FQ_NAME).memberScope
     }
 

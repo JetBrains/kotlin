@@ -62,7 +62,7 @@ class DeserializedClassDescriptor(
 
     private val classId = nameResolver.getClassId(classProto.fqName)
 
-    private val staticScope = if (kind == ClassKind.ENUM_CLASS) StaticScopeForKotlinEnum(this) else MemberScope.Empty
+    private val staticScope = if (kind == ClassKind.ENUM_CLASS) StaticScopeForKotlinEnum(c.storageManager, this) else MemberScope.Empty
     private val typeConstructor = DeserializedClassTypeConstructor()
     private val memberScope = DeserializedClassMemberScope()
     private val nestedClasses = NestedClassDescriptors()
