@@ -8,14 +8,15 @@
     </content>
     <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="android-plugin" level="project" />
-    <orderEntry type="library" name="gradle-and-groovy-plugin" level="project" />
     <orderEntry type="library" name="idea-full" level="project" />
+    <orderEntry type="library" name="gradle-and-groovy-plugin" level="project" />
+    <orderEntry type="library" exported="" name="android-plugin" level="project" />
     <orderEntry type="module" module-name="idea" />
     <orderEntry type="module" module-name="ide-common" />
     <orderEntry type="module" module-name="idea-analysis" />
     <orderEntry type="module" module-name="util" />
     <orderEntry type="module" module-name="frontend" />
     <orderEntry type="module" module-name="frontend.java" />
+    <orderEntry type="module" module-name="tests-common" scope="TEST" />
   </component>
 </module>
