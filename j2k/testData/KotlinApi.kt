@@ -70,3 +70,7 @@ public open class KotlinClassWithProperties {
     public open fun getSomething4() { return 1; }
     public open fun setSomething4(value: Int) { }
 }
+
+public abstract class KotlinClassAbstractProperty {
+    abstract val isVisible: Boolean
+}

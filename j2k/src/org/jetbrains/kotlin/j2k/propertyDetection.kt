@@ -20,6 +20,7 @@ import com.intellij.psi.*
 import com.intellij.psi.util.MethodSignatureUtil
 import org.jetbrains.kotlin.asJava.KtLightMethod
 import org.jetbrains.kotlin.j2k.ast.*
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtProperty
@@ -38,7 +39,8 @@ class PropertyInfo(
         val isGetMethodBodyFieldAccess: Boolean,
         val isSetMethodBodyFieldAccess: Boolean,
         val modifiers: Modifiers,
-        val specialSetterAccess: Modifier?
+        val specialSetterAccess: Modifier?,
+        val superInfo: SuperInfo?
 ) {
     init {
         assert(field != null || getMethod != null || setMethod != null)
@@ -73,7 +75,7 @@ class PropertyInfo(
         fun fromFieldWithNoAccessors(field: PsiField, converter: Converter): PropertyInfo {
             val isVar = field.isVar(converter.referenceSearcher)
             val modifiers = converter.convertModifiers(field, false)
-            return PropertyInfo(field.declarationIdentifier(), isVar, field.type, field, null, null, false, false, modifiers, null)
+            return PropertyInfo(field.declarationIdentifier(), isVar, field.type, field, null, null, false, false, modifiers, null, null)
         }
     }
 }
@@ -89,6 +91,21 @@ class PropertyDetectionCache(private val converter: Converter) {
         val detected = PropertyDetector(psiClass, converter).detectProperties()
         cache[psiClass] = detected
         return detected
+    }
+}
+
+sealed class SuperInfo {
+    class Property(
+            val isVar: Boolean,
+            val name: String,
+            val hasAbstractModifier: Boolean
+            //TODO: add visibility
+    ) : SuperInfo()
+
+    object Function : SuperInfo()
+
+    fun isAbstract(): Boolean {
+        return if (this is Property) hasAbstractModifier else false
     }
 }
 
@@ -151,7 +168,8 @@ private class PropertyDetector(
 
             val type = getterInfo?.method?.returnType ?: setterInfo!!.method.parameterList.parameters.single()?.type!!
 
-            val isOverride = getterInfo?.superProperty != null || setterInfo?.superProperty != null
+            val superProperty = getterInfo?.superProperty ?: setterInfo?.superProperty
+            val isOverride = superProperty != null
 
             val modifiers = convertModifiers(field, getterInfo?.method, setterInfo?.method, isOverride)
 
@@ -173,7 +191,8 @@ private class PropertyDetector(
                                             field != null && getterInfo?.field == field,
                                             field != null && setterInfo?.field == field,
                                             modifiers,
-                                            specialSetterAccess)
+                                            specialSetterAccess,
+                                            superProperty)
 
             if (field != null) {
                 memberToPropertyInfo[field] = propertyInfo
@@ -329,17 +348,6 @@ private class PropertyDetector(
             val superProperty: SuperInfo.Property?
     )
 
-    private sealed class SuperInfo {
-        class Property(
-                val isVar: Boolean,
-                val name: String
-                //TODO: add visibility
-        ) : SuperInfo()
-
-        object Function : SuperInfo()
-
-    }
-
     private fun getGetterInfo(method: PsiMethod, superProperty: SuperInfo.Property?): AccessorInfo? {
         val propertyName = propertyNameByGetMethod(method) ?: return null
         val field = fieldFromGetterBody(method)
@@ -364,11 +372,11 @@ private class PropertyDetector(
         val containingClass = superMethod.containingClass!!
         if (converter.inConversionScope(containingClass)) {
             val propertyInfo = converter.propertyDetectionCache[containingClass][superMethod]
-            return if (propertyInfo != null) SuperInfo.Property(propertyInfo.isVar, propertyInfo.name) else SuperInfo.Function
+            return if (propertyInfo != null) SuperInfo.Property(propertyInfo.isVar, propertyInfo.name, propertyInfo.modifiers.contains(Modifier.ABSTRACT)) else SuperInfo.Function
         }
         else if (superMethod is KtLightMethod) {
             val origin = superMethod.kotlinOrigin
-            return if (origin is KtProperty) SuperInfo.Property(origin.isVar, origin.name ?: "") else SuperInfo.Function
+            return if (origin is KtProperty) SuperInfo.Property(origin.isVar, origin.name ?: "", origin.hasModifier(KtTokens.ABSTRACT_KEYWORD)) else SuperInfo.Function
         }
         else {
             return SuperInfo.Function

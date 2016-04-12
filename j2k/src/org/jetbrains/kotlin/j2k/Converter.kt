@@ -348,7 +348,7 @@ class Converter private constructor(
                     getter = PropertyAccessor(AccessorKind.GETTER, method.annotations, Modifiers.Empty, method.parameterList, method.body)
                     getter.assignPrototype(getMethod, CommentsAndSpacesInheritance.NO_SPACES)
                 }
-                else if (propertyInfo.modifiers.contains(Modifier.OVERRIDE)) {
+                else if (propertyInfo.modifiers.contains(Modifier.OVERRIDE) && !(propertyInfo.superInfo?.isAbstract() ?: false)) {
                     val superExpression = SuperExpression(Identifier.Empty).assignNoPrototype()
                     val superAccess = QualifiedExpression(superExpression, propertyInfo.identifier).assignNoPrototype()
                     val returnStatement = ReturnStatement(superAccess).assignNoPrototype()
@@ -357,7 +357,10 @@ class Converter private constructor(
                     getter = PropertyAccessor(AccessorKind.GETTER, Annotations.Empty, Modifiers.Empty, parameterList, deferredElement { body })
                     getter.assignNoPrototype()
                 }
-                //TODO: what else?
+                else {
+                    //TODO: what else?
+                    getter = PropertyAccessor(AccessorKind.GETTER, Annotations.Empty, Modifiers.Empty, null, null).assignNoPrototype()
+                }
             }
 
             var setter: PropertyAccessor? = null
@@ -378,7 +381,7 @@ class Converter private constructor(
                     setter = PropertyAccessor(AccessorKind.SETTER, method.annotations, accessorModifiers, parameterList, method.body)
                     setter.assignPrototype(setMethod, CommentsAndSpacesInheritance.NO_SPACES)
                 }
-                else if (propertyInfo.modifiers.contains(Modifier.OVERRIDE)) {
+                else if (propertyInfo.modifiers.contains(Modifier.OVERRIDE) && !(propertyInfo.superInfo?.isAbstract() ?: false)) {
                     val superExpression = SuperExpression(Identifier.Empty).assignNoPrototype()
                     val superAccess = QualifiedExpression(superExpression, propertyInfo.identifier).assignNoPrototype()
                     val valueIdentifier = Identifier("value", false).assignNoPrototype()
