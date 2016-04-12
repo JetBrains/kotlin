@@ -9,7 +9,7 @@ fun box(): String {
 
     assertEquals(5, eval("3 + 2"))
 
-    val PACKAGE = "Kotlin.modules.JS_TESTS.foo"
+    val PACKAGE = "kotlin.modules.JS_TESTS.foo"
     assertEquals(top, eval("$PACKAGE.top"))
 
     return "OK"

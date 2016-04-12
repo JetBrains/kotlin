@@ -545,13 +545,6 @@ public final class StaticContext {
 
                     JsNameRef result = getQualifierForParentPackage(((PackageFragmentDescriptor) containingDescriptor).getFqName());
 
-                    // TODO: remove this dirty hack
-                    if (descriptor instanceof ClassDescriptor && DescriptorUtils.isTopLevelDeclaration(descriptor)) {
-                        if (DescriptorUtils.getFqNameFromTopLevelClass(descriptor).toString().equals("Annotation")) {
-                            return result;
-                        }
-                    }
-
                     String moduleName = getExternalModuleName(descriptor);
                     if (moduleName == null) {
                         return result;
@@ -561,7 +554,8 @@ public final class StaticContext {
                         return null;
                     }
 
-                    JsName moduleId = importedModules.get(moduleName);
+                    JsName moduleId = moduleName.equals(Namer.KOTLIN_LOWER_NAME) ? rootScope.declareName(Namer.KOTLIN_NAME) :
+                                      importedModules.get(moduleName);
                     if (moduleId == null) {
                         moduleId = rootScope.declareFreshName(Namer.LOCAL_MODULE_PREFIX + Namer.suggestedModuleName(moduleName));
                         importedModules.put(moduleName, moduleId);

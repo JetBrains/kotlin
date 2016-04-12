@@ -1,6 +1,6 @@
 package foo
 
-internal val PACKAGE = "Kotlin.modules.JS_TESTS.foo"
+internal val PACKAGE = "kotlin.modules.JS_TESTS.foo"
 
 internal fun funToString(name: String) = eval("$PACKAGE.$name.toString()") as String
 

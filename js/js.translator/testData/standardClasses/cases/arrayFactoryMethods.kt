@@ -15,7 +15,7 @@ fun box(): String {
         test("byteArrayOf", byteArrayOf(0, 1, 2, 3, 4), "0, 1, 2, 3, 4")
         test("shortArrayOf", shortArrayOf(0, 1, 2, 3, 4), "0, 1, 2, 3, 4")
         test("intArray,", intArrayOf(0, 1, 2, 3, 4), "0, 1, 2, 3, 4")
-        test("longArrayOf", longArrayOf(0, 1, 2, 3, 4), "Kotlin.Long.fromInt(0), Kotlin.Long.fromInt(1), Kotlin.Long.fromInt(2), Kotlin.Long.fromInt(3), Kotlin.Long.fromInt(4)")
+        test("longArrayOf", longArrayOf(0, 1, 2, 3, 4), "kotlin.Long.fromInt(0), kotlin.Long.fromInt(1), kotlin.Long.fromInt(2), kotlin.Long.fromInt(3), kotlin.Long.fromInt(4)")
         test("floatArrayOf", floatArrayOf(0.0f, 1.0f, 2.0f, 3.0f, 4.0f), "0.0, 1.0, 2.0, 3.0, 4.0")
         test("doubleArrayOf", doubleArrayOf(0.0, 1.1, 2.2, 3.3, 4.4), "0.0, 1.1, 2.2, 3.3, 4.4")
     }
