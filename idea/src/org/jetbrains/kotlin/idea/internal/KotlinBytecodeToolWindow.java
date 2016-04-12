@@ -127,6 +127,10 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
                 configuration.put(JVMConfigurationKeys.DISABLE_OPTIMIZATION, true);
             }
 
+            if (jvm8Target.isSelected()) {
+                configuration.put(JVMConfigurationKeys.JVM_8_TARGET, true);
+            }
+
             return getBytecodeForFile(ktFile, configuration);
         }
 
@@ -175,6 +179,7 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
     private final JCheckBox enableOptimization;
     private final JCheckBox enableAssertions;
     private final JButton decompile;
+    private final JCheckBox jvm8Target;
 
     public KotlinBytecodeToolWindow(Project project, ToolWindow toolWindow) {
         super(new BorderLayout());
@@ -213,9 +218,11 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
         enableInline = new JCheckBox("Inline", true);
         enableOptimization = new JCheckBox("Optimization", true);
         enableAssertions = new JCheckBox("Assertions", true);
+        jvm8Target = new JCheckBox("JVM 8 target", false);
         optionPanel.add(enableInline);
         optionPanel.add(enableOptimization);
         optionPanel.add(enableAssertions);
+        optionPanel.add(jvm8Target);
 
         new InfinitePeriodicalTask(UPDATE_DELAY, Alarm.ThreadToUse.SWING_THREAD, this, new Computable<LongRunningReadTask>() {
             @Override
