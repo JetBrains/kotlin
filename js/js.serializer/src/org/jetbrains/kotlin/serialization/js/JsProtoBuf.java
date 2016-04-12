@@ -650,6 +650,10 @@ public final class JsProtoBuf {
        * <code>COMMON_JS = 3;</code>
        */
       COMMON_JS(2, 3),
+      /**
+       * <code>UMD = 4;</code>
+       */
+      UMD(3, 4),
       ;
 
       /**
@@ -664,6 +668,10 @@ public final class JsProtoBuf {
        * <code>COMMON_JS = 3;</code>
        */
       public static final int COMMON_JS_VALUE = 3;
+      /**
+       * <code>UMD = 4;</code>
+       */
+      public static final int UMD_VALUE = 4;
 
 
       public final int getNumber() { return value; }
@@ -673,6 +681,7 @@ public final class JsProtoBuf {
           case 1: return PLAIN;
           case 2: return AMD;
           case 3: return COMMON_JS;
+          case 4: return UMD;
           default: return null;
         }
       }

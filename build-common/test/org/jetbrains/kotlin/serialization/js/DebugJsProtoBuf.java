@@ -746,6 +746,10 @@ public final class DebugJsProtoBuf {
        * <code>COMMON_JS = 3;</code>
        */
       COMMON_JS(2, 3),
+      /**
+       * <code>UMD = 4;</code>
+       */
+      UMD(3, 4),
       ;
 
       /**
@@ -760,6 +764,10 @@ public final class DebugJsProtoBuf {
        * <code>COMMON_JS = 3;</code>
        */
       public static final int COMMON_JS_VALUE = 3;
+      /**
+       * <code>UMD = 4;</code>
+       */
+      public static final int UMD_VALUE = 4;
 
 
       public final int getNumber() { return value; }
@@ -769,6 +777,7 @@ public final class DebugJsProtoBuf {
           case 1: return PLAIN;
           case 2: return AMD;
           case 3: return COMMON_JS;
+          case 4: return UMD;
           default: return null;
         }
       }
@@ -2301,42 +2310,43 @@ public final class DebugJsProtoBuf {
       "rg.jetbrains.kotlin.serialization.js\0320co" +
       "re/deserialization/src/descriptors.debug" +
       ".proto\"!\n\007Classes\022\026\n\nclass_name\030\001 \003(\005B\002\020" +
-      "\001\"\214\002\n\007Library\022G\n\005entry\030\001 \003(\01328.org.jetbr" +
+      "\001\"\225\002\n\007Library\022G\n\005entry\030\001 \003(\01328.org.jetbr" +
       "ains.kotlin.serialization.js.Library.Fil" +
       "eEntry\022H\n\004kind\030\002 \001(\01623.org.jetbrains.kot" +
       "lin.serialization.js.Library.Kind:\005PLAIN" +
       "\022\027\n\017importedModules\030\003 \003(\t\032*\n\tFileEntry\022\014" +
-      "\n\004path\030\001 \002(\t\022\017\n\007content\030\002 \002(\014\")\n\004Kind\022\t\n",
-      "\005PLAIN\020\001\022\007\n\003AMD\020\002\022\r\n\tCOMMON_JS\020\003:t\n\020clas" +
-      "s_annotation\022).org.jetbrains.kotlin.seri" +
-      "alization.Class\030\202\001 \003(\0132..org.jetbrains.k" +
-      "otlin.serialization.Annotation:\200\001\n\026const" +
-      "ructor_annotation\022/.org.jetbrains.kotlin" +
-      ".serialization.Constructor\030\202\001 \003(\0132..org." +
-      "jetbrains.kotlin.serialization.Annotatio" +
-      "n:z\n\023function_annotation\022,.org.jetbrains" +
-      ".kotlin.serialization.Function\030\202\001 \003(\0132.." +
-      "org.jetbrains.kotlin.serialization.Annot",
-      "ation:z\n\023property_annotation\022,.org.jetbr" +
-      "ains.kotlin.serialization.Property\030\202\001 \003(" +
-      "\0132..org.jetbrains.kotlin.serialization.A" +
-      "nnotation:\210\001\n\022compile_time_value\022,.org.j" +
-      "etbrains.kotlin.serialization.Property\030\203" +
-      "\001 \001(\0132=.org.jetbrains.kotlin.serializati" +
-      "on.Annotation.Argument.Value:}\n\025enum_ent" +
-      "ry_annotation\022-.org.jetbrains.kotlin.ser" +
-      "ialization.EnumEntry\030\202\001 \003(\0132..org.jetbra" +
-      "ins.kotlin.serialization.Annotation:\201\001\n\024",
-      "parameter_annotation\0222.org.jetbrains.kot" +
-      "lin.serialization.ValueParameter\030\202\001 \003(\0132" +
-      "..org.jetbrains.kotlin.serialization.Ann" +
-      "otation:r\n\017type_annotation\022(.org.jetbrai" +
-      "ns.kotlin.serialization.Type\030\202\001 \003(\0132..or" +
-      "g.jetbrains.kotlin.serialization.Annotat" +
-      "ion:\205\001\n\031type_parameter_annotation\0221.org." +
-      "jetbrains.kotlin.serialization.TypeParam" +
-      "eter\030\202\001 \003(\0132..org.jetbrains.kotlin.seria" +
-      "lization.AnnotationB\021B\017DebugJsProtoBuf"
+      "\n\004path\030\001 \002(\t\022\017\n\007content\030\002 \002(\014\"2\n\004Kind\022\t\n",
+      "\005PLAIN\020\001\022\007\n\003AMD\020\002\022\r\n\tCOMMON_JS\020\003\022\007\n\003UMD\020" +
+      "\004:t\n\020class_annotation\022).org.jetbrains.ko" +
+      "tlin.serialization.Class\030\202\001 \003(\0132..org.je" +
+      "tbrains.kotlin.serialization.Annotation:" +
+      "\200\001\n\026constructor_annotation\022/.org.jetbrai" +
+      "ns.kotlin.serialization.Constructor\030\202\001 \003" +
+      "(\0132..org.jetbrains.kotlin.serialization." +
+      "Annotation:z\n\023function_annotation\022,.org." +
+      "jetbrains.kotlin.serialization.Function\030" +
+      "\202\001 \003(\0132..org.jetbrains.kotlin.serializat",
+      "ion.Annotation:z\n\023property_annotation\022,." +
+      "org.jetbrains.kotlin.serialization.Prope" +
+      "rty\030\202\001 \003(\0132..org.jetbrains.kotlin.serial" +
+      "ization.Annotation:\210\001\n\022compile_time_valu" +
+      "e\022,.org.jetbrains.kotlin.serialization.P" +
+      "roperty\030\203\001 \001(\0132=.org.jetbrains.kotlin.se" +
+      "rialization.Annotation.Argument.Value:}\n" +
+      "\025enum_entry_annotation\022-.org.jetbrains.k" +
+      "otlin.serialization.EnumEntry\030\202\001 \003(\0132..o" +
+      "rg.jetbrains.kotlin.serialization.Annota",
+      "tion:\201\001\n\024parameter_annotation\0222.org.jetb" +
+      "rains.kotlin.serialization.ValueParamete" +
+      "r\030\202\001 \003(\0132..org.jetbrains.kotlin.serializ" +
+      "ation.Annotation:r\n\017type_annotation\022(.or" +
+      "g.jetbrains.kotlin.serialization.Type\030\202\001" +
+      " \003(\0132..org.jetbrains.kotlin.serializatio" +
+      "n.Annotation:\205\001\n\031type_parameter_annotati" +
+      "on\0221.org.jetbrains.kotlin.serialization." +
+      "TypeParameter\030\202\001 \003(\0132..org.jetbrains.kot" +
+      "lin.serialization.AnnotationB\021B\017DebugJsP",
+      "rotoBuf"
     };
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {

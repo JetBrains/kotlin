@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.js.translate.test.JSTestGenerator;
 import org.jetbrains.kotlin.js.translate.test.JSTester;
 import org.jetbrains.kotlin.js.translate.test.QUnitTester;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
-import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils;
 import org.jetbrains.kotlin.js.translate.utils.mutator.AssignToExpressionMutator;
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody;
 import org.jetbrains.kotlin.psi.KtExpression;
@@ -50,6 +49,7 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtNamedFunction;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
+import org.jetbrains.kotlin.serialization.js.ModuleKind;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.util.ArrayList;
@@ -188,6 +188,16 @@ public final class Translation {
         }
     }
 
+    private static class ImportedModule {
+        final String id;
+        final JsName name;
+
+        public ImportedModule(String id, JsName name) {
+            this.id = id;
+            this.name = name;
+        }
+    }
+
     @NotNull
     private static TranslationContext doGenerateAst(
             @NotNull BindingTrace bindingTrace,
@@ -211,27 +221,18 @@ public final class Translation {
 
         mayBeGenerateTests(files, config, rootBlock, context);
 
-        JsBlock block = program.getGlobalBlock();
-
         // Invoke function passing modules as arguments
         // This should help minifier tool to recognize references to this modules as local variables and make them shorter.
-        List<JsExpression> invocationArgs = new ArrayList<JsExpression>(staticContext.getImportedModules().size() + 1);
+        List<ImportedModule> importedModuleList = new ArrayList<ImportedModule>();
         JsName kotlinName = program.getScope().declareName(Namer.KOTLIN_NAME);
         rootFunction.getParameters().add(new JsParameter((kotlinName)));
-        invocationArgs.add(kotlinName.makeRef());
+        importedModuleList.add(new ImportedModule(Namer.KOTLIN_LOWER_NAME, kotlinName));
 
         for (String importedModule : staticContext.getImportedModules().keySet()) {
             rootFunction.getParameters().add(new JsParameter(staticContext.getImportedModules().get(importedModule)));
-
             JsName globalId = program.getScope().declareName(Namer.suggestedModuleName(importedModule));
-            invocationArgs.add(JsAstUtils.pureFqn(globalId, null));
+            importedModuleList.add(new ImportedModule(importedModule, globalId));
         }
-        JsInvocation invocation = new JsInvocation(rootFunction, invocationArgs);
-
-        String thisModuleName = JsDescriptorUtils.getModuleNameFromDescriptorName(moduleDescriptor);
-        JsName thisModuleId = program.getScope().declareName(Namer.suggestedModuleName(thisModuleName));
-        block.getStatements().add(JsAstUtils.newVar(thisModuleId,
-                                                    new JsBinaryOperation(JsBinaryOperator.OR, thisModuleId.makeRef(), invocation)));
 
         if (mainCallParameters.shouldBeGenerated()) {
             JsStatement statement = generateCallToMain(context, files, mainCallParameters.arguments());
@@ -240,7 +241,142 @@ public final class Translation {
             }
         }
 
+        JsBlock block = program.getGlobalBlock();
+        block.getStatements().addAll(wrapIfNecessary(config.getModuleId(), rootFunction, importedModuleList, program,
+                                                     config.getModuleKind()));
+
         return context;
+    }
+
+    @NotNull
+    private static List<JsStatement> wrapIfNecessary(
+            @NotNull String moduleId,
+            @NotNull JsExpression function,
+            @NotNull List<ImportedModule> importedModules,
+            @NotNull JsProgram program,
+            @NotNull ModuleKind kind
+    ) {
+        switch (kind) {
+            case AMD:
+                return wrapAmd(moduleId, function, importedModules, program);
+            case COMMON_JS:
+                return wrapCommonJs(function, importedModules, program);
+            case UMD:
+                return wrapUmd(moduleId, function, importedModules, program);
+            case PLAIN:
+            default:
+                return wrapPlain(moduleId, function, importedModules, program);
+        }
+    }
+
+    @NotNull
+    private static List<JsStatement> wrapUmd(
+            @Nullable String moduleId,
+            @NotNull JsExpression function,
+            @NotNull List<ImportedModule> importedModules,
+            @NotNull JsProgram program
+    ) {
+        JsScope scope = program.getScope();
+        JsName rootName = scope.declareName("root");
+        JsName factoryName = scope.declareName("factory");
+        JsName defineName = scope.declareName("define");
+        JsName exportsName = scope.declareName("exports");
+
+        JsExpression amdTest = JsAstUtils.and(JsAstUtils.typeOfIs(defineName.makeRef(), program.getStringLiteral("function")),
+                                              new JsNameRef("amd", defineName.makeRef()));
+        JsExpression commonJsTest = JsAstUtils.typeOfIs(exportsName.makeRef(), program.getStringLiteral("object"));
+
+        JsBlock amdBody = new JsBlock(wrapAmd(moduleId, factoryName.makeRef(), importedModules, program));
+        JsBlock commonJsBody = new JsBlock(wrapCommonJs(factoryName.makeRef(), importedModules, program));
+        JsInvocation plainInvocation = makePlainInvocation(factoryName.makeRef(), importedModules);
+        JsExpression plainExpr = moduleId != null ?
+                                 JsAstUtils.assignment(new JsNameRef(moduleId, rootName.makeRef()), plainInvocation) :
+                                 plainInvocation;
+
+        JsStatement selector = JsAstUtils.newJsIf(amdTest, amdBody, JsAstUtils.newJsIf(commonJsTest, commonJsBody, plainExpr.makeStmt()));
+        JsFunction adapter = new JsFunction(program.getScope(), new JsBlock(selector), "UMD adapter");
+        adapter.getParameters().add(new JsParameter(rootName));
+        adapter.getParameters().add(new JsParameter(factoryName));
+
+        return Collections.singletonList(new JsInvocation(adapter, JsLiteral.THIS, function).makeStmt());
+    }
+
+    @NotNull
+    private static List<JsStatement> wrapAmd(
+            @Nullable String moduleId,
+            @NotNull JsExpression function,
+            @NotNull List<ImportedModule> importedModules,
+            @NotNull JsProgram program
+    ) {
+        JsScope scope = program.getScope();
+        JsName defineName = scope.declareName("define");
+        List<JsExpression> invocationArgs = new ArrayList<JsExpression>();
+
+        if (moduleId != null) {
+            invocationArgs.add(program.getStringLiteral(moduleId));
+        }
+
+        List<JsExpression> moduleNameList = new ArrayList<JsExpression>(importedModules.size());
+        for (ImportedModule importedModule : importedModules) {
+            moduleNameList.add(program.getStringLiteral(importedModule.id));
+        }
+        invocationArgs.add(new JsArrayLiteral(moduleNameList));
+
+        invocationArgs.add(function);
+
+        JsInvocation invocation = new JsInvocation(defineName.makeRef(), invocationArgs);
+        return Collections.singletonList(invocation.makeStmt());
+    }
+
+    @NotNull
+    private static List<JsStatement> wrapCommonJs(
+            @NotNull JsExpression function,
+            @NotNull List<ImportedModule> importedModules,
+            @NotNull JsProgram program
+    ) {
+        JsScope scope = program.getScope();
+        JsName moduleName = scope.declareName("module");
+        JsName requireName = scope.declareName("require");
+
+        List<JsExpression> invocationArgs = new ArrayList<JsExpression>();
+        for (ImportedModule importedModule : importedModules) {
+            invocationArgs.add(new JsInvocation(requireName.makeRef(), program.getStringLiteral(importedModule.id)));
+        }
+
+        JsInvocation invocation = new JsInvocation(function, invocationArgs);
+        JsExpression assignment = JsAstUtils.assignment(new JsNameRef("exports", moduleName.makeRef()), invocation);
+        return Collections.singletonList(assignment.makeStmt());
+    }
+
+    @NotNull
+    private static List<JsStatement> wrapPlain(
+            @Nullable String moduleId,
+            @NotNull JsExpression function,
+            @NotNull List<ImportedModule> importedModules,
+            @NotNull JsProgram program
+    ) {
+        JsInvocation invocation = makePlainInvocation(function, importedModules);
+
+        JsStatement statement;
+        if (moduleId == null) {
+            statement = invocation.makeStmt();
+        }
+        else {
+            statement = JsAstUtils.newVar(program.getScope().declareName(moduleId), function);
+        }
+
+        return Collections.singletonList(statement);
+    }
+
+    @NotNull
+    private static JsInvocation makePlainInvocation(@NotNull JsExpression function, @NotNull List<ImportedModule> importedModules) {
+        List<JsExpression> invocationArgs = new ArrayList<JsExpression>(importedModules.size());
+
+        for (ImportedModule importedModule : importedModules) {
+            invocationArgs.add(importedModule.name.makeRef());
+        }
+
+        return new JsInvocation(function, invocationArgs);
     }
 
     private static void defineModule(@NotNull TranslationContext context, @NotNull List<JsStatement> statements, @NotNull String moduleId) {
