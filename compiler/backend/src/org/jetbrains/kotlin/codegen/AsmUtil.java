@@ -168,9 +168,9 @@ public class AsmUtil {
         return new Method(name, Type.getMethodDescriptor(returnType, parameterTypes));
     }
 
-    public static boolean isAbstractMethod(FunctionDescriptor functionDescriptor, OwnerKind kind) {
-        return (functionDescriptor.getModality() == Modality.ABSTRACT
-                || isJvmInterface(functionDescriptor.getContainingDeclaration()))
+    public static boolean isAbstractMethod(FunctionDescriptor functionDescriptor, OwnerKind kind, GenerationState state) {
+        return (functionDescriptor.getModality() == Modality.ABSTRACT ||
+                (isJvmInterface(functionDescriptor.getContainingDeclaration()) && !state.isJvm8Target()))
                && !isStaticMethod(kind, functionDescriptor);
     }
 
@@ -184,7 +184,7 @@ public class AsmUtil {
         return kind == OwnerKind.PACKAGE || kind == OwnerKind.DEFAULT_IMPLS;
     }
 
-    public static int getMethodAsmFlags(FunctionDescriptor functionDescriptor, OwnerKind kind) {
+    public static int getMethodAsmFlags(FunctionDescriptor functionDescriptor, OwnerKind kind, GenerationState state) {
         int flags = getCommonCallableFlags(functionDescriptor);
 
         for (AnnotationCodegen.JvmFlagAnnotation flagAnnotation : AnnotationCodegen.METHOD_FLAGS) {
@@ -214,7 +214,7 @@ public class AsmUtil {
             flags |= ACC_STATIC;
         }
 
-        if (isAbstractMethod(functionDescriptor, kind)) {
+        if (isAbstractMethod(functionDescriptor, kind, state)) {
             flags |= ACC_ABSTRACT;
         }
 
