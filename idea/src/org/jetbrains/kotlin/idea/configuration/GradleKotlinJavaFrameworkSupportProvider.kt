@@ -41,14 +41,26 @@ class GradleKotlinJavaFrameworkSupportProvider() : GradleFrameworkSupportProvide
                             modifiableModelsProvider: ModifiableModelsProvider,
                             buildScriptData: BuildScriptDataBuilder) {
         var kotlinVersion = bundledRuntimeVersion()
-        if (kotlinVersion == "@snapshot@") {
-            kotlinVersion = "0.1-SNAPSHOT"
 
-            val snapshotRepository = KotlinWithGradleConfigurator.SNAPSHOT_REPOSITORY.replace('\n', ' ')
-            buildScriptData.addBuildscriptRepositoriesDefinition(snapshotRepository)
+        val additionalRepository: String? = when {
+            kotlinVersion == "@snapshot@" -> {
+                kotlinVersion = "0.1-SNAPSHOT"
+                KotlinWithGradleConfigurator.SNAPSHOT_REPOSITORY
+            }
+            isEap(kotlinVersion) -> {
+                KotlinWithGradleConfigurator.EAP_REPOSITORY
+            }
+            else -> {
+                null
+            }
+        }
+
+        if (additionalRepository != null) {
+            val oneLineRepository = additionalRepository.replace('\n', ' ')
+            buildScriptData.addBuildscriptRepositoriesDefinition(oneLineRepository)
 
             buildScriptData.addRepositoriesDefinition("mavenCentral()")
-            buildScriptData.addRepositoriesDefinition(snapshotRepository)
+            buildScriptData.addRepositoriesDefinition(oneLineRepository)
         }
 
         buildScriptData

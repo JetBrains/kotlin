@@ -30,6 +30,22 @@ import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.kotlin.idea.versions.getKotlinRuntimeMarkerClass
 import org.jetbrains.kotlin.utils.ifEmpty
 
+data class RepositoryDescription(val id: String, val name: String, val url: String, val isSnapshot: Boolean)
+
+@JvmField
+val SNAPSHOT_REPOSITORY = RepositoryDescription(
+        "sonatype.oss.snapshots",
+        "Sonatype OSS Snapshot Repository",
+        "http://oss.sonatype.org/content/repositories/snapshots",
+        isSnapshot = true)
+
+@JvmField
+val EAP_REPOSITORY = RepositoryDescription(
+        "bintray.kotlin.eap",
+        "Bintray Kotlin EAP Repository",
+        "http://dl.bintray.com/kotlin/kotlin-eap",
+        isSnapshot = false)
+
 fun isProjectConfigured(project: Project): Boolean {
     val modules = getModulesWithKotlinFiles(project)
     return modules.all { isModuleConfigured(it) }
@@ -119,3 +135,12 @@ fun hasKotlinFilesOnlyInTests(module: Module): Boolean {
 fun hasKotlinFilesInSources(module: Module): Boolean {
     return FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, module.getModuleScope(false))
 }
+
+fun isSnapshot(version: String): Boolean {
+    return version.contains("SNAPSHOT")
+}
+
+fun isEap(version: String): Boolean {
+    return version.contains("rc") || version.contains("eap")
+}
+
