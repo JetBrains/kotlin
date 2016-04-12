@@ -59,8 +59,8 @@ class ModulesDependenciesTest : TestCase() {
                             badModulesList.isEmpty())
     }
 
-    fun testNoBadReferencesInNonCompilerTests() {
-        val FORBIDDEN_MODULE_NAMES = MODULES_CAN_DEPEND_ON_COMPILER_TESTS.map { it.nameWithoutExtension }
+    fun testNoModulesFromOtherTestConfigurationsInNonCompilerTests() {
+        val FORBIDDEN_MODULE_NAMES = listOf(COMPILER_TESTS_JAVA8_MODULE_FILE, COMPILER_TESTS_MODULE_FILE).map { it.nameWithoutExtension }
 
         val moduleText = NON_COMPILER_TESTS_MODULE_FILE.readText()
         val nonCompilerTestsHasForbiddenDependencies = FORBIDDEN_MODULE_NAMES.none { moduleText.contains(it) }
