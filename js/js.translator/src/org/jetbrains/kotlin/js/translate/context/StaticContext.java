@@ -41,7 +41,10 @@ import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.*;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.pureFqn;
@@ -541,6 +544,13 @@ public final class StaticContext {
                     }
 
                     JsNameRef result = getQualifierForParentPackage(((PackageFragmentDescriptor) containingDescriptor).getFqName());
+
+                    // TODO: remove this dirty hack
+                    if (descriptor instanceof ClassDescriptor && DescriptorUtils.isTopLevelDeclaration(descriptor)) {
+                        if (DescriptorUtils.getFqNameFromTopLevelClass(descriptor).toString().equals("Annotation")) {
+                            return result;
+                        }
+                    }
 
                     String moduleName = getExternalModuleName(descriptor);
                     if (moduleName == null) {

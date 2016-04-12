@@ -217,7 +217,6 @@ public final class Translation {
         TranslationContext context = TranslationContext.rootContext(staticContext, rootFunction);
         statements.addAll(PackageDeclarationTranslator.translateFiles(files, context));
         defineModule(context, statements, config.getModuleId());
-        statements.add(new JsReturn(program.getRootScope().declareName(Namer.getRootPackageName()).makeRef()));
 
         mayBeGenerateTests(files, config, rootBlock, context);
 
@@ -240,6 +239,8 @@ public final class Translation {
                 statements.add(statement);
             }
         }
+
+        statements.add(new JsReturn(program.getRootScope().declareName(Namer.getRootPackageName()).makeRef()));
 
         JsBlock block = program.getGlobalBlock();
         block.getStatements().addAll(wrapIfNecessary(config.getModuleId(), rootFunction, importedModuleList, program,
@@ -362,7 +363,7 @@ public final class Translation {
             statement = invocation.makeStmt();
         }
         else {
-            statement = JsAstUtils.newVar(program.getScope().declareName(moduleId), function);
+            statement = JsAstUtils.newVar(program.getScope().declareName(moduleId), invocation);
         }
 
         return Collections.singletonList(statement);
