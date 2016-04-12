@@ -58,7 +58,7 @@ public class RhinoFunctionResultChecker implements RhinoResultChecker {
     protected String functionCallString() {
         StringBuilder sb = new StringBuilder();
         if (packageName != null) {
-            sb.append("Kotlin.modules");
+            sb.append("this");
             if (moduleId.contains(".")) {
                 sb.append("['").append(moduleId).append("']");
             } else {

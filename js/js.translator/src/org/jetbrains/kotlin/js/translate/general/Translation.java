@@ -289,7 +289,7 @@ public final class Translation {
 
         JsBlock amdBody = new JsBlock(wrapAmd(moduleId, factoryName.makeRef(), importedModules, program));
         JsBlock commonJsBody = new JsBlock(wrapCommonJs(factoryName.makeRef(), importedModules, program));
-        JsInvocation plainInvocation = makePlainInvocation(factoryName.makeRef(), importedModules);
+        JsInvocation plainInvocation = makePlainInvocation(factoryName.makeRef(), importedModules, program);
         JsExpression plainExpr = moduleId != null ?
                                  JsAstUtils.assignment(new JsNameRef(moduleId, rootName.makeRef()), plainInvocation) :
                                  plainInvocation;
@@ -356,7 +356,7 @@ public final class Translation {
             @NotNull List<ImportedModule> importedModules,
             @NotNull JsProgram program
     ) {
-        JsInvocation invocation = makePlainInvocation(function, importedModules);
+        JsInvocation invocation = makePlainInvocation(function, importedModules, program);
 
         JsStatement statement;
         if (moduleId == null) {
@@ -370,11 +370,12 @@ public final class Translation {
     }
 
     @NotNull
-    private static JsInvocation makePlainInvocation(@NotNull JsExpression function, @NotNull List<ImportedModule> importedModules) {
+    private static JsInvocation makePlainInvocation(@NotNull JsExpression function, @NotNull List<ImportedModule> importedModules,
+            JsProgram program) {
         List<JsExpression> invocationArgs = new ArrayList<JsExpression>(importedModules.size());
 
         for (ImportedModule importedModule : importedModules) {
-            invocationArgs.add(importedModule.name.makeRef());
+            invocationArgs.add(program.getRootScope().declareName(importedModule.id).makeRef());
         }
 
         return new JsInvocation(function, invocationArgs);
