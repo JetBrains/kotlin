@@ -16,6 +16,9 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
@@ -26,25 +29,35 @@ import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
 import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
 
-interface TowerContext<C> {
+interface Candidate<out D : CallableDescriptor> {
+    val descriptor: D
+
+    // this operation should be very fast
+    val isSuccessful: Boolean
+
+    val status: ResolutionCandidateStatus
+}
+
+interface TowerContext<D : CallableDescriptor, C: Candidate<D>> {
     val name: Name
     val scopeTower: ScopeTower
 
     fun createCandidate(
-            towerCandidate: CandidateWithBoundDispatchReceiver<*>,
+            towerCandidate: CandidateWithBoundDispatchReceiver<D>,
             explicitReceiverKind: ExplicitReceiverKind,
             extensionReceiver: ReceiverValue?
     ): C
+}
 
-    fun getStatus(candidate: C): ResolutionCandidateStatus
+interface InvokeTowerContext<F : Candidate<FunctionDescriptor>, V : Candidate<VariableDescriptor>>: TowerContext<FunctionDescriptor, F> {
 
-    fun transformCandidate(variable: C, invoke: C): C
+    fun transformCandidate(variable: V, invoke: F): F
 
-    fun contextForVariable(stripExplicitReceiver: Boolean): TowerContext<C>
+    fun contextForVariable(stripExplicitReceiver: Boolean): TowerContext<VariableDescriptor, V>
 
     // foo() -> ReceiverValue(foo), context for invoke
     // null means that there is no invoke on variable
-    fun contextForInvoke(variable: C, useExplicitReceiver: Boolean): Pair<ReceiverValue, TowerContext<C>>?
+    fun contextForInvoke(variable: V, useExplicitReceiver: Boolean): Pair<ReceiverValue, TowerContext<FunctionDescriptor, F>>?
 }
 
 sealed class TowerData {
@@ -54,21 +67,24 @@ sealed class TowerData {
     class BothTowerLevelAndImplicitReceiver(val level: ScopeTowerLevel, val implicitReceiver: ReceiverValue) : TowerData()
 }
 
-interface ScopeTowerProcessor<C> {
+interface ScopeTowerProcessor<out C> {
     // Candidates with matched receivers (dispatch receiver was already matched in ScopeTowerLevel)
     // Candidates in one groups have same priority, first group has highest priority.
     fun process(data: TowerData): List<Collection<C>>
 }
 
 class TowerResolver {
-    fun <C> runResolve(
-            context: TowerContext<C>,
+    fun <C: Candidate<*>> runResolve(
+            scopeTower: ScopeTower,
             processor: ScopeTowerProcessor<C>,
             useOrder: Boolean
-    ): Collection<C> = context.scopeTower.run(processor, SuccessfulResultCollector { context.getStatus(it) }, useOrder)
+    ): Collection<C> = scopeTower.run(processor, SuccessfulResultCollector { it.status }, useOrder)
 
-    fun <C> collectAllCandidates(context: TowerContext<C>, processor: ScopeTowerProcessor<C>): Collection<C>
-            = context.scopeTower.run(processor, AllCandidatesCollector { context.getStatus(it) }, false)
+    fun <C: Candidate<*>> collectAllCandidates(
+            scopeTower: ScopeTower,
+            processor: ScopeTowerProcessor<C>
+    ): Collection<C>
+            = scopeTower.run(processor, AllCandidatesCollector { it.status }, false)
 
     private fun ScopeTower.createNonLocalLevels(): List<ScopeTowerLevel> {
         val result = ArrayList<ScopeTowerLevel>()

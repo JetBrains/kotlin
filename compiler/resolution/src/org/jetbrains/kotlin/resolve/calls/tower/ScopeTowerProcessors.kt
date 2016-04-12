@@ -16,6 +16,9 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.scopes.receivers.QualifierReceiver
@@ -37,8 +40,8 @@ class CompositeScopeTowerProcessor<C>(
     override fun process(data: TowerData): List<Collection<C>> = processors.flatMap { it.process(data) }
 }
 
-internal abstract class AbstractSimpleScopeTowerProcessor<C>(
-        val context: TowerContext<C>
+internal abstract class AbstractSimpleScopeTowerProcessor<D : CallableDescriptor, C: Candidate<D>>(
+        val context: TowerContext<D, C>
 ) : ScopeTowerProcessor<C> {
     protected val name: Name get() = context.name
 
@@ -47,11 +50,11 @@ internal abstract class AbstractSimpleScopeTowerProcessor<C>(
     override fun process(data: TowerData): List<Collection<C>> = listOfNotNull(simpleProcess(data).check { it.isNotEmpty() })
 }
 
-internal class ExplicitReceiverScopeTowerProcessor<C>(
-        context: TowerContext<C>,
+internal class ExplicitReceiverScopeTowerProcessor<D : CallableDescriptor, C: Candidate<D>>(
+        context: TowerContext<D, C>,
         val explicitReceiver: ReceiverValue,
-        val collectCandidates: ScopeTowerLevel.(name: Name, extensionReceiver: ReceiverValue?) -> Collection<CandidateWithBoundDispatchReceiver<*>>
-): AbstractSimpleScopeTowerProcessor<C>(context) {
+        val collectCandidates: ScopeTowerLevel.(name: Name, extensionReceiver: ReceiverValue?) -> Collection<CandidateWithBoundDispatchReceiver<D>>
+): AbstractSimpleScopeTowerProcessor<D, C>(context) {
     override fun simpleProcess(data: TowerData): Collection<C> {
         return when (data) {
             TowerData.Empty -> resolveAsMember()
@@ -72,11 +75,11 @@ internal class ExplicitReceiverScopeTowerProcessor<C>(
     }
 }
 
-private class QualifierScopeTowerProcessor<C>(
-        context: TowerContext<C>,
+private class QualifierScopeTowerProcessor<D : CallableDescriptor, C: Candidate<D>>(
+        context: TowerContext<D, C>,
         val qualifier: QualifierReceiver,
-        val collectCandidates: ScopeTowerLevel.(name: Name, extensionReceiver: ReceiverValue?) -> Collection<CandidateWithBoundDispatchReceiver<*>>
-): AbstractSimpleScopeTowerProcessor<C>(context) {
+        val collectCandidates: ScopeTowerLevel.(name: Name, extensionReceiver: ReceiverValue?) -> Collection<CandidateWithBoundDispatchReceiver<D>>
+): AbstractSimpleScopeTowerProcessor<D, C>(context) {
     override fun simpleProcess(data: TowerData): Collection<C> {
         if (data != TowerData.Empty) return emptyList()
 
@@ -87,10 +90,10 @@ private class QualifierScopeTowerProcessor<C>(
     }
 }
 
-private class NoExplicitReceiverScopeTowerProcessor<C>(
-        context: TowerContext<C>,
-        val collectCandidates: ScopeTowerLevel.(name: Name, extensionReceiver: ReceiverValue?) -> Collection<CandidateWithBoundDispatchReceiver<*>>
-) : AbstractSimpleScopeTowerProcessor<C>(context) {
+private class NoExplicitReceiverScopeTowerProcessor<D : CallableDescriptor, C: Candidate<D>>(
+        context: TowerContext<D, C>,
+        val collectCandidates: ScopeTowerLevel.(name: Name, extensionReceiver: ReceiverValue?) -> Collection<CandidateWithBoundDispatchReceiver<D>>
+) : AbstractSimpleScopeTowerProcessor<D, C>(context) {
     override fun simpleProcess(data: TowerData): Collection<C>
             = when(data) {
                 is TowerData.TowerLevel -> {
@@ -107,10 +110,10 @@ private class NoExplicitReceiverScopeTowerProcessor<C>(
             }
 }
 
-private fun <C> createSimpleProcessor(
-        context: TowerContext<C>,
+private fun <D : CallableDescriptor, C: Candidate<D>> createSimpleProcessor(
+        context: TowerContext<D, C>,
         explicitReceiver: Receiver?,
-        collectCandidates: ScopeTowerLevel.(name: Name, extensionReceiver: ReceiverValue?) -> Collection<CandidateWithBoundDispatchReceiver<*>>
+        collectCandidates: ScopeTowerLevel.(name: Name, extensionReceiver: ReceiverValue?) -> Collection<CandidateWithBoundDispatchReceiver<D>>
 ) : ScopeTowerProcessor<C> {
     if (explicitReceiver is ReceiverValue) {
         return ExplicitReceiverScopeTowerProcessor(context, explicitReceiver, collectCandidates)
@@ -133,8 +136,8 @@ private fun <C> createSimpleProcessor(
     }
 }
 
-fun <C> createVariableProcessor(context: TowerContext<C>, explicitReceiver: Receiver?)
+fun <C : Candidate<VariableDescriptor>> createVariableProcessor(context: TowerContext<VariableDescriptor, C>, explicitReceiver: Receiver?)
         = createSimpleProcessor(context, explicitReceiver, ScopeTowerLevel::getVariables)
 
-fun <C> createFunctionProcessor(context: TowerContext<C>, explicitReceiver: Receiver?)
+fun <C : Candidate<FunctionDescriptor>> createFunctionProcessor(context: TowerContext<FunctionDescriptor, C>, explicitReceiver: Receiver?)
         = createSimpleProcessor(context, explicitReceiver, ScopeTowerLevel::getFunctions)
