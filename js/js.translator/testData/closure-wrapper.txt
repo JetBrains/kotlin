@@ -1,0 +1,13 @@
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define('Kotlin', [], factory);
+    } else if (typeof exports === 'object') {
+        module.exports = factory();
+    } else {
+        root.Kotlin = factory();
+    }
+}(this, function () {
+    var Kotlin = {};
+%output%
+    return Kotlin;
+}));

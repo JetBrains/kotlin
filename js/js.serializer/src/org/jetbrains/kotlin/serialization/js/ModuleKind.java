@@ -21,5 +21,6 @@ package org.jetbrains.kotlin.serialization.js;
 public enum ModuleKind {
     PLAIN,
     AMD,
-    COMMON_JS
+    COMMON_JS,
+    UMD
 }
