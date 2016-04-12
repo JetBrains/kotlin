@@ -97,7 +97,7 @@ public class SamWrapperCodegen {
 
         ClassBuilder cv = state.getFactory().newVisitor(JvmDeclarationOriginKt.OtherOrigin(erasedInterfaceFunction), asmType, file);
         cv.defineClass(file,
-                       V1_6,
+                       state.getClassFileVersion(),
                        ACC_FINAL | ACC_SUPER | visibility,
                        asmType.getInternalName(),
                        null,

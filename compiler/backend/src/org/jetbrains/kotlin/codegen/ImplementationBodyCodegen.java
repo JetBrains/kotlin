@@ -211,7 +211,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         v.defineClass(
-                myClass, V1_6,
+                myClass,
+                state.getClassFileVersion(),
                 access,
                 signature.getName(),
                 signature.getJavaGenericSignature(),
