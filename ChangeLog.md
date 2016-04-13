@@ -14,6 +14,7 @@
 Issues fixed:
 
 - [KT-11145](https://youtrack.jetbrains.com/issue/KT-11145) Use progress indicator when searching usages in Introduce Parameter
+- [KT-11155](https://youtrack.jetbrains.com/issue/KT-11155) Allow running multiple Kotlin classes as well as running mixtures of Kotlin and Java classes
 
 #### Debugger
 
