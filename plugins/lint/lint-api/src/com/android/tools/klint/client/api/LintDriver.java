@@ -1927,7 +1927,7 @@ public class LintDriver {
 
         @Nullable
         @Override
-        public LocalSdk getSdk() {
+        public SdkWrapper getSdk() {
             return mDelegate.getSdk();
         }
 

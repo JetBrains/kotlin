@@ -14,5 +14,6 @@
     <orderEntry type="library" name="android-plugin" level="project" />
     <orderEntry type="library" name="intellij-core" level="project" />
     <orderEntry type="module" module-name="android-annotations" />
+    <orderEntry type="library" name="kotlin-runtime" level="project" />
   </component>
 </module>

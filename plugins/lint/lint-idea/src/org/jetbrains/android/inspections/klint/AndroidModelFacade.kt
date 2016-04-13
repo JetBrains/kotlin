@@ -4,6 +4,7 @@ import com.android.builder.model.AndroidProject
 import com.android.builder.model.SourceProvider
 import com.android.builder.model.Variant
 import com.android.tools.idea.gradle.util.GradleUtil
+import com.android.tools.klint.client.api.SdkWrapper
 import org.jetbrains.android.facet.AndroidFacet
 import kotlin.reflect.memberFunctions
 import kotlin.reflect.staticFunctions
@@ -17,6 +18,14 @@ class AndroidModelFacade(val facet: AndroidFacet) {
         catch(e: ClassNotFoundException) {
             null
         }
+    }
+
+    fun getLocalSdk(): SdkWrapper? {
+        val sdkData = facet.sdkData ?: return null
+        val localSdk = sdkData.javaClass.kotlin.memberFunctions
+                .firstOrNull { it.name == "getLocalSdk" || it.name == "getSdkHandler" }
+                ?.call(sdkData) ?: return null
+        return SdkWrapper(localSdk)
     }
 
     fun isModelReady() = model != null
