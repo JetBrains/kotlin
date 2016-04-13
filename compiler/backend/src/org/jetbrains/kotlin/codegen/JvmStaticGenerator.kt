@@ -82,12 +82,13 @@ class JvmStaticGenerator(
     }
 
     companion object {
-        @JvmStatic fun createStaticFunctionDescriptor(descriptor: FunctionDescriptor): FunctionDescriptor {
+        @JvmStatic
+        fun createStaticFunctionDescriptor(descriptor: FunctionDescriptor): FunctionDescriptor {
             val memberDescriptor = if (descriptor is PropertyAccessorDescriptor) descriptor.correspondingProperty else descriptor
             val copies = CodegenUtil.copyFunctions(
                     memberDescriptor,
                     memberDescriptor,
-                    descriptor.containingDeclaration.containingDeclaration,
+                    descriptor.containingDeclaration.containingDeclaration!!,
                     descriptor.modality,
                     descriptor.visibility,
                     CallableMemberDescriptor.Kind.SYNTHESIZED,
