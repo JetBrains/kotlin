@@ -61,7 +61,7 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
     }
 
     @Override
-    public void generateCopyFunction(@NotNull FunctionDescriptor function, @NotNull List<KtParameter> constructorParameters) {
+    public void generateCopyFunction(@NotNull FunctionDescriptor function, @NotNull List<? extends KtParameter> constructorParameters) {
         JsFunction functionObj = generateJsMethod(function);
 
         assert function.getValueParameters().size() == constructorParameters.size();
@@ -110,7 +110,7 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
     }
 
     @Override
-    public void generateToStringMethod(@NotNull FunctionDescriptor function, @NotNull List<PropertyDescriptor> classProperties) {
+    public void generateToStringMethod(@NotNull FunctionDescriptor function, @NotNull List<? extends PropertyDescriptor> classProperties) {
         // TODO: relax this limitation, with the data generation logic fixed.
         assert !classProperties.isEmpty();
         JsFunction functionObj = generateJsMethod(function);
@@ -136,7 +136,7 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
     }
 
     @Override
-    public void generateHashCodeMethod(@NotNull FunctionDescriptor function, @NotNull List<PropertyDescriptor> classProperties) {
+    public void generateHashCodeMethod(@NotNull FunctionDescriptor function, @NotNull List<? extends PropertyDescriptor> classProperties) {
         JsFunction functionObj = generateJsMethod(function);
 
         JsProgram jsProgram = context.program();
@@ -161,7 +161,7 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
     }
 
     @Override
-    public void generateEqualsMethod(@NotNull FunctionDescriptor function, @NotNull List<PropertyDescriptor> classProperties) {
+    public void generateEqualsMethod(@NotNull FunctionDescriptor function, @NotNull List<? extends PropertyDescriptor> classProperties) {
         assert !classProperties.isEmpty();
         JsFunction functionObj = generateJsMethod(function);
         JsFunctionScope funScope = functionObj.getScope();
