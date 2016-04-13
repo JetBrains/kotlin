@@ -17,11 +17,14 @@
 package org.jetbrains.kotlin.idea.debugger.evaluate
 
 import com.intellij.debugger.engine.evaluation.EvaluateExceptionUtil
+import com.intellij.diagnostic.LogMessageEx
+import com.intellij.openapi.diagnostic.Attachment
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiModificationTrackerImpl
+import com.intellij.util.ExceptionUtil
 import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
@@ -32,6 +35,8 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.ErrorMessage
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.Status
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.idea.util.attachment.attachmentByPsiFile
+import org.jetbrains.kotlin.idea.util.attachment.mergeAttachments
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
@@ -49,13 +54,16 @@ fun getFunctionForExtractedFragment(
 
     fun getErrorMessageForExtractFunctionResult(analysisResult: AnalysisResult, tmpFile: KtFile): String {
         if (KotlinInternalMode.enabled) {
-            LOG.error("Couldn't extract function for debugger:\n" +
-                      "FILE NAME: ${breakpointFile.name}\n" +
-                      "BREAKPOINT LINE: $breakpointLine\n" +
-                      "CODE FRAGMENT:\n${codeFragment.text}\n" +
-                      "ERRORS:\n${analysisResult.messages.map { "$it: ${it.renderMessage()}" }.joinToString("\n")}\n" +
-                      "TMPFILE_TEXT:\n${tmpFile.text}\n" +
-                      "FILE TEXT: \n${breakpointFile.text}\n")
+            val attachments = arrayOf(attachmentByPsiFile(tmpFile),
+                                      attachmentByPsiFile(breakpointFile),
+                                      attachmentByPsiFile(codeFragment),
+                                      Attachment("breakpoint.info", "line: $breakpointLine"),
+                                      Attachment("context.info", codeFragment.context?.text ?: "null"),
+                                      Attachment("errors.info", analysisResult.messages.map { "$it: ${it.renderMessage()}" }.joinToString("\n")))
+            LOG.error(LogMessageEx.createEvent(
+                    "Internal error during evaluate expression",
+                    ExceptionUtil.getThrowableText(Throwable("Extract function fails with ${analysisResult.messages.joinToString { it.name }}")),
+                    mergeAttachments(*attachments)))
         }
         return analysisResult.messages.map { errorMessage ->
             val message = when(errorMessage) {

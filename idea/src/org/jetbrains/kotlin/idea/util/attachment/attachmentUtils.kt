@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.idea.util.attachment
 
-import com.intellij.psi.PsiFile
-import com.intellij.openapi.diagnostic.Attachment
 import com.intellij.diagnostic.AttachmentFactory
+import com.intellij.openapi.diagnostic.Attachment
+import com.intellij.psi.PsiFile
 
 fun attachmentByPsiFileAsArray(file: PsiFile?): Array<Attachment> {
     val attachment = attachmentByPsiFile(file)
@@ -48,9 +48,9 @@ fun mergeAttachments(vararg attachments: Attachment?): Attachment {
     val builder = StringBuilder()
     attachments.forEach {
         if (it != null) {
-            builder.append("\n----- START ${it.path} -----\n")
+            builder.append("----- START ${it.path} -----\n")
             builder.append(it.displayText)
-            builder.append("\n----- END   ${it.path} -----\n")
+            builder.append("\n----- END ${it.path} -----\n\n")
         }
     }
 
