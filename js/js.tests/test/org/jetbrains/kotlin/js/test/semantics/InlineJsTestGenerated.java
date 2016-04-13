@@ -209,6 +209,12 @@ public class InlineJsTestGenerated extends AbstractInlineJsTest {
         doTest(fileName);
     }
 
+    @TestMetadata("innerOuterThis.kt")
+    public void testInnerOuterThis() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inline/cases/innerOuterThis.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("jsCode.kt")
     public void testJsCode() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inline/cases/jsCode.kt");
