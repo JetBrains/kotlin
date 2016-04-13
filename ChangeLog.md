@@ -11,6 +11,10 @@
 
 ### IDE
 
+New features:
+
+- [KT-11768](https://youtrack.jetbrains.com/issue/KT-11768) Implement "Introduce local variable" intention
+
 Issues fixed:
 
 - [KT-11145](https://youtrack.jetbrains.com/issue/KT-11145) Use progress indicator when searching usages in Introduce Parameter

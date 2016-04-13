@@ -6103,6 +6103,63 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/introduceVariable")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class IntroduceVariable extends AbstractIntentionTest {
+        @TestMetadata("afterExpression.kt")
+        public void testAfterExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/introduceVariable/afterExpression.kt");
+            doTest(fileName);
+        }
+
+        public void testAllFilesPresentInIntroduceVariable() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/introduceVariable"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("atExpressionEnd.kt")
+        public void testAtExpressionEnd() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/introduceVariable/atExpressionEnd.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("atExpressionStart.kt")
+        public void testAtExpressionStart() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/introduceVariable/atExpressionStart.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("atNestedExpression.kt")
+        public void testAtNestedExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/introduceVariable/atNestedExpression.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("beforeExpression.kt")
+        public void testBeforeExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/introduceVariable/beforeExpression.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noType.kt")
+        public void testNoType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/introduceVariable/noType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nothingType.kt")
+        public void testNothingType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/introduceVariable/nothingType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unitType.kt")
+        public void testUnitType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/introduceVariable/unitType.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/invertIfCondition")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
