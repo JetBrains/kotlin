@@ -26,7 +26,9 @@ import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
+import org.jetbrains.kotlin.serialization.deserialization.NotFoundClasses
+import org.jetbrains.kotlin.serialization.deserialization.findNonGenericClassAcrossDependencies
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 import kotlin.reflect.KClass
@@ -78,5 +80,7 @@ fun getKotlinType(scriptDescriptor: ScriptDescriptor, kClass: KClass<out Any>): 
                               kClass.qualifiedName ?: throw RuntimeException("Cannot get FQN from $kClass"))
 
 fun getKotlinTypeByFqName(scriptDescriptor: ScriptDescriptor, fqName: String): KotlinType =
-        scriptDescriptor.module.findClassAcrossModuleDependencies(ClassId.topLevel(FqName(fqName)))?.defaultType ?:
-            throw RuntimeException("Cannot find class $fqName in the dependencies, may be it is missing in the classpath")
+        scriptDescriptor.module.findNonGenericClassAcrossDependencies(
+                ClassId.topLevel(FqName(fqName)),
+                NotFoundClasses(LockBasedStorageManager.NO_LOCKS, scriptDescriptor.module)
+        ).defaultType
