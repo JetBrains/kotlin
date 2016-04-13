@@ -37,20 +37,20 @@ public class PluginTestCaseBase {
     }
 
     @NotNull
-    private static Sdk getSdk(String sdkHome) {
-        return JavaSdk.getInstance().createJdk("JDK", sdkHome, true);
+    private static Sdk getSdk(String sdkHome, String name) {
+        return JavaSdk.getInstance().createJdk(name + " JDK", sdkHome, true);
     }
 
     @NotNull
     public static Sdk mockJdk() {
-        return getSdk("compiler/testData/mockJDK/jre");
+        return getSdk("compiler/testData/mockJDK/jre", "Mock");
     }
 
     @NotNull
     public static Sdk fullJdk() {
         String javaHome = System.getProperty("java.home");
         assert new File(javaHome).isDirectory();
-        return getSdk(javaHome);
+        return getSdk(javaHome, "Full");
     }
 
     public static boolean isAllFilesPresentTest(@NotNull String testName) {
