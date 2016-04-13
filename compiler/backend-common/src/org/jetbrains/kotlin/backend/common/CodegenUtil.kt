@@ -20,12 +20,10 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.common.bridges.findTraitImplementation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.MemberComparator
-import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isOrOverridesSynthesized
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.KotlinType
@@ -76,21 +74,6 @@ object CodegenUtil {
 
                     actualDelegates.firstOrNull()
                 }
-    }
-
-    @JvmStatic
-    fun getDeclaredFunctionByRawSignature(
-            owner: ClassDescriptor,
-            name: Name,
-            returnedClassifier: ClassifierDescriptor,
-            vararg valueParameterClassifiers: ClassifierDescriptor
-    ): FunctionDescriptor? {
-        return owner.defaultType.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND).firstOrNull { function ->
-            !isOrOverridesSynthesized(function) &&
-            function.typeParameters.isEmpty() &&
-            valueParameterClassesMatch(function.valueParameters, valueParameterClassifiers.toList()) &&
-            rawTypeMatches(function.returnType!!, returnedClassifier)
-        }
     }
 
     @JvmStatic
@@ -169,22 +152,6 @@ object CodegenUtil {
         return superType.constructor.declarationDescriptor as? ClassDescriptor
                ?: error("ClassDescriptor of superType should not be null: ${specifier.text}")
     }
-
-    private fun valueParameterClassesMatch(
-            parameters: List<ValueParameterDescriptor>,
-            classifiers: List<ClassifierDescriptor>
-    ): Boolean {
-        if (parameters.size != classifiers.size) return false
-        for ((parameterDescriptor, classDescriptor) in parameters.zip(classifiers)) {
-            if (!rawTypeMatches(parameterDescriptor.type, classDescriptor)) {
-                return false
-            }
-        }
-        return true
-    }
-
-    private fun rawTypeMatches(type: KotlinType, classifier: ClassifierDescriptor): Boolean =
-            type.constructor == classifier.typeConstructor
 
     @JvmStatic
     fun isEnumValueOfMethod(functionDescriptor: FunctionDescriptor): Boolean {
