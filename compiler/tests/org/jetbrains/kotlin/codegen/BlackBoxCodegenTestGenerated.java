@@ -8482,6 +8482,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("privateConstVal.kt")
+        public void testPrivateConstVal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/multifileClasses/privateConstVal.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("samePartNameDifferentFacades.kt")
         public void testSamePartNameDifferentFacades() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/multifileClasses/samePartNameDifferentFacades.kt");
