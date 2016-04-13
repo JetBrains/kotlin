@@ -685,7 +685,7 @@ public abstract class LintClient {
     @NonNull
     public IAndroidTarget[] getTargets() {
         if (mTargets == null) {
-            LocalSdk localSdk = getSdk();
+            SdkWrapper localSdk = getSdk();
             if (localSdk != null) {
                 mTargets = localSdk.getTargets();
             } else {
@@ -696,7 +696,7 @@ public abstract class LintClient {
         return mTargets;
     }
 
-    protected LocalSdk mSdk;
+    protected SdkWrapper mSdk;
 
     /**
      * Returns the SDK installation (used to look up platforms etc)
@@ -704,11 +704,11 @@ public abstract class LintClient {
      * @return the SDK if known
      */
     @Nullable
-    public LocalSdk getSdk() {
+    public SdkWrapper getSdk() {
          if (mSdk == null) {
              File sdkHome = getSdkHome();
              if (sdkHome != null) {
-                 mSdk = new LocalSdk(sdkHome);
+                 mSdk = SdkWrapper.createLocalSdk(sdkHome);
              }
          }
 
