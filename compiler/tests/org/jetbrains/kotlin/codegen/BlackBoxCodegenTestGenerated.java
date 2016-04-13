@@ -4123,6 +4123,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("nonTrivialFinalMemberInSuperClass.kt")
+        public void testNonTrivialFinalMemberInSuperClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/dataClasses/nonTrivialFinalMemberInSuperClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nonTrivialMemberInSuperClass.kt")
+        public void testNonTrivialMemberInSuperClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/dataClasses/nonTrivialMemberInSuperClass.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("privateValParams.kt")
         public void testPrivateValParams() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/dataClasses/privateValParams.kt");
