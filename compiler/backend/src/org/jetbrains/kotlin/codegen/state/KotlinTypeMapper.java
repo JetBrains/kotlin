@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.fileClasses.FileClasses;
+import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature;
@@ -924,7 +925,7 @@ public class KotlinTypeMapper {
                                   ? JvmAbi.getterName(propertyName)
                                   : JvmAbi.setterName(propertyName);
 
-            return updateMemberNameIfInternal(isAccessor ? "access$" + accessorName : accessorName, descriptor);
+            return mangleMemberNameIfRequired(isAccessor ? "access$" + accessorName : accessorName, descriptor);
         }
         else if (isFunctionLiteral(descriptor)) {
             PsiElement element = DescriptorToSourceUtils.getSourceFromDescriptor(descriptor);
@@ -944,7 +945,7 @@ public class KotlinTypeMapper {
             return OperatorNameConventions.INVOKE.asString();
         }
         else {
-            return updateMemberNameIfInternal(descriptor.getName().asString(), descriptor);
+            return mangleMemberNameIfRequired(descriptor.getName().asString(), descriptor);
         }
     }
 
@@ -973,7 +974,7 @@ public class KotlinTypeMapper {
     }
 
     @NotNull
-    private String updateMemberNameIfInternal(@NotNull String name, @NotNull CallableMemberDescriptor descriptor) {
+    private String mangleMemberNameIfRequired(@NotNull String name, @NotNull CallableMemberDescriptor descriptor) {
         if (descriptor.getContainingDeclaration() instanceof ScriptDescriptor) {
             //script properties should be public
             return name;
@@ -983,8 +984,9 @@ public class KotlinTypeMapper {
             if (Visibilities.isPrivate(descriptor.getVisibility()) && !(descriptor instanceof ConstructorDescriptor) && !"<clinit>".equals(name)) {
                 KtFile containingFile = DescriptorToSourceUtils.getContainingFile(descriptor);
                 assert containingFile != null : "Private descriptor accessed outside of corresponding file scope: " + descriptor;
-                if (JvmFileClassUtil.isFromMultifileClass(containingFile, descriptor)) {
-                    return name + "$" + JvmAbi.sanitizeAsJavaIdentifier(containingFile.getName());
+                JvmFileClassInfo fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(containingFile);
+                if (fileClassInfo.getWithJvmMultifileClass()) {
+                    return name + "$" + fileClassInfo.getFileClassFqName().shortName().asString();
                 }
             }
             return name;
