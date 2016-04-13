@@ -1,6 +1,6 @@
 fun Any.foo() {
     with("different extension receiver") {
-        foo()
+        <lineMarker>foo</lineMarker>()
     }
 }
 

@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
@@ -104,7 +105,6 @@ class KotlinRecursiveCallLineMarkerProvider() : LineMarkerProvider {
             }
         }
 
-        if (isDifferentReceiver(resolvedCall.extensionReceiver)) return false
         if (isDifferentReceiver(resolvedCall.dispatchReceiver)) return false
         return true
     }
