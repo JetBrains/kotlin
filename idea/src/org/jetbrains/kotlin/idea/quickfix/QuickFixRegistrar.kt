@@ -370,5 +370,7 @@ class QuickFixRegistrar : QuickFixContributor {
         UNSUPPORTED.registerFactory(UnsupportedAsyncFix)
 
         DATA_CLASS_NOT_PROPERTY_PARAMETER.registerFactory(AddValVarToConstructorParameterAction.QuickFixFactory)
+
+        NON_LOCAL_RETURN_NOT_ALLOWED.registerFactory(AddCrossInlineFix)
     }
 }
