@@ -137,6 +137,7 @@ New features:
 - [KT-11404](https://youtrack.jetbrains.com/issue/KT-11404) Quick fix to let type implement missing interface
 - [KT-6785](https://youtrack.jetbrains.com/issue/KT-6785), [KT-10013](https://youtrack.jetbrains.com/issue/KT-10013), [KT-9996](https://youtrack.jetbrains.com/issue/KT-9996), [KT-11675](https://youtrack.jetbrains.com/issue/KT-11675) Support Smart Enter for trailing lambda argument, try/catch/finally, property setter, init block
 - Add `kotlinClassName()` and `kotlinFunctionName()` macros for use in live templates
+- Auto-configure EAP-repository during Kotlin Maven and Gradle project set up
 
 Issues fixed:
 
