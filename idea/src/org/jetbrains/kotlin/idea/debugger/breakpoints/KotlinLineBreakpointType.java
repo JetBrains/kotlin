@@ -88,7 +88,7 @@ public class KotlinLineBreakpointType extends JavaLineBreakpointType {
     private static KtFunction getLambdaByOrdinal(SourcePosition position, Integer ordinal) {
         if (ordinal != null && ordinal >= 0) {
             List<KtFunction> lambdas = BreakpointTypeUtilsKt.getLambdasAtLineIfAny(position);
-            if (lambdas.size() >= ordinal) {
+            if (lambdas.size() > ordinal) {
                 return lambdas.get(ordinal);
             }
         }
