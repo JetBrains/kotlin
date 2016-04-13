@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.setSingleOverridden
 
 interface OverrideMemberChooserObject : ClassMember {
     enum class BodyType {
+        NO_BODY,
         EMPTY,
         SUPER,
         QUALIFIED_SUPER
@@ -137,9 +138,11 @@ private fun generateFunction(project: Project, descriptor: FunctionDescriptor, b
     val returnType = descriptor.returnType
     val returnsNotUnit = returnType != null && !KotlinBuiltIns.isUnit(returnType)
 
-    val delegation = generateUnsupportedOrSuperCall(descriptor, bodyType)
-
-    val body = "{" + (if (returnsNotUnit && bodyType != OverrideMemberChooserObject.BodyType.EMPTY) "return " else "") + delegation + "}"
+    val body = if (bodyType != OverrideMemberChooserObject.BodyType.NO_BODY) {
+        val delegation = generateUnsupportedOrSuperCall(descriptor, bodyType)
+        "{" + (if (returnsNotUnit && bodyType != OverrideMemberChooserObject.BodyType.EMPTY) "return " else "") + delegation + "}"
+    }
+    else ""
 
     return KtPsiFactory(project).createFunction(OVERRIDE_RENDERER.render(newDescriptor) + body)
 }

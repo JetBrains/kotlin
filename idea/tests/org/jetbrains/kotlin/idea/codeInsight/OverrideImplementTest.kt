@@ -231,4 +231,8 @@ class OverrideImplementTest : AbstractOverrideImplementTest() {
     fun testDuplicatedAnyMembersBug() {
         doMultiOverrideFileTest()
     }
+
+    fun testEqualsInInterface() {
+        doOverrideFileTest("equals")
+    }
 }
