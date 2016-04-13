@@ -175,8 +175,6 @@ public class JsInliner extends JsVisitorWithContextImpl {
 
     private void inline(@NotNull JsInvocation call, @NotNull JsContext context) {
         JsInliningContext inliningContext = getInliningContext();
-        FunctionContext functionContext = getFunctionContext();
-        functionContext.declareFunctionConstructorCalls(call.getArguments());
         InlineableResult inlineableResult = getInlineableCallReplacement(call, inliningContext);
 
         JsStatement inlineableBody = inlineableResult.getInlineableBody();
@@ -256,7 +254,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
         private final FunctionContext functionContext;
 
         JsInliningContext(JsFunction function) {
-            functionContext = new FunctionContext(function, this, functionReader) {
+            functionContext = new FunctionContext(function, functionReader) {
                 @Nullable
                 @Override
                 protected JsFunction lookUpStaticFunction(@Nullable JsName functionName) {
