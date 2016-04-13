@@ -85,7 +85,6 @@ public class BuiltinIssueRegistry extends IssueRegistry {
         issues.add(OverrideConcreteDetector.ISSUE);
         issues.add(ParcelDetector.ISSUE);
         issues.add(PreferenceActivityDetector.ISSUE);
-        issues.add(PrivateResourceDetector.ISSUE);
         issues.add(RequiredAttributeDetector.ISSUE);
         issues.add(RtlDetector.COMPAT);
         issues.add(RtlDetector.ENABLED);

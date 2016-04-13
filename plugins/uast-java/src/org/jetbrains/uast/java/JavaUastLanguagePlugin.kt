@@ -22,8 +22,7 @@ import org.jetbrains.uast.java.expressions.JavaUSynchronizedExpression
 
 object JavaUastLanguagePlugin : UastLanguagePlugin {
     override val converter: UastConverter = JavaConverter
-    override val visitorExtensions: List<UastVisitorExtension>
-        get() = emptyList()
+    override val visitorExtensions = emptyList<UastVisitorExtension>()
 }
 
 internal object JavaConverter : UastConverter {
@@ -56,7 +55,6 @@ internal object JavaConverter : UastConverter {
         is PsiVariable -> convert(element, parent)
         is PsiClassInitializer -> convert(element, parent)
         is PsiAnnotation -> convert(element, parent)
-        is PsiResourceExpression -> convert(element.expression, parent)
         is PsiExpression -> convert(element, parent)
         is PsiStatement -> convert(element, parent)
         is PsiIdentifier -> JavaUSimpleReferenceExpression(element, element.text, parent)

@@ -35,7 +35,7 @@ import static com.android.SdkConstants.TAG_PLURALS;
 import static com.android.SdkConstants.TAG_RESOURCES;
 import static com.android.SdkConstants.TAG_STRING_ARRAY;
 import static com.android.SdkConstants.TAG_STYLE;
-import static com.android.utils.SdkUtils.getResourceFieldName;
+import static com.android.tools.klint.checks.NewSdkUtils.getResourceFieldName;
 
 import com.android.annotations.NonNull;
 import com.android.resources.ResourceType;

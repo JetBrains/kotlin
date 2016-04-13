@@ -29,7 +29,7 @@ class JavaUTryExpression(
     override val finallyClause by lz { psi.finallyBlock?.let { JavaConverter.convert(it, this) } }
     override val resources by lz {
         val vars = psi.resourceList ?: return@lz null
-        val resources = vars.map { JavaConverter.convert(it, this) ?: UDeclarationNotResolved }
+        val resources = vars.resourceVariables.map { JavaConverter.convert(it, this) }
         if (resources.isEmpty()) null else resources
     }
 }

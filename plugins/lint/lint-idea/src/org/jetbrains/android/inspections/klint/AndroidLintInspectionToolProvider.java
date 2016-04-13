@@ -179,7 +179,7 @@ public class AndroidLintInspectionToolProvider {
 
   public static class AndroidKLintPackageManagerGetSignaturesInspection extends AndroidLintInspectionBase {
     public AndroidKLintPackageManagerGetSignaturesInspection() {
-      super(AndroidBundle.message("android.lint.inspections.package.manager.get.signatures"), GetSignaturesDetector.ISSUE);
+      super("Potential Multiple Certificate Exploit", GetSignaturesDetector.ISSUE);
     }
   }
 
@@ -192,12 +192,6 @@ public class AndroidLintInspectionToolProvider {
   public static class AndroidKLintPluralsCandidateInspection extends AndroidLintInspectionBase {
     public AndroidKLintPluralsCandidateInspection() {
       super(AndroidBundle.message("android.lint.inspections.plurals.candidate"), StringFormatDetector.POTENTIAL_PLURAL);
-    }
-  }
-
-  public static class AndroidKLintPrivateResourceInspection extends AndroidLintInspectionBase {
-    public AndroidKLintPrivateResourceInspection() {
-      super(AndroidBundle.message("android.lint.inspections.private.resource"), PrivateResourceDetector.ISSUE);
     }
   }
 
@@ -215,7 +209,7 @@ public class AndroidLintInspectionToolProvider {
 
   public static class AndroidKLintSQLiteStringInspection extends AndroidLintInspectionBase {
     public AndroidKLintSQLiteStringInspection() {
-      super(AndroidBundle.message("android.lint.inspections.sqlite.string"), SQLiteDetector.ISSUE);
+      super("Using STRING instead of TEXT", SQLiteDetector.ISSUE);
     }
   }
 
@@ -438,7 +432,7 @@ public class AndroidLintInspectionToolProvider {
 
   public static class AndroidKLintShortAlarmInspection extends AndroidLintInspectionBase {
     public AndroidKLintShortAlarmInspection() {
-      super(AndroidBundle.message("android.lint.inspections.short.alarm"), AlarmDetector.ISSUE);
+      super("Short or Frequent Alarm", AlarmDetector.ISSUE);
     }
   }
 

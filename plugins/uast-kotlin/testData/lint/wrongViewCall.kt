@@ -11,7 +11,7 @@ abstract class WrongViewCall(context: Context, attrs: AttributeSet, defStyle: In
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        child?.<error descr="Suspicious method call; should probably call \"`draw`\" rather than \"`onDraw`\"">onDraw</error>(canvas)
+        child?.<error>onDraw</error>(canvas)
     }
 
     private inner class MyChild(context: Context, attrs: AttributeSet, defStyle: Int) : FrameLayout(context, attrs, defStyle) {

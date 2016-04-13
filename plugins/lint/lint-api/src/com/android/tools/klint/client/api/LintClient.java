@@ -19,7 +19,6 @@ package com.android.tools.klint.client.api;
 import com.android.SdkConstants;
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
-import com.android.ide.common.repository.ResourceVisibilityLookup;
 import com.android.ide.common.res2.AbstractResourceRepository;
 import com.android.ide.common.res2.ResourceItem;
 import com.android.prefs.AndroidLocation;
@@ -1018,20 +1017,5 @@ public abstract class LintClient {
     @NonNull
     public Location.Handle createResourceItemHandle(@NonNull ResourceItem item) {
         return new Location.ResourceItemHandle(item);
-    }
-
-    private ResourceVisibilityLookup.Provider mResourceVisibility;
-
-    /**
-     * Returns a shared {@link ResourceVisibilityLookup.Provider}
-     *
-     * @return a shared provider for looking up resource visibility
-     */
-    @NonNull
-    public ResourceVisibilityLookup.Provider getResourceVisibilityProvider() {
-        if (mResourceVisibility == null) {
-            mResourceVisibility = new ResourceVisibilityLookup.Provider();
-        }
-        return mResourceVisibility;
     }
 }

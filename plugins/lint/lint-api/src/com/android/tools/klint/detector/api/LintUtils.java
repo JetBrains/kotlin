@@ -63,8 +63,6 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import static com.android.SdkConstants.*;
-import static com.android.ide.common.resources.configuration.FolderConfiguration.QUALIFIER_SPLITTER;
-import static com.android.ide.common.resources.configuration.LocaleQualifier.BCP_47_PREFIX;
 
 /**
  * Useful utility methods related to lint.
@@ -725,45 +723,6 @@ public class LintUtils {
     }
 
     /**
-     * Look up the locale and region from the given parent folder name and
-     * return it as a combined string, such as "en", "en-rUS", b+eng-US, etc, or null if
-     * no language is specified.
-     *
-     * @param folderName the folder name
-     * @return the locale+region string or null
-     */
-    @Nullable
-    public static String getLocaleAndRegion(@NonNull String folderName) {
-        if (folderName.indexOf('-') == -1) {
-            return null;
-        }
-
-        String locale = null;
-
-        for (String qualifier : QUALIFIER_SPLITTER.split(folderName)) {
-            int qualifierLength = qualifier.length();
-            if (qualifierLength == 2) {
-                char first = qualifier.charAt(0);
-                char second = qualifier.charAt(1);
-                if (first >= 'a' && first <= 'z' && second >= 'a' && second <= 'z') {
-                    locale = qualifier;
-                }
-            } else if (qualifierLength == 3 && qualifier.charAt(0) == 'r' && locale != null) {
-                char first = qualifier.charAt(1);
-                char second = qualifier.charAt(2);
-                if (first >= 'A' && first <= 'Z' && second >= 'A' && second <= 'Z') {
-                    return locale + '-' + qualifier;
-                }
-                break;
-            } else if (qualifier.startsWith(BCP_47_PREFIX)) {
-                return qualifier;
-            }
-        }
-
-        return locale;
-    }
-
-    /**
      * Returns true if the given class (specified by a fully qualified class
      * name) name is imported in the given compilation unit either through a fully qualified
      * import or by a wildcard import.
@@ -1238,7 +1197,7 @@ public class LintUtils {
         if (locale == null) {
             return assumeForBase;
         } else {
-            return "en".equals(locale.getLanguage());  //$NON-NLS-1$
+            return "en".equals(locale.getLanguageQualifier().toString());  //$NON-NLS-1$
         }
     }
 }

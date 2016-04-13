@@ -18,7 +18,7 @@ package com.android.tools.klint.checks;
 
 import static com.android.SdkConstants.*;
 import static com.android.tools.klint.detector.api.LintUtils.endsWith;
-import static com.android.utils.SdkUtils.getResourceFieldName;
+import static com.android.tools.klint.checks.NewSdkUtils.getResourceFieldName;
 
 import com.android.annotations.NonNull;
 import com.android.resources.ResourceFolderType;

@@ -39,6 +39,7 @@ import com.android.tools.klint.detector.api.TextFormat;
 import com.android.tools.klint.detector.api.XmlContext;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Objects;
+import com.google.common.base.Splitter;
 import com.google.common.collect.*;
 import com.sun.istack.internal.NotNull;
 import org.jetbrains.uast.*;
@@ -60,7 +61,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.android.SdkConstants.*;
-import static com.android.ide.common.resources.configuration.FolderConfiguration.QUALIFIER_SPLITTER;
 import static java.io.File.separator;
 
 /**
@@ -79,6 +79,8 @@ public class LintDriver {
     private static final String SUPPRESS_LINT_VMSIG = '/' + SUPPRESS_LINT + ';';
     /** Prefix used by the comment suppress mechanism in Studio/IntelliJ */
     private static final String STUDIO_ID_PREFIX = "AndroidLint";
+
+    private static final Splitter QUALIFIER_SPLITTER = Splitter.on('-');
 
     private final LintClient mClient;
     private LintRequest mRequest;
