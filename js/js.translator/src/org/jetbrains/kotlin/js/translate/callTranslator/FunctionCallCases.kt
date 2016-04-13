@@ -210,11 +210,8 @@ object ConstructorCallCase : FunctionCallCase() {
         val arguments = argumentsInfo.getArguments()
 
         val constructorDescriptor = callableDescriptor as ConstructorDescriptor
-        val closure = context.getLocalClassClosure(constructorDescriptor)
-        var closureArgs = emptyList<JsExpression>()
-        if (closure != null) {
-            closureArgs = closure.asSequence().map { context.getParameterNameRefForInvocation(it) }.toList()
-        }
+        val closure = context.getClassOrConstructorClosure(constructorDescriptor)
+        val closureArgs = closure?.map { context.getParameterNameRefForInvocation(it) } ?: emptyList()
 
         if (constructorDescriptor.isPrimary || AnnotationsUtils.isNativeObject(constructorDescriptor)) {
             return JsNew(functionRef, closureArgs + arguments)

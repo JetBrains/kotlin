@@ -85,7 +85,8 @@ public class ManglingUtils {
         }
 
         Collections.reverse(parts);
-        return StringUtil.join(parts, "$") + "$";
+        String result = StringUtil.join(parts, "$");
+        return !result.isEmpty() ? result + "$" : "";
     }
 
     @NotNull

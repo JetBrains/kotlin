@@ -17,13 +17,11 @@
 package org.jetbrains.kotlin.js.translate.context
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.resolve.DescriptorUtils.isAncestor
 import com.google.dart.compiler.backend.js.ast.JsName
 import org.jetbrains.kotlin.js.translate.utils.ManglingUtils.getSuggestedName
 import com.google.dart.compiler.backend.js.ast.JsScope
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.DescriptorUtils.getParentOfType
-import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
+import org.jetbrains.kotlin.resolve.DescriptorUtils.*
 
 private val CAPTURED_RECEIVER_NAME_PREFIX : String = "this$"
 
@@ -64,12 +62,21 @@ class UsageTracker(
     }
 
     private fun captureIfNeed(descriptor: DeclarationDescriptor?) {
-        if (descriptor == null || isCaptured(descriptor) || isAncestor(containingDescriptor, descriptor, /* strict = */ true) ||
-            isReceiverAncestor(descriptor) || isSingletonReceiver(descriptor)) return
+        if (descriptor == null || isCaptured(descriptor) || !isInLocalDeclaration() ||
+            isAncestor(containingDescriptor, descriptor, /* strict = */ true) ||
+            isReceiverAncestor(descriptor) || isSingletonReceiver(descriptor)
+        ) {
+            return
+        }
 
         parent?.captureIfNeed(descriptor)
 
         captured[descriptor] = descriptor.getJsNameForCapturedDescriptor()
+    }
+
+    private fun isInLocalDeclaration(): Boolean {
+        val container = containingDescriptor
+        return isDescriptorWithLocalVisibility(if (container is ConstructorDescriptor) container.containingDeclaration else container)
     }
 
     /**
@@ -92,10 +99,10 @@ class UsageTracker(
      */
     private fun isReceiverAncestor(descriptor: DeclarationDescriptor): Boolean {
         if (descriptor !is ReceiverParameterDescriptor) return false
-        if (containingDescriptor !is ClassDescriptor && DescriptorUtils.isDescriptorWithLocalVisibility(containingDescriptor)) return false
+        if (containingDescriptor !is ClassDescriptor && containingDescriptor !is ConstructorDescriptor) return false
 
-        val currentClass = DescriptorUtils.getClassDescriptorForType(descriptor.type)
         val containingClass = getParentOfType(containingDescriptor, ClassDescriptor::class.java, false) ?: return false
+        val currentClass = descriptor.containingDeclaration as? ClassDescriptor ?: return false
 
         for (outerDeclaration in generateSequence(containingClass) { it.containingDeclaration as? ClassDescriptor }) {
             if (DescriptorUtils.isSubclass(outerDeclaration, currentClass)) return true
@@ -124,19 +131,17 @@ class UsageTracker(
     private fun isSingletonReceiver(descriptor: DeclarationDescriptor): Boolean {
         if (descriptor !is ReceiverParameterDescriptor) return false
 
-        val value = descriptor.value
-        if (value !is ImplicitReceiver) return false
-
-        if (!DescriptorUtils.isObject(value.declarationDescriptor)) return false
+        val container = descriptor.containingDeclaration
+        if (!DescriptorUtils.isObject(container)) return false
 
         // This is workaround, since sometimes translator generates wrong expression for `this` expressions.
         // Presumably, it's related to KT-11823
         // TODO: remove when issue gets fixed.
-        if (containingDescriptor == value.declarationDescriptor) return false
+        if (containingDescriptor == container) return false
 
         if (containingDescriptor !is ClassDescriptor) {
             val containingClass = getParentOfType(containingDescriptor, ClassDescriptor::class.java, false);
-            if (containingClass == value.declarationDescriptor) return false
+            if (containingClass == container) return false
         }
 
         return true
