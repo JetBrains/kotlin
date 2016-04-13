@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.js.inline.clean
 import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.metadata.staticRef
 
-import org.jetbrains.kotlin.js.inline.util.collectReferencesInside
+import org.jetbrains.kotlin.js.inline.util.collectUsedNames
 
 /**
  * Removes unused local function declarations like:
@@ -53,7 +53,7 @@ private class UnusedInstanceCollector : JsVisitorWithContextImpl() {
         val currentStatement = statementContext.currentNode
         tracker.addCandidateForRemoval(name, currentStatement!!)
 
-        val references = collectReferencesInside(x)
+        val references = collectUsedNames(x)
         references.filterNotNull()
                   .forEach { tracker.addRemovableReference(name, it) }
 

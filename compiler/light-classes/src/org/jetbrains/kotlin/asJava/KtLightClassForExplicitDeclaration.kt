@@ -181,7 +181,7 @@ open class KtLightClassForExplicitDeclaration(
         assert(virtualFile != null) { "No virtual file for " + classOrObject.text }
 
         object : FakeFileForLightClass(
-                classOrObject.getContainingKtFile().packageFqName, virtualFile, myManager,
+                classOrObject.getContainingKtFile(),
                 { if (classOrObject.isTopLevel()) this else create(getOutermostClassOrObject(classOrObject))!! },
                 { getJavaFileStub() }
         ) {

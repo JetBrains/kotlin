@@ -59,7 +59,7 @@ class MultifileClassPartCodegen(
                 FINAL_PART_CLASS_ATTRIBUTES
 
     private fun ClassBuilder.newSpecialMethod(originDescriptor: DeclarationDescriptor, name: String) =
-            newMethod(OtherOrigin(originDescriptor), Opcodes.ACC_STATIC or Opcodes.ACC_SUPER, name, "()V", null, null)
+            newMethod(OtherOrigin(originDescriptor), Opcodes.ACC_STATIC, name, "()V", null, null)
 
     private val staticInitClassBuilder = ClassBuilderOnDemand {
         state.factory.newVisitor(MultifileClass(file, packageFragment), staticInitClassType, file).apply {

@@ -19,31 +19,111 @@ package org.jetbrains.kotlin.js.inline.util
 import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.metadata.staticRef
 
-import java.util.IdentityHashMap
-import org.jetbrains.kotlin.js.inline.util.collectors.ReferenceNameCollector
-import org.jetbrains.kotlin.js.inline.util.collectors.NameCollector
 import org.jetbrains.kotlin.js.inline.util.collectors.InstanceCollector
 import org.jetbrains.kotlin.js.inline.util.collectors.PropertyCollector
 import org.jetbrains.kotlin.js.translate.expression.*
+import java.util.*
 
 fun collectFunctionReferencesInside(scope: JsNode): List<JsName> =
-     collectReferencesInside(scope).filter { it.staticRef is JsFunction }
+        collectReferencedNames(scope).filter { it.staticRef is JsFunction }
 
-fun collectReferencesInside(scope: JsNode): List<JsName> {
-    return with(ReferenceNameCollector()) {
-        accept(scope)
-        references
-    }
+private fun collectReferencedNames(scope: JsNode): Set<JsName> {
+    val references = IdentitySet<JsName>()
+
+    object : RecursiveJsVisitor() {
+        override fun visitBreak(x: JsBreak) { }
+
+        override fun visitContinue(x: JsContinue) { }
+
+        override fun visit(x: JsVars.JsVar) {
+            val initializer = x.initExpression
+            if (initializer != null) {
+                accept(initializer)
+            }
+        }
+
+        override fun visitNameRef(nameRef: JsNameRef) {
+            super.visitNameRef(nameRef)
+            val name = nameRef.name
+            if (name != null) {
+                references += name
+            }
+        }
+    }.accept(scope)
+
+    return references
 }
 
-fun collectLocalNames(function: JsFunction): List<JsName> {
-    val functionScope = function.scope
+fun collectUsedNames(scope: JsNode): Set<JsName> {
+    val references = IdentitySet<JsName>()
 
-    return with(NameCollector(functionScope)) {
-        accept(function.body)
-        names.values.toList()
-    }
+    object : RecursiveJsVisitor() {
+        override fun visitBreak(x: JsBreak) { }
+
+        override fun visitContinue(x: JsContinue) { }
+
+        override fun visit(x: JsVars.JsVar) {
+            val initializer = x.initExpression
+            if (initializer != null) {
+                accept(initializer)
+            }
+        }
+
+        override fun visitNameRef(nameRef: JsNameRef) {
+            super.visitNameRef(nameRef)
+            val name = nameRef.name
+            if (name != null && nameRef.qualifier == null) {
+                references.add(name)
+            }
+        }
+
+        override fun visitFunction(x: JsFunction) {
+            references += x.collectFreeVariables()
+        }
+    }.accept(scope)
+
+    return references
 }
+
+fun collectDefinedNames(scope: JsNode): Set<JsName> {
+    val names: MutableMap<String, JsName> = HashMap()
+
+    object : RecursiveJsVisitor() {
+        override fun visit(x: JsVars.JsVar) {
+            val initializer = x.initExpression
+            if (initializer != null) {
+                accept(initializer)
+            }
+            addNameIfNeeded(x.name)
+        }
+
+        override fun visitExpressionStatement(x: JsExpressionStatement) {
+            val expression = x.expression
+            if (expression is JsFunction) {
+                val name = expression.name
+                if (name != null) {
+                    addNameIfNeeded(name)
+                }
+            }
+            super.visitExpressionStatement(x)
+        }
+
+        // Skip function expression, since it does not introduce name in scope of containing function.
+        // The only exception is function statement, that is handled with the code above.
+        override fun visitFunction(x: JsFunction) { }
+
+        private fun addNameIfNeeded(name: JsName) {
+            val ident = name.ident
+            val nameCollected = names[ident]
+            assert(nameCollected == null || nameCollected === name) { "ambiguous identifier $name" }
+            names[ident] = name
+        }
+    }.accept(scope)
+
+    return names.values.toSet()
+}
+
+fun JsFunction.collectFreeVariables() = collectUsedNames(body) - collectDefinedNames(body) - parameters.map { it.name }
 
 fun collectJsProperties(scope: JsNode): IdentityHashMap<JsName, JsExpression> {
     val collector = PropertyCollector()

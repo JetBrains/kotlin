@@ -134,13 +134,11 @@ public class DirectiveTestUtils {
     private static final DirectiveHandler COUNT_LABELS = new CountNodesDirective<JsLabel>("CHECK_LABELS_COUNT", JsLabel.class) {
         @Override
         protected int getActualCountFor(@NotNull JsLabel node, @NotNull ArgumentsHelper arguments) {
-            String labelName = arguments.getNamedArgument("name");
-
-            if (node.getName().getIdent().equals(labelName)) {
+            String labelName = arguments.findNamedArgument("name");
+            if (labelName == null) {
                 return 1;
             }
-
-            return 0;
+            return node.getName().getIdent().equals(labelName) ? 1 : 0;
         }
     };
 

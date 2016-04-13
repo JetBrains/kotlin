@@ -525,20 +525,17 @@ public class BodyResolver {
             @NotNull ClassDescriptorWithResolutionScopes classDescriptor
     ) {
         LexicalScope scopeForInitializers = classDescriptor.getScopeForInitializerResolution();
-        if (!classDescriptor.getConstructors().isEmpty()) {
-            KtExpression body = anonymousInitializer.getBody();
-            if (body != null) {
-                PreliminaryDeclarationVisitor.Companion.createForDeclaration(
-                        (KtDeclaration) anonymousInitializer.getParent().getParent(), trace);
-                expressionTypingServices.getTypeInfo(
-                        scopeForInitializers, body, NO_EXPECTED_TYPE, outerDataFlowInfo, trace, /*isStatement = */true
-                );
-            }
-            processModifiersOnInitializer(anonymousInitializer, scopeForInitializers);
+        KtExpression body = anonymousInitializer.getBody();
+        if (body != null) {
+            PreliminaryDeclarationVisitor.Companion.createForDeclaration(
+                    (KtDeclaration) anonymousInitializer.getParent().getParent(), trace);
+            expressionTypingServices.getTypeInfo(
+                    scopeForInitializers, body, NO_EXPECTED_TYPE, outerDataFlowInfo, trace, /*isStatement = */true
+            );
         }
-        else {
+        processModifiersOnInitializer(anonymousInitializer, scopeForInitializers);
+        if (classDescriptor.getConstructors().isEmpty()) {
             trace.report(ANONYMOUS_INITIALIZER_IN_INTERFACE.on(anonymousInitializer));
-            processModifiersOnInitializer(anonymousInitializer, scopeForInitializers);
         }
     }
 

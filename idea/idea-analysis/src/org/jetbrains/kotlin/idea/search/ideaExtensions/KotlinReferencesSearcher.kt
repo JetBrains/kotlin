@@ -224,8 +224,8 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
         }
 
         private fun searchPropertyMethods(queryParameters: ReferencesSearch.SearchParameters, parameter: KtParameter) {
-            val propertyMethods = runReadAction { LightClassUtil.getLightClassPropertyMethods(parameter) }
-            propertyMethods.allDeclarations.forEach { searchNamedElement(queryParameters, it) }
+            val lightElements = runReadAction { parameter.toLightElements() }
+            lightElements.forEach { searchNamedElement(queryParameters, it) }
         }
 
         private fun searchDataClassComponentUsages(queryParameters: ReferencesSearch.SearchParameters,

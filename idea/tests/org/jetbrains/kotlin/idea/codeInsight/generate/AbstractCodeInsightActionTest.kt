@@ -37,6 +37,14 @@ abstract class AbstractCodeInsightActionTest : KotlinLightCodeInsightFixtureTest
         return Class.forName(actionClassName).newInstance() as CodeInsightAction
     }
 
+    protected open fun configureExtra(mainFilePath: String, mainFileText: String) {
+
+    }
+
+    protected open fun checkExtra() {
+
+    }
+
     protected open fun testAction(action: AnAction, forced: Boolean): Presentation {
         val e = TestActionEvent(action)
         action.beforeActionPerformedUpdate(e)
@@ -65,6 +73,7 @@ abstract class AbstractCodeInsightActionTest : KotlinLightCodeInsightFixtureTest
                     .forEach {
                         myFixture.configureByFile(File(rootDir, it).path.replace(File.separator, "/"))
                     }
+            configureExtra(path, fileText)
             myFixture.configureByFile(path)
 
             val action = createAction(fileText)
@@ -83,6 +92,8 @@ abstract class AbstractCodeInsightActionTest : KotlinLightCodeInsightFixtureTest
                 val afterFile = File("$path.after")
                 TestCase.assertTrue(afterFile.exists())
                 myFixture.checkResult(FileUtil.loadFile(afterFile, true))
+
+                checkExtra()
             }
         }
         catch (e: CommonRefactoringUtil.RefactoringErrorHintException) {

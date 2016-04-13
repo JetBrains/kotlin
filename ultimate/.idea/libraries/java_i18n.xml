@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="java-i18n">
+    <ANNOTATIONS>
+      <root url="file://$PROJECT_DIR$/../annotations" />
+    </ANNOTATIONS>
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/java-i18n/lib/java-i18n.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

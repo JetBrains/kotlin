@@ -59,20 +59,18 @@ fun renameLocalNames(
         context: NamingContext,
         function: JsFunction
 ) {
-    for (name in collectLocalNames(function)) {
+    for (name in collectDefinedNames(function.body)) {
         val freshName = context.getFreshName(name)
         context.replaceName(name, freshName.makeRef())
     }
 }
 
 fun refreshLabelNames(
-        context: NamingContext,
-        function: JsFunction
-) {
-    val scope = function.scope
+        node: JsNode,
+        scope: JsScope
+): JsNode {
     if (scope !is JsFunctionScope) throw AssertionError("JsFunction is expected to have JsFunctionScope")
 
-    val visitor = LabelNameRefreshingVisitor(context, scope)
-    visitor.accept(function.body)
-    context.applyRenameTo(function)
+    val visitor = LabelNameRefreshingVisitor(scope)
+    return visitor.accept(node)
 }

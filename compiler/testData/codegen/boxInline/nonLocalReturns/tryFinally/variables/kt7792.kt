@@ -21,7 +21,7 @@ fun monitorCall(lock: Any) {
 import test.*
 
 public class ClassA {
-    val LOCK = Object()
+    val LOCK = "__LOCK__"
 
     var result = "fail"
 

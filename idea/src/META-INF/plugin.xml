@@ -18,6 +18,8 @@
   <depends optional="true" config-file="coverage.xml">Coverage</depends>
   <depends optional="true" config-file="i18n.xml">com.intellij.java-i18n</depends>
 
+  <!-- ULTIMATE-PLUGIN-PLACEHOLDER -->
+
   <project-components>
     <component>
       <implementation-class>org.jetbrains.kotlin.idea.compiler.KotlinCompilerManager</implementation-class>
@@ -628,6 +630,10 @@
 
     <testCreator language="kotlin" implementationClass="org.jetbrains.kotlin.idea.testIntegration.KotlinTestCreator"/>
     <testFinder implementation="org.jetbrains.kotlin.idea.testIntegration.KotlinTestFinder"/>
+
+    <constantExpressionEvaluator
+        language="kotlin"
+        implementationClass="org.jetbrains.kotlin.idea.KotlinLightConstantExpressionEvaluator"/>
 
     <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.IfNullToElvisIntention</className>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="KotlinCompilerSettings">
+    <option name="additionalArguments" value="-version -Xallow-kotlin-package -Xskip-metadata-version-check" />
+  </component>
+</project>

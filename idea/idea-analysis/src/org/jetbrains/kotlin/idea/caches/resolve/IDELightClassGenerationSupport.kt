@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.lazy.NoDescriptorForDeclarationException
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
@@ -66,7 +67,6 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
 
     private fun getContextForNonLocalClassOrObject(classOrObject: KtClassOrObject): LightClassConstructionContext {
         val resolutionFacade = classOrObject.getResolutionFacade()
-        ForceResolveUtil.forceResolveAllContents(resolutionFacade.resolveToDescriptor(classOrObject))
         val bindingContext = if (classOrObject is KtClass && classOrObject.isAnnotation()) {
             // need to make sure default values for parameters are resolved
             // because java resolve depends on whether there is a default value for an annotation attribute
@@ -76,6 +76,10 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
         else {
             resolutionFacade.analyze(classOrObject)
         }
+        val classDescriptor = bindingContext.get(BindingContext.CLASS, classOrObject).sure {
+            "Class descriptor was not found for ${classOrObject.getElementTextWithContext()}"
+        }
+        ForceResolveUtil.forceResolveAllContents(classDescriptor)
         return LightClassConstructionContext(bindingContext, resolutionFacade.moduleDescriptor)
     }
 
@@ -175,6 +179,8 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
     }
 
     override fun getMultifilePartClasses(partFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
+        if (partFqName.isRoot) return emptyList()
+
         val facadeKtFiles = StaticFacadeIndexUtil.getMultifileClassForPart(partFqName, scope, project)
         val partShortName = partFqName.shortName().asString()
         val partClassFileShortName = partShortName + ".class"
@@ -219,6 +225,8 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
             return null
         }
     }
+
+    override fun analyze(element: KtElement) = element.analyze(BodyResolveMode.PARTIAL)
 
     override fun getFacadeNames(packageFqName: FqName, scope: GlobalSearchScope): Collection<String> {
         val facadeFilesInPackage = KotlinFileFacadeClassByPackageIndex.getInstance().get(packageFqName.asString(), project, scope)

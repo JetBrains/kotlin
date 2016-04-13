@@ -897,16 +897,6 @@ public class DescriptorResolver {
                     annotationSplitter.getAnnotationsForTarget(PROPERTY_GETTER),
                     annotationResolver.resolveAnnotationsWithoutArguments(scopeWithTypeParameters, getter.getModifierList(), trace)));
 
-            KotlinType outType = propertyDescriptor.getType();
-            KotlinType returnType = outType;
-            KtTypeReference returnTypeReference = getter.getReturnTypeReference();
-            if (returnTypeReference != null) {
-                returnType = typeResolver.resolveType(scopeWithTypeParameters, returnTypeReference, trace, true);
-                if (!TypeUtils.equalTypes(returnType, outType)) {
-                    trace.report(WRONG_GETTER_RETURN_TYPE.on(returnTypeReference, propertyDescriptor.getReturnType(), outType));
-                }
-            }
-
             getterDescriptor = new PropertyGetterDescriptorImpl(
                     propertyDescriptor, getterAnnotations,
                     resolveModalityFromModifiers(getter, propertyDescriptor.getModality()),
@@ -914,10 +904,8 @@ public class DescriptorResolver {
                     /* isDefault = */ false, getter.hasModifier(EXTERNAL_KEYWORD),
                     CallableMemberDescriptor.Kind.DECLARATION, null, KotlinSourceElementKt.toSourceElement(getter)
             );
-            if (returnType.isError() && !getter.hasBlockBody() && getter.hasBody()) {
-                returnType = inferReturnTypeFromExpressionBody(storageManager, expressionTypingServices, trace, scopeWithTypeParameters,
-                                                               DataFlowInfoFactory.EMPTY, getter, getterDescriptor);
-            }
+            KotlinType returnType =
+                    determineGetterReturnType(scopeWithTypeParameters, trace, getterDescriptor, getter, propertyDescriptor.getType());
             getterDescriptor.initialize(returnType);
             trace.record(BindingContext.PROPERTY_ACCESSOR, getter, getterDescriptor);
         }
@@ -928,6 +916,37 @@ public class DescriptorResolver {
             getterDescriptor.initialize(propertyDescriptor.getType());
         }
         return getterDescriptor;
+    }
+
+    @NotNull
+    private KotlinType determineGetterReturnType(
+            @NotNull LexicalScope scope,
+            @NotNull BindingTrace trace,
+            @NotNull PropertyGetterDescriptor getterDescriptor,
+            @NotNull KtPropertyAccessor getter,
+            @NotNull KotlinType propertyType
+    ) {
+        KtTypeReference returnTypeReference = getter.getReturnTypeReference();
+        if (returnTypeReference != null) {
+            KotlinType explicitReturnType = typeResolver.resolveType(scope, returnTypeReference, trace, true);
+            if (!TypeUtils.equalTypes(explicitReturnType, propertyType)) {
+                trace.report(WRONG_GETTER_RETURN_TYPE.on(returnTypeReference, propertyType, explicitReturnType));
+            }
+            return explicitReturnType;
+        }
+
+        // If a property has no type specified in the PSI but the getter does (or has an initializer e.g. "val x get() = ..."),
+        // infer the correct type for the getter but leave the error type for the property.
+        // This is useful for an IDE quick fix which would add the type to the property
+        KtProperty property = getter.getProperty();
+        if (!property.hasDelegateExpressionOrInitializer() && property.getTypeReference() == null &&
+            getter.hasBody() && !getter.hasBlockBody()) {
+            return inferReturnTypeFromExpressionBody(
+                    storageManager, expressionTypingServices, trace, scope, DataFlowInfoFactory.EMPTY, getter, getterDescriptor
+            );
+        }
+
+        return propertyType;
     }
 
     @NotNull

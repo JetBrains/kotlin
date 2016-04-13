@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
+import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
@@ -51,11 +52,16 @@ class InlineCodegenForDefaultBody(
 
     private val jvmSignature = state.typeMapper.mapSignatureWithGeneric(functionDescriptor, context.contextKind)
 
+    private val methodStartLabel = Label()
+
     init {
         assert(InlineUtil.isInline(function)) {
             "InlineCodegen can inline only inline functions and array constructors: " + function
         }
         InlineCodegen.reportIncrementalInfo(functionDescriptor, codegen.context.functionDescriptor.original, jvmSignature, state)
+
+        //InlineCodegenForDefaultBody created just after visitCode call
+        codegen.v.visitLabel(methodStartLabel)
     }
 
     override fun genCallInner(callableMethod: Callable, resolvedCall: ResolvedCall<*>?, callDefault: Boolean, codegen: ExpressionCodegen) {
@@ -70,7 +76,13 @@ class InlineCodegenForDefaultBody(
                 node.signature,
                 node.exceptions.toTypedArray())
 
-        node.accept(InlineAdapter(transformedMethod, 0, childSourceMapper))
+        val argsSize = (Type.getArgumentsAndReturnSizes(jvmSignature.asmMethod.descriptor) ushr  2) - if (callableMethod.isStaticCall()) 1 else 0
+        node.accept(object : InlineAdapter(transformedMethod, 0, childSourceMapper) {
+            override fun visitLocalVariable(name: String, desc: String, signature: String?, start: Label, end: Label, index: Int) {
+                val startLabel = if (index < argsSize) methodStartLabel else start
+                super.visitLocalVariable(name, desc, signature, startLabel, end, index)
+            }
+        })
 
         transformedMethod.accept(MethodBodyVisitor(codegen.v))
     }

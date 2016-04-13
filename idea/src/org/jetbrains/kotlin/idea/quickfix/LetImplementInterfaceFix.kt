@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isInterface
@@ -38,17 +39,22 @@ class LetImplementInterfaceFix(
 
     private fun KotlinType.renderShort() = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(this)
 
-    private val expectedTypeName = expectedType.renderShort()
+    private val expectedTypeName: String
 
-    private val expectedTypeNameSourceCode = IdeDescriptorRenderers.SOURCE_CODE.renderType(expectedType)
+    private val expectedTypeNameSourceCode: String
 
     private val prefix: String
 
     private val validExpectedType: Boolean
 
     init {
+        val expectedTypeNotNullable = TypeUtils.makeNotNullable(expectedType)
+        expectedTypeName = expectedTypeNotNullable.renderShort()
+        expectedTypeNameSourceCode = IdeDescriptorRenderers.SOURCE_CODE.renderType(expectedTypeNotNullable)
+
         val verb = if (expressionType.isInterface()) "extend" else "implement"
-        prefix = "Let '${expressionType.renderShort()}' $verb"
+        val typeDescription = if (element.isObjectLiteral()) "the anonymous object" else "'${expressionType.renderShort()}'"
+        prefix = "Let $typeDescription $verb"
 
         validExpectedType = with (expectedType) {
             isInterface() &&

@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.maven;
 
-import com.intellij.util.ArrayUtil;
-import com.sampullara.cli.Args;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.apache.maven.artifact.Artifact;
@@ -99,13 +97,6 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
 
         arguments.moduleName = moduleName;
         getLog().info("Module name is " + moduleName);
-
-        try {
-            Args.parse(arguments, ArrayUtil.toStringArray(args));
-        }
-        catch (IllegalArgumentException e) {
-            throw new MojoExecutionException(e.getMessage());
-        }
 
         if (arguments.noOptimize) {
             getLog().info("Optimization is turned off");

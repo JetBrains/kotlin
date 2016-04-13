@@ -22,6 +22,9 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.SystemInfo;
 import com.sampullara.cli.Args;
+import kotlin.Pair;
+import kotlin.collections.CollectionsKt;
+import kotlin.jvm.functions.Function1;
 import org.fusesource.jansi.AnsiConsole;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -87,7 +90,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
     private A parseArguments(@NotNull PrintStream errStream, @NotNull MessageRenderer messageRenderer, @NotNull String[] args) {
         try {
             A arguments = createArguments();
-            arguments.freeArgs = Args.parse(arguments, args);
+            parseArguments(args, arguments);
             return arguments;
         }
         catch (IllegalArgumentException e) {
@@ -102,6 +105,26 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
             );
         }
         return null;
+    }
+
+    @SuppressWarnings("WeakerAccess") // Used in maven (see KotlinCompileMojoBase.java)
+    public void parseArguments(@NotNull String[] args, @NotNull A arguments) {
+        Pair<List<String>, List<String>> unparsedArgs =
+                CollectionsKt.partition(Args.parse(arguments, args, false), new Function1<String, Boolean>() {
+                    @Override
+                    public Boolean invoke(String s) {
+                        return s.startsWith("-X");
+                    }
+                });
+
+        arguments.unknownExtraFlags = unparsedArgs.getFirst();
+        arguments.freeArgs = unparsedArgs.getSecond();
+
+        for (String argument : arguments.freeArgs) {
+            if (argument.startsWith("-")) {
+                throw new IllegalArgumentException("Invalid argument: " + argument);
+            }
+        }
     }
 
     /**
@@ -169,6 +192,8 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
             messageCollector = new FilteringMessageCollector(messageCollector, Predicates.equalTo(CompilerMessageSeverity.WARNING));
         }
 
+        reportUnknownExtraFlags(messageCollector, arguments);
+
         GroupingMessageCollector groupingCollector = new GroupingMessageCollector(messageCollector);
         try {
             ExitCode exitCode = OK;
@@ -223,6 +248,16 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
         }
         finally {
             groupingCollector.flush();
+        }
+    }
+
+    private void reportUnknownExtraFlags(@NotNull MessageCollector collector, @NotNull A arguments) {
+        for (String flag : arguments.unknownExtraFlags) {
+            collector.report(
+                    CompilerMessageSeverity.WARNING,
+                    "Flag is not supported by this version of the compiler: " + flag,
+                    CompilerMessageLocation.NO_LOCATION
+            );
         }
     }
 

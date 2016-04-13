@@ -1,0 +1,8 @@
+{
+  "fixtureClasses": ["org.jetbrains.kotlin.idea.spring.tests.SpringTestFixtureExtension"],
+  "type": "MARKED_ELEMENT",
+  "mainFile": "test.kt",
+  "springFileSet": ["spring-config.xml"],
+  "newName": "setBar2",
+  "withRuntime": "true"
+}

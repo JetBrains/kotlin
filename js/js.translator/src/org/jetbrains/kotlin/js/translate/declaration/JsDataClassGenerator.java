@@ -69,7 +69,7 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
                 argumentValue = parameterValue;
             }
             else {
-                JsExpression defaultCondition = JsAstUtils.equality(new JsNameRef(paramName), context.namer().getUndefinedExpression());
+                JsExpression defaultCondition = JsAstUtils.equality(new JsNameRef(paramName), Namer.getUndefinedExpression());
                 argumentValue = new JsConditional(defaultCondition,
                                                   propertyAccessor(JsLiteral.THIS, constructorParam.getName()),
                                                   parameterValue);
@@ -97,8 +97,7 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
         for (int i = 0; i < classProperties.size(); i++) {
             String name = classProperties.get(i).getName().toString();
             JsExpression literal = jsProgram.getStringLiteral((i == 0 ? (getClassDescriptor().getName() + "(") : ", ") + name + "=");
-            JsExpression expr =
-                    new JsInvocation(new JsNameRef("toString", Namer.KOTLIN_OBJECT_REF), propertyAccessor(JsLiteral.THIS, name));
+            JsExpression expr = new JsInvocation(context.namer().kotlin("toString"), propertyAccessor(JsLiteral.THIS, name));
             JsExpression component = JsAstUtils.sum(literal, expr);
             if (result == null) {
                 result = component;
@@ -125,7 +124,7 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
 
         for (PropertyDescriptor prop : classProperties) {
             // TODO: we should statically check that we can call hashCode method directly.
-            JsExpression component = new JsInvocation(new JsNameRef("hashCode", Namer.KOTLIN_OBJECT_REF),
+            JsExpression component = new JsInvocation(context.namer().kotlin("hashCode"),
                                                       propertyAccessor(JsLiteral.THIS, prop.getName().toString()));
             JsExpression newHashValue = JsAstUtils.sum(JsAstUtils.mul(new JsNameRef(varName), jsProgram.getNumberLiteral(31)), component);
             JsExpression assignment = JsAstUtils.assignment(new JsNameRef(varName),
@@ -156,7 +155,7 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
         JsExpression fieldChain = null;
         for (PropertyDescriptor prop : classProperties) {
             String name = prop.getName().toString();
-            JsExpression next = new JsInvocation(new JsNameRef("equals", Namer.KOTLIN_OBJECT_REF),
+            JsExpression next = new JsInvocation(context.namer().kotlin("equals"),
                                                  propertyAccessor(JsLiteral.THIS, name),
                                                  propertyAccessor(new JsNameRef(paramName), name));
             if (fieldChain == null) {

@@ -74,6 +74,7 @@
                         <arg>-Xno-optimize</arg>
                         <arg>-Xno-call-assertions</arg>
                         <arg>-Xno-param-assertions</arg>
+                        <arg>-Xunknown-extra-argument-abcdefghijklmnopqrstuvwxyz</arg>
                     </args>
                 </configuration>
             </plugin>

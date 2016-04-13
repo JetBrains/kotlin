@@ -1,0 +1,10 @@
+{
+  "fixtureClasses": ["org.jetbrains.kotlin.idea.spring.tests.SpringTestFixtureExtension"],
+  "type": "MARKED_ELEMENT",
+  "mainFile": "test/KotlinAnnotated.kt",
+  "springFileSet": ["test/JavaAnnotated.java", "test/KotlinAnnotated.kt"],
+  "injected": "true",
+  "byRef": "true",
+  "newName": "buildBeanJNew",
+  "withRuntime": "true"
+}

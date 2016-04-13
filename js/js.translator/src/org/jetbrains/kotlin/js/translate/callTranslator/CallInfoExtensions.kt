@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.js.translate.callTranslator
 
+import com.google.dart.compiler.backend.js.ast.JsEmptyExpression
 import com.google.dart.compiler.backend.js.ast.JsExpression
 import com.google.dart.compiler.backend.js.ast.JsName
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
@@ -72,7 +73,7 @@ fun VariableAccessInfo.constructAccessExpression(ref: JsExpression): JsExpressio
     if (isGetAccess()) {
         return ref
     } else {
-        return JsAstUtils.assignment(ref, value!!)
+        return if (value !is JsEmptyExpression) JsAstUtils.assignment(ref, value!!) else context.emptyExpression
     }
 }
 

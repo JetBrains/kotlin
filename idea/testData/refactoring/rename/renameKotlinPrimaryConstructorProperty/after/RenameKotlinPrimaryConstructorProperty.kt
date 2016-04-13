@@ -1,6 +1,6 @@
 package testing.rename
 
-public open class Foo(public open val /*rename*/second: String)
+public open class Foo(public open val second: String)
 
 public class Bar : Foo("abc") {
     override val second = "xyzzy"

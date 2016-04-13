@@ -17,7 +17,9 @@
 package org.jetbrains.kotlin.js.translate.utils;
 
 import com.google.dart.compiler.backend.js.ast.*;
+import com.google.dart.compiler.backend.js.ast.metadata.MetadataProperties;
 import com.intellij.util.SmartList;
+import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.translate.context.Namer;
@@ -30,12 +32,12 @@ import java.util.Collections;
 import java.util.List;
 
 public final class JsAstUtils {
-    private static final JsNameRef DEFINE_PROPERTY = new JsNameRef("defineProperty");
-    public static final JsNameRef CREATE_OBJECT = new JsNameRef("create");
+    private static final JsNameRef DEFINE_PROPERTY = fqnWithoutSideEffects("defineProperty", null);
+    public static final JsNameRef CREATE_OBJECT = fqnWithoutSideEffects("create", null);
 
     private static final JsNameRef VALUE = new JsNameRef("value");
-    private static final JsPropertyInitializer WRITABLE = new JsPropertyInitializer(new JsNameRef("writable"), JsLiteral.TRUE);
-    private static final JsPropertyInitializer ENUMERABLE = new JsPropertyInitializer(new JsNameRef("enumerable"), JsLiteral.TRUE);
+    private static final JsPropertyInitializer WRITABLE = new JsPropertyInitializer(fqnWithoutSideEffects("writable", null), JsLiteral.TRUE);
+    private static final JsPropertyInitializer ENUMERABLE = new JsPropertyInitializer(fqnWithoutSideEffects("enumerable", null), JsLiteral.TRUE);
 
     public static final String LENDS_JS_DOC_TAG = "lends";
 
@@ -121,12 +123,12 @@ public final class JsAstUtils {
 
     @NotNull
     public static JsInvocation invokeKotlinFunction(@NotNull String name, @NotNull JsExpression... argument) {
-        return new JsInvocation(new JsNameRef(name, Namer.KOTLIN_OBJECT_REF), argument);
+        return invokeMethod(Namer.kotlinObject(), name, argument);
     }
 
     @NotNull
     public static JsInvocation invokeMethod(@NotNull JsExpression thisObject, @NotNull String name, @NotNull JsExpression... arguments) {
-        return new JsInvocation(new JsNameRef(name, thisObject), arguments);
+        return new JsInvocation(fqnWithoutSideEffects(name, thisObject), arguments);
     }
 
     @NotNull
@@ -171,7 +173,7 @@ public final class JsAstUtils {
 
     @NotNull
     private static JsExpression rangeTo(@NotNull String rangeClassName, @NotNull JsExpression rangeStart, @NotNull JsExpression rangeEnd) {
-        JsNameRef expr = new JsNameRef(rangeClassName, Namer.KOTLIN_NAME);
+        JsNameRef expr = fqnWithoutSideEffects(rangeClassName, Namer.kotlinObject());
         JsNew numberRangeConstructorInvocation = new JsNew(expr);
         setArguments(numberRangeConstructorInvocation, rangeStart, rangeEnd);
         return numberRangeConstructorInvocation;
@@ -194,17 +196,17 @@ public final class JsAstUtils {
             List<JsExpression> args = new SmartList<JsExpression>();
             args.add(context.program().getNumberLiteral(low));
             args.add(context.program().getNumberLiteral(high));
-            return new JsNew(Namer.KOTLIN_LONG_NAME_REF, args);
+            return new JsNew(Namer.kotlinLong(), args);
         }
         else {
             if (value == 0) {
-                return new JsNameRef(Namer.LONG_ZERO, Namer.KOTLIN_LONG_NAME_REF);
+                return new JsNameRef(Namer.LONG_ZERO, Namer.kotlinLong());
             }
             else if (value == 1) {
-                return new JsNameRef(Namer.LONG_ONE, Namer.KOTLIN_LONG_NAME_REF);
+                return new JsNameRef(Namer.LONG_ONE, Namer.kotlinLong());
             }
             else if (value == -1) {
-                return new JsNameRef(Namer.LONG_NEG_ONE, Namer.KOTLIN_LONG_NAME_REF);
+                return new JsNameRef(Namer.LONG_NEG_ONE, Namer.kotlinLong());
             }
             return longFromInt(context.program().getNumberLiteral((int) value));
         }
@@ -212,12 +214,12 @@ public final class JsAstUtils {
 
     @NotNull
     public static JsExpression longFromInt(@NotNull JsExpression expression) {
-        return invokeMethod(Namer.KOTLIN_LONG_NAME_REF, Namer.LONG_FROM_INT, expression);
+        return invokeMethod(Namer.kotlinLong(), Namer.LONG_FROM_INT, expression);
     }
 
     @NotNull
     public static JsExpression longFromNumber(@NotNull JsExpression expression) {
-        return invokeMethod(Namer.KOTLIN_LONG_NAME_REF, Namer.LONG_FROM_NUMBER, expression);
+        return invokeMethod(Namer.kotlinLong(), Namer.LONG_FROM_NUMBER, expression);
     }
 
     @NotNull
@@ -295,8 +297,29 @@ public final class JsAstUtils {
     }
 
     @NotNull
-    public static JsExpression assignment(@NotNull JsExpression left, @NotNull JsExpression right) {
+    public static JsBinaryOperation assignment(@NotNull JsExpression left, @NotNull JsExpression right) {
         return new JsBinaryOperation(JsBinaryOperator.ASG, left, right);
+    }
+
+    @Nullable
+    public static Pair<JsExpression, JsExpression> decomposeAssignment(@NotNull JsExpression expr) {
+        if (!(expr instanceof JsBinaryOperation)) return null;
+
+        JsBinaryOperation binary = (JsBinaryOperation) expr;
+        if (binary.getOperator() != JsBinaryOperator.ASG) return null;
+
+        return new Pair<JsExpression, JsExpression>(binary.getArg1(), binary.getArg2());
+    }
+
+    @Nullable
+    public static Pair<JsName, JsExpression> decomposeAssignmentToVariable(@NotNull JsExpression expr) {
+        Pair<JsExpression, JsExpression> assignment = decomposeAssignment(expr);
+        if (assignment == null || !(assignment.getFirst() instanceof JsNameRef)) return null;
+
+        JsNameRef nameRef = (JsNameRef) assignment.getFirst();
+        if (nameRef.getName() == null || nameRef.getQualifier() != null) return null;
+
+        return new Pair<JsName, JsExpression>(nameRef.getName(), assignment.getSecond());
     }
 
     @NotNull
@@ -425,7 +448,7 @@ public final class JsAstUtils {
         JsName kotlinObjectAsParameter = packageBlockFunction.getScope().declareNameUnsafe(Namer.KOTLIN_NAME);
         packageBlockFunction.getParameters().add(new JsParameter(kotlinObjectAsParameter));
 
-        to.add(new JsInvocation(packageBlockFunction, Namer.KOTLIN_OBJECT_REF).makeStmt());
+        to.add(new JsInvocation(packageBlockFunction, Namer.kotlinObject()).makeStmt());
 
         return packageBlockFunction;
     }
@@ -462,5 +485,26 @@ public final class JsAstUtils {
         }
 
         return new SmartList<JsStatement>(statement);
+    }
+
+    @NotNull
+    public static JsNameRef fqnWithoutSideEffects(@NotNull String identifier, @Nullable JsExpression qualifier) {
+        JsNameRef result = new JsNameRef(identifier, qualifier);
+        MetadataProperties.setSideEffects(result, false);
+        return result;
+    }
+
+    @NotNull
+    public static JsNameRef fqnWithoutSideEffects(@NotNull JsName identifier, @Nullable JsExpression qualifier) {
+        JsNameRef result = new JsNameRef(identifier, qualifier);
+        MetadataProperties.setSideEffects(result, false);
+        return result;
+    }
+
+    public static boolean isUndefinedExpression(JsExpression expression) {
+        if (!(expression instanceof JsUnaryOperation)) return false;
+
+        JsUnaryOperation unary = (JsUnaryOperation) expression;
+        return unary.getOperator() == JsUnaryOperator.VOID;
     }
 }

@@ -17,10 +17,12 @@
 package org.jetbrains.kotlin.js.translate.utils;
 
 import com.google.dart.compiler.backend.js.ast.*;
+import com.google.dart.compiler.backend.js.ast.metadata.MetadataProperties;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
+import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.general.Translation;
@@ -61,7 +63,7 @@ public final class FunctionBodyTranslator extends AbstractTranslator {
             JsExpression defaultValue = Translation.translateAsExpression(defaultArgument, functionBodyContext, defaultArgBlock);
             JsStatement assignStatement = assignment(jsNameRef, defaultValue).makeStmt();
             JsStatement thenStatement = JsAstUtils.mergeStatementInBlockIfNeeded(assignStatement, defaultArgBlock);
-            JsBinaryOperation checkArgIsUndefined = equality(jsNameRef, functionBodyContext.namer().getUndefinedExpression());
+            JsBinaryOperation checkArgIsUndefined = equality(jsNameRef, Namer.getUndefinedExpression());
             JsIf jsIf = JsAstUtils.newJsIf(checkArgIsUndefined, thenStatement);
             result.add(jsIf);
         }
@@ -106,7 +108,7 @@ public final class FunctionBodyTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private static JsNode lastExpressionReturned(@NotNull JsNode body) {
+    private JsNode lastExpressionReturned(@NotNull JsNode body) {
         return mutateLastExpression(body, new Mutator() {
             @Override
             @NotNull
@@ -114,7 +116,9 @@ public final class FunctionBodyTranslator extends AbstractTranslator {
                 if (!(node instanceof JsExpression)) {
                     return node;
                 }
-                return new JsReturn((JsExpression)node);
+                JsReturn jsReturn = new JsReturn((JsExpression)node);
+                MetadataProperties.setReturnTarget(jsReturn, descriptor);
+                return jsReturn;
             }
         });
     }

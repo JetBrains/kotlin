@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.generators.tests
 import junit.framework.TestCase
 import org.jetbrains.kotlin.AbstractDataFlowValueRenderingTest
 import org.jetbrains.kotlin.addImport.AbstractAddImportTest
-import org.jetbrains.kotlin.android.AbstractAndroidCompletionTest
-import org.jetbrains.kotlin.android.AbstractAndroidFindUsagesTest
-import org.jetbrains.kotlin.android.AbstractAndroidGotoTest
-import org.jetbrains.kotlin.android.AbstractAndroidRenameTest
+import org.jetbrains.kotlin.android.*
 import org.jetbrains.kotlin.android.configure.AbstractConfigureProjectTest
 import org.jetbrains.kotlin.annotation.AbstractAnnotationProcessorBoxTest
 import org.jetbrains.kotlin.asJava.AbstractCompilerLightClassTest
@@ -117,6 +114,7 @@ import org.jetbrains.kotlin.js.test.semantics.*
 import org.jetbrains.kotlin.jvm.compiler.*
 import org.jetbrains.kotlin.jvm.runtime.AbstractJvm8RuntimeDescriptorLoaderTest
 import org.jetbrains.kotlin.jvm.runtime.AbstractJvmRuntimeDescriptorLoaderTest
+import org.jetbrains.kotlin.kdoc.AbstractKDocLexerTest
 import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidBoxTest
 import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidBytecodeShapeTest
 import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidSyntheticPropertyDescriptorTest
@@ -135,6 +133,7 @@ import org.jetbrains.kotlin.resolve.constraintSystem.AbstractConstraintSystemTes
 import org.jetbrains.kotlin.serialization.AbstractLocalClassProtoTest
 import org.jetbrains.kotlin.shortenRefs.AbstractShortenRefsTest
 import org.jetbrains.kotlin.types.AbstractTypeBindingTest
+import org.jetbrains.kotlin.uast.AbstractKotlinLintTest
 import java.io.File
 import java.util.*
 import java.util.regex.Pattern
@@ -335,6 +334,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractLocalClassProtoTest>() {
             model("serialization/local")
+        }
+
+        testClass<AbstractKDocLexerTest> {
+            model("kdoc/lexer")
         }
     }
 
@@ -969,6 +972,12 @@ fun main(args: Array<String>) {
         }
     }
 
+    testGroup("plugins/uast-kotlin/test", "plugins/uast-kotlin/testData") {
+        testClass<AbstractKotlinLintTest>() {
+            model("lint", excludeParentDirs = true)
+        }
+    }
+
     testGroup("plugins/annotation-collector/test", "plugins/annotation-collector/testData") {
         testClass<AbstractAnnotationProcessorBoxTest>() {
             model("collectToFile", recursive = false, extension = null)
@@ -1085,10 +1094,14 @@ fun main(args: Array<String>) {
         testClass<AbstractSuperTest>() {
             model("codegen/box/super/", targetBackend = TargetBackend.JS)
         }
+
+        testClass<AbstractNonLocalReturnsTest>() {
+            model("codegen/boxInline/nonLocalReturns/", targetBackend = TargetBackend.JS)
+        }
     }
 }
 
-internal class TestGroup(val testsRoot: String, val testDataRoot: String) {
+class TestGroup(val testsRoot: String, val testDataRoot: String) {
     inline fun <reified T: TestCase> testClass(
             suiteTestClass: String = getDefaultSuiteTestClass(T::class.java),
             noinline init: TestClass.() -> Unit
@@ -1152,11 +1165,11 @@ internal class TestGroup(val testsRoot: String, val testDataRoot: String) {
 
 }
 
-private fun testGroup(testsRoot: String, testDataRoot: String, init: TestGroup.() -> Unit) {
+fun testGroup(testsRoot: String, testDataRoot: String, init: TestGroup.() -> Unit) {
     TestGroup(testsRoot, testDataRoot).init()
 }
 
-private fun getDefaultSuiteTestClass(baseTestClass:Class<*>): String {
+fun getDefaultSuiteTestClass(baseTestClass:Class<*>): String {
     val baseName = baseTestClass.simpleName
     if (!baseName.startsWith("Abstract")) {
         throw IllegalArgumentException("Doesn't start with \"Abstract\": $baseName")

@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.maven;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Processor;
-import com.sampullara.cli.Args;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -115,9 +114,9 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
         }
 
         A arguments = createCompilerArguments();
-        configureCompilerArguments(arguments);
-
         CLICompiler<A> compiler = createCompiler();
+
+        configureCompilerArguments(arguments, compiler);
         printCompilerArgumentsIfDebugEnabled(arguments, compiler);
 
         MessageCollector messageCollector = new MessageCollector() {
@@ -224,7 +223,7 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
      */
     protected abstract void configureSpecificCompilerArguments(@NotNull A arguments) throws MojoExecutionException;
 
-    private void configureCompilerArguments(@NotNull A arguments) throws MojoExecutionException {
+    private void configureCompilerArguments(@NotNull A arguments, @NotNull CLICompiler<A> compiler) throws MojoExecutionException {
         if (getLog().isDebugEnabled()) {
             arguments.verbose = true;
         }
@@ -245,17 +244,18 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
 
         arguments.suppressWarnings = nowarn;
 
-        arguments.freeArgs.addAll(sources);
         getLog().info("Compiling Kotlin sources from " + sources);
 
         configureSpecificCompilerArguments(arguments);
 
         try {
-            Args.parse(arguments, ArrayUtil.toStringArray(args));
+            compiler.parseArguments(ArrayUtil.toStringArray(args), arguments);
         }
         catch (IllegalArgumentException e) {
             throw new MojoExecutionException(e.getMessage());
         }
+
+        arguments.freeArgs.addAll(sources);
 
         if (arguments.noInline) {
             getLog().info("Method inlining is turned off");

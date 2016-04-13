@@ -1,4 +1,4 @@
 class JavaSuper {
-    void foo(int /*rename*/aa, String b) {
+    void foo(int aa, String b) {
     }
 }

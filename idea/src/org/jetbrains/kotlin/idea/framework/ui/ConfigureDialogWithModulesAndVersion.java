@@ -34,7 +34,10 @@ import com.intellij.util.ui.AsyncProcessIcon;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.idea.KotlinPluginUtil;
+import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtilsKt;
 import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator;
+import org.jetbrains.kotlin.idea.versions.KotlinRuntimeLibraryUtilKt;
 
 import javax.swing.*;
 import java.awt.*;
@@ -50,6 +53,9 @@ import java.util.concurrent.TimeUnit;
 public class ConfigureDialogWithModulesAndVersion extends DialogWrapper {
     private static final String VERSIONS_LIST_URL =
             "http://search.maven.org/solrsearch/select?q=g:%22org.jetbrains.kotlin%22+AND+a:%22kotlin-runtime%22&core=gav&rows=20&wt=json";
+
+    private static final String EAP_VERSIONS_URL =
+            "https://bintray.com/kotlin/kotlin-eap/kotlin/";
 
     private final ChooseModulePanel chooseModulePanel;
 
@@ -164,6 +170,23 @@ public class ConfigureDialogWithModulesAndVersion extends DialogWrapper {
     @NotNull
     protected static Collection<String> loadVersions() throws Exception {
         List<String> versions = Lists.newArrayList();
+
+        String bundledRuntimeVersion = KotlinRuntimeLibraryUtilKt.bundledRuntimeVersion(KotlinPluginUtil.getPluginVersion());
+        if (ConfigureKotlinInProjectUtilsKt.isEap(bundledRuntimeVersion)) {
+            HttpURLConnection eapConnection = HttpConfigurable.getInstance().openHttpConnection(EAP_VERSIONS_URL + bundledRuntimeVersion);
+            try {
+                int timeout = (int) TimeUnit.SECONDS.toMillis(30);
+                eapConnection.setConnectTimeout(timeout);
+                eapConnection.setReadTimeout(timeout);
+
+                if (eapConnection.getResponseCode() == 200) {
+                    versions.add(bundledRuntimeVersion);
+                }
+            }
+            finally {
+                eapConnection.disconnect();
+            }
+        }
 
         HttpURLConnection urlConnection = HttpConfigurable.getInstance().openHttpConnection(VERSIONS_LIST_URL);
         try {

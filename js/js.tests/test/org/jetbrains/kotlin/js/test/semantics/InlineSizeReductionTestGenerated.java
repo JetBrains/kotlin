@@ -35,15 +35,33 @@ public class InlineSizeReductionTestGenerated extends AbstractInlineSizeReductio
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/inlineSizeReduction/cases"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
+    @TestMetadata("inlineOrder.kt")
+    public void testInlineOrder() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineSizeReduction/cases/inlineOrder.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("lastBreak.kt")
     public void testLastBreak() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineSizeReduction/cases/lastBreak.kt");
         doTest(fileName);
     }
 
+    @TestMetadata("noDuplicateVariableDeclaration.kt")
+    public void testNoDuplicateVariableDeclaration() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineSizeReduction/cases/noDuplicateVariableDeclaration.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("oneTopLevelReturn.kt")
     public void testOneTopLevelReturn() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineSizeReduction/cases/oneTopLevelReturn.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("propertyAssignment.kt")
+    public void testPropertyAssignment() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineSizeReduction/cases/propertyAssignment.kt");
         doTest(fileName);
     }
 
@@ -56,6 +74,12 @@ public class InlineSizeReductionTestGenerated extends AbstractInlineSizeReductio
     @TestMetadata("simpleReturnFunction.kt")
     public void testSimpleReturnFunction() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineSizeReduction/cases/simpleReturnFunction.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ternaryConditional.kt")
+    public void testTernaryConditional() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineSizeReduction/cases/ternaryConditional.kt");
         doTest(fileName);
     }
 

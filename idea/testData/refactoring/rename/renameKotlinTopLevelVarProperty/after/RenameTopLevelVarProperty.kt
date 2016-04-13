@@ -1,3 +1,3 @@
 package testing.rename
 
-var /*rename*/bar: String = "xyzzy"
+var bar: String = "xyzzy"

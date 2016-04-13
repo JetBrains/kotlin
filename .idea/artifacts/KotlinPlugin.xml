@@ -47,6 +47,7 @@
           <element id="module-output" name="idea-repl" />
           <element id="module-output" name="idea-live-templates" />
           <element id="module-output" name="resolution" />
+          <element id="module-output" name="idea-ultimate" />
         </element>
         <element id="library" level="project" name="javax.inject" />
         <element id="directory" name="jps">
@@ -58,6 +59,16 @@
         </element>
         <element id="archive" name="kotlin-android-extensions-compiler-plugin.jar">
           <element id="module-output" name="android-extensions-compiler" />
+        </element>
+        <element id="archive" name="android-lint.jar">
+          <element id="module-output" name="uast-kotlin" />
+          <element id="module-output" name="lint-idea" />
+          <element id="module-output" name="uast-java" />
+          <element id="module-output" name="uast-common" />
+          <element id="module-output" name="lint-checks" />
+          <element id="library" level="project" name="guava" />
+          <element id="module-output" name="lint-api" />
+          <element id="module-output" name="uast-android" />
         </element>
       </element>
       <element id="directory" name="kotlinc">

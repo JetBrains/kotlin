@@ -1,0 +1,13 @@
+// ACTION_CLASS: org.jetbrains.kotlin.idea.spring.generate.GenerateKotlinSpringBeanXmlDependencyAction$Constructor
+// CONFIG_FILE: factoryMethod-config.xml
+// CHOOSE_BEAN: barBean
+package a
+
+open class FooBean {<caret>
+}
+
+open class FooFactoryBean {
+    open fun create(barBean: BarBean) = FooBean()
+}
+
+open class BarBean

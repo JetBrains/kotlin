@@ -61,10 +61,10 @@ import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.convertToStatem
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.newVar;
 import static org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getReceiverParameterForDeclaration;
 import static org.jetbrains.kotlin.js.translate.utils.TranslationUtils.translateInitializerForProperty;
-import static org.jetbrains.kotlin.resolve.BindingContext.DECLARATION_TO_DESCRIPTOR;
-import static org.jetbrains.kotlin.resolve.BindingContext.LABEL_TARGET;
-import static org.jetbrains.kotlin.resolve.BindingContext.REFERENCE_TARGET;
+import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.isVarCapturedInClosure;
+import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionExpression;
+import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionLiteral;
 
 public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @Override
@@ -137,8 +137,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
 
     @Override
     @NotNull
-    public JsNode visitReturnExpression(@NotNull KtReturnExpression jetReturnExpression,
-            @NotNull TranslationContext context) {
+    public JsNode visitReturnExpression(@NotNull KtReturnExpression jetReturnExpression, @NotNull TranslationContext context) {
         KtExpression returned = jetReturnExpression.getReturnedExpression();
 
         // TODO: add related descriptor to context and use it here
@@ -146,14 +145,51 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         if (parent instanceof KtSecondaryConstructor) {
             return new JsReturn(new JsNameRef(Namer.ANOTHER_THIS_PARAMETER_NAME)).source(jetReturnExpression);
         }
+
+        JsReturn jsReturn;
         if (returned == null) {
-            return new JsReturn(null).source(jetReturnExpression);
+            jsReturn = new JsReturn(null);
         }
-        JsExpression jsReturnExpression = translateAsExpression(returned, context);
-        if (JsAstUtils.isEmptyExpression(jsReturnExpression)) {
-            return context.getEmptyExpression();
+        else {
+            JsExpression jsReturnExpression = translateAsExpression(returned, context);
+            if (JsAstUtils.isEmptyExpression(jsReturnExpression)) {
+                return context.getEmptyExpression();
+            }
+
+            jsReturn = new JsReturn(jsReturnExpression);
         }
-        return new JsReturn(jsReturnExpression).source(jetReturnExpression);
+
+        MetadataProperties.setReturnTarget(jsReturn, getNonLocalReturnTarget(jetReturnExpression, context));
+
+        return jsReturn.source(jetReturnExpression);
+    }
+
+    @Nullable
+    private static FunctionDescriptor getNonLocalReturnTarget(
+            @NotNull KtReturnExpression expression,
+            @NotNull TranslationContext context
+    ) {
+        DeclarationDescriptor descriptor = context.getDeclarationDescriptor();
+        assert descriptor instanceof CallableMemberDescriptor : "Return expression can only be inside callable declaration: " +
+                                                                PsiUtilsKt.getTextWithLocation(expression);
+        KtSimpleNameExpression target = expression.getTargetLabel();
+
+        //call inside lambda
+        if (isFunctionLiteral(descriptor) || isFunctionExpression(descriptor)) {
+            if (target == null) {
+                if (isFunctionLiteral(descriptor)) {
+                    return BindingContextUtils.getContainingFunctionSkipFunctionLiterals(descriptor, true).getFirst();
+                }
+            }
+            else {
+                PsiElement element = context.bindingContext().get(LABEL_TARGET, target);
+                descriptor = context.bindingContext().get(DECLARATION_TO_DESCRIPTOR, element);
+            }
+        }
+
+        assert descriptor == null || descriptor instanceof FunctionDescriptor :
+                "Function descriptor expected to be target of return label: " + PsiUtilsKt.getTextWithLocation(expression);
+        return (FunctionDescriptor) descriptor;
     }
 
     @Override
@@ -260,8 +296,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
 
     @Override
     @NotNull
-    public JsNode visitStringTemplateExpression(@NotNull KtStringTemplateExpression expression,
-            @NotNull TranslationContext context) {
+    public JsNode visitStringTemplateExpression(@NotNull KtStringTemplateExpression expression, @NotNull TranslationContext context) {
         JsStringLiteral stringLiteral = resolveAsStringConstant(expression, context);
         if (stringLiteral != null) {
             return stringLiteral;
@@ -289,15 +324,12 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
 
     @Override
     @NotNull
-    public JsNode visitDotQualifiedExpression(@NotNull KtDotQualifiedExpression expression,
-            @NotNull TranslationContext context) {
+    public JsNode visitDotQualifiedExpression(@NotNull KtDotQualifiedExpression expression, @NotNull TranslationContext context) {
         return QualifiedExpressionTranslator.translateQualifiedExpression(expression, context);
     }
 
     @Override
-    public JsNode visitLabeledExpression(
-            @NotNull KtLabeledExpression expression, TranslationContext context
-    ) {
+    public JsNode visitLabeledExpression(@NotNull KtLabeledExpression expression, @NotNull TranslationContext context) {
         KtExpression baseExpression = expression.getBaseExpression();
         assert baseExpression != null;
 
@@ -400,15 +432,13 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
 
     @Override
     @NotNull
-    public JsNode visitBreakExpression(@NotNull KtBreakExpression expression,
-            @NotNull TranslationContext context) {
+    public JsNode visitBreakExpression(@NotNull KtBreakExpression expression, @NotNull TranslationContext context) {
         return new JsBreak(getTargetLabel(expression, context)).source(expression);
     }
 
     @Override
     @NotNull
-    public JsNode visitContinueExpression(@NotNull KtContinueExpression expression,
-            @NotNull TranslationContext context) {
+    public JsNode visitContinueExpression(@NotNull KtContinueExpression expression, @NotNull TranslationContext context) {
         return new JsContinue(getTargetLabel(expression, context)).source(expression);
     }
 

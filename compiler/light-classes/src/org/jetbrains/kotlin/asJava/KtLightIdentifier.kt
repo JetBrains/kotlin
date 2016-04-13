@@ -25,6 +25,7 @@ class KtLightIdentifier(
         private val lightOwner: PsiNameIdentifierOwner,
         private val ktDeclaration: KtNamedDeclaration?
 ) : LightIdentifier(lightOwner.manager, ktDeclaration?.name ?: "") {
+    override fun isPhysical() = true
     override fun getParent() = lightOwner
     override fun getTextRange() = ktDeclaration?.nameIdentifier?.textRange ?: TextRange.EMPTY_RANGE
 }

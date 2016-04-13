@@ -43,7 +43,6 @@ import org.jetbrains.idea.maven.dom.MavenDomUtil;
 import org.jetbrains.idea.maven.dom.model.*;
 import org.jetbrains.idea.maven.project.MavenProjectsManager;
 import org.jetbrains.jps.model.java.JavaSourceRootType;
-import org.jetbrains.kotlin.cli.common.KotlinVersion;
 import org.jetbrains.kotlin.idea.KotlinPluginUtil;
 import org.jetbrains.kotlin.idea.framework.ui.ConfigureDialogWithModulesAndVersion;
 
@@ -56,7 +55,6 @@ public abstract class KotlinMavenConfigurator implements KotlinProjectConfigurat
     private static final String GROUP_ID = "org.jetbrains.kotlin";
     private static final String MAVEN_PLUGIN_ID = "kotlin-maven-plugin";
     private static final String KOTLIN_VERSION_PROPERTY = "kotlin.version";
-    private static final String SNAPSHOT_REPOSITORY_ID = "sonatype.oss.snapshots";
 
     private static final String PROCESS_TEST_SOURCES_PHASE = "process-test-sources";
     private static final String PROCESS_SOURCES_PHASE = "process-sources";
@@ -161,9 +159,14 @@ public abstract class KotlinMavenConfigurator implements KotlinProjectConfigurat
             protected void run(@NotNull Result result) {
                 addKotlinVersionPropertyIfNeeded(domModel, version);
 
-                if (isSnapshot(version)) {
-                    addPluginRepositoryIfNeeded(domModel);
-                    addLibraryRepositoryIfNeeded(domModel);
+                if (ConfigureKotlinInProjectUtilsKt.isSnapshot(version)) {
+                    addPluginRepositoryIfNeeded(domModel, ConfigureKotlinInProjectUtilsKt.SNAPSHOT_REPOSITORY);
+                    addLibraryRepositoryIfNeeded(domModel, ConfigureKotlinInProjectUtilsKt.SNAPSHOT_REPOSITORY);
+                }
+
+                if (ConfigureKotlinInProjectUtilsKt.isEap(version)) {
+                    addPluginRepositoryIfNeeded(domModel, ConfigureKotlinInProjectUtilsKt.EAP_REPOSITORY);
+                    addLibraryRepositoryIfNeeded(domModel, ConfigureKotlinInProjectUtilsKt.EAP_REPOSITORY);
                 }
 
                 addPluginIfNeeded(domModel, module, virtualFile);
@@ -251,19 +254,19 @@ public abstract class KotlinMavenConfigurator implements KotlinProjectConfigurat
         createTagIfNeeded(domModel.getProperties(), KOTLIN_VERSION_PROPERTY, version);
     }
 
-    private static void addLibraryRepositoryIfNeeded(MavenDomProjectModel domModel) {
+    private static void addLibraryRepositoryIfNeeded(MavenDomProjectModel domModel, RepositoryDescription description) {
         MavenDomRepositories repositories = domModel.getRepositories();
-        if (!isRepositoryConfigured(repositories.getRepositories())) {
+        if (!isRepositoryConfigured(repositories.getRepositories(), description.getId())) {
             MavenDomRepository newPluginRepository = repositories.addRepository();
-            configureRepository(newPluginRepository);
+            configureRepository(newPluginRepository, description);
         }
     }
 
-    private static void addPluginRepositoryIfNeeded(MavenDomProjectModel domModel) {
+    private static void addPluginRepositoryIfNeeded(MavenDomProjectModel domModel, RepositoryDescription description) {
         MavenDomPluginRepositories pluginRepositories = domModel.getPluginRepositories();
-        if (!isRepositoryConfigured(pluginRepositories.getPluginRepositories())) {
+        if (!isRepositoryConfigured(pluginRepositories.getPluginRepositories(), description.getId())) {
             MavenDomRepository newPluginRepository = pluginRepositories.addPluginRepository();
-            configureRepository(newPluginRepository);
+            configureRepository(newPluginRepository, description);
         }
     }
 
@@ -294,21 +297,25 @@ public abstract class KotlinMavenConfigurator implements KotlinProjectConfigurat
         createExecutions(virtualFile, kotlinPlugin, module);
     }
 
-    private static boolean isRepositoryConfigured(List<MavenDomRepository> pluginRepositories) {
+    private static boolean isRepositoryConfigured(List<MavenDomRepository> pluginRepositories, String repositoryId) {
         for (MavenDomRepository repository : pluginRepositories) {
-            if (SNAPSHOT_REPOSITORY_ID.equals(repository.getId().getStringValue())) {
+            if (repositoryId.equals(repository.getId().getStringValue())) {
                 return true;
             }
         }
         return false;
     }
 
-    private static void configureRepository(@NotNull MavenDomRepository repository) {
-        repository.getId().setStringValue(SNAPSHOT_REPOSITORY_ID);
-        repository.getName().setStringValue("Sonatype OSS Snapshot Repository");
-        repository.getUrl().setStringValue("http://oss.sonatype.org/content/repositories/snapshots");
-        createTagIfNeeded(repository.getReleases(), "enabled", "false");
-        createTagIfNeeded(repository.getSnapshots(), "enabled", "true");
+    private static void configureRepository(
+            @NotNull MavenDomRepository repository,
+            @NotNull RepositoryDescription repositoryDescription
+    ) {
+        repository.getId().setStringValue(repositoryDescription.getId());
+        repository.getName().setStringValue(repositoryDescription.getName());
+        repository.getUrl().setStringValue(repositoryDescription.getUrl());
+
+        createTagIfNeeded(repository.getReleases(), "enabled", Boolean.toString(!repositoryDescription.isSnapshot()));
+        createTagIfNeeded(repository.getSnapshots(), "enabled", Boolean.toString(repositoryDescription.isSnapshot()));
     }
 
     @NotNull
@@ -335,10 +342,6 @@ public abstract class KotlinMavenConfigurator implements KotlinProjectConfigurat
             return psiFile;
         }
         return null;
-    }
-
-    private static boolean isSnapshot(@NotNull String version) {
-        return version.contains("SNAPSHOT");
     }
 
     @NotNull

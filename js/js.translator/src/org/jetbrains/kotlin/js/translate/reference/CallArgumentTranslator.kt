@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.js.translate.reference
 import com.google.dart.compiler.backend.js.ast.*
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TemporaryConstVariable
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.expression.PatternTranslator
@@ -56,10 +57,10 @@ class CallArgumentTranslator private constructor(
     private val isNativeFunctionCall = AnnotationsUtils.isNativeObject(resolvedCall.candidateDescriptor)
 
     private fun removeLastUndefinedArguments(result: MutableList<JsExpression>) {
-        var i = result.size - 1
+        var i = result.lastIndex
 
         while (i >= 0) {
-            if (result.get(i) != context().namer().undefinedExpression) {
+            if (!JsAstUtils.isUndefinedExpression(result[i])) {
                 break
             }
             i--
@@ -182,7 +183,7 @@ class CallArgumentTranslator private constructor(
             val valueArguments = actualArgument.arguments
 
             if (actualArgument is DefaultValueArgument) {
-                result.add(context.namer().undefinedExpression)
+                result += Namer.getUndefinedExpression()
                 return ArgumentsKind.HAS_NOT_EMPTY_EXPRESSION_ARGUMENT
             }
 

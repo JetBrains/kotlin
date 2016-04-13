@@ -25,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink;
 import org.jetbrains.kotlin.diagnostics.Errors;
+import org.jetbrains.kotlin.js.inline.clean.FunctionPostProcessor;
 import org.jetbrains.kotlin.js.inline.clean.RemoveUnusedFunctionDefinitionsKt;
 import org.jetbrains.kotlin.js.inline.clean.RemoveUnusedLocalFunctionDeclarationsKt;
 import org.jetbrains.kotlin.js.inline.context.FunctionContext;
@@ -36,7 +37,6 @@ import org.jetbrains.kotlin.resolve.inline.InlineStrategy;
 
 import java.util.*;
 
-import static org.jetbrains.kotlin.js.inline.FunctionInlineMutator.canBeExpression;
 import static org.jetbrains.kotlin.js.inline.FunctionInlineMutator.getInlineableCallReplacement;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.flattenStatement;
 
@@ -59,12 +59,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
 
             JsInvocation call = (JsInvocation) node;
 
-            if (hasToBeInlined(call)) {
-                JsFunction function = getFunctionContext().getFunctionDefinition(call);
-                return !canBeExpression(function);
-            }
-
-            return false;
+            return hasToBeInlined(call);
         }
     };
 
@@ -103,10 +98,12 @@ public class JsInliner extends JsVisitorWithContextImpl {
     @Override
     public void endVisit(@NotNull JsFunction function, @NotNull JsContext context) {
         super.endVisit(function, context);
-        NamingUtilsKt.refreshLabelNames(getInliningContext().newNamingContext(), function);
+        NamingUtilsKt.refreshLabelNames(function.getBody(), function.getScope());
 
         RemoveUnusedLocalFunctionDeclarationsKt.removeUnusedLocalFunctionDeclarations(function);
         processedFunctions.add(function);
+
+        new FunctionPostProcessor(function.getBody()).apply();
 
         assert inProcessFunctions.contains(function);
         inProcessFunctions.remove(function);
@@ -188,7 +185,6 @@ public class JsInliner extends JsVisitorWithContextImpl {
         // body of inline function can contain call to lambdas that need to be inlined
         JsStatement inlineableBodyWithLambdasInlined = accept(inlineableBody);
         assert inlineableBody == inlineableBodyWithLambdasInlined;
-
         statementContext.addPrevious(flattenStatement(inlineableBody));
 
         /**
@@ -219,7 +215,8 @@ public class JsInliner extends JsVisitorWithContextImpl {
         return inliningContexts.peek();
     }
 
-    @NotNull FunctionContext getFunctionContext() {
+    @NotNull
+    private FunctionContext getFunctionContext() {
         return getInliningContext().getFunctionContext();
     }
 
@@ -248,7 +245,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
         }
     }
 
-    public boolean hasToBeInlined(@NotNull JsInvocation call) {
+    private boolean hasToBeInlined(@NotNull JsInvocation call) {
         InlineStrategy strategy = MetadataProperties.getInlineStrategy(call);
         if (strategy == null || !strategy.isInline()) return false;
 

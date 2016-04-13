@@ -1,0 +1,8 @@
+{
+    springConfig: ["propertyGutter.xml"],
+    file: "BeanWithProperties.kt",
+    icon: "SpringProperty",
+    tooltip: "Navigate to the spring bean property",
+    naming: "property",
+    targets: ["prop", "prop"]
+}
