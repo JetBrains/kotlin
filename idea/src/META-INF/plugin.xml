@@ -39,7 +39,7 @@
       <implementation-class>org.jetbrains.kotlin.asJava.KotlinCodeBlockModificationListener</implementation-class>
     </component>
     <component>
-      <implementation-class>org.jetbrains.kotlin.script.KotlinScriptConfigurationManager</implementation-class>
+      <implementation-class>org.jetbrains.kotlin.idea.script.KotlinScriptConfigurationManager</implementation-class>
     </component>
   </project-components>
 

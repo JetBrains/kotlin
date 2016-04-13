@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.io.InputStream
 import java.io.StringWriter
@@ -40,24 +39,6 @@ import java.util.*
 
 
 val SCRIPT_CONFIG_FILE_EXTENSION = ".ktscfg.xml"
-
-class KotlinScriptConfigurationManager(project: Project, scriptDefinitionProvider: KotlinScriptDefinitionProvider) : AbstractProjectComponent(project) {
-
-    val kotlinEnvVars: Map<String, List<String>> by lazy {
-        val paths = PathUtil.getKotlinPathsForIdeaPlugin()
-        mapOf("kotlin-runtime" to listOf(paths.runtimePath.canonicalPath),
-              "project-root" to listOf(project.basePath ?: "."),
-              "jdk" to PathUtil.getJdkClassesRoots().map { it.canonicalPath })
-    }
-
-    init {
-        loadScriptDefinitionsFromDirectoryWithConfigs(File(project.basePath ?: "."), kotlinEnvVars).let {
-            if (it.isNotEmpty()) {
-                scriptDefinitionProvider.setScriptDefinitions(it + StandardScriptDefinition)
-            }
-        }
-    }
-}
 
 fun loadScriptDefinitionsFromDirectoryWithConfigs(dir: File, kotlinEnvVars: Map<String, List<String>>? = null): List<KotlinConfigurableScriptDefinition> =
     dir.walk().filter { it.isFile && it.name.endsWith(SCRIPT_CONFIG_FILE_EXTENSION, ignoreCase = true) }.toList()
