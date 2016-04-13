@@ -62,7 +62,7 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
     }
 
     @Override
-    public Void visitClass(@NotNull KtClass declaration, TranslationContext context) {
+    public Void visitClassOrObject(@NotNull KtClassOrObject declaration, TranslationContext context) {
         staticResult.addAll(ClassTranslator.translate(declaration, context).getProperties());
         return null;
     }
@@ -79,12 +79,6 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
             jsEnumEntryCreation = new ClassInitializerTranslator(enumEntry, data).generateEnumEntryInstanceCreation(supertypes.get(0));
             enumEntryList.add(new JsPropertyInitializer(data.getNameForDescriptor(descriptor).makeRef(), jsEnumEntryCreation));
         }
-        return null;
-    }
-
-    @Override
-    public Void visitObjectDeclaration(@NotNull KtObjectDeclaration declaration, TranslationContext context) {
-        staticResult.addAll(ClassTranslator.translate(declaration, context).getProperties());
         return null;
     }
 

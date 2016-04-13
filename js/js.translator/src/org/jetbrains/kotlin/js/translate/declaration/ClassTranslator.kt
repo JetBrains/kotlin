@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils.*
 import org.jetbrains.kotlin.types.CommonSupertypes.topologicallySortSuperclassesAndRecordAllInstances
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
+import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.identity
 
 /**
@@ -63,9 +64,8 @@ class ClassTranslator private constructor(
     private var primaryConstructor: ConstructorInfo? = null
     private lateinit var definitionPlace: DefinitionPlace
 
-    fun translate(): TranslationResult {
-        invocationArguments.clear()
-        getClassCreateInvocationArguments()
+    private fun translate(): TranslationResult {
+        generateClassCreateInvocationArguments()
 
         val classNameRef = context().getNameForDescriptor(descriptor).makeRef()
         val classCreation = JsInvocation(context().namer().classCreateInvocation(descriptor), invocationArguments)
@@ -76,16 +76,14 @@ class ClassTranslator private constructor(
 
     private fun isTrait(): Boolean = descriptor.kind == ClassKind.INTERFACE
 
-    private fun getClassCreateInvocationArguments() {
-        var context = context()
-
+    private fun generateClassCreateInvocationArguments() {
         val properties = SmartList<JsPropertyInitializer>()
         val staticProperties = SmartList<JsPropertyInitializer>()
 
-        val qualifiedReference = context.getQualifiedReference(descriptor)
+        val qualifiedReference = context().getQualifiedReference(descriptor)
         val scope = context().getScopeForDescriptor(descriptor)
         val definitionPlace = DefinitionPlace(scope as JsObjectScope, qualifiedReference, staticProperties)
-        context = context.newDeclaration(descriptor, definitionPlace)
+        val context = context().newDeclaration(descriptor, definitionPlace)
 
         invocationArguments += getSuperclassReferences(context)
 
@@ -96,16 +94,14 @@ class ClassTranslator private constructor(
         bodyVisitor.traverseContainer(classDeclaration, nonConstructorContext)
         delegationTranslator.generateDelegated(properties)
 
-        var enumFunction: JsFunction? = null
-        if (isEnumClass(descriptor)) {
-            val enumEntries = JsObjectLiteral(bodyVisitor.enumEntryList, true)
-            enumFunction = simpleReturnFunction(nonConstructorContext.getScopeForDescriptor(descriptor), enumEntries)
-        }
-
         translatePrimaryConstructor(context, delegationTranslator)
         classDeclaration.getSecondaryConstructors().forEach { generateSecondaryConstructor(context, it) }
         generatedBridgeMethods(properties)
-        enumFunction?.let { invocationArguments += it }
+
+        if (isEnumClass(descriptor)) {
+            val enumEntries = JsObjectLiteral(bodyVisitor.enumEntryList, true)
+            invocationArguments += simpleReturnFunction(nonConstructorContext.getScopeForDescriptor(descriptor), enumEntries)
+        }
 
         val dataClassGenerator = JsDataClassGenerator(classDeclaration, context, properties)
 
@@ -118,6 +114,12 @@ class ClassTranslator private constructor(
             dataClassGenerator.generate()
         }
 
+        // ExpressionVisitor.visitObjectLiteralExpression uses DefinitionPlace of the translated class to generate call to
+        // super constructor. Sometimes, when generating super call, we may translate another anonymous class passed as an
+        // argument. This class will be declared in the DefinitionPlace and put it static properties. See full explanation
+        // in ExpressionVisitor.visitObjectLiteralExpression
+        // TODO: It's a hack, we should think how to generate staticProperties lazily, whenever somebody tries to put
+        // definition into DefinitionPlace.
         val hasStaticProperties = !staticProperties.isEmpty() || DescriptorUtils.isAnonymousObject(descriptor)
         if (!properties.isEmpty() || hasStaticProperties) {
             if (properties.isEmpty()) {
@@ -144,7 +146,7 @@ class ClassTranslator private constructor(
         if (isTrait()) return
 
         val scope = JsFunctionScope(classContext.scope(), "$descriptor: primary constructor")
-        var constructorContext = classContext.innerWithUsageTracker(scope, descriptor)
+        val constructorContext = classContext.innerWithUsageTracker(scope, descriptor)
         val initializer = ClassInitializerTranslator(classDeclaration, constructorContext).generateInitializeMethod(delegationTranslator)
         invocationArguments += initializer
 
@@ -157,21 +159,20 @@ class ClassTranslator private constructor(
         val classDescriptor = constructorDescriptor.containingDeclaration
 
         val constructorScope = classContext.getScopeForDescriptor(constructorDescriptor)
-        var context = classContext.innerWithUsageTracker(constructorScope, constructorDescriptor)
 
         val thisName = constructorScope.declareName(Namer.ANOTHER_THIS_PARAMETER_NAME)
         val thisNameRef = thisName.makeRef()
         val receiverDescriptor = classDescriptor.thisAsReceiverParameter
 
-        context = context.newDeclaration(constructorDescriptor.containingDeclaration, context.definitionPlace)
-        context = context.newDeclaration(constructorDescriptor, context.definitionPlace)
-        context = context.innerContextWithAliased(receiverDescriptor, thisNameRef)
+        var context = classContext
+                .innerWithUsageTracker(constructorScope, constructorDescriptor)
+                .innerContextWithAliased(receiverDescriptor, thisNameRef)
 
-        val outerName = context.getOuterClassReference(classDescriptor);
+        val outerClassName = context.getOuterClassReference(classDescriptor);
         val outerClass = DescriptorUtils.getContainingClass(classDescriptor)
-        if (outerClass != null && outerName != null) {
-            val outerClassRef = outerClass.thisAsReceiverParameter
-            context = context.innerContextWithAliased(outerClassRef, outerName.makeRef())
+        if (outerClassName != null) {
+            val outerClassReceiver = outerClass!!.thisAsReceiverParameter
+            context = context.innerContextWithAliased(outerClassReceiver, outerClassName.makeRef())
         }
 
         // Translate constructor body
@@ -191,9 +192,9 @@ class ClassTranslator private constructor(
         // Add parameter for outer instance
         val leadingArgs = mutableListOf<JsExpression>()
 
-        if (outerName != null) {
-            constructorFunction.parameters.add(0, JsParameter(outerName))
-            leadingArgs += outerName.makeRef()
+        if (outerClassName != null) {
+            constructorFunction.parameters.add(0, JsParameter(outerClassName))
+            leadingArgs += outerClassName.makeRef()
         }
 
         constructorFunction.parameters += JsParameter(thisName)
@@ -212,8 +213,8 @@ class ClassTranslator private constructor(
         if (!delegationCtorInTheSameClass && !classDescriptor.hasPrimaryConstructor()) {
             superCallGenerators += {
                 val usageTracker = context.usageTracker()!!
-                val closure = context.getLocalClassClosure(classDescriptor).orEmpty().map {
-                    usageTracker.capturedDescriptorToJsName[it]?.makeRef() as? JsExpression ?: JsLiteral.NULL
+                val closure = context.getClassOrConstructorClosure(classDescriptor).orEmpty().map {
+                    usageTracker.getNameForCapturedDescriptor(it)!!.makeRef()
                 }
                 it += JsInvocation(Namer.getFunctionCallRef(referenceToClass), listOf(thisNameRef) + closure + leadingArgs).makeStmt()
             }
@@ -242,9 +243,8 @@ class ClassTranslator private constructor(
     private fun emitConstructors(nonConstructorContext: TranslationContext) {
         // Build map that maps constructor to all constructors called via this()
         val constructorMap = allConstructors.map { it.descriptor to it }.toMap()
-        val primaryConstructor = this.primaryConstructor
 
-        val thisCalls = allConstructors.map {
+        val thisCalls = secondaryConstructors.map {
             val set = mutableSetOf<ConstructorInfo>()
             val descriptor = it.descriptor
             if (descriptor is ConstructorDescriptor) {
@@ -256,72 +256,46 @@ class ClassTranslator private constructor(
                     }
                 }
             }
-            if (primaryConstructor != null && primaryConstructor != it) {
-                set += primaryConstructor
-            }
             Pair(it, set)
         }.toMap()
 
-        // Sort graph of constructors
-        val sortedConstructors = mutableListOf<ConstructorInfo>()
-        val visitedConstructors = mutableSetOf<ConstructorInfo>()
-
-        fun sort(constructor: ConstructorInfo) {
-            if (!visitedConstructors.add(constructor)) return
-
-            sortedConstructors += constructor
-            for (thisCall in thisCalls[constructor].orEmpty()) {
-                sort(thisCall)
-            }
-        }
-
-        allConstructors.forEach(::sort)
-
-        // Emit constructors
+        val sortedConstructors = DFS.topologicalOrder(allConstructors.asIterable()) { thisCalls[it].orEmpty() }.reversed()
         for (constructor in sortedConstructors) {
             constructor.superCallGenerator()
 
             val nonConstructorUsageTracker = nonConstructorContext.usageTracker()!!
-            val usageTracker = constructor.context.usageTracker() ?: continue
+            val usageTracker = constructor.context.usageTracker()!!
 
             val nonConstructorCapturedVars = nonConstructorUsageTracker.capturedDescriptors
             val constructorCapturedVars = usageTracker.capturedDescriptors
 
-            val capturedVars = (nonConstructorCapturedVars.asSequence() +
-                                constructorCapturedVars.asSequence().filter { it !in nonConstructorCapturedVars }).toList()
+            val capturedVars = (nonConstructorCapturedVars + constructorCapturedVars).distinct()
 
             val descriptor = constructor.descriptor
-            nonConstructorContext.putLocalClassClosure(descriptor, capturedVars)
-            if (descriptor is ClassDescriptor) {
-                if (primaryConstructor != null) {
-                    nonConstructorContext.putLocalClassClosure(primaryConstructor.descriptor, capturedVars)
-                }
-            }
-
-            for (thisCall in thisCalls[constructor].orEmpty()) {
-                val callUsageTracker = thisCall.context.usageTracker() ?: continue
-                callUsageTracker.capturedDescriptors.forEach { usageTracker.used(it) }
-            }
+            nonConstructorContext.putClassOrConstructorClosure(descriptor, capturedVars)
         }
     }
 
     private fun addClosureParameters(constructor: ConstructorInfo, nonConstructorContext: TranslationContext,
                                      dataClassGenerator: JsDataClassGenerator) {
         val usageTracker = constructor.context.usageTracker()!!
-        val capturedVars = context().getLocalClassClosure(constructor.descriptor) ?: return
+        val capturedVars = context().getClassOrConstructorClosure(constructor.descriptor) ?: return
         val nonConstructorUsageTracker = nonConstructorContext.usageTracker()!!
 
         val function = constructor.function
+        val additionalStatements = mutableListOf<JsStatement>()
         for ((i, capturedVar) in capturedVars.withIndex()) {
             val fieldName = nonConstructorUsageTracker.capturedDescriptorToJsName[capturedVar]
             val name = usageTracker.capturedDescriptorToJsName[capturedVar] ?: fieldName!!
 
             function.parameters.add(i, JsParameter(name))
             if (fieldName != null && constructor == primaryConstructor) {
-                function.body.statements.add(i, JsAstUtils.defineSimpleProperty(fieldName.ident, name.makeRef()))
+                additionalStatements += JsAstUtils.defineSimpleProperty(fieldName.ident, name.makeRef())
                 dataClassGenerator.addClosureVariable(fieldName)
             }
         }
+
+        function.body.statements.addAll(0, additionalStatements);
     }
 
     private fun getSuperclassReferences(declarationContext: TranslationContext): JsExpression {

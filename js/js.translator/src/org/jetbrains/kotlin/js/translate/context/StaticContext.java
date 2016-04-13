@@ -46,6 +46,7 @@ import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.fqnWithoutSideE
 import static org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.*;
 import static org.jetbrains.kotlin.js.translate.utils.ManglingUtils.getMangledName;
 import static org.jetbrains.kotlin.js.translate.utils.ManglingUtils.getSuggestedName;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.getParentOfType;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isExtension;
 import static org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallsKt.isDynamic;
@@ -252,7 +253,7 @@ public final class StaticContext {
                 }
             };
 
-            Rule<JsName> localDeclarations = new Rule<JsName>() {
+            Rule<JsName> localClasses = new Rule<JsName>() {
                 @Nullable
                 @Override
                 public JsName apply(@NotNull DeclarationDescriptor descriptor) {
@@ -263,9 +264,7 @@ public final class StaticContext {
 
                     String suggested = getSuggestedName(descriptor);
 
-                    do {
-                        descriptor = descriptor.getContainingDeclaration();
-                    } while (descriptor != null && !(descriptor instanceof ClassOrPackageFragmentDescriptor));
+                    descriptor = getParentOfType(descriptor, ClassOrPackageFragmentDescriptor.class, true);
                     assert descriptor != null;
 
                     JsScope scope = getScopeForDescriptor(descriptor);
@@ -291,7 +290,7 @@ public final class StaticContext {
                     return scope.declareFreshName(getSuggestedName(descriptor));
                 }
             };
-            Rule<JsName> constructorOrCompanionObjectHasTheSameNameAsTheClass = new Rule<JsName>() {
+            Rule<JsName> constructorOrNativeCompanionObjectHasTheSameNameAsTheClass = new Rule<JsName>() {
                 @Override
                 public JsName apply(@NotNull DeclarationDescriptor descriptor) {
                     if (descriptor instanceof ConstructorDescriptor && ((ConstructorDescriptor) descriptor).isPrimary() ||
@@ -385,9 +384,9 @@ public final class StaticContext {
             };
 
             addRule(namesForDynamic);
-            addRule(localDeclarations);
+            addRule(localClasses);
             addRule(namesForStandardClasses);
-            addRule(constructorOrCompanionObjectHasTheSameNameAsTheClass);
+            addRule(constructorOrNativeCompanionObjectHasTheSameNameAsTheClass);
             addRule(propertyOrPropertyAccessor);
             addRule(predefinedObjectsHasUnobfuscatableNames);
             addRule(overridingDescriptorsReferToOriginalName);
@@ -573,7 +572,7 @@ public final class StaticContext {
                     if (!(descriptor instanceof ClassDescriptor)) {
                         return null;
                     }
-                    DeclarationDescriptor container = getEnclosing(descriptor.getContainingDeclaration());
+                    DeclarationDescriptor container = getParentOfType(descriptor, ClassDescriptor.class);
                     if (container == null) {
                         return null;
                     }
@@ -593,12 +592,8 @@ public final class StaticContext {
                         return null;
                     }
 
-                    descriptor = descriptor.getContainingDeclaration();
-                    while (descriptor != null && !(descriptor instanceof ClassOrPackageFragmentDescriptor)) {
-                        descriptor = descriptor.getContainingDeclaration();
-                    }
-                    if (!(descriptor instanceof PackageFragmentDescriptor)) return null;
-
+                    descriptor = getParentOfType(descriptor, PackageFragmentDescriptor.class, true);
+                    assert descriptor != null;
                     return getQualifiedReference(descriptor);
                 }
             };
@@ -612,14 +607,6 @@ public final class StaticContext {
             addRule(nestedClassesHaveContainerQualifier);
             addRule(localClassesHavePackageQualifier);
         }
-    }
-
-    @Nullable
-    private static ClassDescriptor getEnclosing(@Nullable DeclarationDescriptor descriptor) {
-        while (descriptor != null && !(descriptor instanceof ClassDescriptor)) {
-            descriptor = descriptor.getContainingDeclaration();
-        }
-        return (ClassDescriptor) descriptor;
     }
 
     private static JsExpression applySideEffects(JsExpression expression, DeclarationDescriptor descriptor) {
@@ -650,13 +637,13 @@ public final class StaticContext {
         }
     }
 
-    public void putLocalClassClosure(@NotNull MemberDescriptor localClass, @NotNull List<DeclarationDescriptor> closure) {
+    public void putClassOrConstructorClosure(@NotNull MemberDescriptor localClass, @NotNull List<DeclarationDescriptor> closure) {
         localClassesClosure.put(localClass, Lists.newArrayList(closure));
     }
 
     @Nullable
-    public List<DeclarationDescriptor> getLocalClassClosure(@NotNull MemberDescriptor localClass) {
-        List<DeclarationDescriptor> result = localClassesClosure.get(localClass);
+    public List<DeclarationDescriptor> getClassOrConstructorClosure(@NotNull MemberDescriptor descriptor) {
+        List<DeclarationDescriptor> result = localClassesClosure.get(descriptor);
         return result != null ? Lists.newArrayList(result) : null;
     }
 }

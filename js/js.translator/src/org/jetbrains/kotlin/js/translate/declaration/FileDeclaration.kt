@@ -26,10 +26,7 @@ import org.jetbrains.kotlin.js.translate.initializer.InitializerUtils.generateIn
 import org.jetbrains.kotlin.js.translate.initializer.InitializerVisitor
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getPropertyDescriptor
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
-import org.jetbrains.kotlin.psi.KtClass
-import org.jetbrains.kotlin.psi.KtAnonymousInitializer
-import org.jetbrains.kotlin.psi.KtObjectDeclaration
-import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.*
 
 class FileDeclarationVisitor(
         val context: TranslationContext,
@@ -49,17 +46,8 @@ class FileDeclarationVisitor(
         }
     }
 
-    override fun visitClass(declaration: KtClass, context: TranslationContext?): Void? {
+    override fun visitClassOrObject(declaration: KtClassOrObject, context: TranslationContext?): Void? {
         result += ClassTranslator.translate(declaration, context!!).properties
-        return null
-    }
-
-    override fun visitObjectDeclaration(declaration: KtObjectDeclaration, context: TranslationContext?): Void? {
-        context!!
-
-        // TODO: avoid duplication with superclass
-        result += ClassTranslator.translate(declaration, context).properties
-
         return null
     }
 

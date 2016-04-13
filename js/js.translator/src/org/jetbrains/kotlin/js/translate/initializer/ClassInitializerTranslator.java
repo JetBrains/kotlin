@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.js.translate.context.UsageTracker;
 import org.jetbrains.kotlin.js.translate.declaration.DelegationTranslator;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.reference.CallArgumentTranslator;
-import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.AstUtilsKt;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -149,7 +148,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
             return;
         }
         if (hasAncestorClass(bindingContext(), classDeclaration)) {
-            ResolvedCall<FunctionDescriptor> superCall = BindingUtils.getSuperCall(bindingContext(), classDeclaration);
+            ResolvedCall<FunctionDescriptor> superCall = getSuperCall(bindingContext(), classDeclaration);
             if (superCall == null) return;
 
             if (classDeclaration instanceof KtEnumEntry) {
@@ -163,9 +162,11 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
 
                 ConstructorDescriptor superDescriptor = (ConstructorDescriptor) superCall.getResultingDescriptor();
 
-                List<DeclarationDescriptor> superclassClosure = context.getLocalClassClosure(superDescriptor);
-                UsageTracker tracker = context.usageTracker();
-                if (superclassClosure != null && tracker != null) {
+                List<DeclarationDescriptor> superclassClosure = context.getClassOrConstructorClosure(superDescriptor);
+                if (superclassClosure != null) {
+                    UsageTracker tracker = context.usageTracker();
+                    assert tracker != null : "Closure exists, therefore UsageTracker must exist too. Translating constructor of " +
+                                             descriptor;
                     for (DeclarationDescriptor capturedValue : superclassClosure) {
                         tracker.used(capturedValue);
                         arguments.add(tracker.getCapturedDescriptorToJsName().get(capturedValue).makeRef());

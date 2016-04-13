@@ -522,15 +522,12 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitObjectLiteralExpression(@NotNull KtObjectLiteralExpression expression, @NotNull TranslationContext context) {
         ClassDescriptor descriptor = BindingUtils.getClassDescriptor(context.bindingContext(), expression.getObjectDeclaration());
-        JsScope scope = context.getScopeForDescriptor(descriptor);
-        TranslationContext classContext = context.innerWithUsageTracker(scope, descriptor);
-
-        ClassTranslator.TranslationResult result = ClassTranslator.translate(expression.getObjectDeclaration(), classContext);
+        ClassTranslator.TranslationResult result = translateClassOrObject(expression.getObjectDeclaration(), descriptor, context);
         List<JsPropertyInitializer> properties = result.getProperties();
         context.getDefinitionPlace().getProperties().addAll(properties);
 
         JsExpression constructor = context.getQualifiedReference(descriptor);
-        List<DeclarationDescriptor> closure = context.getLocalClassClosure(descriptor);
+        List<DeclarationDescriptor> closure = context.getClassOrConstructorClosure(descriptor);
         List<JsExpression> closureArgs = new ArrayList<JsExpression>();
         if (closure != null) {
             for (DeclarationDescriptor capturedValue : closure) {
@@ -601,11 +598,17 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @Override
     public JsNode visitClass(@NotNull KtClass klass, TranslationContext context) {
         ClassDescriptor descriptor = BindingUtils.getClassDescriptor(context.bindingContext(), klass);
+        context.getDefinitionPlace().getProperties().addAll(translateClassOrObject(klass, descriptor, context).getProperties());
+        return JsEmpty.INSTANCE;
+    }
+
+    private static ClassTranslator.TranslationResult translateClassOrObject(
+            @NotNull KtClassOrObject declaration,
+            @NotNull ClassDescriptor descriptor,
+            @NotNull TranslationContext context
+    ) {
         JsScope scope = context.getScopeForDescriptor(descriptor);
         TranslationContext classContext = context.innerWithUsageTracker(scope, descriptor);
-
-        context.getDefinitionPlace().getProperties().addAll(ClassTranslator.translate(klass, classContext).getProperties());
-
-        return JsEmpty.INSTANCE;
+        return ClassTranslator.translate(declaration, classContext);
     }
 }

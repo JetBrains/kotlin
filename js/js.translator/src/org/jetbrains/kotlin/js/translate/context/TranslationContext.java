@@ -356,11 +356,17 @@ public class TranslationContext {
         if (descriptor.getValue() instanceof ExtensionReceiver) return JsLiteral.THIS;
 
         ClassifierDescriptor classifier = descriptor.getValue().getType().getConstructor().getDeclarationDescriptor();
-        if (!(classifier instanceof ClassDescriptor)) return JsLiteral.THIS;
+
+        // TODO: can't tell why this assertion is valid, revisit this code later
+        assert classifier instanceof ClassDescriptor;
 
         ClassDescriptor cls = (ClassDescriptor) classifier;
 
         JsExpression receiver = getAliasForDescriptor(cls.getThisAsReceiverParameter());
+
+        // I could reproduce situation when receiver == null, although there's no test to reproduce it. Have no time for investigation
+        // Hint: try generating field with getter/setter, see deepInnerClassInLocalClass.kt
+        // TODO: revisit this code later
         if (receiver == null) {
             receiver = JsLiteral.THIS;
         }
@@ -447,15 +453,15 @@ public class TranslationContext {
         return declarationDescriptor;
     }
 
-    public void putLocalClassClosure(@NotNull MemberDescriptor localClass, @NotNull List<DeclarationDescriptor> closure) {
-        staticContext.putLocalClassClosure(localClass, closure);
+    public void putClassOrConstructorClosure(@NotNull MemberDescriptor descriptor, @NotNull List<DeclarationDescriptor> closure) {
+        staticContext.putClassOrConstructorClosure(descriptor, closure);
     }
 
     @Nullable
-    public List<DeclarationDescriptor> getLocalClassClosure(@NotNull MemberDescriptor localClass) {
-        List<DeclarationDescriptor> result = staticContext.getLocalClassClosure(localClass);
+    public List<DeclarationDescriptor> getClassOrConstructorClosure(@NotNull MemberDescriptor localClass) {
+        List<DeclarationDescriptor> result = staticContext.getClassOrConstructorClosure(localClass);
         if (result == null && localClass instanceof ConstructorDescriptor && ((ConstructorDescriptor) localClass).isPrimary()) {
-            result = staticContext.getLocalClassClosure((ClassDescriptor) localClass.getContainingDeclaration());
+            result = staticContext.getClassOrConstructorClosure((ClassDescriptor) localClass.getContainingDeclaration());
         }
         return result;
     }
