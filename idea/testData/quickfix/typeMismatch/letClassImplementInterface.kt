@@ -9,5 +9,7 @@ fun bar() {
 fun foo(a: A) {
 }
 
-interface A
+interface A {
+    fun gav()
+}
 class B
