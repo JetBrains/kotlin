@@ -102,6 +102,7 @@ import org.jetbrains.kotlin.idea.refactoring.pullUp.AbstractPullUpTest
 import org.jetbrains.kotlin.idea.refactoring.pushDown.AbstractPushDownTest
 import org.jetbrains.kotlin.idea.refactoring.rename.AbstractRenameTest
 import org.jetbrains.kotlin.idea.refactoring.safeDelete.AbstractSafeDeleteTest
+import org.jetbrains.kotlin.idea.repl.AbstractIdeReplCompletionTest
 import org.jetbrains.kotlin.idea.resolve.*
 import org.jetbrains.kotlin.idea.structureView.AbstractKotlinFileStructureTest
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiFileHighlightingTest
@@ -812,6 +813,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractGenerateToStringActionTest>() {
             model("codeInsight/generate/toString")
+        }
+
+        testClass<AbstractIdeReplCompletionTest>() {
+            model("repl/completion")
         }
     }
 
