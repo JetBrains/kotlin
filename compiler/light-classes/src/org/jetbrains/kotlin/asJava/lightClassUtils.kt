@@ -89,7 +89,9 @@ fun KtParameter.toPsiParameters(): Collection<PsiParameter> {
                 else -> null
             } ?: return emptyList()
 
-    return methods.map { it.parameterList.parameters[lightParamIndex] }
+    return methods.mapNotNull {
+        if (it.parameterList.parametersCount > lightParamIndex) it.parameterList.parameters[lightParamIndex] else null
+    }
 }
 
 fun KtTypeParameter.toPsiTypeParameters(): List<PsiTypeParameter> {
