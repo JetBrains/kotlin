@@ -174,6 +174,7 @@ Issues fixed:
 - Fix several issues leading to exceptions: [KT-11579](https://youtrack.jetbrains.com/issue/KT-11579), [KT-11580](https://youtrack.jetbrains.com/issue/KT-11580), [KT-11777](https://youtrack.jetbrains.com/issue/KT-11777)
 - Fixed NoSuchFieldException in Kotlin module settings on IDEA Ultimate
 - [KT-11868](https://youtrack.jetbrains.com/issue/KT-11868) Fixed exception on search of functions/constructors with default parameters
+- [KT-11895](https://youtrack.jetbrains.com/issue/KT-11895) Fixed exception on highlighting of injected references
 
 #### Debugger
 
