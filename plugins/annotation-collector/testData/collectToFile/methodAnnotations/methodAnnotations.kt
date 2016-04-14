@@ -1,13 +1,25 @@
 package org.test
 
-public class SomeClass {
+annotation class Ann
 
-    public fun annotatedFunction() {
+open class Parent {
+    @Ann
+    open fun overridenWithoutAnnotation() {}
 
-        @java.lang.Deprecated fun localFunction() {
+    open fun overridenWithAnnotation() {}
 
-        }
+    @Ann
+    fun notOverriden() {}
 
-    }
+    open fun notAnnotated() {}
+}
 
+class Child : Parent() {
+    override fun overridenWithoutAnnotation() {}
+
+    @Ann
+    override fun overridenWithAnnotation() {}
+
+    @Ann
+    fun childMethod() {}
 }
