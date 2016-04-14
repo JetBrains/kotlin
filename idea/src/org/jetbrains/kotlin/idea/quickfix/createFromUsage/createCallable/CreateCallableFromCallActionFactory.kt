@@ -36,8 +36,8 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getReferenceTargets
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.classValueType
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
@@ -71,7 +71,8 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
             }
 
             Errors.NO_VALUE_FOR_PARAMETER,
-            Errors.TOO_MANY_ARGUMENTS -> diagElement.getNonStrictParentOfType<KtCallExpression>()
+            Errors.TOO_MANY_ARGUMENTS,
+            Errors.NONE_APPLICABLE -> diagElement.getNonStrictParentOfType<KtCallExpression>()
 
             else -> throw AssertionError("Unexpected diagnostic: ${diagnostic.factory}")
         } as? KtExpression
@@ -182,8 +183,12 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
         ): CallableInfo? {
             if (expression.typeArguments.isNotEmpty()) return null
 
-            val constructorDescriptor = expression.getResolvedCall(context)?.resultingDescriptor as? ConstructorDescriptor
-            val classDescriptor = constructorDescriptor?.containingDeclaration as? ClassDescriptor
+            val classDescriptor = expression
+                    .calleeExpression
+                    ?.getReferenceTargets(context)
+                    ?.mapNotNull { (it as? ConstructorDescriptor)?.containingDeclaration }
+                    ?.distinct()
+                    ?.singleOrNull() as? ClassDescriptor
             val klass = classDescriptor?.source?.getPsi()
             if ((klass !is KtClass && klass !is PsiClass) || !klass.canRefactor()) return null
 

@@ -2701,6 +2701,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("noneApplicable.kt")
+            public void testNoneApplicable() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createSecondaryConstructor/noneApplicable.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("superCall.kt")
             public void testSuperCall() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createSecondaryConstructor/superCall.kt");
