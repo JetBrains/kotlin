@@ -23,14 +23,14 @@ import java.io.StringReader
 class KotlinAnnotationProvider(private val annotationsReader: Reader) {
 
     private companion object {
-        val ANNOTATED_CLASS = "c"
-        val ANNOTATED_METHOD = "m"
-        val ANNOTATED_FIELD = "f"
+        const val ANNOTATED_CLASS = "c"
+        const val ANNOTATED_METHOD = "m"
+        const val ANNOTATED_FIELD = "f"
 
-        val SHORTENED_ANNOTATION = "a"
-        val SHORTENED_PACKAGE_NAME = "p"
+        const val SHORTENED_ANNOTATION = "a"
+        const val SHORTENED_PACKAGE_NAME = "p"
 
-        val CLASS_DECLARATION = "d"
+        const val CLASS_DECLARATION = "d"
     }
 
     constructor(annotationsFile: File) : this(annotationsFile.reader().buffered())
