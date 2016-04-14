@@ -159,6 +159,7 @@
                         <configuration>
                             <excludes>
                                 <exclude>kotlin/internal/OnlyInputTypes*</exclude>
+                                <exclude>kotlin/internal/InlineOnly*</exclude>
                                 <exclude>kotlin/internal</exclude>
                             </excludes>
                             <archive>
