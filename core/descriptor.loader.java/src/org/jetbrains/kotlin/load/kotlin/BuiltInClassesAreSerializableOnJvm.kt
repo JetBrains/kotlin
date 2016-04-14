@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.platform.createMappedTypeParametersSubstitution
+import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
@@ -43,6 +45,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addToStdlib.check
+import org.jetbrains.kotlin.utils.sure
 import java.io.Serializable
 import java.util.*
 
@@ -50,6 +53,7 @@ open class BuiltInClassesAreSerializableOnJvm(
         private val moduleDescriptor: ModuleDescriptor,
         deferredOwnerModuleDescriptor: () -> ModuleDescriptor
 ) : AdditionalClassPartsProvider {
+    private val j2kClassMap = JavaToKotlinClassMap.INSTANCE
 
     private val ownerModuleDescriptor: ModuleDescriptor by lazy(deferredOwnerModuleDescriptor)
 
@@ -106,24 +110,13 @@ open class BuiltInClassesAreSerializableOnJvm(
             classDescriptor: DeserializedClassDescriptor,
             functionsByScope: (MemberScope) -> Collection<SimpleFunctionDescriptor>
     ): Collection<SimpleFunctionDescriptor> {
-        // Prevents recursive dependency: memberScope(Any) -> memberScope(Object) -> memberScope(Any)
-        // No additional members should be added to Any
-        if (classDescriptor.isAny) return emptyList()
-
-        val fqName = classDescriptor.fqNameUnsafe.check { it.isSafe }?.toSafe() ?: return emptyList()
-
-        val j2kClassMap = JavaToKotlinClassMap.INSTANCE
-        val javaAnalogueFqName = j2kClassMap.mapKotlinToJava(fqName.toUnsafe())?.asSingleFqName() ?: return emptyList()
-
-        if (javaAnalogueFqName in IGNORE_BY_DEFAULT_CLASS_FQ_NAMES) return emptyList()
-
-        val javaAnalogueDescriptor =
-                ownerModuleDescriptor.resolveClassByFqName(javaAnalogueFqName, NoLookupLocation.FROM_BUILTINS) as? LazyJavaClassDescriptor
-                ?: return emptyList()
+        val javaAnalogueDescriptor = classDescriptor.getJavaAnalogue() ?: return emptyList()
 
         val platformClassDescriptors = j2kClassMap.mapPlatformClass(javaAnalogueDescriptor.fqNameSafe, DefaultBuiltIns.Instance)
         val kotlinMutableClassIfContainer = platformClassDescriptors.lastOrNull() ?: return emptyList()
         val platformVersions = SmartSet.create(platformClassDescriptors.map { it.fqNameSafe })
+
+        if (javaAnalogueDescriptor.fqNameSafe in IGNORE_BY_DEFAULT_CLASS_FQ_NAMES) return emptyList()
 
         val isMutable = j2kClassMap.isMutable(classDescriptor)
 
@@ -149,6 +142,52 @@ open class BuiltInClassesAreSerializableOnJvm(
                     }
                 }
     }
+
+    private fun ClassDescriptor.getJavaAnalogue(): LazyJavaClassDescriptor? {
+        // Prevents recursive dependency: memberScope(Any) -> memberScope(Object) -> memberScope(Any)
+        // No additional members should be added to Any
+        if (isAny) return null
+
+        val fqName = fqNameUnsafe.check { it.isSafe }?.toSafe() ?: return null
+        val javaAnalogueFqName = j2kClassMap.mapKotlinToJava(fqName.toUnsafe())?.asSingleFqName() ?: return null
+
+        return ownerModuleDescriptor.resolveClassByFqName(javaAnalogueFqName, NoLookupLocation.FROM_BUILTINS) as? LazyJavaClassDescriptor
+    }
+
+    override fun getConstructors(classDescriptor: DeserializedClassDescriptor): Collection<ConstructorDescriptor> {
+        if (classDescriptor.kind != ClassKind.CLASS) return emptyList()
+
+        val javaAnalogueDescriptor = classDescriptor.getJavaAnalogue() ?: return emptyList()
+
+        val defaultKotlinVersion =
+                j2kClassMap.mapJavaToKotlin(javaAnalogueDescriptor.fqNameSafe, DefaultBuiltIns.Instance) ?: return emptyList()
+
+        val substitutor = createMappedTypeParametersSubstitution(defaultKotlinVersion, javaAnalogueDescriptor).buildSubstitutor()
+
+        fun ConstructorDescriptor.isEffectivelyTheSameAs(javaConstructor: ConstructorDescriptor) =
+                OverridingUtil.getBothWaysOverridability(this, javaConstructor.substitute(substitutor)) ==
+                    OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE
+
+        return javaAnalogueDescriptor.constructors.filter {
+            javaConstructor ->
+            javaConstructor.visibility.isPublicAPI &&
+                defaultKotlinVersion.constructors.none { it.isEffectivelyTheSameAs(javaConstructor) } &&
+                !javaConstructor.isTrivialCopyConstructorFor(classDescriptor) &&
+                !KotlinBuiltIns.isDeprecated(javaConstructor)
+        }.map {
+            javaConstructor ->
+            javaConstructor.newCopyBuilder().apply {
+                setOwner(classDescriptor)
+                setReturnType(classDescriptor.defaultType)
+                setPreserveSourceElement()
+                setSubstitution(substitutor.substitution)
+            }.build() as ConstructorDescriptor
+        }
+    }
+
+    private fun ConstructorDescriptor.isTrivialCopyConstructorFor(classDescriptor: DeserializedClassDescriptor): Boolean
+        = valueParameters.size == 1 &&
+            valueParameters.single().type.constructor.declarationDescriptor?.fqNameUnsafe == classDescriptor.fqNameUnsafe
 
     companion object {
         fun isSerializableInJava(classFqName: FqName): Boolean {

@@ -33,6 +33,7 @@ public final class Array</*0*/ T> : kotlin.Cloneable, java.io.Serializable {
 
 public final class Boolean : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable {
     /*primary*/ private constructor Boolean()
+    public constructor Boolean(/*0*/ p0: kotlin.String!)
     public final infix fun and(/*0*/ other: kotlin.Boolean): kotlin.Boolean
     public open override /*1*/ fun compareTo(/*0*/ other: kotlin.Boolean): kotlin.Int
     public final operator fun not(): kotlin.Boolean
@@ -53,6 +54,7 @@ public final class BooleanArray : kotlin.Cloneable, java.io.Serializable {
 
 public final class Byte : kotlin.Number, kotlin.Comparable<kotlin.Byte>, java.io.Serializable {
     /*primary*/ private constructor Byte()
+    public constructor Byte(/*0*/ p0: kotlin.String!)
     public open override /*1*/ fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
     public final operator fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
     public final operator fun compareTo(/*0*/ other: kotlin.Float): kotlin.Int
@@ -219,6 +221,7 @@ public final enum class DeprecationLevel : kotlin.Enum<kotlin.DeprecationLevel> 
 
 public final class Double : kotlin.Number, kotlin.Comparable<kotlin.Double>, java.io.Serializable {
     /*primary*/ private constructor Double()
+    public constructor Double(/*0*/ p0: kotlin.String!)
     public final operator fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
     public open override /*1*/ fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
     public final operator fun compareTo(/*0*/ other: kotlin.Float): kotlin.Int
@@ -315,6 +318,8 @@ public abstract class Enum</*0*/ E : kotlin.Enum<E>> : kotlin.Comparable<E>, jav
 
 public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float>, java.io.Serializable {
     /*primary*/ private constructor Float()
+    public constructor Float(/*0*/ p0: kotlin.Double)
+    public constructor Float(/*0*/ p0: kotlin.String!)
     public final operator fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
     public final operator fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
     public open override /*1*/ fun compareTo(/*0*/ other: kotlin.Float): kotlin.Int
@@ -394,6 +399,7 @@ public interface Function</*0*/ out R> {
 
 public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int>, java.io.Serializable {
     /*primary*/ private constructor Int()
+    public constructor Int(/*0*/ p0: kotlin.String!)
     public final infix fun and(/*0*/ other: kotlin.Int): kotlin.Int
     public final operator fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
     public final operator fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
@@ -475,6 +481,7 @@ public final class IntArray : kotlin.Cloneable, java.io.Serializable {
 
 public final class Long : kotlin.Number, kotlin.Comparable<kotlin.Long>, java.io.Serializable {
     /*primary*/ private constructor Long()
+    public constructor Long(/*0*/ p0: kotlin.String!)
     public final infix fun and(/*0*/ other: kotlin.Long): kotlin.Long
     public final operator fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
     public final operator fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
@@ -579,6 +586,7 @@ public abstract class Number : kotlin.Any, java.io.Serializable {
 
 public final class Short : kotlin.Number, kotlin.Comparable<kotlin.Short>, java.io.Serializable {
     /*primary*/ private constructor Short()
+    public constructor Short(/*0*/ p0: kotlin.String!)
     public final operator fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
     public final operator fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
     public final operator fun compareTo(/*0*/ other: kotlin.Float): kotlin.Int
@@ -653,6 +661,17 @@ public final class ShortArray : kotlin.Cloneable, java.io.Serializable {
 
 public final class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable {
     /*primary*/ public constructor String()
+    public constructor String(/*0*/ p0: java.lang.StringBuffer!)
+    public constructor String(/*0*/ p0: java.lang.StringBuilder!)
+    public constructor String(/*0*/ p0: kotlin.ByteArray!)
+    public constructor String(/*0*/ p0: kotlin.ByteArray!, /*1*/ p1: java.nio.charset.Charset!)
+    public constructor String(/*0*/ p0: kotlin.ByteArray!, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Int)
+    public constructor String(/*0*/ p0: kotlin.ByteArray!, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Int, /*3*/ p3: java.nio.charset.Charset!)
+    public constructor String(/*0*/ p0: kotlin.ByteArray!, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Int, /*3*/ p3: kotlin.String!)
+    public constructor String(/*0*/ p0: kotlin.ByteArray!, /*1*/ p1: kotlin.String!)
+    public constructor String(/*0*/ p0: kotlin.CharArray!)
+    public constructor String(/*0*/ p0: kotlin.CharArray!, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Int)
+    public constructor String(/*0*/ p0: kotlin.IntArray!, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Int)
     public open override /*1*/ val length: kotlin.Int
         public open override /*1*/ fun <get-length>(): kotlin.Int
     public open override /*1*/ fun compareTo(/*0*/ other: kotlin.String): kotlin.Int

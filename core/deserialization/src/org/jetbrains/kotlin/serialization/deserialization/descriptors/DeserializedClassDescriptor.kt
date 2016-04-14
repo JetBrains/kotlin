@@ -116,7 +116,8 @@ class DeserializedClassDescriptor(
     override fun getUnsubstitutedPrimaryConstructor(): ConstructorDescriptor? = primaryConstructor()
 
     private fun computeConstructors(): Collection<ConstructorDescriptor> =
-            computeSecondaryConstructors() + getUnsubstitutedPrimaryConstructor().singletonOrEmptyList()
+            computeSecondaryConstructors() + unsubstitutedPrimaryConstructor.singletonOrEmptyList() +
+            c.components.additionalClassPartsProvider.getConstructors(this)
 
     private fun computeSecondaryConstructors(): List<ConstructorDescriptor> =
             classProto.constructorList.filter { Flags.IS_SECONDARY.get(it.flags) }.map {
