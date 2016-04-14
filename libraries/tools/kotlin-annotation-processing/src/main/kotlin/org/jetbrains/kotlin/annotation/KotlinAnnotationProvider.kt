@@ -36,19 +36,23 @@ class KotlinAnnotationProvider(private val annotationsReader: Reader) {
     constructor(annotationsFile: File) : this(annotationsFile.reader().buffered())
     constructor() : this(StringReader(""))
 
-    public val annotatedKotlinElements: Map<String, Set<AnnotatedElementDescriptor>> by lazy {
+    private val kotlinClassesInternal = hashSetOf<String>()
+    private val annotatedKotlinElementsInternal = hashMapOf<String, MutableSet<AnnotatedElementDescriptor>>()
+
+    init {
         readAnnotations()
     }
 
-    private val kotlinClassesInternal = hashSetOf<String>()
+    val annotatedKotlinElements: Map<String, Set<AnnotatedElementDescriptor>>
+        get() = annotatedKotlinElementsInternal
 
-    public val kotlinClasses: Set<String>
+    val kotlinClasses: Set<String>
         get() = kotlinClassesInternal
 
-    public val supportInheritedAnnotations: Boolean
+    val supportInheritedAnnotations: Boolean
         get() = kotlinClassesInternal.isNotEmpty()
 
-    private fun readAnnotations(): MutableMap<String, MutableSet<AnnotatedElementDescriptor>> {
+    private fun readAnnotations() {
         val shortenedAnnotationCache = hashMapOf<String, String>()
         val shortenedPackageNameCache = hashMapOf<String, String>()
 
@@ -62,8 +66,6 @@ class KotlinAnnotationProvider(private val annotationsReader: Reader) {
 
             return shortenedValue + '.' + s.substring(id.length + 1)
         }
-
-        val annotatedKotlinElements: MutableMap<String, MutableSet<AnnotatedElementDescriptor>> = hashMapOf()
 
         annotationsReader.useLines { lines ->
             for (line in lines) {
@@ -84,7 +86,7 @@ class KotlinAnnotationProvider(private val annotationsReader: Reader) {
                         val classFqName = expandClassName(lineParts[2]).replace('$', '.')
                         val elementName = if (lineParts.size == 4) lineParts[3] else null
 
-                        val set = annotatedKotlinElements.getOrPut(annotationName) { hashSetOf() }
+                        val set = annotatedKotlinElementsInternal.getOrPut(annotationName) { hashSetOf() }
                         set.add(when (type) {
                             ANNOTATED_CLASS -> AnnotatedClassDescriptor(classFqName)
                             ANNOTATED_FIELD -> {
@@ -107,8 +109,6 @@ class KotlinAnnotationProvider(private val annotationsReader: Reader) {
                 }
             }
         }
-
-        return annotatedKotlinElements
     }
 
     private fun handleShortenedName(cache: MutableMap<String, String>, lineParts: List<String>) {
