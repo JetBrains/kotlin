@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.load.kotlin
 
 import com.google.protobuf.MessageLite
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -133,8 +132,9 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any, 
             container: ProtoContainer, signature: MemberSignature,
             property: Boolean = false, field: Boolean = false, isConst: Boolean? = null
     ): List<A> {
-        val kotlinClass = findClassWithAnnotationsAndInitializers(container, getImplClassName(container, property, isConst), field)
-                          ?: return listOf()
+        val kotlinClass =
+                findClassWithAnnotationsAndInitializers(container, getSpecialCaseContainerClass(container, property, field, isConst))
+                ?: return listOf()
 
         return storage(kotlinClass).memberAnnotations[signature] ?: listOf()
     }
@@ -195,60 +195,54 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any, 
         val signature = getCallableSignature(proto, container.nameResolver, container.typeTable, AnnotatedCallableKind.PROPERTY)
                         ?: return null
 
-        val implClassName = getImplClassName(container, property = true, isConst = Flags.IS_CONST.get(proto.flags))
-        val kotlinClass = findClassWithAnnotationsAndInitializers(container, implClassName, field = true) ?: return null
+        val specialCase = getSpecialCaseContainerClass(container, property = true, field = true, isConst = Flags.IS_CONST.get(proto.flags))
+        val kotlinClass = findClassWithAnnotationsAndInitializers(container, specialCase) ?: return null
 
         return storage(kotlinClass).propertyConstants[signature]
     }
 
     private fun findClassWithAnnotationsAndInitializers(
-            container: ProtoContainer, implClassName: ClassId?, field: Boolean
+            container: ProtoContainer, specialCase: KotlinJvmBinaryClass?
     ): KotlinJvmBinaryClass? {
-        if (container is ProtoContainer.Class) {
-            val containerBinaryClass = container.toBinaryClass()
-
-            if (implClassName == container.classId) {
-                return containerBinaryClass
-            }
-
-            if (implClassName != null) {
-                return kotlinClassFinder.findKotlinClass(implClassName)
-            }
-
-            if (field && container.kind == ProtoBuf.Class.Kind.COMPANION_OBJECT) {
-                val outerClass = container.outerClass
-                if (outerClass != null && (outerClass.kind == ProtoBuf.Class.Kind.CLASS || outerClass.kind == ProtoBuf.Class.Kind.ENUM_CLASS)) {
-                    // Backing fields of properties of a companion object in a class are generated in the outer class
-                    return outerClass.toBinaryClass()
-                }
-            }
-
-            return containerBinaryClass
+        return when {
+            specialCase != null -> specialCase
+            container is ProtoContainer.Class -> container.toBinaryClass()
+            else -> null
         }
-
-        if (implClassName != null) {
-            return kotlinClassFinder.findKotlinClass(implClassName)
-        }
-
-        return null
     }
 
-    private fun getImplClassName(container: ProtoContainer, property: Boolean, isConst: Boolean?): ClassId? {
+    // TODO: do not use KotlinClassFinder#findKotlinClass here because it traverses the file system in the compiler
+    // Introduce an API in KotlinJvmBinaryClass to find a class nearby instead
+    private fun getSpecialCaseContainerClass(
+            container: ProtoContainer, property: Boolean, field: Boolean, isConst: Boolean?
+    ): KotlinJvmBinaryClass? {
         if (property) {
             checkNotNull(isConst) { "isConst should not be null for property (container=$container)" }
             if (container is ProtoContainer.Class && container.kind == ProtoBuf.Class.Kind.INTERFACE) {
-                return container.classId.createNestedClassId(Name.identifier(JvmAbi.DEFAULT_IMPLS_CLASS_NAME))
+                return kotlinClassFinder.findKotlinClass(
+                        container.classId.createNestedClassId(Name.identifier(JvmAbi.DEFAULT_IMPLS_CLASS_NAME))
+                )
             }
             if (isConst!! && container is ProtoContainer.Package) {
                 // Const properties in multifile classes are generated into the facade class
                 val facadeClassName = (container.source as? JvmPackagePartSource)?.facadeClassName
                 if (facadeClassName != null) {
                     // Converting '/' to '.' is fine here because the facade class has a top level ClassId
-                    return ClassId.topLevel(FqName(facadeClassName.internalName.replace('/', '.')))
+                    return kotlinClassFinder.findKotlinClass(ClassId.topLevel(FqName(facadeClassName.internalName.replace('/', '.'))))
                 }
             }
         }
-        return ((container as? ProtoContainer.Package)?.source as? JvmPackagePartSource)?.classId
+        if (field && container is ProtoContainer.Class && container.kind == ProtoBuf.Class.Kind.COMPANION_OBJECT) {
+            val outerClass = container.outerClass
+            if (outerClass != null && (outerClass.kind == ProtoBuf.Class.Kind.CLASS || outerClass.kind == ProtoBuf.Class.Kind.ENUM_CLASS)) {
+                // Backing fields of properties of a companion object in a class are generated in the outer class
+                return outerClass.toBinaryClass()
+            }
+        }
+        if (container is ProtoContainer.Package && container.source is JvmPackagePartSource) {
+            return kotlinClassFinder.findKotlinClass((container.source as JvmPackagePartSource).classId)
+        }
+        return null
     }
 
     private fun loadAnnotationsAndInitializers(kotlinClass: KotlinJvmBinaryClass): Storage<A, C> {
