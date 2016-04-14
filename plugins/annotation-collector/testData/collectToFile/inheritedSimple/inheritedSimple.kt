@@ -1,5 +1,11 @@
 package org.test
 
-public interface SomeInterface
+import java.lang.annotation.Inherited
 
-public class SomeClass
+@Inherited
+annotation class Ann
+
+@Ann
+interface A
+
+class B : A
