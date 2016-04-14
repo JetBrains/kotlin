@@ -22,6 +22,7 @@ Issues fixed:
 - [KT-11495](https://youtrack.jetbrains.com/issue/KT-11495) Show recursion line markers for extension function calls with different receiver
 - [KT-11659](https://youtrack.jetbrains.com/issue/KT-11659) Generate abstract overrides for Any members inside of Kotlin interfaces
 - [KT-11866](https://youtrack.jetbrains.com/issue/KT-11866) Suggest "Create secondary constructor" when constructors exist but are not applicable
+- [KT-11908](https://youtrack.jetbrains.com/issue/KT-11866) Allow properties with custom setters to be used in generated equals/hashCode/toString
 
 #### Debugger
 

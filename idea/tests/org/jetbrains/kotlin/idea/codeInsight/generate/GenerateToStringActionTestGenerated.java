@@ -82,6 +82,12 @@ public class GenerateToStringActionTestGenerated extends AbstractGenerateToStrin
             doTest(fileName);
         }
 
+        @TestMetadata("customAccessors.kt")
+        public void testCustomAccessors() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/toString/multipeTemplates/customAccessors.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("multipleVars.kt")
         public void testMultipleVars() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/toString/multipeTemplates/multipleVars.kt");
@@ -124,6 +130,12 @@ public class GenerateToStringActionTestGenerated extends AbstractGenerateToStrin
         @TestMetadata("arrays.kt")
         public void testArrays() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/toString/singleTemplate/arrays.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("customAccessors.kt")
+        public void testCustomAccessors() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/toString/singleTemplate/customAccessors.kt");
             doTest(fileName);
         }
 
