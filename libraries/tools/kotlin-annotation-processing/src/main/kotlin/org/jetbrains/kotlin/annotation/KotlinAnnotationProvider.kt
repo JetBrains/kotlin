@@ -53,6 +53,12 @@ class KotlinAnnotationProvider(private val annotationsReader: Reader) {
         get() = kotlinClassesInternal.isNotEmpty()
 
     private fun readAnnotations() {
+        fun handleShortenedName(cache: MutableMap<String, String>, lineParts: List<String>) {
+            val name = lineParts[1]
+            val id = lineParts[2]
+            cache.put(id, name)
+        }
+
         val shortenedAnnotationCache = hashMapOf<String, String>()
         val shortenedPackageNameCache = hashMapOf<String, String>()
 
@@ -109,11 +115,5 @@ class KotlinAnnotationProvider(private val annotationsReader: Reader) {
                 }
             }
         }
-    }
-
-    private fun handleShortenedName(cache: MutableMap<String, String>, lineParts: List<String>) {
-        val name = lineParts[1]
-        val id = lineParts[2]
-        cache.put(id, name)
     }
 }
