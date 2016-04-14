@@ -67,6 +67,9 @@ class TypeCastExpression(val type: Type, val expression: Expression) : Expressio
     override fun generateCode(builder: CodeBuilder) {
         builder.appendOperand(this, expression).append(" as ").append(type)
     }
+
+    override val isNullable: Boolean
+        get() = type.isNullable
 }
 
 class LiteralExpression(val literalText: String) : Expression() {

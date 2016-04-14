@@ -1,5 +1,5 @@
-// ERROR: Abstract member cannot be accessed directly
-// ERROR: Abstract member cannot be accessed directly
+// ERROR: Property must be initialized
+// ERROR: Property must be initialized
 internal interface I {
     val something1: Int
 
@@ -56,12 +56,10 @@ internal abstract class C(override val something1: Int) : B(), I {
 
     override var something4: Int
         get() = 0
-        set(value: Int) {
-            super.something4 = value
-        }
+        set
 
     override var something5: Int
-        get() = super.something5
+        get
         set(value) {
 
         }

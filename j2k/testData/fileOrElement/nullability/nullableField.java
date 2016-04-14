@@ -14,19 +14,33 @@ public class Test {
         myIntProp = 1;
     }
 
-    public void test() {
+    public void test1() {
         foo1(myProp);
-        foo2(myProp);
-        foo3(myProp);
+    }
 
+    public void test2() {
+        foo2(myProp);
+    }
+
+    public void test3() {
+        foo3(myProp);
+    }
+
+    public void test4() {
         myProp.charAt(myIntProp);
         System.out.println(myProp);
+    }
 
+    public void test5() {
         boolean b = "aaa".equals(myProp);
         String s = "aaa" + myProp;
+    }
 
+    public void test6() {
         myProp.compareToIgnoreCase(myProp);
+    }
 
+    public void test7() {
         List<Integer> list = new ArrayList<Integer>();
         list.remove(myIntProp);
     }

@@ -6,6 +6,6 @@ internal abstract class C {
         val h = s2.hashCode()
     }
 
-    internal abstract fun f()
-    internal abstract fun g()
+    internal abstract fun f(): String?
+    internal abstract fun g(): String?
 }

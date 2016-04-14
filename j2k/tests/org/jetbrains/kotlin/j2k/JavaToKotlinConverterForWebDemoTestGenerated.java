@@ -757,6 +757,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/class"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
+        @TestMetadata("anonymousClass.java")
+        public void testAnonymousClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/anonymousClass.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("class.java")
         public void testClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/class.java");
@@ -1362,6 +1368,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class DetectProperties extends AbstractJavaToKotlinConverterForWebDemoTest {
+        @TestMetadata("AbstractPropertyPrivateSetter.java")
+        public void testAbstractPropertyPrivateSetter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/AbstractPropertyPrivateSetter.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("AccessInGetterWithThis.java")
         public void testAccessInGetterWithThis() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/AccessInGetterWithThis.java");
@@ -3499,9 +3511,39 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("notNullCast.java")
+        public void testNotNullCast() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/notNullCast.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("nullableField.java")
         public void testNullableField() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/nullableField.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nullableInitializer1.java")
+        public void testNullableInitializer1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/nullableInitializer1.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nullableInitializer2.java")
+        public void testNullableInitializer2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/nullableInitializer2.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nullableInitializer3.java")
+        public void testNullableInitializer3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/nullableInitializer3.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nullableInitializer4.java")
+        public void testNullableInitializer4() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/nullableInitializer4.java");
             doTest(fileName);
         }
 
