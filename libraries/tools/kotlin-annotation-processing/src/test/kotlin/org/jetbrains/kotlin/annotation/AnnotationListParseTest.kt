@@ -53,7 +53,7 @@ public class AnnotationListParseTest {
 
         assertTrue(annotationsFile.absolutePath + " does not exist.", annotationsFile.exists())
 
-        val annotationProvider = FileKotlinAnnotationProvider(annotationsFile)
+        val annotationProvider = KotlinAnnotationProvider(annotationsFile)
         val parsedAnnotations = annotationProvider.annotatedKotlinElements
 
         val actualAnnotations = StringBuilder()

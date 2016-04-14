@@ -19,9 +19,8 @@ package org.jetbrains.kotlin.annotation
 import java.io.File
 import java.io.Reader
 import java.io.StringReader
-import javax.tools.FileObject
 
-public abstract class KotlinAnnotationProvider {
+class KotlinAnnotationProvider(private val annotationsReader: Reader) {
 
     private companion object {
         val ANNOTATED_CLASS = "c"
@@ -34,6 +33,9 @@ public abstract class KotlinAnnotationProvider {
         val CLASS_DECLARATION = "d"
     }
 
+    constructor(annotationsFile: File) : this(annotationsFile.reader().buffered())
+    constructor() : this(StringReader(""))
+
     public val annotatedKotlinElements: Map<String, Set<AnnotatedElementDescriptor>> by lazy {
         readAnnotations()
     }
@@ -45,8 +47,6 @@ public abstract class KotlinAnnotationProvider {
 
     public val supportInheritedAnnotations: Boolean
         get() = kotlinClassesInternal.isNotEmpty()
-
-    protected abstract val serializedAnnotations: Reader
 
     private fun readAnnotations(): MutableMap<String, MutableSet<AnnotatedElementDescriptor>> {
         val shortenedAnnotationCache = hashMapOf<String, String>()
@@ -65,7 +65,7 @@ public abstract class KotlinAnnotationProvider {
 
         val annotatedKotlinElements: MutableMap<String, MutableSet<AnnotatedElementDescriptor>> = hashMapOf()
 
-        serializedAnnotations.useLines { lines ->
+        annotationsReader.useLines { lines ->
             for (line in lines) {
                 if (line.isEmpty()) continue
                 val lineParts = line.split(' ')
@@ -116,14 +116,4 @@ public abstract class KotlinAnnotationProvider {
         val id = lineParts[2]
         cache.put(id, name)
     }
-
-}
-
-public class FileKotlinAnnotationProvider(val annotationsFile: File): KotlinAnnotationProvider() {
-    override val serializedAnnotations: Reader
-        get() = annotationsFile.reader().buffered()
-}
-
-public class EmptyKotlinAnnotationsProvider : KotlinAnnotationProvider() {
-    override val serializedAnnotations = StringReader("")
 }
