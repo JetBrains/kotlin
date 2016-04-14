@@ -124,7 +124,7 @@ private fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFil
 
     val scriptDefinition = KotlinScriptDefinitionProvider.getInstance(project).findScriptDefinition(virtualFile)
     if (scriptDefinition != null)
-        return CustomizedScriptModuleInfo(project, virtualFile, scriptDefinition)
+        return CustomizedScriptModuleInfo(project, module, virtualFile, scriptDefinition)
 
     return NotUnderContentRootModuleInfo
 }
