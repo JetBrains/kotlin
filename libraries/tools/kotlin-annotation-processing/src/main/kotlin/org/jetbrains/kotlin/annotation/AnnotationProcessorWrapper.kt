@@ -97,10 +97,10 @@ public abstract class AnnotationProcessorWrapper(
         val annotationsFilePath = processingEnv.options[KAPT_ANNOTATION_OPTION]
         val annotationsFile = if (annotationsFilePath != null) File(annotationsFilePath) else null
         kotlinAnnotationsProvider = if (annotationsFile != null && annotationsFile.exists()) {
-            FileKotlinAnnotationProvider(annotationsFile)
+            KotlinAnnotationProvider(annotationsFile)
         }
         else {
-            EmptyKotlinAnnotationsProvider()
+            KotlinAnnotationProvider()
         }
 
         processor.init(processingEnv)
