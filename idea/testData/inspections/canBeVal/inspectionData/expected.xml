@@ -61,4 +61,13 @@
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Local 'var' can be declared as 'val'</problem_class>
         <description>Can be declared as 'val'</description>
     </problem>
+
+    <problem>
+        <file>kt11891.kt</file>
+        <line>2</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="kt11891.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Local 'var' can be declared as 'val'</problem_class>
+        <description>Can be declared as 'val'</description>
+    </problem>
 </problems>

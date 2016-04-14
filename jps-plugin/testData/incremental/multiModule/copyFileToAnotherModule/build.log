@@ -1,6 +1,5 @@
 ================ Step #1 =================
 
-Building module1
 Compiling files:
   module1/src/b.kt
 End of files
@@ -16,7 +15,6 @@ Compiling files:
 End of files
 Exit code: OK
 ------------------------------------------
-Building module2
 Cleaning output files:
   out/production/module2/META-INF/module2.kotlin_module
   out/production/module2/usage/UseClassBKt.class
@@ -31,7 +29,6 @@ Exit code: OK
 
 ================ Step #2 =================
 
-Building module1
 Compiling files:
   module1/src/failCompilation.kt
 End of files

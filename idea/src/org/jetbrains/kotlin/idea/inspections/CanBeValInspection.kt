@@ -98,7 +98,7 @@ class CanBeValInspection : AbstractKotlinInspection() {
                 var instruction = from
                 while (instruction is InstructionWithNext) {
                     val next = instruction.next ?: return false
-                    if (next in visited) continue
+                    if (next in visited) return false
                     if (next in targets) return true
                     visited.add(next)
                     instruction = next
