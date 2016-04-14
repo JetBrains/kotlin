@@ -31,11 +31,12 @@ import java.io.StringWriter
 abstract class AbstractAnnotationProcessorBoxTest : CodegenTestCase() {
     override fun doTest(path: String) {
         val testName = getTestName(true)
-        val fileName = path + testName + ".kt"
+        val ktFiles = File(path).listFiles { file -> file.isFile && file.extension.toLowerCase() == "kt" }
+        val testFiles = ktFiles.map { TestFile(it.name, it.readText()) }
         val supportInheritedAnnotations = testName.startsWith("inherited")
 
         val collectorExtension = createTestEnvironment(supportInheritedAnnotations)
-        loadFileByFullPath(fileName)
+        loadMultiFiles(testFiles)
         CodegenTestUtil.generateFiles(myEnvironment, myFiles)
 
         val actualAnnotations = KotlinTestUtils.replaceHashWithStar(collectorExtension.stringWriter.toString())
