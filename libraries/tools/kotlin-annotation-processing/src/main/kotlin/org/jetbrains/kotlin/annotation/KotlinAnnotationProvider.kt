@@ -20,7 +20,7 @@ import java.io.File
 import java.io.Reader
 import java.io.StringReader
 
-class KotlinAnnotationProvider(private val annotationsReader: Reader) {
+class KotlinAnnotationProvider(annotationsReader: Reader) {
 
     private companion object {
         const val ANNOTATED_CLASS = "c"
@@ -40,7 +40,7 @@ class KotlinAnnotationProvider(private val annotationsReader: Reader) {
     private val annotatedKotlinElementsInternal = hashMapOf<String, MutableSet<AnnotatedElementDescriptor>>()
 
     init {
-        readAnnotations()
+        readAnnotations(annotationsReader)
     }
 
     val annotatedKotlinElements: Map<String, Set<AnnotatedElementDescriptor>>
@@ -52,7 +52,7 @@ class KotlinAnnotationProvider(private val annotationsReader: Reader) {
     val supportInheritedAnnotations: Boolean
         get() = kotlinClassesInternal.isNotEmpty()
 
-    private fun readAnnotations() {
+    private fun readAnnotations(annotationsReader: Reader) {
         fun handleShortenedName(cache: MutableMap<String, String>, lineParts: List<String>) {
             val name = lineParts[1]
             val id = lineParts[2]
