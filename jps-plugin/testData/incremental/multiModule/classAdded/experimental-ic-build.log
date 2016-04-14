@@ -1,9 +1,7 @@
 ================ Step #1 =================
 
-Building module1
 Exit code: NOTHING_DONE
 ------------------------------------------
-Building module2
 Compiling files:
   module2/src/A.kt
 End of files
@@ -38,7 +36,6 @@ Unresolved reference: foo
 
 ================ Step #2 =================
 
-Building module1
 Cleaning output files:
   out/production/module1/foo/A.class
 End of files
@@ -47,7 +44,6 @@ Compiling files:
 End of files
 Exit code: OK
 ------------------------------------------
-Building module2
 Cleaning output files:
   out/production/module2/foo/A.class
 End of files

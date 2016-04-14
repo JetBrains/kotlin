@@ -1,12 +1,10 @@
 ================ Step #1 =================
 
-Building module1
 Exit code: NOTHING_DONE
 ------------------------------------------
 Cleaning output files:
   out/production/module2/foo/A.class
 End of files
-Building module2
 Compiling files:
 End of files
 Exit code: ADDITIONAL_PASS_REQUIRED
@@ -35,10 +33,8 @@ Unresolved reference: boo
 
 ================ Step #2 =================
 
-Building module1
 Exit code: NOTHING_DONE
 ------------------------------------------
-Building module2
 Compiling files:
   module2/src/B.kt
   module2/src/createA.kt
@@ -52,10 +48,8 @@ Exit code: OK
 
 ================ Step #3 =================
 
-Building module1
 Exit code: NOTHING_DONE
 ------------------------------------------
-Building module2
 Compiling files:
   module2/src/failCompilation.kt
 End of files
