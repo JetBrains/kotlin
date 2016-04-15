@@ -1,0 +1,13 @@
+// "Create type parameter 'X'" "true"
+class A<T : List<T>>
+
+interface I : List<I>
+
+fun <X : List<X>> foo(x: A<X>) {
+
+}
+
+fun test() {
+    foo<List<>>(A())
+    foo(A<I>())
+}

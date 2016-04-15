@@ -272,3 +272,17 @@ fun dropEnclosingParenthesesIfPossible(expression: KtExpression): KtExpression {
     if (!KtPsiUtil.areParenthesesUseless(parent)) return expression
     return parent.replaced(expression)
 }
+
+fun KtTypeParameterListOwner.addTypeParameter(typeParameter: KtTypeParameter): KtTypeParameter? {
+    typeParameterList?.let { return it.addParameter(typeParameter) }
+
+    val list = KtPsiFactory(this).createTypeParameterList("<X>")
+    list.parameters[0].replace(typeParameter)
+    val leftAnchor = when (this) {
+        is KtClass -> nameIdentifier ?: getClassOrInterfaceKeyword()
+        is KtNamedFunction -> funKeyword
+        is KtProperty -> valOrVarKeyword
+        else -> null
+    } ?: return null
+    return (addAfter(list, leftAnchor) as KtTypeParameterList).parameters.first()
+}

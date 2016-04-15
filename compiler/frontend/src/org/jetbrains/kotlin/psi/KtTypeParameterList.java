@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
@@ -35,6 +36,11 @@ public class KtTypeParameterList extends KtElementImplStub<KotlinPlaceHolderStub
     @NotNull
     public List<KtTypeParameter> getParameters() {
         return getStubOrPsiChildrenAsList(KtStubElementTypes.TYPE_PARAMETER);
+    }
+
+    @NotNull
+    public KtTypeParameter addParameter(@NotNull KtTypeParameter typeParameter) {
+        return EditCommaSeparatedListHelper.INSTANCE.addItem(this, getParameters(), typeParameter, KtTokens.LT);
     }
 
     @Override

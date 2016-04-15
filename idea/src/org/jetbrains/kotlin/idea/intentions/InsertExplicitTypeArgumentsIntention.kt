@@ -22,11 +22,13 @@ import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtTypeArgumentList
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.ErrorUtils
 
 class InsertExplicitTypeArgumentsIntention : SelfTargetingRangeIntention<KtCallExpression>(KtCallExpression::class.java, "Add explicit type arguments"), LowPriorityAction {
@@ -34,17 +36,10 @@ class InsertExplicitTypeArgumentsIntention : SelfTargetingRangeIntention<KtCallE
         return if (isApplicableTo(element, element.analyze())) element.calleeExpression!!.textRange else null
     }
 
-    override fun applyTo(element: KtCallExpression, editor: Editor?) {
-        val argumentList = createTypeArguments(element, element.analyze())!!
-
-        val callee = element.calleeExpression!!
-        val newArgumentList = element.addAfter(argumentList, callee) as KtTypeArgumentList
-
-        ShortenReferences.DEFAULT.process(newArgumentList)
-    }
+    override fun applyTo(element: KtCallExpression, editor: Editor?) = applyTo(element)
 
     companion object {
-        fun isApplicableTo(element: KtCallExpression, bindingContext: BindingContext): Boolean {
+        fun isApplicableTo(element: KtCallElement, bindingContext: BindingContext = element.analyze(BodyResolveMode.PARTIAL)): Boolean {
             if (!element.typeArguments.isEmpty()) return false
             if (element.calleeExpression == null) return false
 
@@ -53,7 +48,18 @@ class InsertExplicitTypeArgumentsIntention : SelfTargetingRangeIntention<KtCallE
             return typeArgs.isNotEmpty() && typeArgs.values.none { ErrorUtils.containsErrorType(it) }
         }
 
-        fun createTypeArguments(element: KtCallExpression, bindingContext: BindingContext): KtTypeArgumentList? {
+        fun applyTo(element: KtCallElement, shortenReferences: Boolean = true) {
+            val argumentList = createTypeArguments(element, element.analyze())!!
+
+            val callee = element.calleeExpression!!
+            val newArgumentList = element.addAfter(argumentList, callee) as KtTypeArgumentList
+
+            if (shortenReferences) {
+                ShortenReferences.DEFAULT.process(newArgumentList)
+            }
+        }
+
+        fun createTypeArguments(element: KtCallElement, bindingContext: BindingContext): KtTypeArgumentList? {
             val resolvedCall = element.getResolvedCall(bindingContext) ?: return null
 
             val args = resolvedCall.typeArguments

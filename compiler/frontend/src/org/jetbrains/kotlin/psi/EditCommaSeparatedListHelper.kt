@@ -18,18 +18,21 @@ package org.jetbrains.kotlin.psi
 
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiWhiteSpace
+import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 
 object EditCommaSeparatedListHelper {
-    fun <TItem: KtElement> addItem(list: KtElement, allItems: List<TItem>, item: TItem): TItem {
-        return addItemBefore(list, allItems, item, null)
+    @JvmOverloads
+    fun <TItem: KtElement> addItem(list: KtElement, allItems: List<TItem>, item: TItem, prefix: KtToken = KtTokens.LPAR): TItem {
+        return addItemBefore(list, allItems, item, null, prefix)
     }
 
-    fun <TItem: KtElement> addItemAfter(list: KtElement, allItems: List<TItem>, item: TItem, anchor: TItem?): TItem {
+    @JvmOverloads
+    fun <TItem: KtElement> addItemAfter(list: KtElement, allItems: List<TItem>, item: TItem, anchor: TItem?, prefix: KtToken = KtTokens.LPAR): TItem {
         assert(anchor == null || anchor.parent == list)
         if (allItems.isEmpty()) {
-            if (list.firstChild.node.elementType == KtTokens.LPAR) {
+            if (list.firstChild.node.elementType == prefix) {
                 return list.addAfter(item, list.firstChild) as TItem
             }
             else {
@@ -49,7 +52,8 @@ object EditCommaSeparatedListHelper {
         }
     }
 
-    fun <TItem: KtElement> addItemBefore(list: KtElement, allItems: List<TItem>, item: TItem, anchor: TItem?): TItem {
+    @JvmOverloads
+    fun <TItem: KtElement> addItemBefore(list: KtElement, allItems: List<TItem>, item: TItem, anchor: TItem?, prefix: KtToken = KtTokens.LPAR): TItem {
         val anchorAfter: TItem?
         if (allItems.isEmpty()) {
             assert(anchor == null)
@@ -65,7 +69,7 @@ object EditCommaSeparatedListHelper {
                 anchorAfter = allItems.get(allItems.size - 1)
             }
         }
-        return addItemAfter(list, allItems, item, anchorAfter)
+        return addItemAfter(list, allItems, item, anchorAfter, prefix)
     }
 
     fun <TItem: KtElement> removeItem(item: TItem) {

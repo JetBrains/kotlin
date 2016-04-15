@@ -24,22 +24,23 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiPackage
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.quickfix.DelegatingIntentionAction
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.containsStarProjections
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.guessTypes
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.noSubstitutions
-import org.jetbrains.kotlin.psi.Call
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.idea.refactoring.canRefactor
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getAbbreviatedTypeOrType
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.Qualifier
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.descriptors.ClassKind as ClassDescriptorKind
 
@@ -128,4 +129,22 @@ internal fun KtSimpleNameExpression.getCreatePackageFixIfApplicable(targetParent
 
         override fun getText(): String = "Create package '$fullName'"
     }
+}
+
+internal fun getUpperBoundType(ktTypeElement: KtTypeElement): KotlinType? {
+    val context = ktTypeElement.analyze(BodyResolveMode.PARTIAL)
+    val containingTypeArg = (ktTypeElement.parent as? KtTypeReference)?.parent as? KtTypeProjection ?: return null
+    val argumentList = containingTypeArg.parent as? KtTypeArgumentList ?: return null
+    val containingTypeRef = (argumentList.parent as? KtTypeElement)?.parent as? KtTypeReference ?: return null
+    val containingType = containingTypeRef.getAbbreviatedTypeOrType(context) ?: return null
+    return containingType.arguments.getOrNull(argumentList.arguments.indexOf(containingTypeArg))?.type
+}
+
+internal fun getBoundingTypeParameter(element: KtTypeElement): TypeParameterDescriptor? {
+    val context = element.analyze(BodyResolveMode.PARTIAL)
+    val containingTypeArg = (element.parent as? KtTypeReference)?.parent as? KtTypeProjection ?: return null
+    val argumentList = containingTypeArg.parent as? KtTypeArgumentList ?: return null
+    val containingTypeRef = (argumentList.parent as? KtTypeElement)?.parent as? KtTypeReference ?: return null
+    val containingType = containingTypeRef.getAbbreviatedTypeOrType(context) ?: return null
+    return containingType.constructor.parameters.getOrNull(argumentList.arguments.indexOf(containingTypeArg))
 }

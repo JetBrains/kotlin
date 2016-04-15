@@ -6,6 +6,7 @@
 // ACTION: Create type alias 'A'
 // ACTION: Convert to block body
 // ACTION: Remove explicit type specification
+// ACTION: Create type parameter 'A'
 // ERROR: Unresolved reference: A
 package p
 

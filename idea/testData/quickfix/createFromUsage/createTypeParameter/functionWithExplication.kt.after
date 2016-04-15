@@ -1,0 +1,11 @@
+// "Create type parameter 'X'" "true"
+class A<T>
+
+fun <X> foo(x: A<X>) {
+
+}
+
+fun test() {
+    foo<Any>(A())
+    foo(A<Int>())
+}
