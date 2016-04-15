@@ -246,3 +246,34 @@ fun UExpression.endsWithQualified(fqName: String): Boolean {
     }
     return true
 }
+
+fun UExpression.findTopMostQualifiedExpression(): UQualifiedExpression? {
+    val parent = this.parent
+    return when (parent) {
+        is UQualifiedExpression -> parent.findTopMostQualifiedExpression()
+        else -> if (this is UQualifiedExpression) this else null
+    }
+}
+
+fun UExpression.getQualifiedChains(): List<UExpression> {
+    fun collect(expr: UQualifiedExpression, chains: MutableList<UExpression>) {
+        val receiver = expr.receiver
+        if (receiver is UQualifiedExpression) {
+            collect(receiver, chains)
+        } else {
+            chains += receiver
+        }
+
+        val selector = expr.selector
+        if (selector is UQualifiedExpression) {
+            collect(selector, chains)
+        } else {
+            chains += selector
+        }
+    }
+
+    val qualifiedExpression = this.findTopMostQualifiedExpression() ?: return emptyList()
+    val chains = mutableListOf<UExpression>()
+    collect(qualifiedExpression, chains)
+    return chains
+}

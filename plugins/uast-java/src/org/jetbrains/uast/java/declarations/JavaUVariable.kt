@@ -19,6 +19,9 @@ import com.intellij.psi.PsiField
 import com.intellij.psi.PsiLocalVariable
 import com.intellij.psi.PsiVariable
 import org.jetbrains.uast.*
+import org.jetbrains.uast.kinds.UastVariableInitialierKind
+import org.jetbrains.uast.kinds.UastVariableInitialierKind.Companion.NO_INITIALIZER
+import org.jetbrains.uast.kinds.UastVariableInitialierKind.Companion.SIMPLE
 import org.jetbrains.uast.psi.PsiElementBacked
 
 class JavaUVariable(
@@ -32,6 +35,9 @@ class JavaUVariable(
     override val type by lz { JavaConverter.convert(psi.type, this) }
 
     override val initializer by lz { JavaConverter.convertOrEmpty(psi.initializer, this) }
+
+    override val initializerKind: UastVariableInitialierKind
+        get() = if (psi.initializer != null) SIMPLE else NO_INITIALIZER
 
     override val kind = when (psi) {
         is PsiField -> UastVariableKind.MEMBER

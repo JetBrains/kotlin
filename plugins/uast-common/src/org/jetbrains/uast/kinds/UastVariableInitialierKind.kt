@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2016 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,28 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jetbrains.uast
 
-/**
- * Kinds of [UVariable].
- */
-open class UastVariableKind(val name: String) {
-    class Member(name: String) : UastVariableKind(name)
-    class LocalVariable(name: String) : UastVariableKind(name)
-    class ValueParameter(name: String) : UastVariableKind(name)
+package org.jetbrains.uast.kinds
+
+open class UastVariableInitialierKind(val name: String) {
+    class Simple(name: String) : UastVariableInitialierKind(name)
+    class Delegation(name: String) : UastVariableInitialierKind(name)
 
     companion object {
         @JvmField
-        val LOCAL_VARIABLE = LocalVariable("local")
+        val SIMPLE = Simple("simple")
 
         @JvmField
-        val MEMBER = Member("member")
+        val DELEGATION = Simple("delegation")
 
         @JvmField
-        val VALUE_PARAMETER = ValueParameter("parameter")
-    }
-
-    override fun toString(): String{
-        return "UastVariableKind(name='$name')"
+        val NO_INITIALIZER = UastVariableInitialierKind("no_initializer")
     }
 }

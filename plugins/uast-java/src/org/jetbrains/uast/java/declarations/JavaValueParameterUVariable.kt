@@ -17,6 +17,7 @@ package org.jetbrains.uast.java
 
 import com.intellij.psi.PsiParameter
 import org.jetbrains.uast.*
+import org.jetbrains.uast.kinds.UastVariableInitialierKind
 import org.jetbrains.uast.psi.PsiElementBacked
 
 class JavaValueParameterUVariable(
@@ -31,6 +32,9 @@ class JavaValueParameterUVariable(
 
     override val initializer: UExpression?
         get() = null
+
+    override val initializerKind: UastVariableInitialierKind
+        get() = UastVariableInitialierKind.NO_INITIALIZER
 
     override val kind: UastVariableKind
         get() = UastVariableKind.VALUE_PARAMETER

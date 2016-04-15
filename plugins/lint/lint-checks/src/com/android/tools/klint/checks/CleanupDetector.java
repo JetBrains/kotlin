@@ -365,15 +365,16 @@ public class CleanupDetector extends Detector implements UastScanner {
         //    getFragmentManager().beginTransaction().addToBackStack("test")
         //            .disallowAddToBackStack().hide(mFragment2).setBreadCrumbShortTitle("test")
         //            .show(mFragment2).setCustomAnimations(0, 0).commit();
-        UElement parent = node.getParent();
-        while (parent instanceof UCallExpression) {
-            UCallExpression methodInvocation = (UCallExpression) parent;
-            if (isTransactionCommitMethodCall(context, methodInvocation)
+        List<UExpression> chains = UastUtils.getQualifiedChains(node);
+        if (chains.size() > 0) {
+            UExpression lastExpression = chains.get(chains.size() - 1);
+            if (lastExpression instanceof UCallExpression) {
+                UCallExpression methodInvocation = (UCallExpression) lastExpression;
+                if (isTransactionCommitMethodCall(context, methodInvocation)
                     || isShowFragmentMethodCall(context, methodInvocation)) {
-                return true;
+                    return true;
+                }
             }
-
-            parent = parent.getParent();
         }
 
         return false;
@@ -413,7 +414,17 @@ public class CleanupDetector extends Detector implements UastScanner {
     @Nullable
     public static UVariable getVariable(@NonNull UastAndroidContext context,
             @NonNull UElement expression) {
-        UElement parent = expression.getParent();
+        if (!(expression instanceof UExpression)) {
+            return null;
+        }
+
+        UQualifiedExpression topMostQualified = UastUtils.findTopMostQualifiedExpression(((UExpression) expression));
+        if (topMostQualified == null) {
+            return null;
+        }
+
+        UElement parent = topMostQualified.getParent();
+
         if (parent instanceof UBinaryExpression) {
             UBinaryExpression binaryExpression = (UBinaryExpression) parent;
             if (binaryExpression.getOperator() == UastBinaryOperator.ASSIGN) {
