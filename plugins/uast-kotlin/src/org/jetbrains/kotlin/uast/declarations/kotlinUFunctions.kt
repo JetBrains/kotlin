@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.uast.*
+import org.jetbrains.uast.kinds.UastVariableInitialierKind
 import org.jetbrains.uast.psi.PsiElementBacked
 
 abstract class KotlinAbstractUFunction : KotlinAbstractUElement(), UFunction, PsiElementBacked {
@@ -203,6 +204,8 @@ open class KotlinObjectLiteralConstructorUFunction(
             object : UVariable {
                 override val initializer: UExpression?
                     get() = null
+                override val initializerKind: UastVariableInitialierKind
+                    get() = UastVariableInitialierKind.NO_INITIALIZER
                 override val kind: UastVariableKind
                     get() = UastVariableKind.VALUE_PARAMETER
                 override val type: UType

@@ -21,6 +21,7 @@ import com.intellij.psi.util.ClassUtil
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.PsiTypesUtil
 import org.jetbrains.uast.*
+import org.jetbrains.uast.kinds.UastVariableInitialierKind
 import org.jetbrains.uast.psi.PsiElementBacked
 
 class JavaUClass(
@@ -150,7 +151,7 @@ class JavaUClass(
 
 private class JavaUAnonymousClassConstructor(
         override val psi: PsiAnonymousClass,
-        val newExpression: PsiNewExpression,
+        newExpression: PsiNewExpression,
         override val parent: UElement
 ) : JavaAbstractUElement(), UFunction, PsiElementBacked, NoAnnotations, NoModifiers {
     override val kind = UastFunctionKind.CONSTRUCTOR
@@ -190,6 +191,9 @@ private class JavaUAnonymousClassConstructorParameter(
         override val parent: UElement
 ) : JavaAbstractUElement(), UVariable, NoAnnotations, NoModifiers {
     override val initializer by lz { JavaConverter.convert(psi.expressions[index], this) }
+
+    override val initializerKind: UastVariableInitialierKind
+        get() = UastVariableInitialierKind.SIMPLE
 
     override val kind: UastVariableKind
         get() = UastVariableKind.VALUE_PARAMETER
