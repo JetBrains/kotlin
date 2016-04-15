@@ -4731,6 +4731,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("privateMemberToInternalWithExposed.kt")
+        public void testPrivateMemberToInternalWithExposed() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/increaseVisibility/privateMemberToInternalWithExposed.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("protectedMemberToPublicSingleFile.kt")
         public void testProtectedMemberToPublicSingleFile() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/increaseVisibility/protectedMemberToPublicSingleFile.kt");

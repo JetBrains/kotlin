@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.ExposedVisibilityChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.idea.core.setVisibility
@@ -62,12 +63,15 @@ class IncreaseVisibilityFix(
             val declaration = DescriptorToSourceUtils.getSourceFromDescriptor(descriptor) as? KtModifierListOwner ?: return null
 
             val module = DescriptorUtils.getContainingModule(descriptor)
-            val modifier = if (module != usageModule || descriptor.visibility != Visibilities.PRIVATE) {
-                KtTokens.PUBLIC_KEYWORD
+            val (modifier, visibility) = if (module != usageModule || descriptor.visibility != Visibilities.PRIVATE) {
+                Pair(KtTokens.PUBLIC_KEYWORD, Visibilities.PUBLIC)
             }
             else {
-                KtTokens.INTERNAL_KEYWORD
+                Pair(KtTokens.INTERNAL_KEYWORD, Visibilities.INTERNAL)
             }
+
+            if (!ExposedVisibilityChecker().checkDeclarationWithVisibility(declaration, descriptor, visibility)) return null
+
             return IncreaseVisibilityFix(declaration, descriptor.name.asString(), modifier)
         }
     }

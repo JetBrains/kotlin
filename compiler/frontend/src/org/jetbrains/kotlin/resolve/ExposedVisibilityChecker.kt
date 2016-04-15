@@ -17,13 +17,15 @@
 package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.diagnostics.DiagnosticSink
+import org.jetbrains.kotlin.diagnostics.DiagnosticSink.DO_NOTHING
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.types.TypeUtils
 
 // Checker for all seven EXPOSED_* errors
 // All functions return true if everything is OK, or false in case of any errors
-class ExposedVisibilityChecker(private val trace: BindingTrace) {
+class ExposedVisibilityChecker(private val trace: DiagnosticSink = DO_NOTHING) {
 
     // NB: does not check any members
     fun checkClassHeader(klass: KtClassOrObject, classDescriptor: ClassDescriptor): Boolean {
@@ -35,8 +37,27 @@ class ExposedVisibilityChecker(private val trace: BindingTrace) {
         return result and checkFunction(constructor, constructorDescriptor)
     }
 
-    fun checkFunction(function: KtFunction, functionDescriptor: FunctionDescriptor): Boolean {
-        val functionVisibility = functionDescriptor.effectiveVisibility()
+    fun checkDeclarationWithVisibility(modifierListOwner: KtModifierListOwner,
+                                       descriptor: DeclarationDescriptorWithVisibility,
+                                       visibility: Visibility
+    ) : Boolean {
+        return when {
+            modifierListOwner is KtFunction &&
+            descriptor is FunctionDescriptor -> checkFunction(modifierListOwner, descriptor, visibility)
+
+            modifierListOwner is KtProperty &&
+            descriptor is PropertyDescriptor -> checkProperty(modifierListOwner, descriptor, visibility)
+
+            else -> true
+        }
+    }
+
+    fun checkFunction(function: KtFunction,
+                      functionDescriptor: FunctionDescriptor,
+                      // for checking situation with modified basic visibility
+                      visibility: Visibility = functionDescriptor.visibility
+    ): Boolean {
+        val functionVisibility = functionDescriptor.effectiveVisibility(visibility)
         var result = true
         if (function !is KtConstructor<*>) {
             val restricting = functionDescriptor.returnType?.leastPermissiveDescriptor(functionVisibility)
@@ -57,8 +78,12 @@ class ExposedVisibilityChecker(private val trace: BindingTrace) {
         return result and checkMemberReceiver(function.receiverTypeReference, functionDescriptor)
     }
 
-    fun checkProperty(property: KtProperty, propertyDescriptor: PropertyDescriptor): Boolean {
-        val propertyVisibility = propertyDescriptor.effectiveVisibility()
+    fun checkProperty(property: KtProperty,
+                      propertyDescriptor: PropertyDescriptor,
+                      // for checking situation with modified basic visibility
+                      visibility: Visibility = propertyDescriptor.visibility
+    ): Boolean {
+        val propertyVisibility = propertyDescriptor.effectiveVisibility(visibility)
         val restricting = propertyDescriptor.type.leastPermissiveDescriptor(propertyVisibility)
         var result = true
         if (restricting != null) {

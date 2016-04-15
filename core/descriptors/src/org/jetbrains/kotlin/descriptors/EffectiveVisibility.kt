@@ -281,7 +281,7 @@ private fun Set<DescriptorWithRelation>.leastPermissive(base: EffectiveVisibilit
 
 fun KotlinType.leastPermissiveDescriptor(base: EffectiveVisibility) = dependentDescriptors().leastPermissive(base)
 
-fun DeclarationDescriptorWithVisibility.effectiveVisibility(): EffectiveVisibility =
+fun DeclarationDescriptorWithVisibility.effectiveVisibility(visibility: Visibility = this.visibility): EffectiveVisibility =
         lowerBound(visibility.effectiveVisibility(this.containingDeclaration as? ClassDescriptor),
                    (this.containingDeclaration as? ClassDescriptor)?.effectiveVisibility() ?: Public)
 
