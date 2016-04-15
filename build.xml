@@ -902,7 +902,7 @@
 
         <pack-runtime-jar jar-name="kotlin-test.jar" implementation-title="${manifest.impl.title.kotlin.test}">
             <jar-content>
-                <fileset dir="${output}/classes/kotlin-test" includes="**/*" excludes="kotlin/internal/OnlyInputTypes*,kotlin/internal"/>
+                <fileset dir="${output}/classes/kotlin-test" includes="**/*" excludes="kotlin/internal/OnlyInputTypes*,kotlin/internal/InlineOnly*,kotlin/internal"/>
             </jar-content>
         </pack-runtime-jar>
     </target>
