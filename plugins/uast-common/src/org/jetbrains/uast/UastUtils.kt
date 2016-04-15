@@ -152,12 +152,17 @@ tailrec fun UQualifiedExpression.getCallElementFromQualified(): UCallExpression?
 }
 
 fun UCallExpression.getQualifiedCallElement(): UExpression {
-    fun findParent(element: UExpression?): UExpression? = when (element) {
-        is UQualifiedExpression -> findParent(element.parent as? UExpression) ?: element
+    fun findParent(parent: UExpression?, current: UExpression): UExpression? = when (parent) {
+        is UQualifiedExpression -> {
+            if (parent.selector == current)
+                findParent(parent.parent as? UExpression, parent) ?: parent
+            else
+                current
+        }
         else -> null
     }
 
-    return findParent(parent as? UExpression) ?: this
+    return findParent(parent as? UExpression, this) ?: this
 }
 
 inline fun <reified T: UElement> UElement.getParentOfType(): T? = getParentOfType(T::class.java)
@@ -210,7 +215,7 @@ fun UExpression.asQualifiedIdentifiers(): List<String>? {
     }
     when (this) {
         is UQualifiedExpression -> addIdentifiers(this)
-        is USimpleReferenceExpression -> listOf(identifier)
+        is USimpleReferenceExpression -> list += identifier
         else -> return null
     }
     return if (error) null else list
@@ -224,18 +229,20 @@ fun UExpression.matchesQualified(fqName: String): Boolean {
 
 fun UExpression.startsWithQualified(fqName: String): Boolean {
     val identifiers = this.asQualifiedIdentifiers() ?: return false
-    val passedIdentifiers = fqName.split('.')
-    identifiers.forEachIndexed { i, identifier ->
-        if (identifier != passedIdentifiers[i]) return false
+    val passedIdentifiers = fqName.trim('.').split('.')
+    if (identifiers.size < passedIdentifiers.size) return false
+    passedIdentifiers.forEachIndexed { i, passedIdentifier ->
+        if (passedIdentifier != identifiers[i]) return false
     }
     return true
 }
 
 fun UExpression.endsWithQualified(fqName: String): Boolean {
-    val identifiers = this.asQualifiedIdentifiers() ?: return false
-    val passedIdentifiers = fqName.split('.')
-    identifiers.forEachIndexed { i, identifier ->
-        if (identifier != passedIdentifiers[i]) return false
+    val identifiers = this.asQualifiedIdentifiers()?.asReversed() ?: return false
+    val passedIdentifiers = fqName.trim('.').split('.').asReversed()
+    if (identifiers.size < passedIdentifiers.size) return false
+    passedIdentifiers.forEachIndexed { i, passedIdentifier ->
+        if (passedIdentifier != identifiers[i]) return false
     }
     return true
 }
