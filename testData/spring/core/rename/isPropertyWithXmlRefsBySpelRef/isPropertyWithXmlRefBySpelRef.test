@@ -1,0 +1,10 @@
+{
+  "fixtureClasses": ["org.jetbrains.kotlin.idea.spring.tests.SpringTestFixtureExtension"],
+  "type": "MARKED_ELEMENT",
+  "mainFile": "a/spring-config.xml",
+  "springFileSet": ["a/spring-config.xml"],
+  "newName": "isFooNew",
+  "byRef": "true",
+  "injected": "true",
+  "withRuntime": "true"
+}
