@@ -1,12 +1,16 @@
 package org.jetbrains.kotlin.annotation
 
 import org.junit.Assert
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.File
-import org.junit.Assert.*
-import java.io.IOException
 
-public class AnnotationListParseTest {
+open class AnnotationListParseTest {
+    companion object {
+        const val ANNOTATIONS_FILE_NAME = "annotations.txt"
+        const val PARSED_FILE_NAME = "parsed.txt"
+    }
 
     @Test
     fun testAnnotatedGettersSetters() = doTest("annotatedGettersSetters")
@@ -48,8 +52,12 @@ public class AnnotationListParseTest {
     private val resourcesRootFile = File("src/test/resources/parse")
 
     private fun doTest(testName: String) {
-        val annotationsFile = File(resourcesRootFile, "$testName/annotations.txt")
-        val expectedFile = File(resourcesRootFile, "$testName/parsed.txt")
+        doTest(testDir = File(resourcesRootFile, testName))
+    }
+
+    protected open fun doTest(testDir: File) {
+        val annotationsFile = File(testDir, ANNOTATIONS_FILE_NAME)
+        val expectedFile = File(testDir, PARSED_FILE_NAME)
 
         assertTrue(annotationsFile.absolutePath + " does not exist.", annotationsFile.exists())
 
