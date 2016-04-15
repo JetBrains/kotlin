@@ -29,6 +29,7 @@ import android.widget.TextView
 class ApiCallTest: Activity() {
 
     fun method(chronometer: Chronometer, locator: DOMLocator) {
+        chronometer.<error descr="Call requires API level 16 (current min is 1): `setBackground`">setBackground(null)</error>
 
         // Virtual call
         <error descr="Call requires API level 11 (current min is 1): `getActionBar`">getActionBar()</error> // API 11
