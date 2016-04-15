@@ -67,7 +67,7 @@ class JavaToKotlinAction : AnAction() {
                 try {
                     virtualFile.setBinaryContent(CharsetToolkit.getUtf8Bytes(text))
 
-                    if (ScratchRootType.getInstance().containsFile(virtualFile)) {
+                    if (ScratchRootType.getInstance().findFile(psiFile.project, virtualFile.name, ScratchFileService.Option.existing_only) != null) {
                         val mapping = ScratchFileService.getInstance().scratchesMapping
                         mapping.setMapping(virtualFile, KotlinFileType.INSTANCE.language)
                     }
