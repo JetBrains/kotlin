@@ -1,0 +1,7 @@
+// "Make Data protected" "true"
+
+class Outer {
+    protected open class Data(val x: Int)
+
+    protected class First : Data(42)
+}

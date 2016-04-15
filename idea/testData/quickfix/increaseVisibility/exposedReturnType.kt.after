@@ -1,0 +1,7 @@
+// "Make Data internal" "true"
+
+internal data class Data(val x: Int)
+
+class First {
+    internal fun bar(x: Int) = Data(x)
+}

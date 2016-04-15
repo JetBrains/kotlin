@@ -4731,6 +4731,66 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/increaseVisibility"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
+        @TestMetadata("exposedParameterType.kt")
+        public void testExposedParameterType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/increaseVisibility/exposedParameterType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("exposedPropertyType.kt")
+        public void testExposedPropertyType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/increaseVisibility/exposedPropertyType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("exposedReceiverType.kt")
+        public void testExposedReceiverType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/increaseVisibility/exposedReceiverType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("exposedReturnType.kt")
+        public void testExposedReturnType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/increaseVisibility/exposedReturnType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("exposedSuperClass.kt")
+        public void testExposedSuperClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/increaseVisibility/exposedSuperClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("exposedSuperClassProtectedBase.kt")
+        public void testExposedSuperClassProtectedBase() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/increaseVisibility/exposedSuperClassProtectedBase.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("exposedSuperClassProtectedInAnother.kt")
+        public void testExposedSuperClassProtectedInAnother() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/increaseVisibility/exposedSuperClassProtectedInAnother.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("exposedSuperClassProtectedInAnotherFromPrivate.kt")
+        public void testExposedSuperClassProtectedInAnotherFromPrivate() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/increaseVisibility/exposedSuperClassProtectedInAnotherFromPrivate.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("exposedSuperInterface.kt")
+        public void testExposedSuperInterface() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/increaseVisibility/exposedSuperInterface.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("exposedTypeParameterBound.kt")
+        public void testExposedTypeParameterBound() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/increaseVisibility/exposedTypeParameterBound.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("overriddenProtectedMemberToPublicSingleFile.kt")
         public void testOverriddenProtectedMemberToPublicSingleFile() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/increaseVisibility/overriddenProtectedMemberToPublicSingleFile.kt");

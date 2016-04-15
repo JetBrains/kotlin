@@ -1,0 +1,9 @@
+// "Make Nested internal" "true"
+
+class Outer {
+    internal class Nested
+}
+
+class Generic<T>
+
+internal fun foo(arg: Generic<Outer.Nested>) {}

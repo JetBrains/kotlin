@@ -193,6 +193,20 @@ fun KtDeclaration.implicitVisibility(): KtModifierKeywordToken? {
     return defaultVisibilityKeyword
 }
 
+fun KtModifierListOwner.canBePrivate(): Boolean {
+    if (modifierList?.hasModifier(KtTokens.ABSTRACT_KEYWORD) ?: false) return false
+    return true
+}
+
+fun KtModifierListOwner.canBeProtected(): Boolean {
+    val parent = this.parent
+    return when (parent) {
+        is KtClassBody -> parent.parent is KtClass
+        is KtParameterList -> parent.parent is KtPrimaryConstructor
+        else -> false
+    }
+}
+
 fun KtDeclaration.implicitModality(): KtModifierKeywordToken {
     if (this is KtClassOrObject) return KtTokens.FINAL_KEYWORD
     val klass = containingClassOrObject ?: return KtTokens.FINAL_KEYWORD

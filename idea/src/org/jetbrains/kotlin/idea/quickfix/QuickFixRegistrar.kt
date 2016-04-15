@@ -153,6 +153,14 @@ class QuickFixRegistrar : QuickFixContributor {
         INVISIBLE_MEMBER.registerFactory(IncreaseVisibilityFix)
         INVISIBLE_SETTER.registerFactory(IncreaseVisibilityFix)
 
+        EXPOSED_FUNCTION_RETURN_TYPE.registerFactory(IncreaseVisibilityFix.Exposed)
+        EXPOSED_PARAMETER_TYPE.registerFactory(IncreaseVisibilityFix.Exposed)
+        EXPOSED_PROPERTY_TYPE.registerFactory(IncreaseVisibilityFix.Exposed)
+        EXPOSED_RECEIVER_TYPE.registerFactory(IncreaseVisibilityFix.Exposed)
+        EXPOSED_SUPER_CLASS.registerFactory(IncreaseVisibilityFix.Exposed)
+        EXPOSED_SUPER_INTERFACE.registerFactory(IncreaseVisibilityFix.Exposed)
+        EXPOSED_TYPE_PARAMETER_BOUND.registerFactory(IncreaseVisibilityFix.Exposed)
+
         REDUNDANT_NULLABLE.registerFactory(RemoveNullableFix.Factory(RemoveNullableFix.NullableKind.REDUNDANT))
         NULLABLE_SUPERTYPE.registerFactory(RemoveNullableFix.Factory(RemoveNullableFix.NullableKind.SUPERTYPE))
         USELESS_NULLABLE_CHECK.registerFactory(RemoveNullableFix.Factory(RemoveNullableFix.NullableKind.USELESS))

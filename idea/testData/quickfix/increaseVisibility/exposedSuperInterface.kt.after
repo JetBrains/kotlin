@@ -1,0 +1,11 @@
+// "Make Outer public" "true"
+
+import Outer.Base
+
+class Outer {
+    interface Base
+}
+
+class Container {
+    interface Derived : Base
+}

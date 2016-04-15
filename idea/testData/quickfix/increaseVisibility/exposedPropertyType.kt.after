@@ -1,0 +1,7 @@
+// "Make Data public" "true"
+
+data class Data(val x: Int)
+
+class First {
+    val foo = Data(13)
+}

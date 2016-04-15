@@ -1,0 +1,9 @@
+// "Make Private protected" "true"
+
+class Receiver<T>
+
+abstract class My {
+    protected class Private
+
+    abstract protected fun Receiver<Private>.foo()
+}

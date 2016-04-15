@@ -1,0 +1,5 @@
+// "Make InternalString public" "true"
+
+open class InternalString
+
+class User<T : User<T, InternalString>, R>

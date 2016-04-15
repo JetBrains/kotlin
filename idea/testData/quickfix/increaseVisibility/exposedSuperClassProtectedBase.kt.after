@@ -1,0 +1,7 @@
+// "Make Data public" "true"
+
+open class Data(val x: Int)
+
+class Outer {
+    protected class First : Data(42)
+}
