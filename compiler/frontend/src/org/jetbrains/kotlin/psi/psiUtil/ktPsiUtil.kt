@@ -406,6 +406,7 @@ fun KtDeclaration.visibilityModifierType(): KtModifierKeywordToken?
         = visibilityModifier()?.node?.elementType as KtModifierKeywordToken?
 
 fun KtStringTemplateExpression.isPlain() = entries.all { it is KtLiteralStringTemplateEntry }
+fun KtStringTemplateExpression.isPlainWithEscapes() = entries.all { it is KtLiteralStringTemplateEntry || it is KtEscapeStringTemplateEntry }
 
 val KtDeclaration.containingClassOrObject: KtClassOrObject?
         get() = (parent as? KtClassBody)?.parent as? KtClassOrObject
