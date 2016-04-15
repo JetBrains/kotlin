@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.js.translate.general.TranslatorVisitor;
 import org.jetbrains.kotlin.js.translate.initializer.ClassInitializerTranslator;
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
+import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.types.KotlinType;
 
@@ -69,14 +70,15 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
 
     @Override
     public Void visitEnumEntry(@NotNull KtEnumEntry enumEntry, TranslationContext data) {
-        JsExpression jsEnumEntryCreation;
         ClassDescriptor descriptor = getClassDescriptor(data.bindingContext(), enumEntry);
         List<KotlinType> supertypes = getSupertypesWithoutFakes(descriptor);
         if (enumEntry.getBody() != null || supertypes.size() > 1) {
             enumEntryList.addAll(ClassTranslator.translate(enumEntry, data).getProperties());
         } else {
             assert supertypes.size() == 1 : "Simple Enum entry must have one supertype";
-            jsEnumEntryCreation = new ClassInitializerTranslator(enumEntry, data).generateEnumEntryInstanceCreation(supertypes.get(0));
+            JsExpression jsEnumEntryCreation = new ClassInitializerTranslator(enumEntry, data)
+                    .generateEnumEntryInstanceCreation(supertypes.get(0));
+            jsEnumEntryCreation = TranslationUtils.simpleReturnFunction(data.scope(), jsEnumEntryCreation);
             enumEntryList.add(new JsPropertyInitializer(data.getNameForDescriptor(descriptor).makeRef(), jsEnumEntryCreation));
         }
         return null;
