@@ -1093,76 +1093,6 @@
         </zip>
     </target>
 
-    <target name="kotlin-for-upsource">
-        <cleandir dir="${output}/classes/idea-analysis"/>
-
-        <javac2 destdir="${output}/classes/idea-analysis" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
-                source="${java.target}" target="${java.target}">
-            <withKotlin modulename="kotlin-for-upsource">
-                <compilerarg value="-version"/>
-            </withKotlin>
-            <skip pattern="kotlin/Metadata"/>
-            <src>
-                <dirset dir="${basedir}/idea/ide-common" includes="src"/>
-                <dirset dir="${basedir}/idea/idea-analysis" includes="src"/>
-            </src>
-            <classpath>
-                <fileset dir="${idea.sdk}" includes="core-analysis/*.jar"/>
-                <pathelement location="${output}/kotlin-compiler-before-shrink.jar"/>
-                <path refid="classpath"/>
-            </classpath>
-        </javac2>
-
-        <copy todir="${output}/classes/idea-analysis">
-            <fileset dir="${basedir}/idea/idea-analysis/src" excludes="**/*.java, **/*.kt"/>
-        </copy>
-
-        <jar jarfile="${output}/kotlin-for-upsource0.jar">
-            <fileset dir="${output}/classes/idea-analysis"/>
-            <fileset dir="${output}/classes/compiler"/>
-            <fileset dir="${output}/builtins">
-                <include name="kotlin/**"/>
-            </fileset>
-            <fileset dir="${basedir}/core/descriptor.loader.java/src" includes="META-INF/services/**"/>
-            <fileset dir="${basedir}/compiler/frontend.java/src" includes="META-INF/services/**"/>
-            <fileset dir="${basedir}/compiler/backend/src" includes="META-INF/services/**"/>
-            <fileset dir="${basedir}/compiler/cli/src" includes="META-INF/services/**"/>
-
-            <zipgroupfileset dir="${basedir}/lib" includes="*.jar"/>
-            <zipgroupfileset file="${kotlin-home}/lib/kotlin-runtime.jar"/>
-            <zipgroupfileset file="${kotlin-home}/lib/kotlin-runtime-sources.jar"/>
-            <zipgroupfileset file="${kotlin-home}/lib/kotlin-reflect.jar"/>
-
-            <fileset dir="${basedir}/resources"/>
-            <!-- icons, etc. -->
-            <fileset dir="idea/resources"/>
-            <!-- plugin.xml and friends -->
-            <fileset dir="idea/src" includes="META-INF/**"/>
-        </jar>
-        <sleep seconds="1"/>
-        <jar jarfile="${output}/kotlin-for-upsource.jar">
-            <zipfileset src="${output}/kotlin-for-upsource0.jar">
-                <exclude name="javax/**/*.java"/>
-            </zipfileset>
-        </jar>
-        <delete file="${output}/kotlin-for-upsource0.jar"/>
-
-        <!-- sources -->
-        <jar jarfile="${output}/kotlin-for-upsource-sources.jar">
-            <zipfileset src="${output}/kotlin-compiler-sources.jar" includes="**/*"/>
-            <fileset dir="idea/idea-analysis/src"/>
-            <fileset dir="idea/ide-common/src"/>
-
-            <manifest>
-                <attribute name="Built-By" value="${manifest.impl.vendor}"/>
-
-                <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
-                <attribute name="Implementation-Version" value="${build.number}"/>
-            </manifest>
-        </jar>
-
-    </target>
-
     <target name="zip-test-data">
         <zip destfile="${output}/kotlin-test-data.zip">
             <zipfileset dir="compiler/testData" prefix="compiler"/>
@@ -1195,5 +1125,5 @@
 
     <target name="build-bootstrap-artifacts" depends="dist,zip-compiler"/>
 
-    <target name="build-artifacts" depends="dist,zip-compiler,kotlin-for-upsource,zip-test-data"/>
+    <target name="build-artifacts" depends="dist,zip-compiler,zip-test-data"/>
 </project>
