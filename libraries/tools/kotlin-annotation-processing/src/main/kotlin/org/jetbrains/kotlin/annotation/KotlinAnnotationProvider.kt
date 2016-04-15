@@ -94,18 +94,18 @@ class KotlinAnnotationProvider(annotationsReader: Reader) {
 
                         val set = annotatedKotlinElementsInternal.getOrPut(annotationName) { hashSetOf() }
                         set.add(when (type) {
-                            ANNOTATED_CLASS -> AnnotatedClassDescriptor(classFqName)
+                            ANNOTATED_CLASS -> AnnotatedElementDescriptor.Class(classFqName)
                             ANNOTATED_FIELD -> {
                                 val name = elementName ?: throw AssertionError("Name for field must be provided")
-                                AnnotatedFieldDescriptor(classFqName, name)
+                                AnnotatedElementDescriptor.Field(classFqName, name)
                             }
                             ANNOTATED_METHOD -> {
                                 val name = elementName ?: throw AssertionError("Name for method must be provided")
 
                                 if ("<init>" == name)
-                                    AnnotatedConstructorDescriptor(classFqName)
+                                    AnnotatedElementDescriptor.Constructor(classFqName)
                                 else
-                                    AnnotatedMethodDescriptor(classFqName, name)
+                                    AnnotatedElementDescriptor.Method(classFqName, name)
                             }
                             else -> throw AssertionError("Unknown type: $type")
                         })

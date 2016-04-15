@@ -7,7 +7,6 @@ import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.TypeElement
 import javax.lang.model.type.NoType
-import javax.lang.model.type.TypeVisitor
 
 internal class RoundEnvironmentWrapper(
         val processingEnv: ProcessingEnvironment,
@@ -67,16 +66,16 @@ internal class RoundEnvironmentWrapper(
         val descriptorsWithKotlin = descriptors.fold(hashSetOf<Element>()) { set, descriptor ->
             val clazz = processingEnv.elementUtils.getTypeElement(descriptor.classFqName) ?: return@fold set
             when (descriptor) {
-                is AnnotatedClassDescriptor -> set.add(clazz)
-                is AnnotatedConstructorDescriptor -> {
+                is AnnotatedElementDescriptor.Class -> set.add(clazz)
+                is AnnotatedElementDescriptor.Constructor -> {
                     set.addAll(clazz.filterEnclosedElements(ElementKind.CONSTRUCTOR)
                             .filter { it.hasAnnotation(annotationFqName) })
                 }
-                is AnnotatedFieldDescriptor -> {
+                is AnnotatedElementDescriptor.Field -> {
                     set.addAll(clazz.filterEnclosedElements(ElementKind.FIELD, descriptor.fieldName)
                             .filter { it.hasAnnotation(annotationFqName) })
                 }
-                is AnnotatedMethodDescriptor -> {
+                is AnnotatedElementDescriptor.Method -> {
                     set.addAll(clazz.filterEnclosedElements(ElementKind.METHOD, descriptor.methodName)
                             .filter { it.hasAnnotation(annotationFqName) })
                 }

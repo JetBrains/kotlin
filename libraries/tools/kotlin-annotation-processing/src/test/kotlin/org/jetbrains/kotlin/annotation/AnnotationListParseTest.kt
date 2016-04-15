@@ -61,11 +61,10 @@ public class AnnotationListParseTest {
             for (element in it.value) {
                 actualAnnotations.append(it.key).append(' ').append(element.classFqName)
                 when (element) {
-                    is AnnotatedMethodDescriptor -> actualAnnotations.append(' ').append(element.methodName)
-                    is AnnotatedFieldDescriptor -> actualAnnotations.append(' ').append(element.fieldName)
-                    is AnnotatedConstructorDescriptor -> actualAnnotations.append(" <init>")
-                    is AnnotatedClassDescriptor -> {}
-                    else -> Assert.fail("Unknown element type: $element")
+                    is AnnotatedElementDescriptor.Method -> actualAnnotations.append(' ').append(element.methodName)
+                    is AnnotatedElementDescriptor.Field -> actualAnnotations.append(' ').append(element.fieldName)
+                    is AnnotatedElementDescriptor.Constructor -> actualAnnotations.append(" <init>")
+                    is AnnotatedElementDescriptor.Class -> {}
                 }
                 actualAnnotations.append('\n')
             }
