@@ -121,7 +121,7 @@ class IDEAndroidLayoutXmlFileManager(val module: Module) : AndroidLayoutXmlFileM
             }
             else {
                 val model = AndroidGradleModel.get(module)
-                model?.flavorSourceProviders?.map { it.toVariant() }
+                model?.flavorSourceProviders?.map { it.toVariant() } ?: listOf(this.mainSourceProvider.toVariant())
             }
 
             if (variants != null) {
