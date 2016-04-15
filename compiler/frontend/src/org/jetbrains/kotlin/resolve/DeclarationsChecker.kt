@@ -278,7 +278,7 @@ class DeclarationsChecker(
         classDescriptor.declaredTypeParameters.forEachIndexed { i, typeParameterDescriptor ->
             if (i >= typeParameterList.size) return
             for (upperBound in typeParameterDescriptor.upperBounds) {
-                val restricting = upperBound.dependentDescriptors().leastPermissive(classVisibility)
+                val restricting = upperBound.leastPermissiveDescriptor(classVisibility)
                 if (restricting != null) {
                     trace.report(EXPOSED_TYPE_PARAMETER_BOUND.on(typeParameterList[i], classVisibility,
                                                                  restricting, restricting.effectiveVisibility()))
@@ -299,7 +299,7 @@ class DeclarationsChecker(
             if (superIsInterface != isInterface) {
                 return@forEachIndexed
             }
-            val restricting = superType.dependentDescriptors().leastPermissive(classVisibility)
+            val restricting = superType.leastPermissiveDescriptor(classVisibility)
             if (restricting != null) {
                 if (isInterface) {
                     trace.report(EXPOSED_SUPER_INTERFACE.on(delegationList[i], classVisibility,
@@ -627,7 +627,7 @@ class DeclarationsChecker(
         if (typeReference == null) return
         val receiverParameterDescriptor = memberDescriptor.extensionReceiverParameter ?: return
         val memberVisibility = memberDescriptor.effectiveVisibility()
-        val restricting = receiverParameterDescriptor.type.dependentDescriptors().leastPermissive(memberVisibility)
+        val restricting = receiverParameterDescriptor.type.leastPermissiveDescriptor(memberVisibility)
         if (restricting != null) {
             trace.report(EXPOSED_RECEIVER_TYPE.on(typeReference, memberVisibility,
                                                   restricting, restricting.effectiveVisibility()))
@@ -636,7 +636,7 @@ class DeclarationsChecker(
 
     private fun checkPropertyExposedType(property: KtProperty, propertyDescriptor: PropertyDescriptor) {
         val propertyVisibility = propertyDescriptor.effectiveVisibility()
-        val restricting = propertyDescriptor.type.dependentDescriptors().leastPermissive(propertyVisibility)
+        val restricting = propertyDescriptor.type.leastPermissiveDescriptor(propertyVisibility)
         if (restricting != null) {
             trace.report(EXPOSED_PROPERTY_TYPE.on(property.nameIdentifier ?: property, propertyVisibility,
                                                   restricting, restricting.effectiveVisibility()))
@@ -707,14 +707,14 @@ class DeclarationsChecker(
     private fun checkFunctionExposedType(function: KtFunction, functionDescriptor: FunctionDescriptor) {
         val functionVisibility = functionDescriptor.effectiveVisibility()
         if (function !is KtConstructor<*>) {
-            val restricting = functionDescriptor.returnType?.dependentDescriptors()?.leastPermissive(functionVisibility)
+            val restricting = functionDescriptor.returnType?.leastPermissiveDescriptor(functionVisibility)
             if (restricting != null) {
                 trace.report(EXPOSED_FUNCTION_RETURN_TYPE.on(function.nameIdentifier ?: function, functionVisibility,
                                                              restricting, restricting.effectiveVisibility()))
             }
         }
         functionDescriptor.valueParameters.forEachIndexed { i, parameterDescriptor ->
-            val restricting = parameterDescriptor.type.dependentDescriptors().leastPermissive(functionVisibility)
+            val restricting = parameterDescriptor.type.leastPermissiveDescriptor(functionVisibility)
             if (restricting != null && i < function.valueParameters.size) {
                 trace.report(EXPOSED_PARAMETER_TYPE.on(function.valueParameters[i], functionVisibility,
                                                        restricting, restricting.effectiveVisibility()))

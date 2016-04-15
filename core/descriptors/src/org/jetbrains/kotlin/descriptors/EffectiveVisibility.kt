@@ -257,7 +257,7 @@ private fun ClassDescriptor.effectiveVisibility(classes: Set<ClassDescriptor>): 
         }
 
 // Should collect all dependent classifier descriptors, to get verbose diagnostic
-fun KotlinType.dependentDescriptors() = dependentDescriptors(emptySet(), CONSTRUCTOR)
+private fun KotlinType.dependentDescriptors() = dependentDescriptors(emptySet(), CONSTRUCTOR)
 
 private fun KotlinType.dependentDescriptors(types: Set<KotlinType>, ownRelation: RelationToType): Set<DescriptorWithRelation> {
     if (this in types) return emptySet()
@@ -266,7 +266,7 @@ private fun KotlinType.dependentDescriptors(types: Set<KotlinType>, ownRelation:
     return ownDependent + argumentDependent
 }
 
-fun Set<DescriptorWithRelation>.leastPermissive(base: EffectiveVisibility): DescriptorWithRelation? {
+private fun Set<DescriptorWithRelation>.leastPermissive(base: EffectiveVisibility): DescriptorWithRelation? {
     for (descriptorWithRelation in this) {
         val currentVisibility = descriptorWithRelation.effectiveVisibility()
         when (currentVisibility.relation(base)) {
@@ -278,6 +278,8 @@ fun Set<DescriptorWithRelation>.leastPermissive(base: EffectiveVisibility): Desc
     }
     return null
 }
+
+fun KotlinType.leastPermissiveDescriptor(base: EffectiveVisibility) = dependentDescriptors().leastPermissive(base)
 
 fun DeclarationDescriptorWithVisibility.effectiveVisibility(): EffectiveVisibility =
         lowerBound(visibility.effectiveVisibility(this.containingDeclaration as? ClassDescriptor),
