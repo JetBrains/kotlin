@@ -24,6 +24,17 @@ fun main(args: Array<String>) {
         foo { test(1) }
         prop++
     } while(prop < 4)
+
+    var i = 1
+    // inline in while condition (true)
+    while(foo { test(i++) } == 1) {
+        prop++
+    }
+
+    // inline in while condition (false)
+    while(foo { test(2) } == 1) {
+        prop++
+    }
 }
 
 inline fun foo(f: () -> Int): Int {
