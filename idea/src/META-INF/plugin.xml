@@ -18,6 +18,7 @@
   <depends optional="true" config-file="coverage.xml">Coverage</depends>
   <depends optional="true" config-file="i18n.xml">com.intellij.java-i18n</depends>
   <depends optional="true" config-file="injection.xml">org.intellij.intelliLang</depends>
+  <depends optional="true" config-file="decompiler.xml">org.jetbrains.java.decompiler</depends>
 
   <!-- ULTIMATE-PLUGIN-PLACEHOLDER -->
 
