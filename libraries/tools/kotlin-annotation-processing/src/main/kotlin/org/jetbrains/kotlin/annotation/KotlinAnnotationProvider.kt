@@ -102,7 +102,7 @@ class KotlinAnnotationProvider(annotationsReader: Reader) {
                             ANNOTATED_METHOD -> {
                                 val name = elementName ?: throw AssertionError("Name for method must be provided")
 
-                                if ("<init>" == name)
+                                if (AnnotatedElementDescriptor.Constructor.METHOD_NAME == name)
                                     AnnotatedElementDescriptor.Constructor(classFqName)
                                 else
                                     AnnotatedElementDescriptor.Method(classFqName, name)
