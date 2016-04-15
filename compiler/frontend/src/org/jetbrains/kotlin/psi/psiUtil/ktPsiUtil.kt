@@ -413,6 +413,7 @@ private val MODALITY_MODIFIERS = TokenSet.create(
 fun KtDeclaration.modalityModifier() = modifierFromTokenSet(MODALITY_MODIFIERS)
 
 fun KtStringTemplateExpression.isPlain() = entries.all { it is KtLiteralStringTemplateEntry }
+fun KtStringTemplateExpression.isPlainWithEscapes() = entries.all { it is KtLiteralStringTemplateEntry || it is KtEscapeStringTemplateEntry }
 
 val KtDeclaration.containingClassOrObject: KtClassOrObject?
         get() = (parent as? KtClassBody)?.parent as? KtClassOrObject
