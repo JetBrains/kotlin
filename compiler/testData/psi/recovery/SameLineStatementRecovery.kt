@@ -21,10 +21,6 @@ fun f4() {
     val a1 = 12val b1 = 12
 }
 
-fun f5() {
-    a::b.c::d
-}
-
 fun f6() {
     3 + 4 33 1
 }

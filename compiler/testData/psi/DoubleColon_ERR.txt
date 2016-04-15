@@ -15,16 +15,15 @@ JetFile: DoubleColon_ERR.kt
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
       CALLABLE_REFERENCE_EXPRESSION
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('a')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('a')
         PsiElement(COLONCOLON)('::')
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('b')
-      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
-        PsiElement(LPAR)('(')
-        PsiElement(RPAR)(')')
+        PsiErrorElement:This syntax is reserved for future use; to call a reference, enclose it in parentheses: (foo::bar)(args)
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
@@ -40,20 +39,19 @@ JetFile: DoubleColon_ERR.kt
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
       CALLABLE_REFERENCE_EXPRESSION
-        TYPE_REFERENCE
-          USER_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('a')
-            PsiElement(DOT)('.')
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('b')
+        DOT_QUALIFIED_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
+          PsiElement(DOT)('.')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('b')
         PsiElement(COLONCOLON)('::')
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('c')
-      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
-        PsiElement(LPAR)('(')
-        PsiElement(RPAR)(')')
+        PsiErrorElement:This syntax is reserved for future use; to call a reference, enclose it in parentheses: (foo::bar)(args)
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
@@ -69,10 +67,8 @@ JetFile: DoubleColon_ERR.kt
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
       CALLABLE_REFERENCE_EXPRESSION
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('A')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('A')
         PsiElement(COLONCOLON)('::')
         PsiWhiteSpace('\n')
         REFERENCE_EXPRESSION
@@ -97,6 +93,54 @@ JetFile: DoubleColon_ERR.kt
         REFERENCE_EXPRESSION
           PsiErrorElement:Expecting an identifier
             <empty list>
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('err4')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      CALLABLE_REFERENCE_EXPRESSION
+        PsiElement(COLONCOLON)('::')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('x')
+        PsiErrorElement:This syntax is reserved for future use; to call a reference, enclose it in parentheses: (foo::bar)(args)
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('err5')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      CALL_EXPRESSION
+        CALLABLE_REFERENCE_EXPRESSION
+          PsiElement(COLONCOLON)('::')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('x')
+          PsiErrorElement:This syntax is reserved for future use; to call a reference, enclose it in parentheses: (foo::bar)(args)
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
   FUN
@@ -148,10 +192,8 @@ JetFile: DoubleColon_ERR.kt
           PsiElement(GT)('>')
       PsiWhiteSpace('\n    ')
       CALLABLE_REFERENCE_EXPRESSION
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('a')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('a')
         PsiElement(COLONCOLON)('::')
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('b')
@@ -176,49 +218,9 @@ JetFile: DoubleColon_ERR.kt
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('b')
           PsiElement(GT)('>')
-      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
-        PsiElement(LPAR)('(')
-        PsiElement(RPAR)(')')
-      PsiWhiteSpace('\n')
-      PsiElement(RBRACE)('}')
-  PsiWhiteSpace('\n\n')
-  FUN
-    PsiElement(fun)('fun')
-    PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('expressionsOnLHS')
-    VALUE_PARAMETER_LIST
-      PsiElement(LPAR)('(')
-      PsiElement(RPAR)(')')
-    PsiWhiteSpace(' ')
-    BLOCK
-      PsiElement(LBRACE)('{')
-      PsiWhiteSpace('\n    ')
-      DOT_QUALIFIED_EXPRESSION
-        CALLABLE_REFERENCE_EXPRESSION
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('a')
-          PsiElement(COLONCOLON)('::')
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('b')
-        PsiElement(DOT)('.')
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('c')
-      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
-        PsiElement(COLONCOLON)('::')
-        PsiElement(IDENTIFIER)('d')
-      PsiWhiteSpace('\n    ')
-      CALLABLE_REFERENCE_EXPRESSION
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('A')
-        PsiElement(COLONCOLON)('::')
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('a')
-      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
-        PsiElement(COLONCOLON)('::')
-        PsiElement(IDENTIFIER)('b')
+        PsiErrorElement:This syntax is reserved for future use; to call a reference, enclose it in parentheses: (foo::bar)(args)
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')

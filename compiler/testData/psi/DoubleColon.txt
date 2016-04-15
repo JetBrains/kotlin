@@ -15,20 +15,16 @@ JetFile: DoubleColon.kt
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
       CALLABLE_REFERENCE_EXPRESSION
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('A')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('A')
         PsiElement(COLONCOLON)('::')
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('a')
       PsiWhiteSpace('\n    ')
       BINARY_EXPRESSION
         CALLABLE_REFERENCE_EXPRESSION
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('A')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('A')
           PsiElement(COLONCOLON)('::')
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('a')
@@ -40,25 +36,24 @@ JetFile: DoubleColon.kt
           PsiElement(INTEGER_LITERAL)('1')
       PsiWhiteSpace('\n    ')
       CALLABLE_REFERENCE_EXPRESSION
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('Map')
-            TYPE_ARGUMENT_LIST
-              PsiElement(LT)('<')
-              TYPE_PROJECTION
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('String')
-              PsiElement(COMMA)(',')
-              PsiWhiteSpace(' ')
-              TYPE_PROJECTION
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('Int')
-              PsiElement(GT)('>')
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('Map')
+          TYPE_ARGUMENT_LIST
+            PsiElement(LT)('<')
+            TYPE_PROJECTION
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('String')
+            PsiElement(COMMA)(',')
+            PsiWhiteSpace(' ')
+            TYPE_PROJECTION
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Int')
+            PsiElement(GT)('>')
         PsiElement(COLONCOLON)('::')
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('size')
@@ -69,24 +64,20 @@ JetFile: DoubleColon.kt
           PsiElement(IDENTIFIER)('a')
       PsiWhiteSpace('\n\n    ')
       CALLABLE_REFERENCE_EXPRESSION
-        TYPE_REFERENCE
-          USER_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('a')
-            PsiElement(DOT)('.')
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('b')
+        DOT_QUALIFIED_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
+          PsiElement(DOT)('.')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('b')
         PsiElement(COLONCOLON)('::')
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('c')
       PsiWhiteSpace('\n    ')
       DOT_QUALIFIED_EXPRESSION
         CALLABLE_REFERENCE_EXPRESSION
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('a')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
           PsiElement(COLONCOLON)('::')
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('b')
@@ -96,14 +87,12 @@ JetFile: DoubleColon.kt
       PsiWhiteSpace('\n    ')
       DOT_QUALIFIED_EXPRESSION
         CALLABLE_REFERENCE_EXPRESSION
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
-              PsiElement(DOT)('.')
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('b')
+          DOT_QUALIFIED_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
+            PsiElement(DOT)('.')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('b')
           PsiElement(COLONCOLON)('::')
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('c')
@@ -115,10 +104,8 @@ JetFile: DoubleColon.kt
         PARENTHESIZED
           PsiElement(LPAR)('(')
           CALLABLE_REFERENCE_EXPRESSION
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
             PsiElement(COLONCOLON)('::')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('b')
@@ -135,10 +122,8 @@ JetFile: DoubleColon.kt
           PARENTHESIZED
             PsiElement(LPAR)('(')
             CALLABLE_REFERENCE_EXPRESSION
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('b')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('b')
               PsiElement(COLONCOLON)('::')
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('c')
@@ -161,8 +146,24 @@ JetFile: DoubleColon.kt
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
       CALLABLE_REFERENCE_EXPRESSION
-        TYPE_REFERENCE
-          USER_TYPE
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
+          TYPE_ARGUMENT_LIST
+            PsiElement(LT)('<')
+            TYPE_PROJECTION
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('b')
+            PsiElement(GT)('>')
+        PsiElement(COLONCOLON)('::')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('c')
+      PsiWhiteSpace('\n    ')
+      DOT_QUALIFIED_EXPRESSION
+        CALLABLE_REFERENCE_EXPRESSION
+          CALL_EXPRESSION
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('a')
             TYPE_ARGUMENT_LIST
@@ -173,24 +174,6 @@ JetFile: DoubleColon.kt
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('b')
               PsiElement(GT)('>')
-        PsiElement(COLONCOLON)('::')
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('c')
-      PsiWhiteSpace('\n    ')
-      DOT_QUALIFIED_EXPRESSION
-        CALLABLE_REFERENCE_EXPRESSION
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('a')
-              TYPE_ARGUMENT_LIST
-                PsiElement(LT)('<')
-                TYPE_PROJECTION
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('b')
-                PsiElement(GT)('>')
           PsiElement(COLONCOLON)('::')
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('c')
@@ -199,12 +182,11 @@ JetFile: DoubleColon.kt
           PsiElement(IDENTIFIER)('d')
       PsiWhiteSpace('\n    ')
       CALLABLE_REFERENCE_EXPRESSION
-        TYPE_REFERENCE
-          USER_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('a')
-            PsiElement(DOT)('.')
+        DOT_QUALIFIED_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
+          PsiElement(DOT)('.')
+          CALL_EXPRESSION
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('b')
             TYPE_ARGUMENT_LIST
@@ -221,12 +203,11 @@ JetFile: DoubleColon.kt
       PsiWhiteSpace('\n    ')
       DOT_QUALIFIED_EXPRESSION
         CALLABLE_REFERENCE_EXPRESSION
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
-              PsiElement(DOT)('.')
+          DOT_QUALIFIED_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
+            PsiElement(DOT)('.')
+            CALL_EXPRESSION
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('b')
               TYPE_ARGUMENT_LIST
@@ -245,12 +226,11 @@ JetFile: DoubleColon.kt
           PsiElement(IDENTIFIER)('e')
       PsiWhiteSpace('\n    ')
       CALLABLE_REFERENCE_EXPRESSION
-        TYPE_REFERENCE
-          USER_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('a')
-            PsiElement(DOT)('.')
+        DOT_QUALIFIED_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
+          PsiElement(DOT)('.')
+          CALL_EXPRESSION
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('b')
             TYPE_ARGUMENT_LIST
@@ -271,12 +251,11 @@ JetFile: DoubleColon.kt
       PsiWhiteSpace('\n    ')
       DOT_QUALIFIED_EXPRESSION
         CALLABLE_REFERENCE_EXPRESSION
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
-              PsiElement(DOT)('.')
+          DOT_QUALIFIED_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
+            PsiElement(DOT)('.')
+            CALL_EXPRESSION
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('b')
               TYPE_ARGUMENT_LIST
@@ -300,12 +279,11 @@ JetFile: DoubleColon.kt
       PsiWhiteSpace('\n    ')
       DOT_QUALIFIED_EXPRESSION
         CALLABLE_REFERENCE_EXPRESSION
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
-              PsiElement(DOT)('.')
+          DOT_QUALIFIED_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
+            PsiElement(DOT)('.')
+            CALL_EXPRESSION
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('b')
               TYPE_ARGUMENT_LIST
@@ -340,18 +318,17 @@ JetFile: DoubleColon.kt
           PsiElement(IDENTIFIER)('h')
       PsiWhiteSpace('\n\n    ')
       CALLABLE_REFERENCE_EXPRESSION
-        TYPE_REFERENCE
-          USER_TYPE
-            USER_TYPE
-              USER_TYPE
-                USER_TYPE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('a')
-                  PsiElement(DOT)('.')
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('b')
+        DOT_QUALIFIED_EXPRESSION
+          DOT_QUALIFIED_EXPRESSION
+            DOT_QUALIFIED_EXPRESSION
+              DOT_QUALIFIED_EXPRESSION
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
                 PsiElement(DOT)('.')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('b')
+              PsiElement(DOT)('.')
+              CALL_EXPRESSION
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('c')
                 TYPE_ARGUMENT_LIST
@@ -362,7 +339,8 @@ JetFile: DoubleColon.kt
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('d')
                   PsiElement(GT)('>')
-              PsiElement(DOT)('.')
+            PsiElement(DOT)('.')
+            CALL_EXPRESSION
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('e')
               TYPE_ARGUMENT_LIST
@@ -373,9 +351,9 @@ JetFile: DoubleColon.kt
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('f')
                 PsiElement(GT)('>')
-            PsiElement(DOT)('.')
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('g')
+          PsiElement(DOT)('.')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('g')
         PsiElement(COLONCOLON)('::')
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('h')
@@ -394,73 +372,62 @@ JetFile: DoubleColon.kt
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
       CALLABLE_REFERENCE_EXPRESSION
-        TYPE_REFERENCE
-          NULLABLE_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('a')
-            PsiElement(QUEST)('?')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('a')
+        PsiElement(QUEST)('?')
         PsiElement(COLONCOLON)('::')
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('b')
       PsiWhiteSpace('\n    ')
       CALLABLE_REFERENCE_EXPRESSION
-        TYPE_REFERENCE
-          NULLABLE_TYPE
-            NULLABLE_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
-              PsiElement(QUEST)('?')
-            PsiElement(QUEST)('?')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('a')
+        PsiElement(QUEST)('?')
+        PsiElement(QUEST)('?')
         PsiElement(COLONCOLON)('::')
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('b')
       PsiWhiteSpace('\n    ')
       CALLABLE_REFERENCE_EXPRESSION
-        TYPE_REFERENCE
-          NULLABLE_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('a')
-              TYPE_ARGUMENT_LIST
-                PsiElement(LT)('<')
-                TYPE_PROJECTION
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('b')
-                PsiElement(GT)('>')
-            PsiElement(QUEST)('?')
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
+          TYPE_ARGUMENT_LIST
+            PsiElement(LT)('<')
+            TYPE_PROJECTION
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('b')
+            PsiElement(GT)('>')
+        PsiElement(QUEST)('?')
         PsiElement(COLONCOLON)('::')
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('c')
       PsiWhiteSpace('\n    ')
       CALLABLE_REFERENCE_EXPRESSION
-        TYPE_REFERENCE
-          NULLABLE_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('a')
-              TYPE_ARGUMENT_LIST
-                PsiElement(LT)('<')
-                TYPE_PROJECTION
-                  TYPE_REFERENCE
-                    NULLABLE_TYPE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('b')
-                      PsiElement(QUEST)('?')
-                PsiElement(COMMA)(',')
-                TYPE_PROJECTION
-                  TYPE_REFERENCE
-                    NULLABLE_TYPE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('c')
-                      PsiElement(QUEST)('?')
-                PsiElement(GT)('>')
-            PsiElement(QUEST)('?')
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
+          TYPE_ARGUMENT_LIST
+            PsiElement(LT)('<')
+            TYPE_PROJECTION
+              TYPE_REFERENCE
+                NULLABLE_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('b')
+                  PsiElement(QUEST)('?')
+            PsiElement(COMMA)(',')
+            TYPE_PROJECTION
+              TYPE_REFERENCE
+                NULLABLE_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('c')
+                  PsiElement(QUEST)('?')
+            PsiElement(GT)('>')
+        PsiElement(QUEST)('?')
         PsiElement(COLONCOLON)('::')
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('d')
@@ -479,32 +446,29 @@ JetFile: DoubleColon.kt
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
       CLASS_LITERAL_EXPRESSION
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('A')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('A')
         PsiElement(COLONCOLON)('::')
         PsiElement(class)('class')
       PsiWhiteSpace('\n    ')
       CLASS_LITERAL_EXPRESSION
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('a')
-            TYPE_ARGUMENT_LIST
-              PsiElement(LT)('<')
-              TYPE_PROJECTION
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('b')
-              PsiElement(COMMA)(',')
-              TYPE_PROJECTION
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('c')
-              PsiElement(GT)('>')
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
+          TYPE_ARGUMENT_LIST
+            PsiElement(LT)('<')
+            TYPE_PROJECTION
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('b')
+            PsiElement(COMMA)(',')
+            TYPE_PROJECTION
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('c')
+            PsiElement(GT)('>')
         PsiElement(COLONCOLON)('::')
         PsiElement(class)('class')
       PsiWhiteSpace('\n    ')
@@ -522,5 +486,232 @@ JetFile: DoubleColon.kt
         CLASS_LITERAL_EXPRESSION
           PsiElement(COLONCOLON)('::')
           PsiElement(class)('class')
+      PsiWhiteSpace('\n\n    ')
+      CLASS_LITERAL_EXPRESSION
+        THIS_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(this)('this')
+        PsiElement(COLONCOLON)('::')
+        PsiElement(class)('class')
+      PsiWhiteSpace('\n    ')
+      CLASS_LITERAL_EXPRESSION
+        SUPER_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(super)('super')
+        PsiElement(COLONCOLON)('::')
+        PsiElement(class)('class')
+      PsiWhiteSpace('\n    ')
+      CLASS_LITERAL_EXPRESSION
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('X')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+        PsiElement(COLONCOLON)('::')
+        PsiElement(class)('class')
+      PsiWhiteSpace('\n    ')
+      CLASS_LITERAL_EXPRESSION
+        OBJECT_LITERAL
+          OBJECT_DECLARATION
+            PsiElement(object)('object')
+            PsiWhiteSpace(' ')
+            CLASS_BODY
+              PsiElement(LBRACE)('{')
+              PsiElement(RBRACE)('}')
+        PsiElement(COLONCOLON)('::')
+        PsiElement(class)('class')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('expressions')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      CALLABLE_REFERENCE_EXPRESSION
+        THIS_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(this)('this')
+          LABEL_QUALIFIER
+            LABEL
+              PsiElement(AT)('@')
+              PsiElement(IDENTIFIER)('x')
+        PsiElement(COLONCOLON)('::')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('foo')
+      PsiWhiteSpace('\n    ')
+      CALLABLE_REFERENCE_EXPRESSION
+        SUPER_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(super)('super')
+          PsiElement(LT)('<')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('a')
+          PsiElement(GT)('>')
+          LABEL_QUALIFIER
+            LABEL
+              PsiElement(AT)('@')
+              PsiElement(IDENTIFIER)('b')
+        PsiElement(COLONCOLON)('::')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('foo')
+      PsiWhiteSpace('\n\n    ')
+      PREFIX_EXPRESSION
+        OPERATION_REFERENCE
+          PsiElement(MINUS)('-')
+        CALLABLE_REFERENCE_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
+          PsiElement(COLONCOLON)('::')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('b')
+      PsiWhiteSpace('\n    ')
+      PREFIX_EXPRESSION
+        OPERATION_REFERENCE
+          PsiElement(PLUSPLUS)('++')
+        CALLABLE_REFERENCE_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
+          PsiElement(COLONCOLON)('::')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('b')
+      PsiWhiteSpace('\n    ')
+      BINARY_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('a')
+        OPERATION_REFERENCE
+          PsiElement(PLUS)('+')
+        CALLABLE_REFERENCE_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('b')
+          PsiElement(COLONCOLON)('::')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('c')
+      PsiWhiteSpace('\n    ')
+      CALLABLE_REFERENCE_EXPRESSION
+        PARENTHESIZED
+          PsiElement(LPAR)('(')
+          BINARY_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
+            OPERATION_REFERENCE
+              PsiElement(PLUS)('+')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('b')
+          PsiElement(RPAR)(')')
+        PsiElement(COLONCOLON)('::')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('c')
+      PsiWhiteSpace('\n    ')
+      CALLABLE_REFERENCE_EXPRESSION
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('x')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+        PsiElement(COLONCOLON)('::')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('e')
+      PsiWhiteSpace('\n    ')
+      CALLABLE_REFERENCE_EXPRESSION
+        DOT_QUALIFIED_EXPRESSION
+          DOT_QUALIFIED_EXPRESSION
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('x')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                PsiElement(RPAR)(')')
+            PsiElement(DOT)('.')
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('y')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                PsiElement(RPAR)(')')
+          PsiElement(DOT)('.')
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('z')
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
+        PsiElement(COLONCOLON)('::')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('e')
+      PsiWhiteSpace('\n\n    ')
+      CALLABLE_REFERENCE_EXPRESSION
+        DOT_QUALIFIED_EXPRESSION
+          CALLABLE_REFERENCE_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
+            PsiElement(COLONCOLON)('::')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('b')
+          PsiElement(DOT)('.')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('c')
+        PsiElement(COLONCOLON)('::')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('d')
+      PsiWhiteSpace('\n    ')
+      CALLABLE_REFERENCE_EXPRESSION
+        CALLABLE_REFERENCE_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('A')
+          PsiElement(COLONCOLON)('::')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
+        PsiElement(COLONCOLON)('::')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('b')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('emptyLHS')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      DOT_QUALIFIED_EXPRESSION
+        CALLABLE_REFERENCE_EXPRESSION
+          PsiElement(COLONCOLON)('::')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('x')
+        PsiElement(DOT)('.')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('name')
+      PsiWhiteSpace('\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('foo')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            DOT_QUALIFIED_EXPRESSION
+              CALLABLE_REFERENCE_EXPRESSION
+                PsiElement(COLONCOLON)('::')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('x')
+              PsiElement(DOT)('.')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('name')
+          PsiElement(RPAR)(')')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
