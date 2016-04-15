@@ -22,3 +22,7 @@ abstract class AbstractIn<T>(private val foo: T) {
     fun bar(arg: T) = foo == arg
 }
 interface Empty<T>
+
+abstract class AbstractInv<T>(var foo: T)
+
+class InvUser<T>(val user: AbstractInv<T>)
