@@ -1,0 +1,7 @@
+<idea-plugin>
+    <extensions defaultExtensionNs="com.intellij">
+        <applicationService serviceInterface="org.jetbrains.kotlin.idea.internal.KotlinDecompilerService"
+                            serviceImplementation="org.jetbrains.kotlin.idea.internal.KotlinDecompilerServiceImpl"/>
+        <writingAccessProvider implementation="org.jetbrains.kotlin.idea.internal.DecompiledFileWritingAccessProvider"/>
+    </extensions>
+</idea-plugin>
