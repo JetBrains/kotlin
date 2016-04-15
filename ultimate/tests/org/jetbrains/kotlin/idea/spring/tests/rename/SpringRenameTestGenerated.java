@@ -47,6 +47,12 @@ public class SpringRenameTestGenerated extends AbstractSpringRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("isPropertyWithXmlRefsBySpelRef/isPropertyWithXmlRefBySpelRef.test")
+    public void testIsPropertyWithXmlRefsBySpelRef_IsPropertyWithXmlRefBySpelRef() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("ultimate/testData/spring/core/rename/isPropertyWithXmlRefsBySpelRef/isPropertyWithXmlRefBySpelRef.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("javaSpelRefToJava/javaSpelRefToJava.test")
     public void testJavaSpelRefToJava_JavaSpelRefToJava() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("ultimate/testData/spring/core/rename/javaSpelRefToJava/javaSpelRefToJava.test");
@@ -95,6 +101,12 @@ public class SpringRenameTestGenerated extends AbstractSpringRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("parameterWithXmlRefsBySpelRef/parameterWithXmlRefBySpelRef.test")
+    public void testParameterWithXmlRefsBySpelRef_ParameterWithXmlRefBySpelRef() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("ultimate/testData/spring/core/rename/parameterWithXmlRefsBySpelRef/parameterWithXmlRefBySpelRef.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("primaryConstructorArgWithXmlRefs/primaryConstructorArgWithXmlRef.test")
     public void testPrimaryConstructorArgWithXmlRefs_PrimaryConstructorArgWithXmlRef() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("ultimate/testData/spring/core/rename/primaryConstructorArgWithXmlRefs/primaryConstructorArgWithXmlRef.test");
@@ -122,6 +134,12 @@ public class SpringRenameTestGenerated extends AbstractSpringRenameTest {
     @TestMetadata("propertyWithXmlRefsByRef/propertyWithXmlRefByRef.test")
     public void testPropertyWithXmlRefsByRef_PropertyWithXmlRefByRef() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("ultimate/testData/spring/core/rename/propertyWithXmlRefsByRef/propertyWithXmlRefByRef.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("propertyWithXmlRefsBySpelRef/propertyWithXmlRefBySpelRef.test")
+    public void testPropertyWithXmlRefsBySpelRef_PropertyWithXmlRefBySpelRef() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("ultimate/testData/spring/core/rename/propertyWithXmlRefsBySpelRef/propertyWithXmlRefBySpelRef.test");
         doTest(fileName);
     }
 
