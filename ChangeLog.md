@@ -171,9 +171,8 @@ Issues fixed:
 - [KT-11725](https://youtrack.jetbrains.com/issue/KT-11725) Fixed renaming of injected SpEL references
 - [KT-11720](https://youtrack.jetbrains.com/issue/KT-11720) Fixed renaming of Kotlin beans through SpEL references
 - [KT-11719](https://youtrack.jetbrains.com/issue/KT-11719) Fixed renaming of Kotlin parameters references in XML files
-- Fix several issues leading to exceptions: [KT-11579](https://youtrack.jetbrains.com/issue/KT-11579), [KT-11580](https://youtrack.jetbrains.com/issue/KT-11580), [KT-11777](https://youtrack.jetbrains.com/issue/KT-11777)
+- Fix several issues leading to exceptions: [KT-11579](https://youtrack.jetbrains.com/issue/KT-11579), [KT-11580](https://youtrack.jetbrains.com/issue/KT-11580), [KT-11777](https://youtrack.jetbrains.com/issue/KT-11777), [KT-11868](https://youtrack.jetbrains.com/issue/KT-11868)
 - Fixed NoSuchFieldException in Kotlin module settings on IDEA Ultimate
-- [KT-11868](https://youtrack.jetbrains.com/issue/KT-11868) Fixed exception on search of functions/constructors with default parameters
 
 #### Debugger
 
@@ -204,6 +203,9 @@ Issues fixed:
 - [KT-11126](https://youtrack.jetbrains.com/issue/KT-11126) Convert annotations in annotations parameters correctly
 - [KT-11600](https://youtrack.jetbrains.com/issue/KT-11600) Do not produce unresolved `toArray` calls for Java `Collection#toArray(T[])`
 - [KT-11544](https://youtrack.jetbrains.com/issue/KT-11544) Fix conversion of uninitialized non-final field
+- [KT-10604](https://youtrack.jetbrains.com/issue/KT-10604) Fix conversion of scratch files
+- [KT-11543](https://youtrack.jetbrains.com/issue/KT-11543) Do not produce unnecessary casts of non-nullable expression to nullable type
+- [KT-11160](https://youtrack.jetbrains.com/issue/KT-11160) Fix IDE freeze
 
 ### Android
 
