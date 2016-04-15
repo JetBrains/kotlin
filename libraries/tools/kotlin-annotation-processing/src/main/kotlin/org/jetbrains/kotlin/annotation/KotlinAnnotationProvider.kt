@@ -19,20 +19,10 @@ package org.jetbrains.kotlin.annotation
 import java.io.File
 import java.io.Reader
 import java.io.StringReader
+import java.util.*
+import org.jetbrains.kotlin.annotation.CompactNotationType as Notation
 
 class KotlinAnnotationProvider(annotationsReader: Reader) {
-
-    private companion object {
-        const val ANNOTATED_CLASS = "c"
-        const val ANNOTATED_METHOD = "m"
-        const val ANNOTATED_FIELD = "f"
-
-        const val SHORTENED_ANNOTATION = "a"
-        const val SHORTENED_PACKAGE_NAME = "p"
-
-        const val CLASS_DECLARATION = "d"
-    }
-
     constructor(annotationsFile: File) : this(annotationsFile.reader().buffered())
     constructor() : this(StringReader(""))
 
@@ -80,26 +70,26 @@ class KotlinAnnotationProvider(annotationsReader: Reader) {
 
                 val type = lineParts[0]
                 when (type) {
-                    SHORTENED_ANNOTATION -> handleShortenedName(shortenedAnnotationCache, lineParts)
-                    SHORTENED_PACKAGE_NAME -> handleShortenedName(shortenedPackageNameCache, lineParts)
-                    CLASS_DECLARATION -> {
+                    Notation.SHORTENED_ANNOTATION -> handleShortenedName(shortenedAnnotationCache, lineParts)
+                    Notation.SHORTENED_PACKAGE_NAME -> handleShortenedName(shortenedPackageNameCache, lineParts)
+                    Notation.CLASS_DECLARATION -> {
                         val classFqName = expandClassName(lineParts[1]).replace('$', '.')
                         kotlinClassesInternal.add(classFqName)
                     }
 
-                    ANNOTATED_CLASS, ANNOTATED_FIELD, ANNOTATED_METHOD -> {
+                    Notation.ANNOTATED_CLASS, Notation.ANNOTATED_FIELD, Notation.ANNOTATED_METHOD -> {
                         val annotationName = expandAnnotation(lineParts[1])
                         val classFqName = expandClassName(lineParts[2]).replace('$', '.')
                         val elementName = if (lineParts.size == 4) lineParts[3] else null
 
-                        val set = annotatedKotlinElementsInternal.getOrPut(annotationName) { hashSetOf() }
+                        val set = annotatedKotlinElementsInternal.getOrPut(annotationName) { HashSet() }
                         set.add(when (type) {
-                            ANNOTATED_CLASS -> AnnotatedElementDescriptor.Class(classFqName)
-                            ANNOTATED_FIELD -> {
+                            Notation.ANNOTATED_CLASS -> AnnotatedElementDescriptor.Class(classFqName)
+                            Notation.ANNOTATED_FIELD -> {
                                 val name = elementName ?: throw AssertionError("Name for field must be provided")
                                 AnnotatedElementDescriptor.Field(classFqName, name)
                             }
-                            ANNOTATED_METHOD -> {
+                            Notation.ANNOTATED_METHOD -> {
                                 val name = elementName ?: throw AssertionError("Name for method must be provided")
 
                                 if (AnnotatedElementDescriptor.Constructor.METHOD_NAME == name)
@@ -114,6 +104,18 @@ class KotlinAnnotationProvider(annotationsReader: Reader) {
                     else -> throw AssertionError("Unknown type: $type")
                 }
             }
+        }
+    }
+
+    fun writeAnnotations(writer: AnnotationWriter) {
+        for ((annotation, elements) in annotatedKotlinElements) {
+            for (element in elements) {
+                writer.writeAnnotatedElement(annotation, element)
+            }
+        }
+
+        for (className in kotlinClasses) {
+            writer.writeClassDeclaration(className)
         }
     }
 }

@@ -24,3 +24,20 @@ sealed class AnnotatedElementDescriptor(val classFqName: String) {
         override fun hashCode() = 31 * classFqName.hashCode() + fieldName.hashCode()
     }
 }
+
+fun AnnotationWriter.writeAnnotatedElement(annotation: String, element: AnnotatedElementDescriptor) {
+    when (element) {
+        is AnnotatedElementDescriptor.Class -> {
+            writeAnnotatedClass(annotation, element.classFqName)
+        }
+        is AnnotatedElementDescriptor.Constructor -> {
+            writeAnnotatedMethod(annotation, element.classFqName, AnnotatedElementDescriptor.Constructor.METHOD_NAME)
+        }
+        is AnnotatedElementDescriptor.Method -> {
+            writeAnnotatedMethod(annotation, element.classFqName, element.methodName)
+        }
+        is AnnotatedElementDescriptor.Field -> {
+            writeAnnotatedField(annotation, element.classFqName, element.fieldName)
+        }
+    }
+}
