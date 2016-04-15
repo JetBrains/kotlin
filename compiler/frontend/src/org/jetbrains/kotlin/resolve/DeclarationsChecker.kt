@@ -88,6 +88,8 @@ class DeclarationsChecker(
 
     private val modifiersChecker = modifiersChecker.withTrace(trace)
 
+    private val exposedChecker = ExposedVisibilityChecker(trace)
+
     fun KtDeclaration.checkTypeReferences() = checkTypeReferences(trace)
 
     fun process(bodiesResolveContext: BodiesResolveContext) {
@@ -116,7 +118,7 @@ class DeclarationsChecker(
             classOrObject.checkTypeReferences()
             modifiersChecker.checkModifiersForDeclaration(classOrObject, classDescriptor)
             identifierChecker.checkDeclaration(classOrObject, trace)
-            checkClassExposedType(classOrObject, classDescriptor)
+            exposedChecker.checkClassHeader(classOrObject, classDescriptor)
         }
 
         for ((function, functionDescriptor) in bodiesResolveContext.functions.entries) {
@@ -135,7 +137,7 @@ class DeclarationsChecker(
 
         for ((declaration, constructorDescriptor) in bodiesResolveContext.secondaryConstructors.entries) {
             checkConstructorDeclaration(constructorDescriptor, declaration)
-            checkFunctionExposedType(declaration, constructorDescriptor)
+            exposedChecker.checkFunction(declaration, constructorDescriptor)
         }
     }
 
@@ -259,56 +261,6 @@ class DeclarationsChecker(
                 trace.report(INCONSISTENT_TYPE_PARAMETER_BOUNDS.on(
                         sourceElement, typeParameterDescriptor, containingDeclaration, conflictingTypes
                 ))
-            }
-        }
-    }
-
-    private fun checkClassExposedType(klass: KtClassOrObject, classDescriptor: ClassDescriptor) {
-        checkExposedSupertypes(klass, classDescriptor)
-        checkExposedParameterBounds(klass, classDescriptor)
-
-        val constructor = klass.getPrimaryConstructor() ?: return
-        val constructorDescriptor = classDescriptor.unsubstitutedPrimaryConstructor ?: return
-        checkFunctionExposedType(constructor, constructorDescriptor)
-    }
-
-    private fun checkExposedParameterBounds(klass: KtClassOrObject, classDescriptor: ClassDescriptor) {
-        val classVisibility = classDescriptor.effectiveVisibility()
-        val typeParameterList = klass.typeParameters
-        classDescriptor.declaredTypeParameters.forEachIndexed { i, typeParameterDescriptor ->
-            if (i >= typeParameterList.size) return
-            for (upperBound in typeParameterDescriptor.upperBounds) {
-                val restricting = upperBound.leastPermissiveDescriptor(classVisibility)
-                if (restricting != null) {
-                    trace.report(EXPOSED_TYPE_PARAMETER_BOUND.on(typeParameterList[i], classVisibility,
-                                                                 restricting, restricting.effectiveVisibility()))
-                    break
-                }
-            }
-        }
-    }
-
-    private fun checkExposedSupertypes(klass: KtClassOrObject, classDescriptor: ClassDescriptor) {
-        val classVisibility = classDescriptor.effectiveVisibility()
-        val isInterface = classDescriptor.kind == ClassKind.INTERFACE
-        val delegationList = klass.getSuperTypeListEntries()
-        classDescriptor.typeConstructor.supertypes.forEachIndexed { i, superType ->
-            if (i >= delegationList.size) return
-            val superDescriptor = TypeUtils.getClassDescriptor(superType) ?: return@forEachIndexed
-            val superIsInterface = superDescriptor.kind == ClassKind.INTERFACE
-            if (superIsInterface != isInterface) {
-                return@forEachIndexed
-            }
-            val restricting = superType.leastPermissiveDescriptor(classVisibility)
-            if (restricting != null) {
-                if (isInterface) {
-                    trace.report(EXPOSED_SUPER_INTERFACE.on(delegationList[i], classVisibility,
-                                                            restricting, restricting.effectiveVisibility()))
-                }
-                else {
-                    trace.report(EXPOSED_SUPER_CLASS.on(delegationList[i], classVisibility,
-                                                        restricting, restricting.effectiveVisibility()))
-                }
             }
         }
     }
@@ -445,7 +397,7 @@ class DeclarationsChecker(
         checkPropertyInitializer(property, propertyDescriptor)
         checkAccessors(property, propertyDescriptor)
         checkTypeParameterConstraints(property)
-        checkPropertyExposedType(property, propertyDescriptor)
+        exposedChecker.checkProperty(property, propertyDescriptor)
         checkPropertyTypeParametersAreUsedInReceiverType(propertyDescriptor)
         checkImplicitCallableType(property, propertyDescriptor)
     }
@@ -623,27 +575,6 @@ class DeclarationsChecker(
         }
     }
 
-    private fun checkMemberReceiverExposedType(typeReference: KtTypeReference?, memberDescriptor: CallableMemberDescriptor) {
-        if (typeReference == null) return
-        val receiverParameterDescriptor = memberDescriptor.extensionReceiverParameter ?: return
-        val memberVisibility = memberDescriptor.effectiveVisibility()
-        val restricting = receiverParameterDescriptor.type.leastPermissiveDescriptor(memberVisibility)
-        if (restricting != null) {
-            trace.report(EXPOSED_RECEIVER_TYPE.on(typeReference, memberVisibility,
-                                                  restricting, restricting.effectiveVisibility()))
-        }
-    }
-
-    private fun checkPropertyExposedType(property: KtProperty, propertyDescriptor: PropertyDescriptor) {
-        val propertyVisibility = propertyDescriptor.effectiveVisibility()
-        val restricting = propertyDescriptor.type.leastPermissiveDescriptor(propertyVisibility)
-        if (restricting != null) {
-            trace.report(EXPOSED_PROPERTY_TYPE.on(property.nameIdentifier ?: property, propertyVisibility,
-                                                  restricting, restricting.effectiveVisibility()))
-        }
-        checkMemberReceiverExposedType(property.receiverTypeReference, propertyDescriptor)
-    }
-
     fun checkFunction(function: KtNamedFunction, functionDescriptor: SimpleFunctionDescriptor) {
         val typeParameterList = function.typeParameterList
         val nameIdentifier = function.nameIdentifier
@@ -653,7 +584,7 @@ class DeclarationsChecker(
         }
         checkTypeParameterConstraints(function)
         checkImplicitCallableType(function, functionDescriptor)
-        checkFunctionExposedType(function, functionDescriptor)
+        exposedChecker.checkFunction(function, functionDescriptor)
         checkVarargParameters(trace, functionDescriptor)
 
         val containingDescriptor = functionDescriptor.containingDeclaration
@@ -702,25 +633,6 @@ class DeclarationsChecker(
                 }
             }
         }
-    }
-
-    private fun checkFunctionExposedType(function: KtFunction, functionDescriptor: FunctionDescriptor) {
-        val functionVisibility = functionDescriptor.effectiveVisibility()
-        if (function !is KtConstructor<*>) {
-            val restricting = functionDescriptor.returnType?.leastPermissiveDescriptor(functionVisibility)
-            if (restricting != null) {
-                trace.report(EXPOSED_FUNCTION_RETURN_TYPE.on(function.nameIdentifier ?: function, functionVisibility,
-                                                             restricting, restricting.effectiveVisibility()))
-            }
-        }
-        functionDescriptor.valueParameters.forEachIndexed { i, parameterDescriptor ->
-            val restricting = parameterDescriptor.type.leastPermissiveDescriptor(functionVisibility)
-            if (restricting != null && i < function.valueParameters.size) {
-                trace.report(EXPOSED_PARAMETER_TYPE.on(function.valueParameters[i], functionVisibility,
-                                                       restricting, restricting.effectiveVisibility()))
-            }
-        }
-        checkMemberReceiverExposedType(function.receiverTypeReference, functionDescriptor)
     }
 
     private fun checkAccessors(property: KtProperty, propertyDescriptor: PropertyDescriptor) {
