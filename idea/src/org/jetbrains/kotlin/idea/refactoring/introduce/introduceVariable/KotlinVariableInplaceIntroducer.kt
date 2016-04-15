@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention
 import org.jetbrains.kotlin.idea.refactoring.introduce.AbstractKotlinInplaceIntroducer
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtProperty
@@ -146,11 +147,14 @@ class KotlinVariableInplaceIntroducer(
 
     override fun performIntroduce() {
         val newName = inputName ?: return
-        addedVariable.setName(newName)
         val replacement = KtPsiFactory(myProject).createExpression(newName)
-        occurrences.forEach {
-            if (it.isValid) {
-                it.replace(replacement)
+
+        runWriteAction {
+            addedVariable.setName(newName)
+            occurrences.forEach {
+                if (it.isValid) {
+                    it.replace(replacement)
+                }
             }
         }
     }
