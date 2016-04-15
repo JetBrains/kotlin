@@ -56,8 +56,8 @@ class AddVarianceModifierInspection : AbstractKotlinInspection() {
                     val variances = listOf(Variance.IN_VARIANCE, Variance.OUT_VARIANCE).filter {
                         variancePossible(klass, parameterDescriptor, it, context)
                     }
-                    if (variances.isNotEmpty()) {
-                        val suggested = variances.joinToString(" or ") { "'$it'" }
+                    if (variances.size == 1) {
+                        val suggested = variances.first()
                         val fixes = variances.map { AddVarianceFix(it) }
                         holder.registerProblem(
                                 typeParameter,

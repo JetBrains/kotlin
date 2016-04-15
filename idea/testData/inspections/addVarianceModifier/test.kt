@@ -21,7 +21,7 @@ abstract class AbstractOut<T> {
 abstract class AbstractIn<T>(private val foo: T) {
     fun bar(arg: T) = foo == arg
 }
-interface Empty<T>
+interface Empty<T> // here we do not report anything to avoid ambiguity
 
 abstract class AbstractInv<T>(var foo: T)
 
