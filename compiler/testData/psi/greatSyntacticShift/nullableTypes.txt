@@ -55,69 +55,51 @@ JetFile: nullableTypes.kt
           PsiElement(return)('return')
       PsiWhiteSpace('\n\n    ')
       CALLABLE_REFERENCE_EXPRESSION
-        TYPE_REFERENCE
-          NULLABLE_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('X')
-            PsiElement(QUEST)('?')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('X')
+        PsiElement(QUEST)('?')
         PsiElement(COLONCOLON)('::')
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('x')
       PsiWhiteSpace('\n    ')
       CALLABLE_REFERENCE_EXPRESSION
-        TYPE_REFERENCE
-          NULLABLE_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('X')
-            PsiWhiteSpace(' ')
-            PsiElement(QUEST)('?')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('X')
+        PsiWhiteSpace(' ')
+        PsiElement(QUEST)('?')
         PsiElement(COLONCOLON)('::')
         PsiWhiteSpace(' ')
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('x')
       PsiWhiteSpace('\n    ')
       CALLABLE_REFERENCE_EXPRESSION
-        TYPE_REFERENCE
-          NULLABLE_TYPE
-            NULLABLE_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('X')
-              PsiElement(QUEST)('?')
-            PsiWhiteSpace(' ')
-            PsiElement(QUEST)('?')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('X')
+        PsiElement(QUEST)('?')
+        PsiWhiteSpace(' ')
+        PsiElement(QUEST)('?')
         PsiElement(COLONCOLON)('::')
         PsiWhiteSpace(' ')
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('x')
       PsiWhiteSpace('\n    ')
       CALLABLE_REFERENCE_EXPRESSION
-        TYPE_REFERENCE
-          NULLABLE_TYPE
-            NULLABLE_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('X')
-              PsiWhiteSpace(' ')
-              PsiElement(QUEST)('?')
-            PsiElement(QUEST)('?')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('X')
+        PsiWhiteSpace(' ')
+        PsiElement(QUEST)('?')
+        PsiElement(QUEST)('?')
         PsiElement(COLONCOLON)('::')
         PsiWhiteSpace(' ')
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('x')
       PsiWhiteSpace('\n    ')
       CALLABLE_REFERENCE_EXPRESSION
-        TYPE_REFERENCE
-          NULLABLE_TYPE
-            NULLABLE_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('X')
-              PsiWhiteSpace(' ')
-              PsiElement(QUEST)('?')
-            PsiElement(QUEST)('?')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('X')
+        PsiWhiteSpace(' ')
+        PsiElement(QUEST)('?')
+        PsiElement(QUEST)('?')
         PsiWhiteSpace(' ')
         PsiElement(COLONCOLON)('::')
         PsiWhiteSpace(' ')

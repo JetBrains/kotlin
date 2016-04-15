@@ -175,6 +175,12 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             doParsingTest(fileName);
         }
 
+        @TestMetadata("DoubleColonWhitespaces.kt")
+        public void testDoubleColonWhitespaces() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/DoubleColonWhitespaces.kt");
+            doParsingTest(fileName);
+        }
+
         @TestMetadata("DoubleColon_ERR.kt")
         public void testDoubleColon_ERR() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/DoubleColon_ERR.kt");

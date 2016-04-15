@@ -225,35 +225,6 @@ JetFile: SameLineStatementRecovery.kt
   FUN
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('f5')
-    VALUE_PARAMETER_LIST
-      PsiElement(LPAR)('(')
-      PsiElement(RPAR)(')')
-    PsiWhiteSpace(' ')
-    BLOCK
-      PsiElement(LBRACE)('{')
-      PsiWhiteSpace('\n    ')
-      DOT_QUALIFIED_EXPRESSION
-        CALLABLE_REFERENCE_EXPRESSION
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('a')
-          PsiElement(COLONCOLON)('::')
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('b')
-        PsiElement(DOT)('.')
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('c')
-      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
-        PsiElement(COLONCOLON)('::')
-        PsiElement(IDENTIFIER)('d')
-      PsiWhiteSpace('\n')
-      PsiElement(RBRACE)('}')
-  PsiWhiteSpace('\n\n')
-  FUN
-    PsiElement(fun)('fun')
-    PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f6')
     VALUE_PARAMETER_LIST
       PsiElement(LPAR)('(')

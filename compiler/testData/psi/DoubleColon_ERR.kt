@@ -14,15 +14,18 @@ fun err3() {
     ::
 }
 
+fun err4() {
+    ::x()
+}
+
+fun err5() {
+    ::x()()
+}
+
 fun typeArgumentsError() {
     ::a<b>
     ::a<b,c<*>>
     a::b<c>
 
     ::a<b>()
-}
-
-fun expressionsOnLHS() {
-    a::b.c::d
-    A::a::b
 }

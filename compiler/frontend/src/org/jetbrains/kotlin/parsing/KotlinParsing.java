@@ -57,7 +57,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
     private static final TokenSet PARAMETER_NAME_RECOVERY_SET = TokenSet.create(COLON, EQ, COMMA, RPAR);
     private static final TokenSet PACKAGE_NAME_RECOVERY_SET = TokenSet.create(DOT, EOL_OR_SEMICOLON);
     private static final TokenSet IMPORT_RECOVERY_SET = TokenSet.create(AS_KEYWORD, DOT, EOL_OR_SEMICOLON);
-    /*package*/ static final TokenSet TYPE_REF_FIRST = TokenSet.create(LBRACKET, IDENTIFIER, LPAR, HASH, DYNAMIC_KEYWORD);
+    private static final TokenSet TYPE_REF_FIRST = TokenSet.create(LBRACKET, IDENTIFIER, LPAR, HASH, DYNAMIC_KEYWORD);
     private static final TokenSet RECEIVER_TYPE_TERMINATORS = TokenSet.create(DOT, SAFE_ACCESS);
     private static final TokenSet VALUE_PARAMETER_FIRST =
             TokenSet.orSet(TokenSet.create(IDENTIFIER, LBRACKET, VAL_KEYWORD, VAR_KEYWORD), MODIFIER_KEYWORDS);
@@ -779,7 +779,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   : "object" SimpleName? primaryConstructor? ":" delegationSpecifier{","}? classBody?
      *   ;
      */
-    IElementType parseClassOrObject(
+    private IElementType parseClassOrObject(
             boolean object,
             NameParsingMode nameParsingMode,
             boolean optionalBody,
@@ -1641,7 +1641,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
     /*
      * delegationSpecifier{","}
      */
-    /*package*/ void parseDelegationSpecifierList() {
+    private void parseDelegationSpecifierList() {
         PsiBuilder.Marker list = mark();
 
         while (true) {
@@ -1926,7 +1926,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
     }
 
     @NotNull
-    PsiBuilder.Marker parseNullableTypeSuffix(@NotNull PsiBuilder.Marker typeElementMarker) {
+    private PsiBuilder.Marker parseNullableTypeSuffix(@NotNull PsiBuilder.Marker typeElementMarker) {
         // ?: is joined regardless of joining state
         while (at(QUEST) && myBuilder.rawLookup(1) != COLON) {
             PsiBuilder.Marker precede = typeElementMarker.precede();
@@ -1947,7 +1947,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *    - (Mutable)List<Foo>!
      *    - Array<(out) Foo>!
      */
-    void parseUserType() {
+    private void parseUserType() {
         PsiBuilder.Marker userType = mark();
 
         if (at(PACKAGE_KEYWORD)) {
@@ -2122,7 +2122,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   : parameter ("=" element)?
      *   ;
      */
-    void parseValueParameterList(boolean isFunctionTypeContents, boolean typeRequired, TokenSet recoverySet) {
+    private void parseValueParameterList(boolean isFunctionTypeContents, boolean typeRequired, TokenSet recoverySet) {
         assert _at(LPAR);
         PsiBuilder.Marker parameters = mark();
 

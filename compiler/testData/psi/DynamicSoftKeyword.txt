@@ -69,10 +69,8 @@ JetFile: DynamicSoftKeyword.kt
               PsiElement(INTEGER_LITERAL)('1')
           PsiWhiteSpace('\n        ')
           CALLABLE_REFERENCE_EXPRESSION
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('dynamic')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('dynamic')
             PsiElement(COLONCOLON)('::')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('foo')

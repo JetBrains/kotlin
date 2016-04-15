@@ -366,54 +366,60 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
     }
 
     /*
-     * callableReference
-     *   : (userType "?"*)? "::" SimpleName typeArguments?
+     * doubleColonSuffix
+     *   : "::" SimpleName typeArguments?
      *   ;
      */
-    private boolean parseDoubleColonExpression() {
-        PsiBuilder.Marker expression = mark();
-
-        if (!at(COLONCOLON)) {
-            PsiBuilder.Marker typeReference = mark();
-            myKotlinParsing.parseUserType();
-            typeReference = myKotlinParsing.parseNullableTypeSuffix(typeReference);
-            typeReference.done(TYPE_REFERENCE);
-
-            if (!at(COLONCOLON)) {
-                expression.rollbackTo();
-                return false;
-            }
-        }
+    private boolean parseDoubleColonSuffix(@NotNull PsiBuilder.Marker expression) {
+        if (!at(COLONCOLON)) return false;
 
         advance(); // COLONCOLON
 
         if (at(CLASS_KEYWORD)) {
             advance(); // CLASS_KEYWORD
-            expression.done(CLASS_LITERAL_EXPRESSION);
-        }
-        else {
-            parseSimpleNameExpression();
 
-            if (at(LT)) {
-                PsiBuilder.Marker typeArgumentList = mark();
-                if (myKotlinParsing.tryParseTypeArgumentList(TYPE_ARGUMENT_LIST_STOPPERS)) {
-                    typeArgumentList.error("Type arguments are not allowed");
-                }
-                else {
-                    typeArgumentList.rollbackTo();
+            expression.done(CLASS_LITERAL_EXPRESSION);
+            return true;
+        }
+
+        parseSimpleNameExpression();
+
+        if (at(LT)) {
+            PsiBuilder.Marker typeArgumentList = mark();
+            if (myKotlinParsing.tryParseTypeArgumentList(TYPE_ARGUMENT_LIST_STOPPERS)) {
+                typeArgumentList.error("Type arguments are not allowed");
+            }
+            else {
+                typeArgumentList.rollbackTo();
+            }
+        }
+
+        if (at(LPAR) && !myBuilder.newlineBeforeCurrentToken()) {
+            PsiBuilder.Marker lpar = mark();
+            parseCallSuffix();
+            lpar.error("This syntax is reserved for future use; to call a reference, enclose it in parentheses: (foo::bar)(args)");
+        }
+
+        expression.done(CALLABLE_REFERENCE_EXPRESSION);
+        return true;
+    }
+
+    private void skipQuestionMarksBeforeDoubleColon() {
+        if (at(QUEST)) {
+            int k = 1;
+            while (lookahead(k) == QUEST) k++;
+            if (lookahead(k) == COLONCOLON) {
+                while (k > 0) {
+                    advance(); // QUEST
+                    k--;
                 }
             }
-
-            expression.done(CALLABLE_REFERENCE_EXPRESSION);
         }
-
-        return true;
     }
 
     /*
      * postfixUnaryExpression
      *   : atomicExpression postfixUnaryOperation*
-     *   : callableReference postfixUnaryOperation*
      *   ;
      *
      * postfixUnaryOperation
@@ -427,14 +433,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
     private void parsePostfixExpression() {
         PsiBuilder.Marker expression = mark();
 
-        boolean firstExpressionParsed;
-        boolean doubleColonExpression = parseDoubleColonExpression();
-        if (!doubleColonExpression) {
-            firstExpressionParsed = parseAtomicExpression();
-        }
-        else {
-            firstExpressionParsed = true;
-        }
+        boolean firstExpressionParsed = at(COLONCOLON) ? parseDoubleColonSuffix(mark()) : parseAtomicExpression();
 
         while (true) {
             if (interruptedWithNewLine()) {
@@ -444,7 +443,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
                 parseArrayAccess();
                 expression.done(ARRAY_ACCESS_EXPRESSION);
             }
-            else if (!doubleColonExpression && parseCallSuffix()) {
+            else if (parseCallSuffix()) {
                 expression.done(CALL_EXPRESSION);
             }
             else if (at(DOT) || at(SAFE_ACCESS)) {
@@ -471,7 +470,10 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
                 expression.done(POSTFIX_EXPRESSION);
             }
             else {
-                break;
+                skipQuestionMarksBeforeDoubleColon();
+                if (!parseDoubleColonSuffix(expression)) {
+                    break;
+                }
             }
             expression = expression.precede();
         }
