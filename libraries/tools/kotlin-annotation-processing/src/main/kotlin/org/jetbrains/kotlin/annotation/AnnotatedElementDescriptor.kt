@@ -12,6 +12,9 @@ sealed class AnnotatedElementDescriptor(val classFqName: String) {
     }
 
     class Constructor(classFqName: String) : AnnotatedElementDescriptor(classFqName) {
+        companion object {
+            const val METHOD_NAME = "<init>"
+        }
         // use referential equality
     }
 
