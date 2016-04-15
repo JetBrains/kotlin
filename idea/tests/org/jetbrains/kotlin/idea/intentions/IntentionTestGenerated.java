@@ -7933,6 +7933,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("applicable_nestedLiteralsNoUseInside.kt")
+        public void testApplicable_nestedLiteralsNoUseInside() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceExplicitFunctionLiteralParamWithIt/applicable_nestedLiteralsNoUseInside.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("notApplicable_alreadyUsesImplicitIt.kt")
         public void testNotApplicable_alreadyUsesImplicitIt() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceExplicitFunctionLiteralParamWithIt/notApplicable_alreadyUsesImplicitIt.kt");
@@ -7942,6 +7948,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("notApplicable_hasMultipleParameters.kt")
         public void testNotApplicable_hasMultipleParameters() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceExplicitFunctionLiteralParamWithIt/notApplicable_hasMultipleParameters.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notApplicable_nestedLiterals.kt")
+        public void testNotApplicable_nestedLiterals() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceExplicitFunctionLiteralParamWithIt/notApplicable_nestedLiterals.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notApplicable_nestedLiteralsNoIt.kt")
+        public void testNotApplicable_nestedLiteralsNoIt() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceExplicitFunctionLiteralParamWithIt/notApplicable_nestedLiteralsNoIt.kt");
             doTest(fileName);
         }
 
