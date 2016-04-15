@@ -145,11 +145,15 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
     private void mayBeAddCallToSuperMethod(JsFunction initializer, @NotNull ClassDescriptor descriptor) {
         if (classDeclaration.hasModifier(KtTokens.ENUM_KEYWORD)) {
             addCallToSuperMethod(Collections.<JsExpression>emptyList(), initializer);
-            return;
         }
-        if (hasAncestorClass(bindingContext(), classDeclaration)) {
+        else if (hasAncestorClass(bindingContext(), classDeclaration)) {
             ResolvedCall<FunctionDescriptor> superCall = getSuperCall(bindingContext(), classDeclaration);
-            if (superCall == null) return;
+            if (superCall == null) {
+                if (DescriptorUtils.isEnumEntry(descriptor)) {
+                    addCallToSuperMethod(Collections.<JsExpression>emptyList(), initializer);
+                }
+                return;
+            }
 
             if (classDeclaration instanceof KtEnumEntry) {
                 JsExpression expression = CallTranslator.translate(context(), superCall, null);

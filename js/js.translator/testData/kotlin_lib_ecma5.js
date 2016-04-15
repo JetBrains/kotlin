@@ -256,27 +256,21 @@ var Kotlin = {};
             var values = [];
             for (var entryName in enumEntryList) {
                 if (enumEntryList.hasOwnProperty(entryName)) {
-                    var entryObject = enumEntryList[entryName];
+                    var entryFactory = enumEntryList[entryName];
                     values.push(entryName);
-                    if (typeof entryObject === 'function' && entryObject.type === Kotlin.TYPE.INIT_FUN) {
-                        entryObject.className = entryName;
-                        Object.defineProperty(cls, entryName, {
-                            get: function(ordinal, name, obj) {
-                                return function() {
-                                    var result = obj.apply(this);
-                                    result.ordinal$ = ordinal;
-                                    result.name$ = name;
-                                    return result;
-                                }
-                            }(i++, entryName, entryObject),
-                            configurable: true
-                        })
+
+                    var entryObject;
+                    if (typeof entryFactory === 'function' && entryFactory.type === Kotlin.TYPE.INIT_FUN) {
+                        entryFactory.className = entryName;
+                        entryObject = entryFactory.apply(cls);
                     }
                     else {
-                        entryObject.ordinal$ = i++;
-                        entryObject.name$ = entryName;
-                        cls[entryName] = entryObject;
+                        entryObject = entryFactory();
                     }
+                    
+                    entryObject.ordinal$ = i++;
+                    entryObject.name$ = entryName;
+                    cls[entryName] = entryObject;
                 }
             }
             cls.valuesNames$ = values;
