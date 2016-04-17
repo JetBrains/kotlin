@@ -1,0 +1,37 @@
+File buildLog = new File(basedir, "build.log");
+
+void assertBuildLogHasLine(String expectedLine) {
+    BufferedReader reader = new BufferedReader(new FileReader(buildLog));
+    try {
+        String line;
+        int i = 0;
+        while ((line = reader.readLine()) != null) {
+            i++;
+            if (line.equals(expectedLine)) {
+                print("Expected line was found at line " + i + " of build log: " + "\"" + expectedLine + "\"");
+                return;
+            }
+        }
+        throw new Exception("Expected build log to contain line: \"" + expectedLine + "\"");
+    } finally {
+        reader.close();
+    }
+}
+
+void assertBuildLogHasLineThatContains(String content) {
+    BufferedReader reader = new BufferedReader(new FileReader(buildLog));
+    try {
+        String line;
+        int i = 0;
+        while ((line = reader.readLine()) != null) {
+            i++;
+            if (line.contains(content)) {
+                print("Expected content " + "\"" + content + "\"" + " was found at line " + i + " of build log: " + "\"" + line + "\"");
+                return;
+            }
+        }
+        throw new Exception("Expected build log to contain: \"" + content + "\"");
+    } finally {
+        reader.close();
+    }
+}
