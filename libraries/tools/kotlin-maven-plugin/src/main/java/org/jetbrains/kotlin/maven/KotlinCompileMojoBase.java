@@ -119,25 +119,7 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
         configureCompilerArguments(arguments, compiler);
         printCompilerArgumentsIfDebugEnabled(arguments, compiler);
 
-        MessageCollector messageCollector = new MessageCollector() {
-            @Override
-            public void report(@NotNull CompilerMessageSeverity severity, @NotNull String message, @NotNull CompilerMessageLocation location) {
-                String path = location.getPath();
-                String position = path == null ? "" : path + ": (" + (location.getLine() + ", " + location.getColumn()) + ") ";
-
-                String text = position + message;
-
-                if (CompilerMessageSeverity.VERBOSE.contains(severity)) {
-                    getLog().debug(text);
-                } else if (CompilerMessageSeverity.ERRORS.contains(severity)) {
-                    getLog().error(text);
-                } else if (severity == CompilerMessageSeverity.INFO) {
-                    getLog().info(text);
-                } else {
-                    getLog().warn(text);
-                }
-            }
-        };
+        MessageCollector messageCollector = new MavenPluginLogMessageCollector(getLog());
 
         ExitCode exitCode = executeCompiler(compiler, arguments, messageCollector);
 
