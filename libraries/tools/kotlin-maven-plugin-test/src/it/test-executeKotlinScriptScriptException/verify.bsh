@@ -1,0 +1,4 @@
+source("verify-common.bsh");
+
+assertBuildLogHasLine("[INFO] BUILD FAILURE");
+assertBuildLogHasLineThatContains("script threw an exception: exception from script");
