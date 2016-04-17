@@ -21,5 +21,6 @@ import kotlin.internal.PureReifiable
 /**
  * Returns an empty array of the specified type [T].
  */
-public inline fun <reified @PureReifiable T> emptyArray(): Array<T> = arrayOfNulls<T>(0) as Array<T>
-
+public inline fun <reified @PureReifiable T> emptyArray(): Array<T> =
+        @Suppress("CAST_NEVER_SUCCEEDS")
+        arrayOfNulls<T>(0) as Array<T>

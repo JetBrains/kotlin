@@ -168,6 +168,7 @@ public class DescriptorUtils {
     }
 
     @Nullable
+    @SuppressWarnings("unchecked")
     public static <D extends DeclarationDescriptor> D getParentOfType(
             @Nullable DeclarationDescriptor descriptor,
             @NotNull Class<D> aClass,
@@ -179,7 +180,6 @@ public class DescriptorUtils {
         }
         while (descriptor != null) {
             if (aClass.isInstance(descriptor)) {
-                //noinspection unchecked
                 return (D) descriptor;
             }
             descriptor = descriptor.getContainingDeclaration();
@@ -420,21 +420,22 @@ public class DescriptorUtils {
      * TODO: probably all call-sites of this method are wrong, they should handle all super-declarations
      */
     @NotNull
+    @SuppressWarnings("unchecked")
     public static <D extends CallableMemberDescriptor> D unwrapFakeOverride(@NotNull D descriptor) {
         while (descriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
             Collection<? extends CallableMemberDescriptor> overridden = descriptor.getOverriddenDescriptors();
             if (overridden.isEmpty()) {
                 throw new IllegalStateException("Fake override should have at least one overridden descriptor: " + descriptor);
             }
-            //noinspection unchecked
             descriptor = (D) overridden.iterator().next();
         }
         return descriptor;
     }
 
+    @NotNull
+    @SuppressWarnings("unchecked")
     public static <D extends DeclarationDescriptorWithVisibility> D unwrapFakeOverrideToAnyDeclaration(@NotNull D descriptor) {
         if (descriptor instanceof CallableMemberDescriptor) {
-            //noinspection unchecked
             return (D) unwrapFakeOverride((CallableMemberDescriptor) descriptor);
         }
 
@@ -482,12 +483,12 @@ public class DescriptorUtils {
     }
 
     @NotNull
+    @SuppressWarnings("unchecked")
     public static <D extends CallableMemberDescriptor> Set<D> getAllOverriddenDeclarations(@NotNull D memberDescriptor) {
         Set<D> result = new HashSet<D>();
         for (CallableMemberDescriptor overriddenDeclaration : memberDescriptor.getOverriddenDescriptors()) {
             CallableMemberDescriptor.Kind kind = overriddenDeclaration.getKind();
             if (kind == DECLARATION) {
-                //noinspection unchecked
                 result.add((D) overriddenDeclaration);
             }
             else if (kind == DELEGATION || kind == FAKE_OVERRIDE || kind == SYNTHESIZED) {
@@ -496,7 +497,6 @@ public class DescriptorUtils {
             else {
                 throw new AssertionError("Unexpected callable kind " + kind);
             }
-            //noinspection unchecked
             result.addAll(getAllOverriddenDeclarations((D) overriddenDeclaration));
         }
         return result;

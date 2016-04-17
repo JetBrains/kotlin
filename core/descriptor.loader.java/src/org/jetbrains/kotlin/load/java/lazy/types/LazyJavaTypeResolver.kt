@@ -218,7 +218,7 @@ class LazyJavaTypeResolver(
                 // Most of the time this means there is an error in the Java code
                 return typeParameters.map { p -> TypeProjectionImpl(ErrorUtils.createErrorType(p.name.asString())) }.toReadOnlyList()
             }
-            var howTheProjectionIsUsed = if (attr.howThisTypeIsUsed == SUPERTYPE) SUPERTYPE_ARGUMENT else TYPE_ARGUMENT
+            val howTheProjectionIsUsed = if (attr.howThisTypeIsUsed == SUPERTYPE) SUPERTYPE_ARGUMENT else TYPE_ARGUMENT
             return javaType.typeArguments.withIndex().map {
                 indexedArgument ->
                 val (i, javaTypeArgument) = indexedArgument
@@ -263,10 +263,9 @@ class LazyJavaTypeResolver(
         override fun getCapabilities(): TypeCapabilities = if (isRaw()) RawTypeCapabilities else TypeCapabilities.NONE
 
         private val nullable = c.storageManager.createLazyValue l@ {
-            when (attr.flexibility) {
-                FLEXIBLE_LOWER_BOUND -> return@l false
-                FLEXIBLE_UPPER_BOUND -> return@l true
-            }
+            if (attr.flexibility == FLEXIBLE_LOWER_BOUND) return@l false
+            if (attr.flexibility == FLEXIBLE_UPPER_BOUND) return@l true
+
             !attr.isMarkedNotNull &&
             // 'L extends List<T>' in Java is a List<T> in Kotlin, not a List<T?>
             // nullability will be taken care of in individual member signatures

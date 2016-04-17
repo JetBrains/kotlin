@@ -406,6 +406,7 @@ internal class DescriptorRendererImpl(
     }
 
     private fun renderVisibility(visibility: Visibility, builder: StringBuilder) {
+        @Suppress("NAME_SHADOWING")
         var visibility = visibility
         if (DescriptorRendererModifier.VISIBILITY !in modifiers) return
         if (normalizedVisibilities) {

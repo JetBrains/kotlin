@@ -73,6 +73,7 @@ public class WrappedValues {
     }
 
     @Nullable
+    @SuppressWarnings("unchecked")
     public static <V> V unescapeThrowable(@Nullable Object value) {
         if (value instanceof ThrowableWrapper) {
             Throwable originThrowable = ((ThrowableWrapper) value).getThrowable();
@@ -85,7 +86,6 @@ public class WrappedValues {
             throw ExceptionUtilsKt.rethrow(originThrowable);
         }
 
-        //noinspection unchecked
         return (V) value;
     }
 

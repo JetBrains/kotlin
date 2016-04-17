@@ -103,7 +103,7 @@ class LazyJavaStaticClassScope(
 
     private fun getStaticFunctionsFromJavaSuperClasses(name: Name, descriptor: ClassDescriptor): Set<SimpleFunctionDescriptor> {
         val staticScope = descriptor.getParentJavaStaticClassScope() ?: return emptySet()
-        return staticScope.getContributedFunctions(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS).map { it as SimpleFunctionDescriptor }.toSet()
+        return staticScope.getContributedFunctions(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS).toSet()
     }
 
     private fun getStaticPropertiesFromJavaSupertypes(name: Name, descriptor: ClassDescriptor): Set<PropertyDescriptor> {

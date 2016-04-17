@@ -132,8 +132,6 @@ private fun <T> Iterable<T>.elementAt(position: Int): T {
 
         idx++
     } while (true)
-
-    throw IllegalStateException()
 }
 
 private fun <T> Iterator<T>.remaining(): List<T> {
