@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.intellij.openapi.util.text.StringUtil.join;
+import static org.jetbrains.kotlin.maven.Util.filterClassPath;
 
 /**
  * Compiles kotlin sources
@@ -84,7 +85,7 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
             arguments.module = module;
         }
 
-        List<String> classpathList = filterClassPath(classpath);
+        List<String> classpathList = filterClassPath(project.getBasedir(), classpath);
 
         if (!classpathList.isEmpty()) {
             String classPathString = join(classpathList, File.pathSeparator);
@@ -101,14 +102,5 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
         if (arguments.noOptimize) {
             getLog().info("Optimization is turned off");
         }
-    }
-
-    protected List<String> filterClassPath(List<String> classpath) {
-        return CollectionsKt.filter(classpath, new Function1<String, Boolean>() {
-            @Override
-            public Boolean invoke(String s) {
-                return new File(s).exists() || new File(project.getBasedir(), s).exists();
-            }
-        });
     }
 }
