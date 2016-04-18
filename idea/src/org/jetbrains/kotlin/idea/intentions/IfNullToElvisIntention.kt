@@ -30,7 +30,9 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.typeUtil.isNothing
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
 
@@ -51,10 +53,15 @@ class IfNullToElvisIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfE
         val (initializer, declaration, ifNullExpr) = calcData(element)!!
         val factory = KtPsiFactory(element)
 
-        val explicitTypeToAdd = if (declaration.isVar && declaration.typeReference == null)
-            initializer.analyze().getType(initializer)
-        else
-            null
+        val explicitTypeToSet = when {
+            // for var with no explicit type, add it so that the actual change won't change
+            declaration.isVar && declaration.typeReference == null -> initializer.analyze(BodyResolveMode.PARTIAL).getType(initializer)
+
+            // for val with explicit type, change it to non-nullable
+            !declaration.isVar && declaration.typeReference != null -> initializer.analyze(BodyResolveMode.PARTIAL).getType(initializer)?.makeNotNullable()
+
+            else -> null
+        }
 
         // do not loose any comments!
         val comments = element.extractComments(ifNullExpr)
@@ -68,8 +75,8 @@ class IfNullToElvisIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfE
         val newElvis = initializer.replaced(elvis)
         element.delete()
 
-        if (explicitTypeToAdd != null && !explicitTypeToAdd.isError) {
-            declaration.setType(explicitTypeToAdd)
+        if (explicitTypeToSet != null && !explicitTypeToSet.isError) {
+            declaration.setType(explicitTypeToSet)
         }
 
         editor?.caretModel?.moveToOffset(newElvis.right!!.textOffset)
