@@ -46,6 +46,7 @@ public class ExpressionTypingComponents {
     /*package*/ LocalClassifierAnalyzer localClassifierAnalyzer;
     /*package*/ FunctionDescriptorResolver functionDescriptorResolver;
     /*package*/ CallExpressionResolver callExpressionResolver;
+    /*package*/ DoubleColonExpressionResolver doubleColonExpressionResolver;
     /*package*/ DescriptorResolver descriptorResolver;
     /*package*/ TypeResolver typeResolver;
     /*package*/ AnnotationResolver annotationResolver;
@@ -124,6 +125,11 @@ public class ExpressionTypingComponents {
     @Inject
     public void setCallExpressionResolver(CallExpressionResolver callExpressionResolver) {
         this.callExpressionResolver = callExpressionResolver;
+    }
+
+    @Inject
+    public void setDoubleColonExpressionResolver(DoubleColonExpressionResolver doubleColonExpressionResolver) {
+        this.doubleColonExpressionResolver = doubleColonExpressionResolver;
     }
 
     @Inject
