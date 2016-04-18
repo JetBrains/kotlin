@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.idea.completion
 
+import com.intellij.codeInsight.completion.InsertHandler
+import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.openapi.project.Project
@@ -30,9 +32,7 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.*
-import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
-import org.jetbrains.kotlin.idea.completion.handlers.KotlinKeywordInsertHandler
-import org.jetbrains.kotlin.idea.completion.handlers.UseSiteAnnotationTargetInsertHandler
+import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.createKeywordConstructLookupElement
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
@@ -72,6 +72,20 @@ object KeywordCompletion {
             CONSTRUCTOR_KEYWORD to "class C { constructor(caret)"
     )
 
+    private val NO_SPACE_AFTER = listOf(THIS_KEYWORD,
+                                        SUPER_KEYWORD,
+                                        NULL_KEYWORD,
+                                        TRUE_KEYWORD,
+                                        FALSE_KEYWORD,
+                                        BREAK_KEYWORD,
+                                        CONTINUE_KEYWORD,
+                                        ELSE_KEYWORD,
+                                        WHEN_KEYWORD,
+                                        FILE_KEYWORD,
+                                        DYNAMIC_KEYWORD,
+                                        GET_KEYWORD,
+                                        SET_KEYWORD).map { it.value} + "companion object"
+
     fun complete(position: PsiElement, prefix: String, isJvmModule: Boolean, consumer: (LookupElement) -> Unit) {
         if (!GENERAL_FILTER.isAcceptable(position, position)) return
 
@@ -109,12 +123,14 @@ object KeywordCompletion {
 
                 val isUseSiteAnnotationTarget = position.prevLeaf()?.node?.elementType == KtTokens.AT
 
-                val insertHandler = if (isUseSiteAnnotationTarget)
-                    UseSiteAnnotationTargetInsertHandler
-                else if (keywordToken !in FUNCTION_KEYWORDS)
-                    KotlinKeywordInsertHandler
-                else
-                    KotlinFunctionInsertHandler.Normal(inputTypeArguments = false, inputValueArguments = false)
+                val insertHandler = when {
+                    isUseSiteAnnotationTarget -> UseSiteAnnotationTargetInsertHandler
+
+                    keyword in NO_SPACE_AFTER -> null
+
+                    else -> SpaceAfterInsertHandler
+                }
+
                 element = element.withInsertHandler(insertHandler)
 
                 if (isUseSiteAnnotationTarget) {
@@ -126,7 +142,17 @@ object KeywordCompletion {
         }
     }
 
-    private val FUNCTION_KEYWORDS = listOf(CONSTRUCTOR_KEYWORD)
+    private object UseSiteAnnotationTargetInsertHandler : InsertHandler<LookupElement> {
+        override fun handleInsert(context: InsertionContext, item: LookupElement) {
+            WithTailInsertHandler(":", spaceBefore = false, spaceAfter = false).postHandleInsert(context, item)
+        }
+    }
+
+    private object SpaceAfterInsertHandler : InsertHandler<LookupElement> {
+        override fun handleInsert(context: InsertionContext, item: LookupElement) {
+            WithTailInsertHandler.SPACE.postHandleInsert(context, item)
+        }
+    }
 
     private val GENERAL_FILTER = NotFilter(OrFilter(
             CommentFilter(),
