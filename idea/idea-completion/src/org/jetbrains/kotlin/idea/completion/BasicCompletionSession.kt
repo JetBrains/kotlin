@@ -26,18 +26,17 @@ import com.intellij.codeInsight.template.TemplateManager
 import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.JavaPsiFacade
-import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.ProcessingContext
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.idea.completion.handlers.createKeywordConstructLookupElement
 import org.jetbrains.kotlin.idea.completion.smart.ExpectedInfoMatch
 import org.jetbrains.kotlin.idea.completion.smart.SMART_COMPLETION_ITEM_PRIORITY_KEY
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletion
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletionItemPriority
 import org.jetbrains.kotlin.idea.core.ExpectedInfo
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
-import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -376,8 +375,8 @@ class BasicCompletionSession(
                         collector.addElement(lookupElement)
 
                         if (!isUseSiteAnnotationTarget) {
-                            collector.addElement(createKeywordConstructLookupElement(keyword, "val v:Int get()=caret", "caret"))
-                            collector.addElement(createKeywordConstructLookupElement(keyword, "val v:Int get(){caret}", "caret", trimSpacesAroundCaret = true))
+                            collector.addElement(createKeywordConstructLookupElement(project, keyword, "val v:Int get()=caret"))
+                            collector.addElement(createKeywordConstructLookupElement(project, keyword, "val v:Int get(){caret}", trimSpacesAroundCaret = true))
                         }
                     }
 
@@ -385,49 +384,14 @@ class BasicCompletionSession(
                         collector.addElement(lookupElement)
 
                         if (!isUseSiteAnnotationTarget) {
-                            collector.addElement(createKeywordConstructLookupElement(keyword, "var v:Int set(value)=caret", "caret"))
-                            collector.addElement(createKeywordConstructLookupElement(keyword, "var v:Int set(value){caret}", "caret", trimSpacesAroundCaret = true))
+                            collector.addElement(createKeywordConstructLookupElement(project, keyword, "var v:Int set(value)=caret"))
+                            collector.addElement(createKeywordConstructLookupElement(project, keyword, "var v:Int set(value){caret}", trimSpacesAroundCaret = true))
                         }
                     }
 
                     else -> collector.addElement(lookupElement)
                 }
             }
-        }
-
-        private fun createKeywordConstructLookupElement(
-                keyword: String,
-                fileTextToReformat: String,
-                caretPlaceHolder: String,
-                trimSpacesAroundCaret: Boolean = false
-        ): LookupElement {
-            val file = KtPsiFactory(project).createFile(fileTextToReformat)
-            CodeStyleManager.getInstance(project).reformat(file)
-            val newFileText = file.text
-
-            val keywordOffset = newFileText.indexOf(keyword)
-            assert(keywordOffset >= 0)
-            val keywordEndOffset = keywordOffset + keyword.length
-
-            val caretOffset = newFileText.indexOf(caretPlaceHolder)
-            assert(caretOffset >= 0)
-            assert(caretOffset >= keywordEndOffset)
-
-            var tailBeforeCaret = newFileText.substring(keywordEndOffset, caretOffset)
-            var tailAfterCaret = newFileText.substring(caretOffset + caretPlaceHolder.length)
-
-            if (trimSpacesAroundCaret) {
-                tailBeforeCaret = tailBeforeCaret.trimEnd()
-                tailAfterCaret = tailAfterCaret.trimStart()
-            }
-
-            return LookupElementBuilder.create(KeywordLookupObject(), keyword + tailBeforeCaret + tailAfterCaret)
-                    .withPresentableText(keyword)
-                    .bold()
-                    .withTailText(tailBeforeCaret + tailAfterCaret)
-                    .withInsertHandler { insertionContext, lookupElement ->
-                        insertionContext.editor.moveCaret(insertionContext.editor.caretModel.offset - tailAfterCaret.length)
-                    }
         }
     }
 

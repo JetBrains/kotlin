@@ -1,0 +1,8 @@
+fun t() {
+    while (true) {
+        if(<caret>)
+    }
+}
+
+// ELEMENT: if
+// CHAR: '('

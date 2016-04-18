@@ -18,8 +18,15 @@ package org.jetbrains.kotlin.idea.completion.handlers
 
 import com.intellij.codeInsight.completion.InsertHandler
 import com.intellij.codeInsight.completion.InsertionContext
+import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.codeInsight.lookup.LookupElement
+import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.openapi.project.Project
+import com.intellij.psi.codeStyle.CodeStyleManager
+import org.jetbrains.kotlin.idea.completion.KeywordLookupObject
+import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.lexer.KtTokens.*
+import org.jetbrains.kotlin.psi.KtPsiFactory
 
 object KotlinKeywordInsertHandler : InsertHandler<LookupElement> {
     private val NO_SPACE_AFTER = listOf(THIS_KEYWORD,
@@ -47,6 +54,103 @@ object KotlinKeywordInsertHandler : InsertHandler<LookupElement> {
         val keyword = item.lookupString
         if (keyword !in NO_SPACE_AFTER) {
             WithTailInsertHandler.SPACE.postHandleInsert(context, item)
+        }
+    }
+}
+
+fun createKeywordConstructLookupElement(
+        project: Project,
+        keyword: String,
+        fileTextToReformat: String,
+        trimSpacesAroundCaret: Boolean = false,
+        showConstructInLookup: Boolean = true
+): LookupElement {
+    val file = KtPsiFactory(project).createFile(fileTextToReformat)
+    CodeStyleManager.getInstance(project).reformat(file)
+    val newFileText = file.text
+
+    val keywordOffset = newFileText.indexOf(keyword)
+    assert(keywordOffset >= 0)
+    val keywordEndOffset = keywordOffset + keyword.length
+
+    val caretPlaceHolder = "caret"
+
+    val caretOffset = newFileText.indexOf(caretPlaceHolder)
+    assert(caretOffset >= 0)
+    assert(caretOffset >= keywordEndOffset)
+
+    var tailBeforeCaret = newFileText.substring(keywordEndOffset, caretOffset)
+    var tailAfterCaret = newFileText.substring(caretOffset + caretPlaceHolder.length)
+
+    if (trimSpacesAroundCaret) {
+        tailBeforeCaret = tailBeforeCaret.trimEnd()
+        tailAfterCaret = tailAfterCaret.trimStart()
+    }
+
+    val indent = detectIndent(newFileText, keywordOffset)
+    if (indent != null) {
+        tailBeforeCaret = tailBeforeCaret.unindent(indent)
+        tailAfterCaret = tailAfterCaret.unindent(indent)
+    }
+
+    var lookupElementBuilder = LookupElementBuilder.create(KeywordLookupObject(), keyword)
+            .bold()
+            .withInsertHandler { insertionContext, lookupElement ->
+                if (insertionContext.completionChar == Lookup.NORMAL_SELECT_CHAR || insertionContext.completionChar == Lookup.REPLACE_SELECT_CHAR) {
+                    val offset = insertionContext.tailOffset
+                    val newIndent = detectIndent(insertionContext.document.charsSequence, offset - keyword.length)
+                    var beforeCaret = tailBeforeCaret
+                    var afterCaret = tailAfterCaret
+                    if (newIndent != null) {
+                        beforeCaret = beforeCaret.indentLinesAfterFirst(newIndent)
+                        afterCaret = afterCaret.indentLinesAfterFirst(newIndent)
+                    }
+                    insertionContext.document.insertString(offset, beforeCaret + afterCaret)
+                    insertionContext.editor.moveCaret(offset + beforeCaret.length)
+                }
+            }
+    if (showConstructInLookup) {
+        lookupElementBuilder = lookupElementBuilder.withTailText(tailBeforeCaret + tailAfterCaret)
+    }
+    return lookupElementBuilder
+}
+
+private fun detectIndent(text: CharSequence, offset: Int): String? {
+    val reversedIndent = buildString {
+        var index = offset - 1
+        Loop@
+        while (index >= 0) {
+            val c = text[index]
+            when (c) {
+                ' ', '\t' -> append(c)
+                '\r', '\n' -> break@Loop
+                else -> return null
+            }
+            index--
+        }
+    }
+    return reversedIndent.reversed()
+}
+
+private fun String.indentLinesAfterFirst(indent: String): String {
+    val text = this
+    return buildString {
+        val lines = text.lines()
+        for ((index, line) in lines.withIndex()) {
+            if (index > 0) append(indent)
+            append(line)
+            if (index != lines.lastIndex) append('\n')
+        }
+    }
+}
+
+private fun String.unindent(indent: String): String {
+    val text = this
+    return buildString {
+        val lines = text.lines()
+        for ((index, line) in lines.withIndex()) {
+            append(line.removePrefix(indent))
+            if (index != lines.lastIndex) append('\n')
         }
     }
 }

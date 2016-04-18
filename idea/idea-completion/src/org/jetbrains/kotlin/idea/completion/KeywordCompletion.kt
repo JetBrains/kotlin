@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.*
 import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.KotlinKeywordInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.UseSiteAnnotationTargetInsertHandler
+import org.jetbrains.kotlin.idea.completion.handlers.createKeywordConstructLookupElement
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -56,6 +57,19 @@ object KeywordCompletion {
             COMPANION_KEYWORD to OBJECT_KEYWORD,
             ENUM_KEYWORD to CLASS_KEYWORD,
             ANNOTATION_KEYWORD to CLASS_KEYWORD
+    )
+
+    private val KEYWORD_CONSTRUCTS = mapOf<KtKeywordToken, String>(
+            IF_KEYWORD to "fun foo() { if (caret)",
+            WHILE_KEYWORD to "fun foo() { while(caret)",
+            FOR_KEYWORD to "fun foo() { for(caret)",
+            TRY_KEYWORD to "fun foo() { try {\ncaret\n}",
+/* TODO!
+            CATCH_KEYWORD to "fun foo() { try {} catch (<caret>)",
+*/
+            DO_KEYWORD to "fun foo() { do {\ncaret\n}",
+            INIT_KEYWORD to "class C { init {\ncaret\n}",
+            CONSTRUCTOR_KEYWORD to "class C { constructor(caret)"
     )
 
     fun complete(position: PsiElement, prefix: String, isJvmModule: Boolean, consumer: (LookupElement) -> Unit) {
@@ -85,23 +99,30 @@ object KeywordCompletion {
 
             if (!parserFilter(keywordToken)) continue
 
-            var element = LookupElementBuilder.create(KeywordLookupObject(), keyword).bold()
-
-            val isUseSiteAnnotationTarget = position.prevLeaf()?.node?.elementType == KtTokens.AT
-
-            val insertHandler = if (isUseSiteAnnotationTarget)
-                UseSiteAnnotationTargetInsertHandler
-            else if (keywordToken !in FUNCTION_KEYWORDS)
-                KotlinKeywordInsertHandler
-            else
-                KotlinFunctionInsertHandler.Normal(inputTypeArguments = false, inputValueArguments = false)
-            element = element.withInsertHandler(insertHandler)
-
-            if (isUseSiteAnnotationTarget) {
-                element = element.withPresentableText(keyword + ":")
+            val constructText = KEYWORD_CONSTRUCTS[keywordToken]
+            if (constructText != null) {
+                val element = createKeywordConstructLookupElement(position.project, keyword, constructText, showConstructInLookup = false)
+                consumer(element)
             }
+            else {
+                var element = LookupElementBuilder.create(KeywordLookupObject(), keyword).bold()
 
-            consumer(element)
+                val isUseSiteAnnotationTarget = position.prevLeaf()?.node?.elementType == KtTokens.AT
+
+                val insertHandler = if (isUseSiteAnnotationTarget)
+                    UseSiteAnnotationTargetInsertHandler
+                else if (keywordToken !in FUNCTION_KEYWORDS)
+                    KotlinKeywordInsertHandler
+                else
+                    KotlinFunctionInsertHandler.Normal(inputTypeArguments = false, inputValueArguments = false)
+                element = element.withInsertHandler(insertHandler)
+
+                if (isUseSiteAnnotationTarget) {
+                    element = element.withPresentableText(keyword + ":")
+                }
+
+                consumer(element)
+            }
         }
     }
 

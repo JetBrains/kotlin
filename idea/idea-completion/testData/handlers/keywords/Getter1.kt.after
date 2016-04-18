@@ -1,4 +1,5 @@
 val v: Int
     get() = <caret>
 
-// ELEMENT: "get() = "
+// ELEMENT: "get"
+// TAIL_TEXT: "() = "

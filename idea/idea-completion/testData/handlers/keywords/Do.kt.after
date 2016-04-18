@@ -1,0 +1,7 @@
+fun t() {
+    do {
+        <caret>
+    }
+}
+
+// ELEMENT: do

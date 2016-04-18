@@ -53,9 +53,27 @@ public class KeywordCompletionHandlerTestGenerated extends AbstractKeywordComple
         doTest(fileName);
     }
 
+    @TestMetadata("Constructor.kt")
+    public void testConstructor() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/Constructor.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Do.kt")
+    public void testDo() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/Do.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("FileKeyword.kt")
     public void testFileKeyword() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/FileKeyword.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("For.kt")
+    public void testFor() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/For.kt");
         doTest(fileName);
     }
 
@@ -68,6 +86,30 @@ public class KeywordCompletionHandlerTestGenerated extends AbstractKeywordComple
     @TestMetadata("Getter2.kt")
     public void testGetter2() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/Getter2.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("If.kt")
+    public void testIf() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/If.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("IfLParenth.kt")
+    public void testIfLParenth() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/IfLParenth.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("IfSpace.kt")
+    public void testIfSpace() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/IfSpace.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Init.kt")
+    public void testInit() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/Init.kt");
         doTest(fileName);
     }
 
@@ -149,6 +191,12 @@ public class KeywordCompletionHandlerTestGenerated extends AbstractKeywordComple
         doTest(fileName);
     }
 
+    @TestMetadata("Try.kt")
+    public void testTry() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/Try.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("UseSiteAnnotationTarget1.kt")
     public void testUseSiteAnnotationTarget1() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/UseSiteAnnotationTarget1.kt");
@@ -164,6 +212,12 @@ public class KeywordCompletionHandlerTestGenerated extends AbstractKeywordComple
     @TestMetadata("UseSiteAnnotationTarget3.kt")
     public void testUseSiteAnnotationTarget3() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/UseSiteAnnotationTarget3.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("While.kt")
+    public void testWhile() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/While.kt");
         doTest(fileName);
     }
 }
