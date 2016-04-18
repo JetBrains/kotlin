@@ -178,7 +178,9 @@ class DoubleColonExpressionResolver(
         val traceAndCache = TemporaryTraceAndCache.create(c, "Resolve expression on LHS of callable reference", simpleNameExpression)
         val resolutionResult = callExpressionResolver.resolveSimpleName(c.replaceTraceAndCache(traceAndCache), simpleNameExpression)
 
-        val resultingCalls = resolutionResult.resultingCalls.filter { call -> call.status.possibleTransformToSuccess() }
+        val resultingCalls = resolutionResult.resultingCalls.filter { call ->
+            call.status.possibleTransformToSuccess() && !ErrorUtils.isError(call.resultingDescriptor)
+        }
         if (resultingCalls.isEmpty()) return
 
         if (resultingCalls.singleOrNull()?.resultingDescriptor is FakeCallableDescriptorForObject) return

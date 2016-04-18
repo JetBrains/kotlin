@@ -1647,6 +1647,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/callableReference"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("ea81649_errorPropertyLHS.kt")
+            public void testEa81649_errorPropertyLHS() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/ea81649_errorPropertyLHS.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("emptyLhs.kt")
             public void testEmptyLhs() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/emptyLhs.kt");
