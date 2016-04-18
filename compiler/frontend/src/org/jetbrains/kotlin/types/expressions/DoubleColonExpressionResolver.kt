@@ -61,9 +61,7 @@ class DoubleColonExpressionResolver(
     }
 
     private fun resolveClassLiteral(expression: KtClassLiteralExpression, c: ExpressionTypingContext): KotlinType? {
-        val typeReference = expression.typeReference
-
-        if (typeReference == null) {
+        if (expression.isEmptyLHS) {
             // "::class" will maybe mean "this::class", a class of "this" instance
             c.trace.report(UNSUPPORTED.on(expression, "Class literals with empty left hand side are not yet supported"))
             return null
@@ -72,7 +70,7 @@ class DoubleColonExpressionResolver(
         val context = TypeResolutionContext(
                 c.scope, c.trace, /* checkBounds = */ false, /* allowBareTypes = */ true, /* isDebuggerContext = */ false
         )
-        val possiblyBareType = typeResolver.resolvePossiblyBareType(context, typeReference)
+        val possiblyBareType = typeResolver.resolvePossiblyBareType(context, expression.typeReference!!)
 
         var type: KotlinType? = null
         if (possiblyBareType.isBare) {
@@ -208,7 +206,7 @@ class DoubleColonExpressionResolver(
         }
         if (descriptor == null) return null
 
-        if (expression.typeReference == null &&
+        if (expression.isEmptyLHS &&
             (descriptor.dispatchReceiverParameter != null || descriptor.extensionReceiverParameter != null)) {
             context.trace.report(CALLABLE_REFERENCE_TO_MEMBER_OR_EXTENSION_WITH_EMPTY_LHS.on(reference))
         }

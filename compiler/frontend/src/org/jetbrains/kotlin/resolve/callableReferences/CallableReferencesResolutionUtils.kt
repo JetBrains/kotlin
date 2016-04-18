@@ -270,7 +270,7 @@ fun createReflectionTypeForResolvedCallableReference(
         reflectionTypes: ReflectionTypes
 ): KotlinType? {
     val type = createReflectionTypeForCallableDescriptor(
-            descriptor, lhsType, reflectionTypes, context.trace, reference.callableReference, reference.typeReference == null
+            descriptor, lhsType, reflectionTypes, context.trace, reference.callableReference, reference.isEmptyLHS
     ) ?: return null
     when (descriptor) {
         is FunctionDescriptor -> {
@@ -298,8 +298,9 @@ fun getResolvedCallableReferenceShapeType(
                 null
             overloadResolutionResults.isSingleResult ->
                 OverloadResolutionResultsUtil.getResultingCall(overloadResolutionResults, context.contextDependency)?.let { call ->
-                    createReflectionTypeForCallableDescriptor(call.resultingDescriptor, lhsType, reflectionTypes, context.trace, reference,
-                                                              reference.typeReference == null)
+                    createReflectionTypeForCallableDescriptor(
+                            call.resultingDescriptor, lhsType, reflectionTypes, context.trace, reference, reference.isEmptyLHS
+                    )
                 }
             expectedTypeUnknown /* && overload resolution was ambiguous */ ->
                 functionPlaceholders.createFunctionPlaceholderType(emptyList(), false)

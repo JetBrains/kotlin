@@ -160,7 +160,7 @@ class CandidateResolver(
                     val candidate = candidateCall.candidateDescriptor
                     val candidateReflectionType = getReflectionTypeForCandidateDescriptor(
                             candidate, reflectionTypes,
-                            call.callElement.parent.let { it is KtCallableReferenceExpression && it.typeReference == null }
+                            call.callElement.parent.let { it is KtCallableReferenceExpression && it.isEmptyLHS }
                     );
                     if (candidateReflectionType != null) {
                         if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(candidateReflectionType, expectedType)) {

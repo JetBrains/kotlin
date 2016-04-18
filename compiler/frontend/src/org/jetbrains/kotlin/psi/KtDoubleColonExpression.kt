@@ -38,6 +38,9 @@ abstract class KtDoubleColonExpression(node: ASTNode) : KtExpressionImpl(node) {
         }
     }
 
+    val isEmptyLHS: Boolean
+        get() = doubleColonTokenReference.prevSibling == null
+
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R {
         return visitor.visitDoubleColonExpression(this, data)
     }
