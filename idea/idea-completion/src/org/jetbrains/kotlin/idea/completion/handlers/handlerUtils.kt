@@ -100,10 +100,8 @@ fun createKeywordConstructLookupElement(
     }
 
     val indent = detectIndent(newFileText, keywordOffset)
-    if (indent != null) {
-        tailBeforeCaret = tailBeforeCaret.unindent(indent)
-        tailAfterCaret = tailAfterCaret.unindent(indent)
-    }
+    tailBeforeCaret = tailBeforeCaret.unindent(indent)
+    tailAfterCaret = tailAfterCaret.unindent(indent)
 
     var lookupElementBuilder = LookupElementBuilder.create(KeywordLookupObject(), keyword)
             .bold()
@@ -111,12 +109,10 @@ fun createKeywordConstructLookupElement(
                 if (insertionContext.completionChar == Lookup.NORMAL_SELECT_CHAR || insertionContext.completionChar == Lookup.REPLACE_SELECT_CHAR) {
                     val offset = insertionContext.tailOffset
                     val newIndent = detectIndent(insertionContext.document.charsSequence, offset - keyword.length)
-                    var beforeCaret = tailBeforeCaret
-                    var afterCaret = tailAfterCaret
-                    if (newIndent != null) {
-                        beforeCaret = beforeCaret.indentLinesAfterFirst(newIndent)
-                        afterCaret = afterCaret.indentLinesAfterFirst(newIndent)
-                    }
+
+                    val beforeCaret = tailBeforeCaret.indentLinesAfterFirst(newIndent)
+                    val afterCaret = tailAfterCaret.indentLinesAfterFirst(newIndent)
+
                     insertionContext.document.insertString(offset, beforeCaret + afterCaret)
                     insertionContext.editor.moveCaret(offset + beforeCaret.length)
                 }
@@ -127,18 +123,23 @@ fun createKeywordConstructLookupElement(
     return lookupElementBuilder
 }
 
-private fun detectIndent(text: CharSequence, offset: Int): String? {
+private fun detectIndent(text: CharSequence, offset: Int): String {
     val reversedIndent = buildString {
         var index = offset - 1
-        Loop@
         while (index >= 0) {
             val c = text[index]
-            when (c) {
-                ' ', '\t' -> append(c)
-                '\r', '\n' -> break@Loop
-                else -> return null
+            if (c == '\n' || c == '\r') {
+                break
             }
             index--
+        }
+        index++
+
+        while (index < offset) {
+            val c = text[index]
+            if (!c.isWhitespace()) break
+            append(c)
+            index++
         }
     }
     return reversedIndent.reversed()

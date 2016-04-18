@@ -47,6 +47,12 @@ public class KeywordCompletionHandlerTestGenerated extends AbstractKeywordComple
         doTest(fileName);
     }
 
+    @TestMetadata("Catch.kt")
+    public void testCatch() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/Catch.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("CompanionObject.kt")
     public void testCompanionObject() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/CompanionObject.kt");
@@ -68,6 +74,12 @@ public class KeywordCompletionHandlerTestGenerated extends AbstractKeywordComple
     @TestMetadata("FileKeyword.kt")
     public void testFileKeyword() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/FileKeyword.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Finally.kt")
+    public void testFinally() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/Finally.kt");
         doTest(fileName);
     }
 

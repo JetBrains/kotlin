@@ -64,9 +64,8 @@ object KeywordCompletion {
             WHILE_KEYWORD to "fun foo() { while(caret)",
             FOR_KEYWORD to "fun foo() { for(caret)",
             TRY_KEYWORD to "fun foo() { try {\ncaret\n}",
-/* TODO!
-            CATCH_KEYWORD to "fun foo() { try {} catch (<caret>)",
-*/
+            CATCH_KEYWORD to "fun foo() { try {} catch (caret)",
+            FINALLY_KEYWORD to "fun foo() { try {\n}\nfinally{\ncaret\n}",
             DO_KEYWORD to "fun foo() { do {\ncaret\n}",
             INIT_KEYWORD to "class C { init {\ncaret\n}",
             CONSTRUCTOR_KEYWORD to "class C { constructor(caret)"
@@ -187,8 +186,15 @@ object KeywordCompletion {
         while (parent != null) {
             when (parent) {
                 is KtBlockExpression -> {
-                    val prefixText = "fun foo() { "
+                    var prefixText = "fun foo() { "
                     if (prevParent is KtExpression) {
+                        val tryExpression = prevParent.prevSiblingOfSameType() as? KtTryExpression
+                        if (tryExpression != null && tryExpression.finallyBlock == null) {
+                            prefixText += when {
+                                tryExpression.catchClauses.isEmpty() -> "try {}\n"
+                                else -> "try {} catch (e: E) {}\n"
+                            }
+                        }
                         return buildFilterWithContext(prefixText, prevParent, position)
                     }
                     else {

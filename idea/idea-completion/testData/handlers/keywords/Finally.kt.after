@@ -1,0 +1,12 @@
+fun t() {
+    while (true) {
+        try {
+
+        }
+        finally {
+            <caret>
+        }
+    }
+}
+
+// ELEMENT: finally
