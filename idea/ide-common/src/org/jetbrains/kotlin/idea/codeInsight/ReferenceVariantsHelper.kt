@@ -235,6 +235,11 @@ class ReferenceVariantsHelper(
             descriptors.addNonExtensionMembers(listOf(type), kindFilter, nameFilter, constructorFilter = { true })
 
             descriptors.addScopeAndSyntheticExtensions(resolutionScope, listOf(type), CallType.CALLABLE_REFERENCE, kindFilter, nameFilter)
+
+            val staticScope = (type.constructor.declarationDescriptor as? ClassDescriptor)?.staticScope
+            if (staticScope != null) {
+                descriptors.addAll(staticScope.getDescriptorsFiltered(kindFilter, nameFilter))
+            }
         }
         else {
             // process non-instance members and class constructors

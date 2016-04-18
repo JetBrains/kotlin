@@ -161,6 +161,12 @@ public class MultiFileJvmBasicCompletionTestGenerated extends AbstractMultiFileJ
         doTest(fileName);
     }
 
+    @TestMetadata("JavaCallableReference")
+    public void testJavaCallableReference() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/JavaCallableReference/");
+        doTest(fileName);
+    }
+
     @TestMetadata("JavaInnerClasses")
     public void testJavaInnerClasses() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/JavaInnerClasses/");
