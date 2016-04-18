@@ -24,7 +24,6 @@ import com.intellij.psi.PsiParameterList
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.tree.TokenSet
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -38,7 +37,6 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import java.util.*
-import kotlin.text.Regex
 
 // NOTE: in this file we collect only Kotlin-specific methods working with PSI and not modifying it
 
@@ -148,7 +146,7 @@ fun KtExpression.getQualifiedExpressionForReceiverOrThis(): KtExpression {
 }
 
 fun KtExpression.isDotReceiver(): Boolean =
-        (parent as? KtDotQualifiedExpression)?.getReceiverExpression() == this
+        (parent as? KtDotQualifiedExpression)?.receiverExpression == this
 
 // ---------- Block expression -------------------------------------------------------------------------------------------------------------
 
@@ -209,7 +207,7 @@ fun StubBasedPsiElementBase<out KotlinClassOrObjectStub<out KtClassOrObject>>.ge
             if (directive != null) {
                 var reference = directive.getImportedReference()
                 while (reference is KtDotQualifiedExpression) {
-                    reference = reference.getSelectorExpression()
+                    reference = reference.selectorExpression
                 }
                 if (reference is KtSimpleNameExpression) {
                     result.add(reference.getReferencedName())

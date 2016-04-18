@@ -14,23 +14,29 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.psi;
+package org.jetbrains.kotlin.psi
 
-import com.intellij.lang.ASTNode;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.lexer.KtToken;
+import com.intellij.lang.ASTNode
+import org.jetbrains.kotlin.lexer.KtToken
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
+import org.jetbrains.kotlin.psi.psiUtil.siblings
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
-public interface KtQualifiedExpression extends KtExpression {
-    @NotNull
-    KtExpression getReceiverExpression();
+interface KtQualifiedExpression : KtExpression {
+    val receiverExpression: KtExpression
+        get() = getExpression(false) ?: throw AssertionError("No receiver found: ${getElementTextWithContext()}")
 
-    @Nullable
-    KtExpression getSelectorExpression();
+    val selectorExpression: KtExpression?
+        get() = getExpression(true)
 
-    @NotNull
-    ASTNode getOperationTokenNode();
+    val operationTokenNode: ASTNode
+        get() = node.findChildByType(KtTokens.OPERATIONS)!!
 
-    @NotNull
-    KtToken getOperationSign();
+    val operationSign: KtToken
+        get() = operationTokenNode.elementType as KtToken
+
+    private fun KtQualifiedExpression.getExpression(afterOperation: Boolean): KtExpression? {
+        return operationTokenNode.psi?.siblings(afterOperation, false)?.firstIsInstanceOrNull<KtExpression>()
+    }
 }

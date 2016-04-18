@@ -14,44 +14,12 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.psi;
+package org.jetbrains.kotlin.psi
 
-import com.intellij.lang.ASTNode;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.lexer.KtToken;
+import com.intellij.lang.ASTNode
 
-public class KtSafeQualifiedExpression extends KtExpressionImpl implements KtQualifiedExpression {
-    public KtSafeQualifiedExpression(@NotNull ASTNode node) {
-        super(node);
-    }
-
-    @Override
-    public <R, D> R accept(@NotNull KtVisitor<R, D> visitor, D data) {
-        return visitor.visitSafeQualifiedExpression(this, data);
-    }
-
-    @NotNull
-    @Override
-    public KtExpression getReceiverExpression() {
-        return KtQualifiedExpressionImpl.INSTANCE.getReceiverExpression(this);
-    }
-
-    @Nullable
-    @Override
-    public KtExpression getSelectorExpression() {
-        return KtQualifiedExpressionImpl.INSTANCE.getSelectorExpression(this);
-    }
-
-    @NotNull
-    @Override
-    public ASTNode getOperationTokenNode() {
-        return KtQualifiedExpressionImpl.INSTANCE.getOperationTokenNode(this);
-    }
-
-    @NotNull
-    @Override
-    public KtToken getOperationSign() {
-        return KtQualifiedExpressionImpl.INSTANCE.getOperationSign(this);
+class KtSafeQualifiedExpression(node: ASTNode) : KtExpressionImpl(node), KtQualifiedExpression {
+    override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R {
+        return visitor.visitSafeQualifiedExpression(this, data)
     }
 }
