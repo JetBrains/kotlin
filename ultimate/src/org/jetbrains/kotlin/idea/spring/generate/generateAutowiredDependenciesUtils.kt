@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.utils.ifEmpty
-import org.jetbrains.kotlin.idea.util.ShortenReferences
+import org.jetbrains.kotlin.idea.core.ShortenReferences
 
 // TODO: GenerateAutowiredDependenciesUtil.getQualifierName() is not accessible here
 private fun SpringBeanPointer<CommonSpringBean>.getQualifierName(): String? {
