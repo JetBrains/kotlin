@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.codegen.intrinsics
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.psi.KtClassLiteralExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -31,8 +33,8 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 class KClassJavaProperty : IntrinsicPropertyGetter() {
     override fun generate(resolvedCall: ResolvedCall<*>?, codegen: ExpressionCodegen, returnType: Type, receiver: StackValue): StackValue? {
-        val extensionReceiver = resolvedCall!!.extensionReceiver!!
-        val type = extensionReceiver.type.arguments.single().type
+        val receiverType = resolvedCall!!.extensionReceiver!!.type
+        val type = getKClassTypeArgument(receiverType) ?: return null
         val asmType = codegen.state.typeMapper.mapType(type)
 
         return when {
@@ -56,6 +58,14 @@ class KClassJavaProperty : IntrinsicPropertyGetter() {
             }
             else -> null
         }
+    }
+
+    private fun getKClassTypeArgument(type: KotlinType): KotlinType? {
+        val typeClassifier = type.constructor.declarationDescriptor
+        return if (typeClassifier is ClassDescriptor && KotlinBuiltIns.isKClass(typeClassifier))
+            type.arguments.singleOrNull()?.type
+        else
+            null
     }
 
     private fun isReifiedTypeParameter(type: KotlinType): Boolean {
