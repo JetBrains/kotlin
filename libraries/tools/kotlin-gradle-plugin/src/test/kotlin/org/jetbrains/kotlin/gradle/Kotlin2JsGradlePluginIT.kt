@@ -5,7 +5,7 @@ import org.junit.Test
 class Kotlin2JsGradlePluginIT : BaseGradleIT() {
     @Test
     fun testBuildAndClean() {
-        val project = Project("kotlin2JsProject", "1.6")
+        val project = Project("kotlin2JsProject", "2.10")
 
         project.build("build") {
             assertSuccessful()
@@ -63,7 +63,7 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
 
     @Test
     fun testNoOutputFileFails() {
-        val project = Project("kotlin2JsNoOutputFileProject", "1.6")
+        val project = Project("kotlin2JsNoOutputFileProject", "2.10")
         project.build("build") {
             assertFailed()
             assertReportExists()

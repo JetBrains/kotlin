@@ -30,7 +30,7 @@ compileKotlin2Js.kotlinOptions.outputFile = "${projectDir}/web/js/app.js"
 compileKotlin2Js.kotlinOptions.suppressWarnings = true
 compileKotlin2Js.kotlinOptions.verbose = true
 
-task copyJsFilesFromDependencies(dependsOn: build) {
+build.doLast {
     configurations.compile.each { File file ->
         copy {
             includeEmptyDirs = false
