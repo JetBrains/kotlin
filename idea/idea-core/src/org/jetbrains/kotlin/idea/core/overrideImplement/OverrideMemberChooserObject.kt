@@ -24,6 +24,8 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
+import org.jetbrains.kotlin.idea.core.TemplateKind
+import org.jetbrains.kotlin.idea.core.getFunctionBodyTextFromTemplate
 import org.jetbrains.kotlin.idea.core.util.DescriptorMemberChooserObject
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
@@ -115,7 +117,7 @@ private fun generateProperty(project: Project, descriptor: PropertyDescriptor, b
     val body = buildString {
         append("\nget()")
         append(" = ")
-        append(generateUnsupportedOrSuperCall(descriptor, bodyType))
+        append(generateUnsupportedOrSuperCall(project, descriptor, bodyType))
         if (descriptor.isVar) {
             append("\nset(value) {}")
         }
@@ -139,17 +141,26 @@ private fun generateFunction(project: Project, descriptor: FunctionDescriptor, b
     val returnsNotUnit = returnType != null && !KotlinBuiltIns.isUnit(returnType)
 
     val body = if (bodyType != OverrideMemberChooserObject.BodyType.NO_BODY) {
-        val delegation = generateUnsupportedOrSuperCall(descriptor, bodyType)
-        "{" + (if (returnsNotUnit && bodyType != OverrideMemberChooserObject.BodyType.EMPTY) "return " else "") + delegation + "}"
+        val delegation = generateUnsupportedOrSuperCall(project, descriptor, bodyType)
+        "{" + (if (returnsNotUnit && bodyType != OverrideMemberChooserObject.BodyType.EMPTY) "return " else "") + delegation + "\n}"
     }
     else ""
 
     return KtPsiFactory(project).createFunction(OVERRIDE_RENDERER.render(newDescriptor) + body)
 }
 
-fun generateUnsupportedOrSuperCall(descriptor: CallableMemberDescriptor, bodyType: OverrideMemberChooserObject.BodyType): String {
+fun generateUnsupportedOrSuperCall(
+        project: Project,
+        descriptor: CallableMemberDescriptor,
+        bodyType: OverrideMemberChooserObject.BodyType
+): String {
     if (bodyType == OverrideMemberChooserObject.BodyType.EMPTY) {
-        return "throw UnsupportedOperationException()"
+        if (descriptor !is FunctionDescriptor) return "throw UnsupportedOperationException()"
+        return getFunctionBodyTextFromTemplate(project,
+                                               TemplateKind.FUNCTION,
+                                               descriptor.name.asString(),
+                                               descriptor.returnType?.let { IdeDescriptorRenderers.SOURCE_CODE.renderType(it) } ?: "Unit",
+                                               null)
     }
     else {
         return buildString {
@@ -165,7 +176,7 @@ fun generateUnsupportedOrSuperCall(descriptor: CallableMemberDescriptor, bodyTyp
                     val renderedName = it.name.render()
                     if (it.varargElementType != null) "*$renderedName" else renderedName
                 }
-                paramTexts.joinTo(this, prefix="(", postfix=")")
+                paramTexts.joinTo(this, prefix = "(", postfix = ")")
             }
         }
     }

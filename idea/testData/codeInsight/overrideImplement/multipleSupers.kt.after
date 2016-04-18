@@ -8,7 +8,7 @@ interface B {
 
 class C : A(), B {
     override fun bar() {
-        <selection><caret>throw UnsupportedOperationException()</selection>
+        <selection><caret>throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.</selection>
     }
 
     override fun equals(other: Any?): Boolean {
