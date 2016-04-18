@@ -32,7 +32,6 @@ inline fun test(z: () -> Unit) {
 
 
 // FILE: 2.smap
-//PROBLEM of KT-11478 in additional line mapping for default source (so 'single' was replaces with 'first' in SMAP class init):
 //*L
 //1#1,15:1
 //17#1:19
@@ -66,11 +65,7 @@ test/_1Kt
 _2Kt
 *L
 1#1,17:1
-21#1:23
 13#2,2:18
-5#2:18
-18#2:19
 9#2:20
-19#2,2:20
-7#3:22
+7#3:21
 *E

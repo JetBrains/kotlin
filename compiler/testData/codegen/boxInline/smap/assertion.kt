@@ -36,7 +36,7 @@ fun box(): String {
 }
 
 // FILE: 1.smap
-
+//TODO maybe do smth with default method body mapping
 SMAP
 1.kt
 Kotlin
@@ -46,6 +46,7 @@ Kotlin
 test/_1Kt
 *L
 1#1,25:1
+18#1,6:26
 *E
 
 // FILE: 2.smap

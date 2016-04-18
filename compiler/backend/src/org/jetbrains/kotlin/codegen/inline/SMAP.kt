@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen.inline
 import gnu.trove.TIntIntHashMap
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.SourceInfo
+import org.jetbrains.kotlin.codegen.inline2.LineNumberToMap
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import java.util.*
@@ -121,6 +122,7 @@ open class InlineLambdaSourceMapper(
 interface SourceMapper {
     val resultMappings: List<FileMapping>
     val parent: SourceMapper?
+        get() = null
 
     open fun visitSource(name: String, path: String) {
         throw UnsupportedOperationException("fail")
@@ -131,6 +133,10 @@ interface SourceMapper {
     }
 
     open fun visitLineNumber(iv: MethodVisitor, lineNumber: Int, start: Label) {
+        throw UnsupportedOperationException("fail")
+    }
+
+    open fun visitLineNumber(iv: MethodVisitor, destLineNumber: Int, start: Label, source: LineNumberToMap): Int {
         throw UnsupportedOperationException("fail")
     }
 
@@ -145,8 +151,8 @@ interface SourceMapper {
             }
         }
 
-        fun createFromSmap(smap: SMAP): DefaultSourceMapper {
-            val sourceMapper = DefaultSourceMapper(smap.sourceInfo, null)
+        fun createFromSmap(smap: SMAP): SourceMapper {
+            val sourceMapper = org.jetbrains.kotlin.codegen.inline2.DefaultSourceMapper(smap.sourceInfo)
             smap.fileMappings.asSequence()
                     //default one mapped through sourceInfo
                     .filterNot { it == smap.default }
@@ -239,8 +245,6 @@ class SMAP(val fileMappings: List<FileMapping>) {
 
     val sourceInfo: SourceInfo
     init {
-        //val defaultMapping = default.lineMappings.single()
-        //temporary workaround for KT-11478 ("Couldn't inline method call" error)
         val defaultMapping = default.lineMappings.first()
         sourceInfo = SourceInfo(default.name, default.path, defaultMapping.source + defaultMapping.range - 1)
     }

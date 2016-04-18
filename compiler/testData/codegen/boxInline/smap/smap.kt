@@ -11,7 +11,7 @@ inline fun initTag2(init: () -> Unit) {
     init()
 }
 //{val p = initTag2(init); return p} to remove difference in linenumber processing through MethodNode and MethodVisitor should be: = initTag2(init)
-inline fun head(init: () -> Unit) {val p = initTag2(init); return p}
+inline fun head(init: () -> Unit) { val p = initTag2(init); return p}
 
 
 inline fun html(init: () -> Unit) {
@@ -44,7 +44,6 @@ fun box(): String {
 
 // FILE: 1.smap
 
-//TODO SHOULD BE EMPTY
 SMAP
 1.kt
 Kotlin
@@ -54,9 +53,12 @@ Kotlin
 builders/_1Kt
 *L
 1#1,21:1
+10#1,3:22
+6#1,2:25
 *E
 
 // FILE: 2.smap
+
 
 SMAP
 2.kt

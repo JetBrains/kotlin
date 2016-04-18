@@ -35,7 +35,9 @@ fun box(): String {
 
 // FILE: 2.smap
 
-//TODO SHOULD BE LESS
+//7#1,3:28
+//10#1,8:32 - could be merged in one big interval due preprocessing of inline function
+
 SMAP
 2.kt
 Kotlin
@@ -47,7 +49,10 @@ _2Kt
 builders/_1Kt
 *L
 1#1,26:1
+7#1,3:28
+10#1,8:32
 6#2:27
+6#2:31
 *E
 
 SMAP
