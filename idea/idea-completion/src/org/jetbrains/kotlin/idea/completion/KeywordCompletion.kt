@@ -114,7 +114,7 @@ object KeywordCompletion {
 
             val constructText = KEYWORD_CONSTRUCTS[keywordToken]
             if (constructText != null) {
-                val element = createKeywordConstructLookupElement(position.project, keyword, constructText, showConstructInLookup = false)
+                val element = createKeywordConstructLookupElement(position.project, keyword, constructText)
                 consumer(element)
             }
             else {

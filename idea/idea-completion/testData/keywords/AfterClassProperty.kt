@@ -11,8 +11,8 @@ class MouseMovedEventArgs
 // EXIST:  final
 // EXIST:  fun
 // EXIST: { itemText: "get", tailText: null }
-// EXIST: { itemText: "get", tailText: "() = " }
-// EXIST: { itemText: "get", tailText: "() {}" }
+// EXIST: { itemText: "get", tailText: "() = ..." }
+// EXIST: { itemText: "get", tailText: "() {...}" }
 // EXIST:  inner
 // EXIST:  internal
 // EXIST:  object
@@ -22,8 +22,8 @@ class MouseMovedEventArgs
 // EXIST:  protected
 // EXIST:  public
 // EXIST: { itemText: "set", tailText: null }
-// EXIST: { itemText: "set", tailText: "(value) = " }
-// EXIST: { itemText: "set", tailText: "(value) {}" }
+// EXIST: { itemText: "set", tailText: "(value) = ..." }
+// EXIST: { itemText: "set", tailText: "(value) {...}" }
 // EXIST:  interface
 // EXIST:  val
 // EXIST:  var

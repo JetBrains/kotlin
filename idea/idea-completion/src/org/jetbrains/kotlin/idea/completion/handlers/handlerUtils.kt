@@ -74,8 +74,7 @@ fun createKeywordConstructLookupElement(
         project: Project,
         keyword: String,
         fileTextToReformat: String,
-        trimSpacesAroundCaret: Boolean = false,
-        showConstructInLookup: Boolean = true
+        trimSpacesAroundCaret: Boolean = false
 ): LookupElement {
     val file = KtPsiFactory(project).createFile(fileTextToReformat)
     CodeStyleManager.getInstance(project).reformat(file)
@@ -103,8 +102,13 @@ fun createKeywordConstructLookupElement(
     tailBeforeCaret = tailBeforeCaret.unindent(indent)
     tailAfterCaret = tailAfterCaret.unindent(indent)
 
-    var lookupElementBuilder = LookupElementBuilder.create(KeywordLookupObject(), keyword)
+    val tailText = (if (tailBeforeCaret.contains('\n')) tailBeforeCaret.replace("\n", "").trimEnd() else tailBeforeCaret) +
+                   "..." +
+                   (if (tailAfterCaret.contains('\n')) tailAfterCaret.replace("\n", "").trimStart() else tailAfterCaret)
+
+    return LookupElementBuilder.create(KeywordLookupObject(), keyword)
             .bold()
+            .withTailText(tailText)
             .withInsertHandler { insertionContext, lookupElement ->
                 if (insertionContext.completionChar == Lookup.NORMAL_SELECT_CHAR || insertionContext.completionChar == Lookup.REPLACE_SELECT_CHAR) {
                     val offset = insertionContext.tailOffset
@@ -117,10 +121,6 @@ fun createKeywordConstructLookupElement(
                     insertionContext.editor.moveCaret(offset + beforeCaret.length)
                 }
             }
-    if (showConstructInLookup) {
-        lookupElementBuilder = lookupElementBuilder.withTailText(tailBeforeCaret + tailAfterCaret)
-    }
-    return lookupElementBuilder
 }
 
 private fun detectIndent(text: CharSequence, offset: Int): String {

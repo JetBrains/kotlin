@@ -19,8 +19,8 @@ class Some {
 // EXIST:  protected
 // EXIST:  public
 // EXIST: { itemText: "set", tailText: null }
-// EXIST: { itemText: "set", tailText: "(value) = " }
-// EXIST: { itemText: "set", tailText: "(value) {}" }
+// EXIST: { itemText: "set", tailText: "(value) = ..." }
+// EXIST: { itemText: "set", tailText: "(value) {...}" }
 // EXIST:  interface
 // EXIST:  val
 // EXIST:  var
