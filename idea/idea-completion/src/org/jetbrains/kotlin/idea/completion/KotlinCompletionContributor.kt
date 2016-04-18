@@ -343,9 +343,8 @@ class KotlinCompletionContributor : CompletionContributor() {
 
                 assert(startOffset > 1 && document.charsSequence[startOffset - 1] == '.')
                 val token = context.file.findElementAt(startOffset - 2)!!
-                assert(token.node.elementType == KtTokens.IDENTIFIER)
+                assert(token.node.elementType == KtTokens.IDENTIFIER || token.node.elementType == KtTokens.THIS_KEYWORD)
                 val nameRef = token.parent as KtNameReferenceExpression
-                assert(nameRef.parent is KtSimpleNameStringTemplateEntry)
 
                 document.insertString(nameRef.startOffset, "{")
 
