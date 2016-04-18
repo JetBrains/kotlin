@@ -3492,6 +3492,69 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/decreaseVisibility")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class DecreaseVisibility extends AbstractQuickFixTest {
+        public void testAllFilesPresentInDecreaseVisibility() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/decreaseVisibility"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("exposedParameterType.kt")
+        public void testExposedParameterType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/decreaseVisibility/exposedParameterType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("exposedPropertyType.kt")
+        public void testExposedPropertyType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/decreaseVisibility/exposedPropertyType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("exposedReceiverType.kt")
+        public void testExposedReceiverType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/decreaseVisibility/exposedReceiverType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("exposedReturnType.kt")
+        public void testExposedReturnType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/decreaseVisibility/exposedReturnType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("exposedSuperClass.kt")
+        public void testExposedSuperClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/decreaseVisibility/exposedSuperClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("exposedSuperClassProtectedBase.kt")
+        public void testExposedSuperClassProtectedBase() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/decreaseVisibility/exposedSuperClassProtectedBase.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("exposedSuperClassProtectedInAnother.kt")
+        public void testExposedSuperClassProtectedInAnother() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/decreaseVisibility/exposedSuperClassProtectedInAnother.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("exposedSuperInterface.kt")
+        public void testExposedSuperInterface() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/decreaseVisibility/exposedSuperInterface.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("exposedTypeParameterBound.kt")
+        public void testExposedTypeParameterBound() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/decreaseVisibility/exposedTypeParameterBound.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/deprecatedSymbolUsage")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

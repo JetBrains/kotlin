@@ -21,15 +21,17 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.DescriptorWithRelation
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility.Permissiveness.LESS
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibilities.*
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory3
+import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
-object IncreaseExposedVisibilityFactory : KotlinSingleIntentionActionFactory() {
+object DecreaseExposingVisibilityFactory  : KotlinSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {
         @Suppress("UNCHECKED_CAST")
         val factory = diagnostic.factory as DiagnosticFactory3<*, EffectiveVisibility, DescriptorWithRelation, EffectiveVisibility>
@@ -39,15 +41,17 @@ object IncreaseExposedVisibilityFactory : KotlinSingleIntentionActionFactory() {
         val exposedVisibility = exposedDiagnostic.c
         val exposingVisibility = exposedDiagnostic.a
         val boundVisibility = when (exposedVisibility.relation(exposingVisibility)) {
-            LESS -> exposingVisibility.toVisibility()
-            else -> PUBLIC
+            LESS -> exposedVisibility.toVisibility()
+            else -> PRIVATE
         }
-        val exposingDeclaration = diagnostic.psiElement.getParentOfType<KtDeclaration>(true)
+        val exposingDeclaration = diagnostic.psiElement.getParentOfType<KtDeclaration>(true) ?: return null
         val targetVisibility = when (boundVisibility) {
-            PRIVATE -> return null
-            PROTECTED -> if (exposedDeclaration.parent == exposingDeclaration?.parent) PROTECTED else PUBLIC
+            PUBLIC -> return null
+            PROTECTED -> if (exposedDeclaration.parent == exposingDeclaration.parent) PROTECTED else PRIVATE
             else -> boundVisibility
         }
-        return ChangeVisibilityFix.create(exposedDeclaration, exposedDescriptor, targetVisibility)
+        val exposingDescriptor = exposingDeclaration.toDescriptor() as? DeclarationDescriptorWithVisibility ?: return null
+        if (!Visibilities.isVisibleIgnoringReceiver(exposedDescriptor, exposingDescriptor)) return null
+        return ChangeVisibilityFix.create(exposingDeclaration, exposingDescriptor, targetVisibility)
     }
 }

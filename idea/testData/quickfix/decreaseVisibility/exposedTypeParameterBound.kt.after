@@ -1,0 +1,5 @@
+// "Make User internal" "true"
+
+internal open class InternalString
+
+internal class User<T : User<T, InternalString>, R>

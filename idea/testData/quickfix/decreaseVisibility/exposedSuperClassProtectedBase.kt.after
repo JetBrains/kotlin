@@ -1,0 +1,7 @@
+// "Make First private" "true"
+
+private open class Data(val x: Int)
+
+class Outer {
+    private class First : Data(42)
+}

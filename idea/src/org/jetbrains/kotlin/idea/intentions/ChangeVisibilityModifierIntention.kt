@@ -20,17 +20,15 @@ import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.canBePrivate
 import org.jetbrains.kotlin.idea.core.canBeProtected
 import org.jetbrains.kotlin.idea.core.setVisibility
+import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
-import org.jetbrains.kotlin.resolve.BindingContext
 
 open class ChangeVisibilityModifierIntention protected constructor(
         val modifier: KtModifierKeywordToken
@@ -69,20 +67,6 @@ open class ChangeVisibilityModifierIntention protected constructor(
             TextRange(modifierList.startOffset, defaultRange.endOffset) //TODO: smaller range? now it includes annotations too
         else
             defaultRange
-    }
-
-    private fun KtDeclaration.toDescriptor(): DeclarationDescriptor? {
-        val bindingContext = analyze()
-        // TODO: temporary code
-        if (this is KtPrimaryConstructor) {
-            return (this.getContainingClassOrObject().resolveToDescriptor() as ClassDescriptor).unsubstitutedPrimaryConstructor
-        }
-
-        val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, this]
-        if (descriptor is ValueParameterDescriptor) {
-            return bindingContext[BindingContext.VALUE_PARAMETER_AS_PROPERTY, descriptor]
-        }
-        return descriptor
     }
 
     override fun applyTo(element: KtDeclaration, editor: Editor?) {

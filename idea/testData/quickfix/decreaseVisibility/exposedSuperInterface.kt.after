@@ -1,0 +1,11 @@
+// "Make Derived internal" "true"
+
+import Outer.Base
+
+internal class Outer {
+    interface Base
+}
+
+class Container {
+    internal interface Derived : Base
+}

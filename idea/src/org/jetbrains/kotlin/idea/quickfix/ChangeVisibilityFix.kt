@@ -24,6 +24,7 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.idea.core.canBePrivate
 import org.jetbrains.kotlin.idea.core.canBeProtected
 import org.jetbrains.kotlin.idea.core.setVisibility
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
@@ -58,6 +59,13 @@ open class ChangeVisibilityFix(
     protected class ChangeToInternalFix(element: KtModifierListOwner, elementName: String) :
             ChangeVisibilityFix(element, elementName, KtTokens.INTERNAL_KEYWORD)
 
+    protected class ChangeToPrivateFix(element: KtModifierListOwner, elementName: String) :
+            ChangeVisibilityFix(element, elementName, KtTokens.PRIVATE_KEYWORD) {
+
+        override fun isAvailable(project: Project, editor: Editor?, file: PsiFile) =
+                super.isAvailable(project, editor, file) && element.canBePrivate()
+    }
+
     companion object {
         fun create(
                 declaration: KtModifierListOwner,
@@ -69,6 +77,7 @@ open class ChangeVisibilityFix(
             val name = descriptor.name.asString()
 
             return when (targetVisibility) {
+                Visibilities.PRIVATE ->   ChangeToPrivateFix(declaration, name)
                 Visibilities.INTERNAL ->  ChangeToInternalFix(declaration, name)
                 Visibilities.PROTECTED -> ChangeToProtectedFix(declaration, name)
                 Visibilities.PUBLIC ->    ChangeToPublicFix(declaration, name)

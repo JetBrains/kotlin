@@ -1,0 +1,7 @@
+// "Make foo private" "true"
+
+private data class Data(val x: Int)
+
+class First {
+    private val foo = Data(13)
+}

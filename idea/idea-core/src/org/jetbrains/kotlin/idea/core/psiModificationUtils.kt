@@ -21,6 +21,10 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -164,6 +168,20 @@ fun PsiElement.deleteSingle() {
 fun KtClass.getOrCreateCompanionObject() : KtObjectDeclaration {
     getCompanionObjects().firstOrNull()?.let { return it }
     return addDeclaration(KtPsiFactory(this).createCompanionObject())
+}
+
+fun KtDeclaration.toDescriptor(): DeclarationDescriptor? {
+    val bindingContext = analyze()
+    // TODO: temporary code
+    if (this is KtPrimaryConstructor) {
+        return (this.getContainingClassOrObject().resolveToDescriptor() as ClassDescriptor).unsubstitutedPrimaryConstructor
+    }
+
+    val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, this]
+    if (descriptor is ValueParameterDescriptor) {
+        return bindingContext[BindingContext.VALUE_PARAMETER_AS_PROPERTY, descriptor]
+    }
+    return descriptor
 }
 
 //TODO: code style option whether to insert redundant 'public' keyword or not
