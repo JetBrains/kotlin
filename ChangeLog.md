@@ -175,6 +175,7 @@ Issues fixed:
 - Fixed NoSuchFieldException in Kotlin module settings on IDEA Ultimate
 - [KT-11880](https://youtrack.jetbrains.com/issue/KT-11880) Fixed renaming of Kotlin properties through SpEL references in XML files
 - [KT-11736](https://youtrack.jetbrains.com/issue/KT-11736) Fixed searching of Java usages for @JvmStatic properties and @JvmStatic @JvmOverloads functions
+- [KT-11845](https://youtrack.jetbrains.com/issue/KT-11845) Fixed exception on attempt to find derived classes
 
 #### Debugger
 

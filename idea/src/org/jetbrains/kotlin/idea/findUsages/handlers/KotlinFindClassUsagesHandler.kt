@@ -76,20 +76,22 @@ class KotlinFindClassUsagesHandler(
 
         fun processInheritors(): Boolean {
             val request = HierarchySearchRequest(element, options.searchScope, options.isCheckDeepInheritance)
-            return request.searchInheritors().forEach(
-                    PsiElementProcessorAdapter(
-                            object : PsiElementProcessor<PsiClass> {
-                                override fun execute(element: PsiClass): Boolean {
-                                    val isInterface = element.isInterface
-                                    return when {
-                                        isInterface && options.isDerivedInterfaces || !isInterface && options.isDerivedClasses ->
-                                            KotlinFindUsagesHandler.processUsage(processor, element.navigationElement)
-                                        else -> true
+            return runReadAction {
+                request.searchInheritors().forEach(
+                        PsiElementProcessorAdapter(
+                                object : PsiElementProcessor<PsiClass> {
+                                    override fun execute(element: PsiClass): Boolean {
+                                        val isInterface = element.isInterface
+                                        return when {
+                                            isInterface && options.isDerivedInterfaces || !isInterface && options.isDerivedClasses ->
+                                                KotlinFindUsagesHandler.processUsage(processor, element.navigationElement)
+                                            else -> true
+                                        }
                                     }
                                 }
-                            }
-                    )
-            )
+                        )
+                )
+            }
         }
 
         val classOrObject = element as KtClassOrObject
