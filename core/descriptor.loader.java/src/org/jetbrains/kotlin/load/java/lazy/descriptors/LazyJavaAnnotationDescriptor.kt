@@ -118,8 +118,7 @@ class LazyJavaAnnotationDescriptor(
 
         val containingJavaClass = element.containingClass
 
-        //TODO: (module refactoring) moduleClassResolver should be used here
-        val enumClass = c.javaClassResolver.resolveClass(containingJavaClass) ?: return null
+        val enumClass = c.components.moduleClassResolver.resolveClass(containingJavaClass) ?: return null
 
         val classifier = enumClass.unsubstitutedInnerClassesScope.getContributedClassifier(element.name, NoLookupLocation.FROM_JAVA_LOADER)
         if (classifier !is ClassDescriptor) return null

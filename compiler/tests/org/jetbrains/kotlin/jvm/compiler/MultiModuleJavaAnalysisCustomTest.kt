@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
+import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
@@ -85,7 +86,7 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
         val configuration = KotlinTestUtils.compilerConfigurationForTests(
                 ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, emptyList(), moduleDirs.toList()
         )
-        return KotlinCoreEnvironment.createForTests(testRootDisposable!!, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+        return KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     }
 
     private fun setupModules(environment: KotlinCoreEnvironment, moduleDirs: Array<File>): List<TestModule> {
@@ -151,9 +152,22 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
             it.type.constructor.declarationDescriptor!!
         }.forEach { checkDescriptor(it, callable) }
 
-        callable.annotations.map {
-            it.type.constructor.declarationDescriptor!!
-        }.forEach { checkDescriptor(it, callable) }
+        callable.annotations.forEach {
+            val annotationClassDescriptor = it.type.constructor.declarationDescriptor as ClassDescriptor
+            checkDescriptor(annotationClassDescriptor, callable)
+
+            Assert.assertEquals(
+                    "Annotation value arguments number is not equal to number of parameters in $callable",
+                    annotationClassDescriptor.constructors.single().valueParameters.size, it.allValueArguments.size)
+
+            it.allValueArguments.forEach {
+                val argument = it.value
+                if (argument is EnumValue) {
+                    Assert.assertEquals("Enum entry name should be <module-name>X", "X", argument.value.name.identifier.last().toString())
+                    checkDescriptor(argument.value, callable)
+                }
+            }
+        }
     }
 
     private fun checkSupertypes(classDescriptor: ClassDescriptor) {

@@ -55,19 +55,19 @@ class RuntimeModuleData private constructor(val deserialization: Deserialization
             val deserializedDescriptorResolver = DeserializedDescriptorResolver(RuntimeErrorReporter)
             val singleModuleClassResolver = SingleModuleClassResolver()
             val runtimePackageFacadeProvider = RuntimePackagePartProvider(classLoader)
+            val javaResolverCache = JavaResolverCache.EMPTY
             val globalJavaResolverContext = JavaResolverComponents(
                     storageManager, ReflectJavaClassFinder(classLoader), reflectKotlinClassFinder, deserializedDescriptorResolver,
-                    ExternalAnnotationResolver.EMPTY, SignaturePropagator.DO_NOTHING, RuntimeErrorReporter, JavaResolverCache.EMPTY,
+                    ExternalAnnotationResolver.EMPTY, SignaturePropagator.DO_NOTHING, RuntimeErrorReporter, javaResolverCache,
                     JavaPropertyInitializerEvaluator.DoNothing, SamConversionResolver, RuntimeSourceElementFactory, singleModuleClassResolver,
-                    runtimePackageFacadeProvider, SupertypeLoopChecker.EMPTY, LookupTracker.DO_NOTHING
+                    runtimePackageFacadeProvider, SupertypeLoopChecker.EMPTY, LookupTracker.DO_NOTHING, module, ReflectionTypes(module)
             )
 
-            val lazyJavaPackageFragmentProvider =
-                    LazyJavaPackageFragmentProvider(globalJavaResolverContext, module, ReflectionTypes(module))
+            val lazyJavaPackageFragmentProvider = LazyJavaPackageFragmentProvider(globalJavaResolverContext)
 
             builtIns.setOwnerModuleDescriptor(module)
 
-            val javaDescriptorResolver = JavaDescriptorResolver(lazyJavaPackageFragmentProvider)
+            val javaDescriptorResolver = JavaDescriptorResolver(lazyJavaPackageFragmentProvider, javaResolverCache)
             val javaClassDataFinder = JavaClassDataFinder(reflectKotlinClassFinder, deserializedDescriptorResolver)
             val notFoundClasses = NotFoundClasses(storageManager, module)
             val binaryClassAnnotationAndConstantLoader = BinaryClassAnnotationAndConstantLoaderImpl(

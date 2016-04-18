@@ -47,7 +47,9 @@ class JavaResolverComponents(
         val moduleClassResolver: ModuleClassResolver,
         val packageMapper: PackagePartProvider,
         val supertypeLoopChecker: SupertypeLoopChecker,
-        val lookupTracker: LookupTracker
+        val lookupTracker: LookupTracker,
+        val module: ModuleDescriptor,
+        val reflectionTypes: ReflectionTypes
 ) {
     fun replace(
             javaResolverCache: JavaResolverCache = this.javaResolverCache
@@ -55,30 +57,28 @@ class JavaResolverComponents(
             storageManager, finder, kotlinClassFinder, deserializedDescriptorResolver,
             externalAnnotationResolver, signaturePropagator, errorReporter, javaResolverCache,
             javaPropertyInitializerEvaluator, samConversionResolver, sourceElementFactory,
-            moduleClassResolver, packageMapper, supertypeLoopChecker, lookupTracker)
+            moduleClassResolver, packageMapper, supertypeLoopChecker, lookupTracker, module, reflectionTypes)
 }
 
 open class LazyJavaResolverContext(
         val components: JavaResolverComponents,
-        val packageFragmentProvider: LazyJavaPackageFragmentProvider,
-        val javaClassResolver: LazyJavaClassResolver,
-        val module: ModuleDescriptor,
-        val reflectionTypes: ReflectionTypes,
         val typeParameterResolver: TypeParameterResolver
 ) {
     val typeResolver = LazyJavaTypeResolver(this, typeParameterResolver)
 
     val storageManager: StorageManager
         get() = components.storageManager
+
+    val module: ModuleDescriptor get() = components.module
 }
 
 fun LazyJavaResolverContext.child(
         typeParameterResolver: TypeParameterResolver
-) = LazyJavaResolverContext(components, packageFragmentProvider, javaClassResolver, module, reflectionTypes, typeParameterResolver)
+) = LazyJavaResolverContext(components, typeParameterResolver)
 
 fun LazyJavaResolverContext.replaceComponents(
         components: JavaResolverComponents
-) = LazyJavaResolverContext(components, packageFragmentProvider, javaClassResolver, module, reflectionTypes, typeParameterResolver)
+) = LazyJavaResolverContext(components, typeParameterResolver)
 
 fun LazyJavaResolverContext.child(
         containingDeclaration: DeclarationDescriptor,

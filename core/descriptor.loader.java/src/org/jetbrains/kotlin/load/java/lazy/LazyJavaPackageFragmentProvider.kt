@@ -16,26 +16,18 @@
 
 package org.jetbrains.kotlin.load.java.lazy
 
-import org.jetbrains.kotlin.builtins.ReflectionTypes
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
-import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNullable
 import org.jetbrains.kotlin.utils.emptyOrSingletonList
 
 class LazyJavaPackageFragmentProvider(
-        components: JavaResolverComponents,
-        module: ModuleDescriptor,
-        reflectionTypes: ReflectionTypes
+        components: JavaResolverComponents
 ) : PackageFragmentProvider {
 
-    private val c =
-            LazyJavaResolverContext(components, this, FragmentClassResolver(), module, reflectionTypes, TypeParameterResolver.EMPTY)
+    private val c = LazyJavaResolverContext(components, TypeParameterResolver.EMPTY)
 
     private val packageFragments: MemoizedFunctionToNullable<FqName, LazyJavaPackageFragment> =
             c.storageManager.createMemoizedFunctionWithNullableValues {
@@ -53,24 +45,4 @@ class LazyJavaPackageFragmentProvider(
 
     override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean) =
             getPackageFragment(fqName)?.getSubPackageFqNames().orEmpty()
-
-    fun getClass(javaClass: JavaClass): ClassDescriptor? = c.javaClassResolver.resolveClass(javaClass)
-
-    private inner class FragmentClassResolver : LazyJavaClassResolver {
-        override fun resolveClass(javaClass: JavaClass): ClassDescriptor? {
-            val fqName = javaClass.fqName
-            if (fqName != null && javaClass.isKotlinLightClass) {
-                return c.components.javaResolverCache.getClassResolvedFromSource(fqName)
-            }
-
-            javaClass.outerClass?.let { outerClass ->
-                val outerClassScope = resolveClass(outerClass)?.unsubstitutedInnerClassesScope
-                return outerClassScope?.getContributedClassifier(javaClass.name, NoLookupLocation.FROM_JAVA_LOADER) as? ClassDescriptor
-            }
-
-            if (fqName == null) return null
-
-            return getPackageFragment(fqName.parent())?.findClassifierByJavaClass(javaClass)
-        }
-    }
 }

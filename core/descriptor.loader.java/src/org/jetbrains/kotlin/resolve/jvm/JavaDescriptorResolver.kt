@@ -17,11 +17,28 @@
 package org.jetbrains.kotlin.resolve.jvm
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.load.java.components.JavaResolverCache
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaPackageFragmentProvider
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 
-class JavaDescriptorResolver(val packageFragmentProvider: LazyJavaPackageFragmentProvider) {
+class JavaDescriptorResolver(
+        val packageFragmentProvider: LazyJavaPackageFragmentProvider,
+        private val javaResolverCache: JavaResolverCache
+) {
     fun resolveClass(javaClass: JavaClass): ClassDescriptor? {
-        return packageFragmentProvider.getClass(javaClass)
+        val fqName = javaClass.fqName
+        if (fqName != null && javaClass.isKotlinLightClass) {
+            return javaResolverCache.getClassResolvedFromSource(fqName)
+        }
+
+        javaClass.outerClass?.let { outerClass ->
+            val outerClassScope = resolveClass(outerClass)?.unsubstitutedInnerClassesScope
+            return outerClassScope?.getContributedClassifier(javaClass.name, NoLookupLocation.FROM_JAVA_LOADER) as? ClassDescriptor
+        }
+
+        if (fqName == null) return null
+
+        return packageFragmentProvider.getPackageFragments(fqName.parent()).firstOrNull()?.findClassifierByJavaClass(javaClass)
     }
 }

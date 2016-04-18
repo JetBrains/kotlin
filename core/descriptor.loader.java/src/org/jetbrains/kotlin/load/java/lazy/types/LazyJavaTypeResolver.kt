@@ -133,7 +133,7 @@ class LazyJavaTypeResolver(
 
         private fun mapKotlinClass(fqName: FqName): ClassDescriptor? {
             if (attr.isForAnnotationParameter && fqName == JAVA_LANG_CLASS_FQ_NAME) {
-                return c.reflectionTypes.kClass
+                return c.components.reflectionTypes.kClass
             }
 
             val javaToKotlin = JavaToKotlinClassMap.INSTANCE

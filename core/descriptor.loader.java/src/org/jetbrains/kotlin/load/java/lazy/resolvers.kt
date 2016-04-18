@@ -16,19 +16,12 @@
 
 package org.jetbrains.kotlin.load.java.lazy
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaTypeParameterDescriptor
-import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameterListOwner
 import org.jetbrains.kotlin.utils.mapToIndex
-
-//TODO: (module refactoring) usages of this interface should be replaced by ModuleClassResolver
-interface LazyJavaClassResolver {
-    fun resolveClass(javaClass: JavaClass): ClassDescriptor?
-}
 
 interface TypeParameterResolver {
     object EMPTY : TypeParameterResolver {
