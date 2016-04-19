@@ -204,7 +204,7 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
                 val blockInfo = allBlocks[i]
                 if (blockInfo is BreakableBlockInfo) {
                     if (blockInfo.referablePoints.contains(jumpTarget) || jumpTarget === error) {
-                        for (j in finallyBlocks.indices.reversed()) {
+                        for (j in finallyBlocks.indices) {
                             finallyBlocks[j].generateFinallyBlock()
                         }
                         break

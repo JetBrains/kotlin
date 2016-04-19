@@ -3123,6 +3123,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("nestedTryFinally.kt")
+            public void testNestedTryFinally() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/nestedTryFinally.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("nonLocalReturnUnreachable.kt")
             public void testNonLocalReturnUnreachable() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/nonLocalReturnUnreachable.kt");
