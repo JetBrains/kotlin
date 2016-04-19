@@ -62,13 +62,12 @@ open class InlineLambdaSourceMapper(
 
     init {
         assert(smap.ranges.isNotEmpty()) {
-            "Mapping ragnes should be present in inlined lambda: ${smap.node}"
+            "Mapping ranges should be presented in inline lambda: ${smap.node}"
         }
     }
 
     override fun visitLineNumber(iv: MethodVisitor, lineNumber: Int, start: Label) {
-        val mapping = findMappingIfExists(lineNumber)!!
-        if (mapping == ranges.firstOrNull()) { //TODO rewrite
+        if (ranges.firstOrNull()?.contains(lineNumber) ?: false) {
             //don't remap origin lambda line numbers
             iv.visitLineNumber(lineNumber, start)
         }
