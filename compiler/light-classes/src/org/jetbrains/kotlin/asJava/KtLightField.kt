@@ -65,8 +65,10 @@ sealed class KtLightFieldImpl(
 
     override fun computeConstantValue() = clsDelegate.computeConstantValue()
 
-    @Throws(IncorrectOperationException::class)
-    override fun setName(@NonNls name: String) = throw IncorrectOperationException("Not supported")
+    override fun setName(@NonNls name: String): PsiElement {
+        (kotlinOrigin as? KtNamedDeclaration)?.setName(name)
+        return this
+    }
 
     private val _modifierList by lazy {
         if (lightMemberOrigin is LightMemberOriginForDeclaration)

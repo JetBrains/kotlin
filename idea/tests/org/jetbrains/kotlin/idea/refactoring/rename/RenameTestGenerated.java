@@ -305,6 +305,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("renameKotlinEnumConstByJavaRef/renameKotlinEnumConstByJavaRef.test")
+    public void testRenameKotlinEnumConstByJavaRef_RenameKotlinEnumConstByJavaRef() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameKotlinEnumConstByJavaRef/renameKotlinEnumConstByJavaRef.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("renameKotlinEnumEntry/renameKotlinEnumEntry.test")
     public void testRenameKotlinEnumEntry_RenameKotlinEnumEntry() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameKotlinEnumEntry/renameKotlinEnumEntry.test");
@@ -386,6 +392,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
     @TestMetadata("renameKotlinPrimaryConstructorPropertyFromOverride/renameKotlinPrimaryConstructorPropertyFromOverride.test")
     public void testRenameKotlinPrimaryConstructorPropertyFromOverride_RenameKotlinPrimaryConstructorPropertyFromOverride() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameKotlinPrimaryConstructorPropertyFromOverride/renameKotlinPrimaryConstructorPropertyFromOverride.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("renameKotlinPropertyWithJvmField/renameKotlinPropertyWithJvmField.test")
+    public void testRenameKotlinPropertyWithJvmField_RenameKotlinPropertyWithJvmField() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameKotlinPropertyWithJvmField/renameKotlinPropertyWithJvmField.test");
         doTest(fileName);
     }
 
