@@ -1,0 +1,4 @@
+// WITH_RUNTIME
+fun foo(list: List<String>, target: MutableList<Int>) {
+    <caret>list.mapTo(target) { it.length }
+}

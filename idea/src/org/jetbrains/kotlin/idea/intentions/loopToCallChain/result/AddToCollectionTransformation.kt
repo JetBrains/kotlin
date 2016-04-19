@@ -43,6 +43,10 @@ class AddToCollectionTransformation(
                 FilterToTransformation(loop, inputVariable, targetCollection, previousTransformation.effectiveCondition()) //TODO: use filterNotTo?
             }
 
+            is MapTransformation -> {
+                MapToTransformation(loop, previousTransformation.inputVariable, targetCollection, previousTransformation.mapping)
+            }
+
             is FlatMapTransformation -> {
                 FlatMapToTransformation(loop, previousTransformation.inputVariable, targetCollection, previousTransformation.transform)
             }
