@@ -48,11 +48,17 @@ fun Project.initKapt(
         kotlinTask.extensions.extraProperties.set("kaptStubsDir", stubsDir)
         javaTask.appendClasspathDynamically(stubsDir)
 
+        val javaDestinationDir = project.files(javaTask.destinationDir)
         javaTask.doLast {
             kotlinAfterJavaTask.source(kotlinTask.source)
-            kotlinAfterJavaTask.source(kaptManager.javaAptSourceDir)
             // we don't want kotlinAfterJavaTask to track modifications in generated class
-            kotlinAfterJavaTask.classpath -= project.files(javaTask.destinationDir)
+            kotlinAfterJavaTask.classpath -= javaDestinationDir
+        }
+        kotlinAfterJavaTask.doFirst {
+            kotlinAfterJavaTask.classpath += javaDestinationDir
+        }
+        kotlinAfterJavaTask.doLast {
+            kotlinAfterJavaTask.classpath -= javaDestinationDir
         }
 
         subpluginEnvironment.addSubpluginArguments(this, kotlinAfterJavaTask)
@@ -123,7 +129,7 @@ public class AnnotationProcessingManager(
         private val javaTask: JavaCompile,
         private val taskQualifier: String,
         private val aptFiles: Set<File>,
-        private val aptOutputDir: File,
+        val aptOutputDir: File,
         private val aptWorkingDir: File,
         private val coreClassLoader: ClassLoader,
         private val androidVariant: Any? = null) {
