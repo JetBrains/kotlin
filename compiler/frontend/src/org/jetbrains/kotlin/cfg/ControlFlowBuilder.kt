@@ -35,9 +35,9 @@ interface ControlFlowBuilder {
     val returnSubroutine: KtElement
 
     // Lexical scopes
-    fun enterLexicalScope(element: KtElement)
+    fun enterLexicalScope(block: KtElement)
 
-    fun exitLexicalScope(element: KtElement)
+    fun exitLexicalScope(block: KtElement)
 
     fun getExitPoint(labelElement: KtElement): Label?
     fun getConditionEntryPoint(labelElement: KtElement): Label

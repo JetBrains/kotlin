@@ -179,18 +179,18 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
         private val currentScope: LexicalScope
             get() = lexicalScopes.peek()
 
-        override fun enterLexicalScope(element: KtElement) {
+        override fun enterLexicalScope(block: KtElement) {
             val current = if (lexicalScopes.isEmpty()) null else currentScope
-            val scope = LexicalScope(current, element)
+            val scope = LexicalScope(current, block)
             lexicalScopes.push(scope)
         }
 
-        override fun exitLexicalScope(element: KtElement) {
+        override fun exitLexicalScope(block: KtElement) {
             val currentScope = currentScope
-            assert(currentScope.element === element) {
+            assert(currentScope.block === block) {
                 "Exit from not the current lexical scope.\n" +
-                "Current scope is for: " + currentScope.element + ".\n" +
-                "Exit from the scope for: " + element.text
+                "Current scope is for a block: " + currentScope.block.text + ".\n" +
+                "Exit from the scope for: " + block.text
             }
             lexicalScopes.pop()
         }
