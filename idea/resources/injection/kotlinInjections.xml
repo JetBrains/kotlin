@@ -5,5 +5,8 @@
         <place><![CDATA[
             psiParameter().ofMethod(0, psiMethod().withName("Regex").definedInClass("kotlin.text.Regex"))
             ]]></place>
+        <place><![CDATA[
+            receiver().ofMethod(psiMethod().withName("toRegex").withReceiver("kotlin.String").definedInPackage("kotlin.text"))
+            ]]></place>
     </injection>
 </component>

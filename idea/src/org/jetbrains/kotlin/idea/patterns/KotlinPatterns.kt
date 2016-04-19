@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 object KotlinPatterns: StandardPatterns() {
     @JvmStatic fun psiParameter() = KtParameterPattern()
     @JvmStatic fun psiMethod() = KotlinFunctionPattern()
+    @JvmStatic fun receiver() = KotlinReceiverPattern()
 }
 
 // Methods in this class are used through reflection during pattern construction
@@ -114,6 +115,24 @@ class KtParameterPattern : PsiElementPattern<KtParameter, KtParameterPattern>(Kt
                 if (index < 0 || index >= parameters.size || ktParameter != parameters[index]) return false
 
                 return super.accepts(ktParameter, context)
+            }
+        })
+    }
+}
+
+@Suppress("unused")
+class KotlinReceiverPattern : PsiElementPattern<KtTypeReference, KotlinReceiverPattern>(KtTypeReference::class.java) {
+    fun ofMethod(pattern: ElementPattern<Any>): KotlinReceiverPattern {
+        return with(object : PatternConditionPlus<KtTypeReference, KtFunction>("KtReceiverPattern-ofMethod", pattern) {
+            override fun processValues(typeReference: KtTypeReference, context: ProcessingContext?, processor: PairProcessor<KtFunction, ProcessingContext>): Boolean {
+                return processor.process(typeReference.parent as? KtFunction, context)
+            }
+
+            override fun accepts(typeReference: KtTypeReference, context: ProcessingContext?): Boolean {
+                val ktFunction = typeReference.parent as? KtFunction ?: return false
+                if (ktFunction.receiverTypeReference != typeReference) return false
+
+                return super.accepts(typeReference, context)
             }
         })
     }

@@ -41,6 +41,27 @@ class KotlinStdlibInjectionTest : AbstractInjectionTest() {
             RegExpLanguage.INSTANCE.id
     )
 
+    fun testToRegex0() = testInjection(
+            """
+            |val test = "hi<caret>".toRegex()
+            """,
+            RegExpLanguage.INSTANCE.id
+    )
+
+    fun testToRegex1() = testInjection(
+            """
+            |val test = "hi<caret>".toRegex(RegexOption.CANON_EQ)
+            """,
+            RegExpLanguage.INSTANCE.id
+    )
+
+    fun testToRegex2() = testInjection(
+            """
+            |val test = "hi<caret>".toRegex(setOf(RegexOption.LITERAL))
+            """,
+            RegExpLanguage.INSTANCE.id
+    )
+
     private fun testInjection(text: String, languageId: String) {
         testInjectionPresent(text, languageId, false)
     }

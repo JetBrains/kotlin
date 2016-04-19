@@ -18,13 +18,11 @@ package org.jetbrains.kotlin.idea.injection
 
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.InjectedLanguagePlaces
-import com.intellij.psi.LanguageInjector
-import com.intellij.psi.PsiLanguageInjectionHost
-import com.intellij.psi.PsiMethod
+import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
 import org.intellij.plugins.intelliLang.Configuration
 import org.intellij.plugins.intelliLang.inject.InjectorUtils
+import org.intellij.plugins.intelliLang.inject.config.BaseInjection
 import org.intellij.plugins.intelliLang.inject.java.JavaLanguageInjectionSupport
 import org.jetbrains.kotlin.psi.*
 import java.util.*
@@ -41,6 +39,7 @@ class KotlinLanguageInjector : LanguageInjector {
         val injectionInfo =
                 injectWithExplicitCodeInstruction(ktHost)
                 ?: injectWithCall(ktHost)
+                ?: injectWithReceiver(ktHost)
                 ?: return
 
         val language = InjectorUtils.getLanguageByString(injectionInfo.languageId) ?: return
@@ -51,6 +50,28 @@ class KotlinLanguageInjector : LanguageInjector {
         val support = kotlinSupport ?: return null
         val languageId = support.findAnnotationInjectionLanguageId(host) ?: return null
         return InjectionInfo(languageId, null, null)
+    }
+
+    private fun injectWithReceiver(host: KtElement): InjectionInfo? {
+        val qualifiedExpression = host.parent as? KtDotQualifiedExpression ?: return null
+        if (qualifiedExpression.receiverExpression != host) return null
+
+        val callExpression = qualifiedExpression.selectorExpression as? KtCallExpression ?: return null
+        val callee = callExpression.calleeExpression ?: return null
+
+        for (reference in callee.references) {
+            ProgressManager.checkCanceled()
+
+            val resolvedTo = reference.resolve()
+            if (resolvedTo is KtFunction) {
+                val injectionInfo = findInjection(resolvedTo.receiverTypeReference, Configuration.getInstance().getInjections(KOTLIN_SUPPORT_ID))
+                if (injectionInfo != null) {
+                    return injectionInfo
+                }
+            }
+        }
+
+        return null
     }
 
     private fun injectWithCall(host: KtElement): InjectionInfo? {
@@ -85,26 +106,19 @@ class KotlinLanguageInjector : LanguageInjector {
         val argumentIndex = (argument.parent as KtValueArgumentList).arguments.indexOf(argument)
         val psiParameter = javaMethod.parameterList.parameters.getOrNull(argumentIndex) ?: return null
 
-        val injections = Configuration.getInstance().getInjections(JavaLanguageInjectionSupport.JAVA_SUPPORT_ID)
-
-        for (injection in injections) {
-            if (injection.acceptsPsiElement(psiParameter)) {
-                // ?? if (!processXmlInjections(injection, owner, method, paramIndex)) {
-                return InjectionInfo(injection.injectedLanguageId, injection.prefix, injection.suffix)
-            }
-        }
-
-        return null
+        return findInjection(psiParameter, Configuration.getInstance().getInjections(JavaLanguageInjectionSupport.JAVA_SUPPORT_ID))
     }
 
     private fun injectionForKotlinCall(argument: KtValueArgument, ktFunction: KtFunction): InjectionInfo? {
         val argumentIndex = (argument.parent as KtValueArgumentList).arguments.indexOf(argument)
         val ktParameter = ktFunction.valueParameters.getOrNull(argumentIndex) ?: return null
 
-        val injections = Configuration.getInstance().getInjections(KOTLIN_SUPPORT_ID)
+        return findInjection(ktParameter, Configuration.getInstance().getInjections(KOTLIN_SUPPORT_ID))
+    }
 
+    private fun findInjection(element: PsiElement?, injections: List<BaseInjection>): InjectionInfo? {
         for (injection in injections) {
-            if (injection.acceptsPsiElement(ktParameter)) {
+            if (injection.acceptsPsiElement(element)) {
                 return InjectionInfo(injection.injectedLanguageId, injection.prefix, injection.suffix)
             }
         }
