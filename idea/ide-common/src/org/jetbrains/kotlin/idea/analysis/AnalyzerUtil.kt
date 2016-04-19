@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor
 ): KotlinTypeInfo {
     PreliminaryDeclarationVisitor.createForExpression(this, trace)
     return contextExpression.getResolutionFacade().frontendService<ExpressionTypingServices>()
-            .getTypeInfo(scope, this, expectedType, dataFlowInfo, trace, isStatement)
+            .getTypeInfo(scope, this, expectedType, dataFlowInfo, trace, isStatement, contextExpression)
 }
 
 @JvmOverloads fun KtExpression.analyzeInContext(

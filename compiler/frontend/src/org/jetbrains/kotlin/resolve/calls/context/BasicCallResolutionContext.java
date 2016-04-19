@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.resolve.calls.context;
 
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.Call;
+import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.StatementFilter;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
@@ -41,10 +43,12 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             boolean isAnnotationContext,
             boolean isDebuggerContext,
             boolean collectAllCandidates,
-            @NotNull CallPosition callPosition
+            @NotNull CallPosition callPosition,
+            @NotNull Function1<KtExpression, KtExpression> expressionContextProvider
     ) {
         super(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, resolutionResultsCache,
-              dataFlowInfoForArguments, statementFilter, isAnnotationContext, isDebuggerContext, collectAllCandidates, callPosition);
+              dataFlowInfoForArguments, statementFilter, isAnnotationContext, isDebuggerContext, collectAllCandidates,
+              callPosition, expressionContextProvider);
     }
 
     @NotNull
@@ -61,7 +65,7 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
         return new BasicCallResolutionContext(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments,
                                               new ResolutionResultsCacheImpl(), null,
                                               StatementFilter.NONE, isAnnotationContext, false, false,
-                                              CallPosition.Unknown.INSTANCE);
+                                              CallPosition.Unknown.INSTANCE, DEFAULT_EXPRESSION_CONTEXT_PROVIDER);
     }
 
     @NotNull
@@ -72,7 +76,8 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
         return new BasicCallResolutionContext(
                 context.trace, context.scope, call, context.expectedType, context.dataFlowInfo, context.contextDependency, checkArguments,
                 context.resolutionResultsCache, dataFlowInfoForArguments,
-                context.statementFilter, context.isAnnotationContext, context.isDebuggerContext, context.collectAllCandidates, context.callPosition);
+                context.statementFilter, context.isAnnotationContext, context.isDebuggerContext, context.collectAllCandidates,
+                context.callPosition, context.expressionContextProvider);
     }
 
     @NotNull
@@ -92,17 +97,20 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull StatementFilter statementFilter,
             boolean collectAllCandidates,
-            @NotNull CallPosition callPosition
+            @NotNull CallPosition callPosition,
+            @NotNull Function1<KtExpression, KtExpression> expressionContextProvider
     ) {
         return new BasicCallResolutionContext(
                 trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, resolutionResultsCache,
-                dataFlowInfoForArguments, statementFilter, isAnnotationContext, isDebuggerContext, collectAllCandidates, callPosition);
+                dataFlowInfoForArguments, statementFilter, isAnnotationContext, isDebuggerContext, collectAllCandidates,
+                callPosition, expressionContextProvider);
     }
 
     @NotNull
     public BasicCallResolutionContext replaceCall(@NotNull Call newCall) {
         return new BasicCallResolutionContext(
                 trace, scope, newCall, expectedType, dataFlowInfo, contextDependency, checkArguments, resolutionResultsCache,
-                dataFlowInfoForArguments, statementFilter, isAnnotationContext, isDebuggerContext, collectAllCandidates, callPosition);
+                dataFlowInfoForArguments, statementFilter, isAnnotationContext, isDebuggerContext, collectAllCandidates,
+                callPosition, expressionContextProvider);
     }
 }

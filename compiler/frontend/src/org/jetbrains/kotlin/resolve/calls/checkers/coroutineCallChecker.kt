@@ -33,7 +33,7 @@ object CoroutineSuspendCallChecker : CallChecker {
         val dispatchReceiverOwner = (resolvedCall.dispatchReceiver as? CoroutineReceiverValue)?.declarationDescriptor ?: return
         val callElement = resolvedCall.call.callElement as KtExpression
 
-        if (!InlineUtil.checkNonLocalReturnUsage(dispatchReceiverOwner, callElement, context.trace)) {
+        if (!InlineUtil.checkNonLocalReturnUsage(dispatchReceiverOwner, callElement, context.resolutionContext)) {
             context.trace.report(Errors.NON_LOCAL_SUSPENSION_POINT.on(reportOn))
         }
     }

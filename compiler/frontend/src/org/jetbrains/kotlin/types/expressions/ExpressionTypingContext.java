@@ -16,7 +16,9 @@
 
 package org.jetbrains.kotlin.types.expressions;
 
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.StatementFilter;
 import org.jetbrains.kotlin.resolve.calls.context.*;
@@ -45,7 +47,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
                 context.contextDependency, context.resolutionResultsCache,
                 context.statementFilter,
                 context.isAnnotationContext, context.isDebuggerContext, context.collectAllCandidates,
-                context.callPosition);
+                context.callPosition, context.expressionContextProvider);
     }
 
     @NotNull
@@ -55,7 +57,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
                 context.contextDependency, context.resolutionResultsCache,
                 context.statementFilter,
                 context.isAnnotationContext, isDebuggerContext, context.collectAllCandidates,
-                context.callPosition);
+                context.callPosition, context.expressionContextProvider);
     }
 
     @NotNull
@@ -71,7 +73,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
     ) {
         return new ExpressionTypingContext(
                 trace, scope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache,
-                statementFilter, isAnnotationContext, false, false, CallPosition.Unknown.INSTANCE);
+                statementFilter, isAnnotationContext, false, false, CallPosition.Unknown.INSTANCE, DEFAULT_EXPRESSION_CONTEXT_PROVIDER);
     }
 
     private ExpressionTypingContext(
@@ -85,10 +87,11 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             boolean isAnnotationContext,
             boolean isDebuggerContext,
             boolean collectAllCandidates,
-            @NotNull CallPosition callPosition
+            @NotNull CallPosition callPosition,
+            @NotNull Function1<KtExpression, KtExpression> expressionContextProvider
     ) {
         super(trace, scope, expectedType, dataFlowInfo, contextDependency, resolutionResultsCache,
-              statementFilter, isAnnotationContext, isDebuggerContext, collectAllCandidates, callPosition);
+              statementFilter, isAnnotationContext, isDebuggerContext, collectAllCandidates, callPosition, expressionContextProvider);
     }
 
     @Override
@@ -101,10 +104,12 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull StatementFilter statementFilter,
             boolean collectAllCandidates,
-            @NotNull CallPosition callPosition
+            @NotNull CallPosition callPosition,
+            @NotNull Function1<KtExpression, KtExpression> expressionContextProvider
     ) {
         return new ExpressionTypingContext(trace, scope, dataFlowInfo,
                                            expectedType, contextDependency, resolutionResultsCache,
-                                           statementFilter, isAnnotationContext, isDebuggerContext, collectAllCandidates, callPosition);
+                                           statementFilter, isAnnotationContext, isDebuggerContext,
+                                           collectAllCandidates, callPosition, expressionContextProvider);
     }
 }

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.types.expressions;
 
 import com.intellij.psi.tree.IElementType;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -92,9 +93,30 @@ public class ExpressionTypingServices {
             @NotNull BindingTrace trace,
             boolean isStatement
     ) {
+        return getTypeInfo(scope, expression, expectedType, dataFlowInfo, trace, isStatement, expression);
+    }
+
+    @NotNull
+    public KotlinTypeInfo getTypeInfo(
+            @NotNull LexicalScope scope,
+            @NotNull final KtExpression expression,
+            @NotNull KotlinType expectedType,
+            @NotNull DataFlowInfo dataFlowInfo,
+            @NotNull BindingTrace trace,
+            boolean isStatement,
+            @NotNull final KtExpression contextExpression
+    ) {
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 trace, scope, dataFlowInfo, expectedType
         );
+        if (contextExpression != expression) {
+            context = context.replaceExpressionContextProvider(new Function1<KtExpression, KtExpression>() {
+                @Override
+                public KtExpression invoke(KtExpression arg) {
+                    return arg == expression ? contextExpression : null;
+                }
+            });
+        }
         return expressionTypingFacade.getTypeInfo(expression, context, isStatement);
     }
 

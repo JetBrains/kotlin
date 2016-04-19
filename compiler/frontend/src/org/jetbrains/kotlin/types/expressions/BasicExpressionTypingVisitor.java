@@ -909,9 +909,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 if (resolvedCall != null) {
                     // Call must be validated with the actual, not temporary trace in order to report operator diagnostic
                     // Only unary assignment expressions (++, --) and +=/... must be checked, normal assignments have the proper trace
-                    CallCheckerContext callCheckerContext = new CallCheckerContext(
-                            trace, context.scope, components.languageFeatureSettings, context.dataFlowInfo, context.isAnnotationContext
-                    );
+                    CallCheckerContext callCheckerContext = new CallCheckerContext(context, trace, components.languageFeatureSettings);
                     for (CallChecker checker : components.callCheckers) {
                         checker.check(resolvedCall, expression, callCheckerContext);
                     }
