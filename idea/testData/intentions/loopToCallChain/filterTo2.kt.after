@@ -1,0 +1,7 @@
+// WITH_RUNTIME
+fun foo(list: List<String>) {
+    val target = createCollection()
+    <caret>list.filterTo(target) { it.length > 0 }
+}
+
+fun createCollection() = java.util.ArrayList<String>()

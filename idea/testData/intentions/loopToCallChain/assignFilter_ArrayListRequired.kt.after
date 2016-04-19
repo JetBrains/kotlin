@@ -2,7 +2,6 @@
 import java.util.ArrayList
 
 fun foo(list: List<String>): ArrayList<String> {
-    val result = ArrayList<String>()
-    <caret>list.filterTo(result) { it.length > 0 }
+    <caret>val result = list.filterTo(ArrayList<String>()) { it.length > 0 }
     return result
 }

@@ -1,0 +1,9 @@
+// WITH_RUNTIME
+import java.util.ArrayList
+
+fun foo(list: List<String>): List<Int> {
+    <caret>val target = list
+            .filter { it.length > 0 }
+            .mapTo(ArrayList<Int>(100)) { it.hashCode() }
+    return target
+}
