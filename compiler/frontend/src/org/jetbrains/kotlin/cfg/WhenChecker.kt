@@ -73,7 +73,7 @@ private object NullMissingCase : WhenMissingCase {
 
 // It's not a regular exhaustiveness checker, invoke it only inside other checkers
 private object WhenOnNullableExhaustivenessChecker /* : WhenExhaustivenessChecker*/ {
-    fun getMissingCases(expression: KtWhenExpression, context: BindingContext, subjectDescriptor: ClassDescriptor?, nullable: Boolean) =
+    fun getMissingCases(expression: KtWhenExpression, context: BindingContext, nullable: Boolean) =
             if (nullable) getNullCaseIfMissing(expression, context) else listOf()
 
     private fun getNullCaseIfMissing(expression: KtWhenExpression, context: BindingContext): List<WhenMissingCase> {
@@ -120,7 +120,7 @@ private object WhenOnBooleanExhaustivenessChecker : WhenExhaustivenessChecker {
         }
         return (if (!containsTrue) listOf(BooleanMissingCase(true)) else listOf()) +
                (if (!containsFalse) listOf(BooleanMissingCase(false)) else listOf()) +
-               WhenOnNullableExhaustivenessChecker.getMissingCases(expression, context, subjectDescriptor, nullable)
+               WhenOnNullableExhaustivenessChecker.getMissingCases(expression, context, nullable)
     }
 
     override fun isApplicable(subjectType: KotlinType): Boolean {
@@ -212,7 +212,7 @@ private object WhenOnEnumExhaustivenessChecker : WhenOnClassExhaustivenessChecke
                         .filterIsInstance<ClassDescriptor>()
                         .toSet()
         return getMissingClassCases(expression, entryDescriptors, context) +
-               WhenOnNullableExhaustivenessChecker.getMissingCases(expression, context, subjectDescriptor, nullable)
+               WhenOnNullableExhaustivenessChecker.getMissingCases(expression, context, nullable)
     }
 
     override fun isApplicable(subjectType: KotlinType): Boolean {
@@ -235,7 +235,7 @@ private object WhenOnSealedExhaustivenessChecker : WhenOnClassExhaustivenessChec
         collectNestedSubclasses(subjectDescriptor!!, subjectDescriptor, memberClassDescriptors)
         // When on a sealed class without derived members is considered non-exhaustive (see test WhenOnEmptySealed)
         return getMissingClassCases(expression, memberClassDescriptors, context) +
-               WhenOnNullableExhaustivenessChecker.getMissingCases(expression, context, subjectDescriptor, nullable)
+               WhenOnNullableExhaustivenessChecker.getMissingCases(expression, context, nullable)
     }
 
     override fun isApplicable(subjectType: KotlinType): Boolean {
@@ -331,7 +331,7 @@ object WhenChecker {
             }
 
     fun containsNullCase(expression: KtWhenExpression, context: BindingContext) =
-            WhenOnNullableExhaustivenessChecker.getMissingCases(expression, context, null, true).isEmpty()
+            WhenOnNullableExhaustivenessChecker.getMissingCases(expression, context, true).isEmpty()
 
     fun checkDeprecatedWhenSyntax(trace: BindingTrace, expression: KtWhenExpression) {
         if (expression.subjectExpression != null) return
