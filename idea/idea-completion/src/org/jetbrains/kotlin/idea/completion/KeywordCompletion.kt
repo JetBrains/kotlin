@@ -188,13 +188,16 @@ object KeywordCompletion {
                 is KtBlockExpression -> {
                     var prefixText = "fun foo() { "
                     if (prevParent is KtExpression) {
-                        val tryExpression = prevParent.prevSiblingOfSameType() as? KtTryExpression
-                        if (tryExpression != null && tryExpression.finallyBlock == null) {
-                            prefixText += when {
-                                tryExpression.catchClauses.isEmpty() -> "try {}\n"
-                                else -> "try {} catch (e: E) {}\n"
+                        // check that we are right after a try-expression without finally-block
+                        val prevLeaf = prevParent.prevLeaf { it !is PsiWhiteSpace && it !is PsiComment && it !is PsiErrorElement }
+                        if (prevLeaf?.node?.elementType == KtTokens.RBRACE) {
+                            val blockParent = (prevLeaf?.parent as? KtBlockExpression)?.parent
+                            when (blockParent) {
+                                is KtTryExpression -> prefixText += "try {}\n"
+                                is KtCatchClause -> prefixText += "try {} catch (e: E) {}\n"
                             }
                         }
+
                         return buildFilterWithContext(prefixText, prevParent, position)
                     }
                     else {

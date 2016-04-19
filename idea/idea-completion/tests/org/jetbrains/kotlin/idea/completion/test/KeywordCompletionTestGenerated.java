@@ -85,6 +85,12 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         doTest(fileName);
     }
 
+    @TestMetadata("AfterTryInAssignment.kt")
+    public void testAfterTryInAssignment() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/AfterTryInAssignment.kt");
+        doTest(fileName);
+    }
+
     public void testAllFilesPresentInKeywords() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/keywords"), Pattern.compile("^(.+)\\.kt$"), false);
     }
