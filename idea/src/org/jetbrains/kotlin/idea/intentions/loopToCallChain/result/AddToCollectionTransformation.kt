@@ -16,12 +16,20 @@
 
 package org.jetbrains.kotlin.idea.intentions.loopToCallChain.result
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.*
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.FilterTransformation
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.FlatMapTransformation
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.MapTransformation
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getCallNameExpression
+import org.jetbrains.kotlin.renderer.render
 
 class AddToCollectionTransformation(
         loop: KtForExpression,
@@ -69,48 +77,84 @@ class AddToCollectionTransformation(
             //TODO: check that it's MutableCollection's add
             val argument = callExpression.valueArguments.singleOrNull() ?: return null
             val argumentValue = argument.getArgumentExpression() ?: return null
-            val argumentIsInputVariable = argumentValue.isVariableReference(state.inputVariable)
 
-            //TODO: collection can be used as mutable collection or even ArrayList!
-            val collectionInitialization = targetCollection.detectInitializationBeforeLoop(state.outerLoop)
-            if (collectionInitialization != null) {
-                val collectionKind = collectionInitialization.initializer.isSimpleCollectionInstantiation()
-                when (collectionKind) {
-                    CollectionKind.LIST -> {
-                        val transformation = if (argumentIsInputVariable) {
-                            AssignToListTransformation(state.outerLoop, state.inputVariable, collectionInitialization)
-                        }
-                        else {
-                            val mapTransformation = MapTransformation(state.outerLoop, state.inputVariable, argumentValue)
-                            AssignSequenceTransformationResultTransformation(mapTransformation, collectionInitialization)
-                        }
-                        return ResultTransformationMatch(transformation)
-                    }
+            matchWithCollectionInitializationReplacement(state, targetCollection, argumentValue)
+                    ?.let { return it }
 
-                    CollectionKind.SET -> {
-                        if (argumentIsInputVariable) {
-                            val transformation = AssignToSetTransformation(state.outerLoop, state.inputVariable, collectionInitialization)
-                            return ResultTransformationMatch(transformation)
-                        }
-                        else {
-                            val mapTransformation = MapTransformation(state.outerLoop, state.inputVariable, argumentValue)
-                            val transformation = AssignToSetTransformation(
-                                    state.outerLoop,
-                                    state.inputVariable/*TODO: it's not correct and it looks like not all transformations should have inputVariable*/,
-                                    collectionInitialization)
-                            return ResultTransformationMatch(transformation, mapTransformation)
-                        }
-                    }
-                }
-            }
-
-            val transformation = if (argumentIsInputVariable) {
+            val transformation = if (argumentValue.isVariableReference(state.inputVariable)) {
                 AddToCollectionTransformation(state.outerLoop, state.inputVariable, targetCollection)
             }
             else {
                 MapToTransformation(state.outerLoop, state.inputVariable, targetCollection, argumentValue)
             }
             return ResultTransformationMatch(transformation)
+        }
+
+        private fun matchWithCollectionInitializationReplacement(
+                state: MatchingState,
+                targetCollection: KtExpression,
+                addOperationArgument: KtExpression
+        ): ResultTransformationMatch? {
+            val collectionInitialization = targetCollection.detectInitializationBeforeLoop(state.outerLoop) ?: return null
+            val collectionKind = collectionInitialization.initializer.isSimpleCollectionInstantiation() ?: return null
+            val argumentIsInputVariable = addOperationArgument.isVariableReference(state.inputVariable)
+            when (collectionKind) {
+                CollectionKind.LIST -> {
+                    when {
+                        canChangeInitializerType(collectionInitialization, KotlinBuiltIns.FQ_NAMES.list, state.outerLoop) -> {
+                            val transformation = if (argumentIsInputVariable) {
+                                AssignToListTransformation(state.outerLoop, state.inputVariable, collectionInitialization)
+                            }
+                            else {
+                                val mapTransformation = MapTransformation(state.outerLoop, state.inputVariable, addOperationArgument)
+                                AssignSequenceTransformationResultTransformation(mapTransformation, collectionInitialization)
+                            }
+                            return ResultTransformationMatch(transformation)
+                        }
+
+                        canChangeInitializerType(collectionInitialization, KotlinBuiltIns.FQ_NAMES.mutableList, state.outerLoop) -> {
+                            if (argumentIsInputVariable) {
+                                val transformation = AssignToMutableListTransformation(state.outerLoop, state.inputVariable, collectionInitialization)
+                                return ResultTransformationMatch(transformation)
+                            }
+                        }
+                    }
+                }
+
+                CollectionKind.SET -> {
+                    val assignToSetTransformation = when {
+                        canChangeInitializerType(collectionInitialization, KotlinBuiltIns.FQ_NAMES.set, state.outerLoop) -> {
+                            AssignToSetTransformation(state.outerLoop, state.inputVariable/*TODO: it's not correct and it looks like not all transformations should have inputVariable*/, collectionInitialization)
+                        }
+
+                        canChangeInitializerType(collectionInitialization, KotlinBuiltIns.FQ_NAMES.mutableSet, state.outerLoop) -> {
+                            AssignToMutableSetTransformation(state.outerLoop, state.inputVariable, collectionInitialization)
+                        }
+
+                        else -> return null
+                    }
+
+                    if (argumentIsInputVariable) {
+                        return ResultTransformationMatch(assignToSetTransformation)
+                    }
+                    else {
+                        val mapTransformation = MapTransformation(state.outerLoop, state.inputVariable, addOperationArgument)
+                        return ResultTransformationMatch(assignToSetTransformation, mapTransformation)
+                    }
+                }
+            }
+
+            return null
+        }
+
+        private fun canChangeInitializerType(initialization: VariableInitialization, newTypeFqName: FqName, loop: KtForExpression): Boolean {
+            val currentType = (initialization.variable.resolveToDescriptor() as VariableDescriptor).type
+            if ((currentType.constructor.declarationDescriptor as? ClassDescriptor)?.importableFqName == newTypeFqName) return true // already of the required type
+
+            if (initialization.initializationStatement != initialization.variable) return false
+
+            val newTypeText = newTypeFqName.render() + IdeDescriptorRenderers.SOURCE_CODE.renderTypeArguments(currentType.arguments)
+            return canChangeLocalVariableType(initialization.variable, newTypeText, loop)
         }
     }
 }
@@ -170,6 +214,17 @@ class AssignToListTransformation(
     }
 }
 
+class AssignToMutableListTransformation(
+        loop: KtForExpression,
+        inputVariable: KtCallableDeclaration,
+        initialization: VariableInitialization
+) : AssignToVariableResultTransformation(loop, inputVariable, initialization) {
+
+    override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
+        return chainedCallGenerator.generate("toMutableList()")
+    }
+}
+
 class AssignToSetTransformation(
         loop: KtForExpression,
         inputVariable: KtCallableDeclaration,
@@ -178,5 +233,16 @@ class AssignToSetTransformation(
 
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
         return chainedCallGenerator.generate("toSet()")
+    }
+}
+
+class AssignToMutableSetTransformation(
+        loop: KtForExpression,
+        inputVariable: KtCallableDeclaration,
+        initialization: VariableInitialization
+) : AssignToVariableResultTransformation(loop, inputVariable, initialization) {
+
+    override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
+        return chainedCallGenerator.generate("toMutableSet()")
     }
 }
