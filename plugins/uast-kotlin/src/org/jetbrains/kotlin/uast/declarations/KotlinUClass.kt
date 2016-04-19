@@ -17,14 +17,9 @@
 package org.jetbrains.kotlin.uast
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.codegen.ClassBuilderMode
-import org.jetbrains.kotlin.codegen.state.IncompatibleClassTracker
-import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.fileClasses.NoResolveFileClassesProvider
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
-import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
@@ -74,10 +69,10 @@ class KotlinUClass(
     }
 
     override val internalName by lz {
-        val descriptor = resolveToDescriptor() ?: return@lz null
-        val typeMapper = KotlinTypeMapper(BindingContext.EMPTY, ClassBuilderMode.LIGHT_CLASSES, NoResolveFileClassesProvider, null,
-                                               IncompatibleClassTracker.DoNothing, JvmAbi.DEFAULT_MODULE_NAME)
-        typeMapper.mapClass(descriptor).internalName
+        val generationState = psi.getGenerationState()
+        val descriptor = generationState.bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, psi]
+                                 as? ClassDescriptor ?: return@lz null
+        generationState.typeMapper.mapClass(descriptor).internalName
     }
 
     override fun getSuperClass(context: UastContext): UClass? {

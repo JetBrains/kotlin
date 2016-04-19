@@ -111,3 +111,16 @@ internal fun DeclarationDescriptor.toSource() = try {
 }
 
 internal fun <T> lz(initializer: () -> T) = lazy(LazyThreadSafetyMode.NONE, initializer)
+
+internal fun KtElement.getGenerationState(): GenerationState {
+    val analysisResult = this.analyzeAndGetResult()
+    val file = getContainingKtFile()
+    val state = GenerationState(
+            file.project,
+            ClassBuilderFactories.THROW_EXCEPTION,
+            analysisResult.moduleDescriptor,
+            analysisResult.bindingContext,
+            listOf(file))
+    state.beforeCompile()
+    return state
+}
