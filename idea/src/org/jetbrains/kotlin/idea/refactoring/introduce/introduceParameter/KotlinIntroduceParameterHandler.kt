@@ -191,6 +191,7 @@ fun selectNewParameterContext(
             operationName = INTRODUCE_PARAMETER,
             editor = editor,
             file = file,
+            title = "Introduce parameter to declaration",
             getContainers = { elements, parent ->
                 val parents = parent.parents
                 val stopAt = (parent.parents.zip(parent.parents.drop(1)))

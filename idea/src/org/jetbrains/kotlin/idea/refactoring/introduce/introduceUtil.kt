@@ -44,6 +44,7 @@ fun selectElementsWithTargetSibling(
         operationName: String,
         editor: Editor,
         file: KtFile,
+        title: String,
         getContainers: (elements: List<PsiElement>, commonParent: PsiElement) -> List<PsiElement>,
         continuation: (elements: List<PsiElement>, targetSibling: PsiElement) -> Unit
 ) {
@@ -66,13 +67,14 @@ fun selectElementsWithTargetSibling(
         continuation(elements, outermostParent)
     }
 
-    selectElementsWithTargetParent(operationName, editor, file, getContainers, ::onSelectionComplete)
+    selectElementsWithTargetParent(operationName, editor, file, title, getContainers, ::onSelectionComplete)
 }
 
 fun selectElementsWithTargetParent(
         operationName: String,
         editor: Editor,
         file: KtFile,
+        title: String,
         getContainers: (elements: List<PsiElement>, commonParent: PsiElement) -> List<PsiElement>,
         continuation: (elements: List<PsiElement>, targetParent: PsiElement) -> Unit
 ) {
@@ -94,7 +96,7 @@ fun selectElementsWithTargetParent(
         chooseContainerElementIfNecessary(
                 containers,
                 editor,
-                "Select target code block",
+                title,
                 true,
                 { it },
                 { continuation(elements, it) }

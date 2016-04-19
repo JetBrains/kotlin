@@ -66,6 +66,7 @@ class ExtractKotlinFunctionHandler(
                 EXTRACT_FUNCTION,
                 editor,
                 file,
+                "Select target code block",
                 { elements, parent -> parent.getExtractionContainers(elements.size == 1, allContainersEnabled) },
                 continuation
         )
