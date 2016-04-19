@@ -215,6 +215,30 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("renameJavaSyntheticIsPropertyByGetterRef/renameJavaSyntheticIsPropertyByGetterRef.test")
+    public void testRenameJavaSyntheticIsPropertyByGetterRef_RenameJavaSyntheticIsPropertyByGetterRef() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameJavaSyntheticIsPropertyByGetterRef/renameJavaSyntheticIsPropertyByGetterRef.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("renameJavaSyntheticPropertyByGetterRef/renameJavaSyntheticPropertyByGetterRef.test")
+    public void testRenameJavaSyntheticPropertyByGetterRef_RenameJavaSyntheticPropertyByGetterRef() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameJavaSyntheticPropertyByGetterRef/renameJavaSyntheticPropertyByGetterRef.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("renameJavaSyntheticPropertyByGetterSetterRef/renameJavaSyntheticPropertyByGetterSetterRef.test")
+    public void testRenameJavaSyntheticPropertyByGetterSetterRef_RenameJavaSyntheticPropertyByGetterSetterRef() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameJavaSyntheticPropertyByGetterSetterRef/renameJavaSyntheticPropertyByGetterSetterRef.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("renameJavaSyntheticPropertyBySetterRef/renameJavaSyntheticPropertyBySetterRef.test")
+    public void testRenameJavaSyntheticPropertyBySetterRef_RenameJavaSyntheticPropertyBySetterRef() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameJavaSyntheticPropertyBySetterRef/renameJavaSyntheticPropertyBySetterRef.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("renameKotlinBaseMethod/javaWrapperForBaseFunction.test")
     public void testRenameKotlinBaseMethod_JavaWrapperForBaseFunction() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameKotlinBaseMethod/javaWrapperForBaseFunction.test");

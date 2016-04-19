@@ -51,6 +51,12 @@ sealed class SyntheticPropertyAccessorReference(expression: KtNameReferenceExpre
 
     override fun canRename() = true
 
+    fun renameByPropertyName(newName: String): PsiElement? {
+        val nameIdentifier = KtPsiFactory(expression).createNameIdentifier(newName)
+        expression.getReferencedNameElement().replace(nameIdentifier)
+        return expression
+    }
+
     override fun handleElementRename(newElementName: String?): PsiElement? {
         if (!Name.isValidIdentifier(newElementName!!)) return expression
 
@@ -65,9 +71,7 @@ sealed class SyntheticPropertyAccessorReference(expression: KtNameReferenceExpre
         }
         if (newName == null) return expression //TODO: handle the case when get/set becomes ordinary method
 
-        val nameIdentifier = KtPsiFactory(expression).createNameIdentifier(newName.identifier)
-        expression.getReferencedNameElement().replace(nameIdentifier)
-        return expression
+        return renameByPropertyName(newName.identifier)
     }
 
     class Getter(expression: KtNameReferenceExpression) : SyntheticPropertyAccessorReference(expression, true)
