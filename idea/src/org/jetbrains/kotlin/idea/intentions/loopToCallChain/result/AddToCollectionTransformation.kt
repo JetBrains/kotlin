@@ -40,15 +40,15 @@ class AddToCollectionTransformation(
     override fun mergeWithPrevious(previousTransformation: SequenceTransformation): ResultTransformation? {
         return when (previousTransformation) {
             is FilterTransformation -> {
-                FilterToTransformation(loop, inputVariable, targetCollection, previousTransformation.effectiveCondition()) //TODO: use filterNotTo?
+                FilterToTransformation.create(loop, inputVariable, targetCollection, previousTransformation.effectiveCondition()) //TODO: use filterNotTo?
             }
 
             is MapTransformation -> {
-                MapToTransformation(loop, previousTransformation.inputVariable, targetCollection, previousTransformation.mapping)
+                MapToTransformation.create(loop, previousTransformation.inputVariable, targetCollection, previousTransformation.mapping)
             }
 
             is FlatMapTransformation -> {
-                FlatMapToTransformation(loop, previousTransformation.inputVariable, targetCollection, previousTransformation.transform)
+                FlatMapToTransformation.create(loop, previousTransformation.inputVariable, targetCollection, previousTransformation.transform)
             }
 
             else -> null
@@ -89,7 +89,7 @@ class AddToCollectionTransformation(
                 AddToCollectionTransformation(state.outerLoop, state.inputVariable, targetCollection)
             }
             else {
-                MapToTransformation(state.outerLoop, state.inputVariable, targetCollection, argumentValue)
+                MapToTransformation.create(state.outerLoop, state.inputVariable, targetCollection, argumentValue)
             }
             return ResultTransformationMatch(transformation)
         }
@@ -163,7 +163,7 @@ class AddToCollectionTransformation(
     }
 }
 
-class FilterToTransformation(
+class FilterToTransformation private constructor(
         loop: KtForExpression,
         inputVariable: KtCallableDeclaration,
         private val targetCollection: KtExpression,
@@ -174,9 +174,39 @@ class FilterToTransformation(
         val lambda = generateLambda(inputVariable, filter)
         return chainedCallGenerator.generate("filterTo($0) $1:'{}'", targetCollection, lambda)
     }
+
+    companion object {
+        fun create(
+                loop: KtForExpression,
+                inputVariable: KtCallableDeclaration,
+                targetCollection: KtExpression,
+                filter: KtExpression
+        ): ResultTransformation {
+            val initialization = targetCollection.detectInitializationBeforeLoop(loop)
+            if (initialization != null && initialization.initializer.hasNoSideEffect()) {
+                return AssignFilterToTransformation(loop, inputVariable, initialization, filter)
+            }
+            else {
+                return FilterToTransformation(loop, inputVariable, targetCollection, filter)
+            }
+        }
+    }
 }
 
-class MapToTransformation(
+class AssignFilterToTransformation(
+        loop: KtForExpression,
+        inputVariable: KtCallableDeclaration,
+        targetCollectionInitialization: VariableInitialization,
+        private val filter: KtExpression
+) : AssignToVariableResultTransformation(loop, inputVariable, targetCollectionInitialization) {
+
+    override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
+        val lambda = generateLambda(inputVariable, filter)
+        return chainedCallGenerator.generate("filterTo($0) $1:'{}'", initialization.initializer, lambda)
+    }
+}
+
+class MapToTransformation private constructor(
         loop: KtForExpression,
         inputVariable: KtCallableDeclaration,
         private val targetCollection: KtExpression,
@@ -187,9 +217,39 @@ class MapToTransformation(
         val lambda = generateLambda(inputVariable, mapping)
         return chainedCallGenerator.generate("mapTo($0) $1:'{}'", targetCollection, lambda)
     }
+
+    companion object {
+        fun create(
+                loop: KtForExpression,
+                inputVariable: KtCallableDeclaration,
+                targetCollection: KtExpression,
+                mapping: KtExpression
+        ): ResultTransformation {
+            val initialization = targetCollection.detectInitializationBeforeLoop(loop)
+            if (initialization != null && initialization.initializer.hasNoSideEffect()) {
+                return AssignMapToTransformation(loop, inputVariable, initialization, mapping)
+            }
+            else {
+                return MapToTransformation(loop, inputVariable, targetCollection, mapping)
+            }
+        }
+    }
 }
 
-class FlatMapToTransformation(
+class AssignMapToTransformation(
+        loop: KtForExpression,
+        inputVariable: KtCallableDeclaration,
+        targetCollectionInitialization: VariableInitialization,
+        private val mapping: KtExpression
+) : AssignToVariableResultTransformation(loop, inputVariable, targetCollectionInitialization) {
+
+    override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
+        val lambda = generateLambda(inputVariable, mapping)
+        return chainedCallGenerator.generate("mapTo($0) $1:'{}'", initialization.initializer, lambda)
+    }
+}
+
+class FlatMapToTransformation private constructor(
         loop: KtForExpression,
         inputVariable: KtCallableDeclaration,
         private val targetCollection: KtExpression,
@@ -199,6 +259,36 @@ class FlatMapToTransformation(
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
         val lambda = generateLambda(inputVariable, transform)
         return chainedCallGenerator.generate("flatMapTo($0) $1:'{}'", targetCollection, lambda)
+    }
+
+    companion object {
+        fun create(
+                loop: KtForExpression,
+                inputVariable: KtCallableDeclaration,
+                targetCollection: KtExpression,
+                transform: KtExpression
+        ): ResultTransformation {
+            val initialization = targetCollection.detectInitializationBeforeLoop(loop)
+            if (initialization != null && initialization.initializer.hasNoSideEffect()) {
+                return AssignFlatMapToTransformation(loop, inputVariable, initialization, transform)
+            }
+            else {
+                return FlatMapToTransformation(loop, inputVariable, targetCollection, transform)
+            }
+        }
+    }
+}
+
+class AssignFlatMapToTransformation(
+        loop: KtForExpression,
+        inputVariable: KtCallableDeclaration,
+        targetCollectionInitialization: VariableInitialization,
+        private val transform: KtExpression
+) : AssignToVariableResultTransformation(loop, inputVariable, targetCollectionInitialization) {
+
+    override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
+        val lambda = generateLambda(inputVariable, transform)
+        return chainedCallGenerator.generate("flatMapTo($0) $1:'{}'", initialization.initializer, lambda)
     }
 }
 

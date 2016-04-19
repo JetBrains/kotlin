@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import org.jetbrains.kotlin.types.typeUtil.nullability
@@ -374,4 +375,27 @@ fun canChangeLocalVariableType(variable: KtProperty, newTypeText: String, loop: 
                                                        trace = DelegatingBindingTrace(bindingContext, "Temporary trace"))
     //TODO: what if there were errors before?
     return newBindingContext.diagnostics.none { it.severity == Severity.ERROR && !loopCopy.isAncestor(it.psiElement) }
+}
+
+private val NO_SIDE_EFFECT_STANDARD_CLASSES = setOf(
+        "java.util.ArrayList",
+        "java.util.LinkedList",
+        "java.util.HashSet",
+        "java.util.LinkedHashSet",
+        "java.util.HashMap",
+        "java.util.LinkedHashMap"
+)
+
+fun KtExpression.hasNoSideEffect(): Boolean {
+    val bindingContext = analyze(BodyResolveMode.PARTIAL)
+    if (ConstantExpressionEvaluator.getConstant(this, bindingContext) != null) return true
+
+    val callExpression = this as? KtCallExpression ?: return false//TODO: it can be qualified too
+    if (callExpression.valueArguments.any { it.getArgumentExpression()?.hasNoSideEffect() == false }) return false
+
+    val resolvedCall = callExpression.getResolvedCall(bindingContext) ?: return false
+    val constructorDescriptor = resolvedCall.resultingDescriptor as? ConstructorDescriptor ?: return false
+    val classDescriptor = constructorDescriptor.containingDeclaration
+    val classFqName = classDescriptor.importableFqName?.asString()
+    return classFqName in NO_SIDE_EFFECT_STANDARD_CLASSES
 }
