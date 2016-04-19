@@ -31,6 +31,7 @@ import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.psi.*
+import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.codeStyle.JavaCodeStyleManager
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.IncorrectOperationException
@@ -47,12 +48,12 @@ import org.jetbrains.kotlin.idea.caches.resolve.getJavaClassDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.ClassKind
+import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.insertMember
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.ClassKind
 import org.jetbrains.kotlin.idea.refactoring.*
 import org.jetbrains.kotlin.idea.util.DialogWithEditor
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -1017,6 +1018,8 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                             if (callElement != null) {
                                 setupCallTypeArguments(callElement, expression?.currentTypeParameters ?: Collections.emptyList())
                             }
+
+                            CodeStyleManager.getInstance(project).reformat(newDeclaration)
                         }
 
                         // change short type names to fully qualified ones (to be shortened below)
