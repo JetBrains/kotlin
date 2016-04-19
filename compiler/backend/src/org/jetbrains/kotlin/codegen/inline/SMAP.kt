@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.codegen.inline
 import gnu.trove.TIntIntHashMap
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.SourceInfo
-import org.jetbrains.kotlin.codegen.inline2.LineNumberToMap
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import java.util.*
@@ -136,7 +135,7 @@ interface SourceMapper {
         throw UnsupportedOperationException("fail")
     }
 
-    open fun visitLineNumber(iv: MethodVisitor, destLineNumber: Int, start: Label, source: LineNumberToMap): Int {
+    open fun visitLineNumber(iv: MethodVisitor, start: Label, source: Int, sourceName: String, sourcePath:String): Int {
         throw UnsupportedOperationException("fail")
     }
 

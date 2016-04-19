@@ -26,8 +26,6 @@ import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import java.util.*
 
-open class LineNumberToMap(val lineNumberToMap: Int, val source: Int, val name: String, val path: String)
-
 open class NestedSourceMapper(
         override val parent: SourceMapper, val ranges: List<RangeMapping>, sourceInfo: SourceInfo
 ) : DefaultSourceMapper(sourceInfo) {
@@ -42,7 +40,7 @@ open class NestedSourceMapper(
         } else {
             val findMappingIfExists = findMappingIfExists(lineNumber)!!
             val sourceLineNumber = findMappingIfExists.mapDestToSource(lineNumber)
-            val visitLineNumber = parent.visitLineNumber(iv, lineNumber, start, LineNumberToMap(lineNumber, sourceLineNumber, findMappingIfExists.parent!!.name, findMappingIfExists.parent!!.path))
+            val visitLineNumber = parent.visitLineNumber(iv, start, sourceLineNumber, findMappingIfExists.parent!!.name, findMappingIfExists.parent!!.path)
             if (visitLineNumber > 0) {
                 visited.put(lineNumber, visitLineNumber)
             }
@@ -125,13 +123,13 @@ open class DefaultSourceMapper @JvmOverloads constructor(
         iv.visitLineNumber(lineNumber, start)
     }
 
-    override fun visitLineNumber(iv: MethodVisitor, destLineNumber: Int, start: Label, source: LineNumberToMap): Int {
-        if (source.source < 0) {
+    override fun visitLineNumber(iv: MethodVisitor, start: Label, source: Int, sourceName: String, sourcePath: String): Int {
+        if (source < 0) {
             //no source information, so just skip this linenumber
             return -1
         }
-        visitSource(source.name, source.path)
-        val mappedLineIndex = createMapping(source.source)
+        visitSource(sourceName, sourcePath)
+        val mappedLineIndex = createMapping(source)
         iv.visitLineNumber(mappedLineIndex, start)
         return mappedLineIndex
 
