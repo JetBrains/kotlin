@@ -22,9 +22,7 @@ import com.intellij.formatting.SpacingBuilder
 import com.intellij.formatting.SpacingBuilder.RuleBuilder
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiWhiteSpace
-import com.intellij.psi.TokenType
 import com.intellij.psi.codeStyle.CodeStyleSettings
-import com.intellij.psi.impl.source.tree.TreeUtil
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeTypes.*
@@ -147,15 +145,9 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             beforeInside(IDENTIFIER, CLASS).spaces(1)
             beforeInside(IDENTIFIER, OBJECT_DECLARATION).spaces(1)
 
-            betweenInside(VAL_KEYWORD, IDENTIFIER, PROPERTY).spaces(1)
-            betweenInside(VAR_KEYWORD, IDENTIFIER, PROPERTY).spaces(1)
-            betweenInside(VAL_KEYWORD, TYPE_REFERENCE, PROPERTY).spaces(1)
-            betweenInside(VAR_KEYWORD, TYPE_REFERENCE, PROPERTY).spaces(1)
+            after(VAL_KEYWORD).spaces(1)
+            after(VAR_KEYWORD).spaces(1)
             beforeInside(PROPERTY_ACCESSOR, PROPERTY).spacing(1, 0, 0, true, 0)
-            betweenInside(VAL_KEYWORD, IDENTIFIER, VALUE_PARAMETER).spaces(1)
-            betweenInside(VAR_KEYWORD, IDENTIFIER, VALUE_PARAMETER).spaces(1)
-            betweenInside(VAL_KEYWORD, TYPE_REFERENCE, VALUE_PARAMETER).spaces(1)
-            betweenInside(VAR_KEYWORD, TYPE_REFERENCE, VALUE_PARAMETER).spaces(1)
             betweenInside(TYPE_PARAMETER_LIST, IDENTIFIER, PROPERTY).spaces(1)
             betweenInside(TYPE_REFERENCE, DOT, PROPERTY).spacing(0, 0, 0, false, 0)
             betweenInside(DOT, IDENTIFIER, PROPERTY).spacing(0, 0, 0, false, 0)
@@ -164,11 +156,10 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             afterInside(RETURN_KEYWORD, RETURN).spaces(1)
             afterInside(LABEL_QUALIFIER, RETURN).spaces(1)
 
-            betweenInside(FUN_KEYWORD, IDENTIFIER, FUN).spaces(1)
-            betweenInside(FUN_KEYWORD, TYPE_REFERENCE, FUN).spaces(1)
+            betweenInside(FUN_KEYWORD, VALUE_PARAMETER_LIST, FUN).spacing(0, 0, 0, false, 0)
+            after(FUN_KEYWORD).spaces(1)
             betweenInside(TYPE_PARAMETER_LIST, TYPE_REFERENCE, FUN).spaces(1)
             betweenInside(TYPE_PARAMETER_LIST, IDENTIFIER, FUN).spaces(1)
-            betweenInside(FUN_KEYWORD, VALUE_PARAMETER_LIST, FUN).spacing(0, 0, 0, false, 0)
             betweenInside(TYPE_REFERENCE, DOT, FUN).spacing(0, 0, 0, false, 0)
             betweenInside(DOT, IDENTIFIER, FUN).spacing(0, 0, 0, false, 0)
             afterInside(IDENTIFIER, FUN).spacing(0, 0, 0, false, 0)

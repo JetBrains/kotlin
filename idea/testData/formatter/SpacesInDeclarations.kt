@@ -58,6 +58,12 @@ public       var         varWithAccessors2:    Int
     }
 }
 //-----------------------
+val       <T> some1 = 1
+val<T> some2 = 1
+val
+        <T> some3 = 1
+
+//-----------------------
 annotation class A1
 annotation class A2
 
@@ -95,3 +101,10 @@ public
 object    FooObject2   {
 
 }
+
+fun<T> foo_1() {}
+fun     <T> foo_2() {}
+
+fun
+        <T>
+        foo_3() {}
