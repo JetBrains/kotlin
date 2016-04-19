@@ -16,134 +16,113 @@
 
 package org.jetbrains.kotlin.resolve.inline;
 
-import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.diagnostics.Errors;
-import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.resolve.FunctionAnalyzerExtension;
-import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
-import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.FunctionAnalyzerExtension
+import org.jetbrains.kotlin.resolve.annotations.isInlineOnlyOrReified
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 
-import java.util.List;
+object InlineAnalyzerExtension : FunctionAnalyzerExtension.AnalyzerExtension {
 
-public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.AnalyzerExtension {
+    override fun process(descriptor: FunctionDescriptor, function: KtNamedFunction, trace: BindingTrace) {
+        assert(InlineUtil.isInline(descriptor)) { "This method should be invoked on inline function: " + descriptor }
 
-    public static final InlineAnalyzerExtension INSTANCE = new InlineAnalyzerExtension();
+        checkDefaults(descriptor, function, trace)
+        checkNotVirtual(descriptor, function, trace)
+        checkHasInlinableAndNullability(descriptor, function, trace)
 
-    private InlineAnalyzerExtension() {
-    }
-
-    @Override
-    public void process(
-            @NotNull final FunctionDescriptor descriptor, @NotNull KtNamedFunction function, @NotNull final BindingTrace trace
-    ) {
-        assert InlineUtil.isInline(descriptor) : "This method should be invoked on inline function: " + descriptor;
-
-        checkDefaults(descriptor, function, trace);
-        checkNotVirtual(descriptor, function, trace);
-        checkHasInlinableAndNullability(descriptor, function, trace);
-
-        KtVisitorVoid visitor = new KtVisitorVoid() {
-            @Override
-            public void visitKtElement(@NotNull KtElement element) {
-                super.visitKtElement(element);
-                element.acceptChildren(this);
+        val visitor = object : KtVisitorVoid() {
+            override fun visitKtElement(element: KtElement) {
+                super.visitKtElement(element)
+                element.acceptChildren(this)
             }
 
-            @Override
-            public void visitClass(@NotNull KtClass klass) {
-                trace.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(klass, klass, descriptor));
+            override fun visitClass(klass: KtClass) {
+                trace.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(klass, klass, descriptor))
             }
 
-            @Override
-            public void visitNamedFunction(@NotNull KtNamedFunction function) {
-                if (function.getParent().getParent() instanceof KtObjectDeclaration) {
-                    super.visitNamedFunction(function);
-                } else {
-                    trace.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(function, function, descriptor));
+            override fun visitNamedFunction(function: KtNamedFunction) {
+                if (function.parent.parent is KtObjectDeclaration) {
+                    super.visitNamedFunction(function)
+                }
+                else {
+                    trace.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(function, function, descriptor))
                 }
             }
-        };
+        }
 
-        function.acceptChildren(visitor);
+        function.acceptChildren(visitor)
     }
 
-    private static void checkDefaults(
-            @NotNull FunctionDescriptor functionDescriptor,
-            @NotNull KtFunction function,
-            @NotNull BindingTrace trace
-    ) {
-        List<KtParameter> jetParameters = function.getValueParameters();
-        for (ValueParameterDescriptor parameter : functionDescriptor.getValueParameters()) {
-            if (DescriptorUtilsKt.hasDefaultValue(parameter)) {
-                KtParameter jetParameter = jetParameters.get(parameter.getIndex());
-                //report not supported default only on inlinable lambda and on parameter with inherited default (there is some problems to inline it)
-                if (checkInlinableParameter(parameter, jetParameter, functionDescriptor, null) || !parameter.declaresDefaultValue()) {
-                    trace.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(jetParameter, jetParameter, functionDescriptor));
+    private fun checkDefaults(
+            functionDescriptor: FunctionDescriptor,
+            function: KtFunction,
+            trace: BindingTrace) {
+        val ktParameters = function.valueParameters
+        for (parameter in functionDescriptor.valueParameters) {
+            if (parameter.hasDefaultValue()) {
+                val ktParameter = ktParameters[parameter.index]
+                //report unsupported default only on inlinable lambda and on parameter with inherited default (there is some problems to inline it)
+                if (checkInlinableParameter(parameter, ktParameter, functionDescriptor, null) || !parameter.declaresDefaultValue()) {
+                    trace.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(ktParameter, ktParameter, functionDescriptor))
                 }
             }
         }
     }
 
-    private static void checkNotVirtual(
-            @NotNull FunctionDescriptor functionDescriptor,
-            @NotNull KtFunction function,
-            @NotNull BindingTrace trace
-    ) {
-        if (Visibilities.isPrivate(functionDescriptor.getVisibility()) || functionDescriptor.getModality() == Modality.FINAL) {
-            return;
+    private fun checkNotVirtual(
+            functionDescriptor: FunctionDescriptor,
+            function: KtFunction,
+            trace: BindingTrace) {
+        if (Visibilities.isPrivate(functionDescriptor.visibility) || functionDescriptor.modality === Modality.FINAL) {
+            return
         }
 
-        if (functionDescriptor.getContainingDeclaration() instanceof PackageFragmentDescriptor) {
-            return;
+        if (functionDescriptor.containingDeclaration is PackageFragmentDescriptor) {
+            return
         }
 
-        trace.report(Errors.DECLARATION_CANT_BE_INLINED.on(function));
+        trace.report(Errors.DECLARATION_CANT_BE_INLINED.on(function))
     }
 
 
-    private static void checkHasInlinableAndNullability(
-            @NotNull FunctionDescriptor functionDescriptor,
-            @NotNull KtFunction function,
-            @NotNull BindingTrace trace
-    ) {
-        boolean hasInlinable = false;
-        List<ValueParameterDescriptor> parameters = functionDescriptor.getValueParameters();
-        int index = 0;
-        for (ValueParameterDescriptor parameter : parameters) {
-            hasInlinable |= checkInlinableParameter(parameter, function.getValueParameters().get(index++), functionDescriptor, trace);
+    private fun checkHasInlinableAndNullability(
+            functionDescriptor: FunctionDescriptor,
+            function: KtFunction,
+            trace: BindingTrace) {
+        var hasInlinable = false
+        val parameters = functionDescriptor.valueParameters
+        var index = 0
+        for (parameter in parameters) {
+            hasInlinable = hasInlinable or checkInlinableParameter(parameter, function.valueParameters[index++], functionDescriptor, trace)
         }
 
-        hasInlinable |= InlineUtil.containsReifiedTypeParameters(functionDescriptor);
+        hasInlinable = hasInlinable or InlineUtil.containsReifiedTypeParameters(functionDescriptor)
 
-        if (!hasInlinable && !AnnotationUtilKt.isInlineOnlyOrReified(functionDescriptor)) {
-            KtModifierList modifierList = function.getModifierList();
-            PsiElement inlineModifier = modifierList == null ? null : modifierList.getModifier(KtTokens.INLINE_KEYWORD);
-            PsiElement reportOn = inlineModifier == null ? function : inlineModifier;
-            trace.report(Errors.NOTHING_TO_INLINE.on(reportOn, functionDescriptor));
+        if (!hasInlinable && !functionDescriptor.isInlineOnlyOrReified()) {
+            val modifierList = function.modifierList
+            val inlineModifier = modifierList?.getModifier(KtTokens.INLINE_KEYWORD)
+            val reportOn = inlineModifier ?: function
+            trace.report(Errors.NOTHING_TO_INLINE.on(reportOn, functionDescriptor))
         }
     }
 
-    public static boolean checkInlinableParameter(
-            @NotNull ParameterDescriptor parameter,
-            @NotNull KtElement expression,
-            @NotNull CallableDescriptor functionDescriptor,
-            @Nullable BindingTrace trace
-    ) {
+    fun checkInlinableParameter(
+            parameter: ParameterDescriptor,
+            expression: KtElement,
+            functionDescriptor: CallableDescriptor,
+            trace: BindingTrace?): Boolean {
         if (InlineUtil.isInlineLambdaParameter(parameter)) {
-            if (parameter.getType().isMarkedNullable()) {
-                if (trace != null) {
-                    trace.report(Errors.NULLABLE_INLINE_PARAMETER.on(expression, expression, functionDescriptor));
-                }
+            if (parameter.type.isMarkedNullable) {
+                trace?.report(Errors.NULLABLE_INLINE_PARAMETER.on(expression, expression, functionDescriptor))
             }
             else {
-                return true;
+                return true
             }
         }
-        return false;
+        return false
     }
 }
