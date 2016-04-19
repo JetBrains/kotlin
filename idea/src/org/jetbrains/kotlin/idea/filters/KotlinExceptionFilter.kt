@@ -122,12 +122,12 @@ class KotlinExceptionFilter(private val searchScope: GlobalSearchScope) : Filter
 
         val inlineInfo = arrayListOf<InlineFunctionHyperLinkInfo.InlineInfo>()
 
-        val (inlineFunctionBodyFile, inlineFunctionBodyLine) = parseStrata(smapData.kotlin1, line, project) ?: return null
+        val (inlineFunctionBodyFile, inlineFunctionBodyLine) = parseStrata(smapData.kotlin1, line, project, false) ?: return null
         inlineInfo.add(InlineFunctionHyperLinkInfo.InlineInfo.InlineFunctionBodyInfo(
                 inlineFunctionBodyFile.virtualFile,
                 inlineFunctionBodyLine))
 
-        val kotlin2 = parseStrata(smapData.kotlin2, line, project)
+        val kotlin2 = parseStrata(smapData.kotlin2, line, project, true)
         if (kotlin2 != null) {
             inlineInfo.add(InlineFunctionHyperLinkInfo.InlineInfo.CallSiteInfo(
                     kotlin2.first.virtualFile,
@@ -137,7 +137,7 @@ class KotlinExceptionFilter(private val searchScope: GlobalSearchScope) : Filter
         return InlineFunctionHyperLinkInfo(project, inlineInfo)
     }
 
-    private fun parseStrata(strata: String?, line: Int, project: Project): Pair<KtFile, Int>? {
+    private fun parseStrata(strata: String?, line: Int, project: Project, isKotlin2: Boolean): Pair<KtFile, Int>? {
         if (strata == null) return null
 
         val mappings = SMAPParser.parse(strata)
@@ -149,7 +149,8 @@ class KotlinExceptionFilter(private val searchScope: GlobalSearchScope) : Filter
         val newJvmName = JvmClassName.byInternalName(mappingInfo.path)
         val newSourceFile = DebuggerUtils.findSourceFileForClassIncludeLibrarySources(project, searchScope, newJvmName, mappingInfo.name) ?: return null
 
-        return newSourceFile to mappingInfo.getIntervalIfContains(line)!!.mapDestToSource(line) - 1
+        val interval = mappingInfo.getIntervalIfContains(line)!!
+        return newSourceFile to (if (isKotlin2) interval.source else interval.mapDestToSource(line)) - 1
     }
 
     private fun readDebugInfo(bytes: ByteArray): SmapData? {
