@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.intentions.loopToCallChain
 
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.search.LocalSearchScope
@@ -23,10 +24,12 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isNullExpression
@@ -38,6 +41,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.typeUtil.TypeNullability
@@ -329,4 +334,44 @@ fun KtExpression.isSimpleCollectionInstantiation(): CollectionKind? {
         "java.util.HashSet", "java.util.LinkedHashSet" -> CollectionKind.SET
         else -> null
     }
+}
+
+fun canChangeLocalVariableType(variable: KtProperty, newTypeText: String, loop: KtForExpression): Boolean {
+    val bindingContext = variable.analyze(BodyResolveMode.FULL)
+
+    // analyze the closest block which is not used as expression
+    val block = variable.parents
+                        .filterIsInstance<KtBlockExpression>()
+                        .firstOrNull { bindingContext[BindingContext.USED_AS_EXPRESSION, it] != true }
+                ?: return false
+
+    val KEY = Key<Unit>("KEY")
+    block.putCopyableUserData(KEY, Unit)
+    variable.putCopyableUserData(KEY, Unit)
+    loop.putCopyableUserData(KEY, Unit)
+
+    val fileCopy = block.containingFile.copied()
+    val blockCopy: KtBlockExpression
+    val variableCopy: KtProperty
+    val loopCopy: KtForExpression
+    try {
+        blockCopy = fileCopy.findDescendantOfType<KtBlockExpression> { it.getCopyableUserData(KEY) != null }!!
+        variableCopy = blockCopy.findDescendantOfType<KtProperty> { it.getCopyableUserData(KEY) != null }!!
+        loopCopy = blockCopy.findDescendantOfType<KtForExpression> { it.getCopyableUserData(KEY) != null }!!
+    }
+    finally {
+        block.putCopyableUserData(KEY, null)
+        variable.putCopyableUserData(KEY, null)
+        loop.putCopyableUserData(KEY, null)
+    }
+
+    variableCopy.typeReference = KtPsiFactory(block).createType(newTypeText)
+
+    val resolutionScope = block.getResolutionScope(bindingContext, block.getResolutionFacade())
+    val newBindingContext = blockCopy.analyzeInContext(scope = resolutionScope,
+                                                       contextExpression = block,
+                                                       dataFlowInfo = bindingContext.getDataFlowInfo(block),
+                                                       trace = DelegatingBindingTrace(bindingContext, "Temporary trace"))
+    //TODO: what if there were errors before?
+    return newBindingContext.diagnostics.none { it.severity == Severity.ERROR && !loopCopy.isAncestor(it.psiElement) }
 }
