@@ -1319,6 +1319,7 @@
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="WARNING"
+                     runForWholeFile="true"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.UnusedReceiverParameterInspection"
@@ -1333,6 +1334,7 @@
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="WARNING"
+                     runForWholeFile="true"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantSamConstructorInspection"
