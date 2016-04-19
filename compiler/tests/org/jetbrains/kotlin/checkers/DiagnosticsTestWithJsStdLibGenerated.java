@@ -571,19 +571,4 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
             }
         }
     }
-
-    @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/unsupportedFeatures")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class UnsupportedFeatures extends AbstractDiagnosticsTestWithJsStdLib {
-        public void testAllFilesPresentInUnsupportedFeatures() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/unsupportedFeatures"), Pattern.compile("^(.+)\\.kt$"), true);
-        }
-
-        @TestMetadata("localClassifier.kt")
-        public void testLocalClassifier() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/unsupportedFeatures/localClassifier.kt");
-            doTest(fileName);
-        }
-    }
 }
