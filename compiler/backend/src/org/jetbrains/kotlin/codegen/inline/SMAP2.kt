@@ -81,8 +81,11 @@ open class InlineLambdaSourceMapper(
 }
 
 
-open class DefaultSourceMapper(val sourceInfo: SourceInfo): SourceMapper {
-    protected var maxUsedValue: Int = sourceInfo.linesInFile
+open class DefaultSourceMapper @JvmOverloads constructor(
+        val sourceInfo: SourceInfo,
+        protected var maxUsedValue: Int = sourceInfo.linesInFile
+) : SourceMapper {
+
     var lastVisited: RawFileMapping? = null
     private var lastMappedWithChanges: RawFileMapping? = null
     private var fileMappings: LinkedHashMap<String, RawFileMapping> = linkedMapOf()
@@ -92,7 +95,7 @@ open class DefaultSourceMapper(val sourceInfo: SourceInfo): SourceMapper {
         val name = sourceInfo.source
         val path = sourceInfo.pathOrCleanFQN
         origin = RawFileMapping(name, path)
-        origin.initRange(1, maxUsedValue)
+        origin.initRange(1, sourceInfo.linesInFile)
         fileMappings.put(createKey(name, path), origin)
         lastVisited = origin
     }

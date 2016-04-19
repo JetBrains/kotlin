@@ -152,7 +152,8 @@ interface SourceMapper {
         }
 
         fun createFromSmap(smap: SMAP): SourceMapper {
-            val sourceMapper = org.jetbrains.kotlin.codegen.inline2.DefaultSourceMapper(smap.sourceInfo)
+            val maxUsedIndex = smap.fileMappings.maxBy { it.lineMappings.maxBy { it.maxDest }!!.maxDest }!!.lineMappings.maxBy { it.maxDest }!!.maxDest
+            val sourceMapper = org.jetbrains.kotlin.codegen.inline2.DefaultSourceMapper(smap.sourceInfo, maxUsedIndex)
             smap.fileMappings.asSequence()
                     //default one mapped through sourceInfo
                     .filterNot { it == smap.default }
@@ -336,6 +337,9 @@ open class FileMapping(val name: String, val path: String) {
 data class RangeMapping(val source: Int, val dest: Int, var range: Int = 1) {
     var parent: FileMapping? = null
     private val skip = source == -1 && dest == -1
+
+    val maxDest: Int
+        get() = dest + range - 1
 
     operator fun contains(destLine: Int): Boolean {
         return if (skip) true else dest <= destLine && destLine < dest + range

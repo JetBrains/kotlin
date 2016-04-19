@@ -123,4 +123,4 @@ object SMAPTestUtil {
 }
 
 val RangeMapping.toRange: IntRange
-           get() = this.dest..this.dest + this.range - 1
+           get() = this.dest..this.maxDest
