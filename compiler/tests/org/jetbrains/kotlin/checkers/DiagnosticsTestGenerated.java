@@ -9417,6 +9417,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("overrideWithInline.kt")
+            public void testOverrideWithInline() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inline/overrideWithInline.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("parenthesized.kt")
             public void testParenthesized() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inline/parenthesized.kt");

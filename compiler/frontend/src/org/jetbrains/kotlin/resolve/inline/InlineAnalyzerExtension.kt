@@ -31,7 +31,7 @@ object InlineAnalyzerExtension : FunctionAnalyzerExtension.AnalyzerExtension {
         assert(InlineUtil.isInline(descriptor)) { "This method should be invoked on inline function: " + descriptor }
 
         checkDefaults(descriptor, function, trace)
-        checkNotVirtual(descriptor, function, trace)
+        checkModalityAndOverrides(descriptor, function, trace)
         checkHasInlinableAndNullability(descriptor, function, trace)
 
         val visitor = object : KtVisitorVoid() {
@@ -73,15 +73,35 @@ object InlineAnalyzerExtension : FunctionAnalyzerExtension.AnalyzerExtension {
         }
     }
 
-    private fun checkNotVirtual(
+    private fun checkModalityAndOverrides(
             functionDescriptor: FunctionDescriptor,
             function: KtFunction,
             trace: BindingTrace) {
-        if (Visibilities.isPrivate(functionDescriptor.visibility) || functionDescriptor.modality === Modality.FINAL) {
+        if (functionDescriptor.containingDeclaration is PackageFragmentDescriptor) {
             return
         }
 
-        if (functionDescriptor.containingDeclaration is PackageFragmentDescriptor) {
+        if (Visibilities.isPrivate(functionDescriptor.visibility)) {
+            return
+        }
+
+        val overridesAnything = functionDescriptor.overriddenDescriptors.isNotEmpty()
+
+        if (overridesAnything) {
+            val ktTypeParameters = function.typeParameters
+            for (typeParameter in functionDescriptor.typeParameters) {
+                if (typeParameter.isReified) {
+                    val ktTypeParameter = ktTypeParameters[typeParameter.index]
+                    val reportOn = ktTypeParameter.modifierList?.getModifier(KtTokens.REIFIED_KEYWORD) ?: ktTypeParameter
+                    trace.report(Errors.REIFIED_TYPE_PARAMETER_IN_OVERRIDE.on(reportOn))
+                }
+            }
+        }
+
+        if (functionDescriptor.modality == Modality.FINAL) {
+            if (overridesAnything) {
+                trace.report(Errors.OVERRIDE_BY_INLINE.on(function))
+            }
             return
         }
 
