@@ -5,5 +5,6 @@
 
     <extensions defaultExtensionNs="org.intellij.intelliLang">
         <languageSupport implementation="org.jetbrains.kotlin.idea.injection.KotlinLanguageInjectionSupport"/>
+        <injectionConfig config="injection/kotlinInjections.xml"/>
     </extensions>
 </idea-plugin>

@@ -31,6 +31,7 @@ import org.intellij.plugins.intelliLang.inject.config.InjectionPlace
 import org.intellij.plugins.intelliLang.references.FileReferenceInjector
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 
 class KotlinInjectionTest : KotlinLightCodeInsightFixtureTestCase() {
     fun testInjectUnInjectOnSimpleString() {
@@ -52,6 +53,14 @@ class KotlinInjectionTest : KotlinLightCodeInsightFixtureTestCase() {
     fun testInjectionOnJavaPredefinedMethodWithAnnotation() = testInjectionPresent(
             """
             |val test1 = java.util.regex.Pattern.compile("<caret>pattern")
+            """,
+            RegExpLanguage.INSTANCE.id,
+            unInjectShouldBePresent = false
+    )
+
+    fun testInjectionOnKotlinPredefinedMethodWithRuntime() = testInjectionPresent(
+            """
+            |val test1 = kotlin.text.Regex("<caret>some")
             """,
             RegExpLanguage.INSTANCE.id,
             unInjectShouldBePresent = false
@@ -285,11 +294,12 @@ class KotlinInjectionTest : KotlinLightCodeInsightFixtureTestCase() {
     )
 
     override fun getProjectDescriptor(): LightProjectDescriptor {
-        if (getTestName(true).endsWith("WithAnnotation")) {
-            return KotlinLightProjectDescriptor.INSTANCE
+        val testName = getTestName(true)
+        return when {
+            testName.endsWith("WithAnnotation") -> KotlinLightProjectDescriptor.INSTANCE
+            testName.endsWith("WithRuntime") -> KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+            else -> JAVA_LATEST
         }
-
-        return JAVA_LATEST
     }
 
     private fun testInjectionPresent(text: String, languageId: String? = null, unInjectShouldBePresent: Boolean = true) {

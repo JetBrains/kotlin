@@ -24,7 +24,6 @@ import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.PsiTreeUtil.getDeepestLast
-import com.intellij.util.ArrayUtil
 import com.intellij.util.Processor
 import org.intellij.plugins.intelliLang.Configuration
 import org.intellij.plugins.intelliLang.inject.AbstractLanguageInjectionSupport
@@ -32,6 +31,7 @@ import org.intellij.plugins.intelliLang.inject.InjectLanguageAction
 import org.intellij.plugins.intelliLang.inject.InjectedLanguage
 import org.intellij.plugins.intelliLang.inject.TemporaryPlacesRegistry
 import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.idea.patterns.KotlinPatterns
 import org.jetbrains.kotlin.idea.util.addAnnotation
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.findAnnotation
@@ -48,9 +48,11 @@ val LINE_LANGUAGE_REGEXP_COMMENT = Regex("//\\s*language=[\\w-]+")
 class KotlinLanguageInjectionSupport : AbstractLanguageInjectionSupport() {
     override fun getId(): String = KOTLIN_SUPPORT_ID
 
-    override fun getPatternClasses() = ArrayUtil.EMPTY_CLASS_ARRAY
+    override fun getPatternClasses() = arrayOf(KotlinPatterns::class.java)
 
     override fun isApplicableTo(host: PsiLanguageInjectionHost?) = host is KtElement
+
+    override fun useDefaultInjector(host: PsiLanguageInjectionHost?): Boolean = false
 
     override fun addInjectionInPlace(language: Language?, host: PsiLanguageInjectionHost?): Boolean {
         if (language == null || host == null) return false

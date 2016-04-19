@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="LanguageInjectionConfiguration">
+    <injection language="RegExp" injector-id="kotlin">
+        <display-name>Kotlin</display-name>
+        <place><![CDATA[
+            psiParameter().ofMethod(0, psiMethod().withName("Regex").withParameters("kotlin.String").definedInClass("kotlin.text.Regex"))
+            ]]></place>
+    </injection>
+</component>

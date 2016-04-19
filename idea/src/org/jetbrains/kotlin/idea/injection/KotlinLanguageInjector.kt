@@ -26,10 +26,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.intellij.plugins.intelliLang.Configuration
 import org.intellij.plugins.intelliLang.inject.InjectorUtils
 import org.intellij.plugins.intelliLang.inject.java.JavaLanguageInjectionSupport
-import org.jetbrains.kotlin.psi.KtCallExpression
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtValueArgument
-import org.jetbrains.kotlin.psi.KtValueArgumentList
+import org.jetbrains.kotlin.psi.*
 import java.util.*
 
 class KotlinLanguageInjector : LanguageInjector {
@@ -66,18 +63,49 @@ class KotlinLanguageInjector : LanguageInjector {
         for (reference in callee.references) {
             ProgressManager.checkCanceled()
 
-            val javaMethod = reference.resolve()
-            if (javaMethod !is PsiMethod) continue
-
-            val argumentIndex = (argument.parent as KtValueArgumentList).arguments.indexOf(argument)
-            val psiParameter = javaMethod.parameterList.parameters.getOrNull(argumentIndex) ?: continue
-
-            val injections = Configuration.getInstance().getInjections(JavaLanguageInjectionSupport.JAVA_SUPPORT_ID)
-
-            for (injection in injections) {
-                if (injection.acceptsPsiElement(psiParameter)) {
-                    return InjectionInfo(injection.injectedLanguageId, injection.prefix, injection.suffix)
+            val resolvedTo = reference.resolve()
+            if (resolvedTo is PsiMethod) {
+                val injectionForJavaMethod = injectionForJavaMethod(argument, resolvedTo)
+                if (injectionForJavaMethod != null) {
+                    return injectionForJavaMethod
                 }
+            }
+            else if (resolvedTo is KtFunction) {
+                val injectionForJavaMethod = injectionForKotlinCall(argument, resolvedTo)
+                if (injectionForJavaMethod != null) {
+                    return injectionForJavaMethod
+                }
+            }
+        }
+
+        return null
+    }
+
+    private fun injectionForJavaMethod(argument: KtValueArgument, javaMethod: PsiMethod): InjectionInfo? {
+        val argumentIndex = (argument.parent as KtValueArgumentList).arguments.indexOf(argument)
+        val psiParameter = javaMethod.parameterList.parameters.getOrNull(argumentIndex) ?: return null
+
+        val injections = Configuration.getInstance().getInjections(JavaLanguageInjectionSupport.JAVA_SUPPORT_ID)
+
+        for (injection in injections) {
+            if (injection.acceptsPsiElement(psiParameter)) {
+                // ?? if (!processXmlInjections(injection, owner, method, paramIndex)) {
+                return InjectionInfo(injection.injectedLanguageId, injection.prefix, injection.suffix)
+            }
+        }
+
+        return null
+    }
+
+    private fun injectionForKotlinCall(argument: KtValueArgument, ktFunction: KtFunction): InjectionInfo? {
+        val argumentIndex = (argument.parent as KtValueArgumentList).arguments.indexOf(argument)
+        val ktParameter = ktFunction.valueParameters.getOrNull(argumentIndex) ?: return null
+
+        val injections = Configuration.getInstance().getInjections(KOTLIN_SUPPORT_ID)
+
+        for (injection in injections) {
+            if (injection.acceptsPsiElement(ktParameter)) {
+                return InjectionInfo(injection.injectedLanguageId, injection.prefix, injection.suffix)
             }
         }
 
