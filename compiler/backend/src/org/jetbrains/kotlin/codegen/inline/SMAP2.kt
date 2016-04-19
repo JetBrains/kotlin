@@ -30,20 +30,23 @@ open class NestedSourceMapper(
         override val parent: SourceMapper, val ranges: List<RangeMapping>, sourceInfo: SourceInfo
 ) : DefaultSourceMapper(sourceInfo) {
 
-    val visited = TIntIntHashMap()
+    val visitedLines = TIntIntHashMap()
+
+    var lastVisitedRange: RangeMapping? = null
 
     override fun visitLineNumber(iv: MethodVisitor, lineNumber: Int, start: Label) {
-        val mappedLineNumber = visited.get(lineNumber)
+        val mappedLineNumber = visitedLines.get(lineNumber)
 
         if (mappedLineNumber > 0) {
             iv.visitLineNumber(mappedLineNumber, start)
         } else {
-            val findMappingIfExists = findMappingIfExists(lineNumber)!!
-            val sourceLineNumber = findMappingIfExists.mapDestToSource(lineNumber)
-            val visitLineNumber = parent.visitLineNumber(iv, start, sourceLineNumber, findMappingIfExists.parent!!.name, findMappingIfExists.parent!!.path)
+            val rangeForMapping = if (lastVisitedRange?.contains(lineNumber) ?: false) lastVisitedRange!! else findMappingIfExists(lineNumber)!!
+            val sourceLineNumber = rangeForMapping.mapDestToSource(lineNumber)
+            val visitLineNumber = parent.visitLineNumber(iv, start, sourceLineNumber, rangeForMapping.parent!!.name, rangeForMapping.parent!!.path)
             if (visitLineNumber > 0) {
-                visited.put(lineNumber, visitLineNumber)
+                visitedLines.put(lineNumber, visitLineNumber)
             }
+            lastVisitedRange = rangeForMapping
         }
     }
 
