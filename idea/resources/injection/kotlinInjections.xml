@@ -3,7 +3,7 @@
     <injection language="RegExp" injector-id="kotlin">
         <display-name>Kotlin</display-name>
         <place><![CDATA[
-            psiParameter().ofMethod(0, psiMethod().withName("Regex").withParameters("kotlin.String").definedInClass("kotlin.text.Regex"))
+            psiParameter().ofMethod(0, psiMethod().withName("Regex").definedInClass("kotlin.text.Regex"))
             ]]></place>
     </injection>
 </component>
