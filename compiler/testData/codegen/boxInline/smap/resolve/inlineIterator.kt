@@ -36,3 +36,10 @@ zzz/_1Kt
 1#1,14:1
 7#2:15
 *E
+*S KotlinDebug
+*F
++ 1 2.kt
+_2Kt
+*L
+7#1:15
+*E

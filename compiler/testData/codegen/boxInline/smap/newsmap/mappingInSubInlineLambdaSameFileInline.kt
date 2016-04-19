@@ -50,6 +50,13 @@ test/_1Kt
 1#1,26:1
 6#2,4:27
 *E
+*S KotlinDebug
+*F
++ 1 2.kt
+_2Kt
+*L
+14#1,4:27
+*E
 
 SMAP
 2.kt
@@ -63,4 +70,11 @@ _2Kt
 *L
 1#1,26:1
 6#2,3:27
+*E
+*S KotlinDebug
+*F
++ 1 2.kt
+_2Kt$box$1$1
+*L
+16#1,3:27
 *E

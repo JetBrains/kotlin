@@ -51,6 +51,14 @@ test/_1Kt
 9#2:19
 5#2:20
 *E
+*S KotlinDebug
+*F
++ 1 2.kt
+_2Kt
+*L
+7#1:19
+7#1:20
+*E
 
 SMAP
 1.kt

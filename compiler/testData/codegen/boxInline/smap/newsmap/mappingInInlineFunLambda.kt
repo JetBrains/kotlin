@@ -44,6 +44,14 @@ test/_1Kt
 1#1,18:1
 6#2,3:19
 *E
+*S KotlinDebug
+*F
++ 1 1.kt
+test/_1Kt$test$1
+*L
+13#1,3:19
+*E
+
 
 // FILE: 2.smap
 
@@ -59,6 +67,13 @@ test/_1Kt
 *L
 1#1,16:1
 11#2,6:17
+*E
+*S KotlinDebug
+*F
++ 1 2.kt
+_2Kt
+*L
+8#1,6:17
 *E
 
 SMAP

@@ -49,3 +49,10 @@ builders/_1Kt
 1#1,26:1
 6#2:27
 *E
+*S KotlinDebug
+*F
++ 1 2.kt
+_2Kt
+*L
+9#1:27
+*E
