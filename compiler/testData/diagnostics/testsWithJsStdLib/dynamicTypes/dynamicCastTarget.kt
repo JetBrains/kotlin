@@ -15,9 +15,9 @@ fun test(d: Any, dl: Collection<dynamic>) {
 
     when (d) {
         is <!DYNAMIC_NOT_ALLOWED!>dynamic<!> -> {}
-        is <!DYNAMIC_NOT_ALLOWED!>dynamic?<!> -> {}
+        is <!DYNAMIC_NOT_ALLOWED, DUPLICATE_LABEL_IN_WHEN!>dynamic?<!> -> {}
         !is <!DYNAMIC_NOT_ALLOWED!>dynamic<!> -> {}
-        !is <!DYNAMIC_NOT_ALLOWED!>dynamic?<!> -> {}
+        !is <!DYNAMIC_NOT_ALLOWED, DUPLICATE_LABEL_IN_WHEN!>dynamic?<!> -> {}
     }
 
     dl as List<dynamic>

@@ -19260,6 +19260,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("DuplicatedLabels.kt")
+            public void testDuplicatedLabels() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/DuplicatedLabels.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ElseOnNullableEnum.kt")
             public void testElseOnNullableEnum() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/ElseOnNullableEnum.kt");

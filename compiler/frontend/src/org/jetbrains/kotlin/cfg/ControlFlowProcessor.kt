@@ -1202,6 +1202,7 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             builder.bindLabel(doneLabel)
 
             mergeValues(branches, expression)
+            WhenChecker.checkDuplicatedLabels(expression, trace)
         }
 
         override fun visitObjectLiteralExpression(expression: KtObjectLiteralExpression) {

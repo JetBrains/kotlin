@@ -37,6 +37,8 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumClass
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
+import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
+import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import java.util.*
 
 interface WhenMissingCase {
@@ -332,6 +334,46 @@ object WhenChecker {
 
     fun containsNullCase(expression: KtWhenExpression, context: BindingContext) =
             WhenOnNullableExhaustivenessChecker.getMissingCases(expression, context, true).isEmpty()
+
+    fun checkDuplicatedLabels(expression: KtWhenExpression, trace: BindingTrace) {
+        if (expression.subjectExpression == null) return
+
+        val checkedTypes = HashSet<Pair<KotlinType, Boolean>>()
+        val checkedConstants = HashSet<CompileTimeConstant<*>>()
+        for (entry in expression.entries) {
+            if (entry.isElse) continue
+
+            conditions@ for (condition in entry.conditions) {
+                when (condition) {
+                    is KtWhenConditionWithExpression -> {
+                        val constantExpression = condition.expression ?: continue@conditions
+                        val constant = ConstantExpressionEvaluator.getConstant(
+                                constantExpression, trace.bindingContext) ?: continue@conditions
+                        if (checkedConstants.contains(constant)) {
+                            trace.report(Errors.DUPLICATE_LABEL_IN_WHEN.on(constantExpression))
+                        }
+                        else {
+                            checkedConstants.add(constant)
+                        }
+
+                    }
+                    is KtWhenConditionIsPattern -> {
+                        val typeReference = condition.typeReference ?: continue@conditions
+                        val type = trace.get(BindingContext.TYPE, typeReference) ?: continue@conditions
+                        val typeWithIsNegation = type to condition.isNegated
+                        if (checkedTypes.contains(typeWithIsNegation)) {
+                            trace.report(Errors.DUPLICATE_LABEL_IN_WHEN.on(typeReference))
+                        }
+                        else {
+                            checkedTypes.add(typeWithIsNegation)
+                        }
+                    }
+                    else -> {}
+                }
+            }
+        }
+
+    }
 
     fun checkDeprecatedWhenSyntax(trace: BindingTrace, expression: KtWhenExpression) {
         if (expression.subjectExpression != null) return
