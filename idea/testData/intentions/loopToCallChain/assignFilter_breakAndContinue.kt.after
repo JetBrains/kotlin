@@ -1,0 +1,19 @@
+// WITH_RUNTIME
+import java.util.ArrayList
+
+fun foo(): List<String> {
+    while (true) {
+        <caret>val result = list().filter { it.length > 0 }
+
+        if (bar1()) continue
+        if (bar2()) break
+
+        return result
+    }
+
+    return emptyList()
+}
+
+fun list() = listOf("a")
+fun bar1() = true
+fun bar2() = true
