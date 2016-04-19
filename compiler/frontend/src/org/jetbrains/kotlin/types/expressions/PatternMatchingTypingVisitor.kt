@@ -60,10 +60,11 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
             contextWithExpectedType: ExpressionTypingContext,
             @Suppress("UNUSED_PARAMETER") isStatement: Boolean
     ): KotlinTypeInfo {
-        WhenChecker.checkDeprecatedWhenSyntax(contextWithExpectedType.trace, expression)
-        WhenChecker.checkReservedPrefix(contextWithExpectedType.trace, expression)
+        val trace = contextWithExpectedType.trace
+        WhenChecker.checkDeprecatedWhenSyntax(trace, expression)
+        WhenChecker.checkReservedPrefix(trace, expression)
 
-        components.dataFlowAnalyzer.recordExpectedType(contextWithExpectedType.trace, expression, contextWithExpectedType.expectedType)
+        components.dataFlowAnalyzer.recordExpectedType(trace, expression, contextWithExpectedType.expectedType)
 
         val contextBeforeSubject = contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT)
         // TODO :change scope according to the bound value in the when header
@@ -86,7 +87,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         val (outputDataFlowInfo, jumpOutPossible) =
                 joinWhenExpressionBranches(expression, contextAfterSubject, jumpOutPossibleInSubject, whenResultValue)
 
-        val isExhaustive = WhenChecker.isWhenExhaustive(expression, contextAfterSubject.trace)
+        val isExhaustive = WhenChecker.isWhenExhaustive(expression, trace)
 
         val resultDataFlowInfo = if (expression.elseExpression == null && !isExhaustive) {
             // Without else expression in non-exhaustive when, we *must* take initial data flow info into account,
@@ -98,10 +99,10 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         }
 
         if (whenReturnType != null && isExhaustive && expression.elseExpression == null && KotlinBuiltIns.isNothing(whenReturnType)) {
-            contextAfterSubject.trace.record(BindingContext.IMPLICIT_EXHAUSTIVE_WHEN, expression)
+            trace.record(BindingContext.IMPLICIT_EXHAUSTIVE_WHEN, expression)
         }
 
-        val resultType: KotlinType? = whenReturnType?.let {
+        val resultType = whenReturnType?.let {
             components.dataFlowAnalyzer.checkType(it, expression, contextWithExpectedType)
         }
 
