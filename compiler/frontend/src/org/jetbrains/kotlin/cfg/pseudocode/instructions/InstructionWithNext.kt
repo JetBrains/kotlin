@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.utils.emptyOrSingletonList
 
 abstract class InstructionWithNext(
         element: KtElement,
-        lexicalScope: LexicalScope
-) : KtElementInstructionImpl(element, lexicalScope) {
+        blockScope: BlockScope
+) : KtElementInstructionImpl(element, blockScope) {
     var next: Instruction? = null
         set(value: Instruction?) {
             field = outgoingEdgeTo(value)

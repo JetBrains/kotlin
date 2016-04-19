@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.psi.KtElement
 
 abstract class KtElementInstructionImpl(
         override val element: KtElement,
-        lexicalScope: LexicalScope
-) : InstructionImpl(lexicalScope), KtElementInstruction {
+        blockScope: BlockScope
+) : InstructionImpl(blockScope), KtElementInstruction {
     protected fun render(element: PsiElement): String =
             element.text?.replace("\\s+".toRegex(), " ") ?: ""
 }

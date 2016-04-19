@@ -19,11 +19,11 @@ package org.jetbrains.kotlin.cfg.pseudocode.instructions
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 
-class LexicalScope(private val parentScope: LexicalScope?, val block: KtElement) {
+class BlockScope(private val parentScope: BlockScope?, val block: KtElement) {
     val depth: Int = (parentScope?.depth ?: 0) + 1
 
-    val lexicalScopeForContainingDeclaration: LexicalScope? by lazy {
-        var scope: LexicalScope? = this
+    val blockScopeForContainingDeclaration: BlockScope? by lazy {
+        var scope: BlockScope? = this
         while (scope != null) {
             if (scope.block is KtDeclaration) {
                 break

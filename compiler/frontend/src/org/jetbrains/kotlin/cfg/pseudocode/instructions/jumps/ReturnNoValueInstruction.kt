@@ -18,15 +18,15 @@ package org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps
 
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.cfg.Label
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.LexicalScope
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.BlockScope
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithResult
 
 class ReturnNoValueInstruction(
         element: KtElement,
-        lexicalScope: LexicalScope,
+        blockScope: BlockScope,
         targetLabel: Label
-) : AbstractJumpInstruction(element, targetLabel, lexicalScope) {
+) : AbstractJumpInstruction(element, targetLabel, blockScope) {
     override fun accept(visitor: InstructionVisitor) {
         visitor.visitReturnNoValue(this)
     }
@@ -37,6 +37,6 @@ class ReturnNoValueInstruction(
 
     override fun toString(): String = "ret $targetLabel"
 
-    override fun createCopy(newLabel: Label, lexicalScope: LexicalScope): AbstractJumpInstruction =
-            ReturnNoValueInstruction(element, lexicalScope, newLabel)
+    override fun createCopy(newLabel: Label, blockScope: BlockScope): AbstractJumpInstruction =
+            ReturnNoValueInstruction(element, blockScope, newLabel)
 }

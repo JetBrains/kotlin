@@ -217,11 +217,11 @@ abstract class ControlFlowBuilderAdapter : ControlFlowBuilder {
         return delegateBuilder.newValue(element)
     }
 
-    override fun enterLexicalScope(block: KtElement) {
-        delegateBuilder.enterLexicalScope(block)
+    override fun enterBlockScope(block: KtElement) {
+        delegateBuilder.enterBlockScope(block)
     }
 
-    override fun exitLexicalScope(block: KtElement) {
-        delegateBuilder.exitLexicalScope(block)
+    override fun exitBlockScope(block: KtElement) {
+        delegateBuilder.exitBlockScope(block)
     }
 }

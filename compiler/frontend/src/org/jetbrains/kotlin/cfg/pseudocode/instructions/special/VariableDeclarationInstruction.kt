@@ -20,15 +20,15 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtVariableDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionWithNext
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.LexicalScope
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.BlockScope
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithResult
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionImpl
 
 class VariableDeclarationInstruction(
         element: KtDeclaration,
-        lexicalScope: LexicalScope
-) : InstructionWithNext(element, lexicalScope) {
+        blockScope: BlockScope
+) : InstructionWithNext(element, blockScope) {
     init {
         assert(element is KtVariableDeclaration || element is KtParameter) { "Invalid element: ${render(element)}}" }
     }
@@ -47,5 +47,5 @@ class VariableDeclarationInstruction(
     override fun toString(): String = "v(${render(element)})"
 
     override fun createCopy(): InstructionImpl =
-            VariableDeclarationInstruction(variableDeclarationElement, lexicalScope)
+            VariableDeclarationInstruction(variableDeclarationElement, blockScope)
 }

@@ -27,7 +27,7 @@ interface Instruction {
 
     val dead: Boolean
 
-    val lexicalScope: LexicalScope
+    val blockScope: BlockScope
 
     val inputValues: List<PseudoValue>
 

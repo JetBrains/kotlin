@@ -19,14 +19,14 @@ package org.jetbrains.kotlin.cfg.pseudocode.instructions.eval
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionWithNext
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.LexicalScope
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.BlockScope
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionImpl
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithResult
 
 class LoadUnitValueInstruction(
         expression: KtExpression,
-        lexicalScope: LexicalScope
-) : InstructionWithNext(expression, lexicalScope) {
+        blockScope: BlockScope
+) : InstructionWithNext(expression, blockScope) {
     override fun accept(visitor: InstructionVisitor) {
         visitor.visitLoadUnitValue(this)
     }
@@ -39,5 +39,5 @@ class LoadUnitValueInstruction(
             "read (Unit)"
 
     override fun createCopy(): InstructionImpl =
-            LoadUnitValueInstruction(element as KtExpression, lexicalScope)
+            LoadUnitValueInstruction(element as KtExpression, blockScope)
 }
