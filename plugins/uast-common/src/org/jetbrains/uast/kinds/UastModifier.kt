@@ -34,6 +34,8 @@ open class UastModifier(val name: String) {
         val VARARG = UastModifier("vararg")
         @JvmField
         val OVERRIDE = UastModifier("override")
+        @JvmField
+        val FIELD = UastModifier("field")
 
         val VALUES = listOf(ABSTRACT, STATIC, FINAL, IMMUTABLE, VARARG, OVERRIDE)
     }

@@ -27,6 +27,9 @@ private val MODIFIER_MAP = mapOf(
 )
 
 internal fun PsiModifierListOwner.hasModifier(modifier: UastModifier): Boolean {
+    if (modifier == UastModifier.FIELD && this is PsiField) {
+        return true;
+    }
     if (modifier == UastModifier.OVERRIDE && this is PsiAnnotationOwner) {
         return this.annotations.any { it.qualifiedName == "java.lang.Override" }
     }
