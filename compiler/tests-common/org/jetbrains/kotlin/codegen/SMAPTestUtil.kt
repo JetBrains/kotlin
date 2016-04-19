@@ -20,6 +20,9 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil
+import org.jetbrains.kotlin.codegen.inline.RangeMapping
+import org.jetbrains.kotlin.codegen.inline.SMAPParser
+import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -60,7 +63,8 @@ object SMAPTestUtil {
         if (!InlineCodegenUtil.GENERATE_SMAP) return
 
         val sourceData = inputFiles.mapNotNull { extractSmapFromTestDataFile(it) }
-        val compiledData = extractSMAPFromClasses(outputFiles).groupBy {
+        val compiledSmaps = extractSMAPFromClasses(outputFiles)
+        val compiledData = compiledSmaps.groupBy {
             it.sourceFile
         }.map {
             val smap = it.value.mapNotNull { it.smap }.joinToString("\n")
@@ -71,6 +75,31 @@ object SMAPTestUtil {
             val ktFileName = "/" + source.sourceFile.replace(".smap", ".kt")
             val data = compiledData[ktFileName]
             Assert.assertEquals("Smap data differs for $ktFileName", normalize(source.smap), normalize(data?.smap))
+        }
+
+        checkNoConflictMappings(compiledSmaps)
+    }
+
+    private fun checkNoConflictMappings(compiledSmap: List<SMAPAndFile>?) {
+        if (compiledSmap == null) return
+
+        compiledSmap.mapNotNull { it.smap }.forEach {
+            val smap = SMAPParser.parse(it)
+            val conflictingLines = smap.fileMappings.flatMap {
+                fileMapping ->
+                fileMapping.lineMappings.flatMap {
+                    lineMapping: RangeMapping ->
+                    lineMapping.toRange.keysToMap { lineMapping }.entries
+                }
+            }.groupBy { it.key }.entries.filter { it.value.size != 1 }
+
+
+            Assert.assertTrue(
+                    conflictingLines.joinToString(separator = "\n") {
+                        "Conflicting mapping for line ${it.key} in ${it.value.joinToString { it.toString() }} "
+                    },
+                    conflictingLines.isEmpty()
+            )
         }
     }
 
@@ -92,3 +121,6 @@ object SMAPTestUtil {
         }
     }
 }
+
+val RangeMapping.toRange: IntRange
+           get() = this.dest..this.dest + this.range - 1
