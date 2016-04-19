@@ -155,7 +155,7 @@ class QuickFixRegistrar : QuickFixContributor {
 
         for (exposed in listOf(EXPOSED_FUNCTION_RETURN_TYPE, EXPOSED_PARAMETER_TYPE, EXPOSED_PROPERTY_TYPE, EXPOSED_RECEIVER_TYPE,
                                EXPOSED_SUPER_CLASS, EXPOSED_SUPER_INTERFACE, EXPOSED_TYPE_PARAMETER_BOUND)) {
-            exposed.registerFactory(IncreaseExposedVisibilityFactory, DecreaseExposingVisibilityFactory)
+            exposed.registerFactory(ChangeVisibilityOnExposureFactory)
         }
 
         REDUNDANT_NULLABLE.registerFactory(RemoveNullableFix.Factory(RemoveNullableFix.NullableKind.REDUNDANT))

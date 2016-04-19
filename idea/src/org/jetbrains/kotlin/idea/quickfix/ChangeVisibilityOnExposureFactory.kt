@@ -21,33 +21,52 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.DescriptorWithRelation
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility.Permissiveness.LESS
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibilities.*
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory3
+import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import java.util.*
 
-object IncreaseExposedVisibilityFactory : KotlinSingleIntentionActionFactory() {
-    override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+object ChangeVisibilityOnExposureFactory : KotlinIntentionActionsFactory() {
+    override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
         @Suppress("UNCHECKED_CAST")
         val factory = diagnostic.factory as DiagnosticFactory3<*, EffectiveVisibility, DescriptorWithRelation, EffectiveVisibility>
         val exposedDiagnostic = factory.cast(diagnostic)
-        val exposedDescriptor = exposedDiagnostic.b.descriptor as? DeclarationDescriptorWithVisibility ?: return null
-        val exposedDeclaration = DescriptorToSourceUtils.getSourceFromDescriptor(exposedDescriptor) as? KtModifierListOwner ?: return null
+        val exposedDescriptor = exposedDiagnostic.b.descriptor as? DeclarationDescriptorWithVisibility ?: return emptyList()
+        val exposedDeclaration =
+                DescriptorToSourceUtils.getSourceFromDescriptor(exposedDescriptor) as? KtModifierListOwner ?: return emptyList()
         val exposedVisibility = exposedDiagnostic.c
         val exposingVisibility = exposedDiagnostic.a
-        val boundVisibility = when (exposedVisibility.relation(exposingVisibility)) {
-            LESS -> exposingVisibility.toVisibility()
-            else -> PUBLIC
+        val (lowerBoundVisibility, upperBoundVisibility) = when (exposedVisibility.relation(exposingVisibility)) {
+            LESS -> Pair(exposedVisibility.toVisibility(), exposingVisibility.toVisibility())
+            else -> Pair(PRIVATE, PUBLIC)
         }
         val exposingDeclaration = diagnostic.psiElement.getParentOfType<KtDeclaration>(true)
-        val targetVisibility = when (boundVisibility) {
-            PRIVATE -> return null
-            PROTECTED -> if (exposedDeclaration.parent == exposingDeclaration?.parent) PROTECTED else PUBLIC
-            else -> boundVisibility
+        val exposingTargetVisibility = when (lowerBoundVisibility) {
+            PUBLIC -> null
+            PROTECTED -> if (exposedDeclaration.parent == exposingDeclaration?.parent) PROTECTED else PRIVATE
+            else -> lowerBoundVisibility
         }
-        return ChangeVisibilityFix.create(exposedDeclaration, exposedDescriptor, targetVisibility)
+        val exposingDescriptor = exposingDeclaration?.toDescriptor() as? DeclarationDescriptorWithVisibility
+        val result = ArrayList<IntentionAction>()
+        if (exposingDeclaration != null && exposingDescriptor != null && exposingTargetVisibility != null &&
+            Visibilities.isVisibleIgnoringReceiver(exposedDescriptor, exposingDescriptor)) {
+            ChangeVisibilityFix.create(exposingDeclaration, exposingDescriptor, exposingTargetVisibility)?.let { result += it }
+        }
+
+        val exposedTargetVisibility = when (upperBoundVisibility) {
+            PRIVATE -> null
+            PROTECTED -> if (exposedDeclaration.parent == exposingDeclaration?.parent) PROTECTED else PUBLIC
+            else -> upperBoundVisibility
+        }
+        if (exposedTargetVisibility != null) {
+            ChangeVisibilityFix.create(exposedDeclaration, exposedDescriptor, exposedTargetVisibility)?.let { result += it }
+        }
+        return result
     }
 }
