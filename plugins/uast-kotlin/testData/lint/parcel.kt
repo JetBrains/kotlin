@@ -15,6 +15,7 @@ internal class MyParcelable2 : Parcelable {
     override fun writeToParcel(arg0: Parcel, arg1: Int) {}
 
     companion object {
+        @JvmField
         val CREATOR: Parcelable.Creator<String> = object : Parcelable.Creator<String> {
             override fun newArray(size: Int) = null!!
             override fun createFromParcel(source: Parcel?) = null!!
@@ -27,7 +28,69 @@ internal class MyParcelable3 : Parcelable {
     override fun writeToParcel(arg0: Parcel, arg1: Int) {}
 
     companion object {
+        @JvmField
         val CREATOR = 0 // Wrong type
+    }
+}
+
+class RecyclerViewScrollPosition(val position: Int, val topOffset: Int): Parcelable {
+    override fun describeContents(): Int = 0
+    override fun writeToParcel(dest: Parcel, flags: Int) {
+        dest.writeInt(position)
+        dest.writeInt(topOffset)
+    }
+
+    companion object {
+        @JvmField
+        val CREATOR = object : Parcelable.Creator<RecyclerViewScrollPosition> {
+            override fun createFromParcel(parcel: Parcel): RecyclerViewScrollPosition {
+                val position = parcel.readInt()
+                val topOffset = parcel.readInt()
+                return RecyclerViewScrollPosition(position, topOffset)
+            }
+
+            override fun newArray(size: Int): Array<RecyclerViewScrollPosition?> = arrayOfNulls(size)
+        }
+
+    }
+}
+
+class <error>RecyclerViewScrollPositionWithoutJvmF</error>(val position: Int, val topOffset: Int): Parcelable {
+    override fun describeContents(): Int = 0
+    override fun writeToParcel(dest: Parcel, flags: Int) {
+        dest.writeInt(position)
+        dest.writeInt(topOffset)
+    }
+
+    companion object {
+        val CREATOR = object : Parcelable.Creator<RecyclerViewScrollPosition> {
+            override fun createFromParcel(parcel: Parcel): RecyclerViewScrollPosition {
+                val position = parcel.readInt()
+                val topOffset = parcel.readInt()
+                return RecyclerViewScrollPosition(position, topOffset)
+            }
+
+            override fun newArray(size: Int): Array<RecyclerViewScrollPosition?> = arrayOfNulls(size)
+        }
+
+    }
+}
+
+class RecyclerViewScrollPosition2(val position: Int, val topOffset: Int): Parcelable {
+    override fun describeContents(): Int = 0
+    override fun writeToParcel(dest: Parcel, flags: Int) {
+        dest.writeInt(position)
+        dest.writeInt(topOffset)
+    }
+
+    companion object CREATOR: Parcelable.Creator<RecyclerViewScrollPosition> {
+        override fun createFromParcel(parcel: Parcel): RecyclerViewScrollPosition {
+            val position = parcel.readInt()
+            val topOffset = parcel.readInt()
+            return RecyclerViewScrollPosition(position, topOffset)
+        }
+
+        override fun newArray(size: Int): Array<RecyclerViewScrollPosition?> = arrayOfNulls(size)
     }
 }
 
