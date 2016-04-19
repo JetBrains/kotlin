@@ -27,6 +27,7 @@ Issues fixed:
 - [KT-11866](https://youtrack.jetbrains.com/issue/KT-11866) Suggest "Create secondary constructor" when constructors exist but are not applicable
 - [KT-11908](https://youtrack.jetbrains.com/issue/KT-11866) Allow properties with custom setters to be used in generated equals/hashCode/toString
 - [KT-11845](https://youtrack.jetbrains.com/issue/KT-11845) Fixed exception on attempt to find derived classes
+- [KT-11736](https://youtrack.jetbrains.com/issue/KT-11736) Fixed searching of Java usages for @JvmStatic properties and @JvmStatic @JvmOverloads functions
 
 #### Debugger
 
