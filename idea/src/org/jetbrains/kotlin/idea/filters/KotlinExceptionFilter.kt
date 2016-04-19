@@ -122,7 +122,7 @@ class KotlinExceptionFilter(private val searchScope: GlobalSearchScope) : Filter
 
         val newJvmName = JvmClassName.byInternalName(mappingInfo.path)
         val newSourceFile = DebuggerUtils.findSourceFileForClassIncludeLibrarySources(project, searchScope, newJvmName, mappingInfo.name) ?: return null
-        return OpenFileHyperlinkInfo(project, newSourceFile.virtualFile, mappingInfo.getIntervalIfContains(line)!!.map(line) - 1)
+        return OpenFileHyperlinkInfo(project, newSourceFile.virtualFile, mappingInfo.getIntervalIfContains(line)!!.mapDestToSource(line) - 1)
     }
 
     private fun readDebugInfo(bytes: ByteArray): String? {

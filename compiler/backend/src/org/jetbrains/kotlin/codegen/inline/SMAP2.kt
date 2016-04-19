@@ -41,7 +41,7 @@ open class NestedSourceMapper(
             iv.visitLineNumber(mappedLineNumber, start)
         } else {
             val findMappingIfExists = findMappingIfExists(lineNumber)!!
-            val sourceLineNumber = findMappingIfExists.map(lineNumber)
+            val sourceLineNumber = findMappingIfExists.mapDestToSource(lineNumber)
             val visitLineNumber = parent.visitLineNumber(iv, lineNumber, start, LineNumberToMap(lineNumber, sourceLineNumber, findMappingIfExists.parent!!.name, findMappingIfExists.parent!!.path))
             if (visitLineNumber > 0) {
                 visited.put(lineNumber, visitLineNumber)
@@ -150,7 +150,6 @@ open class DefaultSourceMapper @JvmOverloads constructor(
 }
 
 class RawFileMapping(val name: String, val path: String) {
-    private val lineMappings = TIntIntHashMap()
     private val rangeMappings = arrayListOf<RangeMapping>()
 
     private var lastMappedWithNewIndex = -1000
@@ -163,20 +162,9 @@ class RawFileMapping(val name: String, val path: String) {
             }
 
     fun initRange(start: Int, end: Int) {
-        assert(lineMappings.isEmpty) { "initRange should only be called for empty mapping" }
-        for (index in start..end) {
-            lineMappings.put(index, index)
-        }
+        assert(rangeMappings.isEmpty()) { "initRange should only be called for empty mapping" }
         rangeMappings.add(RangeMapping(start, start, end - start + 1))
         lastMappedWithNewIndex = end
-    }
-
-    fun mapLine(source: Int, currentIndex: Int, isLastMapped: Boolean): Int {
-        var dest = lineMappings[source]
-        if (dest == 0) { // line numbers are 1-based, so 0 is ok to indicate missing value
-            dest = mapNewLineNumber(source, currentIndex, isLastMapped)
-        }
-        return dest
     }
 
     fun mapNewLineNumber(source: Int, currentIndex: Int, isLastMapped: Boolean): Int {
@@ -185,7 +173,7 @@ class RawFileMapping(val name: String, val path: String) {
         if (rangeMappings.isNotEmpty() && isLastMapped && couldFoldInRange(lastMappedWithNewIndex, source)) {
             rangeMapping = rangeMappings.last()
             rangeMapping.range += source - lastMappedWithNewIndex
-            dest = lineMappings[lastMappedWithNewIndex] + source - lastMappedWithNewIndex
+            dest = rangeMapping.mapSourceToDest(source)
         }
         else {
             dest = currentIndex + 1
@@ -193,7 +181,6 @@ class RawFileMapping(val name: String, val path: String) {
             rangeMappings.add(rangeMapping)
         }
 
-        lineMappings.put(source, dest)
         lastMappedWithNewIndex = source
         return dest
     }
@@ -201,10 +188,6 @@ class RawFileMapping(val name: String, val path: String) {
     fun mapNewInterval(source: Int, dest: Int, range: Int) {
         val rangeMapping = RangeMapping(source, dest, range)
         rangeMappings.add(rangeMapping)
-
-        (source..(source + range - 1)).forEach {
-            lineMappings.put(source, dest)
-        }
     }
 
     private fun couldFoldInRange(first: Int, second: Int): Boolean {

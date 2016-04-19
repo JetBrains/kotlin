@@ -78,7 +78,7 @@ open class NestedSourceMapper(
         else {
             val rangeMapping = ranges[index]
             parent!!.visitSource(rangeMapping.parent!!.name, rangeMapping.parent!!.path)
-            parent!!.visitLineNumber(iv, rangeMapping.map(lineNumber), start)
+            parent!!.visitLineNumber(iv, rangeMapping.mapDestToSource(lineNumber), start)
         }
     }
 }
@@ -345,8 +345,12 @@ data class RangeMapping(val source: Int, val dest: Int, var range: Int = 1) {
         return if (skip) true else dest <= destLine && destLine < dest + range
     }
 
-    fun map(destLine: Int): Int {
+    fun mapDestToSource(destLine: Int): Int {
         return if (skip) -1 else source + (destLine - dest)
+    }
+
+    fun mapSourceToDest(sourceLine: Int): Int {
+        return if (skip) -1 else dest + (sourceLine - source)
     }
 
     object Comparator : java.util.Comparator<RangeMapping> {
