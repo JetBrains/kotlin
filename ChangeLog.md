@@ -174,6 +174,7 @@ Issues fixed:
 - Fix several issues leading to exceptions: [KT-11579](https://youtrack.jetbrains.com/issue/KT-11579), [KT-11580](https://youtrack.jetbrains.com/issue/KT-11580), [KT-11777](https://youtrack.jetbrains.com/issue/KT-11777), [KT-11868](https://youtrack.jetbrains.com/issue/KT-11868)
 - Fixed NoSuchFieldException in Kotlin module settings on IDEA Ultimate
 - [KT-11880](https://youtrack.jetbrains.com/issue/KT-11880) Fixed renaming of Kotlin properties through SpEL references in XML files
+- [KT-11736](https://youtrack.jetbrains.com/issue/KT-11736) Fixed searching of Java usages for @JvmStatic properties and @JvmStatic @JvmOverloads functions
 
 #### Debugger
 

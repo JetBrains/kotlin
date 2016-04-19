@@ -1,0 +1,2 @@
+Unclassified usage 3 Foo.getFoo();
+Unclassified usage 4 Foo.setFoo(2);
