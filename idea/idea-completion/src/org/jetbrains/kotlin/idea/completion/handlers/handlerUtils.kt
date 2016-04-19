@@ -124,17 +124,17 @@ fun createKeywordConstructLookupElement(
 }
 
 private fun detectIndent(text: CharSequence, offset: Int): String {
-    val reversedIndent = buildString {
-        var index = offset - 1
-        while (index >= 0) {
-            val c = text[index]
-            if (c == '\n' || c == '\r') {
-                break
-            }
-            index--
+    var index = offset - 1
+    while (index >= 0) {
+        val c = text[index]
+        if (c == '\n' || c == '\r') {
+            break
         }
-        index++
+        index--
+    }
+    index++
 
+    return buildString {
         while (index < offset) {
             val c = text[index]
             if (!c.isWhitespace()) break
@@ -142,7 +142,6 @@ private fun detectIndent(text: CharSequence, offset: Int): String {
             index++
         }
     }
-    return reversedIndent.reversed()
 }
 
 private fun String.indentLinesAfterFirst(indent: String): String {
