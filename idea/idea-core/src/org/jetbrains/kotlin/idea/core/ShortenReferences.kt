@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.resolve.scopes.utils.findPackage
+import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import java.util.*
 
 class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT }) {
@@ -210,12 +211,12 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
         protected fun analyze(element: KtElement)
                 = resolutionFacade.analyze(element, BodyResolveMode.PARTIAL)
 
-        protected fun processQualifiedElement(element: T, target: DeclarationDescriptor?, canShortenNow: Boolean) {
+        protected fun processQualifiedElement(element: T, targets: Collection<DeclarationDescriptor>, canShortenNow: Boolean) {
             if (canShortenNow) {
                 addElementToShorten(element)
             }
-            else if (target != null && target !in failedToImportDescriptors && mayImport(target, file)) {
-                descriptorsToImport.add(target)
+            else if (targets.isNotEmpty() && targets.none { it in failedToImportDescriptors } && targets.all { mayImport(it, file) }) {
+                descriptorsToImport.addAll(targets)
             }
             else {
                 qualifier(element).accept(this)
@@ -283,14 +284,14 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
             val target = referenceExpression.targets(bindingContext).singleOrNull() ?: return
 
             val scope = type.getResolutionScope(bindingContext, resolutionFacade)
-            val name = target.getName()
+            val name = target.name
             val targetByName = if (target is ClassifierDescriptor)
                 scope.findClassifier(name, NoLookupLocation.FROM_IDE)
             else
                 scope.findPackage(name)
             val canShortenNow = targetByName?.asString() == target.asString()
 
-            processQualifiedElement(type, target, canShortenNow)
+            processQualifiedElement(type, target.singletonOrEmptyList(), canShortenNow)
         }
 
         override fun qualifier(element: KtUserType) = element.qualifier!!
@@ -378,7 +379,7 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
                 return false
             }
 
-            processQualifiedElement(qualifiedExpression, targets.singleOrNull(), targetsMatch)
+            processQualifiedElement(qualifiedExpression, targets, targetsMatch)
             return true
         }
 

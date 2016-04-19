@@ -101,6 +101,12 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
         doTest(fileName);
     }
 
+    @TestMetadata("UnresolvedOverload.kt")
+    public void testUnresolvedOverload() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/UnresolvedOverload.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("idea/testData/shortenRefs/constructor")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
