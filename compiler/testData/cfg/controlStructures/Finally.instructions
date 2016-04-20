@@ -14,10 +14,11 @@ L0:
     jmp?(L2)                                       NEXT:[mark({ 2 }), mark({ 1 })]
   3 mark({ 1 })
     r(1) -> <v0>
-  2 jmp(L3)                                        NEXT:[mark({ 2 })]
+  2 jmp?(L2)                                       NEXT:[mark({ 2 }), jmp(L3)]
+    jmp(L3)                                        NEXT:[mark({ 2 })]
 L2 [onExceptionToFinallyBlock]:
 L4 [start finally]:
-  3 mark({ 2 })                                    PREV:[jmp?(L2)]
+  3 mark({ 2 })                                    PREV:[jmp?(L2), jmp?(L2)]
     r(2) -> <v1>
 L5 [finish finally]:
   2 jmp(error)                                     NEXT:[<ERROR>]
@@ -59,6 +60,7 @@ L0:
     call(2 > 3, compareTo|<v1>, <v2>) -> <v3>
     jf(L3|<v3>)                                                          NEXT:[read (Unit), mark({ return })]
   4 mark({ return })
+    jmp?(L2)                                                             NEXT:[mark({ 2 }), mark({ 2 })]
 L4 [start finally]:
   5 mark({ 2 })
     r(2) -> <v4>
@@ -69,9 +71,10 @@ L3 [else branch]:
     read (Unit)                                                          PREV:[jf(L3|<v3>)]
 L6 ['if' expression result]:
     merge(if (2 > 3) { return }|!<v5>) -> <v6>
-  2 jmp(L7)                                                              NEXT:[mark({ 2 })]
+  2 jmp?(L2)                                                             NEXT:[mark({ 2 }), jmp(L7)]
+    jmp(L7)                                                              NEXT:[mark({ 2 })]
 L2 [onExceptionToFinallyBlock]:
-  5 mark({ 2 })                                                          PREV:[jmp?(L2)]
+  5 mark({ 2 })                                                          PREV:[jmp?(L2), jmp?(L2), jmp?(L2)]
     r(2) -> <v4>
   2 jmp(error)                                                           NEXT:[<ERROR>]
 L7 [skipFinallyToErrorBlock]:
@@ -112,10 +115,11 @@ L0:
     d({ -> if (2 > 3) { return@l } })                                               NEXT:[<SINK>]
 L3 [after local declaration]:
     r({ -> if (2 > 3) { return@l } }) -> <v1>                                       PREV:[jmp?(L3)]
-  2 jmp(L8)                                                                         NEXT:[mark({ 2 })]
+  2 jmp?(L2)                                                                        NEXT:[mark({ 2 }), jmp(L8)]
+    jmp(L8)                                                                         NEXT:[mark({ 2 })]
 L2 [onExceptionToFinallyBlock]:
 L9 [start finally]:
-  3 mark({ 2 })                                                                     PREV:[jmp?(L2)]
+  3 mark({ 2 })                                                                     PREV:[jmp?(L2), jmp?(L2)]
     r(2) -> <v2>
 L10 [finish finally]:
   2 jmp(error)                                                                      NEXT:[<ERROR>]
@@ -217,6 +221,7 @@ L3:
     call(2 > 3, compareTo|<v1>, <v2>) -> <v3>
     jf(L6|<v3>)                                                            NEXT:[read (Unit), mark({ return@l })]
   6 mark({ return@l })
+    jmp?(L5)                                                               NEXT:[mark({ 2 }), mark({ 2 })]
 L7 [start finally]:
   7 mark({ 2 })
     r(2) -> <v4>
@@ -227,9 +232,10 @@ L6 [else branch]:
     read (Unit)                                                            PREV:[jf(L6|<v3>)]
 L9 ['if' expression result]:
     merge(if (2 > 3) { return@l }|!<v5>) -> <v6>
-  4 jmp(L10)                                                               NEXT:[mark({ 2 })]
+  4 jmp?(L5)                                                               NEXT:[mark({ 2 }), jmp(L10)]
+    jmp(L10)                                                               NEXT:[mark({ 2 })]
 L5 [onExceptionToFinallyBlock]:
-  7 mark({ 2 })                                                            PREV:[jmp?(L5)]
+  7 mark({ 2 })                                                            PREV:[jmp?(L5), jmp?(L5), jmp?(L5)]
     r(2) -> <v4>
   4 jmp(error)                                                             NEXT:[<ERROR>]
 L10 [skipFinallyToErrorBlock]:
@@ -279,6 +285,7 @@ L4 [body entry point]:
     call(2 > 3, compareTo|<v3>, <v4>) -> <v5>
     jf(L8|<v5>)                                                                    NEXT:[read (Unit), mark({ break@l })]
   5 mark({ break@l })
+    jmp?(L7)                                                                       NEXT:[mark({ 2 }), mark({ 2 })]
 L9 [start finally]:
   6 mark({ 2 })
     r(2) -> <v6>
@@ -289,9 +296,10 @@ L8 [else branch]:
     read (Unit)                                                                    PREV:[jf(L8|<v5>)]
 L11 ['if' expression result]:
     merge(if (2 > 3) { break@l }|!<v7>) -> <v8>
-  3 jmp(L12)                                                                       NEXT:[mark({ 2 })]
+  3 jmp?(L7)                                                                       NEXT:[mark({ 2 }), jmp(L12)]
+    jmp(L12)                                                                       NEXT:[mark({ 2 })]
 L7 [onExceptionToFinallyBlock]:
-  6 mark({ 2 })                                                                    PREV:[jmp?(L7)]
+  6 mark({ 2 })                                                                    PREV:[jmp?(L7), jmp?(L7), jmp?(L7)]
     r(2) -> <v6>
   3 jmp(error)                                                                     NEXT:[<ERROR>]
 L12 [skipFinallyToErrorBlock]:
@@ -357,10 +365,11 @@ L4 [loop exit point]:
 L6 [body exit point]:
     read (Unit)                                                                                 PREV:[jmp(L4)]
     r(5) -> <v9>
-  2 jmp(L10)                                                                                    NEXT:[mark({ 2 })]
+  2 jmp?(L2)                                                                                    NEXT:[mark({ 2 }), jmp(L10)]
+    jmp(L10)                                                                                    NEXT:[mark({ 2 })]
 L2 [onExceptionToFinallyBlock]:
 L11 [start finally]:
-  3 mark({ 2 })                                                                                 PREV:[jmp?(L2)]
+  3 mark({ 2 })                                                                                 PREV:[jmp?(L2), jmp?(L2)]
     r(2) -> <v10>
 L12 [finish finally]:
   2 jmp(error)                                                                                  NEXT:[<ERROR>]
@@ -422,10 +431,11 @@ L9 ['if' expression result]:
 L4 [loop exit point]:
 L6 [body exit point]:
     read (Unit)                                                                                PREV:[jmp(L4)]
-  2 jmp(L10)                                                                                   NEXT:[mark({ 2 })]
+  2 jmp?(L2)                                                                                   NEXT:[mark({ 2 }), jmp(L10)]
+    jmp(L10)                                                                                   NEXT:[mark({ 2 })]
 L2 [onExceptionToFinallyBlock]:
 L11 [start finally]:
-  3 mark({ 2 })                                                                                PREV:[jmp?(L2)]
+  3 mark({ 2 })                                                                                PREV:[jmp?(L2), jmp?(L2)]
     r(2) -> <v9>
 L12 [finish finally]:
   2 jmp(error)                                                                                 NEXT:[<ERROR>]
@@ -486,6 +496,7 @@ L4 [body entry point]:
     call(2 > 3, compareTo|<v6>, <v7>) -> <v8>
     jf(L8|<v8>)                                                                           NEXT:[read (Unit), mark({ continue@l })]
   6 mark({ continue@l })
+    jmp?(L7)                                                                              NEXT:[mark({ 2 }), mark({ 2 })]
 L9 [start finally]:
   7 mark({ 2 })
     r(2) -> <v9>
@@ -496,9 +507,10 @@ L8 [else branch]:
     read (Unit)                                                                           PREV:[jf(L8|<v8>)]
 L11 ['if' expression result]:
     merge(if (2 > 3) { continue@l }|!<v10>) -> <v11>
-  4 jmp(L12)                                                                              NEXT:[mark({ 2 })]
+  4 jmp?(L7)                                                                              NEXT:[mark({ 2 }), jmp(L12)]
+    jmp(L12)                                                                              NEXT:[mark({ 2 })]
 L7 [onExceptionToFinallyBlock]:
-  7 mark({ 2 })                                                                           PREV:[jmp?(L7)]
+  7 mark({ 2 })                                                                           PREV:[jmp?(L7), jmp?(L7), jmp?(L7)]
     r(2) -> <v9>
   4 jmp(error)                                                                            NEXT:[<ERROR>]
 L12 [skipFinallyToErrorBlock]:
@@ -573,10 +585,11 @@ L4 [loop exit point]:
 L6 [body exit point]:
     read (Unit)                                                                                         PREV:[jmp?(L4)]
   3 r(5) -> <v12>
-  2 jmp(L10)                                                                                            NEXT:[mark({ 2 })]
+  2 jmp?(L2)                                                                                            NEXT:[mark({ 2 }), jmp(L10)]
+    jmp(L10)                                                                                            NEXT:[mark({ 2 })]
 L2 [onExceptionToFinallyBlock]:
 L11 [start finally]:
-  3 mark({ 2 })                                                                                         PREV:[jmp?(L2)]
+  3 mark({ 2 })                                                                                         PREV:[jmp?(L2), jmp?(L2)]
     r(2) -> <v13>
 L12 [finish finally]:
   2 jmp(error)                                                                                          NEXT:[<ERROR>]
@@ -647,10 +660,11 @@ L9 ['if' expression result]:
 L4 [loop exit point]:
 L6 [body exit point]:
     read (Unit)                                                                                        PREV:[jmp?(L4)]
-  2 jmp(L10)                                                                                           NEXT:[mark({ 2 })]
+  2 jmp?(L2)                                                                                           NEXT:[mark({ 2 }), jmp(L10)]
+    jmp(L10)                                                                                           NEXT:[mark({ 2 })]
 L2 [onExceptionToFinallyBlock]:
 L11 [start finally]:
-  3 mark({ 2 })                                                                                        PREV:[jmp?(L2)]
+  3 mark({ 2 })                                                                                        PREV:[jmp?(L2), jmp?(L2)]
     r(2) -> <v12>
 L12 [finish finally]:
   2 jmp(error)                                                                                         NEXT:[<ERROR>]
@@ -682,6 +696,7 @@ L0:
     mark(try { return 1 } finally { return 2 })
     jmp?(L2)                                                      NEXT:[mark({ return 2 }), mark({ return 1 })]
   3 mark({ return 1 })
+    jmp?(L2)                                                      NEXT:[mark({ return 2 }), r(1) -> <v0>]
     r(1) -> <v0>
 L3 [start finally]:
   4 mark({ return 2 })
@@ -689,9 +704,10 @@ L3 [start finally]:
     ret(*|<v1>) L1                                                NEXT:[<END>]
 L4 [finish finally]:
 - 3 ret(*|<v0>) L1                                                NEXT:[<END>]                                              PREV:[]
-- 2 jmp(L5)                                                       NEXT:[mark({ return 2 })]                                 PREV:[]
+- 2 jmp?(L2)                                                      NEXT:[mark({ return 2 }), jmp(L5)]                        PREV:[]
+-   jmp(L5)                                                       NEXT:[mark({ return 2 })]                                 PREV:[]
 L2 [onExceptionToFinallyBlock]:
-  4 mark({ return 2 })                                            PREV:[jmp?(L2)]
+  4 mark({ return 2 })                                            PREV:[jmp?(L2), jmp?(L2)]
     r(2) -> <v1>
     ret(*|<v1>) L1                                                NEXT:[<END>]
 - 2 jmp(error)                                                    NEXT:[<ERROR>]                                            PREV:[]
@@ -723,6 +739,7 @@ L0:
     mark(try { return 1 } finally { doSmth(3) })
     jmp?(L2)                                                       NEXT:[mark({ doSmth(3) }), mark({ return 1 })]
   3 mark({ return 1 })
+    jmp?(L2)                                                       NEXT:[mark({ doSmth(3) }), r(1) -> <v0>]
     r(1) -> <v0>
 L3 [start finally]:
   4 mark({ doSmth(3) })
@@ -731,9 +748,10 @@ L3 [start finally]:
     call(doSmth(3), doSmth|<v1>) -> <v2>
 L4 [finish finally]:
   3 ret(*|<v0>) L1                                                 NEXT:[<END>]
-- 2 jmp(L5)                                                        NEXT:[mark({ doSmth(3) })]                                            PREV:[]
+- 2 jmp?(L2)                                                       NEXT:[mark({ doSmth(3) }), jmp(L5)]                                   PREV:[]
+-   jmp(L5)                                                        NEXT:[mark({ doSmth(3) })]                                            PREV:[]
 L2 [onExceptionToFinallyBlock]:
-  4 mark({ doSmth(3) })                                            PREV:[jmp?(L2)]
+  4 mark({ doSmth(3) })                                            PREV:[jmp?(L2), jmp?(L2)]
     r(3) -> <v1>
     mark(doSmth(3))
     call(doSmth(3), doSmth|<v1>) -> <v2>
@@ -771,6 +789,8 @@ L0:
     jmp?(L2)                                                                                                                    NEXT:[v(e: UnsupportedOperationException), jmp?(L3)]
     jmp?(L3)                                                                                                                    NEXT:[mark({ doSmth(3) }), mark({ return 1 })]
   3 mark({ return 1 })
+    jmp?(L2)                                                                                                                    NEXT:[v(e: UnsupportedOperationException), jmp?(L3)]
+    jmp?(L3)                                                                                                                    NEXT:[mark({ doSmth(3) }), r(1) -> <v0>]
     r(1) -> <v0>
 L4 [start finally]:
   4 mark({ doSmth(3) })
@@ -779,9 +799,11 @@ L4 [start finally]:
     call(doSmth(3), doSmth|<v1>) -> <v2>
 L5 [finish finally]:
   3 ret(*|<v0>) L1                                                                                                              NEXT:[<END>]
-- 2 jmp(L6)                                                                                                                     NEXT:[jmp(L7)]                                                                                                                     PREV:[]
+- 2 jmp?(L2)                                                                                                                    NEXT:[v(e: UnsupportedOperationException), jmp?(L3)]                                                                               PREV:[]
+-   jmp?(L3)                                                                                                                    NEXT:[mark({ doSmth(3) }), jmp(L6)]                                                                                                PREV:[]
+-   jmp(L6)                                                                                                                     NEXT:[jmp(L7)]                                                                                                                     PREV:[]
 L2 [onException]:
-  3 v(e: UnsupportedOperationException)                                                                                         PREV:[jmp?(L2)]
+  3 v(e: UnsupportedOperationException)                                                                                         PREV:[jmp?(L2), jmp?(L2)]
     magic[FAKE_INITIALIZER](e: UnsupportedOperationException) -> <v4>
     w(e|<v4>)
   4 mark({ doSmth(2) })
@@ -792,7 +814,7 @@ L2 [onException]:
 L6 [afterCatches]:
   2 jmp(L7)                                                                                                                     NEXT:[mark({ doSmth(3) })]
 L3 [onExceptionToFinallyBlock]:
-  4 mark({ doSmth(3) })                                                                                                         PREV:[jmp?(L3)]
+  4 mark({ doSmth(3) })                                                                                                         PREV:[jmp?(L3), jmp?(L3)]
     r(3) -> <v1>
     mark(doSmth(3))
     call(doSmth(3), doSmth|<v1>) -> <v2>
@@ -826,11 +848,13 @@ L0:
     mark(try { return 1 } catch (e: UnsupportedOperationException) { doSmth(2) })
     jmp?(L2)                                                                                              NEXT:[v(e: UnsupportedOperationException), mark({ return 1 })]
   3 mark({ return 1 })
+    jmp?(L2)                                                                                              NEXT:[v(e: UnsupportedOperationException), r(1) -> <v0>]
     r(1) -> <v0>
     ret(*|<v0>) L1                                                                                        NEXT:[<END>]
-- 2 jmp(L3)                                                                                               NEXT:[merge(try { return 1 } catch (e: UnsupportedOperationException) { doSmth(2) }|!<v1>, <v4>) -> <v5>]    PREV:[]
+- 2 jmp?(L2)                                                                                              NEXT:[v(e: UnsupportedOperationException), jmp(L3)]                                                          PREV:[]
+-   jmp(L3)                                                                                               NEXT:[merge(try { return 1 } catch (e: UnsupportedOperationException) { doSmth(2) }|!<v1>, <v4>) -> <v5>]    PREV:[]
 L2 [onException]:
-  3 v(e: UnsupportedOperationException)                                                                   PREV:[jmp?(L2)]
+  3 v(e: UnsupportedOperationException)                                                                   PREV:[jmp?(L2), jmp?(L2)]
     magic[FAKE_INITIALIZER](e: UnsupportedOperationException) -> <v2>
     w(e|<v2>)
   4 mark({ doSmth(2) })
@@ -867,6 +891,8 @@ L0:
     jmp?(L2)                                                                                                                    NEXT:[v(e: UnsupportedOperationException), jmp?(L3)]
     jmp?(L3)                                                                                                                    NEXT:[mark({ doSmth(3) }), mark({ return 1 })]
   3 mark({ return 1 })
+    jmp?(L2)                                                                                                                    NEXT:[v(e: UnsupportedOperationException), jmp?(L3)]
+    jmp?(L3)                                                                                                                    NEXT:[mark({ doSmth(3) }), r(1) -> <v0>]
     r(1) -> <v0>
 L4 [start finally]:
   4 mark({ doSmth(3) })
@@ -875,9 +901,11 @@ L4 [start finally]:
     call(doSmth(3), doSmth|<v1>) -> <v2>
 L5 [finish finally]:
   3 ret(*|<v0>) L1                                                                                                              NEXT:[<END>]
-- 2 jmp(L6)                                                                                                                     NEXT:[jmp(L7)]                                                                                                                     PREV:[]
+- 2 jmp?(L2)                                                                                                                    NEXT:[v(e: UnsupportedOperationException), jmp?(L3)]                                                                               PREV:[]
+-   jmp?(L3)                                                                                                                    NEXT:[mark({ doSmth(3) }), jmp(L6)]                                                                                                PREV:[]
+-   jmp(L6)                                                                                                                     NEXT:[jmp(L7)]                                                                                                                     PREV:[]
 L2 [onException]:
-  3 v(e: UnsupportedOperationException)                                                                                         PREV:[jmp?(L2)]
+  3 v(e: UnsupportedOperationException)                                                                                         PREV:[jmp?(L2), jmp?(L2)]
     magic[FAKE_INITIALIZER](e: UnsupportedOperationException) -> <v4>
     w(e|<v4>)
   4 mark({ return 2 })
@@ -891,7 +919,7 @@ L2 [onException]:
 L6 [afterCatches]:
 - 2 jmp(L7)                                                                                                                     NEXT:[mark({ doSmth(3) })]                                                                                                         PREV:[]
 L3 [onExceptionToFinallyBlock]:
-  4 mark({ doSmth(3) })                                                                                                         PREV:[jmp?(L3)]
+  4 mark({ doSmth(3) })                                                                                                         PREV:[jmp?(L3), jmp?(L3)]
     r(3) -> <v1>
     mark(doSmth(3))
     call(doSmth(3), doSmth|<v1>) -> <v2>
@@ -932,9 +960,11 @@ L0:
     r(1) -> <v0>
     mark(doSmth(1))
     call(doSmth(1), doSmth|<v0>) -> <v1>
-  2 jmp(L4)                                                                                                                     NEXT:[jmp(L7)]
+  2 jmp?(L2)                                                                                                                    NEXT:[v(e: UnsupportedOperationException), jmp?(L3)]
+    jmp?(L3)                                                                                                                    NEXT:[mark({ doSmth(3) }), jmp(L4)]
+    jmp(L4)                                                                                                                     NEXT:[jmp(L7)]
 L2 [onException]:
-  3 v(e: UnsupportedOperationException)                                                                                         PREV:[jmp?(L2)]
+  3 v(e: UnsupportedOperationException)                                                                                         PREV:[jmp?(L2), jmp?(L2)]
     magic[FAKE_INITIALIZER](e: UnsupportedOperationException) -> <v2>
     w(e|<v2>)
   4 mark({ return 2 })
@@ -950,7 +980,7 @@ L6 [finish finally]:
 L4 [afterCatches]:
   2 jmp(L7)                                                                                                                     NEXT:[mark({ doSmth(3) })]                                                                                                         PREV:[jmp(L4)]
 L3 [onExceptionToFinallyBlock]:
-  5 mark({ doSmth(3) })                                                                                                         PREV:[jmp?(L3)]
+  5 mark({ doSmth(3) })                                                                                                         PREV:[jmp?(L3), jmp?(L3)]
     r(3) -> <v4>
     mark(doSmth(3))
     call(doSmth(3), doSmth|<v4>) -> <v5>

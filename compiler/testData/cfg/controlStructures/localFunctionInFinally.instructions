@@ -21,10 +21,11 @@ L0:
   3 mark({ i = 1 })
     r(1) -> <v1>
     w(i|<v1>)
-  2 jmp(L3)                                                                 NEXT:[mark({ fun bar() {} return i })]
+  2 jmp?(L2)                                                                NEXT:[mark({ fun bar() {} return i }), jmp(L3)]
+    jmp(L3)                                                                 NEXT:[mark({ fun bar() {} return i })]
 L2 [onExceptionToFinallyBlock]:
 L4 [start finally]:
-  3 mark({ fun bar() {} return i })                                         PREV:[jmp?(L2)]
+  3 mark({ fun bar() {} return i })                                         PREV:[jmp?(L2), jmp?(L2)]
     jmp?(L5)                                                                NEXT:[r(i) -> <v3>, d(fun bar() {})]
     d(fun bar() {})                                                         NEXT:[<SINK>]
 L5 [after local declaration]:
