@@ -22,22 +22,24 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.*
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.FilterTransformation
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtBinaryExpression
+import org.jetbrains.kotlin.psi.KtBreakExpression
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class FindAndAssignTransformation(
         loop: KtForExpression,
-        inputVariable: KtCallableDeclaration,
         private val generator: FindOperatorGenerator,
         initialization: VariableInitialization,
         private val filter: KtExpression? = null
-) : AssignToVariableResultTransformation(loop, inputVariable, initialization) {
+) : AssignToVariableResultTransformation(loop, initialization) {
 
     override fun mergeWithPrevious(previousTransformation: SequenceTransformation): ResultTransformation? {
         if (previousTransformation !is FilterTransformation) return null
         assert(filter == null) { "Should not happen because no 2 consecutive FilterTransformation's possible"}
-        return FindAndAssignTransformation(loop, previousTransformation.inputVariable, generator, initialization, previousTransformation.effectiveCondition())
+        return FindAndAssignTransformation(loop, generator, initialization, previousTransformation.effectiveCondition())
     }
 
     override val presentation: String
@@ -102,7 +104,7 @@ class FindAndAssignTransformation(
 
             val generator = buildFindOperationGenerator(right, initialization.initializer, state.inputVariable, findFirst) ?: return null
 
-            val transformation = FindAndAssignTransformation(state.outerLoop, state.inputVariable, generator, initialization)
+            val transformation = FindAndAssignTransformation(state.outerLoop, generator, initialization)
             return ResultTransformationMatch(transformation)
         }
     }

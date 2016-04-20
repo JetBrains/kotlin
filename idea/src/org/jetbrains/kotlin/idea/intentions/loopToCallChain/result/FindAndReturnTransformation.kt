@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.intentions.loopToCallChain.result
 
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.*
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.FilterTransformation
-import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.psi.KtReturnExpression
@@ -26,7 +25,6 @@ import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
 
 class FindAndReturnTransformation(
         override val loop: KtForExpression,
-        override val inputVariable: KtCallableDeclaration,
         private val generator: FindOperatorGenerator,
         private val endReturn: KtReturnExpression,
         private val filter: KtExpression? = null
@@ -35,7 +33,7 @@ class FindAndReturnTransformation(
     override fun mergeWithPrevious(previousTransformation: SequenceTransformation): ResultTransformation? {
         if (previousTransformation !is FilterTransformation) return null
         assert(filter == null) { "Should not happen because no 2 consecutive FilterTransformation's possible"}
-        return FindAndReturnTransformation(loop, previousTransformation.inputVariable, generator, endReturn, previousTransformation.effectiveCondition())
+        return FindAndReturnTransformation(loop, generator, endReturn, previousTransformation.effectiveCondition())
     }
 
     override val commentSavingRange = PsiChildRange(loop.unwrapIfLabeled(), endReturn)
@@ -85,7 +83,7 @@ class FindAndReturnTransformation(
 
             val generator = buildFindOperationGenerator(returnValueInLoop, returnValueAfterLoop, state.inputVariable, findFirst = true) ?: return null
 
-            val transformation = FindAndReturnTransformation(state.outerLoop, state.inputVariable, generator, returnAfterLoop)
+            val transformation = FindAndReturnTransformation(state.outerLoop, generator, returnAfterLoop)
             return ResultTransformationMatch(transformation)
         }
     }

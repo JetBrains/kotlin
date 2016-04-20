@@ -33,9 +33,9 @@ import org.jetbrains.kotlin.renderer.render
 
 class AddToCollectionTransformation(
         loop: KtForExpression,
-        inputVariable: KtCallableDeclaration,
+        private val inputVariable: KtCallableDeclaration,
         private val targetCollection: KtExpression
-) : ReplaceLoopResultTransformation(loop, inputVariable) {
+) : ReplaceLoopResultTransformation(loop) {
 
     override fun mergeWithPrevious(previousTransformation: SequenceTransformation): ResultTransformation? {
         return when (previousTransformation) {
@@ -120,7 +120,7 @@ class AddToCollectionTransformation(
                     when {
                         canChangeInitializerType(collectionInitialization, KotlinBuiltIns.FQ_NAMES.list, state.outerLoop) -> {
                             val transformation = if (argumentIsInputVariable) {
-                                AssignToListTransformation(state.outerLoop, state.inputVariable, collectionInitialization)
+                                AssignToListTransformation(state.outerLoop, collectionInitialization)
                             }
                             else {
                                 val mapTransformation = MapTransformation(state.outerLoop, state.inputVariable, addOperationArgument)
@@ -131,7 +131,7 @@ class AddToCollectionTransformation(
 
                         canChangeInitializerType(collectionInitialization, KotlinBuiltIns.FQ_NAMES.mutableList, state.outerLoop) -> {
                             if (argumentIsInputVariable) {
-                                val transformation = AssignToMutableListTransformation(state.outerLoop, state.inputVariable, collectionInitialization)
+                                val transformation = AssignToMutableListTransformation(state.outerLoop, collectionInitialization)
                                 return ResultTransformationMatch(transformation)
                             }
                         }
@@ -141,11 +141,11 @@ class AddToCollectionTransformation(
                 CollectionKind.SET -> {
                     val assignToSetTransformation = when {
                         canChangeInitializerType(collectionInitialization, KotlinBuiltIns.FQ_NAMES.set, state.outerLoop) -> {
-                            AssignToSetTransformation(state.outerLoop, state.inputVariable/*TODO: it's not correct and it looks like not all transformations should have inputVariable*/, collectionInitialization)
+                            AssignToSetTransformation(state.outerLoop, collectionInitialization)
                         }
 
                         canChangeInitializerType(collectionInitialization, KotlinBuiltIns.FQ_NAMES.mutableSet, state.outerLoop) -> {
-                            AssignToMutableSetTransformation(state.outerLoop, state.inputVariable, collectionInitialization)
+                            AssignToMutableSetTransformation(state.outerLoop, collectionInitialization)
                         }
 
                         else -> return null
@@ -178,10 +178,10 @@ class AddToCollectionTransformation(
 
 class FilterToTransformation private constructor(
         loop: KtForExpression,
-        inputVariable: KtCallableDeclaration,
+        private val inputVariable: KtCallableDeclaration,
         private val targetCollection: KtExpression,
         private val filter: KtExpression
-) : ReplaceLoopResultTransformation(loop, inputVariable) {
+) : ReplaceLoopResultTransformation(loop) {
 
     override val presentation: String
         get() = "filterTo(){}"
@@ -211,10 +211,10 @@ class FilterToTransformation private constructor(
 
 class AssignFilterToTransformation(
         loop: KtForExpression,
-        inputVariable: KtCallableDeclaration,
+        private val inputVariable: KtCallableDeclaration,
         targetCollectionInitialization: VariableInitialization,
         private val filter: KtExpression
-) : AssignToVariableResultTransformation(loop, inputVariable, targetCollectionInitialization) {
+) : AssignToVariableResultTransformation(loop, targetCollectionInitialization) {
 
     override val presentation: String
         get() = "filterTo(){}"
@@ -227,10 +227,10 @@ class AssignFilterToTransformation(
 
 class MapToTransformation private constructor(
         loop: KtForExpression,
-        inputVariable: KtCallableDeclaration,
+        private val inputVariable: KtCallableDeclaration,
         private val targetCollection: KtExpression,
         private val mapping: KtExpression
-) : ReplaceLoopResultTransformation(loop, inputVariable) {
+) : ReplaceLoopResultTransformation(loop) {
 
     override val presentation: String
         get() = "mapTo(){}"
@@ -260,10 +260,10 @@ class MapToTransformation private constructor(
 
 class AssignMapToTransformation(
         loop: KtForExpression,
-        inputVariable: KtCallableDeclaration,
+        private val inputVariable: KtCallableDeclaration,
         targetCollectionInitialization: VariableInitialization,
         private val mapping: KtExpression
-) : AssignToVariableResultTransformation(loop, inputVariable, targetCollectionInitialization) {
+) : AssignToVariableResultTransformation(loop, targetCollectionInitialization) {
 
     override val presentation: String
         get() = "mapTo(){}"
@@ -276,10 +276,10 @@ class AssignMapToTransformation(
 
 class FlatMapToTransformation private constructor(
         loop: KtForExpression,
-        inputVariable: KtCallableDeclaration,
+        private val inputVariable: KtCallableDeclaration,
         private val targetCollection: KtExpression,
         private val transform: KtExpression
-) : ReplaceLoopResultTransformation(loop, inputVariable) {
+) : ReplaceLoopResultTransformation(loop) {
 
     override val presentation: String
         get() = "flatMapTo(){}"
@@ -309,10 +309,10 @@ class FlatMapToTransformation private constructor(
 
 class AssignFlatMapToTransformation(
         loop: KtForExpression,
-        inputVariable: KtCallableDeclaration,
+        private val inputVariable: KtCallableDeclaration,
         targetCollectionInitialization: VariableInitialization,
         private val transform: KtExpression
-) : AssignToVariableResultTransformation(loop, inputVariable, targetCollectionInitialization) {
+) : AssignToVariableResultTransformation(loop, targetCollectionInitialization) {
 
     override val presentation: String
         get() = "flatMapTo(){}"
@@ -325,9 +325,8 @@ class AssignFlatMapToTransformation(
 
 class AssignToListTransformation(
         loop: KtForExpression,
-        inputVariable: KtCallableDeclaration,
         initialization: VariableInitialization
-) : AssignToVariableResultTransformation(loop, inputVariable, initialization) {
+) : AssignToVariableResultTransformation(loop, initialization) {
 
     override val presentation: String
         get() = "toList()"
@@ -344,9 +343,8 @@ class AssignToListTransformation(
 
 class AssignToMutableListTransformation(
         loop: KtForExpression,
-        inputVariable: KtCallableDeclaration,
         initialization: VariableInitialization
-) : AssignToVariableResultTransformation(loop, inputVariable, initialization) {
+) : AssignToVariableResultTransformation(loop, initialization) {
 
     override val presentation: String
         get() = "toMutableList()"
@@ -358,9 +356,8 @@ class AssignToMutableListTransformation(
 
 class AssignToSetTransformation(
         loop: KtForExpression,
-        inputVariable: KtCallableDeclaration,
         initialization: VariableInitialization
-) : AssignToVariableResultTransformation(loop, inputVariable, initialization) {
+) : AssignToVariableResultTransformation(loop, initialization) {
 
     override val presentation: String
         get() = "toSet()"
@@ -372,9 +369,8 @@ class AssignToSetTransformation(
 
 class AssignToMutableSetTransformation(
         loop: KtForExpression,
-        inputVariable: KtCallableDeclaration,
         initialization: VariableInitialization
-) : AssignToVariableResultTransformation(loop, inputVariable, initialization) {
+) : AssignToVariableResultTransformation(loop, initialization) {
 
     override val presentation: String
         get() = "toMutableSet()"

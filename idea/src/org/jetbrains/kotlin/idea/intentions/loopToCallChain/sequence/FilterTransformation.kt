@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.psiUtil.blockExpressionsOrSingle
 
 class FilterTransformation(
         override val loop: KtForExpression,
-        override val inputVariable: KtCallableDeclaration,
+        val inputVariable: KtCallableDeclaration,
         val condition: KtExpression,
         val isInverse: Boolean
 ) : SequenceTransformation {
@@ -105,7 +105,7 @@ class FilterTransformation(
             ) {
                 val typeRef = effectiveCondition.typeReference
                 if (typeRef != null) {
-                    return FilterIsInstanceTransformation(loop, inputVariable, typeRef)
+                    return FilterIsInstanceTransformation(loop, typeRef)
                 }
             }
 
@@ -114,7 +114,7 @@ class FilterTransformation(
                 && effectiveCondition.right.isNullExpression()
                 && effectiveCondition.left.isSimpleName(inputVariable.nameAsSafeName)
             ) {
-                return FilterNotNullTransformation(loop, inputVariable)
+                return FilterNotNullTransformation(loop)
             }
 
             return FilterTransformation(loop, inputVariable, condition, isInverse)
@@ -124,7 +124,6 @@ class FilterTransformation(
 
 class FilterIsInstanceTransformation(
         override val loop: KtForExpression,
-        override val inputVariable: KtCallableDeclaration,
         private val type: KtTypeReference
 ) : SequenceTransformation {
 
@@ -139,10 +138,7 @@ class FilterIsInstanceTransformation(
     }
 }
 
-class FilterNotNullTransformation(
-        override val loop: KtForExpression,
-        override val inputVariable: KtCallableDeclaration
-) : SequenceTransformation {
+class FilterNotNullTransformation(override val loop: KtForExpression) : SequenceTransformation {
 
     override val affectsIndex: Boolean
         get() = true

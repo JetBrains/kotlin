@@ -312,10 +312,7 @@ fun KtExpression.detectInitializationBeforeLoop(loop: KtForExpression): Variable
     return VariableInitialization(variable, assignment, initializer)
 }
 
-abstract class ReplaceLoopResultTransformation(
-        override val loop: KtForExpression,
-        final override val inputVariable: KtCallableDeclaration
-): ResultTransformation {
+abstract class ReplaceLoopResultTransformation(override val loop: KtForExpression): ResultTransformation {
 
     override val commentSavingRange = PsiChildRange.singleElement(loop.unwrapIfLabeled())
 
@@ -328,7 +325,6 @@ abstract class ReplaceLoopResultTransformation(
 
 abstract class AssignToVariableResultTransformation(
         override val loop: KtForExpression,
-        final override val inputVariable: KtCallableDeclaration,
         protected val initialization: VariableInitialization
 ) : ResultTransformation {
 
@@ -353,7 +349,7 @@ abstract class AssignToVariableResultTransformation(
 class AssignSequenceTransformationResultTransformation(
         private val sequenceTransformation: SequenceTransformation,
         initialization: VariableInitialization
-) : AssignToVariableResultTransformation(sequenceTransformation.loop, sequenceTransformation.inputVariable, initialization) {
+) : AssignToVariableResultTransformation(sequenceTransformation.loop, initialization) {
 
     override val presentation: String
         get() = sequenceTransformation.presentation
