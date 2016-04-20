@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.load.kotlin
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.typeEnhancement.hasEnhancedNullability
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -145,6 +142,13 @@ fun <T : Any> mapType(
     }
 }
 
+
+fun hasVoidReturnType(descriptor: CallableDescriptor): Boolean {
+    if (descriptor is ConstructorDescriptor) return true
+    return KotlinBuiltIns.isUnit(descriptor.returnType!!) && !TypeUtils.isNullableType(descriptor.returnType!!)
+           && descriptor !is PropertyGetterDescriptor
+}
+
 private fun <T : Any> mapBuiltInType(
         type: KotlinType,
         typeFactory: JvmTypeFactory<T>
@@ -173,7 +177,7 @@ private fun <T : Any> mapBuiltInType(
     return null
 }
 
-private fun computeInternalName(klass: ClassDescriptor): String {
+internal fun computeInternalName(klass: ClassDescriptor): String {
     val container = klass.containingDeclaration
 
     val name = SpecialNames.safeIdentifier(klass.name).identifier
