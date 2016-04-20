@@ -16,6 +16,9 @@ New features:
 - [KT-11768](https://youtrack.jetbrains.com/issue/KT-11768) Implement "Introduce local variable" intention
 - [KT-11692](https://youtrack.jetbrains.com/issue/KT-11692) Support Spring model diagrams for Kotlin classes
 - [KT-11574](https://youtrack.jetbrains.com/issue/KT-11574) Support predefined Java positions for language injection
+- [KT-2428](https://youtrack.jetbrains.com/issue/KT-11574) Support basic use-cases of language injection for expressions marked with @Language annotation
+- Add comment or @Language annotation after "Inject language or reference" intention automatically
+- Apply injection for the literals in property initializer through property usages
 - [KT-11807](https://youtrack.jetbrains.com/issue/KT-11807) Use function body template when generating overriding functions with default body
 
 Issues fixed:
