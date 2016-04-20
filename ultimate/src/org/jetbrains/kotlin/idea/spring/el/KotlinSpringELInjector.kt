@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.isPlain
+import org.jetbrains.kotlin.psi.psiUtil.isPlainWithEscapes
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.ifEmpty
@@ -52,7 +52,7 @@ class KotlinSpringELInjector : MultiHostInjector {
 
     override fun getLanguagesToInject(registrar: MultiHostRegistrar, host: PsiElement) {
         if (host is KtStringTemplateExpression) {
-            if (!host.isPlain()) return
+            if (!host.isPlainWithEscapes()) return
 
             val argument = host.parent as? KtValueArgument ?: return
             val entry = argument.getStrictParentOfType<KtAnnotationEntry>() ?: return

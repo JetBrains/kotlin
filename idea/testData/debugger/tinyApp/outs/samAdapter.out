@@ -4,9 +4,9 @@ Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socke
 samAdapter.kt:5
 samAdapter.kt:6
 samAdapter.kt:10
-MyJavaClass.java:20
+MyJavaClass.java:21
 samAdapter.kt:6
-MyJavaClass.java:20
+MyJavaClass.java:21
 samAdapter.kt:10
 samAdapter.kt:6
 samAdapter.kt:7

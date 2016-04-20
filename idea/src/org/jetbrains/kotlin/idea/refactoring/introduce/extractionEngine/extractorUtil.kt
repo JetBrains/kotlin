@@ -111,9 +111,7 @@ private fun buildSignature(config: ExtractionGeneratorConfiguration, renderer: D
 fun ExtractionGeneratorConfiguration.getSignaturePreview(renderer: DescriptorRenderer) = buildSignature(this, renderer).asString()
 
 fun ExtractionGeneratorConfiguration.getDeclarationPattern(
-        descriptorRenderer: DescriptorRenderer = if (generatorOptions.flexibleTypesAllowed)
-                                                    DescriptorRenderer.FLEXIBLE_TYPES_FOR_CODE
-                                                 else IdeDescriptorRenderers.SOURCE_CODE
+        descriptorRenderer: DescriptorRenderer = IdeDescriptorRenderers.SOURCE_CODE
 ): String {
     val extractionTarget = generatorOptions.target
     if (!extractionTarget.isAvailable(descriptor)) {

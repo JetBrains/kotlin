@@ -21,9 +21,7 @@ import org.gradle.BuildAdapter
 import org.gradle.BuildResult
 import org.gradle.api.Project
 import org.gradle.api.logging.Logging
-import org.gradle.api.tasks.compile.AbstractCompile
 import java.util.concurrent.ScheduledExecutorService
-import kotlin.properties.Delegates
 
 
 private fun comparableVersionStr(version: String) =
@@ -42,7 +40,6 @@ class CleanUpBuildListener(pluginClassLoader: ClassLoader, private val project: 
     }
 
     private val log = Logging.getLogger(this.javaClass)
-    private var threadTracker: ThreadTracker? = ThreadTracker()
     private val cleanup = CompilerServicesCleanup(pluginClassLoader)
     private var startMemory: Long? = null
 
@@ -65,15 +62,11 @@ class CleanUpBuildListener(pluginClassLoader: ClassLoader, private val project: 
                 log.kotlinDebug("Cleanup after kotlin")
 
                 cleanup(gradle.gradleVersion)
-
-                // checking thread leaks only then cleaning up
-                threadTracker?.checkThreadLeak(gradle)
             }
             else {
                 log.kotlinDebug("Skipping kotlin cleanup since compiler wasn't called")
             }
 
-            threadTracker = null
             gradle.removeListener(this)
 
             if (kotlinCompilerCalled) {

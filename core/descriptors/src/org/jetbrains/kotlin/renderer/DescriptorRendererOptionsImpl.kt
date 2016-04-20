@@ -80,7 +80,6 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
     override var withoutSuperTypes by property(false)
     override var typeNormalizer by property<(KotlinType) -> KotlinType>({ it })
     override var renderDefaultValues by property(true)
-    override var flexibleTypesForCode by property(false)
     override var secondaryConstructorsAsPrimary by property(true)
     override var overrideRenderingPolicy by property(OverrideRenderingPolicy.RENDER_OPEN)
     override var valueParametersHandler: DescriptorRenderer.ValueParametersHandler by property(DescriptorRenderer.ValueParametersHandler.DEFAULT)

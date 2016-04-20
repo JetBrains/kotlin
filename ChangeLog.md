@@ -173,6 +173,7 @@ Issues fixed:
 - [KT-11719](https://youtrack.jetbrains.com/issue/KT-11719) Fixed renaming of Kotlin parameters references in XML files
 - Fix several issues leading to exceptions: [KT-11579](https://youtrack.jetbrains.com/issue/KT-11579), [KT-11580](https://youtrack.jetbrains.com/issue/KT-11580), [KT-11777](https://youtrack.jetbrains.com/issue/KT-11777), [KT-11868](https://youtrack.jetbrains.com/issue/KT-11868)
 - Fixed NoSuchFieldException in Kotlin module settings on IDEA Ultimate
+- [KT-11880](https://youtrack.jetbrains.com/issue/KT-11880) Fixed renaming of Kotlin properties through SpEL references in XML files
 
 #### Debugger
 
@@ -189,6 +190,10 @@ Issues fixed:
 - [KT-6805](https://youtrack.jetbrains.com/issue/KT-6805) Convert Java expression to Kotlin when opening Evaluate Expression from Variables view
 - Show error message when debug info for some local variable is corrupted
 - Avoid 1s delay in completion in debugger fields if session is not stopped on a breakpoint
+- Avoid cast to runtime type unavailable in current scope
+- Fix text with line breaks in popup with line breakpoint variants
+- Fix breakpoints inside inline functions in libraries sources
+- Allow breakpoints at catch clause declaration
 
 ### Java to Kotlin converter
 
@@ -213,6 +218,7 @@ Issues fixed:
 - [KT-11487](https://youtrack.jetbrains.com/issue/KT-11487) Fixed sequential build with kapt and stubs enabled when Kotlin source file was modified and no Java source files were modified
 - [KT-11264](https://youtrack.jetbrains.com/issue/KT-11264) Action to create new activity in Kotlin
 - [KT-11201](https://youtrack.jetbrains.com/issue/KT-11201) Do not ignore items with similar names in kapt
+- Rename Android Extensions imports when the layout file is renamed
 
 ### Maven
 

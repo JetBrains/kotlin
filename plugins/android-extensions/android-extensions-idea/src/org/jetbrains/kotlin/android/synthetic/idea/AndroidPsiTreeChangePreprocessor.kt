@@ -21,6 +21,7 @@ import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.SimpleModificationTracker
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.PsiTreeChangeEventImpl
@@ -42,6 +43,17 @@ class AndroidPsiTreeChangePreprocessor : PsiTreeChangePreprocessor, SimpleModifi
                 return
             }
 
+            // Layout file was renamed
+            val element = event.element
+            if (element != null
+                    && event.code == PsiTreeChangeEventImpl.PsiEventType.PROPERTY_CHANGED
+                    && event.propertyName == "fileName") {
+                if (checkIfLayoutFile(element)) {
+                    incModificationCount()
+                    return
+                }
+            }
+
             if (child != null && checkIfLayoutFile(child)) {
                 incModificationCount()
                 return
@@ -50,12 +62,9 @@ class AndroidPsiTreeChangePreprocessor : PsiTreeChangePreprocessor, SimpleModifi
             val file = event.file ?: return
             if (!checkIfLayoutFile(file)) return
 
-            val xmlAttribute = findXmlAttribute(child)
-            if (xmlAttribute != null) {
-                val name = xmlAttribute.name
-                if (name != "android:id" && name != "class") return
-            }
-
+            val xmlAttribute = findXmlAttribute(child) ?: return
+            val name = xmlAttribute.name
+            if (name != "android:id" && name != "class") return
             incModificationCount()
         }
     }
@@ -66,13 +75,15 @@ class AndroidPsiTreeChangePreprocessor : PsiTreeChangePreprocessor, SimpleModifi
                 PsiTreeChangeEventImpl.PsiEventType.CHILD_MOVED,
                 PsiTreeChangeEventImpl.PsiEventType.CHILD_REMOVED,
                 PsiTreeChangeEventImpl.PsiEventType.CHILD_REPLACED,
-                PsiTreeChangeEventImpl.PsiEventType.CHILDREN_CHANGED)
+                PsiTreeChangeEventImpl.PsiEventType.CHILDREN_CHANGED,
+                PsiTreeChangeEventImpl.PsiEventType.PROPERTY_CHANGED)
 
         private fun checkIfLayoutFile(element: PsiElement): Boolean {
             val xmlFile = element as? XmlFile ?: return false
 
             val projectFileIndex = ProjectRootManager.getInstance(xmlFile.project).fileIndex
             val module = projectFileIndex.getModuleForFile(xmlFile.virtualFile)
+                         ?: (element.parent as? PsiDirectory)?.let { projectFileIndex.getModuleForFile(it.virtualFile) }
 
             if (module != null) {
                 val resourceManager = AndroidLayoutXmlFileManager.getInstance(module) ?: return false

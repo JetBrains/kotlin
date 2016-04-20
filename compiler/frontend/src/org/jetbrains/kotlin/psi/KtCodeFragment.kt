@@ -99,11 +99,23 @@ abstract class KtCodeFragment(
 
     override fun addImportsFromString(imports: String?) {
         if (imports == null || imports.isEmpty()) return
-        this.imports.addAll(imports.split(IMPORT_SEPARATOR))
+
+        imports.split(IMPORT_SEPARATOR).forEach {
+            addImport(it)
+        }
 
         // we need this code to force re-highlighting, otherwise it does not work by some reason
         val tempElement = KtPsiFactory(project).createColon()
         add(tempElement).delete()
+    }
+
+    fun addImport(import: String) {
+        val contextFile = getContextContainingFile()
+        if (contextFile != null) {
+            if (contextFile.importDirectives.find { it.text == import } == null) {
+                imports.add(import)
+            }
+        }
     }
 
     fun importsAsImportList(): KtImportList? {
@@ -146,7 +158,11 @@ abstract class KtCodeFragment(
 
     private fun initImports(imports: String?) {
         if (imports != null && !imports.isEmpty()) {
-            this.imports.addAll(imports.split(IMPORT_SEPARATOR).map { it.check { it.startsWith("import ") } ?: "import $it" })
+
+            val importsWithPrefix = imports.split(IMPORT_SEPARATOR).map { it.check { it.startsWith("import ") } ?: "import ${it.trim()}" }
+            importsWithPrefix.forEach {
+                addImport(it)
+            }
         }
     }
 

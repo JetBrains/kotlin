@@ -63,6 +63,7 @@
       <root url="file://$PROJECT_DIR$/../out/production/util" />
       <root url="file://$PROJECT_DIR$/../out/production/util.runtime" />
       <root url="file://$PROJECT_DIR$/../out/production/Kotlin" />
+      <root url="file://$PROJECT_DIR$/../out/production/formatter" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
@@ -94,6 +95,7 @@
       <root url="file://$PROJECT_DIR$/../idea/idea-jps-common/src" />
       <root url="file://$PROJECT_DIR$/../idea/idea-live-templates/src" />
       <root url="file://$PROJECT_DIR$/../idea/idea-test-framework/src" />
+      <root url="file://$PROJECT_DIR$/../idea/formatter/src" />
     </SOURCES>
   </library>
 </component>

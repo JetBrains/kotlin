@@ -16,11 +16,12 @@
 
 package org.jetbrains.kotlin.android.synthetic
 
+import org.jetbrains.kotlin.android.synthetic.res.ResourceIdentifier
 import org.xml.sax.Attributes
 import org.xml.sax.helpers.DefaultHandler
 import java.util.HashMap
 
-class AndroidXmlHandler(private val elementCallback: (String, String) -> Unit) : DefaultHandler() {
+class AndroidXmlHandler(private val elementCallback: (ResourceIdentifier, String) -> Unit) : DefaultHandler() {
 
     override fun startDocument() {
         super.startDocument()

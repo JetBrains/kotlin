@@ -26,7 +26,6 @@ import com.intellij.diagnostic.LogMessageEx
 import com.intellij.openapi.diagnostic.Attachment
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProcessCanceledException
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiDocumentManager
@@ -72,7 +71,6 @@ import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.types.Flexibility
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.Opcodes.ASM5
 import org.jetbrains.org.objectweb.asm.Type
@@ -158,7 +156,8 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
 
             val attachments = arrayOf(attachmentByPsiFile(sourcePosition.file),
                                       attachmentByPsiFile(codeFragment),
-                                      Attachment("breakpoint.info", "line: ${sourcePosition.line}"))
+                                      Attachment("breakpoint.info", "line: ${sourcePosition.line}"),
+                                      Attachment("context.info", codeFragment.context?.text ?: "null"))
             LOG.error(LogMessageEx.createEvent(
                                 "Couldn't evaluate expression",
                                 ExceptionUtil.getThrowableText(e),
@@ -455,7 +454,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                 }
 
                 val filesToAnalyze = if (contextFile == null) listOf(this) else listOf(this, contextFile)
-                val resolutionFacade = KotlinCacheService.getInstance(project).getResolutionFacade(filesToAnalyze + createFlexibleTypesFile())
+                val resolutionFacade = KotlinCacheService.getInstance(project).getResolutionFacade(filesToAnalyze)
                 val analysisResult = resolutionFacade.analyzeFullyAndGetResult(filesToAnalyze)
 
                 if (analysisResult.isError()) {
@@ -528,16 +527,6 @@ private fun createFileForDebugger(codeFragment: KtCodeFragment,
     return jetFile
 }
 
-private fun PsiElement.createFlexibleTypesFile(): KtFile {
-    return createKtFile(
-            "FLEXIBLE_TYPES.kt",
-            """
-                package ${Flexibility.FLEXIBLE_TYPE_CLASSIFIER.packageFqName}
-                public class ${Flexibility.FLEXIBLE_TYPE_CLASSIFIER.relativeClassName}<L, U>
-            """
-    )
-}
-
 private fun PsiElement.createKtFile(fileName: String, fileText: String): KtFile {
     // Not using KtPsiFactory because we need a virtual file attached to the JetFile
     val virtualFile = LightVirtualFile(fileName, KotlinLanguage.INSTANCE, fileText)
@@ -552,7 +541,7 @@ private fun SuspendContext.getInvokePolicy(): Int {
     return if (suspendPolicy == EventRequest.SUSPEND_EVENT_THREAD) ObjectReference.INVOKE_SINGLE_THREADED else 0
 }
 
-fun Type.getClassDescriptor(project: Project): ClassDescriptor? {
+fun Type.getClassDescriptor(scope: GlobalSearchScope): ClassDescriptor? {
     if (AsmUtil.isPrimitive(this)) return null
 
     val jvmName = JvmClassName.byInternalName(internalName).fqNameForClassNameWithoutDollars
@@ -561,7 +550,7 @@ fun Type.getClassDescriptor(project: Project): ClassDescriptor? {
     if (platformClasses.isNotEmpty()) return platformClasses.first()
 
     return runReadAction {
-        val classes = JavaPsiFacade.getInstance(project).findClasses(jvmName.asString(), GlobalSearchScope.allScope(project))
+        val classes = JavaPsiFacade.getInstance(scope.project).findClasses(jvmName.asString(), scope)
         if (classes.isEmpty()) null
         else {
             classes.first().getJavaClassDescriptor()

@@ -7346,8 +7346,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
         @TestMetadata("letClassImplementInterfaceNullable.kt")
         public void testLetClassImplementInterfaceNullable() throws Exception {
-            String fileName =
-                    KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/letClassImplementInterfaceNullable.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/letClassImplementInterfaceNullable.kt");
             doTest(fileName);
         }
 

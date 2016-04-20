@@ -20,6 +20,8 @@ abstract class KotlinBasePluginWrapper: Plugin<Project> {
                     "contains 'kotlin-gradle-plugin' in buildscript's classpath configuration.")
             return
         }
+        // TODO: consider only set if if daemon or parallel compilation are enabled, though this way it should be safe too
+        System.setProperty(org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, "true")
 
         val kotlinPluginVersion = loadKotlinVersionFromResource(log)
         project.extensions.extraProperties?.set("kotlin.gradle.plugin.version", kotlinPluginVersion)

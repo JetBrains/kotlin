@@ -997,6 +997,10 @@ fun main(args: Array<String>) {
             model("android/rename", recursive = false, extension = null)
         }
 
+        testClass<AbstractAndroidLayoutRenameTest>() {
+            model("android/renameLayout", recursive = false, extension = null)
+        }
+
         testClass<AbstractAndroidFindUsagesTest>() {
             model("android/findUsages", recursive = false, extension = null)
         }
@@ -1156,7 +1160,7 @@ class TestGroup(val testsRoot: String, val testDataRoot: String) {
                     }
                     else {
                         SimpleTestClassModel(rootFile, recursive, excludeParentDirs,
-                                             compiledPattern, filenameStartsLowerCase, testMethod, className, 
+                                             compiledPattern, filenameStartsLowerCase, testMethod, className,
                                              targetBackend, excludeDirs)
                     }
             )

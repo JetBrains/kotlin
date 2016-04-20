@@ -138,10 +138,6 @@ internal class DescriptorRendererImpl(
             if (debugMode) {
                 return renderFlexibleTypeWithBothBounds(type.flexibility().lowerBound, type.flexibility().upperBound)
             }
-            else if (flexibleTypesForCode) {
-                val prefix = if (classifierNamePolicy == ClassifierNamePolicy.SHORT) "" else Flexibility.FLEXIBLE_TYPE_CLASSIFIER.packageFqName.asString() + "."
-                return prefix + Flexibility.FLEXIBLE_TYPE_CLASSIFIER.relativeClassName + lt() + renderNormalizedType(type.flexibility().lowerBound) + ", " + renderNormalizedType(type.flexibility().upperBound) + gt()
-            }
             else {
                 return renderFlexibleType(type)
             }

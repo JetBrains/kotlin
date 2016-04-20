@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Type
 
 class FrameVisitor(context: EvaluationContextImpl) {
-    private val project = context.debugProcess.project
+    private val scope = context.debugProcess.searchScope
     private val frame = context.frameProxy
 
     companion object {
@@ -177,7 +177,6 @@ class FrameVisitor(context: EvaluationContextImpl) {
 
     private fun isValueOfCorrectType(value: Value, asmType: Type?, shouldCheckType: Boolean): Boolean {
         if (!shouldCheckType || asmType == null || value.asmType == asmType) return true
-        if (project == null) return false
 
         if (asmType == OBJECT_TYPE) return true
 
@@ -185,8 +184,8 @@ class FrameVisitor(context: EvaluationContextImpl) {
             return true
         }
 
-        val thisDesc = value.asmType.getClassDescriptor(project)
-        val expDesc = asmType.getClassDescriptor(project)
+        val thisDesc = value.asmType.getClassDescriptor(scope)
+        val expDesc = asmType.getClassDescriptor(scope)
         return thisDesc != null && expDesc != null && runReadAction { DescriptorUtils.isSubclass(thisDesc, expDesc) }
     }
 

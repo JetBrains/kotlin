@@ -262,7 +262,7 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
         }
 
         private fun createKotlinProperty(project: Project, variableName: String, variableTypeName: String, value: Value): String? {
-            val actualClassDescriptor = value.asValue().asmType.getClassDescriptor(project)
+            val actualClassDescriptor = value.asValue().asmType.getClassDescriptor(GlobalSearchScope.allScope(project))
             if (actualClassDescriptor != null && actualClassDescriptor.defaultType.arguments.isEmpty()) {
                 val renderedType = IdeDescriptorRenderers.SOURCE_CODE.renderType(actualClassDescriptor.defaultType.makeNullable())
                 return "val ${variableName.quoteIfNeeded()}: $renderedType = null"

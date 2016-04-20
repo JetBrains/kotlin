@@ -13,7 +13,6 @@ abstract class AbstractKotlinAndroidGradleTests(
 
     override fun defaultBuildOptions() =
             BuildOptions(withDaemon = true,
-                         assertThreadLeaks = false,
                          androidHome = File("../../../dependencies/android-sdk-for-tests"),
                          androidGradlePluginVersion = androidGradlePluginVersion)
 

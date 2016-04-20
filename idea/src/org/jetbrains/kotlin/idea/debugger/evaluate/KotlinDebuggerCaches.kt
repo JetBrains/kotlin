@@ -187,7 +187,7 @@ class KotlinDebuggerCaches(private val project: Project) {
             val value = frameVisitor.findValue(name, asmType = null, checkType = false, failIfNotFound = false)
             if (value == null) return@all false
 
-            val thisDescriptor = value.asmType.getClassDescriptor(project)
+            val thisDescriptor = value.asmType.getClassDescriptor(context.debugProcess.searchScope)
             val superClassDescriptor = jetType.constructor.declarationDescriptor as? ClassDescriptor
             return@all thisDescriptor != null && superClassDescriptor != null && runReadAction { DescriptorUtils.isSubclass(thisDescriptor, superClassDescriptor) }
         }
