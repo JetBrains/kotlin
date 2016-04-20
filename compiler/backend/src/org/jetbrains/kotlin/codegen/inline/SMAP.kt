@@ -143,24 +143,16 @@ interface SourceMapper {
     val parent: SourceMapper?
         get() = null
 
-    open fun visitSource(name: String, path: String) {
+    fun visitLineNumber(iv: MethodVisitor, lineNumber: Int, start: Label) {
         throw UnsupportedOperationException("fail")
     }
 
-    open fun visitOrigin() {
+    fun visitLineNumber(iv: MethodVisitor, start: Label, source: Int, sourceName: String, sourcePath:String): Int {
         throw UnsupportedOperationException("fail")
     }
 
-    open fun visitLineNumber(iv: MethodVisitor, lineNumber: Int, start: Label) {
-        throw UnsupportedOperationException("fail")
-    }
+    fun endMapping() {
 
-    open fun visitLineNumber(iv: MethodVisitor, start: Label, source: Int, sourceName: String, sourcePath:String): Int {
-        throw UnsupportedOperationException("fail")
-    }
-
-    open fun endMapping() {
-        parent?.visitOrigin()
     }
 
     companion object {
@@ -169,19 +161,7 @@ interface SourceMapper {
         }
 
         fun createFromSmap(smap: SMAP): SourceMapper {
-            val maxUsedIndex = smap.fileMappings.maxBy { it.lineMappings.maxBy { it.maxDest }!!.maxDest }!!.lineMappings.maxBy { it.maxDest }!!.maxDest
-            val sourceMapper = DefaultSourceMapper(smap.sourceInfo, maxUsedIndex)
-            smap.fileMappings.asSequence()
-                    //default one mapped through sourceInfo
-                    .filterNot { it == smap.default }
-                    .forEach { fileMapping ->
-                        sourceMapper.visitSource(fileMapping.name, fileMapping.path)
-                        fileMapping.lineMappings.forEach {
-                            sourceMapper.lastVisited!!.mapNewInterval(it.source, it.dest, it.range)
-                        }
-                    }
-
-            return sourceMapper
+            return DefaultSourceMapper(smap.sourceInfo, smap.fileMappings)
         }
     }
 }
@@ -193,10 +173,6 @@ object IdenticalSourceMapper : SourceMapper {
     override val parent: SourceMapper?
         get() = null
 
-    override fun visitSource(name: String, path: String) {}
-
-    override fun visitOrigin() {}
-
     override fun visitLineNumber(iv: MethodVisitor, lineNumber: Int, start: Label) {
         iv.visitLineNumber(lineNumber, start)
     }
@@ -204,10 +180,15 @@ object IdenticalSourceMapper : SourceMapper {
 
 class CallSiteMarker(val lineNumber: Int)
 
-open class DefaultSourceMapper @JvmOverloads constructor(
-        val sourceInfo: SourceInfo,
-        protected var maxUsedValue: Int = sourceInfo.linesInFile
-) : SourceMapper {
+open class DefaultSourceMapper(val sourceInfo: SourceInfo) : SourceMapper {
+
+    private var maxUsedValue: Int = sourceInfo.linesInFile
+
+    private var lastMappedWithChanges: RawFileMapping? = null
+
+    private var fileMappings: LinkedHashMap<String, RawFileMapping> = linkedMapOf()
+
+    protected val origin: RawFileMapping
 
     var callSiteMarker: CallSiteMarker? = null;
         set(value) {
@@ -215,10 +196,9 @@ open class DefaultSourceMapper @JvmOverloads constructor(
             field = value
         }
 
-    var lastVisited: RawFileMapping? = null
-    private var lastMappedWithChanges: RawFileMapping? = null
-    private var fileMappings: LinkedHashMap<String, RawFileMapping> = linkedMapOf()
-    protected val origin: RawFileMapping
+    override val resultMappings: List<FileMapping>
+        get() = fileMappings.values.map { it.toFileMapping() }
+
 
     init {
         val name = sourceInfo.source
@@ -226,20 +206,24 @@ open class DefaultSourceMapper @JvmOverloads constructor(
         origin = RawFileMapping(name, path)
         origin.initRange(1, sourceInfo.linesInFile)
         fileMappings.put(createKey(name, path), origin)
-        lastVisited = origin
+    }
+
+    constructor(sourceInfo: SourceInfo, fileMappings: List<FileMapping>): this(sourceInfo) {
+       fileMappings.asSequence().drop(1)
+                //default one mapped through sourceInfo
+                .forEach { fileMapping ->
+                    val newFileMapping = getOrRegisterNewSource(fileMapping.name, fileMapping.path)
+                    fileMapping.lineMappings.forEach {
+                        newFileMapping.mapNewInterval(it.source, it.dest, it.range)
+                        maxUsedValue = Math.max(it.maxDest, maxUsedValue)
+                    }
+                }
     }
 
     private fun createKey(name: String, path: String) = "$name#$path"
 
-    override val resultMappings: List<FileMapping>
-        get() = fileMappings.values.map { it.toFileMapping() }
-
-    override fun visitSource(name: String, path: String) {
-        lastVisited = fileMappings.getOrPut(createKey(name, path)) { RawFileMapping(name, path) }
-    }
-
-    override fun visitOrigin() {
-        lastVisited = origin
+    private fun getOrRegisterNewSource(name: String, path: String): RawFileMapping {
+        return fileMappings.getOrPut(createKey(name, path)) { RawFileMapping(name, path) }
     }
 
     override fun visitLineNumber(iv: MethodVisitor, lineNumber: Int, start: Label) {
@@ -247,10 +231,6 @@ open class DefaultSourceMapper @JvmOverloads constructor(
             //no source information, so just skip this linenumber
             return
         }
-        //TODO add assertion that mapping exists
-        //val sourceLineNumber = createMapping(lineNumberToMap)
-        val sourceLineNumber = lineNumber
-        assert(lineNumber == sourceLineNumber)
         iv.visitLineNumber(lineNumber, start)
     }
 
@@ -259,16 +239,13 @@ open class DefaultSourceMapper @JvmOverloads constructor(
             //no source information, so just skip this linenumber
             return -1
         }
-        visitSource(sourceName, sourcePath)
-        val mappedLineIndex = createMapping(source)
+        val mappedLineIndex = createMapping(getOrRegisterNewSource(sourceName, sourcePath), source)
         iv.visitLineNumber(mappedLineIndex, start)
         return mappedLineIndex
-
     }
 
-    protected fun createMapping(lineNumber: Int): Int {
-        val fileMapping = lastVisited!!
-        val mappedLineIndex = fileMapping.mapNewLineNumber(lineNumber, maxUsedValue, lastMappedWithChanges == lastVisited, callSiteMarker)
+    private fun createMapping(fileMapping: RawFileMapping, lineNumber: Int): Int {
+        val mappedLineIndex = fileMapping.mapNewLineNumber(lineNumber, maxUsedValue, lastMappedWithChanges == fileMapping, callSiteMarker)
         if (mappedLineIndex > maxUsedValue) {
             lastMappedWithChanges = fileMapping
             maxUsedValue = mappedLineIndex
