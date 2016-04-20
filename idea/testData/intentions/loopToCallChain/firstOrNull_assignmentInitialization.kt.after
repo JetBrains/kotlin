@@ -1,4 +1,5 @@
 // WITH_RUNTIME
+// INTENTION_TEXT: "Replace with 'firstOrNull{}'"
 fun foo(list: List<String>) {
     var result: String? = ""
 

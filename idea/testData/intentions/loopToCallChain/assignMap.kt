@@ -1,4 +1,5 @@
 // WITH_RUNTIME
+// INTENTION_TEXT: "Replace with 'filter{}.map{}'"
 import java.util.ArrayList
 
 fun foo(list: List<String>): List<Int> {

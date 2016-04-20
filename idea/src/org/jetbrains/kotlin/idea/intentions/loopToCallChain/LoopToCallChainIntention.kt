@@ -33,7 +33,23 @@ class LoopToCallChainIntention : SelfTargetingRangeIntention<KtForExpression>(
         "Replace with stdlib operations"
 ) {
     override fun applicabilityRange(element: KtForExpression): TextRange? {
-        return if (match(element) != null) element.forKeyword.textRange else null
+        val match = match(element)
+        text = if (match != null) "Replace with '${match.buildPresentation()}'" else defaultText
+        return if (match != null) element.forKeyword.textRange else null
+    }
+
+    private fun ResultTransformationMatch.buildPresentation(): String {
+        var transformations = sequenceTransformations + resultTransformation
+        val MAX = 3
+        var result: String? = null
+        if (transformations.size > MAX) {
+            transformations = transformations.drop(transformations.size - MAX)
+            result = ".."
+        }
+        for (transformation in transformations) {
+            result = transformation.buildPresentation(result)
+        }
+        return result!!
     }
 
     override fun applyTo(element: KtForExpression, editor: Editor?) {

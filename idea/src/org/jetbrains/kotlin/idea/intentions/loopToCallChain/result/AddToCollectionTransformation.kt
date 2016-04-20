@@ -55,6 +55,16 @@ class AddToCollectionTransformation(
         }
     }
 
+    override val presentation: String
+        get() = "+="
+
+    override fun buildPresentation(prevTransformationsPresentation: String?): String {
+        return if (prevTransformationsPresentation != null)
+            "+= $prevTransformationsPresentation"
+        else
+            "+="
+    }
+
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
         return KtPsiFactory(loop).createExpressionByPattern("$0 += $1", targetCollection, chainedCallGenerator.receiver)
     }
@@ -170,6 +180,9 @@ class FilterToTransformation private constructor(
         private val filter: KtExpression
 ) : ReplaceLoopResultTransformation(loop, inputVariable) {
 
+    override val presentation: String
+        get() = "filterTo(){}"
+
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
         val lambda = generateLambda(inputVariable, filter)
         return chainedCallGenerator.generate("filterTo($0) $1:'{}'", targetCollection, lambda)
@@ -200,6 +213,9 @@ class AssignFilterToTransformation(
         private val filter: KtExpression
 ) : AssignToVariableResultTransformation(loop, inputVariable, targetCollectionInitialization) {
 
+    override val presentation: String
+        get() = "filterTo(){}"
+
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
         val lambda = generateLambda(inputVariable, filter)
         return chainedCallGenerator.generate("filterTo($0) $1:'{}'", initialization.initializer, lambda)
@@ -212,6 +228,9 @@ class MapToTransformation private constructor(
         private val targetCollection: KtExpression,
         private val mapping: KtExpression
 ) : ReplaceLoopResultTransformation(loop, inputVariable) {
+
+    override val presentation: String
+        get() = "mapTo(){}"
 
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
         val lambda = generateLambda(inputVariable, mapping)
@@ -243,6 +262,9 @@ class AssignMapToTransformation(
         private val mapping: KtExpression
 ) : AssignToVariableResultTransformation(loop, inputVariable, targetCollectionInitialization) {
 
+    override val presentation: String
+        get() = "mapTo(){}"
+
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
         val lambda = generateLambda(inputVariable, mapping)
         return chainedCallGenerator.generate("mapTo($0) $1:'{}'", initialization.initializer, lambda)
@@ -255,6 +277,9 @@ class FlatMapToTransformation private constructor(
         private val targetCollection: KtExpression,
         private val transform: KtExpression
 ) : ReplaceLoopResultTransformation(loop, inputVariable) {
+
+    override val presentation: String
+        get() = "flatMapTo(){}"
 
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
         val lambda = generateLambda(inputVariable, transform)
@@ -286,6 +311,9 @@ class AssignFlatMapToTransformation(
         private val transform: KtExpression
 ) : AssignToVariableResultTransformation(loop, inputVariable, targetCollectionInitialization) {
 
+    override val presentation: String
+        get() = "flatMapTo(){}"
+
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
         val lambda = generateLambda(inputVariable, transform)
         return chainedCallGenerator.generate("flatMapTo($0) $1:'{}'", initialization.initializer, lambda)
@@ -297,6 +325,9 @@ class AssignToListTransformation(
         inputVariable: KtCallableDeclaration,
         initialization: VariableInitialization
 ) : AssignToVariableResultTransformation(loop, inputVariable, initialization) {
+
+    override val presentation: String
+        get() = "toList()"
 
     override fun mergeWithPrevious(previousTransformation: SequenceTransformation): ResultTransformation? {
         if (previousTransformation !is FilterTransformation) return null
@@ -314,6 +345,9 @@ class AssignToMutableListTransformation(
         initialization: VariableInitialization
 ) : AssignToVariableResultTransformation(loop, inputVariable, initialization) {
 
+    override val presentation: String
+        get() = "toMutableList()"
+
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
         return chainedCallGenerator.generate("toMutableList()")
     }
@@ -325,6 +359,9 @@ class AssignToSetTransformation(
         initialization: VariableInitialization
 ) : AssignToVariableResultTransformation(loop, inputVariable, initialization) {
 
+    override val presentation: String
+        get() = "toSet()"
+
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
         return chainedCallGenerator.generate("toSet()")
     }
@@ -335,6 +372,9 @@ class AssignToMutableSetTransformation(
         inputVariable: KtCallableDeclaration,
         initialization: VariableInitialization
 ) : AssignToVariableResultTransformation(loop, inputVariable, initialization) {
+
+    override val presentation: String
+        get() = "toMutableSet()"
 
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
         return chainedCallGenerator.generate("toMutableSet()")

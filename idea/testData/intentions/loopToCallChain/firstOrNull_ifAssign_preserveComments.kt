@@ -1,4 +1,5 @@
 // WITH_RUNTIME
+// INTENTION_TEXT: "Replace with 'firstOrNull{}'"
 fun foo(list: List<String>) {
     var result: String? = null
     <caret>for (s in list) { // search for first non-empty string in the list

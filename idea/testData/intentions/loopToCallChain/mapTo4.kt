@@ -1,4 +1,5 @@
 // WITH_RUNTIME
+// INTENTION_TEXT: "Replace with 'filter{}.mapTo(){}'"
 fun foo(list: List<String>): List<Int> {
     val target = createCollection()
     <caret>for (s in list) {

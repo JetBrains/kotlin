@@ -1,4 +1,5 @@
 // WITH_RUNTIME
+// INTENTION_TEXT: "Replace with 'map{}.toSet()'"
 import java.util.HashSet
 
 fun foo(map: Map<Int, String>): Collection<Int> {

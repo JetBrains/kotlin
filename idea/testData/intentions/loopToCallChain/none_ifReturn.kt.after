@@ -1,4 +1,5 @@
 // WITH_RUNTIME
+// INTENTION_TEXT: "Replace with 'none{}'"
 fun foo(list: List<String>): Boolean {
     <caret>return list.none { it.length > 0 }
 }

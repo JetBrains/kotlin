@@ -1,4 +1,5 @@
 // WITH_RUNTIME
+// INTENTION_TEXT: "Replace with 'filter{}.mapTo(){}'"
 fun foo(list: List<String>, target: MutableList<Int>) {
     <caret>list
             .filter { it.length > 0 }

@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
 class FindAndReturnTransformation(
         override val loop: KtForExpression,
         override val inputVariable: KtCallableDeclaration,
-        private val generator: (chainedCallGenerator: ChainedCallGenerator, filter: KtExpression?) -> KtExpression,
+        private val generator: FindOperatorGenerator,
         private val endReturn: KtReturnExpression,
         private val filter: KtExpression? = null
 ) : ResultTransformation {
@@ -44,8 +44,11 @@ class FindAndReturnTransformation(
 
     override fun commentRestoringRange(convertLoopResult: KtExpression) = commentRestoringRange
 
+    override val presentation: String
+        get() = generator.functionName + (if (filter != null) "{}" else "()")
+
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
-        return generator(chainedCallGenerator, filter)
+        return generator.generate(chainedCallGenerator, filter)
     }
 
     override fun convertLoop(resultCallChain: KtExpression): KtExpression {

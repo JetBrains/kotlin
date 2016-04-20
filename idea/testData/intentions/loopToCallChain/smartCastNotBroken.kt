@@ -1,4 +1,5 @@
 // WITH_RUNTIME
+// INTENTION_TEXT: "Replace with '...filter{}.map{}.firstOrNull()'"
 fun foo(list: List<String>, o: Any): Int? {
     if (o is Int) {
         <caret>for (s in list) {
