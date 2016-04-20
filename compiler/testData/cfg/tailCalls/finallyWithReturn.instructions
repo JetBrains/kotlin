@@ -14,10 +14,11 @@ L0:
     jmp?(L2)                                                                NEXT:[mark({ return test() }), mark({ // do nothing })]
   3 mark({ // do nothing })
     read (Unit)
-  2 jmp(L3)                                                                 NEXT:[mark({ return test() })]
+  2 jmp?(L2)                                                                NEXT:[mark({ return test() }), jmp(L3)]
+    jmp(L3)                                                                 NEXT:[mark({ return test() })]
 L2 [onExceptionToFinallyBlock]:
 L4 [start finally]:
-  3 mark({ return test() })                                                 PREV:[jmp?(L2)]
+  3 mark({ return test() })                                                 PREV:[jmp?(L2), jmp?(L2)]
     mark(test())
     call(test(), test) -> <v0>
     ret(*|<v0>) L1                                                          NEXT:[<END>]

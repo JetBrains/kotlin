@@ -18,9 +18,11 @@ L0:
   3 mark({ test() })
     mark(test())
     call(test(), test) -> <v0>
-  2 jmp(L4)                                                                                           NEXT:[jmp(L5)]
+  2 jmp?(L2)                                                                                          NEXT:[v(any : Exception), jmp?(L3)]
+    jmp?(L3)                                                                                          NEXT:[mark({ test() }), jmp(L4)]
+    jmp(L4)                                                                                           NEXT:[jmp(L5)]
 L2 [onException]:
-  3 v(any : Exception)                                                                                PREV:[jmp?(L2)]
+  3 v(any : Exception)                                                                                PREV:[jmp?(L2), jmp?(L2)]
     magic[FAKE_INITIALIZER](any : Exception) -> <v1>
     w(any|<v1>)
   4 mark({ test() })
@@ -31,7 +33,7 @@ L4 [afterCatches]:
   2 jmp(L5)                                                                                           NEXT:[mark({ test() })]                                                                                  PREV:[jmp(L4), jmp(L4)]
 L3 [onExceptionToFinallyBlock]:
 L6 [start finally]:
-  3 mark({ test() })                                                                                  PREV:[jmp?(L3)]
+  3 mark({ test() })                                                                                  PREV:[jmp?(L3), jmp?(L3)]
     mark(test())
     call(test(), test) -> <v3>
 L7 [finish finally]:
