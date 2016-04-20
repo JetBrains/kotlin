@@ -20,6 +20,8 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
+import com.intellij.psi.search.LocalSearchScope
+import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.PsiTreeUtil
 import org.intellij.plugins.intelliLang.Configuration
 import org.intellij.plugins.intelliLang.inject.InjectorUtils
@@ -37,14 +39,17 @@ class KotlinLanguageInjector : LanguageInjector {
         if (!host.isValidHost) return
         val ktHost: KtElement = host as? KtElement ?: return
 
-        val injectionInfo =
-                injectWithExplicitCodeInstruction(ktHost)
-                ?: injectWithCall(ktHost)
-                ?: injectWithReceiver(ktHost)
-                ?: return
+        val injectionInfo = findInjectionInfo(host) ?: return
 
         val language = InjectorUtils.getLanguageByString(injectionInfo.languageId) ?: return
         injectionPlacesRegistrar.addPlace(language, TextRange.from(0, ktHost.textLength), injectionInfo.prefix, injectionInfo.suffix)
+    }
+
+    private fun findInjectionInfo(place: KtElement): InjectionInfo? {
+        return injectWithExplicitCodeInstruction(place)
+                ?: injectWithCall(place)
+                ?: injectWithReceiver(place)
+                ?: injectWithVariableUsage(place)
     }
 
     private fun injectWithExplicitCodeInstruction(host: KtElement): InjectionInfo? {
@@ -75,6 +80,20 @@ class KotlinLanguageInjector : LanguageInjector {
         }
 
         return null
+    }
+
+    private fun injectWithVariableUsage(host: KtElement): InjectionInfo? {
+        val ktHost: KtElement = host
+        val ktProperty = host.parent as? KtProperty?: return null
+        if (ktProperty.initializer != host) return null
+
+        if (isAnalyzeOff(ktHost.project)) return null
+
+        val searchScope = LocalSearchScope(arrayOf(ktProperty.containingFile), "", true)
+        return ReferencesSearch.search(ktProperty, searchScope).asSequence().mapNotNull { psiReference ->
+            val element = psiReference.element as? KtElement ?: return@mapNotNull null
+            findInjectionInfo(element)
+        }.firstOrNull()
     }
 
     private fun injectWithCall(host: KtElement): InjectionInfo? {

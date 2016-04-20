@@ -82,6 +82,20 @@ class KotlinInjectionTest : AbstractInjectionTest() {
             |val test = "<caret>simple"
             """)
 
+    fun testInjectionWithUsageOnReceiverWithRuntime() = testInjectionPresent(
+            """
+            |val test = "<caret>some"
+            |fun foo() = test.toRegex()
+            """,
+            languageId = RegExpLanguage.INSTANCE.id, unInjectShouldBePresent = false)
+
+    fun testInjectionWithUsageInParameterWithRuntime() = testInjectionPresent(
+            """
+            |val test = "<caret>some"
+            |fun foo() = Regex(test)
+            """,
+            languageId = RegExpLanguage.INSTANCE.id, unInjectShouldBePresent = false)
+
     fun testInjectionWithMultipleCommentsOnFun() = testInjectionPresent(
             """
             |// Some comment
