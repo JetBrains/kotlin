@@ -19,8 +19,6 @@ package org.jetbrains.kotlin.codegen.inline
 import gnu.trove.TIntIntHashMap
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.SourceInfo
-import org.jetbrains.org.objectweb.asm.Label
-import org.jetbrains.org.objectweb.asm.MethodVisitor
 import java.util.*
 
 //TODO join parameter
@@ -230,6 +228,7 @@ open class DefaultSourceMapper(val sourceInfo: SourceInfo) : SourceMapper {
             //no source information, so just skip this linenumber
             return - 1
         }
+        //TODO maybe add assertion that linenumber contained in fileMappings
         return lineNumber
     }
 
@@ -269,9 +268,9 @@ class SMAP(val fileMappings: List<FileMapping>) {
     }
 
     companion object {
-        val FILE_SECTION = "*F"
-        val LINE_SECTION = "*L"
-        val END = "*E"
+        const val FILE_SECTION = "*F"
+        const val LINE_SECTION = "*L"
+        const val END = "*E"
     }
 }
 
