@@ -79,6 +79,7 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
     private static final String OUT = "out/";
     private static final String EXPECTED = "expected/";
     private static final String COMMON_FILES_DIR = "_commonFiles/";
+    public static final String MODULE_EMULATION_FILE = TEST_DATA_DIR_PATH + "/moduleEmulation.js";
 
     public static final String TEST_MODULE = "JS_TESTS";
     public static final String TEST_PACKAGE = "foo";

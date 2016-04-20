@@ -16,22 +16,24 @@
 
 package org.jetbrains.kotlin.js.test
 
-import com.google.dart.compiler.backend.js.ast.JsProgram
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.js.config.Config
 import org.jetbrains.kotlin.js.config.EcmaVersion
+import org.jetbrains.kotlin.js.config.LibrarySourcesConfig
 import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.js.test.rhino.RhinoFunctionResultChecker
-import org.jetbrains.kotlin.js.test.utils.DirectiveTestUtils
-import org.jetbrains.kotlin.js.test.utils.JsTestUtils
 import org.jetbrains.kotlin.js.test.utils.JsTestUtils.getAllFilesInDir
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import java.io.File
-import java.util.ArrayList
 import java.util.LinkedHashMap
 
 abstract class MultipleModulesTranslationTest(main: String) : BasicTest(main) {
-
     private val MAIN_MODULE_NAME: String = "main"
     private var dependencies: Map<String, List<String>>? = null
+    protected var moduleKind = ModuleKind.PLAIN
 
     override fun checkFooBoxIsOkByPath(filePath: String) {
         val dirName = getTestName(true)
@@ -68,10 +70,23 @@ abstract class MultipleModulesTranslationTest(main: String) : BasicTest(main) {
     private fun getMetaFileOutputPath(moduleDirectoryName: String, version: EcmaVersion) =
         KotlinJavascriptMetadataUtils.replaceSuffix(getOutputFilePath(moduleDirectoryName, version))
 
+    override fun setupConfig(builder: LibrarySourcesConfig.Builder) {
+        val method = try {
+            javaClass.getMethod(name)
+        }
+        catch (e: NoSuchMethodException) {
+            return
+        }
+
+        method.getAnnotation(WithModuleKind::class.java)?.let { moduleKind = it.value }
+        builder.moduleKind(moduleKind)
+    }
+
     override fun shouldGenerateMetaInfo() = true
 
     override fun additionalJsFiles(ecmaVersion: EcmaVersion): List<String> {
-        val result = super.additionalJsFiles(ecmaVersion)
+        val result = mutableListOf(MODULE_EMULATION_FILE)
+        result += super.additionalJsFiles(ecmaVersion)
         val dirName = getTestName(true)
         assert(dependencies != null) { "dependencies should not be null" }
 
@@ -82,6 +97,20 @@ abstract class MultipleModulesTranslationTest(main: String) : BasicTest(main) {
         }
 
         return result
+    }
+
+    override fun translateFiles(jetFiles: MutableList<KtFile>, outputFile: File, mainCallParameters: MainCallParameters,
+                                config: Config) {
+        super.translateFiles(jetFiles, outputFile, mainCallParameters, config)
+
+        if (config.moduleKind == ModuleKind.COMMON_JS) {
+            val content = FileUtil.loadFile(outputFile, true)
+            val wrappedContent = "__beginModule__();\n" +
+                                 "$content\n" +
+                                 "__endModule__(\"${StringUtil.escapeStringCharacters(config.moduleId)}\");"
+            FileUtil.writeToFile(outputFile, wrappedContent)
+            // TODO: it would be better to wrap output before JS file is actually written
+        }
     }
 
     private fun readModuleDependencies(testDataDir: String): Map<String, List<String>> {
