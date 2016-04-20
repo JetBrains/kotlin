@@ -47,6 +47,18 @@ public class SpringRenameTestGenerated extends AbstractSpringRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("factoryMethodParam/factoryMethodParam.test")
+    public void testFactoryMethodParam_FactoryMethodParam() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("ultimate/testData/spring/core/rename/factoryMethodParam/factoryMethodParam.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("factoryMethodParamByXmlRef/factoryMethodParamByXmlRef.test")
+    public void testFactoryMethodParamByXmlRef_FactoryMethodParamByXmlRef() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("ultimate/testData/spring/core/rename/factoryMethodParamByXmlRef/factoryMethodParamByXmlRef.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("isPropertyWithXmlRefsBySpelRef/isPropertyWithXmlRefBySpelRef.test")
     public void testIsPropertyWithXmlRefsBySpelRef_IsPropertyWithXmlRefBySpelRef() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("ultimate/testData/spring/core/rename/isPropertyWithXmlRefsBySpelRef/isPropertyWithXmlRefBySpelRef.test");
