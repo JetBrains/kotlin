@@ -51,8 +51,24 @@ class MultiModuleWrappersTest() : MultipleModulesTranslationTest("multiModuleWra
         runTest("simple")
     }
 
-    @WithModuleKind(ModuleKind.UMD) fun testPlain() {
+    @WithModuleKind(ModuleKind.PLAIN) fun testPlain() {
         runTest("simple")
+    }
+
+    @WithModuleKind(ModuleKind.AMD) fun testAmdModuleWithNonIdentifierName() {
+        runTest("moduleWithNonIdentifierName")
+    }
+
+    @WithModuleKind(ModuleKind.COMMON_JS) fun testCommonJsModuleWithNonIdentifierName() {
+        runTest("moduleWithNonIdentifierName")
+    }
+
+    @WithModuleKind(ModuleKind.UMD) fun testUmdModuleWithNonIdentifierName() {
+        runTest("moduleWithNonIdentifierName")
+    }
+
+    @WithModuleKind(ModuleKind.PLAIN) fun testPlainModuleWithNonIdentifierName() {
+        runTest("moduleWithNonIdentifierName")
     }
 
     fun runTest(name: String) {

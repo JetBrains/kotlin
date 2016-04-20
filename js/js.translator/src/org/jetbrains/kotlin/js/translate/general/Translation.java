@@ -290,9 +290,17 @@ public final class Translation {
         JsBlock amdBody = new JsBlock(wrapAmd(moduleId, factoryName.makeRef(), importedModules, program));
         JsBlock commonJsBody = new JsBlock(wrapCommonJs(factoryName.makeRef(), importedModules, program));
         JsInvocation plainInvocation = makePlainInvocation(factoryName.makeRef(), importedModules, program);
-        JsExpression plainExpr = moduleId != null ?
-                                 JsAstUtils.assignment(new JsNameRef(moduleId, rootName.makeRef()), plainInvocation) :
-                                 plainInvocation;
+
+        JsExpression plainExpr;
+        if (moduleId != null) {
+            JsExpression lhs = Namer.requiresEscaping(moduleId) ?
+                               new JsArrayAccess(rootName.makeRef(), program.getStringLiteral(moduleId)) :
+                               new JsNameRef(scope.declareName(moduleId), rootName.makeRef());
+            plainExpr = JsAstUtils.assignment(lhs, plainInvocation);
+        }
+        else {
+            plainExpr = plainInvocation;
+        }
 
         JsStatement selector = JsAstUtils.newJsIf(amdTest, amdBody, JsAstUtils.newJsIf(commonJsTest, commonJsBody, plainExpr.makeStmt()));
         JsFunction adapter = new JsFunction(program.getScope(), new JsBlock(selector), "UMD adapter");
@@ -363,7 +371,9 @@ public final class Translation {
             statement = invocation.makeStmt();
         }
         else {
-            statement = JsAstUtils.newVar(program.getScope().declareName(moduleId), invocation);
+            statement = Namer.requiresEscaping(moduleId) ?
+                        JsAstUtils.assignment(makePlainModuleRef(moduleId, program), invocation).makeStmt() :
+                        JsAstUtils.newVar(program.getRootScope().declareName(moduleId), invocation);
         }
 
         return Collections.singletonList(statement);
@@ -375,10 +385,19 @@ public final class Translation {
         List<JsExpression> invocationArgs = new ArrayList<JsExpression>(importedModules.size());
 
         for (ImportedModule importedModule : importedModules) {
-            invocationArgs.add(program.getRootScope().declareName(importedModule.id).makeRef());
+            invocationArgs.add(makePlainModuleRef(importedModule.id, program));
         }
 
         return new JsInvocation(function, invocationArgs);
+    }
+
+    @NotNull
+    private static JsExpression makePlainModuleRef(@NotNull String moduleId, @NotNull JsProgram program) {
+        // TODO: we could use `this.moduleName` syntax. However, this does not work for `kotlin` module in Rhino, since
+        // we run kotlin.js in a parent scope. Consider better solution
+        return Namer.requiresEscaping(moduleId) ?
+               new JsArrayAccess(JsLiteral.THIS, program.getStringLiteral(moduleId)) :
+               program.getScope().declareName(moduleId).makeRef();
     }
 
     private static void defineModule(@NotNull TranslationContext context, @NotNull List<JsStatement> statements, @NotNull String moduleId) {

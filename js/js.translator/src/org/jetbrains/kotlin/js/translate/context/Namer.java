@@ -539,4 +539,14 @@ public final class Namer {
 
         return sb.toString();
     }
+
+    public static boolean requiresEscaping(@NotNull String name) {
+        // TODO: remove if there is existing implementation of this method
+        // TODO: handle JavaScript keywords
+        if (name.isEmpty() || !Character.isJavaIdentifierStart(name.charAt(0))) return true;
+        for (int i = 1; i < name.length(); ++i) {
+            if (!Character.isJavaIdentifierPart(name.charAt(i))) return true;
+        }
+        return false;
+    }
 }
