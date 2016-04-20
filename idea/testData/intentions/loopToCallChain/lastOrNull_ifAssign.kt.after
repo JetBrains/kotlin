@@ -1,5 +1,5 @@
 // WITH_RUNTIME
 // INTENTION_TEXT: "Replace with 'lastOrNull{}'"
 fun foo(list: List<String>) {
-    <caret>val result: String? = list.lastOrNull { it.length > 0 }
+    val <caret>result: String? = list.lastOrNull { it.length > 0 }
 }

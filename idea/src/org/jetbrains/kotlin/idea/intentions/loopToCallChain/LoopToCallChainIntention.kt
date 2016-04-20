@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.psi.KtForExpression
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class LoopToCallChainInspection : IntentionBasedInspection<KtForExpression>(
@@ -55,6 +56,13 @@ class LoopToCallChainIntention : SelfTargetingRangeIntention<KtForExpression>(
     override fun applyTo(element: KtForExpression, editor: Editor?) {
         val match = match(element)!!
         val result = convertLoop(element, match)
-        editor?.moveCaret(result.startOffset)
+
+        val offset = when (result) {
+            // if result is variable declaration, put the caret onto its name to allow quick inline
+            is KtProperty -> result.nameIdentifier?.startOffset ?: result.startOffset
+            else -> result.startOffset
+        }
+
+        editor?.moveCaret(offset)
     }
 }

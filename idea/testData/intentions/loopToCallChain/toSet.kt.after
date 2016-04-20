@@ -3,6 +3,6 @@
 import java.util.HashSet
 
 fun foo(map: Map<Int, String>): Collection<String> {
-    <caret>val result = map.values.toSet()
+    val <caret>result = map.values.toSet()
     return result
 }
