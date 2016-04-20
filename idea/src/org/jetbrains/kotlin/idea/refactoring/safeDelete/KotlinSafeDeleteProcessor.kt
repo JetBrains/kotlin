@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.processDelegationCallConstr
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.ifEmpty
@@ -99,6 +100,8 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
                                 else -> {
                                     usageElement.getNonStrictParentOfType<KtImportDirective>()?.let { importDirective ->
                                         SafeDeleteImportDirectiveUsageInfo(importDirective, element.unwrapped as KtDeclaration)
+                                    } ?: usageElement.getParentOfTypeAndBranch<KtSuperTypeEntry> { typeReference }?.let {
+                                        if (element is PsiClass && element.isInterface) SafeDeleteSuperTypeUsageInfo(it, element) else usageInfo
                                     } ?: if (forceReferencedElementUnwrapping) {
                                         SafeDeleteReferenceJavaDeleteUsageInfo(usageElement, element.unwrapped, usageInfo.isSafeDelete)
                                     } else usageInfo
@@ -212,6 +215,9 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
             }
 
             is PsiMethod ->
+                findUsagesByJavaProcessor(element, false)
+
+            is PsiClass ->
                 findUsagesByJavaProcessor(element, false)
 
             is KtProperty -> {

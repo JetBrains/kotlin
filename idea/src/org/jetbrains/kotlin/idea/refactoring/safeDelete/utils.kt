@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.refactoring.safeDelete
 
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.search.searches.OverridingMethodsSearch
@@ -36,6 +37,7 @@ fun PsiElement.canDeleteElement(): Boolean {
         || this is KtSecondaryConstructor
         || this is KtNamedFunction
         || this is PsiMethod
+        || this is PsiClass
         || this is KtProperty
         || this is KtTypeParameter
 }

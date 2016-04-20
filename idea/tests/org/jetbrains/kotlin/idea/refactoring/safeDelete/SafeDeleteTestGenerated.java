@@ -137,6 +137,27 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
         }
     }
 
+    @TestMetadata("idea/testData/refactoring/safeDelete/deleteClass/javaClassWithKotlin")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class JavaClassWithKotlin extends AbstractSafeDeleteTest {
+        public void testAllFilesPresentInJavaClassWithKotlin() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteClass/javaClassWithKotlin"), Pattern.compile("^(.+)\\.java$"), true);
+        }
+
+        @TestMetadata("javaInterfaceInSuperTypeList.java")
+        public void testJavaInterfaceInSuperTypeList() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteClass/javaClassWithKotlin/javaInterfaceInSuperTypeList.java");
+            doJavaClassTest(fileName);
+        }
+
+        @TestMetadata("javaInterfaceInSuperTypeListLast.java")
+        public void testJavaInterfaceInSuperTypeListLast() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteClass/javaClassWithKotlin/javaInterfaceInSuperTypeListLast.java");
+            doJavaClassTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/refactoring/safeDelete/deleteObject/kotlinObject")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
