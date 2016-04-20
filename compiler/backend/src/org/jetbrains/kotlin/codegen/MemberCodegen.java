@@ -24,8 +24,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.inline.*;
-import org.jetbrains.kotlin.codegen.inline2.*;
-import org.jetbrains.kotlin.codegen.inline2.DefaultSourceMapper;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;

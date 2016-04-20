@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.codegen.inline
 import gnu.trove.TIntIntHashMap
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.SourceInfo
-import org.jetbrains.kotlin.codegen.inline2.CallSiteMarker
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import java.util.*
@@ -86,58 +85,56 @@ class SMAPBuilder(
 }
 
 open class NestedSourceMapper(
-        parent: SourceMapper, val ranges: List<RangeMapping>, sourceInfo: SourceInfo
-) : DefaultSourceMapper(sourceInfo, parent) {
+        override val parent: SourceMapper, val ranges: List<RangeMapping>, sourceInfo: SourceInfo
+) : DefaultSourceMapper(sourceInfo) {
+
+    val visitedLines = TIntIntHashMap()
+
+    var lastVisitedRange: RangeMapping? = null
+
     override fun visitLineNumber(iv: MethodVisitor, lineNumber: Int, start: Label) {
+        val mappedLineNumber = visitedLines.get(lineNumber)
+
+        if (mappedLineNumber > 0) {
+            iv.visitLineNumber(mappedLineNumber, start)
+        } else {
+            val rangeForMapping = if (lastVisitedRange?.contains(lineNumber) ?: false) lastVisitedRange!! else findMappingIfExists(lineNumber)!!
+            val sourceLineNumber = rangeForMapping.mapDestToSource(lineNumber)
+            val visitLineNumber = parent.visitLineNumber(iv, start, sourceLineNumber, rangeForMapping.parent!!.name, rangeForMapping.parent!!.path)
+            if (visitLineNumber > 0) {
+                visitedLines.put(lineNumber, visitLineNumber)
+            }
+            lastVisitedRange = rangeForMapping
+        }
+    }
+
+    fun findMappingIfExists(lineNumber: Int): RangeMapping? {
         val index = ranges.binarySearch(RangeMapping(lineNumber, lineNumber, 1), Comparator {
             value, key ->
             if (key.dest in value) 0 else RangeMapping.Comparator.compare(value, key)
         })
-        if (index < 0) {
-            parent!!.visitSource(sourceInfo.source,  sourceInfo.pathOrCleanFQN)
-            parent!!.visitLineNumber(iv, lineNumber, start)
-        }
-        else {
-            val rangeMapping = ranges[index]
-            parent!!.visitSource(rangeMapping.parent!!.name, rangeMapping.parent!!.path)
-            parent!!.visitLineNumber(iv, rangeMapping.mapDestToSource(lineNumber), start)
-        }
+        return if (index < 0) null else ranges[index];
     }
 }
 
 open class InlineLambdaSourceMapper(
         parent: SourceMapper, smap: SMAPAndMethodNode
 ) : NestedSourceMapper(parent, smap.ranges, smap.classSMAP.sourceInfo) {
-    override fun visitSource(name: String, path: String) {
-        super.visitSource(name, path)
-        if (isOriginalVisited()) {
-            parent!!.visitOrigin()
+
+    init {
+        assert(smap.ranges.isNotEmpty()) {
+            "Mapping ranges should be presented in inline lambda: ${smap.node}"
         }
-    }
-
-    override fun visitOrigin() {
-        super.visitOrigin()
-        parent!!.visitOrigin()
-    }
-
-    private fun isOriginalVisited(): Boolean {
-        return lastVisited == origin
     }
 
     override fun visitLineNumber(iv: MethodVisitor, lineNumber: Int, start: Label) {
-        val index = ranges.binarySearch(RangeMapping(lineNumber, lineNumber, 1), Comparator {
-            value, key ->
-            if (key.dest in value) 0 else RangeMapping.Comparator.compare(value, key)
-        })
-        if (index >= 0) {
-            val mapping = ranges[index].parent!!
-            if (mapping.path == origin.path && mapping.name == origin.name) {
-                parent!!.visitOrigin()
-                parent!!.visitLineNumber(iv, lineNumber, start)
-                return
-            }
+        if (ranges.firstOrNull()?.contains(lineNumber) ?: false) {
+            //don't remap origin lambda line numbers
+            iv.visitLineNumber(lineNumber, start)
         }
-        super.visitLineNumber(iv, lineNumber, start)
+        else {
+            super.visitLineNumber(iv, lineNumber, start)
+        }
     }
 }
 
@@ -173,7 +170,7 @@ interface SourceMapper {
 
         fun createFromSmap(smap: SMAP): SourceMapper {
             val maxUsedIndex = smap.fileMappings.maxBy { it.lineMappings.maxBy { it.maxDest }!!.maxDest }!!.lineMappings.maxBy { it.maxDest }!!.maxDest
-            val sourceMapper = org.jetbrains.kotlin.codegen.inline2.DefaultSourceMapper(smap.sourceInfo, maxUsedIndex)
+            val sourceMapper = DefaultSourceMapper(smap.sourceInfo, maxUsedIndex)
             smap.fileMappings.asSequence()
                     //default one mapped through sourceInfo
                     .filterNot { it == smap.default }
@@ -205,8 +202,19 @@ object IdenticalSourceMapper : SourceMapper {
     }
 }
 
-open class DefaultSourceMapper(val sourceInfo: SourceInfo, override val parent: SourceMapper?): SourceMapper {
-    protected var maxUsedValue: Int = sourceInfo.linesInFile
+class CallSiteMarker(val lineNumber: Int)
+
+open class DefaultSourceMapper @JvmOverloads constructor(
+        val sourceInfo: SourceInfo,
+        protected var maxUsedValue: Int = sourceInfo.linesInFile
+) : SourceMapper {
+
+    var callSiteMarker: CallSiteMarker? = null;
+        set(value) {
+            lastMappedWithChanges = null
+            field = value
+        }
+
     var lastVisited: RawFileMapping? = null
     private var lastMappedWithChanges: RawFileMapping? = null
     private var fileMappings: LinkedHashMap<String, RawFileMapping> = linkedMapOf()
@@ -216,7 +224,7 @@ open class DefaultSourceMapper(val sourceInfo: SourceInfo, override val parent: 
         val name = sourceInfo.source
         val path = sourceInfo.pathOrCleanFQN
         origin = RawFileMapping(name, path)
-        origin.initRange(1, maxUsedValue)
+        origin.initRange(1, sourceInfo.linesInFile)
         fileMappings.put(createKey(name, path), origin)
         lastVisited = origin
     }
@@ -239,13 +247,28 @@ open class DefaultSourceMapper(val sourceInfo: SourceInfo, override val parent: 
             //no source information, so just skip this linenumber
             return
         }
-        val mappedLineIndex = createMapping(lineNumber)
+        //TODO add assertion that mapping exists
+        //val sourceLineNumber = createMapping(lineNumberToMap)
+        val sourceLineNumber = lineNumber
+        assert(lineNumber == sourceLineNumber)
+        iv.visitLineNumber(lineNumber, start)
+    }
+
+    override fun visitLineNumber(iv: MethodVisitor, start: Label, source: Int, sourceName: String, sourcePath: String): Int {
+        if (source < 0) {
+            //no source information, so just skip this linenumber
+            return -1
+        }
+        visitSource(sourceName, sourcePath)
+        val mappedLineIndex = createMapping(source)
         iv.visitLineNumber(mappedLineIndex, start)
+        return mappedLineIndex
+
     }
 
     protected fun createMapping(lineNumber: Int): Int {
         val fileMapping = lastVisited!!
-        val mappedLineIndex = fileMapping.mapLine(lineNumber, maxUsedValue, lastMappedWithChanges == lastVisited)
+        val mappedLineIndex = fileMapping.mapNewLineNumber(lineNumber, maxUsedValue, lastMappedWithChanges == lastVisited, callSiteMarker)
         if (mappedLineIndex > maxUsedValue) {
             lastMappedWithChanges = fileMapping
             maxUsedValue = mappedLineIndex
@@ -277,8 +300,8 @@ class SMAP(val fileMappings: List<FileMapping>) {
     }
 }
 
+
 class RawFileMapping(val name: String, val path: String) {
-    private val lineMappings = TIntIntHashMap()
     private val rangeMappings = arrayListOf<RangeMapping>()
 
     private var lastMappedWithNewIndex = -1000
@@ -291,43 +314,32 @@ class RawFileMapping(val name: String, val path: String) {
             }
 
     fun initRange(start: Int, end: Int) {
-        assert(lineMappings.isEmpty) { "initRange should only be called for empty mapping" }
-        for (index in start..end) {
-            lineMappings.put(index, index)
-        }
+        assert(rangeMappings.isEmpty()) { "initRange should only be called for empty mapping" }
         rangeMappings.add(RangeMapping(start, start, end - start + 1))
         lastMappedWithNewIndex = end
     }
 
-    fun mapLine(source: Int, currentIndex: Int, isLastMapped: Boolean): Int {
-        var dest = lineMappings[source]
-        if (dest == 0) { // line numbers are 1-based, so 0 is ok to indicate missing value
-            val rangeMapping: RangeMapping
-            if (rangeMappings.isNotEmpty() && isLastMapped && couldFoldInRange(lastMappedWithNewIndex, source)) {
-                rangeMapping = rangeMappings.last()
-                rangeMapping.range += source - lastMappedWithNewIndex
-                dest = lineMappings[lastMappedWithNewIndex] + source - lastMappedWithNewIndex
-            }
-            else {
-                dest = currentIndex + 1
-                rangeMapping = RangeMapping(source, dest)
-                rangeMappings.add(rangeMapping)
-            }
-
-            lineMappings.put(source, dest)
-            lastMappedWithNewIndex = source
+    fun mapNewLineNumber(source: Int, currentIndex: Int, isLastMapped: Boolean, callSiteMarker: CallSiteMarker?): Int {
+        val dest: Int
+        val rangeMapping: RangeMapping
+        if (rangeMappings.isNotEmpty() && isLastMapped && couldFoldInRange(lastMappedWithNewIndex, source)) {
+            rangeMapping = rangeMappings.last()
+            rangeMapping.range += source - lastMappedWithNewIndex
+            dest = rangeMapping.mapSourceToDest(source)
+        }
+        else {
+            dest = currentIndex + 1
+            rangeMapping = RangeMapping(source, dest, callSiteMarker = callSiteMarker)
+            rangeMappings.add(rangeMapping)
         }
 
+        lastMappedWithNewIndex = source
         return dest
     }
 
     fun mapNewInterval(source: Int, dest: Int, range: Int) {
         val rangeMapping = RangeMapping(source, dest, range)
         rangeMappings.add(rangeMapping)
-
-        (source..(source + range - 1)).forEach {
-            lineMappings.put(source, dest)
-        }
     }
 
     private fun couldFoldInRange(first: Int, second: Int): Boolean {
