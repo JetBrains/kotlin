@@ -200,18 +200,15 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
         private fun handleJumpInsideTryFinally(jumpTarget: Label) {
             val finallyBlocks = ArrayList<TryFinallyBlockInfo>()
 
-            for (i in allBlocks.indices.reversed()) {
-                val blockInfo = allBlocks[i]
-                if (blockInfo is BreakableBlockInfo) {
-                    if (blockInfo.referablePoints.contains(jumpTarget) || jumpTarget === error) {
-                        for (j in finallyBlocks.indices) {
-                            finallyBlocks[j].generateFinallyBlock()
+            for (blockInfo in allBlocks.asReversed()) {
+                when (blockInfo) {
+                    is BreakableBlockInfo -> if (blockInfo.referablePoints.contains(jumpTarget) || jumpTarget === error) {
+                        for (finallyBlockInfo in finallyBlocks) {
+                            finallyBlockInfo.generateFinallyBlock()
                         }
-                        break
+                        return
                     }
-                }
-                else if (blockInfo is TryFinallyBlockInfo) {
-                    finallyBlocks.add(blockInfo)
+                    is TryFinallyBlockInfo -> finallyBlocks.add(blockInfo)
                 }
             }
         }
