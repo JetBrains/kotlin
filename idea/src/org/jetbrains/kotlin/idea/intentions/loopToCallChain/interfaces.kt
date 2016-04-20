@@ -40,6 +40,15 @@ interface Transformation {
     val inputVariable: KtCallableDeclaration
     val loop: KtForExpression
 
+    val presentation: String
+
+    open fun buildPresentation(prevTransformationsPresentation: String?): String {
+        return if (prevTransformationsPresentation != null)
+            prevTransformationsPresentation + "." + presentation
+        else
+            presentation
+    }
+
     fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression
 }
 

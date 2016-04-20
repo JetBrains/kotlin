@@ -34,6 +34,9 @@ class FlatMapTransformation(
     override val affectsIndex: Boolean
         get() = true
 
+    override val presentation: String
+        get() = "flatMap{}"
+
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
         val lambda = generateLambda(inputVariable, transform)
         return chainedCallGenerator.generate("flatMap$0:'{}'", lambda)

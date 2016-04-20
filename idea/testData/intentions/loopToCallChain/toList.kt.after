@@ -1,4 +1,5 @@
 // WITH_RUNTIME
+// INTENTION_TEXT: "Replace with 'toList()'"
 import java.util.ArrayList
 
 fun foo(map: Map<Int, String>): List<String> {

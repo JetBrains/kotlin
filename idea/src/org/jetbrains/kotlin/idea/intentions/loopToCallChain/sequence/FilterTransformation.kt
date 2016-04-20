@@ -43,6 +43,9 @@ class FilterTransformation(
     override val affectsIndex: Boolean
         get() = true
 
+    override val presentation: String
+        get() = if (isInverse) "filterNot{}" else "filter{}"
+
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
         val lambda = generateLambda(inputVariable, condition)
         val name = if (isInverse) "filterNot" else "filter"
@@ -128,6 +131,9 @@ class FilterIsInstanceTransformation(
     override val affectsIndex: Boolean
         get() = true
 
+    override val presentation: String
+        get() = "filterIsInstance<>()"
+
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
         return chainedCallGenerator.generate("filterIsInstance<$0>()", type)
     }
@@ -140,6 +146,9 @@ class FilterNotNullTransformation(
 
     override val affectsIndex: Boolean
         get() = true
+
+    override val presentation: String
+        get() = "filterNotNull()"
 
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
         return chainedCallGenerator.generate("filterNotNull()")

@@ -1,4 +1,5 @@
 // WITH_RUNTIME
+// INTENTION_TEXT: "Replace with 'flatMapTo(){}'"
 fun foo(list: List<String>, target: MutableList<String>) {
     <caret>list.flatMapTo(target) { it.lines() }
 }

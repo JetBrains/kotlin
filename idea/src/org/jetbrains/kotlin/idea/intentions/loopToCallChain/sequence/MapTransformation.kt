@@ -31,6 +31,9 @@ class MapTransformation(
     override val affectsIndex: Boolean
         get() = false
 
+    override val presentation: String
+        get() = "map{}"
+
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
         val lambda = generateLambda(inputVariable, mapping)
         return chainedCallGenerator.generate("map$0:'{}'", lambda)

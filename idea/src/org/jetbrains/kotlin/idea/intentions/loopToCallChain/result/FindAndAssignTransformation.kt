@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 class FindAndAssignTransformation(
         loop: KtForExpression,
         inputVariable: KtCallableDeclaration,
-        private val generator: (chainedCallGenerator: ChainedCallGenerator, filter: KtExpression?) -> KtExpression,
+        private val generator: FindOperatorGenerator,
         initialization: VariableInitialization,
         private val filter: KtExpression? = null
 ) : AssignToVariableResultTransformation(loop, inputVariable, initialization) {
@@ -40,8 +40,11 @@ class FindAndAssignTransformation(
         return FindAndAssignTransformation(loop, previousTransformation.inputVariable, generator, initialization, previousTransformation.effectiveCondition())
     }
 
+    override val presentation: String
+        get() = generator.functionName + (if (filter != null) "{}" else "()")
+
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
-        return generator(chainedCallGenerator, filter)
+        return generator.generate(chainedCallGenerator, filter)
     }
 
     /**

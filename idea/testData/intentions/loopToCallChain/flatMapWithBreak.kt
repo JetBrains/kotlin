@@ -1,4 +1,5 @@
 // WITH_RUNTIME
+// INTENTION_TEXT: "Replace with 'flatMap{}.firstOrNull{}'"
 fun foo(list: List<String>): String? {
     var result: String? = null
     MainLoop@

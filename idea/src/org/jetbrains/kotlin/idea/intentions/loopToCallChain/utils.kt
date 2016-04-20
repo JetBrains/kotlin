@@ -112,12 +112,17 @@ fun KtProperty.hasWriteUsages(): Boolean {
     }
 }
 
+interface FindOperatorGenerator {
+    val functionName: String
+    fun generate(chainedCallGenerator: ChainedCallGenerator, filter: KtExpression?): KtExpression
+}
+
 fun buildFindOperationGenerator(
         valueIfFound: KtExpression,
         valueIfNotFound: KtExpression,
         inputVariable: KtCallableDeclaration,
         findFirst: Boolean
-): ((chainedCallGenerator: ChainedCallGenerator, filter: KtExpression?) -> KtExpression)?  {
+): FindOperatorGenerator?  {
     assert(valueIfFound.isPhysical)
     assert(valueIfNotFound.isPhysical)
 
@@ -131,36 +136,40 @@ fun buildFindOperationGenerator(
         }
     }
 
+    class SimpleGenerator(override val functionName: String) : FindOperatorGenerator {
+        override fun generate(chainedCallGenerator: ChainedCallGenerator, filter: KtExpression?): KtExpression {
+            return generateChainedCall(functionName, chainedCallGenerator, filter)
+        }
+    }
+
     val inputVariableCanHoldNull = (inputVariable.resolveToDescriptor() as VariableDescriptor).type.nullability() != TypeNullability.NOT_NULL
 
-    fun ((chainedCallGenerator: ChainedCallGenerator, filter: KtExpression?) -> KtExpression).useElvisOperatorIfNeeded(): ((chainedCallGenerator: ChainedCallGenerator, filter: KtExpression?) -> KtExpression)? {
+    fun FindOperatorGenerator.useElvisOperatorIfNeeded(): FindOperatorGenerator? {
         if (valueIfNotFound.isNullExpression()) return this
 
         // we cannot use ?: if found value can be null
         if (inputVariableCanHoldNull) return null
 
-        return { chainedCallGenerator, filter ->
-            val generated = this(chainedCallGenerator, filter)
-            KtPsiFactory(generated).createExpressionByPattern("$0 ?: $1", generated, valueIfNotFound)
+        return object: FindOperatorGenerator {
+            override val functionName: String
+                get() = this@useElvisOperatorIfNeeded.functionName
+
+            override fun generate(chainedCallGenerator: ChainedCallGenerator, filter: KtExpression?): KtExpression {
+                val generated = this@useElvisOperatorIfNeeded.generate(chainedCallGenerator, filter)
+                return KtPsiFactory(generated).createExpressionByPattern("$0 ?: $1", generated, valueIfNotFound)
+            }
         }
     }
 
     when {
         valueIfFound.isVariableReference(inputVariable) -> {
-            val stdlibFunName = if (findFirst) "firstOrNull" else "lastOrNull"
-            val generator = { chainedCallGenerator: ChainedCallGenerator, filter: KtExpression? ->
-                generateChainedCall(stdlibFunName, chainedCallGenerator, filter)
-            }
+            val generator = SimpleGenerator(if (findFirst) "firstOrNull" else "lastOrNull")
             return generator.useElvisOperatorIfNeeded()
         }
 
-        valueIfFound.isTrueConstant() && valueIfNotFound.isFalseConstant() -> {
-            return { chainedCallGenerator, filter -> generateChainedCall("any", chainedCallGenerator, filter) }
-        }
+        valueIfFound.isTrueConstant() && valueIfNotFound.isFalseConstant() -> return SimpleGenerator("any")
 
-        valueIfFound.isFalseConstant() && valueIfNotFound.isTrueConstant() -> {
-            return { chainedCallGenerator, filter -> generateChainedCall("none", chainedCallGenerator, filter) }
-        }
+        valueIfFound.isFalseConstant() && valueIfNotFound.isTrueConstant() -> return SimpleGenerator("none")
 
         inputVariable.hasUsages(valueIfFound) -> {
             if (!findFirst) return null // too dangerous because of side effects
@@ -171,9 +180,14 @@ fun buildFindOperationGenerator(
                 val receiver = qualifiedExpression.receiverExpression
                 val selector = qualifiedExpression.selectorExpression
                 if (receiver.isVariableReference(inputVariable) && selector != null && !inputVariable.hasUsages(selector)) {
-                    return { chainedCallGenerator: ChainedCallGenerator, filter: KtExpression? ->
-                        val findFirstCall = generateChainedCall("firstOrNull", chainedCallGenerator, filter)
-                        KtPsiFactory(findFirstCall).createExpressionByPattern("$0?.$1", findFirstCall, selector)
+                    return object: FindOperatorGenerator {
+                        override val functionName: String
+                            get() = "firstOrNull"
+
+                        override fun generate(chainedCallGenerator: ChainedCallGenerator, filter: KtExpression?): KtExpression {
+                            val findFirstCall = generateChainedCall(functionName, chainedCallGenerator, filter)
+                            return KtPsiFactory(findFirstCall).createExpressionByPattern("$0?.$1", findFirstCall, selector)
+                        }
                     }.useElvisOperatorIfNeeded()
                 }
             }
@@ -181,17 +195,27 @@ fun buildFindOperationGenerator(
             // in case of nullable input variable we cannot distinguish by the result of "firstOrNull" whether nothing was found or 'null' was found
             if (inputVariableCanHoldNull) return null
 
-            return { chainedCallGenerator: ChainedCallGenerator, filter: KtExpression? ->
-                val findFirstCall = generateChainedCall("firstOrNull", chainedCallGenerator, filter)
-                val letBody = generateLambda(inputVariable, valueIfFound)
-                KtPsiFactory(findFirstCall).createExpressionByPattern("$0?.let $1:'{}'", findFirstCall, letBody)
+            return object: FindOperatorGenerator {
+                override val functionName: String
+                    get() = "firstOrNull" //TODO
+
+                override fun generate(chainedCallGenerator: ChainedCallGenerator, filter: KtExpression?): KtExpression {
+                    val findFirstCall = generateChainedCall(functionName, chainedCallGenerator, filter)
+                    val letBody = generateLambda(inputVariable, valueIfFound)
+                    return KtPsiFactory(findFirstCall).createExpressionByPattern("$0?.let $1:'{}'", findFirstCall, letBody)
+                }
             }.useElvisOperatorIfNeeded()
         }
 
         else -> {
-            return { chainedCallGenerator, filter ->
-                val chainedCall = generateChainedCall("any", chainedCallGenerator, filter)
-                KtPsiFactory(chainedCall).createExpressionByPattern("if ($0) $1 else $2", chainedCall, valueIfFound, valueIfNotFound)
+            return object: FindOperatorGenerator {
+                override val functionName: String
+                    get() = "any"
+
+                override fun generate(chainedCallGenerator: ChainedCallGenerator, filter: KtExpression?): KtExpression {
+                    val chainedCall = generateChainedCall(functionName, chainedCallGenerator, filter)
+                    return KtPsiFactory(chainedCall).createExpressionByPattern("if ($0) $1 else $2", chainedCall, valueIfFound, valueIfNotFound)
+                }
             }
         }
     }
@@ -312,6 +336,13 @@ class AssignSequenceTransformationResultTransformation(
         private val sequenceTransformation: SequenceTransformation,
         initialization: VariableInitialization
 ) : AssignToVariableResultTransformation(sequenceTransformation.loop, sequenceTransformation.inputVariable, initialization) {
+
+    override val presentation: String
+        get() = sequenceTransformation.presentation
+
+    override fun buildPresentation(prevTransformationsPresentation: String?): String {
+        return sequenceTransformation.buildPresentation(prevTransformationsPresentation)
+    }
 
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
         return sequenceTransformation.generateCode(chainedCallGenerator)
