@@ -3,6 +3,6 @@
 import java.util.HashSet
 
 fun foo(map: Map<Int, String>): MutableCollection<String> {
-    <caret>val result = map.values.toMutableSet()
+    val <caret>result = map.values.toMutableSet()
     return result
 }

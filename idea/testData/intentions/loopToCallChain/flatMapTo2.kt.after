@@ -3,6 +3,6 @@
 import java.util.ArrayList
 
 fun foo(list: List<String>): List<String> {
-    <caret>val target = list.flatMapTo(ArrayList<String>(100)) { it.lines() }
+    val <caret>target = list.flatMapTo(ArrayList<String>(100)) { it.lines() }
     return target
 }

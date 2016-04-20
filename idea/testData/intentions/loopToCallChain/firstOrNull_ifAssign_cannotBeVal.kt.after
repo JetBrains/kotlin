@@ -1,7 +1,7 @@
 // WITH_RUNTIME
 // INTENTION_TEXT: "Replace with 'firstOrNull{}'"
 fun foo(list: List<String>) {
-    <caret>var result: String? = list.firstOrNull { it.length > 0 }
+    var <caret>result: String? = list.firstOrNull { it.length > 0 }
 
     result += "1"
 }

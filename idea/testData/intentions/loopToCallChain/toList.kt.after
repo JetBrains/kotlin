@@ -3,6 +3,6 @@
 import java.util.ArrayList
 
 fun foo(map: Map<Int, String>): List<String> {
-    <caret>val result = map.values.toList()
+    val <caret>result = map.values.toList()
     return result
 }

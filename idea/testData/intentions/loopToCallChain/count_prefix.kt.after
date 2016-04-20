@@ -1,6 +1,6 @@
 // WITH_RUNTIME
 // INTENTION_TEXT: "Replace with 'count{}'"
 fun foo(list: List<String>): Int {
-    <caret>val count = list.count { it.isNotBlank() }
+    val <caret>count = list.count { it.isNotBlank() }
     return count
 }
