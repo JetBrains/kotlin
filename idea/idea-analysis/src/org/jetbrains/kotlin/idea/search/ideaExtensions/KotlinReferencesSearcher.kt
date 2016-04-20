@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.search.KOTLIN_NAMED_ARGUMENT_SEARCH_CONTEXT
 import org.jetbrains.kotlin.idea.search.allScope
+import org.jetbrains.kotlin.idea.search.effectiveSearchScope
 import org.jetbrains.kotlin.idea.search.usagesSearch.*
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -69,7 +70,10 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
             (if (classNameForCompanionObject != null) listOf(classNameForCompanionObject) else emptyList())
         }
 
-        val effectiveSearchScope = runReadAction { queryParameters.effectiveSearchScope }
+        val effectiveSearchScope = runReadAction {
+            val elements = if (unwrappedElement is KtDeclaration) unwrappedElement.toLightElements() else listOf(unwrappedElement)
+            elements.fold(queryParameters.effectiveSearchScope) { scope, e -> scope.union(queryParameters.effectiveSearchScope(e)) }
+        }
 
         val refFilter: (PsiReference) -> Boolean = when {
             unwrappedElement is KtParameter -> ({ ref: PsiReference -> !ref.isNamedArgumentReference()/* they are processed later*/ })
@@ -314,7 +318,7 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
                                        element: PsiNamedElement?,
                                        name: String? = element?.name) {
             if (name != null && element != null) {
-                val scope = runReadAction { queryParameters.effectiveSearchScope }
+                val scope = runReadAction { queryParameters.effectiveSearchScope(element) }
                 val context = UsageSearchContext.IN_CODE + UsageSearchContext.IN_FOREIGN_LANGUAGES + UsageSearchContext.IN_COMMENTS
                 val kotlinOptions = (queryParameters as? KotlinReferencesSearchParameters)?.kotlinOptions
                                     ?: KotlinReferencesSearchOptions.Empty

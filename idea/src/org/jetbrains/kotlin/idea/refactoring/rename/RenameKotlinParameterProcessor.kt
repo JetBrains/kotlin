@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.refactoring.rename
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.listeners.RefactoringElementListener
 import com.intellij.usageView.UsageInfo
+import com.intellij.util.xml.impl.GenericDomValueReference
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeSignatureConfiguration
@@ -36,6 +37,12 @@ class RenameKotlinParameterProcessor : RenameKotlinPsiProcessor() {
     }
 
     override fun renameElement(element: PsiElement, newName: String, usages: Array<out UsageInfo>, listener: RefactoringElementListener?) {
+        // Workaround for usages in XML files
+        // TODO: Do not use Change Signature for parameter rename as it's less efficient and loses some usages
+        for (usage in usages) {
+            (usage.reference as? GenericDomValueReference<*>)?.handleElementRename(newName)
+        }
+
         val function = (element as KtParameter).parent.parent as KtNamedFunction
         val paramIndex = function.valueParameters.indexOf(element)
         assert(paramIndex != -1, { "couldn't find parameter in parent ${element.getElementTextWithContext()}" })
