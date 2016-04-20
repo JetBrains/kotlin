@@ -67,6 +67,12 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
             doClassTest(fileName);
         }
 
+        @TestMetadata("enumEntry.kt")
+        public void testEnumEntry() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteClass/kotlinClass/enumEntry.kt");
+            doClassTest(fileName);
+        }
+
         @TestMetadata("localClass1.kt")
         public void testLocalClass1() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteClass/kotlinClass/localClass1.kt");
