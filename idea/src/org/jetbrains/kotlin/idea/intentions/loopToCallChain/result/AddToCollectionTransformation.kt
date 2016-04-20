@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.*
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.FilterTransformation
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.FlatMapTransformation
+import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.MapIndexedTransformation
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.MapTransformation
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.name.FqName
@@ -33,14 +34,13 @@ import org.jetbrains.kotlin.renderer.render
 
 class AddToCollectionTransformation(
         loop: KtForExpression,
-        private val inputVariable: KtCallableDeclaration,
         private val targetCollection: KtExpression
 ) : ReplaceLoopResultTransformation(loop) {
 
     override fun mergeWithPrevious(previousTransformation: SequenceTransformation): ResultTransformation? {
         return when (previousTransformation) {
             is FilterTransformation -> {
-                FilterToTransformation.create(loop, inputVariable, targetCollection, previousTransformation.effectiveCondition()) //TODO: use filterNotTo?
+                FilterToTransformation.create(loop, previousTransformation.inputVariable, targetCollection, previousTransformation.effectiveCondition()) //TODO: use filterNotTo?
             }
 
             is MapTransformation -> {
@@ -80,10 +80,10 @@ class AddToCollectionTransformation(
      *     }
      */
     object Matcher : ResultTransformationMatcher {
-        override fun match(state: MatchingState): ResultTransformationMatch? {
-            //TODO: pass indexVariable as null if not used
-            if (state.indexVariable != null) return null
+        override val indexVariableUsePossible: Boolean
+            get() = true
 
+        override fun match(state: MatchingState): ResultTransformationMatch? {
             val statement = state.statements.singleOrNull() ?: return null
             //TODO: it can be implicit 'this' too
             val qualifiedExpression = statement as? KtDotQualifiedExpression ?: return null
@@ -95,16 +95,22 @@ class AddToCollectionTransformation(
             val argument = callExpression.valueArguments.singleOrNull() ?: return null
             val argumentValue = argument.getArgumentExpression() ?: return null
 
-            matchWithCollectionInitializationReplacement(state, targetCollection, argumentValue)
-                    ?.let { return it }
+            if (state.indexVariable == null) {
+                matchWithCollectionInitializationReplacement(state, targetCollection, argumentValue)
+                        ?.let { return it }
+            }
 
-            val transformation = if (argumentValue.isVariableReference(state.inputVariable)) {
-                AddToCollectionTransformation(state.outerLoop, state.inputVariable, targetCollection)
+            if (state.indexVariable == null && argumentValue.isVariableReference(state.inputVariable)) {
+                return ResultTransformationMatch(AddToCollectionTransformation(state.outerLoop, targetCollection))
+            }
+            else if (state.indexVariable != null) {
+                val mapIndexedTransformation = MapIndexedTransformation(state.outerLoop, state.inputVariable, state.indexVariable, argumentValue)
+                val addToCollectionTransformation = AddToCollectionTransformation(state.outerLoop, targetCollection)
+                return ResultTransformationMatch(addToCollectionTransformation, mapIndexedTransformation)
             }
             else {
-                MapToTransformation.create(state.outerLoop, state.inputVariable, targetCollection, argumentValue)
+                return ResultTransformationMatch(MapToTransformation.create(state.outerLoop, state.inputVariable, targetCollection, argumentValue))
             }
-            return ResultTransformationMatch(transformation)
         }
 
         private fun matchWithCollectionInitializationReplacement(

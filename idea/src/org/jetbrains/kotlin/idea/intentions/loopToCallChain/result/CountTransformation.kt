@@ -71,6 +71,9 @@ class CountTransformation(
      *     }
      */
     object Matcher : ResultTransformationMatcher {
+        override val indexVariableUsePossible: Boolean
+            get() = false
+
         override fun match(state: MatchingState): ResultTransformationMatch? {
             val statement = state.statements.singleOrNull() as? KtUnaryExpression ?: return null
             if (statement.operationToken != KtTokens.PLUSPLUS) return null

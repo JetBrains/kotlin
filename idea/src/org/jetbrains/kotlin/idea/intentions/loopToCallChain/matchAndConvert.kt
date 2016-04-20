@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.FlatMapTran
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.MapTransformation
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.idea.util.getResolutionScope
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
@@ -54,14 +55,21 @@ object MatcherRegistrar {
     )
 }
 
-fun match(loop: KtForExpression): ResultTransformationMatch? {
+data class MatchResult(
+        val sequenceExpression: KtExpression,
+        val transformationMatch: ResultTransformationMatch
+)
+
+fun match(loop: KtForExpression): MatchResult? {
+    val (inputVariable, indexVariable, sequenceExpression) = extractLoopData(loop) ?: return null
+
     val sequenceTransformations = ArrayList<SequenceTransformation>()
     var state = MatchingState(
             outerLoop = loop,
             innerLoop = loop,
             statements = listOf(loop.body ?: return null),
-            inputVariable = loop.loopParameter ?: return null,
-            indexVariable = null
+            inputVariable = inputVariable,
+            indexVariable = indexVariable
     )
 
     MatchLoop@
@@ -73,7 +81,14 @@ fun match(loop: KtForExpression): ResultTransformationMatch? {
 
         val inputVariableUsed = state.inputVariable.hasUsages(state.statements)
 
+        // drop index variable if it's not used anymore
+        if (state.indexVariable != null && !state.indexVariable!!.hasUsages(state.statements)) {
+            state = state.copy(indexVariable = null)
+        }
+
         for (matcher in MatcherRegistrar.resultMatchers) {
+            if (state.indexVariable != null && !matcher.indexVariableUsePossible) continue
+
             val match = matcher.match(state)
             if (match != null) {
                 if (!inputVariableUsed
@@ -85,6 +100,7 @@ fun match(loop: KtForExpression): ResultTransformationMatch? {
                 sequenceTransformations.addAll(match.sequenceTransformations)
                 return ResultTransformationMatch(match.resultTransformation, sequenceTransformations)
                         .let { mergeTransformations(it) }
+                        .let { MatchResult(sequenceExpression, it) }
                         .check { checkSmartCastsPreserved(loop, it) }
             }
         }
@@ -96,9 +112,15 @@ fun match(loop: KtForExpression): ResultTransformationMatch? {
                     return null
                 }
 
-                val newState = match.newState
+                var newState = match.newState
                 // check that old input variable is not needed anymore
                 if (state.inputVariable != newState.inputVariable && state.inputVariable.hasUsages(newState.statements)) return null
+
+                if (state.indexVariable != null && match.transformations.any { it.affectsIndex }) {
+                    // index variable is still needed but index in the new sequence is different
+                    if (state.indexVariable!!.hasUsages(newState.statements)) return null
+                    newState = newState.copy(indexVariable = null)
+                }
 
                 sequenceTransformations.addAll(match.transformations)
                 state = newState
@@ -111,19 +133,44 @@ fun match(loop: KtForExpression): ResultTransformationMatch? {
 }
 
 //TODO: offer to use of .asSequence() as an option
-fun convertLoop(loop: KtForExpression, matchResult: ResultTransformationMatch): KtExpression {
-    val commentSaver = CommentSaver(matchResult.resultTransformation.commentSavingRange)
+fun convertLoop(loop: KtForExpression, matchResult: MatchResult): KtExpression {
+    val resultTransformation = matchResult.transformationMatch.resultTransformation
+    val commentSaver = CommentSaver(resultTransformation.commentSavingRange)
 
     val callChain = matchResult.generateCallChain(loop)
 
-    val result = matchResult.resultTransformation.convertLoop(callChain)
+    val result = resultTransformation.convertLoop(callChain)
 
-    commentSaver.restore(matchResult.resultTransformation.commentRestoringRange(result))
+    commentSaver.restore(resultTransformation.commentRestoringRange(result))
 
     return result
 }
 
-private fun checkSmartCastsPreserved(loop: KtForExpression, matchResult: ResultTransformationMatch): Boolean {
+data class LoopData(
+        val inputVariable: KtCallableDeclaration,
+        val indexVariable: KtCallableDeclaration?,
+        val sequenceExpression: KtExpression)
+
+private fun extractLoopData(loop: KtForExpression): LoopData? {
+    val loopRange = loop.loopRange ?: return null
+
+    //TODO: recognize other patterns for loop with index
+    val destructuringParameter = loop.destructuringParameter
+    if (destructuringParameter != null && destructuringParameter.entries.size == 2) {
+        val qualifiedExpression = loopRange as? KtDotQualifiedExpression
+        if (qualifiedExpression != null) {
+            val call = qualifiedExpression.selectorExpression as? KtCallExpression
+            //TODO: check that it's the correct "withIndex"
+            if (call != null && call.calleeExpression.isSimpleName(Name.identifier("withIndex")) && call.valueArguments.isEmpty()) {
+                return LoopData(destructuringParameter.entries[1], destructuringParameter.entries[0], qualifiedExpression.receiverExpression)
+            }
+        }
+    }
+
+    return LoopData(loop.loopParameter ?: return null, null, loopRange)
+}
+
+private fun checkSmartCastsPreserved(loop: KtForExpression, matchResult: MatchResult): Boolean {
     val bindingContext = loop.analyze(BodyResolveMode.FULL)
 
     val SMARTCAST_KEY = Key<KotlinType>("SMARTCAST_KEY")
@@ -174,9 +221,9 @@ private fun checkSmartCastsPreserved(loop: KtForExpression, matchResult: ResultT
     }
 }
 
-private fun ResultTransformationMatch.generateCallChain(loop: KtForExpression): KtExpression {
-    var sequenceTransformations = sequenceTransformations
-    var resultTransformation = resultTransformation
+private fun MatchResult.generateCallChain(loop: KtForExpression): KtExpression {
+    var sequenceTransformations = transformationMatch.sequenceTransformations
+    var resultTransformation = transformationMatch.resultTransformation
     while(true) {
         val last = sequenceTransformations.lastOrNull() ?: break
         resultTransformation = resultTransformation.mergeWithPrevious(last) ?: break
@@ -186,7 +233,7 @@ private fun ResultTransformationMatch.generateCallChain(loop: KtForExpression): 
     val chainCallCount = sequenceTransformations.sumBy { it.chainCallCount } + resultTransformation.chainCallCount
     val lineBreak = if (chainCallCount > 1) "\n" else ""
 
-    var callChain = loop.loopRange!!
+    var callChain = sequenceExpression
 
     val psiFactory = KtPsiFactory(loop)
     val chainedCallGenerator = object : ChainedCallGenerator {

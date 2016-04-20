@@ -86,6 +86,9 @@ data class MatchingState(
         val innerLoop: KtForExpression,
         val statements: Collection<KtExpression>,
         val inputVariable: KtCallableDeclaration,
+        /**
+         * Matchers can assume that indexVariable is null if it's not used in the rest of the loop
+         */
         val indexVariable: KtCallableDeclaration?
 )
 
@@ -113,6 +116,8 @@ class SequenceTransformationMatch(
  */
 interface ResultTransformationMatcher {
     fun match(state: MatchingState): ResultTransformationMatch?
+
+    val indexVariableUsePossible: Boolean
 }
 
 class ResultTransformationMatch(

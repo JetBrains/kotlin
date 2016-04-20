@@ -1,0 +1,5 @@
+// WITH_RUNTIME
+// INTENTION_TEXT: "Replace with '+= mapIndexed{}'"
+fun foo(list: List<String>, target: MutableList<Int>) {
+    <caret>target += list.mapIndexed { index, s -> s.hashCode() * index }
+}

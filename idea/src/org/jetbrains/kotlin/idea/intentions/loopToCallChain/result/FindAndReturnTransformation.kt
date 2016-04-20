@@ -70,10 +70,10 @@ class FindAndReturnTransformation(
      *     return ...
      */
     object Matcher : ResultTransformationMatcher {
-        override fun match(state: MatchingState): ResultTransformationMatch? {
-            //TODO: pass indexVariable as null if not used
-            if (state.indexVariable != null) return null
+        override val indexVariableUsePossible: Boolean
+            get() = false
 
+        override fun match(state: MatchingState): ResultTransformationMatch? {
             val returnInLoop = state.statements.singleOrNull() as? KtReturnExpression ?: return null
             val returnAfterLoop = state.outerLoop.nextStatement() as? KtReturnExpression ?: return null
             if (returnInLoop.getLabelName() != returnAfterLoop.getLabelName()) return null

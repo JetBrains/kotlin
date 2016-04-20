@@ -81,6 +81,25 @@ fun generateLambda(inputVariable: KtCallableDeclaration, expression: KtExpressio
     return psiFactory.createExpressionByPattern("{ $0 }", lambdaExpression.bodyExpression!!) as KtLambdaExpression
 }
 
+fun generateLambda(expression: KtExpression, vararg inputVariables: KtCallableDeclaration): KtLambdaExpression {
+    return KtPsiFactory(expression).buildExpression {
+        appendFixedText("{")
+
+        for ((index, variable) in inputVariables.withIndex()) {
+            if (index > 0) {
+                appendFixedText(",")
+            }
+            appendName(variable.nameAsSafeName)
+        }
+
+        appendFixedText("->")
+
+        appendExpression(expression)
+
+        appendFixedText("}")
+    } as KtLambdaExpression
+}
+
 fun KtExpression?.isTrueConstant()
         = this != null && node?.elementType == KtNodeTypes.BOOLEAN_CONSTANT && text == "true"
 
@@ -100,12 +119,14 @@ fun KtCallableDeclaration.hasUsages(inElement: KtElement): Boolean {
 }
 
 fun KtCallableDeclaration.hasUsages(inElements: Collection<KtElement>): Boolean {
+    assert(this.isPhysical)
     // TODO: it's a temporary workaround about strange dead-lock when running inspections
     return inElements.any { ReferencesSearch.search(this, LocalSearchScope(it)).any() }
 //    return ReferencesSearch.search(this, LocalSearchScope(inElements.toTypedArray())).any()
 }
 
 fun KtProperty.hasWriteUsages(): Boolean {
+    assert(this.isPhysical)
     if (!isVar) return false
     return ReferencesSearch.search(this, useScope).any {
         (it as? KtSimpleNameReference)?.element?.readWriteAccess(useResolveForReadWrite = true)?.isWrite == true
