@@ -3435,6 +3435,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("reassignmentInTryCatch.kt")
+            public void testReassignmentInTryCatch() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/reassignmentInTryCatch.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("reassignmentInTryCatchWithJumps.kt")
+            public void testReassignmentInTryCatchWithJumps() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/reassignmentInTryCatchWithJumps.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("referenceToPropertyInitializer.kt")
             public void testReferenceToPropertyInitializer() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/referenceToPropertyInitializer.kt");
@@ -3456,6 +3468,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("throwInLambda.kt")
             public void testThrowInLambda() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/throwInLambda.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("tryWithAssignmentUsedInCatch.kt")
+            public void testTryWithAssignmentUsedInCatch() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/tryWithAssignmentUsedInCatch.kt");
                 doTest(fileName);
             }
 
