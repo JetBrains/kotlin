@@ -24,10 +24,6 @@ import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.components.JavaResolverCache
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaClassDescriptor
-import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaClassMemberScope
-import org.jetbrains.kotlin.load.java.lazy.replaceComponents
-import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
-import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
@@ -42,10 +38,9 @@ import org.jetbrains.kotlin.serialization.deserialization.AdditionalClassPartsPr
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.types.DelegatingType
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addToStdlib.check
-import org.jetbrains.kotlin.utils.sure
 import java.io.Serializable
 import java.util.*
 
@@ -112,11 +107,9 @@ open class BuiltInClassesAreSerializableOnJvm(
     ): Collection<SimpleFunctionDescriptor> {
         val javaAnalogueDescriptor = classDescriptor.getJavaAnalogue() ?: return emptyList()
 
-        val platformClassDescriptors = j2kClassMap.mapPlatformClass(javaAnalogueDescriptor.fqNameSafe, DefaultBuiltIns.Instance)
-        val kotlinMutableClassIfContainer = platformClassDescriptors.lastOrNull() ?: return emptyList()
-        val platformVersions = SmartSet.create(platformClassDescriptors.map { it.fqNameSafe })
-
-        if (javaAnalogueDescriptor.fqNameSafe in IGNORE_BY_DEFAULT_CLASS_FQ_NAMES) return emptyList()
+        val kotlinClassDescriptors = j2kClassMap.mapPlatformClass(javaAnalogueDescriptor.fqNameSafe, DefaultBuiltIns.Instance)
+        val kotlinMutableClassIfContainer = kotlinClassDescriptors.lastOrNull() ?: return emptyList()
+        val kotlinVersions = SmartSet.create(kotlinClassDescriptors.map { it.fqNameSafe })
 
         val isMutable = j2kClassMap.isMutable(classDescriptor)
 
@@ -131,17 +124,47 @@ open class BuiltInClassesAreSerializableOnJvm(
                 .filter { analogueMember ->
                     if (analogueMember.kind != CallableMemberDescriptor.Kind.DECLARATION) return@filter false
                     if (!analogueMember.visibility.isPublicAPI) return@filter false
+                    if (KotlinBuiltIns.isDeprecated(analogueMember)) return@filter false
 
-                    val methodFqName = analogueMember.fqNameSafe
+                    if (analogueMember.overriddenDescriptors.any {
+                        it.containingDeclaration.fqNameSafe in kotlinVersions
+                    }) return@filter false
 
-                    if (methodFqName in BLACK_LIST_METHODS_FQ_NAMES) return@filter false
-                    if ((methodFqName in MUTABLE_METHODS_FQ_NAMES) xor isMutable) return@filter false
-
-                    analogueMember.overriddenDescriptors.none {
-                        it.containingDeclaration.fqNameSafe in platformVersions
-                    }
+                    !analogueMember.isInBlackOrMutabilityViolation(isMutable)
                 }
     }
+
+    private fun SimpleFunctionDescriptor.isInBlackOrMutabilityViolation(isMutable: Boolean): Boolean {
+        val jvmDescriptor = computeJvmDescriptor()
+        val owner = containingDeclaration as ClassDescriptor
+        if (DFS.ifAny(
+                listOf(owner),
+                {
+                    // Search through mapped supertypes to determine that Set.toArray is in blacklist, while we have only
+                    // Collection.toArray there explicitly
+                    // Note, that we can't find j.u.Collection.toArray within overriddenDescriptors of j.u.Set.toArray
+                    it.typeConstructor.supertypes.mapNotNull {
+                        (it.constructor.declarationDescriptor?.original as? ClassDescriptor)?.getJavaAnalogue()
+                    }
+                }
+        ) {
+            javaClassDescriptor ->
+            signature(javaClassDescriptor, jvmDescriptor) in BLACK_LIST_METHOD_SIGNATURES
+        }) return true
+
+        if ((signature(owner, jvmDescriptor) in MUTABLE_METHOD_SIGNATURES) xor isMutable) return true
+
+        return DFS.ifAny<CallableMemberDescriptor>(
+                listOf(this),
+                { it.original.overriddenDescriptors }
+        ) {
+            overridden ->
+            overridden.kind == CallableMemberDescriptor.Kind.DECLARATION &&
+                j2kClassMap.isMutable(overridden.containingDeclaration as ClassDescriptor)
+        }
+    }
+
+    private fun signature(javaClassDescriptor: ClassDescriptor, jvmDescriptor: String) = javaClassDescriptor.internalName + "." + jvmDescriptor
 
     private fun ClassDescriptor.getJavaAnalogue(): LazyJavaClassDescriptor? {
         // Prevents recursive dependency: memberScope(Any) -> memberScope(Object) -> memberScope(Any)
@@ -205,35 +228,75 @@ open class BuiltInClassesAreSerializableOnJvm(
             return Serializable::class.java.isAssignableFrom(classViaReflection)
         }
 
-        private val IGNORE_BY_DEFAULT_CLASS_FQ_NAMES =
-                setOf(FqName("java.lang.String")) +
-                JvmPrimitiveType.values().map { it.wrapperFqName }
-
-        private val BLACK_LIST_METHODS_FQ_NAMES =
+        private val BLACK_LIST_METHOD_SIGNATURES: Set<String> =
                 buildPrimitiveValueMethodsSet() +
-                FqName("java.util.Collection.toArray") +
-                FqName("java.util.List.toArray") +
-                FqName("java.util.Set.toArray") +
-                FqName("java.lang.annotation.Annotation.annotationType")
 
-        private val MUTABLE_METHODS_FQ_NAMES =
-                inClass("java.util.Collection",
-                        "removeIf") +
+                "java/lang/annotation/Annotation.annotationType()${javaLang("Class").t}" +
 
-                inClass("java.util.List",
-                        "sort", "replaceAll") +
+                inJavaUtil(
+                        "Collection", "toArray()[Ljava/lang/Object;", "toArray([Ljava/lang/Object;)[Ljava/lang/Object;"
+                ) +
 
-                inClass("java.util.Map",
-                        "compute", "computeIfAbsent", "computeIfPresent", "remove", "merge", "putIfAbsent", "replace", "replaceAll")
+                inJavaLang("String",
+                           "codePointAt(I)I", "codePointBefore(I)I", "codePointCount(II)I", "compareToIgnoreCase($stringType)I",
+                           "concat($stringType)$stringType", "contains(Ljava/lang/CharSequence;)Z",
+                           "contentEquals(Ljava/lang/CharSequence;)Z", "contentEquals(Ljava/lang/StringBuffer;)Z",
+                           "endsWith($stringType)Z", "equalsIgnoreCase($stringType)Z", "getBytes()[B", "getBytes(II[BI)V",
+                           "getBytes($stringType)[B", "getBytes(Ljava/nio/charset/Charset;)[B", "getChars(II[CI)V",
+                           "indexOf(I)I", "indexOf(II)I", "indexOf($stringType)I", "indexOf(${stringType}I)I",
+                           "intern()$stringType", "isEmpty()Z", "lastIndexOf(I)I", "lastIndexOf(II)I",
+                           "lastIndexOf($stringType)I", "lastIndexOf(${stringType}I)I", "matches($stringType)Z",
+                           "offsetByCodePoints(II)I", "regionMatches(I${stringType}II)Z", "regionMatches(ZI${stringType}II)Z",
+                           "replaceAll($stringType$stringType)$stringType", "replace(CC)$stringType",
+                           "replaceFirst($stringType$stringType)$stringType",
+                           "replace(Ljava/lang/CharSequence;Ljava/lang/CharSequence;)$stringType",
+                           "split(${stringType}I)[$stringType", "split($stringType)[$stringType",
+                           "startsWith(${stringType}I)Z", "startsWith($stringType)Z", "substring(II)$stringType",
+                           "substring(I)$stringType", "toCharArray()[C", "toLowerCase()$stringType",
+                           "toLowerCase(Ljava/util/Locale;)$stringType", "toUpperCase()$stringType",
+                           "toUpperCase(Ljava/util/Locale;)$stringType", "trim()$stringType") +
 
-        private fun buildPrimitiveValueMethodsSet() =
-                JvmPrimitiveType.values().mapTo(LinkedHashSet()) {
-                    it.wrapperFqName.child(Name.identifier(it.javaKeywordName + "Value"))
+                inJavaLang("Double", "isInfinite()Z", "isNaN()Z") +
+                inJavaLang("Float", "isInfinite()Z", "isNaN()Z") +
+
+                inJavaUtil("Collection", "toArray([$objectType)[$objectType", "toArray()[$objectType")
+
+
+        private val MUTABLE_METHOD_SIGNATURES: Set<String> =
+                inJavaUtil("Collection", "removeIf(Ljava/util/function/Predicate;)Z") +
+
+                inJavaUtil("List",
+                        "sort(Ljava/util/Comparator;)V", "replaceAll(Ljava/util/function/UnaryOperator;)V") +
+
+                inJavaUtil("Map",
+                           "computeIfAbsent(${objectType}Ljava/util/function/Function;)$objectType",
+                           "computeIfPresent(${objectType}Ljava/util/function/BiFunction;)$objectType",
+                           "compute(${objectType}Ljava/util/function/BiFunction;)$objectType",
+                           "merge($objectType${objectType}Ljava/util/function/BiFunction;)$objectType",
+                           "putIfAbsent($objectType$objectType)$objectType",
+                           "remove($objectType$objectType)Z", "replaceAll(Ljava/util/function/BiFunction;)V",
+                           "replace($objectType$objectType)$objectType",
+                           "replace($objectType$objectType$objectType)Z")
+
+        private fun buildPrimitiveValueMethodsSet(): Set<String> =
+                JvmPrimitiveType.values().flatMapTo(LinkedHashSet()) {
+                    inJavaLang(it.wrapperFqName.shortName().asString(), "${it.javaKeywordName}Value()${it.desc}")
                 }
-
-        private fun inClass(classFqName: String, vararg names: String) =
-                names.mapTo(LinkedHashSet()) { FqName(classFqName).child(Name.identifier(it)) }
     }
 }
 
 private val ClassDescriptor.isAny: Boolean get() = fqNameUnsafe == KotlinBuiltIns.FQ_NAMES.any
+
+private val String.t: String
+    get() = "L$this;"
+
+private val stringType = javaLang("String").t
+private val objectType = javaLang("Object").t
+
+private fun javaLang(name: String) = "java/lang/$name"
+private fun javaUtil(name: String) = "java/util/$name"
+
+private fun inJavaLang(name: String, vararg signatures: String) = inClass(javaLang(name), *signatures)
+private fun inJavaUtil(name: String, vararg signatures: String) = inClass(javaUtil(name), *signatures)
+
+private fun inClass(internalName: String, vararg signatures: String) = signatures.mapTo(LinkedHashSet()) { internalName + "." + it }

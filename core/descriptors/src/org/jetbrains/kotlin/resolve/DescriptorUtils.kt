@@ -156,26 +156,13 @@ fun CallableDescriptor.getOwnerForEffectiveDispatchReceiverParameter(): Declarat
  * @return `true` iff the parameter has a default value, i.e. declares it or inherits by overriding a parameter which has a default value.
  */
 fun ValueParameterDescriptor.hasDefaultValue(): Boolean {
-    val handler = object : DFS.AbstractNodeHandler<ValueParameterDescriptor, Boolean>() {
-        var result = false
-
-        override fun beforeChildren(current: ValueParameterDescriptor): Boolean {
-            result = result || current.declaresDefaultValue()
-            return !result
-        }
-
-        override fun result() = result
-    }
-
-    DFS.dfs(
+    return DFS.ifAny(
             listOf(this),
             DFS.Neighbors<ValueParameterDescriptor> { current ->
                 current.overriddenDescriptors.map(ValueParameterDescriptor::getOriginal)
             },
-            handler
+            ValueParameterDescriptor::declaresDefaultValue
     )
-
-    return handler.result()
 }
 
 fun Annotated.isRepeatableAnnotation(): Boolean =

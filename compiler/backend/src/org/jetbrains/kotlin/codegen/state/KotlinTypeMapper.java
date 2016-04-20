@@ -21,7 +21,6 @@ import com.intellij.psi.PsiElement;
 import kotlin.Pair;
 import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
-import kotlin.jvm.functions.Function2;
 import kotlin.jvm.functions.Function3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -81,7 +80,6 @@ import org.jetbrains.org.objectweb.asm.commons.Method;
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isUnit;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.*;
@@ -348,7 +346,7 @@ public class KotlinTypeMapper {
             return Type.VOID_TYPE;
         }
 
-        if (isUnit(returnType) && !TypeUtils.isNullableType(returnType) && !(descriptor instanceof PropertyGetterDescriptor)) {
+        if (TypeSignatureMappingKt.hasVoidReturnType(descriptor)) {
             if (sw != null) {
                 sw.writeAsmType(Type.VOID_TYPE);
             }
