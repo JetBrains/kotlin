@@ -65,6 +65,9 @@ class AddToCollectionTransformation(
             "+="
     }
 
+    override val chainCallCount: Int
+        get() = 0
+
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
         return KtPsiFactory(loop).createExpressionByPattern("$0 += $1", targetCollection, chainedCallGenerator.receiver)
     }
