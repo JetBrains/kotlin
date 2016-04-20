@@ -51,9 +51,11 @@ interface Transformation {
 
     fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression
 
-
     val chainCallCount: Int
         get() = 1
+
+    val shouldUseInputVariable: Boolean
+        get() = true
 }
 
 /**

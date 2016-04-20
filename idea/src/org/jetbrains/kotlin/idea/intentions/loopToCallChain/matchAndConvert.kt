@@ -71,9 +71,17 @@ fun match(loop: KtForExpression): ResultTransformationMatch? {
             state = state.copy(statements = block.statements)
         }
 
+        val inputVariableUsed = state.inputVariable.hasUsages(state.statements)
+
         for (matcher in MatcherRegistrar.resultMatchers) {
             val match = matcher.match(state)
             if (match != null) {
+                if (!inputVariableUsed
+                    && (match.sequenceTransformations.any { it.shouldUseInputVariable }
+                        || match.resultTransformation.shouldUseInputVariable)) {
+                    return null
+                }
+
                 sequenceTransformations.addAll(match.sequenceTransformations)
                 return ResultTransformationMatch(match.resultTransformation, sequenceTransformations)
                         .let { mergeTransformations(it) }
@@ -84,6 +92,10 @@ fun match(loop: KtForExpression): ResultTransformationMatch? {
         for (matcher in MatcherRegistrar.sequenceMatchers) {
             val match = matcher.match(state)
             if (match != null) {
+                if (!inputVariableUsed && match.transformations.any { it.shouldUseInputVariable }) {
+                    return null
+                }
+
                 val newState = match.newState
                 // check that old input variable is not needed anymore
                 if (state.inputVariable != newState.inputVariable && state.inputVariable.hasUsages(newState.statements)) return null
