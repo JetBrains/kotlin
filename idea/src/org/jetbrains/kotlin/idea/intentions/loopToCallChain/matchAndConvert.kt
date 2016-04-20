@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.result.AddToCollectionTransformation
+import org.jetbrains.kotlin.idea.intentions.loopToCallChain.result.CountTransformation
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.result.FindAndAssignTransformation
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.result.FindAndReturnTransformation
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.FilterTransformation
@@ -48,7 +49,8 @@ object MatcherRegistrar {
     val resultMatchers: Collection<ResultTransformationMatcher> = listOf(
             FindAndReturnTransformation.Matcher,
             FindAndAssignTransformation.Matcher,
-            AddToCollectionTransformation.Matcher
+            AddToCollectionTransformation.Matcher,
+            CountTransformation.Matcher
     )
 }
 
