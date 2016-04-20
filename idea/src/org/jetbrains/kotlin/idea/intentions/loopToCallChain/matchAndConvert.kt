@@ -169,7 +169,8 @@ private fun ResultTransformationMatch.generateCallChain(loop: KtForExpression): 
         sequenceTransformations = sequenceTransformations.dropLast(1)
     }
 
-    val lineBreak = if (sequenceTransformations.isNotEmpty()) "\n" else ""
+    val chainCallCount = sequenceTransformations.sumBy { it.chainCallCount } + resultTransformation.chainCallCount
+    val lineBreak = if (chainCallCount > 1) "\n" else ""
 
     var callChain = loop.loopRange!!
 
@@ -178,9 +179,10 @@ private fun ResultTransformationMatch.generateCallChain(loop: KtForExpression): 
         override val receiver: KtExpression
             get() = callChain
 
-        override fun generate(pattern: String, vararg args: Any): KtExpression {
-            val newPattern = "\$${args.size}$lineBreak.$pattern"
-            return psiFactory.createExpressionByPattern(newPattern, *args, callChain)
+        override fun generate(pattern: String, vararg args: Any, receiver: KtExpression, safeCall: Boolean): KtExpression {
+            val dot = if (safeCall) "?." else "."
+            val newPattern = "$" + args.size + lineBreak + dot + pattern
+            return psiFactory.createExpressionByPattern(newPattern, *args, receiver)
         }
     }
 

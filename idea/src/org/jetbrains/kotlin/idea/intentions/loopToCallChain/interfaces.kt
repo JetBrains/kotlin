@@ -30,7 +30,7 @@ interface ChainedCallGenerator {
     /**
      * @param pattern pattern string for generating the part of the call to the right from the dot
      */
-    fun generate(pattern: String, vararg args: Any): KtExpression
+    fun generate(pattern: String, vararg args: Any, receiver: KtExpression = this.receiver, safeCall: Boolean = false): KtExpression
 }
 
 /**
@@ -42,7 +42,7 @@ interface Transformation {
 
     val presentation: String
 
-    open fun buildPresentation(prevTransformationsPresentation: String?): String {
+    fun buildPresentation(prevTransformationsPresentation: String?): String {
         return if (prevTransformationsPresentation != null)
             prevTransformationsPresentation + "." + presentation
         else
@@ -50,6 +50,10 @@ interface Transformation {
     }
 
     fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression
+
+
+    val chainCallCount: Int
+        get() = 1
 }
 
 /**
@@ -59,7 +63,6 @@ interface SequenceTransformation : Transformation {
     fun mergeWithPrevious(previousTransformation: SequenceTransformation): SequenceTransformation? = null
 
     val affectsIndex: Boolean
-
 }
 
 /**

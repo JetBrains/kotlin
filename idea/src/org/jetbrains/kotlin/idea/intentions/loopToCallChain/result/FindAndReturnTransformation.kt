@@ -47,6 +47,9 @@ class FindAndReturnTransformation(
     override val presentation: String
         get() = generator.functionName + (if (filter != null) "{}" else "()")
 
+    override val chainCallCount: Int
+        get() = generator.chainCallCount
+
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
         return generator.generate(chainedCallGenerator, filter)
     }

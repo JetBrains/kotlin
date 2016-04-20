@@ -114,7 +114,11 @@ fun KtProperty.hasWriteUsages(): Boolean {
 
 interface FindOperatorGenerator {
     val functionName: String
+
     fun generate(chainedCallGenerator: ChainedCallGenerator, filter: KtExpression?): KtExpression
+
+    val chainCallCount: Int
+        get() = 1
 }
 
 fun buildFindOperationGenerator(
@@ -150,10 +154,7 @@ fun buildFindOperationGenerator(
         // we cannot use ?: if found value can be null
         if (inputVariableCanHoldNull) return null
 
-        return object: FindOperatorGenerator {
-            override val functionName: String
-                get() = this@useElvisOperatorIfNeeded.functionName
-
+        return object: FindOperatorGenerator by this {
             override fun generate(chainedCallGenerator: ChainedCallGenerator, filter: KtExpression?): KtExpression {
                 val generated = this@useElvisOperatorIfNeeded.generate(chainedCallGenerator, filter)
                 return KtPsiFactory(generated).createExpressionByPattern("$0 ?: $1", generated, valueIfNotFound)
@@ -184,9 +185,12 @@ fun buildFindOperationGenerator(
                         override val functionName: String
                             get() = "firstOrNull"
 
+                        override val chainCallCount: Int
+                            get() = 2
+
                         override fun generate(chainedCallGenerator: ChainedCallGenerator, filter: KtExpression?): KtExpression {
                             val findFirstCall = generateChainedCall(functionName, chainedCallGenerator, filter)
-                            return KtPsiFactory(findFirstCall).createExpressionByPattern("$0?.$1", findFirstCall, selector)
+                            return chainedCallGenerator.generate("$0", selector, receiver = findFirstCall, safeCall = true)
                         }
                     }.useElvisOperatorIfNeeded()
                 }
@@ -197,12 +201,15 @@ fun buildFindOperationGenerator(
 
             return object: FindOperatorGenerator {
                 override val functionName: String
-                    get() = "firstOrNull" //TODO
+                    get() = "firstOrNull"
+
+                override val chainCallCount: Int
+                    get() = 2 // also includes "let"
 
                 override fun generate(chainedCallGenerator: ChainedCallGenerator, filter: KtExpression?): KtExpression {
                     val findFirstCall = generateChainedCall(functionName, chainedCallGenerator, filter)
                     val letBody = generateLambda(inputVariable, valueIfFound)
-                    return KtPsiFactory(findFirstCall).createExpressionByPattern("$0?.let $1:'{}'", findFirstCall, letBody)
+                    return chainedCallGenerator.generate("let $0:'{}'", letBody, receiver = findFirstCall, safeCall = true)
                 }
             }.useElvisOperatorIfNeeded()
         }
