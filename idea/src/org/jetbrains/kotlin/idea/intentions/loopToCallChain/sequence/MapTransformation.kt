@@ -48,16 +48,36 @@ class MapTransformation(
      */
     object Matcher : SequenceTransformationMatcher {
         override fun match(state: MatchingState): SequenceTransformationMatch? {
-            if (state.indexVariable != null) return null //TODO?
-
             val declaration = state.statements.firstOrNull() as? KtProperty ?: return null //TODO: support multi-variables
             val initializer = declaration.initializer ?: return null
             if (declaration.hasWriteUsages()) return null
             val restStatements = state.statements.drop(1)
 
-            val transformation = MapTransformation(state.outerLoop, state.inputVariable, initializer)
+            val transformation = if (state.indexVariable != null && state.indexVariable.hasUsages(initializer))
+                MapIndexedTransformation(state.outerLoop, state.inputVariable, state.indexVariable, initializer)
+            else
+                MapTransformation(state.outerLoop, state.inputVariable, initializer)
             val newState = state.copy(statements = restStatements, inputVariable = declaration)
             return SequenceTransformationMatch(transformation, newState)
         }
+    }
+}
+
+class MapIndexedTransformation(
+        override val loop: KtForExpression,
+        val inputVariable: KtCallableDeclaration,
+        val indexVariable: KtCallableDeclaration,
+        val mapping: KtExpression
+) : SequenceTransformation {
+
+    override val affectsIndex: Boolean
+        get() = false
+
+    override val presentation: String
+        get() = "mapIndexed{}"
+
+    override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
+        val lambda = generateLambda(mapping, indexVariable, inputVariable)
+        return chainedCallGenerator.generate("mapIndexed $0:'{}'", lambda)
     }
 }

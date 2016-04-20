@@ -71,10 +71,10 @@ class FindAndAssignTransformation(
      *     }
      */
     object Matcher : ResultTransformationMatcher {
-        override fun match(state: MatchingState): ResultTransformationMatch? {
-            //TODO: pass indexVariable as null if not used
-            if (state.indexVariable != null) return null
+        override val indexVariableUsePossible: Boolean
+            get() = false
 
+        override fun match(state: MatchingState): ResultTransformationMatch? {
             when (state.statements.size) {
                 1 -> {}
 

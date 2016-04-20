@@ -69,22 +69,20 @@ class FilterTransformation(
      */
     object Matcher : SequenceTransformationMatcher {
         override fun match(state: MatchingState): SequenceTransformationMatch? {
-            if (state.indexVariable != null) return null //TODO?
-
             val ifStatement = state.statements.firstOrNull() as? KtIfExpression ?: return null
             if (ifStatement.`else` != null) return null
             val condition = ifStatement.condition ?: return null
             val then = ifStatement.then ?: return null
 
             if (state.statements.size == 1) {
-                val transformation = createFilterTransformation(state.outerLoop, state.inputVariable, condition, isInverse = false)
+                val transformation = createFilterTransformation(state.outerLoop, state.inputVariable, state.indexVariable, condition, isInverse = false)
                 val newState = state.copy(statements = listOf(then))
                 return SequenceTransformationMatch(transformation, newState)
             }
             else {
                 val continueExpression = then.blockExpressionsOrSingle().singleOrNull() as? KtContinueExpression ?: return null
                 if (!continueExpression.isBreakOrContinueOfLoop(state.innerLoop)) return null
-                val transformation = createFilterTransformation(state.outerLoop, state.inputVariable, condition, isInverse = true)
+                val transformation = createFilterTransformation(state.outerLoop, state.inputVariable, state.indexVariable, condition, isInverse = true)
                 val newState = state.copy(statements = state.statements.drop(1))
                 return SequenceTransformationMatch(transformation, newState)
             }
@@ -94,10 +92,16 @@ class FilterTransformation(
         private fun createFilterTransformation(
                 loop: KtForExpression,
                 inputVariable: KtCallableDeclaration,
+                indexVariable: KtCallableDeclaration?,
                 condition: KtExpression,
-                isInverse: Boolean): SequenceTransformation {
+                isInverse: Boolean
+        ): SequenceTransformation {
 
             val effectiveCondition = if (isInverse) condition.negate() else condition
+
+            if (indexVariable != null && indexVariable.hasUsages(condition)) {
+                return FilterIndexedTransformation(loop, inputVariable, indexVariable, effectiveCondition)
+            }
 
             if (effectiveCondition is KtIsExpression
                 && !effectiveCondition.isNegated
@@ -150,3 +154,25 @@ class FilterNotNullTransformation(override val loop: KtForExpression) : Sequence
         return chainedCallGenerator.generate("filterNotNull()")
     }
 }
+
+class FilterIndexedTransformation(
+        override val loop: KtForExpression,
+        val inputVariable: KtCallableDeclaration,
+        val indexVariable: KtCallableDeclaration,
+        val condition: KtExpression
+) : SequenceTransformation {
+
+    //TODO: how to handle multiple if's using index?
+
+    override val affectsIndex: Boolean
+        get() = true
+
+    override val presentation: String
+        get() = "filterIndexed{}"
+
+    override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
+        val lambda = generateLambda(condition, indexVariable, inputVariable)
+        return chainedCallGenerator.generate("filterIndexed $0:'{}'", lambda)
+    }
+}
+

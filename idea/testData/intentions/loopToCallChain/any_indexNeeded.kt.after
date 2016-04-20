@@ -1,0 +1,7 @@
+// WITH_RUNTIME
+// INTENTION_TEXT: "Replace with 'filterIndexed{}.any()'"
+fun foo(list: List<String>) {
+    val <caret>found = list
+            .filterIndexed { index, s -> s.length > index }
+            .any()
+}

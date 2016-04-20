@@ -20,9 +20,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.*
 import org.jetbrains.kotlin.idea.util.FuzzyType
-import org.jetbrains.kotlin.psi.KtCallableDeclaration
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtForExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class FlatMapTransformation(
@@ -53,8 +51,6 @@ class FlatMapTransformation(
      */
     object Matcher : SequenceTransformationMatcher {
         override fun match(state: MatchingState): SequenceTransformationMatch? {
-            if (state.indexVariable != null) return null
-
             val nestedLoop = state.statements.singleOrNull() as? KtForExpression ?: return null
 
             val transform = nestedLoop.loopRange ?: return null
@@ -65,8 +61,21 @@ class FlatMapTransformation(
             if (iterableType.checkIsSuperTypeOf(nestedSequenceType) == null) return null
 
             val nestedLoopBody = nestedLoop.body ?: return null
-
             val newWorkingVariable = nestedLoop.loopParameter ?: return null
+
+            if (state.indexVariable != null && state.indexVariable.hasUsages(transform)) {
+                // if nested loop range uses index, convert to "mapIndexed {...}.flatMap { it }"
+                val mapIndexedTransformation = MapIndexedTransformation(state.outerLoop, state.inputVariable, state.indexVariable, transform)
+                val inputVarExpression = KtPsiFactory(nestedLoop).createExpressionByPattern("$0", state.inputVariable.nameAsSafeName)
+                val flatMapTransformation = FlatMapTransformation(state.outerLoop, state.inputVariable, inputVarExpression)
+                val newState = state.copy(
+                        innerLoop = nestedLoop,
+                        statements = listOf(nestedLoopBody),
+                        inputVariable = newWorkingVariable
+                )
+                return SequenceTransformationMatch(listOf(mapIndexedTransformation, flatMapTransformation), newState)
+            }
+
             val transformation = FlatMapTransformation(state.outerLoop, state.inputVariable, transform)
             val newState = state.copy(
                     innerLoop = nestedLoop,
