@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
@@ -60,5 +61,11 @@ public class KtParameterList extends KtElementImplStub<KotlinPlaceHolderStub<KtP
 
     public void removeParameter(@NotNull KtParameter parameter) {
         EditCommaSeparatedListHelper.INSTANCE.removeItem(parameter);
+    }
+
+    public KtFunction getOwnerFunction() {
+        PsiElement parent = getParentByStub();
+        if (!(parent instanceof KtFunction)) return null;
+        return (KtFunction) parent;
     }
 }
