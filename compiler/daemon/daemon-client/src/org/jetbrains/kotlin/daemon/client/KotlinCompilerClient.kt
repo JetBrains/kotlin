@@ -220,7 +220,7 @@ object KotlinCompilerClient {
                     val res = daemon.remoteCompile(CompileService.NO_SESSION, CompileService.TargetPlatform.JVM, filteredArgs.toList().toTypedArray(), servicesFacade, outStrm, CompileService.OutputFormat.PLAIN, outStrm, null)
 
                     val endTime = System.nanoTime()
-                    println("Compilation result code: $res")
+                    println("Compilation ${if (res.isGood) "succeeded" else "failed"}, result code: ${res.get()}")
                     val memAfter = daemon.getUsedMemory().get() / 1024
                     println("Compilation time: " + TimeUnit.NANOSECONDS.toMillis(endTime - startTime) + " ms")
                     println("Used memory $memAfter (${"%+d".format(memAfter - memBefore)} kb)")
