@@ -415,8 +415,17 @@ fun KtDeclaration.modalityModifier() = modifierFromTokenSet(MODALITY_MODIFIERS)
 fun KtStringTemplateExpression.isPlain() = entries.all { it is KtLiteralStringTemplateEntry }
 fun KtStringTemplateExpression.isPlainWithEscapes() = entries.all { it is KtLiteralStringTemplateEntry || it is KtEscapeStringTemplateEntry }
 
+// Correct for class members only (including constructors and nested classes)
+// Returns null e.g. for member function parameters, member function locals, property accessors
 val KtDeclaration.containingClassOrObject: KtClassOrObject?
-        get() = (parent as? KtClassBody)?.parent as? KtClassOrObject
+        get() = parent.let {
+            when (it) {
+                is KtClassBody -> it.parent as? KtClassOrObject
+                is KtClassOrObject -> it
+                is KtParameterList -> (it.parent as? KtPrimaryConstructor)?.getContainingClassOrObject()
+                else -> null
+            }
+        }
 
 fun KtExpression.getOutermostParenthesizerOrThis(): KtExpression {
     return (parentsWithSelf.zip(parents)).firstOrNull {
