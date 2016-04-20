@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.injection
 
 import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
@@ -59,6 +60,8 @@ class KotlinLanguageInjector : LanguageInjector {
         val callExpression = qualifiedExpression.selectorExpression as? KtCallExpression ?: return null
         val callee = callExpression.calleeExpression ?: return null
 
+        if (isAnalyzeOff(qualifiedExpression.project)) return null
+
         for (reference in callee.references) {
             ProgressManager.checkCanceled()
 
@@ -80,6 +83,8 @@ class KotlinLanguageInjector : LanguageInjector {
 
         val callExpression = PsiTreeUtil.getParentOfType(ktHost, KtCallExpression::class.java) ?: return null
         val callee = callExpression.calleeExpression ?: return null
+
+        if (isAnalyzeOff(ktHost.project)) return null
 
         for (reference in callee.references) {
             ProgressManager.checkCanceled()
@@ -124,6 +129,10 @@ class KotlinLanguageInjector : LanguageInjector {
         }
 
         return null
+    }
+
+    private fun isAnalyzeOff(project: Project): Boolean {
+        return Configuration.getProjectInstance(project).advancedConfiguration.dfaOption == Configuration.DfaOption.OFF
     }
 
     private class InjectionInfo(val languageId: String?, val prefix: String?, val suffix: String?)
