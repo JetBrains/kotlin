@@ -81,6 +81,7 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
     private static final String OUT = "out/";
     private static final String EXPECTED = "expected/";
     private static final String COMMON_FILES_DIR = "_commonFiles/";
+    public static final String MODULE_EMULATION_FILE = TEST_DATA_DIR_PATH + "/moduleEmulation.js";
 
     public static final String TEST_MODULE = "JS_TESTS";
     public static final String TEST_PACKAGE = "foo";
@@ -346,6 +347,8 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
 
         configuration.put(JSConfigurationKeys.UNIT_TEST_CONFIG, shouldBeTranslateAsUnitTestClass());
 
+        setupConfig(configBuilder);
+
         return new LibrarySourcesConfig(project, configuration);
     }
 
@@ -357,6 +360,10 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
         }
 
         return false;
+    }
+
+    protected void setupConfig(@NotNull CompilerConfiguration configuration) {
+        // Do nothing by default, expect inheritors to implement this method
     }
 
     @NotNull
