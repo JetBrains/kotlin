@@ -115,6 +115,8 @@ fun KtProperty.hasWriteUsages(): Boolean {
 interface FindOperatorGenerator {
     val functionName: String
 
+    val shouldUseInputVariable: Boolean
+
     fun generate(chainedCallGenerator: ChainedCallGenerator, filter: KtExpression?): KtExpression
 
     val chainCallCount: Int
@@ -140,7 +142,7 @@ fun buildFindOperationGenerator(
         }
     }
 
-    class SimpleGenerator(override val functionName: String) : FindOperatorGenerator {
+    class SimpleGenerator(override val functionName: String, override val shouldUseInputVariable: Boolean) : FindOperatorGenerator {
         override fun generate(chainedCallGenerator: ChainedCallGenerator, filter: KtExpression?): KtExpression {
             return generateChainedCall(functionName, chainedCallGenerator, filter)
         }
@@ -164,13 +166,13 @@ fun buildFindOperationGenerator(
 
     when {
         valueIfFound.isVariableReference(inputVariable) -> {
-            val generator = SimpleGenerator(if (findFirst) "firstOrNull" else "lastOrNull")
+            val generator = SimpleGenerator(if (findFirst) "firstOrNull" else "lastOrNull", shouldUseInputVariable = true)
             return generator.useElvisOperatorIfNeeded()
         }
 
-        valueIfFound.isTrueConstant() && valueIfNotFound.isFalseConstant() -> return SimpleGenerator("any")
+        valueIfFound.isTrueConstant() && valueIfNotFound.isFalseConstant() -> return SimpleGenerator("any", shouldUseInputVariable = false)
 
-        valueIfFound.isFalseConstant() && valueIfNotFound.isTrueConstant() -> return SimpleGenerator("none")
+        valueIfFound.isFalseConstant() && valueIfNotFound.isTrueConstant() -> return SimpleGenerator("none", shouldUseInputVariable = false)
 
         inputVariable.hasUsages(valueIfFound) -> {
             if (!findFirst) return null // too dangerous because of side effects
@@ -184,6 +186,9 @@ fun buildFindOperationGenerator(
                     return object: FindOperatorGenerator {
                         override val functionName: String
                             get() = "firstOrNull"
+
+                        override val shouldUseInputVariable: Boolean
+                            get() = true
 
                         override val chainCallCount: Int
                             get() = 2
@@ -203,6 +208,9 @@ fun buildFindOperationGenerator(
                 override val functionName: String
                     get() = "firstOrNull"
 
+                override val shouldUseInputVariable: Boolean
+                    get() = true
+
                 override val chainCallCount: Int
                     get() = 2 // also includes "let"
 
@@ -218,6 +226,9 @@ fun buildFindOperationGenerator(
             return object: FindOperatorGenerator {
                 override val functionName: String
                     get() = "any"
+
+                override val shouldUseInputVariable: Boolean
+                    get() = false
 
                 override fun generate(chainedCallGenerator: ChainedCallGenerator, filter: KtExpression?): KtExpression {
                     val chainedCall = generateChainedCall(functionName, chainedCallGenerator, filter)

@@ -46,6 +46,9 @@ class FindAndAssignTransformation(
     override val chainCallCount: Int
         get() = generator.chainCallCount
 
+    override val shouldUseInputVariable: Boolean
+        get() = generator.shouldUseInputVariable
+
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
         return generator.generate(chainedCallGenerator, filter)
     }
