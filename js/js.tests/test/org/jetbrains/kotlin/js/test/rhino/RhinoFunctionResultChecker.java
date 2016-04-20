@@ -55,10 +55,10 @@ public class RhinoFunctionResultChecker implements RhinoResultChecker {
         return cx.evaluateString(scope, functionCallString(), "function call", 0, null);
     }
 
-    protected String functionCallString() {
+    private String functionCallString() {
         StringBuilder sb = new StringBuilder();
         if (packageName != null) {
-            sb.append("this");
+            sb.append("kotlin.modules");
             if (moduleId.contains(".")) {
                 sb.append("['").append(moduleId).append("']");
             } else {
