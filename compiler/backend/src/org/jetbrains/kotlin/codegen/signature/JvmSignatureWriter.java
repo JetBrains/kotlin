@@ -18,11 +18,10 @@ package org.jetbrains.kotlin.codegen.signature;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.load.kotlin.JvmDescriptorTypeWriter;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.types.Variance;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.Method;
@@ -30,22 +29,27 @@ import org.jetbrains.org.objectweb.asm.commons.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JvmSignatureWriter {
+public class JvmSignatureWriter extends JvmDescriptorTypeWriter<Type> {
 
     private final List<JvmMethodParameterSignature> kotlinParameterTypes = new ArrayList<JvmMethodParameterSignature>();
 
-    private int jvmCurrentTypeArrayLevel;
-    private Type jvmCurrentType;
     private Type jvmReturnType;
 
     private JvmMethodParameterKind currentParameterKind;
 
     private int currentSignatureSize = 0;
 
-    /**
-     * Shortcut
-     */
-    public void writeAsmType(Type asmType) {
+    public JvmSignatureWriter() {
+        super(AsmTypeFactory.INSTANCE);
+    }
+
+    @Override
+    public void writeClass(@NotNull Type objectType) {
+        writeClassBegin(objectType);
+        writeClassEnd();
+    }
+
+    public void writeAsmType(@NotNull Type asmType) {
         switch (asmType.getSort()) {
             case Type.OBJECT:
                 writeClassBegin(asmType);
@@ -57,45 +61,22 @@ public class JvmSignatureWriter {
                 writeArrayEnd();
                 return;
             default:
-                writeAsmType0(asmType);
-        }
-    }
-
-    private String makeArrayPrefix() {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < jvmCurrentTypeArrayLevel; ++i) {
-            sb.append('[');
-        }
-        return sb.toString();
-    }
-
-    protected void writeAsmType0(Type type) {
-        if (jvmCurrentType == null) {
-            jvmCurrentType = Type.getType(makeArrayPrefix() + type.getDescriptor());
+                writeJvmTypeAsIs(asmType);
         }
     }
 
     public void writeClassBegin(Type asmType) {
-        writeAsmType0(asmType);
+        writeJvmTypeAsIs(asmType);
     }
 
     public void writeOuterClassBegin(Type resultingAsmType, String outerInternalName) {
-        writeAsmType0(resultingAsmType);
+        writeJvmTypeAsIs(resultingAsmType);
     }
 
     public void writeInnerClass(String name) {
     }
 
     public void writeClassEnd() {
-    }
-
-    public void writeArrayType() {
-        if (jvmCurrentType == null) {
-            ++jvmCurrentTypeArrayLevel;
-        }
-    }
-
-    public void writeArrayEnd() {
     }
 
     public void writeTypeArgument(@NotNull Variance projectionKind) {
@@ -105,10 +86,6 @@ public class JvmSignatureWriter {
     }
 
     public void writeTypeArgumentEnd() {
-    }
-
-    public void writeTypeVariable(Name name, Type asmType) {
-        writeAsmType0(asmType);
     }
 
     public void writeFormalTypeParameter(String name) {
@@ -128,8 +105,7 @@ public class JvmSignatureWriter {
 
     public void writeParametersStart() {
         // hacks
-        jvmCurrentType = null;
-        jvmCurrentTypeArrayLevel = 0;
+        clearCurrentType();
     }
 
     public void writeParameterType(JvmMethodParameterKind parameterKind) {
@@ -137,21 +113,20 @@ public class JvmSignatureWriter {
     }
 
     public void writeParameterTypeEnd() {
-        kotlinParameterTypes.add(new JvmMethodParameterSignature(jvmCurrentType, currentParameterKind));
-        currentSignatureSize += jvmCurrentType.getSize();
+        //noinspection ConstantConditions
+        kotlinParameterTypes.add(new JvmMethodParameterSignature(getJvmCurrentType(), currentParameterKind));
+        currentSignatureSize += getJvmCurrentType().getSize();
 
         currentParameterKind = null;
-        jvmCurrentType = null;
-        jvmCurrentTypeArrayLevel = 0;
+        clearCurrentType();
     }
 
     public void writeReturnType() {
     }
 
     public void writeReturnTypeEnd() {
-        jvmReturnType = jvmCurrentType;
-        jvmCurrentType = null;
-        jvmCurrentTypeArrayLevel = 0;
+        jvmReturnType = getJvmCurrentType();
+        clearCurrentType();
     }
 
     public void writeSuperclass() {

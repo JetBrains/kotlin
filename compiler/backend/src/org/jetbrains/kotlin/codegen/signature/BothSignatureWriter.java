@@ -67,7 +67,7 @@ public class BothSignatureWriter extends JvmSignatureWriter {
      * Shortcut
      */
     @Override
-    public void writeAsmType(Type asmType) {
+    public void writeAsmType(@NotNull Type asmType) {
         if (asmType.getSort() != Type.OBJECT && asmType.getSort() != Type.ARRAY) {
             signatureVisitor().visitBaseType(asmType.getDescriptor().charAt(0));
         }
@@ -141,7 +141,7 @@ public class BothSignatureWriter extends JvmSignatureWriter {
     }
 
     @Override
-    public void writeTypeVariable(Name name, Type asmType) {
+    public void writeTypeVariable(@NotNull Name name, @NotNull Type asmType) {
         signatureVisitor().visitTypeVariable(name.asString());
         generic = true;
         super.writeTypeVariable(name, asmType);

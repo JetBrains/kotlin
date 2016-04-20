@@ -19,17 +19,19 @@ package org.jetbrains.kotlin.codegen.state;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import kotlin.Pair;
+import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
+import kotlin.jvm.functions.Function2;
+import kotlin.jvm.functions.Function3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor;
 import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.binding.MutableClosure;
-import org.jetbrains.kotlin.codegen.binding.PsiCodegenPredictor;
+import org.jetbrains.kotlin.codegen.signature.AsmTypeFactory;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter;
 import org.jetbrains.kotlin.descriptors.*;
@@ -45,13 +47,13 @@ import org.jetbrains.kotlin.load.java.SpecialBuiltinMembers;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment;
-import org.jetbrains.kotlin.load.java.typeEnhancement.TypeEnhancementKt;
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass;
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryPackageSourceElement;
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement;
+import org.jetbrains.kotlin.load.kotlin.*;
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
-import org.jetbrains.kotlin.name.*;
+import org.jetbrains.kotlin.name.ClassId;
+import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtFile;
@@ -63,9 +65,7 @@ import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
-import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
@@ -74,12 +74,11 @@ import org.jetbrains.kotlin.serialization.deserialization.DeserializedType;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.kotlin.types.*;
-import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isUnit;
@@ -101,6 +100,26 @@ public class KotlinTypeMapper {
     private final IncrementalCache incrementalCache;
     private final IncompatibleClassTracker incompatibleClassTracker;
     private final String moduleName;
+    private final TypeMappingConfiguration<Type> typeMappingConfiguration = new TypeMappingConfiguration<Type>() {
+        @NotNull
+        @Override
+        public KotlinType commonSupertype(@NotNull Collection<KotlinType> types) {
+            return CommonSupertypes.commonSupertype(types);
+        }
+
+        @Nullable
+        @Override
+        public Type getPredefinedTypeForClass(@NotNull ClassDescriptor classDescriptor) {
+            return bindingContext.get(ASM_TYPE, classDescriptor);
+        }
+
+        @Override
+        public void processErrorType(@NotNull KotlinType kotlinType, @NotNull ClassDescriptor descriptor) {
+            if (classBuilderMode != ClassBuilderMode.LIGHT_CLASSES) {
+                throw new IllegalStateException(generateErrorMessageForErrorType(kotlinType, descriptor));
+            }
+        }
+    };
 
     public KotlinTypeMapper(
             @NotNull BindingContext bindingContext,
@@ -365,11 +384,6 @@ public class KotlinTypeMapper {
     }
 
     @NotNull
-    private Type mapType(@NotNull KotlinType jetType, @NotNull TypeMappingMode mode) {
-        return mapType(jetType, null, mode);
-    }
-
-    @NotNull
     public Type mapSupertype(@NotNull KotlinType jetType, @Nullable JvmSignatureWriter signatureVisitor) {
         return mapType(jetType, signatureVisitor, TypeMappingMode.SUPER_TYPE);
     }
@@ -411,161 +425,19 @@ public class KotlinTypeMapper {
 
     @NotNull
     private Type mapType(
-            @NotNull KotlinType jetType,
-            @Nullable JvmSignatureWriter signatureVisitor,
+            @NotNull KotlinType kotlinType,
+            @Nullable final JvmSignatureWriter signatureVisitor,
             @NotNull TypeMappingMode mode
     ) {
-        Type builtinType = mapBuiltinType(jetType);
-
-        if (builtinType != null) {
-            Type asmType = mode.getNeedPrimitiveBoxing() ? boxType(builtinType) : builtinType;
-            writeGenericType(jetType, asmType, signatureVisitor, mode);
-            return asmType;
-        }
-
-        TypeConstructor constructor = jetType.getConstructor();
-        if (constructor instanceof IntersectionTypeConstructor) {
-            jetType = CommonSupertypes.commonSupertype(new ArrayList<KotlinType>(constructor.getSupertypes()));
-
-            // interface In<in E>
-            // open class A : In<A>
-            // open class B : In<B>
-            // commonSupertype(A, B) = In<A & B>
-            // So replace arguments with star-projections to prevent infinite recursive mapping
-            // It's not very important because such types anyway are prohibited in declarations
-            jetType = TypeUtilsKt.replaceArgumentsWithStarProjections(jetType);
-
-            constructor = jetType.getConstructor();
-        }
-        DeclarationDescriptor descriptor = constructor.getDeclarationDescriptor();
-
-        if (descriptor == null) {
-            throw new UnsupportedOperationException("no descriptor for type constructor of " + jetType);
-        }
-
-        if (ErrorUtils.isError(descriptor)) {
-            if (classBuilderMode == ClassBuilderMode.FULL) {
-                throw new IllegalStateException(generateErrorMessageForErrorType(jetType, descriptor));
-            }
-            Type asmType = Type.getObjectType("error/NonExistentClass");
-            if (signatureVisitor != null) {
-                signatureVisitor.writeAsmType(asmType);
-            }
-            return asmType;
-        }
-
-        if (descriptor instanceof ClassDescriptor && KotlinBuiltIns.isArray(jetType)) {
-            if (jetType.getArguments().size() != 1) {
-                throw new UnsupportedOperationException("arrays must have one type argument");
-            }
-            TypeProjection memberProjection = jetType.getArguments().get(0);
-            KotlinType memberType = memberProjection.getType();
-
-            Type arrayElementType;
-            if (memberProjection.getProjectionKind() == Variance.IN_VARIANCE) {
-                arrayElementType = AsmTypes.OBJECT_TYPE;
-                if (signatureVisitor != null) {
-                    signatureVisitor.writeArrayType();
-                    signatureVisitor.writeAsmType(arrayElementType);
-                    signatureVisitor.writeArrayEnd();
-                }
-            }
-            else {
-                arrayElementType = boxType(mapType(memberType, mode));
-                if (signatureVisitor != null) {
-                    signatureVisitor.writeArrayType();
-                    mapType(memberType, signatureVisitor, mode.toGenericArgumentMode(memberProjection.getProjectionKind()));
-                    signatureVisitor.writeArrayEnd();
-                }
-            }
-
-            return Type.getType("[" + arrayElementType.getDescriptor());
-        }
-
-        if (descriptor instanceof ClassDescriptor) {
-            Type asmType = mode.isForAnnotationParameter() && KotlinBuiltIns.isKClass((ClassDescriptor) descriptor) ?
-                           AsmTypes.JAVA_CLASS_TYPE :
-                           computeAsmType((ClassDescriptor) descriptor.getOriginal());
-            writeGenericType(jetType, asmType, signatureVisitor, mode);
-            return asmType;
-        }
-
-        if (descriptor instanceof TypeParameterDescriptor) {
-            Type type = mapType(getRepresentativeUpperBound((TypeParameterDescriptor) descriptor), mode);
-            if (signatureVisitor != null) {
-                signatureVisitor.writeTypeVariable(descriptor.getName(), type);
-            }
-            return type;
-        }
-
-        throw new UnsupportedOperationException("Unknown type " + jetType);
-    }
-
-    @NotNull
-    private static KotlinType getRepresentativeUpperBound(@NotNull TypeParameterDescriptor descriptor) {
-        List<KotlinType> upperBounds = descriptor.getUpperBounds();
-        assert !upperBounds.isEmpty() : "Upper bounds should not be empty: " + descriptor;
-        for (KotlinType upperBound : upperBounds) {
-            if (!isJvmInterface(upperBound)) {
-                return upperBound;
-            }
-        }
-        return CollectionsKt.first(upperBounds);
-    }
-
-    @Nullable
-    private static Type mapBuiltinType(@NotNull KotlinType type) {
-        DeclarationDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
-        if (!(descriptor instanceof ClassDescriptor)) return null;
-
-        FqNameUnsafe fqName = DescriptorUtils.getFqName(descriptor);
-
-        PrimitiveType primitiveType = KotlinBuiltIns.getPrimitiveTypeByFqName(fqName);
-        if (primitiveType != null) {
-            Type asmType = Type.getType(JvmPrimitiveType.get(primitiveType).getDesc());
-            boolean isNullableInJava = TypeUtils.isNullableType(type) || TypeEnhancementKt.hasEnhancedNullability(type);
-            return isNullableInJava ? boxType(asmType) : asmType;
-        }
-
-        PrimitiveType arrayElementType = KotlinBuiltIns.getPrimitiveTypeByArrayClassFqName(fqName);
-        if (arrayElementType != null) {
-            return Type.getType("[" + JvmPrimitiveType.get(arrayElementType).getDesc());
-        }
-
-        ClassId classId = JavaToKotlinClassMap.INSTANCE.mapKotlinToJava(fqName);
-        if (classId != null) {
-            return Type.getObjectType(JvmClassName.byClassId(classId).getInternalName());
-        }
-
-        return null;
-    }
-
-    @NotNull
-    private Type computeAsmType(@NotNull ClassDescriptor klass) {
-        Type alreadyComputedType = bindingContext.get(ASM_TYPE, klass);
-        if (alreadyComputedType != null) {
-            return alreadyComputedType;
-        }
-
-        Type asmType = Type.getObjectType(computeAsmTypeImpl(klass));
-        assert PsiCodegenPredictor.checkPredictedNameFromPsi(klass, asmType, fileClassesProvider);
-        return asmType;
-    }
-
-    @NotNull
-    private String computeAsmTypeImpl(@NotNull ClassDescriptor klass) {
-        DeclarationDescriptor container = klass.getContainingDeclaration();
-
-        String name = SpecialNames.safeIdentifier(klass.getName()).getIdentifier();
-        if (container instanceof PackageFragmentDescriptor) {
-            FqName fqName = ((PackageFragmentDescriptor) container).getFqName();
-            return fqName.isRoot() ? name : fqName.asString().replace('.', '/') + '/' + name;
-        }
-
-        assert container instanceof ClassDescriptor : "Unexpected container: " + container + " for " + klass;
-
-        String containerInternalName = computeAsmTypeImpl((ClassDescriptor) container);
-        return klass.getKind() == ClassKind.ENUM_ENTRY ? containerInternalName : containerInternalName + "$" + name;
+        return TypeSignatureMappingKt.mapType(
+                kotlinType, AsmTypeFactory.INSTANCE, mode, typeMappingConfiguration, signatureVisitor,
+                new Function3<KotlinType, Type, TypeMappingMode, Unit>() {
+                    @Override
+                    public Unit invoke(KotlinType kotlinType, Type type, TypeMappingMode mode) {
+                        writeGenericType(kotlinType, type, signatureVisitor, mode);
+                        return Unit.INSTANCE;
+                    }
+                });
     }
 
     @NotNull
