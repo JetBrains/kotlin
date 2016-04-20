@@ -56,6 +56,13 @@ abstract class AbstractInjectionTest : KotlinLightCodeInsightFixtureTestCase() {
         }
     }
 
+    protected fun testNoInjection(text: String) {
+        myFixture.configureByText("${getTestName(true)}.kt", text.trimMargin())
+
+        TestCase.assertTrue("Injection action is not available. There's probably some injection but nothing was expected.",
+                            InjectLanguageAction().isAvailable(project, myFixture.editor, myFixture.file))
+    }
+
     protected fun doRemoveInjectionTest(before: String, after: String) {
         myFixture.setCaresAboutInjection(false)
 

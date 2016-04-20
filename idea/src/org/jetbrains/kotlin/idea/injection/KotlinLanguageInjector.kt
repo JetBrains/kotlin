@@ -45,11 +45,11 @@ class KotlinLanguageInjector : LanguageInjector {
         injectionPlacesRegistrar.addPlace(language, TextRange.from(0, ktHost.textLength), injectionInfo.prefix, injectionInfo.suffix)
     }
 
-    private fun findInjectionInfo(place: KtElement): InjectionInfo? {
+    private fun findInjectionInfo(place: KtElement, originalHost: Boolean = true): InjectionInfo? {
         return injectWithExplicitCodeInstruction(place)
                 ?: injectWithCall(place)
                 ?: injectWithReceiver(place)
-                ?: injectWithVariableUsage(place)
+                ?: injectWithVariableUsage(place, originalHost)
     }
 
     private fun injectWithExplicitCodeInstruction(host: KtElement): InjectionInfo? {
@@ -82,7 +82,10 @@ class KotlinLanguageInjector : LanguageInjector {
         return null
     }
 
-    private fun injectWithVariableUsage(host: KtElement): InjectionInfo? {
+    private fun injectWithVariableUsage(host: KtElement, originalHost: Boolean): InjectionInfo? {
+        // Given place is not original host of the injection so we stop to prevent stepping through indirect references
+        if (!originalHost) return null
+
         val ktHost: KtElement = host
         val ktProperty = host.parent as? KtProperty?: return null
         if (ktProperty.initializer != host) return null
@@ -92,7 +95,7 @@ class KotlinLanguageInjector : LanguageInjector {
         val searchScope = LocalSearchScope(arrayOf(ktProperty.containingFile), "", true)
         return ReferencesSearch.search(ktProperty, searchScope).asSequence().mapNotNull { psiReference ->
             val element = psiReference.element as? KtElement ?: return@mapNotNull null
-            findInjectionInfo(element)
+            findInjectionInfo(element, false)
         }.firstOrNull()
     }
 

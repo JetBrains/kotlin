@@ -96,6 +96,13 @@ class KotlinInjectionTest : AbstractInjectionTest() {
             """,
             languageId = RegExpLanguage.INSTANCE.id, unInjectShouldBePresent = false)
 
+    fun testNoInjectionThoughSeveralAssignmentsWithRuntime() = testNoInjection(
+            """
+            |val first = "<caret>some"
+            |val test = first
+            |fun foo() = Regex(test)
+            """)
+
     fun testInjectionWithMultipleCommentsOnFun() = testInjectionPresent(
             """
             |// Some comment
