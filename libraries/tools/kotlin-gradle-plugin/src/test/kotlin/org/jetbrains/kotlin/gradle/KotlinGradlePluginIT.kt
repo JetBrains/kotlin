@@ -49,7 +49,7 @@ class KotlinGradleIT: BaseGradleIT() {
         val project = Project("kotlinProject", "2.4")
         val VARIANT_CONSTANT = "ForTest"
         val userVariantArg = "-Duser.variant=$VARIANT_CONSTANT"
-        val MEMORY_GROWTH_LIMIT_KB = 200
+        val MEMORY_GROWTH_LIMIT_KB = 800
 
         fun exitTestDaemon() {
             project.build(userVariantArg, "exit", options = BaseGradleIT.BuildOptions(withDaemon = true)) {
