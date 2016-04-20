@@ -28,10 +28,10 @@ import org.jetbrains.kotlin.psi.*
 
 class CountTransformation(
         loop: KtForExpression,
-        inputVariable: KtCallableDeclaration,
+        private val inputVariable: KtCallableDeclaration,
         initialization: VariableInitialization,
         private val filter: KtExpression?
-) : AssignToVariableResultTransformation(loop, inputVariable, initialization) {
+) : AssignToVariableResultTransformation(loop, initialization) {
 
     override fun mergeWithPrevious(previousTransformation: SequenceTransformation): ResultTransformation? {
         if (previousTransformation !is FilterTransformation) return null

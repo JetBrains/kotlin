@@ -37,7 +37,6 @@ interface ChainedCallGenerator {
  * Base interface for recognized transformations of the sequence. Should always be either [SequenceTransformation] or [ResultTransformation]
  */
 interface Transformation {
-    val inputVariable: KtCallableDeclaration
     val loop: KtForExpression
 
     val presentation: String

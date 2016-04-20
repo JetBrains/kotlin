@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.KtProperty
 
 class MapTransformation(
         override val loop: KtForExpression,
-        override val inputVariable: KtCallableDeclaration,
+        val inputVariable: KtCallableDeclaration,
         val mapping: KtExpression
 ) : SequenceTransformation {
 

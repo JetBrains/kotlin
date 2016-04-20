@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class FlatMapTransformation(
         override val loop: KtForExpression,
-        override val inputVariable: KtCallableDeclaration,
+        val inputVariable: KtCallableDeclaration,
         val transform: KtExpression
 ) : SequenceTransformation {
 
