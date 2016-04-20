@@ -92,19 +92,20 @@ open class NestedSourceMapper(
 
     var lastVisitedRange: RangeMapping? = null
 
-    override fun visitLineNumber(iv: MethodVisitor, lineNumber: Int, start: Label) {
+    override fun mapLineNumber(lineNumber: Int): Int {
         val mappedLineNumber = visitedLines.get(lineNumber)
 
         if (mappedLineNumber > 0) {
-            iv.visitLineNumber(mappedLineNumber, start)
+            return mappedLineNumber
         } else {
             val rangeForMapping = if (lastVisitedRange?.contains(lineNumber) ?: false) lastVisitedRange!! else findMappingIfExists(lineNumber)!!
             val sourceLineNumber = rangeForMapping.mapDestToSource(lineNumber)
-            val visitLineNumber = parent.visitLineNumber(iv, start, sourceLineNumber, rangeForMapping.parent!!.name, rangeForMapping.parent!!.path)
-            if (visitLineNumber > 0) {
-                visitedLines.put(lineNumber, visitLineNumber)
+            val newLineNumber = parent.mapLineNumber(sourceLineNumber, rangeForMapping.parent!!.name, rangeForMapping.parent!!.path)
+            if (newLineNumber > 0) {
+                visitedLines.put(lineNumber, newLineNumber)
             }
             lastVisitedRange = rangeForMapping
+            return newLineNumber
         }
     }
 
@@ -127,13 +128,13 @@ open class InlineLambdaSourceMapper(
         }
     }
 
-    override fun visitLineNumber(iv: MethodVisitor, lineNumber: Int, start: Label) {
+    override fun mapLineNumber(lineNumber: Int): Int {
         if (ranges.firstOrNull()?.contains(lineNumber) ?: false) {
             //don't remap origin lambda line numbers
-            iv.visitLineNumber(lineNumber, start)
+            return lineNumber
         }
         else {
-            super.visitLineNumber(iv, lineNumber, start)
+            return super.mapLineNumber(lineNumber)
         }
     }
 }
@@ -143,11 +144,11 @@ interface SourceMapper {
     val parent: SourceMapper?
         get() = null
 
-    fun visitLineNumber(iv: MethodVisitor, lineNumber: Int, start: Label) {
+    fun mapLineNumber(lineNumber: Int): Int {
         throw UnsupportedOperationException("fail")
     }
 
-    fun visitLineNumber(iv: MethodVisitor, start: Label, source: Int, sourceName: String, sourcePath:String): Int {
+    fun mapLineNumber(source: Int, sourceName: String, sourcePath: String): Int {
         throw UnsupportedOperationException("fail")
     }
 
@@ -173,9 +174,7 @@ object IdenticalSourceMapper : SourceMapper {
     override val parent: SourceMapper?
         get() = null
 
-    override fun visitLineNumber(iv: MethodVisitor, lineNumber: Int, start: Label) {
-        iv.visitLineNumber(lineNumber, start)
-    }
+    override fun mapLineNumber(lineNumber: Int) = lineNumber
 }
 
 class CallSiteMarker(val lineNumber: Int)
@@ -226,21 +225,20 @@ open class DefaultSourceMapper(val sourceInfo: SourceInfo) : SourceMapper {
         return fileMappings.getOrPut(createKey(name, path)) { RawFileMapping(name, path) }
     }
 
-    override fun visitLineNumber(iv: MethodVisitor, lineNumber: Int, start: Label) {
+    override fun mapLineNumber(lineNumber: Int): Int {
         if (lineNumber < 0) {
             //no source information, so just skip this linenumber
-            return
+            return - 1
         }
-        iv.visitLineNumber(lineNumber, start)
+        return lineNumber
     }
 
-    override fun visitLineNumber(iv: MethodVisitor, start: Label, source: Int, sourceName: String, sourcePath: String): Int {
+    override fun mapLineNumber(source: Int, sourceName: String, sourcePath: String): Int {
         if (source < 0) {
             //no source information, so just skip this linenumber
             return -1
         }
         val mappedLineIndex = createMapping(getOrRegisterNewSource(sourceName, sourcePath), source)
-        iv.visitLineNumber(mappedLineIndex, start)
         return mappedLineIndex
     }
 

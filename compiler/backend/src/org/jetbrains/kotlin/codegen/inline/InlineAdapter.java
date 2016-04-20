@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.codegen.inline;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
-import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
 import java.util.ArrayList;
@@ -90,11 +89,9 @@ public class InlineAdapter extends InstructionAdapter {
     @Override
     public void visitLineNumber(int line, Label start) {
         if (InlineCodegenUtil.GENERATE_SMAP) {
-            sourceMapper.visitLineNumber(mv, line, start);
+            line = sourceMapper.mapLineNumber(line);
         }
-        else {
-            super.visitLineNumber(line, start);
-        }
+        super.visitLineNumber(line, start);
     }
 
     @Override
