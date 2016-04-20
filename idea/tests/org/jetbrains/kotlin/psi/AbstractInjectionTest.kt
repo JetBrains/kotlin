@@ -39,7 +39,7 @@ abstract class AbstractInjectionTest : KotlinLightCodeInsightFixtureTestCase() {
         }
     }
 
-    protected fun testInjectionPresent(text: String, languageId: String? = null, unInjectShouldBePresent: Boolean = true) {
+    protected fun assertInjectionPresent(text: String, languageId: String? = null, unInjectShouldBePresent: Boolean = true) {
         myFixture.configureByText("${getTestName(true)}.kt", text.trimMargin())
 
         TestCase.assertFalse("Injection action is available. There's probably no injection at caret place",
@@ -56,7 +56,7 @@ abstract class AbstractInjectionTest : KotlinLightCodeInsightFixtureTestCase() {
         }
     }
 
-    protected fun testNoInjection(text: String) {
+    protected fun assertNoInjection(text: String) {
         myFixture.configureByText("${getTestName(true)}.kt", text.trimMargin())
 
         TestCase.assertTrue("Injection action is not available. There's probably some injection but nothing was expected.",

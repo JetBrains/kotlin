@@ -44,7 +44,7 @@ class KotlinInjectionTest : AbstractInjectionTest() {
         TestCase.assertNull(myFixture.getReferenceAtCaretPosition())
     }
 
-    fun testInjectionOnJavaPredefinedMethodWithAnnotation() = testInjectionPresent(
+    fun testInjectionOnJavaPredefinedMethodWithAnnotation() = assertInjectionPresent(
             """
             |val test1 = java.util.regex.Pattern.compile("<caret>pattern")
             """,
@@ -63,7 +63,7 @@ class KotlinInjectionTest : AbstractInjectionTest() {
         try {
             Configuration.getInstance().replaceInjections(listOf(customInjection), listOf(), true)
 
-            testInjectionPresent(
+            assertInjectionPresent(
                     """
                     |val stringBuilder = StringBuilder().replace(0, 0, "<caret><html></html>")
                     """,
@@ -76,34 +76,34 @@ class KotlinInjectionTest : AbstractInjectionTest() {
         }
     }
 
-    fun testInjectionWithCommentOnProperty() = testInjectionPresent(
+    fun testInjectionWithCommentOnProperty() = assertInjectionPresent(
             """
             |//language=file-reference
             |val test = "<caret>simple"
             """)
 
-    fun testInjectionWithUsageOnReceiverWithRuntime() = testInjectionPresent(
+    fun testInjectionWithUsageOnReceiverWithRuntime() = assertInjectionPresent(
             """
             |val test = "<caret>some"
             |fun foo() = test.toRegex()
             """,
             languageId = RegExpLanguage.INSTANCE.id, unInjectShouldBePresent = false)
 
-    fun testInjectionWithUsageInParameterWithRuntime() = testInjectionPresent(
+    fun testInjectionWithUsageInParameterWithRuntime() = assertInjectionPresent(
             """
             |val test = "<caret>some"
             |fun foo() = Regex(test)
             """,
             languageId = RegExpLanguage.INSTANCE.id, unInjectShouldBePresent = false)
 
-    fun testNoInjectionThoughSeveralAssignmentsWithRuntime() = testNoInjection(
+    fun testNoInjectionThoughSeveralAssignmentsWithRuntime() = assertNoInjection(
             """
             |val first = "<caret>some"
             |val test = first
             |fun foo() = Regex(test)
             """)
 
-    fun testInjectionWithMultipleCommentsOnFun() = testInjectionPresent(
+    fun testInjectionWithMultipleCommentsOnFun() = assertInjectionPresent(
             """
             |// Some comment
             |// Other comment
@@ -111,7 +111,7 @@ class KotlinInjectionTest : AbstractInjectionTest() {
             |fun test() = "<caret>simple"
             """)
 
-    fun testInjectionWithAnnotationOnPropertyWithAnnotation() = testInjectionPresent(
+    fun testInjectionWithAnnotationOnPropertyWithAnnotation() = assertInjectionPresent(
             """
             |@org.intellij.lang.annotations.Language("file-reference")
             |val test = "<caret>simple"
