@@ -172,15 +172,13 @@ public final class ClosureTest extends SingleFileTranslationTest {
         checkFooBoxIsOk();
     }
 
-    // TODO: tests UsageTracker but encounters issue somewhere else. Uncomment when issue with `this` generation gets fixed
-    // Presumably, KT-11996
-    /*public void testDeepInnerClassInLocalClass() throws Exception {
+    public void testDeepInnerClassInLocalClass() throws Exception {
         checkFooBoxIsOk();
     }
 
     public void testDeepInnerClassInLocalClassFromExtension() throws Exception {
         checkFooBoxIsOk();
-    }*/
+    }
 
     public void testImplicitGenericReceiverInExtensionInLocalClass() throws Exception {
         checkFooBoxIsOk();

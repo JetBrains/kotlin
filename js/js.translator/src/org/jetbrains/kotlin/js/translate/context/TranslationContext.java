@@ -339,7 +339,17 @@ public class TranslationContext {
     }
 
     @NotNull
-    public JsExpression getDispatchReceiver(@NotNull ReceiverParameterDescriptor descriptor) {
+    public JsExpression getDispatchReceiver(@NotNull ReceiverParameterDescriptor descriptor, boolean allowSuperCall) {
+        // I don't see any reason for descriptor being treated inconsistently for different cases of call.
+        // descriptor should always point on the exact class. I.e., in the code
+        //
+        // class A { inner class B : A { foo() } }
+        //
+        // implicit receiver for `foo` must always point to either `A` or `B` depending on where `foo()` is picked by resolver.
+        // However, it's not always true. According to ExpressionCodegen, this rule is violated in the case of constructor call.
+        // It's reasonable since there won't be any ambiguity in this case, but it's simply inconsistent.
+        // TODO: avoid `allowSuperCall` by convincing people to alter behaviour of frontend
+
         JsExpression alias = getAliasForDescriptor(descriptor);
         if (alias != null) {
             return alias;
@@ -362,16 +372,13 @@ public class TranslationContext {
 
         ClassDescriptor cls = (ClassDescriptor) classifier;
 
-        JsExpression receiver = getAliasForDescriptor(cls.getThisAsReceiverParameter());
-
-        // I could reproduce situation when receiver == null, although there's no test to reproduce it. Have no time for investigation
-        // Hint: try generating field with getter/setter, see deepInnerClassInLocalClass.kt
-        // TODO: revisit this code later
+        assert classDescriptor != null : "Can't get ReceiverParameterDescriptor in top level";
+        JsExpression receiver = getAliasForDescriptor(classDescriptor.getThisAsReceiverParameter());
         if (receiver == null) {
             receiver = JsLiteral.THIS;
         }
 
-        return getDispatchReceiverPath(cls, receiver);
+        return getDispatchReceiverPath(cls, receiver, allowSuperCall);
     }
 
     private boolean isConstructorOrDirectScope(DeclarationDescriptor descriptor) {
@@ -384,7 +391,7 @@ public class TranslationContext {
     }
 
     @NotNull
-    private JsExpression getDispatchReceiverPath(@Nullable ClassDescriptor cls, JsExpression thisExpression) {
+    private JsExpression getDispatchReceiverPath(@Nullable ClassDescriptor cls, JsExpression thisExpression, boolean allowSuperCall) {
         if (cls != null) {
             JsExpression alias = getAliasForDescriptor(cls);
             if (alias != null) {
@@ -392,17 +399,16 @@ public class TranslationContext {
             }
         }
         if (classDescriptor == cls ||
-            (classDescriptor != null &&
-             cls != null && DescriptorUtils.isSubclass(classDescriptor, cls)) ||
+            (allowSuperCall && classDescriptor != null && cls != null && DescriptorUtils.isSubclass(classDescriptor, cls)) ||
             parent == null) {
             return thisExpression;
         }
         ClassDescriptor parentDescriptor = parent.classDescriptor;
         if (classDescriptor != parentDescriptor) {
-            return new JsNameRef(Namer.OUTER_FIELD_NAME, parent.getDispatchReceiverPath(cls, thisExpression));
+            return new JsNameRef(Namer.OUTER_FIELD_NAME, parent.getDispatchReceiverPath(cls, thisExpression, allowSuperCall));
         }
         else {
-            return parent.getDispatchReceiverPath(cls, thisExpression);
+            return parent.getDispatchReceiverPath(cls, thisExpression, allowSuperCall);
         }
     }
 
@@ -496,7 +502,7 @@ public class TranslationContext {
         JsExpression alias = getAliasForDescriptor(descriptor);
         if (alias != null) return alias;
         if (descriptor instanceof ReceiverParameterDescriptor) {
-            return getDispatchReceiver((ReceiverParameterDescriptor) descriptor);
+            return getDispatchReceiver((ReceiverParameterDescriptor) descriptor, false);
         }
         return getNameForDescriptor(descriptor).makeRef();
     }

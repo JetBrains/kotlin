@@ -50,8 +50,6 @@ abstract class AbstractReservedWordTest : SingleFileTranslationTest("reservedWor
 
 abstract class AbstractSecondaryConstructorTest : AbstractBlackBoxTest("secondaryConstructors/")
 
-abstract class AbstractNestedTypesTest : AbstractBlackBoxTest("classes/inner/")
-
 abstract class AbstractInnerNestedTest : AbstractBlackBoxTest("innerNested/")
 
 abstract class AbstractClassesTest : AbstractBlackBoxTest("classes/")

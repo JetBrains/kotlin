@@ -86,6 +86,14 @@ public class NestedTypesTest extends SingleFileTranslationTest {
         checkFooBoxIsOk();
     }
 
+    public void testPrivateFieldNotOverridenInNestedSubclass() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testOuterClassReferenceFromSecondaryConstructor() throws Exception {
+        checkFooBoxIsOk();
+    }
+
     @NotNull
     @Override
     protected List<String> additionalJsFiles(@NotNull EcmaVersion ecmaVersion) {
