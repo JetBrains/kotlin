@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -290,19 +290,22 @@ class LazyJavaTypeResolver(
 
         override val id: String get() = "kotlin.jvm.PlatformType"
 
-        override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>, jetType: KotlinType, flexibility: Flexibility): T? {
-            @Suppress("UNCHECKED_CAST")
-            return when (capabilityClass) {
-                CustomTypeVariable::class.java, Specificity::class.java -> Impl(flexibility) as T
-                else -> null
-            }
+        override fun createFlexibleType(lowerBound: KotlinType, upperBound: KotlinType): KotlinType {
+            if (lowerBound == upperBound) return lowerBound
+
+            return Impl(lowerBound, upperBound)
         }
 
+        private class Impl(lowerBound: KotlinType, upperBound: KotlinType) :
+                DelegatingFlexibleType(lowerBound, upperBound, FlexibleJavaClassifierTypeCapabilities), CustomTypeVariable, Specificity {
 
-        private class Impl(val flexibility: Flexibility) : CustomTypeVariable, Specificity {
-
-            private val lowerBound: KotlinType get() = flexibility.lowerBound
-            private val upperBound: KotlinType get() = flexibility.upperBound
+            override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>): T? {
+                @Suppress("UNCHECKED_CAST")
+                return when (capabilityClass) {
+                    CustomTypeVariable::class.java, Specificity::class.java -> this as T
+                    else -> super.getCapability(capabilityClass)
+                }
+            }
 
             override val isTypeVariable: Boolean = lowerBound.getConstructor() == upperBound.getConstructor()
                                                    && lowerBound.getConstructor().getDeclarationDescriptor() is TypeParameterDescriptor

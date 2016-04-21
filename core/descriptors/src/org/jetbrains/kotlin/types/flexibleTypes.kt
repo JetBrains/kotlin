@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,15 +18,18 @@ package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
 interface FlexibleTypeCapabilities {
-    fun <T: TypeCapability> getCapability(capabilityClass: Class<T>, jetType: KotlinType, flexibility: Flexibility): T?
+    fun createFlexibleType(lowerBound: KotlinType, upperBound: KotlinType): KotlinType
     val id: String
 
     object NONE : FlexibleTypeCapabilities {
-        override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>, jetType: KotlinType, flexibility: Flexibility): T? = null
+        override fun createFlexibleType(lowerBound: KotlinType, upperBound: KotlinType): KotlinType {
+            if (lowerBound == upperBound) return lowerBound
+            return object : DelegatingFlexibleType(lowerBound, upperBound, this@NONE) {}
+        }
+
         override val id: String get() = "NONE"
     }
 }
@@ -124,8 +127,7 @@ open class DelegatingFlexibleType protected constructor(
 
         @JvmStatic
         fun create(lowerBound: KotlinType, upperBound: KotlinType, extraCapabilities: FlexibleTypeCapabilities): KotlinType {
-            if (lowerBound == upperBound) return lowerBound
-            return DelegatingFlexibleType(lowerBound, upperBound, extraCapabilities)
+            return extraCapabilities.createFlexibleType(lowerBound, upperBound)
         }
 
         @JvmField
@@ -153,9 +155,6 @@ open class DelegatingFlexibleType protected constructor(
     }
 
     override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>): T? {
-        val extra = extraCapabilities.getCapability(capabilityClass, this, this)
-        if (extra != null) return extra
-
         @Suppress("UNCHECKED_CAST")
         if (capabilityClass in capabilityClasses) return this as T
 
