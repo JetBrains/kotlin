@@ -265,12 +265,13 @@ fun getReflectionTypeForCandidateDescriptor(
 fun createReflectionTypeForResolvedCallableReference(
         reference: KtCallableReferenceExpression,
         lhsType: KotlinType?,
+        ignoreReceiver: Boolean,
         descriptor: CallableDescriptor,
         context: ResolutionContext<*>,
         reflectionTypes: ReflectionTypes
 ): KotlinType? {
     val type = createReflectionTypeForCallableDescriptor(
-            descriptor, lhsType, reflectionTypes, context.trace, reference.callableReference, reference.isEmptyLHS
+            descriptor, lhsType, reflectionTypes, context.trace, reference.callableReference, ignoreReceiver
     ) ?: return null
     when (descriptor) {
         is FunctionDescriptor -> {

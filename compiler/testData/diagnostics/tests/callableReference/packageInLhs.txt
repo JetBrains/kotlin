@@ -1,0 +1,9 @@
+package
+
+package foo {
+    public fun test(): kotlin.Unit
+
+    package foo.bar {
+        public fun test(): kotlin.Unit
+    }
+}

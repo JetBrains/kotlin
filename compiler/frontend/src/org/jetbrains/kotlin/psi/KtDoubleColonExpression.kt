@@ -22,6 +22,20 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 
 abstract class KtDoubleColonExpression(node: ASTNode) : KtExpressionImpl(node) {
+    val receiverExpression: KtExpression?
+        get() = node.firstChildNode.psi as? KtExpression
+
+    val hasQuestionMarks: Boolean
+        get() {
+            for (element in generateSequence(node.firstChildNode, ASTNode::getTreeNext)) {
+                when (element.elementType) {
+                    KtTokens.QUEST -> return true
+                    KtTokens.COLONCOLON -> return false
+                }
+            }
+            error("Double colon expression must have '::': $text")
+        }
+
     val typeReference: KtTypeReference?
         get() = findChildByType(KtNodeTypes.TYPE_REFERENCE)
 
