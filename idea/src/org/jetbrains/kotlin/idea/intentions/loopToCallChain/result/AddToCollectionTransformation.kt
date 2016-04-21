@@ -44,6 +44,10 @@ class AddToCollectionTransformation(
                 FilterIndexedToTransformation.create(loop, previousTransformation.inputVariable, previousTransformation.indexVariable, targetCollection, previousTransformation.condition)
             }
 
+            is FilterNotNullTransformation -> {
+                FilterNotNullToTransformation.create(loop, targetCollection)
+            }
+
             is MapTransformation -> {
                 MapToTransformation.create(loop, previousTransformation.inputVariable, targetCollection, previousTransformation.mapping)
             }
@@ -248,6 +252,35 @@ class FilterIndexedToTransformation private constructor(
             }
             else {
                 return FilterIndexedToTransformation(loop, inputVariable, indexVariable, targetCollection, filter)
+            }
+        }
+    }
+}
+
+class FilterNotNullToTransformation private constructor(
+        loop: KtForExpression,
+        private val targetCollection: KtExpression
+) : ReplaceLoopResultTransformation(loop) {
+
+    override val presentation: String
+        get() = "filterNotNullTo()"
+
+    override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
+        return chainedCallGenerator.generate("filterNotNullTo($0)", targetCollection)
+    }
+
+    companion object {
+        fun create(
+                loop: KtForExpression,
+                targetCollection: KtExpression
+        ): ResultTransformation {
+            val initialization = targetCollection.detectInitializationBeforeLoop(loop, checkNoOtherUsagesInLoop = true)
+            if (initialization != null && initialization.initializer.hasNoSideEffect()) {
+                val transformation = FilterNotNullToTransformation(loop, initialization.initializer)
+                return AssignToVariableResultTransformation.createDelegated(transformation, initialization)
+            }
+            else {
+                return FilterNotNullToTransformation(loop, targetCollection)
             }
         }
     }
