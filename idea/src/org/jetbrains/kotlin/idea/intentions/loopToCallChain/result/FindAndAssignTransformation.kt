@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.intentions.loopToCallChain.result
 
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.*
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.FilterTransformation
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -24,8 +23,6 @@ import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtBreakExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtForExpression
-import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class FindAndAssignTransformation(
         loop: KtForExpression,
@@ -95,9 +92,7 @@ class FindAndAssignTransformation(
             if (initialization.variable.countUsages(state.outerLoop) != 1) return null // this should be the only usage of this variable inside the loop
 
             // we do not try to convert anything if the initializer is not compile-time constant because of possible side-effects
-            val initializerIsConstant = ConstantExpressionEvaluator.getConstant(
-                    initialization.initializer, initialization.initializer.analyze(BodyResolveMode.PARTIAL)) != null
-            if (!initializerIsConstant) return null
+            if (!initialization.initializer.isConstant()) return null
 
             val generator = buildFindOperationGenerator(right, initialization.initializer, state.inputVariable, findFirst) ?: return null
 

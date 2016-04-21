@@ -1,0 +1,12 @@
+// WITH_RUNTIME
+// INTENTION_TEXT: "Replace with 'any{}'"
+fun foo(list: List<String>, p: Int) {
+    var found: Boolean
+    if (p > 0) {
+        println("Starting the search")
+        <caret>found = list.any { it.length > 0 }
+    }
+    else {
+        found = true
+    }
+}

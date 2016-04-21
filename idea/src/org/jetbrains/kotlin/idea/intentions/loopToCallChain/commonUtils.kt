@@ -32,9 +32,15 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+
+fun KtExpression.isConstant(): Boolean {
+    val bindingContext = analyze(BodyResolveMode.PARTIAL)
+    return ConstantExpressionEvaluator.getConstant(this, bindingContext) != null
+}
 
 fun KtExpression?.isTrueConstant()
         = this != null && node?.elementType == KtNodeTypes.BOOLEAN_CONSTANT && text == "true"

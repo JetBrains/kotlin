@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.idea.intentions.loopToCallChain
 
 import com.intellij.openapi.util.Key
+import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
@@ -148,6 +150,14 @@ fun convertLoop(loop: KtForExpression, matchResult: MatchResult): KtExpression {
     matchResult.initializationStatementsToDelete.forEach { it.delete() }
 
     commentSaver.restore(resultTransformation.commentRestoringRange(result))
+
+    // need to manually adjust indent of the result because in some cases it's made incorrect when moving closer to the loop
+    // TODO: use forceAdjustIndent = true of CommentSaver.restore
+    val file = result.containingFile
+    val psiDocumentManager = PsiDocumentManager.getInstance(file.project)
+    psiDocumentManager.doPostponedOperationsAndUnblockDocument(psiDocumentManager.getDocument(file)!!)
+    val codeStyleManager = CodeStyleManager.getInstance(file.project)
+    codeStyleManager.adjustLineIndent(file, result.textRange)
 
     return result
 }
