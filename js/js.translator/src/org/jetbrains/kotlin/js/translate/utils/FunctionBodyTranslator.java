@@ -20,6 +20,7 @@ import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.backend.js.ast.metadata.MetadataProperties;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.js.translate.context.Namer;
@@ -88,7 +89,11 @@ public final class FunctionBodyTranslator extends AbstractTranslator {
     private JsBlock translate() {
         KtExpression jetBodyExpression = declaration.getBodyExpression();
         assert jetBodyExpression != null : "Cannot translate a body of an abstract function.";
-        JsBlock jsBlock = new JsBlock(setDefaultValueForArguments(descriptor, context()));
+        JsBlock jsBlock = new JsBlock();
+        if (!(descriptor instanceof ConstructorDescriptor) || ((ConstructorDescriptor) descriptor).isPrimary()) {
+            jsBlock.getStatements().addAll(setDefaultValueForArguments(descriptor, context()));
+        }
+
         jsBlock.getStatements().addAll(mayBeWrapWithReturn(Translation.translateExpression(jetBodyExpression, context(), jsBlock)).getStatements());
         return jsBlock;
     }

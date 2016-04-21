@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,14 +68,6 @@ public final class InitializerVisitor extends TranslatorVisitor<Void> {
     @Override
     // Not interested in other types of declarations, they do not contain initializers.
     public Void visitDeclaration(@NotNull KtDeclaration expression, @NotNull TranslationContext context) {
-        return null;
-    }
-
-    @Override
-    public Void visitObjectDeclaration(@NotNull KtObjectDeclaration declaration, @NotNull TranslationContext context) {
-        if (!declaration.isCompanion()) {
-            InitializerUtils.generateObjectInitializer(declaration, result, context);
-        }
         return null;
     }
 

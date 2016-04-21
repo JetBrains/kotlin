@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtSuperTypeListEntry
 import org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import java.util.*
 
 class DelegationTranslator(
         private val classDeclaration: KtClassOrObject,
@@ -49,7 +48,7 @@ class DelegationTranslator(
             classDeclaration.getSuperTypeListEntries().filterIsInstance<KtDelegatedSuperTypeEntry>();
 
     private class Field (val name: String, val generateField: Boolean)
-    private val fields = HashMap<KtDelegatedSuperTypeEntry, Field>()
+    private val fields = mutableMapOf<KtDelegatedSuperTypeEntry, Field>()
 
     init {
         for (specifier in delegationBySpecifiers) {
@@ -59,20 +58,20 @@ class DelegationTranslator(
             val propertyDescriptor = CodegenUtil.getDelegatePropertyIfAny(expression, classDescriptor, bindingContext())
 
             if (CodegenUtil.isFinalPropertyWithBackingField(propertyDescriptor, bindingContext())) {
-                fields.put(specifier, Field(propertyDescriptor!!.name.asString(), false))
+                fields[specifier] = Field(propertyDescriptor!!.name.asString(), false)
             }
             else {
                 val classFqName = DescriptorUtils.getFqName(classDescriptor)
                 val typeFqName = DescriptorUtils.getFqName(descriptor)
                 val delegateName = getMangledMemberNameForExplicitDelegation(Namer.getDelegatePrefix(), classFqName, typeFqName)
-                fields.put(specifier, Field(delegateName, true))
+                fields[specifier] = Field(delegateName, true)
             }
         }
     }
 
     fun addInitCode(statements: MutableList<JsStatement>) {
         for (specifier in delegationBySpecifiers) {
-            val field = fields.get(specifier)!!
+            val field = fields[specifier]!!
             if (field.generateField) {
                 val expression = specifier.delegateExpression!!
                 val delegateInitExpr = Translation.translateAsExpression(expression, context())
@@ -83,7 +82,7 @@ class DelegationTranslator(
 
     fun generateDelegated(properties: MutableList<JsPropertyInitializer>) {
         for (specifier in delegationBySpecifiers) {
-            generateDelegates(getSuperClass(specifier), fields.get(specifier)!!, properties)
+            generateDelegates(getSuperClass(specifier), fields[specifier]!!, properties)
         }
     }
 
@@ -98,7 +97,7 @@ class DelegationTranslator(
                 is FunctionDescriptor ->
                     generateDelegateCallForFunctionMember(descriptor, overriddenDescriptor as FunctionDescriptor, field.name, properties)
                 else ->
-                    throw IllegalArgumentException("Expected property or function ${descriptor}")
+                    throw IllegalArgumentException("Expected property or function $descriptor")
             }
         }
     }

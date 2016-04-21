@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,16 +21,12 @@ import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.general.Translation
-import org.jetbrains.kotlin.js.translate.initializer.InitializerUtils
 import org.jetbrains.kotlin.js.translate.initializer.InitializerUtils.generateInitializerForDelegate
 import org.jetbrains.kotlin.js.translate.initializer.InitializerUtils.generateInitializerForProperty
 import org.jetbrains.kotlin.js.translate.initializer.InitializerVisitor
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getPropertyDescriptor
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
-import org.jetbrains.kotlin.psi.KtClass
-import org.jetbrains.kotlin.psi.KtAnonymousInitializer
-import org.jetbrains.kotlin.psi.KtObjectDeclaration
-import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.*
 
 class FileDeclarationVisitor(
         val context: TranslationContext,
@@ -50,13 +46,8 @@ class FileDeclarationVisitor(
         }
     }
 
-    override fun visitClass(declaration: KtClass, context: TranslationContext?): Void? {
-        result.addAll(ClassTranslator.translate(declaration, context!!))
-        return null
-    }
-
-    override fun visitObjectDeclaration(declaration: KtObjectDeclaration, context: TranslationContext?): Void? {
-        InitializerUtils.generateObjectInitializer(declaration, initializerStatements, context!!)
+    override fun visitClassOrObject(declaration: KtClassOrObject, context: TranslationContext?): Void? {
+        result += ClassTranslator.translate(declaration, context!!).properties
         return null
     }
 

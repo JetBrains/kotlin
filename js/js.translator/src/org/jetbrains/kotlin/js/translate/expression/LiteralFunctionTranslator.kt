@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,16 +67,6 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
 }
 
 fun JsFunction.withCapturedParameters(context: TranslationContext, invokingContext: TranslationContext, descriptor: MemberDescriptor): JsExpression {
-
-    fun getParameterNameRefForInvocation(descriptor: DeclarationDescriptor): JsExpression {
-        val alias = invokingContext.getAliasForDescriptor(descriptor)
-        if (alias != null) return alias
-
-        if (descriptor is ReceiverParameterDescriptor) return JsLiteral.THIS
-
-        return invokingContext.getNameForDescriptor(descriptor).makeRef()
-    }
-
     val ref = invokingContext.define(descriptor, this)
     val invocation = JsInvocation(ref)
 
@@ -88,7 +78,7 @@ fun JsFunction.withCapturedParameters(context: TranslationContext, invokingConte
     for ((capturedDescriptor, name) in tracker.capturedDescriptorToJsName) {
         if (capturedDescriptor == tracker.containingDescriptor) continue
 
-        val capturedRef = getParameterNameRefForInvocation(capturedDescriptor)
+        val capturedRef = invokingContext.getParameterNameRefForInvocation(capturedDescriptor)
         var additionalArgs = listOf(capturedRef)
         var additionalParams = listOf(JsParameter(name))
 

@@ -33,11 +33,16 @@ import java.util.List;
 class JsDataClassGenerator extends DataClassMethodGenerator {
     private final TranslationContext context;
     private final List<? super JsPropertyInitializer> output;
+    private final List<JsName> closureFieldNames = new ArrayList<JsName>();
 
     JsDataClassGenerator(KtClassOrObject klass, TranslationContext context, List<? super JsPropertyInitializer> output) {
         super(klass, context.bindingContext());
         this.context = context;
         this.output = output;
+    }
+
+    public void addClosureVariable(@NotNull JsName name) {
+        closureFieldNames.add(name);
     }
 
     @Override
@@ -55,6 +60,11 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
         assert function.getValueParameters().size() == constructorParameters.size();
 
         List<JsExpression> constructorArguments = new ArrayList<JsExpression>(constructorParameters.size());
+
+        for (JsName closureFieldName : closureFieldNames) {
+            constructorArguments.add(propertyAccessor(JsLiteral.THIS, closureFieldName.getIdent()));
+        }
+
         for (int i = 0; i < constructorParameters.size(); i++) {
             KtParameter constructorParam = constructorParameters.get(i);
             JsName paramName = funScope.declareName(constructorParam.getName());

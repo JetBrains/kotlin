@@ -1,5 +1,3 @@
-// TODO: Enable when JS backend get support of local classes
-// TARGET_BACKEND: JVM
 fun test1(str: String): String {
     data class A(val x: Int) {
         fun foo() = str

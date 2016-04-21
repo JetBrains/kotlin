@@ -40,7 +40,7 @@ import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName;
 public class ManglingUtils {
     private ManglingUtils() {}
 
-    public static final Comparator<CallableDescriptor> CALLABLE_COMPARATOR = new CallableComparator();
+    private static final Comparator<CallableDescriptor> CALLABLE_COMPARATOR = new CallableComparator();
 
     @NotNull
     public static String getMangledName(@NotNull PropertyDescriptor descriptor, @NotNull String suggestedName) {
@@ -49,7 +49,7 @@ public class ManglingUtils {
 
     @NotNull
     public static String getSuggestedName(@NotNull DeclarationDescriptor descriptor) {
-        String suggestedName = descriptor.getName().asString();
+        String suggestedName = descriptor.getName().isSpecial() ? "f" : descriptor.getName().getIdentifier();
 
         if (descriptor instanceof FunctionDescriptor ||
             descriptor instanceof PropertyDescriptor && DescriptorUtils.isExtension((PropertyDescriptor) descriptor)
@@ -57,7 +57,36 @@ public class ManglingUtils {
             suggestedName = getMangledName((CallableMemberDescriptor) descriptor);
         }
 
+        ClassDescriptor localClass = null;
+        if (descriptor instanceof ConstructorDescriptor) {
+            ConstructorDescriptor constructor = (ConstructorDescriptor) descriptor;
+            localClass = constructor.getContainingDeclaration();
+        }
+        else if (descriptor instanceof ClassDescriptor) {
+            localClass = (ClassDescriptor) descriptor;
+        }
+
+        if (DescriptorUtils.isDescriptorWithLocalVisibility(localClass)) {
+            suggestedName = getSuggestedLocalPrefix(localClass) + suggestedName;
+        }
+
         return suggestedName;
+    }
+
+    @NotNull
+    private static String getSuggestedLocalPrefix(@NotNull DeclarationDescriptor descriptor) {
+        List<String> parts = new ArrayList<String>();
+        while (true) {
+            descriptor = descriptor.getContainingDeclaration();
+            if (descriptor == null || descriptor instanceof ClassOrPackageFragmentDescriptor) {
+                break;
+            }
+            parts.add(descriptor.getName().isSpecial() ? "f" : descriptor.getName().getIdentifier());
+        }
+
+        Collections.reverse(parts);
+        String result = StringUtil.join(parts, "$");
+        return !result.isEmpty() ? result + "$" : "";
     }
 
     @NotNull
@@ -142,7 +171,7 @@ public class ManglingUtils {
     @NotNull
     private static String getSuggestedName(@NotNull CallableDescriptor descriptor) {
         if (descriptor instanceof ConstructorDescriptor && !((ConstructorDescriptor) descriptor).isPrimary()) {
-            return descriptor.getContainingDeclaration().getName().asString();
+            return descriptor.getContainingDeclaration().getName().asString() + "_init";
         }
         else {
             return descriptor.getName().asString();

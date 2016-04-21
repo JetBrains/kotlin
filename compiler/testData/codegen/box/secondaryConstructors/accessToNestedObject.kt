@@ -1,6 +1,3 @@
-// TODO enable for JS backend too when KT-6203 will be fixed
-// TARGET_BACKEND: JVM
-
 class A(val result: Int) {
     object B {
         fun bar(): Int = 4

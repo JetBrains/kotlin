@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
@@ -95,12 +96,6 @@ public final class BindingUtils {
         return BindingContextUtils.getNotNull(context, BindingContext.TYPE, typeReference);
     }
 
-    @NotNull
-    public static ClassDescriptor getClassDescriptorForTypeReference(@NotNull BindingContext context,
-            @NotNull KtTypeReference typeReference) {
-        return DescriptorUtils.getClassDescriptorForType(getTypeByReference(context, typeReference));
-    }
-
     @Nullable
     public static PropertyDescriptor getPropertyDescriptorForConstructorParameter(@NotNull BindingContext context,
             @NotNull KtParameter parameter) {
@@ -117,7 +112,7 @@ public final class BindingUtils {
     }
 
     @Nullable
-    public static DeclarationDescriptor getNullableDescriptorForReferenceExpression(@NotNull BindingContext context,
+    private static DeclarationDescriptor getNullableDescriptorForReferenceExpression(@NotNull BindingContext context,
             @NotNull KtReferenceExpression reference) {
         return context.get(BindingContext.REFERENCE_TARGET, reference);
     }
@@ -214,5 +209,18 @@ public final class BindingUtils {
             @NotNull KtArrayAccessExpression arrayAccessExpression,
             boolean isGet) {
         return BindingContextUtils.getNotNull(context, isGet ? INDEXED_LVALUE_GET : INDEXED_LVALUE_SET, arrayAccessExpression);
+    }
+
+
+    @Nullable
+    @SuppressWarnings("unchecked")
+    public static ResolvedCall<FunctionDescriptor> getSuperCall(@NotNull BindingContext context, KtClassOrObject classDeclaration) {
+        for (KtSuperTypeListEntry specifier : classDeclaration.getSuperTypeListEntries()) {
+            if (specifier instanceof KtSuperTypeCallEntry) {
+                KtSuperTypeCallEntry superCall = (KtSuperTypeCallEntry) specifier;
+                return (ResolvedCall<FunctionDescriptor>) CallUtilKt.getResolvedCallWithAssert(superCall, context);
+            }
+        }
+        return null;
     }
 }

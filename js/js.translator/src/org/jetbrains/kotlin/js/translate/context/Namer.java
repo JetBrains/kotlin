@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.js.resolve.JsPlatform;
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -93,10 +92,9 @@ public final class Namer {
     public static final String ANOTHER_THIS_PARAMETER_NAME = "$this";
 
     private static final String THROW_NPE_FUN_NAME = "throwNPE";
-    private static final String COMPANION_OBJECT_GETTER = "object";
-    private static final String COMPANION_OBJECT_INITIALIZER = "object_initializer$";
     private static final String PROTOTYPE_NAME = "prototype";
-    public static final String CAPTURED_VAR_FIELD = "v";
+    private static final String CAPTURED_VAR_FIELD = "v";
+
     public static final String DEFINE_INLINE_FUNCTION = "defineInlineFunction";
 
     private static final JsNameRef JS_OBJECT = new JsNameRef("Object");
@@ -171,16 +169,6 @@ public final class Namer {
     }
 
     @NotNull
-    public static JsExpression getCompanionObjectAccessor(@NotNull JsExpression referenceToClass) {
-        return fqnWithoutSideEffects(COMPANION_OBJECT_GETTER, referenceToClass);
-    }
-
-    @NotNull
-    public static String getNameForCompanionObjectInitializer() {
-        return COMPANION_OBJECT_INITIALIZER;
-    }
-
-    @NotNull
     public static String getPrototypeName() {
         return PROTOTYPE_NAME;
     }
@@ -241,8 +229,6 @@ public final class Namer {
     }
 
     @NotNull
-    private final JsName kotlinName;
-    @NotNull
     private final JsObjectScope kotlinScope;
     @NotNull
     private final JsName className;
@@ -282,7 +268,6 @@ public final class Namer {
     private final JsExpression modulesMap;
 
     private Namer(@NotNull JsScope rootScope) {
-        kotlinName = rootScope.declareName(KOTLIN_NAME);
         kotlinScope = JsObjectScope(rootScope, "Kotlin standard object");
         traitName = kotlinScope.declareName(TRAIT_OBJECT_NAME);
 
@@ -438,9 +423,7 @@ public final class Namer {
                 return objectCreationMethodReference();
             case ANNOTATION_CLASS:
             case CLASS:
-                return DescriptorUtils.isAnonymousObject(descriptor)
-                       ? objectCreationMethodReference()
-                       : classCreationMethodReference();
+                return classCreationMethodReference();
             default:
                 throw new UnsupportedOperationException("Unsupported class kind: " + descriptor);
         }
