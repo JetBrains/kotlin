@@ -91,7 +91,10 @@ public class InlineAdapter extends InstructionAdapter {
         if (InlineCodegenUtil.GENERATE_SMAP) {
             line = sourceMapper.mapLineNumber(line);
         }
-        super.visitLineNumber(line, start);
+        //skip not mapped lines
+        if (line >= 0) {
+            super.visitLineNumber(line, start);
+        }
     }
 
     @Override
