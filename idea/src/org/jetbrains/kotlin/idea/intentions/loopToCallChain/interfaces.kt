@@ -16,10 +16,14 @@
 
 package org.jetbrains.kotlin.idea.intentions.loopToCallChain
 
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.psi.psiUtil.siblings
 
 /**
  * An abstraction for generating a chained call that knows about receiver expression and handles proper formatting
@@ -73,9 +77,12 @@ interface ResultTransformation : Transformation {
     fun mergeWithPrevious(previousTransformation: SequenceTransformation): ResultTransformation? = null
 
     val commentSavingRange: PsiChildRange
-    fun commentRestoringRange(convertLoopResult: KtExpression): PsiChildRange
 
-    fun convertLoop(resultCallChain: KtExpression): KtExpression
+    /**
+     * Implementations of this method are obliged to update [commentSavingRangeHolder] when deleting or adding any element into the tree
+     * except for the loop itself and the result element returned from this method
+     */
+    fun convertLoop(resultCallChain: KtExpression, commentSavingRangeHolder: CommentSavingRangeHolder): KtExpression
 }
 
 /**
@@ -123,4 +130,69 @@ class ResultTransformationMatch(
 ) {
     constructor(resultTransformation: ResultTransformation, vararg sequenceTransformations: SequenceTransformation)
     : this(resultTransformation, sequenceTransformations.asList())
+}
+
+/**
+ * Helper class for holding and updating PsiChildRange to be used for [CommentSaver.restore] call
+ */
+class CommentSavingRangeHolder(range: PsiChildRange) {
+    var range = range
+        private set
+
+    /**
+     * Call this method when a new element to be included into the range is added into the tree
+     */
+    fun add(element: PsiElement) {
+        if (range.isEmpty) {
+            range = PsiChildRange.singleElement(element)
+            return
+        }
+
+        val rangeParent = range.first!!.parent
+        val elementToAdd = element.parentsWithSelf.takeWhile { it != rangeParent }.last()
+        when (elementToAdd) {
+            in range -> return
+
+            in range.first!!.siblingsBefore() -> range = PsiChildRange(elementToAdd, range.last)
+
+            else -> range = PsiChildRange(range.first, elementToAdd)
+        }
+    }
+
+    /**
+     * Call this method before deletion of any element which can belong to the range
+     */
+    fun remove(element: PsiElement) {
+        when {
+            range.isEmpty -> return
+
+            element == range.first -> {
+                val newFirst = element
+                        .siblings(forward = true, withItself = false)
+                        .takeWhile { it != range.last!!.nextSibling }
+                        .firstOrNull { it !is PsiWhiteSpace }
+                if (newFirst != null) {
+                    range = PsiChildRange(newFirst, range.last)
+                }
+                else {
+                    range = PsiChildRange.EMPTY
+                }
+            }
+
+            element == range.last -> {
+                val newLast = element
+                        .siblings(forward = false, withItself = false)
+                        .takeWhile { it != range.first!!.prevSibling }
+                        .firstOrNull { it !is PsiWhiteSpace }
+                if (newLast != null) {
+                    range = PsiChildRange(range.first, newLast)
+                }
+                else {
+                    range = PsiChildRange.EMPTY
+                }
+            }
+        }
+    }
+
+    private fun PsiElement.siblingsBefore() = if (prevSibling != null) PsiChildRange(parent.firstChild, prevSibling) else PsiChildRange.EMPTY
 }

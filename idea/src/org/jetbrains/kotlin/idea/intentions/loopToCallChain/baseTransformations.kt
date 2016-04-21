@@ -27,9 +27,7 @@ abstract class ReplaceLoopResultTransformation(override val loop: KtForExpressio
 
     override val commentSavingRange = PsiChildRange.singleElement(loop.unwrapIfLabeled())
 
-    override fun commentRestoringRange(convertLoopResult: KtExpression) = PsiChildRange.singleElement(convertLoopResult)
-
-    override fun convertLoop(resultCallChain: KtExpression): KtExpression {
+    override fun convertLoop(resultCallChain: KtExpression, commentSavingRangeHolder: CommentSavingRangeHolder): KtExpression {
         return loop.unwrapIfLabeled().replaced(resultCallChain)
     }
 }
@@ -41,17 +39,13 @@ abstract class AssignToVariableResultTransformation(
 
     override val commentSavingRange = PsiChildRange(initialization.initializationStatement, loop.unwrapIfLabeled())
 
-    //TODO: does not work in case of move
-    private val commentRestoringRange = commentSavingRange.withoutLastStatement()
-
-    override fun commentRestoringRange(convertLoopResult: KtExpression) = commentRestoringRange
-
-    override fun convertLoop(resultCallChain: KtExpression): KtExpression {
+    override fun convertLoop(resultCallChain: KtExpression, commentSavingRangeHolder: CommentSavingRangeHolder): KtExpression {
         initialization.initializer.replace(resultCallChain)
 
-        val previousStatement = loop.unwrapIfLabeled().previousStatement()
+        val loopUnwrapped = loop.unwrapIfLabeled()
+        val previousStatement = loopUnwrapped.previousStatement()
 
-        loop.deleteWithLabels()
+        loopUnwrapped.delete()
 
         if (initialization.variable.isVar && !initialization.variable.hasWriteUsages()) { // change variable to 'val' if possible
             initialization.variable.valOrVarKeyword.replace(KtPsiFactory(initialization.variable).createValKeyword())
@@ -64,6 +58,9 @@ abstract class AssignToVariableResultTransformation(
             assert(block is KtBlockExpression)
             val movedInitializationStatement = block.addAfter(initializationStatement, previousStatement) as KtExpression
             block.addAfter(KtPsiFactory(block).createNewLine(), previousStatement)
+
+            commentSavingRangeHolder.remove(initializationStatement)
+
             initializationStatement.delete()
             initializationStatement = movedInitializationStatement
         }
