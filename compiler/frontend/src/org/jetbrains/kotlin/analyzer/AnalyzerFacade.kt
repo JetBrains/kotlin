@@ -206,11 +206,13 @@ abstract class AnalyzerFacade<in P : PlatformAnalysisParameters> {
 
         addFriends()
 
+        val cache = WeakReferenceSLRUCache<M, ResolverForModule>(storageManager)
+
         fun initializeResolverForProject() {
             modules.forEach {
                 module ->
                 val descriptor = resolverForProject.descriptorForModule(module)
-                val computeResolverForModule = storageManager.createLazyValue {
+                val computeResolverForModule = cache.prepareValueComputation(module) {
                     val content = modulesContent(module)
                     createResolverForModule(
                             module, descriptor, projectContext.withModule(descriptor), modulesContent(module),
