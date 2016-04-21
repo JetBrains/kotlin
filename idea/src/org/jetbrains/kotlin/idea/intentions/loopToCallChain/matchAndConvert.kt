@@ -17,8 +17,6 @@
 package org.jetbrains.kotlin.idea.intentions.loopToCallChain
 
 import com.intellij.openapi.util.Key
-import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
@@ -140,24 +138,26 @@ fun match(loop: KtForExpression): MatchResult? {
 //TODO: offer to use of .asSequence() as an option
 fun convertLoop(loop: KtForExpression, matchResult: MatchResult): KtExpression {
     val resultTransformation = matchResult.transformationMatch.resultTransformation
-    val commentSaver = CommentSaver(resultTransformation.commentSavingRange)
+
+    val commentSavingRange = resultTransformation.commentSavingRange
+    val commentSaver = CommentSaver(commentSavingRange)
+    val commentSavingRangeHolder = CommentSavingRangeHolder(commentSavingRange)
+
+    matchResult.initializationStatementsToDelete.forEach { commentSavingRangeHolder.add(it) }
 
     val callChain = matchResult.generateCallChain(loop)
 
-    val result = resultTransformation.convertLoop(callChain)
+    commentSavingRangeHolder.remove(loop.unwrapIfLabeled()) // loop will be deleted in all cases
+    val result = resultTransformation.convertLoop(callChain, commentSavingRangeHolder)
+    commentSavingRangeHolder.add(result)
 
-    //TODO: preserve comments?
-    matchResult.initializationStatementsToDelete.forEach { it.delete() }
+    for (statement in matchResult.initializationStatementsToDelete) {
+        commentSavingRangeHolder.remove(statement)
+        statement.delete()
+    }
 
-    commentSaver.restore(resultTransformation.commentRestoringRange(result))
-
-    // need to manually adjust indent of the result because in some cases it's made incorrect when moving closer to the loop
-    // TODO: use forceAdjustIndent = true of CommentSaver.restore
-    val file = result.containingFile
-    val psiDocumentManager = PsiDocumentManager.getInstance(file.project)
-    psiDocumentManager.doPostponedOperationsAndUnblockDocument(psiDocumentManager.getDocument(file)!!)
-    val codeStyleManager = CodeStyleManager.getInstance(file.project)
-    codeStyleManager.adjustLineIndent(file, result.textRange)
+    // we need to adjust indent of the result because in some cases it's made incorrect when moving statement closer to the loop
+    commentSaver.restore(commentSavingRangeHolder.range, forceAdjustIndent = true)
 
     return result
 }

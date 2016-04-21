@@ -38,10 +38,6 @@ class FindAndReturnTransformation(
 
     override val commentSavingRange = PsiChildRange(loop.unwrapIfLabeled(), endReturn)
 
-    private val commentRestoringRange = commentSavingRange.withoutFirstStatement()
-
-    override fun commentRestoringRange(convertLoopResult: KtExpression) = commentRestoringRange
-
     override val presentation: String
         get() = generator.functionName + (if (filter != null) "{}" else "()")
 
@@ -55,7 +51,7 @@ class FindAndReturnTransformation(
         return generator.generate(chainedCallGenerator, filter)
     }
 
-    override fun convertLoop(resultCallChain: KtExpression): KtExpression {
+    override fun convertLoop(resultCallChain: KtExpression, commentSavingRangeHolder: CommentSavingRangeHolder): KtExpression {
         endReturn.returnedExpression!!.replace(resultCallChain)
         loop.deleteWithLabels()
         return endReturn
