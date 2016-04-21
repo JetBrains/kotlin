@@ -78,7 +78,7 @@ fun JsFunction.withCapturedParameters(context: TranslationContext, invokingConte
     for ((capturedDescriptor, name) in tracker.capturedDescriptorToJsName) {
         if (capturedDescriptor == tracker.containingDescriptor) continue
 
-        val capturedRef = invokingContext.getParameterNameRefForInvocation(capturedDescriptor)
+        val capturedRef = invokingContext.getArgumentForClosureConstructor(capturedDescriptor)
         var additionalArgs = listOf(capturedRef)
         var additionalParams = listOf(JsParameter(name))
 

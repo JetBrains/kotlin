@@ -466,11 +466,38 @@ public class TranslationContext {
         return result;
     }
 
+    /**
+     * Gets an expression to pass to a constructor of a closure function. I.e. consider the case:
+     *
+     * ```
+     * fun a(x) {
+     *     fun b(y) = x + y
+     *     return b
+     * }
+     * ```
+     *
+     * Here, `x` is a free variable of `b`. Transform `a` into the following form:
+     *
+     * ```
+     * fun a(x) {
+     *     fun b0(x0) = { y -> x0 * y }
+     *     return b0(x)
+     * }
+     * ```
+     *
+     * This function generates arguments passed to newly generated `b0` closure, as well as for the similar case of local class and
+     * object expression.
+     *
+     * @param descriptor represents a free variable or, more generally, free declaration.
+     * @return expression to pass to a closure constructor.
+     */
     @NotNull
-    public JsExpression getParameterNameRefForInvocation(@NotNull DeclarationDescriptor descriptor) {
+    public JsExpression getArgumentForClosureConstructor(@NotNull DeclarationDescriptor descriptor) {
         JsExpression alias = getAliasForDescriptor(descriptor);
         if (alias != null) return alias;
-        if (descriptor instanceof ReceiverParameterDescriptor) return JsLiteral.THIS;
+        if (descriptor instanceof ReceiverParameterDescriptor) {
+            return getDispatchReceiver((ReceiverParameterDescriptor) descriptor);
+        }
         return getNameForDescriptor(descriptor).makeRef();
     }
 
