@@ -16,14 +16,20 @@
 
 package org.jetbrains.kotlin.uast
 
+import org.jetbrains.kotlin.codegen.ClassBuilderMode
+import org.jetbrains.kotlin.codegen.state.IncompatibleClassTracker
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.fileClasses.NoResolveFileClassesProvider
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.uast.*
 import org.jetbrains.uast.kinds.UastVariableInitialierKind
 import org.jetbrains.uast.psi.PsiElementBacked
@@ -48,10 +54,21 @@ abstract class KotlinAbstractUFunction : KotlinAbstractUElement(), UFunction, Ps
     }
 
     override val bytecodeDescriptor by lz {
-        val generationState = psi.getGenerationState()
-        val descriptor = generationState.bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, psi]
-                                 as? FunctionDescriptor ?: return@lz null
-        generationState.typeMapper.mapAsmMethod(descriptor).descriptor
+        val bindingContext = psi.analyze(BodyResolveMode.PARTIAL)
+        val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, psi] as? FunctionDescriptor ?: return@lz null
+
+        fun KotlinType?.isAnonymous(): Boolean {
+            if (this == null) return true
+            return false
+        }
+
+        if (descriptor.valueParameters.any { it.type.isAnonymous() } || descriptor.returnType.isAnonymous()) {
+            return@lz null
+        }
+
+        val typeMapper = KotlinTypeMapper(BindingContext.EMPTY, ClassBuilderMode.LIGHT_CLASSES, NoResolveFileClassesProvider, null,
+                                          IncompatibleClassTracker.DoNothing, JvmAbi.DEFAULT_MODULE_NAME)
+        typeMapper.mapAsmMethod(descriptor).descriptor
     }
 
     override fun hasModifier(modifier: UastModifier) = psi.hasModifier(modifier)

@@ -193,7 +193,7 @@ private class JavaUAnonymousClassConstructorParameter(
     override val initializer by lz { JavaConverter.convert(psi.expressions[index], this) }
 
     override val initializerKind: UastVariableInitialierKind
-        get() = UastVariableInitialierKind.SIMPLE
+        get() = UastVariableInitialierKind.EXPRESSION
 
     override val kind: UastVariableKind
         get() = UastVariableKind.VALUE_PARAMETER

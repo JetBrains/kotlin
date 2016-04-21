@@ -20,6 +20,7 @@ import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.util.findAnnotation
@@ -61,12 +62,26 @@ internal fun KtModifierListOwner.hasModifier(modifier: UastModifier): Boolean {
         }
         if (this is KtDeclaration && (parent is KtObjectDeclaration ||
                                       parent is KtClassBody && parent?.parent is KtObjectDeclaration)) {
-            return hasAnnotations(JVM_STATIC_FQNAME, JVM_FIELD_FQNAME)
+            return hasAnyAnnotation(JVM_STATIC_FQNAME, JVM_FIELD_FQNAME)
         }
         return false
     }
 
-    if (modifier == UastModifier.FIELD) return hasAnnotations(JVM_FIELD_FQNAME)
+    if (modifier == UastModifier.JVM_FIELD) {
+        var bindingContext: BindingContext? = null
+        fun getOrCreateBindingContext(): BindingContext {
+            if (bindingContext == null) {
+                bindingContext = analyze(BodyResolveMode.PARTIAL)
+            }
+            return bindingContext!!
+        }
+
+        if (this is KtProperty) {
+            val context = getOrCreateBindingContext()
+            val descriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, this] as? PropertyDescriptor ?: return false
+            return context[BindingContext.BACKING_FIELD_REQUIRED, descriptor] ?: false
+        }
+    }
     if (modifier == UastModifier.FINAL) return hasModifier(KtTokens.FINAL_KEYWORD)
     if (modifier == UastModifier.IMMUTABLE && this is KtVariableDeclaration && !this.isVar) return true
 
@@ -74,12 +89,12 @@ internal fun KtModifierListOwner.hasModifier(modifier: UastModifier): Boolean {
     return hasModifier(javaModifier)
 }
 
-private fun KtElement.hasAnnotations(vararg annotationFqNames: String): Boolean {
+private fun KtElement.hasAnyAnnotation(vararg annotationFqNames: String): Boolean {
     if (this !is KtAnnotated) return false
 
+    val bindingContext = analyze(BodyResolveMode.PARTIAL)
     for (annotationFqName in annotationFqNames) {
         val annotationEntry = findAnnotation(FqName(annotationFqName)) ?: continue
-        val bindingContext = this.analyze(BodyResolveMode.PARTIAL)
         val annotationDescriptor = bindingContext[BindingContext.ANNOTATION, annotationEntry] ?: continue
         val classifierDescriptor = annotationDescriptor.type.constructor.declarationDescriptor ?: continue
         val fqName = DescriptorUtils.getFqName(classifierDescriptor).asString()
@@ -111,16 +126,3 @@ internal fun DeclarationDescriptor.toSource() = try {
 }
 
 internal fun <T> lz(initializer: () -> T) = lazy(LazyThreadSafetyMode.NONE, initializer)
-
-internal fun KtElement.getGenerationState(): GenerationState {
-    val analysisResult = this.analyzeAndGetResult()
-    val file = getContainingKtFile()
-    val state = GenerationState(
-            file.project,
-            ClassBuilderFactories.THROW_EXCEPTION,
-            analysisResult.moduleDescriptor,
-            analysisResult.bindingContext,
-            listOf(file))
-    state.beforeCompile()
-    return state
-}
