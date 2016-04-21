@@ -366,57 +366,6 @@ fun KtExpression.detectInitializationBeforeLoop(
     return VariableInitialization(variable, assignment, initializer)
 }
 
-abstract class ReplaceLoopResultTransformation(override val loop: KtForExpression): ResultTransformation {
-
-    override val commentSavingRange = PsiChildRange.singleElement(loop.unwrapIfLabeled())
-
-    override fun commentRestoringRange(convertLoopResult: KtExpression) = PsiChildRange.singleElement(convertLoopResult)
-
-    override fun convertLoop(resultCallChain: KtExpression): KtExpression {
-        return loop.unwrapIfLabeled().replaced(resultCallChain)
-    }
-}
-
-abstract class AssignToVariableResultTransformation(
-        override val loop: KtForExpression,
-        protected val initialization: VariableInitialization
-) : ResultTransformation {
-
-    override val commentSavingRange = PsiChildRange(initialization.initializationStatement, loop.unwrapIfLabeled())
-
-    private val commentRestoringRange = commentSavingRange.withoutLastStatement()
-
-    override fun commentRestoringRange(convertLoopResult: KtExpression) = commentRestoringRange
-
-    override fun convertLoop(resultCallChain: KtExpression): KtExpression {
-        initialization.initializer.replace(resultCallChain)
-        loop.deleteWithLabels()
-
-        if (initialization.variable.isVar && !initialization.variable.hasWriteUsages()) { // change variable to 'val' if possible
-            initialization.variable.valOrVarKeyword.replace(KtPsiFactory(initialization.variable).createValKeyword())
-        }
-
-        return initialization.initializationStatement
-    }
-}
-
-class AssignSequenceTransformationResultTransformation(
-        private val sequenceTransformation: SequenceTransformation,
-        initialization: VariableInitialization
-) : AssignToVariableResultTransformation(sequenceTransformation.loop, initialization) {
-
-    override val presentation: String
-        get() = sequenceTransformation.presentation
-
-    override fun buildPresentation(prevTransformationsPresentation: String?): String {
-        return sequenceTransformation.buildPresentation(prevTransformationsPresentation)
-    }
-
-    override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
-        return sequenceTransformation.generateCode(chainedCallGenerator)
-    }
-}
-
 enum class CollectionKind {
     LIST, SET/*, MAP*/
 }
