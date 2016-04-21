@@ -40,7 +40,7 @@ abstract class AbstractInjectionTest : KotlinLightCodeInsightFixtureTestCase() {
     }
 
     protected fun assertInjectionPresent(text: String, languageId: String? = null, unInjectShouldBePresent: Boolean = true) {
-        myFixture.configureByText("${getTestName(true)}.kt", text.trimMargin())
+        myFixture.configureByText("${getTestName(true)}.kt", text.trimIndent())
 
         TestCase.assertFalse("Injection action is available. There's probably no injection at caret place",
                              InjectLanguageAction().isAvailable(project, myFixture.editor, myFixture.file))
@@ -57,7 +57,7 @@ abstract class AbstractInjectionTest : KotlinLightCodeInsightFixtureTestCase() {
     }
 
     protected fun assertNoInjection(text: String) {
-        myFixture.configureByText("${getTestName(true)}.kt", text.trimMargin())
+        myFixture.configureByText("${getTestName(true)}.kt", text.trimIndent())
 
         TestCase.assertTrue("Injection action is not available. There's probably some injection but nothing was expected.",
                             InjectLanguageAction().isAvailable(project, myFixture.editor, myFixture.file))
@@ -66,12 +66,12 @@ abstract class AbstractInjectionTest : KotlinLightCodeInsightFixtureTestCase() {
     protected fun doRemoveInjectionTest(before: String, after: String) {
         myFixture.setCaresAboutInjection(false)
 
-        myFixture.configureByText("${getTestName(true)}.kt", before.trimMargin())
+        myFixture.configureByText("${getTestName(true)}.kt", before.trimIndent())
 
         TestCase.assertTrue(UnInjectLanguageAction().isAvailable(project, myFixture.editor, myFixture.file))
         UnInjectLanguageAction.invokeImpl(project, myFixture.editor, myFixture.file)
 
-        myFixture.checkResult(after.trimMargin())
+        myFixture.checkResult(after.trimIndent())
     }
 
     protected fun doFileReferenceInjectTest(before: String, after: String) {
@@ -84,9 +84,9 @@ abstract class AbstractInjectionTest : KotlinLightCodeInsightFixtureTestCase() {
 
         configuration.isSourceModificationAllowed = true
         try {
-            myFixture.configureByText("${getTestName(true)}.kt", before.trimMargin())
+            myFixture.configureByText("${getTestName(true)}.kt", before.trimIndent())
             InjectLanguageAction.invokeImpl(project, myFixture.editor, myFixture.file, injectable)
-            myFixture.checkResult(after.trimMargin())
+            myFixture.checkResult(after.trimIndent())
         }
         finally {
             configuration.isSourceModificationAllowed = allowed
