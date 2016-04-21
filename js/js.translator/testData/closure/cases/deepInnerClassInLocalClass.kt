@@ -3,13 +3,13 @@ package foo
 class A() {
     fun test(): Int {
         open class B(open val x: Int) {
-            inner class C(override val x: Int) : B(x * 10) {
+            inner class C(x: Int) : B(x * 10) {
                 inner class D() {
                     var baz: () -> Int = { 0 }
                     constructor(b: Boolean) : this() {
                         baz = { x + this@B.x }
                     }
-                    fun bar() = { x + this@B.x }
+                    fun bar() = { 100 * (x + this@B.x) }
                 }
             }
         }
