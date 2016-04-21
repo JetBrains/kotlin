@@ -156,7 +156,7 @@ public final class TranslationUtils {
             receiver = JsLiteral.THIS;
         }
         else {
-            receiver = context.getDispatchReceiver(JsDescriptorUtils.getReceiverParameterForDeclaration(containingDescriptor));
+            receiver = context.getDispatchReceiver(JsDescriptorUtils.getReceiverParameterForDeclaration(containingDescriptor), false);
         }
         return new JsNameRef(backingFieldName, receiver);
     }
