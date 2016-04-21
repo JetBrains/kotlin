@@ -67,6 +67,19 @@ abstract class AssignToVariableResultTransformation(
 
         return initializationStatement
     }
+
+    companion object {
+        fun createDelegated(delegate: ResultTransformation, initialization: VariableInitialization): AssignToVariableResultTransformation {
+            return object: AssignToVariableResultTransformation(delegate.loop, initialization) {
+                override val presentation: String
+                    get() = delegate.presentation
+
+                override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
+                    return delegate.generateCode(chainedCallGenerator)
+                }
+            }
+        }
+    }
 }
 
 class AssignSequenceTransformationResultTransformation(

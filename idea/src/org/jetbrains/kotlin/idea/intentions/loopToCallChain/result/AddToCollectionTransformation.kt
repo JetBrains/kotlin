@@ -206,28 +206,13 @@ class FilterToTransformation private constructor(
         ): ResultTransformation {
             val initialization = targetCollection.detectInitializationBeforeLoop(loop, checkNoOtherUsagesInLoop = true)
             if (initialization != null && initialization.initializer.hasNoSideEffect()) {
-                return AssignFilterToTransformation(loop, inputVariable, initialization, filter)
+                val transformation = FilterToTransformation(loop, inputVariable, initialization.initializer, filter)
+                return AssignToVariableResultTransformation.createDelegated(transformation, initialization)
             }
             else {
                 return FilterToTransformation(loop, inputVariable, targetCollection, filter)
             }
         }
-    }
-}
-
-class AssignFilterToTransformation(
-        loop: KtForExpression,
-        private val inputVariable: KtCallableDeclaration,
-        targetCollectionInitialization: VariableInitialization,
-        private val filter: KtExpression
-) : AssignToVariableResultTransformation(loop, targetCollectionInitialization) {
-
-    override val presentation: String
-        get() = "filterTo(){}"
-
-    override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
-        val lambda = generateLambda(inputVariable, filter)
-        return chainedCallGenerator.generate("filterTo($0) $1:'{}'", initialization.initializer, lambda)
     }
 }
 
@@ -255,28 +240,13 @@ class MapToTransformation private constructor(
         ): ResultTransformation {
             val initialization = targetCollection.detectInitializationBeforeLoop(loop, checkNoOtherUsagesInLoop = true)
             if (initialization != null && initialization.initializer.hasNoSideEffect()) {
-                return AssignMapToTransformation(loop, inputVariable, initialization, mapping)
+                val transformation = MapToTransformation(loop, inputVariable, initialization.initializer, mapping)
+                return AssignToVariableResultTransformation.createDelegated(transformation, initialization)
             }
             else {
                 return MapToTransformation(loop, inputVariable, targetCollection, mapping)
             }
         }
-    }
-}
-
-class AssignMapToTransformation(
-        loop: KtForExpression,
-        private val inputVariable: KtCallableDeclaration,
-        targetCollectionInitialization: VariableInitialization,
-        private val mapping: KtExpression
-) : AssignToVariableResultTransformation(loop, targetCollectionInitialization) {
-
-    override val presentation: String
-        get() = "mapTo(){}"
-
-    override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
-        val lambda = generateLambda(inputVariable, mapping)
-        return chainedCallGenerator.generate("mapTo($0) $1:'{}'", initialization.initializer, lambda)
     }
 }
 
@@ -304,28 +274,13 @@ class FlatMapToTransformation private constructor(
         ): ResultTransformation {
             val initialization = targetCollection.detectInitializationBeforeLoop(loop, checkNoOtherUsagesInLoop = true)
             if (initialization != null && initialization.initializer.hasNoSideEffect()) {
-                return AssignFlatMapToTransformation(loop, inputVariable, initialization, transform)
+                val transformation = FlatMapToTransformation(loop, inputVariable, initialization.initializer, transform)
+                return AssignToVariableResultTransformation.createDelegated(transformation, initialization)
             }
             else {
                 return FlatMapToTransformation(loop, inputVariable, targetCollection, transform)
             }
         }
-    }
-}
-
-class AssignFlatMapToTransformation(
-        loop: KtForExpression,
-        private val inputVariable: KtCallableDeclaration,
-        targetCollectionInitialization: VariableInitialization,
-        private val transform: KtExpression
-) : AssignToVariableResultTransformation(loop, targetCollectionInitialization) {
-
-    override val presentation: String
-        get() = "flatMapTo(){}"
-
-    override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
-        val lambda = generateLambda(inputVariable, transform)
-        return chainedCallGenerator.generate("flatMapTo($0) $1:'{}'", initialization.initializer, lambda)
     }
 }
 
