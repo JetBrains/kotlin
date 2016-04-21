@@ -1,0 +1,7 @@
+// WITH_RUNTIME
+// INTENTION_TEXT: "Replace with 'filterIndexed{}.firstOrNull()'"
+fun foo(list: List<String>): String? {
+    <caret>return list
+            .filterIndexed { i, s -> s.length > i }
+            .firstOrNull()
+}

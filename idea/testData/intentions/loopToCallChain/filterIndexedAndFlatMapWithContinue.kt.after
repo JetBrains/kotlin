@@ -1,0 +1,9 @@
+// WITH_RUNTIME
+// INTENTION_TEXT: "Replace with '...flatMap{}.filterNot{}.mapTo(){}'"
+fun foo(list: List<String>, target: MutableCollection<String>) {
+    <caret>list
+            .filterIndexed { i, s -> i % 10 != 0 }
+            .flatMap { it.indices }
+            .filterNot { it == 10 }
+            .mapTo(target) { it.toString() }
+}

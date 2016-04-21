@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.readWriteAccess
 import org.jetbrains.kotlin.idea.util.getResolutionScope
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -132,6 +133,31 @@ fun KtProperty.hasWriteUsages(): Boolean {
         (it as? KtSimpleNameReference)?.element?.readWriteAccess(useResolveForReadWrite = true)?.isWrite == true
     }
 }
+
+fun KtProperty.countUsages(inElement: KtElement): Int {
+    assert(this.isPhysical)
+    return ReferencesSearch.search(this, LocalSearchScope(inElement)).count()
+}
+
+fun KtProperty.countUsages(inElements: Collection<KtElement>): Int {
+    assert(this.isPhysical)
+    // TODO: it's a temporary workaround about strange dead-lock when running inspections
+    return inElements.sumBy { ReferencesSearch.search(this, LocalSearchScope(it)).count() }
+}
+
+fun KtProperty.countUsages(): Int {
+    assert(this.isPhysical)
+    return ReferencesSearch.search(this, useScope).count()
+}
+
+fun KtProperty.countWriteUsages(inElement: KtElement): Int {
+    assert(this.isPhysical)
+    if (!isVar) return 0
+    return ReferencesSearch.search(this, LocalSearchScope(inElement)).count {
+        (it as? KtSimpleNameReference)?.element?.readWriteAccess(useResolveForReadWrite = true)?.isWrite == true
+    }
+}
+
 
 interface FindOperatorGenerator {
     val functionName: String
@@ -260,17 +286,21 @@ fun buildFindOperationGenerator(
     }
 }
 
-fun KtExpressionWithLabel.isBreakOrContinueOfLoop(loop: KtLoopExpression): Boolean {
+fun KtExpressionWithLabel.targetLoop(): KtLoopExpression? {
     val label = getTargetLabel()
     if (label == null) {
-        val closestLoop = parents.firstIsInstance<KtLoopExpression>()
-        return loop == closestLoop
+        return parents.firstIsInstance<KtLoopExpression>()
     }
     else {
         //TODO: does PARTIAL always work here?
-        val targetLoop = analyze(BodyResolveMode.PARTIAL)[BindingContext.LABEL_TARGET, label]
-        return targetLoop == loop
+        return analyze(BodyResolveMode.PARTIAL)[BindingContext.LABEL_TARGET, label] as? KtLoopExpression
     }
+}
+
+fun KtExpression.isPlusPlusOf(): KtExpression? {
+    if (this !is KtUnaryExpression) return null
+    if (operationToken != KtTokens.PLUSPLUS) return null
+    return baseExpression
 }
 
 fun KtExpression.previousStatement(): KtExpression? {
@@ -312,14 +342,17 @@ data class VariableInitialization(
         val initializer: KtExpression)
 
 //TODO: we need more correctness checks (if variable is non-local or is local but can be changed by some local functions)
-fun KtExpression.detectInitializationBeforeLoop(loop: KtForExpression): VariableInitialization? {
+fun KtExpression.detectInitializationBeforeLoop(
+        loop: KtForExpression,
+        checkNoOtherUsagesInLoop: Boolean
+): VariableInitialization? {
     if (this !is KtNameReferenceExpression) return null
     if (getQualifiedExpressionForSelector() != null) return null
     val variable = this.mainReference.resolve() as? KtProperty ?: return null
     val statementBeforeLoop = loop.previousStatement() //TODO: support initialization not right before the loop
 
     // do not allow any other usages of this variable inside the loop
-    if (ReferencesSearch.search(variable, LocalSearchScope(loop)).count() > 1) return null
+    if (checkNoOtherUsagesInLoop && variable.countUsages(loop) > 1) return null
 
     if (statementBeforeLoop == variable) {
         val initializer = variable.initializer ?: return null

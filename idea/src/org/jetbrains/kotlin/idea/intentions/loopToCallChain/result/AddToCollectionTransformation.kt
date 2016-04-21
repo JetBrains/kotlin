@@ -118,7 +118,7 @@ class AddToCollectionTransformation(
                 targetCollection: KtExpression,
                 addOperationArgument: KtExpression
         ): ResultTransformationMatch? {
-            val collectionInitialization = targetCollection.detectInitializationBeforeLoop(state.outerLoop) ?: return null
+            val collectionInitialization = targetCollection.detectInitializationBeforeLoop(state.outerLoop, checkNoOtherUsagesInLoop = true) ?: return null
             val collectionKind = collectionInitialization.initializer.isSimpleCollectionInstantiation() ?: return null
             val argumentIsInputVariable = addOperationArgument.isVariableReference(state.inputVariable)
             when (collectionKind) {
@@ -204,7 +204,7 @@ class FilterToTransformation private constructor(
                 targetCollection: KtExpression,
                 filter: KtExpression
         ): ResultTransformation {
-            val initialization = targetCollection.detectInitializationBeforeLoop(loop)
+            val initialization = targetCollection.detectInitializationBeforeLoop(loop, checkNoOtherUsagesInLoop = true)
             if (initialization != null && initialization.initializer.hasNoSideEffect()) {
                 return AssignFilterToTransformation(loop, inputVariable, initialization, filter)
             }
@@ -253,7 +253,7 @@ class MapToTransformation private constructor(
                 targetCollection: KtExpression,
                 mapping: KtExpression
         ): ResultTransformation {
-            val initialization = targetCollection.detectInitializationBeforeLoop(loop)
+            val initialization = targetCollection.detectInitializationBeforeLoop(loop, checkNoOtherUsagesInLoop = true)
             if (initialization != null && initialization.initializer.hasNoSideEffect()) {
                 return AssignMapToTransformation(loop, inputVariable, initialization, mapping)
             }
@@ -302,7 +302,7 @@ class FlatMapToTransformation private constructor(
                 targetCollection: KtExpression,
                 transform: KtExpression
         ): ResultTransformation {
-            val initialization = targetCollection.detectInitializationBeforeLoop(loop)
+            val initialization = targetCollection.detectInitializationBeforeLoop(loop, checkNoOtherUsagesInLoop = true)
             if (initialization != null && initialization.initializer.hasNoSideEffect()) {
                 return AssignFlatMapToTransformation(loop, inputVariable, initialization, transform)
             }
