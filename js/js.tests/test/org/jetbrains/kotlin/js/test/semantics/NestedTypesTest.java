@@ -78,6 +78,14 @@ public class NestedTypesTest extends SingleFileTranslationTest {
         checkFooBoxIsOk();
     }
 
+    public void testImplicitOuterThisFromLambda() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testImplicitOuterThisFromLocalClass() throws Exception {
+        checkFooBoxIsOk();
+    }
+
     @NotNull
     @Override
     protected List<String> additionalJsFiles(@NotNull EcmaVersion ecmaVersion) {

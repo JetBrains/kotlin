@@ -524,7 +524,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         List<JsExpression> closureArgs = new ArrayList<JsExpression>();
         if (closure != null) {
             for (DeclarationDescriptor capturedValue : closure) {
-                closureArgs.add(context.getParameterNameRefForInvocation(capturedValue));
+                closureArgs.add(context.getArgumentForClosureConstructor(capturedValue));
             }
         }
 
