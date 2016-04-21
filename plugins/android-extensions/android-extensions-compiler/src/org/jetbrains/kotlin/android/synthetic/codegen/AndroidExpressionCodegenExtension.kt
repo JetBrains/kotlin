@@ -373,6 +373,17 @@ class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
             }
             AndroidClassType.FRAGMENT, AndroidClassType.SUPPORT_FRAGMENT -> {
                 iv.invokevirtual(className, "getView", "()Landroid/view/View;", false)
+                iv.dup()
+                val lgetViewNotNull = Label()
+                iv.ifnonnull(lgetViewNotNull)
+
+                // Return if getView() is null
+                iv.pop()
+                iv.aconst(null)
+                iv.areturn(viewType)
+
+                // Else return getView().findViewById(id)
+                iv.visitLabel(lgetViewNotNull)
                 loadId()
                 iv.invokevirtual("android/view/View", "findViewById", "(I)Landroid/view/View;", false)
             }
