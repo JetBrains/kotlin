@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -465,7 +465,7 @@ public class DescriptorSerializer {
             Flexibility flexibility = FlexibleTypesKt.flexibility(type);
 
             ProtoBuf.Type.Builder lowerBound = type(flexibility.getLowerBound());
-            lowerBound.setFlexibleTypeCapabilitiesId(getStringTable().getStringIndex(flexibility.getExtraCapabilities().getId()));
+            lowerBound.setFlexibleTypeCapabilitiesId(getStringTable().getStringIndex(flexibility.getFactory().getId()));
             if (useTypeTable()) {
                 lowerBound.setFlexibleUpperBoundId(typeId(flexibility.getUpperBound()));
             }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,7 +72,7 @@ public class SingleAbstractMethodUtils {
                                       "' should not end with conflict";
 
                 if (FlexibleTypesKt.isNullabilityFlexible(samType)) {
-                    return LazyJavaTypeResolver.FlexibleJavaClassifierTypeCapabilities.create(type, TypeUtils.makeNullable(type));
+                    return LazyJavaTypeResolver.FlexibleJavaClassifierTypeFactory.INSTANCE.create(type, TypeUtils.makeNullable(type));
                 }
 
                 return TypeUtils.makeNullableAsSpecified(type, samType.isMarkedNullable());

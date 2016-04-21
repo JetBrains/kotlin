@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.frontend.di.configureModule
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
-import org.jetbrains.kotlin.load.java.JavaFlexibleTypeCapabilitiesProvider
+import org.jetbrains.kotlin.load.java.JavaFlexibleTypeFactoryProvider
 import org.jetbrains.kotlin.load.java.components.*
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolver
 import org.jetbrains.kotlin.load.java.lazy.SingleModuleClassResolver
@@ -62,7 +62,7 @@ fun StorageComponentContainer.configureJavaTopDownAnalysis(moduleContentScope: G
     useInstance(SamConversionResolverImpl)
     useImpl<JavaSourceElementFactoryImpl>()
     useImpl<JavaLazyAnalyzerPostConstruct>()
-    useImpl<JavaFlexibleTypeCapabilitiesProvider>()
+    useInstance(JavaFlexibleTypeFactoryProvider)
 }
 
 fun createContainerForLazyResolveWithJava(

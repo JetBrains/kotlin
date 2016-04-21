@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,7 +70,7 @@ private fun KotlinType.enhancePossiblyFlexible(qualifiers: (Int) -> JavaTypeQual
             val wereChanges = lowerResult.wereChanges || upperResult.wereChanges
             Result(
                 if (wereChanges)
-                    DelegatingFlexibleType.create(lowerResult.type, upperResult.type, extraCapabilities)
+                    factory.create(lowerResult.type, upperResult.type)
                 else
                     this@enhancePossiblyFlexible,
                 lowerResult.subtreeSize,
@@ -229,7 +229,7 @@ internal object NotNullTypeParameterTypeCapability : CustomTypeVariable {
 
         if (replacement.isFlexible()) {
             with(replacement.flexibility()) {
-                return DelegatingFlexibleType.create(lowerBound.prepareReplacement(), upperBound.prepareReplacement(), extraCapabilities)
+                return factory.create(lowerBound.prepareReplacement(), upperBound.prepareReplacement())
             }
         }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.serialization.ProtoBuf.Type
 import org.jetbrains.kotlin.serialization.ProtoBuf.Type.Argument.Projection
 import org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter.Variance
 import org.jetbrains.kotlin.serialization.deserialization.*
-import org.jetbrains.kotlin.types.DynamicTypeCapabilities
+import org.jetbrains.kotlin.types.DynamicTypeFactory
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
 
@@ -71,7 +71,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         if (type.hasFlexibleTypeCapabilitiesId()) {
             val id = c.nameResolver.getString(type.flexibleTypeCapabilitiesId)
 
-            if (id == DynamicTypeCapabilities.id) {
+            if (id == DynamicTypeFactory.id) {
                 KotlinPlaceHolderStubImpl<KtDynamicType>(parent, KtStubElementTypes.DYNAMIC_TYPE)
                 return
             }

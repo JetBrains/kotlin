@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,14 +56,12 @@ class TypeDeserializer(
     fun type(proto: ProtoBuf.Type, additionalAnnotations: Annotations = Annotations.EMPTY): KotlinType {
         if (proto.hasFlexibleTypeCapabilitiesId()) {
             val id = c.nameResolver.getString(proto.flexibleTypeCapabilitiesId)
-            val capabilities = c.components.flexibleTypeCapabilitiesDeserializer.capabilitiesById(id) ?:
-                    return ErrorUtils.createErrorType("${DeserializedType(c, proto)}: Capabilities not found for id $id")
+            val capabilities = c.components.flexibleTypeFactoryDeserializer.capabilitiesById(id) ?:
+                               return ErrorUtils.createErrorType("${DeserializedType(c, proto)}: Capabilities not found for id $id")
 
-            return DelegatingFlexibleType.create(
-                    DeserializedType(c, proto),
-                    DeserializedType(c, proto.flexibleUpperBound(c.typeTable)!!),
-                    capabilities
-            )
+            return capabilities
+                    .create(DeserializedType(c, proto),
+                            DeserializedType(c, proto.flexibleUpperBound(c.typeTable)!!))
         }
 
         return DeserializedType(c, proto, additionalAnnotations)

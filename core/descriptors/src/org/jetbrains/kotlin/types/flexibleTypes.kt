@@ -20,17 +20,18 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
-interface FlexibleTypeCapabilities {
-    fun createFlexibleType(lowerBound: KotlinType, upperBound: KotlinType): KotlinType
+interface FlexibleTypeFactory {
     val id: String
 
-    object NONE : FlexibleTypeCapabilities {
-        override fun createFlexibleType(lowerBound: KotlinType, upperBound: KotlinType): KotlinType {
-            if (lowerBound == upperBound) return lowerBound
-            return object : DelegatingFlexibleType(lowerBound, upperBound, this@NONE) {}
-        }
+    fun create(lowerBound: KotlinType, upperBound: KotlinType): KotlinType
 
+    object DEFAULT : FlexibleTypeFactory {
         override val id: String get() = "NONE"
+
+        override fun create(lowerBound: KotlinType, upperBound: KotlinType): KotlinType {
+            if (lowerBound == upperBound) return lowerBound
+            return object : DelegatingFlexibleType(lowerBound, upperBound, this@DEFAULT) {}
+        }
     }
 }
 
@@ -47,7 +48,7 @@ interface Flexibility : TypeCapability, SubtypingRepresentatives {
     val lowerBound: KotlinType
     val upperBound: KotlinType
 
-    val extraCapabilities: FlexibleTypeCapabilities
+    val factory: FlexibleTypeFactory
 
     override val subTypeRepresentative: KotlinType
         get() = lowerBound
@@ -115,7 +116,7 @@ interface FlexibleTypeDelegation : TypeCapability {
 open class DelegatingFlexibleType protected constructor(
         override val lowerBound: KotlinType,
         override val upperBound: KotlinType,
-        override val extraCapabilities: FlexibleTypeCapabilities
+        override val factory: FlexibleTypeFactory
 ) : DelegatingType(), NullAwareness, Flexibility, FlexibleTypeDelegation {
     companion object {
         internal val capabilityClasses = hashSetOf(
@@ -124,11 +125,6 @@ open class DelegatingFlexibleType protected constructor(
                 SubtypingRepresentatives::class.java,
                 FlexibleTypeDelegation::class.java
         )
-
-        @JvmStatic
-        fun create(lowerBound: KotlinType, upperBound: KotlinType, extraCapabilities: FlexibleTypeCapabilities): KotlinType {
-            return extraCapabilities.createFlexibleType(lowerBound, upperBound)
-        }
 
         @JvmField
         var RUN_SLOW_ASSERTIONS = false
@@ -162,10 +158,8 @@ open class DelegatingFlexibleType protected constructor(
     }
 
     override fun makeNullableAsSpecified(nullable: Boolean): KotlinType {
-        return create(
-                TypeUtils.makeNullableAsSpecified(lowerBound, nullable),
-                TypeUtils.makeNullableAsSpecified(upperBound, nullable),
-                extraCapabilities)
+        return factory.create(TypeUtils.makeNullableAsSpecified(lowerBound, nullable),
+                              TypeUtils.makeNullableAsSpecified(upperBound, nullable))
     }
 
     override fun computeIsNullable() = delegateType.isMarkedNullable

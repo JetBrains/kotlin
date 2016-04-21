@@ -50,7 +50,7 @@ class TypeResolver(
         private val annotationResolver: AnnotationResolver,
         private val qualifiedExpressionResolver: QualifiedExpressionResolver,
         private val moduleDescriptor: ModuleDescriptor,
-        private val flexibleTypeCapabilitiesProvider: FlexibleTypeCapabilitiesProvider,
+        private val flexibleTypeFactoryProvider: FlexibleTypeFactoryProvider,
         private val storageManager: StorageManager,
         private val lazinessToken: TypeLazinessToken,
         private val dynamicTypesSettings: DynamicTypesSettings,
@@ -58,10 +58,8 @@ class TypeResolver(
         private val identifierChecker: IdentifierChecker
 ) {
 
-    open class FlexibleTypeCapabilitiesProvider {
-        open fun getCapabilities(): FlexibleTypeCapabilities {
-            return FlexibleTypeCapabilities.NONE
-        }
+    open class FlexibleTypeFactoryProvider {
+        open val factory: FlexibleTypeFactory get() = FlexibleTypeFactory.DEFAULT
     }
 
     fun resolveType(scope: LexicalScope, typeReference: KtTypeReference, trace: BindingTrace, checkBounds: Boolean): KotlinType {
@@ -373,10 +371,8 @@ class TypeResolver(
             && parameters.size == 2) {
             // We create flexible types by convention here
             // This is not intended to be used in normal users' environments, only for tests and debugger etc
-            return type(DelegatingFlexibleType.create(
-                    arguments[0].type,
-                    arguments[1].type,
-                    flexibleTypeCapabilitiesProvider.getCapabilities())
+            return type(flexibleTypeFactoryProvider.factory.create(arguments[0].type,
+                                                                             arguments[1].type)
             )
         }
 

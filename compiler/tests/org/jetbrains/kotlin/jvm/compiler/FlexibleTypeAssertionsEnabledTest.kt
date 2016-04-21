@@ -26,7 +26,7 @@ class FlexibleTypeAssertionsEnabledTest : KotlinTestWithEnvironmentManagement() 
         val builtIns = JvmPlatform.builtIns
 
         try {
-            LazyJavaTypeResolver.FlexibleJavaClassifierTypeCapabilities.create(
+            LazyJavaTypeResolver.FlexibleJavaClassifierTypeFactory.create(
                     builtIns.intType, builtIns.stringType).arguments
         } catch (e: AssertionError) {
             assertEquals("Lower bound Int of a flexible type must be a subtype of the upper bound String", e.message)

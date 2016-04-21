@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,7 +64,7 @@ class DeserializerForClassfileDecompiler(
         deserializationComponents = DeserializationComponents(
                 storageManager, moduleDescriptor, classDataFinder, annotationAndConstantLoader, packageFragmentProvider,
                 ResolveEverythingToKotlinAnyLocalClassResolver(targetPlatform.builtIns), LoggingErrorReporter(LOG),
-                LookupTracker.DO_NOTHING, JavaFlexibleTypeCapabilitiesDeserializer, ClassDescriptorFactory.EMPTY, notFoundClasses
+                LookupTracker.DO_NOTHING, JavaFlexibleTypeFactoryDeserializer, ClassDescriptorFactory.EMPTY, notFoundClasses
         )
     }
 

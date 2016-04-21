@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,10 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.FlexibleTypeFactory
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.KotlinTypeImpl
+import org.jetbrains.kotlin.types.StarProjectionImpl
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
 private class XmlSourceElement(override val psi: PsiElement) : PsiSourceElement
@@ -106,7 +109,7 @@ private fun genProperty(
         override val resourceId = id
     }
 
-    val flexibleType = DelegatingFlexibleType.create(type, type.makeNullable(), FlexibleTypeCapabilities.NONE)
+    val flexibleType = FlexibleTypeFactory.DEFAULT.create(type, type.makeNullable())
     property.setType(
             flexibleType,
             emptyList<TypeParameterDescriptor>(),

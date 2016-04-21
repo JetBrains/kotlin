@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,22 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
-import org.jetbrains.kotlin.types.DynamicTypeCapabilities
-import org.jetbrains.kotlin.types.FlexibleTypeCapabilities
+import org.jetbrains.kotlin.types.DynamicTypeFactory
+import org.jetbrains.kotlin.types.FlexibleTypeFactory
 
-interface FlexibleTypeCapabilitiesDeserializer {
-    object ThrowException : FlexibleTypeCapabilitiesDeserializer {
-        override fun capabilitiesById(id: String): FlexibleTypeCapabilities? {
+interface FlexibleTypeFactoryDeserializer {
+    object ThrowException : FlexibleTypeFactoryDeserializer {
+        override fun capabilitiesById(id: String): FlexibleTypeFactory? {
             throw IllegalArgumentException("Capabilities not found by ThrowException manager: $id")
         }
     }
 
-    object Dynamic : FlexibleTypeCapabilitiesDeserializer {
-        override fun capabilitiesById(id: String): FlexibleTypeCapabilities? {
-            return if (id == DynamicTypeCapabilities.id) DynamicTypeCapabilities else null
+    object Dynamic : FlexibleTypeFactoryDeserializer {
+        override fun capabilitiesById(id: String): FlexibleTypeFactory? {
+            return if (id == DynamicTypeFactory.id) DynamicTypeFactory else null
         }
     }
 
 
-    fun capabilitiesById(id: String): FlexibleTypeCapabilities?
+    fun capabilitiesById(id: String): FlexibleTypeFactory?
 }

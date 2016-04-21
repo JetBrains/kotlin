@@ -33,17 +33,17 @@ interface Dynamicity : TypeCapability
 
 fun KotlinType.isDynamic(): Boolean = this.getCapability(Dynamicity::class.java) != null
 
-fun createDynamicType(builtIns: KotlinBuiltIns) = DynamicTypeCapabilities.createFlexibleType(builtIns.nothingType, builtIns.nullableAnyType)
+fun createDynamicType(builtIns: KotlinBuiltIns) = DynamicTypeFactory.create(builtIns.nothingType, builtIns.nullableAnyType)
 
-object DynamicTypeCapabilities : FlexibleTypeCapabilities {
+object DynamicTypeFactory : FlexibleTypeFactory {
     override val id: String get() = "kotlin.DynamicType"
 
-    override fun createFlexibleType(lowerBound: KotlinType, upperBound: KotlinType): KotlinType {
+    override fun create(lowerBound: KotlinType, upperBound: KotlinType): KotlinType {
         if (lowerBound == upperBound) return lowerBound
         return Impl(lowerBound, upperBound)
     }
 
-    private class Impl(lowerBound: KotlinType, upperBound: KotlinType) : DelegatingFlexibleType(lowerBound, upperBound, DynamicTypeCapabilities),  Dynamicity, Specificity, NullAwareness, FlexibleTypeDelegation {
+    private class Impl(lowerBound: KotlinType, upperBound: KotlinType) : DelegatingFlexibleType(lowerBound, upperBound, DynamicTypeFactory),  Dynamicity, Specificity, NullAwareness, FlexibleTypeDelegation {
         companion object {
             internal val capabilityClasses = hashSetOf(
                     Dynamicity::class.java,
