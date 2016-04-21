@@ -173,7 +173,7 @@ public final class ClosureTest extends SingleFileTranslationTest {
     }
 
     // TODO: tests UsageTracker but encounters issue somewhere else. Uncomment when issue with `this` generation gets fixed
-    // Presumably, KT-11823
+    // Presumably, KT-11996
     /*public void testDeepInnerClassInLocalClass() throws Exception {
         checkFooBoxIsOk();
     }
@@ -183,6 +183,10 @@ public final class ClosureTest extends SingleFileTranslationTest {
     }*/
 
     public void testImplicitGenericReceiverInExtensionInLocalClass() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testClosureThisInLambdaInsideObject() throws Exception {
         checkFooBoxIsOk();
     }
 }
