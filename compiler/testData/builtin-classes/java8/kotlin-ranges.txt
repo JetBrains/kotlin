@@ -31,7 +31,7 @@ internal final class CharProgressionIterator : kotlin.collections.CharIterator {
         private final fun <set-next>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit
     public final val step: kotlin.Int
         public final fun <get-step>(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun forEachRemaining(/*0*/ p0: java.util.function.Consumer<in kotlin.Char!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun forEachRemaining(/*0*/ p0: java.util.function.Consumer<in kotlin.Char>): kotlin.Unit
     public open override /*1*/ fun hasNext(): kotlin.Boolean
     public final override /*1*/ /*fake_override*/ fun next(): kotlin.Char
     public open override /*1*/ fun nextChar(): kotlin.Char
@@ -102,7 +102,7 @@ internal final class IntProgressionIterator : kotlin.collections.IntIterator {
         private final fun <set-next>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit
     public final val step: kotlin.Int
         public final fun <get-step>(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun forEachRemaining(/*0*/ p0: java.util.function.Consumer<in kotlin.Int!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun forEachRemaining(/*0*/ p0: java.util.function.Consumer<in kotlin.Int>): kotlin.Unit
     public open override /*1*/ fun hasNext(): kotlin.Boolean
     public final override /*1*/ /*fake_override*/ fun next(): kotlin.Int
     public open override /*1*/ fun nextInt(): kotlin.Int
@@ -164,7 +164,7 @@ internal final class LongProgressionIterator : kotlin.collections.LongIterator {
         private final fun <set-next>(/*0*/ <set-?>: kotlin.Long): kotlin.Unit
     public final val step: kotlin.Long
         public final fun <get-step>(): kotlin.Long
-    public open override /*1*/ /*fake_override*/ fun forEachRemaining(/*0*/ p0: java.util.function.Consumer<in kotlin.Long!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun forEachRemaining(/*0*/ p0: java.util.function.Consumer<in kotlin.Long>): kotlin.Unit
     public open override /*1*/ fun hasNext(): kotlin.Boolean
     public final override /*1*/ /*fake_override*/ fun next(): kotlin.Long
     public open override /*1*/ fun nextLong(): kotlin.Long

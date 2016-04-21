@@ -17,7 +17,11 @@
 package org.jetbrains.kotlin.load.java.typeEnhancement
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
+import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
+import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
+import org.jetbrains.kotlin.load.kotlin.computeJvmDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 
 fun <D : CallableMemberDescriptor> enhanceSignatures(platformSignatures: Collection<D>): Collection<D> {
@@ -41,11 +45,26 @@ private fun <D : CallableMemberDescriptor> D.enhanceSignature(): D {
                 parts(isCovariant = false) { it.extensionReceiverParameter!!.type }.enhance()
             else null
 
-    val valueParameterEnhancements = valueParameters.map {
-        p -> parts(isCovariant = false) { it.valueParameters[p.index].type }.enhance()
+
+    val predefinedEnhancementInfo =
+        if (this is JavaMethodDescriptor)
+            PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE[
+                    SignatureBuildingComponents.signature(this.containingDeclaration as ClassDescriptor, this.computeJvmDescriptor())]
+        else null
+
+    predefinedEnhancementInfo?.let {
+        assert(it.parametersInfo.size == valueParameters.size) {
+            "Predefined enhancement info for $this has ${it.parametersInfo.size}, but ${valueParameters.size} expected"
+        }
     }
 
-    val returnTypeEnhancement = parts(isCovariant = true) { it.returnType!! }.enhance()
+    val valueParameterEnhancements = valueParameters.map {
+        p ->
+        parts(isCovariant = false) { it.valueParameters[p.index].type }
+                .enhance(predefinedEnhancementInfo?.parametersInfo?.getOrNull(p.index))
+    }
+
+    val returnTypeEnhancement = parts(isCovariant = true) { it.returnType!! }.enhance(predefinedEnhancementInfo?.returnTypeInfo)
 
     if ((receiverTypeEnhancement?.wereChanges ?: false)
             || returnTypeEnhancement.wereChanges || valueParameterEnhancements.any { it.wereChanges }) {
@@ -61,9 +80,16 @@ private class SignatureParts(
         val fromOverridden: Collection<KotlinType>,
         val isCovariant: Boolean
 ) {
-    fun enhance(): PartEnhancementResult {
+    fun enhance(predefined: TypeEnhancementInfo? = null): PartEnhancementResult {
         val qualifiers = fromOverride.computeIndexedQualifiersForOverride(this.fromOverridden, isCovariant)
-        return fromOverride.enhance(qualifiers)?.let {
+
+        val qualifiersWithPredefined: ((Int) -> JavaTypeQualifiers)? = predefined?.let {
+            {
+                index -> predefined.map[index] ?: qualifiers(index)
+            }
+        }
+
+        return fromOverride.enhance(qualifiersWithPredefined ?: qualifiers)?.let {
             enhanced -> PartEnhancementResult(enhanced, wereChanges = true)
         } ?: PartEnhancementResult(fromOverride, wereChanges = false)
     }

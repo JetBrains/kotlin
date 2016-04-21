@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.types.KotlinType
@@ -46,6 +48,10 @@ fun FunctionDescriptor.computeJvmDescriptor()
 
 val ClassDescriptor.internalName: String
     get() {
+        JavaToKotlinClassMap.INSTANCE.mapKotlinToJava(fqNameSafe.toUnsafe())?.let {
+            return JvmClassName.byClassId(it).internalName
+        }
+
         return computeInternalName(this)
     }
 

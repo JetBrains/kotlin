@@ -2,7 +2,7 @@ package-fragment kotlin.collections
 
 public abstract class BooleanIterator : kotlin.collections.Iterator<kotlin.Boolean> {
     /*primary*/ public constructor BooleanIterator()
-    public open override /*1*/ /*fake_override*/ fun forEachRemaining(/*0*/ p0: java.util.function.Consumer<in kotlin.Boolean!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun forEachRemaining(/*0*/ p0: java.util.function.Consumer<in kotlin.Boolean>): kotlin.Unit
     public abstract override /*1*/ /*fake_override*/ fun hasNext(): kotlin.Boolean
     public final override /*1*/ fun next(): kotlin.Boolean
     public abstract fun nextBoolean(): kotlin.Boolean
@@ -10,7 +10,7 @@ public abstract class BooleanIterator : kotlin.collections.Iterator<kotlin.Boole
 
 public abstract class ByteIterator : kotlin.collections.Iterator<kotlin.Byte> {
     /*primary*/ public constructor ByteIterator()
-    public open override /*1*/ /*fake_override*/ fun forEachRemaining(/*0*/ p0: java.util.function.Consumer<in kotlin.Byte!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun forEachRemaining(/*0*/ p0: java.util.function.Consumer<in kotlin.Byte>): kotlin.Unit
     public abstract override /*1*/ /*fake_override*/ fun hasNext(): kotlin.Boolean
     public final override /*1*/ fun next(): kotlin.Byte
     public abstract fun nextByte(): kotlin.Byte
@@ -18,7 +18,7 @@ public abstract class ByteIterator : kotlin.collections.Iterator<kotlin.Byte> {
 
 public abstract class CharIterator : kotlin.collections.Iterator<kotlin.Char> {
     /*primary*/ public constructor CharIterator()
-    public open override /*1*/ /*fake_override*/ fun forEachRemaining(/*0*/ p0: java.util.function.Consumer<in kotlin.Char!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun forEachRemaining(/*0*/ p0: java.util.function.Consumer<in kotlin.Char>): kotlin.Unit
     public abstract override /*1*/ /*fake_override*/ fun hasNext(): kotlin.Boolean
     public final override /*1*/ fun next(): kotlin.Char
     public abstract fun nextChar(): kotlin.Char
@@ -39,7 +39,7 @@ public interface Collection</*0*/ out E> : kotlin.collections.Iterable<E> {
 
 public abstract class DoubleIterator : kotlin.collections.Iterator<kotlin.Double> {
     /*primary*/ public constructor DoubleIterator()
-    public open override /*1*/ /*fake_override*/ fun forEachRemaining(/*0*/ p0: java.util.function.Consumer<in kotlin.Double!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun forEachRemaining(/*0*/ p0: java.util.function.Consumer<in kotlin.Double>): kotlin.Unit
     public abstract override /*1*/ /*fake_override*/ fun hasNext(): kotlin.Boolean
     public final override /*1*/ fun next(): kotlin.Double
     public abstract fun nextDouble(): kotlin.Double
@@ -47,7 +47,7 @@ public abstract class DoubleIterator : kotlin.collections.Iterator<kotlin.Double
 
 public abstract class FloatIterator : kotlin.collections.Iterator<kotlin.Float> {
     /*primary*/ public constructor FloatIterator()
-    public open override /*1*/ /*fake_override*/ fun forEachRemaining(/*0*/ p0: java.util.function.Consumer<in kotlin.Float!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun forEachRemaining(/*0*/ p0: java.util.function.Consumer<in kotlin.Float>): kotlin.Unit
     public abstract override /*1*/ /*fake_override*/ fun hasNext(): kotlin.Boolean
     public final override /*1*/ fun next(): kotlin.Float
     public abstract fun nextFloat(): kotlin.Float
@@ -55,7 +55,7 @@ public abstract class FloatIterator : kotlin.collections.Iterator<kotlin.Float> 
 
 public abstract class IntIterator : kotlin.collections.Iterator<kotlin.Int> {
     /*primary*/ public constructor IntIterator()
-    public open override /*1*/ /*fake_override*/ fun forEachRemaining(/*0*/ p0: java.util.function.Consumer<in kotlin.Int!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun forEachRemaining(/*0*/ p0: java.util.function.Consumer<in kotlin.Int>): kotlin.Unit
     public abstract override /*1*/ /*fake_override*/ fun hasNext(): kotlin.Boolean
     public final override /*1*/ fun next(): kotlin.Int
     public abstract fun nextInt(): kotlin.Int
@@ -68,7 +68,7 @@ public interface Iterable</*0*/ out T> {
 }
 
 public interface Iterator</*0*/ out T> {
-    public open fun forEachRemaining(/*0*/ p0: java.util.function.Consumer<in T!>!): kotlin.Unit
+    public open fun forEachRemaining(/*0*/ p0: java.util.function.Consumer<in T>): kotlin.Unit
     public abstract operator fun hasNext(): kotlin.Boolean
     public abstract operator fun next(): T
 }
@@ -93,7 +93,7 @@ public interface List</*0*/ out E> : kotlin.collections.Collection<E> {
 }
 
 public interface ListIterator</*0*/ out T> : kotlin.collections.Iterator<T> {
-    public open override /*1*/ /*fake_override*/ fun forEachRemaining(/*0*/ p0: java.util.function.Consumer<in T!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun forEachRemaining(/*0*/ p0: java.util.function.Consumer<in T>): kotlin.Unit
     public abstract override /*1*/ fun hasNext(): kotlin.Boolean
     public abstract fun hasPrevious(): kotlin.Boolean
     public abstract override /*1*/ fun next(): T
@@ -104,7 +104,7 @@ public interface ListIterator</*0*/ out T> : kotlin.collections.Iterator<T> {
 
 public abstract class LongIterator : kotlin.collections.Iterator<kotlin.Long> {
     /*primary*/ public constructor LongIterator()
-    public open override /*1*/ /*fake_override*/ fun forEachRemaining(/*0*/ p0: java.util.function.Consumer<in kotlin.Long!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun forEachRemaining(/*0*/ p0: java.util.function.Consumer<in kotlin.Long>): kotlin.Unit
     public abstract override /*1*/ /*fake_override*/ fun hasNext(): kotlin.Boolean
     public final override /*1*/ fun next(): kotlin.Long
     public abstract fun nextLong(): kotlin.Long
@@ -161,7 +161,7 @@ public interface MutableIterable</*0*/ out T> : kotlin.collections.Iterable<T> {
 }
 
 public interface MutableIterator</*0*/ out T> : kotlin.collections.Iterator<T> {
-    public open override /*1*/ /*fake_override*/ fun forEachRemaining(/*0*/ p0: java.util.function.Consumer<in T!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun forEachRemaining(/*0*/ p0: java.util.function.Consumer<in T>): kotlin.Unit
     public abstract override /*1*/ /*fake_override*/ fun hasNext(): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun next(): T
     public abstract fun remove(): kotlin.Unit
@@ -201,7 +201,7 @@ public interface MutableList</*0*/ E> : kotlin.collections.List<E>, kotlin.colle
 
 public interface MutableListIterator</*0*/ T> : kotlin.collections.ListIterator<T>, kotlin.collections.MutableIterator<T> {
     public abstract fun add(/*0*/ element: T): kotlin.Unit
-    public open override /*2*/ /*fake_override*/ fun forEachRemaining(/*0*/ p0: java.util.function.Consumer<in T!>!): kotlin.Unit
+    public open override /*2*/ /*fake_override*/ fun forEachRemaining(/*0*/ p0: java.util.function.Consumer<in T>): kotlin.Unit
     public abstract override /*2*/ fun hasNext(): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun hasPrevious(): kotlin.Boolean
     public abstract override /*2*/ fun next(): T
@@ -285,7 +285,7 @@ public interface Set</*0*/ out E> : kotlin.collections.Collection<E> {
 
 public abstract class ShortIterator : kotlin.collections.Iterator<kotlin.Short> {
     /*primary*/ public constructor ShortIterator()
-    public open override /*1*/ /*fake_override*/ fun forEachRemaining(/*0*/ p0: java.util.function.Consumer<in kotlin.Short!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun forEachRemaining(/*0*/ p0: java.util.function.Consumer<in kotlin.Short>): kotlin.Unit
     public abstract override /*1*/ /*fake_override*/ fun hasNext(): kotlin.Boolean
     public final override /*1*/ fun next(): kotlin.Short
     public abstract fun nextShort(): kotlin.Short

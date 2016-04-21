@@ -149,10 +149,10 @@ open class JvmBuiltInsAdditionalClassPartsProvider(
                 }
         ) {
             javaClassDescriptor ->
-            signature(javaClassDescriptor, jvmDescriptor) in BLACK_LIST_METHOD_SIGNATURES
+            SignatureBuildingComponents.signature(javaClassDescriptor, jvmDescriptor) in BLACK_LIST_METHOD_SIGNATURES
         }) return true
 
-        if ((signature(owner, jvmDescriptor) in MUTABLE_METHOD_SIGNATURES) xor isMutable) return true
+        if ((SignatureBuildingComponents.signature(owner, jvmDescriptor) in MUTABLE_METHOD_SIGNATURES) xor isMutable) return true
 
         return DFS.ifAny<CallableMemberDescriptor>(
                 listOf(this),
@@ -163,8 +163,6 @@ open class JvmBuiltInsAdditionalClassPartsProvider(
                 j2kClassMap.isMutable(overridden.containingDeclaration as ClassDescriptor)
         }
     }
-
-    private fun signature(javaClassDescriptor: ClassDescriptor, jvmDescriptor: String) = javaClassDescriptor.internalName + "." + jvmDescriptor
 
     private fun ClassDescriptor.getJavaAnalogue(): LazyJavaClassDescriptor? {
         // Prevents recursive dependency: memberScope(Any) -> memberScope(Object) -> memberScope(Any)
@@ -197,7 +195,7 @@ open class JvmBuiltInsAdditionalClassPartsProvider(
                 defaultKotlinVersion.constructors.none { it.isEffectivelyTheSameAs(javaConstructor) } &&
                 !javaConstructor.isTrivialCopyConstructorFor(classDescriptor) &&
                 !KotlinBuiltIns.isDeprecated(javaConstructor) &&
-                signature(javaAnalogueDescriptor, javaConstructor.computeJvmDescriptor()) !in BLACK_LIST_CONSTRUCTOR_SIGNATURES
+                SignatureBuildingComponents.signature(javaAnalogueDescriptor, javaConstructor.computeJvmDescriptor()) !in BLACK_LIST_CONSTRUCTOR_SIGNATURES
         }.map {
             javaConstructor ->
             javaConstructor.newCopyBuilder().apply {
@@ -230,6 +228,7 @@ open class JvmBuiltInsAdditionalClassPartsProvider(
         }
 
         private val BLACK_LIST_METHOD_SIGNATURES: Set<String> =
+            signatures {
                 buildPrimitiveValueMethodsSet() +
 
                 "java/lang/annotation/Annotation.annotationType()${javaLang("Class").t}" +
@@ -261,17 +260,21 @@ open class JvmBuiltInsAdditionalClassPartsProvider(
                 inJavaLang("Float", "isInfinite()Z", "isNaN()Z") +
 
                 inJavaUtil("Collection", "toArray([$objectType)[$objectType", "toArray()[$objectType")
+            }
 
         private fun buildPrimitiveValueMethodsSet(): Set<String> =
+            signatures {
                 JvmPrimitiveType.values().flatMapTo(LinkedHashSet()) {
                     inJavaLang(it.wrapperFqName.shortName().asString(), "${it.javaKeywordName}Value()${it.desc}")
                 }
+            }
 
         private val MUTABLE_METHOD_SIGNATURES: Set<String> =
+            signatures {
                 inJavaUtil("Collection", "removeIf(Ljava/util/function/Predicate;)Z") +
 
                 inJavaUtil("List",
-                        "sort(Ljava/util/Comparator;)V", "replaceAll(Ljava/util/function/UnaryOperator;)V") +
+                           "sort(Ljava/util/Comparator;)V", "replaceAll(Ljava/util/function/UnaryOperator;)V") +
 
                 inJavaUtil("Map",
                            "computeIfAbsent(${objectType}Ljava/util/function/Function;)$objectType",
@@ -282,8 +285,10 @@ open class JvmBuiltInsAdditionalClassPartsProvider(
                            "remove($objectType$objectType)Z", "replaceAll(Ljava/util/function/BiFunction;)V",
                            "replace($objectType$objectType)$objectType",
                            "replace($objectType$objectType$objectType)Z")
+            }
 
         private val BLACK_LIST_CONSTRUCTOR_SIGNATURES: Set<String> =
+            signatures {
                 buildPrimitiveStringConstructorsSet() +
                 inJavaLang("Float", *constructors("D")) +
                 inJavaLang("String", *constructors(
@@ -295,28 +300,15 @@ open class JvmBuiltInsAdditionalClassPartsProvider(
                         "Ljava/lang/StringBuffer;",
                         "Ljava/lang/StringBuilder;"
                 ))
+            }
 
         private fun buildPrimitiveStringConstructorsSet(): Set<String> =
+            signatures {
                 JvmPrimitiveType.values().flatMapTo(LinkedHashSet()) {
                     inJavaLang(it.wrapperFqName.shortName().asString(), *constructors(stringType))
                 }
+            }
     }
 }
 
 private val ClassDescriptor.isAny: Boolean get() = fqNameUnsafe == KotlinBuiltIns.FQ_NAMES.any
-
-private val String.t: String
-    get() = "L$this;"
-
-private val stringType = javaLang("String").t
-private val objectType = javaLang("Object").t
-
-private fun javaLang(name: String) = "java/lang/$name"
-private fun javaUtil(name: String) = "java/util/$name"
-
-private fun constructors(vararg signatures: String) = signatures.map { "<init>($it)V" }.toTypedArray()
-
-private fun inJavaLang(name: String, vararg signatures: String) = inClass(javaLang(name), *signatures)
-private fun inJavaUtil(name: String, vararg signatures: String) = inClass(javaUtil(name), *signatures)
-
-private fun inClass(internalName: String, vararg signatures: String) = signatures.mapTo(LinkedHashSet()) { internalName + "." + it }

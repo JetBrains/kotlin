@@ -1,0 +1,77 @@
+package
+
+public fun foo(/*0*/ x: kotlin.collections.Iterator<kotlin.String>, /*1*/ y: kotlin.collections.Iterator<kotlin.String?>): kotlin.Unit
+
+public abstract class MyIt1</*0*/ out T> : kotlin.collections.Iterator<T> {
+    public constructor MyIt1</*0*/ out T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ fun forEachRemaining(/*0*/ x: java.util.function.Consumer<in T>): kotlin.Unit
+    public abstract override /*1*/ /*fake_override*/ fun hasNext(): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun next(): T
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public abstract class MyIt2</*0*/ out T> : kotlin.collections.Iterator<T> {
+    public constructor MyIt2</*0*/ out T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun forEachRemaining(/*0*/ p0: java.util.function.Consumer<in T>): kotlin.Unit
+    public open fun forEachRemaining(/*0*/ x: java.util.function.Consumer<in T?>): kotlin.Unit
+    public abstract override /*1*/ /*fake_override*/ fun hasNext(): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun next(): T
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public abstract class MyIt3</*0*/ out T> : kotlin.collections.Iterator<T> {
+    public constructor MyIt3</*0*/ out T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun forEachRemaining(/*0*/ p0: java.util.function.Consumer<in T>): kotlin.Unit
+    public open fun forEachRemaining(/*0*/ x: java.util.function.Consumer<in T>?): kotlin.Unit
+    public abstract override /*1*/ /*fake_override*/ fun hasNext(): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun next(): T
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public abstract class MyIt4 : kotlin.collections.Iterator<kotlin.String?> {
+    public constructor MyIt4()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ fun forEachRemaining(/*0*/ x: java.util.function.Consumer<in kotlin.String?>): kotlin.Unit
+    public abstract override /*1*/ /*fake_override*/ fun hasNext(): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun next(): kotlin.String?
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public abstract class MyIt5 : kotlin.collections.Iterator<kotlin.String> {
+    public constructor MyIt5()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ fun forEachRemaining(/*0*/ x: java.util.function.Consumer<in kotlin.String>): kotlin.Unit
+    public abstract override /*1*/ /*fake_override*/ fun hasNext(): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun next(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public abstract class MyIt6 : kotlin.collections.Iterator<kotlin.String?> {
+    public constructor MyIt6()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open fun forEachRemaining(/*0*/ x: java.util.function.Consumer<in kotlin.String>): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun forEachRemaining(/*0*/ p0: java.util.function.Consumer<in kotlin.String?>): kotlin.Unit
+    public abstract override /*1*/ /*fake_override*/ fun hasNext(): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun next(): kotlin.String?
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public abstract class MyIt7 : kotlin.collections.Iterator<kotlin.String> {
+    public constructor MyIt7()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun forEachRemaining(/*0*/ p0: java.util.function.Consumer<in kotlin.String>): kotlin.Unit
+    public open fun forEachRemaining(/*0*/ x: java.util.function.Consumer<in kotlin.String?>): kotlin.Unit
+    public abstract override /*1*/ /*fake_override*/ fun hasNext(): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun next(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

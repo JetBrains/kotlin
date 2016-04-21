@@ -121,6 +121,12 @@ public class DiagnosticsWithJava8TestGenerated extends AbstractDiagnosticsWithFu
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJava8/targetedBuiltIns"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("forEachRemainingNullability.kt")
+        public void testForEachRemainingNullability() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/targetedBuiltIns/forEachRemainingNullability.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("removeIf.kt")
         public void testRemoveIf() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/targetedBuiltIns/removeIf.kt");
