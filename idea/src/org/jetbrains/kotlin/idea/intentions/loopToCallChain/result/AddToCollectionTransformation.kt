@@ -37,7 +37,7 @@ class AddToCollectionTransformation(
     override fun mergeWithPrevious(previousTransformation: SequenceTransformation): ResultTransformation? {
         return when (previousTransformation) {
             is FilterTransformation -> {
-                FilterToTransformation.create(loop, previousTransformation.inputVariable, targetCollection, previousTransformation.effectiveCondition()) //TODO: use filterNotTo?
+                FilterToTransformation.create(loop, previousTransformation.inputVariable, targetCollection, previousTransformation.condition, previousTransformation.isInverse)
             }
 
             is FilterIndexedTransformation -> {
@@ -191,15 +191,18 @@ class FilterToTransformation private constructor(
         loop: KtForExpression,
         private val inputVariable: KtCallableDeclaration,
         private val targetCollection: KtExpression,
-        private val filter: KtExpression
+        private val filter: KtExpression,
+        isInverse: Boolean
 ) : ReplaceLoopResultTransformation(loop) {
 
+    private val functionName = if (isInverse) "filterNotTo" else "filterTo"
+
     override val presentation: String
-        get() = "filterTo(){}"
+        get() = "$functionName(){}"
 
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
         val lambda = generateLambda(inputVariable, filter)
-        return chainedCallGenerator.generate("filterTo($0) $1:'{}'", targetCollection, lambda)
+        return chainedCallGenerator.generate("$functionName($0) $1:'{}'", targetCollection, lambda)
     }
 
     companion object {
@@ -207,15 +210,16 @@ class FilterToTransformation private constructor(
                 loop: KtForExpression,
                 inputVariable: KtCallableDeclaration,
                 targetCollection: KtExpression,
-                filter: KtExpression
+                filter: KtExpression,
+                isInverse: Boolean
         ): ResultTransformation {
             val initialization = targetCollection.detectInitializationBeforeLoop(loop, checkNoOtherUsagesInLoop = true)
             if (initialization != null && initialization.initializer.hasNoSideEffect()) {
-                val transformation = FilterToTransformation(loop, inputVariable, initialization.initializer, filter)
+                val transformation = FilterToTransformation(loop, inputVariable, initialization.initializer, filter, isInverse)
                 return AssignToVariableResultTransformation.createDelegated(transformation, initialization)
             }
             else {
-                return FilterToTransformation(loop, inputVariable, targetCollection, filter)
+                return FilterToTransformation(loop, inputVariable, targetCollection, filter, isInverse)
             }
         }
     }

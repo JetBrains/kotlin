@@ -40,16 +40,17 @@ class FilterTransformation(
         return FilterTransformation(loop, inputVariable, mergedCondition, isInverse = false) //TODO: build filterNot in some cases?
     }
 
+    private val functionName = if (isInverse) "filterNot" else "filter"
+
     override val affectsIndex: Boolean
         get() = true
 
     override val presentation: String
-        get() = if (isInverse) "filterNot{}" else "filter{}"
+        get() = "$functionName{}"
 
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
         val lambda = generateLambda(inputVariable, condition)
-        val name = if (isInverse) "filterNot" else "filter"
-        return chainedCallGenerator.generate("$0$1:'{}'", name, lambda)
+        return chainedCallGenerator.generate("$0$1:'{}'", functionName, lambda)
     }
 
     /**
