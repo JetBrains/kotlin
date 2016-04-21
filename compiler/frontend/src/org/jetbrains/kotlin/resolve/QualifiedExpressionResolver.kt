@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
+import org.jetbrains.kotlin.types.expressions.isWithoutValueArguments
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.check
 
@@ -69,7 +70,7 @@ class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageValidator
             isDebuggerContext: Boolean
     ): TypeQualifierResolutionResult {
         val ownerDescriptor = if (!isDebuggerContext) scope.ownerDescriptor else null
-        if (userType.qualifier == null && !userType.startWithPackage) { // optimization for non-qualified types
+        if (userType.qualifier == null && !userType.startWithPackage) {
             val descriptor = userType.referenceExpression?.let {
                 val classifier = scope.findClassifier(it.getReferencedNameAsName(), KotlinLookupLocation(it))
                 storeResult(trace, it, classifier, ownerDescriptor, position = QualifierPosition.TYPE, isQualifier = false)
@@ -87,13 +88,25 @@ class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageValidator
             ) as? ClassifierDescriptor
             return TypeQualifierResolutionResult(qualifierPartList, descriptor)
         }
-        assert(qualifierPartList.size >= 1) {
-            "Too short qualifier list for user type $userType : ${qualifierPartList.joinToString()}"
-        }
+
+        return resolveQualifierPartListForType(
+                qualifierPartList, ownerDescriptor, module, scope.check { !userType.startWithPackage }, trace, isQualifier = false
+        )
+    }
+
+    private fun resolveQualifierPartListForType(
+            qualifierPartList: List<QualifierPart>,
+            ownerDescriptor: DeclarationDescriptor?,
+            module: ModuleDescriptor,
+            scope: LexicalScope?,
+            trace: BindingTrace,
+            isQualifier: Boolean
+    ): TypeQualifierResolutionResult {
+        assert(qualifierPartList.isNotEmpty()) { "Qualifier list should not be empty" }
 
         val qualifier = resolveToPackageOrClass(
-                qualifierPartList.subList(0, qualifierPartList.size - 1), module,
-                trace, ownerDescriptor, scope.check { !userType.startWithPackage }, position = QualifierPosition.TYPE
+                qualifierPartList.subList(0, qualifierPartList.size - 1), module, trace, ownerDescriptor, scope,
+                position = QualifierPosition.TYPE
         ) ?: return TypeQualifierResolutionResult(qualifierPartList, null)
 
         val lastPart = qualifierPartList.last()
@@ -102,8 +115,34 @@ class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageValidator
             is ClassDescriptor -> qualifier.unsubstitutedInnerClassesScope.getContributedClassifier(lastPart.name, lastPart.location)
             else -> null
         }
-        storeResult(trace, lastPart.expression, classifier, ownerDescriptor, position = QualifierPosition.TYPE, isQualifier = false)
+        storeResult(trace, lastPart.expression, classifier, ownerDescriptor, position = QualifierPosition.TYPE, isQualifier = isQualifier)
         return TypeQualifierResolutionResult(qualifierPartList, classifier)
+    }
+
+    fun resolveDescriptorForDoubleColonLHS(
+            expression: KtExpression,
+            scope: LexicalScope,
+            trace: BindingTrace,
+            isDebuggerContext: Boolean
+    ): TypeQualifierResolutionResult {
+        val ownerDescriptor = if (!isDebuggerContext) scope.ownerDescriptor else null
+
+        val qualifierPartList = expression.asQualifierPartList(doubleColonLHS = true)
+        if (qualifierPartList.isEmpty()) {
+            return TypeQualifierResolutionResult(qualifierPartList, null)
+        }
+
+        if (qualifierPartList.size == 1) {
+            val (name, simpleName) = qualifierPartList.single()
+            val descriptor = scope.findClassifier(name, KotlinLookupLocation(simpleName))
+            storeResult(trace, simpleName, descriptor, ownerDescriptor, position = QualifierPosition.TYPE, isQualifier = true)
+
+            return TypeQualifierResolutionResult(qualifierPartList, descriptor)
+        }
+
+        return resolveQualifierPartListForType(
+                qualifierPartList, ownerDescriptor, scope.ownerDescriptor.module, scope, trace, isQualifier = true
+        )
     }
 
     private val KtUserType.startWithPackage: Boolean
@@ -270,24 +309,32 @@ class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageValidator
         storeResult(trace, lastPart.expression, descriptors, shouldBeVisibleFrom = null, position = QualifierPosition.IMPORT, isQualifier = false)
     }
 
-    private fun KtExpression.asQualifierPartList(): List<QualifierPart> {
+    private fun KtExpression.asQualifierPartList(doubleColonLHS: Boolean = false): List<QualifierPart> {
         val result = SmartList<QualifierPart>()
-        var expression: KtExpression? = this
-        loop@ while (expression != null) {
-            when (expression) {
-                is KtSimpleNameExpression -> {
-                    result.add(QualifierPart(expression.getReferencedNameAsName(), expression))
-                    break@loop
-                }
-                is KtQualifiedExpression -> {
-                    (expression.selectorExpression as? KtSimpleNameExpression)?.let {
-                        result.add(QualifierPart(it.getReferencedNameAsName(), it))
-                    }
-                    expression = expression.receiverExpression
-                }
-                else -> expression = null
+
+        fun addQualifierPart(expression: KtExpression?): Boolean {
+            if (expression is KtSimpleNameExpression) {
+                result.add(QualifierPart(expression))
+                return true
             }
+            if (doubleColonLHS && expression is KtCallExpression && expression.isWithoutValueArguments) {
+                val simpleName = expression.calleeExpression as KtSimpleNameExpression
+                result.add(QualifierPart(simpleName.getReferencedNameAsName(), simpleName, expression.typeArgumentList))
+                return true
+            }
+            return false
         }
+
+        var expression: KtExpression? = this
+        while (true) {
+            if (addQualifierPart(expression)) break
+            if (expression !is KtQualifiedExpression) break
+
+            addQualifierPart(expression.selectorExpression)
+
+            expression = expression.receiverExpression
+        }
+
         return result.asReversed()
     }
 
