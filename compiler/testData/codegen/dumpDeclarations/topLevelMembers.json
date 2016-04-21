@@ -9,7 +9,7 @@
 		]
 	},
 	{
-		"declaration": "package-fragment ",
+		"declaration": "package-fragment",
 		"class": "TopLevelMembersKt",
 		"members": [
 			{"visibility": "public",	"declaration": "val publicVal: kotlin.Int", "name": "publicVal", "desc": "I"},
@@ -38,7 +38,7 @@
 			{"visibility": "internal",	"declaration": "fun internalOverloads(a: kotlin.String = ..., b: kotlin.Long? = ...): kotlin.Unit", "name": "internalOverloads$default", "desc": "(Ljava/lang/String;Ljava/lang/Long;ILjava/lang/Object;)V"},
 			{"visibility": "internal",	"declaration": "fun internalOverloads(a: kotlin.String = ..., b: kotlin.Long? = ...): kotlin.Unit", "name": "internalOverloads", "desc": "(Ljava/lang/String;)V"},
 			{"visibility": "internal",	"declaration": "fun internalOverloads(a: kotlin.String = ..., b: kotlin.Long? = ...): kotlin.Unit", "name": "internalOverloads", "desc": "()V"},
-			{"declaration": "package-fragment ", "name": "<clinit>", "desc": "()V"},
+			{"declaration": "package-fragment", "name": "<clinit>", "desc": "()V"},
 			{"visibility": "private",	"declaration": "fun privateFun(x: kotlin.Any?): kotlin.Unit", "name": "access$privateFun", "desc": "(Ljava/lang/Object;)V"},
 			{"visibility": "private",	"declaration": "fun <get-privateVal>(): kotlin.Any?", "name": "access$getPrivateVal$p", "desc": "()Ljava/lang/Object;"},
 			{"visibility": "private",	"declaration": "fun <get-privateVar>(): kotlin.Any?", "name": "access$getPrivateVar$p", "desc": "()Ljava/lang/Object;"},

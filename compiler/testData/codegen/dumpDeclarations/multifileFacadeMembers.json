@@ -1,6 +1,6 @@
 [
 	{
-		"declaration": "package-fragment ",
+		"declaration": "package-fragment",
 		"class": "MultifileFacade__Part1Kt",
 		"members": [
 			{"visibility": "public",	"declaration": "val publicVal: kotlin.Int", "name": "publicVal", "desc": "I"},
@@ -18,7 +18,7 @@
 			{"visibility": "private",	"declaration": "var privateVar: kotlin.Any?", "name": "privateVar", "desc": "Ljava/lang/Object;"},
 			{"visibility": "private",	"declaration": "fun <get-privateVar>(): kotlin.Any?", "name": "getPrivateVar$MultifileFacade__Part1Kt", "desc": "()Ljava/lang/Object;"},
 			{"visibility": "private",	"declaration": "fun <set-privateVar>(<set-?>: kotlin.Any?): kotlin.Unit", "name": "setPrivateVar$MultifileFacade__Part1Kt", "desc": "(Ljava/lang/Object;)V"},
-			{"declaration": "package-fragment ", "name": "<clinit>", "desc": "()V"}
+			{"declaration": "package-fragment", "name": "<clinit>", "desc": "()V"}
 		]
 	},
 	{
@@ -31,7 +31,7 @@
 		]
 	},
 	{
-		"declaration": "package-fragment ",
+		"declaration": "package-fragment",
 		"class": "MultifileFacade__Part2Kt",
 		"members": [
 			{"visibility": "private",	"declaration": "const val privateConst: kotlin.Int", "name": "privateConst", "desc": "I"},
@@ -43,7 +43,7 @@
 		]
 	},
 	{
-		"declaration": "package-fragment ",
+		"declaration": "package-fragment",
 		"class": "MultifileFacade",
 		"members": [
 			{"visibility": "internal",	"declaration": "const val internalConst: kotlin.Int", "name": "internalConst", "desc": "I"},

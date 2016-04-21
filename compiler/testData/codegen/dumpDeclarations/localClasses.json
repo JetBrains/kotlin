@@ -80,7 +80,7 @@
 		]
 	},
 	{
-		"declaration": "package-fragment ",
+		"declaration": "package-fragment",
 		"class": "Part2Kt",
 		"members": [
 			{"visibility": "public",	"declaration": "fun box(): kotlin.Unit", "name": "box", "desc": "()V"}
