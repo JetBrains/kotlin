@@ -18,27 +18,16 @@ package org.jetbrains.kotlin.idea.intentions.loopToCallChain
 
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.UserDataHolderBase
-import com.intellij.psi.PsiWhiteSpace
-import com.intellij.psi.search.LocalSearchScope
-import com.intellij.psi.search.searches.ReferencesSearch
-import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.imports.importableFqName
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isNullExpression
-import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.idea.references.readWriteAccess
 import org.jetbrains.kotlin.idea.util.getResolutionScope
-import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -47,10 +36,6 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.types.typeUtil.TypeNullability
-import org.jetbrains.kotlin.types.typeUtil.nullability
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 fun generateLambda(inputVariable: KtCallableDeclaration, expression: KtExpression): KtLambdaExpression {
     val psiFactory = KtPsiFactory(expression)
@@ -99,241 +84,6 @@ fun generateLambda(expression: KtExpression, vararg inputVariables: KtCallableDe
 
         appendFixedText("}")
     } as KtLambdaExpression
-}
-
-fun KtExpression?.isTrueConstant()
-        = this != null && node?.elementType == KtNodeTypes.BOOLEAN_CONSTANT && text == "true"
-
-fun KtExpression?.isFalseConstant()
-        = this != null && node?.elementType == KtNodeTypes.BOOLEAN_CONSTANT && text == "false"
-
-fun KtExpression?.isVariableReference(variable: KtCallableDeclaration): Boolean {
-    return this is KtNameReferenceExpression && this.mainReference.isReferenceTo(variable)
-}
-
-fun KtExpression?.isSimpleName(name: Name): Boolean {
-    return this is KtNameReferenceExpression && this.getQualifiedExpressionForSelector() == null && this.getReferencedNameAsName() == name
-}
-
-fun KtCallableDeclaration.hasUsages(inElement: KtElement): Boolean {
-    return hasUsages(listOf(inElement))
-}
-
-fun KtCallableDeclaration.hasUsages(inElements: Collection<KtElement>): Boolean {
-    assert(this.isPhysical)
-    // TODO: it's a temporary workaround about strange dead-lock when running inspections
-    return inElements.any { ReferencesSearch.search(this, LocalSearchScope(it)).any() }
-//    return ReferencesSearch.search(this, LocalSearchScope(inElements.toTypedArray())).any()
-}
-
-fun KtProperty.hasWriteUsages(): Boolean {
-    assert(this.isPhysical)
-    if (!isVar) return false
-    return ReferencesSearch.search(this, useScope).any {
-        (it as? KtSimpleNameReference)?.element?.readWriteAccess(useResolveForReadWrite = true)?.isWrite == true
-    }
-}
-
-fun KtProperty.countUsages(inElement: KtElement): Int {
-    assert(this.isPhysical)
-    return ReferencesSearch.search(this, LocalSearchScope(inElement)).count()
-}
-
-fun KtProperty.countUsages(inElements: Collection<KtElement>): Int {
-    assert(this.isPhysical)
-    // TODO: it's a temporary workaround about strange dead-lock when running inspections
-    return inElements.sumBy { ReferencesSearch.search(this, LocalSearchScope(it)).count() }
-}
-
-fun KtProperty.countUsages(): Int {
-    assert(this.isPhysical)
-    return ReferencesSearch.search(this, useScope).count()
-}
-
-fun KtProperty.countWriteUsages(inElement: KtElement): Int {
-    assert(this.isPhysical)
-    if (!isVar) return 0
-    return ReferencesSearch.search(this, LocalSearchScope(inElement)).count {
-        (it as? KtSimpleNameReference)?.element?.readWriteAccess(useResolveForReadWrite = true)?.isWrite == true
-    }
-}
-
-
-interface FindOperatorGenerator {
-    val functionName: String
-
-    val shouldUseInputVariable: Boolean
-
-    fun generate(chainedCallGenerator: ChainedCallGenerator, filter: KtExpression?): KtExpression
-
-    val chainCallCount: Int
-        get() = 1
-}
-
-fun buildFindOperationGenerator(
-        valueIfFound: KtExpression,
-        valueIfNotFound: KtExpression,
-        inputVariable: KtCallableDeclaration,
-        findFirst: Boolean
-): FindOperatorGenerator?  {
-    assert(valueIfFound.isPhysical)
-    assert(valueIfNotFound.isPhysical)
-
-    fun generateChainedCall(stdlibFunName: String, chainedCallGenerator: ChainedCallGenerator, filter: KtExpression?): KtExpression {
-        return if (filter == null) {
-            chainedCallGenerator.generate("$stdlibFunName()")
-        }
-        else {
-            val lambda = generateLambda(inputVariable, filter)
-            chainedCallGenerator.generate("$stdlibFunName $0:'{}'", lambda)
-        }
-    }
-
-    class SimpleGenerator(override val functionName: String, override val shouldUseInputVariable: Boolean) : FindOperatorGenerator {
-        override fun generate(chainedCallGenerator: ChainedCallGenerator, filter: KtExpression?): KtExpression {
-            return generateChainedCall(functionName, chainedCallGenerator, filter)
-        }
-    }
-
-    val inputVariableCanHoldNull = (inputVariable.resolveToDescriptor() as VariableDescriptor).type.nullability() != TypeNullability.NOT_NULL
-
-    fun FindOperatorGenerator.useElvisOperatorIfNeeded(): FindOperatorGenerator? {
-        if (valueIfNotFound.isNullExpression()) return this
-
-        // we cannot use ?: if found value can be null
-        if (inputVariableCanHoldNull) return null
-
-        return object: FindOperatorGenerator by this {
-            override fun generate(chainedCallGenerator: ChainedCallGenerator, filter: KtExpression?): KtExpression {
-                val generated = this@useElvisOperatorIfNeeded.generate(chainedCallGenerator, filter)
-                return KtPsiFactory(generated).createExpressionByPattern("$0 ?: $1", generated, valueIfNotFound)
-            }
-        }
-    }
-
-    when {
-        valueIfFound.isVariableReference(inputVariable) -> {
-            val generator = SimpleGenerator(if (findFirst) "firstOrNull" else "lastOrNull", shouldUseInputVariable = true)
-            return generator.useElvisOperatorIfNeeded()
-        }
-
-        valueIfFound.isTrueConstant() && valueIfNotFound.isFalseConstant() -> return SimpleGenerator("any", shouldUseInputVariable = false)
-
-        valueIfFound.isFalseConstant() && valueIfNotFound.isTrueConstant() -> return SimpleGenerator("none", shouldUseInputVariable = false)
-
-        inputVariable.hasUsages(valueIfFound) -> {
-            if (!findFirst) return null // too dangerous because of side effects
-
-            // specially handle the case when the result expression is "<input variable>.<some call>" or "<input variable>?.<some call>"
-            val qualifiedExpression = valueIfFound as? KtQualifiedExpression
-            if (qualifiedExpression != null) {
-                val receiver = qualifiedExpression.receiverExpression
-                val selector = qualifiedExpression.selectorExpression
-                if (receiver.isVariableReference(inputVariable) && selector != null && !inputVariable.hasUsages(selector)) {
-                    return object: FindOperatorGenerator {
-                        override val functionName: String
-                            get() = "firstOrNull"
-
-                        override val shouldUseInputVariable: Boolean
-                            get() = true
-
-                        override val chainCallCount: Int
-                            get() = 2
-
-                        override fun generate(chainedCallGenerator: ChainedCallGenerator, filter: KtExpression?): KtExpression {
-                            val findFirstCall = generateChainedCall(functionName, chainedCallGenerator, filter)
-                            return chainedCallGenerator.generate("$0", selector, receiver = findFirstCall, safeCall = true)
-                        }
-                    }.useElvisOperatorIfNeeded()
-                }
-            }
-
-            // in case of nullable input variable we cannot distinguish by the result of "firstOrNull" whether nothing was found or 'null' was found
-            if (inputVariableCanHoldNull) return null
-
-            return object: FindOperatorGenerator {
-                override val functionName: String
-                    get() = "firstOrNull"
-
-                override val shouldUseInputVariable: Boolean
-                    get() = true
-
-                override val chainCallCount: Int
-                    get() = 2 // also includes "let"
-
-                override fun generate(chainedCallGenerator: ChainedCallGenerator, filter: KtExpression?): KtExpression {
-                    val findFirstCall = generateChainedCall(functionName, chainedCallGenerator, filter)
-                    val letBody = generateLambda(inputVariable, valueIfFound)
-                    return chainedCallGenerator.generate("let $0:'{}'", letBody, receiver = findFirstCall, safeCall = true)
-                }
-            }.useElvisOperatorIfNeeded()
-        }
-
-        else -> {
-            return object: FindOperatorGenerator {
-                override val functionName: String
-                    get() = "any"
-
-                override val shouldUseInputVariable: Boolean
-                    get() = false
-
-                override fun generate(chainedCallGenerator: ChainedCallGenerator, filter: KtExpression?): KtExpression {
-                    val chainedCall = generateChainedCall(functionName, chainedCallGenerator, filter)
-                    return KtPsiFactory(chainedCall).createExpressionByPattern("if ($0) $1 else $2", chainedCall, valueIfFound, valueIfNotFound)
-                }
-            }
-        }
-    }
-}
-
-fun KtExpressionWithLabel.targetLoop(): KtLoopExpression? {
-    val label = getTargetLabel()
-    if (label == null) {
-        return parents.firstIsInstance<KtLoopExpression>()
-    }
-    else {
-        //TODO: does PARTIAL always work here?
-        return analyze(BodyResolveMode.PARTIAL)[BindingContext.LABEL_TARGET, label] as? KtLoopExpression
-    }
-}
-
-fun KtExpression.isPlusPlusOf(): KtExpression? {
-    if (this !is KtUnaryExpression) return null
-    if (operationToken != KtTokens.PLUSPLUS) return null
-    return baseExpression
-}
-
-fun KtExpression.previousStatement(): KtExpression? {
-    val statement = unwrapIfLabeled()
-    if (statement.parent !is KtBlockExpression) return null
-    return statement.siblings(forward = false, withItself = false).firstIsInstanceOrNull<KtExpression>()
-}
-
-fun KtExpression.nextStatement(): KtExpression? {
-    val statement = unwrapIfLabeled()
-    if (statement.parent !is KtBlockExpression) return null
-    return statement.siblings(forward = true, withItself = false).firstIsInstanceOrNull<KtExpression>()
-}
-
-fun KtExpression.unwrapIfLabeled(): KtExpression {
-    var statement = this
-    while (true) {
-        statement = statement.parent as? KtLabeledExpression ?: return statement
-    }
-}
-
-fun KtLoopExpression.deleteWithLabels() {
-    unwrapIfLabeled().delete()
-}
-
-fun PsiChildRange.withoutFirstStatement(): PsiChildRange {
-    val newFirst = first!!.siblings(forward = true, withItself = false).first { it !is PsiWhiteSpace }
-    return PsiChildRange(newFirst, last)
-}
-
-fun PsiChildRange.withoutLastStatement(): PsiChildRange {
-    val newLast = last!!.siblings(forward = false, withItself = false).first { it !is PsiWhiteSpace }
-    return PsiChildRange(first, newLast)
 }
 
 data class VariableInitialization(
