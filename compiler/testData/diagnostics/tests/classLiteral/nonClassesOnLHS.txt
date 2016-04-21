@@ -1,10 +1,11 @@
 package
 
-public val a1: [ERROR : Unresolved class]
-public val a2: [ERROR : Unresolved class]
-public val l1: [ERROR : Unresolved class]
-public val l2: [ERROR : Unresolved class]
+public val a1: kotlin.reflect.KClass<A?>
+public val a2: kotlin.reflect.KClass<A?>
+public val l1: kotlin.reflect.KClass<kotlin.collections.List<kotlin.String>?>
+public val l2: kotlin.reflect.KClass<kotlin.collections.List<*>?>
 public val m: [ERROR : Unresolved class]
+public inline fun </*0*/ reified T : kotlin.Any> bar(): kotlin.Unit
 public fun </*0*/ T : kotlin.Any> foo(): kotlin.Unit
 
 public final class A {
