@@ -196,7 +196,8 @@ open class BuiltInClassesAreSerializableOnJvm(
             javaConstructor.visibility.isPublicAPI &&
                 defaultKotlinVersion.constructors.none { it.isEffectivelyTheSameAs(javaConstructor) } &&
                 !javaConstructor.isTrivialCopyConstructorFor(classDescriptor) &&
-                !KotlinBuiltIns.isDeprecated(javaConstructor)
+                !KotlinBuiltIns.isDeprecated(javaConstructor) &&
+                signature(javaAnalogueDescriptor, javaConstructor.computeJvmDescriptor()) !in BLACK_LIST_CONSTRUCTOR_SIGNATURES
         }.map {
             javaConstructor ->
             javaConstructor.newCopyBuilder().apply {
@@ -261,6 +262,10 @@ open class BuiltInClassesAreSerializableOnJvm(
 
                 inJavaUtil("Collection", "toArray([$objectType)[$objectType", "toArray()[$objectType")
 
+        private fun buildPrimitiveValueMethodsSet(): Set<String> =
+                JvmPrimitiveType.values().flatMapTo(LinkedHashSet()) {
+                    inJavaLang(it.wrapperFqName.shortName().asString(), "${it.javaKeywordName}Value()${it.desc}")
+                }
 
         private val MUTABLE_METHOD_SIGNATURES: Set<String> =
                 inJavaUtil("Collection", "removeIf(Ljava/util/function/Predicate;)Z") +
@@ -278,9 +283,22 @@ open class BuiltInClassesAreSerializableOnJvm(
                            "replace($objectType$objectType)$objectType",
                            "replace($objectType$objectType$objectType)Z")
 
-        private fun buildPrimitiveValueMethodsSet(): Set<String> =
+        private val BLACK_LIST_CONSTRUCTOR_SIGNATURES: Set<String> =
+                buildPrimitiveStringConstructorsSet() +
+                inJavaLang("Float", *constructors("D")) +
+                inJavaLang("String", *constructors(
+                        "[C", "[CII", "[III", "[BIILjava/lang/String;",
+                        "[BIILjava/nio/charset/Charset;",
+                        "[BLjava/lang/String;",
+                        "[BLjava/nio/charset/Charset;",
+                        "[BII", "[B",
+                        "Ljava/lang/StringBuffer;",
+                        "Ljava/lang/StringBuilder;"
+                ))
+
+        private fun buildPrimitiveStringConstructorsSet(): Set<String> =
                 JvmPrimitiveType.values().flatMapTo(LinkedHashSet()) {
-                    inJavaLang(it.wrapperFqName.shortName().asString(), "${it.javaKeywordName}Value()${it.desc}")
+                    inJavaLang(it.wrapperFqName.shortName().asString(), *constructors(stringType))
                 }
     }
 }
@@ -295,6 +313,8 @@ private val objectType = javaLang("Object").t
 
 private fun javaLang(name: String) = "java/lang/$name"
 private fun javaUtil(name: String) = "java/util/$name"
+
+private fun constructors(vararg signatures: String) = signatures.map { "<init>($it)V" }.toTypedArray()
 
 private fun inJavaLang(name: String, vararg signatures: String) = inClass(javaLang(name), *signatures)
 private fun inJavaUtil(name: String, vararg signatures: String) = inClass(javaUtil(name), *signatures)
