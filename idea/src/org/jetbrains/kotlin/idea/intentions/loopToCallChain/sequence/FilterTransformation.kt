@@ -67,6 +67,12 @@ class FilterTransformation(
      *         if (<condition>) continue
      *         ...
      *     }
+     * or
+     *
+     *     for (...) {
+     *         if (<condition>) break
+     *         ...
+     *     }
      */
     object Matcher : SequenceTransformationMatcher {
         override fun match(state: MatchingState): SequenceTransformationMatch? {
@@ -81,11 +87,24 @@ class FilterTransformation(
                 return SequenceTransformationMatch(transformation, newState)
             }
             else {
-                val continueExpression = then.blockExpressionsOrSingle().singleOrNull() as? KtContinueExpression ?: return null
-                if (continueExpression.targetLoop() != state.innerLoop) return null
-                val transformation = createFilterTransformation(state.outerLoop, state.inputVariable, state.indexVariable, condition, isInverse = true)
-                val newState = state.copy(statements = state.statements.drop(1))
-                return SequenceTransformationMatch(transformation, newState)
+                val statement = then.blockExpressionsOrSingle().singleOrNull() ?: return null
+                when (statement) {
+                    is KtContinueExpression -> {
+                        if (statement.targetLoop() != state.innerLoop) return null
+                        val transformation = createFilterTransformation(state.outerLoop, state.inputVariable, state.indexVariable, condition, isInverse = true)
+                        val newState = state.copy(statements = state.statements.drop(1))
+                        return SequenceTransformationMatch(transformation, newState)
+                    }
+
+                    is KtBreakExpression -> {
+                        if (statement.targetLoop() != state.outerLoop) return null
+                        val transformation = TakeWhileTransformation(state.outerLoop, state.inputVariable, condition.negate())
+                        val newState = state.copy(statements = state.statements.drop(1))
+                        return SequenceTransformationMatch(transformation, newState)
+                    }
+
+                    else -> return null
+                }
             }
         }
 
@@ -177,3 +196,22 @@ class FilterIndexedTransformation(
     }
 }
 
+class TakeWhileTransformation(
+        override val loop: KtForExpression,
+        val inputVariable: KtCallableDeclaration,
+        val condition: KtExpression
+) : SequenceTransformation {
+
+    //TODO: merge multiple
+
+    override val affectsIndex: Boolean
+        get() = false
+
+    override val presentation: String
+        get() = "takeWhile{}"
+
+    override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
+        val lambda = generateLambda(inputVariable, condition)
+        return chainedCallGenerator.generate("takeWhile$0:'{}'", lambda)
+    }
+}
