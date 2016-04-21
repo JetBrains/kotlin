@@ -72,65 +72,51 @@ class DoubleColonExpressionResolver(
         )
         val possiblyBareType = typeResolver.resolvePossiblyBareType(context, expression.typeReference!!)
 
-        var type: KotlinType? = null
+        if (!possiblyBareType.isBare && possiblyBareType.actualType.isError) {
+            return null
+        }
+
+        var reportError = false
+        val type: KotlinType
         if (possiblyBareType.isBare) {
-            if (!possiblyBareType.isNullable) {
-                val descriptor = possiblyBareType.bareTypeConstructor.declarationDescriptor
-                if (descriptor is ClassDescriptor) {
-                    if (KotlinBuiltIns.isNonPrimitiveArray(descriptor)) {
-                        context.trace.report(ARRAY_CLASS_LITERAL_REQUIRES_ARGUMENT.on(expression))
-                        return null
-                    }
-                    type = KotlinTypeImpl.create(
-                            Annotations.EMPTY, descriptor, false, descriptor.typeConstructor.parameters.map(TypeUtils::makeStarProjection)
-                    )
-                }
+            val descriptor = possiblyBareType.bareTypeConstructor.declarationDescriptor as? ClassDescriptor
+                             ?: error("Only classes can produce bare types: $possiblyBareType")
+            if (KotlinBuiltIns.isNonPrimitiveArray(descriptor)) {
+                context.trace.report(ARRAY_CLASS_LITERAL_REQUIRES_ARGUMENT.on(expression))
             }
+
+            type = KotlinTypeImpl.create(
+                    Annotations.EMPTY, descriptor, possiblyBareType.isNullable,
+                    descriptor.typeConstructor.parameters.map(TypeUtils::makeStarProjection)
+            )
         }
         else {
-            val actualType = possiblyBareType.actualType
-            if (actualType.isError) return null
-            if (isAllowedInClassLiteral(actualType)) {
-                type = actualType
-            }
+            type = possiblyBareType.actualType
+            reportError = !isAllowedInClassLiteral(type)
         }
 
-        if (type != null) {
-            return type
+        if (type.isMarkedNullable || reportError) {
+            context.trace.report(CLASS_LITERAL_LHS_NOT_A_CLASS.on(expression))
         }
 
-        context.trace.report(CLASS_LITERAL_LHS_NOT_A_CLASS.on(expression))
-        return null
+        return type
     }
 
-    private fun isAllowedInClassLiteral(type: KotlinType): Boolean =
-            isClassifierAvailableAtRuntime(type, false)
-
-    private fun isClassifierAvailableAtRuntime(type: KotlinType, canBeNullable: Boolean): Boolean {
-        if (type.isMarkedNullable && !canBeNullable) return false
-
+    private fun isAllowedInClassLiteral(type: KotlinType): Boolean {
         val typeConstructor = type.constructor
-        val typeDeclarationDescriptor = typeConstructor.declarationDescriptor
-        val typeIsArray = KotlinBuiltIns.isArray(type)
+        val descriptor = typeConstructor.declarationDescriptor
 
-        when (typeDeclarationDescriptor) {
+        when (descriptor) {
             is ClassDescriptor -> {
-                val parameters = typeConstructor.parameters
-                if (parameters.size != type.arguments.size) return false
-
-                val typeArgumentsIterator = type.arguments.iterator()
-                for (parameter in parameters) {
-                    if (!typeIsArray && !parameter.isReified) return false
-
-                    val typeArgument = typeArgumentsIterator.next() ?: return false
-
-                    if (typeArgument.isStarProjection) return false
-                    if (!isClassifierAvailableAtRuntime(typeArgument.type, true)) return false
+                if (KotlinBuiltIns.isNonPrimitiveArray(descriptor)) {
+                    return type.arguments.none { typeArgument ->
+                        typeArgument.isStarProjection || !isAllowedInClassLiteral(typeArgument.type)
+                    }
                 }
 
-                return true
+                return type.arguments.isEmpty()
             }
-            is TypeParameterDescriptor -> return typeDeclarationDescriptor.isReified
+            is TypeParameterDescriptor -> return descriptor.isReified
             else -> return false
         }
     }

@@ -1,19 +1,19 @@
 package
 
 public val a1: kotlin.reflect.KClass<A<*>>
-public val a2: [ERROR : Unresolved class]
-public val a3: [ERROR : Unresolved class]
-public val a4: [ERROR : Unresolved class]
+public val a2: kotlin.reflect.KClass<A<*>>
+public val a3: kotlin.reflect.KClass<A<kotlin.String>>
+public val a4: kotlin.reflect.KClass<A<out kotlin.String?>>
 public val b1: kotlin.reflect.KClass<kotlin.Int>
 public val b2: kotlin.reflect.KClass<kotlin.Nothing>
 public val i1: kotlin.reflect.KClass<A<*>.Inner<*>>
-public val i2: [ERROR : Unresolved class]
-public val i3: [ERROR : Unresolved class]
+public val i2: kotlin.reflect.KClass<A<*>.Inner<*>>
+public val i3: kotlin.reflect.KClass<A<kotlin.Int>.Inner<kotlin.CharSequence>>
 public val m1: kotlin.reflect.KClass<kotlin.collections.Map<*, *>>
-public val m2: [ERROR : Unresolved class]
+public val m2: kotlin.reflect.KClass<kotlin.collections.Map<kotlin.Int, *>>
 public val m3: kotlin.reflect.KClass<kotlin.collections.Map.Entry<*, *>>
 public val n1: kotlin.reflect.KClass<A.Nested<*>>
-public val n2: [ERROR : Unresolved class]
+public val n2: kotlin.reflect.KClass<A.Nested<*>>
 
 public final class A</*0*/ T> {
     public constructor A</*0*/ T>()
