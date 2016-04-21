@@ -55,6 +55,12 @@ public class AndroidBoxTestGenerated extends AbstractAndroidBoxTest {
             doCompileAgainstAndroidSdkTest(fileName);
         }
 
+        @TestMetadata("fragmentNoGetView")
+        public void testFragmentNoGetView() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/fragmentNoGetView/");
+            doCompileAgainstAndroidSdkTest(fileName);
+        }
+
         @TestMetadata("manyWidgets")
         public void testManyWidgets() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/manyWidgets/");
@@ -103,6 +109,12 @@ public class AndroidBoxTestGenerated extends AbstractAndroidBoxTest {
         @TestMetadata("fragment")
         public void testFragment() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/fragment/");
+            doFakeInvocationTest(fileName);
+        }
+
+        @TestMetadata("fragmentNoGetView")
+        public void testFragmentNoGetView() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/fragmentNoGetView/");
             doFakeInvocationTest(fileName);
         }
 
