@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 class KotlinDebuggerCaches(private val project: Project) {
 
@@ -54,14 +55,16 @@ class KotlinDebuggerCaches(private val project: Project) {
 
     private val cachedClassNames = CachedValuesManager.getManager(project).createCachedValue(
             {
-                CachedValueProvider.Result<HashMap<PsiElement, List<String>>>(
-                        hashMapOf(), PsiModificationTracker.MODIFICATION_COUNT)
+                CachedValueProvider.Result<MutableMap<PsiElement, List<String>>>(
+                        ConcurrentHashMap<PsiElement, List<String>>(),
+                        PsiModificationTracker.MODIFICATION_COUNT)
             }, false)
 
     private val cachedTypeMappers = CachedValuesManager.getManager(project).createCachedValue(
             {
-                CachedValueProvider.Result<HashMap<PsiElement, KotlinTypeMapper>>(
-                        hashMapOf(), PsiModificationTracker.MODIFICATION_COUNT)
+                CachedValueProvider.Result<MutableMap<PsiElement, KotlinTypeMapper>>(
+                        ConcurrentHashMap<PsiElement, KotlinTypeMapper>(),
+                        PsiModificationTracker.MODIFICATION_COUNT)
             }, false)
 
     companion object {
@@ -77,67 +80,75 @@ class KotlinDebuggerCaches(private val project: Project) {
         ): CompiledDataDescriptor {
             val evaluateExpressionCache = getInstance(codeFragment.project)
 
-            return synchronized<CompiledDataDescriptor>(evaluateExpressionCache.cachedCompiledData) {
+            val text = "${codeFragment.importsToString()}\n${codeFragment.text}"
+
+            val cached = synchronized<Collection<CompiledDataDescriptor>>(evaluateExpressionCache.cachedCompiledData) {
                 val cache = evaluateExpressionCache.cachedCompiledData.value!!
-                val text = "${codeFragment.importsToString()}\n${codeFragment.text}"
 
-                val answer = cache[text].firstOrNull {
-                    it.sourcePosition == sourcePosition || evaluateExpressionCache.canBeEvaluatedInThisContext(it, evaluationContext)
-                }
-                if (answer != null) return@synchronized answer
-
-                val newCompiledData = create(codeFragment, sourcePosition)
-                LOG.debug("Compile bytecode for ${codeFragment.text}")
-
-                cache.putValue(text, newCompiledData)
-                return@synchronized newCompiledData
+                cache[text]
             }
+
+            val answer = cached.firstOrNull {
+                it.sourcePosition == sourcePosition || evaluateExpressionCache.canBeEvaluatedInThisContext(it, evaluationContext)
+            }
+            if (answer != null) {
+                return answer
+            }
+
+            val newCompiledData = create(codeFragment, sourcePosition)
+            LOG.debug("Compile bytecode for ${codeFragment.text}")
+
+            synchronized(evaluateExpressionCache.cachedCompiledData) {
+                evaluateExpressionCache.cachedCompiledData.value.putValue(text, newCompiledData)
+            }
+
+            return newCompiledData
         }
 
         fun <T: PsiElement> getOrComputeClassNames(psiElement: T, create: (T) -> ComputedClassNames): List<String> {
             val cache = getInstance(runReadAction { psiElement.project })
-            synchronized(cache.cachedClassNames) {
-                val classNamesCache = cache.cachedClassNames.value
 
-                val cachedValue = classNamesCache[psiElement]
-                if (cachedValue != null) return cachedValue
+            val classNamesCache = cache.cachedClassNames.value
 
-                val computedClassNames = create(psiElement)
+            val cachedValue = classNamesCache[psiElement]
+            if (cachedValue != null) return cachedValue
 
-                if (computedClassNames.shouldBeCached) {
-                    classNamesCache[psiElement] = computedClassNames.classNames
-                }
-                return computedClassNames.classNames
+            val computedClassNames = create(psiElement)
+
+            if (computedClassNames.shouldBeCached) {
+                classNamesCache[psiElement] = computedClassNames.classNames
             }
+
+            return computedClassNames.classNames
         }
 
         fun getOrCreateTypeMapper(psiElement: PsiElement): KotlinTypeMapper {
             val cache = getInstance(runReadAction { psiElement.project })
-            synchronized(cache.cachedTypeMappers) {
-                val typeMappersCache = cache.cachedTypeMappers.value
 
-                val file = runReadAction { psiElement.containingFile as KtFile }
-                val isInLibrary = LibraryUtil.findLibraryEntry(file.virtualFile, file.project) != null
+            val file = runReadAction { psiElement.containingFile as KtFile }
+            val isInLibrary = LibraryUtil.findLibraryEntry(file.virtualFile, file.project) != null
 
-                if (!isInLibrary) {
-                    // Key = file
-                    val cachedValue = typeMappersCache[file]
-                    if (cachedValue != null) return cachedValue
+            val key = if (!isInLibrary) file else psiElement
 
-                    val newValue = createTypeMapperForSourceFile(file)
-                    typeMappersCache[file] = newValue
-                    return newValue
-                }
-                else {
-                    // key = KtElement
-                    val element = getElementToCreateTypeMapperForLibraryFile(psiElement)
-                    val cachedValue = typeMappersCache[psiElement]
-                    if (cachedValue != null) return cachedValue
+            val typeMappersCache = cache.cachedTypeMappers.value
 
-                    val newValue = createTypeMapperForLibraryFile(element, file)
-                    typeMappersCache[psiElement] = newValue
-                    return newValue
-                }
+            val cachedValue = typeMappersCache[key]
+            if (cachedValue != null) return cachedValue
+
+            if (!isInLibrary) {
+                val newValue = createTypeMapperForSourceFile(file)
+
+                typeMappersCache[file] = newValue
+
+                return newValue
+            }
+            else {
+                val element = getElementToCreateTypeMapperForLibraryFile(psiElement)
+                val newValue = createTypeMapperForLibraryFile(element, file)
+
+                typeMappersCache[psiElement] = newValue
+
+                return newValue
             }
         }
 
