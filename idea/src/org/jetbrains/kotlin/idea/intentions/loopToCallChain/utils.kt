@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtPsiUtil.isOrdinaryAssignment
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
@@ -36,6 +37,8 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.utils.addToStdlib.check
+import java.util.*
 
 fun generateLambda(inputVariable: KtCallableDeclaration, expression: KtExpression): KtLambdaExpression {
     val psiFactory = KtPsiFactory(expression)
@@ -99,17 +102,38 @@ fun KtExpression.detectInitializationBeforeLoop(
     if (this !is KtNameReferenceExpression) return null
     if (getQualifiedExpressionForSelector() != null) return null
     val variable = this.mainReference.resolve() as? KtProperty ?: return null
-    val statementBeforeLoop = loop.previousStatement() //TODO: support initialization not right before the loop
 
     // do not allow any other usages of this variable inside the loop
     if (checkNoOtherUsagesInLoop && variable.countUsages(loop) > 1) return null
 
-    if (statementBeforeLoop == variable) {
+    val unwrapped = loop.unwrapIfLabeled()
+    if (unwrapped.parent !is KtBlockExpression) return null
+    val prevStatements = unwrapped
+            .siblings(forward = false, withItself = false)
+            .filterIsInstance<KtExpression>()
+
+    val statementsBetween = ArrayList<KtExpression>()
+    for (statement in prevStatements) {
+        val variableInitialization = extractVariableInitialization(statement, variable)
+        if (variableInitialization != null) {
+            return variableInitialization.check {
+                statementsBetween.all { canSwapExecutionOrder(variableInitialization.initializationStatement, it) }
+            }
+        }
+
+        statementsBetween.add(statement)
+    }
+
+    return null
+}
+
+private fun extractVariableInitialization(statement: KtExpression, variable: KtProperty): VariableInitialization? {
+    if (statement == variable) {
         val initializer = variable.initializer ?: return null
         return VariableInitialization(variable, variable, initializer)
     }
 
-    val assignment = statementBeforeLoop?.asAssignment() ?: return null
+    val assignment = statement.asAssignment() ?: return null
     if (!assignment.left.isVariableReference(variable)) return null
 
     val initializer = assignment.right ?: return null
@@ -196,4 +220,40 @@ fun KtExpression.hasNoSideEffect(): Boolean {
     val classDescriptor = constructorDescriptor.containingDeclaration
     val classFqName = classDescriptor.importableFqName?.asString()
     return classFqName in NO_SIDE_EFFECT_STANDARD_CLASSES
+}
+
+//TODO: we need more correctness checks (if variable is non-local or is local but can be changed by some local functions)
+fun canSwapExecutionOrder(expressionBefore: KtExpression, expressionAfter: KtExpression): Boolean {
+    assert(expressionBefore.isPhysical)
+    assert(expressionAfter.isPhysical)
+
+    if (expressionBefore is KtDeclaration) {
+        if (expressionBefore !is KtProperty) return false // local function, class or destructuring declaration - do not bother to handle these rare cases
+        if (expressionBefore.hasUsages(expressionAfter)) return false
+        return canSwapExecutionOrder(expressionBefore.initializer ?: return true, expressionAfter)
+    }
+
+    if (expressionAfter is KtDeclaration) {
+        if (expressionAfter !is KtProperty) return false // local function, class or destructuring declaration - do not bother to handle these rare cases
+        return canSwapExecutionOrder(expressionBefore, expressionAfter.initializer ?: return true)
+    }
+
+    if (expressionBefore is KtBinaryExpression && isOrdinaryAssignment(expressionBefore)) {
+        val leftName = expressionBefore.left as? KtSimpleNameExpression ?: return false
+        val target = leftName.mainReference.resolve() as? KtProperty ?: return false
+        if (target.hasUsages(expressionAfter)) return false
+        return canSwapExecutionOrder(expressionBefore.right ?: return true, expressionAfter)
+    }
+
+    if (expressionAfter is KtBinaryExpression && isOrdinaryAssignment(expressionAfter)) {
+        val leftName = expressionAfter.left as? KtSimpleNameExpression ?: return false
+        val target = leftName.mainReference.resolve() as? KtProperty ?: return false
+        if (target.hasUsages(expressionBefore)) return false
+        return canSwapExecutionOrder(expressionBefore, expressionAfter.right ?: return true)
+    }
+
+    if (expressionBefore.isConstant() || expressionAfter.isConstant()) return true
+
+    //TODO: more cases
+    return false
 }

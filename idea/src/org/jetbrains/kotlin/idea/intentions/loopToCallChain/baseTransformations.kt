@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.intentions.loopToCallChain
 
 import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -40,19 +41,34 @@ abstract class AssignToVariableResultTransformation(
 
     override val commentSavingRange = PsiChildRange(initialization.initializationStatement, loop.unwrapIfLabeled())
 
+    //TODO: does not work in case of move
     private val commentRestoringRange = commentSavingRange.withoutLastStatement()
 
     override fun commentRestoringRange(convertLoopResult: KtExpression) = commentRestoringRange
 
     override fun convertLoop(resultCallChain: KtExpression): KtExpression {
         initialization.initializer.replace(resultCallChain)
+
+        val previousStatement = loop.unwrapIfLabeled().previousStatement()
+
         loop.deleteWithLabels()
 
         if (initialization.variable.isVar && !initialization.variable.hasWriteUsages()) { // change variable to 'val' if possible
             initialization.variable.valOrVarKeyword.replace(KtPsiFactory(initialization.variable).createValKeyword())
         }
 
-        return initialization.initializationStatement
+        // move initializer to the place where the loop was if needed
+        var initializationStatement = initialization.initializationStatement
+        if (initializationStatement != previousStatement) {
+            val block = initializationStatement.parent
+            assert(block is KtBlockExpression)
+            val movedInitializationStatement = block.addAfter(initializationStatement, previousStatement) as KtExpression
+            block.addAfter(KtPsiFactory(block).createNewLine(), previousStatement)
+            initializationStatement.delete()
+            initializationStatement = movedInitializationStatement
+        }
+
+        return initializationStatement
     }
 }
 
