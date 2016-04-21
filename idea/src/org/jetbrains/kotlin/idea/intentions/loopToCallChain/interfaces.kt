@@ -84,12 +84,13 @@ interface ResultTransformation : Transformation {
 data class MatchingState(
         val outerLoop: KtForExpression,
         val innerLoop: KtForExpression,
-        val statements: Collection<KtExpression>,
+        val statements: List<KtExpression>,
         val inputVariable: KtCallableDeclaration,
         /**
          * Matchers can assume that indexVariable is null if it's not used in the rest of the loop
          */
-        val indexVariable: KtCallableDeclaration?
+        val indexVariable: KtCallableDeclaration?,
+        val initializationStatementsToDelete: Collection<KtExpression> = emptyList()
 )
 
 /**
@@ -103,10 +104,6 @@ class SequenceTransformationMatch(
         val transformations: List<SequenceTransformation>,
         val newState: MatchingState
 ) {
-    init {
-        assert(transformations.isNotEmpty())
-    }
-
     constructor(transformation: SequenceTransformation, newState: MatchingState) : this(listOf(transformation), newState)
 }
 

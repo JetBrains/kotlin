@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.intentions.loopToCallChain.result.FindAndAssign
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.result.FindAndReturnTransformation
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.FilterTransformation
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.FlatMapTransformation
+import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.IntroduceIndexMatcher
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.MapTransformation
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.idea.util.getResolutionScope
@@ -42,6 +43,7 @@ import java.util.*
 
 object MatcherRegistrar {
     val sequenceMatchers: Collection<SequenceTransformationMatcher> = listOf(
+            IntroduceIndexMatcher,
             FilterTransformation.Matcher,
             MapTransformation.Matcher,
             FlatMapTransformation.Matcher
@@ -57,7 +59,8 @@ object MatcherRegistrar {
 
 data class MatchResult(
         val sequenceExpression: KtExpression,
-        val transformationMatch: ResultTransformationMatch
+        val transformationMatch: ResultTransformationMatch,
+        val initializationStatementsToDelete: Collection<KtExpression>
 )
 
 fun match(loop: KtForExpression): MatchResult? {
@@ -100,7 +103,7 @@ fun match(loop: KtForExpression): MatchResult? {
                 sequenceTransformations.addAll(match.sequenceTransformations)
                 return ResultTransformationMatch(match.resultTransformation, sequenceTransformations)
                         .let { mergeTransformations(it) }
-                        .let { MatchResult(sequenceExpression, it) }
+                        .let { MatchResult(sequenceExpression, it, state.initializationStatementsToDelete) }
                         .check { checkSmartCastsPreserved(loop, it) }
             }
         }
@@ -141,6 +144,9 @@ fun convertLoop(loop: KtForExpression, matchResult: MatchResult): KtExpression {
 
     val result = resultTransformation.convertLoop(callChain)
 
+    //TODO: preserve comments?
+    matchResult.initializationStatementsToDelete.forEach { it.delete() }
+
     commentSaver.restore(resultTransformation.commentRestoringRange(result))
 
     return result
@@ -154,7 +160,6 @@ data class LoopData(
 private fun extractLoopData(loop: KtForExpression): LoopData? {
     val loopRange = loop.loopRange ?: return null
 
-    //TODO: recognize other patterns for loop with index
     val destructuringParameter = loop.destructuringParameter
     if (destructuringParameter != null && destructuringParameter.entries.size == 2) {
         val qualifiedExpression = loopRange as? KtDotQualifiedExpression

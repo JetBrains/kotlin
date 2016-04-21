@@ -1,0 +1,8 @@
+// WITH_RUNTIME
+// INTENTION_TEXT: "Replace with '+= ...filterNot{}.mapIndexed{}'"
+fun foo(list: List<String>, target: MutableCollection<Int>) {
+    <caret>target += list
+            .flatMap { it.indices }
+            .filterNot { it == 10 }
+            .mapIndexed { i, j -> i + j }
+}

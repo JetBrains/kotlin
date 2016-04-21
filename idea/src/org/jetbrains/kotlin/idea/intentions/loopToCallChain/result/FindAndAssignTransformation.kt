@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.idea.intentions.loopToCallChain.result
 
-import com.intellij.psi.search.LocalSearchScope
-import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.*
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.FilterTransformation
@@ -80,7 +78,7 @@ class FindAndAssignTransformation(
 
                 2 -> {
                     val breakExpression = state.statements.last() as? KtBreakExpression ?: return null
-                    if (!breakExpression.isBreakOrContinueOfLoop(state.outerLoop)) return null
+                    if (breakExpression.targetLoop() != state.outerLoop) return null
                 }
 
                 else -> return null
@@ -92,10 +90,9 @@ class FindAndAssignTransformation(
             val left = binaryExpression.left ?: return null
             val right = binaryExpression.right ?: return null
 
-            val initialization = left.detectInitializationBeforeLoop(state.outerLoop) ?: return null
+            val initialization = left.detectInitializationBeforeLoop(state.outerLoop, checkNoOtherUsagesInLoop = true) ?: return null
 
-            val usageCountInLoop = ReferencesSearch.search(initialization.variable, LocalSearchScope(state.outerLoop)).count()
-            if (usageCountInLoop != 1) return null // this should be the only usage of this variable inside the loop
+            if (initialization.variable.countUsages(state.outerLoop) != 1) return null // this should be the only usage of this variable inside the loop
 
             // we do not try to convert anything if the initializer is not compile-time constant because of possible side-effects
             val initializerIsConstant = ConstantExpressionEvaluator.getConstant(

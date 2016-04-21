@@ -81,7 +81,7 @@ class FilterTransformation(
             }
             else {
                 val continueExpression = then.blockExpressionsOrSingle().singleOrNull() as? KtContinueExpression ?: return null
-                if (!continueExpression.isBreakOrContinueOfLoop(state.innerLoop)) return null
+                if (continueExpression.targetLoop() != state.innerLoop) return null
                 val transformation = createFilterTransformation(state.outerLoop, state.inputVariable, state.indexVariable, condition, isInverse = true)
                 val newState = state.copy(statements = state.statements.drop(1))
                 return SequenceTransformationMatch(transformation, newState)
