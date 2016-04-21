@@ -20,9 +20,12 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.contains
@@ -66,35 +69,36 @@ private class AdaptiveClassifierNamePolicy(private val ambiguousNames: List<Name
 
 private val ADAPTIVE_CLASSIFIER_POLICY_KEY = object : RenderingContext.Key<ClassifierNamePolicy>("ADAPTIVE_CLASSIFIER_POLICY") {
     override fun compute(objectsToRender: Collection<Any?>): ClassifierNamePolicy {
-        val ambiguousNames = collectClassifiers(objectsToRender).groupBy { it.name }.filter { it.value.size > 1 }.map { it.key }
+        val ambiguousNames =
+                collectClassifiersFqNames(objectsToRender).groupBy { it.shortNameOrSpecial() }.filter { it.value.size > 1 }.map { it.key }
         return AdaptiveClassifierNamePolicy(ambiguousNames)
     }
 }
 
-private fun collectClassifiers(objectsToRender: Collection<Any?>): Set<ClassifierDescriptor> = LinkedHashSet<ClassifierDescriptor>().apply {
-    collectMentionedClassifiers(objectsToRender, this)
+private fun collectClassifiersFqNames(objectsToRender: Collection<Any?>): Set<FqNameUnsafe> = LinkedHashSet<FqNameUnsafe>().apply {
+    collectMentionedClassifiersFqNames(objectsToRender, this)
 }
 
-private fun collectMentionedClassifiers(contextObjects: Collection<Any?>, result: MutableSet<ClassifierDescriptor>) {
+private fun collectMentionedClassifiersFqNames(contextObjects: Collection<Any?>, result: MutableSet<FqNameUnsafe>) {
     contextObjects.filterIsInstance<KotlinType>().forEach { diagnosticType ->
         diagnosticType.contains {
             innerType ->
-            innerType.constructor.declarationDescriptor?.let { result.add(it) }
+            innerType.constructor.declarationDescriptor?.let { result.add(it.fqNameUnsafe) }
             false
         }
     }
 
     contextObjects.filterIsInstance<Collection<*>>().forEach {
-        collectMentionedClassifiers(it, result)
+        collectMentionedClassifiersFqNames(it, result)
     }
     contextObjects.filterIsInstance<ClassifierDescriptor>().forEach {
-        result.add(it)
+        result.add(it.fqNameUnsafe)
     }
     contextObjects.filterIsInstance<TypeParameterDescriptor>().forEach {
-        collectMentionedClassifiers(it.upperBounds, result)
+        collectMentionedClassifiersFqNames(it.upperBounds, result)
     }
     contextObjects.filterIsInstance<CallableDescriptor>().forEach {
-        collectMentionedClassifiers(listOf(
+        collectMentionedClassifiersFqNames(listOf(
                 it.typeParameters,
                 it.returnType,
                 it.valueParameters,
