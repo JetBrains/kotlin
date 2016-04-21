@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.*
-import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.FilterTransformation
-import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.FlatMapTransformation
-import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.MapIndexedTransformation
-import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.MapTransformation
+import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.*
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -41,6 +38,10 @@ class AddToCollectionTransformation(
         return when (previousTransformation) {
             is FilterTransformation -> {
                 FilterToTransformation.create(loop, previousTransformation.inputVariable, targetCollection, previousTransformation.effectiveCondition()) //TODO: use filterNotTo?
+            }
+
+            is FilterIndexedTransformation -> {
+                FilterIndexedToTransformation.create(loop, previousTransformation.inputVariable, previousTransformation.indexVariable, targetCollection, previousTransformation.condition)
             }
 
             is MapTransformation -> {
@@ -211,6 +212,42 @@ class FilterToTransformation private constructor(
             }
             else {
                 return FilterToTransformation(loop, inputVariable, targetCollection, filter)
+            }
+        }
+    }
+}
+
+class FilterIndexedToTransformation private constructor(
+        loop: KtForExpression,
+        private val inputVariable: KtCallableDeclaration,
+        private val indexVariable: KtCallableDeclaration,
+        private val targetCollection: KtExpression,
+        private val filter: KtExpression
+) : ReplaceLoopResultTransformation(loop) {
+
+    override val presentation: String
+        get() = "filterIndexedTo(){}"
+
+    override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
+        val lambda = generateLambda(filter, indexVariable, inputVariable)
+        return chainedCallGenerator.generate("filterIndexedTo($0) $1:'{}'", targetCollection, lambda)
+    }
+
+    companion object {
+        fun create(
+                loop: KtForExpression,
+                inputVariable: KtCallableDeclaration,
+                indexVariable: KtCallableDeclaration,
+                targetCollection: KtExpression,
+                filter: KtExpression
+        ): ResultTransformation {
+            val initialization = targetCollection.detectInitializationBeforeLoop(loop, checkNoOtherUsagesInLoop = true)
+            if (initialization != null && initialization.initializer.hasNoSideEffect()) {
+                val transformation = FilterIndexedToTransformation(loop, inputVariable, indexVariable, initialization.initializer, filter)
+                return AssignToVariableResultTransformation.createDelegated(transformation, initialization)
+            }
+            else {
+                return FilterIndexedToTransformation(loop, inputVariable, indexVariable, targetCollection, filter)
             }
         }
     }

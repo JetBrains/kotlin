@@ -1,5 +1,5 @@
 // WITH_RUNTIME
-// INTENTION_TEXT: "Replace with '+= filterIndexed{}.filterIndexed{}'"
+// INTENTION_TEXT: "Replace with 'filterIndexed{}.filterIndexedTo(){}'"
 fun foo(list: List<String>, target: MutableCollection<String>) {
     var j = 0
     <caret>for ((i, s) in list.withIndex()) {
