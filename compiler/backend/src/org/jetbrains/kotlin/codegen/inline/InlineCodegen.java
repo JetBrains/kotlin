@@ -901,7 +901,7 @@ public class InlineCodegen extends CallGenerator {
     }
 
     public static SourceMapper createNestedSourceMapper(@NotNull SMAPAndMethodNode nodeAndSmap, @NotNull SourceMapper parent) {
-        return new NestedSourceMapper(parent, nodeAndSmap.getRanges(), nodeAndSmap.getClassSMAP().getSourceInfo());
+        return new NestedSourceMapper(parent, nodeAndSmap.getSortedRanges(), nodeAndSmap.getClassSMAP().getSourceInfo());
     }
 
     static void reportIncrementalInfo(

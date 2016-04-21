@@ -96,7 +96,8 @@ open class NestedSourceMapper(
         if (mappedLineNumber > 0) {
             return mappedLineNumber
         } else {
-            val rangeForMapping = if (lastVisitedRange?.contains(lineNumber) ?: false) lastVisitedRange!! else findMappingIfExists(lineNumber)!!
+            val rangeForMapping = (if (lastVisitedRange?.contains(lineNumber) ?: false) lastVisitedRange!! else findMappingIfExists(lineNumber))
+                                  ?: error("Can't find range to map line $lineNumber in ${sourceInfo.source}:${sourceInfo.pathOrCleanFQN}")
             val sourceLineNumber = rangeForMapping.mapDestToSource(lineNumber)
             val newLineNumber = parent.mapLineNumber(sourceLineNumber, rangeForMapping.parent!!.name, rangeForMapping.parent!!.path)
             if (newLineNumber > 0) {
@@ -118,10 +119,10 @@ open class NestedSourceMapper(
 
 open class InlineLambdaSourceMapper(
         parent: SourceMapper, smap: SMAPAndMethodNode
-) : NestedSourceMapper(parent, smap.ranges, smap.classSMAP.sourceInfo) {
+) : NestedSourceMapper(parent, smap.sortedRanges, smap.classSMAP.sourceInfo) {
 
     init {
-        assert(smap.ranges.isNotEmpty()) {
+        assert(ranges.isNotEmpty()) {
             "Mapping ranges should be presented in inline lambda: ${smap.node}"
         }
     }

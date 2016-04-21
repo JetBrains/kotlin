@@ -23,7 +23,7 @@ import java.util.*
 
 //TODO comment
 class SMAPAndMethodNode(val node: MethodNode, val classSMAP: SMAP) {
-    val ranges = createLineNumberSequence(node, classSMAP).map { it.mapper }.distinct().toList()
+    val sortedRanges = createLineNumberSequence(node, classSMAP).map { it.mapper }.distinct().toList().sortedWith(RangeMapping.Comparator)
 
     fun copyWithNewNode(newMethodNode: MethodNode) = SMAPAndMethodNode(newMethodNode, classSMAP)
 }
