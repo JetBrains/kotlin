@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.io.Serializable
 import java.util.*
 
-open class BuiltInClassesAreSerializableOnJvm(
+open class JvmBuiltInsAdditionalClassPartsProvider(
         private val moduleDescriptor: ModuleDescriptor,
         deferredOwnerModuleDescriptor: () -> ModuleDescriptor
 ) : AdditionalClassPartsProvider {

@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionFqnNameIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelPropertyFqnNameIndex
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.load.kotlin.BuiltInClassesAreSerializableOnJvm
+import org.jetbrains.kotlin.load.kotlin.JvmBuiltInsAdditionalClassPartsProvider
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -125,7 +125,7 @@ object ByDescriptorIndexer : DecompiledTextIndexer<String> {
             if (descriptor !is ClassDescriptor) return null
 
             val classFqName = descriptor.fqNameSafe
-            if (BuiltInClassesAreSerializableOnJvm.isSerializableInJava(classFqName)) {
+            if (JvmBuiltInsAdditionalClassPartsProvider.isSerializableInJava(classFqName)) {
                 val builtInDescriptor = DefaultBuiltIns.Instance.builtInsModule.resolveTopLevelClass(classFqName, NoLookupLocation.FROM_IDE)
                 return builtInDescriptor?.let { file.getDeclaration(this, it.toStringKey()) }
             }

@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.platform
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.load.kotlin.BuiltInClassesAreSerializableOnJvm
+import org.jetbrains.kotlin.load.kotlin.JvmBuiltInsAdditionalClassPartsProvider
 import org.jetbrains.kotlin.serialization.deserialization.AdditionalClassPartsProvider
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.sure
@@ -33,7 +33,7 @@ class JvmBuiltIns(storageManager: StorageManager) : KotlinBuiltIns(storageManage
     }
 
     override fun getAdditionalClassPartsProvider(): AdditionalClassPartsProvider {
-        return BuiltInClassesAreSerializableOnJvm(builtInsModule, {
+        return JvmBuiltInsAdditionalClassPartsProvider(builtInsModule, {
             ownerModuleDescriptor.sure { "JvmBuiltins has not been initialized properly" }
         })
     }
