@@ -365,9 +365,9 @@ public class CleanupDetector extends Detector implements UastScanner {
         //    getFragmentManager().beginTransaction().addToBackStack("test")
         //            .disallowAddToBackStack().hide(mFragment2).setBreadCrumbShortTitle("test")
         //            .show(mFragment2).setCustomAnimations(0, 0).commit();
-        List<UExpression> chains = UastUtils.getQualifiedChains(node);
-        if (chains.size() > 0) {
-            UExpression lastExpression = chains.get(chains.size() - 1);
+        List<UExpression> chain = UastUtils.getQualifiedChain(node);
+        if (chain.size() > 0) {
+            UExpression lastExpression = chain.get(chain.size() - 1);
             if (lastExpression instanceof UCallExpression) {
                 UCallExpression methodInvocation = (UCallExpression) lastExpression;
                 if (isTransactionCommitMethodCall(context, methodInvocation)
@@ -418,7 +418,7 @@ public class CleanupDetector extends Detector implements UastScanner {
             return null;
         }
 
-        UQualifiedExpression topMostQualified = UastUtils.findTopMostQualifiedExpression(((UExpression) expression));
+        UQualifiedExpression topMostQualified = UastUtils.findOutermostQualifiedExpression(((UExpression) expression));
         if (topMostQualified == null) {
             return null;
         }

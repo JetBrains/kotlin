@@ -140,6 +140,12 @@ fun UClass.getAllDeclarations(context: UastContext): List<UDeclaration> = mutabl
     }
 }
 
+/**
+ * Get all functions in class (including supertypes).
+ *
+ * @param context the Uast context
+ * @return the list of functions for the receiver class and its supertypes
+ */
 fun UClass.getAllFunctions(context: UastContext) = getAllDeclarations(context).filterIsInstance<UFunction>()
 
 tailrec fun UQualifiedExpression.getCallElementFromQualified(): UCallExpression? {
@@ -151,22 +157,19 @@ tailrec fun UQualifiedExpression.getCallElementFromQualified(): UCallExpression?
     }
 }
 
-fun UCallExpression.getQualifiedCallElement(): UExpression {
-    fun findParent(parent: UExpression?, current: UExpression): UExpression? = when (parent) {
-        is UQualifiedExpression -> {
-            if (parent.selector == current)
-                findParent(parent.parent as? UExpression, parent) ?: parent
-            else
-                current
-        }
-        else -> null
-    }
-
-    return findParent(parent as? UExpression, this) ?: this
-}
-
+/**
+ * Get the nearest parent of the type [T].
+ *
+ * @return the nearest parent of type [T], or null if the parent with such type was not found.
+ */
 inline fun <reified T: UElement> UElement.getParentOfType(): T? = getParentOfType(T::class.java)
 
+/**
+ * Get the nearest parent of the type [T].
+ *
+ * @param strict if false, return the received element if it's type is [T], do not check the received element overwise.
+ * @return the nearest parent of type [T], or null if the parent with such type was not found.
+ */
 @JvmOverloads
 fun <T: UElement> UElement.getParentOfType(clazz: Class<T>, strict: Boolean = true): T? {
     tailrec fun findParent(element: UElement?): UElement? {
@@ -179,6 +182,35 @@ fun <T: UElement> UElement.getParentOfType(clazz: Class<T>, strict: Boolean = tr
 
     @Suppress("UNCHECKED_CAST")
     return findParent(if (!strict) this else parent) as? T
+}
+
+/**
+ * Get the topmost parent qualified expression for the call expression.
+ *
+ * Example 1:
+ *  Code: variable.call(args)
+ *  Call element: E = call(args)
+ *  Qualified call element: Q = [getQualifiedCallElement](E) = variable.call(args)
+ *
+ * Example 2:
+ *  Code: call(args)
+ *  Call element: E = call(args)
+ *  Qualified call element: Q = [getQualifiedCallElement](E) = call(args) (no qualifier)
+ *
+ *  @return containing qualified expression if the call is a child of the qualified expression, call element otherwise.
+ */
+fun UCallExpression.getQualifiedCallElement(): UExpression {
+    fun findParent(current: UExpression?, previous: UExpression): UExpression? = when (current) {
+        is UQualifiedExpression -> {
+            if (current.selector == previous)
+                findParent(current.parent as? UExpression, current) ?: current
+            else
+                previous
+        }
+        else -> null
+    }
+
+    return findParent(parent as? UExpression, this) ?: this
 }
 
 fun <T> UClass.findStaticMemberOfType(name: String, type: Class<out T>): T? {
@@ -198,6 +230,12 @@ fun <T> UClass.findStaticMemberOfType(name: String, type: Class<out T>): T? {
 }
 
 fun UExpression.asQualifiedIdentifiers(): List<String>? {
+    if (this is USimpleReferenceExpression) {
+        return listOf(this.identifier)
+    } else if (this !is UQualifiedExpression) {
+        return null
+    }
+
     var error = false
     val list = mutableListOf<String>()
     fun addIdentifiers(expr: UQualifiedExpression) {
@@ -213,20 +251,29 @@ fun UExpression.asQualifiedIdentifiers(): List<String>? {
         }
         list += selector.identifier
     }
-    when (this) {
-        is UQualifiedExpression -> addIdentifiers(this)
-        is USimpleReferenceExpression -> list += identifier
-        else -> return null
-    }
+
+    addIdentifiers(this)
     return if (error) null else list
 }
 
+/**
+ * Checks if the received expression is a qualified chain of identifiers, and the chain is [fqName].
+ *
+ * @param fqName the chain part to check against. Sequence of identifiers, separated by dot ('.'). Example: "com.example".
+ * @return true, if the received expression is a qualified chain of identifiers, and the chain is [fqName].
+ */
 fun UExpression.matchesQualified(fqName: String): Boolean {
     val identifiers = this.asQualifiedIdentifiers() ?: return false
     val passedIdentifiers = fqName.split('.')
     return identifiers == passedIdentifiers
 }
 
+/**
+ * Checks if the received expression is a qualified chain of identifiers, and the leading part of such chain is [fqName].
+ *
+ * @param fqName the chain part to check against. Sequence of identifiers, separated by dot ('.'). Example: "com.example".
+ * @return true, if the received expression is a qualified chain of identifiers, and the leading part of such chain is [fqName].
+ */
 fun UExpression.startsWithQualified(fqName: String): Boolean {
     val identifiers = this.asQualifiedIdentifiers() ?: return false
     val passedIdentifiers = fqName.trim('.').split('.')
@@ -237,6 +284,12 @@ fun UExpression.startsWithQualified(fqName: String): Boolean {
     return true
 }
 
+/**
+ * Checks if the received expression is a qualified chain of identifiers, and the trailing part of such chain is [fqName].
+ *
+ * @param fqName the chain part to check against. Sequence of identifiers, separated by dot ('.'). Example: "com.example".
+ * @return true, if the received expression is a qualified chain of identifiers, and the trailing part of such chain is [fqName].
+ */
 fun UExpression.endsWithQualified(fqName: String): Boolean {
     val identifiers = this.asQualifiedIdentifiers()?.asReversed() ?: return false
     val passedIdentifiers = fqName.trim('.').split('.').asReversed()
@@ -247,15 +300,31 @@ fun UExpression.endsWithQualified(fqName: String): Boolean {
     return true
 }
 
-fun UExpression.findTopMostQualifiedExpression(): UQualifiedExpression? {
+/**
+ * Return the outermost qualified expression.
+ *
+ * @return the outermost qualified expression,
+ *  this element if the parent expression is not a qualified expression,
+ *  or null if the element is not a qualified expression.
+ */
+fun UExpression.findOutermostQualifiedExpression(): UQualifiedExpression? {
     val parent = this.parent
     return when (parent) {
-        is UQualifiedExpression -> parent.findTopMostQualifiedExpression()
+        is UQualifiedExpression -> parent.findOutermostQualifiedExpression()
         else -> if (this is UQualifiedExpression) this else null
     }
 }
 
-fun UExpression.getQualifiedChains(): List<UExpression> {
+/**
+ * Return the list of qualified expressions.
+ *
+ * Example:
+ *   Code: obj.call(param).anotherCall(param2).getter
+ *   Qualified chain: [obj, call(param), anotherCall(param2), getter]
+ *
+ * @return list of qualified expressions, or the empty list if the received expression is not a qualified expression.
+ */
+fun UExpression.getQualifiedChain(): List<UExpression> {
     fun collect(expr: UQualifiedExpression, chains: MutableList<UExpression>) {
         val receiver = expr.receiver
         if (receiver is UQualifiedExpression) {
@@ -272,7 +341,7 @@ fun UExpression.getQualifiedChains(): List<UExpression> {
         }
     }
 
-    val qualifiedExpression = this.findTopMostQualifiedExpression() ?: return emptyList()
+    val qualifiedExpression = this.findOutermostQualifiedExpression() ?: return emptyList()
     val chains = mutableListOf<UExpression>()
     collect(qualifiedExpression, chains)
     return chains

@@ -14,16 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.uast.kinds
+package org.jetbrains.kotlin.uast.kinds
 
-open class UastVariableInitialierKind(val name: String) {
-    class Expression(name: String) : UastVariableInitialierKind(name)
+import org.jetbrains.uast.kinds.UastVariableInitialierKind
 
-    companion object {
-        @JvmField
-        val EXPRESSION = Expression("expression")
-
-        @JvmField
-        val NO_INITIALIZER = UastVariableInitialierKind("no_initializer")
-    }
+object KotlinVariableInitializerKinds {
+    @JvmField
+    val DELEGATION = UastVariableInitialierKind("delegation")
 }

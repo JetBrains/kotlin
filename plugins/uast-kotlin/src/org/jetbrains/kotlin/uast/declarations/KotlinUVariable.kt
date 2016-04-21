@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.uast.kinds.KotlinVariableInitializerKinds
 import org.jetbrains.uast.*
 import org.jetbrains.uast.kinds.UastVariableInitialierKind
 import org.jetbrains.uast.psi.PsiElementBacked
@@ -42,9 +43,9 @@ open class KotlinUVariable(
 
     override val initializerKind by lz {
         if ((psi as? KtProperty)?.delegateExpression != null)
-            UastVariableInitialierKind.DELEGATION
+            KotlinVariableInitializerKinds.DELEGATION
         else if (psi.initializer != null)
-            UastVariableInitialierKind.SIMPLE
+            UastVariableInitialierKind.EXPRESSION
         else
             UastVariableInitialierKind.NO_INITIALIZER
     }
@@ -148,7 +149,10 @@ class KotlinDestructuringUVariable(
     override val initializer by lz { KotlinConverter.convertOrEmpty(psi.initializer, this) }
 
     override val initializerKind: UastVariableInitialierKind
-        get() = UastVariableInitialierKind.NO_INITIALIZER
+        get() = if (initializer != null)
+            UastVariableInitialierKind.EXPRESSION
+        else
+            UastVariableInitialierKind.NO_INITIALIZER
 
     override val kind = UastVariableKind.LOCAL_VARIABLE
     override val type: UType
@@ -174,7 +178,10 @@ class KotlinParameterUVariable(
     override val initializer by lz { KotlinConverter.convert(psi.defaultValue, this) as? UExpression }
 
     override val initializerKind: UastVariableInitialierKind
-        get() = UastVariableInitialierKind.NO_INITIALIZER
+        get() = if (initializer != null)
+            UastVariableInitialierKind.EXPRESSION
+        else
+            UastVariableInitialierKind.NO_INITIALIZER
 
     override val kind = UastVariableKind.VALUE_PARAMETER
 
