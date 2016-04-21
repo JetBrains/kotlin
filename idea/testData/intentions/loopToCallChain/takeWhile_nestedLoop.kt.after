@@ -1,0 +1,7 @@
+// WITH_RUNTIME
+// INTENTION_TEXT: "Replace with '+= flatMap{}.takeWhile{}'"
+fun foo(list: List<String>, target: MutableCollection<Int>) {
+    <caret>target += list
+            .flatMap { it.indices }
+            .takeWhile { it <= 1000 }
+}

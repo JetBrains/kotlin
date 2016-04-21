@@ -1,0 +1,5 @@
+// WITH_RUNTIME
+// INTENTION_TEXT: "Replace with '+= takeWhile{}'"
+fun foo(list: List<String>, target: MutableCollection<String>) {
+    <caret>target += list.takeWhile { !it.isEmpty() }
+}
