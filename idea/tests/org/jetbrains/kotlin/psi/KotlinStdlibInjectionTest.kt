@@ -22,42 +22,42 @@ import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescrip
 class KotlinStdlibInjectionTest : AbstractInjectionTest() {
     fun testOnRegex0() = assertInjectionPresent(
             """
-            |val test1 = kotlin.text.Regex("<caret>some")
+            val test1 = kotlin.text.Regex("<caret>some")
             """,
             RegExpLanguage.INSTANCE.id
     )
 
     fun testOnRegex1() = assertInjectionPresent(
             """
-            |val test1 = kotlin.text.Regex("<caret>some", RegexOption.COMMENTS)
+            val test1 = kotlin.text.Regex("<caret>some", RegexOption.COMMENTS)
             """,
             RegExpLanguage.INSTANCE.id
     )
 
     fun testOnRegex2() = assertInjectionPresent(
             """
-            |val test1 = kotlin.text.Regex("<caret>some", setOf(RegexOption.COMMENTS))
+            val test1 = kotlin.text.Regex("<caret>some", setOf(RegexOption.COMMENTS))
             """,
             RegExpLanguage.INSTANCE.id
     )
 
     fun testToRegex0() = assertInjectionPresent(
             """
-            |val test = "hi<caret>".toRegex()
+            val test = "hi<caret>".toRegex()
             """,
             RegExpLanguage.INSTANCE.id
     )
 
     fun testToRegex1() = assertInjectionPresent(
             """
-            |val test = "hi<caret>".toRegex(RegexOption.CANON_EQ)
+            val test = "hi<caret>".toRegex(RegexOption.CANON_EQ)
             """,
             RegExpLanguage.INSTANCE.id
     )
 
     fun testToRegex2() = assertInjectionPresent(
             """
-            |val test = "hi<caret>".toRegex(setOf(RegexOption.LITERAL))
+            val test = "hi<caret>".toRegex(setOf(RegexOption.LITERAL))
             """,
             RegExpLanguage.INSTANCE.id
     )
