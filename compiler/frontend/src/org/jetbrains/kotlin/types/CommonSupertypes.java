@@ -88,6 +88,9 @@ public class CommonSupertypes {
         Set<FlexibleTypeFactory> factories = new LinkedHashSet<FlexibleTypeFactory>();
         for (KotlinType type : types) {
             if (FlexibleTypesKt.isFlexible(type)) {
+                if (DynamicTypesKt.isDynamic(type)) {
+                    return type;
+                }
                 hasFlexible = true;
                 Flexibility flexibility = FlexibleTypesKt.flexibility(type);
                 upper.add(flexibility.getUpperBound());

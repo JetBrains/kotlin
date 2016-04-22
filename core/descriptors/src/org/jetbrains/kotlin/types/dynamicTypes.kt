@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.types.Flexibility.SpecificityRelation
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
 open class DynamicTypesSettings {
@@ -40,8 +41,13 @@ object DynamicTypeFactory : FlexibleTypeFactory {
     override val id: String get() = "kotlin.DynamicType"
 
     override fun create(lowerBound: KotlinType, upperBound: KotlinType): KotlinType {
-        if (lowerBound == upperBound) return lowerBound
-        return Impl(lowerBound, upperBound)
+        if (KotlinTypeChecker.FLEXIBLE_UNEQUAL_TO_INFLEXIBLE.equalTypes(lowerBound, lowerBound.builtIns.nothingType) &&
+            KotlinTypeChecker.FLEXIBLE_UNEQUAL_TO_INFLEXIBLE.equalTypes(upperBound, upperBound.builtIns.nullableAnyType)) {
+            return Impl(lowerBound, upperBound)
+        }
+        else {
+            throw IllegalStateException("Illegal type range for dynamic type: $lowerBound..$upperBound")
+        }
     }
 
     private class Impl(lowerBound: KotlinType, upperBound: KotlinType) :
