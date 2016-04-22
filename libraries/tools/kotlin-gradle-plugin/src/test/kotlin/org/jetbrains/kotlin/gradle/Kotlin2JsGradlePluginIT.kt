@@ -29,7 +29,7 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
             //      into Rhino and running assertions on that. See https://github.com/abesto/kotlin/commit/120ec1bda3d95630189d4d33d0b2afb4253b5186
             //      for the (original) discussion on this.
             assertFileContains("libraryProject/build/kotlin2js/main/test-library.js", "Counter: Kotlin.createClass")
-            assertFileContains("mainProject/web/js/app.js", "var counter = new Kotlin.modules['test-library'].example.library.Counter(counterText);")
+            assertFileContains("mainProject/web/js/app.js", "var counter = new \$module\$test_library.example.library.Counter(counterText);")
         }
 
         project.build("build") {
