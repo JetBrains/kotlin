@@ -43,19 +43,12 @@ object DynamicTypeFactory : FlexibleTypeFactory {
         return Impl(lowerBound, upperBound)
     }
 
-    private class Impl(lowerBound: KotlinType, upperBound: KotlinType) : DelegatingFlexibleType(lowerBound, upperBound, DynamicTypeFactory),  Dynamicity, Specificity, NullAwareness, FlexibleTypeDelegation {
-        companion object {
-            internal val capabilityClasses = hashSetOf(
-                    Dynamicity::class.java,
-                    Specificity::class.java,
-                    NullAwareness::class.java,
-                    FlexibleTypeDelegation::class.java
-            )
-        }
+    private class Impl(lowerBound: KotlinType, upperBound: KotlinType) :
+            DelegatingFlexibleType(lowerBound, upperBound, DynamicTypeFactory), Dynamicity {
 
         override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>): T? {
             @Suppress("UNCHECKED_CAST")
-            if (capabilityClass in capabilityClasses) return this as T
+            if (capabilityClass == Dynamicity::class.java) return this as T
 
             return super.getCapability(capabilityClass)
         }
@@ -71,6 +64,6 @@ object DynamicTypeFactory : FlexibleTypeFactory {
             return createDynamicType(delegateType.builtIns)
         }
 
-        override fun computeIsNullable() = false
+        override fun isMarkedNullable() = false
     }
 }

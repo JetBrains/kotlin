@@ -294,18 +294,19 @@ class LazyJavaTypeResolver(
         }
 
         private class Impl(lowerBound: KotlinType, upperBound: KotlinType) :
-                DelegatingFlexibleType(lowerBound, upperBound, FlexibleJavaClassifierTypeFactory), CustomTypeVariable, Specificity {
+                DelegatingFlexibleType(lowerBound, upperBound, FlexibleJavaClassifierTypeFactory), CustomTypeVariable {
+
+            override val delegateType: KotlinType get() = lowerBound
 
             override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>): T? {
                 @Suppress("UNCHECKED_CAST")
-                return when (capabilityClass) {
-                    CustomTypeVariable::class.java, Specificity::class.java -> this as T
-                    else -> super.getCapability(capabilityClass)
-                }
+                if (capabilityClass == CustomTypeVariable::class.java) return this as T
+
+                return super.getCapability(capabilityClass)
             }
 
-            override val isTypeVariable: Boolean = lowerBound.getConstructor() == upperBound.getConstructor()
-                                                   && lowerBound.getConstructor().getDeclarationDescriptor() is TypeParameterDescriptor
+            override val isTypeVariable: Boolean = lowerBound.constructor == upperBound.constructor
+                                                   && lowerBound.constructor.declarationDescriptor is TypeParameterDescriptor
 
             override fun substitutionResult(replacement: KotlinType): KotlinType {
                 return if (replacement.isFlexible()) replacement
@@ -323,7 +324,7 @@ class LazyJavaTypeResolver(
                 // Int! >< Int?
                 if (otherType.isFlexible()) return Specificity.Relation.DONT_KNOW
                 // Int? >< Int!
-                if (otherType.isMarkedNullable()) return Specificity.Relation.DONT_KNOW
+                if (otherType.isMarkedNullable) return Specificity.Relation.DONT_KNOW
                 // Int! lessSpecific Int
                 return Specificity.Relation.LESS_SPECIFIC
             }

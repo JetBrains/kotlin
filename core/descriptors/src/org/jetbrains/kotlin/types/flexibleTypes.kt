@@ -87,24 +87,19 @@ fun KotlinType.upperIfFlexible(): KotlinType = if (this.isFlexible()) this.flexi
 
 interface NullAwareness : TypeCapability {
     fun makeNullableAsSpecified(nullable: Boolean): KotlinType
-    fun computeIsNullable(): Boolean
 }
 
-interface FlexibleTypeDelegation : TypeCapability {
-    val delegateType: KotlinType
-}
-
-open class DelegatingFlexibleType protected constructor(
+abstract class DelegatingFlexibleType protected constructor(
         override val lowerBound: KotlinType,
         override val upperBound: KotlinType,
         override val factory: FlexibleTypeFactory
-) : DelegatingType(), NullAwareness, Flexibility, FlexibleTypeDelegation {
+) : DelegatingType(), NullAwareness, Flexibility, Specificity {
     companion object {
         internal val capabilityClasses = hashSetOf(
                 NullAwareness::class.java,
                 Flexibility::class.java,
                 SubtypingRepresentatives::class.java,
-                FlexibleTypeDelegation::class.java
+                Specificity::class.java
         )
 
         @JvmField
@@ -131,6 +126,8 @@ open class DelegatingFlexibleType protected constructor(
         }
     }
 
+    protected abstract val delegateType: KotlinType
+
     override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>): T? {
         @Suppress("UNCHECKED_CAST")
         if (capabilityClass in capabilityClasses) return this as T
@@ -143,17 +140,10 @@ open class DelegatingFlexibleType protected constructor(
                               TypeUtils.makeNullableAsSpecified(upperBound, nullable))
     }
 
-    override fun computeIsNullable() = delegateType.isMarkedNullable
-
-    override fun isMarkedNullable(): Boolean = getCapability(NullAwareness::class.java)!!.computeIsNullable()
-
-    override val delegateType: KotlinType
-        get() {
-            runAssertions()
-            return lowerBound
-        }
-
-    override fun getDelegate() = getCapability(FlexibleTypeDelegation::class.java)!!.delegateType
+    final override fun getDelegate(): KotlinType {
+        runAssertions()
+        return delegateType
+    }
 
     override fun toString() = "('$lowerBound'..'$upperBound')"
 }
