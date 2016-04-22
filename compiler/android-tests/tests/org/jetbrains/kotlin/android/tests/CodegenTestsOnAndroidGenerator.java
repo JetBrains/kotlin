@@ -166,6 +166,8 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
         }
 
         private void writeFiles(List<KtFile> filesToCompile) {
+            if (filesToCompile.isEmpty()) return;
+
             System.out.println("Generating " + filesToCompile.size() + " files...");
             OutputFileCollection outputFiles;
             try {
