@@ -80,10 +80,7 @@ fun match(loop: KtForExpression): MatchResult? {
 
     MatchLoop@
     while (true) {
-        val block = state.statements.singleOrNull() as? KtBlockExpression
-        if (block != null) {
-            state = state.copy(statements = block.statements)
-        }
+        state = state.unwrapBlock()
 
         val inputVariableUsed = state.inputVariable.hasUsages(state.statements)
 

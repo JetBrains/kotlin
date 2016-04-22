@@ -33,6 +33,7 @@ class FindAndAssignTransformation(
 
     override fun mergeWithPrevious(previousTransformation: SequenceTransformation): ResultTransformation? {
         if (previousTransformation !is FilterTransformation) return null
+        if (previousTransformation.indexVariable != null) return null
         assert(filter == null) { "Should not happen because no 2 consecutive FilterTransformation's possible"}
         return FindAndAssignTransformation(loop, generator, initialization, previousTransformation.effectiveCondition())
     }
