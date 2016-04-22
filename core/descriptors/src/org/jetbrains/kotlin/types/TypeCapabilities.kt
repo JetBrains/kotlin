@@ -84,8 +84,3 @@ fun sameTypeConstructors(first: KotlinType, second: KotlinType): Boolean {
     return first.getCapability(typeRangeCapability)?.sameTypeConstructor(second) ?: false
            || second.getCapability(typeRangeCapability)?.sameTypeConstructor(first) ?: false
 }
-
-interface CustomSubstitutionCapability : TypeCapability {
-    val substitution: TypeSubstitution?
-    val substitutionToComposeWith: TypeSubstitution?
-}

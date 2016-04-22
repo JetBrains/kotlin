@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ abstract class AbstractLazyType(storageManager: StorageManager) : AbstractKotlin
 
     override fun getSubstitution() = computeCustomSubstitution() ?: TypeConstructorSubstitution.create(constructor, getArguments())
 
-    protected open fun computeCustomSubstitution(): TypeSubstitution? = getCapability<CustomSubstitutionCapability>()?.substitution
+    protected open fun computeCustomSubstitution(): TypeSubstitution? = getCapability<RawTypeCapability>()?.substitution
 
     private val memberScope = storageManager.createLazyValue { computeMemberScope() }
     override fun getMemberScope() = memberScope()

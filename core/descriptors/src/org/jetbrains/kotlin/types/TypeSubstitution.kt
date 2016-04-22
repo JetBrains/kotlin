@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -117,7 +117,7 @@ fun KotlinType.computeNewSubstitution(
     val newSubstitution = TypeConstructorSubstitution.create(typeConstructor, newArguments)
 
     // If previous substitution was trivial just replace it with indexed one
-    val substitutionToComposeWith = getCapability<CustomSubstitutionCapability>()?.substitutionToComposeWith ?: return newSubstitution
+    val substitutionToComposeWith = getCapability<RawTypeCapability>()?.substitutionToComposeWith ?: return newSubstitution
     val composedSubstitution = CompositeTypeSubstitution(newSubstitution, substitutionToComposeWith)
 
     return composedSubstitution

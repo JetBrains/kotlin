@@ -20,22 +20,18 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.load.java.components.TypeUsage
-import org.jetbrains.kotlin.renderer.CustomFlexibleRendering
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.*
 
-object RawTypeTag : TypeCapability
-
 object RawTypeCapabilities : TypeCapabilities {
-    private object RawSubstitutionCapability : CustomSubstitutionCapability {
+
+    private object Impl : RawTypeCapability {
         override val substitution: TypeSubstitution?
             get() = RawSubstitution
         override val substitutionToComposeWith: TypeSubstitution?
             get() = RawSubstitution
-    }
 
-    private object RawFlexibleRendering : CustomFlexibleRendering {
         private fun DescriptorRenderer.renderArguments(jetType: KotlinType) = jetType.arguments.map { renderTypeProjection(it) }
 
         private fun String.replaceArgs(newArgs: String): String {
@@ -76,9 +72,7 @@ object RawTypeCapabilities : TypeCapabilities {
     override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>): T? {
         @Suppress("UNCHECKED_CAST")
         return when(capabilityClass) {
-            CustomSubstitutionCapability::class.java -> RawSubstitutionCapability as T
-            CustomFlexibleRendering::class.java -> RawFlexibleRendering as T
-            RawTypeTag::class.java -> RawTypeTag as T
+            RawTypeCapability::class.java -> Impl as T
             else -> null
         }
     }
