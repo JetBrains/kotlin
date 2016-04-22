@@ -49,19 +49,7 @@ class AddToCollectionTransformation(
             }
 
             is MapTransformation -> {
-                MapToTransformation.create(loop, previousTransformation.inputVariable, null, targetCollection, previousTransformation.mapping, mapNotNull = false)
-            }
-
-            is MapNotNullTransformation -> {
-                MapToTransformation.create(loop, previousTransformation.inputVariable, null, targetCollection, previousTransformation.mapping, mapNotNull = true)
-            }
-
-            is MapIndexedTransformation -> {
-                MapToTransformation.create(loop, previousTransformation.inputVariable, previousTransformation.indexVariable, targetCollection, previousTransformation.mapping, mapNotNull = false)
-            }
-
-            is MapIndexedNotNullTransformation -> {
-                MapToTransformation.create(loop, previousTransformation.inputVariable, previousTransformation.indexVariable, targetCollection, previousTransformation.mapping, mapNotNull = true)
+                MapToTransformation.create(loop, previousTransformation.inputVariable, previousTransformation.indexVariable, targetCollection, previousTransformation.mapping, previousTransformation.mapNotNull)
             }
 
             is FlatMapTransformation -> {
@@ -144,7 +132,7 @@ class AddToCollectionTransformation(
                                 AssignToListTransformation(state.outerLoop, collectionInitialization)
                             }
                             else {
-                                val mapTransformation = MapTransformation(state.outerLoop, state.inputVariable, addOperationArgument)
+                                val mapTransformation = MapTransformation(state.outerLoop, state.inputVariable, null, addOperationArgument, mapNotNull = false)
                                 AssignSequenceTransformationResultTransformation(mapTransformation, collectionInitialization)
                             }
                             return ResultTransformationMatch(transformation)
@@ -176,7 +164,7 @@ class AddToCollectionTransformation(
                         return ResultTransformationMatch(assignToSetTransformation)
                     }
                     else {
-                        val mapTransformation = MapTransformation(state.outerLoop, state.inputVariable, addOperationArgument)
+                        val mapTransformation = MapTransformation(state.outerLoop, state.inputVariable, null, addOperationArgument, mapNotNull = false)
                         return ResultTransformationMatch(assignToSetTransformation, mapTransformation)
                     }
                 }
