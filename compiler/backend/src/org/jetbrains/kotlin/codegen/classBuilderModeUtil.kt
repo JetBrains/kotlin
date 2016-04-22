@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen;
+package org.jetbrains.kotlin.codegen
 
-public enum ClassBuilderMode {
-    /**
-     * Full function bodies
-     */
-    FULL,
-    /**
-     * Generating light classes: Only function signatures
-     */
-    LIGHT_CLASSES,
-    /**
-     * Function signatures + metadata (to support incremental compilation with kapt)
-     */
-    LIGHT_CLASSES_WITH_METADATA;
-}
+fun ClassBuilderMode.shouldGenerateMetadata() =
+        this == ClassBuilderMode.FULL || this == ClassBuilderMode.LIGHT_CLASSES_WITH_METADATA
