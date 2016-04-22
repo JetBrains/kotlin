@@ -24,6 +24,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Function;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.HashMap;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
@@ -63,12 +64,21 @@ import org.jetbrains.kotlin.utils.PathUtil;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 import static org.jetbrains.kotlin.cli.common.ExitCode.COMPILATION_ERROR;
 import static org.jetbrains.kotlin.cli.common.ExitCode.OK;
 import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
 
 public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
+    private static final Map<String, ModuleKind> moduleKindMap = new HashMap<String, ModuleKind>();
+
+    static {
+        moduleKindMap.put(K2JSCompilerArguments.MODULE_PLAIN, ModuleKind.PLAIN);
+        moduleKindMap.put(K2JSCompilerArguments.MODULE_COMMONJS, ModuleKind.COMMON_JS);
+        moduleKindMap.put(K2JSCompilerArguments.MODULE_AMD, ModuleKind.AMD);
+        moduleKindMap.put(K2JSCompilerArguments.MODULE_UMD, ModuleKind.UMD);
+    }
 
     public static void main(String... args) {
         doMain(new K2JSCompiler(), args);
@@ -274,29 +284,14 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         }
 
         configuration.put(JSConfigurationKeys.LIBRARY_FILES, libraryFiles);
-        String moduleKindName = arguments.moduleKind;
-        ModuleKind moduleKind = ModuleKind.PLAIN;
-        if (moduleKindName != null) {
-            moduleKindName = moduleKindName.toLowerCase();
-            if (moduleKindName.equals(K2JSCompilerArguments.MODULE_PLAIN)) {
-                moduleKind = ModuleKind.PLAIN;
-            }
-            else if (moduleKindName.equals(K2JSCompilerArguments.MODULE_AMD)) {
-                moduleKind = ModuleKind.AMD;
-            }
-            else if (moduleKindName.equals(K2JSCompilerArguments.MODULE_COMMONJS)) {
-                moduleKind = ModuleKind.COMMON_JS;
-            }
-            else if (moduleKindName.equals(K2JSCompilerArguments.MODULE_UMD)) {
-                moduleKind = ModuleKind.UMD;
-            }
-            else {
-                messageCollector.report(CompilerMessageSeverity.ERROR, "Unknown module kind: " + moduleKindName + ". " +
-                                                                       "valid values are: plain, amd, commonjs",
-                                        CompilerMessageLocation.NO_LOCATION);
-            }
-        }
 
+        String moduleKindName = arguments.moduleKind;
+        ModuleKind moduleKind = moduleKindName != null ? moduleKindMap.get(moduleKindName) : ModuleKind.PLAIN;
+        if (moduleKind == null) {
+            messageCollector.report(CompilerMessageSeverity.ERROR, "Unknown module kind: " + moduleKindName + ". " +
+                                                                   "valid values are: plain, amd, commonjs, umd",
+                                    CompilerMessageLocation.NO_LOCATION);
+        }
         configuration.put(JSConfigurationKeys.MODULE_KIND, moduleKind);
     }
 

@@ -236,7 +236,7 @@ object KotlinJavascriptSerializationUtil {
     private fun JsModuleDescriptor<ModuleDescriptor>.toBinaryMetadata() = contentMapToByteArray(toContentMap(data), kind, imported)
 }
 
-private fun ByteArray.toContentMap(): JsModuleProto {
+private fun ByteArray.readAsContentMap(name: String): JsModuleDescriptor<Map<String, ByteArray>> {
     val gzipInputStream = GZIPInputStream(ByteArrayInputStream(this))
     val content = JsProtoBuf.Library.parseFrom(gzipInputStream)
     gzipInputStream.close()
@@ -244,8 +244,9 @@ private fun ByteArray.toContentMap(): JsModuleProto {
     val contentMap: MutableMap<String, ByteArray> = hashMapOf()
     content.entryList.forEach { entry -> contentMap[entry.path] = entry.content.toByteArray() }
 
-    return JsModuleProto(
-            contentMap = contentMap,
+    return JsModuleDescriptor(
+            name = name,
+            data = contentMap,
             kind = when (content.kind) {
                 null, JsProtoBuf.Library.Kind.PLAIN -> ModuleKind.PLAIN
                 JsProtoBuf.Library.Kind.AMD -> ModuleKind.AMD
@@ -255,5 +256,3 @@ private fun ByteArray.toContentMap(): JsModuleProto {
             imported = content.importedModulesList
     )
 }
-
-private class JsModuleProto(val contentMap: Map<String, ByteArray>, val kind: ModuleKind, val imported: List<String>)
