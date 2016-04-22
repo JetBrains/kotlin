@@ -188,7 +188,7 @@ object FindTransformationMatcher : TransformationMatcher {
                 chainedCallGenerator.generate("$stdlibFunName()")
             }
             else {
-                val lambda = org.jetbrains.kotlin.idea.intentions.loopToCallChain.generateLambda(inputVariable, filter)
+                val lambda = generateLambda(inputVariable, filter)
                 chainedCallGenerator.generate("$stdlibFunName $0:'{}'", lambda)
             }
         }
