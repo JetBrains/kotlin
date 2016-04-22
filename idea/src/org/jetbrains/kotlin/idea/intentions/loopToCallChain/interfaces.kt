@@ -78,6 +78,8 @@ interface ResultTransformation : Transformation {
 
     val commentSavingRange: PsiChildRange
 
+    val expressionToBeReplacedByResultCallChain: KtExpression
+
     /**
      * Implementations of this method are obliged to update [commentSavingRangeHolder] when deleting or adding any element into the tree
      * except for the loop itself and the result element returned from this method

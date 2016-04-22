@@ -127,6 +127,9 @@ object FindTransformationMatcher : TransformationMatcher {
             return generator.generate(chainedCallGenerator)
         }
 
+        override val expressionToBeReplacedByResultCallChain: KtExpression
+            get() = endReturn.returnedExpression!!
+
         override fun convertLoop(resultCallChain: KtExpression, commentSavingRangeHolder: CommentSavingRangeHolder): KtExpression {
             endReturn.returnedExpression!!.replace(resultCallChain)
             loop.deleteWithLabels()

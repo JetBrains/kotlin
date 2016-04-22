@@ -27,6 +27,9 @@ abstract class ReplaceLoopResultTransformation(override val loop: KtForExpressio
 
     override val commentSavingRange = PsiChildRange.singleElement(loop.unwrapIfLabeled())
 
+    override val expressionToBeReplacedByResultCallChain: KtExpression
+        get() = loop.unwrapIfLabeled()
+
     override fun convertLoop(resultCallChain: KtExpression, commentSavingRangeHolder: CommentSavingRangeHolder): KtExpression {
         return loop.unwrapIfLabeled().replaced(resultCallChain)
     }
@@ -38,6 +41,9 @@ abstract class AssignToVariableResultTransformation(
 ) : ResultTransformation {
 
     override val commentSavingRange = PsiChildRange(initialization.initializationStatement, loop.unwrapIfLabeled())
+
+    override val expressionToBeReplacedByResultCallChain: KtExpression
+        get() = initialization.initializer
 
     override fun convertLoop(resultCallChain: KtExpression, commentSavingRangeHolder: CommentSavingRangeHolder): KtExpression {
         initialization.initializer.replace(resultCallChain)
