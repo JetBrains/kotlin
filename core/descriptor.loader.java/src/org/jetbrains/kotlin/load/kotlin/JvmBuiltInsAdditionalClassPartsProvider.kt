@@ -227,7 +227,7 @@ open class JvmBuiltInsAdditionalClassPartsProvider(
             return Serializable::class.java.isAssignableFrom(classViaReflection)
         }
 
-        private val BLACK_LIST_METHOD_SIGNATURES: Set<String> =
+        val BLACK_LIST_METHOD_SIGNATURES: Set<String> =
             signatures {
                 buildPrimitiveValueMethodsSet() +
 
@@ -264,12 +264,12 @@ open class JvmBuiltInsAdditionalClassPartsProvider(
 
         private fun buildPrimitiveValueMethodsSet(): Set<String> =
             signatures {
-                JvmPrimitiveType.values().flatMapTo(LinkedHashSet()) {
+                listOf(JvmPrimitiveType.BOOLEAN, JvmPrimitiveType.CHAR).flatMapTo(LinkedHashSet()) {
                     inJavaLang(it.wrapperFqName.shortName().asString(), "${it.javaKeywordName}Value()${it.desc}")
                 }
             }
 
-        private val MUTABLE_METHOD_SIGNATURES: Set<String> =
+        val MUTABLE_METHOD_SIGNATURES: Set<String> =
             signatures {
                 inJavaUtil("Collection", "removeIf(Ljava/util/function/Predicate;)Z") +
 
@@ -287,7 +287,7 @@ open class JvmBuiltInsAdditionalClassPartsProvider(
                            "replace(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Z")
             }
 
-        private val BLACK_LIST_CONSTRUCTOR_SIGNATURES: Set<String> =
+        val BLACK_LIST_CONSTRUCTOR_SIGNATURES: Set<String> =
             signatures {
                 buildPrimitiveStringConstructorsSet() +
                 inJavaLang("Float", *constructors("D")) +
@@ -304,7 +304,10 @@ open class JvmBuiltInsAdditionalClassPartsProvider(
 
         private fun buildPrimitiveStringConstructorsSet(): Set<String> =
             signatures {
-                JvmPrimitiveType.values().flatMapTo(LinkedHashSet()) {
+                listOf(JvmPrimitiveType.BOOLEAN, JvmPrimitiveType.BYTE, JvmPrimitiveType.DOUBLE, JvmPrimitiveType.FLOAT,
+                      JvmPrimitiveType.BYTE, JvmPrimitiveType.INT, JvmPrimitiveType.LONG, JvmPrimitiveType.SHORT
+                ).flatMapTo(LinkedHashSet()) {
+                    // java/lang/<Wrapper>.<init>(Ljava/lang/String;)V
                     inJavaLang(it.wrapperFqName.shortName().asString(), *constructors("Ljava/lang/String;"))
                 }
             }
