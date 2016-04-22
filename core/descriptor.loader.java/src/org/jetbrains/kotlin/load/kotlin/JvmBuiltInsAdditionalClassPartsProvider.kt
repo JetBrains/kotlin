@@ -231,35 +231,35 @@ open class JvmBuiltInsAdditionalClassPartsProvider(
             signatures {
                 buildPrimitiveValueMethodsSet() +
 
-                "java/lang/annotation/Annotation.annotationType()${javaLang("Class").t}" +
+                "java/lang/annotation/Annotation.annotationType()Ljava/lang/Class;" +
 
                 inJavaUtil(
                         "Collection", "toArray()[Ljava/lang/Object;", "toArray([Ljava/lang/Object;)[Ljava/lang/Object;"
                 ) +
 
                 inJavaLang("String",
-                           "codePointAt(I)I", "codePointBefore(I)I", "codePointCount(II)I", "compareToIgnoreCase($stringType)I",
-                           "concat($stringType)$stringType", "contains(Ljava/lang/CharSequence;)Z",
+                           "codePointAt(I)I", "codePointBefore(I)I", "codePointCount(II)I", "compareToIgnoreCase(Ljava/lang/String;)I",
+                           "concat(Ljava/lang/String;)Ljava/lang/String;", "contains(Ljava/lang/CharSequence;)Z",
                            "contentEquals(Ljava/lang/CharSequence;)Z", "contentEquals(Ljava/lang/StringBuffer;)Z",
-                           "endsWith($stringType)Z", "equalsIgnoreCase($stringType)Z", "getBytes()[B", "getBytes(II[BI)V",
-                           "getBytes($stringType)[B", "getBytes(Ljava/nio/charset/Charset;)[B", "getChars(II[CI)V",
-                           "indexOf(I)I", "indexOf(II)I", "indexOf($stringType)I", "indexOf(${stringType}I)I",
-                           "intern()$stringType", "isEmpty()Z", "lastIndexOf(I)I", "lastIndexOf(II)I",
-                           "lastIndexOf($stringType)I", "lastIndexOf(${stringType}I)I", "matches($stringType)Z",
-                           "offsetByCodePoints(II)I", "regionMatches(I${stringType}II)Z", "regionMatches(ZI${stringType}II)Z",
-                           "replaceAll($stringType$stringType)$stringType", "replace(CC)$stringType",
-                           "replaceFirst($stringType$stringType)$stringType",
-                           "replace(Ljava/lang/CharSequence;Ljava/lang/CharSequence;)$stringType",
-                           "split(${stringType}I)[$stringType", "split($stringType)[$stringType",
-                           "startsWith(${stringType}I)Z", "startsWith($stringType)Z", "substring(II)$stringType",
-                           "substring(I)$stringType", "toCharArray()[C", "toLowerCase()$stringType",
-                           "toLowerCase(Ljava/util/Locale;)$stringType", "toUpperCase()$stringType",
-                           "toUpperCase(Ljava/util/Locale;)$stringType", "trim()$stringType") +
+                           "endsWith(Ljava/lang/String;)Z", "equalsIgnoreCase(Ljava/lang/String;)Z", "getBytes()[B", "getBytes(II[BI)V",
+                           "getBytes(Ljava/lang/String;)[B", "getBytes(Ljava/nio/charset/Charset;)[B", "getChars(II[CI)V",
+                           "indexOf(I)I", "indexOf(II)I", "indexOf(Ljava/lang/String;)I", "indexOf(Ljava/lang/String;I)I",
+                           "intern()Ljava/lang/String;", "isEmpty()Z", "lastIndexOf(I)I", "lastIndexOf(II)I",
+                           "lastIndexOf(Ljava/lang/String;)I", "lastIndexOf(Ljava/lang/String;I)I", "matches(Ljava/lang/String;)Z",
+                           "offsetByCodePoints(II)I", "regionMatches(ILjava/lang/String;II)Z", "regionMatches(ZILjava/lang/String;II)Z",
+                           "replaceAll(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;", "replace(CC)Ljava/lang/String;",
+                           "replaceFirst(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;",
+                           "replace(Ljava/lang/CharSequence;Ljava/lang/CharSequence;)Ljava/lang/String;",
+                           "split(Ljava/lang/String;I)[Ljava/lang/String;", "split(Ljava/lang/String;)[Ljava/lang/String;",
+                           "startsWith(Ljava/lang/String;I)Z", "startsWith(Ljava/lang/String;)Z", "substring(II)Ljava/lang/String;",
+                           "substring(I)Ljava/lang/String;", "toCharArray()[C", "toLowerCase()Ljava/lang/String;",
+                           "toLowerCase(Ljava/util/Locale;)Ljava/lang/String;", "toUpperCase()Ljava/lang/String;",
+                           "toUpperCase(Ljava/util/Locale;)Ljava/lang/String;", "trim()Ljava/lang/String;") +
 
                 inJavaLang("Double", "isInfinite()Z", "isNaN()Z") +
                 inJavaLang("Float", "isInfinite()Z", "isNaN()Z") +
 
-                inJavaUtil("Collection", "toArray([$objectType)[$objectType", "toArray()[$objectType")
+                inJavaUtil("Collection", "toArray([Ljava/lang/Object;)[Ljava/lang/Object;", "toArray()[Ljava/lang/Object;")
             }
 
         private fun buildPrimitiveValueMethodsSet(): Set<String> =
@@ -277,14 +277,14 @@ open class JvmBuiltInsAdditionalClassPartsProvider(
                            "sort(Ljava/util/Comparator;)V", "replaceAll(Ljava/util/function/UnaryOperator;)V") +
 
                 inJavaUtil("Map",
-                           "computeIfAbsent(${objectType}Ljava/util/function/Function;)$objectType",
-                           "computeIfPresent(${objectType}Ljava/util/function/BiFunction;)$objectType",
-                           "compute(${objectType}Ljava/util/function/BiFunction;)$objectType",
-                           "merge($objectType${objectType}Ljava/util/function/BiFunction;)$objectType",
-                           "putIfAbsent($objectType$objectType)$objectType",
-                           "remove($objectType$objectType)Z", "replaceAll(Ljava/util/function/BiFunction;)V",
-                           "replace($objectType$objectType)$objectType",
-                           "replace($objectType$objectType$objectType)Z")
+                           "computeIfAbsent(Ljava/lang/Object;Ljava/util/function/Function;)Ljava/lang/Object;",
+                           "computeIfPresent(Ljava/lang/Object;Ljava/util/function/BiFunction;)Ljava/lang/Object;",
+                           "compute(Ljava/lang/Object;Ljava/util/function/BiFunction;)Ljava/lang/Object;",
+                           "merge(Ljava/lang/Object;Ljava/lang/Object;Ljava/util/function/BiFunction;)Ljava/lang/Object;",
+                           "putIfAbsent(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;",
+                           "remove(Ljava/lang/Object;Ljava/lang/Object;)Z", "replaceAll(Ljava/util/function/BiFunction;)V",
+                           "replace(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;",
+                           "replace(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Z")
             }
 
         private val BLACK_LIST_CONSTRUCTOR_SIGNATURES: Set<String> =
@@ -305,7 +305,7 @@ open class JvmBuiltInsAdditionalClassPartsProvider(
         private fun buildPrimitiveStringConstructorsSet(): Set<String> =
             signatures {
                 JvmPrimitiveType.values().flatMapTo(LinkedHashSet()) {
-                    inJavaLang(it.wrapperFqName.shortName().asString(), *constructors(stringType))
+                    inJavaLang(it.wrapperFqName.shortName().asString(), *constructors("Ljava/lang/String;"))
                 }
             }
     }

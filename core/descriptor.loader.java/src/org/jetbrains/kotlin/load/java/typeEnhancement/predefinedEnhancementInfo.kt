@@ -40,7 +40,7 @@ val PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE = signatures {
                                     )
                             )
                     ),
-            signature("java/util/function/Consumer", "accept($objectType)V") to
+            signature("java/util/function/Consumer", "accept(Ljava/lang/Object;)V") to
                     PredefinedFunctionEnhancementInfo(parametersInfo = listOf(TypeEnhancementInfo(0 to NOT_NULLABLE)))
     )
 }

@@ -22,13 +22,6 @@ import java.util.*
 fun <T> signatures(block: SignatureBuildingComponents.() -> T) = with(SignatureBuildingComponents, block)
 
 object SignatureBuildingComponents {
-
-    val stringType = javaLang("String").t
-    val objectType = javaLang("Object").t
-
-    val String.t: String
-        get() = "L$this;"
-
     fun javaLang(name: String) = "java/lang/$name"
     fun javaUtil(name: String) = "java/util/$name"
 
