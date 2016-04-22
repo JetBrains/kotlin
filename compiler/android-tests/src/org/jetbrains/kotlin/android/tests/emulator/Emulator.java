@@ -112,10 +112,15 @@ public class Emulator {
         OutputUtils.checkResult(RunUtils.execute(new RunUtils.RunSettings(getCreateCommand(), "no", true, null, false)));
     }
 
-    public void startServer() {
+    private GeneralCommandLine createAdbCommand() {
         GeneralCommandLine commandLine = new GeneralCommandLine();
         String adbCmdName = SystemInfo.isWindows ? "adb.exe" : "adb";
         commandLine.setExePath(pathManager.getPlatformToolsFolderInAndroidSdk() + "/" + adbCmdName);
+        return commandLine;
+    }
+
+    public void startServer() {
+        GeneralCommandLine commandLine = createAdbCommand();
         commandLine.addParameter("start-server");
         System.out.println("Start adb server...");
         OutputUtils.checkResult(RunUtils.execute(commandLine));
@@ -129,9 +134,7 @@ public class Emulator {
     }
 
     public void printLog() {
-        GeneralCommandLine commandLine = new GeneralCommandLine();
-        String adbCmdName = SystemInfo.isWindows ? "adb.exe" : "adb";
-        commandLine.setExePath(pathManager.getPlatformToolsFolderInAndroidSdk() + "/" + adbCmdName);
+        GeneralCommandLine commandLine = createAdbCommand();
         commandLine.addParameter("logcat");
         commandLine.addParameter("-v");
         commandLine.addParameter("time");
@@ -146,9 +149,19 @@ public class Emulator {
 
     public void stopEmulator() {
         System.out.println("Stopping emulator...");
+
+        GeneralCommandLine command = createAdbCommand();
+        command.addParameter("-s");
+        command.addParameter("emulator-5554");
+        command.addParameter("emu");
+        command.addParameter("kill");
+        RunUtils.execute(command);
+
         if (SystemInfo.isWindows) {
+            //TODO check that command above works on windows and remove this
             OutputUtils.checkResult(RunUtils.execute(getStopCommand()));
         }
+
         finishProcess("emulator64-" + platform);
         finishProcess("emulator-" + platform);
     }
@@ -198,9 +211,7 @@ public class Emulator {
     }
 
     private void stopRedundantEmulators(PathManager pathManager) {
-        GeneralCommandLine commandLineForListOfDevices = new GeneralCommandLine();
-        String adbCmdName = SystemInfo.isWindows ? "adb.exe" : "adb";
-        commandLineForListOfDevices.setExePath(pathManager.getPlatformToolsFolderInAndroidSdk() + "/" + adbCmdName);
+        GeneralCommandLine commandLineForListOfDevices = createAdbCommand();
         commandLineForListOfDevices.addParameter("devices");
         RunResult runResult = RunUtils.execute(commandLineForListOfDevices);
         OutputUtils.checkResult(runResult);
