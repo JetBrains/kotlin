@@ -111,6 +111,7 @@ class AddToCollectionTransformation(
                 return ResultTransformationMatch(AddToCollectionTransformation(state.outerLoop, targetCollection))
             }
             else {
+                //TODO: recognize "?: continue" in the argument
                 return ResultTransformationMatch(MapToTransformation.create(
                         state.outerLoop, state.inputVariable, state.indexVariable, targetCollection, argumentValue, mapNotNull = false))
             }
