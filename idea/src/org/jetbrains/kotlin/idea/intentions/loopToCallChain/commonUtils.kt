@@ -67,7 +67,7 @@ fun KtCallableDeclaration.hasUsages(inElements: Collection<KtElement>): Boolean 
 //    return ReferencesSearch.search(this, LocalSearchScope(inElements.toTypedArray())).any()
 }
 
-fun KtProperty.hasWriteUsages(): Boolean {
+fun KtVariableDeclaration.hasWriteUsages(): Boolean {
     assert(this.isPhysical)
     if (!isVar) return false
     return ReferencesSearch.search(this, useScope).any {
@@ -75,26 +75,34 @@ fun KtProperty.hasWriteUsages(): Boolean {
     }
 }
 
-fun KtProperty.countUsages(inElement: KtElement): Int {
+fun KtCallableDeclaration.countUsages(inElement: KtElement): Int {
     assert(this.isPhysical)
     return ReferencesSearch.search(this, LocalSearchScope(inElement)).count()
 }
 
-fun KtProperty.countUsages(inElements: Collection<KtElement>): Int {
+fun KtCallableDeclaration.countUsages(inElements: Collection<KtElement>): Int {
     assert(this.isPhysical)
     // TODO: it's a temporary workaround about strange dead-lock when running inspections
     return inElements.sumBy { ReferencesSearch.search(this, LocalSearchScope(it)).count() }
 }
 
-fun KtProperty.countUsages(): Int {
+fun KtCallableDeclaration.countUsages(): Int {
     assert(this.isPhysical)
     return ReferencesSearch.search(this, useScope).count()
 }
 
-fun KtProperty.countWriteUsages(inElement: KtElement): Int {
+fun KtVariableDeclaration.countWriteUsages(inElement: KtElement): Int {
     assert(this.isPhysical)
     if (!isVar) return 0
     return ReferencesSearch.search(this, LocalSearchScope(inElement)).count {
+        (it as? KtSimpleNameReference)?.element?.readWriteAccess(useResolveForReadWrite = true)?.isWrite == true
+    }
+}
+
+fun KtVariableDeclaration.hasWriteUsages(inElement: KtElement): Boolean {
+    assert(this.isPhysical)
+    if (!isVar) return false
+    return ReferencesSearch.search(this, LocalSearchScope(inElement)).any {
         (it as? KtSimpleNameReference)?.element?.readWriteAccess(useResolveForReadWrite = true)?.isWrite == true
     }
 }
@@ -148,4 +156,3 @@ fun PsiChildRange.withoutLastStatement(): PsiChildRange {
     val newLast = last!!.siblings(forward = false, withItself = false).first { it !is PsiWhiteSpace }
     return PsiChildRange(first, newLast)
 }
-
