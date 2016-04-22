@@ -553,7 +553,7 @@ public fun <T> Iterable<T>.drop(n: Int): List<T> {
                 for (item in listIterator(n))
                     list.add(item)
             }
-            return list
+            return list.optimizeReadOnlyList()
         }
     }
     else {
@@ -563,7 +563,7 @@ public fun <T> Iterable<T>.drop(n: Int): List<T> {
     for (item in this) {
         if (count++ >= n) list.add(item)
     }
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -699,7 +699,7 @@ public fun <T> List<T>.slice(indices: IntRange): List<T> {
  */
 public fun <T> List<T>.slice(indices: Iterable<Int>): List<T> {
     val size = indices.collectionSizeOrDefault(10)
-    if (size == 0) return listOf()
+    if (size == 0) return emptyList()
     val list = ArrayList<T>(size)
     for (index in indices) {
         list.add(get(index))
@@ -721,7 +721,7 @@ public fun <T> Iterable<T>.take(n: Int): List<T> {
             break
         list.add(item)
     }
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -740,7 +740,7 @@ public fun <T> List<T>.takeLast(n: Int): List<T> {
         for (item in listIterator(n))
             list.add(item)
     }
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -788,7 +788,7 @@ public fun <T> MutableList<T>.reverse(): Unit {
  * Returns a list with elements in reversed order.
  */
 public fun <T> Iterable<T>.reversed(): List<T> {
-    if (this is Collection && isEmpty()) return emptyList()
+    if (this is Collection && size <= 1) return toList()
     val list = toMutableList()
     Collections.reverse(list)
     return list
@@ -820,7 +820,7 @@ public fun <T : Comparable<T>> MutableList<T>.sortDescending(): Unit {
  */
 public fun <T : Comparable<T>> Iterable<T>.sorted(): List<T> {
     if (this is Collection) {
-        if (size <= 1) return this.toMutableList()
+        if (size <= 1) return this.toList()
         @Suppress("CAST_NEVER_SUCCEEDS")
         return (toTypedArray<Comparable<T>>() as Array<T>).apply { sort() }.asList()
     }
@@ -853,7 +853,7 @@ public fun <T : Comparable<T>> Iterable<T>.sortedDescending(): List<T> {
  */
 public fun <T> Iterable<T>.sortedWith(comparator: Comparator<in T>): List<T> {
     if (this is Collection) {
-       if (size <= 1) return this.toMutableList()
+       if (size <= 1) return this.toList()
        @Suppress("CAST_NEVER_SUCCEEDS")
        return (toTypedArray<Any?>() as Array<T>).apply { sortWith(comparator) }.asList()
     }

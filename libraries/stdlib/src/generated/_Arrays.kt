@@ -2526,7 +2526,7 @@ public fun <T> Array<out T>.drop(n: Int): List<T> {
     for (index in n..size - 1) {
         list.add(this[index])
     }
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -2542,7 +2542,7 @@ public fun ByteArray.drop(n: Int): List<Byte> {
     for (index in n..size - 1) {
         list.add(this[index])
     }
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -2558,7 +2558,7 @@ public fun ShortArray.drop(n: Int): List<Short> {
     for (index in n..size - 1) {
         list.add(this[index])
     }
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -2574,7 +2574,7 @@ public fun IntArray.drop(n: Int): List<Int> {
     for (index in n..size - 1) {
         list.add(this[index])
     }
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -2590,7 +2590,7 @@ public fun LongArray.drop(n: Int): List<Long> {
     for (index in n..size - 1) {
         list.add(this[index])
     }
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -2606,7 +2606,7 @@ public fun FloatArray.drop(n: Int): List<Float> {
     for (index in n..size - 1) {
         list.add(this[index])
     }
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -2622,7 +2622,7 @@ public fun DoubleArray.drop(n: Int): List<Double> {
     for (index in n..size - 1) {
         list.add(this[index])
     }
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -2638,7 +2638,7 @@ public fun BooleanArray.drop(n: Int): List<Boolean> {
     for (index in n..size - 1) {
         list.add(this[index])
     }
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -2654,7 +2654,7 @@ public fun CharArray.drop(n: Int): List<Char> {
     for (index in n..size - 1) {
         list.add(this[index])
     }
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -3547,7 +3547,7 @@ public fun CharArray.slice(indices: IntRange): List<Char> {
  */
 public fun <T> Array<out T>.slice(indices: Iterable<Int>): List<T> {
     val size = indices.collectionSizeOrDefault(10)
-    if (size == 0) return listOf()
+    if (size == 0) return emptyList()
     val list = ArrayList<T>(size)
     for (index in indices) {
         list.add(get(index))
@@ -3560,7 +3560,7 @@ public fun <T> Array<out T>.slice(indices: Iterable<Int>): List<T> {
  */
 public fun ByteArray.slice(indices: Iterable<Int>): List<Byte> {
     val size = indices.collectionSizeOrDefault(10)
-    if (size == 0) return listOf()
+    if (size == 0) return emptyList()
     val list = ArrayList<Byte>(size)
     for (index in indices) {
         list.add(get(index))
@@ -3573,7 +3573,7 @@ public fun ByteArray.slice(indices: Iterable<Int>): List<Byte> {
  */
 public fun ShortArray.slice(indices: Iterable<Int>): List<Short> {
     val size = indices.collectionSizeOrDefault(10)
-    if (size == 0) return listOf()
+    if (size == 0) return emptyList()
     val list = ArrayList<Short>(size)
     for (index in indices) {
         list.add(get(index))
@@ -3586,7 +3586,7 @@ public fun ShortArray.slice(indices: Iterable<Int>): List<Short> {
  */
 public fun IntArray.slice(indices: Iterable<Int>): List<Int> {
     val size = indices.collectionSizeOrDefault(10)
-    if (size == 0) return listOf()
+    if (size == 0) return emptyList()
     val list = ArrayList<Int>(size)
     for (index in indices) {
         list.add(get(index))
@@ -3599,7 +3599,7 @@ public fun IntArray.slice(indices: Iterable<Int>): List<Int> {
  */
 public fun LongArray.slice(indices: Iterable<Int>): List<Long> {
     val size = indices.collectionSizeOrDefault(10)
-    if (size == 0) return listOf()
+    if (size == 0) return emptyList()
     val list = ArrayList<Long>(size)
     for (index in indices) {
         list.add(get(index))
@@ -3612,7 +3612,7 @@ public fun LongArray.slice(indices: Iterable<Int>): List<Long> {
  */
 public fun FloatArray.slice(indices: Iterable<Int>): List<Float> {
     val size = indices.collectionSizeOrDefault(10)
-    if (size == 0) return listOf()
+    if (size == 0) return emptyList()
     val list = ArrayList<Float>(size)
     for (index in indices) {
         list.add(get(index))
@@ -3625,7 +3625,7 @@ public fun FloatArray.slice(indices: Iterable<Int>): List<Float> {
  */
 public fun DoubleArray.slice(indices: Iterable<Int>): List<Double> {
     val size = indices.collectionSizeOrDefault(10)
-    if (size == 0) return listOf()
+    if (size == 0) return emptyList()
     val list = ArrayList<Double>(size)
     for (index in indices) {
         list.add(get(index))
@@ -3638,7 +3638,7 @@ public fun DoubleArray.slice(indices: Iterable<Int>): List<Double> {
  */
 public fun BooleanArray.slice(indices: Iterable<Int>): List<Boolean> {
     val size = indices.collectionSizeOrDefault(10)
-    if (size == 0) return listOf()
+    if (size == 0) return emptyList()
     val list = ArrayList<Boolean>(size)
     for (index in indices) {
         list.add(get(index))
@@ -3651,7 +3651,7 @@ public fun BooleanArray.slice(indices: Iterable<Int>): List<Boolean> {
  */
 public fun CharArray.slice(indices: Iterable<Int>): List<Char> {
     val size = indices.collectionSizeOrDefault(10)
-    if (size == 0) return listOf()
+    if (size == 0) return emptyList()
     val list = ArrayList<Char>(size)
     for (index in indices) {
         list.add(get(index))
@@ -3853,7 +3853,7 @@ public fun <T> Array<out T>.take(n: Int): List<T> {
             break
         list.add(item)
     }
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -3870,7 +3870,7 @@ public fun ByteArray.take(n: Int): List<Byte> {
             break
         list.add(item)
     }
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -3887,7 +3887,7 @@ public fun ShortArray.take(n: Int): List<Short> {
             break
         list.add(item)
     }
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -3904,7 +3904,7 @@ public fun IntArray.take(n: Int): List<Int> {
             break
         list.add(item)
     }
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -3921,7 +3921,7 @@ public fun LongArray.take(n: Int): List<Long> {
             break
         list.add(item)
     }
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -3938,7 +3938,7 @@ public fun FloatArray.take(n: Int): List<Float> {
             break
         list.add(item)
     }
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -3955,7 +3955,7 @@ public fun DoubleArray.take(n: Int): List<Double> {
             break
         list.add(item)
     }
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -3972,7 +3972,7 @@ public fun BooleanArray.take(n: Int): List<Boolean> {
             break
         list.add(item)
     }
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -3989,7 +3989,7 @@ public fun CharArray.take(n: Int): List<Char> {
             break
         list.add(item)
     }
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -4003,7 +4003,7 @@ public fun <T> Array<out T>.takeLast(n: Int): List<T> {
     val list = ArrayList<T>(n)
     for (index in size - n .. size - 1)
         list.add(this[index])
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -4017,7 +4017,7 @@ public fun ByteArray.takeLast(n: Int): List<Byte> {
     val list = ArrayList<Byte>(n)
     for (index in size - n .. size - 1)
         list.add(this[index])
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -4031,7 +4031,7 @@ public fun ShortArray.takeLast(n: Int): List<Short> {
     val list = ArrayList<Short>(n)
     for (index in size - n .. size - 1)
         list.add(this[index])
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -4045,7 +4045,7 @@ public fun IntArray.takeLast(n: Int): List<Int> {
     val list = ArrayList<Int>(n)
     for (index in size - n .. size - 1)
         list.add(this[index])
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -4059,7 +4059,7 @@ public fun LongArray.takeLast(n: Int): List<Long> {
     val list = ArrayList<Long>(n)
     for (index in size - n .. size - 1)
         list.add(this[index])
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -4073,7 +4073,7 @@ public fun FloatArray.takeLast(n: Int): List<Float> {
     val list = ArrayList<Float>(n)
     for (index in size - n .. size - 1)
         list.add(this[index])
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -4087,7 +4087,7 @@ public fun DoubleArray.takeLast(n: Int): List<Double> {
     val list = ArrayList<Double>(n)
     for (index in size - n .. size - 1)
         list.add(this[index])
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -4101,7 +4101,7 @@ public fun BooleanArray.takeLast(n: Int): List<Boolean> {
     val list = ArrayList<Boolean>(n)
     for (index in size - n .. size - 1)
         list.add(this[index])
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -4115,7 +4115,7 @@ public fun CharArray.takeLast(n: Int): List<Char> {
     val list = ArrayList<Char>(n)
     for (index in size - n .. size - 1)
         list.add(this[index])
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**

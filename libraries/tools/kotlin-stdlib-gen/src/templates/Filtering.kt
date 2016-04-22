@@ -56,7 +56,7 @@ fun filtering(): List<GenericFunction> {
                         for (item in listIterator(n))
                             list.add(item)
                     }
-                    return list
+                    return list.optimizeReadOnlyList()
                 }
             }
             else {
@@ -66,7 +66,7 @@ fun filtering(): List<GenericFunction> {
             for (item in this) {
                 if (count++ >= n) list.add(item)
             }
-            return list
+            return list.optimizeReadOnlyList()
             """
         }
 
@@ -105,7 +105,7 @@ fun filtering(): List<GenericFunction> {
             for (index in n..size - 1) {
                 list.add(this[index])
             }
-            return list
+            return list.optimizeReadOnlyList()
             """
         }
     }
@@ -126,7 +126,7 @@ fun filtering(): List<GenericFunction> {
                     break
                 list.add(item)
             }
-            return list
+            return list.optimizeReadOnlyList()
             """
         }
 
@@ -165,7 +165,7 @@ fun filtering(): List<GenericFunction> {
                     break;
                 list.add(item)
             }
-            return list
+            return list.optimizeReadOnlyList()
             """
         }
     }
@@ -215,7 +215,7 @@ fun filtering(): List<GenericFunction> {
             val list = ArrayList<T>(n)
             for (index in size - n .. size - 1)
                 list.add(this[index])
-            return list
+            return list.optimizeReadOnlyList()
             """
         }
         body(Lists) {
@@ -232,7 +232,7 @@ fun filtering(): List<GenericFunction> {
                 for (item in listIterator(n))
                     list.add(item)
             }
-            return list
+            return list.optimizeReadOnlyList()
             """
         }
     }
@@ -663,7 +663,7 @@ fun filtering(): List<GenericFunction> {
         body {
             """
             val size = indices.collectionSizeOrDefault(10)
-            if (size == 0) return listOf()
+            if (size == 0) return emptyList()
             val list = ArrayList<T>(size)
             for (index in indices) {
                 list.add(get(index))
