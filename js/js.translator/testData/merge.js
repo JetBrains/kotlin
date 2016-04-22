@@ -1,4 +1,6 @@
+var stdlib = module.exports;
 var mergedRoot = Kotlin;
+
 for (var propertyName in stdlib) {
     Kotlin[propertyName] = stdlib[propertyName];
 }
