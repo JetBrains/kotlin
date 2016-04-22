@@ -24,6 +24,7 @@ import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
+import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.CodegenTestFiles;
 import org.jetbrains.kotlin.codegen.GenerationUtils;
@@ -171,8 +172,12 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
             System.out.println("Generating " + filesToCompile.size() + " files...");
             OutputFileCollection outputFiles;
             try {
-                outputFiles = GenerationUtils
-                        .compileManyFilesGetGenerationStateForTest(filesToCompile.iterator().next().getProject(), filesToCompile).getFactory();
+                outputFiles = GenerationUtils.compileManyFilesGetGenerationStateForTest(
+                        filesToCompile.iterator().next().getProject(),
+                        filesToCompile,
+                        new JvmPackagePartProvider(environment),
+                        null
+                ).getFactory();
             }
             catch (Throwable e) {
                 throw new RuntimeException(e);
@@ -216,8 +221,8 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
                 String text = FileUtil.loadFile(file, true);
                 //TODO: support multifile tests
                 if (text.contains("FILE:")) continue;
-                //TODO: support WITH_RUNTIME & WITH_REFLECT
-                if (text.contains("WITH_RUNTIME") || text.contains("WITH_REFLECT")) continue;
+                //TODO: support JvmFileName & WITH_REFLECT
+                if (text.contains("WITH_REFLECT") || text.contains("JvmFileName")) continue;
 
                 if (hasBoxMethod(text)) {
                     String generatedTestName = generateTestName(file.getName());
