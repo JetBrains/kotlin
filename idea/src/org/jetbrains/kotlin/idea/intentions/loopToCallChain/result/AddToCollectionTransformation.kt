@@ -49,7 +49,11 @@ class AddToCollectionTransformation(
             }
 
             is MapTransformation -> {
-                MapToTransformation.create(loop, previousTransformation.inputVariable, targetCollection, previousTransformation.mapping)
+                MapToTransformation.create(loop, previousTransformation.inputVariable, targetCollection, previousTransformation.mapping, mapNotNull = false)
+            }
+
+            is MapNotNullTransformation -> {
+                MapToTransformation.create(loop, previousTransformation.inputVariable, targetCollection, previousTransformation.mapping, mapNotNull = true)
             }
 
             is FlatMapTransformation -> {
@@ -116,7 +120,7 @@ class AddToCollectionTransformation(
                 return ResultTransformationMatch(addToCollectionTransformation, mapIndexedTransformation)
             }
             else {
-                return ResultTransformationMatch(MapToTransformation.create(state.outerLoop, state.inputVariable, targetCollection, argumentValue))
+                return ResultTransformationMatch(MapToTransformation.create(state.outerLoop, state.inputVariable, targetCollection, argumentValue, mapNotNull = false))
             }
         }
 
@@ -296,15 +300,18 @@ class MapToTransformation private constructor(
         loop: KtForExpression,
         private val inputVariable: KtCallableDeclaration,
         private val targetCollection: KtExpression,
-        private val mapping: KtExpression
+        private val mapping: KtExpression,
+        mapNotNull: Boolean
 ) : ReplaceLoopResultTransformation(loop) {
 
+    private val functionName = if (mapNotNull) "mapNotNullTo" else "mapTo"
+
     override val presentation: String
-        get() = "mapTo(){}"
+        get() = "$functionName(){}"
 
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
         val lambda = generateLambda(inputVariable, mapping)
-        return chainedCallGenerator.generate("mapTo($0) $1:'{}'", targetCollection, lambda)
+        return chainedCallGenerator.generate("$functionName($0) $1:'{}'", targetCollection, lambda)
     }
 
     companion object {
@@ -312,15 +319,16 @@ class MapToTransformation private constructor(
                 loop: KtForExpression,
                 inputVariable: KtCallableDeclaration,
                 targetCollection: KtExpression,
-                mapping: KtExpression
+                mapping: KtExpression,
+                mapNotNull: Boolean
         ): ResultTransformation {
             val initialization = targetCollection.detectInitializationBeforeLoop(loop, checkNoOtherUsagesInLoop = true)
             if (initialization != null && initialization.initializer.hasNoSideEffect()) {
-                val transformation = MapToTransformation(loop, inputVariable, initialization.initializer, mapping)
+                val transformation = MapToTransformation(loop, inputVariable, initialization.initializer, mapping, mapNotNull)
                 return AssignToVariableResultTransformation.createDelegated(transformation, initialization)
             }
             else {
-                return MapToTransformation(loop, inputVariable, targetCollection, mapping)
+                return MapToTransformation(loop, inputVariable, targetCollection, mapping, mapNotNull)
             }
         }
     }
