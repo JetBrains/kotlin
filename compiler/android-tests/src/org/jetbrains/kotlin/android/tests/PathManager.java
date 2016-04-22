@@ -46,6 +46,10 @@ public class PathManager {
         return getAndroidSdkRoot() + "/tools";
     }
 
+    public String getBuildToolsFolderInAndroidSdk() {
+        return getAndroidSdkRoot() + "/build-tools";
+    }
+
     public String getOutputForCompiledFiles() {
         return tmpFolder + "/libs/codegen-test-output";
     }
