@@ -1,0 +1,5 @@
+// WITH_RUNTIME
+// INTENTION_TEXT: "Replace with 'contains()'"
+fun foo(list: List<String>) {
+    val <caret>v = !list.contains("a")
+}
