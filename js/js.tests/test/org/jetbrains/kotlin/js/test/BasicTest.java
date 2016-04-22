@@ -347,7 +347,7 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
 
         configuration.put(JSConfigurationKeys.UNIT_TEST_CONFIG, shouldBeTranslateAsUnitTestClass());
 
-        setupConfig(configBuilder);
+        setupConfig(configuration);
 
         return new LibrarySourcesConfig(project, configuration);
     }

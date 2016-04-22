@@ -278,16 +278,16 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         ModuleKind moduleKind = ModuleKind.PLAIN;
         if (moduleKindName != null) {
             moduleKindName = moduleKindName.toLowerCase();
-            if (moduleKindName.equals("plain")) {
+            if (moduleKindName.equals(K2JSCompilerArguments.MODULE_PLAIN)) {
                 moduleKind = ModuleKind.PLAIN;
             }
-            else if (moduleKindName.equals("amd")) {
+            else if (moduleKindName.equals(K2JSCompilerArguments.MODULE_AMD)) {
                 moduleKind = ModuleKind.AMD;
             }
-            else if (moduleKindName.equals("commonjs")) {
+            else if (moduleKindName.equals(K2JSCompilerArguments.MODULE_COMMONJS)) {
                 moduleKind = ModuleKind.COMMON_JS;
             }
-            else if (moduleKindName.equals("umd")) {
+            else if (moduleKindName.equals(K2JSCompilerArguments.MODULE_UMD)) {
                 moduleKind = ModuleKind.UMD;
             }
             else {
