@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.frontend.di.configureModule
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.load.java.InternalFlexibleTypeTransformer
 import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
-import org.jetbrains.kotlin.load.java.JavaFlexibleTypeFactoryProvider
 import org.jetbrains.kotlin.load.java.components.*
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolver
 import org.jetbrains.kotlin.load.java.lazy.SingleModuleClassResolver
@@ -62,7 +62,7 @@ fun StorageComponentContainer.configureJavaTopDownAnalysis(moduleContentScope: G
     useInstance(SamConversionResolverImpl)
     useImpl<JavaSourceElementFactoryImpl>()
     useImpl<JavaLazyAnalyzerPostConstruct>()
-    useInstance(JavaFlexibleTypeFactoryProvider)
+    useInstance(InternalFlexibleTypeTransformer)
 }
 
 fun createContainerForLazyResolveWithJava(
