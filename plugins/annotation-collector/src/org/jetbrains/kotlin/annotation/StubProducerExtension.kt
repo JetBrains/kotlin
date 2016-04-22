@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension
 import org.jetbrains.org.objectweb.asm.ClassWriter
@@ -59,7 +58,7 @@ class StubProducerExtension(val stubsOutputDir: File) : AnalysisCompletedHandler
 
 private class StubClassBuilderFactory : ClassBuilderFactory {
 
-    override fun getClassBuilderMode() = ClassBuilderMode.LIGHT_CLASSES
+    override fun getClassBuilderMode() = ClassBuilderMode.LIGHT_CLASSES_WITH_METADATA
 
     override fun newClassBuilder(origin: JvmDeclarationOrigin) = AbstractClassBuilder.Concrete(
             ClassWriter(ClassWriter.COMPUTE_FRAMES or ClassWriter.COMPUTE_MAXS))

@@ -404,6 +404,7 @@ public abstract class AnnotationCodegen {
                     case FULL:
                         throw new IllegalStateException("Don't know how to compile annotation value " + value);
                     case LIGHT_CLASSES:
+                    case LIGHT_CLASSES_WITH_METADATA:
                         return null;
                     default:
                         throw new IllegalStateException("Unknown builder mode: " + mode);

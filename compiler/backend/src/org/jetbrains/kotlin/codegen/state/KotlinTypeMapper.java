@@ -113,7 +113,7 @@ public class KotlinTypeMapper {
 
         @Override
         public void processErrorType(@NotNull KotlinType kotlinType, @NotNull ClassDescriptor descriptor) {
-            if (classBuilderMode != ClassBuilderMode.LIGHT_CLASSES) {
+            if (classBuilderMode == ClassBuilderMode.FULL) {
                 throw new IllegalStateException(generateErrorMessageForErrorType(kotlinType, descriptor));
             }
         }
@@ -1122,7 +1122,7 @@ public class KotlinTypeMapper {
     }
 
     private void writeFormalTypeParameter(@NotNull TypeParameterDescriptor typeParameterDescriptor, @NotNull JvmSignatureWriter sw) {
-        if (classBuilderMode == ClassBuilderMode.LIGHT_CLASSES && typeParameterDescriptor.getName().isSpecial()) {
+        if (classBuilderMode != ClassBuilderMode.FULL && typeParameterDescriptor.getName().isSpecial()) {
             // If a type parameter has no name, the code below fails, but it should recover in case of light classes
             return;
         }
