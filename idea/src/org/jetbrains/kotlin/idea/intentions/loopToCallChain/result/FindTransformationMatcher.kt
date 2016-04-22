@@ -177,13 +177,14 @@ object FindTransformationMatcher : TransformationMatcher {
     private class SimpleGenerator(
             override val functionName: String,
             private val inputVariable: KtCallableDeclaration,
-            private val filter: KtExpression?
+            private val filter: KtExpression?,
+            private val argument: KtExpression? = null
     ) : FindOperationGenerator {
         override val hasFilter: Boolean
             get() = filter != null
 
         override fun generate(chainedCallGenerator: ChainedCallGenerator): KtExpression {
-            return generateChainedCall(functionName, chainedCallGenerator, inputVariable, filter)
+            return generateChainedCall(functionName, chainedCallGenerator, inputVariable, filter, argument)
         }
     }
 
@@ -191,14 +192,25 @@ object FindTransformationMatcher : TransformationMatcher {
             stdlibFunName: String,
             chainedCallGenerator: ChainedCallGenerator,
             inputVariable: KtCallableDeclaration,
-            filter: KtExpression?
+            filter: KtExpression?,
+            argument: KtExpression? = null
     ): KtExpression {
         return if (filter == null) {
-            chainedCallGenerator.generate("$stdlibFunName()")
+            if (argument != null) {
+                chainedCallGenerator.generate("$stdlibFunName($0)", argument)
+            }
+            else {
+                chainedCallGenerator.generate("$stdlibFunName()")
+            }
         }
         else {
             val lambda = generateLambda(inputVariable, filter)
-            chainedCallGenerator.generate("$stdlibFunName $0:'{}'", lambda)
+            if (argument != null) {
+                chainedCallGenerator.generate("$stdlibFunName($0) $1:'{}'", argument, lambda)
+            }
+            else {
+                chainedCallGenerator.generate("$stdlibFunName $0:'{}'", lambda)
+            }
         }
     }
 
@@ -222,8 +234,15 @@ object FindTransformationMatcher : TransformationMatcher {
 
             //TODO: what if value when not found is not "-1"?
             if (valueIfFound.isVariableReference(indexVariable) && valueIfNotFound.text == "-1") {
-                val functionName = if (findFirst) "indexOfFirst" else "indexOfLast"
-                return SimpleGenerator(functionName, inputVariable, filter)
+                val containsArgument = filter!!.isFilterForContainsOperation(inputVariable, loop)
+                if (containsArgument != null) {
+                    val functionName = if (findFirst) "indexOf" else "lastIndexOf"
+                    return SimpleGenerator(functionName, inputVariable, null, containsArgument)
+                }
+                else {
+                    val functionName = if (findFirst) "indexOfFirst" else "indexOfLast"
+                    return SimpleGenerator(functionName, inputVariable, filter)
+                }
             }
 
             return null
@@ -331,17 +350,16 @@ object FindTransformationMatcher : TransformationMatcher {
         if (filter != null) {
             val containsArgument = filter.isFilterForContainsOperation(inputVariable, loop)
             if (containsArgument != null) {
-                return object: FindOperationGenerator {
-                    override val functionName: String
-                        get() = "contains"
-
-                    override val hasFilter: Boolean
-                        get() = false
-
-                    override fun generate(chainedCallGenerator: ChainedCallGenerator): KtExpression {
-                        val expression = chainedCallGenerator.generate("contains($0)", containsArgument)
-                        return if (negated) expression.negate() else expression
+                val generator = SimpleGenerator("contains", inputVariable, null, containsArgument)
+                if (negated) {
+                    return object: FindOperationGenerator by generator{
+                        override fun generate(chainedCallGenerator: ChainedCallGenerator): KtExpression {
+                            return generator.generate(chainedCallGenerator).negate()
+                        }
                     }
+                }
+                else {
+                    return generator
                 }
             }
         }
