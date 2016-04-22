@@ -1,0 +1,5 @@
+// WITH_RUNTIME
+// INTENTION_TEXT: "Replace with 'lastIndexOf()'"
+fun foo(list: List<String>) {
+    val <caret>result = list.lastIndexOf("a")
+}
