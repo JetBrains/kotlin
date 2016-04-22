@@ -38,6 +38,16 @@ interface Flexibility : TypeCapability, SubtypingRepresentatives {
         get() = upperBound
 
     override fun sameTypeConstructor(type: KotlinType) = false
+
+    fun makeNullableAsSpecified(nullable: Boolean): KotlinType
+
+    enum class SpecificityRelation {
+        LESS_SPECIFIC,
+        MORE_SPECIFIC,
+        DONT_KNOW
+    }
+
+    fun getSpecificityRelationTo(otherType: KotlinType): SpecificityRelation
 }
 
 fun KotlinType.isFlexible(): Boolean = this.getCapability(Flexibility::class.java) != null
@@ -85,23 +95,12 @@ fun Collection<TypeProjection>.singleBestRepresentative(): TypeProjection? {
 fun KotlinType.lowerIfFlexible(): KotlinType = if (this.isFlexible()) this.flexibility().lowerBound else this
 fun KotlinType.upperIfFlexible(): KotlinType = if (this.isFlexible()) this.flexibility().upperBound else this
 
-interface NullAwareness : TypeCapability {
-    fun makeNullableAsSpecified(nullable: Boolean): KotlinType
-}
-
 abstract class DelegatingFlexibleType protected constructor(
         override val lowerBound: KotlinType,
         override val upperBound: KotlinType,
         override val factory: FlexibleTypeFactory
-) : DelegatingType(), NullAwareness, Flexibility, Specificity {
+) : DelegatingType(), Flexibility {
     companion object {
-        internal val capabilityClasses = hashSetOf(
-                NullAwareness::class.java,
-                Flexibility::class.java,
-                SubtypingRepresentatives::class.java,
-                Specificity::class.java
-        )
-
         @JvmField
         var RUN_SLOW_ASSERTIONS = false
     }
@@ -130,9 +129,10 @@ abstract class DelegatingFlexibleType protected constructor(
 
     override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>): T? {
         @Suppress("UNCHECKED_CAST")
-        if (capabilityClass in capabilityClasses) return this as T
-
-        return super<DelegatingType>.getCapability(capabilityClass)
+        return when(capabilityClass) {
+            Flexibility::class.java, SubtypingRepresentatives::class.java -> this as T
+            else -> super<DelegatingType>.getCapability(capabilityClass)
+        }
     }
 
     override fun makeNullableAsSpecified(nullable: Boolean): KotlinType {

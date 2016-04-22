@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.types.Flexibility.SpecificityRelation
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
 open class DynamicTypesSettings {
@@ -55,8 +56,8 @@ object DynamicTypeFactory : FlexibleTypeFactory {
 
         override val delegateType: KotlinType get() = upperBound
 
-        override fun getSpecificityRelationTo(otherType: KotlinType): Specificity.Relation {
-            return if (!otherType.isDynamic()) Specificity.Relation.LESS_SPECIFIC else Specificity.Relation.DONT_KNOW
+        override fun getSpecificityRelationTo(otherType: KotlinType): SpecificityRelation {
+            return if (!otherType.isDynamic()) SpecificityRelation.LESS_SPECIFIC else SpecificityRelation.DONT_KNOW
         }
 
         override fun makeNullableAsSpecified(nullable: Boolean): KotlinType {

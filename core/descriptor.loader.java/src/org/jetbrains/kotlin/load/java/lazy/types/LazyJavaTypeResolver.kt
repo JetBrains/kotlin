@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.Flexibility.SpecificityRelation
 import org.jetbrains.kotlin.types.Variance.*
 import org.jetbrains.kotlin.types.typeUtil.createProjection
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
@@ -313,20 +314,20 @@ class LazyJavaTypeResolver(
                        else create(replacement, TypeUtils.makeNullable(replacement))
             }
 
-            override fun getSpecificityRelationTo(otherType: KotlinType): Specificity.Relation {
+            override fun getSpecificityRelationTo(otherType: KotlinType): SpecificityRelation {
                 // For primitive types we have to take care of the case when there are two overloaded methods like
                 //    foo(int) and foo(Integer)
                 // if we do not discriminate one of them, any call to foo(kotlin.Int) will result in overload resolution ambiguity
                 // so, for such cases, we discriminate Integer in favour of int
                 if (!KotlinBuiltIns.isPrimitiveType(otherType) || !KotlinBuiltIns.isPrimitiveType(lowerBound)) {
-                    return Specificity.Relation.DONT_KNOW
+                    return SpecificityRelation.DONT_KNOW
                 }
                 // Int! >< Int?
-                if (otherType.isFlexible()) return Specificity.Relation.DONT_KNOW
+                if (otherType.isFlexible()) return SpecificityRelation.DONT_KNOW
                 // Int? >< Int!
-                if (otherType.isMarkedNullable) return Specificity.Relation.DONT_KNOW
+                if (otherType.isMarkedNullable) return SpecificityRelation.DONT_KNOW
                 // Int! lessSpecific Int
-                return Specificity.Relation.LESS_SPECIFIC
+                return SpecificityRelation.LESS_SPECIFIC
             }
         }
     }

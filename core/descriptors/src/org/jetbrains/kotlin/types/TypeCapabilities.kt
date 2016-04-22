@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,19 +49,6 @@ fun <T : TypeCapability> TypeCapabilities.addCapability(clazz: Class<T>, typeCap
 
 inline fun <reified T : TypeCapability> KotlinType.getCapability(): T? = getCapability(T::class.java)
 
-interface Specificity : TypeCapability {
-
-    enum class Relation {
-        LESS_SPECIFIC,
-        MORE_SPECIFIC,
-        DONT_KNOW
-    }
-
-    fun getSpecificityRelationTo(otherType: KotlinType): Relation
-}
-
-fun KotlinType.getSpecificityRelationTo(otherType: KotlinType) =
-        this.getCapability(Specificity::class.java)?.getSpecificityRelationTo(otherType) ?: Specificity.Relation.DONT_KNOW
 
 // To facilitate laziness, any KotlinType implementation may inherit from this trait,
 // even if it turns out that the type an instance represents is not actually a type variable
