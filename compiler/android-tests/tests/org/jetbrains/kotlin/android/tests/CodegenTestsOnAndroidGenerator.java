@@ -244,7 +244,14 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
             return matcher.replaceAll("package " + testName);
         }
         else {
-            return "package " + testName + ";\n" + text;
+            String packageDirective = "package " + testName + ";\n";
+            if (text.contains("@file:")) {
+                int index = text.lastIndexOf("@file:");
+                int packageDirectiveIndex = text.indexOf("\n", index);
+                return text.substring(0, packageDirectiveIndex + 1) + packageDirective + text.substring(packageDirectiveIndex + 1);
+            } else {
+                return packageDirective + text;
+            }
         }
     }
 
