@@ -93,12 +93,14 @@ class AddToCollectionTransformation(
             //TODO: it can be implicit 'this' too
             val qualifiedExpression = statement as? KtDotQualifiedExpression ?: return null
             val targetCollection = qualifiedExpression.receiverExpression
-            //TODO: check that receiver is stable!
             val callExpression = qualifiedExpression.selectorExpression as? KtCallExpression ?: return null
             if (callExpression.getCallNameExpression()?.getReferencedName() != "add") return null
             //TODO: check that it's MutableCollection's add
             val argument = callExpression.valueArguments.singleOrNull() ?: return null
             val argumentValue = argument.getArgumentExpression() ?: return null
+
+            //TODO: should work when ".asSequence()" used when there are other read-usages in the loop
+            if (!targetCollection.isStableInLoop(state.outerLoop, checkNoOtherUsagesInLoop = true)) return null
 
             if (state.indexVariable == null) {
                 matchWithCollectionInitializationReplacement(state, targetCollection, argumentValue)

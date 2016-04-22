@@ -19,10 +19,12 @@ package org.jetbrains.kotlin.idea.intentions.loopToCallChain
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.UserDataHolderBase
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.imports.importableFqName
@@ -256,4 +258,29 @@ fun canSwapExecutionOrder(expressionBefore: KtExpression, expressionAfter: KtExp
 
     //TODO: more cases
     return false
+}
+
+fun KtExpression.isStableInLoop(loop: KtLoopExpression, checkNoOtherUsagesInLoop: Boolean): Boolean {
+    when {
+        isConstant() -> return true
+
+        this is KtSimpleNameExpression -> {
+            val declaration = mainReference.resolve() as? KtCallableDeclaration ?: return false
+            if (loop.isAncestor(declaration)) return false // should be declared outside the loop
+            val variable = declaration.resolveToDescriptorIfAny() as? VariableDescriptor ?: return false
+
+            if (checkNoOtherUsagesInLoop && declaration.countUsages(loop) > 1) return false
+
+            if (!variable.isVar) return true
+            if (declaration !is KtVariableDeclaration) return false
+            if (!KtPsiUtil.isLocal(declaration)) return false // it's difficult to analyze non-local declarations
+            //TODO: check that there are no local functions or lambdas that can modify it implicitly
+            return !declaration.hasWriteUsages(loop)
+        }
+
+        //TODO: qualified expression?
+        //TODO: this
+
+        else -> return false
+    }
 }
