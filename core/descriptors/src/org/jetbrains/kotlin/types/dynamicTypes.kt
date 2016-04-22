@@ -31,9 +31,7 @@ class DynamicTypesAllowed: DynamicTypesSettings() {
         get() = true
 }
 
-interface Dynamicity : TypeCapability
-
-fun KotlinType.isDynamic(): Boolean = this.getCapability(Dynamicity::class.java) != null
+fun KotlinType.isDynamic(): Boolean = this.getCapability(Flexibility::class.java)?.factory == DynamicTypeFactory
 
 fun createDynamicType(builtIns: KotlinBuiltIns) = DynamicTypeFactory.create(builtIns.nothingType, builtIns.nullableAnyType)
 
@@ -51,14 +49,7 @@ object DynamicTypeFactory : FlexibleTypeFactory {
     }
 
     private class Impl(lowerBound: KotlinType, upperBound: KotlinType) :
-            DelegatingFlexibleType(lowerBound, upperBound, DynamicTypeFactory), Dynamicity {
-
-        override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>): T? {
-            @Suppress("UNCHECKED_CAST")
-            if (capabilityClass == Dynamicity::class.java) return this as T
-
-            return super.getCapability(capabilityClass)
-        }
+            DelegatingFlexibleType(lowerBound, upperBound, DynamicTypeFactory) {
 
         override val delegateType: KotlinType get() = upperBound
 
