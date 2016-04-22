@@ -1,0 +1,9 @@
+// "Make Nested public" "true"
+
+class Outer {
+    class Nested
+}
+
+class Generic<T>
+
+internal fun foo(arg: Generic<Outer.Nested>) {}

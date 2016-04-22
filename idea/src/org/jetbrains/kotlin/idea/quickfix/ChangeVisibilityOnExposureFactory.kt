@@ -48,26 +48,26 @@ object ChangeVisibilityOnExposureFactory : KotlinIntentionActionsFactory() {
             else -> Pair(PRIVATE, PUBLIC)
         }
         val userDeclaration = diagnostic.psiElement.getParentOfType<KtDeclaration>(true)
-        val userTargetVisibility = when (lowerBoundVisibility) {
-            PUBLIC -> null
-            PROTECTED -> if (exposedDeclaration.parent == userDeclaration?.parent) PROTECTED else PRIVATE
-            else -> lowerBoundVisibility
+        val userTargetVisibilities = when (lowerBoundVisibility) {
+            PROTECTED -> if (exposedDeclaration.parent == userDeclaration?.parent) listOf(PRIVATE, PROTECTED) else listOf(PRIVATE)
+            INTERNAL -> listOf(PRIVATE, INTERNAL)
+            PRIVATE -> listOf(PRIVATE)
+            else -> listOf()
         }
         val userDescriptor = userDeclaration?.toDescriptor() as? DeclarationDescriptorWithVisibility
         val result = ArrayList<IntentionAction>()
-        if (userDeclaration != null && userDescriptor != null && userTargetVisibility != null &&
+        if (userDeclaration != null && userDescriptor != null &&
             Visibilities.isVisibleIgnoringReceiver(exposedDescriptor, userDescriptor)) {
-            ChangeVisibilityFix.create(userDeclaration, userDescriptor, userTargetVisibility)?.let { result += it }
+            result += userTargetVisibilities.mapNotNull { ChangeVisibilityFix.create(userDeclaration, userDescriptor, it) }
         }
 
-        val exposedTargetVisibility = when (upperBoundVisibility) {
-            PRIVATE -> null
-            PROTECTED -> if (exposedDeclaration.parent == userDeclaration?.parent) PROTECTED else PUBLIC
-            else -> upperBoundVisibility
+        val exposedTargetVisibilities = when (upperBoundVisibility) {
+            PROTECTED -> if (exposedDeclaration.parent == userDeclaration?.parent) listOf(PUBLIC, PROTECTED) else listOf(PUBLIC)
+            INTERNAL -> listOf(PUBLIC, INTERNAL)
+            PUBLIC -> listOf(PUBLIC)
+            else -> listOf()
         }
-        if (exposedTargetVisibility != null) {
-            ChangeVisibilityFix.create(exposedDeclaration, exposedDescriptor, exposedTargetVisibility)?.let { result += it }
-        }
+        result += exposedTargetVisibilities.mapNotNull { ChangeVisibilityFix.create(exposedDeclaration, exposedDescriptor, it) }
         return result
     }
 }

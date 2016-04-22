@@ -3548,6 +3548,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("exposedSuperInterfacePrivate.kt")
+        public void testExposedSuperInterfacePrivate() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/decreaseVisibility/exposedSuperInterfacePrivate.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("exposedTypeParameterBound.kt")
         public void testExposedTypeParameterBound() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/decreaseVisibility/exposedTypeParameterBound.kt");
@@ -4797,6 +4803,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("exposedParameterType.kt")
         public void testExposedParameterType() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/increaseVisibility/exposedParameterType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("exposedParameterTypePublic.kt")
+        public void testExposedParameterTypePublic() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/increaseVisibility/exposedParameterTypePublic.kt");
             doTest(fileName);
         }
 
