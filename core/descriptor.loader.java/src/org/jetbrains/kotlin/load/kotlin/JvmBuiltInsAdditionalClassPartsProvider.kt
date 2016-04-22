@@ -237,6 +237,8 @@ open class JvmBuiltInsAdditionalClassPartsProvider(
                         "Collection", "toArray()[Ljava/lang/Object;", "toArray([Ljava/lang/Object;)[Ljava/lang/Object;"
                 ) +
 
+                inJavaUtil("List", "sort(Ljava/util/Comparator;)V") +
+
                 inJavaLang("String",
                            "codePointAt(I)I", "codePointBefore(I)I", "codePointCount(II)I", "compareToIgnoreCase(Ljava/lang/String;)I",
                            "concat(Ljava/lang/String;)Ljava/lang/String;", "contains(Ljava/lang/CharSequence;)Z",
@@ -259,7 +261,9 @@ open class JvmBuiltInsAdditionalClassPartsProvider(
                 inJavaLang("Double", "isInfinite()Z", "isNaN()Z") +
                 inJavaLang("Float", "isInfinite()Z", "isNaN()Z") +
 
-                inJavaUtil("Collection", "toArray([Ljava/lang/Object;)[Ljava/lang/Object;", "toArray()[Ljava/lang/Object;")
+                inJavaUtil("Collection", "toArray([Ljava/lang/Object;)[Ljava/lang/Object;", "toArray()[Ljava/lang/Object;") +
+
+                inJavaLang("Enum", "getDeclaringClass()Ljava/lang/Class;", "finalize()V")
             }
 
         private fun buildPrimitiveValueMethodsSet(): Set<String> =
@@ -273,8 +277,7 @@ open class JvmBuiltInsAdditionalClassPartsProvider(
             signatures {
                 inJavaUtil("Collection", "removeIf(Ljava/util/function/Predicate;)Z") +
 
-                inJavaUtil("List",
-                           "sort(Ljava/util/Comparator;)V", "replaceAll(Ljava/util/function/UnaryOperator;)V") +
+                inJavaUtil("List", "replaceAll(Ljava/util/function/UnaryOperator;)V") +
 
                 inJavaUtil("Map",
                            "computeIfAbsent(Ljava/lang/Object;Ljava/util/function/Function;)Ljava/lang/Object;",
