@@ -18,9 +18,10 @@ package org.jetbrains.kotlin.js.test
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
-import org.jetbrains.kotlin.js.config.Config
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.js.config.EcmaVersion
-import org.jetbrains.kotlin.js.config.LibrarySourcesConfig
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.js.test.rhino.RhinoFunctionResultChecker
 import org.jetbrains.kotlin.js.test.utils.JsTestUtils.getAllFilesInDir
@@ -28,7 +29,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import java.io.File
-import java.util.LinkedHashMap
+import java.util.*
 
 abstract class MultipleModulesTranslationTest(main: String) : BasicTest(main) {
     private val MAIN_MODULE_NAME: String = "main"
@@ -70,7 +71,7 @@ abstract class MultipleModulesTranslationTest(main: String) : BasicTest(main) {
     private fun getMetaFileOutputPath(moduleDirectoryName: String, version: EcmaVersion) =
         KotlinJavascriptMetadataUtils.replaceSuffix(getOutputFilePath(moduleDirectoryName, version))
 
-    override fun setupConfig(builder: LibrarySourcesConfig.Builder) {
+    override fun setupConfig(configuration: CompilerConfiguration) {
         val method = try {
             javaClass.getMethod(name)
         }
@@ -79,7 +80,7 @@ abstract class MultipleModulesTranslationTest(main: String) : BasicTest(main) {
         }
 
         method.getAnnotation(WithModuleKind::class.java)?.let { moduleKind = it.value }
-        builder.moduleKind(moduleKind)
+        configuration.put(JSConfigurationKeys.MODULE_KIND, moduleKind)
     }
 
     override fun shouldGenerateMetaInfo() = true
@@ -100,7 +101,7 @@ abstract class MultipleModulesTranslationTest(main: String) : BasicTest(main) {
     }
 
     override fun translateFiles(jetFiles: MutableList<KtFile>, outputFile: File, mainCallParameters: MainCallParameters,
-                                config: Config) {
+                                config: JsConfig) {
         super.translateFiles(jetFiles, outputFile, mainCallParameters, config)
 
         if (config.moduleKind == ModuleKind.COMMON_JS) {
