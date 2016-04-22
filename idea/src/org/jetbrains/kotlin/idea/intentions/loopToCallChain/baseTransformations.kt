@@ -42,28 +42,28 @@ abstract class AssignToVariableResultTransformation(
     override fun convertLoop(resultCallChain: KtExpression, commentSavingRangeHolder: CommentSavingRangeHolder): KtExpression {
         initialization.initializer.replace(resultCallChain)
 
-        val loopUnwrapped = loop.unwrapIfLabeled()
-        val previousStatement = loopUnwrapped.previousStatement()
-
-        loopUnwrapped.delete()
-
-        if (initialization.variable.isVar && !initialization.variable.hasWriteUsages()) { // change variable to 'val' if possible
-            initialization.variable.valOrVarKeyword.replace(KtPsiFactory(initialization.variable).createValKeyword())
+        val variable = initialization.variable
+        if (variable.isVar && variable.countWriteUsages() == variable.countWriteUsages(loop)) { // change variable to 'val' if possible
+            variable.valOrVarKeyword.replace(KtPsiFactory(variable).createValKeyword())
         }
 
-        // move initializer to the place where the loop was if needed
+        val loopUnwrapped = loop.unwrapIfLabeled()
+
+        // move initializer to the loop if needed
         var initializationStatement = initialization.initializationStatement
-        if (initializationStatement != previousStatement) {
-            val block = initializationStatement.parent
+        if (initializationStatement.nextStatement() != loopUnwrapped) {
+            val block = loopUnwrapped.parent
             assert(block is KtBlockExpression)
-            val movedInitializationStatement = block.addAfter(initializationStatement, previousStatement) as KtExpression
-            block.addAfter(KtPsiFactory(block).createNewLine(), previousStatement)
+            val movedInitializationStatement = block.addBefore(initializationStatement, loopUnwrapped) as KtExpression
+            block.addBefore(KtPsiFactory(block).createNewLine(), loopUnwrapped)
 
             commentSavingRangeHolder.remove(initializationStatement)
 
             initializationStatement.delete()
             initializationStatement = movedInitializationStatement
         }
+
+        loopUnwrapped.delete()
 
         return initializationStatement
     }
