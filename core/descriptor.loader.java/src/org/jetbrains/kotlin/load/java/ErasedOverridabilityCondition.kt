@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,10 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.load.java.lazy.types.RawSubstitution
-import org.jetbrains.kotlin.load.java.lazy.types.RawTypeTag
 import org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition
 import org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition.Result
 import org.jetbrains.kotlin.resolve.OverridingUtil
+import org.jetbrains.kotlin.types.RawTypeCapability
 import org.jetbrains.kotlin.types.getCapability
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
@@ -40,7 +40,7 @@ class ErasedOverridabilityCondition : ExternalOverridabilityCondition {
                              subDescriptor.returnType!! +
                              subDescriptor.extensionReceiverParameter?.type.singletonOrEmptyList()
 
-        if (signatureTypes.any { it.arguments.isNotEmpty() && it.getCapability<RawTypeTag>() == null }) return Result.UNKNOWN
+        if (signatureTypes.any { it.arguments.isNotEmpty() && it.getCapability<RawTypeCapability>() == null }) return Result.UNKNOWN
 
         var erasedSuper = superDescriptor.substitute(RawSubstitution.buildSubstitutor()) ?: return Result.UNKNOWN
 

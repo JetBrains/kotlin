@@ -154,7 +154,7 @@ internal class DescriptorRendererImpl(
     private fun renderInflexibleType(type: KotlinType): String {
         assert(!type.isFlexible()) { "Flexible types not allowed here: " + renderNormalizedType(type) }
 
-        val customResult = type.getCapability<CustomFlexibleRendering>()?.renderInflexible(type, this)
+        val customResult = type.getCapability<RawTypeCapability>()?.renderInflexible(type, this)
         if (customResult != null) return customResult
 
         if (type == CANT_INFER_FUNCTION_PARAM_TYPE || TypeUtils.isDontCarePlaceholder(type)) {
@@ -183,7 +183,7 @@ internal class DescriptorRendererImpl(
         val lower = type.flexibility().lowerBound
         val upper = type.flexibility().upperBound
 
-        val (lowerRendered, upperRendered) = type.getCapability<CustomFlexibleRendering>()?.renderBounds(type.flexibility(), this)
+        val (lowerRendered, upperRendered) = type.getCapability<RawTypeCapability>()?.renderBounds(type.flexibility(), this)
                                              ?: Pair(renderInflexibleType(lower), renderInflexibleType(upper))
 
         if (differsOnlyInNullability(lowerRendered, upperRendered)) {
