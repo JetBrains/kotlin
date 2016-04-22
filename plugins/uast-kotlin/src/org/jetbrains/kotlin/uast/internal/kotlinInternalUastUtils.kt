@@ -16,14 +16,9 @@
 
 package org.jetbrains.kotlin.uast
 
-import com.intellij.openapi.application.ApplicationManager
-import org.jetbrains.kotlin.codegen.ClassBuilderFactories
-import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
-import org.jetbrains.kotlin.idea.util.findAnnotation
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -32,6 +27,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.uast.kinds.KotlinUastVisibilities
 import org.jetbrains.uast.*
@@ -93,12 +89,14 @@ private fun KtElement.hasAnyAnnotation(vararg annotationFqNames: String): Boolea
     if (this !is KtAnnotated) return false
 
     val bindingContext = analyze(BodyResolveMode.PARTIAL)
-    for (annotationFqName in annotationFqNames) {
-        val annotationEntry = findAnnotation(FqName(annotationFqName)) ?: continue
+    for (annotationEntry in annotationEntries) {
         val annotationDescriptor = bindingContext[BindingContext.ANNOTATION, annotationEntry] ?: continue
         val classifierDescriptor = annotationDescriptor.type.constructor.declarationDescriptor ?: continue
         val fqName = DescriptorUtils.getFqName(classifierDescriptor).asString()
-        return fqName == annotationFqName
+
+        for (annotationFqName in annotationFqNames) {
+            if (fqName == annotationFqName) return true
+        }
     }
 
     return false
