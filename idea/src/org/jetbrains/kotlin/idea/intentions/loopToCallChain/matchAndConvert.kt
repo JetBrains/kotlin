@@ -190,21 +190,21 @@ private fun checkSmartCastsPreserved(loop: KtForExpression, matchResult: MatchRe
     val SMARTCAST_KEY = Key<KotlinType>("SMARTCAST_KEY")
     val IMPLICIT_RECEIVER_SMARTCAST_KEY = Key<KotlinType>("IMPLICIT_RECEIVER_SMARTCAST")
 
-    var smartCastsFound = false
+    var smartCastCount = 0
     try {
         loop.forEachDescendantOfType<KtExpression> { expression ->
             bindingContext[BindingContext.SMARTCAST, expression]?.let {
                 expression.putCopyableUserData(SMARTCAST_KEY, it)
-                smartCastsFound = true
+                smartCastCount++
             }
 
             bindingContext[BindingContext.IMPLICIT_RECEIVER_SMARTCAST, expression]?.let {
                 expression.putCopyableUserData(IMPLICIT_RECEIVER_SMARTCAST_KEY, it)
-                smartCastsFound = true
+                smartCastCount++
             }
         }
 
-        if (!smartCastsFound) return true // optimization
+        if (smartCastCount == 0) return true // optimization
 
         val callChain = matchResult.generateCallChain(loop)
 
@@ -214,23 +214,40 @@ private fun checkSmartCastsPreserved(loop: KtForExpression, matchResult: MatchRe
 
         val smartCastBroken = callChain.anyDescendantOfType<KtExpression> { expression ->
             val smartCastType = expression.getCopyableUserData(SMARTCAST_KEY)
-            if (smartCastType != null && newBindingContext[BindingContext.SMARTCAST, expression] != smartCastType && newBindingContext.getType(expression) != smartCastType) {
-                return@anyDescendantOfType true
+            if (smartCastType != null) {
+                if (newBindingContext[BindingContext.SMARTCAST, expression] != smartCastType && newBindingContext.getType(expression) != smartCastType) {
+                    return@anyDescendantOfType true
+                }
+                smartCastCount--
             }
 
             val implicitReceiverSmartCastType = expression.getCopyableUserData(IMPLICIT_RECEIVER_SMARTCAST_KEY)
-            if (implicitReceiverSmartCastType != null && newBindingContext[BindingContext.IMPLICIT_RECEIVER_SMARTCAST, expression] != implicitReceiverSmartCastType) {
-                return@anyDescendantOfType true
+            if (implicitReceiverSmartCastType != null) {
+                if (newBindingContext[BindingContext.IMPLICIT_RECEIVER_SMARTCAST, expression] != implicitReceiverSmartCastType) {
+                    return@anyDescendantOfType true
+                }
+                smartCastCount--
             }
 
             false
         }
 
-        return !smartCastBroken
+        if (smartCastBroken) return false
+
+        assert(smartCastCount >= 0)
+        if (smartCastCount > 0) { // not all smart cast expressions has been found in the result, perform more expensive check
+            val expressionToBeReplaced = matchResult.transformationMatch.resultTransformation.expressionToBeReplacedByResultCallChain
+            if (!tryChangeAndCheckErrors(expressionToBeReplaced, loop) { it.replace(callChain) }) return false
+        }
+
+        return true
     }
     finally {
-        if (smartCastsFound) {
-            loop.forEachDescendantOfType<KtExpression> { it.putCopyableUserData(SMARTCAST_KEY, null) }
+        if (smartCastCount > 0) {
+            loop.forEachDescendantOfType<KtExpression> {
+                it.putCopyableUserData(SMARTCAST_KEY, null)
+                it.putCopyableUserData(IMPLICIT_RECEIVER_SMARTCAST_KEY, null)
+            }
         }
     }
 }

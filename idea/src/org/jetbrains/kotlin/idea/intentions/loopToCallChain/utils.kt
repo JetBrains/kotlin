@@ -162,35 +162,43 @@ fun KtExpression.isSimpleCollectionInstantiation(): CollectionKind? {
 }
 
 fun canChangeLocalVariableType(variable: KtProperty, newTypeText: String, loop: KtForExpression): Boolean {
-    val bindingContext = variable.analyze(BodyResolveMode.FULL)
+    return tryChangeAndCheckErrors(variable, loop) {
+        it.typeReference = KtPsiFactory(it).createType(newTypeText)
+    }
+}
+
+fun <TExpression : KtExpression> tryChangeAndCheckErrors(
+        expressionToChange: TExpression,
+        scopeToExclude: KtElement,
+        performChange: (TExpression) -> Unit
+): Boolean {
+    val bindingContext = expressionToChange.analyze(BodyResolveMode.FULL)
 
     // analyze the closest block which is not used as expression
-    val block = variable.parents
+    val block = expressionToChange.parents
                         .filterIsInstance<KtBlockExpression>()
                         .firstOrNull { bindingContext[BindingContext.USED_AS_EXPRESSION, it] != true }
-                ?: return false
+                ?: return true
 
-    val KEY = Key<Unit>("KEY")
-    block.putCopyableUserData(KEY, Unit)
-    variable.putCopyableUserData(KEY, Unit)
-    loop.putCopyableUserData(KEY, Unit)
+    val EXPRESSION = Key<Unit>("EXPRESSION")
+    val SCOPE_TO_EXCLUDE = Key<Unit>("SCOPE_TO_EXCLUDE")
+    expressionToChange.putCopyableUserData(EXPRESSION, Unit)
+    scopeToExclude.putCopyableUserData(SCOPE_TO_EXCLUDE, Unit)
 
-    val fileCopy = block.containingFile.copied()
-    val blockCopy: KtBlockExpression
-    val variableCopy: KtProperty
-    val loopCopy: KtForExpression
+    val blockCopy = block.copied()
+    val expressionCopy: TExpression
+    val scopeToExcludeCopy: KtElement
+    @Suppress("UNCHECKED_CAST")
     try {
-        blockCopy = fileCopy.findDescendantOfType<KtBlockExpression> { it.getCopyableUserData(KEY) != null }!!
-        variableCopy = blockCopy.findDescendantOfType<KtProperty> { it.getCopyableUserData(KEY) != null }!!
-        loopCopy = blockCopy.findDescendantOfType<KtForExpression> { it.getCopyableUserData(KEY) != null }!!
+        expressionCopy = blockCopy.findDescendantOfType<KtExpression> { it.getCopyableUserData(EXPRESSION) != null } as TExpression
+        scopeToExcludeCopy = blockCopy.findDescendantOfType<KtElement> { it.getCopyableUserData(SCOPE_TO_EXCLUDE) != null }!!
     }
     finally {
-        block.putCopyableUserData(KEY, null)
-        variable.putCopyableUserData(KEY, null)
-        loop.putCopyableUserData(KEY, null)
+        expressionToChange.putCopyableUserData(EXPRESSION, null)
+        scopeToExclude.putCopyableUserData(SCOPE_TO_EXCLUDE, null)
     }
 
-    variableCopy.typeReference = KtPsiFactory(block).createType(newTypeText)
+    performChange(expressionCopy)
 
     val resolutionScope = block.getResolutionScope(bindingContext, block.getResolutionFacade())
     val newBindingContext = blockCopy.analyzeInContext(scope = resolutionScope,
@@ -198,7 +206,7 @@ fun canChangeLocalVariableType(variable: KtProperty, newTypeText: String, loop: 
                                                        dataFlowInfo = bindingContext.getDataFlowInfo(block),
                                                        trace = DelegatingBindingTrace(bindingContext, "Temporary trace"))
     //TODO: what if there were errors before?
-    return newBindingContext.diagnostics.none { it.severity == Severity.ERROR && !loopCopy.isAncestor(it.psiElement) }
+    return newBindingContext.diagnostics.none { it.severity == Severity.ERROR && !scopeToExcludeCopy.isAncestor(it.psiElement) }
 }
 
 private val NO_SIDE_EFFECT_STANDARD_CLASSES = setOf(
