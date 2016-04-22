@@ -22,8 +22,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.result.AddToCollectionTransformation
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.result.CountTransformation
-import org.jetbrains.kotlin.idea.intentions.loopToCallChain.result.FindAndAssignTransformation
-import org.jetbrains.kotlin.idea.intentions.loopToCallChain.result.FindAndReturnTransformation
+import org.jetbrains.kotlin.idea.intentions.loopToCallChain.result.FindTransformationMatcher
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.FilterTransformation
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.FlatMapTransformation
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.IntroduceIndexMatcher
@@ -42,24 +41,20 @@ import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
 
 object MatcherRegistrar {
-    val sequenceMatchers: Collection<SequenceTransformationMatcher> = listOf(
+    val matchers: Collection<TransformationMatcher> = listOf(
+            FindTransformationMatcher,
+            AddToCollectionTransformation.Matcher,
+            CountTransformation.Matcher,
             IntroduceIndexMatcher,
             FilterTransformation.Matcher,
             MapTransformation.Matcher,
             FlatMapTransformation.Matcher
     )
-
-    val resultMatchers: Collection<ResultTransformationMatcher> = listOf(
-            FindAndReturnTransformation.Matcher,
-            FindAndAssignTransformation.Matcher,
-            AddToCollectionTransformation.Matcher,
-            CountTransformation.Matcher
-    )
 }
 
 data class MatchResult(
         val sequenceExpression: KtExpression,
-        val transformationMatch: ResultTransformationMatch,
+        val transformationMatch: TransformationMatch.Result,
         val initializationStatementsToDelete: Collection<KtExpression>
 )
 
@@ -91,52 +86,47 @@ fun match(loop: KtForExpression): MatchResult? {
 
         val restContainsEmbeddedBreakOrContinue = loopContainsEmbeddedBreakOrContinue && state.statements.any { it.containsEmbeddedBreakOrContinue() }
 
-        for (matcher in MatcherRegistrar.resultMatchers) {
-            if (state.indexVariable != null && !matcher.indexVariableUsePossible) continue
-            if (restContainsEmbeddedBreakOrContinue && !matcher.embeddedBreakOrContinuePossible) continue
+        MatchersLoop@
+        for (matcher in MatcherRegistrar.matchers) {
+            if (state.indexVariable != null && !matcher.indexVariableAllowed) continue
 
             val match = matcher.match(state)
             if (match != null) {
-                if (!inputVariableUsed
-                    && (match.sequenceTransformations.any { it.shouldUseInputVariable }
-                        || match.resultTransformation.shouldUseInputVariable)) {
-                    return null
-                }
+                if (!inputVariableUsed && match.allTransformations.any { it.shouldUseInputVariable }) return null
 
                 sequenceTransformations.addAll(match.sequenceTransformations)
-                return ResultTransformationMatch(match.resultTransformation, sequenceTransformations)
-                        .let { mergeTransformations(it) }
-                        .let { MatchResult(sequenceExpression, it, state.initializationStatementsToDelete) }
-                        .check { checkSmartCastsPreserved(loop, it) }
-            }
-        }
 
-        for (matcher in MatcherRegistrar.sequenceMatchers) {
-            val match = matcher.match(state)
-            if (match != null) {
-                if (!inputVariableUsed && match.transformations.any { it.shouldUseInputVariable }) {
-                    return null
+                when (match) {
+                    is TransformationMatch.Sequence -> {
+                        // check that old input variable is not needed anymore
+                        var newState = match.newState
+                        if (state.inputVariable != newState.inputVariable && state.inputVariable.hasUsages(newState.statements)) return null
+
+                        if (state.indexVariable != null && match.sequenceTransformations.any { it.affectsIndex }) {
+                            // index variable is still needed but index in the new sequence is different
+                            if (state.indexVariable!!.hasUsages(newState.statements)) return null
+                            newState = newState.copy(indexVariable = null)
+                        }
+
+                        if (restContainsEmbeddedBreakOrContinue && !matcher.embeddedBreakOrContinuePossible) {
+                            val countBefore = state.statements.sumBy { it.countEmbeddedBreaksAndContinues() }
+                            val countAfter = newState.statements.sumBy { it.countEmbeddedBreaksAndContinues() }
+                            if (countAfter != countBefore) continue@MatchersLoop // some embedded break or continue in the matched part
+                        }
+
+                        state = newState
+                        continue@MatchLoop
+                    }
+
+                    is TransformationMatch.Result -> {
+                        if (restContainsEmbeddedBreakOrContinue && !matcher.embeddedBreakOrContinuePossible) continue@MatchersLoop
+
+                        return TransformationMatch.Result(match.resultTransformation, sequenceTransformations)
+                                .let { mergeTransformations(it) }
+                                .let { MatchResult(sequenceExpression, it, state.initializationStatementsToDelete) }
+                                .check { checkSmartCastsPreserved(loop, it) }
+                    }
                 }
-
-                // check that old input variable is not needed anymore
-                var newState = match.newState
-                if (state.inputVariable != newState.inputVariable && state.inputVariable.hasUsages(newState.statements)) return null
-
-                if (state.indexVariable != null && match.transformations.any { it.affectsIndex }) {
-                    // index variable is still needed but index in the new sequence is different
-                    if (state.indexVariable!!.hasUsages(newState.statements)) return null
-                    newState = newState.copy(indexVariable = null)
-                }
-
-                if (restContainsEmbeddedBreakOrContinue && !matcher.embeddedBreakOrContinuePossible) {
-                    val countBefore = state.statements.sumBy { it.countEmbeddedBreaksAndContinues() }
-                    val countAfter = newState.statements.sumBy { it.countEmbeddedBreaksAndContinues() }
-                    if (countAfter != countBefore) continue // some embedded break or continue in the matched part
-                }
-
-                sequenceTransformations.addAll(match.transformations)
-                state = newState
-                continue@MatchLoop
             }
         }
 
@@ -279,7 +269,7 @@ private fun MatchResult.generateCallChain(loop: KtForExpression): KtExpression {
     return callChain
 }
 
-private fun mergeTransformations(match: ResultTransformationMatch): ResultTransformationMatch {
+private fun mergeTransformations(match: TransformationMatch.Result): TransformationMatch.Result {
     val transformations = ArrayList<Transformation>().apply { addAll(match.sequenceTransformations); add(match.resultTransformation) }
 
     var anyChange: Boolean
@@ -302,6 +292,6 @@ private fun mergeTransformations(match: ResultTransformationMatch): ResultTransf
     } while(anyChange)
 
     @Suppress("UNCHECKED_CAST")
-    return ResultTransformationMatch(transformations.last() as ResultTransformation, transformations.dropLast(1) as List<SequenceTransformation>)
+    return TransformationMatch.Result(transformations.last() as ResultTransformation, transformations.dropLast(1) as List<SequenceTransformation>)
 }
 

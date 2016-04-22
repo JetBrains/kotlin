@@ -16,30 +16,21 @@
 
 package org.jetbrains.kotlin.idea.intentions.loopToCallChain.result
 
-import org.jetbrains.kotlin.idea.intentions.loopToCallChain.*
-import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.FilterTransformation
-import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtBinaryExpression
-import org.jetbrains.kotlin.psi.KtBreakExpression
+import org.jetbrains.kotlin.idea.intentions.loopToCallChain.AssignToVariableResultTransformation
+import org.jetbrains.kotlin.idea.intentions.loopToCallChain.ChainedCallGenerator
+import org.jetbrains.kotlin.idea.intentions.loopToCallChain.FindOperatorGenerator
+import org.jetbrains.kotlin.idea.intentions.loopToCallChain.VariableInitialization
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtForExpression
 
 class FindAndAssignTransformation(
         loop: KtForExpression,
         private val generator: FindOperatorGenerator,
-        initialization: VariableInitialization,
-        private val filter: KtExpression? = null
+        initialization: VariableInitialization
 ) : AssignToVariableResultTransformation(loop, initialization) {
 
-    override fun mergeWithPrevious(previousTransformation: SequenceTransformation): ResultTransformation? {
-        if (previousTransformation !is FilterTransformation) return null
-        if (previousTransformation.indexVariable != null) return null
-        assert(filter == null) { "Should not happen because no 2 consecutive FilterTransformation's possible"}
-        return FindAndAssignTransformation(loop, generator, initialization, previousTransformation.effectiveCondition())
-    }
-
     override val presentation: String
-        get() = generator.functionName + (if (filter != null) "{}" else "()")
+        get() = generator.presentation
 
     override val chainCallCount: Int
         get() = generator.chainCallCount
@@ -48,57 +39,6 @@ class FindAndAssignTransformation(
         get() = generator.shouldUseInputVariable
 
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
-        return generator.generate(chainedCallGenerator, filter)
-    }
-
-    /**
-     * Matches:
-     *     val variable = ...
-     *     for (...) {
-     *         ...
-     *         variable = ...
-     *         break
-     *     }
-     * or
-     *     val variable = ...
-     *     for (...) {
-     *         ...
-     *         variable = ...
-     *     }
-     */
-    object Matcher : ResultTransformationMatcher {
-        override val indexVariableUsePossible: Boolean
-            get() = false
-
-        override fun match(state: MatchingState): ResultTransformationMatch? {
-            when (state.statements.size) {
-                1 -> {}
-
-                2 -> {
-                    val breakExpression = state.statements.last() as? KtBreakExpression ?: return null
-                    if (breakExpression.targetLoop() != state.outerLoop) return null
-                }
-
-                else -> return null
-            }
-            val findFirst = state.statements.size == 2
-
-            val binaryExpression = state.statements.first() as? KtBinaryExpression ?: return null
-            if (binaryExpression.operationToken != KtTokens.EQ) return null
-            val left = binaryExpression.left ?: return null
-            val right = binaryExpression.right ?: return null
-
-            val initialization = left.detectInitializationBeforeLoop(state.outerLoop, checkNoOtherUsagesInLoop = true) ?: return null
-
-            if (initialization.variable.countUsages(state.outerLoop) != 1) return null // this should be the only usage of this variable inside the loop
-
-            // we do not try to convert anything if the initializer is not compile-time constant because of possible side-effects
-            if (!initialization.initializer.isConstant()) return null
-
-            val generator = buildFindOperationGenerator(right, initialization.initializer, state.inputVariable, findFirst) ?: return null
-
-            val transformation = FindAndAssignTransformation(state.outerLoop, generator, initialization)
-            return ResultTransformationMatch(transformation)
-        }
+        return generator.generate(chainedCallGenerator)
     }
 }

@@ -84,11 +84,11 @@ class AddToCollectionTransformation(
      *         collection.add(...)
      *     }
      */
-    object Matcher : ResultTransformationMatcher {
-        override val indexVariableUsePossible: Boolean
+    object Matcher : TransformationMatcher {
+        override val indexVariableAllowed: Boolean
             get() = true
 
-        override fun match(state: MatchingState): ResultTransformationMatch? {
+        override fun match(state: MatchingState): TransformationMatch.Result? {
             val statement = state.statements.singleOrNull() ?: return null
             //TODO: it can be implicit 'this' too
             val qualifiedExpression = statement as? KtDotQualifiedExpression ?: return null
@@ -108,11 +108,11 @@ class AddToCollectionTransformation(
             }
 
             if (state.indexVariable == null && argumentValue.isVariableReference(state.inputVariable)) {
-                return ResultTransformationMatch(AddToCollectionTransformation(state.outerLoop, targetCollection))
+                return TransformationMatch.Result(AddToCollectionTransformation(state.outerLoop, targetCollection))
             }
             else {
                 //TODO: recognize "?: continue" in the argument
-                return ResultTransformationMatch(MapToTransformation.create(
+                return TransformationMatch.Result(MapToTransformation.create(
                         state.outerLoop, state.inputVariable, state.indexVariable, targetCollection, argumentValue, mapNotNull = false))
             }
         }
@@ -121,7 +121,7 @@ class AddToCollectionTransformation(
                 state: MatchingState,
                 targetCollection: KtExpression,
                 addOperationArgument: KtExpression
-        ): ResultTransformationMatch? {
+        ): TransformationMatch.Result? {
             val collectionInitialization = targetCollection.detectInitializationBeforeLoop(state.outerLoop, checkNoOtherUsagesInLoop = true) ?: return null
             val collectionKind = collectionInitialization.initializer.isSimpleCollectionInstantiation() ?: return null
             val argumentIsInputVariable = addOperationArgument.isVariableReference(state.inputVariable)
@@ -136,13 +136,13 @@ class AddToCollectionTransformation(
                                 val mapTransformation = MapTransformation(state.outerLoop, state.inputVariable, null, addOperationArgument, mapNotNull = false)
                                 AssignSequenceTransformationResultTransformation(mapTransformation, collectionInitialization)
                             }
-                            return ResultTransformationMatch(transformation)
+                            return TransformationMatch.Result(transformation)
                         }
 
                         canChangeInitializerType(collectionInitialization, KotlinBuiltIns.FQ_NAMES.mutableList, state.outerLoop) -> {
                             if (argumentIsInputVariable) {
                                 val transformation = AssignToMutableListTransformation(state.outerLoop, collectionInitialization)
-                                return ResultTransformationMatch(transformation)
+                                return TransformationMatch.Result(transformation)
                             }
                         }
                     }
@@ -162,11 +162,11 @@ class AddToCollectionTransformation(
                     }
 
                     if (argumentIsInputVariable) {
-                        return ResultTransformationMatch(assignToSetTransformation)
+                        return TransformationMatch.Result(assignToSetTransformation)
                     }
                     else {
                         val mapTransformation = MapTransformation(state.outerLoop, state.inputVariable, null, addOperationArgument, mapNotNull = false)
-                        return ResultTransformationMatch(assignToSetTransformation, mapTransformation)
+                        return TransformationMatch.Result(assignToSetTransformation, mapTransformation)
                     }
                 }
             }
