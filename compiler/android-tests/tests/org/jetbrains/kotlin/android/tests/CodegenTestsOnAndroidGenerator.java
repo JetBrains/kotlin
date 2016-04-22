@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.generators.tests.generator.TestGeneratorUtil;
 import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.ConfigurationKind;
+import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
 import org.jetbrains.kotlin.utils.Printer;
@@ -132,22 +133,22 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
     }
 
     private class FilesWriter {
-        private final boolean isFullJdk;
+        private final boolean isFullJdkAndRuntime;
 
         public List<KtFile> files = new ArrayList<KtFile>();
         private KotlinCoreEnvironment environment;
 
-        private FilesWriter(boolean isFullJdk) {
-            this.isFullJdk = isFullJdk;
-            environment = createEnvironment(isFullJdk);
+        private FilesWriter(boolean isFullJdkAndRuntime) {
+            this.isFullJdkAndRuntime = isFullJdkAndRuntime;
+            environment = createEnvironment(isFullJdkAndRuntime);
         }
 
-        private KotlinCoreEnvironment createEnvironment(boolean isFullJdk) {
-            return isFullJdk ?
+        private KotlinCoreEnvironment createEnvironment(boolean isFullJdkAndRuntime) {
+            return isFullJdkAndRuntime ?
                    KotlinTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
                            myTestRootDisposable, ConfigurationKind.ALL, TestJdkKind.FULL_JDK
                    ) :
-                   KotlinTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable);
+                   KotlinTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, ConfigurationKind.JDK_ONLY);
         }
 
         public boolean shouldWriteFilesOnDisk() {
@@ -163,13 +164,14 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
         public void writeFilesOnDisk() {
             writeFiles(files);
             files = new ArrayList<KtFile>();
-            environment = createEnvironment(isFullJdk);
+            environment = createEnvironment(isFullJdkAndRuntime);
         }
 
         private void writeFiles(List<KtFile> filesToCompile) {
             if (filesToCompile.isEmpty()) return;
 
-            System.out.println("Generating " + filesToCompile.size() + " files...");
+            System.out.println("Generating " + filesToCompile.size() + " files" + (isFullJdkAndRuntime
+                                                                                   ? " (full jdk and runtime)" : "") + "...");
             OutputFileCollection outputFiles;
             try {
                 outputFiles = GenerationUtils.compileManyFilesGetGenerationStateForTest(
@@ -193,6 +195,8 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
         }
     }
 
+    private int counter;
+
     private void processFiles(
             @NotNull Printer printer,
             @NotNull File[] files,
@@ -200,7 +204,7 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
             @NotNull FilesWriter holderMock)
             throws IOException
     {
-
+        if (counter > 10) return;
         holderFull.writeFilesOnDiskIfNeeded();
         holderMock.writeFilesOnDiskIfNeeded();
 
@@ -221,17 +225,19 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
                 String text = FileUtil.loadFile(file, true);
                 //TODO: support multifile tests
                 if (text.contains("FILE:")) continue;
-                //TODO: support JvmFileName & WITH_REFLECT
-                if (text.contains("WITH_REFLECT") || text.contains("JvmFileName")) continue;
+                //TODO: support JvmFileName annotation & WITH_REFLECT directive
+                if (InTextDirectivesUtils.isDirectiveDefined(text, "WITH_REFLECT") || text.contains("JvmFileName")) continue;
 
                 if (hasBoxMethod(text)) {
+                    counter++;
                     String generatedTestName = generateTestName(file.getName());
                     String packageName = file.getPath().replaceAll("\\\\|-|\\.|/", "_");
                     text = changePackage(packageName, text);
 
-                    // TODO: use holderMock when there's no WITH_RUNTIME or WITH_REFLECT in the test
-                    CodegenTestFiles codegenFile = CodegenTestFiles.create(file.getName(), text, holderFull.environment.getProject());
-                    holderFull.files.add(codegenFile.getPsiFile());
+                    FilesWriter filesHolder = InTextDirectivesUtils.isDirectiveDefined(text, "FULL_JDK") ||
+                                              InTextDirectivesUtils.isDirectiveDefined(text, "WITH_RUNTIME") ? holderFull : holderMock;
+                    CodegenTestFiles codegenFile = CodegenTestFiles.create(file.getName(), text, filesHolder.environment.getProject());
+                    filesHolder.files.add(codegenFile.getPsiFile());
 
                     generateTestMethod(printer, generatedTestName, StringUtil.escapeStringCharacters(file.getPath()));
                 }
