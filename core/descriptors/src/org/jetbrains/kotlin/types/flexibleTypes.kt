@@ -22,6 +22,14 @@ interface FlexibleTypeFactory {
     val id: String
 
     fun create(lowerBound: KotlinType, upperBound: KotlinType): KotlinType
+
+    object ThrowException : FlexibleTypeFactory {
+        private fun error(): Nothing = throw IllegalArgumentException("This factory should not be used.")
+        override val id: String
+            get() = error()
+
+        override fun create(lowerBound: KotlinType, upperBound: KotlinType): KotlinType = error()
+    }
 }
 
 interface Flexibility : TypeCapability, SubtypingRepresentatives {

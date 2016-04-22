@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.types.DynamicTypeFactory
 import java.io.InputStream
 
 fun createKotlinJavascriptPackageFragmentProvider(
@@ -48,7 +49,7 @@ fun createKotlinJavascriptPackageFragmentProvider(
             localClassResolver,
             ErrorReporter.DO_NOTHING,
             LookupTracker.DO_NOTHING,
-            FlexibleTypeFactoryDeserializer.Dynamic,
+            DynamicTypeFactory,
             ClassDescriptorFactory.EMPTY,
             notFoundClasses
     )
