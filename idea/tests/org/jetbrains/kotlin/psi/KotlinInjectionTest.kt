@@ -44,7 +44,7 @@ class KotlinInjectionTest : AbstractInjectionTest() {
         TestCase.assertNull(myFixture.getReferenceAtCaretPosition())
     }
 
-    fun testInjectionOnJavaPredefinedMethodWithAnnotation() = assertInjectionPresent(
+    fun testInjectionOnJavaPredefinedMethodWithAnnotation() = doInjectionPresentTest(
             """
             val test1 = java.util.regex.Pattern.compile("<caret>pattern")
             """,
@@ -63,7 +63,7 @@ class KotlinInjectionTest : AbstractInjectionTest() {
         try {
             Configuration.getInstance().replaceInjections(listOf(customInjection), listOf(), true)
 
-            assertInjectionPresent(
+            doInjectionPresentTest(
                     """
                     val stringBuilder = StringBuilder().replace(0, 0, "<caret><html></html>")
                     """,
@@ -76,20 +76,20 @@ class KotlinInjectionTest : AbstractInjectionTest() {
         }
     }
 
-    fun testInjectionWithCommentOnProperty() = assertInjectionPresent(
+    fun testInjectionWithCommentOnProperty() = doInjectionPresentTest(
             """
             //language=file-reference
             val test = "<caret>simple"
             """)
 
-    fun testInjectionWithUsageOnReceiverWithRuntime() = assertInjectionPresent(
+    fun testInjectionWithUsageOnReceiverWithRuntime() = doInjectionPresentTest(
             """
             val test = "<caret>some"
             fun foo() = test.toRegex()
             """,
             languageId = RegExpLanguage.INSTANCE.id, unInjectShouldBePresent = false)
 
-    fun testInjectionWithUsageInParameterWithRuntime() = assertInjectionPresent(
+    fun testInjectionWithUsageInParameterWithRuntime() = doInjectionPresentTest(
             """
             val test = "<caret>some"
             fun foo() = Regex(test)
@@ -103,7 +103,7 @@ class KotlinInjectionTest : AbstractInjectionTest() {
             fun foo() = Regex(test)
             """)
 
-    fun testInjectionWithMultipleCommentsOnFun() = assertInjectionPresent(
+    fun testInjectionWithMultipleCommentsOnFun() = doInjectionPresentTest(
             """
             // Some comment
             // Other comment
@@ -111,7 +111,7 @@ class KotlinInjectionTest : AbstractInjectionTest() {
             fun test() = "<caret>simple"
             """)
 
-    fun testInjectionWithAnnotationOnPropertyWithAnnotation() = assertInjectionPresent(
+    fun testInjectionWithAnnotationOnPropertyWithAnnotation() = doInjectionPresentTest(
             """
             @org.intellij.lang.annotations.Language("file-reference")
             val test = "<caret>simple"
@@ -300,7 +300,7 @@ class KotlinInjectionTest : AbstractInjectionTest() {
             """
     )
 
-    fun testInjectionWithUsageInFunctionWithMarkedParameterWithAnnotation() = assertInjectionPresent(
+    fun testInjectionWithUsageInFunctionWithMarkedParameterWithAnnotation() = doInjectionPresentTest(
             """
             import org.intellij.lang.annotations.Language
 
@@ -312,7 +312,7 @@ class KotlinInjectionTest : AbstractInjectionTest() {
             """,
             languageId = HTMLLanguage.INSTANCE.id, unInjectShouldBePresent = false)
     
-    fun testInjectionOfCustomParameterWithAnnotation() = assertInjectionPresent(
+    fun testInjectionOfCustomParameterWithAnnotation() = doInjectionPresentTest(
             """
             import org.intellij.lang.annotations.Language
 
@@ -322,7 +322,7 @@ class KotlinInjectionTest : AbstractInjectionTest() {
             """,
             languageId = HTMLLanguage.INSTANCE.id, unInjectShouldBePresent = false)
 
-    fun testInjectionOfCustomParameterInConstructorWithAnnotation() = assertInjectionPresent(
+    fun testInjectionOfCustomParameterInConstructorWithAnnotation() = doInjectionPresentTest(
             """
             import org.intellij.lang.annotations.Language
 
@@ -332,7 +332,7 @@ class KotlinInjectionTest : AbstractInjectionTest() {
             """,
             languageId = HTMLLanguage.INSTANCE.id, unInjectShouldBePresent = false)
 
-    fun testInjectionOfCustomParameterDefaultCallWithAnnotation() = assertInjectionPresent(
+    fun testInjectionOfCustomParameterDefaultCallWithAnnotation() = doInjectionPresentTest(
             """
             import org.intellij.lang.annotations.Language
 
@@ -341,4 +341,42 @@ class KotlinInjectionTest : AbstractInjectionTest() {
             fun other() { foo(s = "<caret>some") }
             """,
             languageId = HTMLLanguage.INSTANCE.id, unInjectShouldBePresent = false)
+
+//    fun testInjectionOfCustomParameterJavaWithAnnotation() = dotInjectionPresentTest(
+//            """
+//            import some.Test
+//
+//            fun bar() { Test.foo("<caret>some") }
+//            """,
+//            javaCode =
+//            """
+//            package some;
+//
+//            import org.intellij.lang.annotations.Language;
+//
+//            public class Test {
+//              public static void foo(@Language("HTML") String str) {}
+//            }
+//            """,
+//            languageId = HTMLLanguage.INSTANCE.id, unInjectShouldBePresent = false
+//    )
+//
+//    fun testInjectionOfCustomParameterInJavaConstructorWithAnnotation() = dotInjectionPresentTest(
+//            """
+//            import some.Test
+//
+//            fun bar() { Test("<caret>some") }
+//            """,
+//            javaCode =
+//            """
+//            package some;
+//
+//            import org.intellij.lang.annotations.Language;
+//
+//            public class Test {
+//              public Test(@Language("HTML") String str) {}
+//            }
+//            """,
+//            languageId = HTMLLanguage.INSTANCE.id, unInjectShouldBePresent = false
+//    )
 }

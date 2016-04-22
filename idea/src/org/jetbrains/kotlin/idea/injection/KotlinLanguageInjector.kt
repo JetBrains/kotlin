@@ -28,6 +28,7 @@ import org.intellij.plugins.intelliLang.Configuration
 import org.intellij.plugins.intelliLang.inject.InjectorUtils
 import org.intellij.plugins.intelliLang.inject.config.BaseInjection
 import org.intellij.plugins.intelliLang.inject.java.JavaLanguageInjectionSupport
+import org.intellij.plugins.intelliLang.util.AnnotationUtilEx
 import org.jetbrains.kotlin.idea.util.findAnnotation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -136,7 +137,21 @@ class KotlinLanguageInjector : LanguageInjector {
         val argumentIndex = (argument.parent as KtValueArgumentList).arguments.indexOf(argument)
         val psiParameter = javaMethod.parameterList.parameters.getOrNull(argumentIndex) ?: return null
 
-        return findInjection(psiParameter, Configuration.getInstance().getInjections(JavaLanguageInjectionSupport.JAVA_SUPPORT_ID))
+        val injectionInfo = findInjection(psiParameter, Configuration.getInstance().getInjections(JavaLanguageInjectionSupport.JAVA_SUPPORT_ID))
+        if (injectionInfo != null) {
+            return injectionInfo
+        }
+
+        val annotations = AnnotationUtilEx.getAnnotationFrom(
+                psiParameter,
+                Configuration.getProjectInstance(psiParameter.project).advancedConfiguration.languageAnnotationPair,
+                true)
+
+        if (annotations.size > 0) {
+            return processAnnotationInjectionInner(annotations)
+        }
+
+        return null
     }
 
     private fun injectionForKotlinCall(argument: KtValueArgument, ktFunction: KtFunction): InjectionInfo? {
@@ -168,4 +183,12 @@ class KotlinLanguageInjector : LanguageInjector {
     }
 
     private class InjectionInfo(val languageId: String?, val prefix: String?, val suffix: String?)
+
+    private fun processAnnotationInjectionInner(annotations: Array<PsiAnnotation>): InjectionInfo? {
+        val id = AnnotationUtilEx.calcAnnotationValue(annotations, "value")
+        val prefix = AnnotationUtilEx.calcAnnotationValue(annotations, "prefix")
+        val suffix = AnnotationUtilEx.calcAnnotationValue(annotations, "suffix")
+
+        return InjectionInfo(id, prefix, suffix)
+    }
 }

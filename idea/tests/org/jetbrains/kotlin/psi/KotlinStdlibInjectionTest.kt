@@ -63,7 +63,7 @@ class KotlinStdlibInjectionTest : AbstractInjectionTest() {
     )
 
     private fun assertInjectionPresent(text: String, languageId: String) {
-        assertInjectionPresent(text, languageId, false)
+        doInjectionPresentTest(text, languageId = languageId, unInjectShouldBePresent = false)
     }
 
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
