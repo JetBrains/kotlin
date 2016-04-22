@@ -74,12 +74,28 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
     @Parameter(defaultValue = "false")
     private boolean sourceMap;
 
+    /**
+     * <p>Specifies which JS module system to generate compatible sources for. Options are:</p>
+     * <ul>
+     *     <li><b>amd</b> &mdash;
+     *       <a href="https://github.com/amdjs/amdjs-api/wiki/AMD"></a>Asynchronous Module System</a>;</li>
+     *     <li><b>commonjs</b> &mdash; npm/CommonJS conventions based on synchronous <code>require</code>
+     *       function;</li>
+     *     <li><b>plain</b> (default) &mdash; no module system, keep all modules in global scope;</li>
+     *     <li><b>umd</b> &mdash; Universal Module Definition, stub wrapper that detects current
+     *       module system in runtime and behaves as <code>plain</code> if none detected.</li>
+     * </ul>
+     */
+    @Parameter(defaultValue = "plain")
+    private String moduleKind;
+
     @Override
     protected void configureSpecificCompilerArguments(@NotNull K2JSCompilerArguments arguments) throws MojoExecutionException {
         arguments.outputFile = outputFile;
         arguments.noStdlib = true;
         arguments.metaInfo = metaInfo;
         arguments.kjsm = kjsm;
+        arguments.moduleKind = moduleKind;
 
         List<String> libraries = getKotlinJavascriptLibraryFiles();
         getLog().debug("libraryFiles: " + libraries);
