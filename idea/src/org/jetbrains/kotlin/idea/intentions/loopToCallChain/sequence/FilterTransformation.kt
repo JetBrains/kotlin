@@ -26,21 +26,18 @@ import org.jetbrains.kotlin.psi.psiUtil.blockExpressionsOrSingle
 class FilterTransformation(
         override val loop: KtForExpression,
         val inputVariable: KtCallableDeclaration,
+        val indexVariable: KtCallableDeclaration?,
         val condition: KtExpression,
         val isInverse: Boolean
 ) : SequenceTransformation {
 
     fun effectiveCondition() = if (isInverse) condition.negate() else condition
 
-    override fun mergeWithPrevious(previousTransformation: SequenceTransformation): SequenceTransformation? {
-        if (previousTransformation !is FilterTransformation) return null
-        assert(previousTransformation.inputVariable == inputVariable)
-        val mergedCondition = KtPsiFactory(condition).createExpressionByPattern(
-                "$0 && $1", previousTransformation.effectiveCondition(), effectiveCondition())
-        return FilterTransformation(loop, inputVariable, mergedCondition, isInverse = false) //TODO: build filterNot in some cases?
+    private val functionName = when {
+        indexVariable != null -> "filterIndexed"
+        isInverse -> "filterNot"
+        else -> "filter"
     }
-
-    private val functionName = if (isInverse) "filterNot" else "filter"
 
     override val affectsIndex: Boolean
         get() = true
@@ -49,7 +46,10 @@ class FilterTransformation(
         get() = "$functionName{}"
 
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
-        val lambda = generateLambda(inputVariable, condition)
+        val lambda = if (indexVariable != null)
+            generateLambda(effectiveCondition(), indexVariable, inputVariable)
+        else
+            generateLambda(inputVariable, condition)
         return chainedCallGenerator.generate("$0$1:'{}'", functionName, lambda)
     }
 
@@ -76,22 +76,29 @@ class FilterTransformation(
      */
     object Matcher : SequenceTransformationMatcher {
         override fun match(state: MatchingState): SequenceTransformationMatch? {
-            var (transformation, currentState) = matchOneTransformation(state, takeWhileAllowed = true) ?: return null
+            // we merge filter transformations here instead of FilterTransformation.mergeWithPrevious() because of filterIndexed that won't merge otherwise
 
-/*
-            if (transformation is FilterTransformation || transformation is FilterIndexedTransformation) {
+            var (transformation, currentState) = matchOneTransformation(state) ?: return null
+
+            if (transformation is FilterTransformation) {
                 while (true) {
-                    val (nextTransformation, nextState) = matchOneTransformation(currentState, takeWhileAllowed = false) ?: break
-                    if (nextTransformation !is FilterTransformation && nextTransformation !is FilterIndexedTransformation) break
+                    currentState = currentState.unwrapBlock()
 
+                    val (nextTransformation, nextState) = matchOneTransformation(currentState) ?: break
+                    if (nextTransformation !is FilterTransformation) break
+
+                    val indexVariable = transformation.indexVariable ?: nextTransformation.indexVariable
+                    val mergedCondition = KtPsiFactory(state.outerLoop).createExpressionByPattern(
+                            "$0 && $1", transformation.effectiveCondition(), nextTransformation.effectiveCondition())
+                    transformation = FilterTransformation(state.outerLoop, transformation.inputVariable, indexVariable, mergedCondition, isInverse = false) //TODO: build filterNot in some cases?
+                    currentState = nextState
                 }
             }
-*/
 
             return SequenceTransformationMatch(transformation, currentState)
         }
 
-        private fun matchOneTransformation(state: MatchingState, takeWhileAllowed: Boolean): Pair<SequenceTransformation, MatchingState>? {
+        private fun matchOneTransformation(state: MatchingState): Pair<SequenceTransformation, MatchingState>? {
             val ifStatement = state.statements.firstOrNull() as? KtIfExpression ?: return null
             if (ifStatement.`else` != null) return null
             val condition = ifStatement.condition ?: return null
@@ -113,7 +120,6 @@ class FilterTransformation(
                     }
 
                     is KtBreakExpression -> {
-                        if (!takeWhileAllowed) return null
                         if (statement.targetLoop() != state.outerLoop) return null
                         val transformation = TakeWhileTransformation(state.outerLoop, state.inputVariable, condition.negate())
                         val newState = state.copy(statements = state.statements.drop(1))
@@ -124,8 +130,6 @@ class FilterTransformation(
                 }
             }
         }
-
-//        private fun mergeFilterTransformations(transformation1: )
 
         //TODO: choose filter or filterNot depending on condition
         private fun createFilterTransformation(
@@ -139,7 +143,7 @@ class FilterTransformation(
             val effectiveCondition = if (isInverse) condition.negate() else condition
 
             if (indexVariable != null && indexVariable.hasUsages(condition)) {
-                return FilterIndexedTransformation(loop, inputVariable, indexVariable, effectiveCondition)
+                return FilterTransformation(loop, inputVariable, indexVariable, effectiveCondition, isInverse = false)
             }
 
             if (effectiveCondition is KtIsExpression
@@ -160,7 +164,7 @@ class FilterTransformation(
                 return FilterNotNullTransformation(loop)
             }
 
-            return FilterTransformation(loop, inputVariable, condition, isInverse)
+            return FilterTransformation(loop, inputVariable, null, condition, isInverse)
         }
     }
 }
@@ -197,27 +201,6 @@ class FilterNotNullTransformation(override val loop: KtForExpression) : Sequence
 
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
         return chainedCallGenerator.generate("filterNotNull()")
-    }
-}
-
-class FilterIndexedTransformation(
-        override val loop: KtForExpression,
-        val inputVariable: KtCallableDeclaration,
-        val indexVariable: KtCallableDeclaration,
-        val condition: KtExpression
-) : SequenceTransformation {
-
-    //TODO: how to handle multiple if's using index?
-
-    override val affectsIndex: Boolean
-        get() = true
-
-    override val presentation: String
-        get() = "filterIndexed{}"
-
-    override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
-        val lambda = generateLambda(condition, indexVariable, inputVariable)
-        return chainedCallGenerator.generate("filterIndexed $0:'{}'", lambda)
     }
 }
 

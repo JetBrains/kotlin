@@ -307,3 +307,8 @@ private fun isEmbeddedBreakOrContinue(expression: KtExpressionWithLabel): Boolea
         else -> return true
     }
 }
+
+fun MatchingState.unwrapBlock(): MatchingState {
+    val block = statements.singleOrNull() as? KtBlockExpression ?: return this
+    return this.copy(statements = block.statements)
+}
