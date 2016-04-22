@@ -306,8 +306,8 @@ class LazyJavaTypeResolver(
                 return super.getCapability(capabilityClass)
             }
 
-            override val isTypeVariable: Boolean = lowerBound.constructor == upperBound.constructor
-                                                   && lowerBound.constructor.declarationDescriptor is TypeParameterDescriptor
+            override val isTypeVariable: Boolean get() = lowerBound.constructor.declarationDescriptor is TypeParameterDescriptor
+                                                         && lowerBound.constructor == upperBound.constructor
 
             override fun substitutionResult(replacement: KotlinType): KotlinType {
                 return if (replacement.isFlexible()) replacement
