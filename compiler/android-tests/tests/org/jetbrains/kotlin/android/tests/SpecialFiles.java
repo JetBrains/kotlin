@@ -74,6 +74,7 @@ public class SpecialFiles {
         // TODO: fix import processing
         excludedFiles.add("useImportedMemberFromCompanion.kt");
         excludedFiles.add("useImportedMember.kt");
+        excludedFiles.add("importStaticMemberFromObject.kt");
     }
 
     private SpecialFiles() {
