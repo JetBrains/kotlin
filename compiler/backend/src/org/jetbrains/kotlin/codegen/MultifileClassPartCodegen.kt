@@ -24,7 +24,8 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
-import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.MultifileClassKind.*
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.MultifileClassKind.DELEGATING
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.MultifileClassKind.INHERITING
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtProperty
@@ -76,7 +77,7 @@ class MultifileClassPartCodegen(
             }
 
     override fun generate() {
-        if (state.classBuilderMode == ClassBuilderMode.LIGHT_CLASSES) return
+        if (state.classBuilderMode != ClassBuilderMode.FULL) return
 
         super.generate()
 
