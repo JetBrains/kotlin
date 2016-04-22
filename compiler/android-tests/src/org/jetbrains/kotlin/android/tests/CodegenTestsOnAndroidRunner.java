@@ -175,7 +175,7 @@ public class CodegenTestsOnAndroidRunner {
         }
 
         SDKDownloader downloader = new SDKDownloader(pathManager);
-        Emulator emulator = new Emulator(pathManager);
+        Emulator emulator = new Emulator(pathManager, Emulator.X86);
         AntRunner antRunner = new AntRunner(pathManager);
         downloader.downloadAll();
         downloader.unzipAll();

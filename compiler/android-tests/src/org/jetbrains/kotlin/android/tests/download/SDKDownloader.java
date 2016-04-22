@@ -29,7 +29,8 @@ import java.util.zip.ZipInputStream;
 
 public class SDKDownloader {
     private final String platformZipPath;
-    private final String systemImages;
+    private final String armImage;
+    private final String x86Image;
     private final String platformToolsZipPath;
     private final String skdToolsZipPath;
     private final String buildToolsZipPath;
@@ -45,7 +46,8 @@ public class SDKDownloader {
     public SDKDownloader(PathManager pathManager) {
         this.pathManager = pathManager;
         platformZipPath = pathManager.getRootForDownload() + "/platforms.zip";
-        systemImages = pathManager.getRootForDownload() + "/system-images.zip";
+        armImage = pathManager.getRootForDownload() + "/arm-image.zip";
+        x86Image = pathManager.getRootForDownload() + "/x86-image.zip";
         platformToolsZipPath = pathManager.getRootForDownload() + "/platform-tools.zip";
         skdToolsZipPath = pathManager.getRootForDownload() + "/tools.zip";
         buildToolsZipPath = pathManager.getRootForDownload() + "/build-tools.zip";
@@ -56,7 +58,8 @@ public class SDKDownloader {
     }
 
     private void downloadAbi() {
-        download("http://dl.google.com/android/repository/sys-img/android/sysimg_armv7a-" + ANDROID_VERSION + "_r04.zip", systemImages);  //Same for all platforms
+        download("http://dl.google.com/android/repository/sys-img/android/sysimg_armv7a-" + ANDROID_VERSION + "_r04.zip", armImage);  //Same for all platforms
+        download("https://dl.google.com/android/repository/sys-img/android/sysimg_x86-" + ANDROID_VERSION + "_r02.zip", x86Image);  //Same for all platforms
     }
 
     public void downloadPlatformTools() {
@@ -100,9 +103,12 @@ public class SDKDownloader {
     public void unzipAll() {
         String androidSdkRoot = pathManager.getAndroidSdkRoot();
         unzip(platformZipPath, pathManager.getPlatformFolderInAndroidSdk());
-        unzip(systemImages, androidSdkRoot + "/system-images/android-" + ANDROID_VERSION + "/");
+        unzip(armImage, androidSdkRoot + "/system-images/android-" + ANDROID_VERSION + "/");
+        unzip(x86Image, androidSdkRoot + "/system-images/android-" + ANDROID_VERSION + "/");
         unzip(platformToolsZipPath, androidSdkRoot);
         unzip(skdToolsZipPath, androidSdkRoot);
+
+        //BUILD TOOLS
         String buildTools = androidSdkRoot + "/build-tools/";
         String buildToolsFolder = buildTools + BUILD_TOOLS + "/";
         new File(buildToolsFolder).delete();
@@ -115,6 +121,8 @@ public class SDKDownloader {
         delete(platformToolsZipPath);
         delete(skdToolsZipPath);
         delete(buildToolsZipPath);
+        delete(armImage);
+        delete(x86Image);
     }
 
     private static void download(String urlString, String output) {

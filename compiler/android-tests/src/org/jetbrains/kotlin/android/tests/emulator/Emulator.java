@@ -31,12 +31,17 @@ import java.util.regex.Pattern;
 
 public class Emulator {
 
+    public static final String ARM = "arm";
+    public static final String X86 = "x86";
+
     private final static Pattern EMULATOR_PATTERN = Pattern.compile("emulator-([0-9])*");
 
     private final PathManager pathManager;
+    private String platform;
 
-    public Emulator(PathManager pathManager) {
+    public Emulator(PathManager pathManager, String platform) {
         this.pathManager = pathManager;
+        this.platform = platform;
     }
 
     private GeneralCommandLine getCreateCommand() {
@@ -52,7 +57,14 @@ public class Emulator {
         commandLine.addParameter(pathManager.getAndroidEmulatorRoot());
         commandLine.addParameter("-t");
         commandLine.addParameter("1");
+
+        commandLine.addParameter("-b");
+        commandLine.addParameter(getEmulatorAbi());
         return commandLine;
+    }
+
+    private String getEmulatorAbi(){
+        return platform == X86 ? "x86" : "armeabi-v7a";
     }
 
     private GeneralCommandLine getStartCommand() {
@@ -83,13 +95,13 @@ public class Emulator {
     }
 
     @Nullable
-    private static GeneralCommandLine getStopCommand() {
+    private GeneralCommandLine getStopCommand() {
         if (SystemInfo.isWindows) {
             GeneralCommandLine commandLine = new GeneralCommandLine();
             commandLine.setExePath("taskkill");
             commandLine.addParameter("/F");
             commandLine.addParameter("/IM");
-            commandLine.addParameter("emulator-arm.exe");
+            commandLine.addParameter("emulator-" + platform + ".exe");
             return commandLine;
         }
         return null;
@@ -137,7 +149,8 @@ public class Emulator {
         if (SystemInfo.isWindows) {
             OutputUtils.checkResult(RunUtils.execute(getStopCommand()));
         }
-        finishProcess("emulator-arm");
+        finishProcess("emulator64-" + platform);
+        finishProcess("emulator-" + platform);
     }
 
     //Only for Unix
@@ -207,7 +220,7 @@ public class Emulator {
             }
             else {
                 if (!isDdmsStopped && SystemInfo.isUnix) {
-                    finishProcess("emulator-arm");
+                    stopEmulator();
                     stopDdmsProcess();
                     isDdmsStopped = true;
                 }
