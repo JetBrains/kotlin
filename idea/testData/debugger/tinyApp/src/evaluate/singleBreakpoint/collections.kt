@@ -21,5 +21,5 @@ fun main(args: Array<String>) {
 // EXPRESSION: arrayListOf(1, 2).size
 // RESULT: 2: I
 
-// EXPRESSION: arrayListOf(1, 2).drop(1)
+// EXPRESSION: arrayListOf(1, 2, 3).drop(1)
 // RESULT: instance of java.util.ArrayList(id=ID): Ljava/util/ArrayList;
