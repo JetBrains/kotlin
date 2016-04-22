@@ -39,7 +39,7 @@ class LoopToCallChainIntention : SelfTargetingRangeIntention<KtForExpression>(
         return if (match != null) element.forKeyword.textRange else null
     }
 
-    private fun ResultTransformationMatch.buildPresentation(): String {
+    private fun TransformationMatch.Result.buildPresentation(): String {
         var transformations = sequenceTransformations + resultTransformation
         val MAX = 3
         var result: String? = null

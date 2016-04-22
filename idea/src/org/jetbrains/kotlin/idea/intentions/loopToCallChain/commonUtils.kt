@@ -57,6 +57,7 @@ fun KtExpression?.isSimpleName(name: Name): Boolean {
 }
 
 fun KtCallableDeclaration.hasUsages(inElement: KtElement): Boolean {
+    assert(inElement.isPhysical)
     return hasUsages(listOf(inElement))
 }
 

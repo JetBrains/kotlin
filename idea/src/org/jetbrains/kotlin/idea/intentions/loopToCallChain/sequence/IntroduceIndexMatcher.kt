@@ -22,9 +22,11 @@ import org.jetbrains.kotlin.psi.KtContinueExpression
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 
-object IntroduceIndexMatcher : SequenceTransformationMatcher {
-    override fun match(state: MatchingState): SequenceTransformationMatch? {
-        if (state.indexVariable != null) return null // old index variable is still needed - cannot introduce another one
+object IntroduceIndexMatcher : TransformationMatcher {
+    override val indexVariableAllowed: Boolean
+        get() = false // old index variable is still needed - cannot introduce another one
+
+    override fun match(state: MatchingState): TransformationMatch.Sequence? {
         if (state.statements.size < 2) return null
         val operand = state.statements.last().isPlusPlusOf() ?: return null
         val restStatements = state.statements.dropLast(1)
@@ -52,6 +54,6 @@ object IntroduceIndexMatcher : SequenceTransformationMatcher {
         val newState = state.copy(statements = restStatements,
                                   indexVariable = variable,
                                   initializationStatementsToDelete = state.initializationStatementsToDelete + variableInitialization.initializationStatement)
-        return SequenceTransformationMatch(emptyList(), newState)
+        return TransformationMatch.Sequence(emptyList(), newState)
     }
 }

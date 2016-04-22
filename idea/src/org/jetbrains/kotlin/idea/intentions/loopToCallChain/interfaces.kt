@@ -100,7 +100,11 @@ data class MatchingState(
         val initializationStatementsToDelete: Collection<KtExpression> = emptyList()
 )
 
-interface BaseMatcher {
+interface TransformationMatcher {
+    fun match(state: MatchingState): TransformationMatch?
+
+    val indexVariableAllowed: Boolean
+
     /**
      * Implementors should return true if they match some constructs with expression-embedded break or continue.
      * In this case they are obliged to deal with them and filter out invalid cases.
@@ -109,36 +113,28 @@ interface BaseMatcher {
         get() = false
 }
 
-/**
- * A matcher that can recognize one or more [SequenceTransformation]'s
- */
-interface SequenceTransformationMatcher : BaseMatcher {
-    fun match(state: MatchingState): SequenceTransformationMatch?
-}
+sealed class TransformationMatch(val sequenceTransformations: List<SequenceTransformation>) {
+    abstract val allTransformations: List<Transformation>
 
-class SequenceTransformationMatch(
-        val transformations: List<SequenceTransformation>,
-        val newState: MatchingState
-) {
-    constructor(transformation: SequenceTransformation, newState: MatchingState) : this(listOf(transformation), newState)
-}
+    /**
+     * A partial match, includes [newState] for further matching
+     */
+    class Sequence(transformations: List<SequenceTransformation>, val newState: MatchingState) : TransformationMatch(transformations) {
+        constructor(transformation: SequenceTransformation, newState: MatchingState) : this(listOf(transformation), newState)
 
-/**
- * A matcher that can recognize a [ResultTransformation] (optionally prepended by some [SequenceTransformation]'s).
- * Should match the whole rest part of the loop.
- */
-interface ResultTransformationMatcher : BaseMatcher {
-    fun match(state: MatchingState): ResultTransformationMatch?
+        override val allTransformations: List<Transformation>
+            get() = sequenceTransformations
+    }
 
-    val indexVariableUsePossible: Boolean
-}
+    /**
+     * A match of the whole rest part of the loop
+     */
+    class Result(val resultTransformation: ResultTransformation, sequenceTransformations: List<SequenceTransformation>) : TransformationMatch(sequenceTransformations) {
+        constructor(resultTransformation: ResultTransformation, vararg sequenceTransformations: SequenceTransformation)
+        : this(resultTransformation, sequenceTransformations.asList())
 
-class ResultTransformationMatch(
-        val resultTransformation: ResultTransformation,
-        val sequenceTransformations: List<SequenceTransformation>
-) {
-    constructor(resultTransformation: ResultTransformation, vararg sequenceTransformations: SequenceTransformation)
-    : this(resultTransformation, sequenceTransformations.asList())
+        override val allTransformations = sequenceTransformations + resultTransformation
+    }
 }
 
 /**

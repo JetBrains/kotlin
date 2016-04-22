@@ -68,11 +68,11 @@ class CountTransformation(
      *         variable++ (or ++variable)
      *     }
      */
-    object Matcher : ResultTransformationMatcher {
-        override val indexVariableUsePossible: Boolean
+    object Matcher : TransformationMatcher {
+        override val indexVariableAllowed: Boolean
             get() = false
 
-        override fun match(state: MatchingState): ResultTransformationMatch? {
+        override fun match(state: MatchingState): TransformationMatch.Result? {
             val operand = state.statements.singleOrNull()?.isPlusPlusOf() ?: return null
             val initialization = operand.detectInitializationBeforeLoop(state.outerLoop, checkNoOtherUsagesInLoop = true) ?: return null
 
@@ -82,7 +82,7 @@ class CountTransformation(
             if (!KotlinBuiltIns.isInt(variableType)) return null
 
             val transformation = CountTransformation(state.outerLoop, state.inputVariable, initialization, null)
-            return ResultTransformationMatch(transformation)
+            return TransformationMatch.Result(transformation)
         }
     }
 }

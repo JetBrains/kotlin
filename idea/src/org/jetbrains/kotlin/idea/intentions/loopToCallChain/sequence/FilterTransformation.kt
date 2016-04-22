@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence
 
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isNullExpression
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.*
+import org.jetbrains.kotlin.idea.intentions.loopToCallChain.result.FindTransformationMatcher
 import org.jetbrains.kotlin.idea.intentions.negate
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -73,9 +74,14 @@ class FilterTransformation(
      *         if (<condition>) break
      *         ...
      *     }
+     *
+     * plus optionally consequent find operation (assignment or return)
      */
-    object Matcher : SequenceTransformationMatcher {
-        override fun match(state: MatchingState): SequenceTransformationMatch? {
+    object Matcher : TransformationMatcher {
+        override val indexVariableAllowed: Boolean
+            get() = true
+
+        override fun match(state: MatchingState): TransformationMatch? {
             // we merge filter transformations here instead of FilterTransformation.mergeWithPrevious() because of filterIndexed that won't merge otherwise
 
             var (transformation, currentState) = matchOneTransformation(state) ?: return null
@@ -93,9 +99,12 @@ class FilterTransformation(
                     transformation = FilterTransformation(state.outerLoop, transformation.inputVariable, indexVariable, mergedCondition, isInverse = false) //TODO: build filterNot in some cases?
                     currentState = nextState
                 }
+
+                FindTransformationMatcher.matchWithFilterBefore(currentState, transformation)
+                        ?.let { return it }
             }
 
-            return SequenceTransformationMatch(transformation, currentState)
+            return TransformationMatch.Sequence(transformation, currentState)
         }
 
         private fun matchOneTransformation(state: MatchingState): Pair<SequenceTransformation, MatchingState>? {

@@ -49,8 +49,11 @@ class FlatMapTransformation(
      *         }
      *     }
      */
-    object Matcher : SequenceTransformationMatcher {
-        override fun match(state: MatchingState): SequenceTransformationMatch? {
+    object Matcher : TransformationMatcher {
+        override val indexVariableAllowed: Boolean
+            get() = true
+
+        override fun match(state: MatchingState): TransformationMatch.Sequence? {
             val nestedLoop = state.statements.singleOrNull() as? KtForExpression ?: return null
 
             val transform = nestedLoop.loopRange ?: return null
@@ -73,7 +76,7 @@ class FlatMapTransformation(
                         statements = listOf(nestedLoopBody),
                         inputVariable = newInputVariable
                 )
-                return SequenceTransformationMatch(listOf(mapIndexedTransformation, flatMapTransformation), newState)
+                return TransformationMatch.Sequence(listOf(mapIndexedTransformation, flatMapTransformation), newState)
             }
 
             val transformation = FlatMapTransformation(state.outerLoop, state.inputVariable, transform)
@@ -82,7 +85,7 @@ class FlatMapTransformation(
                     statements = listOf(nestedLoopBody),
                     inputVariable = newInputVariable
             )
-            return SequenceTransformationMatch(transformation, newState)
+            return TransformationMatch.Sequence(transformation, newState)
         }
     }
 }

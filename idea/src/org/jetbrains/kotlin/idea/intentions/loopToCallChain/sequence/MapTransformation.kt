@@ -54,11 +54,14 @@ class MapTransformation(
      *         ...
      *     }
      */
-    object Matcher : SequenceTransformationMatcher {
+    object Matcher : TransformationMatcher {
+        override val indexVariableAllowed: Boolean
+            get() = true
+
         override val embeddedBreakOrContinuePossible: Boolean
             get() = true
 
-        override fun match(state: MatchingState): SequenceTransformationMatch? {
+        override fun match(state: MatchingState): TransformationMatch.Sequence? {
             val declaration = state.statements.firstOrNull() as? KtProperty ?: return null //TODO: support multi-variables
             val initializer = declaration.initializer ?: return null
             if (declaration.hasWriteUsages()) return null
@@ -76,7 +79,7 @@ class MapTransformation(
                 else
                     MapTransformation(state.outerLoop, state.inputVariable, null, mapping, mapNotNull = true)
                 val newState = state.copy(statements = restStatements, inputVariable = declaration)
-                return SequenceTransformationMatch(transformation, newState)
+                return TransformationMatch.Sequence(transformation, newState)
             }
 
             if (initializer.containsEmbeddedBreakOrContinue()) return null
@@ -86,7 +89,7 @@ class MapTransformation(
             else
                 MapTransformation(state.outerLoop, state.inputVariable, null, initializer, mapNotNull = false)
             val newState = state.copy(statements = restStatements, inputVariable = declaration)
-            return SequenceTransformationMatch(transformation, newState)
+            return TransformationMatch.Sequence(transformation, newState)
         }
     }
 }
