@@ -17,7 +17,8 @@
 package org.jetbrains.kotlin.annotation
 
 import com.intellij.mock.MockProject
-import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
@@ -25,24 +26,8 @@ import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.MemberDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.diagnostics.DiagnosticSink
-import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters1
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtCallableDeclaration
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension
-import java.io.BufferedWriter
 import java.io.File
-import java.io.IOException
-import java.io.Writer
-import java.util.regex.Pattern
-import java.util.regex.PatternSyntaxException
 
 object AnnotationCollectorConfigurationKeys {
     val ANNOTATION_FILTER_LIST: CompilerConfigurationKey<List<String>> =
@@ -104,8 +89,9 @@ class AnnotationCollectorComponentRegistrar : ComponentRegistrar {
         }
 
         val stubs = configuration.get(AnnotationCollectorConfigurationKeys.STUBS_PATH)
+        val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
         if (stubs != null) {
-            AnalysisCompletedHandlerExtension.registerExtension(project, StubProducerExtension(File(stubs)))
+            AnalysisCompletedHandlerExtension.registerExtension(project, StubProducerExtension(File(stubs), messageCollector))
         }
     }
 }
