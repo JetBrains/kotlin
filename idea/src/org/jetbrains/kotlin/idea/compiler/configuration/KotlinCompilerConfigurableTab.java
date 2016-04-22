@@ -40,8 +40,18 @@ import org.jetbrains.kotlin.idea.PluginStartupComponent;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import java.util.List;
+
+import static java.util.Arrays.asList;
 
 public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Configurable.NoScroll{
+    private static final List<String> moduleKindDescriptions = asList(
+            "Plain (put to global scope)",
+            "AMD",
+            "CommonJS/node.js",
+            "UMD (detect AMD or CommonJS if available, fallback to plain)"
+    );
+    private static final List<String> moduleKindIds = asList("plain", "amd", "commonjs", "umd");
     private final CommonCompilerArguments commonCompilerArguments;
     private final K2JSCompilerArguments k2jsCompilerArguments;
     private final CompilerSettings compilerSettings;
@@ -61,6 +71,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     private JCheckBox copyRuntimeFilesCheckBox;
     private JCheckBox keepAliveCheckBox;
     private JCheckBox enablePreciseIncrementalCheckBox;
+    private JComboBox moduleKindComboBox;
 
     public KotlinCompilerConfigurableTab(Project project) {
         this.commonCompilerArguments = KotlinCommonCompilerArgumentsHolder.getInstance(project).getSettings();
@@ -84,6 +95,16 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
                 labelForOutputDirectory.setEnabled(copyRuntimeFilesCheckBox.isSelected());
             }
         });
+
+        fillModuleKindList();
+    }
+
+    @SuppressWarnings("unchecked")
+    private void fillModuleKindList() {
+        for (String description : moduleKindDescriptions) {
+            // TODO: not sure if it's a right way to add items to a combo box
+            moduleKindComboBox.addItem(description);
+        }
     }
 
     @NotNull
@@ -116,7 +137,12 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
 
                ComparingUtils.isModified(generateSourceMapsCheckBox, k2jsCompilerArguments.sourceMap) ||
                isModified(outputPrefixFile, k2jsCompilerArguments.outputPrefix) ||
-               isModified(outputPostfixFile, k2jsCompilerArguments.outputPostfix);
+               isModified(outputPostfixFile, k2jsCompilerArguments.outputPostfix) ||
+               !getSelectedModuleKind().equals(k2jsCompilerArguments.moduleKind);
+    }
+
+    private String getSelectedModuleKind() {
+        return moduleKindIds.get(moduleKindComboBox.getSelectedIndex());
     }
 
     @Override
@@ -137,6 +163,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         k2jsCompilerArguments.sourceMap = generateSourceMapsCheckBox.isSelected();
         k2jsCompilerArguments.outputPrefix = StringUtil.nullize(outputPrefixFile.getText(), true);
         k2jsCompilerArguments.outputPostfix = StringUtil.nullize(outputPostfixFile.getText(), true);
+        k2jsCompilerArguments.moduleKind = getSelectedModuleKind();
 
         BuildManager.getInstance().clearState(project);
     }
@@ -154,6 +181,13 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         generateSourceMapsCheckBox.setSelected(k2jsCompilerArguments.sourceMap);
         outputPrefixFile.setText(k2jsCompilerArguments.outputPrefix);
         outputPostfixFile.setText(k2jsCompilerArguments.outputPostfix);
+
+        String moduleKind = k2jsCompilerArguments.moduleKind;
+        int index = moduleKind != null ? moduleKindIds.indexOf(moduleKind) : 0;
+        if (index < 0) {
+            index = 0;
+        }
+        moduleKindComboBox.setSelectedIndex(index);
     }
 
     @Override
