@@ -65,7 +65,7 @@ class FlatMapTransformation(
 
             if (state.indexVariable != null && state.indexVariable.hasUsages(transform)) {
                 // if nested loop range uses index, convert to "mapIndexed {...}.flatMap { it }"
-                val mapIndexedTransformation = MapIndexedTransformation(state.outerLoop, state.inputVariable, state.indexVariable, transform)
+                val mapIndexedTransformation = MapTransformation(state.outerLoop, state.inputVariable, state.indexVariable, transform, mapNotNull = false)
                 val inputVarExpression = KtPsiFactory(nestedLoop).createExpressionByPattern("$0", state.inputVariable.nameAsSafeName)
                 val flatMapTransformation = FlatMapTransformation(state.outerLoop, state.inputVariable, inputVarExpression)
                 val newState = state.copy(
