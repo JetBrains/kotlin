@@ -43,6 +43,10 @@
 
     <include file="jslib_files.xml" />
 
+    <property name="compiled.stdlib.js" value="stdlib.js"/>
+    <property name="compiled.stdlib.meta.js" value="kotlin.meta.js"/>
+    <property name="stdlib.js.dir" value="${basedir}/js/js.translator/testData"/>
+
     <!--
     The compiler produced on the first step of the build (Bootstrap No Tests) is only guaranteed to work against the OLD runtime
     located in dependencies/bootstrap-compiler/.../kotlin-runtime.jar, because the newly built compiler is just a Kotlin application,
@@ -324,35 +328,15 @@
         </sequential>
     </macrodef>
 
-    <target name="js-stdlib">
-        <property name="compiled.builtins.js" value="builtins.js"/>
-        <property name="compiled.builtins.meta.js" value="builtins.meta.js"/>
-        <property name="compiled.stdlib.js" value="stdlib.js"/>
-        <property name="compiled.stdlib.meta.js" value="kotlin.meta.js"/>
-        <property name="stdlib.js.dir" value="${basedir}/js/js.translator/testData"/>
-
-        <kotlin-pp src="libraries/stdlib/src" output="${intermediate-sources}/stdlib/js" profile="JS" />
-
-        <new-kotlin2js output="${js.stdlib.output.dir}/tmp/kotlin.js">
-            <src>
-                <union>
-                    <fileset refid="kotlin.builtin.files"/>
-                    <resources refid="js.lib.files"/>
-                </union>
-            </src>
-        </new-kotlin2js>
-        <move file="${js.stdlib.output.dir}/tmp/kotlin.js" tofile="${js.stdlib.output.dir}/${compiled.stdlib.js}" />
-        <move file="${js.stdlib.output.dir}/tmp/kotlin" todir="${js.stdlib.output.dir}" />
-        <move file="${js.stdlib.output.dir}/tmp/${compiled.stdlib.meta.js}" tofile="${js.stdlib.output.dir}/${compiled.stdlib.meta.js}" />
-
-        <taskdef name="closure-compiler"
-                 classname="com.google.javascript.jscomp.ant.CompileTask"
-                 classpath="${dependencies.dir}/closure-compiler.jar"/>
-
+    <target name="js-stdlib-merge">
         <!-- value should be one of: whitespace, simple, advanced -->
         <property name="compilationLevel" value="whitespace"/>
         <!-- value should be one of: default, quiet, verbose -->
         <property name="warningLevel" value="default"/>
+
+        <taskdef name="closure-compiler"
+                 classname="com.google.javascript.jscomp.ant.CompileTask"
+                 classpath="${dependencies.dir}/closure-compiler.jar"/>
 
         <closure-compiler
             compilationLevel="${compilationLevel}"
@@ -381,6 +365,41 @@
                 <file name="externs.js"/>
             </externs>
         </closure-compiler>
+    </target>
+
+    <target name="js-stdlib">
+        <property environment="env"/>
+        <kotlin-pp src="libraries/stdlib/src" output="${intermediate-sources}/stdlib/js" profile="JS" />
+
+        <new-kotlin2js output="${js.stdlib.output.dir}/tmp/kotlin.js">
+            <src>
+                <union>
+                    <fileset refid="kotlin.builtin.files"/>
+                    <resources refid="js.lib.files"/>
+                </union>
+            </src>
+        </new-kotlin2js>
+        <move file="${js.stdlib.output.dir}/tmp/kotlin.js" tofile="${js.stdlib.output.dir}/${compiled.stdlib.js}" />
+        <move file="${js.stdlib.output.dir}/tmp/kotlin" todir="${js.stdlib.output.dir}" />
+        <move file="${js.stdlib.output.dir}/tmp/${compiled.stdlib.meta.js}" tofile="${js.stdlib.output.dir}/${compiled.stdlib.meta.js}" />
+
+        <condition property="jdk17" value="${env.JDK_17}" else="${env.JAVA_HOME}">
+            <isset property="env.JDK_17" />
+        </condition>
+        <java classname="org.apache.tools.ant.launch.Launcher"
+              fork="true"
+              failonerror="true"
+              timeout="4000000"
+              taskname="startAnt"
+              jvm="${jdk17}/bin/java">
+            <env key="JAVA_HOME" value="${jdk17}"/>
+            <classpath>
+                <pathelement location="${ant.home}/lib/ant-launcher.jar"/>
+            </classpath>
+            <arg line="-f" />
+            <arg line="build.xml" />
+            <arg line="js-stdlib-merge" />
+        </java>
 
         <jar jarfile="${kotlin-home}/lib/kotlin-jslib.jar" duplicate="fail">
             <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
