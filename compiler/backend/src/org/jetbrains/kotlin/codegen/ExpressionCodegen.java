@@ -38,13 +38,10 @@ import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension;
 import org.jetbrains.kotlin.codegen.inline.*;
-import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicCallable;
-import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethod;
-import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
-import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicPropertyGetter;
+import org.jetbrains.kotlin.codegen.intrinsics.*;
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsnsKt;
-import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
+import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegen;
@@ -1983,8 +1980,14 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 VariableAsFunctionResolvedCall call = (VariableAsFunctionResolvedCall) resolvedCall;
                 resolvedCall = call.getVariableCall();
             }
-            receiver = StackValue.receiver(resolvedCall, receiver, this, null);
+
             descriptor = resolvedCall.getResultingDescriptor();
+
+            //Check early if KCallableNameProperty is applicable to prevent closure generation
+            StackValue intrinsicResult = applyIntrinsic(descriptor, KCallableNameProperty.class, resolvedCall, receiver);
+            if (intrinsicResult != null) return intrinsicResult;
+
+            receiver = StackValue.receiver(resolvedCall, receiver, this, null);
             if (descriptor instanceof FakeCallableDescriptorForObject) {
                 descriptor = ((FakeCallableDescriptorForObject) descriptor).getReferencedDescriptor();
             }
@@ -1997,17 +2000,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         if (isSyntheticField) {
             descriptor = ((SyntheticFieldDescriptor) descriptor).getPropertyDescriptor();
         }
-        if (descriptor instanceof CallableMemberDescriptor) {
-            CallableMemberDescriptor memberDescriptor = DescriptorUtils.unwrapFakeOverride((CallableMemberDescriptor) descriptor);
 
-            IntrinsicMethod intrinsic = state.getIntrinsics().getIntrinsic(memberDescriptor);
-            if (intrinsic instanceof IntrinsicPropertyGetter) {
-                //TODO: intrinsic properties (see intermediateValueForProperty)
-                Type returnType = typeMapper.mapType(memberDescriptor);
-                StackValue intrinsicResult = ((IntrinsicPropertyGetter) intrinsic).generate(resolvedCall, this, returnType, receiver);
-                if (intrinsicResult != null) return intrinsicResult;
-            }
-        }
+        StackValue intrinsicResult = applyIntrinsic(descriptor, IntrinsicPropertyGetter.class, resolvedCall, receiver);
+        if (intrinsicResult != null) return intrinsicResult;
 
         if (descriptor instanceof PropertyDescriptor) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
@@ -2054,6 +2049,25 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             return localOrCaptured;
         }
         throw new UnsupportedOperationException("don't know how to generate reference " + descriptor);
+    }
+
+    @Nullable
+    private StackValue applyIntrinsic(
+            DeclarationDescriptor descriptor,
+            Class<? extends IntrinsicPropertyGetter> intrinsicType,
+            ResolvedCall<?> resolvedCall,
+            @NotNull StackValue receiver
+    ) {
+        if (descriptor instanceof CallableMemberDescriptor) {
+            CallableMemberDescriptor memberDescriptor = DescriptorUtils.unwrapFakeOverride((CallableMemberDescriptor) descriptor);
+            IntrinsicMethod intrinsic = state.getIntrinsics().getIntrinsic(memberDescriptor);
+            if (intrinsicType.isInstance(intrinsic)) {
+                //TODO: intrinsic properties (see intermediateValueForProperty)
+                Type returnType = typeMapper.mapType(memberDescriptor);
+                return ((IntrinsicPropertyGetter) intrinsic).generate(resolvedCall, this, returnType, receiver);
+            }
+        }
+        return null;
     }
 
     @Nullable
