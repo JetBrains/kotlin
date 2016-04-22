@@ -66,6 +66,9 @@ data class MatchResult(
 fun match(loop: KtForExpression): MatchResult? {
     val (inputVariable, indexVariable, sequenceExpression) = extractLoopData(loop) ?: return null
 
+    // used just as optimization to avoid unnecessary checks
+    val loopContainsEmbeddedBreakOrContinue = loop.containsEmbeddedBreakOrContinue()
+
     val sequenceTransformations = ArrayList<SequenceTransformation>()
     var state = MatchingState(
             outerLoop = loop,
@@ -89,8 +92,11 @@ fun match(loop: KtForExpression): MatchResult? {
             state = state.copy(indexVariable = null)
         }
 
+        val restContainsEmbeddedBreakOrContinue = loopContainsEmbeddedBreakOrContinue && state.statements.any { it.containsEmbeddedBreakOrContinue() }
+
         for (matcher in MatcherRegistrar.resultMatchers) {
             if (state.indexVariable != null && !matcher.indexVariableUsePossible) continue
+            if (restContainsEmbeddedBreakOrContinue && !matcher.embeddedBreakOrContinuePossible) continue
 
             val match = matcher.match(state)
             if (match != null) {
@@ -115,14 +121,20 @@ fun match(loop: KtForExpression): MatchResult? {
                     return null
                 }
 
-                var newState = match.newState
                 // check that old input variable is not needed anymore
+                var newState = match.newState
                 if (state.inputVariable != newState.inputVariable && state.inputVariable.hasUsages(newState.statements)) return null
 
                 if (state.indexVariable != null && match.transformations.any { it.affectsIndex }) {
                     // index variable is still needed but index in the new sequence is different
                     if (state.indexVariable!!.hasUsages(newState.statements)) return null
                     newState = newState.copy(indexVariable = null)
+                }
+
+                if (restContainsEmbeddedBreakOrContinue && !matcher.embeddedBreakOrContinuePossible) {
+                    val countBefore = state.statements.sumBy { it.countEmbeddedBreaksAndContinues() }
+                    val countAfter = newState.statements.sumBy { it.countEmbeddedBreaksAndContinues() }
+                    if (countAfter != countBefore) continue // some embedded break or continue in the matched part
                 }
 
                 sequenceTransformations.addAll(match.transformations)

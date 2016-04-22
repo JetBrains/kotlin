@@ -17,10 +17,8 @@
 package org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence
 
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.*
-import org.jetbrains.kotlin.psi.KtCallableDeclaration
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtForExpression
-import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.*
 
 class MapTransformation(
         override val loop: KtForExpression,
@@ -47,11 +45,31 @@ class MapTransformation(
      *     }
      */
     object Matcher : SequenceTransformationMatcher {
+        override val embeddedBreakOrContinuePossible: Boolean
+            get() = true
+
         override fun match(state: MatchingState): SequenceTransformationMatch? {
             val declaration = state.statements.firstOrNull() as? KtProperty ?: return null //TODO: support multi-variables
             val initializer = declaration.initializer ?: return null
             if (declaration.hasWriteUsages()) return null
             val restStatements = state.statements.drop(1)
+
+            if (initializer is KtBinaryExpression && initializer.operationToken == KtTokens.ELVIS) {
+                val continueExpression = initializer.right as? KtContinueExpression ?: return null
+                if (continueExpression.targetLoop() != state.innerLoop) return null
+
+                val mapping = initializer.left ?: return null
+                if (mapping.containsEmbeddedBreakOrContinue()) return null
+
+                val transformation = if (state.indexVariable != null && state.indexVariable.hasUsages(mapping))
+                    MapIndexedNotNullTransformation(state.outerLoop, state.inputVariable, state.indexVariable, mapping)
+                else
+                    MapNotNullTransformation(state.outerLoop, state.inputVariable, mapping)
+                val newState = state.copy(statements = restStatements, inputVariable = declaration)
+                return SequenceTransformationMatch(transformation, newState)
+            }
+
+            if (initializer.containsEmbeddedBreakOrContinue()) return null
 
             val transformation = if (state.indexVariable != null && state.indexVariable.hasUsages(initializer))
                 MapIndexedTransformation(state.outerLoop, state.inputVariable, state.indexVariable, initializer)
@@ -79,5 +97,42 @@ class MapIndexedTransformation(
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
         val lambda = generateLambda(mapping, indexVariable, inputVariable)
         return chainedCallGenerator.generate("mapIndexed $0:'{}'", lambda)
+    }
+}
+
+class MapNotNullTransformation(
+        override val loop: KtForExpression,
+        val inputVariable: KtCallableDeclaration,
+        val mapping: KtExpression
+) : SequenceTransformation {
+
+    override val affectsIndex: Boolean
+        get() = true
+
+    override val presentation: String
+        get() = "mapNotNull{}"
+
+    override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
+        val lambda = generateLambda(inputVariable, mapping)
+        return chainedCallGenerator.generate("mapNotNull$0:'{}'", lambda)
+    }
+}
+
+class MapIndexedNotNullTransformation(
+        override val loop: KtForExpression,
+        val inputVariable: KtCallableDeclaration,
+        val indexVariable: KtCallableDeclaration,
+        val mapping: KtExpression
+) : SequenceTransformation {
+
+    override val affectsIndex: Boolean
+        get() = false
+
+    override val presentation: String
+        get() = "mapIndexedNotNull{}"
+
+    override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
+        val lambda = generateLambda(mapping, indexVariable, inputVariable)
+        return chainedCallGenerator.generate("mapIndexedNotNull $0:'{}'", lambda)
     }
 }
