@@ -204,6 +204,8 @@ public class Emulator {
             for (String pid : processIds) {
                 GeneralCommandLine killCommand = new GeneralCommandLine();
                 killCommand.setExePath("kill");
+                killCommand.addParameter("-s");
+                killCommand.addParameter("9");
                 killCommand.addParameter(pid);
                 RunUtils.execute(killCommand);
             }
