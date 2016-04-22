@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.codegen.intrinsics
 
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -32,12 +31,7 @@ class KCallableNameProperty : IntrinsicPropertyGetter() {
         val expression = expressionReceiver.expression as? KtCallableReferenceExpression ?: return null
         val callableReference = expression.callableReference
         val descriptor = callableReference.getResolvedCall(codegen.bindingContext)?.resultingDescriptor ?: return null
-
-        val name = if (descriptor is ConstructorDescriptor) {
-            "<init>"
-        } else {
-            callableReference.text.trim('`')
-        }
+        val name = descriptor.name.asString()
 
         return StackValue.operation(returnType) { iv ->
             iv.aconst(name)

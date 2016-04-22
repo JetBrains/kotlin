@@ -3,10 +3,11 @@ class A {
     val b = ""
 }
 
+val c = ""
+
 fun box(): String {
-    val a = A::a.name
-    if (a != "a") return "Fail $a"
-    val b = A::`b`.name
-    if (b != "b") return "Fail $b"
+    if ("a" != A::a.name) return "Fail a"
+    if ("b" != A::`b`.name) return "Fail b"
+    if ("c" != ::c.name) return "Fail c"
     return "OK"
 }
