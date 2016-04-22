@@ -32,21 +32,21 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-object MakeVisibleFactory  : KotlinSingleIntentionActionFactory() {
-
-    override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-        val element = diagnostic.psiElement as? KtElement ?: return null
+object MakeVisibleFactory  : KotlinIntentionActionsFactory() {
+    override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
+        val element = diagnostic.psiElement as? KtElement ?: return emptyList()
         val context = element.analyze(BodyResolveMode.PARTIAL)
         val usageModule = context.get(BindingContext.FILE_TO_PACKAGE_FRAGMENT, element.getContainingKtFile())?.module
 
         @Suppress("UNCHECKED_CAST")
         val factory = diagnostic.factory as DiagnosticFactory3<*, DeclarationDescriptor, *, DeclarationDescriptor>
-        val descriptor = factory.cast(diagnostic).c as? DeclarationDescriptorWithVisibility ?: return null
-        val declaration = DescriptorToSourceUtils.getSourceFromDescriptor(descriptor) as? KtModifierListOwner ?: return null
+        val descriptor = factory.cast(diagnostic).c as? DeclarationDescriptorWithVisibility ?: return emptyList()
+        val declaration = DescriptorToSourceUtils.getSourceFromDescriptor(descriptor) as? KtModifierListOwner ?: return emptyList()
 
         val module = DescriptorUtils.getContainingModule(descriptor)
-        val targetVisibility = if (module != usageModule || descriptor.visibility != PRIVATE) PUBLIC else INTERNAL
+        val targetVisibilities = if (module != usageModule || descriptor.visibility != PRIVATE) listOf(PUBLIC)
+                                 else listOf(PUBLIC, INTERNAL)
 
-        return ChangeVisibilityFix.create(declaration, descriptor, targetVisibility)
+        return targetVisibilities.mapNotNull { ChangeVisibilityFix.create(declaration, descriptor, it) }
     }
 }
