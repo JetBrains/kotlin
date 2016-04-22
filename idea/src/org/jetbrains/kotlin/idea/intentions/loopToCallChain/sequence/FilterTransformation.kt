@@ -163,6 +163,13 @@ class FilterIsInstanceTransformation(
 }
 
 class FilterNotNullTransformation(override val loop: KtForExpression) : SequenceTransformation {
+    override fun mergeWithPrevious(previousTransformation: SequenceTransformation): SequenceTransformation? {
+        return when (previousTransformation) {
+            is MapTransformation -> MapNotNullTransformation(loop, previousTransformation.inputVariable, previousTransformation.mapping)
+            is MapIndexedTransformation -> MapIndexedNotNullTransformation(loop, previousTransformation.inputVariable, previousTransformation.indexVariable, previousTransformation.mapping)
+            else -> null
+        }
+    }
 
     override val affectsIndex: Boolean
         get() = true
