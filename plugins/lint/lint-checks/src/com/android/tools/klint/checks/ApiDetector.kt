@@ -367,10 +367,7 @@ open class ApiDetector : Detector(), UastScanner {
                 Severity.ERROR,
                 Implementation(
                         ApiDetector::class.java,
-                        EnumSet.of(Scope.CLASS_FILE, Scope.RESOURCE_FILE, Scope.MANIFEST),
-                        Scope.RESOURCE_FILE_SCOPE,
-                        Scope.CLASS_FILE_SCOPE,
-                        Scope.MANIFEST_SCOPE))
+                        Scope.SOURCE_FILE_SCOPE))
 
         /** Accessing an inlined API on older platforms  */
         @JvmField

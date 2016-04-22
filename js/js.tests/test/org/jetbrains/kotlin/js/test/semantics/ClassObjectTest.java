@@ -51,4 +51,12 @@ public final class ClassObjectTest extends SingleFileTranslationTest {
     public void testDefaultObjectSameNamesAsInOuter() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testEnumCompanionObject() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testObjectInCompanionObject() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

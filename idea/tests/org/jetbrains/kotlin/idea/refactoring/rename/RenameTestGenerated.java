@@ -371,6 +371,18 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("renameKotlinStaticMethodWithJvmOverloads/renameKotlinStaticMethodWithJvmOverloads.test")
+    public void testRenameKotlinStaticMethodWithJvmOverloads_RenameKotlinStaticMethodWithJvmOverloads() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameKotlinStaticMethodWithJvmOverloads/renameKotlinStaticMethodWithJvmOverloads.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("renameKotlinStaticProperty/renameKotlinStaticProperty.test")
+    public void testRenameKotlinStaticProperty_RenameKotlinStaticProperty() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameKotlinStaticProperty/renameKotlinStaticProperty.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("renameKotlinTopLevelVarProperty/renameTopLevelVarProperty.test")
     public void testRenameKotlinTopLevelVarProperty_RenameTopLevelVarProperty() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameKotlinTopLevelVarProperty/renameTopLevelVarProperty.test");

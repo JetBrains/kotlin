@@ -19,15 +19,19 @@ package org.jetbrains.uast
  * Kinds of [UVariable].
  */
 open class UastVariableKind(val name: String) {
+    class Member(name: String) : UastVariableKind(name)
+    class LocalVariable(name: String) : UastVariableKind(name)
+    class ValueParameter(name: String) : UastVariableKind(name)
+
     companion object {
         @JvmField
-        val LOCAL_VARIABLE = UastVariableKind("local")
+        val LOCAL_VARIABLE = LocalVariable("local")
 
         @JvmField
-        val MEMBER = UastVariableKind("member")
+        val MEMBER = Member("member")
 
         @JvmField
-        val VALUE_PARAMETER = UastVariableKind("parameter")
+        val VALUE_PARAMETER = ValueParameter("parameter")
     }
 
     override fun toString(): String{

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.refactoring.fqName.isImported
 import org.jetbrains.kotlin.idea.util.ImportDescriptorResult
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.getFileResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
@@ -398,7 +399,7 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
             val psiFactory = KtPsiFactory(project)
             if (file is KtCodeFragment) {
                 val newDirective = psiFactory.createImportDirective(importPath)
-                file.addImportsFromString(newDirective.text)
+                runWriteAction { file.addImportsFromString(newDirective.text) }
                 return newDirective
             }
 
@@ -407,8 +408,10 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
                 val newDirective = psiFactory.createImportDirective(importPath)
                 val imports = importList.imports
                 if (imports.isEmpty()) { //TODO: strange hack
-                    importList.add(psiFactory.createNewLine())
-                    return importList.add(newDirective) as KtImportDirective
+                    return runWriteAction<KtImportDirective> {
+                        importList.add(psiFactory.createNewLine())
+                        importList.add(newDirective) as KtImportDirective
+                    }
                 }
                 else {
                     val insertAfter = imports
@@ -416,7 +419,7 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
                                 val directivePath = it.importPath
                                 directivePath != null && ImportPathComparator.compare(directivePath, importPath) <= 0
                             }
-                    return importList.addAfter(newDirective, insertAfter) as KtImportDirective
+                    return runWriteAction { importList.addAfter(newDirective, insertAfter) as KtImportDirective }
                 }
             }
             else {

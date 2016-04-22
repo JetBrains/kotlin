@@ -85,7 +85,7 @@ class JavaUFunction(
             PsiType.BOOLEAN -> "Z"
             PsiType.VOID -> "V"
             is PsiArrayType -> renderType(type.componentType)?.let { "[$it" }
-            is PsiClassType -> type.resolve()?.qualifiedName?.let { "L$it;" }
+            is PsiClassType -> type.resolve()?.qualifiedName?.replace('.', '/')?.let { "L$it;" }
             else -> null
         }
     }

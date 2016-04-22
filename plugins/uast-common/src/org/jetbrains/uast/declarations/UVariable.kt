@@ -15,6 +15,7 @@
  */
 package org.jetbrains.uast
 
+import org.jetbrains.uast.kinds.UastVariableInitialierKind
 import org.jetbrains.uast.visitor.UastVisitor
 
 interface UVariable : UDeclaration, UModifierOwner, UVisibilityOwner, UAnnotated {
@@ -22,6 +23,12 @@ interface UVariable : UDeclaration, UModifierOwner, UVisibilityOwner, UAnnotated
      * Return the variable initializer (or the default value for value parameter), or null if the variable is not initialized.
      */
     val initializer: UExpression?
+
+
+    /**
+     * Return the variable initializer kind (simple initializer, property delegation, etc.).
+     */
+    val initializerKind: UastVariableInitialierKind
 
     /**
      * Return the variable kind.
@@ -75,6 +82,7 @@ interface UVariable : UDeclaration, UModifierOwner, UVisibilityOwner, UAnnotated
 
 object UVariableNotResolved : UVariable {
     override val initializer = null
+    override val initializerKind = UastVariableInitialierKind.NO_INITIALIZER
     override val kind = UastVariableKind(ERROR_NAME)
     override val type = UastErrorType
     override val nameElement = null
