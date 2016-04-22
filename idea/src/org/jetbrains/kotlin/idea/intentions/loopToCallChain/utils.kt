@@ -284,3 +284,26 @@ fun KtExpression.isStableInLoop(loop: KtLoopExpression, checkNoOtherUsagesInLoop
         else -> return false
     }
 }
+
+fun KtExpression.containsEmbeddedBreakOrContinue(): Boolean {
+    return anyDescendantOfType<KtExpressionWithLabel>(::isEmbeddedBreakOrContinue)
+}
+
+fun KtExpression.countEmbeddedBreaksAndContinues(): Int {
+    return collectDescendantsOfType<KtExpressionWithLabel>(::isEmbeddedBreakOrContinue).size
+}
+
+private fun isEmbeddedBreakOrContinue(expression: KtExpressionWithLabel): Boolean {
+    if (expression !is KtBreakExpression && expression !is KtContinueExpression) return false
+    val parent = expression.parent
+    when (parent) {
+        is KtBlockExpression -> return false
+
+        is KtContainerNode -> {
+            val containerExpression = parent.parent as KtExpression
+            return containerExpression.analyze(BodyResolveMode.PARTIAL)[BindingContext.USED_AS_EXPRESSION, containerExpression] == true
+        }
+
+        else -> return true
+    }
+}

@@ -100,10 +100,19 @@ data class MatchingState(
         val initializationStatementsToDelete: Collection<KtExpression> = emptyList()
 )
 
+interface BaseMatcher {
+    /**
+     * Implementors should return true if they match some constructs with expression-embedded break or continue.
+     * In this case they are obliged to deal with them and filter out invalid cases.
+     */
+    val embeddedBreakOrContinuePossible: Boolean
+        get() = false
+}
+
 /**
  * A matcher that can recognize one or more [SequenceTransformation]'s
  */
-interface SequenceTransformationMatcher {
+interface SequenceTransformationMatcher : BaseMatcher {
     fun match(state: MatchingState): SequenceTransformationMatch?
 }
 
@@ -118,7 +127,7 @@ class SequenceTransformationMatch(
  * A matcher that can recognize a [ResultTransformation] (optionally prepended by some [SequenceTransformation]'s).
  * Should match the whole rest part of the loop.
  */
-interface ResultTransformationMatcher {
+interface ResultTransformationMatcher : BaseMatcher {
     fun match(state: MatchingState): ResultTransformationMatch?
 
     val indexVariableUsePossible: Boolean
