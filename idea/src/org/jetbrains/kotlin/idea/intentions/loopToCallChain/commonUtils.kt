@@ -92,6 +92,14 @@ fun KtCallableDeclaration.countUsages(): Int {
     return ReferencesSearch.search(this, useScope).count()
 }
 
+fun KtVariableDeclaration.countWriteUsages(): Int {
+    assert(this.isPhysical)
+    if (!isVar) return 0
+    return ReferencesSearch.search(this, useScope).count {
+        (it as? KtSimpleNameReference)?.element?.readWriteAccess(useResolveForReadWrite = true)?.isWrite == true
+    }
+}
+
 fun KtVariableDeclaration.countWriteUsages(inElement: KtElement): Int {
     assert(this.isPhysical)
     if (!isVar) return 0

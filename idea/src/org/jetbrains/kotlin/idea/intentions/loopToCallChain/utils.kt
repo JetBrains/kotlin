@@ -254,7 +254,7 @@ fun canSwapExecutionOrder(expressionBefore: KtExpression, expressionAfter: KtExp
         return canSwapExecutionOrder(expressionBefore, expressionAfter.right ?: return true)
     }
 
-    if (expressionBefore.isConstant() || expressionAfter.isConstant()) return true
+    if (expressionBefore.hasNoSideEffect() || expressionAfter.hasNoSideEffect()) return true
 
     //TODO: more cases
     return false
