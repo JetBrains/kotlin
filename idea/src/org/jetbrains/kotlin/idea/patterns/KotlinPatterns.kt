@@ -17,9 +17,11 @@
 package org.jetbrains.kotlin.idea.patterns
 
 import com.intellij.patterns.*
+import com.intellij.psi.PsiElement
 import com.intellij.util.PairProcessor
 import com.intellij.util.ProcessingContext
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFunction
@@ -87,14 +89,6 @@ open class KotlinFunctionPattern : PsiElementPattern<KtFunction, KotlinFunctionP
             function.getContainingKtFile().packageFqName.asString() == packageFqName
         }
     }
-
-    private fun withPatternCondition(debugName: String, condition: (KtFunction, ProcessingContext?) -> Boolean): KotlinFunctionPattern {
-        return with(object: PatternCondition<KtFunction>(debugName) {
-            override fun accepts(function: KtFunction, context: ProcessingContext?): Boolean {
-                return condition(function, context)
-            }
-        })
-    }
 }
 
 // Methods in this class are used through reflection during pattern construction
@@ -118,6 +112,18 @@ class KtParameterPattern : PsiElementPattern<KtParameter, KtParameterPattern>(Kt
             }
         })
     }
+
+    fun withAnnotation(fqName: String): KtParameterPattern {
+        return withPatternCondition("KtParameterPattern-withAnnotation") { ktParameter, context ->
+            if (ktParameter.annotationEntries.isEmpty()) return@withPatternCondition false
+
+            val parameterDescriptor = ktParameter.resolveToDescriptorIfAny() as? ValueParameterDescriptor ?: return@withPatternCondition false
+
+            parameterDescriptor.annotations.any { annotation ->
+                DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(annotation.type) == fqName
+            }
+        }
+    }
 }
 
 @Suppress("unused")
@@ -136,5 +142,14 @@ class KotlinReceiverPattern : PsiElementPattern<KtTypeReference, KotlinReceiverP
             }
         })
     }
+}
+
+private fun <T: PsiElement, Self: PsiElementPattern<T, Self>> PsiElementPattern<T, Self>.withPatternCondition(
+        debugName: String, condition: (T, ProcessingContext?) -> Boolean): Self {
+    return with(object: PatternCondition<T>(debugName) {
+        override fun accepts(element: T, context: ProcessingContext?): Boolean {
+            return condition(element, context)
+        }
+    })
 }
 
