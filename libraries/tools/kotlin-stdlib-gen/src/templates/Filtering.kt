@@ -49,8 +49,12 @@ fun filtering(): List<GenericFunction> {
 
                 list = ArrayList<T>(resultSize)
                 if (this is List<T>) {
-                    for (item in listIterator(n)) {
-                        list.add(item)
+                    if (this is RandomAccess) {
+                        for (index in n..size - 1)
+                            list.add(this[index])
+                    } else {
+                        for (item in listIterator(n))
+                            list.add(item)
                     }
                     return list
                 }

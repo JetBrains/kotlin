@@ -177,6 +177,9 @@ public fun <T> MutableList<T>.removeAll(predicate: (T) -> Boolean): Boolean = fi
 public fun <T> MutableList<T>.retainAll(predicate: (T) -> Boolean): Boolean = filterInPlace(predicate, false)
 
 private fun <T> MutableList<T>.filterInPlace(predicate: (T) -> Boolean, predicateResultToRemove: Boolean): Boolean {
+    if (this !is RandomAccess)
+        return (this as MutableIterable<T>).filterInPlace(predicate, predicateResultToRemove)
+
     var writeIndex: Int = 0
     for (readIndex in 0..lastIndex) {
         val element = this[readIndex]
