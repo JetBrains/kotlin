@@ -527,12 +527,6 @@ fun elements(): List<GenericFunction> {
         @throws [NoSuchElementException] if no such ${f.element} is found.""" }
         returns("T")
         body { f ->
-            (if (f == Iterables)
-            """
-            if (this is List)
-                return this.last(predicate)
-            """
-            else "") +
             """
             var last: T? = null
             var found = false
@@ -574,12 +568,6 @@ fun elements(): List<GenericFunction> {
         doc { f -> "Returns the last ${f.element} matching the given [predicate], or `null` if no such ${f.element} was found." }
         returns("T?")
         body { f ->
-            (if (f == Iterables)
-            """
-            if (this is List)
-                return this.lastOrNull(predicate)
-            """
-            else "") +
             """
             var last: T? = null
             for (element in this) {

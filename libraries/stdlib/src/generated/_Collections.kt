@@ -348,8 +348,6 @@ public fun <T> List<T>.last(): T {
  * @throws [NoSuchElementException] if no such element is found.
  */
 public inline fun <T> Iterable<T>.last(predicate: (T) -> Boolean): T {
-    if (this is List)
-        return this.last(predicate)
     var last: T? = null
     var found = false
     for (element in this) {
@@ -426,8 +424,6 @@ public fun <T> List<T>.lastOrNull(): T? {
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
 public inline fun <T> Iterable<T>.lastOrNull(predicate: (T) -> Boolean): T? {
-    if (this is List)
-        return this.lastOrNull(predicate)
     var last: T? = null
     for (element in this) {
         if (predicate(element)) {
