@@ -124,7 +124,7 @@ object FindTransformationMatcher : TransformationMatcher {
             get() = generator.chainCallCount
 
         override val shouldUseInputVariable: Boolean
-            get() = generator.shouldUseInputVariable
+            get() = false
 
         override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
             return generator.generate(chainedCallGenerator)
@@ -153,7 +153,7 @@ object FindTransformationMatcher : TransformationMatcher {
             get() = generator.chainCallCount
 
         override val shouldUseInputVariable: Boolean
-            get() = generator.shouldUseInputVariable
+            get() = false
 
         override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
             return generator.generate(chainedCallGenerator)
@@ -168,8 +168,6 @@ object FindTransformationMatcher : TransformationMatcher {
         val presentation: String
             get() = functionName + (if (hasFilter) "{}" else "()")
 
-        val shouldUseInputVariable: Boolean
-
         fun generate(chainedCallGenerator: ChainedCallGenerator): KtExpression
 
         val chainCallCount: Int
@@ -179,8 +177,7 @@ object FindTransformationMatcher : TransformationMatcher {
     private class SimpleGenerator(
             override val functionName: String,
             private val inputVariable: KtCallableDeclaration,
-            private val filter: KtExpression?,
-            override val shouldUseInputVariable: Boolean
+            private val filter: KtExpression?
     ) : FindOperationGenerator {
         override val hasFilter: Boolean
             get() = filter != null
@@ -226,7 +223,7 @@ object FindTransformationMatcher : TransformationMatcher {
             //TODO: what if value when not found is not "-1"?
             if (valueIfFound.isVariableReference(indexVariable) && valueIfNotFound.text == "-1") {
                 val functionName = if (findFirst) "indexOfFirst" else "indexOfLast"
-                return SimpleGenerator(functionName, inputVariable, filter, shouldUseInputVariable = false)
+                return SimpleGenerator(functionName, inputVariable, filter)
             }
 
             return null
@@ -252,7 +249,7 @@ object FindTransformationMatcher : TransformationMatcher {
             when {
                 valueIfFound.isVariableReference(inputVariable) -> {
                     val functionName = if (findFirst) "firstOrNull" else "lastOrNull"
-                    val generator = SimpleGenerator(functionName, inputVariable, filter, shouldUseInputVariable = true)
+                    val generator = SimpleGenerator(functionName, inputVariable, filter)
                     return generator.useElvisOperatorIfNeeded()
                 }
 
@@ -280,9 +277,6 @@ object FindTransformationMatcher : TransformationMatcher {
                                 override val hasFilter: Boolean
                                     get() = filter != null
 
-                                override val shouldUseInputVariable: Boolean
-                                    get() = true
-
                                 override val chainCallCount: Int
                                     get() = 2
 
@@ -303,9 +297,6 @@ object FindTransformationMatcher : TransformationMatcher {
 
                         override val hasFilter: Boolean
                             get() = filter != null
-
-                        override val shouldUseInputVariable: Boolean
-                            get() = true
 
                         override val chainCallCount: Int
                             get() = 2 // also includes "let"
@@ -347,9 +338,6 @@ object FindTransformationMatcher : TransformationMatcher {
                     override val hasFilter: Boolean
                         get() = false
 
-                    override val shouldUseInputVariable: Boolean
-                        get() = false
-
                     override fun generate(chainedCallGenerator: ChainedCallGenerator): KtExpression {
                         val expression = chainedCallGenerator.generate("contains($0)", containsArgument)
                         return if (negated) expression.negate() else expression
@@ -359,10 +347,10 @@ object FindTransformationMatcher : TransformationMatcher {
         }
 
         if (negated) {
-            return SimpleGenerator("none", inputVariable, filter, shouldUseInputVariable = false)
+            return SimpleGenerator("none", inputVariable, filter)
         }
         else {
-            return SimpleGenerator("any", inputVariable, filter, shouldUseInputVariable = false)
+            return SimpleGenerator("any", inputVariable, filter)
         }
     }
 
