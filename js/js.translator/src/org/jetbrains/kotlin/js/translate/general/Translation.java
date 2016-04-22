@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.js.translate.declaration.PackageDeclarationTranslato
 import org.jetbrains.kotlin.js.translate.expression.ExpressionVisitor;
 import org.jetbrains.kotlin.js.translate.expression.FunctionTranslator;
 import org.jetbrains.kotlin.js.translate.expression.PatternTranslator;
+import org.jetbrains.kotlin.js.translate.general.ModuleWrapperTranslation.ImportedModule;
 import org.jetbrains.kotlin.js.translate.test.JSRhinoUnitTester;
 import org.jetbrains.kotlin.js.translate.test.JSTestGenerator;
 import org.jetbrains.kotlin.js.translate.test.JSTester;
@@ -57,6 +58,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import static org.jetbrains.kotlin.js.translate.general.ModuleWrapperTranslation.wrapIfNecessary;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getFunctionDescriptor;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.convertToStatement;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.toStringLiteralList;
@@ -188,16 +190,6 @@ public final class Translation {
         }
     }
 
-    private static class ImportedModule {
-        final String id;
-        final JsName name;
-
-        public ImportedModule(String id, JsName name) {
-            this.id = id;
-            this.name = name;
-        }
-    }
-
     @NotNull
     private static TranslationContext doGenerateAst(
             @NotNull BindingTrace bindingTrace,
@@ -247,157 +239,6 @@ public final class Translation {
                                                      config.getModuleKind()));
 
         return context;
-    }
-
-    @NotNull
-    private static List<JsStatement> wrapIfNecessary(
-            @NotNull String moduleId,
-            @NotNull JsExpression function,
-            @NotNull List<ImportedModule> importedModules,
-            @NotNull JsProgram program,
-            @NotNull ModuleKind kind
-    ) {
-        switch (kind) {
-            case AMD:
-                return wrapAmd(moduleId, function, importedModules, program);
-            case COMMON_JS:
-                return wrapCommonJs(function, importedModules, program);
-            case UMD:
-                return wrapUmd(moduleId, function, importedModules, program);
-            case PLAIN:
-            default:
-                return wrapPlain(moduleId, function, importedModules, program);
-        }
-    }
-
-    @NotNull
-    private static List<JsStatement> wrapUmd(
-            @Nullable String moduleId,
-            @NotNull JsExpression function,
-            @NotNull List<ImportedModule> importedModules,
-            @NotNull JsProgram program
-    ) {
-        JsScope scope = program.getScope();
-        JsName rootName = scope.declareName("root");
-        JsName factoryName = scope.declareName("factory");
-        JsName defineName = scope.declareName("define");
-        JsName exportsName = scope.declareName("exports");
-
-        JsExpression amdTest = JsAstUtils.and(JsAstUtils.typeOfIs(defineName.makeRef(), program.getStringLiteral("function")),
-                                              new JsNameRef("amd", defineName.makeRef()));
-        JsExpression commonJsTest = JsAstUtils.typeOfIs(exportsName.makeRef(), program.getStringLiteral("object"));
-
-        JsBlock amdBody = new JsBlock(wrapAmd(moduleId, factoryName.makeRef(), importedModules, program));
-        JsBlock commonJsBody = new JsBlock(wrapCommonJs(factoryName.makeRef(), importedModules, program));
-        JsInvocation plainInvocation = makePlainInvocation(factoryName.makeRef(), importedModules, program);
-
-        JsExpression plainExpr;
-        if (moduleId != null) {
-            JsExpression lhs = Namer.requiresEscaping(moduleId) ?
-                               new JsArrayAccess(rootName.makeRef(), program.getStringLiteral(moduleId)) :
-                               new JsNameRef(scope.declareName(moduleId), rootName.makeRef());
-            plainExpr = JsAstUtils.assignment(lhs, plainInvocation);
-        }
-        else {
-            plainExpr = plainInvocation;
-        }
-
-        JsStatement selector = JsAstUtils.newJsIf(amdTest, amdBody, JsAstUtils.newJsIf(commonJsTest, commonJsBody, plainExpr.makeStmt()));
-        JsFunction adapter = new JsFunction(program.getScope(), new JsBlock(selector), "UMD adapter");
-        adapter.getParameters().add(new JsParameter(rootName));
-        adapter.getParameters().add(new JsParameter(factoryName));
-
-        return Collections.singletonList(new JsInvocation(adapter, JsLiteral.THIS, function).makeStmt());
-    }
-
-    @NotNull
-    private static List<JsStatement> wrapAmd(
-            @Nullable String moduleId,
-            @NotNull JsExpression function,
-            @NotNull List<ImportedModule> importedModules,
-            @NotNull JsProgram program
-    ) {
-        JsScope scope = program.getScope();
-        JsName defineName = scope.declareName("define");
-        List<JsExpression> invocationArgs = new ArrayList<JsExpression>();
-
-        if (moduleId != null) {
-            invocationArgs.add(program.getStringLiteral(moduleId));
-        }
-
-        List<JsExpression> moduleNameList = new ArrayList<JsExpression>(importedModules.size());
-        for (ImportedModule importedModule : importedModules) {
-            moduleNameList.add(program.getStringLiteral(importedModule.id));
-        }
-        invocationArgs.add(new JsArrayLiteral(moduleNameList));
-
-        invocationArgs.add(function);
-
-        JsInvocation invocation = new JsInvocation(defineName.makeRef(), invocationArgs);
-        return Collections.singletonList(invocation.makeStmt());
-    }
-
-    @NotNull
-    private static List<JsStatement> wrapCommonJs(
-            @NotNull JsExpression function,
-            @NotNull List<ImportedModule> importedModules,
-            @NotNull JsProgram program
-    ) {
-        JsScope scope = program.getScope();
-        JsName moduleName = scope.declareName("module");
-        JsName requireName = scope.declareName("require");
-
-        List<JsExpression> invocationArgs = new ArrayList<JsExpression>();
-        for (ImportedModule importedModule : importedModules) {
-            invocationArgs.add(new JsInvocation(requireName.makeRef(), program.getStringLiteral(importedModule.id)));
-        }
-
-        JsInvocation invocation = new JsInvocation(function, invocationArgs);
-        JsExpression assignment = JsAstUtils.assignment(new JsNameRef("exports", moduleName.makeRef()), invocation);
-        return Collections.singletonList(assignment.makeStmt());
-    }
-
-    @NotNull
-    private static List<JsStatement> wrapPlain(
-            @Nullable String moduleId,
-            @NotNull JsExpression function,
-            @NotNull List<ImportedModule> importedModules,
-            @NotNull JsProgram program
-    ) {
-        JsInvocation invocation = makePlainInvocation(function, importedModules, program);
-
-        JsStatement statement;
-        if (moduleId == null) {
-            statement = invocation.makeStmt();
-        }
-        else {
-            statement = Namer.requiresEscaping(moduleId) ?
-                        JsAstUtils.assignment(makePlainModuleRef(moduleId, program), invocation).makeStmt() :
-                        JsAstUtils.newVar(program.getRootScope().declareName(moduleId), invocation);
-        }
-
-        return Collections.singletonList(statement);
-    }
-
-    @NotNull
-    private static JsInvocation makePlainInvocation(@NotNull JsExpression function, @NotNull List<ImportedModule> importedModules,
-            JsProgram program) {
-        List<JsExpression> invocationArgs = new ArrayList<JsExpression>(importedModules.size());
-
-        for (ImportedModule importedModule : importedModules) {
-            invocationArgs.add(makePlainModuleRef(importedModule.id, program));
-        }
-
-        return new JsInvocation(function, invocationArgs);
-    }
-
-    @NotNull
-    private static JsExpression makePlainModuleRef(@NotNull String moduleId, @NotNull JsProgram program) {
-        // TODO: we could use `this.moduleName` syntax. However, this does not work for `kotlin` module in Rhino, since
-        // we run kotlin.js in a parent scope. Consider better solution
-        return Namer.requiresEscaping(moduleId) ?
-               new JsArrayAccess(JsLiteral.THIS, program.getStringLiteral(moduleId)) :
-               program.getScope().declareName(moduleId).makeRef();
     }
 
     private static void defineModule(@NotNull TranslationContext context, @NotNull List<JsStatement> statements, @NotNull String moduleId) {
