@@ -76,6 +76,22 @@ class FilterTransformation(
      */
     object Matcher : SequenceTransformationMatcher {
         override fun match(state: MatchingState): SequenceTransformationMatch? {
+            var (transformation, currentState) = matchOneTransformation(state, takeWhileAllowed = true) ?: return null
+
+/*
+            if (transformation is FilterTransformation || transformation is FilterIndexedTransformation) {
+                while (true) {
+                    val (nextTransformation, nextState) = matchOneTransformation(currentState, takeWhileAllowed = false) ?: break
+                    if (nextTransformation !is FilterTransformation && nextTransformation !is FilterIndexedTransformation) break
+
+                }
+            }
+*/
+
+            return SequenceTransformationMatch(transformation, currentState)
+        }
+
+        private fun matchOneTransformation(state: MatchingState, takeWhileAllowed: Boolean): Pair<SequenceTransformation, MatchingState>? {
             val ifStatement = state.statements.firstOrNull() as? KtIfExpression ?: return null
             if (ifStatement.`else` != null) return null
             val condition = ifStatement.condition ?: return null
@@ -84,7 +100,7 @@ class FilterTransformation(
             if (state.statements.size == 1) {
                 val transformation = createFilterTransformation(state.outerLoop, state.inputVariable, state.indexVariable, condition, isInverse = false)
                 val newState = state.copy(statements = listOf(then))
-                return SequenceTransformationMatch(transformation, newState)
+                return transformation to newState
             }
             else {
                 val statement = then.blockExpressionsOrSingle().singleOrNull() ?: return null
@@ -93,20 +109,23 @@ class FilterTransformation(
                         if (statement.targetLoop() != state.innerLoop) return null
                         val transformation = createFilterTransformation(state.outerLoop, state.inputVariable, state.indexVariable, condition, isInverse = true)
                         val newState = state.copy(statements = state.statements.drop(1))
-                        return SequenceTransformationMatch(transformation, newState)
+                        return transformation to newState
                     }
 
                     is KtBreakExpression -> {
+                        if (!takeWhileAllowed) return null
                         if (statement.targetLoop() != state.outerLoop) return null
                         val transformation = TakeWhileTransformation(state.outerLoop, state.inputVariable, condition.negate())
                         val newState = state.copy(statements = state.statements.drop(1))
-                        return SequenceTransformationMatch(transformation, newState)
+                        return transformation to newState
                     }
 
                     else -> return null
                 }
             }
         }
+
+//        private fun mergeFilterTransformations(transformation1: )
 
         //TODO: choose filter or filterNot depending on condition
         private fun createFilterTransformation(

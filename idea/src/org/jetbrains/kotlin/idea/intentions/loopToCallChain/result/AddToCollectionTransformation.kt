@@ -378,7 +378,7 @@ class AssignToListTransformation(
         get() = "toList()"
 
     override fun mergeWithPrevious(previousTransformation: SequenceTransformation): ResultTransformation? {
-        if (previousTransformation !is FilterTransformation) return null
+        //TODO: can be any SequenceTransformation's that return not List<T>? Also this code needs to be changed when .asSequence() used
         return AssignSequenceTransformationResultTransformation(previousTransformation, initialization)
     }
 
