@@ -17,8 +17,9 @@ New features:
 - [KT-11692](https://youtrack.jetbrains.com/issue/KT-11692) Support Spring model diagrams for Kotlin classes
 - [KT-11574](https://youtrack.jetbrains.com/issue/KT-11574) Support predefined Java positions for language injection
 - [KT-2428](https://youtrack.jetbrains.com/issue/KT-11574) Support basic use-cases of language injection for expressions marked with @Language annotation
-- Add comment or @Language annotation after "Inject language or reference" intention automatically
+- [KT-11472](https://youtrack.jetbrains.com/issue/KT-11472) Add comment or @Language annotation after "Inject language or reference" intention automatically
 - Apply injection for the literals in property initializer through property usages
+- Enable injection in Kotlin by annotation function or method parameter with @Language annotation
 - [KT-11807](https://youtrack.jetbrains.com/issue/KT-11807) Use function body template when generating overriding functions with default body
 
 Issues fixed:

@@ -103,11 +103,13 @@ class KotlinLanguageInjectionSupport : AbstractLanguageInjectionSupport() {
         }
     }
 
-    fun findAnnotationInjectionLanguageId(host: KtElement): String? = doFindAnnotationInjectionLanguageId(host)
+    fun findAnnotationInjectionLanguageId(host: KtElement): String? {
+        val annotationEntry = findAnnotationInjection(host) ?: return null
+        return extractLanguageFromInjectAnnotation(annotationEntry)
+    }
 }
 
-private fun doFindAnnotationInjectionLanguageId(host: KtElement): String? {
-    val annotationEntry = findAnnotationInjection(host) ?: return null
+fun extractLanguageFromInjectAnnotation(annotationEntry: KtAnnotationEntry): String? {
     val firstArgument: ValueArgument = annotationEntry.valueArguments.firstOrNull() ?: return null
 
     val firstStringArgument = firstArgument.getArgumentExpression() as? KtStringTemplateExpression ?: return null

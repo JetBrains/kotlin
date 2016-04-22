@@ -299,4 +299,46 @@ class KotlinInjectionTest : AbstractInjectionTest() {
             }
             """
     )
+
+    fun testInjectionWithUsageInFunctionWithMarkedParameterWithAnnotation() = assertInjectionPresent(
+            """
+            import org.intellij.lang.annotations.Language
+
+            val v = "<caret>some"
+
+            fun foo(@Language("HTML") s: String) {}
+
+            fun other() { foo(v) }
+            """,
+            languageId = HTMLLanguage.INSTANCE.id, unInjectShouldBePresent = false)
+    
+    fun testInjectionOfCustomParameterWithAnnotation() = assertInjectionPresent(
+            """
+            import org.intellij.lang.annotations.Language
+
+            fun foo(@Language("HTML") s: String) {}
+
+            fun other() { foo("<caret>some") }
+            """,
+            languageId = HTMLLanguage.INSTANCE.id, unInjectShouldBePresent = false)
+
+    fun testInjectionOfCustomParameterInConstructorWithAnnotation() = assertInjectionPresent(
+            """
+            import org.intellij.lang.annotations.Language
+
+            class Test(@Language("HTML") val s: String)
+
+            fun other() { Test("<caret>some") }
+            """,
+            languageId = HTMLLanguage.INSTANCE.id, unInjectShouldBePresent = false)
+
+    fun testInjectionOfCustomParameterDefaultCallWithAnnotation() = assertInjectionPresent(
+            """
+            import org.intellij.lang.annotations.Language
+
+            fun foo(@Language("HTML") s: String) {}
+
+            fun other() { foo(s = "<caret>some") }
+            """,
+            languageId = HTMLLanguage.INSTANCE.id, unInjectShouldBePresent = false)
 }
