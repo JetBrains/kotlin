@@ -11886,6 +11886,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("propertyName.kt")
+            public void testPropertyName() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/properties/propertyName.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("propertyOfNestedClassAndArrayType.kt")
             public void testPropertyOfNestedClassAndArrayType() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/properties/propertyOfNestedClassAndArrayType.kt");
