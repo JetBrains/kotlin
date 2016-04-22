@@ -36,32 +36,33 @@ object ChangeVisibilityOnExposureFactory : KotlinIntentionActionsFactory() {
     override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
         @Suppress("UNCHECKED_CAST")
         val factory = diagnostic.factory as DiagnosticFactory3<*, EffectiveVisibility, DescriptorWithRelation, EffectiveVisibility>
+        // We have USER that uses some EXPOSED object. USER visibility must be same or less permissive.
         val exposedDiagnostic = factory.cast(diagnostic)
         val exposedDescriptor = exposedDiagnostic.b.descriptor as? DeclarationDescriptorWithVisibility ?: return emptyList()
         val exposedDeclaration =
                 DescriptorToSourceUtils.getSourceFromDescriptor(exposedDescriptor) as? KtModifierListOwner ?: return emptyList()
         val exposedVisibility = exposedDiagnostic.c
-        val exposingVisibility = exposedDiagnostic.a
-        val (lowerBoundVisibility, upperBoundVisibility) = when (exposedVisibility.relation(exposingVisibility)) {
-            LESS -> Pair(exposedVisibility.toVisibility(), exposingVisibility.toVisibility())
+        val userVisibility = exposedDiagnostic.a
+        val (lowerBoundVisibility, upperBoundVisibility) = when (exposedVisibility.relation(userVisibility)) {
+            LESS -> Pair(exposedVisibility.toVisibility(), userVisibility.toVisibility())
             else -> Pair(PRIVATE, PUBLIC)
         }
-        val exposingDeclaration = diagnostic.psiElement.getParentOfType<KtDeclaration>(true)
-        val exposingTargetVisibility = when (lowerBoundVisibility) {
+        val userDeclaration = diagnostic.psiElement.getParentOfType<KtDeclaration>(true)
+        val userTargetVisibility = when (lowerBoundVisibility) {
             PUBLIC -> null
-            PROTECTED -> if (exposedDeclaration.parent == exposingDeclaration?.parent) PROTECTED else PRIVATE
+            PROTECTED -> if (exposedDeclaration.parent == userDeclaration?.parent) PROTECTED else PRIVATE
             else -> lowerBoundVisibility
         }
-        val exposingDescriptor = exposingDeclaration?.toDescriptor() as? DeclarationDescriptorWithVisibility
+        val userDescriptor = userDeclaration?.toDescriptor() as? DeclarationDescriptorWithVisibility
         val result = ArrayList<IntentionAction>()
-        if (exposingDeclaration != null && exposingDescriptor != null && exposingTargetVisibility != null &&
-            Visibilities.isVisibleIgnoringReceiver(exposedDescriptor, exposingDescriptor)) {
-            ChangeVisibilityFix.create(exposingDeclaration, exposingDescriptor, exposingTargetVisibility)?.let { result += it }
+        if (userDeclaration != null && userDescriptor != null && userTargetVisibility != null &&
+            Visibilities.isVisibleIgnoringReceiver(exposedDescriptor, userDescriptor)) {
+            ChangeVisibilityFix.create(userDeclaration, userDescriptor, userTargetVisibility)?.let { result += it }
         }
 
         val exposedTargetVisibility = when (upperBoundVisibility) {
             PRIVATE -> null
-            PROTECTED -> if (exposedDeclaration.parent == exposingDeclaration?.parent) PROTECTED else PUBLIC
+            PROTECTED -> if (exposedDeclaration.parent == userDeclaration?.parent) PROTECTED else PUBLIC
             else -> upperBoundVisibility
         }
         if (exposedTargetVisibility != null) {
