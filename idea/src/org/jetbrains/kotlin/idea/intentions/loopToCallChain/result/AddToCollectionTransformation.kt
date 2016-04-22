@@ -49,11 +49,19 @@ class AddToCollectionTransformation(
             }
 
             is MapTransformation -> {
-                MapToTransformation.create(loop, previousTransformation.inputVariable, targetCollection, previousTransformation.mapping, mapNotNull = false)
+                MapToTransformation.create(loop, previousTransformation.inputVariable, null, targetCollection, previousTransformation.mapping, mapNotNull = false)
             }
 
             is MapNotNullTransformation -> {
-                MapToTransformation.create(loop, previousTransformation.inputVariable, targetCollection, previousTransformation.mapping, mapNotNull = true)
+                MapToTransformation.create(loop, previousTransformation.inputVariable, null, targetCollection, previousTransformation.mapping, mapNotNull = true)
+            }
+
+            is MapIndexedTransformation -> {
+                MapToTransformation.create(loop, previousTransformation.inputVariable, previousTransformation.indexVariable, targetCollection, previousTransformation.mapping, mapNotNull = false)
+            }
+
+            is MapIndexedNotNullTransformation -> {
+                MapToTransformation.create(loop, previousTransformation.inputVariable, previousTransformation.indexVariable, targetCollection, previousTransformation.mapping, mapNotNull = true)
             }
 
             is FlatMapTransformation -> {
@@ -114,13 +122,9 @@ class AddToCollectionTransformation(
             if (state.indexVariable == null && argumentValue.isVariableReference(state.inputVariable)) {
                 return ResultTransformationMatch(AddToCollectionTransformation(state.outerLoop, targetCollection))
             }
-            else if (state.indexVariable != null) {
-                val mapIndexedTransformation = MapIndexedTransformation(state.outerLoop, state.inputVariable, state.indexVariable, argumentValue)
-                val addToCollectionTransformation = AddToCollectionTransformation(state.outerLoop, targetCollection)
-                return ResultTransformationMatch(addToCollectionTransformation, mapIndexedTransformation)
-            }
             else {
-                return ResultTransformationMatch(MapToTransformation.create(state.outerLoop, state.inputVariable, targetCollection, argumentValue, mapNotNull = false))
+                return ResultTransformationMatch(MapToTransformation.create(
+                        state.outerLoop, state.inputVariable, state.indexVariable, targetCollection, argumentValue, mapNotNull = false))
             }
         }
 
@@ -299,18 +303,25 @@ class FilterNotNullToTransformation private constructor(
 class MapToTransformation private constructor(
         loop: KtForExpression,
         private val inputVariable: KtCallableDeclaration,
+        private val indexVariable: KtCallableDeclaration?,
         private val targetCollection: KtExpression,
         private val mapping: KtExpression,
         mapNotNull: Boolean
 ) : ReplaceLoopResultTransformation(loop) {
 
-    private val functionName = if (mapNotNull) "mapNotNullTo" else "mapTo"
+    private val functionName = if (indexVariable != null)
+        if (mapNotNull) "mapIndexedNotNullTo" else "mapIndexedTo"
+    else
+        if (mapNotNull) "mapNotNullTo" else "mapTo"
 
     override val presentation: String
         get() = "$functionName(){}"
 
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
-        val lambda = generateLambda(inputVariable, mapping)
+        val lambda = if (indexVariable != null)
+            generateLambda(mapping, indexVariable, inputVariable)
+        else
+            generateLambda(inputVariable, mapping)
         return chainedCallGenerator.generate("$functionName($0) $1:'{}'", targetCollection, lambda)
     }
 
@@ -318,17 +329,18 @@ class MapToTransformation private constructor(
         fun create(
                 loop: KtForExpression,
                 inputVariable: KtCallableDeclaration,
+                indexVariable: KtCallableDeclaration?,
                 targetCollection: KtExpression,
                 mapping: KtExpression,
                 mapNotNull: Boolean
         ): ResultTransformation {
             val initialization = targetCollection.detectInitializationBeforeLoop(loop, checkNoOtherUsagesInLoop = true)
             if (initialization != null && initialization.initializer.hasNoSideEffect()) {
-                val transformation = MapToTransformation(loop, inputVariable, initialization.initializer, mapping, mapNotNull)
+                val transformation = MapToTransformation(loop, inputVariable, indexVariable, initialization.initializer, mapping, mapNotNull)
                 return AssignToVariableResultTransformation.createDelegated(transformation, initialization)
             }
             else {
-                return MapToTransformation(loop, inputVariable, targetCollection, mapping, mapNotNull)
+                return MapToTransformation(loop, inputVariable, indexVariable, targetCollection, mapping, mapNotNull)
             }
         }
     }

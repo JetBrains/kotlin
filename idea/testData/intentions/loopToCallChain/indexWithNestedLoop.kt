@@ -1,5 +1,5 @@
 // WITH_RUNTIME
-// INTENTION_TEXT: "Replace with '+= ...filterNot{}.mapIndexed{}'"
+// INTENTION_TEXT: "Replace with 'flatMap{}.filterNot{}.mapIndexedTo(){}'"
 fun foo(list: List<String>, target: MutableCollection<Int>) {
     var i = 0
     <caret>for (s in list) {
