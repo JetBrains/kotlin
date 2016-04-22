@@ -31,7 +31,7 @@ fun ordering(): List<GenericFunction> {
         returns { "List<T>" }
         body {
             """
-            if (this is Collection && isEmpty()) return emptyList()
+            if (this is Collection && size <= 1) return toList()
             val list = toMutableList()
             Collections.reverse(list)
             return list
@@ -101,7 +101,7 @@ fun ordering(): List<GenericFunction> {
         body {
             """
                 if (this is Collection) {
-                    if (size <= 1) return this.toMutableList()
+                    if (size <= 1) return this.toList()
                     @Suppress("CAST_NEVER_SUCCEEDS")
                     return (toTypedArray<Comparable<T>>() as Array<T>).apply { sort() }.asList()
                 }
@@ -231,7 +231,7 @@ fun ordering(): List<GenericFunction> {
         body {
             """
              if (this is Collection) {
-                if (size <= 1) return this.toMutableList()
+                if (size <= 1) return this.toList()
                 @Suppress("CAST_NEVER_SUCCEEDS")
                 return (toTypedArray<Any?>() as Array<T>).apply { sortWith(comparator) }.asList()
             }
