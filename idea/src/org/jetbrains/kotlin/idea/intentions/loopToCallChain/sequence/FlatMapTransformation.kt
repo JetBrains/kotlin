@@ -61,7 +61,7 @@ class FlatMapTransformation(
             if (iterableType.checkIsSuperTypeOf(nestedSequenceType) == null) return null
 
             val nestedLoopBody = nestedLoop.body ?: return null
-            val newWorkingVariable = nestedLoop.loopParameter ?: return null
+            val newInputVariable = nestedLoop.loopParameter ?: return null
 
             if (state.indexVariable != null && state.indexVariable.hasUsages(transform)) {
                 // if nested loop range uses index, convert to "mapIndexed {...}.flatMap { it }"
@@ -71,7 +71,7 @@ class FlatMapTransformation(
                 val newState = state.copy(
                         innerLoop = nestedLoop,
                         statements = listOf(nestedLoopBody),
-                        inputVariable = newWorkingVariable
+                        inputVariable = newInputVariable
                 )
                 return SequenceTransformationMatch(listOf(mapIndexedTransformation, flatMapTransformation), newState)
             }
@@ -80,7 +80,7 @@ class FlatMapTransformation(
             val newState = state.copy(
                     innerLoop = nestedLoop,
                     statements = listOf(nestedLoopBody),
-                    inputVariable = newWorkingVariable
+                    inputVariable = newInputVariable
             )
             return SequenceTransformationMatch(transformation, newState)
         }
