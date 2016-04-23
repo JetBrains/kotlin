@@ -60,7 +60,7 @@ open class ChangeVisibilityFix(
             ChangeVisibilityFix(element, elementName, KtTokens.INTERNAL_KEYWORD)
 
     protected class ChangeToPrivateFix(element: KtModifierListOwner, elementName: String) :
-            ChangeVisibilityFix(element, elementName, KtTokens.PRIVATE_KEYWORD) {
+            ChangeVisibilityFix(element, elementName, KtTokens.PRIVATE_KEYWORD), HighPriorityAction {
 
         override fun isAvailable(project: Project, editor: Editor?, file: PsiFile) =
                 super.isAvailable(project, editor, file) && element.canBePrivate()
