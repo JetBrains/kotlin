@@ -42,6 +42,7 @@ Issues fixed:
 - [KT-11512](https://youtrack.jetbrains.com/issue/KT-11512) Allow choosing any source root in "Move file to directory" intention
 - [KT-10950](https://youtrack.jetbrains.com/issue/KT-10950) Keep original file package name when moving top-level declarations to separate file (provided it's not ambiguous)
 - [KT-10174](https://youtrack.jetbrains.com/issue/KT-10174) Optimize imports after applying "Move declaration to separate file" intention
+- [KT-12035](https://youtrack.jetbrains.com/issue/KT-12035) Auto-format cast expressions
 
 #### Debugger
 
