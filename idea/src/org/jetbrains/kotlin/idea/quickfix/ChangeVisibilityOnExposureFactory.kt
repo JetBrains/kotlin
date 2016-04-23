@@ -17,11 +17,8 @@
 package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.codeInsight.intention.IntentionAction
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
-import org.jetbrains.kotlin.descriptors.DescriptorWithRelation
-import org.jetbrains.kotlin.descriptors.EffectiveVisibility
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility.Permissiveness.LESS
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibilities.*
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory3
@@ -33,6 +30,24 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import java.util.*
 
 object ChangeVisibilityOnExposureFactory : KotlinIntentionActionsFactory() {
+
+    private fun addFixToTargetVisibility(
+            modifierListOwner: KtModifierListOwner,
+            descriptor: DeclarationDescriptorWithVisibility,
+            targetVisibility: Visibility,
+            boundVisibility: Visibility,
+            protectedAllowed: Boolean,
+            fixes: MutableList<IntentionAction>
+    ) {
+        val possibleVisibilities = when (targetVisibility) {
+            PROTECTED -> if (protectedAllowed) listOf(boundVisibility, PROTECTED) else listOf(boundVisibility)
+            INTERNAL -> listOf(boundVisibility, INTERNAL)
+            boundVisibility -> listOf(boundVisibility)
+            else -> listOf()
+        }
+        possibleVisibilities.mapNotNullTo(fixes) { ChangeVisibilityFix.create(modifierListOwner, descriptor, it) }
+    }
+
     override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
         @Suppress("UNCHECKED_CAST")
         val factory = diagnostic.factory as DiagnosticFactory3<*, EffectiveVisibility, DescriptorWithRelation, EffectiveVisibility>
@@ -43,31 +58,24 @@ object ChangeVisibilityOnExposureFactory : KotlinIntentionActionsFactory() {
                 DescriptorToSourceUtils.getSourceFromDescriptor(exposedDescriptor) as? KtModifierListOwner ?: return emptyList()
         val exposedVisibility = exposedDiagnostic.c
         val userVisibility = exposedDiagnostic.a
-        val (lowerBoundVisibility, upperBoundVisibility) = when (exposedVisibility.relation(userVisibility)) {
+        val (targetUserVisibility, targetExposedVisibility) = when (exposedVisibility.relation(userVisibility)) {
             LESS -> Pair(exposedVisibility.toVisibility(), userVisibility.toVisibility())
             else -> Pair(PRIVATE, PUBLIC)
         }
-        val userDeclaration = diagnostic.psiElement.getParentOfType<KtDeclaration>(true)
-        val userTargetVisibilities = when (lowerBoundVisibility) {
-            PROTECTED -> if (exposedDeclaration.parent == userDeclaration?.parent) listOf(PRIVATE, PROTECTED) else listOf(PRIVATE)
-            INTERNAL -> listOf(PRIVATE, INTERNAL)
-            PRIVATE -> listOf(PRIVATE)
-            else -> listOf()
-        }
-        val userDescriptor = userDeclaration?.toDescriptor() as? DeclarationDescriptorWithVisibility
         val result = ArrayList<IntentionAction>()
-        if (userDeclaration != null && userDescriptor != null &&
-            Visibilities.isVisibleIgnoringReceiver(exposedDescriptor, userDescriptor)) {
-            result += userTargetVisibilities.mapNotNull { ChangeVisibilityFix.create(userDeclaration, userDescriptor, it) }
+        val userDeclaration = diagnostic.psiElement.getParentOfType<KtDeclaration>(true)
+        val protectedAllowed = exposedDeclaration.parent == userDeclaration?.parent
+        if (userDeclaration != null) {
+            val userDescriptor = userDeclaration.toDescriptor() as? DeclarationDescriptorWithVisibility
+            if (userDescriptor != null && Visibilities.isVisibleIgnoringReceiver(exposedDescriptor, userDescriptor)) {
+                addFixToTargetVisibility(userDeclaration, userDescriptor,
+                                         targetUserVisibility, PRIVATE,
+                                         protectedAllowed, result)
+            }
         }
-
-        val exposedTargetVisibilities = when (upperBoundVisibility) {
-            PROTECTED -> if (exposedDeclaration.parent == userDeclaration?.parent) listOf(PUBLIC, PROTECTED) else listOf(PUBLIC)
-            INTERNAL -> listOf(PUBLIC, INTERNAL)
-            PUBLIC -> listOf(PUBLIC)
-            else -> listOf()
-        }
-        result += exposedTargetVisibilities.mapNotNull { ChangeVisibilityFix.create(exposedDeclaration, exposedDescriptor, it) }
+        addFixToTargetVisibility(exposedDeclaration, exposedDescriptor,
+                                 targetExposedVisibility, PUBLIC,
+                                 protectedAllowed, result)
         return result
     }
 }
