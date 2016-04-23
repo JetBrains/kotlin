@@ -43,6 +43,7 @@ Issues fixed:
 - [KT-10950](https://youtrack.jetbrains.com/issue/KT-10950) Keep original file package name when moving top-level declarations to separate file (provided it's not ambiguous)
 - [KT-10174](https://youtrack.jetbrains.com/issue/KT-10174) Optimize imports after applying "Move declaration to separate file" intention
 - [KT-12035](https://youtrack.jetbrains.com/issue/KT-12035) Auto-format cast expressions
+- [KT-12018](https://youtrack.jetbrains.com/issue/KT-12018) Auto-format spaces between function name and arguments in infix calls
 
 #### Debugger
 
