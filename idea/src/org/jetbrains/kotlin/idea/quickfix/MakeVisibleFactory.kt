@@ -44,8 +44,10 @@ object MakeVisibleFactory  : KotlinIntentionActionsFactory() {
         val declaration = DescriptorToSourceUtils.getSourceFromDescriptor(descriptor) as? KtModifierListOwner ?: return emptyList()
 
         val module = DescriptorUtils.getContainingModule(descriptor)
-        val targetVisibilities = if (module != usageModule || descriptor.visibility != PRIVATE) listOf(PUBLIC)
-                                 else listOf(PUBLIC, INTERNAL)
+        val targetVisibilities = when (descriptor.visibility) {
+            PRIVATE -> if (module != usageModule) listOf(PUBLIC) else listOf(PUBLIC, INTERNAL)
+            else -> listOf(PUBLIC)
+        }
 
         return targetVisibilities.mapNotNull { ChangeVisibilityFix.create(declaration, descriptor, it) }
     }
