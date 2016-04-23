@@ -1,4 +1,6 @@
-// "Make Private protected" "true"
+// "Make 'Private' protected" "true"
+// ACTION: Make 'foo' private
+// ACTION: Make 'Private' public
 
 class Receiver<T>
 

@@ -1,4 +1,4 @@
-// "Make Data public" "true"
+// "Make 'Data' public" "true"
 
 class Other {
     private open class Data(val x: Int)

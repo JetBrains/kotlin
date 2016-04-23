@@ -1,4 +1,5 @@
-// "Make foo private" "true"
+// "Make 'foo' private" "true"
+// ACTION: Make 'Data' public
 
 private data class Data(val x: Int)
 

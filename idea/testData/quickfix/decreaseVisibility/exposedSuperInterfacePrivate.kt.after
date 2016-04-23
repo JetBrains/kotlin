@@ -1,4 +1,5 @@
-// "Make Derived private" "true"
+// "Make 'Derived' private" "true"
+// ACTION: Make 'Derived' internal
 
 import Outer.Base
 

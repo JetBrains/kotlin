@@ -1,4 +1,5 @@
-// "Make Nested public" "true"
+// "Make 'Nested' public" "true"
+// ACTION: Make 'Nested' internal
 
 class Outer {
     class Nested

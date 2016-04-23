@@ -1,4 +1,5 @@
-// "Make First private" "true"
+// "Make 'First' private" "true"
+// ACTION: Make 'Data' protected
 
 class Outer {
     private open class Data(val x: Int)

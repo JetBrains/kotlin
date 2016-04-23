@@ -1,4 +1,4 @@
-// "Make x public" "true"
+// "Make 'x' public" "true"
 
 open class Base(protected open val x: Int)
 

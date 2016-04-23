@@ -1,4 +1,5 @@
-// "Make Outer public" "true"
+// "Make 'Outer' public" "true"
+// ACTION: Make 'Derived' internal
 
 import Outer.Base
 

@@ -1,4 +1,5 @@
-// "Make User internal" "true"
+// "Make 'User' internal" "true"
+// ACTION: Make 'InternalString' public
 
 internal open class InternalString
 

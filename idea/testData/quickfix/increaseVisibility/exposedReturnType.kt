@@ -1,4 +1,6 @@
-// "Make Data internal" "true"
+// "Make 'Data' internal" "true"
+// ACTION: Make 'bar' private
+// ACTION: Make 'Data' public
 
 private data class Data(val x: Int)
 
