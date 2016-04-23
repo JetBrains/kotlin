@@ -164,6 +164,8 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             betweenInside(DOT, IDENTIFIER, FUN).spacing(0, 0, 0, false, 0)
             afterInside(IDENTIFIER, FUN).spacing(0, 0, 0, false, 0)
 
+            around(AS_KEYWORD).spaces(1)
+
             // before LPAR in constructor(): this() {}
             after(CONSTRUCTOR_DELEGATION_REFERENCE).spacing(0, 0, 0, false, 0)
 
