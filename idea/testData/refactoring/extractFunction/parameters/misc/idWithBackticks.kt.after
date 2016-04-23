@@ -6,5 +6,5 @@ fun test() {
 }
 
 private fun __dummyTestFun__(`i`: Int) {
-    `i`plus i
+    `i` plus i
 }
