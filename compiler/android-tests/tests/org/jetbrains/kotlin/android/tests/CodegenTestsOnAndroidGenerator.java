@@ -29,8 +29,8 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.CodegenTestFiles;
 import org.jetbrains.kotlin.codegen.GenerationUtils;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
-import org.jetbrains.kotlin.generators.tests.generator.TestGeneratorUtil;
 import org.jetbrains.kotlin.idea.KotlinFileType;
+import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
@@ -276,7 +276,7 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
     }
 
     private String generateTestName(String fileName) {
-        String result = TestGeneratorUtil.escapeForJavaIdentifier(FileUtil.getNameWithoutExtension(StringUtil.capitalize(fileName)));
+        String result = JvmAbi.sanitizeAsJavaIdentifier(FileUtil.getNameWithoutExtension(StringUtil.capitalize(fileName)));
 
         int i = 0;
         while (generatedTestNames.contains(result)) {
