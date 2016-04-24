@@ -32,6 +32,7 @@ public class PermissionManager {
             RunUtils.execute(generateChmodCmd(pathManager.getAntBinDirectory() + "/ant"));
             setExecPermissionForSimpleNamedFiles(new File(pathManager.getToolsFolderInAndroidSdk()));
             setExecPermissionForSimpleNamedFiles(new File(pathManager.getBuildToolsFolderInAndroidSdk() + "/" + SDKDownloader.BUILD_TOOLS));
+            setExecPermissionForSimpleNamedFiles(new File(pathManager.getPlatformToolsFolderInAndroidSdk()));
         }
     }
 
@@ -40,7 +41,7 @@ public class PermissionManager {
         if (files != null) {
             for (File file : files) {
                 if (file.isFile() && !file.getName().contains(".")) {
-                    file.setExecutable(true);
+                    RunUtils.execute(generateChmodCmd(file.getAbsolutePath()));
                 }
             }
         }
@@ -49,7 +50,7 @@ public class PermissionManager {
     private static GeneralCommandLine generateChmodCmd(String path) {
         GeneralCommandLine commandLine = new GeneralCommandLine();
         commandLine.setExePath("chmod");
-        commandLine.addParameter("u+x");
+        commandLine.addParameter("a+x");
         commandLine.addParameter(path);
         return commandLine;
     }
