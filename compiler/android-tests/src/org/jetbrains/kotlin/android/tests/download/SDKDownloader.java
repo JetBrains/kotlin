@@ -103,8 +103,11 @@ public class SDKDownloader {
     public void unzipAll() {
         String androidSdkRoot = pathManager.getAndroidSdkRoot();
         unzip(platformZipPath, pathManager.getPlatformFolderInAndroidSdk());
-        unzip(armImage, androidSdkRoot + "/system-images/android-" + ANDROID_VERSION + "/");
-        unzip(x86Image, androidSdkRoot + "/system-images/android-" + ANDROID_VERSION + "/");
+        new File(pathManager.getPlatformFolderInAndroidSdk() + "/android-4.1.2").renameTo(new File(pathManager.getPlatformFolderInAndroidSdk() + "/android-16"));
+
+        unzip(armImage, androidSdkRoot + "/system-images/android-" + ANDROID_VERSION + "/default/");
+        unzip(x86Image, androidSdkRoot + "/system-images/android-" + ANDROID_VERSION + "/default/");
+
         unzip(platformToolsZipPath, androidSdkRoot);
         unzip(skdToolsZipPath, androidSdkRoot);
 
