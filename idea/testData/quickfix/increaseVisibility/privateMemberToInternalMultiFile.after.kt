@@ -1,4 +1,5 @@
-// "Make foo internal" "true"
+// "Make 'foo' internal" "true"
+// ACTION: Make 'foo' public
 // ERROR: Cannot access 'foo': it is 'private' in 'First'
 
 package test
