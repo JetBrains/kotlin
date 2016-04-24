@@ -73,6 +73,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import static org.jetbrains.kotlin.builtins.FunctionTypesKt.isExtensionFunctionType;
+import static org.jetbrains.kotlin.builtins.FunctionTypesKt.isFunctionType;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
@@ -305,7 +307,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             return;
         }
         KotlinTypeChecker typeChecker = KotlinTypeChecker.DEFAULT;
-        if (actualType.equals(targetType)) {
+        if (isExactTypeCast(actualType, targetType)) {
             // cast to itself: String as String
             context.trace.report(USELESS_CAST.on(expression));
             return;
@@ -316,8 +318,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         boolean checkExactType = checkExactTypeForUselessCast(expression);
         for (KotlinType possibleType : possibleTypes) {
             boolean castIsUseless = checkExactType
-                                    ? possibleType.equals(targetType)
-                                    : typeChecker.isSubtypeOf(possibleType, targetType);
+                                    ? isExactTypeCast(possibleType, targetType)
+                                    : isUpcast(possibleType, targetType, typeChecker);
             if (castIsUseless) {
                 context.trace.report(USELESS_CAST.on(expression));
                 return;
@@ -326,6 +328,20 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (CastDiagnosticsUtil.isCastErased(actualType, targetType, typeChecker)) {
             context.trace.report(UNCHECKED_CAST.on(expression, actualType, targetType));
         }
+    }
+
+    private static boolean isExactTypeCast(KotlinType candidateType, KotlinType targetType) {
+        return candidateType.equals(targetType) && isExtensionFunctionType(candidateType) == isExtensionFunctionType(targetType);
+    }
+
+    private static boolean isUpcast(KotlinType candidateType, KotlinType targetType, KotlinTypeChecker typeChecker) {
+        if (!typeChecker.isSubtypeOf(candidateType, targetType)) return false;
+
+        if (isFunctionType(candidateType) && isFunctionType(targetType)) {
+            return isExtensionFunctionType(candidateType) == isExtensionFunctionType(targetType);
+        }
+
+        return true;
     }
 
     // Casting an argument or a receiver to a supertype may be useful to select an exact overload of a method.
