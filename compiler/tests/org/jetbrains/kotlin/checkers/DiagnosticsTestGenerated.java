@@ -2247,6 +2247,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("ExtensionAsNonExtension.kt")
+            public void testExtensionAsNonExtension() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cast/ExtensionAsNonExtension.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("IsErasedAllowForDerivedWithOneSubstitutedAndOneSameGeneric.kt")
             public void testIsErasedAllowForDerivedWithOneSubstitutedAndOneSameGeneric() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cast/IsErasedAllowForDerivedWithOneSubstitutedAndOneSameGeneric.kt");
