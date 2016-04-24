@@ -22,6 +22,8 @@ import junit.framework.TestSuite;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class AndroidRunner extends TestSuite {
 
@@ -42,7 +44,8 @@ public class AndroidRunner extends TestSuite {
         PathManager pathManager = getPathManager();
 
         FileUtil.copyDir(new File(pathManager.getAndroidModuleRoot()), new File(pathManager.getTmpFolder()));
-        
+        writeAndroidSkdToLocalProperties();
+
         CodegenTestsOnAndroidGenerator.generate(pathManager);
 
         System.out.println("Run tests on android...");
@@ -54,5 +57,16 @@ public class AndroidRunner extends TestSuite {
     public void tearDown() throws Exception {
         // Clear tmp folder where we run android tests
         FileUtil.delete(new File(pathManager.getTmpFolder()));
+    }
+
+    private static void writeAndroidSkdToLocalProperties() throws IOException {
+        System.out.println("Writing android sdk to local.properties: " + pathManager.getAndroidSdkRoot());
+        File file = new File(pathManager.getTmpFolder() + "/local.properties");
+        FileWriter fw = new FileWriter(file);
+        try {
+            fw.write("sdk.dir=" + pathManager.getAndroidSdkRoot());
+        } finally {
+            fw.close();
+        }
     }
 }
