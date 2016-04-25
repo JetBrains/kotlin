@@ -87,6 +87,27 @@ fun getSomething() = 10
     }
 
     @Test
+    fun testIncrementalBuildWithNoChanges() {
+        val project = Project("AndroidIncrementalSingleModuleProject", gradleVersion)
+        val tasksToExecute = arrayOf(
+                ":app:prepareComAndroidSupportAppcompatV72311Library",
+                ":app:prepareComAndroidSupportSupportV42311Library",
+                ":app:compileDebugKotlin",
+                ":app:compileDebugJavaWithJavac"
+        )
+
+        project.build("assembleDebug") {
+            assertSuccessful()
+            assertContains(*tasksToExecute)
+        }
+
+        project.build("assembleDebug") {
+            assertSuccessful()
+            assertContains(*tasksToExecute.map { it + " UP-TO-DATE" }.toTypedArray())
+        }
+    }
+
+    @Test
     fun testModuleNameAndroid() {
         val project = Project("AndroidProject", gradleVersion)
 

@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.gradle.plugin.CleanUpBuildListener
 import org.jetbrains.kotlin.gradle.tasks.USING_EXPERIMENTAL_INCREMENTAL_MESSAGE
+import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.junit.Test
 import java.io.File
 import kotlin.test.assertTrue
@@ -222,22 +223,48 @@ class KotlinGradleIT: BaseGradleIT() {
     }
 
     @Test
+    fun testKaptSimpleIncrementalBuild() {
+        doTestKaptIncrementalBuild("kaptSimple", arrayOf(":compileKotlin", ":compileJava"))
+    }
+
+    @Test
     fun testKaptStubsIncrementalBuild() {
-        val project = Project("kaptStubs", GRADLE_VERSION)
+        doTestKaptIncrementalBuild("kaptStubs", arrayOf(":compileKotlin", ":compileJava", ":compileKotlinAfterJava"))
+    }
+
+    private fun doTestKaptIncrementalBuild(projectName: String, compileTasks: Array<String>) {
+        val compileTasksUpToDate = compileTasks.map { it + " UP-TO-DATE" }.toTypedArray()
+        val project = Project(projectName, GRADLE_VERSION)
 
         project.build("build") {
             assertSuccessful()
-
-            // Modify the Kotlin source file somehow
-            val someJavaFile = fileInWorkingDir("src/main/java/test.kt")
-            someJavaFile.appendText(" ")
         }
 
+        project.projectDir.getFileByName("test.kt").appendText(" ")
         project.build("build") {
             assertSuccessful()
-            assertContains(":compileKotlin")
-            assertContains(":compileJava")
-            assertNotContains(":compileJava UP-TO-DATE")
+            assertContains(*compileTasks)
+            assertNotContains(*compileTasksUpToDate)
+        }
+
+        repeat(2) {
+            project.build("build") {
+                assertSuccessful()
+                assertContains(*compileTasksUpToDate)
+            }
+        }
+
+        project.build("clean", "build") {
+            assertSuccessful()
+            assertContains(*compileTasks)
+            assertNotContains(*compileTasksUpToDate)
+        }
+
+        repeat(2) {
+            project.build("build") {
+                assertSuccessful()
+                assertContains(*compileTasksUpToDate)
+            }
         }
     }
 
