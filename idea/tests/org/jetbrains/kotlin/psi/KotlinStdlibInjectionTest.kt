@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.psi
 
+import org.intellij.lang.annotations.Language
 import org.intellij.lang.regexp.RegExpLanguage
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 
@@ -62,7 +63,7 @@ class KotlinStdlibInjectionTest : AbstractInjectionTest() {
             RegExpLanguage.INSTANCE.id
     )
 
-    private fun assertInjectionPresent(text: String, languageId: String) {
+    private fun assertInjectionPresent(@Language("kotlin") text: String, languageId: String) {
         doInjectionPresentTest(text, languageId = languageId, unInjectShouldBePresent = false)
     }
 
