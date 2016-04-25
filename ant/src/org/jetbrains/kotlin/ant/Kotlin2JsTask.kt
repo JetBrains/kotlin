@@ -27,6 +27,7 @@ class Kotlin2JsTask : KotlinCompilerBaseTask() {
     var outputPostfix: File? = null
     var sourceMap: Boolean = false
     var metaInfo: Boolean = false
+    var moduleKind: String = "plain"
 
     /**
      * {@link K2JsArgumentConstants.CALL} (default) if need generate a main function call (main function will be auto detected)
@@ -73,5 +74,7 @@ class Kotlin2JsTask : KotlinCompilerBaseTask() {
         if (noStdlib) args.add("-no-stdlib")
         if (sourceMap) args.add("-source-map")
         if (metaInfo) args.add("-meta-info")
+
+        args += listOf("-module-kind", moduleKind)
     }
 }
