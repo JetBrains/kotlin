@@ -37,6 +37,7 @@ Issues fixed:
 - [KT-11816](https://youtrack.jetbrains.com/issue/KT-11816) Fixed usages search for Safe Delete on simple enum entries
 - [KT-11282](https://youtrack.jetbrains.com/issue/KT-11282) Delete interface reference from super-type list when applying Safe Delete to Java interface
 - [KT-11967](https://youtrack.jetbrains.com/issue/KT-11967) Fix Find Usages/Rename for parameter references in XML files
+- [KT-11482](https://youtrack.jetbrains.com/issue/KT-11482) Fixed exception in "Move to companion object" intention
 
 #### Debugger
 
