@@ -19,7 +19,9 @@ package org.jetbrains.kotlin.idea.intentions;
 import com.google.common.collect.Lists;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.ide.startup.impl.StartupManagerImpl;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.startup.StartupManager;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -144,9 +146,25 @@ public abstract class AbstractIntentionTest extends KotlinCodeInsightTestCase {
         String isApplicableString = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// IS_APPLICABLE: ");
         boolean isApplicableExpected = isApplicableString == null || isApplicableString.equals("true");
 
+        boolean isApplicableOnPooled = ApplicationManager.getApplication().executeOnPooledThread(new java.util.concurrent.Callable<Boolean>() {
+            @Override
+            public Boolean call() throws Exception {
+                return ApplicationManager.getApplication().runReadAction(new Computable<Boolean>() {
+                    @Override
+                    public Boolean compute() {
+                        return intentionAction.isAvailable(getProject(), getEditor(), getFile());
+                    }
+                });
+            }
+        }).get();
+
+        boolean isApplicableOnEdt = intentionAction.isAvailable(getProject(), getEditor(), getFile());
+
+        Assert.assertEquals("There should not be any difference what thread isApplicable is called from", isApplicableOnPooled, isApplicableOnEdt);
+
         Assert.assertTrue(
                 "isAvailable() for " + intentionAction.getClass() + " should return " + isApplicableExpected,
-                isApplicableExpected == intentionAction.isAvailable(getProject(), getEditor(), getFile()));
+                isApplicableExpected == isApplicableOnEdt);
 
         String intentionTextString = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// INTENTION_TEXT: ");
 
