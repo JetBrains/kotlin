@@ -82,20 +82,20 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
                 "$PROJECT_NAME.js",
                 "$PROJECT_NAME.meta.js",
                 "lib/kotlin.js",
-                "lib/stdlib.meta.js"
+                "lib/kotlin.meta.js"
         )
         private val EXPECTED_JS_FILES_IN_OUTPUT_FOR_MODULE_STDLIB_ONLY = hashSetOf(
                 "$ADDITIONAL_MODULE_NAME.js",
                 "$ADDITIONAL_MODULE_NAME.meta.js",
                 "lib/kotlin.js",
-                "lib/stdlib.meta.js"
+                "lib/kotlin.meta.js"
         )
         private val EXPECTED_JS_FILES_IN_OUTPUT_NO_COPY = hashSetOf("$PROJECT_NAME.js", "$PROJECT_NAME.meta.js")
         private val EXPECTED_JS_FILES_IN_OUTPUT_WITH_ADDITIONAL_LIB_AND_DEFAULT_DIR = hashSetOf(
                 "$PROJECT_NAME.js",
                 "$PROJECT_NAME.meta.js",
                 "lib/kotlin.js",
-                "lib/stdlib.meta.js",
+                "lib/kotlin.meta.js",
                 "lib/jslib-example.js",
                 "lib/file0.js",
                 "lib/dir/file1.js",
@@ -107,7 +107,7 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
                 "$PROJECT_NAME.js",
                 "$PROJECT_NAME.meta.js",
                 "custom/kotlin.js",
-                "custom/stdlib.meta.js",
+                "custom/kotlin.meta.js",
                 "custom/jslib-example.js",
                 "custom/file0.js",
                 "custom/dir/file1.js",
