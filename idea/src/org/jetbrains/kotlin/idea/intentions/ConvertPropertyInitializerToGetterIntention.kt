@@ -17,18 +17,24 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 
-class ConvertPropertyInitializerToGetterIntention : SelfTargetingIntention<KtProperty>(KtProperty::class.java, "Convert property initializer to getter") {
-    override fun isApplicableTo(element: KtProperty, caretOffset: Int): Boolean {
-        return element.initializer != null
-               && element.initializer?.textRange?.containsOffset(caretOffset) == true
-               && element.getter == null
-               && !element.isExtensionDeclaration()
-               && !element.isLocal
+class ConvertPropertyInitializerToGetterIntention : SelfTargetingRangeIntention<KtProperty>(KtProperty::class.java, "Convert property initializer to getter") {
+
+    override fun applicabilityRange(element: KtProperty): TextRange? {
+        val initializer = element.initializer
+        if (initializer != null && element.getter == null && !element.isExtensionDeclaration() && !element.isLocal)
+            return initializer.textRange
+        else
+            return null
     }
+
+    override fun allowCaretInsideElement(element: PsiElement) = element !is KtDeclaration // do not work inside lambda's in initializer - they can be too big
 
     override fun applyTo(element: KtProperty, editor: Editor?) {
         convertPropertyInitializerToGetter(element, editor)
