@@ -333,6 +333,22 @@ public inline fun <T, C : MutableCollection<in T>> Sequence<T>.filterIndexedTo(d
 }
 
 /**
+ * Returns a sequence containing all elements that are instances of specified type parameter R.
+ */
+public inline fun <reified R> Sequence<*>.filterIsInstance(): Sequence<@kotlin.internal.NoInfer R> {
+    @Suppress("UNCHECKED_CAST")
+    return filter { it is R } as Sequence<R>
+}
+
+/**
+ * Appends all elements that are instances of specified type parameter R to the given [destination].
+ */
+public inline fun <reified R, C : MutableCollection<in R>> Sequence<*>.filterIsInstanceTo(destination: C): C {
+    for (element in this) if (element is R) destination.add(element)
+    return destination
+}
+
+/**
  * Returns a sequence containing all elements not matching the given [predicate].
  */
 public fun <T> Sequence<T>.filterNot(predicate: (T) -> Boolean): Sequence<T> {
@@ -1177,30 +1193,12 @@ public inline fun <T> Sequence<T>.asSequence(): Sequence<T> {
 }
 
 /**
- * Returns a sequence containing all elements that are instances of specified type parameter R.
- */
-@kotlin.jvm.JvmVersion
-public inline fun <reified R> Sequence<*>.filterIsInstance(): Sequence<@kotlin.internal.NoInfer R> {
-    @Suppress("UNCHECKED_CAST")
-    return filter { it is R } as Sequence<R>
-}
-
-/**
  * Returns a sequence containing all elements that are instances of specified class.
  */
 @kotlin.jvm.JvmVersion
 public fun <R> Sequence<*>.filterIsInstance(klass: Class<R>): Sequence<R> {
     @Suppress("UNCHECKED_CAST")
     return filter { klass.isInstance(it) } as Sequence<R>
-}
-
-/**
- * Appends all elements that are instances of specified type parameter R to the given [destination].
- */
-@kotlin.jvm.JvmVersion
-public inline fun <reified R, C : MutableCollection<in R>> Sequence<*>.filterIsInstanceTo(destination: C): C {
-    for (element in this) if (element is R) destination.add(element)
-    return destination
 }
 
 /**
