@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ private constructor(
         private val constructor: TypeConstructor,
         private val nullable: Boolean,
         private val arguments: List<TypeProjection>,
-        private val substitution: TypeSubstitution?,
         private val memberScope: MemberScope
 ) : AbstractKotlinType() {
 
@@ -37,20 +36,19 @@ private constructor(
                               arguments: List<TypeProjection>,
                               memberScope: MemberScope): KotlinTypeImpl
 
-                = KotlinTypeImpl(annotations, constructor, nullable, arguments, null, memberScope)
+                = KotlinTypeImpl(annotations, constructor, nullable, arguments, memberScope)
 
         @JvmStatic fun create(annotations: Annotations,
                               constructor: TypeConstructor,
                               nullable: Boolean,
                               arguments: List<TypeProjection>,
-                              substitution: TypeSubstitution,
                               memberScope: MemberScope,
                               capabilities: TypeCapabilities
         ): KotlinTypeImpl {
             if (capabilities !== TypeCapabilities.NONE) {
-                return WithCapabilities(annotations, constructor, nullable, arguments, substitution, memberScope, capabilities)
+                return WithCapabilities(annotations, constructor, nullable, arguments, memberScope, capabilities)
             }
-            return KotlinTypeImpl(annotations, constructor, nullable, arguments, substitution, memberScope)
+            return KotlinTypeImpl(annotations, constructor, nullable, arguments, memberScope)
         }
 
         @JvmStatic fun create(annotations: Annotations,
@@ -59,7 +57,7 @@ private constructor(
                               arguments: List<TypeProjection>): KotlinTypeImpl
 
                 = KotlinTypeImpl(
-                    annotations, descriptor.typeConstructor, nullable, arguments, null, descriptor.getMemberScope(arguments)
+                    annotations, descriptor.typeConstructor, nullable, arguments, descriptor.getMemberScope(arguments)
                 )
     }
 
@@ -68,10 +66,9 @@ private constructor(
             constructor: TypeConstructor,
             nullable: Boolean,
             arguments: List<TypeProjection>,
-            substitution: TypeSubstitution?,
             memberScope: MemberScope,
             private val typeCapabilities: TypeCapabilities
-    ) : KotlinTypeImpl(annotations, constructor, nullable, arguments, substitution, memberScope) {
+    ) : KotlinTypeImpl(annotations, constructor, nullable, arguments, memberScope) {
         override fun getCapabilities(): TypeCapabilities = typeCapabilities
     }
 
@@ -82,13 +79,6 @@ private constructor(
     }
 
     override fun getAnnotations() = annotations
-
-    override fun getSubstitution(): TypeSubstitution {
-        if (substitution == null) {
-            return TypeConstructorSubstitution.create(getConstructor(), getArguments())
-        }
-        return substitution
-    }
 
     override fun getConstructor() = constructor
 

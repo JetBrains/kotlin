@@ -121,7 +121,6 @@ internal object RawSubstitution : TypeSubstitution() {
                     parameter ->
                     computeProjection(parameter, attr)
                 },
-                RawSubstitution,
                 declaration.getMemberScope(RawSubstitution),
                 RawTypeCapabilities
         )

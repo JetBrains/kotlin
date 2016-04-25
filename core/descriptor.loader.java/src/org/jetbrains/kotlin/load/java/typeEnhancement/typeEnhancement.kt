@@ -136,7 +136,6 @@ private fun KotlinType.enhanceInflexible(qualifiers: (Int) -> JavaTypeQualifiers
             typeConstructor,
             enhancedNullability,
             enhancedArguments,
-            newSubstitution,
             if (enhancedClassifier is ClassDescriptor)
                 enhancedClassifier.getMemberScope(newSubstitution)
             else enhancedClassifier.getDefaultType().getMemberScope(),
