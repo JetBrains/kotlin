@@ -108,6 +108,7 @@ class MoveKotlinDeclarationsProcessor(
         val mover: Mover = Mover.Default) : BaseRefactoringProcessor(project) {
     companion object {
         private val REFACTORING_NAME = "Move declarations"
+        val REFACTORING_ID = "move.kotlin.declarations"
     }
 
     private var nonCodeUsages: Array<NonCodeUsageInfo>? = null
@@ -118,6 +119,8 @@ class MoveKotlinDeclarationsProcessor(
     private val conflicts = MultiMap<PsiElement, String>()
 
     private val resolutionFacade by lazy { KotlinCacheService.getInstance(project).getResolutionFacade(elementsToMove) }
+
+    override fun getRefactoringId() = REFACTORING_ID
 
     override fun createUsageViewDescriptor(usages: Array<out UsageInfo>): UsageViewDescriptor {
         val targetContainerFqName = descriptor.moveTarget.targetContainerFqName?.let {
