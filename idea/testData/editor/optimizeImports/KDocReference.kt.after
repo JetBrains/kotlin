@@ -1,0 +1,11 @@
+// RUNTIME
+import java.util.ArrayList
+import kotlin.concurrent.fixedRateTimer
+
+/**
+ * Reference to [ArrayList]
+ * Reference to [fixedRateTimer]
+ * Reference to [kotlin.concurrent.read]
+ */
+fun foo() {
+}
