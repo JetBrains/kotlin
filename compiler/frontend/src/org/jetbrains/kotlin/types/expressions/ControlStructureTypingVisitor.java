@@ -69,15 +69,11 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     @NotNull
     private DataFlowInfo checkCondition(@NotNull LexicalScope scope, @Nullable KtExpression condition, ExpressionTypingContext context) {
         if (condition != null) {
-            KotlinTypeInfo typeInfo = facade.getTypeInfo(condition, context.replaceScope(scope)
-                    .replaceExpectedType(components.builtIns.getBooleanType()).replaceContextDependency(INDEPENDENT));
-            KotlinType conditionType = typeInfo.getType();
+            ExpressionTypingContext conditionContext = context.replaceScope(scope)
+                    .replaceExpectedType(components.builtIns.getBooleanType()).replaceContextDependency(INDEPENDENT);
+            KotlinTypeInfo typeInfo = facade.getTypeInfo(condition, conditionContext);
 
-            if (conditionType != null && !components.builtIns.isBooleanOrSubtype(conditionType)) {
-                context.trace.report(TYPE_MISMATCH_IN_CONDITION.on(condition, conditionType));
-            }
-
-            return typeInfo.getDataFlowInfo();
+            return components.dataFlowAnalyzer.checkType(typeInfo, condition, conditionContext).getDataFlowInfo();
         }
         return context.dataFlowInfo;
     }

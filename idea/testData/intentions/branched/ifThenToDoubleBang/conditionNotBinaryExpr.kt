@@ -1,7 +1,7 @@
 // WITH_RUNTIME
 // IS_APPLICABLE: false
 // ERROR: Type mismatch: inferred type is Int but Boolean was expected
-// ERROR: Condition must be of type Boolean, but is of type Int
+// ERROR: Type mismatch: inferred type is Int but Boolean was expected
 // ERROR: Infix call corresponds to a dot-qualified call 'foo.times(10)' which is not allowed on a nullable receiver 'foo'. Use '?.'-qualified call instead
 
 fun String?.times(a: Int): Boolean = a == 0

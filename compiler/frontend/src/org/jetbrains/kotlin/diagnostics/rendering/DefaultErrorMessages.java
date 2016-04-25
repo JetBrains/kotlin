@@ -540,7 +540,6 @@ public class DefaultErrorMessages {
 
         MAP.put(TYPE_MISMATCH_IN_FOR_LOOP, "The loop iterates over values of type {0} but the parameter is declared to be {1}", RENDER_TYPE,
                 RENDER_TYPE);
-        MAP.put(TYPE_MISMATCH_IN_CONDITION, "Condition must be of type Boolean, but is of type {0}", RENDER_TYPE);
         MAP.put(INCOMPATIBLE_TYPES, "Incompatible types: {0} and {1}", RENDER_TYPE, RENDER_TYPE);
         MAP.put(IMPLICIT_NOTHING_RETURN_TYPE, "'Nothing' return type needs to be specified explicitly");
         MAP.put(IMPLICIT_NOTHING_PROPERTY_TYPE, "'Nothing' property type needs to be specified explicitly");

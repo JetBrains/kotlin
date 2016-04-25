@@ -7,10 +7,10 @@ fun foo() =
     when {
         cond1() -> 12
         cond2() -> 2
-        <!TYPE_MISMATCH_IN_CONDITION!>4<!> -> 34
-        <!TYPE_MISMATCH_IN_CONDITION!>Pair(1, 2)<!> -> 3
+        <!CONSTANT_EXPECTED_TYPE_MISMATCH!>4<!> -> 34
+        <!TYPE_MISMATCH!>Pair(1, 2)<!> -> 3
         <!EXPECTED_CONDITION!>in 1..10<!> -> 34
-        <!TYPE_MISMATCH_IN_CONDITION!>4<!> -> 38
+        <!CONSTANT_EXPECTED_TYPE_MISMATCH!>4<!> -> 38
         <!EXPECTED_CONDITION!>is Int<!> -> 33
         else -> 34
     }
