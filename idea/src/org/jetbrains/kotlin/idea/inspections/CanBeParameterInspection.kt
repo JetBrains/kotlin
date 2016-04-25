@@ -54,13 +54,15 @@ class CanBeParameterInspection : AbstractKotlinInspection() {
         var parameterUser: PsiElement = nameExpression
         do {
             parameterUser = PsiTreeUtil.getParentOfType(parameterUser, KtProperty::class.java, KtPropertyAccessor::class.java,
-                                                        KtClassInitializer::class.java, KtSecondaryConstructor::class.java) ?: return true
+                                                        KtClassInitializer::class.java, KtSecondaryConstructor::class.java,
+                                                        KtFunctionLiteral::class.java) ?: return true
         } while (parameterUser is KtProperty && parameterUser.isLocal)
         return when (parameterUser) {
             is KtProperty -> parameterUser.containingClassOrObject !== klass
             is KtPropertyAccessor -> true
             is KtClassInitializer -> parameterUser.containingDeclaration !== klass
             is KtSecondaryConstructor -> parameterUser.getContainingClassOrObject() !== klass
+            is KtFunctionLiteral -> true
             else -> true
         }
     }
