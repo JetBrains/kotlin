@@ -115,7 +115,7 @@ public class SequenceTest {
         listOf(2, 3, 4, 5).let { assertEquals(it, it.asSequence().drop(0).toList()) }
         assertEquals("13, 21, 34, 55, 89, 144, 233, 377, 610, 987, ...", fibonacci().drop(7).joinToString(limit = 10))
         assertEquals("13, 21, 34, 55, 89, 144, 233, 377, 610, 987, ...", fibonacci().drop(3).drop(4).joinToString(limit = 10))
-        assertTrue(assertFails { fibonacci().drop(-1) } is IllegalArgumentException)
+        assertFailsWith<IllegalArgumentException> { fibonacci().drop(-1) }
     }
 
     @test fun take() {
@@ -129,7 +129,7 @@ public class SequenceTest {
         assertEquals(emptyList(), fibonacci().take(1).drop(1).toList())
         assertEquals(emptyList(), fibonacci().take(1).drop(2).toList())
 
-        assertTrue(assertFails { fibonacci().take(-1) } is IllegalArgumentException)
+        assertFailsWith<IllegalArgumentException> { fibonacci().take(-1) }
     }
 
     @test fun subSequence() {

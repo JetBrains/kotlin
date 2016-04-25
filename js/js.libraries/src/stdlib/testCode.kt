@@ -9,6 +9,15 @@ public fun todo(block: () -> Any) {
     println("TODO at " + block)
 }
 
+/** Asserts that a [block] fails with a specific exception of type [T] being thrown.
+ *  Since inline method doesn't allow to trace where it was invoked, it is required to pass a [message] to distinguish this method call from others.
+ */
+@kotlin.internal.InlineOnly
+inline fun <reified T : Throwable> assertFailsWith(message: String? = null, noinline block: () -> Unit): T {
+    val exception = assertFails(block) // TODO: message (in 1.1)
+    assertTrue(exception is T, (message?.let { "$it. " } ?: "") + "An exception thrown is not of the expected type: $exception")
+    return exception as T
+}
 
 /**
  * Provides the JS implementation of asserter using [QUnit](http://QUnitjs.com/)

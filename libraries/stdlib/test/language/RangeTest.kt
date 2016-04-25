@@ -141,7 +141,7 @@ public class RangeTest {
         assertTrue(9L in openRange)
         assertFalse(10L in openRange)
 
-        assertTrue(assertFails { 0L until Long.MIN_VALUE } is IllegalArgumentException)
+        assertFailsWith<IllegalArgumentException> { 0L until Long.MIN_VALUE }
 
     }
 
@@ -169,7 +169,7 @@ public class RangeTest {
         assertTrue('Y' in openRange)
         assertFalse('Z' in openRange)
 
-        assertTrue(assertFails { 'A' until '\u0000' } is IllegalArgumentException)
+        assertFailsWith<IllegalArgumentException> { 'A' until '\u0000' }
     }
 
     @test fun doubleRange() {
