@@ -1,7 +1,5 @@
 package p
 
-import q.bar
-
 fun foo() {
 
 }
