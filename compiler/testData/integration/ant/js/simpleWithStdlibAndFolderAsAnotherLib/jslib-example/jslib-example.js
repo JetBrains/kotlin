@@ -1,4 +1,4 @@
-(function (Kotlin) {
+this['jslib-example'] = function (Kotlin) {
   'use strict';
   var _ = Kotlin.defineRootPackage(null, /** @lends _ */ {
     library: Kotlin.definePackage(null, /** @lends _.library */ {
@@ -27,11 +27,12 @@
             return result;
           },
           equals_za3rmp$: function (other) {
-            return this === other || (other !== null && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && Kotlin.equals(this.value, other.value)));
+            return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && Kotlin.equals(this.value, other.value))));
           }
         })
       })
     })
   });
   Kotlin.defineModule('jslib-example', _);
-}(Kotlin));
+  return _;
+}(kotlin);

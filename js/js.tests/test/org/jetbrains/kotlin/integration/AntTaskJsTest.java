@@ -120,6 +120,10 @@ public class AntTaskJsTest extends AbstractAntTaskTest {
         doJsAntTest("jslib-example.js");
     }
 
+    public void testSimpleWithStdlibAndJsFileAsAnotherLibModuleKind() throws Exception {
+        doJsAntTest("amd.js", "jslib-example.js");
+    }
+
     public void testSimpleWithStdlibAndTwoJsFilesAsLibraries() throws Exception {
         doJsAntTest("jslib-example1.js", "jslib-example2.js");
     }
