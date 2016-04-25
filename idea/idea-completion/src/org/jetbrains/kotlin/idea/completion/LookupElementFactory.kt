@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.completion
 
+import com.intellij.codeInsight.AutoPopupController
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementDecorator
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.completion.handlers.GenerateLambdaInfo
 import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.lambdaPresentation
+import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.toFuzzyType
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -42,6 +44,7 @@ import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 interface AbstractLookupElementFactory {
@@ -98,6 +101,31 @@ class LookupElementFactory(
             else if (useReceiverTypes) {
                 result.addIfNotNull(createSuperFunctionCallWithArguments(descriptor))
             }
+        }
+
+        // special "[]" item for get-operator
+        if (callType == CallType.DOT && descriptor is FunctionDescriptor && descriptor.isOperator() && descriptor.name == OperatorNameConventions.GET) {
+            val baseLookupElement = createLookupElement(descriptor, useReceiverTypes)
+            val lookupElement = object : LookupElementDecorator<LookupElement>(baseLookupElement) {
+                override fun getLookupString() = "[]"
+                override fun getAllLookupStrings() = setOf(lookupString)
+
+                override fun renderElement(presentation: LookupElementPresentation) {
+                    super.renderElement(presentation)
+                    presentation.itemText = lookupString
+                }
+
+                override fun handleInsert(context: InsertionContext) {
+                    val startOffset = context.startOffset
+                    assert(context.document.charsSequence[startOffset - 1] == '.')
+                    context.document.deleteString(startOffset - 1, startOffset)
+                    context.editor.moveCaret(startOffset)
+
+                    AutoPopupController.getInstance(context.project)?.autoPopupParameterInfo(context.editor, null)
+                }
+            }
+            lookupElement.assignPriority(ItemPriority.GET_OPERATOR)
+            result.add(lookupElement)
         }
 
         return result.map(standardLookupElementsPostProcessor)
