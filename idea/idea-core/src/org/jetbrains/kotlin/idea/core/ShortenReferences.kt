@@ -57,6 +57,7 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
     ) {
         companion object {
             val DEFAULT = Options()
+            val ALL_ENABLED = Options(true, true)
         }
     }
 

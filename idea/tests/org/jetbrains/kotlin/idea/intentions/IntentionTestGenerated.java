@@ -6886,6 +6886,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("implicitDispatchReceiver.kt")
+        public void testImplicitDispatchReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/moveToCompanion/implicitDispatchReceiver.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("inInnerClass.kt")
         public void testInInnerClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/moveToCompanion/inInnerClass.kt");
