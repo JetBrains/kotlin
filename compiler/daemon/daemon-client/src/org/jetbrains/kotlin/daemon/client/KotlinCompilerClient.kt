@@ -28,7 +28,7 @@ import java.io.PrintStream
 import java.rmi.server.UnicastRemoteObject
 import java.util.concurrent.Semaphore
 import java.util.concurrent.TimeUnit
-import kotlin.comparisons.*
+import kotlin.comparisons.compareByDescending
 import kotlin.concurrent.thread
 
 
@@ -259,7 +259,7 @@ object KotlinCompilerClient {
         val aliveWithOpts = walkDaemons(registryDir, compilerId, report = report)
                 .map { Pair(it, it.getDaemonJVMOptions()) }
                 .filter { it.second.isGood }
-                .sortedWith(compareBy(DaemonJVMOptionsMemoryComparator().reversed(), { it.second.get() }))
+                .sortedWith(compareByDescending(DaemonJVMOptionsMemoryComparator(), { it.second.get() }))
         val optsCopy = daemonJVMOptions.copy()
         // if required options fit into fattest running daemon - return the daemon and required options with memory params set to actual ones in the daemon
         return aliveWithOpts.firstOrNull()?.check { daemonJVMOptions memorywiseFitsInto it.second.get() }?.let {
