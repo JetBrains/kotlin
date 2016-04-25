@@ -903,9 +903,9 @@ class StringTest {
             }
         }
 
-        assertTrue(assertFails {
+        assertFailsWith<UnsupportedOperationException> {
             arg1("").reduceIndexed { index, a, b -> '\n' }
-        } is UnsupportedOperationException)
+        }
     }
 
     @test fun reduceRightIndexed() = withOneCharSequenceArg { arg1 ->
@@ -921,27 +921,27 @@ class StringTest {
             }
         }
 
-        assertTrue(assertFails {
+        assertFailsWith<UnsupportedOperationException> {
             arg1("").reduceRightIndexed { index, a, b -> '\n' }
-        } is UnsupportedOperationException)
+        }
     }
 
     @test fun reduce() = withOneCharSequenceArg { arg1 ->
         // get the smallest character(by char value)
         assertEquals('a', arg1("bacfd").reduce { v, c -> if (v > c) c else v })
 
-        assertTrue(assertFails {
+        assertFailsWith<UnsupportedOperationException> {
             arg1("").reduce { a, b -> '\n' }
-        } is UnsupportedOperationException)
+        }
     }
 
     @test fun reduceRight() = withOneCharSequenceArg { arg1 ->
         // get the smallest character(by char value)
         assertEquals('a', arg1("bacfd").reduceRight { c, v -> if (v > c) c else v })
 
-        assertTrue(assertFails {
+        assertFailsWith<UnsupportedOperationException> {
             arg1("").reduceRight { a, b -> '\n' }
-        } is UnsupportedOperationException)
+        }
     }
 
     @test fun groupBy() = withOneCharSequenceArg("abAbaABcD") { data ->

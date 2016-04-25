@@ -290,9 +290,9 @@ class CollectionTest {
             }
         }
 
-        assertTrue(assertFails {
+        assertFailsWith<UnsupportedOperationException> {
             arrayListOf<Int>().reduceIndexed { index, a, b -> a + b }
-        } is UnsupportedOperationException)
+        }
     }
 
     @test fun reduceRightIndexed() {
@@ -310,9 +310,9 @@ class CollectionTest {
             }
         }
 
-        assertTrue(assertFails {
+        assertFailsWith<UnsupportedOperationException> {
             arrayListOf<Int>().reduceRightIndexed { index, a, b -> a + b }
-        } is UnsupportedOperationException)
+        }
     }
 
     @test fun reduce() {
@@ -321,9 +321,9 @@ class CollectionTest {
             list.reduce { a, b -> a + b }
         }
 
-        assertTrue(assertFails {
+        assertFailsWith<UnsupportedOperationException> {
             arrayListOf<Int>().reduce { a, b -> a + b }
-        } is UnsupportedOperationException)
+        }
     }
 
     @test fun reduceRight() {
@@ -332,9 +332,9 @@ class CollectionTest {
             list.reduceRight { a, b -> a + b }
         }
 
-        assertTrue(assertFails {
+        assertFailsWith<UnsupportedOperationException> {
             arrayListOf<Int>().reduceRight { a, b -> a + b }
-        } is UnsupportedOperationException)
+        }
     }
 
     @test fun groupBy() {
