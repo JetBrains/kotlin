@@ -140,7 +140,7 @@ object KotlinCompilerClient {
                     targetPlatform,
                     args,
                     CompilerCallbackServicesFacadeServer(incrementalCompilationComponents = callbackServices.incrementalCompilationComponents,
-                                                         compilationCancelledStatus = callbackServices.compilationCanceledStatus,
+                                                         compilationCanceledStatus = callbackServices.compilationCanceledStatus,
                                                          port = port),
                     RemoteOutputStreamServer(compilerOut, port),
                     CompileService.OutputFormat.XML,

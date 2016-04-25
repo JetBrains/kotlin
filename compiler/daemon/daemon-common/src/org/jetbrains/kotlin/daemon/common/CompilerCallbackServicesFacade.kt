@@ -82,12 +82,12 @@ interface CompilerCallbackServicesFacade : Remote {
 
     // ----------------------------------------------------
     // CompilationCanceledStatus
-    @Throws(RemoteException::class, RmiFriendlyCompilationCancelledException::class)
+    @Throws(RemoteException::class, RmiFriendlyCompilationCanceledException::class)
     fun compilationCanceledStatus_checkCanceled(): Unit
 }
 
 
-class RmiFriendlyCompilationCancelledException: Exception(), Serializable {
+class RmiFriendlyCompilationCanceledException : Exception(), Serializable {
     companion object {
         private val serialVersionUID: Long = 8228357578L // just a random number, but should never be changed to avoid deserialization problems
     }

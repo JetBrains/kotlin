@@ -440,7 +440,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
             val jar = tmpdir.absolutePath + File.separator + "largeKotlinFile.jar"
 
             var callbackServices: CompilerCallbackServicesFacadeServer? = null
-            callbackServices = CompilerCallbackServicesFacadeServer(compilationCancelledStatus = object : CompilationCanceledStatus {
+            callbackServices = CompilerCallbackServicesFacadeServer(compilationCanceledStatus = object : CompilationCanceledStatus {
                 override fun checkCanceled() {
                     thread {
                         Thread.sleep(10)
@@ -460,7 +460,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
             val compilerOutput = strm.toString()
             assertTrue("Expecting cancelation message in:\n$compilerOutput", compilerOutput.contains("Compilation was canceled"))
-            logFile.assertLogContainsSequence("error communicating with host, assuming compilation cancelled")
+            logFile.assertLogContainsSequence("error communicating with host, assuming compilation canceled")
 
             logFile.delete()
         }
