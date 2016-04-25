@@ -29,8 +29,6 @@ class AnnotationFileUpdater(private val generatedAnnotationFile: File) {
         else {
             lastSuccessfullyUpdatedFile.writeText("")
         }
-
-        lastSuccessfullyUpdatedFile.deleteOnExit()
     }
 
     fun updateAnnotations(outdatedClasses: Iterable<JvmClassName>) {
@@ -57,5 +55,9 @@ class AnnotationFileUpdater(private val generatedAnnotationFile: File) {
 
     fun revert() {
         lastSuccessfullyUpdatedFile.copyTo(generatedAnnotationFile, overwrite = true)
+    }
+
+    fun dispose() {
+        lastSuccessfullyUpdatedFile.delete()
     }
 }
