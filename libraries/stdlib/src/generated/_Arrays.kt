@@ -3234,6 +3234,21 @@ public inline fun <C : MutableCollection<in Char>> CharArray.filterIndexedTo(des
 }
 
 /**
+ * Returns a list containing all elements that are instances of specified type parameter R.
+ */
+public inline fun <reified R> Array<*>.filterIsInstance(): List<@kotlin.internal.NoInfer R> {
+    return filterIsInstanceTo(ArrayList<R>())
+}
+
+/**
+ * Appends all elements that are instances of specified type parameter R to the given [destination].
+ */
+public inline fun <reified R, C : MutableCollection<in R>> Array<*>.filterIsInstanceTo(destination: C): C {
+    for (element in this) if (element is R) destination.add(element)
+    return destination
+}
+
+/**
  * Returns a list containing all elements not matching the given [predicate].
  */
 public inline fun <T> Array<out T>.filterNot(predicate: (T) -> Boolean): List<T> {
@@ -12584,28 +12599,11 @@ public fun CharArray.fill(element: Char, fromIndex: Int = 0, toIndex: Int = size
 }
 
 /**
- * Returns a list containing all elements that are instances of specified type parameter R.
- */
-@kotlin.jvm.JvmVersion
-public inline fun <reified R> Array<*>.filterIsInstance(): List<@kotlin.internal.NoInfer R> {
-    return filterIsInstanceTo(ArrayList<R>())
-}
-
-/**
  * Returns a list containing all elements that are instances of specified class.
  */
 @kotlin.jvm.JvmVersion
 public fun <R> Array<*>.filterIsInstance(klass: Class<R>): List<R> {
     return filterIsInstanceTo(ArrayList<R>(), klass)
-}
-
-/**
- * Appends all elements that are instances of specified type parameter R to the given [destination].
- */
-@kotlin.jvm.JvmVersion
-public inline fun <reified R, C : MutableCollection<in R>> Array<*>.filterIsInstanceTo(destination: C): C {
-    for (element in this) if (element is R) destination.add(element)
-    return destination
 }
 
 /**
