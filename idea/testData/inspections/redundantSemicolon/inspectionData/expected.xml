@@ -1,0 +1,64 @@
+<problems>
+    <problem>
+        <file>Test.kt</file>
+        <line>1</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="Test.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant semicolon</problem_class>
+        <description>Redundant semicolon</description>
+    </problem>
+
+    <problem>
+        <file>Test.kt</file>
+        <line>3</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="Test.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant semicolon</problem_class>
+        <description>Redundant semicolon</description>
+    </problem>
+
+    <problem>
+        <file>Test.kt</file>
+        <line>7</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="Test.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant semicolon</problem_class>
+        <description>Redundant semicolon</description>
+    </problem>
+
+    <problem>
+        <file>Test.kt</file>
+        <line>8</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="Test.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant semicolon</problem_class>
+        <description>Redundant semicolon</description>
+    </problem>
+
+    <problem>
+        <file>Test.kt</file>
+        <line>11</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="Test.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant semicolon</problem_class>
+        <description>Redundant semicolon</description>
+    </problem>
+
+    <problem>
+        <file>Test.kt</file>
+        <line>26</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="Test.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant semicolon</problem_class>
+        <description>Redundant semicolon</description>
+    </problem>
+
+    <problem>
+        <file>Test.kt</file>
+        <line>30</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="Test.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant semicolon</problem_class>
+        <description>Redundant semicolon</description>
+    </problem>
+</problems>
