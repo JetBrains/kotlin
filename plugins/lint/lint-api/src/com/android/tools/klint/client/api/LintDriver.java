@@ -1505,7 +1505,8 @@ public class LintDriver {
             }
 
             String filename = file.getName();
-            if (!filename.endsWith(DOT_JAVA) && !UastConverterUtils.isFileSupported(plugins, filename)) {
+            // Ignore Java files for now (check only Kotlin files)
+            if (filename.endsWith(DOT_JAVA) || !UastConverterUtils.isFileSupported(plugins, filename)) {
                 continue;
             }
 

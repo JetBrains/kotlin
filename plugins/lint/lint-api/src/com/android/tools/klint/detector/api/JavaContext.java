@@ -69,7 +69,7 @@ public class JavaContext extends Context implements UastAndroidContext {
      * @return a location for the given node
      */
     @Override
-    public Location getLocation(@NotNull UElement element) {
+    public Location getLocation(@Nullable UElement element) {
         return UastAndroidContext.DefaultImpls.getLocation(this, element);
     }
 

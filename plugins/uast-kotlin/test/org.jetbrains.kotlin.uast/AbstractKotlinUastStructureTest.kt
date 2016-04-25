@@ -36,7 +36,7 @@ abstract class AbstractKotlinUastStructureTest : KotlinLightCodeInsightFixtureTe
         val uElement = KotlinUastLanguagePlugin.converter.convertWithParent(psiFile) ?: error("UFile was not created")
 
         val logActual = uElement.logString()
-        val renderActual = uElement.renderString()
+        val renderActual = trimEmptyLines(uElement.renderString())
 
         try {
             KotlinTestUtils.assertEqualsToFile(logFile, logActual)
@@ -46,6 +46,12 @@ abstract class AbstractKotlinUastStructureTest : KotlinLightCodeInsightFixtureTe
         }
         KotlinTestUtils.assertEqualsToFile(renderFile, renderActual)
         KotlinTestUtils.assertEqualsToFile(treeFile, genTree(uElement))
+    }
+
+    private fun trimEmptyLines(s: String): String {
+        if (true) return s
+        val lineSeparator = System.getProperty("line.separator")
+        return s.lines().map { if (it.trim().isEmpty()) "" else it.trimEnd() }.joinToString(lineSeparator)
     }
 
     private fun genTree(node: UElement): String {

@@ -43,7 +43,6 @@ public class BuiltinIssueRegistry extends IssueRegistry {
         issues.add(ApiDetector.OVERRIDE);
         issues.add(ApiDetector.UNSUPPORTED);
         issues.add(AppCompatCallDetector.ISSUE);
-        issues.add(AssertDetector.ISSUE);
         issues.add(CallSuperDetector.ISSUE);
         issues.add(CipherGetInstanceDetector.ISSUE);
         issues.add(CleanupDetector.COMMIT_FRAGMENT);

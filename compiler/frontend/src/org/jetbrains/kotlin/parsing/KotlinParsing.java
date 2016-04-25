@@ -564,7 +564,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   : "get"
      *   : "set"
      *   : "param"
-     *   : "sparam"
+     *   : "setparam"
      *   ;
      */
     private boolean parseAnnotationOrList(AnnotationParsingMode mode) {

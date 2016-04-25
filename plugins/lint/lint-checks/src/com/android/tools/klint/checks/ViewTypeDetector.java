@@ -238,7 +238,11 @@ public class ViewTypeDetector extends ResourceXmlDetector implements UastScanner
         if (isTypeCast(expression)) {
             return (UBinaryExpressionWithType) expression;
         } else if (expression instanceof UQualifiedExpression) {
-            return findContainingTypeCast(expression.getParent());
+            UElement parent = expression.getParent();
+            if (expression.equals(expression.getParent())) {
+                return null;
+            }
+            return findContainingTypeCast(parent);
         } else if (expression instanceof UParenthesizedExpression) {
             return findContainingTypeCast(((UParenthesizedExpression) expression).getExpression());
         } else {

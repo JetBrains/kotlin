@@ -117,12 +117,6 @@ public class AndroidLintInspectionToolProvider {
     }
   }
 
-  public static class AndroidKLintAssertInspection extends AndroidLintInspectionBase {
-    public AndroidKLintAssertInspection() {
-      super(AndroidBundle.message("android.lint.inspections.assert"), AssertDetector.ISSUE);
-    }
-  }
-
   public static class AndroidKLintStringFormatCountInspection extends AndroidLintInspectionBase {
     public AndroidKLintStringFormatCountInspection() {
       super(AndroidBundle.message("android.lint.inspections.string.format.count"), StringFormatDetector.ARG_COUNT);
