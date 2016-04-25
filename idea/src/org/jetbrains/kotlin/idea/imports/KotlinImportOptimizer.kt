@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.imports
 
-import com.google.common.collect.HashMultimap
 import com.intellij.lang.ImportOptimizer
 import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.psi.PsiElement
@@ -155,17 +154,31 @@ class KotlinImportOptimizer() : ImportOptimizer {
             return visitor.descriptors
         }
 
+        fun prepareOptimizedImports(file: KtFile,
+                                    descriptorsToImport: Collection<DeclarationDescriptor>): List<ImportPath>? {
+            val settings = KotlinCodeStyleSettings.getInstance(file.project)
+            return prepareOptimizedImports(
+                    file,
+                    descriptorsToImport,
+                    settings.NAME_COUNT_TO_USE_STAR_IMPORT,
+                    settings.NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS) { fqName ->
+                fqName.asString() in settings.PACKAGES_TO_USE_STAR_IMPORTS
+            }
+        }
+
         fun prepareOptimizedImports(
                 file: KtFile,
-                descriptorsToImport: Collection<DeclarationDescriptor>
+                descriptorsToImport: Collection<DeclarationDescriptor>,
+                nameCountToUseStarImport: Int,
+                nameCountToUseStarImportForMembers: Int,
+                isInPackagesToUseStarImport: (FqName) -> Boolean
         ): List<ImportPath>? {
             val importInsertHelper = ImportInsertHelper.getInstance(file.project)
-            val codeStyleSettings = KotlinCodeStyleSettings.getInstance(file.project)
             val aliasImports = buildAliasImportMap(file)
 
             val importsToGenerate = HashSet<ImportPath>()
 
-            val descriptorsByParentFqName = HashMultimap.create<FqName, DeclarationDescriptor>()
+            val descriptorsByParentFqName = hashMapOf<FqName, MutableSet<DeclarationDescriptor>>()
             for (descriptor in descriptorsToImport) {
                 val fqName = descriptor.importableFqName!!
                 val container = descriptor.containingDeclaration
@@ -176,7 +189,8 @@ class KotlinImportOptimizer() : ImportOptimizer {
                     else -> true
                 }
                 if (canUseStarImport) {
-                    descriptorsByParentFqName.put(parentFqName, descriptor)
+                    val descriptors = descriptorsByParentFqName.getOrPut(parentFqName) { hashSetOf() }
+                    descriptors.add(descriptor)
                 }
                 else {
                     importsToGenerate.add(ImportPath(fqName, false))
@@ -187,16 +201,15 @@ class KotlinImportOptimizer() : ImportOptimizer {
 
             fun isImportedByDefault(fqName: FqName) = importInsertHelper.isImportedWithDefault(ImportPath(fqName, false), file)
 
-            for (parentFqName in descriptorsByParentFqName.keys()) {
-                val descriptors = descriptorsByParentFqName[parentFqName]
+            for (parentFqName in descriptorsByParentFqName.keys) {
+                val descriptors = descriptorsByParentFqName[parentFqName]!!
                 val fqNames = descriptors.map { it.importableFqName!! }.toSet()
                 val isMember = descriptors.first().containingDeclaration is ClassDescriptor
                 val nameCountToUseStar = if (isMember)
-                    codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS
+                    nameCountToUseStarImportForMembers
                 else
-                    codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT
-                val explicitImports = fqNames.size < nameCountToUseStar
-                                      && parentFqName.asString() !in codeStyleSettings.PACKAGES_TO_USE_STAR_IMPORTS
+                    nameCountToUseStarImport
+                val explicitImports = fqNames.size < nameCountToUseStar && !isInPackagesToUseStarImport(parentFqName)
                 if (explicitImports) {
                     for (fqName in fqNames) {
                         if (!isImportedByDefault(fqName)) {
@@ -232,18 +245,19 @@ class KotlinImportOptimizer() : ImportOptimizer {
 
                     val parentFqName = fqName.parent()
 
-                    for (descriptor in descriptorsByParentFqName[parentFqName].filter { it.importableFqName == fqName }) {
-                        descriptorsByParentFqName.remove(parentFqName, descriptor)
+                    val parentDescriptors = descriptorsByParentFqName[parentFqName]!!
+                    for (descriptor in parentDescriptors.filter { it.importableFqName == fqName }) {
+                        parentDescriptors.remove(descriptor)
                     }
 
-                    if (descriptorsByParentFqName[parentFqName].isEmpty()) { // star import is not really needed
+                    if (parentDescriptors.isEmpty()) { // star import is not really needed
                         importsToGenerate.remove(ImportPath(parentFqName, true))
                     }
                 }
             }
 
             //TODO: drop unused aliases?
-            aliasImports.mapTo(importsToGenerate) { ImportPath(it.value, false, it.key)}
+            aliasImports.mapTo(importsToGenerate) { ImportPath(it.value, false, it.key) }
 
             val sortedImportsToGenerate = importsToGenerate.sortedWith(importInsertHelper.importSortComparator)
 
