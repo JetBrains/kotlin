@@ -26,7 +26,7 @@ class TestRootAffectedIT : BaseGradleIT() {
 
         project.build("build", options = buildOptions) {
             assertSuccessful()
-            val expectedToCompile = project.relativePaths(listOf(kotlinGreetingJoinerFile) + project.allTestKotlinFiles())
+            val expectedToCompile = project.relativize(listOf(kotlinGreetingJoinerFile) + project.allTestKotlinFiles())
             assertCompiledKotlinSources(expectedToCompile)
         }
 
@@ -50,7 +50,7 @@ class TestRootAffectedIT : BaseGradleIT() {
 
         project.build("build", options = buildOptions) {
             assertSuccessful()
-            val expectedToCompile = project.relativePaths(project.allTestKotlinFiles())
+            val expectedToCompile = project.relativize(project.allTestKotlinFiles())
             assertCompiledKotlinSources(expectedToCompile)
         }
 

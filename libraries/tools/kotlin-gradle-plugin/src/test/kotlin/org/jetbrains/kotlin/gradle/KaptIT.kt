@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.gradle
 
+import org.jetbrains.kotlin.gradle.util.allJavaFiles
 import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.junit.Test
 
@@ -49,6 +50,22 @@ class KaptIT: BaseGradleIT() {
 
         project.build("build") {
             assertSuccessful()
+        }
+    }
+
+    @Test
+    fun testStubsWithoutJava() {
+        val project = Project("kaptStubs", GRADLE_VERSION)
+        project.setupWorkingDir()
+        project.projectDir.allJavaFiles().forEach { it.delete() }
+
+        project.build("build") {
+            assertSuccessful()
+            assertContains("kapt: Using class file stubs")
+            assertContains(":compileKotlin")
+            assertContains(":compileJava")
+            assertFileExists("build/classes/main/example/TestClass.class")
+            assertFileExists("build/classes/main/example/TestClassGenerated.class")
         }
     }
 
