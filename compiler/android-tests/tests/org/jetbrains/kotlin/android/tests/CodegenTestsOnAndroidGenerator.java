@@ -195,8 +195,6 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
         }
     }
 
-    private int counter;
-
     private void processFiles(
             @NotNull Printer printer,
             @NotNull File[] files,
@@ -204,7 +202,6 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
             @NotNull FilesWriter holderMock)
             throws IOException
     {
-        if (counter > 10) return;
         holderFull.writeFilesOnDiskIfNeeded();
         holderMock.writeFilesOnDiskIfNeeded();
 
@@ -229,7 +226,6 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
                 if (InTextDirectivesUtils.isDirectiveDefined(text, "WITH_REFLECT") || text.contains("JvmFileName")) continue;
 
                 if (hasBoxMethod(text)) {
-                    counter++;
                     String generatedTestName = generateTestName(file.getName());
                     String packageName = file.getPath().replaceAll("\\\\|-|\\.|/", "_");
                     text = changePackage(packageName, text);
