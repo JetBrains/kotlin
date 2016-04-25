@@ -41,10 +41,10 @@ class CanBeParameterInspection : AbstractKotlinInspection() {
     private fun PsiReference.usedAsPropertyIn(klass: KtClass): Boolean {
         if (this !is KtSimpleNameReference) return true
         val nameExpression = element
-        // this.x
+        // receiver.x
         val parent = element.parent
         if (parent is KtQualifiedExpression) {
-            if (parent.receiverExpression is KtThisExpression) return true
+            if (parent.selectorExpression == element) return true
         }
         // x += something
         if (parent is KtBinaryExpression &&
