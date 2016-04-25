@@ -119,6 +119,12 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("GetOperator.kt")
+    public void testGetOperator() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/GetOperator.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("InterfaceNameBeforeRunBug.kt")
     public void testInterfaceNameBeforeRunBug() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/InterfaceNameBeforeRunBug.kt");

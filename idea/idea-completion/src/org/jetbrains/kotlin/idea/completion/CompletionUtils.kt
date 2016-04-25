@@ -67,6 +67,7 @@ tailrec fun <T : Any> LookupElement.getUserDataDeep(key: Key<T>): T? {
 enum class ItemPriority {
     SUPER_METHOD_WITH_ARGUMENTS,
     FROM_UNRESOLVED_NAME_SUGGESTION,
+    GET_OPERATOR,
     DEFAULT,
     IMPLEMENT,
     OVERRIDE,
