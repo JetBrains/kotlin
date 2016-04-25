@@ -1,2 +1,1 @@
 java.lang.Deprecated org.test.SomeClass <init>
-java.lang.Deprecated org.test.SomeClass <init>

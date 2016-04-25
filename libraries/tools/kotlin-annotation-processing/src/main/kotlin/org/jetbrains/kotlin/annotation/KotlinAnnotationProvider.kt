@@ -22,12 +22,12 @@ import java.io.StringReader
 import java.util.*
 import org.jetbrains.kotlin.annotation.CompactNotationType as Notation
 
-class KotlinAnnotationProvider(annotationsReader: Reader) {
+open class KotlinAnnotationProvider(annotationsReader: Reader) {
     constructor(annotationsFile: File) : this(annotationsFile.reader().buffered())
     constructor() : this(StringReader(""))
 
-    private val kotlinClassesInternal = hashSetOf<String>()
-    private val annotatedKotlinElementsInternal = hashMapOf<String, MutableSet<AnnotatedElementDescriptor>>()
+    protected val kotlinClassesInternal = hashSetOf<String>()
+    protected val annotatedKotlinElementsInternal = hashMapOf<String, MutableSet<AnnotatedElementDescriptor>>()
 
     init {
         readAnnotations(annotationsReader)
@@ -42,7 +42,7 @@ class KotlinAnnotationProvider(annotationsReader: Reader) {
     val supportInheritedAnnotations: Boolean
         get() = kotlinClassesInternal.isNotEmpty()
 
-    private fun readAnnotations(annotationsReader: Reader) {
+    protected fun readAnnotations(annotationsReader: Reader) {
         fun handleShortenedName(cache: MutableMap<String, String>, lineParts: List<String>) {
             val name = lineParts[1]
             val id = lineParts[2]

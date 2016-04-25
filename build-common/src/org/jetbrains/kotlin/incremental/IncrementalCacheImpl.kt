@@ -122,6 +122,11 @@ open class IncrementalCacheImpl<Target>(
         }
     }
 
+    // used in gradle
+    @Suppress("unused")
+    fun classesBySources(sources: Iterable<File>): Iterable<JvmClassName> =
+            sources.flatMap { sourceToClassesMap[it] }
+
     fun getSubtypesOf(className: FqName): Sequence<FqName> =
             subtypesMap[className].asSequence()
 
