@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -115,7 +116,7 @@ class MoveMemberToCompanionObjectIntention : SelfTargetingRangeIntention<KtNamed
         }
     }
 
-    private fun moveReceiverToArgumentList(refElement: PsiElement) {
+    private fun moveReceiverToArgumentList(refElement: PsiElement, classFqName: FqName) {
         when (refElement) {
             is PsiReferenceExpression -> {
                 val qualifier = refElement.qualifier
@@ -127,15 +128,15 @@ class MoveMemberToCompanionObjectIntention : SelfTargetingRangeIntention<KtNamed
             }
 
             is KtSimpleNameExpression -> {
-                val call = refElement.parent as? KtCallExpression
-                val receiver = call?.getQualifiedExpressionForSelector()?.receiverExpression
-                if (call != null && receiver != null) {
-                    val psiFactory = KtPsiFactory(refElement)
-                    val argumentList = call.valueArgumentList
-                                       ?: call.addAfter(psiFactory.createCallArguments("()"), call.typeArgumentList ?: refElement) as KtValueArgumentList
-                    argumentList.addArgumentBefore(psiFactory.createArgument(receiver),
-                                                   argumentList.arguments.firstOrNull())
-                }
+                val call = refElement.parent as? KtCallExpression ?: return
+                val psiFactory = KtPsiFactory(refElement)
+                val argumentList = call.valueArgumentList
+                                   ?: call.addAfter(psiFactory.createCallArguments("()"), call.typeArgumentList ?: refElement) as KtValueArgumentList
+
+                val receiver = call.getQualifiedExpressionForSelector()?.receiverExpression
+                val receiverArg = receiver?.let { psiFactory.createArgument(it) }
+                                  ?: psiFactory.createArgument(psiFactory.createExpression("this@${classFqName.asString()}"))
+                argumentList.addArgumentBefore(receiverArg, argumentList.arguments.firstOrNull())
             }
         }
     }
@@ -190,6 +191,8 @@ class MoveMemberToCompanionObjectIntention : SelfTargetingRangeIntention<KtNamed
             nameSuggestions = emptyList()
         }
 
+        val hasInstanceArg = nameSuggestions.isNotEmpty()
+
         element.removeModifier(KtTokens.OPEN_KEYWORD)
         element.removeModifier(KtTokens.FINAL_KEYWORD)
 
@@ -198,8 +201,8 @@ class MoveMemberToCompanionObjectIntention : SelfTargetingRangeIntention<KtNamed
         for (usage in externalUsages) {
             val usageElement = usage.element ?: continue
 
-            if (nameSuggestions.isNotEmpty()) {
-                moveReceiverToArgumentList(usageElement)
+            if (hasInstanceArg) {
+                moveReceiverToArgumentList(usageElement, containingClass.fqName!!)
             }
 
             when (usage) {
@@ -217,12 +220,18 @@ class MoveMemberToCompanionObjectIntention : SelfTargetingRangeIntention<KtNamed
                 is ImplicitReceiverUsageInfo -> {
                     usage.callExpression
                             .let { it.replaced(ktPsiFactory.createExpressionByPattern("$0.$1", ktCompanionRef, it)) }
-                            .let { elementsToShorten += (it as KtQualifiedExpression).receiverExpression }
+                            .let {
+                                val qualifiedCall = it as KtQualifiedExpression
+                                elementsToShorten += qualifiedCall.receiverExpression
+                                if (hasInstanceArg) {
+                                    elementsToShorten += (qualifiedCall.selectorExpression as KtCallExpression).valueArguments.first()
+                                }
+                            }
                 }
             }
         }
 
-        ShortenReferences.DEFAULT.process(elementsToShorten)
+        ShortenReferences { ShortenReferences.Options.ALL_ENABLED }.process(elementsToShorten)
 
         runTemplateForInstanceParam(newDeclaration, nameSuggestions, editor)
     }

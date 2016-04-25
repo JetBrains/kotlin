@@ -38,6 +38,7 @@ Issues fixed:
 - [KT-11282](https://youtrack.jetbrains.com/issue/KT-11282) Delete interface reference from super-type list when applying Safe Delete to Java interface
 - [KT-11967](https://youtrack.jetbrains.com/issue/KT-11967) Fix Find Usages/Rename for parameter references in XML files
 - [KT-11482](https://youtrack.jetbrains.com/issue/KT-11482) Fixed exception in "Move to companion object" intention
+- [KT-11483](https://youtrack.jetbrains.com/issue/KT-11483) Pass implicit receiver as argument when moving member function to companion object
 
 #### Debugger
 
