@@ -39,6 +39,7 @@ Issues fixed:
 - [KT-11967](https://youtrack.jetbrains.com/issue/KT-11967) Fix Find Usages/Rename for parameter references in XML files
 - [KT-11482](https://youtrack.jetbrains.com/issue/KT-11482) Fixed exception in "Move to companion object" intention
 - [KT-11483](https://youtrack.jetbrains.com/issue/KT-11483) Pass implicit receiver as argument when moving member function to companion object
+- [KT-11512](https://youtrack.jetbrains.com/issue/KT-11512) Allow choosing any source root in "Move file to directory" intention
 
 #### Debugger
 
