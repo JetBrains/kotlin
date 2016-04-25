@@ -1,3 +1,19 @@
+/*
+ * Copyright 2010-2016 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package templates
 
 import templates.Family.*
@@ -542,6 +558,48 @@ fun filtering(): List<GenericFunction> {
             """
         }
     }
+
+    templates add f("filterIsInstanceTo(destination: C)") {
+        doc { "Appends all elements that are instances of specified type parameter R to the given [destination]." }
+        typeParam("reified R")
+        typeParam("C : MutableCollection<in R>")
+        inline(true)
+        receiverAsterisk(true)
+        returns("C")
+        exclude(ArraysOfPrimitives, Strings)
+        body {
+            """
+            for (element in this) if (element is R) destination.add(element)
+            return destination
+            """
+        }
+    }
+
+    templates add f("filterIsInstance()") {
+        doc { "Returns a list containing all elements that are instances of specified type parameter R." }
+        typeParam("reified R")
+        returns("List<@kotlin.internal.NoInfer R>")
+        inline(true)
+        receiverAsterisk(true)
+        body {
+            """
+            return filterIsInstanceTo(ArrayList<R>())
+            """
+        }
+        exclude(ArraysOfPrimitives, Strings)
+
+        doc(Sequences) { "Returns a sequence containing all elements that are instances of specified type parameter R." }
+        returns(Sequences) { "Sequence<@kotlin.internal.NoInfer R>" }
+        inline(true)
+        receiverAsterisk(true)
+        body(Sequences) {
+            """
+            @Suppress("UNCHECKED_CAST")
+            return filter { it is R } as Sequence<R>
+            """
+        }
+    }
+
 
     templates add f("slice(indices: Iterable<Int>)") {
         only(Strings, Lists, ArraysOfPrimitives, ArraysOfObjects)
