@@ -21,6 +21,7 @@ import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
+import org.jetbrains.kotlin.annotation.AnnotationFileUpdater
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
@@ -172,6 +173,8 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
                dataContainerCacheVersion(taskBuildDirectory),
                gradleCacheVersion(taskBuildDirectory))
     }
+
+    private var kaptAnnotationsFileUpdater: AnnotationFileUpdater? = null
 
     override fun populateTargetSpecificArgs(args: K2JVMCompilerArguments) {
         // show kotlin compiler where to look for java source files
@@ -370,9 +373,15 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
             // TODO: process as list here, merge into string later
             args.classpath = args.classpath + File.pathSeparator + outputDir.absolutePath
         }
+        else {
+            // there is no point in updating annotation file since all files will be compiled anyway
+            kaptAnnotationsFileUpdater = null
+        }
 
         while (sourcesToCompile.any() || currentRemoved.any()) {
             val removedAndModified = (sourcesToCompile + currentRemoved).toList()
+            val outdatedClasses = targets.flatMap { getIncrementalCache(it).classesBySources(removedAndModified) }
+
             targets.forEach { getIncrementalCache(it).let {
                 it.markOutputClassesDirty(removedAndModified)
                 it.removeClassfilesBySources(removedAndModified)
@@ -393,6 +402,10 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
 
             if (exitCode == ExitCode.OK) {
                 dirtySourcesSinceLastTimeFile.delete()
+                kaptAnnotationsFileUpdater?.updateAnnotations(outdatedClasses)
+            }
+            else {
+                kaptAnnotationsFileUpdater?.revert()
             }
 
             allGeneratedFiles.addAll(generatedFiles)
@@ -485,6 +498,10 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
     private fun handleKaptProperties(extraProperties: ExtraPropertiesExtension, pluginOptions: MutableList<String>) {
         val kaptAnnotationsFile = extraProperties.getOrNull<File>("kaptAnnotationsFile")
         if (kaptAnnotationsFile != null) {
+            if (incremental) {
+                kaptAnnotationsFileUpdater = AnnotationFileUpdater(kaptAnnotationsFile)
+            }
+
             if (kaptAnnotationsFile.exists()) kaptAnnotationsFile.delete()
             pluginOptions.add("plugin:$ANNOTATIONS_PLUGIN_NAME:output=" + kaptAnnotationsFile)
         }

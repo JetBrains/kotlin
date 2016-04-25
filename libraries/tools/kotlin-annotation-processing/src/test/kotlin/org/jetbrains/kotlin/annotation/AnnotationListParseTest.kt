@@ -1,7 +1,5 @@
 package org.jetbrains.kotlin.annotation
 
-import org.junit.Assert
-import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.File
@@ -84,20 +82,4 @@ open class AnnotationListParseTest {
         val fileContents = (actualAnnotationsSorted + classDeclarationsSorted).joinToString("\n")
         assertEqualsToFile(expectedFile, fileContents)
     }
-
-    // KotlinTestUtils.assertEqualsToFile() is not reachable from here
-    public fun assertEqualsToFile(expectedFile: File, actual: String) {
-        val lineSeparator = System.getProperty("line.separator")
-        val actualText = actual.replace(lineSeparator, "\n").trim('\n', ' ', '\t')
-
-        if (!expectedFile.exists()) {
-            expectedFile.writeText(actualText.replace("\n", lineSeparator))
-            Assert.fail("Expected data file did not exist. Generating: " + expectedFile)
-        }
-
-        val expectedText = expectedFile.readText().replace(lineSeparator, "\n")
-
-        assertEquals(expectedText, actualText)
-    }
-
 }

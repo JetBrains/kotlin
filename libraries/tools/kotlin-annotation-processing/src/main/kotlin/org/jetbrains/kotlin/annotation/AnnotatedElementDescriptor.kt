@@ -2,7 +2,9 @@ package org.jetbrains.kotlin.annotation
 
 sealed class AnnotatedElementDescriptor(val classFqName: String) {
     class Class(classFqName: String) : AnnotatedElementDescriptor(classFqName) {
-        // use referential equality
+        override fun equals(other: Any?) = other is Class && classFqName == other.classFqName
+
+        override fun hashCode() = classFqName.hashCode()
     }
 
     class Method(classFqName: String, val methodName: String) : AnnotatedElementDescriptor(classFqName) {
@@ -15,7 +17,10 @@ sealed class AnnotatedElementDescriptor(val classFqName: String) {
         companion object {
             const val METHOD_NAME = "<init>"
         }
-        // use referential equality
+
+        override fun equals(other: Any?) = other is Constructor && classFqName == other.classFqName
+
+        override fun hashCode() = 31 * classFqName.hashCode() + METHOD_NAME.hashCode()
     }
 
     class Field(classFqName: String, val fieldName: String) : AnnotatedElementDescriptor(classFqName) {

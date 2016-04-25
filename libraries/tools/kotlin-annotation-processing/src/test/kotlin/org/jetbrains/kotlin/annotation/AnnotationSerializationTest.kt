@@ -29,13 +29,9 @@ class AnnotationSerializationTest : AnnotationListParseTest() {
         val annotationProvider = KotlinAnnotationProvider(annotationsFile)
         annotationsFile.delete()
 
-        val writer = annotationsFile.bufferedWriter()
-        try {
+        annotationsFile.bufferedWriter().use { writer ->
             val annotationWriter = CompactAnnotationWriter(writer)
             annotationProvider.writeAnnotations(annotationWriter)
-        }
-        finally {
-            writer.close()
         }
 
         super.doTest(workingDir)
