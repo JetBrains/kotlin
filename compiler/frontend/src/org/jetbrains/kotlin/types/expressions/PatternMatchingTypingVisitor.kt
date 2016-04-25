@@ -322,10 +322,8 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         newContext = newContext.replaceDataFlowInfo(typeInfo.dataFlowInfo)
         if (conditionExpected) {
             val booleanType = components.builtIns.booleanType
-            if (!KotlinTypeChecker.DEFAULT.equalTypes(booleanType, type)) {
-                newContext.trace.report(TYPE_MISMATCH_IN_CONDITION.on(expression, type))
-            }
-            else {
+            val checkedTypeInfo = components.dataFlowAnalyzer.checkType(typeInfo, expression, newContext.replaceExpectedType(booleanType))
+            if (KotlinTypeChecker.DEFAULT.equalTypes(booleanType, checkedTypeInfo.type ?: type)) {
                 val ifInfo = components.dataFlowAnalyzer.extractDataFlowInfoFromCondition(expression, true, newContext)
                 val elseInfo = components.dataFlowAnalyzer.extractDataFlowInfoFromCondition(expression, false, newContext)
                 return ConditionalDataFlowInfo(ifInfo, elseInfo)

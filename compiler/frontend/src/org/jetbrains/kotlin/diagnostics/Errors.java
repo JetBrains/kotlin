@@ -739,7 +739,6 @@ public interface Errors {
     DiagnosticFactory1<KtExpression, KotlinType> EXPECTED_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<KtBinaryExpression, KotlinType> ASSIGNMENT_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory2<KtTypeReference, KotlinType, KotlinType> TYPE_MISMATCH_IN_FOR_LOOP = DiagnosticFactory2.create(ERROR);
-    DiagnosticFactory1<KtElement, KotlinType> TYPE_MISMATCH_IN_CONDITION = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory3<KtExpression, String, KotlinType, KotlinType> RESULT_TYPE_MISMATCH = DiagnosticFactory3.create(ERROR);
     DiagnosticFactory0<KtWhenConditionInRange> TYPE_MISMATCH_IN_RANGE = DiagnosticFactory0.create(ERROR, WHEN_CONDITION_IN_RANGE);
 
