@@ -189,7 +189,11 @@ fun KtExpression.readWriteAccess(useResolveForReadWrite: Boolean): ReferenceAcce
 
 fun KtReference.canBeResolvedViaImport(target: DeclarationDescriptor): Boolean {
     if (!target.canBeReferencedViaImport()) return false
+
+    if (this is KDocReference) return element.getQualifiedName().size == 1
+
     if (target.isExtension) return true // assume that any type of reference can use imports when resolved to extension
+
     val referenceExpression = this.element as? KtNameReferenceExpression ?: return false
     if (CallTypeAndReceiver.detect(referenceExpression).receiver != null) return false
     if (element.parent is KtThisExpression || element.parent is KtSuperExpression) return false // TODO: it's a bad design of PSI tree, we should change it
