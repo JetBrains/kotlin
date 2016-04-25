@@ -29,7 +29,7 @@ class MapTest {
     @Suppress("INVISIBLE_MEMBER")
     @test fun getOrImplicitDefault() {
         val data: MutableMap<String, Int> = hashMapOf("bar" to 1)
-        assertTrue(assertFails { data.getOrImplicitDefault("foo") } is NoSuchElementException)
+        assertFailsWith<NoSuchElementException> { data.getOrImplicitDefault("foo") }
         assertEquals(1, data.getOrImplicitDefault("bar"))
 
         val mutableWithDefault = data.withDefault { 42 }
