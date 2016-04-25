@@ -16764,6 +16764,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("propertyAsCondition.kt")
+            public void testPropertyAsCondition() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/propertyAsCondition.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("propertyToNotNull.kt")
             public void testPropertyToNotNull() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/propertyToNotNull.kt");
