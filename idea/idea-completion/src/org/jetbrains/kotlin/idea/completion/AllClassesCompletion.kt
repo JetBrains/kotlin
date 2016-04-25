@@ -25,7 +25,9 @@ import org.jetbrains.kotlin.asJava.KtLightClass
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
+import org.jetbrains.kotlin.idea.core.isJavaClassNotToBeUsedInKotlin
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
+import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -38,7 +40,8 @@ class AllClassesCompletion(private val parameters: CompletionParameters,
                            private val kotlinIndicesHelper: KotlinIndicesHelper,
                            private val prefixMatcher: PrefixMatcher,
                            private val resolutionFacade: ResolutionFacade,
-                           private val kindFilter: (ClassKind) -> Boolean
+                           private val kindFilter: (ClassKind) -> Boolean,
+                           private val includeJavaClassesNotToBeUsed: Boolean
 ) {
     fun collect(classDescriptorCollector: (ClassDescriptor) -> Unit, javaClassCollector: (PsiClass) -> Unit) {
 
@@ -84,7 +87,7 @@ class AllClassesCompletion(private val parameters: CompletionParameters,
                     psiClass.isEnum -> ClassKind.ENUM_CLASS
                     else -> ClassKind.CLASS
                 }
-                if (kindFilter(kind)) {
+                if (kindFilter(kind) && !isNotToBeUsed(psiClass)) {
                     collector(psiClass)
                 }
             }
@@ -96,5 +99,11 @@ class AllClassesCompletion(private val parameters: CompletionParameters,
         val metadata = modifierList?.findAnnotation(JvmAnnotationNames.METADATA_FQ_NAME.asString())
         return (metadata?.findAttributeValue(JvmAnnotationNames.KIND_FIELD_NAME) as? PsiLiteral)?.value ==
                 KotlinClassHeader.Kind.SYNTHETIC_CLASS.id
+    }
+
+    private fun isNotToBeUsed(javaClass: PsiClass): Boolean {
+        if (includeJavaClassesNotToBeUsed) return false
+        val fqName = javaClass.getKotlinFqName()
+        return fqName != null && isJavaClassNotToBeUsedInKotlin(fqName)
     }
 }

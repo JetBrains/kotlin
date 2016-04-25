@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.completion
 
 import com.intellij.codeInsight.completion.*
+import com.intellij.codeInsight.completion.impl.RealPrefixMatchingWeigher
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.openapi.util.TextRange
@@ -34,6 +35,9 @@ class LookupElementsCollector(
         sorter: CompletionSorter
 ) {
 
+    var bestMatchingDegree = Int.MIN_VALUE
+        private set
+
     private val elements = ArrayList<LookupElement>()
 
     private val resultSet = resultSet
@@ -42,16 +46,21 @@ class LookupElementsCollector(
 
     private val postProcessors = ArrayList<(LookupElement) -> LookupElement>()
 
+    var isResultEmpty: Boolean = true
+        private set
+
     fun flushToResultSet() {
         if (!elements.isEmpty()) {
             resultSet.addAllElements(elements)
             elements.clear()
             isResultEmpty = false
+
+            for (element in elements) {
+                val matchingDegree = RealPrefixMatchingWeigher.getBestMatchingDegree(element, prefixMatcher)
+                bestMatchingDegree = Math.max(bestMatchingDegree, matchingDegree)
+            }
         }
     }
-
-    var isResultEmpty: Boolean = true
-        private set
 
     fun addLookupElementPostProcessor(processor: (LookupElement) -> LookupElement) {
         postProcessors.add(processor)
@@ -140,10 +149,6 @@ class LookupElementsCollector(
 
     fun addElements(elements: Iterable<LookupElement>, notImported: Boolean = false) {
         elements.forEach { addElement(it, notImported) }
-    }
-
-    fun advertiseSecondCompletion() {
-        JavaCompletionContributor.advertiseSecondCompletion(completionParameters.originalFile.project, resultSet)
     }
 
     fun restartCompletionOnPrefixChange(prefixCondition: ElementPattern<String>) {

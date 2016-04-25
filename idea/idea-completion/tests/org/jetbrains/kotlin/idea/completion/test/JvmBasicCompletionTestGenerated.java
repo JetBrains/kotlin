@@ -2632,6 +2632,18 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("NonImportedPrefixMatching1.kt")
+        public void testNonImportedPrefixMatching1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/NonImportedPrefixMatching1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NonImportedPrefixMatching2.kt")
+        public void testNonImportedPrefixMatching2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/NonImportedPrefixMatching2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("Number.kt")
         public void testNumber() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/Number.kt");

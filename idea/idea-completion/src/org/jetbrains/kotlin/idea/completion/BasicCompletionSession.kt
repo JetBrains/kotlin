@@ -16,16 +16,15 @@
 
 package org.jetbrains.kotlin.idea.completion
 
-import com.intellij.codeInsight.completion.CompletionParameters
-import com.intellij.codeInsight.completion.CompletionResultSet
-import com.intellij.codeInsight.completion.CompletionSorter
-import com.intellij.codeInsight.completion.CompletionType
+import com.intellij.codeInsight.completion.*
+import com.intellij.codeInsight.completion.impl.BetterPrefixMatcher
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.codeInsight.template.TemplateManager
 import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.ProcessingContext
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -210,7 +209,7 @@ class BasicCompletionSession(
 
                 packageNames.forEach { collector.addElement(basicLookupElementFactory.createLookupElementForPackage(it)) }
             }
-            
+
             flushToResultSet()
 
             NamedArgumentCompletion.complete(collector, expectedInfos, callTypeAndReceiver.callType)
@@ -271,7 +270,7 @@ class BasicCompletionSession(
                 }
             }
 
-            if (callTypeAndReceiver.receiver == null) {
+            if (callTypeAndReceiver.receiver == null && prefix.isNotEmpty()) {
                 val classKindFilter: ((ClassKind) -> Boolean)?
                 when (callTypeAndReceiver) {
                     is CallTypeAndReceiver.ANNOTATION -> classKindFilter = { it == ClassKind.ANNOTATION_CLASS }
@@ -279,12 +278,11 @@ class BasicCompletionSession(
                     else -> classKindFilter = null
                 }
                 if (classKindFilter != null) {
-                    if (configuration.completeNonImportedClasses) {
-                        addClassesFromIndex(classKindFilter)
-                    }
-                    else {
-                        collector.advertiseSecondCompletion()
-                    }
+                    val prefixMatcher = if (configuration.useBetterPrefixMatcherForNonImportedClasses)
+                        BetterPrefixMatcher(prefixMatcher, collector.bestMatchingDegree)
+                    else
+                        prefixMatcher
+                    addClassesFromIndex(classKindFilter, prefixMatcher)
                 }
             }
         }
@@ -549,4 +547,16 @@ class BasicCompletionSession(
             else -> return null
         }
     }
+
+    private fun addClassesFromIndex(kindFilter: (ClassKind) -> Boolean, prefixMatcher: PrefixMatcher) {
+        val classDescriptorCollector = { descriptor: ClassDescriptor ->
+            collector.addElement(basicLookupElementFactory.createLookupElement(descriptor), notImported = true)
+        }
+        val javaClassCollector = { javaClass: PsiClass ->
+            collector.addElement(basicLookupElementFactory.createLookupElementForJavaClass(javaClass), notImported = true)
+        }
+        AllClassesCompletion(parameters, indicesHelper(true), prefixMatcher, resolutionFacade, kindFilter, configuration.completeJavaClassesNotToBeUsed)
+                .collect(classDescriptorCollector, javaClassCollector)
+    }
+
 }
