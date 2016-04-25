@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.daemon.common.CompilerCallbackServicesFacade
 import org.jetbrains.kotlin.daemon.common.DummyProfiler
 import org.jetbrains.kotlin.daemon.common.Profiler
-import org.jetbrains.kotlin.daemon.common.RmiFriendlyCompilationCancelledException
+import org.jetbrains.kotlin.daemon.common.RmiFriendlyCompilationCanceledException
 import org.jetbrains.kotlin.progress.CompilationCanceledException
 import java.util.concurrent.TimeUnit
 import java.util.logging.Logger
@@ -36,7 +36,7 @@ class RemoteCompilationCanceledStatusClient(val facade: CompilerCallbackServices
     override fun checkCanceled() {
 
         fun cancelOnError(e: Exception) {
-            log.warning("error communicating with host, assuming compilation cancelled (${e.message})")
+            log.warning("error communicating with host, assuming compilation canceled (${e.message})")
             throw CompilationCanceledException()
         }
 
@@ -46,7 +46,7 @@ class RemoteCompilationCanceledStatusClient(val facade: CompilerCallbackServices
                 try {
                     facade.compilationCanceledStatus_checkCanceled()
                 }
-                catch (e: RmiFriendlyCompilationCancelledException) {
+                catch (e: RmiFriendlyCompilationCanceledException) {
                     throw CompilationCanceledException()
                 }
                 catch (e: java.rmi.ConnectIOException) {

@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.daemon.client
 import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.daemon.common.CompilerCallbackServicesFacade
 import org.jetbrains.kotlin.daemon.common.LoopbackNetworkInterface
-import org.jetbrains.kotlin.daemon.common.RmiFriendlyCompilationCancelledException
+import org.jetbrains.kotlin.daemon.common.RmiFriendlyCompilationCanceledException
 import org.jetbrains.kotlin.daemon.common.SOCKET_ANY_FREE_PORT
 import org.jetbrains.kotlin.incremental.components.LookupInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -32,7 +32,7 @@ import java.rmi.server.UnicastRemoteObject
 
 class CompilerCallbackServicesFacadeServer(
         val incrementalCompilationComponents: IncrementalCompilationComponents? = null,
-        val compilationCancelledStatus: CompilationCanceledStatus? = null,
+        val compilationCanceledStatus: CompilationCanceledStatus? = null,
         port: Int = SOCKET_ANY_FREE_PORT
 ) : CompilerCallbackServicesFacade,
     UnicastRemoteObject(port, LoopbackNetworkInterface.clientLoopbackSocketFactory, LoopbackNetworkInterface.serverLoopbackSocketFactory)
@@ -41,7 +41,7 @@ class CompilerCallbackServicesFacadeServer(
 
     override fun hasLookupTracker(): Boolean = incrementalCompilationComponents != null
 
-    override fun hasCompilationCanceledStatus(): Boolean = compilationCancelledStatus != null
+    override fun hasCompilationCanceledStatus(): Boolean = compilationCanceledStatus != null
 
     // TODO: consider replacing NPE with other reporting, although NPE here means most probably incorrect usage
 
@@ -83,12 +83,12 @@ class CompilerCallbackServicesFacadeServer(
 
     override fun compilationCanceledStatus_checkCanceled() {
         try {
-            compilationCancelledStatus!!.checkCanceled()
+            compilationCanceledStatus!!.checkCanceled()
         }
         catch (e: ProcessCanceledException) {
             // avoid passing exceptions that may have different serialVersionUID on across rmi border
             // TODO: doublecheck whether we need to distinguish different cancellation exceptions
-            throw RmiFriendlyCompilationCancelledException()
+            throw RmiFriendlyCompilationCanceledException()
         }
     }
 }
