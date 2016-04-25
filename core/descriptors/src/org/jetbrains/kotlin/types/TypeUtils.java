@@ -54,12 +54,6 @@ public class TypeUtils {
             throw new IllegalStateException(name);
         }
 
-        @NotNull
-        @Override
-        public TypeSubstitution getSubstitution() {
-            throw new IllegalStateException(name);
-        }
-
         @Override
         public boolean isMarkedNullable() {
             throw new IllegalStateException(name);
@@ -551,12 +545,6 @@ public class TypeUtils {
         @NotNull
         public Annotations getAnnotations() {
             return delegate.getAnnotations();
-        }
-
-        @NotNull
-        @Override
-        public TypeSubstitution getSubstitution() {
-            return delegate.getSubstitution();
         }
 
         @Nullable

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -89,7 +89,7 @@ private object ForceTypeCopySubstitution : TypeSubstitution() {
     override fun get(key: KotlinType) =
             with(key) {
                 KotlinTypeImpl.create(
-                        annotations, constructor, isMarkedNullable, arguments, substitution, memberScope, capabilities).asTypeProjection()
+                        annotations, constructor, isMarkedNullable, arguments, memberScope, capabilities).asTypeProjection()
             }
 
     override fun isEmpty() = false

@@ -137,7 +137,6 @@ fun KotlinType.replace(
                 constructor,
                 isMarkedNullable,
                 arguments,
-                substitution,
                 memberScope,
                 newCapabilities
         )
@@ -156,7 +155,6 @@ fun KotlinType.replace(
             constructor,
             isMarkedNullable,
             newArguments,
-            newSubstitution,
             newScope,
             newCapabilities
     )

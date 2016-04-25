@@ -34,10 +34,6 @@ abstract class AbstractLazyType(storageManager: StorageManager) : AbstractKotlin
 
     protected abstract fun computeArguments(): List<TypeProjection>
 
-    override fun getSubstitution() = computeCustomSubstitution() ?: TypeConstructorSubstitution.create(constructor, getArguments())
-
-    protected open fun computeCustomSubstitution(): TypeSubstitution? = getCapability<RawTypeCapability>()?.substitution
-
     private val memberScope = storageManager.createLazyValue { computeMemberScope() }
     override fun getMemberScope() = memberScope()
 
@@ -45,7 +41,11 @@ abstract class AbstractLazyType(storageManager: StorageManager) : AbstractKotlin
         val descriptor = constructor.declarationDescriptor
         return when (descriptor) {
             is TypeParameterDescriptor -> descriptor.getDefaultType().memberScope
-            is ClassDescriptor -> descriptor.getMemberScope(substitution)
+            is ClassDescriptor -> {
+                val substitution = getCapability<RawTypeCapability>()?.substitution
+                                   ?: TypeConstructorSubstitution.create(constructor, getArguments())
+                descriptor.getMemberScope(substitution)
+            }
             else -> throw IllegalStateException("Unsupported classifier: $descriptor")
         }
     }
