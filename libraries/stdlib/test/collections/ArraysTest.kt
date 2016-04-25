@@ -663,9 +663,9 @@ class ArraysTest {
         expect(1.toByte()) { byteArrayOf(3, 2, 1).reduceIndexed { index, a, b -> if (index != 2) (a - b).toByte() else a.toByte() } }
         expect(1.toShort()) { shortArrayOf(3, 2, 1).reduceIndexed { index, a, b -> if (index != 2) (a - b).toShort() else a.toShort() } }
 
-        assertTrue(assertFails {
+        assertFailsWith<UnsupportedOperationException> {
             intArrayOf().reduceIndexed { index, a, b -> a + b }
-        } is UnsupportedOperationException)
+        }
     }
 
     @test fun reduceRightIndexed() {
@@ -679,9 +679,9 @@ class ArraysTest {
         expect(1.toByte()) { byteArrayOf(3, 2, 1).reduceRightIndexed { index, a, b -> if (index != 1) (a - b).toByte() else a.toByte() } }
         expect(1.toShort()) { shortArrayOf(3, 2, 1).reduceRightIndexed { index, a, b -> if (index != 1) (a - b).toShort() else a.toShort() } }
 
-        assertTrue(assertFails {
+        assertFailsWith<UnsupportedOperationException> {
             intArrayOf().reduceRightIndexed { index, a, b -> a + b }
-        } is UnsupportedOperationException)
+        }
     }
 
     @test fun reduce() {
@@ -695,9 +695,9 @@ class ArraysTest {
         expect(0.toByte()) { byteArrayOf(3, 2, 1).reduce { a, b -> (a - b).toByte() } }
         expect(0.toShort()) { shortArrayOf(3, 2, 1).reduce { a, b -> (a - b).toShort() } }
 
-        assertTrue(assertFails {
+        assertFailsWith<UnsupportedOperationException> {
             intArrayOf().reduce { a, b -> a + b }
-        } is UnsupportedOperationException)
+        }
     }
 
     @test fun reduceRight() {
@@ -711,9 +711,9 @@ class ArraysTest {
         expect(2.toByte()) { byteArrayOf(1, 2, 3).reduceRight { a, b -> (a - b).toByte() } }
         expect(2.toShort()) { shortArrayOf(1, 2, 3).reduceRight { a, b -> (a - b).toShort() } }
 
-        assertTrue(assertFails {
+        assertFailsWith<UnsupportedOperationException> {
             intArrayOf().reduceRight { a, b -> a + b }
-        } is UnsupportedOperationException)
+        }
     }
 
     @test fun reverseInPlace() {
