@@ -18,6 +18,7 @@
         <fileset dir="${basedir}/core/builtins/src">
             <include name="kotlin/reflect/**/*.kt"/>
             <include name="kotlin/annotation/Annotations.kt"/>
+            <include name="kotlin/Unit.kt"/>
         </fileset>
 
         <fileset dir="${basedir}/libraries/kotlin.test/shared">
