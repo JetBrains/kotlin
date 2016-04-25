@@ -309,7 +309,7 @@ class KotlinCompletionContributor : CompletionContributor() {
                 if (!somethingAdded && parameters.invocationCount < 2) {
                     // Rerun completion if nothing was found
                     val newConfiguration = CompletionSessionConfiguration(
-                            completeNonImportedClasses = true,
+                            useBetterPrefixMatcherForNonImportedClasses = false,
                             completeNonAccessibleDeclarations = false,
                             filterOutJavaGettersAndSetters = false,
                             completeJavaClassesNotToBeUsed = false,

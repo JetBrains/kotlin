@@ -1,10 +1,10 @@
-class Xyz
+class Xyzzz
 
-fun foo(xyz: Xyz){}
+fun foo(xyz: Xyzzzz){}
 
 fun bar(o: Any) {
-    foo(o as Xy<caret>)
+    foo(o as Xyz<caret>)
 }
 
-// EXIST: Xyz
+// EXIST: Xyzzz
 // NOTHING_ELSE

@@ -89,7 +89,7 @@ class ParameterNameAndTypeCompletion(
     fun addFromAllClasses(parameters: CompletionParameters, indicesHelper: KotlinIndicesHelper) {
         for ((classNameMatcher, userPrefix) in classNamePrefixMatchers.zip(userPrefixes)) {
             AllClassesCompletion(
-                    parameters, indicesHelper, classNameMatcher, resolutionFacade, { !it.isSingleton }
+                    parameters, indicesHelper, classNameMatcher, resolutionFacade, { !it.isSingleton }, includeJavaClassesNotToBeUsed = false
             ).collect(
                     { addSuggestionsForClassifier(it, userPrefix, notImported = true) },
                     { addSuggestionsForJavaClass(it, userPrefix, notImported = true) }
