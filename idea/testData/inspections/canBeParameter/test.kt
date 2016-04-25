@@ -103,3 +103,17 @@ class ModifiedInInit(var x: Int) {
 open class UsedInOverride(val x: Int)
 
 class UserInOverride(override val x: Int) : UsedInOverride(x)
+// NO
+class UsedInLambda(val x: Int) {
+    init {
+        run {
+            val y = x
+        }
+    }
+}
+// NO
+class UsedInDelegate(val x: Int) {
+    val y: Int by lazy {
+        x * x
+    }
+}
