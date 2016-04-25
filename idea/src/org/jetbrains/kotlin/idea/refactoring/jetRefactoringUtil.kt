@@ -95,8 +95,11 @@ import java.lang.annotation.Retention
 import java.util.*
 import javax.swing.Icon
 
-fun getOrCreateKotlinFile(fileName: String, targetDir: PsiDirectory): KtFile? =
-        (targetDir.findFile(fileName) ?: createKotlinFile(fileName, targetDir)) as? KtFile
+@JvmOverloads
+fun getOrCreateKotlinFile(fileName: String,
+                          targetDir: PsiDirectory,
+                          packageName: String? = targetDir.getPackage()?.qualifiedName): KtFile? =
+        (targetDir.findFile(fileName) ?: createKotlinFile(fileName, targetDir, packageName)) as? KtFile
 
 fun createKotlinFile(fileName: String,
                      targetDir: PsiDirectory,
