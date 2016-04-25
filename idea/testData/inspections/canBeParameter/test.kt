@@ -117,3 +117,7 @@ class UsedInDelegate(val x: Int) {
         x * x
     }
 }
+// NO
+class UsedInParent(val x: UsedInParent?) {
+    val y = x?.x
+}
