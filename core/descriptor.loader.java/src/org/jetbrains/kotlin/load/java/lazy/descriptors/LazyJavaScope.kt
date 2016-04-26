@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.incremental.record
 import org.jetbrains.kotlin.load.java.components.TypeUsage
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
@@ -214,10 +213,7 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
         return ResolvedValueParameters(descriptors, synthesizedNames)
     }
 
-    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> {
-        recordLookup(name, location)
-        return functions(name)
-    }
+    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> = functions(name)
 
     protected open fun getFunctionNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name>
             = memberIndex().getMethodNames(nameFilter)
@@ -291,13 +287,9 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
         return propertyType
     }
 
-    override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
-        recordLookup(name, location)
-        return properties(name)
-    }
+    override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> = properties(name)
 
-    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter,
-                                           nameFilter: (Name) -> Boolean) = allDescriptors()
+    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean) = allDescriptors()
 
     protected fun computeDescriptors(
             kindFilter: DescriptorKindFilter,
@@ -336,19 +328,15 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
 
     protected abstract fun getClassNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name>
 
-    override fun toString() = "Lazy scope for ${ownerDescriptor}"
+    override fun toString() = "Lazy scope for $ownerDescriptor"
     
     override fun printScopeStructure(p: Printer) {
         p.println(javaClass.simpleName, " {")
         p.pushIndent()
 
-        p.println("containingDeclaration: ${ownerDescriptor}")
+        p.println("containingDeclaration: $ownerDescriptor")
 
         p.popIndent()
         p.println("}")
-    }
-
-    protected fun recordLookup(name: Name, from: LookupLocation) {
-        c.components.lookupTracker.record(from, ownerDescriptor, name)
     }
 }

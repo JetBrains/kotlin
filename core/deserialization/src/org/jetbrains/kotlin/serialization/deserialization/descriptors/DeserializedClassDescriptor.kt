@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.impl.AbstractClassDescriptor
 import org.jetbrains.kotlin.descriptors.impl.EnumEntrySyntheticClassDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.incremental.record
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.NonReportingOverrideStrategy
@@ -192,8 +193,19 @@ class DeserializedClassDescriptor(
             computeDescriptors(DescriptorKindFilter.ALL, MemberScope.ALL_NAME_FILTER, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS)
         }
 
-        override fun getContributedDescriptors(kindFilter: DescriptorKindFilter,
-                                               nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> = allDescriptors()
+        override fun getContributedDescriptors(
+                kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean
+        ): Collection<DeclarationDescriptor> = allDescriptors()
+
+        override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> {
+            recordLookup(name, location)
+            return super.getContributedFunctions(name, location)
+        }
+
+        override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
+            recordLookup(name, location)
+            return super.getContributedVariables(name, location)
+        }
 
         override fun computeNonDeclaredFunctions(name: Name, functions: MutableCollection<SimpleFunctionDescriptor>) {
             val fromSupertypes = ArrayList<SimpleFunctionDescriptor>()
@@ -256,6 +268,10 @@ class DeserializedClassDescriptor(
 
         override fun addEnumEntryDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean) {
             result.addAll(classDescriptor.enumEntries?.all().orEmpty())
+        }
+
+        private fun recordLookup(name: Name, from: LookupLocation) {
+            c.components.lookupTracker.record(from, c.containingDeclaration, name)
         }
     }
 

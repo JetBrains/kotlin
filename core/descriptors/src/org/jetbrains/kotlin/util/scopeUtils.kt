@@ -62,6 +62,14 @@ inline fun <Scope, T> getFromAllScopes(scopes: List<Scope>, callback: (Scope) ->
     return result ?: emptySet()
 }
 
+inline fun <Scope, T> getFromAllScopes(firstScope: Scope, restScopes: List<Scope>, callback: (Scope) -> Collection<T>): Collection<T> {
+    var result: Collection<T>? = callback(firstScope)
+    for (scope in restScopes) {
+        result = result.concat(callback(scope))
+    }
+    return result ?: emptySet()
+}
+
 inline fun <Scope, T : Any> getFirstMatch(scopes: List<Scope>, callback: (Scope) -> T?): T? {
     // NOTE: This is performance-sensitive; please don't replace with map().firstOrNull()
     for (scope in scopes) {
