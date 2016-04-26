@@ -59,7 +59,7 @@ public class SDKDownloader {
 
     private void downloadAbi() {
         download("http://dl.google.com/android/repository/sys-img/android/sysimg_armv7a-" + ANDROID_VERSION + "_r04.zip", armImage);  //Same for all platforms
-        download("https://dl.google.com/android/repository/sys-img/android/sysimg_x86-" + ANDROID_VERSION + "_r02.zip", x86Image);  //Same for all platforms
+        download("http://dl.google.com/android/repository/sys-img/android/sysimg_x86-" + ANDROID_VERSION + "_r02.zip", x86Image);  //Same for all platforms
     }
 
     public void downloadPlatformTools() {
