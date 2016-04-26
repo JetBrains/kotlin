@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
@@ -56,6 +57,8 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
     private static final String baseTestClassPackage = "org.jetbrains.kotlin.android.tests";
     private static final String baseTestClassName = "AbstractCodegenTestCaseOnAndroid";
     private static final String generatorName = "CodegenTestsOnAndroidGenerator";
+
+    private static final String [] FILE_NAME_ANNOTATIONS = new String [] {"@file:JvmName", "@file:kotlin.jvm.JvmName"};
 
     private final Pattern packagePattern = Pattern.compile("package (.*)");
 
@@ -229,8 +232,8 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
                 String text = FileUtil.loadFile(file, true);
                 //TODO: support multifile tests
                 if (text.contains("FILE:")) continue;
-                //TODO: support JvmFileName annotation & WITH_REFLECT directive
-                if (InTextDirectivesUtils.isDirectiveDefined(text, "WITH_REFLECT") || text.contains("JvmFileName")) continue;
+
+                if (InTextDirectivesUtils.isDirectiveDefined(text, "WITH_REFLECT")) continue;
 
                 if (hasBoxMethod(text)) {
                     String generatedTestName = generateTestName(file.getName());
@@ -242,8 +245,8 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
                     CodegenTestFiles codegenFile = CodegenTestFiles.create(file.getName(), text, filesHolder.environment.getProject());
                     filesHolder.files.add(codegenFile.getPsiFile());
 
-                    FqName className = PackagePartClassUtils.getPackagePartFqName(new FqName(packageName), file.getName());
-                    generateTestMethod(printer, generatedTestName, className.toString(), StringUtil.escapeStringCharacters(file.getPath()));
+                    String className = getGeneratedClassName(file, text, packageName);
+                    generateTestMethod(printer, generatedTestName, className, StringUtil.escapeStringCharacters(file.getPath()));
                 }
             }
         }
@@ -251,6 +254,18 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
 
     private static boolean hasJvmNameAnnotation(String text) {
         return text.contains("@file:JvmName") || text.contains("@file:kotlin.jvm.JvmName");
+    }
+
+    private static String getGeneratedClassName(File file, String text, String packageName) {
+        FqName packageFqName = new FqName(packageName);
+        for (String annotation : FILE_NAME_ANNOTATIONS) {
+            if (text.contains(annotation)) {
+                int indexOf = text.indexOf(annotation);
+                return packageFqName.child(Name.identifier(text.substring(text.indexOf("(\"", indexOf) + 2, text.indexOf("\")", indexOf)))).asString();
+            }
+        }
+
+        return PackagePartClassUtils.getPackagePartFqName(packageFqName, file.getName()).asString();
     }
 
     private static boolean hasBoxMethod(String text) {
