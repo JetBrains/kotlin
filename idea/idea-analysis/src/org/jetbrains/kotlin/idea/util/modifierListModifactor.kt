@@ -70,6 +70,8 @@ fun KtModifierListOwner.addAnnotation(
 }
 
 fun KtAnnotated.findAnnotation(annotationFqName: FqName): KtAnnotationEntry? {
+    if (annotationEntries.isEmpty()) return null
+
     val context = analyze()
 
     for (entry in annotationEntries) {
@@ -81,6 +83,7 @@ fun KtAnnotated.findAnnotation(annotationFqName: FqName): KtAnnotationEntry? {
             }
         }
     }
+
     return null
 }
 
