@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.codegen.GenerationUtils;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.load.java.JvmAbi;
+import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
@@ -240,23 +242,28 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
                     CodegenTestFiles codegenFile = CodegenTestFiles.create(file.getName(), text, filesHolder.environment.getProject());
                     filesHolder.files.add(codegenFile.getPsiFile());
 
-                    generateTestMethod(printer, generatedTestName, StringUtil.escapeStringCharacters(file.getPath()));
+                    FqName className = PackagePartClassUtils.getPackagePartFqName(new FqName(packageName), file.getName());
+                    generateTestMethod(printer, generatedTestName, className.toString(), StringUtil.escapeStringCharacters(file.getPath()));
                 }
             }
         }
+    }
+
+    private static boolean hasJvmNameAnnotation(String text) {
+        return text.contains("@file:JvmName") || text.contains("@file:kotlin.jvm.JvmName");
     }
 
     private static boolean hasBoxMethod(String text) {
         return text.contains("fun box()");
     }
 
-    private String changePackage(String testName, String text) {
+    private String changePackage(String packageName, String text) {
         if (text.contains("package ")) {
             Matcher matcher = packagePattern.matcher(text);
-            return matcher.replaceAll("package " + testName);
+            return matcher.replaceAll("package " + packageName);
         }
         else {
-            String packageDirective = "package " + testName + ";\n";
+            String packageDirective = "package " + packageName + ";\n";
             if (text.contains("@file:")) {
                 int index = text.lastIndexOf("@file:");
                 int packageDirectiveIndex = text.indexOf("\n", index);
@@ -267,10 +274,10 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
         }
     }
 
-    private static void generateTestMethod(Printer p, String testName, String packageName) {
+    private static void generateTestMethod(Printer p, String testName, String className, String filePath) {
         p.println("public void test" + testName + "() throws Exception {");
         p.pushIndent();
-        p.println("invokeBoxMethod(\"" + packageName + "\", \"OK\");");
+        p.println("invokeBoxMethod(" + className + ".class, \"" + filePath + "\", \"OK\");");
         p.popIndent();
         p.println("}");
         p.println();
