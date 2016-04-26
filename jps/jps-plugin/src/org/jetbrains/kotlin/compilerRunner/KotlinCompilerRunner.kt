@@ -38,9 +38,11 @@ import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.jps.build.KotlinBuilder
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
+import org.jetbrains.kotlin.utils.rethrow
 import java.io.*
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
+import java.rmi.ConnectException
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -180,7 +182,8 @@ object KotlinCompilerRunner {
                                      argsArray: Array<String>,
                                      environment: CompilerEnvironment,
                                      messageCollector: MessageCollector,
-                                     collector: OutputItemsCollector): Boolean {
+                                     collector: OutputItemsCollector,
+                                     retryOnConnectionError: Boolean = true): Boolean {
 
         if (isDaemonEnabled()) {
 
@@ -202,7 +205,25 @@ object KotlinCompilerRunner {
                     K2JS_COMPILER -> CompileService.TargetPlatform.JS
                     else -> throw IllegalArgumentException("Unknown compiler type $compilerClassName")
                 }
-                val res = KotlinCompilerClient.incrementalCompile(connection.daemon, connection.sessionId, targetPlatform, argsArray, services, compilerOut, daemonOut)
+
+                fun retryOrFalse(e: Exception): Boolean {
+                    if (retryOnConnectionError) {
+                        KotlinBuilder.LOG.debug("retrying once on daemon connection error: ${e.message}")
+                        return tryCompileWithDaemon(compilerClassName, argsArray, environment, messageCollector, collector, retryOnConnectionError = false)
+                    }
+                    KotlinBuilder.LOG.info("daemon connection error: ${e.message}")
+                    return false
+                }
+
+                val res: Int = try {
+                    KotlinCompilerClient.incrementalCompile(connection.daemon, connection.sessionId, targetPlatform, argsArray, services, compilerOut, daemonOut)
+                }
+                catch (e: java.rmi.ConnectException) {
+                    return retryOrFalse(e)
+                }
+                catch (e: java.rmi.UnmarshalException) {
+                    return retryOrFalse(e)
+                }
 
                 processCompilerOutput(messageCollector, collector, compilerOut, res.toString())
                 BufferedReader(StringReader(daemonOut.toString())).forEachLine {
