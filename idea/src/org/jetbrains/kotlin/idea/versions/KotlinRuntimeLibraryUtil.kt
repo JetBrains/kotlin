@@ -32,6 +32,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.JarFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.PathUtil.getLocalFile
 import com.intellij.util.PathUtil.getLocalPath
@@ -258,16 +259,18 @@ fun showRuntimeJarNotFoundDialog(project: Project, jarName: String) {
                              "No Runtime Found")
 }
 
-fun hasKotlinRuntimeMarkerClass(project: Project, scope: GlobalSearchScope): Boolean {
+fun getKotlinJvmRuntimeMarkerClass(project: Project, scope: GlobalSearchScope): PsiClass? {
     return runReadAction {
         project.runWithAlternativeResolveEnabled {
-            getKotlinJvmRuntimeMarkerClass(project, scope) != null || getKotlinJsRuntimeMarkerClass(project, scope) != null
+            JavaPsiFacade.getInstance(project).findClass(KotlinBuiltIns.FQ_NAMES.unit.asString(), scope)
         }
     }
 }
 
-private fun getKotlinJvmRuntimeMarkerClass(project: Project, scope: GlobalSearchScope) =
-        JavaPsiFacade.getInstance(project).findClass(KotlinBuiltIns.FQ_NAMES.unit.asString(), scope)
-
-private fun getKotlinJsRuntimeMarkerClass(project: Project, scope: GlobalSearchScope) =
-        JsVirtualFileFinderFactory.SERVICE.getInstance(project).create(scope).findVirtualFileWithHeader(ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.unit.toSafe()))
+fun getKotlinJsRuntimeMarkerClass(project: Project, scope: GlobalSearchScope): VirtualFile? {
+    return runReadAction {
+        project.runWithAlternativeResolveEnabled {
+            JsVirtualFileFinderFactory.SERVICE.getInstance(project).create(scope).findVirtualFileWithHeader(ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.unit.toSafe()))
+        }
+    }
+}
