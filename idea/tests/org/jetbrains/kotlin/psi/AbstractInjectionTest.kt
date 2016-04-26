@@ -40,11 +40,17 @@ abstract class AbstractInjectionTest : KotlinLightCodeInsightFixtureTestCase() {
         }
     }
 
-    protected fun doInjectionPresentTest(@Language("kotlin") text: String, languageId: String? = null, unInjectShouldBePresent: Boolean = true) {
+    protected fun doInjectionPresentTest(
+            @Language("kotlin") text: String, @Language("Java") javaText: String? = null,
+            languageId: String? = null, unInjectShouldBePresent: Boolean = true) {
+        if (javaText != null) {
+            myFixture.configureByText("${getTestName(true)}.java", javaText.trimIndent())
+        }
+
         myFixture.configureByText("${getTestName(true)}.kt", text.trimIndent())
+
         assertInjectionPresent(languageId, unInjectShouldBePresent)
     }
-
 
     protected fun assertInjectionPresent(languageId: String?, unInjectShouldBePresent: Boolean) {
         TestCase.assertFalse("Injection action is available. There's probably no injection at caret place",
