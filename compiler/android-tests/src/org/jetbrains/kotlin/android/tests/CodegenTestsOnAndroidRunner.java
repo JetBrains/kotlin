@@ -19,25 +19,27 @@ package org.jetbrains.kotlin.android.tests;
 import com.intellij.util.PlatformUtils;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.android.tests.ant.AntRunner;
 import org.jetbrains.kotlin.android.tests.download.SDKDownloader;
 import org.jetbrains.kotlin.android.tests.emulator.Emulator;
+import org.jetbrains.kotlin.android.tests.gradle.GradleRunner;
 import org.jetbrains.kotlin.android.tests.run.PermissionManager;
 import org.junit.Assert;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CodegenTestsOnAndroidRunner {
-    private static final Pattern ERROR_IN_TEST_OUTPUT_PATTERN =
-            Pattern.compile("([\\s]+at .*| Caused .*| java.lang.RuntimeException: File: .*|[\\s]+\\.\\.\\. .* more| Error in .*)");
-    private static final Pattern NUMBER_OF_TESTS_IF_FAILED = Pattern.compile("Tests run: ([0-9]*),  Failures: ([0-9]*),  Errors: ([0-9]*)");
-    private static final Pattern NUMBER_OF_TESTS_OK = Pattern.compile(" OK \\(([0-9]*) tests\\)");
 
     private final PathManager pathManager;
 
@@ -53,122 +55,21 @@ public class CodegenTestsOnAndroidRunner {
         TestSuite suite = new TestSuite("MySuite");
 
         String resultOutput = runTests();
-        if (resultOutput == null) return suite;
 
-        //Fix problem with exception parsing cause 'at' pattern
-        resultOutput = resultOutput.replaceAll("\\[checkenv\\] Installed at", "[checkenv] Installed_at");
-
-        // Test name -> stackTrace
-        Map<String, String> resultMap = parseOutputForFailedTests(resultOutput);
-        final Statistics statistics;
-
-        // If map is empty => there are no failed tests
-        if (resultMap.isEmpty()) {
-            statistics = parseOutputForTestsNumberIfTestsPassed(resultOutput);
+        String reportFolder = pathManager.getTmpFolder() + "/build/outputs/androidTest-results/connected";
+        try {
+            List<TestCase> testCases = parseSingleReportInFolder(reportFolder);
+            for (TestCase aCase : testCases) {
+                suite.addTest(aCase);
+            }
+            Assert.assertNotEquals("There is no test results in report", 0, testCases.size());
         }
-        else {
-            statistics = parseOutputForTestsNumberIfThereIsFailedTests(resultOutput);
-
-            for (final Map.Entry<String, String> entry : resultMap.entrySet()) {
-
-                suite.addTest(new TestCase("run") {
-                    @Override
-                    public String getName() {
-                        return entry.getKey();
-                    }
-
-                    @Override
-                    protected void runTest() throws Throwable {
-                        Assert.fail(entry.getValue() + "See more information in log above.");
-                    }
-                });
-            }
+        catch (Exception e) {
+            throw new RuntimeException("Can't parse test results in " + reportFolder +"\n" + resultOutput);
         }
-
-        Assert.assertNotNull("Cannot parse number of failed tests from final line", statistics);
-        Assert.assertEquals("Number of stackTraces != failed tests on the final line", resultMap.size(),
-                            statistics.failed + statistics.errors);
-
-        suite.addTest(new TestCase("run") {
-            @Override
-            public String getName() {
-                return "testAll: Total: " + statistics.total + ", Failures: " + statistics.failed + ", Errors: " + statistics.errors;
-            }
-
-            @Override
-            protected void runTest() throws Throwable {
-                Assert.assertTrue(true);
-            }
-        });
 
         return suite;
     }
-
-
-    /*
-    Output example:
-    [exec] Error in testKt344:
-    [exec] java.lang.RuntimeException: File: compiler\testData\codegen\box\regressions\kt344.kt
-    [exec] 	at org.jetbrains.kotlin.android.tests.AbstractCodegenTestCaseOnAndroid.invokeBoxMethod(AbstractCodegenTestCaseOnAndroid.java:38)
-    [exec] 	at org.jetbrains.kotlin.android.tests.CodegenTestCaseOnAndroid.testKt344(CodegenTestCaseOnAndroid.java:595)
-    [exec] 	at java.lang.reflect.Method.invokeNative(Native Method)
-    [exec] 	at android.test.AndroidTestRunner.runTest(AndroidTestRunner.java:169)
-    [exec] Caused by: java.lang.reflect.InvocationTargetException
-    [exec] 	at java.lang.reflect.Method.invokeNative(Native Method)
-    [exec] 	at org.jetbrains.kotlin.android.tests.AbstractCodegenTestCaseOnAndroid.invokeBoxMethod(AbstractCodegenTestCaseOnAndroid.java:35)
-    [exec] 	... 13 more
-    [exec] Caused by: java.lang.VerifyError: compiler_testData_codegen_box_regressions_kt344_kt.Compiler_testData_codegen_box_regressions_kt344_ktPackage$t6$foo$1
-    [exec] 	at compiler_testData_codegen_box_regressions_kt344_kt.Compiler_testData_codegen_box_regressions_kt344_ktPackage.t6(dummy.kt:94)
-    [exec] 	at compiler_testData_codegen_box_regressions_kt344_kt.Compiler_testData_codegen_box_regressions_kt344_ktPackage.box(dummy.kt:185)
-    [exec] 	... 16 more
-    [exec] ...............
-    [exec] Error in testKt529:
-    */
-    private static Map<String, String> parseOutputForFailedTests(@NotNull String output) {
-        Map<String, String> result = new HashMap<String, String>();
-        StringBuilder builder = new StringBuilder();
-        String failedTestNamePrefix = " Error in ";
-        String lastFailedTestName = "";
-        Matcher matcher = ERROR_IN_TEST_OUTPUT_PATTERN.matcher(output);
-        while (matcher.find()) {
-            String groupValue = matcher.group();
-            if (groupValue.startsWith(failedTestNamePrefix)) {
-                if (builder.length() > 0) {
-                    result.put(lastFailedTestName, builder.toString());
-                    builder.delete(0, builder.length());
-                }
-                lastFailedTestName = groupValue.substring(failedTestNamePrefix.length());
-            }
-            builder.append(groupValue);
-            builder.append("\n");
-        }
-        if (builder.length() > 0) {
-            result.put(lastFailedTestName, builder.toString());
-        }
-        return result;
-    }
-
-    //[exec] Tests run: 225,  Failures: 0,  Errors: 2
-    @Nullable
-    private static Statistics parseOutputForTestsNumberIfThereIsFailedTests(String output) {
-        Matcher matcher = NUMBER_OF_TESTS_IF_FAILED.matcher(output);
-        if (matcher.find()) {
-            return new Statistics(Integer.parseInt(matcher.group(1)), Integer.parseInt(matcher.group(2)),
-                                  Integer.parseInt(matcher.group(3)));
-        }
-        return null;
-    }
-
-    //[exec] OK (223 tests)
-    @Nullable
-    private static Statistics parseOutputForTestsNumberIfTestsPassed(String output) {
-        Matcher matcher = NUMBER_OF_TESTS_OK.matcher(output);
-        if (matcher.find()) {
-            return new Statistics(Integer.parseInt(matcher.group(1)), 0, 0);
-        }
-        return null;
-    }
-
 
     @Nullable
     public String runTests() {
@@ -178,27 +79,26 @@ public class CodegenTestsOnAndroidRunner {
         }
 
         SDKDownloader downloader = new SDKDownloader(pathManager);
-        Emulator emulator = new Emulator(pathManager, Emulator.ARM);
-        AntRunner antRunner = new AntRunner(pathManager);
         downloader.downloadAll();
         downloader.unzipAll();
+        PermissionManager.setPermissions(pathManager);
+
+        AntRunner antRunner = new AntRunner(pathManager);
+        antRunner.packLibraries();
+        Emulator emulator = new Emulator(pathManager, Emulator.ARM);
+        GradleRunner gradleRunner = new GradleRunner(pathManager);
+        gradleRunner.clean();
+        gradleRunner.build();
+
+        emulator.createEmulator();
 
         String platformPrefixProperty = System.setProperty(PlatformUtils.PLATFORM_PREFIX_KEY, "Idea");
-
         try {
-            PermissionManager.setPermissions(pathManager);
-
-            antRunner.packLibraries();
-
-            emulator.createEmulator();
             emulator.startEmulator();
 
             try {
                 emulator.waitEmulatorStart();
-                antRunner.cleanOutput();
-                antRunner.compileSources();
-                antRunner.installApplicationOnEmulator();
-                return antRunner.runTestsOnEmulator();
+                return gradleRunner.connectedDebugAndroidTest();
             }
             catch (RuntimeException e) {
                 e.printStackTrace();
@@ -223,15 +123,47 @@ public class CodegenTestsOnAndroidRunner {
         }
     }
 
-    private static class Statistics {
-        public final int total;
-        public final int errors;
-        public final int failed;
+    private static List<TestCase> parseSingleReportInFolder(String reportFolder) throws
+                                                                                 IOException,
+                                                                                 SAXException,
+                                                                                 ParserConfigurationException {
+        File folder = new File(reportFolder);
+        File[] files = folder.listFiles();
+        assert files != null;
+        assert files.length == 1;
+        File reportFile = files[0];
 
-        private Statistics(int total, int failed, int errors) {
-            this.total = total;
-            this.failed = failed;
-            this.errors = errors;
+        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+        Document doc = dBuilder.parse(reportFile);
+        Element root = doc.getDocumentElement();
+        NodeList testCases = root.getElementsByTagName("testcase");
+        List<TestCase> result = new ArrayList(testCases.getLength());
+
+        for (int i = 0; i < testCases.getLength(); i++) {
+            Element item = (Element) testCases.item(i);
+            final NodeList failure = item.getElementsByTagName("failure");
+            String name = item.getAttribute("name");
+            String clazz = item.getAttribute("classname");
+
+            if (failure.getLength() == 0) {
+                result.add(new TestCase(name) {
+                    @Override
+                    protected void runTest() throws Throwable {
+
+                    }
+                });
+            }
+            else {
+                result.add(new TestCase(name) {
+                    @Override
+                    protected void runTest() throws Throwable {
+                        Assert.fail(failure.item(0).getTextContent());
+                    }
+                });
+            }
         }
+
+        return result;
     }
 }
