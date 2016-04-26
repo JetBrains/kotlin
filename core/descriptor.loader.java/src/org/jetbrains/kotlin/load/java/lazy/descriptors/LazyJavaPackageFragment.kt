@@ -27,8 +27,6 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope
-import org.jetbrains.kotlin.resolve.scopes.LazyScopeAdapter
 import org.jetbrains.kotlin.storage.getValue
 
 class LazyJavaPackageFragment(
@@ -42,17 +40,7 @@ class LazyJavaPackageFragment(
         }.toMap()
     }
 
-    private val javaScope by c.storageManager.createLazyValue {
-        LazyJavaPackageScope(c, jPackage, this)
-    }
-
-    private val scope by c.storageManager.createLazyValue {
-        ChainedMemberScope.create("Java + Deserialized Kotlin scope", listOf(javaScope) + LazyScopeAdapter(c.storageManager.createLazyValue {
-            ChainedMemberScope.create("Deserialized Kotlin scope", binaryClasses.values.mapNotNull { partClass ->
-                c.components.deserializedDescriptorResolver.createKotlinPackagePartScope(this, partClass)
-            })
-        }))
-    }
+    private val scope = JvmPackageScope(c, jPackage, this)
 
     private val subPackages = c.storageManager.createRecursionTolerantLazyValue(
             { jPackage.subPackages.map(JavaPackage::fqName) },
@@ -62,7 +50,7 @@ class LazyJavaPackageFragment(
 
     internal fun getSubPackageFqNames(): List<FqName> = subPackages()
 
-    internal fun findClassifierByJavaClass(jClass: JavaClass): ClassDescriptor? = javaScope.findClassifierByJavaClass(jClass)
+    internal fun findClassifierByJavaClass(jClass: JavaClass): ClassDescriptor? = scope.javaScope.findClassifierByJavaClass(jClass)
 
     private val partToFacade by c.storageManager.createLazyValue {
         val result = hashMapOf<String, String>()

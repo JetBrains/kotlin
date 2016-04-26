@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.impl.EnumEntrySyntheticClassDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.incremental.record
 import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithDifferentJvmName.isRemoveAtByIndex
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithDifferentJvmName.sameAsRenamedInJvmBuiltin
@@ -645,6 +646,16 @@ class LazyJavaClassMemberScope(
         return nestedClasses(name)
     }
 
+    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> {
+        recordLookup(name, location)
+        return super.getContributedFunctions(name, location)
+    }
+
+    override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
+        recordLookup(name, location)
+        return super.getContributedVariables(name, location)
+    }
+
     override fun getClassNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name>
             = nestedClassIndex().keys + enumEntryIndex().keys
 
@@ -657,6 +668,10 @@ class LazyJavaClassMemberScope(
                 variable.getName()
             }
         }
+    }
+
+    private fun recordLookup(name: Name, from: LookupLocation) {
+        c.components.lookupTracker.record(from, ownerDescriptor, name)
     }
 
     override fun toString() = "Lazy Java member scope for " + jClass.fqName

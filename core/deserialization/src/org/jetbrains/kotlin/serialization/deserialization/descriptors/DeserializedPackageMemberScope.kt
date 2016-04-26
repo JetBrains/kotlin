@@ -51,7 +51,6 @@ open class DeserializedPackageMemberScope(
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
         if (SpecialNames.isSafeIdentifier(name) &&
             (name in classNames || c.components.fictitiousClassDescriptorFactory.shouldCreateClass(packageFqName, name))) {
-            recordLookup(name, location)
             return getClassDescriptor(name)
         }
         return null
