@@ -11142,12 +11142,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("functionName.kt")
-            public void testFunctionName() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/functions/functionName.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("functionReferenceErasedToKFunction.kt")
             public void testFunctionReferenceErasedToKFunction() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/functions/functionReferenceErasedToKFunction.kt");
@@ -11889,12 +11883,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("privateToThisAccessors.kt")
             public void testPrivateToThisAccessors() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/properties/privateToThisAccessors.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("propertyName.kt")
-            public void testPropertyName() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/properties/propertyName.kt");
                 doTest(fileName);
             }
 
