@@ -17,13 +17,17 @@
 package org.jetbrains.kotlin.daemon
 
 import org.jetbrains.kotlin.cli.AbstractCliTest
+import org.jetbrains.kotlin.daemon.client.CompilerCallbackServicesFacadeServer
 import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
 import org.jetbrains.kotlin.daemon.client.KotlinCompilerClient
+import org.jetbrains.kotlin.daemon.client.RemoteOutputStreamServer
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
+import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.rmi.server.UnicastRemoteObject
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
@@ -389,6 +393,101 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
             }
         }
     }
+
+    fun testDaemonConnectionProblems() {
+        withFlagFile(getTestName(true), ".alive") { flagFile ->
+            val daemonOptions = DaemonOptions(runFilesPath = File(tmpdir, getTestName(true)).absolutePath)
+            KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
+
+            val daemonJVMOptions = configureDaemonJVMOptions(inheritMemoryLimits = false, inheritAdditionalProperties = false)
+            val daemon = KotlinCompilerClient.connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions, DaemonReportingTargets(out = System.err), autostart = true)
+            assertNotNull("failed to connect daemon", daemon)
+            daemon?.registerClient(flagFile.absolutePath)
+
+            KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
+            Thread.sleep(200)
+
+            val exception: Exception? = try {
+                daemon!!.getUsedMemory()
+                null
+            }
+            catch (e: java.rmi.ConnectException) {
+                e
+            }
+            catch (e: java.rmi.UnmarshalException) {
+                e
+            }
+            assertNotNull(exception)
+        }
+    }
+
+    fun testDaemonCallbackConnectionProblems() {
+        withFlagFile(getTestName(true), ".alive") { flagFile ->
+            val daemonOptions = DaemonOptions(runFilesPath = File(tmpdir, getTestName(true)).absolutePath)
+            KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
+
+            val logFile = createTempFile("kotlin-daemon-test", ".log")
+            val daemonJVMOptions =
+                    configureDaemonJVMOptions("D${COMPILE_DAEMON_LOG_PATH_PROPERTY}=\"${logFile.loggerCompatiblePath}\"",
+                                              inheritMemoryLimits = false, inheritAdditionalProperties = false)
+
+            val daemon = KotlinCompilerClient.connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions, DaemonReportingTargets(out = System.err), autostart = true)
+            assertNotNull("failed to connect daemon", daemon)
+            daemon?.registerClient(flagFile.absolutePath)
+
+            val file = File(tmpdir, "largeKotlinFile.kt")
+            file.writeText(generateLargeKotlinFile(10))
+            val jar = tmpdir.absolutePath + File.separator + "largeKotlinFile.jar"
+
+            var callbackServices: CompilerCallbackServicesFacadeServer? = null
+            callbackServices = CompilerCallbackServicesFacadeServer(compilationCancelledStatus = object : CompilationCanceledStatus {
+                override fun checkCanceled() {
+                    thread {
+                        Thread.sleep(10)
+                        UnicastRemoteObject.unexportObject(callbackServices, true)
+                    }
+                }
+            }, port = SOCKET_ANY_FREE_PORT)
+            val strm = ByteArrayOutputStream()
+            val code = daemon!!.remoteCompile(CompileService.NO_SESSION,
+                                              CompileService.TargetPlatform.JVM,
+                                              arrayOf("-include-runtime", file.absolutePath, "-d", jar),
+                                              callbackServices,
+                                              RemoteOutputStreamServer(strm, SOCKET_ANY_FREE_PORT),
+                                              CompileService.OutputFormat.XML,
+                                              RemoteOutputStreamServer(strm, SOCKET_ANY_FREE_PORT),
+                                              null).get()
+
+            val compilerOutput = strm.toString()
+            assertTrue("Expecting cancelation message in:\n$compilerOutput", compilerOutput.contains("Compilation was canceled"))
+            logFile.assertLogContainsSequence("error communicating with host, assuming compilation cancelled")
+
+            logFile.delete()
+        }
+    }
+}
+
+// stolen from CompilerFileLimitTest
+internal fun generateLargeKotlinFile(size: Int): String {
+    return buildString {
+        append("package large\n\n")
+        (0..size).forEach {
+            appendln("class Class$it")
+            appendln("{")
+            appendln("\tfun foo(): Long = $it")
+            appendln("}")
+            appendln("\n")
+            repeat(2000) {
+                appendln("// kotlin rules ... and stuff")
+            }
+        }
+        appendln("fun main(args: Array<String>)")
+        appendln("{")
+        appendln("\tval result = Class5().foo() + Class$size().foo()")
+        appendln("\tprintln(result)")
+        appendln("}")
+    }
+
 }
 
 
