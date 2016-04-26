@@ -37,7 +37,7 @@ public class KotlinJavaModuleConfigurator extends KotlinWithLibraryConfigurator 
 
     @Override
     public boolean isConfigured(@NotNull Module module) {
-        return ConfigureKotlinInProjectUtilsKt.hasKotlinRuntimeInScope(module);
+        return ConfigureKotlinInProjectUtilsKt.hasKotlinJvmRuntimeInScope(module);
     }
 
     @NotNull
@@ -107,7 +107,7 @@ public class KotlinJavaModuleConfigurator extends KotlinWithLibraryConfigurator 
         }
 
         LibraryScope scope = new LibraryScope(project, library);
-        return KotlinRuntimeLibraryUtilKt.hasKotlinRuntimeMarkerClass(project, scope);
+        return KotlinRuntimeLibraryUtilKt.getKotlinJvmRuntimeMarkerClass(project, scope) != null;
     }
 
     KotlinJavaModuleConfigurator() {

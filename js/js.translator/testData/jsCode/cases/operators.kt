@@ -54,14 +54,14 @@ fun box(): String {
     assertEquals(7, js("j /= 2"), "/=")
     assertEquals(1, js("j %= 2"), "%=")
 
-    assertEquals(Unit, js("(void 0)"), "void")
+    assertEquals(undefined, js("(void 0)"), "void")
     assertEquals(true, js("'key' in {'key': 10}"), "in")
     assertEquals("string", js("typeof 'str'"), "typeof")
     assertEquals(A(2), js("new _.foo.A(2)"), "new")
     assertEquals(true, js("new String('str') instanceof String"), "instanceof")
 
     var s: Any = js("({key: 10})")
-    assertEquals(Unit, js("delete s.key, s.key"), "delete")
+    assertEquals(undefined, js("delete s.key, s.key"), "delete")
 
     return "OK"
 }
