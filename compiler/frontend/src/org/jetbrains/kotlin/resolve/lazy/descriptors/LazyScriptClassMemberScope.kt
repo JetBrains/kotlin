@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.incremental.record
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
@@ -108,5 +109,9 @@ class LazyScriptClassMemberScope(
         )
         propertyDescriptor.initialize(null, null)
         return propertyDescriptor
+    }
+
+    override fun recordLookup(name: Name, from: LookupLocation) {
+        c.lookupTracker.record(from, thisDescriptor, name)
     }
 }

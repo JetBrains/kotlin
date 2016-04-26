@@ -16,28 +16,27 @@
 
 package org.jetbrains.kotlin.incremental
 
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.incremental.components.*
+import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.components.Position
+import org.jetbrains.kotlin.incremental.components.ScopeKind
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 
-fun LookupTracker.record(from: LookupLocation, scopeOwner: DeclarationDescriptor, name: Name) {
-    if (this == LookupTracker.DO_NOTHING || from is NoLookupLocation) return
+// These methods are called many times, please pay attention to performance here
 
+fun LookupTracker.record(from: LookupLocation, scopeOwner: ClassDescriptor, name: Name) {
+    if (this === LookupTracker.DO_NOTHING) return
     val location = from.location ?: return
-
-    val scopeKind = getScopeKind(scopeOwner) ?:
-                    throw AssertionError("Unexpected containing declaration type: ${scopeOwner.javaClass}")
-
     val position = if (requiresPosition) location.position else Position.NO_POSITION
-
-    record(location.filePath, position, scopeOwner.fqNameUnsafe.asString(), scopeKind, name.asString())
+    record(location.filePath, position, DescriptorUtils.getFqName(scopeOwner).asString(), ScopeKind.CLASSIFIER, name.asString())
 }
 
-fun getScopeKind(scopeOwner: DeclarationDescriptor) = when (scopeOwner) {
-    is ClassifierDescriptor -> ScopeKind.CLASSIFIER
-    is PackageFragmentDescriptor -> ScopeKind.PACKAGE
-    else -> null
+fun LookupTracker.record(from: LookupLocation, scopeOwner: PackageFragmentDescriptor, name: Name) {
+    if (this === LookupTracker.DO_NOTHING) return
+    val location = from.location ?: return
+    val position = if (requiresPosition) location.position else Position.NO_POSITION
+    record(location.filePath, position, scopeOwner.fqName.asString(), ScopeKind.PACKAGE, name.asString())
 }

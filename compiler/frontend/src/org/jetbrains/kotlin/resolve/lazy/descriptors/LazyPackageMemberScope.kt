@@ -16,8 +16,13 @@
 
 package org.jetbrains.kotlin.resolve.lazy.descriptors
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.incremental.record
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
@@ -43,6 +48,10 @@ class LazyPackageMemberScope(
 
     override fun getNonDeclaredProperties(name: Name, result: MutableSet<PropertyDescriptor>) {
         // No extra properties
+    }
+
+    override fun recordLookup(name: Name, from: LookupLocation) {
+        c.lookupTracker.record(from, thisDescriptor, name)
     }
 
     // Do not add details here, they may compromise the laziness during debugging

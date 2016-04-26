@@ -77,7 +77,7 @@ class CompilerCallbackServicesFacadeServer(
         }
     }
 
-    private val lookupTracker_isDoNothing: Boolean = incrementalCompilationComponents != null && incrementalCompilationComponents.getLookupTracker() == LookupTracker.DO_NOTHING
+    private val lookupTracker_isDoNothing: Boolean = incrementalCompilationComponents?.getLookupTracker() === LookupTracker.DO_NOTHING
 
     override fun lookupTracker_isDoNothing(): Boolean = lookupTracker_isDoNothing
 
