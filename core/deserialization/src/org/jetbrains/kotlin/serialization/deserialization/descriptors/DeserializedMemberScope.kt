@@ -103,13 +103,6 @@ abstract class DeserializedMemberScope protected constructor(
         return properties.invoke(name)
     }
 
-    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
-        recordLookup(name, location)
-        return getClassDescriptor(name)
-    }
-
-    protected abstract fun getClassDescriptor(name: Name): ClassifierDescriptor?
-
     protected abstract fun addClassDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean)
 
     protected fun computeDescriptors(
@@ -185,7 +178,7 @@ abstract class DeserializedMemberScope protected constructor(
         p.println("}")
     }
 
-    private fun recordLookup(name: Name, from: LookupLocation) {
+    protected fun recordLookup(name: Name, from: LookupLocation) {
         c.components.lookupTracker.record(from, c.containingDeclaration, name)
     }
 }
