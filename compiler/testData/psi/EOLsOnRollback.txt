@@ -32,6 +32,18 @@ JetFile: EOLsOnRollback.kt
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('foo')
       PsiWhiteSpace('\n\n    ')
+      TYPEALIAS
+        PsiElement(typealias)('typealias')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('x')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('t')
+      PsiWhiteSpace('\n    ')
       PROPERTY
         PsiElement(var)('var')
         PsiWhiteSpace(' ')

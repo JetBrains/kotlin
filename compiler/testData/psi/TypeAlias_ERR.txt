@@ -1,0 +1,196 @@
+JetFile: TypeAlias_ERR.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  TYPEALIAS
+    PsiElement(typealias)('typealias')
+    PsiErrorElement:Type name expected
+      <empty list>
+    PsiWhiteSpace('\n')
+    TYPE_REFERENCE
+      PsiErrorElement:Type expected
+        <empty list>
+  TYPEALIAS
+    PsiElement(typealias)('typealias')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    PsiErrorElement:Expecting '='
+      <empty list>
+    PsiWhiteSpace('\n')
+    TYPE_REFERENCE
+      PsiErrorElement:Type expected
+        <empty list>
+  TYPEALIAS
+    PsiElement(typealias)('typealias')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace('\n')
+    TYPE_REFERENCE
+      PsiErrorElement:Type expected
+        <empty list>
+  TYPEALIAS
+    PsiElement(typealias)('typealias')
+    PsiErrorElement:Type name expected
+      <empty list>
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      PsiErrorElement:Type expected
+        <empty list>
+    PsiElement(SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  TYPEALIAS
+    PsiElement(typealias)('typealias')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    PsiErrorElement:Expecting '='
+      <empty list>
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      PsiErrorElement:Type expected
+        <empty list>
+    PsiElement(SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  TYPEALIAS
+    PsiElement(typealias)('typealias')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      PsiErrorElement:Type expected
+        <empty list>
+    PsiElement(SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  TYPEALIAS
+    PsiElement(typealias)('typealias')
+    PsiErrorElement:Type name expected
+      <empty list>
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('foo')
+  PsiWhiteSpace('\n')
+  TYPEALIAS
+    PsiElement(typealias)('typealias')
+    PsiErrorElement:Type name expected
+      <empty list>
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace('\n')
+    TYPE_REFERENCE
+      PsiErrorElement:Type expected
+        <empty list>
+  TYPEALIAS
+    PsiElement(typealias)('typealias')
+    PsiErrorElement:Type name expected
+      <empty list>
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('foo')
+    PsiWhiteSpace(' ')
+    PsiElement(SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  TYPEALIAS
+    PsiElement(typealias)('typealias')
+    PsiErrorElement:Type name expected
+      <empty list>
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      PsiErrorElement:Type expected
+        <empty list>
+    PsiElement(SEMICOLON)(';')
+  PsiWhiteSpace('\n\n')
+  TYPEALIAS
+    PsiElement(typealias)('typealias')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      PsiErrorElement:Type parameter declaration expected
+        <empty list>
+      PsiElement(GT)('>')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')
+  PsiWhiteSpace('\n')
+  TYPEALIAS
+    PsiElement(typealias)('typealias')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('T')
+      PsiElement(COMMA)(',')
+      PsiErrorElement:Type parameter declaration expected
+        <empty list>
+      PsiWhiteSpace(' ')
+      PsiElement(GT)('>')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')
+  PsiWhiteSpace('\n')
+  TYPEALIAS
+    PsiElement(typealias)('typealias')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('A')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          PsiErrorElement:Type expected
+            <empty list>
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('B')
+      PsiElement(GT)('>')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiElement(class)('class')
+    PsiErrorElement:Name expected
+      <empty list>
+  PsiWhiteSpace('\n')
+  TYPEALIAS
+    PsiElement(typealias)('typealias')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')

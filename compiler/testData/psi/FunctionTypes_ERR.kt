@@ -1,1 +1,1 @@
-val v: (a, ) -> b
+typealias f =  (a, ) -> b

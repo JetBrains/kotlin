@@ -85,6 +85,9 @@ class StubBasedPackageMemberDeclarationProvider(
        return PackageIndexUtil.findFilesWithExactPackage(fqName, searchScope, project)
     }
 
+    override fun getTypeAliasDeclarations(name: Name): Collection<KtTypeAlias> =
+            emptyList() // TODO stub index for type aliases
+
     private fun childName(name: Name): String {
         return fqName.child(ResolveSessionUtils.safeNameForLazyResolve(name)).asString()
     }

@@ -55,6 +55,18 @@ JetFile: SimpleClassMembers.kt
             PsiElement(var)('var')
             PsiWhiteSpace(' ')
             PsiElement(IDENTIFIER)('f')
+          PsiWhiteSpace('\n\n        ')
+          TYPEALIAS
+            PsiElement(typealias)('typealias')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('foo')
+            PsiWhiteSpace(' ')
+            PsiElement(EQ)('=')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('bar')
           PsiWhiteSpace('\n    ')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
@@ -222,6 +234,18 @@ JetFile: SimpleClassMembers.kt
             PsiElement(var)('var')
             PsiWhiteSpace(' ')
             PsiElement(IDENTIFIER)('f')
+          PsiWhiteSpace('\n\n        ')
+          TYPEALIAS
+            PsiElement(typealias)('typealias')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('foo')
+            PsiWhiteSpace(' ')
+            PsiElement(EQ)('=')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('bar')
           PsiWhiteSpace('\n    ')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
@@ -242,6 +266,18 @@ JetFile: SimpleClassMembers.kt
         PsiElement(var)('var')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('f')
+      PsiWhiteSpace('\n\n    ')
+      TYPEALIAS
+        PsiElement(typealias)('typealias')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('foo')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('bar')
       PsiWhiteSpace('\n\n    ')
       OBJECT_DECLARATION
         MODIFIER_LIST

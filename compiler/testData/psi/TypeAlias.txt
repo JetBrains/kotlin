@@ -1,0 +1,230 @@
+JetFile: TypeAlias.kt
+  PACKAGE_DIRECTIVE
+    PsiElement(package)('package')
+    PsiWhiteSpace(' ')
+    DOT_QUALIFIED_EXPRESSION
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('foo')
+        PsiElement(DOT)('.')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')
+      PsiElement(DOT)('.')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('goo')
+  IMPORT_LIST
+    <empty list>
+  PsiWhiteSpace('\n\n')
+  TYPEALIAS
+    PsiElement(typealias)('typealias')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')
+  PsiWhiteSpace('\n')
+  TYPEALIAS
+    PsiElement(typealias)('typealias')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('T')
+      PsiElement(GT)('>')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')
+  PsiWhiteSpace('\n')
+  TYPEALIAS
+    PsiElement(typealias)('typealias')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('T')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('foo')
+      PsiElement(GT)('>')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')
+  PsiWhiteSpace('\n')
+  TYPEALIAS
+    PsiElement(typealias)('typealias')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('A')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('B')
+      PsiElement(GT)('>')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')
+  PsiWhiteSpace('\n')
+  TYPEALIAS
+    PsiElement(typealias)('typealias')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('A')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('B')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('A')
+      PsiElement(GT)('>')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')
+  PsiWhiteSpace('\n\n')
+  TYPEALIAS
+    PsiElement(typealias)('typealias')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')
+    PsiWhiteSpace(' ')
+    PsiElement(SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  TYPEALIAS
+    PsiElement(typealias)('typealias')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('T')
+      PsiElement(GT)('>')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')
+    PsiWhiteSpace(' ')
+    PsiElement(SEMICOLON)(';')
+  PsiWhiteSpace('\n\n')
+  TYPEALIAS
+    PsiElement(typealias)('typealias')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('T')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('foo')
+      PsiElement(GT)('>')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')
+    PsiWhiteSpace(' ')
+    PsiElement(SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  TYPEALIAS
+    PsiElement(typealias)('typealias')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('A')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('B')
+      PsiElement(GT)('>')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')
+    PsiWhiteSpace(' ')
+    PsiElement(SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  TYPEALIAS
+    PsiElement(typealias)('typealias')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('A')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('B')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('A')
+      PsiElement(GT)('>')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')
+    PsiWhiteSpace(' ')
+    PsiElement(SEMICOLON)(';')

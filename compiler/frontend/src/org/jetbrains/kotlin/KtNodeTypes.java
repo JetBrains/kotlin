@@ -31,8 +31,8 @@ public interface KtNodeTypes {
     IElementType DESTRUCTURING_DECLARATION = new KtNodeType("DESTRUCTURING_DECLARATION", KtDestructuringDeclaration.class);
     IElementType DESTRUCTURING_DECLARATION_ENTRY = new KtNodeType("DESTRUCTURING_DECLARATION_ENTRY", KtDestructuringDeclarationEntry.class);
 
-    //KtNodeType TYPEDEF    = new KtNodeType("TYPEDEF", KtTypedef.class);
     IElementType OBJECT_DECLARATION = KtStubElementTypes.OBJECT_DECLARATION;
+    IElementType TYPEALIAS = KtStubElementTypes.TYPEALIAS;
 
     IElementType ENUM_ENTRY            = KtStubElementTypes.ENUM_ENTRY;
     IElementType CLASS_INITIALIZER = KtStubElementTypes.CLASS_INITIALIZER;

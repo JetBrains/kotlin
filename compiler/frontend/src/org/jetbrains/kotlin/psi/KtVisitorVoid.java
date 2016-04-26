@@ -53,6 +53,10 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
         super.visitProperty(property, null);
     }
 
+    public void visitTypeAlias(@NotNull KtTypeAlias typeAlias) {
+        super.visitTypeAlias(typeAlias, null);
+    }
+
     public void visitDestructuringDeclaration(@NotNull KtDestructuringDeclaration destructuringDeclaration) {
         super.visitDestructuringDeclaration(destructuringDeclaration, null);
     }
@@ -475,6 +479,12 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
     @Override
     public final Void visitProperty(@NotNull KtProperty property, Void data) {
         visitProperty(property);
+        return null;
+    }
+
+    @Override
+    public final Void visitTypeAlias(@NotNull KtTypeAlias typeAlias, Void data) {
+        visitTypeAlias(typeAlias);
         return null;
     }
 
