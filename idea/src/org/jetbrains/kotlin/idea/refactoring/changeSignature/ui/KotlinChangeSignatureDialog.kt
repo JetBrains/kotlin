@@ -52,9 +52,8 @@ import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor.Kind
 import org.jetbrains.kotlin.idea.refactoring.validateElement
-import org.jetbrains.kotlin.psi.KtExpressionCodeFragment
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.KtTypeCodeFragment
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import java.awt.BorderLayout
@@ -399,15 +398,29 @@ class KotlinChangeSignatureDialog(
 
     companion object {
         private fun createParametersInfoModel(descriptor: KotlinMethodDescriptor, defaultValueContext: PsiElement): KotlinCallableParameterTableModel {
+            val typeContext = getTypeCodeFragmentContext(defaultValueContext)
             return when (descriptor.kind) {
-                KotlinMethodDescriptor.Kind.FUNCTION -> KotlinFunctionParameterTableModel(descriptor, defaultValueContext)
-                KotlinMethodDescriptor.Kind.PRIMARY_CONSTRUCTOR -> KotlinPrimaryConstructorParameterTableModel(descriptor, defaultValueContext)
-                KotlinMethodDescriptor.Kind.SECONDARY_CONSTRUCTOR -> KotlinSecondaryConstructorParameterTableModel(descriptor, defaultValueContext)
+                KotlinMethodDescriptor.Kind.FUNCTION -> KotlinFunctionParameterTableModel(descriptor, typeContext, defaultValueContext)
+                KotlinMethodDescriptor.Kind.PRIMARY_CONSTRUCTOR -> KotlinPrimaryConstructorParameterTableModel(descriptor, typeContext, defaultValueContext)
+                KotlinMethodDescriptor.Kind.SECONDARY_CONSTRUCTOR -> KotlinSecondaryConstructorParameterTableModel(descriptor, typeContext, defaultValueContext)
             }
         }
 
+        private fun getTypeCodeFragmentContext(startFrom: PsiElement): KtElement {
+            return startFrom.parents.mapNotNull {
+                when (it) {
+                    is KtNamedFunction -> it.bodyExpression
+                    is KtPropertyAccessor -> it.bodyExpression
+                    is KtConstructor<*> -> it
+                    is KtClassOrObject -> it
+                    is KtFile -> it
+                    else -> null
+                }
+            }.first()
+        }
+
         private fun createReturnTypeCodeFragment(project: Project, method: KotlinMethodDescriptor) =
-                KtPsiFactory(project).createTypeCodeFragment(method.returnTypeInfo.render(), method.baseDeclaration)
+                KtPsiFactory(project).createTypeCodeFragment(method.returnTypeInfo.render(), getTypeCodeFragmentContext(method.baseDeclaration))
 
         fun createRefactoringProcessorForSilentChangeSignature(project: Project,
                                                                       commandName: String,
