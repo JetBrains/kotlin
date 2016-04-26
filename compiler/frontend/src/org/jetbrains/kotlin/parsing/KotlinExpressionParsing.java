@@ -1256,11 +1256,9 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         else if (keywordToken == VAL_KEYWORD || keywordToken == VAR_KEYWORD) {
             declType = myKotlinParsing.parseProperty(true);
         }
-        /*
         else if (keywordToken == TYPE_ALIAS_KEYWORD) {
             declType = myKotlinParsing.parseTypeAlias();
         }
-        */
         else if (keywordToken == OBJECT_KEYWORD) {
             // Object expression may appear at the statement position: should parse it
             // as expression instead of object declaration

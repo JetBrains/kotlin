@@ -11,4 +11,6 @@ class foo {
     val x
 
     var f
+
+    typealias foo = ;
 }

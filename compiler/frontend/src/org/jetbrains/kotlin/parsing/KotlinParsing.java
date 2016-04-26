@@ -23,6 +23,7 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtNodeType;
 import org.jetbrains.kotlin.lexer.KtKeywordToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 
@@ -422,11 +423,9 @@ public class KotlinParsing extends AbstractKotlinParsing {
         else if (keywordToken == VAL_KEYWORD || keywordToken == VAR_KEYWORD) {
             declType = parseProperty();
         }
-        /*
         else if (keywordToken == TYPE_ALIAS_KEYWORD) {
             declType = parseTypeAlias();
         }
-        */
         else if (keywordToken == OBJECT_KEYWORD) {
             parseObject(NameParsingMode.REQUIRED, true);
             declType = OBJECT_DECLARATION;
@@ -1085,11 +1084,9 @@ public class KotlinParsing extends AbstractKotlinParsing {
         else if (keywordToken == VAL_KEYWORD || keywordToken == VAR_KEYWORD) {
             declType = parseProperty();
         }
-        /*
         else if (keywordToken == TYPE_ALIAS_KEYWORD) {
             declType = parseTypeAlias();
         }
-        */
         else if (keywordToken == OBJECT_KEYWORD) {
             parseObject(isDefault ? NameParsingMode.ALLOWED : NameParsingMode.REQUIRED, true);
             declType = OBJECT_DECLARATION;
@@ -1189,17 +1186,17 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
     /*
      * typeAlias
-     *   : modifiers "typealias" SimpleName (typeParameters typeConstraints)? "=" type
+     *   : modifiers "typealias" SimpleName typeParameters? "=" type
      *   ;
      */
-    /*
-    KtNodeType parseTypeAlias() {
+    IElementType parseTypeAlias() {
         assert _at(TYPE_ALIAS_KEYWORD);
 
         advance(); // TYPE_ALIAS_KEYWORD
 
         expect(IDENTIFIER, "Type name expected", TokenSet.orSet(TokenSet.create(LT, EQ, SEMICOLON), TOP_LEVEL_DECLARATION_FIRST));
 
+        // TODO drop type constraints parsing
         if (parseTypeParameterList(TYPE_PARAMETER_GT_RECOVERY_SET)) {
             parseTypeConstraints();
         }
@@ -1210,9 +1207,8 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         consumeIf(SEMICOLON);
 
-        return TYPEDEF;
+        return TYPEALIAS;
     }
-    */
 
     /*
      * variableDeclarationEntry

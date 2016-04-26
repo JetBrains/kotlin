@@ -3,11 +3,12 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
     <empty list>
   IMPORT_LIST
     <empty list>
-  PROPERTY
-    PsiElement(val)('val')
+  TYPEALIAS
+    PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('v')
-    PsiElement(COLON)(':')
+    PsiElement(IDENTIFIER)('f')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
       PsiElement(LPAR)('(')
@@ -48,11 +49,12 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
               PsiElement(IDENTIFIER)('S')
       PsiElement(RPAR)(')')
   PsiWhiteSpace('\n')
-  PROPERTY
-    PsiElement(val)('val')
+  TYPEALIAS
+    PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('v')
-    PsiElement(COLON)(':')
+    PsiElement(IDENTIFIER)('f')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
       PsiElement(LPAR)('(')
@@ -91,11 +93,12 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
               PsiElement(IDENTIFIER)('S')
       PsiElement(RPAR)(')')
   PsiWhiteSpace('\n')
-  PROPERTY
-    PsiElement(val)('val')
+  TYPEALIAS
+    PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('v')
-    PsiElement(COLON)(':')
+    PsiElement(IDENTIFIER)('f')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
       PsiElement(LPAR)('(')
@@ -138,11 +141,12 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
               PsiElement(IDENTIFIER)('S')
       PsiElement(RPAR)(')')
   PsiWhiteSpace('\n')
-  PROPERTY
-    PsiElement(val)('val')
+  TYPEALIAS
+    PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('v')
-    PsiElement(COLON)(':')
+    PsiElement(IDENTIFIER)('f')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
       PsiElement(LPAR)('(')
@@ -208,11 +212,12 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
               PsiElement(IDENTIFIER)('S')
       PsiElement(RPAR)(')')
   PsiWhiteSpace('\n')
-  PROPERTY
-    PsiElement(val)('val')
+  TYPEALIAS
+    PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('v')
-    PsiElement(COLON)(':')
+    PsiElement(IDENTIFIER)('f')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
       PsiElement(LPAR)('(')
@@ -253,12 +258,13 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
               PsiElement(IDENTIFIER)('S')
       PsiElement(RPAR)(')')
   PsiWhiteSpace('\n\n')
-  PROPERTY
-    PsiElement(val)('val')
+  TYPEALIAS
+    PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('v')
-    PsiElement(COLON)(':')
+    PsiElement(IDENTIFIER)('f')
     PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace('  ')
     TYPE_REFERENCE
       ANNOTATION
         PsiElement(AT)('@')
@@ -320,11 +326,12 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
               PsiElement(IDENTIFIER)('S')
       PsiElement(RPAR)(')')
   PsiWhiteSpace('\n')
-  PROPERTY
-    PsiElement(val)('val')
+  TYPEALIAS
+    PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('v')
-    PsiElement(COLON)(':')
+    PsiElement(IDENTIFIER)('f')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
       ANNOTATION
@@ -385,11 +392,12 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
               PsiElement(IDENTIFIER)('S')
       PsiElement(RPAR)(')')
   PsiWhiteSpace('\n')
-  PROPERTY
-    PsiElement(val)('val')
+  TYPEALIAS
+    PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('v')
-    PsiElement(COLON)(':')
+    PsiElement(IDENTIFIER)('f')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
       ANNOTATION
@@ -465,11 +473,12 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
               PsiElement(IDENTIFIER)('S')
       PsiElement(RPAR)(')')
   PsiWhiteSpace('\n')
-  PROPERTY
-    PsiElement(val)('val')
+  TYPEALIAS
+    PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('v')
-    PsiElement(COLON)(':')
+    PsiElement(IDENTIFIER)('f')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
       ANNOTATION

@@ -28,6 +28,7 @@ public interface KtStubElementTypes {
     KtFunctionElementType FUNCTION = new KtFunctionElementType("FUN");
     KtPropertyElementType PROPERTY = new KtPropertyElementType("PROPERTY");
     KtPropertyAccessorElementType PROPERTY_ACCESSOR = new KtPropertyAccessorElementType("PROPERTY_ACCESSOR");
+    KtTypeAliasElementType TYPEALIAS = new KtTypeAliasElementType("TYPEALIAS");
 
     KtClassElementType ENUM_ENTRY = new KtClassElementType("ENUM_ENTRY");
     KtObjectElementType OBJECT_DECLARATION = new KtObjectElementType("OBJECT_DECLARATION");
@@ -119,7 +120,7 @@ public interface KtStubElementTypes {
     KtScriptElementType SCRIPT = new KtScriptElementType("SCRIPT");
 
     TokenSet DECLARATION_TYPES =
-            TokenSet.create(CLASS, OBJECT_DECLARATION, FUNCTION, PROPERTY, CLASS_INITIALIZER, SECONDARY_CONSTRUCTOR, ENUM_ENTRY);
+            TokenSet.create(CLASS, OBJECT_DECLARATION, FUNCTION, PROPERTY, TYPEALIAS, CLASS_INITIALIZER, SECONDARY_CONSTRUCTOR, ENUM_ENTRY);
 
     TokenSet SUPER_TYPE_LIST_ENTRIES = TokenSet.create(DELEGATED_SUPER_TYPE_ENTRY, SUPER_TYPE_CALL_ENTRY, SUPER_TYPE_ENTRY);
 

@@ -36,6 +36,10 @@ interface KotlinStubWithFqName<T : PsiNamedElement> : NamedStub<T> {
     fun getFqName(): FqName?
 }
 
+interface KotlinTypeAliasStub : KotlinStubWithFqName<KtTypeAlias> {
+    fun isTopLevel(): Boolean
+}
+
 interface KotlinClassOrObjectStub<T : KtClassOrObject> : KotlinStubWithFqName<T> {
     fun isLocal(): Boolean
     fun getSuperNames(): List<String>

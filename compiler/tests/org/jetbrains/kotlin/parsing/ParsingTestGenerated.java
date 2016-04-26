@@ -733,6 +733,18 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             doParsingTest(fileName);
         }
 
+        @TestMetadata("TypeAlias.kt")
+        public void testTypeAlias() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/TypeAlias.kt");
+            doParsingTest(fileName);
+        }
+
+        @TestMetadata("TypeAlias_ERR.kt")
+        public void testTypeAlias_ERR() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/TypeAlias_ERR.kt");
+            doParsingTest(fileName);
+        }
+
         @TestMetadata("TypeConstraints.kt")
         public void testTypeConstraints() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/TypeConstraints.kt");

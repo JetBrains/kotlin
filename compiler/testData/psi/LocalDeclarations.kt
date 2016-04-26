@@ -6,4 +6,5 @@ fun foo() {
 
     out val foo = 5
     @a var foo = 4
+    typealias f =  T.() -> Unit
 }
