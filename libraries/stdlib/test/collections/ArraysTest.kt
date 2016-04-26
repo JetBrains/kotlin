@@ -1,3 +1,19 @@
+/*
+ * Copyright 2010-2016 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package test.collections
 
 import test.collections.behaviors.listBehavior
@@ -19,6 +35,23 @@ fun assertArrayNotSameButEquals(expected: BooleanArray, actual: BooleanArray, me
 
 
 class ArraysTest {
+
+    @test fun orEmptyNull() {
+        val x: Array<String>? = null
+        val y: Array<out String>? = null
+        val xArray = x.orEmpty()
+        val yArray = y.orEmpty()
+        expect(0) { xArray.size }
+        expect(0) { yArray.size }
+    }
+
+    @test fun orEmptyNotNull() {
+        val x: Array<String>? = arrayOf("1", "2")
+        val xArray = x.orEmpty()
+        expect(2) { xArray.size }
+        expect("1") { xArray[0] }
+        expect("2") { xArray[1] }
+    }
 
     @test fun emptyArrayLastIndex() {
         val arr1 = IntArray(0)
@@ -630,9 +663,9 @@ class ArraysTest {
         expect(1.toByte()) { byteArrayOf(3, 2, 1).reduceIndexed { index, a, b -> if (index != 2) (a - b).toByte() else a.toByte() } }
         expect(1.toShort()) { shortArrayOf(3, 2, 1).reduceIndexed { index, a, b -> if (index != 2) (a - b).toShort() else a.toShort() } }
 
-        assertTrue(assertFails {
+        assertFailsWith<UnsupportedOperationException> {
             intArrayOf().reduceIndexed { index, a, b -> a + b }
-        } is UnsupportedOperationException)
+        }
     }
 
     @test fun reduceRightIndexed() {
@@ -646,9 +679,9 @@ class ArraysTest {
         expect(1.toByte()) { byteArrayOf(3, 2, 1).reduceRightIndexed { index, a, b -> if (index != 1) (a - b).toByte() else a.toByte() } }
         expect(1.toShort()) { shortArrayOf(3, 2, 1).reduceRightIndexed { index, a, b -> if (index != 1) (a - b).toShort() else a.toShort() } }
 
-        assertTrue(assertFails {
+        assertFailsWith<UnsupportedOperationException> {
             intArrayOf().reduceRightIndexed { index, a, b -> a + b }
-        } is UnsupportedOperationException)
+        }
     }
 
     @test fun reduce() {
@@ -662,9 +695,9 @@ class ArraysTest {
         expect(0.toByte()) { byteArrayOf(3, 2, 1).reduce { a, b -> (a - b).toByte() } }
         expect(0.toShort()) { shortArrayOf(3, 2, 1).reduce { a, b -> (a - b).toShort() } }
 
-        assertTrue(assertFails {
+        assertFailsWith<UnsupportedOperationException> {
             intArrayOf().reduce { a, b -> a + b }
-        } is UnsupportedOperationException)
+        }
     }
 
     @test fun reduceRight() {
@@ -678,9 +711,9 @@ class ArraysTest {
         expect(2.toByte()) { byteArrayOf(1, 2, 3).reduceRight { a, b -> (a - b).toByte() } }
         expect(2.toShort()) { shortArrayOf(1, 2, 3).reduceRight { a, b -> (a - b).toShort() } }
 
-        assertTrue(assertFails {
+        assertFailsWith<UnsupportedOperationException> {
             intArrayOf().reduceRight { a, b -> a + b }
-        } is UnsupportedOperationException)
+        }
     }
 
     @test fun reverseInPlace() {

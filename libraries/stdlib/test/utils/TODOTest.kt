@@ -43,13 +43,12 @@ class TODOTest {
     }
 
     private fun assertNotImplemented(block: () -> Unit) {
-        assertTrue(assertFails(block) is NotImplementedError)
+        assertFailsWith<NotImplementedError>(block = block)
     }
 
     private fun assertNotImplementedWithMessage(message: String, block: () -> Unit) {
-        val e = assertFails(block)
-        assertTrue(e is NotImplementedError)
-        assertTrue(message in e!!.message!!)
+        val e = assertFailsWith<NotImplementedError>(block = block)
+        assertTrue(message in e.message!!)
     }
 
 
