@@ -32,10 +32,15 @@ public abstract class KotlinCallableParameterTableModel extends ParameterTableMo
     private final Project project;
     private final KotlinMethodDescriptor methodDescriptor;
 
-    protected KotlinCallableParameterTableModel(KotlinMethodDescriptor methodDescriptor, PsiElement context, ColumnInfo... columnInfos) {
-        super(context, context, columnInfos);
+    protected KotlinCallableParameterTableModel(
+            KotlinMethodDescriptor methodDescriptor,
+            PsiElement typeContext,
+            PsiElement defaultValueContext,
+            ColumnInfo... columnInfos
+    ) {
+        super(typeContext, defaultValueContext, columnInfos);
         this.methodDescriptor = methodDescriptor;
-        project = context.getProject();
+        project = typeContext.getProject();
     }
 
     @Nullable
