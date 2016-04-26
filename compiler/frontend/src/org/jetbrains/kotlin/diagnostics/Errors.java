@@ -115,6 +115,11 @@ public interface Errors {
     DiagnosticFactory0<KtParameter> REIFIED_TYPE_IN_CATCH_CLAUSE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtTypeParameterList> GENERIC_THROWABLE_SUBCLASS = DiagnosticFactory0.create(ERROR);
 
+    DiagnosticFactory1<KtUserType, ClassifierDescriptor> RECURSIVE_TYPEALIAS_EXPANSION = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory3<KtUserType, KotlinType, KotlinType, ClassifierDescriptor> UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION =
+            DiagnosticFactory3.create(ERROR);
+    DiagnosticFactory1<KtUserType, KotlinType> CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION = DiagnosticFactory1.create(ERROR);
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Errors in declarations
@@ -281,8 +286,8 @@ public interface Errors {
     DiagnosticFactory2<KtSimpleNameExpression, KtTypeConstraint, KtTypeParameterListOwner> NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER =
             DiagnosticFactory2.create(ERROR);
 
-    DiagnosticFactory0<KtTypeParameter>
-            VARIANCE_ON_TYPE_PARAMETER_OF_FUNCTION_OR_PROPERTY = DiagnosticFactory0.create(ERROR, VARIANCE_MODIFIER);
+    DiagnosticFactory0<KtTypeParameter> VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED = DiagnosticFactory0.create(ERROR, VARIANCE_MODIFIER);
+    DiagnosticFactory0<KtTypeReference> BOUND_ON_TYPE_ALIAS_PARAMETER_NOT_ALLOWED = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<KtTypeParameterList> DEPRECATED_TYPE_PARAMETER_SYNTAX = DiagnosticFactory0.create(ERROR);
 

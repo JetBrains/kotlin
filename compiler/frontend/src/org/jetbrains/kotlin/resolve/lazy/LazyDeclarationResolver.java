@@ -225,6 +225,14 @@ public class LazyDeclarationResolver {
             }
 
             @Override
+            public DeclarationDescriptor visitTypeAlias(@NotNull KtTypeAlias typeAlias, Void data) {
+                LookupLocation location = lookupLocationFor(typeAlias, typeAlias.isTopLevel());
+                MemberScope scopeForDeclaration = getMemberScopeDeclaredIn(typeAlias, location);
+                scopeForDeclaration.getContributedClassifier(typeAlias.getNameAsSafeName(), location);
+                return getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, typeAlias);
+            }
+
+            @Override
             public DeclarationDescriptor visitScript(@NotNull KtScript script, Void data) {
                 return getScriptDescriptor(script, lookupLocationFor(script, true));
             }

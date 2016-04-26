@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory;
 import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsKt;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
+import org.jetbrains.kotlin.resolve.lazy.descriptors.TypeAliasDescriptorImpl;
 import org.jetbrains.kotlin.resolve.scopes.*;
 import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
@@ -62,6 +63,7 @@ import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
 import static org.jetbrains.kotlin.resolve.BindingContext.CONSTRUCTOR;
 import static org.jetbrains.kotlin.resolve.BindingContext.PACKAGE_TO_FILES;
+import static org.jetbrains.kotlin.resolve.BindingContext.TYPE_ALIAS;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.ModifiersChecker.resolveModalityFromModifiers;
 import static org.jetbrains.kotlin.resolve.ModifiersChecker.resolveVisibilityFromModifiers;
@@ -388,24 +390,29 @@ public class DescriptorResolver {
         return builtIns.getArrayType(Variance.OUT_VARIANCE, elementType);
     }
 
-    public List<TypeParameterDescriptorImpl> resolveTypeParametersForCallableDescriptor(
+    public List<TypeParameterDescriptorImpl> resolveTypeParametersForDescriptor(
             DeclarationDescriptor containingDescriptor,
             LexicalWritableScope extensibleScope,
             LexicalScope scopeForAnnotationsResolve,
             List<KtTypeParameter> typeParameters,
             BindingTrace trace
     ) {
+        assert containingDescriptor instanceof FunctionDescriptor ||
+               containingDescriptor instanceof PropertyDescriptor ||
+               containingDescriptor instanceof TypeAliasDescriptor
+                : "This method should be called for functions, properties, or type aliases, got " + containingDescriptor;
+
         List<TypeParameterDescriptorImpl> result = new ArrayList<TypeParameterDescriptorImpl>();
         for (int i = 0, typeParametersSize = typeParameters.size(); i < typeParametersSize; i++) {
             KtTypeParameter typeParameter = typeParameters.get(i);
-            result.add(resolveTypeParameterForCallableDescriptor(
+            result.add(resolveTypeParameterForDescriptor(
                     containingDescriptor, extensibleScope, scopeForAnnotationsResolve, typeParameter, i, trace));
         }
         return result;
     }
 
-    private TypeParameterDescriptorImpl resolveTypeParameterForCallableDescriptor(
-            DeclarationDescriptor containingDescriptor,
+    private TypeParameterDescriptorImpl resolveTypeParameterForDescriptor(
+            final DeclarationDescriptor containingDescriptor,
             LexicalWritableScope extensibleScope,
             LexicalScope scopeForAnnotationsResolve,
             final KtTypeParameter typeParameter,
@@ -413,8 +420,7 @@ public class DescriptorResolver {
             final BindingTrace trace
     ) {
         if (typeParameter.getVariance() != Variance.INVARIANT) {
-            assert !(containingDescriptor instanceof ClassifierDescriptor) : "This method is intended for functions/properties";
-            trace.report(VARIANCE_ON_TYPE_PARAMETER_OF_FUNCTION_OR_PROPERTY.on(typeParameter));
+            trace.report(VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED.on(typeParameter));
         }
 
         Annotations annotations =
@@ -431,7 +437,9 @@ public class DescriptorResolver {
                 new Function1<KotlinType, Void>() {
                     @Override
                     public Void invoke(KotlinType type) {
-                        trace.report(Errors.CYCLIC_GENERIC_UPPER_BOUND.on(typeParameter));
+                        if (!(containingDescriptor instanceof TypeAliasDescriptor)) {
+                            trace.report(Errors.CYCLIC_GENERIC_UPPER_BOUND.on(typeParameter));
+                        }
                         return null;
                     }
                 },
@@ -668,6 +676,65 @@ public class DescriptorResolver {
     }
 
     @NotNull
+    public TypeAliasDescriptor resolveTypeAliasDescriptor(
+            @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull LexicalScope scope,
+            @NotNull KtTypeAlias typeAlias,
+            @NotNull final BindingTrace trace
+    ) {
+        KtModifierList modifierList = typeAlias.getModifierList();
+        Visibility visibility = resolveVisibilityFromModifiers(typeAlias, getDefaultVisibility(typeAlias, containingDeclaration));
+
+        Annotations allAnnotations = annotationResolver.resolveAnnotationsWithArguments(scope, modifierList, trace);
+        Name name = KtPsiUtil.safeName(typeAlias.getName());
+        SourceElement sourceElement = KotlinSourceElementKt.toSourceElement(typeAlias);
+        TypeAliasDescriptorImpl typeAliasDescriptor = TypeAliasDescriptorImpl.create(
+                containingDeclaration, allAnnotations, name, sourceElement, visibility);
+
+        List<TypeParameterDescriptorImpl> typeParameterDescriptors;
+        final LexicalScope scopeWithTypeParameters;
+        {
+            List<KtTypeParameter> typeParameters = typeAlias.getTypeParameters();
+            if (typeParameters.isEmpty()) {
+                scopeWithTypeParameters = scope;
+                typeParameterDescriptors = Collections.emptyList();
+            }
+            else {
+                LexicalWritableScope writableScope = new LexicalWritableScope(
+                        scope, containingDeclaration, false, null, new TraceBasedLocalRedeclarationChecker(trace),
+                        LexicalScopeKind.TYPE_ALIAS_HEADER);
+                typeParameterDescriptors = resolveTypeParametersForDescriptor(
+                        typeAliasDescriptor, writableScope, scope, typeParameters, trace);
+                writableScope.freeze();
+                checkNoGenericBoundsOnTypeAliasParameters(typeAlias, trace);
+                resolveGenericBounds(typeAlias, typeAliasDescriptor, writableScope, typeParameterDescriptors, trace);
+                scopeWithTypeParameters = writableScope;
+            }
+        }
+
+        final KtTypeReference typeReference = typeAlias.getTypeReference();
+
+        typeAliasDescriptor.initialize(typeParameterDescriptors, storageManager.createLazyValue(new Function0<KotlinType>() {
+            @Override
+            public KotlinType invoke() {
+                return typeResolver.resolveAbbreviatedType(scopeWithTypeParameters, typeReference, trace, true);
+            }
+        }));
+
+        trace.record(TYPE_ALIAS, typeAlias, typeAliasDescriptor);
+        return typeAliasDescriptor;
+    }
+
+    private static void checkNoGenericBoundsOnTypeAliasParameters(@NotNull KtTypeAlias typeAlias, @NotNull BindingTrace trace) {
+        for (KtTypeParameter typeParameter : typeAlias.getTypeParameters()) {
+            KtTypeReference bound = typeParameter.getExtendsBound();
+            if (bound != null) {
+                trace.report(BOUND_ON_TYPE_ALIAS_PARAMETER_NOT_ALLOWED.on(bound));
+            }
+        }
+    }
+
+    @NotNull
     public PropertyDescriptor resolvePropertyDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull LexicalScope scope,
@@ -727,7 +794,7 @@ public class DescriptorResolver {
                 LexicalWritableScope writableScope = new LexicalWritableScope(
                         scope, containingDeclaration, false, null, new TraceBasedLocalRedeclarationChecker(trace, overloadChecker),
                         LexicalScopeKind.PROPERTY_HEADER);
-                typeParameterDescriptors = resolveTypeParametersForCallableDescriptor(
+                typeParameterDescriptors = resolveTypeParametersForDescriptor(
                         propertyDescriptor, writableScope, scope, typeParameters, trace);
                 writableScope.freeze();
                 resolveGenericBounds(property, propertyDescriptor, writableScope, typeParameterDescriptors, trace);
@@ -1088,6 +1155,27 @@ public class DescriptorResolver {
             KotlinType substitutedBound = substitutor.safeSubstitute(bound, Variance.INVARIANT);
             if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(typeArgument, substitutedBound)) {
                 trace.report(UPPER_BOUND_VIOLATED.on(jetTypeArgument, substitutedBound, typeArgument));
+            }
+        }
+    }
+
+    public static void checkBoundsInTypeAlias(
+            @NotNull KtUserType typeAliasElement,
+            @NotNull KotlinType typeArgument,
+            @NotNull TypeParameterDescriptor typeParameterDescriptor,
+            @NotNull TypeSubstitutor substitutor,
+            @NotNull BindingTrace trace
+    ) {
+        DeclarationDescriptor containingDeclaration = typeParameterDescriptor.getContainingDeclaration();
+        assert containingDeclaration instanceof ClassifierDescriptor :
+                "Containing declaration of a type parameter should be a classifier, got " + containingDeclaration;
+        ClassifierDescriptor containingClassifier = (ClassifierDescriptor) containingDeclaration;
+
+        for (KotlinType bound : typeParameterDescriptor.getUpperBounds()) {
+            KotlinType substitutedBound = substitutor.safeSubstitute(bound, Variance.INVARIANT);
+            if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(typeArgument, substitutedBound)) {
+                trace.report(UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION.on(
+                        typeAliasElement, substitutedBound, typeArgument, containingClassifier));
             }
         }
     }

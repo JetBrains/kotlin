@@ -73,6 +73,8 @@ enum class LexicalScopeKind(val withLocalDescriptors: Boolean) {
     FUNCTION_HEADER(false),
     FUNCTION_INNER_SCOPE(true),
 
+    TYPE_ALIAS_HEADER(false),
+
     CODE_BLOCK(true),
 
     LEFT_BOOLEAN_EXPRESSION(true),

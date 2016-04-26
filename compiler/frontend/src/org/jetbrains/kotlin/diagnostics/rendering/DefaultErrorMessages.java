@@ -413,6 +413,13 @@ public class DefaultErrorMessages {
         MAP.put(USELESS_ELVIS_ON_LAMBDA_EXPRESSION, "Left operand of elvis operator (?:) is a lambda expression");
         MAP.put(CONFLICTING_UPPER_BOUNDS, "Upper bounds of {0} have empty intersection", NAME);
 
+        MAP.put(RECURSIVE_TYPEALIAS_EXPANSION, "Recursive type alias in expansion: {0}", NAME);
+        MAP.put(UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION,
+                "Type argument resulting from type alias expansion is not within required bounds for ''{2}'': " +
+                "should be subtype of ''{0}'', substituted type is ''{1}''",
+                RENDER_TYPE, RENDER_TYPE, NAME);
+        MAP.put(CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION, "Conflicting projection in type alias expansion in intermediate type ''{0}''", RENDER_TYPE);
+
         MAP.put(TOO_MANY_ARGUMENTS, "Too many arguments for {0}", FQ_NAMES_IN_TYPES);
 
         MAP.put(CONSTANT_EXPECTED_TYPE_MISMATCH, "The {0} literal does not conform to the expected type {1}", STRING, RENDER_TYPE);
@@ -503,7 +510,8 @@ public class DefaultErrorMessages {
 
         MAP.put(MISSING_CONSTRUCTOR_KEYWORD, "Use 'constructor' keyword after modifiers of primary constructor");
 
-        MAP.put(VARIANCE_ON_TYPE_PARAMETER_OF_FUNCTION_OR_PROPERTY, "Variance annotations are only allowed for type parameters of classes and interfaces");
+        MAP.put(VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED, "Variance annotations are only allowed for type parameters of classes and interfaces");
+        MAP.put(BOUND_ON_TYPE_ALIAS_PARAMETER_NOT_ALLOWED, "Bounds are not allowed on type alias parameters");
 
         MAP.put(DEPRECATED_TYPE_PARAMETER_SYNTAX, "Type parameters must be placed before the name of the function");
 

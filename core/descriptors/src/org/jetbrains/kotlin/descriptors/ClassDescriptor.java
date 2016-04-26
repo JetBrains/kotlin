@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.types.TypeSubstitutor;
 import java.util.Collection;
 import java.util.List;
 
-public interface ClassDescriptor extends ClassifierDescriptor, MemberDescriptor, ClassOrPackageFragmentDescriptor {
+public interface ClassDescriptor extends ClassifierDescriptorWithTypeParameters, MemberDescriptor, ClassOrPackageFragmentDescriptor {
     @NotNull
     MemberScope getMemberScope(@NotNull List<? extends TypeProjection> typeArguments);
 
@@ -100,6 +100,7 @@ public interface ClassDescriptor extends ClassifierDescriptor, MemberDescriptor,
      * captured parameters from outer declaration.
      * @return list of type parameters actually declared type parameters in current class
      */
+    @Override
     @ReadOnly
     @NotNull
     List<TypeParameterDescriptor> getDeclaredTypeParameters();

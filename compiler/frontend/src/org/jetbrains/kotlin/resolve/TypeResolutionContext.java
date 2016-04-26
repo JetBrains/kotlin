@@ -26,9 +26,14 @@ public class TypeResolutionContext {
     public final boolean allowBareTypes;
     public final boolean forceResolveLazyTypes;
     public final boolean isDebuggerContext;
+    public final boolean abbreviated;
 
     public TypeResolutionContext(@NotNull LexicalScope scope, @NotNull BindingTrace trace, boolean checkBounds, boolean allowBareTypes, boolean isDebuggerContext) {
-        this(scope, trace, checkBounds, allowBareTypes, allowBareTypes, isDebuggerContext);
+        this(scope, trace, checkBounds, allowBareTypes, allowBareTypes, isDebuggerContext, false);
+    }
+
+    public TypeResolutionContext(@NotNull LexicalScope scope, @NotNull BindingTrace trace, boolean checkBounds, boolean allowBareTypes, boolean isDebuggerContext, boolean abbreviated) {
+        this(scope, trace, checkBounds, allowBareTypes, allowBareTypes, isDebuggerContext, abbreviated);
     }
 
     private TypeResolutionContext(
@@ -37,7 +42,8 @@ public class TypeResolutionContext {
             boolean checkBounds,
             boolean allowBareTypes,
             boolean forceResolveLazyTypes,
-            boolean isDebuggerContext
+            boolean isDebuggerContext,
+            boolean abbreviated
     ) {
         this.scope = scope;
         this.trace = trace;
@@ -45,9 +51,10 @@ public class TypeResolutionContext {
         this.allowBareTypes = allowBareTypes;
         this.forceResolveLazyTypes = forceResolveLazyTypes;
         this.isDebuggerContext = isDebuggerContext;
+        this.abbreviated = abbreviated;
     }
 
     public TypeResolutionContext noBareTypes() {
-        return new TypeResolutionContext(scope, trace, checkBounds, false, forceResolveLazyTypes, isDebuggerContext);
+        return new TypeResolutionContext(scope, trace, checkBounds, false, forceResolveLazyTypes, isDebuggerContext, abbreviated);
     }
 }

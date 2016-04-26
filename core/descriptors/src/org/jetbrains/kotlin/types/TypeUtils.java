@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
@@ -228,11 +229,11 @@ public class TypeUtils {
     }
 
     @NotNull
-    public static KotlinType makeUnsubstitutedType(ClassDescriptor classDescriptor, MemberScope unsubstitutedMemberScope) {
-        if (ErrorUtils.isError(classDescriptor)) {
-            return ErrorUtils.createErrorType("Unsubstituted type for " + classDescriptor);
+    public static KotlinType makeUnsubstitutedType(ClassifierDescriptor classifierDescriptor, MemberScope unsubstitutedMemberScope) {
+        if (ErrorUtils.isError(classifierDescriptor)) {
+            return ErrorUtils.createErrorType("Unsubstituted type for " + classifierDescriptor);
         }
-        TypeConstructor typeConstructor = classDescriptor.getTypeConstructor();
+        TypeConstructor typeConstructor = classifierDescriptor.getTypeConstructor();
         List<TypeProjection> arguments = getDefaultTypeProjections(typeConstructor.getParameters());
         return KotlinTypeImpl.create(
                 Annotations.Companion.getEMPTY(),

@@ -20,10 +20,7 @@ import org.jetbrains.annotations.Mutable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ReadOnly;
-import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes;
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor;
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor;
@@ -49,6 +46,8 @@ public interface BodiesResolveContext {
     Map<KtProperty, PropertyDescriptor> getProperties();
     @Mutable
     Map<KtNamedFunction, SimpleFunctionDescriptor> getFunctions();
+    @Mutable
+    Map<KtTypeAlias, TypeAliasDescriptor> getTypeAliases();
 
     @Nullable
     LexicalScope getDeclaringScope(@NotNull KtDeclaration declaration);

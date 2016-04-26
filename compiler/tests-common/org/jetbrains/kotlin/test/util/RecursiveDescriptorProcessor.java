@@ -110,6 +110,12 @@ public class RecursiveDescriptorProcessor {
         }
 
         @Override
+        public Boolean visitTypeAliasDescriptor(TypeAliasDescriptor descriptor, D data) {
+            // TODO typealias
+            return true;
+        }
+
+        @Override
         public Boolean visitModuleDeclaration(ModuleDescriptor descriptor, D data) {
             return applyWorker(descriptor, data)
                    && visitChildren(descriptor.getPackage(FqName.ROOT), data);

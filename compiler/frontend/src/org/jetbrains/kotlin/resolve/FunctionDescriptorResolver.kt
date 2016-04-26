@@ -146,7 +146,7 @@ class FunctionDescriptorResolver(
                                               TraceBasedLocalRedeclarationChecker(trace, overloadChecker), LexicalScopeKind.FUNCTION_HEADER)
 
         val typeParameterDescriptors = descriptorResolver.
-                resolveTypeParametersForCallableDescriptor(functionDescriptor, innerScope, scope, function.typeParameters, trace)
+                resolveTypeParametersForDescriptor(functionDescriptor, innerScope, scope, function.typeParameters, trace)
         descriptorResolver.resolveGenericBounds(function, functionDescriptor, innerScope, typeParameterDescriptors, trace)
 
         val receiverTypeRef = function.receiverTypeReference

@@ -105,7 +105,7 @@ class QuickFixRegistrar : QuickFixContributor {
 
         REDUNDANT_PROJECTION.registerFactory(RemoveModifierFix.createRemoveProjectionFactory(true))
         INCOMPATIBLE_MODIFIERS.registerFactory(RemoveModifierFix.createRemoveModifierFactory(false))
-        VARIANCE_ON_TYPE_PARAMETER_OF_FUNCTION_OR_PROPERTY.registerFactory(RemoveModifierFix.createRemoveVarianceFactory())
+        VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED.registerFactory(RemoveModifierFix.createRemoveVarianceFactory())
 
         val removeOpenModifierFactory = RemoveModifierFix.createRemoveModifierFromListOwnerFactory(OPEN_KEYWORD)
         NON_FINAL_MEMBER_IN_FINAL_CLASS.registerFactory(AddModifierFix.createFactory(OPEN_KEYWORD, KtClass::class.java),

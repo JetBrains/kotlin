@@ -84,3 +84,13 @@ fun sameTypeConstructors(first: KotlinType, second: KotlinType): Boolean {
     return first.getCapability(typeRangeCapability)?.sameTypeConstructor(second) ?: false
            || second.getCapability(typeRangeCapability)?.sameTypeConstructor(first) ?: false
 }
+
+interface AbbreviatedType : TypeCapability {
+    val abbreviatedType : KotlinType
+}
+
+fun KotlinType.hasAbbreviatedType(): Boolean =
+        getCapability(AbbreviatedType::class.java) != null
+
+fun KotlinType.getAbbreviatedType(): KotlinType? =
+        getCapability(AbbreviatedType::class.java)?.abbreviatedType
