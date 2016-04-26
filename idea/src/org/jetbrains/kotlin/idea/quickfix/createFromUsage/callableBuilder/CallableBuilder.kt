@@ -194,7 +194,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             ApplicationManager.getApplication().invokeLater { context.showDialogIfNeeded() }
         }
         else {
-            ShortenReferences.DEFAULT.process(elementsToShorten)
+            runWriteAction { ShortenReferences.DEFAULT.process(elementsToShorten) }
         }
     }
 
@@ -992,13 +992,13 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                             }
 
                             CodeStyleManager.getInstance(project).reformat(newDeclaration)
-                        }
 
-                        // change short type names to fully qualified ones (to be shortened below)
-                        val typeRefsToShorten = setupTypeReferencesForShortening(newDeclaration, parameterTypeExpressions)
-                        if (!transformToJavaMemberIfApplicable(newDeclaration)) {
-                            elementsToShorten.addAll(typeRefsToShorten)
-                            setupEditor(newDeclaration)
+                            // change short type names to fully qualified ones (to be shortened below)
+                            val typeRefsToShorten = setupTypeReferencesForShortening(newDeclaration, parameterTypeExpressions)
+                            if (!transformToJavaMemberIfApplicable(newDeclaration)) {
+                                elementsToShorten.addAll(typeRefsToShorten)
+                                setupEditor(newDeclaration)
+                            }
                         }
                     }
                     finally {
