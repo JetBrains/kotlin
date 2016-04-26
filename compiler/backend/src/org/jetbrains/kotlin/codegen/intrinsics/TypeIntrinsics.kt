@@ -169,7 +169,7 @@ object TypeIntrinsics {
     private val OBJECT_TYPE = Type.getObjectType("java/lang/Object")
 
     private fun getAsMutableCollectionDescriptor(asmType: Type): String =
-            Type.getMethodDescriptor(asmType, OBJECT_TYPE);
+            Type.getMethodDescriptor(asmType, OBJECT_TYPE)
 
     private val BEFORE_CHECKCAST_TO_FUNCTION_OF_ARITY = "beforeCheckcastToFunctionOfArity"
 

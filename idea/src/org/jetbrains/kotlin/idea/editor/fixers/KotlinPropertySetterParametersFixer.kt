@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 
 class KotlinPropertySetterParametersFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, psiElement: PsiElement) {
-        if (psiElement !is KtPropertyAccessor) return;
+        if (psiElement !is KtPropertyAccessor) return
 
         if (!psiElement.isSetter) return
 

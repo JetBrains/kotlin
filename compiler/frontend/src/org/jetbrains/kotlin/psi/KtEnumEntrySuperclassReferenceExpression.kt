@@ -54,7 +54,7 @@ class KtEnumEntrySuperclassReferenceExpression :
     }
 
     override fun getReferencedNameAsName(): Name {
-        return referencedElement.getName()?.let { Name.identifier(it) } ?: SpecialNames.NO_NAME_PROVIDED;
+        return referencedElement.getName()?.let { Name.identifier(it) } ?: SpecialNames.NO_NAME_PROVIDED
     }
 
     override fun getReferencedNameElement(): PsiElement {

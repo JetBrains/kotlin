@@ -66,7 +66,7 @@ object LongOperationFIF : FunctionIntrinsicFactory {
                     "times" to BaseBinaryIntrinsic(::mul),
                     "div" to BaseBinaryIntrinsic(::div),
                     "mod" to BaseBinaryIntrinsic(::mod)
-            );
+            )
 
     class BaseBinaryIntrinsic(val applyFun: (left: JsExpression, right: JsExpression) -> JsExpression) : FunctionIntrinsic() {
         override fun apply(receiver: JsExpression?, arguments: List<JsExpression>, context: TranslationContext): JsExpression {

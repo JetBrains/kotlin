@@ -26,7 +26,7 @@ import kotlin.test.assertEquals
 abstract class AbstractHighlightExitPointsTest : LightCodeInsightFixtureTestCase() {
     fun doTest(testDataPath: String) {
         myFixture.configureByFile(testDataPath)
-        HighlightUsagesHandler.invoke(myFixture.project, myFixture.editor, myFixture.file);
+        HighlightUsagesHandler.invoke(myFixture.project, myFixture.editor, myFixture.file)
 
         val text = myFixture.file.text
         val expectedToBeHighlighted = InTextDirectivesUtils.findLinesWithPrefixesRemoved(text, "//HIGHLIGHTED:")

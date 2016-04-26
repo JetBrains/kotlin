@@ -29,7 +29,7 @@ class AsmTypeRemapper(val typeRemapper: TypeRemapper, val isDefaultGeneration: B
 
     override fun createRemappingSignatureAdapter(v: SignatureVisitor?): SignatureVisitor {
         if (isDefaultGeneration) {
-            return super.createRemappingSignatureAdapter(v);
+            return super.createRemappingSignatureAdapter(v)
         }
 
         return object : RemappingSignatureAdapter(v, this) {

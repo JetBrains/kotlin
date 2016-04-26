@@ -89,7 +89,7 @@ internal class FilteringSequence<T>(private val sequence: Sequence<T>,
                                  ) : Sequence<T> {
 
     override fun iterator(): Iterator<T> = object : Iterator<T> {
-        val iterator = sequence.iterator();
+        val iterator = sequence.iterator()
         var nextState: Int = -1 // -1 for unknown, 0 for done, 1 for continue
         var nextItem: T? = null
 
@@ -325,7 +325,7 @@ internal class TakeSequence<T> (
 
     override fun iterator(): Iterator<T> = object : Iterator<T> {
         var left = count
-        val iterator = sequence.iterator();
+        val iterator = sequence.iterator()
 
         override fun next(): T {
             if (left == 0)
@@ -349,7 +349,7 @@ internal class TakeWhileSequence<T>
                                   private val predicate: (T) -> Boolean
                                  ) : Sequence<T> {
     override fun iterator(): Iterator<T> = object : Iterator<T> {
-        val iterator = sequence.iterator();
+        val iterator = sequence.iterator()
         var nextState: Int = -1 // -1 for unknown, 0 for done, 1 for continue
         var nextItem: T? = null
 
@@ -402,7 +402,7 @@ internal class DropSequence<T> (
     override fun take(n: Int): Sequence<T> = SubSequence(sequence, count, count + n)
 
     override fun iterator(): Iterator<T> = object : Iterator<T> {
-        val iterator = sequence.iterator();
+        val iterator = sequence.iterator()
         var left = count
 
         // Shouldn't be called from constructor to avoid premature iteration
@@ -435,7 +435,7 @@ internal class DropWhileSequence<T>
                                  ) : Sequence<T> {
 
     override fun iterator(): Iterator<T> = object : Iterator<T> {
-        val iterator = sequence.iterator();
+        val iterator = sequence.iterator()
         var dropState: Int = -1 // -1 for not dropping, 1 for nextItem, 0 for normal iteration
         var nextItem: T? = null
 

@@ -53,7 +53,7 @@ open class AbstractStructureTest : LightCodeInsightTestCase() {
             file.writeText(text)
             throw NoTestFileException(file)
         } else {
-            val lineSeparator = System.getProperty("line.separator") ?: "\n";
+            val lineSeparator = System.getProperty("line.separator") ?: "\n"
             val expected = file.readLines().map { it.trimEnd() }.joinToString(lineSeparator).trim()
             val actual = text.lines().map { it.trimEnd() }.joinToString(lineSeparator).trim()
             assertEquals(expected, actual)

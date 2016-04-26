@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.serialization;
+package org.jetbrains.kotlin.serialization
 
 import com.google.protobuf.ExtensionRegistryLite
 import com.google.protobuf.GeneratedMessageLite.GeneratedExtension

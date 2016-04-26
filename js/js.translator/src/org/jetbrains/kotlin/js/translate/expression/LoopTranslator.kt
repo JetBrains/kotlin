@@ -115,7 +115,7 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
                getClassDescriptorForType(rangeType).name.asString() == "IntArray"
     }
 
-    val destructuringParameter: KtDestructuringDeclaration? = expression.destructuringParameter;
+    val destructuringParameter: KtDestructuringDeclaration? = expression.destructuringParameter
 
     fun declareParameter(): JsName {
         val loopParameter = getLoopParameter(expression)

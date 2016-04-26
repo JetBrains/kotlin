@@ -84,7 +84,7 @@ class ReifiedTypeInliner(private val parametersMapping: TypeParameterMappings?) 
                     Opcodes.INVOKESTATIC,
                     IntrinsicMethods.INTRINSICS_CLASS_NAME, NEED_CLASS_REIFICATION_MARKER_METHOD_NAME,
                     Type.getMethodDescriptor(Type.VOID_TYPE), false
-            );
+            )
         }
     }
 

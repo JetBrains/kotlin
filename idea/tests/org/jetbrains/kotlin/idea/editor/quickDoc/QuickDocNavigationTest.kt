@@ -33,7 +33,7 @@ class QuickDocNavigationTest() : LightPlatformCodeInsightFixtureTestCase() {
         myFixture.configureByFile(getTestName(true) + ".kt")
         val source = myFixture.elementAtCaret.getParentOfType<KtFunction>(false)
         val target = KotlinQuickDocumentationProvider().getDocumentationElementForLink(
-                myFixture.psiManager, "C", source);
+                myFixture.psiManager, "C", source)
         Assert.assertTrue(target is KtClass)
         Assert.assertEquals("C", (target as KtClass).name)
     }

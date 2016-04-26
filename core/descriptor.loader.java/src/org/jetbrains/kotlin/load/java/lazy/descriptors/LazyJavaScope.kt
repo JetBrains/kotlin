@@ -258,7 +258,7 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
                     })
         }
 
-        c.components.javaResolverCache.recordField(field, propertyDescriptor);
+        c.components.javaResolverCache.recordField(field, propertyDescriptor)
 
         return propertyDescriptor
     }

@@ -47,7 +47,7 @@ object CallTranslator {
                      resolvedCall: ResolvedCall<out VariableDescriptor>,
                      extensionOrDispatchReceiver: JsExpression? = null
     ): JsExpression {
-        val variableAccessInfo = VariableAccessInfo(context.getCallInfo(resolvedCall, extensionOrDispatchReceiver), null);
+        val variableAccessInfo = VariableAccessInfo(context.getCallInfo(resolvedCall, extensionOrDispatchReceiver), null)
         return variableAccessInfo.translateVariableAccess()
     }
 
@@ -56,7 +56,7 @@ object CallTranslator {
                      value: JsExpression,
                      extensionOrDispatchReceiver: JsExpression? = null
     ): JsExpression {
-        val variableAccessInfo = VariableAccessInfo(context.getCallInfo(resolvedCall, extensionOrDispatchReceiver), value);
+        val variableAccessInfo = VariableAccessInfo(context.getCallInfo(resolvedCall, extensionOrDispatchReceiver), value)
         return variableAccessInfo.translateVariableAccess()
     }
 
@@ -65,7 +65,7 @@ object CallTranslator {
                   args: List<JsExpression>,
                   dispatchReceiver: JsExpression?
     ): JsExpression {
-        val argumentsInfo = CallArgumentTranslator.ArgumentsInfo(args, false, null);
+        val argumentsInfo = CallArgumentTranslator.ArgumentsInfo(args, false, null)
         val functionName = context.getNameForDescriptor(functionDescriptor)
         val isNative = AnnotationsUtils.isNativeObject(functionDescriptor)
         val hasSpreadOperator = false
@@ -207,7 +207,7 @@ interface DelegateIntrinsic<I : CallInfo> {
     }
 
     private fun I.getIntrinsic(): JsExpression? {
-        val descriptor = getDescriptor();
+        val descriptor = getDescriptor()
 
         // Now intrinsic support only FunctionDescriptor. See DelegatePropertyAccessIntrinsic.getDescriptor()
         if (descriptor is FunctionDescriptor) {

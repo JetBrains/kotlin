@@ -67,8 +67,8 @@ class KotlinEnterHandler: EnterHandlerDelegateAdapter() {
         if (elementAt is PsiWhiteSpace && ("\n" in elementAt.getText()!!)) return EnterHandlerDelegate.Result.Continue
 
         // Indent for LBRACE can be removed after fixing IDEA-124917
-        val elementBefore = CodeInsightUtils.getElementAtOffsetIgnoreWhitespaceAfter(file, caretOffset);
-        val elementAfter = CodeInsightUtils.getElementAtOffsetIgnoreWhitespaceBefore(file, caretOffset);
+        val elementBefore = CodeInsightUtils.getElementAtOffsetIgnoreWhitespaceAfter(file, caretOffset)
+        val elementAfter = CodeInsightUtils.getElementAtOffsetIgnoreWhitespaceBefore(file, caretOffset)
 
         val isAfterLBraceOrArrow = elementBefore != null && elementBefore.node!!.elementType in FORCE_INDENT_IN_LAMBDA_AFTER
         val isBeforeRBrace = elementAfter == null || elementAfter.node!!.elementType == KtTokens.RBRACE
@@ -81,7 +81,7 @@ class KotlinEnterHandler: EnterHandlerDelegateAdapter() {
                 CodeStyleManager.getInstance(file.getProject())!!.adjustLineIndent(file, editor.caretModel.offset)
             }
             catch (e: IncorrectOperationException) {
-                LOG.error(e);
+                LOG.error(e)
             }
 
             return EnterHandlerDelegate.Result.DefaultForceIndent

@@ -128,7 +128,7 @@ object KotlinToJVMBytecodeCompiler {
 
         result.throwIfError()
 
-        val generationStates = ArrayList<GenerationState>();
+        val generationStates = ArrayList<GenerationState>()
 
         for (module in chunk) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
@@ -144,7 +144,7 @@ object KotlinToJVMBytecodeCompiler {
                                            module.getModuleName(),  onIndependentPartCompilationEnd)
 
             outputFiles.put(module, generationState.factory)
-            generationStates.add(generationState);
+            generationStates.add(generationState)
         }
 
         try {
@@ -156,7 +156,7 @@ object KotlinToJVMBytecodeCompiler {
         }
         finally {
             for (generationState in generationStates) {
-                generationState.destroy();
+                generationState.destroy()
             }
         }
     }
@@ -435,7 +435,7 @@ object KotlinToJVMBytecodeCompiler {
 
         AnalyzerWithCompilerReport.reportBytecodeVersionErrors(
                 generationState.extraJvmDiagnosticsTrace.bindingContext, environment.messageCollector()
-        );
+        )
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
         return generationState

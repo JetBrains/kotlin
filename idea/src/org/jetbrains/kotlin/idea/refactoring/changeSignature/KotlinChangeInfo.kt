@@ -144,7 +144,7 @@ open class KotlinChangeInfo(
     }
 
     fun removeParameter(index: Int) {
-        val parameterInfo = newParameters.removeAt(index);
+        val parameterInfo = newParameters.removeAt(index)
         if (parameterInfo == receiverParameterInfo) {
             receiverParameterInfo = null
         }

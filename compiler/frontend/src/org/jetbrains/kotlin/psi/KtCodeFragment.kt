@@ -38,7 +38,7 @@ abstract class KtCodeFragment(
         private val context: PsiElement?
 ): KtFile((PsiManager.getInstance(_project) as PsiManagerEx).fileManager.createFileViewProvider(LightVirtualFile(name, KotlinFileType.INSTANCE, text), true), false), JavaCodeFragment {
 
-    private var viewProvider = super<KtFile>.getViewProvider() as SingleRootFileViewProvider
+    private var viewProvider = super.getViewProvider() as SingleRootFileViewProvider
     private var imports = LinkedHashSet<String>()
 
     init {
@@ -68,7 +68,7 @@ abstract class KtCodeFragment(
 
     override fun getContext() = context
 
-    override fun getResolveScope() = context?.resolveScope ?: super<KtFile>.getResolveScope()
+    override fun getResolveScope() = context?.resolveScope ?: super.getResolveScope()
 
     override fun clone(): KtCodeFragment {
         val clone = cloneImpl(calcTreeElement().clone() as FileElement) as KtCodeFragment

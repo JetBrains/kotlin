@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.KtNamedFunction
 
 class KotlinFunctionParametersFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, psiElement: PsiElement) {
-        if (psiElement !is KtNamedFunction) return;
+        if (psiElement !is KtNamedFunction) return
 
         val parameterList = psiElement.valueParameterList
         if (parameterList == null) {

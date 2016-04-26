@@ -275,7 +275,7 @@ class CompileServiceImpl(
         }
 
         val stub = UnicastRemoteObject.exportObject(this, port, LoopbackNetworkInterface.clientLoopbackSocketFactory, LoopbackNetworkInterface.serverLoopbackSocketFactory) as CompileService
-        registry.rebind (COMPILER_SERVICE_RMI_NAME, stub);
+        registry.rebind (COMPILER_SERVICE_RMI_NAME, stub)
 
         timer.schedule(0) {
             initiateElections()

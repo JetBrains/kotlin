@@ -42,7 +42,7 @@ class DefaultCallArgs(val size: Int) {
         for (i in 0..size - 1) {
             if (i != 0 && i % Integer.SIZE == 0) {
                 masks.add(mask)
-                mask = 0;
+                mask = 0
             }
             mask = mask or if (bits.get(i)) 1 shl (i % Integer.SIZE) else 0
         }
@@ -61,6 +61,6 @@ class DefaultCallArgs(val size: Int) {
             val parameterType = if (isConstructor) AsmTypes.DEFAULT_CONSTRUCTOR_MARKER else AsmTypes.OBJECT_TYPE
             callGenerator.putValueIfNeeded(parameterType, StackValue.constant(null, parameterType))
         }
-        return toInts.isNotEmpty();
+        return toInts.isNotEmpty()
     }
 }

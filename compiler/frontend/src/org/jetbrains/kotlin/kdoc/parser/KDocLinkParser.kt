@@ -63,9 +63,9 @@ class KDocLinkParser(): PsiParser {
         }
         else {
             if (!builder.eof()) {
-                builder.error("Expression expected");
+                builder.error("Expression expected")
                 while (!builder.eof()) {
-                    builder.advanceLexer();
+                    builder.advanceLexer()
                 }
             }
         }

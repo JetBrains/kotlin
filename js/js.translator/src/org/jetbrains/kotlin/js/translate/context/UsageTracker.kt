@@ -140,7 +140,7 @@ class UsageTracker(
         if (containingDescriptor == container) return false
 
         if (containingDescriptor !is ClassDescriptor) {
-            val containingClass = getParentOfType(containingDescriptor, ClassDescriptor::class.java, false);
+            val containingClass = getParentOfType(containingDescriptor, ClassDescriptor::class.java, false)
             if (containingClass == container) return false
         }
 

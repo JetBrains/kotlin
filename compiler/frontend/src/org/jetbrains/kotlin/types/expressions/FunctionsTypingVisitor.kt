@@ -189,7 +189,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
             functionTypeExpected: Boolean
     ): KotlinType {
         val expectedReturnType = if (functionTypeExpected) getReturnTypeFromFunctionType(context.expectedType) else null
-        val returnType = computeUnsafeReturnType(expression, context, functionDescriptor, expectedReturnType);
+        val returnType = computeUnsafeReturnType(expression, context, functionDescriptor, expectedReturnType)
 
         if (!expression.functionLiteral.hasDeclaredReturnType() && functionTypeExpected) {
             if (!TypeUtils.noExpectedType(expectedReturnType!!) && KotlinBuiltIns.isUnit(expectedReturnType)) {

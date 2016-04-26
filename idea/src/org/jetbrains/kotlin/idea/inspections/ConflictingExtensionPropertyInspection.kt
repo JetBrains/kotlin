@@ -178,7 +178,7 @@ class ConflictingExtensionPropertyInspection : AbstractKotlinInspection(), Clean
     }
 
     private class DeleteRedundantExtensionAction(property: KtProperty) : KotlinQuickFixAction<KtProperty>(property) {
-        private val LOG = Logger.getInstance(DeleteRedundantExtensionAction::class.java);
+        private val LOG = Logger.getInstance(DeleteRedundantExtensionAction::class.java)
 
         override fun getFamilyName() = "Delete redundant extension property"
         override fun getText() = familyName

@@ -750,7 +750,7 @@ public inline fun <T> Iterable<T>.takeWhile(predicate: (T) -> Boolean): List<T> 
     val list = ArrayList<T>()
     for (item in this) {
         if (!predicate(item))
-            break;
+            break
         list.add(item)
     }
     return list

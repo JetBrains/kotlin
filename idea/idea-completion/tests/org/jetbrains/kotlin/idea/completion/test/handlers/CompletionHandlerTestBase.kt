@@ -115,7 +115,7 @@ abstract class CompletionHandlerTestBase() : KotlinLightCodeInsightFixtureTestCa
         if (lookup.currentItem != item) { // do not touch selection if not changed - important for char filter tests
             lookup.currentItem = item
         }
-        lookup.focusDegree = LookupImpl.FocusDegree.FOCUSED;
+        lookup.focusDegree = LookupImpl.FocusDegree.FOCUSED
         if (LookupEvent.isSpecialCompletionChar(completionChar)) {
             (object : WriteCommandAction.Simple<Any>(project) {
                 override fun run(result: Result<Any>) {

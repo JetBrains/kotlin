@@ -266,7 +266,7 @@ private fun makeCall(
     anchor.nextSibling?.let { from ->
         val to = rangeToReplace.endElement
         if (to != anchor) {
-            anchorParent.deleteChildRange(from, to);
+            anchorParent.deleteChildRange(from, to)
         }
     }
 

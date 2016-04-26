@@ -272,7 +272,7 @@ object ModifierCheckerCore {
         for (second in children) {
             for (first in children) {
                 if (first == second) {
-                    break;
+                    break
                 }
                 checkCompatibility(trace, first, second, list.owner, incorrectNodes)
             }

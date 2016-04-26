@@ -56,5 +56,5 @@ abstract class AbstractSelectExpressionForDebuggerTest : LightCodeInsightFixture
 
     override fun getProjectDescriptor() = KotlinLightProjectDescriptor.INSTANCE
 
-    override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase() + "/debugger/selectExpression";
+    override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase() + "/debugger/selectExpression"
 }

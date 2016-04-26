@@ -176,7 +176,7 @@ class CallArgumentTranslator private constructor(
                 return typeArgs.addReifiedTypeArgsTo(result, context)
             }
 
-            return result;
+            return result
         }
 
         private fun translateSingleArgument(actualArgument: ResolvedValueArgument, result: MutableList<JsExpression>, context: TranslationContext): ArgumentsKind {

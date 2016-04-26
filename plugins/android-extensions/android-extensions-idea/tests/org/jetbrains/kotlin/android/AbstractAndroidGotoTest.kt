@@ -38,7 +38,7 @@ abstract class AbstractAndroidGotoTest : KotlinAndroidTestCase() {
     fun doTest(path: String) {
         val f = myFixture!!
         getResourceDirs(path).forEach { myFixture.copyDirectoryToProject(it.name, it.name) }
-        val virtualFile = f.copyFileToProject(path + getTestName(true) + ".kt", "src/" + getTestName(true) + ".kt");
+        val virtualFile = f.copyFileToProject(path + getTestName(true) + ".kt", "src/" + getTestName(true) + ".kt")
         f.configureFromExistingVirtualFile(virtualFile)
 
         val expression = TargetElementUtil.findReference(f.editor, f.caretOffset)!!.element as KtElement

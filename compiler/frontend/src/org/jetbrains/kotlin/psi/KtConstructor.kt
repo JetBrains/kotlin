@@ -87,7 +87,7 @@ abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinPla
     override fun getTextOffset(): Int {
         return getConstructorKeyword()?.getTextOffset()
                ?: getValueParameterList()?.getTextOffset()
-               ?: super<KtDeclarationStub>.getTextOffset()
+               ?: super.getTextOffset()
     }
 
     override fun getUseScope(): SearchScope {

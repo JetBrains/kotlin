@@ -155,5 +155,5 @@ private fun TranslationContext.createCallInfo(resolvedCall: ResolvedCall<out Cal
                 return notNullConditionalForSafeCall
             }
         }
-    };
+    }
 }

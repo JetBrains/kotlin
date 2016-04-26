@@ -29,7 +29,7 @@ object NumberAndCharConversionFIF : CompositeFIF() {
             pattern("Int.toInt|toFloat|toDouble"), pattern("Short.toShort|toInt|toFloat|toDouble"),
             pattern("Byte.toByte|toShort|toInt|toFloat|toDouble"), pattern("Float|Double.toFloat|toDouble"),
             pattern("Long.toLong"), pattern("Char.toChar")
-    );
+    )
 
     private val convertOperations: Map<String, ConversionUnaryIntrinsic>  =
             mapOf(

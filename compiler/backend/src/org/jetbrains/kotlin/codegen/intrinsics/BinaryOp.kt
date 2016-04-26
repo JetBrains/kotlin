@@ -37,8 +37,8 @@ class BinaryOp(private val opcode: Int) : IntrinsicMethod() {
 
         return createBinaryIntrinsicCallable(returnType, paramType, operandType) {
             v ->
-                v.visitInsn(returnType.getOpcode(opcode));
-                if (operandType != returnType)
+                v.visitInsn(returnType.getOpcode(opcode))
+            if (operandType != returnType)
                     StackValue.coerce(operandType, returnType, v)
         }
     }

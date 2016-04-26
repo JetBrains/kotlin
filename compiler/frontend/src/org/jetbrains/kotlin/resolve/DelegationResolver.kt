@@ -69,9 +69,9 @@ class DelegationResolver<T : CallableMemberDescriptor> private constructor(
         val alreadyDelegated = delegatedMembers.firstOrNull { isOverridableBy(it, candidate) }
         if (alreadyDelegated != null) {
             trace.report(MANY_IMPL_MEMBER_NOT_IMPLEMENTED.on(classOrObject, classOrObject, alreadyDelegated))
-            return true;
+            return true
         }
-        return false;
+        return false
     }
 
 

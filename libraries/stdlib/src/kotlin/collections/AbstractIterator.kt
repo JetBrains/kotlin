@@ -34,7 +34,7 @@ public abstract class AbstractIterator<T>: Iterator<T> {
 
     private fun tryToComputeNext(): Boolean {
         state = State.Failed
-        computeNext();
+        computeNext()
         return state == State.Ready
     }
 

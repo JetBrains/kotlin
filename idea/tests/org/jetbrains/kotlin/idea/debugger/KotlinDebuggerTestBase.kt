@@ -262,7 +262,7 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
         val virtualFile = file.virtualFile
 
         val runnable = {
-            var offset = -1;
+            var offset = -1
             while (true) {
                 val fileText = document.text
                 offset = fileText.indexOf("point!", offset + 1)

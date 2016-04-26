@@ -171,7 +171,7 @@ class CapturedTypeApproximationTest : KotlinTestWithEnvironment() {
     }
 
     fun testSimpleT() {
-        doTest("simpleT.txt", "T");
+        doTest("simpleT.txt", "T")
     }
 
     fun testNullableT() {
@@ -179,19 +179,19 @@ class CapturedTypeApproximationTest : KotlinTestWithEnvironment() {
     }
 
     fun testUseSiteInT() {
-        doTest("useSiteInT.txt", "in T");
+        doTest("useSiteInT.txt", "in T")
     }
 
     fun testUseSiteInNullableT() {
-        doTest("useSiteInNullableT.txt", "in T?");
+        doTest("useSiteInNullableT.txt", "in T?")
     }
 
     fun testUseSiteOutT() {
-        doTest("useSiteOutT.txt", "out T");
+        doTest("useSiteOutT.txt", "out T")
     }
 
     fun testUseSiteOutNullableT() {
-        doTest("useSiteOutNullableT.txt", "out T?");
+        doTest("useSiteOutNullableT.txt", "out T?")
     }
 
     fun testTwoVariables() {

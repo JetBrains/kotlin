@@ -86,7 +86,7 @@ abstract class AbstractAndroidBoxTest : AbstractBlackBoxCodegenTest() {
                 return true
             }
         })
-        Collections.sort(files);
+        Collections.sort(files)
         if (additionalFiles != null) {
             files.addAll(additionalFiles)
         }
@@ -95,6 +95,6 @@ abstract class AbstractAndroidBoxTest : AbstractBlackBoxCodegenTest() {
                 ArrayUtil.toStringArray(files),
                 KotlinTestUtils.getHomeDirectory() + "/plugins/android-extensions/android-extensions-compiler/testData"
         )
-        blackBox();
+        blackBox()
     }
 }

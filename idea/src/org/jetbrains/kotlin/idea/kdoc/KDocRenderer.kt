@@ -68,7 +68,7 @@ object KDocRenderer {
                 to.append(", ")
             }
         }
-        to.append("</DD></DL></DD>");
+        to.append("</DD></DL></DD>")
     }
 
     private fun renderTagList(tags: List<KDocTag>, title: String, to: StringBuilder) {

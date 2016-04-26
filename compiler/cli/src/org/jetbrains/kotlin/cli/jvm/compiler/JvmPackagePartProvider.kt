@@ -29,7 +29,7 @@ class JvmPackagePartProvider(val env: KotlinCoreEnvironment) : PackagePartProvid
         env.configuration.getList(CommonConfigurationKeys.CONTENT_ROOTS).
                 filterIsInstance<JvmClasspathRoot>().
                 mapNotNull {
-                    env.contentRootToVirtualFile(it);
+                    env.contentRootToVirtualFile(it)
                 }.filter { it.findChild("META-INF") != null }.toMutableList()
     }
 

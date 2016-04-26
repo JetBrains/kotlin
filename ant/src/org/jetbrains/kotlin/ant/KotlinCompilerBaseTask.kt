@@ -87,7 +87,7 @@ abstract class KotlinCompilerBaseTask : Task() {
         val compiler = compilerClass.newInstance()
         val exec = compilerClass.getMethod("execFullPathsInMessages", PrintStream::class.java, Array<String>::class.java)
 
-        log("Compiling ${src!!.list().toList()} => [${output!!.canonicalPath}]");
+        log("Compiling ${src!!.list().toList()} => [${output!!.canonicalPath}]")
 
         val result = exec(compiler, System.err, args.toTypedArray())
         exitCode = (result as Enum<*>).ordinal

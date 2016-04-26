@@ -89,7 +89,7 @@ class AnnotationChecker(private val additionalCheckers: Iterable<AdditionalAnnot
                                       || (existingTargetsForAnnotation.any { (it == null) != (useSiteTarget == null) })
 
             if (duplicateAnnotation && !classDescriptor.isRepeatableAnnotation()) {
-                trace.report(Errors.REPEATED_ANNOTATION.on(entry));
+                trace.report(Errors.REPEATED_ANNOTATION.on(entry))
             }
 
             existingTargetsForAnnotation.add(useSiteTarget)

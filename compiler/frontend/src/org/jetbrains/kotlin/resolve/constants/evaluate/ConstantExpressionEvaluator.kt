@@ -250,7 +250,7 @@ private class ConstantExpressionEvaluatorVisitor(
         private fun createStringConstant(compileTimeConstant: CompileTimeConstant<*>): TypedCompileTimeConstant<String>? {
             val constantValue = compileTimeConstant.toConstantValue(TypeUtils.NO_EXPECTED_TYPE)
             if (constantValue.isStandaloneOnlyConstant()) {
-                return null;
+                return null
             }
             return when (constantValue) {
                 is ErrorValue, is EnumValue -> return null
@@ -533,7 +533,7 @@ private class ConstantExpressionEvaluatorVisitor(
     }
 
     override fun visitSimpleNameExpression(expression: KtSimpleNameExpression, expectedType: KotlinType?): CompileTimeConstant<*>? {
-        val enumDescriptor = trace.bindingContext.get(BindingContext.REFERENCE_TARGET, expression);
+        val enumDescriptor = trace.bindingContext.get(BindingContext.REFERENCE_TARGET, expression)
         if (enumDescriptor != null && DescriptorUtils.isEnumEntry(enumDescriptor)) {
             return factory.createEnumValue(enumDescriptor as ClassDescriptor).wrap()
         }

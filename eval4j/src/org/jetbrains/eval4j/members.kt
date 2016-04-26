@@ -38,7 +38,7 @@ open class MemberDescription protected constructor(
     }
 
     override fun hashCode(): Int {
-        var result = 13;
+        var result = 13
         result = result * 23 + ownerInternalName.hashCode()
         result = result * 23 + name.hashCode()
         result = result * 23 + desc.hashCode()

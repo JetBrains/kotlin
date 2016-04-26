@@ -42,8 +42,8 @@ class StringInjectionHostTest : KotlinTestWithEnvironment() {
     }
 
     fun testUnclosedSimpleLiteral() {
-        assertFalse(stringExpression("\"").isValidHost);
-        assertFalse(stringExpression("\"a").isValidHost);
+        assertFalse(stringExpression("\"").isValidHost)
+        assertFalse(stringExpression("\"a").isValidHost)
     }
 
     fun testEscapeSequences() {

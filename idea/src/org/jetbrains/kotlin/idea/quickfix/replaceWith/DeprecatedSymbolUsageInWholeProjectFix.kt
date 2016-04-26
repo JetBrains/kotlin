@@ -47,7 +47,7 @@ class DeprecatedSymbolUsageInWholeProjectFix(
         private val text: String
 ) : DeprecatedSymbolUsageFixBase(element, replaceWith) {
 
-    private val LOG = Logger.getInstance(DeprecatedSymbolUsageInWholeProjectFix::class.java);
+    private val LOG = Logger.getInstance(DeprecatedSymbolUsageInWholeProjectFix::class.java)
 
     override fun getFamilyName() = "Replace deprecated symbol usage in whole project"
 

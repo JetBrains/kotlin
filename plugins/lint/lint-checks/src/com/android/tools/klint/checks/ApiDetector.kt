@@ -112,7 +112,7 @@ open class ApiDetector : Detector(), UastScanner {
                     if (methodSdkLevel != -1 && methodSdkLevel > buildSdk) {
                         val message = "This method is not overriding anything with the current build " +
                                 "target, but will in API level $methodSdkLevel (current target is $buildSdk): `${node.name}`"
-                        context.report(OVERRIDE, node, context.getLocation(node.nameElement), message);
+                        context.report(OVERRIDE, node, context.getLocation(node.nameElement), message)
                     }
                 }
             }
@@ -225,17 +225,17 @@ open class ApiDetector : Detector(), UastScanner {
                             val value = (valueNode as ULiteralExpression).value as String
                             return SdkVersionInfo.getApiByBuildCode(value, true)
                         } else if (valueNode is UQualifiedExpression) {
-                            val codename = valueNode.getSelectorAsIdentifier() ?: return -1;
+                            val codename = valueNode.getSelectorAsIdentifier() ?: return -1
                             return SdkVersionInfo.getApiByBuildCode(codename, true)
                         } else if (valueNode is USimpleReferenceExpression) {
-                            val codename = valueNode.identifier;
+                            val codename = valueNode.identifier
                             return SdkVersionInfo.getApiByBuildCode(codename, true)
                         }
                     }
                 }
             }
 
-            return -1;
+            return -1
         }
 
         fun isCheckedExplicitly(context: UastAndroidContext, requiredVersion: Int, node: UElement): Boolean {

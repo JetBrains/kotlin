@@ -42,13 +42,13 @@ class RenameOnSecondaryConstructorHandler : RenameHandler {
                 file, editor.caretModel.offset, KtSecondaryConstructor::class.java, false,
                 KtBlockExpression::class.java, KtValueArgumentList::class.java, KtParameterList::class.java
         )
-        return element != null;
+        return element != null
     }
 
     override fun isRenaming(dataContext: DataContext?): Boolean = isAvailableOnDataContext(dataContext)
 
     override fun invoke(project: Project, editor: Editor, file: PsiFile, dataContext: DataContext?) {
-        CodeInsightUtils.showErrorHint(project, editor, "Rename is not applicable to secondary constructors", "Rename", null);
+        CodeInsightUtils.showErrorHint(project, editor, "Rename is not applicable to secondary constructors", "Rename", null)
     }
 
     override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext?) {

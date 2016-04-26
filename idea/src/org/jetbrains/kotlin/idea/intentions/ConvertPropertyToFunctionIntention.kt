@@ -58,13 +58,13 @@ class ConvertPropertyToFunctionIntention : SelfTargetingIntention<KtProperty>(Kt
         private val newName: String = JvmAbi.getterName(callableDescriptor.name.asString())
 
         private fun convertProperty(originalProperty: KtProperty, psiFactory: KtPsiFactory) {
-            val property = originalProperty.copy() as KtProperty;
-            val getter = property.getter;
+            val property = originalProperty.copy() as KtProperty
+            val getter = property.getter
 
-            val sampleFunction = psiFactory.createFunction("fun foo() {\n\n}");
+            val sampleFunction = psiFactory.createFunction("fun foo() {\n\n}")
 
-            property.valOrVarKeyword.replace(sampleFunction.funKeyword!!);
-            property.addAfter(psiFactory.createParameterList("()"), property.nameIdentifier);
+            property.valOrVarKeyword.replace(sampleFunction.funKeyword!!)
+            property.addAfter(psiFactory.createParameterList("()"), property.nameIdentifier)
             if (property.initializer == null) {
                 if (getter != null) {
                     val dropGetterTo = (getter.equalsToken ?: getter.bodyExpression)

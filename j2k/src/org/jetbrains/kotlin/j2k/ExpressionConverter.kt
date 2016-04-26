@@ -71,7 +71,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
 
     override fun visitArrayAccessExpression(expression: PsiArrayAccessExpression) {
         val assignment = expression.getStrictParentOfType<PsiAssignmentExpression>()
-        val lvalue = assignment != null && expression == assignment.lExpression;
+        val lvalue = assignment != null && expression == assignment.lExpression
         result = ArrayAccessExpression(codeConverter.convertExpression(expression.arrayExpression),
                                        codeConverter.convertExpression(expression.indexExpression),
                                        lvalue)

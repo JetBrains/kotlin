@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen;
+package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.inline.inlineFunctionsJvmNames

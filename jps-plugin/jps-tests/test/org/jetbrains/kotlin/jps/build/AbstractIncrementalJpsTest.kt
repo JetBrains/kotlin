@@ -96,7 +96,7 @@ abstract class AbstractIncrementalJpsTest(
         TestLoggerFactory.enableDebugLogging(myTestRootDisposable, "#org")
 
         val console = ConsoleAppender()
-        console.layout = PatternLayout("%d [%p|%c|%C{1}] %m%n");
+        console.layout = PatternLayout("%d [%p|%c|%C{1}] %m%n")
         console.threshold = Level.ALL
         console.activateOptions()
         Logger.getRootLogger().addAppender(console)

@@ -353,7 +353,7 @@ fun MethodDescription.matches(ctor: Constructor<*>): Boolean {
         if (!p.matches(methodParams[i])) return false
     }
 
-    return true;
+    return true
 }
 
 fun MethodDescription.matches(method: Method): Boolean {

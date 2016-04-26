@@ -16,7 +16,7 @@ public inline fun <T> Lock.withLock(action: () -> T): T {
     try {
         return action()
     } finally {
-        unlock();
+        unlock()
     }
 }
 

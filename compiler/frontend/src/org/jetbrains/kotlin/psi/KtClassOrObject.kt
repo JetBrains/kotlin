@@ -107,14 +107,14 @@ abstract class KtClassOrObject :
     fun isAnnotation(): Boolean = hasModifier(KtTokens.ANNOTATION_KEYWORD)
 
     override fun delete() {
-        CheckUtil.checkWritable(this);
+        CheckUtil.checkWritable(this)
 
-        val file = getContainingKtFile();
+        val file = getContainingKtFile()
         if (!isTopLevel() || file.declarations.size > 1) {
             super.delete()
         }
         else {
-            file.delete();
+            file.delete()
         }
     }
 }

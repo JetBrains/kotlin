@@ -22,7 +22,7 @@ import java.util.Stack
 
 class ScopeContext(scope: JsScope) {
     private val rootScope = generateSequence(scope) { it.parent }.first { it is JsRootScope }
-    private val scopes = Stack<JsScope>();
+    private val scopes = Stack<JsScope>()
 
     init {
         scopes.push(scope)
