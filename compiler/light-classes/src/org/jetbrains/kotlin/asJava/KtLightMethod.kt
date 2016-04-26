@@ -24,9 +24,6 @@ import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.util.*
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.load.java.propertyNameByGetMethodName
-import org.jetbrains.kotlin.load.java.propertyNameBySetMethodName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 
@@ -98,19 +95,7 @@ sealed class KtLightMethodImpl(
 
     override fun setName(name: String): PsiElement? {
         val toRename = kotlinOrigin as? PsiNamedElement ?: throwCanNotModify()
-
-        val newName = if (toRename is KtProperty || toRename is KtParameter) {
-            val methodName = Name.guessByFirstCharacter(name)
-            val propertyName = toRename.name ?: ""
-            when {
-                name.startsWith("get") -> propertyNameByGetMethodName(methodName)
-                name.startsWith("set") -> propertyNameBySetMethodName(methodName, propertyName.startsWith("is"))
-                else -> null
-            }?.asString() ?: name
-        }
-        else name
-
-        toRename.setName(newName)
+        toRename.setName(propertyNameByAccessor(name, this) ?: name)
         return this
     }
 
