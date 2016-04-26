@@ -35,6 +35,12 @@ public class MultiFileHighlightingTestGenerated extends AbstractMultiFileHighlig
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/multiFileHighlighting"), Pattern.compile("^(.+)\\.kt$"), false);
     }
 
+    @TestMetadata("annotatedParameter.kt")
+    public void testAnnotatedParameter() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileHighlighting/annotatedParameter.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("copyResolveBeforeParams.kt")
     public void testCopyResolveBeforeParams() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileHighlighting/copyResolveBeforeParams.kt");

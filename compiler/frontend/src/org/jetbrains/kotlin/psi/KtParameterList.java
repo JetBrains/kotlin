@@ -39,6 +39,12 @@ public class KtParameterList extends KtElementImplStub<KotlinPlaceHolderStub<KtP
         return visitor.visitParameterList(this, data);
     }
 
+    @Override
+    public PsiElement getParent() {
+        KotlinPlaceHolderStub<KtParameterList> stub = getStub();
+        return stub != null ? stub.getParentStub().getPsi() : super.getParent();
+    }
+
     @NotNull
     public List<KtParameter> getParameters() {
         return getStubOrPsiChildrenAsList(KtStubElementTypes.VALUE_PARAMETER);
@@ -47,11 +53,6 @@ public class KtParameterList extends KtElementImplStub<KotlinPlaceHolderStub<KtP
     @NotNull
     public KtParameter addParameter(@NotNull KtParameter parameter) {
         return EditCommaSeparatedListHelper.INSTANCE.addItem(this, getParameters(), parameter);
-    }
-
-    @NotNull
-    public KtParameter addParameterAfter(@NotNull KtParameter parameter, @Nullable KtParameter anchor) {
-        return EditCommaSeparatedListHelper.INSTANCE.addItemAfter(this, getParameters(), parameter, anchor);
     }
 
     @NotNull
