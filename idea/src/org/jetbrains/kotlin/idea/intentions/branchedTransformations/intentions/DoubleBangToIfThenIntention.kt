@@ -73,11 +73,11 @@ class DoubleBangToIfThenIntention : SelfTargetingRangeIntention<KtPostfixExpress
         val exceptionLookupExpression = ChooseStringExpression(listOf(nullPtrExceptionText, kotlinNullPtrExceptionText))
         val project = element.project
         val builder = TemplateBuilderImpl(thrownExpression)
-        builder.replaceElement(thrownExpression, exceptionLookupExpression);
+        builder.replaceElement(thrownExpression, exceptionLookupExpression)
 
-        PsiDocumentManager.getInstance(project).commitAllDocuments();
-        PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.document);
-        editor.caretModel.moveToOffset(thrownExpression.node!!.startOffset);
+        PsiDocumentManager.getInstance(project).commitAllDocuments()
+        PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.document)
+        editor.caretModel.moveToOffset(thrownExpression.node!!.startOffset)
 
         TemplateManager.getInstance(project).startTemplate(editor, builder.buildInlineTemplate(), object: TemplateEditingAdapter() {
             override fun templateFinished(template: Template?, brokenOff: Boolean) {

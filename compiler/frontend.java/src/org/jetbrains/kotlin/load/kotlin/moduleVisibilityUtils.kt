@@ -71,11 +71,11 @@ fun isContainedByCompiledPartOfOurModule(descriptor: DeclarationDescriptor, outD
         val file = binaryClass.file
         if (file.fileSystem.protocol == StandardFileSystems.FILE_PROTOCOL) {
             val ioFile = VfsUtilCore.virtualToIoFile(file)
-            return ioFile.absolutePath.startsWith(outDirectory.absolutePath + File.separator);
+            return ioFile.absolutePath.startsWith(outDirectory.absolutePath + File.separator)
         }
     }
 
-    return false;
+    return false
 }
 
 fun getSourceElement(descriptor: DeclarationDescriptor): SourceElement =

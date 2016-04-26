@@ -105,6 +105,6 @@ class AnonymousObjectTransformationInfo internal constructor(
     }
 
     override fun createTransformer(inliningContext: InliningContext, sameModule: Boolean): ObjectTransformer<*> {
-        return AnonymousObjectTransformer(this, inliningContext, sameModule);
+        return AnonymousObjectTransformer(this, inliningContext, sameModule)
     }
 }

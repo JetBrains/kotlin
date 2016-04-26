@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import java.util.*
 
 abstract class WholeProjectModalAction<TData : Any>(val title: String) : IntentionAction {
-    private val LOG = Logger.getInstance(WholeProjectModalAction::class.java);
+    private val LOG = Logger.getInstance(WholeProjectModalAction::class.java)
 
     override final fun startInWriteAction() = false
 

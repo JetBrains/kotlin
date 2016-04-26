@@ -207,7 +207,7 @@ class VarianceCheckerCore(
             when (descriptor) {
                 is FunctionDescriptorImpl -> descriptor.visibility = Visibilities.PRIVATE_TO_THIS
                 is PropertyDescriptorImpl -> {
-                    descriptor.visibility = Visibilities.PRIVATE_TO_THIS;
+                    descriptor.visibility = Visibilities.PRIVATE_TO_THIS
                     for (accessor in descriptor.accessors) {
                         (accessor as PropertyAccessorDescriptorImpl).visibility = Visibilities.PRIVATE_TO_THIS
                     }

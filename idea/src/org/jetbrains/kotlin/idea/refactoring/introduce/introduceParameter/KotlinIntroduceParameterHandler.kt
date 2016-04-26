@@ -165,7 +165,7 @@ fun IntroduceParameterDescriptor.performRefactoring() {
             override fun performSilently(affectedFunctions: Collection<PsiElement>): Boolean = true
         }
 
-        val project = callable.project;
+        val project = callable.project
         val changeSignature = { runChangeSignature(project, callableDescriptor, config, callable, INTRODUCE_PARAMETER) }
         changeSignature.runRefactoringWithPostprocessing(project, "refactoring.changeSignature") {
             try {

@@ -90,7 +90,7 @@ class KotlinReferenceData(
 
     public override fun clone(): KotlinReferenceData {
         try {
-            return super<Cloneable>.clone() as KotlinReferenceData
+            return super.clone() as KotlinReferenceData
         }
         catch (e: CloneNotSupportedException) {
             throw RuntimeException()

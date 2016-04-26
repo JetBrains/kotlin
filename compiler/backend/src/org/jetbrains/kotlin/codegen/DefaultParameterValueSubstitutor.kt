@@ -156,7 +156,7 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
             val delegateOwner = delegateFunctionDescriptor.containingDeclaration
             if (delegateOwner is ClassDescriptor && delegateOwner.isCompanionObject) {
                 val singletonValue = StackValue.singleton(delegateOwner, typeMapper)
-                singletonValue.put(singletonValue.type, v);
+                singletonValue.put(singletonValue.type, v)
             }
         }
 

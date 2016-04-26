@@ -687,7 +687,7 @@ public inline fun CharSequence.matches(regex: Regex): Boolean = regex.matches(th
 internal fun CharSequence.regionMatchesImpl(thisOffset: Int, other: CharSequence, otherOffset: Int, length: Int, ignoreCase: Boolean): Boolean {
     if ((otherOffset < 0) || (thisOffset < 0) || (thisOffset > this.length - length)
             || (otherOffset > other.length - length)) {
-        return false;
+        return false
     }
 
     for (index in 0..length-1) {
@@ -779,9 +779,9 @@ public fun CharSequence.commonSuffixWith(other: CharSequence, ignoreCase: Boolea
         i++
     }
     if (this.hasSurrogatePairAt(thisLength - i - 1) || other.hasSurrogatePairAt(otherLength - i - 1)) {
-        i--;
+        i--
     }
-    return subSequence(thisLength - i, thisLength).toString();
+    return subSequence(thisLength - i, thisLength).toString()
 }
 
 

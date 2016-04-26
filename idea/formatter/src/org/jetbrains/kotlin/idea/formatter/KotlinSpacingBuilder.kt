@@ -38,7 +38,7 @@ class KotlinSpacingBuilder(val codeStyleSettings: CodeStyleSettings, val spacing
 
     inner class BasicSpacingBuilder() : SpacingBuilder(codeStyleSettings, KotlinLanguage.INSTANCE), Builder {
         override fun getSpacing(parent: ASTBlock, left: ASTBlock, right: ASTBlock): Spacing? {
-            return super<SpacingBuilder>.getSpacing(parent, left, right)
+            return super.getSpacing(parent, left, right)
         }
     }
 

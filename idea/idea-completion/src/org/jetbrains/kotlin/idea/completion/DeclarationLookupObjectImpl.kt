@@ -52,7 +52,7 @@ abstract class DeclarationLookupObjectImpl(
                 (psiElement as? PsiClass)?.qualifiedName?.let { FqName(it) }
         }
 
-    override fun toString() = super<DeclarationLookupObject>.toString() + " " + (descriptor ?: psiElement)
+    override fun toString() = super.toString() + " " + (descriptor ?: psiElement)
 
     override fun hashCode(): Int {
         return if (descriptor != null) descriptor.original.hashCode() else psiElement!!.hashCode()

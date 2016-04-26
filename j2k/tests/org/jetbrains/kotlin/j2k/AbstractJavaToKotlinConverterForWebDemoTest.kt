@@ -71,7 +71,7 @@ abstract class AbstractJavaToKotlinConverterForWebDemoTest : TestCase() {
                 CoreApplicationEnvironment.registerExtensionPoint(projectArea, PsiTreeChangePreprocessor.EP_NAME, PsiTreeChangePreprocessor::class.java)
                 CoreApplicationEnvironment.registerExtensionPoint(projectArea, PsiElementFinder.EP_NAME, PsiElementFinder::class.java)
             }
-        };
+        }
 
         javaCoreEnvironment.project.registerService(NullableNotNullManager::class.java, object : NullableNotNullManager() {
             override fun isNullable(owner: PsiModifierListOwner, checkBases: Boolean) = !isNotNull(owner, checkBases)

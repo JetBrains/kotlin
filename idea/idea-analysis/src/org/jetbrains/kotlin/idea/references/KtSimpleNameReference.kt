@@ -100,7 +100,7 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
 
     override fun handleElementRename(newElementName: String?): PsiElement {
         if (!canRename()) throw IncorrectOperationException()
-        if (newElementName == null) return expression;
+        if (newElementName == null) return expression
 
         // Do not rename if the reference corresponds to synthesized component function
         val expressionText = expression.text

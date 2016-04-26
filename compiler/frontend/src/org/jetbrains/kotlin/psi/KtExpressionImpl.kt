@@ -30,7 +30,7 @@ abstract class KtExpressionImpl(node: ASTNode) : KtElementImpl(node), KtExpressi
     }
 
     override fun replace(newElement: PsiElement): PsiElement {
-        return replaceExpression(this, newElement, { super<KtElementImpl>.replace(it) })
+        return replaceExpression(this, newElement, { super.replace(it) })
     }
 
     companion object {

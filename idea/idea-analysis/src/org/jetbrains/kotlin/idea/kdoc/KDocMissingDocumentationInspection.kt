@@ -50,7 +50,7 @@ class KDocMissingDocumentationInspection(): AbstractKotlinInspection() {
 
             if (element is KtNamedDeclaration) {
                 val nameIdentifier = element.nameIdentifier
-                val descriptor = element.resolveToDescriptor() as? MemberDescriptor;
+                val descriptor = element.resolveToDescriptor() as? MemberDescriptor
                 if (nameIdentifier != null && descriptor?.visibility == Visibilities.PUBLIC) {
                     val hasDocumentation = element.docComment != null ||
                                            (descriptor as? CallableMemberDescriptor)?.overriddenDescriptors

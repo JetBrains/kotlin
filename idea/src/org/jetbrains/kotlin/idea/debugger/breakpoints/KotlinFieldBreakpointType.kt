@@ -161,10 +161,10 @@ class KotlinFieldBreakpointType : JavaBreakpointType<KotlinPropertyBreakpointPro
     override fun getDisplayText(breakpoint: XLineBreakpoint<KotlinPropertyBreakpointProperties>): String? {
         val kotlinBreakpoint = BreakpointManager.getJavaBreakpoint(breakpoint) as? BreakpointWithHighlighter
         if (kotlinBreakpoint != null) {
-            return kotlinBreakpoint.description;
+            return kotlinBreakpoint.description
         }
         else {
-            return super.getDisplayText(breakpoint);
+            return super.getDisplayText(breakpoint)
         }
     }
 

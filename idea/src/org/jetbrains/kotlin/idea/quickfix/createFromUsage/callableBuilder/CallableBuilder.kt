@@ -87,7 +87,7 @@ class TypeCandidate(val theType: KotlinType, scope: HierarchicalScope? = null) {
         private set
 
     fun render(typeParameterNameMap: Map<TypeParameterDescriptor, String>, fakeFunction: FunctionDescriptor?) {
-        renderedType = theType.renderShort(typeParameterNameMap);
+        renderedType = theType.renderShort(typeParameterNameMap)
         renderedTypeParameters = typeParameters.map {
             RenderedTypeParameter(it, it.containingDeclaration == fakeFunction, typeParameterNameMap[it]!!)
         }
@@ -97,10 +97,10 @@ class TypeCandidate(val theType: KotlinType, scope: HierarchicalScope? = null) {
         val typeParametersInType = theType.getTypeParameters()
         if (scope == null) {
             typeParameters = typeParametersInType.toTypedArray()
-            renderedType = theType.renderShort(Collections.emptyMap());
+            renderedType = theType.renderShort(Collections.emptyMap())
         }
         else {
-            typeParameters = getTypeParameterNamesNotInScope(typeParametersInType, scope).toTypedArray();
+            typeParameters = getTypeParameterNamesNotInScope(typeParametersInType, scope).toTypedArray()
         }
     }
 
@@ -874,7 +874,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             }
             modifierList.setModifierProperty(PsiModifier.STATIC, needStatic)
 
-            JavaCodeStyleManager.getInstance(project).shortenClassReferences(newJavaMember);
+            JavaCodeStyleManager.getInstance(project).shortenClassReferences(newJavaMember)
 
             val descriptor = OpenFileDescriptor(project, targetClass.containingFile.virtualFile)
             val targetEditor = FileEditorManager.getInstance(project).openTextEditor(descriptor, true)!!

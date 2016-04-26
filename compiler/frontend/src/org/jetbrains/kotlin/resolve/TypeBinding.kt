@@ -85,11 +85,11 @@ private class ExplicitTypeBinding(
             // todo fix for List<*>
             val jetTypeReference = psiTypeArguments[index]
             val jetTypeElement = jetTypeReference?.typeElement
-            if (jetTypeElement == null) return@map null;
+            if (jetTypeElement == null) return@map null
 
             if (isErrorBinding) {
                 val nextJetType = trace[BindingContext.TYPE, jetTypeReference]
-                if (nextJetType == null) return@map null;
+                if (nextJetType == null) return@map null
 
                 return@map TypeArgumentBindingImpl(
                         TypeProjectionImpl(nextJetType),

@@ -28,7 +28,7 @@ class ExtraSteppingFilter : com.intellij.debugger.engine.ExtraSteppingFilter {
 
     override fun isApplicable(context: SuspendContext?): Boolean {
         if (context == null) {
-            return false;
+            return false
         }
 
         val debugProcess = context.debugProcess ?: return false
@@ -43,7 +43,7 @@ class ExtraSteppingFilter : com.intellij.debugger.engine.ExtraSteppingFilter {
     private fun shouldFilter(positionManager: KotlinPositionManager, location: Location): Boolean {
         val defaultStrata = location.declaringType()?.defaultStratum()
         if ("Kotlin" != defaultStrata) {
-            return false;
+            return false
         }
 
         val sourcePosition =
@@ -68,7 +68,7 @@ class ExtraSteppingFilter : com.intellij.debugger.engine.ExtraSteppingFilter {
             }
         }
 
-        return false;
+        return false
     }
 
     override fun getStepRequestDepth(context: SuspendContext?): Int {

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.asJava;
+package org.jetbrains.kotlin.asJava
 
-import com.intellij.psi.PsiClass;
-import org.jetbrains.kotlin.name.FqName;
+import com.intellij.psi.PsiClass
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
 interface KtLightClass : PsiClass, KtLightDeclaration<KtClassOrObject, PsiClass> {

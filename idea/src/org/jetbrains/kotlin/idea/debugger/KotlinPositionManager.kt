@@ -171,7 +171,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         if (start == null || end == null) return null
 
         val literalsOrFunctions = getLambdasAtLineIfAny(file, lineNumber)
-        if (literalsOrFunctions.isEmpty()) return null;
+        if (literalsOrFunctions.isEmpty()) return null
 
         val elementAt = file.findElementAt(start) ?: return null
         val typeMapper = KotlinDebuggerCaches.getOrCreateTypeMapper(elementAt)

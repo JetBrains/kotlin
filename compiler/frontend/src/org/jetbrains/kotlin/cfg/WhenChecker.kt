@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.cfg
 
-import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.*
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns

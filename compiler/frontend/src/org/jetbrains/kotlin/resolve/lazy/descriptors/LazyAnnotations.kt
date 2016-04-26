@@ -144,7 +144,7 @@ class LazyAnnotationDescriptor(
 
         @Suppress("UNCHECKED_CAST")
         return resolutionResults.resultingCall.valueArguments
-                .mapValues { val (valueParameter, resolvedArgument) = it;
+                .mapValues { val (valueParameter, resolvedArgument) = it
                     if (resolvedArgument == null) null
                     else c.annotationResolver.getAnnotationArgumentValue(c.trace, valueParameter, resolvedArgument)
                 }

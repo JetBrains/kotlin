@@ -96,7 +96,7 @@ class TypeResolver(
 
             val lazyKotlinType = LazyKotlinType()
             c.trace.record(BindingContext.TYPE, typeReference, lazyKotlinType)
-            return type(lazyKotlinType);
+            return type(lazyKotlinType)
         }
 
         val type = doResolvePossiblyBareType(c, typeReference)

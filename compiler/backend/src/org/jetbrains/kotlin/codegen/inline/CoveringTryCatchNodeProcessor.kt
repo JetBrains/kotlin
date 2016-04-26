@@ -71,7 +71,7 @@ abstract class CoveringTryCatchNodeProcessor(parameterSize: Int) {
         }
 
         Collections.sort<TryCatchBlockNodeInfo>(intervals, comp)
-        return intervals;
+        return intervals
     }
 
     protected fun substituteTryBlockNodes(node: MethodNode) {

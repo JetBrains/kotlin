@@ -550,7 +550,7 @@ class LazyJavaClassMemberScope(
         constructorDescriptor.initialize(valueParameters, getConstructorVisibility(classDescriptor))
         constructorDescriptor.setHasStableParameterNames(true)
         constructorDescriptor.returnType = classDescriptor.defaultType
-        c.components.javaResolverCache.recordConstructor(jClass, constructorDescriptor);
+        c.components.javaResolverCache.recordConstructor(jClass, constructorDescriptor)
         return constructorDescriptor
     }
 

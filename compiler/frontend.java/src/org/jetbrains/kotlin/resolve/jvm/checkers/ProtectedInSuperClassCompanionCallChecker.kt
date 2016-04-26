@@ -42,7 +42,7 @@ class ProtectedInSuperClassCompanionCallChecker : CallChecker {
             if (!parentClassDescriptors.any { DescriptorUtils.isSubclass(it, companionOwnerDescriptor) }) return
             // Called not within the same companion object or its owner class
             if (companionDescriptor !in parentClassDescriptors && companionOwnerDescriptor !in parentClassDescriptors) {
-                context.trace.report(ErrorsJvm.SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC.on(resolvedCall.call.callElement));
+                context.trace.report(ErrorsJvm.SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC.on(resolvedCall.call.callElement))
             }
         }
     }

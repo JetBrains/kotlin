@@ -131,7 +131,7 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
         val propertyType = getMethod.returnType!!
 
         val descriptor = MyPropertyDescriptor.create(ownerClass, getMethod.original, setMethod?.original, name, propertyType)
-        return result(descriptor, possibleGetMethodNames, setMethodName);
+        return result(descriptor, possibleGetMethodNames, setMethodName)
     }
 
     private fun isGoodGetMethod(descriptor: FunctionDescriptor): Boolean {

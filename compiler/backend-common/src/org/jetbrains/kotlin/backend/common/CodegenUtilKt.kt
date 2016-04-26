@@ -39,7 +39,7 @@ object CodegenUtilKt {
             toInterface: ClassDescriptor,
             delegateExpressionType: KotlinType? = null
     ): Map<CallableMemberDescriptor, CallableDescriptor> {
-        if (delegateExpressionType?.isDynamic() ?: false) return mapOf();
+        if (delegateExpressionType?.isDynamic() ?: false) return mapOf()
 
         return descriptor.defaultType.memberScope.getContributedDescriptors().asSequence()
             .filterIsInstance<CallableMemberDescriptor>()

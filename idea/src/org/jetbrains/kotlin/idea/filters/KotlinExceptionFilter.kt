@@ -154,7 +154,7 @@ class KotlinExceptionFilter(private val searchScope: GlobalSearchScope) : Filter
     }
 
     private fun readDebugInfo(bytes: ByteArray): SmapData? {
-        val cr = ClassReader(bytes);
+        val cr = ClassReader(bytes)
         var debugInfo: String? = null
         cr.accept(object : ClassVisitor(InlineCodegenUtil.API) {
             override fun visitSource(source: String?, debug: String?) {

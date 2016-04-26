@@ -62,7 +62,7 @@ abstract class AbstractProtoComparisonTest : UsefulTestCase() {
             p.printDifference(oldClassMap[name]!!, newClassMap[name]!!)
         }
 
-        KotlinTestUtils.assertEqualsToFile(File(testDataPath + File.separator + "result.out"), sb.toString());
+        KotlinTestUtils.assertEqualsToFile(File(testDataPath + File.separator + "result.out"), sb.toString())
     }
 
     private fun compileFileAndGetClasses(testPath: String, testDir: File, prefix: String): List<File> {

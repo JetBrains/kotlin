@@ -29,7 +29,7 @@ class ConsoleReplCommandReader : ReplCommandReader {
     }
 
     override fun readLine(next: ReplFromTerminal.WhatNextAfterOneLine): String? {
-        val prompt = if (next == ReplFromTerminal.WhatNextAfterOneLine.INCOMPLETE) "... " else ">>> ";
+        val prompt = if (next == ReplFromTerminal.WhatNextAfterOneLine.INCOMPLETE) "... " else ">>> "
         return consoleReader.readLine(prompt)
     }
 

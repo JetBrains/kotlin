@@ -42,10 +42,10 @@ class DelegationTranslator(
 ) : AbstractTranslator(context) {
 
     private val classDescriptor: ClassDescriptor =
-            BindingUtils.getClassDescriptor(context.bindingContext(), classDeclaration);
+            BindingUtils.getClassDescriptor(context.bindingContext(), classDeclaration)
 
     private val delegationBySpecifiers =
-            classDeclaration.getSuperTypeListEntries().filterIsInstance<KtDelegatedSuperTypeEntry>();
+            classDeclaration.getSuperTypeListEntries().filterIsInstance<KtDelegatedSuperTypeEntry>()
 
     private class Field (val name: String, val generateField: Boolean)
     private val fields = mutableMapOf<KtDelegatedSuperTypeEntry, Field>()
@@ -186,6 +186,6 @@ class DelegationTranslator(
     ) {
         val delegateRefName = context().getScopeForDescriptor(descriptor).declareName(delegateName)
         val delegateRef = JsNameRef(delegateRefName, JsLiteral.THIS)
-        properties.add(generateDelegateCall(descriptor, overriddenDescriptor, delegateRef, context()));
+        properties.add(generateDelegateCall(descriptor, overriddenDescriptor, delegateRef, context()))
     }
 }

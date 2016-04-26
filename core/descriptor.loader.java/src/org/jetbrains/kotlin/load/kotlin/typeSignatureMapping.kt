@@ -134,7 +134,7 @@ fun <T : Any> mapType(
         descriptor is TypeParameterDescriptor -> {
             val type = mapType(getRepresentativeUpperBound(descriptor),
                             factory, mode, typeMappingConfiguration, writeGenericType = DO_NOTHING_3, descriptorTypeWriter = null)
-            descriptorTypeWriter?.writeTypeVariable(descriptor.getName(), type);
+            descriptorTypeWriter?.writeTypeVariable(descriptor.getName(), type)
             return type
         }
 

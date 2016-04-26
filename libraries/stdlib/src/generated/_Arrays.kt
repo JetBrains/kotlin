@@ -3850,7 +3850,7 @@ public fun <T> Array<out T>.take(n: Int): List<T> {
     val list = ArrayList<T>(n)
     for (item in this) {
         if (count++ == n)
-            break;
+            break
         list.add(item)
     }
     return list
@@ -3867,7 +3867,7 @@ public fun ByteArray.take(n: Int): List<Byte> {
     val list = ArrayList<Byte>(n)
     for (item in this) {
         if (count++ == n)
-            break;
+            break
         list.add(item)
     }
     return list
@@ -3884,7 +3884,7 @@ public fun ShortArray.take(n: Int): List<Short> {
     val list = ArrayList<Short>(n)
     for (item in this) {
         if (count++ == n)
-            break;
+            break
         list.add(item)
     }
     return list
@@ -3901,7 +3901,7 @@ public fun IntArray.take(n: Int): List<Int> {
     val list = ArrayList<Int>(n)
     for (item in this) {
         if (count++ == n)
-            break;
+            break
         list.add(item)
     }
     return list
@@ -3918,7 +3918,7 @@ public fun LongArray.take(n: Int): List<Long> {
     val list = ArrayList<Long>(n)
     for (item in this) {
         if (count++ == n)
-            break;
+            break
         list.add(item)
     }
     return list
@@ -3935,7 +3935,7 @@ public fun FloatArray.take(n: Int): List<Float> {
     val list = ArrayList<Float>(n)
     for (item in this) {
         if (count++ == n)
-            break;
+            break
         list.add(item)
     }
     return list
@@ -3952,7 +3952,7 @@ public fun DoubleArray.take(n: Int): List<Double> {
     val list = ArrayList<Double>(n)
     for (item in this) {
         if (count++ == n)
-            break;
+            break
         list.add(item)
     }
     return list
@@ -3969,7 +3969,7 @@ public fun BooleanArray.take(n: Int): List<Boolean> {
     val list = ArrayList<Boolean>(n)
     for (item in this) {
         if (count++ == n)
-            break;
+            break
         list.add(item)
     }
     return list
@@ -3986,7 +3986,7 @@ public fun CharArray.take(n: Int): List<Char> {
     val list = ArrayList<Char>(n)
     for (item in this) {
         if (count++ == n)
-            break;
+            break
         list.add(item)
     }
     return list
@@ -4233,7 +4233,7 @@ public inline fun <T> Array<out T>.takeWhile(predicate: (T) -> Boolean): List<T>
     val list = ArrayList<T>()
     for (item in this) {
         if (!predicate(item))
-            break;
+            break
         list.add(item)
     }
     return list
@@ -4246,7 +4246,7 @@ public inline fun ByteArray.takeWhile(predicate: (Byte) -> Boolean): List<Byte> 
     val list = ArrayList<Byte>()
     for (item in this) {
         if (!predicate(item))
-            break;
+            break
         list.add(item)
     }
     return list
@@ -4259,7 +4259,7 @@ public inline fun ShortArray.takeWhile(predicate: (Short) -> Boolean): List<Shor
     val list = ArrayList<Short>()
     for (item in this) {
         if (!predicate(item))
-            break;
+            break
         list.add(item)
     }
     return list
@@ -4272,7 +4272,7 @@ public inline fun IntArray.takeWhile(predicate: (Int) -> Boolean): List<Int> {
     val list = ArrayList<Int>()
     for (item in this) {
         if (!predicate(item))
-            break;
+            break
         list.add(item)
     }
     return list
@@ -4285,7 +4285,7 @@ public inline fun LongArray.takeWhile(predicate: (Long) -> Boolean): List<Long> 
     val list = ArrayList<Long>()
     for (item in this) {
         if (!predicate(item))
-            break;
+            break
         list.add(item)
     }
     return list
@@ -4298,7 +4298,7 @@ public inline fun FloatArray.takeWhile(predicate: (Float) -> Boolean): List<Floa
     val list = ArrayList<Float>()
     for (item in this) {
         if (!predicate(item))
-            break;
+            break
         list.add(item)
     }
     return list
@@ -4311,7 +4311,7 @@ public inline fun DoubleArray.takeWhile(predicate: (Double) -> Boolean): List<Do
     val list = ArrayList<Double>()
     for (item in this) {
         if (!predicate(item))
-            break;
+            break
         list.add(item)
     }
     return list
@@ -4324,7 +4324,7 @@ public inline fun BooleanArray.takeWhile(predicate: (Boolean) -> Boolean): List<
     val list = ArrayList<Boolean>()
     for (item in this) {
         if (!predicate(item))
-            break;
+            break
         list.add(item)
     }
     return list
@@ -4337,7 +4337,7 @@ public inline fun CharArray.takeWhile(predicate: (Char) -> Boolean): List<Char> 
     val list = ArrayList<Char>()
     for (item in this) {
         if (!predicate(item))
-            break;
+            break
         list.add(item)
     }
     return list

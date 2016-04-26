@@ -32,7 +32,7 @@ abstract class PackageFragmentDescriptorImpl(
             visitor.visitPackageFragmentDescriptor(this, data)
 
     override fun getContainingDeclaration(): ModuleDescriptor {
-        return super<DeclarationDescriptorNonRootImpl>.getContainingDeclaration() as ModuleDescriptor
+        return super.getContainingDeclaration() as ModuleDescriptor
     }
 
     override fun getSource(): SourceElement {

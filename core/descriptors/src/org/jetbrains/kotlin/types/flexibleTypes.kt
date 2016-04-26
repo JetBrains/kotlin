@@ -139,7 +139,7 @@ abstract class DelegatingFlexibleType protected constructor(
         @Suppress("UNCHECKED_CAST")
         return when(capabilityClass) {
             Flexibility::class.java, SubtypingRepresentatives::class.java -> this as T
-            else -> super<DelegatingType>.getCapability(capabilityClass)
+            else -> super.getCapability(capabilityClass)
         }
     }
 

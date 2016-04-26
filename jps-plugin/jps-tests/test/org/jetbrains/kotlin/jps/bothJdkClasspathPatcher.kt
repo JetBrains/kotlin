@@ -37,7 +37,7 @@ fun disableJava6FileManager() {
 }
 
 private fun setFinalStaticToNull(field: Field) {
-    field.isAccessible = true;
+    field.isAccessible = true
 
     val modifiersField = (Field::class.java).getDeclaredField("modifiers")
     modifiersField.isAccessible = true

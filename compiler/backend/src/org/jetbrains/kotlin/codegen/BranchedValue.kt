@@ -43,13 +43,13 @@ open class BranchedValue(
         v.visitLabel(branchJumpLabel)
         v.iconst(0)
         v.visitLabel(endLabel)
-        coerceTo(type, v);
+        coerceTo(type, v)
     }
 
     open fun condJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
         if (arg1 is CondJump) arg1.condJump(jumpLabel, v, jumpIfFalse) else arg1.put(operandType, v)
         arg2?.put(operandType, v)
-        v.visitJumpInsn(patchOpcode(if (jumpIfFalse) opcode else negatedOperations[opcode]!!, v), jumpLabel);
+        v.visitJumpInsn(patchOpcode(if (jumpIfFalse) opcode else negatedOperations[opcode]!!, v), jumpLabel)
     }
 
     open fun loopJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {

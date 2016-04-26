@@ -160,7 +160,7 @@ class KotlinChangeSignatureData(
     }
 
     override fun canChangeVisibility(): Boolean {
-        if (DescriptorUtils.isLocal(baseDescriptor)) return false;
+        if (DescriptorUtils.isLocal(baseDescriptor)) return false
         val parent = baseDescriptor.containingDeclaration
         return !(baseDescriptor is AnonymousFunctionDescriptor || parent is ClassDescriptor && parent.kind == ClassKind.INTERFACE)
     }

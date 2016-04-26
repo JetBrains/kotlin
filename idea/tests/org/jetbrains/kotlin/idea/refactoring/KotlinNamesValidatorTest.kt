@@ -33,31 +33,31 @@ class KotlinNamesValidatorTest : LightCodeInsightFixtureTestCase() {
     }
 
     fun testKeywords() {
-        Assert.assertTrue(isKeyword("val"));
-        Assert.assertTrue(isKeyword("class"));
-        Assert.assertTrue(isKeyword("fun"));
+        Assert.assertTrue(isKeyword("val"))
+        Assert.assertTrue(isKeyword("class"))
+        Assert.assertTrue(isKeyword("fun"))
 
-        Assert.assertFalse(isKeyword("constructor"));
-        Assert.assertFalse(isKeyword("123"));
-        Assert.assertFalse(isKeyword("a.c"));
-        Assert.assertFalse(isKeyword("-"));
+        Assert.assertFalse(isKeyword("constructor"))
+        Assert.assertFalse(isKeyword("123"))
+        Assert.assertFalse(isKeyword("a.c"))
+        Assert.assertFalse(isKeyword("-"))
     }
 
     fun testIdentifiers() {
-        Assert.assertTrue(isIdentifier("abc"));
-        Assert.assertTrue(isIdentifier("q_q"));
-        Assert.assertTrue(isIdentifier("constructor"));
-        Assert.assertTrue(isIdentifier("`val`"));
+        Assert.assertTrue(isIdentifier("abc"))
+        Assert.assertTrue(isIdentifier("q_q"))
+        Assert.assertTrue(isIdentifier("constructor"))
+        Assert.assertTrue(isIdentifier("`val`"))
 
-        Assert.assertFalse(isIdentifier("val"));
-        Assert.assertFalse(isIdentifier("class"));
-        Assert.assertFalse(isIdentifier("fun"));
+        Assert.assertFalse(isIdentifier("val"))
+        Assert.assertFalse(isIdentifier("class"))
+        Assert.assertFalse(isIdentifier("fun"))
 
-        Assert.assertFalse(isIdentifier("123"));
-        Assert.assertFalse(isIdentifier("a.c"));
-        Assert.assertFalse(isIdentifier("-"));
-        Assert.assertFalse(isIdentifier("``"));
-        Assert.assertFalse(isIdentifier(""));
-        Assert.assertFalse(isIdentifier("  '"));
+        Assert.assertFalse(isIdentifier("123"))
+        Assert.assertFalse(isIdentifier("a.c"))
+        Assert.assertFalse(isIdentifier("-"))
+        Assert.assertFalse(isIdentifier("``"))
+        Assert.assertFalse(isIdentifier(""))
+        Assert.assertFalse(isIdentifier("  '"))
     }
 }

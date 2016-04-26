@@ -385,7 +385,7 @@ class KotlinChangeSignatureDialog(
                                             methodName,
                                             myDefaultValueContext,
                                             false)
-        changeInfo.primaryPropagationTargets = myMethodsToPropagateParameters ?: emptyList();
+        changeInfo.primaryPropagationTargets = myMethodsToPropagateParameters ?: emptyList()
         return KotlinChangeSignatureProcessor(myProject, changeInfo, commandName ?: title)
     }
 

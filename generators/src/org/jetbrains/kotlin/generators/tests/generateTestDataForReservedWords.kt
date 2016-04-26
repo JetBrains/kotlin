@@ -375,7 +375,7 @@ val SHOULD_NOT_BE_ESCAPED = JsFunctionScope.RESERVED_WORDS.filter { it !in SHOUL
 val s1 = SHOULD_BE_ESCAPED.cyclicSequence()
 val s2 = SHOULD_NOT_BE_ESCAPED.cyclicSequence()
 
-val PORTION_PART_SIZE = 2;
+val PORTION_PART_SIZE = 2
 
 fun nextKeywordPortion() = s1.take(PORTION_PART_SIZE).toList() + s2.take(PORTION_PART_SIZE).toList()
 

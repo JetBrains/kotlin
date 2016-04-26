@@ -26,6 +26,6 @@ interface DeclarationChecker {
             declaration: KtDeclaration,
             descriptor: DeclarationDescriptor,
             diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext);
+            bindingContext: BindingContext)
 
 }

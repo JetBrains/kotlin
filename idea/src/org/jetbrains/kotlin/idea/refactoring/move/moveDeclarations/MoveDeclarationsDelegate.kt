@@ -95,7 +95,7 @@ sealed class MoveDeclarationsDelegate {
         ) {
             val usageIterator = usages.iterator()
             while (usageIterator.hasNext()) {
-                val usage = usageIterator.next();
+                val usage = usageIterator.next()
                 val element = usage.element ?: continue
 
                 val isConflict = when (usage) {

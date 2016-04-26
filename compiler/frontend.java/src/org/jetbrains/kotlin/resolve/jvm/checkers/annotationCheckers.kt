@@ -49,7 +49,7 @@ object RepeatableAnnotationChecker: AdditionalAnnotationChecker {
             if (duplicateAnnotation
                 && classDescriptor.isRepeatableAnnotation()
                 && classDescriptor.getAnnotationRetention() != KotlinRetention.SOURCE) {
-                trace.report(ErrorsJvm.NON_SOURCE_REPEATED_ANNOTATION.on(entry));
+                trace.report(ErrorsJvm.NON_SOURCE_REPEATED_ANNOTATION.on(entry))
             }
 
             existingTargetsForAnnotation.add(useSiteTarget)
