@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.imports
 
-import com.google.common.collect.HashMultimap
 import com.intellij.lang.ImportOptimizer
 import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.psi.PsiElement
@@ -155,116 +154,16 @@ class KotlinImportOptimizer() : ImportOptimizer {
             return visitor.descriptors
         }
 
-        fun prepareOptimizedImports(
-                file: KtFile,
-                descriptorsToImport: Collection<DeclarationDescriptor>
-        ): List<ImportPath>? {
-            val importInsertHelper = ImportInsertHelper.getInstance(file.project)
-            val codeStyleSettings = KotlinCodeStyleSettings.getInstance(file.project)
-            val aliasImports = buildAliasImportMap(file)
-
-            val importsToGenerate = HashSet<ImportPath>()
-
-            val descriptorsByParentFqName = HashMultimap.create<FqName, DeclarationDescriptor>()
-            for (descriptor in descriptorsToImport) {
-                val fqName = descriptor.importableFqName!!
-                val container = descriptor.containingDeclaration
-                val parentFqName = fqName.parent()
-                val canUseStarImport = when {
-                    parentFqName.isRoot -> false
-                    (container as? ClassDescriptor)?.kind == ClassKind.OBJECT -> false
-                    else -> true
-                }
-                if (canUseStarImport) {
-                    descriptorsByParentFqName.put(parentFqName, descriptor)
-                }
-                else {
-                    importsToGenerate.add(ImportPath(fqName, false))
-                }
+        fun prepareOptimizedImports(file: KtFile,
+                                    descriptorsToImport: Collection<DeclarationDescriptor>): List<ImportPath>? {
+            val settings = KotlinCodeStyleSettings.getInstance(file.project)
+            return prepareOptimizedImports(
+                    file,
+                    descriptorsToImport,
+                    settings.NAME_COUNT_TO_USE_STAR_IMPORT,
+                    settings.NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS) { fqName ->
+                fqName.asString() in settings.PACKAGES_TO_USE_STAR_IMPORTS
             }
-
-            val classNamesToCheck = HashSet<FqName>()
-
-            fun isImportedByDefault(fqName: FqName) = importInsertHelper.isImportedWithDefault(ImportPath(fqName, false), file)
-
-            for (parentFqName in descriptorsByParentFqName.keys()) {
-                val descriptors = descriptorsByParentFqName[parentFqName]
-                val fqNames = descriptors.map { it.importableFqName!! }.toSet()
-                val isMember = descriptors.first().containingDeclaration is ClassDescriptor
-                val nameCountToUseStar = if (isMember)
-                    codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS
-                else
-                    codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT
-                val explicitImports = fqNames.size < nameCountToUseStar
-                                      && parentFqName.asString() !in codeStyleSettings.PACKAGES_TO_USE_STAR_IMPORTS
-                if (explicitImports) {
-                    for (fqName in fqNames) {
-                        if (!isImportedByDefault(fqName)) {
-                            importsToGenerate.add(ImportPath(fqName, false))
-                        }
-                    }
-                }
-                else {
-                    for (descriptor in descriptors) {
-                        if (descriptor is ClassDescriptor) {
-                            classNamesToCheck.add(descriptor.importableFqName!!)
-                        }
-                    }
-
-                    if (!fqNames.all(::isImportedByDefault)) {
-                        importsToGenerate.add(ImportPath(parentFqName, true))
-                    }
-                }
-            }
-
-            // now check that there are no conflicts and all classes are really imported
-            val fileWithImportsText = buildString {
-                append("package ").append(file.packageFqName.toUnsafe().render()).append("\n")
-                importsToGenerate.filter { it.isAllUnder }.map { "import " + it.pathStr }.joinTo(this, "\n")
-            }
-            val fileWithImports = KtPsiFactory(file).createAnalyzableFile("Dummy.kt", fileWithImportsText, file)
-            val scope = fileWithImports.getResolutionFacade().getFileResolutionScope(fileWithImports)
-
-            for (fqName in classNamesToCheck) {
-                if (scope.findClassifier(fqName.shortName(), NoLookupLocation.FROM_IDE)?.importableFqName != fqName) {
-                    // add explicit import if failed to import with * (or from current package)
-                    importsToGenerate.add(ImportPath(fqName, false))
-
-                    val parentFqName = fqName.parent()
-
-                    for (descriptor in descriptorsByParentFqName[parentFqName].filter { it.importableFqName == fqName }) {
-                        descriptorsByParentFqName.remove(parentFqName, descriptor)
-                    }
-
-                    if (descriptorsByParentFqName[parentFqName].isEmpty()) { // star import is not really needed
-                        importsToGenerate.remove(ImportPath(parentFqName, true))
-                    }
-                }
-            }
-
-            //TODO: drop unused aliases?
-            aliasImports.mapTo(importsToGenerate) { ImportPath(it.value, false, it.key)}
-
-            val sortedImportsToGenerate = importsToGenerate.sortedWith(importInsertHelper.importSortComparator)
-
-            // check if no changes to imports required
-            val oldImports = file.importDirectives
-            if (oldImports.size == sortedImportsToGenerate.size && oldImports.map { it.importPath } == sortedImportsToGenerate) return null
-
-            return sortedImportsToGenerate
-        }
-
-        private fun buildAliasImportMap(file: KtFile): Map<Name, FqName> {
-            val imports = file.importDirectives
-            val aliasImports = HashMap<Name, FqName>()
-            for (import in imports) {
-                val path = import.importPath ?: continue
-                val aliasName = path.alias
-                if (aliasName != null && aliasName != path.fqnPart().shortName() /* we do not keep trivial aliases */) {
-                    aliasImports.put(aliasName, path.fqnPart())
-                }
-            }
-            return aliasImports
         }
 
         fun replaceImports(file: KtFile, imports: List<ImportPath>) {

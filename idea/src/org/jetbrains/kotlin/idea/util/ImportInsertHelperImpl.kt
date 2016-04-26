@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,13 +24,13 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.core.targetDescriptors
+import org.jetbrains.kotlin.idea.imports.ImportPathComparator
 import org.jetbrains.kotlin.idea.imports.getImportableTargets
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.refactoring.fqName.isImported
 import org.jetbrains.kotlin.idea.util.ImportDescriptorResult
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
-import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.getFileResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
@@ -57,29 +57,6 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
 
     override val importSortComparator: Comparator<ImportPath>
         get() = ImportPathComparator
-
-    private object ImportPathComparator : Comparator<ImportPath> {
-        override fun compare(import1: ImportPath, import2: ImportPath): Int {
-            // alias imports placed last
-            if (import1.hasAlias() != import2.hasAlias()) {
-                return if (import1.hasAlias()) +1 else -1
-            }
-
-            // standard library imports last
-            val stdlib1 = isJavaOrKotlinStdlibImport(import1)
-            val stdlib2 = isJavaOrKotlinStdlibImport(import2)
-            if (stdlib1 != stdlib2) {
-                return if (stdlib1) +1 else -1
-            }
-
-            return import1.toString().compareTo(import2.toString())
-        }
-
-        private fun isJavaOrKotlinStdlibImport(path: ImportPath): Boolean {
-            val s = path.pathStr
-            return s.startsWith("java.") || s.startsWith("javax.")|| s.startsWith("kotlin.")
-        }
-    }
 
     override fun isImportedWithDefault(importPath: ImportPath, contextFile: KtFile): Boolean {
         val defaultImports = contextFile.platform.defaultModuleParameters.defaultImports
@@ -399,7 +376,7 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
             val psiFactory = KtPsiFactory(project)
             if (file is KtCodeFragment) {
                 val newDirective = psiFactory.createImportDirective(importPath)
-                runWriteAction { file.addImportsFromString(newDirective.text) }
+                file.addImportsFromString(newDirective.text)
                 return newDirective
             }
 
@@ -408,10 +385,8 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
                 val newDirective = psiFactory.createImportDirective(importPath)
                 val imports = importList.imports
                 if (imports.isEmpty()) { //TODO: strange hack
-                    return runWriteAction<KtImportDirective> {
-                        importList.add(psiFactory.createNewLine())
-                        importList.add(newDirective) as KtImportDirective
-                    }
+                    importList.add(psiFactory.createNewLine())
+                    return importList.add(newDirective) as KtImportDirective
                 }
                 else {
                     val insertAfter = imports
@@ -419,7 +394,7 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
                                 val directivePath = it.importPath
                                 directivePath != null && ImportPathComparator.compare(directivePath, importPath) <= 0
                             }
-                    return runWriteAction { importList.addAfter(newDirective, insertAfter) as KtImportDirective }
+                    return importList.addAfter(newDirective, insertAfter) as KtImportDirective
                 }
             }
             else {

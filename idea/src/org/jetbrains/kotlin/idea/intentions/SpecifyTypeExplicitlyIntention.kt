@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.util.*
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -125,7 +126,7 @@ class SpecifyTypeExplicitlyIntention : SelfTargetingIntention<KtCallableDeclarat
                 override fun templateFinished(template: Template?, brokenOff: Boolean) {
                     val typeRef = declaration.typeReference
                     if (typeRef != null && typeRef.isValid) {
-                        ShortenReferences.DEFAULT.process(typeRef)
+                        runWriteAction { ShortenReferences.DEFAULT.process(typeRef) }
                     }
                 }
             }

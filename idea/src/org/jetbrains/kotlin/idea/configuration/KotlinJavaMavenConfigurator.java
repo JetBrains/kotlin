@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.dom.model.MavenDomPlugin;
-import org.jetbrains.kotlin.idea.project.ProjectStructureUtil;
 import org.jetbrains.kotlin.resolve.TargetPlatform;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 
@@ -35,7 +34,7 @@ public class KotlinJavaMavenConfigurator extends KotlinMavenConfigurator {
 
     @Override
     protected boolean isKotlinModule(@NotNull Module module) {
-        return ConfigureKotlinInProjectUtilsKt.hasKotlinRuntimeInScope(module);
+        return ConfigureKotlinInProjectUtilsKt.hasKotlinJvmRuntimeInScope(module);
     }
 
     @Override
