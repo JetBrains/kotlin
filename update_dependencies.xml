@@ -187,6 +187,8 @@
     </target>
 
     <target name="fetch-third-party" depends="make-dependency-dirs, make-native-platform-uberjar, fetch-idea-artifacts-for-compiler-tests">
+        <antcall target="override-version"/>
+
         <!-- ProGuard -->
         <get-maven-library prefix="net/sf/proguard" lib="proguard-base" version="5.1" target.jar.name.base="proguard" src="false"/>
         <get-maven-library prefix="net/sf/proguard" lib="proguard-anttask" version="5.1" target.jar.name.base="proguard-anttask" src="false"/>
@@ -321,8 +323,6 @@
             <arg value="${dependencies}/bootstrap-compiler/Kotlin/kotlinc/bin"/>
             <arg line="-name 'kotlin*' ! -name '*.bat' -exec chmod a+x '{}' ;"/>
         </exec>
-
-        <antcall target="override-version"/>
 
         <download-or-build-markdown-parser/>
     </target>
@@ -947,6 +947,7 @@
                 <not>
                     <istrue value="${bootstrap.build.no.tests}"/>
                 </not>
+                <isset property="teamcity.version"/>
             </and>
         </condition>
 
