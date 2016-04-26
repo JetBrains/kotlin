@@ -31,14 +31,15 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
 public class KotlinFunctionParameterTableModel extends KotlinCallableParameterTableModel {
-    public KotlinFunctionParameterTableModel(KotlinMethodDescriptor methodDescriptor, PsiElement context) {
+    public KotlinFunctionParameterTableModel(KotlinMethodDescriptor methodDescriptor, PsiElement typeContext, PsiElement defaultValueContext) {
         super(methodDescriptor,
-              context,
-              new NameColumn(context.getProject()),
-              new TypeColumn(context.getProject(), KotlinFileType.INSTANCE),
-              new DefaultValueColumn<KotlinParameterInfo, ParameterTableModelItemBase<KotlinParameterInfo>>(context.getProject(),
+              typeContext,
+              defaultValueContext,
+              new NameColumn(typeContext.getProject()),
+              new TypeColumn(typeContext.getProject(), KotlinFileType.INSTANCE),
+              new DefaultValueColumn<KotlinParameterInfo, ParameterTableModelItemBase<KotlinParameterInfo>>(typeContext.getProject(),
                                                                                                             KotlinFileType.INSTANCE),
-              new ReceiverColumn(context.getProject(), methodDescriptor));
+              new ReceiverColumn(typeContext.getProject(), methodDescriptor));
     }
 
     @Override
