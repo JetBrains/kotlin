@@ -240,8 +240,10 @@ class DeserializedClassDescriptor(
             }
         }
 
-        override fun getClassDescriptor(name: Name): ClassifierDescriptor? =
-                classDescriptor.enumEntries?.findEnumEntry(name) ?: classDescriptor.nestedClasses?.findNestedClass(name)
+        override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
+            recordLookup(name, location)
+            return classDescriptor.enumEntries?.findEnumEntry(name) ?: classDescriptor.nestedClasses?.findNestedClass(name)
+        }
 
         override fun addClassDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean) {
             result.addAll(classDescriptor.nestedClasses?.all().orEmpty())

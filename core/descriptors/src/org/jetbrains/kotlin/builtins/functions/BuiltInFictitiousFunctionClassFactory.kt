@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.ClassDescriptorFactory
 import org.jetbrains.kotlin.storage.StorageManager
 
@@ -61,6 +62,12 @@ class BuiltInFictitiousFunctionClassFactory(
             }
             return result
         }
+    }
+
+    override fun shouldCreateClass(packageFqName: FqName, name: Name): Boolean {
+        val string = name.asString()
+        return (string.startsWith("Function") || string.startsWith("KFunction")) // an optimization
+               && parseClassName(string, packageFqName) != null
     }
 
     override fun createClass(classId: ClassId): ClassDescriptor? {
