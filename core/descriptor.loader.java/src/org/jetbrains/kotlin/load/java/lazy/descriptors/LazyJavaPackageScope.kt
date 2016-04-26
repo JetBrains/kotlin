@@ -103,12 +103,10 @@ class LazyJavaPackageScope(
         override fun hashCode() = name.hashCode()
     }
 
-    override fun getContributedClassifier(name: Name, location: LookupLocation) = findClassifier(name, null, location)
+    override fun getContributedClassifier(name: Name, location: LookupLocation) = findClassifier(name, null)
 
-    private fun findClassifier(name: Name, javaClass: JavaClass?, location: LookupLocation): ClassDescriptor? {
+    private fun findClassifier(name: Name, javaClass: JavaClass?): ClassDescriptor? {
         if (!SpecialNames.isSafeIdentifier(name)) return null
-
-        recordLookup(name, location)
 
         val knownClassNamesInPackage = knownClassNamesInPackage()
         if (javaClass == null && knownClassNamesInPackage != null && name.asString() !in knownClassNamesInPackage) {
@@ -118,8 +116,7 @@ class LazyJavaPackageScope(
         return classes(FindClassRequest(name, javaClass))
     }
 
-    internal fun findClassifierByJavaClass(javaClass: JavaClass) =
-            findClassifier(javaClass.name, javaClass, NoLookupLocation.FROM_JAVA_LOADER)
+    internal fun findClassifierByJavaClass(javaClass: JavaClass) = findClassifier(javaClass.name, javaClass)
 
     override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> = emptyList()
 
