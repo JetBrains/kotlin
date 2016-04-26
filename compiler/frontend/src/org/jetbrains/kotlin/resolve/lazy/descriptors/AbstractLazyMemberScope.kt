@@ -17,9 +17,11 @@
 package org.jetbrains.kotlin.resolve.lazy.descriptors
 
 import com.google.common.collect.Sets
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
-import org.jetbrains.kotlin.incremental.record
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -166,6 +168,8 @@ protected constructor(
         return result.toReadOnlyList()
     }
 
+    abstract fun recordLookup(name: Name, from: LookupLocation)
+
     // Do not change this, override in concrete subclasses:
     // it is very easy to compromise laziness of this class, and fail all the debugging
     // a generic implementation can't do this properly
@@ -179,9 +183,5 @@ protected constructor(
 
         p.popIndent()
         p.println("}")
-    }
-
-    private fun recordLookup(name: Name, from: LookupLocation) {
-        c.lookupTracker.record(from, thisDescriptor, name)
     }
 }

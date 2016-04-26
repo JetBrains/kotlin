@@ -266,7 +266,7 @@ class DeserializedClassDescriptor(
         }
 
         private fun recordLookup(name: Name, from: LookupLocation) {
-            c.components.lookupTracker.record(from, c.containingDeclaration, name)
+            c.components.lookupTracker.record(from, classDescriptor, name)
         }
     }
 

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.incremental.record
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -38,7 +39,6 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProv
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.resolve.VarianceCheckerCore
 import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.storage.NullableLazyValue
 import org.jetbrains.kotlin.types.DeferredType
@@ -314,6 +314,10 @@ open class LazyClassMemberScope(
 
     protected fun setDeferredReturnType(descriptor: ConstructorDescriptorImpl) {
         descriptor.returnType = DeferredType.create(c.storageManager, trace, { thisDescriptor.getDefaultType() })
+    }
+
+    override fun recordLookup(name: Name, from: LookupLocation) {
+        c.lookupTracker.record(from, thisDescriptor, name)
     }
 
     // Do not add details here, they may compromise the laziness during debugging

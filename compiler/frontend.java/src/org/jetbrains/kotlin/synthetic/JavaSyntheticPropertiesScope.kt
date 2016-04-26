@@ -94,7 +94,7 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
     private fun syntheticPropertyInClassNotCached(ownerClass: ClassDescriptor, name: Name): SyntheticPropertyHolder {
 
         fun result(descriptor: PropertyDescriptor?, getterNames: List<Name>, setterName: Name? = null): SyntheticPropertyHolder {
-            if (lookupTracker == LookupTracker.DO_NOTHING) {
+            if (lookupTracker === LookupTracker.DO_NOTHING) {
                 return if (descriptor == null) SyntheticPropertyHolder.EMPTY else SyntheticPropertyHolder(descriptor, emptyList())
             }
 

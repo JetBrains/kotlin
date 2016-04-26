@@ -60,5 +60,5 @@ enum class NoLookupLocation : LookupLocation {
     WHEN_FIND_BY_FQNAME,
     WHEN_GET_COMPANION_OBJECT;
 
-    override val location: LocationInfo? = null
+    override val location: LocationInfo? get() = null
 }
