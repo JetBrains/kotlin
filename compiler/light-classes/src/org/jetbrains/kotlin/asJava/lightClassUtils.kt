@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.asJava
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.java.propertyNameByGetMethodName
+import org.jetbrains.kotlin.load.java.propertyNameBySetMethodName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -134,4 +136,17 @@ fun KtAnnotationEntry.toLightAnnotation(): PsiAnnotation? {
     val ktDeclaration = getStrictParentOfType<KtModifierList>()?.parent as? KtDeclaration ?: return null
     val lightElement = ktDeclaration.toLightElements().firstOrNull() as? PsiModifierListOwner ?: return null
     return lightElement.modifierList?.annotations?.firstOrNull { it is KtLightAnnotation && it.kotlinOrigin == this }
+}
+
+fun propertyNameByAccessor(name: String, accessor: KtLightMethod): String? {
+    val toRename = accessor.kotlinOrigin ?: return null
+    if (toRename !is KtProperty && toRename !is KtParameter) return null
+
+    val methodName = Name.guessByFirstCharacter(name)
+    val propertyName = toRename.name ?: ""
+    return when {
+        name.startsWith("get") -> propertyNameByGetMethodName(methodName)
+        name.startsWith("set") -> propertyNameBySetMethodName(methodName, propertyName.startsWith("is"))
+        else -> null
+    }?.asString()
 }
