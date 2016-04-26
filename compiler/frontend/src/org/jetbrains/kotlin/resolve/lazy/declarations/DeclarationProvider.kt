@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.lazy.data.KtClassLikeInfo
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtTypeAlias
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 
 interface DeclarationProvider {
@@ -31,4 +32,6 @@ interface DeclarationProvider {
     fun getPropertyDeclarations(name: Name): Collection<KtProperty>
 
     fun getClassOrObjectDeclarations(name: Name): Collection<KtClassLikeInfo>
+
+    fun getTypeAliasDeclarations(name: Name): Collection<KtTypeAlias>
 }

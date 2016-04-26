@@ -19012,6 +19012,45 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             }
         }
 
+        @TestMetadata("compiler/testData/diagnostics/tests/typealias")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Typealias extends AbstractDiagnosticsTest {
+            public void testAllFilesPresentInTypealias() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/typealias"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("parameterRestrictions.kt")
+            public void testParameterRestrictions() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/parameterRestrictions.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("parameterSubstitution.kt")
+            public void testParameterSubstitution() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/parameterSubstitution.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("recursive.kt")
+            public void testRecursive() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/recursive.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simpleTypeAlias.kt")
+            public void testSimpleTypeAlias() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/simpleTypeAlias.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("substitutionVariance.kt")
+            public void testSubstitutionVariance() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/substitutionVariance.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/diagnostics/tests/unit")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

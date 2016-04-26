@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.Variance.*
 import org.jetbrains.kotlin.types.typeUtil.isArrayOfNothing
+import java.util.*
 
 class TypeResolver(
         private val annotationResolver: AnnotationResolver,
@@ -64,7 +65,11 @@ class TypeResolver(
 
     fun resolveType(scope: LexicalScope, typeReference: KtTypeReference, trace: BindingTrace, checkBounds: Boolean): KotlinType {
         // bare types are not allowed
-        return resolveType(TypeResolutionContext(scope, trace, checkBounds, false, typeReference.suppressDiagnosticsInDebugMode()), typeReference)
+        return resolveType(TypeResolutionContext(scope, trace, checkBounds, false, typeReference.suppressDiagnosticsInDebugMode(), false), typeReference)
+    }
+
+    fun resolveAbbreviatedType(scope: LexicalScope, typeReference: KtTypeReference, trace: BindingTrace, checkBounds: Boolean): KotlinType {
+        return resolveType(TypeResolutionContext(scope, trace, checkBounds, false, typeReference.suppressDiagnosticsInDebugMode(), true), typeReference)
     }
 
     private fun resolveType(c: TypeResolutionContext, typeReference: KtTypeReference): KotlinType {
@@ -181,7 +186,10 @@ class TypeResolver(
 
                         type(resolveTypeForTypeParameter(c, annotations, classifierDescriptor, referenceExpression, type))
                     }
-                    is ClassDescriptor -> resolveTypeForClass(c, annotations, classifierDescriptor, type, qualifierResolutionResults)
+                    is ClassDescriptor ->
+                        resolveTypeForClass(c, annotations, classifierDescriptor, type, qualifierResolutionResults)
+                    is TypeAliasDescriptor ->
+                        resolveTypeForTypeAlias(c, annotations, classifierDescriptor, type, qualifierResolutionResults)
                     else -> error("Unexpected classifier type: ${classifierDescriptor.javaClass}")
                 }
             }
@@ -347,7 +355,7 @@ class TypeResolver(
         }
 
         if (ErrorUtils.isError(classDescriptor)) {
-            return createErrorTypeAndResolveArguments(c, projectionFromAllQualifierParts, "[Error type: $typeConstructor]")
+            return createErrorTypeForTypeConstructor(c, projectionFromAllQualifierParts, typeConstructor)
         }
 
         val collectedArgumentAsTypeProjections =
@@ -392,6 +400,264 @@ class TypeResolver(
 
         return type(resultingType)
     }
+
+    private fun resolveTypeForTypeAlias(
+            c: TypeResolutionContext,
+            annotations: Annotations,
+            typeAliasDescriptor: TypeAliasDescriptor,
+            type: KtUserType,
+            qualifierResolutionResult: QualifiedExpressionResolver.TypeQualifierResolutionResult
+    ): PossiblyBareType {
+        val typeAliasConstructor = typeAliasDescriptor.typeConstructor
+        val projectionFromAllQualifierParts = qualifierResolutionResult.allProjections
+
+        if (ErrorUtils.isError(typeAliasDescriptor)) {
+            return createErrorTypeForTypeConstructor(c, projectionFromAllQualifierParts, typeAliasConstructor)
+        }
+
+        // TODO type arguments substitution for type parameters of outer classes
+        // TODO should we support type aliases as qualifiers? what about generics?
+
+        val typeAliasParameters = typeAliasDescriptor.declaredTypeParameters
+
+        val typeAliasQualifierPart = qualifierResolutionResult.qualifierParts.lastOrNull()
+                                     ?: return createErrorTypeForTypeConstructor(c, projectionFromAllQualifierParts, typeAliasConstructor)
+
+        // TODO appendDefaultArgumentsForInnerScope
+        val typeAliasArguments = typeAliasQualifierPart.typeArguments?.arguments.orEmpty()
+
+        if (typeAliasParameters.size != typeAliasArguments.size) {
+            c.trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(typeAliasQualifierPart.typeArguments ?: typeAliasQualifierPart.expression,
+                                                             typeAliasParameters.size, typeAliasDescriptor))
+            return createErrorTypeForTypeConstructor(c, projectionFromAllQualifierParts, typeAliasConstructor)
+        }
+
+        return if (c.abbreviated) {
+            val arguments = resolveTypeProjections(c, typeAliasDescriptor.typeConstructor, typeAliasArguments)
+            val abbreviatedType = KotlinTypeImpl.create(annotations, typeAliasDescriptor.typeConstructor, false, arguments, MemberScope.Empty)
+            type(abbreviatedType)
+        }
+        else {
+            val typeAliasExpansion = createTypeAliasExpansionFromSource(c, type, typeAliasDescriptor, typeAliasArguments)
+            val expandedType = expandTypeAlias(c, typeAliasExpansion, annotations)
+            type(expandedType)
+        }
+    }
+
+    private class AbbreviatedTypeImpl(override val abbreviatedType: KotlinType): AbbreviatedType
+
+    private fun withAbbreviatedType(abbreviatedType: KotlinType): TypeCapabilities =
+            SingletonTypeCapabilities(AbbreviatedType::class.java, AbbreviatedTypeImpl(abbreviatedType))
+
+    private class TypeAliasExpansionContext(
+            val element: KtUserType,
+            val argumentElements: Map<TypeParameterDescriptor, KtTypeProjection>
+    )
+
+    private class TypeAliasExpansion(
+            val context: TypeAliasExpansionContext,
+            val parent: TypeAliasExpansion?,
+            val descriptor: TypeAliasDescriptor,
+            val arguments: List<TypeProjection>,
+            val mapping: Map<TypeParameterDescriptor, TypeProjection>
+    ) {
+        fun getReplacement(constructor: TypeConstructor): TypeProjection? {
+            val descriptor = constructor.declarationDescriptor
+            return if (descriptor is TypeParameterDescriptor)
+                mapping[descriptor]
+            else
+                null
+        }
+
+        fun isRecursion(descriptor: TypeAliasDescriptor): Boolean =
+                this.descriptor == descriptor || (parent?.isRecursion(descriptor) ?: false)
+    }
+
+    private fun createTypeAliasExpansionFromSource(
+            c: TypeResolutionContext,
+            element: KtUserType,
+            descriptor: TypeAliasDescriptor,
+            argumentElements: List<KtTypeProjection>
+    ): TypeAliasExpansion {
+        val typeAliasParameters = descriptor.typeConstructor.parameters
+        val arguments = resolveTypeProjections(c, descriptor.typeConstructor, argumentElements)
+
+        val mappedArguments: Map<TypeParameterDescriptor, TypeProjection>
+        val mappedElements: Map<TypeParameterDescriptor, KtTypeProjection>
+        if (typeAliasParameters.isNotEmpty()) {
+            val resultingArguments = HashMap<TypeParameterDescriptor, TypeProjection>()
+            val resultingElements = HashMap<TypeParameterDescriptor, KtTypeProjection>()
+            typeAliasParameters.forEachIndexed { i, typeParameterDescriptor ->
+                resultingArguments[typeParameterDescriptor] = arguments[i]
+                resultingElements[typeParameterDescriptor] = argumentElements[i]
+            }
+            mappedArguments = resultingArguments
+            mappedElements = resultingElements
+        }
+        else {
+            mappedArguments = emptyMap()
+            mappedElements = emptyMap()
+        }
+
+        return TypeAliasExpansion(TypeAliasExpansionContext(element, mappedElements), null, descriptor, arguments, mappedArguments)
+    }
+
+    private fun createNestedTypeAliasExpansion(
+            parent: TypeAliasExpansion,
+            typeAliasDescriptor: TypeAliasDescriptor,
+            expandedArguments: List<TypeProjection>
+    ): TypeAliasExpansion {
+        val mappedArguments = HashMap<TypeParameterDescriptor, TypeProjection>()
+        typeAliasDescriptor.typeConstructor.parameters.forEachIndexed { i, typeParameterDescriptor ->
+            mappedArguments[typeParameterDescriptor] = expandedArguments[i]
+        }
+
+        return TypeAliasExpansion(parent.context, parent, typeAliasDescriptor, expandedArguments, mappedArguments)
+    }
+
+    private fun expandTypeAlias(
+            c: TypeResolutionContext,
+            typeAliasExpansion: TypeAliasExpansion,
+            annotations: Annotations
+    ): KotlinType {
+        val originalProjection = TypeProjectionImpl(Variance.INVARIANT, typeAliasExpansion.descriptor.underlyingType)
+        val expandedProjection = expandTypeProjectionForTypeAlias(c, originalProjection, typeAliasExpansion, null, 1)
+
+        if (expandedProjection.type.isError) return expandedProjection.type
+
+        assert(expandedProjection.projectionKind == Variance.INVARIANT) {
+            "Type alias expansion: result for ${typeAliasExpansion.descriptor} is ${expandedProjection.projectionKind}, should be invariant"
+        }
+
+        val abbreviatedType = KotlinTypeImpl.create(annotations, typeAliasExpansion.descriptor.typeConstructor,
+                                                    originalProjection.type.isMarkedNullable,
+                                                    typeAliasExpansion.arguments, MemberScope.Empty)
+
+        return expandedProjection.type.replace(
+                newAnnotations = annotations,
+                newCapabilities = withAbbreviatedType(abbreviatedType))
+    }
+
+    private fun expandTypeProjectionForTypeAlias(
+            c: TypeResolutionContext,
+            originalProjection: TypeProjection,
+            typeAliasExpansion: TypeAliasExpansion,
+            typeParameterDescriptor: TypeParameterDescriptor?,
+            recursionDepth: Int
+    ): TypeProjection {
+        assertRecursionDepth(recursionDepth) {
+            "Too deep recursion while expanding type alias ${typeAliasExpansion.descriptor}"
+        }
+
+        val originalType = originalProjection.type
+
+        val typeAliasArgument = typeAliasExpansion.getReplacement(originalType.constructor)
+
+        if (typeAliasArgument == null) {
+            return substituteNonArgumentTypeForTypeAlias(c, originalProjection, typeAliasExpansion, recursionDepth)
+        }
+
+        val originalVariance =
+                if (originalProjection.projectionKind != Variance.INVARIANT)
+                    originalProjection.projectionKind
+                else if (typeParameterDescriptor != null)
+                    typeParameterDescriptor.variance
+                else
+                    Variance.INVARIANT
+
+        val argumentVariance = typeAliasArgument.projectionKind
+
+        val substitutedVariance =
+                if (argumentVariance == Variance.INVARIANT)
+                    originalVariance
+                else if (originalVariance == Variance.INVARIANT || originalVariance == argumentVariance)
+                    argumentVariance
+                else if (typeAliasArgument.isStarProjection)
+                    argumentVariance
+                else {
+                    if (originalVariance != argumentVariance && !typeAliasArgument.isStarProjection) {
+                        val argumentElement = typeParameterDescriptor?.let { typeAliasExpansion.context.argumentElements[it] }
+                        if (argumentElement != null && typeParameterDescriptor != null) {
+                            c.trace.report(CONFLICTING_PROJECTION.on(argumentElement, typeParameterDescriptor))
+                        }
+                        else {
+                            c.trace.report(CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION.on(
+                                    typeAliasExpansion.context.element, typeAliasExpansion.descriptor.underlyingType))
+                        }
+                    }
+                    argumentVariance
+                }
+
+        val substitutedType = TypeUtils.makeNullableIfNeeded(typeAliasArgument.type, originalType.isMarkedNullable)
+
+        return TypeProjectionImpl(substitutedVariance, substitutedType)
+    }
+
+    private fun substituteNonArgumentTypeForTypeAlias(
+            c: TypeResolutionContext,
+            originalProjection: TypeProjection,
+            typeAliasExpansion: TypeAliasExpansion,
+            recursionDepth: Int
+    ): TypeProjection {
+        val type = originalProjection.type
+        val typeConstructor = type.constructor
+        val typeDescriptor = typeConstructor.declarationDescriptor
+
+        when (typeDescriptor) {
+            is TypeParameterDescriptor -> {
+                return originalProjection
+            }
+            is TypeAliasDescriptor -> {
+                if (typeAliasExpansion.isRecursion(typeDescriptor)) {
+                    c.trace.report(RECURSIVE_TYPEALIAS_EXPANSION.on(typeAliasExpansion.context.element, typeDescriptor))
+                    return TypeProjectionImpl(Variance.INVARIANT, ErrorUtils.createErrorType("Recursive type alias: ${typeDescriptor.name}"))
+                }
+
+                val expandedArguments = type.arguments.mapIndexed { i, typeAliasArgument ->
+                    expandTypeProjectionForTypeAlias(c, typeAliasArgument, typeAliasExpansion, typeConstructor.parameters[i], recursionDepth)
+                }
+
+                val nestedExpansion = createNestedTypeAliasExpansion(typeAliasExpansion, typeDescriptor, expandedArguments)
+
+                val expandedType = expandTypeAlias(c, nestedExpansion, type.annotations)
+
+                return TypeProjectionImpl(originalProjection.projectionKind,
+                                          if (expandedType.isError) expandedType else expandedType.replace(newCapabilities = withAbbreviatedType(type)))
+            }
+            else -> {
+                val substitutedArguments = type.arguments.mapIndexed { i, originalArgument ->
+                    expandTypeProjectionForTypeAlias(c, originalArgument, typeAliasExpansion, typeConstructor.parameters[i], recursionDepth + 1)
+                }
+
+                checkTypeArgumentsSubstitutionInTypeAliasExpansion(c, type, substitutedArguments, typeAliasExpansion)
+
+                val substitutedType = type.replace(newArguments = substitutedArguments)
+
+                return TypeProjectionImpl(originalProjection.projectionKind, substitutedType)
+            }
+        }
+    }
+
+    private fun checkTypeArgumentsSubstitutionInTypeAliasExpansion(
+            c: TypeResolutionContext,
+            type: KotlinType,
+            substitutedArguments: List<TypeProjection>,
+            typeAliasExpansion: TypeAliasExpansion
+    ) {
+        val typeSubstitutor = TypeSubstitutor.create(type)
+
+        substitutedArguments.forEachIndexed { i, substitutedArgument ->
+            val typeParameter = type.constructor.parameters[i]
+            DescriptorResolver.checkBoundsInTypeAlias(typeAliasExpansion.context.element, substitutedArgument.type, typeParameter, typeSubstitutor, c.trace)
+        }
+    }
+
+    private fun createErrorTypeForTypeConstructor(
+            c: TypeResolutionContext,
+            arguments: List<KtTypeProjection>,
+            typeConstructor: TypeConstructor
+    ) =
+            createErrorTypeAndResolveArguments(c, arguments, "[Error type: $typeConstructor]")
 
     // Returns true in case when at least one argument for this class could be specified
     // It could be always equal to 'typeConstructor.parameters.isNotEmpty()' unless local classes could captured type parameters
@@ -583,6 +849,14 @@ class TypeResolver(
     }
 
     companion object {
+        private const val MAX_RECURSION_DEPTH = 100
+
+        private inline fun assertRecursionDepth(recursionDepth: Int, lazyMessage: () -> String) {
+            if (recursionDepth > MAX_RECURSION_DEPTH) {
+                throw AssertionError(lazyMessage())
+            }
+        }
+
         @JvmStatic fun resolveProjectionKind(projectionKind: KtProjectionKind): Variance {
             return when (projectionKind) {
                 KtProjectionKind.IN -> IN_VARIANCE

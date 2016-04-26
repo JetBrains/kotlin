@@ -216,10 +216,11 @@ public interface BindingContext {
     WritableSlice<KtParameter, VariableDescriptor> VALUE_PARAMETER = Slices.createSimpleSlice();
     WritableSlice<KtPropertyAccessor, PropertyAccessorDescriptor> PROPERTY_ACCESSOR = Slices.createSimpleSlice();
     WritableSlice<PsiElement, PropertyDescriptor> PRIMARY_CONSTRUCTOR_PARAMETER = Slices.createSimpleSlice();
+    WritableSlice<KtTypeAlias, TypeAliasDescriptor> TYPE_ALIAS = Slices.createSimpleSlice();
 
     WritableSlice[] DECLARATIONS_TO_DESCRIPTORS = new WritableSlice[] {
             CLASS, TYPE_PARAMETER, FUNCTION, CONSTRUCTOR, VARIABLE, VALUE_PARAMETER, PROPERTY_ACCESSOR,
-            PRIMARY_CONSTRUCTOR_PARAMETER, SCRIPT
+            PRIMARY_CONSTRUCTOR_PARAMETER, SCRIPT, TYPE_ALIAS
     };
 
     @SuppressWarnings("unchecked")

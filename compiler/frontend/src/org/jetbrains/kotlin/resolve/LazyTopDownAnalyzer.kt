@@ -54,6 +54,7 @@ class LazyTopDownAnalyzer(
 
         val properties = ArrayList<KtProperty>()
         val functions = ArrayList<KtNamedFunction>()
+        val typeAliases = ArrayList<KtTypeAlias>()
 
         // fill in the context
         for (declaration in declarations) {
@@ -168,12 +169,18 @@ class LazyTopDownAnalyzer(
                 override fun visitProperty(property: KtProperty) {
                     properties.add(property)
                 }
+
+                override fun visitTypeAlias(typeAlias: KtTypeAlias) {
+                    typeAliases.add(typeAlias)
+                }
             })
         }
 
         createFunctionDescriptors(c, functions)
 
         createPropertyDescriptors(c, topLevelFqNames, properties)
+
+        createTypeAliasDescriptors(c, topLevelFqNames, typeAliases)
 
         resolveAllHeadersInClasses(c)
 
@@ -196,6 +203,16 @@ class LazyTopDownAnalyzer(
     private fun resolveAllHeadersInClasses(c: TopDownAnalysisContext) {
         for (classDescriptor in c.allClasses) {
             (classDescriptor as LazyClassDescriptor).resolveMemberHeaders()
+        }
+    }
+
+    private fun createTypeAliasDescriptors(c: TopDownAnalysisContext, topLevelFqNames: Multimap<FqName, KtElement>, typeAliases: List<KtTypeAlias>) {
+        for (typeAlias in typeAliases) {
+            val descriptor = lazyDeclarationResolver.resolveToDescriptor(typeAlias) as TypeAliasDescriptor
+
+            c.typeAliases[typeAlias] = descriptor
+            ForceResolveUtil.forceResolveAllContents(descriptor.annotations)
+            registerTopLevelFqName(topLevelFqNames, typeAlias, descriptor)
         }
     }
 

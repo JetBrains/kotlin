@@ -36,29 +36,29 @@ abstract class AbstractPsiBasedDeclarationProvider(storageManager: StorageManage
         val functions = ArrayListMultimap.create<Name, KtNamedFunction>()
         val properties = ArrayListMultimap.create<Name, KtProperty>()
         val classesAndObjects = ArrayListMultimap.create<Name, KtClassLikeInfo>() // order matters here
+        val typeAliases = ArrayListMultimap.create<Name, KtTypeAlias>()
 
         fun putToIndex(declaration: KtDeclaration) {
             if (declaration is KtAnonymousInitializer || declaration is KtSecondaryConstructor) return
 
             allDeclarations.add(declaration)
-            if (declaration is KtNamedFunction) {
-                functions.put(safeNameForLazyResolve(declaration), declaration)
-            }
-            else if (declaration is KtProperty) {
-                properties.put(safeNameForLazyResolve(declaration), declaration)
-            }
-            else if (declaration is KtClassOrObject) {
-                classesAndObjects.put(safeNameForLazyResolve(declaration.getNameAsName()), KtClassInfoUtil.createClassLikeInfo(declaration))
-            }
-            else if (declaration is KtScript) {
-                val scriptInfo = KtScriptInfo(declaration)
-                classesAndObjects.put(scriptInfo.script.nameAsName, scriptInfo)
-            }
-            else if (declaration is KtParameter || declaration is KtDestructuringDeclaration) {
-                // Do nothing, just put it into allDeclarations is enough
-            }
-            else {
-                throw IllegalArgumentException("Unknown declaration: " + declaration)
+            when (declaration) {
+                is KtNamedFunction ->
+                    functions.put(safeNameForLazyResolve(declaration), declaration)
+                is KtProperty ->
+                    properties.put(safeNameForLazyResolve(declaration), declaration)
+                is KtTypeAlias ->
+                    typeAliases.put(safeNameForLazyResolve(declaration.nameAsName), declaration)
+                is KtClassOrObject ->
+                    classesAndObjects.put(safeNameForLazyResolve(declaration.nameAsName), KtClassInfoUtil.createClassLikeInfo(declaration))
+                is KtScript -> {
+                    val scriptInfo = KtScriptInfo(declaration)
+                    classesAndObjects.put(scriptInfo.script.nameAsName, scriptInfo)
+                }
+                is KtParameter, is KtDestructuringDeclaration -> {
+                    // Do nothing, just put it into allDeclarations is enough
+                }
+                else -> throw IllegalArgumentException("Unknown declaration: " + declaration)
             }
         }
     }
@@ -82,4 +82,7 @@ abstract class AbstractPsiBasedDeclarationProvider(storageManager: StorageManage
 
     override fun getClassOrObjectDeclarations(name: Name): Collection<KtClassLikeInfo>
             = index().classesAndObjects[ResolveSessionUtils.safeNameForLazyResolve(name)]
+
+    override fun getTypeAliasDeclarations(name: Name): Collection<KtTypeAlias>
+            = index().typeAliases[ResolveSessionUtils.safeNameForLazyResolve(name)]
 }

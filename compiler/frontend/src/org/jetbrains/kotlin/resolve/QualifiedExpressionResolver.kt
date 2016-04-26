@@ -370,8 +370,10 @@ class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageValidator
 
             val nextPackageOrClassDescriptor =
                     when (currentDescriptor) {
+                        is TypeAliasDescriptor -> // TODO type aliases as qualifiers? (would break some assumptions in TypeResolver)
+                            currentDescriptor.underlyingClassDescriptor.getContributedClassifier(qualifierPart)
                         is ClassDescriptor ->
-                            currentDescriptor.unsubstitutedInnerClassesScope.getContributedClassifier(qualifierPart.name, qualifierPart.location)
+                            currentDescriptor.getContributedClassifier(qualifierPart)
                         is PackageViewDescriptor -> {
                             val packageView =
                                     if (qualifierPart.typeArguments == null) {
@@ -403,6 +405,9 @@ class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageValidator
 
         return Pair(currentDescriptor, path.size)
     }
+
+    fun ClassDescriptor.getContributedClassifier(qualifierPart: QualifierPart) =
+            unsubstitutedInnerClassesScope.getContributedClassifier(qualifierPart.name, qualifierPart.location)
 
     fun resolveNameExpressionAsQualifierForDiagnostics(
             expression: KtSimpleNameExpression,

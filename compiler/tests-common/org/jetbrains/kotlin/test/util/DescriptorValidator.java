@@ -274,6 +274,14 @@ public class DescriptorValidator {
         }
 
         @Override
+        public Boolean visitTypeAliasDescriptor(
+                TypeAliasDescriptor descriptor, DiagnosticCollector data
+        ) {
+            // TODO typealias
+            return true;
+        }
+
+        @Override
         public Boolean visitModuleDeclaration(
                 ModuleDescriptor descriptor, DiagnosticCollector collector
         ) {
@@ -433,6 +441,12 @@ public class DescriptorValidator {
                 ClassDescriptor descriptor, MemberScope scope
         ) {
             assertFound(scope, descriptor, scope.getContributedClassifier(descriptor.getName(), NoLookupLocation.FROM_TEST), true);
+            return null;
+        }
+
+        @Override
+        public Void visitTypeAliasDescriptor(TypeAliasDescriptor descriptor, MemberScope data) {
+            // TODO typealias
             return null;
         }
 
