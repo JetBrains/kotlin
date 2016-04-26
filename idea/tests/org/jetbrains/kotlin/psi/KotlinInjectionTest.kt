@@ -379,4 +379,35 @@ class KotlinInjectionTest : AbstractInjectionTest() {
 //            """,
 //            languageId = HTMLLanguage.INSTANCE.id, unInjectShouldBePresent = false
 //    )
+
+
+    fun testInjectionOfCustomParameterInJavaConstructorWithAnnotationWithAnnotation() = doInjectionPresentTest(
+            """
+            fun bar() { Test("<caret>some") }
+            """,
+            javaText =
+            """
+            import org.intellij.lang.annotations.Language;
+
+            public class Test {
+                public Test(@Language("HTML") String str) {}
+            }
+            """,
+            languageId = HTMLLanguage.INSTANCE.id, unInjectShouldBePresent = false
+    )
+
+    fun testInjectionOfCustomParameterJavaWithAnnotation() = doInjectionPresentTest(
+            """
+            fun bar() { Test.foo("<caret>some") }
+            """,
+            javaText =
+            """
+            import org.intellij.lang.annotations.Language;
+
+            public class Test {
+                public static void foo(@Language("HTML") String str) {}
+            }
+            """,
+            languageId = HTMLLanguage.INSTANCE.id, unInjectShouldBePresent = false
+    )
 }
