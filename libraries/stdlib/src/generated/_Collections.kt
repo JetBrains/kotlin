@@ -544,6 +544,8 @@ public fun <T> Iterable<T>.drop(n: Int): List<T> {
         val resultSize = size - n
         if (resultSize <= 0)
             return emptyList()
+        if (resultSize == 1)
+            return listOf(last())
         list = ArrayList<T>(resultSize)
         if (this is List<T>) {
             if (this is RandomAccess) {
@@ -553,7 +555,7 @@ public fun <T> Iterable<T>.drop(n: Int): List<T> {
                 for (item in listIterator(n))
                     list.add(item)
             }
-            return list.optimizeReadOnlyList()
+            return list
         }
     }
     else {
@@ -713,7 +715,10 @@ public fun <T> List<T>.slice(indices: Iterable<Int>): List<T> {
 public fun <T> Iterable<T>.take(n: Int): List<T> {
     require(n >= 0) { "Requested element count $n is less than zero." }
     if (n == 0) return emptyList()
-    if (this is Collection<T> && n >= size) return toList()
+    if (this is Collection<T>) {
+        if (n >= size) return toList()
+        if (n == 1) return listOf(first())
+    }
     var count = 0
     val list = ArrayList<T>(n)
     for (item in this) {
@@ -732,6 +737,7 @@ public fun <T> List<T>.takeLast(n: Int): List<T> {
     if (n == 0) return emptyList()
     val size = size
     if (n >= size) return toList()
+    if (n == 1) return listOf(last())
     val list = ArrayList<T>(n)
     if (this is RandomAccess) {
         for (index in size - n .. size - 1)
@@ -740,7 +746,7 @@ public fun <T> List<T>.takeLast(n: Int): List<T> {
         for (item in listIterator(n))
             list.add(item)
     }
-    return list.optimizeReadOnlyList()
+    return list
 }
 
 /**

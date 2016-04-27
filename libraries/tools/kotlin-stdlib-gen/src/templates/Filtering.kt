@@ -46,6 +46,8 @@ fun filtering(): List<GenericFunction> {
                 val resultSize = size - n
                 if (resultSize <= 0)
                     return emptyList()
+                if (resultSize == 1)
+                    return listOf(last())
 
                 list = ArrayList<T>(resultSize)
                 if (this is List<T>) {
@@ -56,7 +58,7 @@ fun filtering(): List<GenericFunction> {
                         for (item in listIterator(n))
                             list.add(item)
                     }
-                    return list.optimizeReadOnlyList()
+                    return list
                 }
             }
             else {
@@ -96,16 +98,7 @@ fun filtering(): List<GenericFunction> {
         body(ArraysOfObjects, ArraysOfPrimitives) {
             """
             require(n >= 0) { "Requested element count $n is less than zero." }
-            if (n == 0)
-                return toList()
-            if (n >= size)
-                return emptyList()
-
-            val list = ArrayList<T>(size - n)
-            for (index in n..size - 1) {
-                list.add(this[index])
-            }
-            return list.optimizeReadOnlyList()
+            return takeLast((size - n).coerceAtLeast(0))
             """
         }
     }
@@ -118,7 +111,10 @@ fun filtering(): List<GenericFunction> {
             """
             require(n >= 0) { "Requested element count $n is less than zero." }
             if (n == 0) return emptyList()
-            if (this is Collection<T> && n >= size) return toList()
+            if (this is Collection<T>) {
+                if (n >= size) return toList()
+                if (n == 1) return listOf(first())
+            }
             var count = 0
             val list = ArrayList<T>(n)
             for (item in this) {
@@ -158,6 +154,7 @@ fun filtering(): List<GenericFunction> {
             require(n >= 0) { "Requested element count $n is less than zero." }
             if (n == 0) return emptyList()
             if (n >= size) return toList()
+            if (n == 1) return listOf(this[0])
             var count = 0
             val list = ArrayList<T>(n)
             for (item in this) {
@@ -165,7 +162,7 @@ fun filtering(): List<GenericFunction> {
                     break;
                 list.add(item)
             }
-            return list.optimizeReadOnlyList()
+            return list
             """
         }
     }
@@ -212,10 +209,12 @@ fun filtering(): List<GenericFunction> {
             if (n == 0) return emptyList()
             val size = size
             if (n >= size) return toList()
+            if (n == 1) return listOf(this[size - 1])
+
             val list = ArrayList<T>(n)
             for (index in size - n .. size - 1)
                 list.add(this[index])
-            return list.optimizeReadOnlyList()
+            return list
             """
         }
         body(Lists) {
@@ -224,6 +223,8 @@ fun filtering(): List<GenericFunction> {
             if (n == 0) return emptyList()
             val size = size
             if (n >= size) return toList()
+            if (n == 1) return listOf(last())
+
             val list = ArrayList<T>(n)
             if (this is RandomAccess) {
                 for (index in size - n .. size - 1)
@@ -232,7 +233,7 @@ fun filtering(): List<GenericFunction> {
                 for (item in listIterator(n))
                     list.add(item)
             }
-            return list.optimizeReadOnlyList()
+            return list
             """
         }
     }
