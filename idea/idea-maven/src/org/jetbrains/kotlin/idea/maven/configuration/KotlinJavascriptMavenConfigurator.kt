@@ -18,15 +18,15 @@ package org.jetbrains.kotlin.idea.maven.configuration
 
 import com.intellij.openapi.module.Module
 import org.jetbrains.idea.maven.dom.model.MavenDomPlugin
+import org.jetbrains.kotlin.idea.configuration.hasKotlinJsRuntimeInScope
 import org.jetbrains.kotlin.idea.maven.PomFile
-import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.resolve.TargetPlatform
 
 class KotlinJavascriptMavenConfigurator : KotlinMavenConfigurator(KotlinJavascriptMavenConfigurator.STD_LIB_ID, null, false, KotlinJavascriptMavenConfigurator.NAME, KotlinJavascriptMavenConfigurator.PRESENTABLE_TEXT) {
 
     override fun isKotlinModule(module: Module): Boolean {
-        return ProjectStructureUtil.isJsKotlinModule(module)
+        return hasKotlinJsRuntimeInScope(module)
     }
 
     override fun isRelevantGoal(goalName: String): Boolean {
@@ -35,7 +35,7 @@ class KotlinJavascriptMavenConfigurator : KotlinMavenConfigurator(KotlinJavascri
 
     override fun createExecutions(pomFile: PomFile, kotlinPlugin: MavenDomPlugin, module: Module) {
         createExecution(pomFile, kotlinPlugin, PomFile.DefaultPhases.Compile, PomFile.KotlinGoals.Js, module, false)
-        createExecution(pomFile, kotlinPlugin, PomFile.DefaultPhases.Compile, PomFile.KotlinGoals.TestJs, module, true)
+        createExecution(pomFile, kotlinPlugin, PomFile.DefaultPhases.TestCompile, PomFile.KotlinGoals.TestJs, module, true)
     }
 
     override fun getTargetPlatform(): TargetPlatform {

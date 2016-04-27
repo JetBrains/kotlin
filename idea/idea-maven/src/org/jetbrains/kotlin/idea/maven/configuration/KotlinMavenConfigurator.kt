@@ -36,9 +36,7 @@ import org.jetbrains.idea.maven.model.MavenId
 import org.jetbrains.idea.maven.project.MavenProjectsManager
 import org.jetbrains.idea.maven.utils.MavenArtifactScope
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
-import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator
-import org.jetbrains.kotlin.idea.configuration.NotificationMessageCollector
-import org.jetbrains.kotlin.idea.configuration.createConfigureKotlinNotificationCollector
+import org.jetbrains.kotlin.idea.configuration.*
 import org.jetbrains.kotlin.idea.framework.ui.ConfigureDialogWithModulesAndVersion
 import org.jetbrains.kotlin.idea.maven.PomFile
 import org.jetbrains.kotlin.idea.maven.excludeMavenChildrenModules
@@ -123,12 +121,17 @@ abstract class KotlinMavenConfigurator protected constructor(private val stdlibA
                 pom.addDependency(MavenId(GROUP_ID, testArtifactId, "\${$KOTLIN_VERSION_PROPERTY}"), MavenArtifactScope.TEST, null, false, null)
             }
             if (addJunit) {
+                // TODO currently it is always disabled: junit version selection could be shown in the configurator dialog
                 pom.addDependency(MavenId("junit", "junit", "4.12"), MavenArtifactScope.TEST, null, false, null)
             }
 
             if (isSnapshot(version)) {
-                pom.addLibraryRepository(SNAPSHOT_REPOSITORY_ID, SONATYPE_OSS_REPOSITORY_NAME, SONATYPE_OSS_REPOSITORY_URL, true, false)
-                pom.addPluginRepository(SNAPSHOT_REPOSITORY_ID, SONATYPE_OSS_REPOSITORY_NAME, SONATYPE_OSS_REPOSITORY_URL, true, false)
+                pom.addLibraryRepository(SNAPSHOT_REPOSITORY)
+                pom.addPluginRepository(SNAPSHOT_REPOSITORY)
+            }
+            if (isEap(version)) {
+                pom.addLibraryRepository(EAP_REPOSITORY)
+                pom.addPluginRepository(EAP_REPOSITORY)
             }
 
             val plugin = pom.addPlugin(MavenId(GROUP_ID, MAVEN_PLUGIN_ID, "\${$KOTLIN_VERSION_PROPERTY}"))
@@ -156,9 +159,6 @@ abstract class KotlinMavenConfigurator protected constructor(private val stdlibA
         val GROUP_ID = "org.jetbrains.kotlin"
         val MAVEN_PLUGIN_ID = "kotlin-maven-plugin"
         private val KOTLIN_VERSION_PROPERTY = "kotlin.version"
-        private val SNAPSHOT_REPOSITORY_ID = "sonatype.oss.snapshots"
-        private val SONATYPE_OSS_REPOSITORY_NAME = "Sonatype OSS Snapshot Repository"
-        private val SONATYPE_OSS_REPOSITORY_URL = "http://oss.sonatype.org/content/repositories/snapshots"
 
         private fun hasJavaFiles(module: Module): Boolean {
             return !FileTypeIndex.getFiles(JavaFileType.INSTANCE, GlobalSearchScope.moduleScope(module)).isEmpty()
@@ -174,10 +174,6 @@ abstract class KotlinMavenConfigurator protected constructor(private val stdlibA
                 return psiFile
             }
             return null
-        }
-
-        private fun isSnapshot(version: String): Boolean {
-            return version.contains("SNAPSHOT")
         }
 
         private fun canConfigureFile(file: PsiFile): Boolean {
