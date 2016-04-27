@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 class KotlinJavaMavenConfigurator : KotlinMavenConfigurator(KotlinJavaMavenConfigurator.STD_LIB_ID, KotlinJavaMavenConfigurator.TEST_LIB_ID, false, KotlinJavaMavenConfigurator.NAME, KotlinJavaMavenConfigurator.PRESENTABLE_TEXT) {
 
     override fun isKotlinModule(module: Module): Boolean {
-        return hasKotlinRuntimeInScope(module)
+        return hasKotlinJvmRuntimeInScope(module)
     }
 
     override fun isRelevantGoal(goalName: String): Boolean {
