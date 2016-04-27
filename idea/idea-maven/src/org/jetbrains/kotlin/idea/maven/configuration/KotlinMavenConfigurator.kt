@@ -183,8 +183,8 @@ abstract class KotlinMavenConfigurator protected constructor(private val stdlibA
         private fun showErrorMessage(project: Project, message: String?) {
             Messages.showErrorDialog(project,
                                      "<html>Couldn't configure kotlin-maven plugin automatically.<br/>" +
-                                     (message ?: "") +
-                                     "See manual installation instructions <a href=\"http://confluence.jetbrains.com/display/Kotlin/Kotlin+Build+Tools#KotlinBuildTools-Maven\">here</a></html>",
+                                     (if (message != null) "$message</br>" else "") +
+                                     "See manual installation instructions <a href=\"http://confluence.jetbrains.com/display/Kotlin/Kotlin+Build+Tools#KotlinBuildTools-Maven\">here</a>.</html>",
                                      "Configure Kotlin-Maven Plugin")
         }
     }
