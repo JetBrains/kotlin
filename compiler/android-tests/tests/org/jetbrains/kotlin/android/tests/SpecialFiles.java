@@ -53,6 +53,8 @@ public class SpecialFiles {
         excludedFiles.add("innerAnonymousObject.kt"); // Cannot change package name
         excludedFiles.add("nestedReifiedSignature.kt"); // Cannot change package name
         excludedFiles.add("recursiveInnerAnonymousObject.kt"); // Cannot change package name
+        excludedFiles.add("approximateCapturedTypes.kt"); // Cannot change package name
+        excludedFiles.add("classForEnumEntry.kt"); // Cannot change package name
 
         excludedFiles.add("kt684.kt"); // StackOverflow with StringBuilder (escape())
 
@@ -75,8 +77,10 @@ public class SpecialFiles {
         excludedFiles.add("useImportedMemberFromCompanion.kt");
         excludedFiles.add("useImportedMember.kt");
         excludedFiles.add("importStaticMemberFromObject.kt");
-        //TODO: fix bad class file
+        //TODO: fix KT-12127
         excludedFiles.add("genericProperty.kt");
+
+        excludedFiles.add("external"); //native methods
     }
 
     private SpecialFiles() {
