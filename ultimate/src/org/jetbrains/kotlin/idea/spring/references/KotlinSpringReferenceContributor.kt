@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.spring.references
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiReference
+import com.intellij.psi.PsiReferenceBase
 import com.intellij.psi.PsiReferenceRegistrar
 import com.intellij.spring.constants.SpringAnnotationsConstants
 import com.intellij.spring.constants.SpringConstants
@@ -43,6 +44,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.overriddenTreeAsSequence
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.getPsi
 
+// TODO: Use Kotlin patterns
 class KotlinSpringReferenceContributor : AbstractKotlinReferenceContributor() {
     override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
         registrar.registerProvider<KtStringTemplateExpression> {
@@ -124,6 +126,32 @@ class KotlinSpringReferenceContributor : AbstractKotlinReferenceContributor() {
             val content = it.plainContent
             val resourcesBuilder = SpringResourcesBuilder.create(it, content).fromRoot(content.startsWith("/")).soft(false)
             SpringResourcesUtil.getInstance().getClassPathReferences(resourcesBuilder)
+        }
+
+        registrar.registerProvider<KtStringTemplateExpression>(PsiReferenceRegistrar.HIGHER_PRIORITY) {
+            if (!it.isPlain()) return@registerProvider null
+
+            val argument = it.parent as? KtValueArgument ?: return@registerProvider null
+            val argumentName = argument.getArgumentName()
+            if (argumentName != null && argumentName.asName.asString() != "value") return@registerProvider null
+
+            val entry = argument.getStrictParentOfType<KtAnnotationEntry>() ?: return@registerProvider null
+            val bindingContext = entry.analyze(BodyResolveMode.PARTIAL)
+            val resolvedCall = entry.getResolvedCall(bindingContext) ?: return@registerProvider null
+            val annotation = (resolvedCall.resultingDescriptor as? ConstructorDescriptor)?.containingDeclaration
+                             ?: return@registerProvider null
+            if (annotation.importableFqName?.asString() != SpringAnnotationsConstants.QUALIFIER) return@registerProvider null
+
+            val annotated = entry.getStrictParentOfType<KtModifierListOwner>() ?: return@registerProvider null
+            if (annotated is KtClassOrObject) {
+                object : PsiReferenceBase<KtStringTemplateExpression>(it) {
+                    override fun resolve() = entry
+                    override fun getVariants(): Array<Any> = arrayOf()
+                }
+            }
+            else {
+                KtSpringQualifierReference(it)
+            }
         }
     }
 }
