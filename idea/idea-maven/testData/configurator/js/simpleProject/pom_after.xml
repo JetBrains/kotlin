@@ -29,14 +29,14 @@
                 <version>${kotlin.version}</version>
                 <executions>
                     <execution>
-                        <id>js</id>
+                        <id>compile</id>
                         <phase>compile</phase>
                         <goals>
                             <goal>js</goal>
                         </goals>
                     </execution>
                     <execution>
-                        <id>js-test</id>
+                        <id>test-compile</id>
                         <phase>test-compile</phase>
                         <goals>
                             <goal>test-js</goal>

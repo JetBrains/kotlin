@@ -15,7 +15,7 @@
                 <version>${kotlin.version}</version>
                 <executions>
                     <execution>
-                        <id>js</id>
+                        <id>compile</id>
                         <phase>compile</phase>
                         <goals>
                             <goal>js</goal>

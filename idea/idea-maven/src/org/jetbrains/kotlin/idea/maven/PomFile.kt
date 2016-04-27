@@ -34,6 +34,7 @@ import org.jetbrains.idea.maven.dom.model.*
 import org.jetbrains.idea.maven.model.MavenId
 import org.jetbrains.idea.maven.utils.MavenArtifactScope
 import org.jetbrains.jps.model.java.JavaSourceRootType
+import org.jetbrains.kotlin.idea.configuration.RepositoryDescription
 import org.jetbrains.kotlin.idea.maven.configuration.KotlinMavenConfigurator
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import java.util.*
@@ -225,10 +226,18 @@ class PomFile(val xmlFile: XmlFile) {
         return addRepository(id, name, url, snapshots, releases, { domModel.pluginRepositories.pluginRepositories }, { domModel.pluginRepositories.addPluginRepository() })
     }
 
+    fun addPluginRepository(description: RepositoryDescription) {
+        addPluginRepository(description.id, description.name, description.url, description.isSnapshot, true)
+    }
+
     fun addLibraryRepository(id: String, name: String, url: String, snapshots: Boolean = false, releases: Boolean = true): MavenDomRepository {
         ensureRepositories()
 
         return addRepository(id, name, url, snapshots, releases, { domModel.repositories.repositories }, { domModel.repositories.addRepository() })
+    }
+
+    fun addLibraryRepository(description: RepositoryDescription) {
+        addLibraryRepository(description.id, description.name, description.url, description.isSnapshot, true)
     }
 
     private fun addRepository(id: String, name: String, url: String, snapshots: Boolean, releases: Boolean, existing: () -> List<MavenDomRepository>, create: () -> MavenDomRepository): MavenDomRepository {

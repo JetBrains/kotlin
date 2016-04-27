@@ -7,16 +7,52 @@
     <groupId>maventest</groupId>
     <artifactId>maventest</artifactId>
     <version>1.0-SNAPSHOT</version>
+
     <properties>
         <kotlin.version>$VERSION$</kotlin.version>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-js-library</artifactId>
+            <artifactId>kotlin-stdlib</artifactId>
             <version>${kotlin.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-test</artifactId>
+            <version>${kotlin.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
+
+    <repositories>
+        <repository>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>bintray.kotlin.eap</id>
+            <name>Bintray Kotlin EAP Repository</name>
+            <url>http://dl.bintray.com/kotlin/kotlin-eap</url>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>bintray.kotlin.eap</id>
+            <name>Bintray Kotlin EAP Repository</name>
+            <url>http://dl.bintray.com/kotlin/kotlin-eap</url>
+        </pluginRepository>
+    </pluginRepositories>
 
     <build>
         <sourceDirectory></sourceDirectory>
@@ -30,14 +66,14 @@
                         <id>compile</id>
                         <phase>compile</phase>
                         <goals>
-                            <goal>js</goal>
+                            <goal>compile</goal>
                         </goals>
                     </execution>
                     <execution>
                         <id>test-compile</id>
                         <phase>test-compile</phase>
                         <goals>
-                            <goal>test-js</goal>
+                            <goal>test-compile</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -47,3 +83,6 @@
 
 
 </project>
+<!--
+// VERSION: $VERSION$
+-->
