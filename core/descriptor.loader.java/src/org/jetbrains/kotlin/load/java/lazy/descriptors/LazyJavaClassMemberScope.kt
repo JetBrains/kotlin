@@ -134,6 +134,7 @@ class LazyJavaClassMemberScope(
 
     private fun SimpleFunctionDescriptor.doesOverrideRenamedBuiltins(): Boolean {
         return BuiltinMethodsWithDifferentJvmName.getBuiltinFunctionNamesByJvmName(name).any {
+            // e.g. 'removeAt' or 'toInt'
             builtinName ->
             val builtinSpecialFromSuperTypes =
                     getFunctionsFromSupertypes(builtinName).filter { it.doesOverrideBuiltinWithDifferentJvmName() }
@@ -141,7 +142,7 @@ class LazyJavaClassMemberScope(
 
             val methodDescriptor = this.createRenamedCopy(builtinName)
 
-            builtinSpecialFromSuperTypes.any { isOverridableRenamedDescriptor(it, methodDescriptor) }
+            builtinSpecialFromSuperTypes.any { doesOverrideRenamedDescriptor(it, methodDescriptor) }
         }
     }
 
@@ -152,7 +153,10 @@ class LazyJavaClassMemberScope(
                 setPreserveSourceElement()
             }.build()!!
 
-    private fun isOverridableRenamedDescriptor(superDescriptor: FunctionDescriptor, subDescriptor: FunctionDescriptor): Boolean {
+    private fun doesOverrideRenamedDescriptor(
+            superDescriptor: SimpleFunctionDescriptor,
+            subDescriptor: FunctionDescriptor
+    ): Boolean {
         // if we check 'removeAt', get original sub-descriptor to distinct `remove(int)` and `remove(E)` in Java
         val subDescriptorToCheck = if (superDescriptor.isRemoveAtByIndex) subDescriptor.original else subDescriptor
 
@@ -293,7 +297,7 @@ class LazyJavaClassMemberScope(
             for (method in functions(Name.identifier(nameInJava))) {
                 val renamedCopy = method.createRenamedCopy(name)
 
-                if (isOverridableRenamedDescriptor(overriddenBuiltin, renamedCopy)) {
+                if (doesOverrideRenamedDescriptor(overriddenBuiltin, renamedCopy)) {
                     result.add(
                             renamedCopy.createHiddenCopyIfBuiltinAlreadyAccidentallyOverridden(overriddenBuiltin, alreadyDeclaredFunctions))
                     break

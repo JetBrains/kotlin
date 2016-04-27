@@ -16,10 +16,11 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.types.KotlinType
@@ -43,10 +44,31 @@ fun FunctionDescriptor.computeJvmDescriptor()
             }
         }.toString()
 
+// This method only returns not-null for class methods
+internal fun CallableDescriptor.computeJvmSignature(): String? = signatures {
+    if (DescriptorUtils.isLocal(this@computeJvmSignature)) return null
 
-val ClassDescriptor.internalName: String
+    val classDescriptor = containingDeclaration as? ClassDescriptor ?: return null
+    if (classDescriptor.name.isSpecial) return null
+
+    signature(
+            classDescriptor,
+            (original as? SimpleFunctionDescriptor ?: return null).computeJvmDescriptor()
+    )
+}
+
+internal val ClassDescriptor.internalName: String
     get() {
+        JavaToKotlinClassMap.INSTANCE.mapKotlinToJava(fqNameSafe.toUnsafe())?.let {
+            return JvmClassName.byClassId(it).internalName
+        }
+
         return computeInternalName(this)
+    }
+
+internal val ClassId.internalName: String
+    get() {
+        return JvmClassName.byClassId(JavaToKotlinClassMap.INSTANCE.mapKotlinToJava(asSingleFqName().toUnsafe()) ?: this).internalName
     }
 
 private fun StringBuilder.appendErasedType(type: KotlinType) {
