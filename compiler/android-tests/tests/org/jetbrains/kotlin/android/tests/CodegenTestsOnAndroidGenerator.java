@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.android.tests;
 
 import com.google.common.collect.Lists;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
@@ -45,6 +46,7 @@ import org.junit.Assert;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -233,51 +235,53 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
                 //TODO: support multifile tests
                 if (text.contains("FILE:")) continue;
 
-                if (InTextDirectivesUtils.isDirectiveDefined(text, "WITH_REFLECT")) continue;
-
                 if (hasBoxMethod(text)) {
                     String generatedTestName = generateTestName(file.getName());
                     String packageName = file.getPath().replaceAll("\\\\|-|\\.|/", "_");
-                    text = changePackage(packageName, text);
+                    Ref<FqName> oldPackage = new Ref();
+                    text = changePackage(packageName, text, oldPackage);
+                    FqName className = getGeneratedClassName(file, text, packageName);
+                    text = patchClassForName(className, oldPackage.get(), text);
 
                     FilesWriter filesHolder = InTextDirectivesUtils.isDirectiveDefined(text, "FULL_JDK") ||
-                                              InTextDirectivesUtils.isDirectiveDefined(text, "WITH_RUNTIME") ? holderFull : holderMock;
+                                              InTextDirectivesUtils.isDirectiveDefined(text, "WITH_RUNTIME") ||
+                                              InTextDirectivesUtils.isDirectiveDefined(text, "WITH_REFLECT") ? holderFull : holderMock;
                     CodegenTestFiles codegenFile = CodegenTestFiles.create(file.getName(), text, filesHolder.environment.getProject());
                     filesHolder.files.add(codegenFile.getPsiFile());
 
-                    String className = getGeneratedClassName(file, text, packageName);
-                    generateTestMethod(printer, generatedTestName, className, StringUtil.escapeStringCharacters(file.getPath()));
+
+                    generateTestMethod(printer, generatedTestName, className.asString(), StringUtil.escapeStringCharacters(file.getPath()));
                 }
             }
         }
     }
 
-    private static boolean hasJvmNameAnnotation(String text) {
-        return text.contains("@file:JvmName") || text.contains("@file:kotlin.jvm.JvmName");
-    }
-
-    private static String getGeneratedClassName(File file, String text, String packageName) {
+    private static FqName getGeneratedClassName(File file, String text, String packageName) {
         FqName packageFqName = new FqName(packageName);
         for (String annotation : FILE_NAME_ANNOTATIONS) {
             if (text.contains(annotation)) {
                 int indexOf = text.indexOf(annotation);
-                return packageFqName.child(Name.identifier(text.substring(text.indexOf("(\"", indexOf) + 2, text.indexOf("\")", indexOf)))).asString();
+                return packageFqName.child(Name.identifier(text.substring(text.indexOf("(\"", indexOf) + 2, text.indexOf("\")", indexOf))));
             }
         }
 
-        return PackagePartClassUtils.getPackagePartFqName(packageFqName, file.getName()).asString();
+        return PackagePartClassUtils.getPackagePartFqName(packageFqName, file.getName());
     }
 
     private static boolean hasBoxMethod(String text) {
         return text.contains("fun box()");
     }
 
-    private String changePackage(String packageName, String text) {
+    private String changePackage(String packageName, String text, Ref<FqName> oldPackage) {
         if (text.contains("package ")) {
             Matcher matcher = packagePattern.matcher(text);
+            assert matcher.find();
+            String group = matcher.toMatchResult().group(1);
+            oldPackage.set(FqName.fromSegments(Arrays.asList(group.split("\\."))));
             return matcher.replaceAll("package " + packageName);
         }
         else {
+            oldPackage.set(FqName.ROOT);
             String packageDirective = "package " + packageName + ";\n";
             if (text.contains("@file:")) {
                 int index = text.lastIndexOf("@file:");
@@ -287,6 +291,10 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
                 return packageDirective + text;
             }
         }
+    }
+
+    private static String patchClassForName(FqName className, FqName oldPackage, String text) {
+        return text.replaceAll("Class\\.forName\\(\"" + oldPackage.child(className.shortName()).asString() + "\"\\)", "Class.forName(\"" + className.asString() + "\")");
     }
 
     private static void generateTestMethod(Printer p, String testName, String className, String filePath) {
