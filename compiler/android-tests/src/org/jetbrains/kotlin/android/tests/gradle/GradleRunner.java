@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.android.tests.OutputUtils;
 import org.jetbrains.kotlin.android.tests.PathManager;
 import org.jetbrains.kotlin.android.tests.run.RunResult;
 import org.jetbrains.kotlin.android.tests.run.RunUtils;
-import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,8 +31,8 @@ public class GradleRunner {
 
     public GradleRunner(PathManager pathManager) {
         listOfCommands = new ArrayList<String>();
-        String cmdName = SystemInfo.isWindows ? "gradlew.bat" : "gradlew";
-        listOfCommands.add(pathManager.getTmpFolder() + "/" + cmdName);
+        String cmdName = SystemInfo.isWindows ? "gradle.bat" : "gradle";
+        listOfCommands.add(pathManager.getGradleBinFolder() + "/" + cmdName);
         listOfCommands.add("--build-file");
         listOfCommands.add(pathManager.getTmpFolder() + "/build.gradle");
     }

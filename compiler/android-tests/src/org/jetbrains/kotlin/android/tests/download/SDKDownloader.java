@@ -34,6 +34,7 @@ public class SDKDownloader {
     private final String platformToolsZipPath;
     private final String skdToolsZipPath;
     private final String buildToolsZipPath;
+    private final String gradleZipPath;
 
     private final PathManager pathManager;
 
@@ -51,27 +52,32 @@ public class SDKDownloader {
         platformToolsZipPath = pathManager.getRootForDownload() + "/platform-tools.zip";
         skdToolsZipPath = pathManager.getRootForDownload() + "/tools.zip";
         buildToolsZipPath = pathManager.getRootForDownload() + "/build-tools.zip";
+        gradleZipPath = pathManager.getRootForDownload() + "/gradle.zip";
     }
 
     public void downloadPlatform() {
-        download("http://dl-ssl.google.com/android/repository/android-" + ANDROID_VERSION + "_r05.zip", platformZipPath);  //Same for all platforms
+        download("https://dl-ssl.google.com/android/repository/android-" + ANDROID_VERSION + "_r05.zip", platformZipPath);  //Same for all platforms
     }
 
     private void downloadAbi() {
-        download("http://dl.google.com/android/repository/sys-img/android/sysimg_armv7a-" + ANDROID_VERSION + "_r04.zip", armImage);  //Same for all platforms
-        download("http://dl.google.com/android/repository/sys-img/android/sysimg_x86-" + ANDROID_VERSION + "_r02.zip", x86Image);  //Same for all platforms
+        download("https://dl.google.com/android/repository/sys-img/android/sysimg_armv7a-" + ANDROID_VERSION + "_r04.zip", armImage);  //Same for all platforms
+        download("https://dl.google.com/android/repository/sys-img/android/sysimg_x86-" + ANDROID_VERSION + "_r02.zip", x86Image);  //Same for all platforms
     }
 
     public void downloadPlatformTools() {
-        download(getDownloadUrl("http://dl-ssl.google.com/android/repository/platform-tools_r" + PLATFORM_TOOLS), platformToolsZipPath);
+        download(getDownloadUrl("https://dl-ssl.google.com/android/repository/platform-tools_r" + PLATFORM_TOOLS), platformToolsZipPath);
     }
 
     public void downloadSdkTools() {
-        download(getDownloadUrl("http://dl.google.com/android/repository/tools_r" + SDK_TOOLS), skdToolsZipPath);
+        download(getDownloadUrl("https://dl.google.com/android/repository/tools_r" + SDK_TOOLS), skdToolsZipPath);
     }
 
     public void downloadBuildTools() {
-        download(getDownloadUrl("http://dl.google.com/android/repository/build-tools_r" + BUILD_TOOLS), buildToolsZipPath);
+        download(getDownloadUrl("https://dl.google.com/android/repository/build-tools_r" + BUILD_TOOLS), buildToolsZipPath);
+    }
+
+    public void downloadGradle() {
+        download("https://services.gradle.org/distributions/gradle-2.12-bin.zip", gradleZipPath);
     }
 
     private static String getDownloadUrl(String prefix) {
@@ -97,6 +103,7 @@ public class SDKDownloader {
         downloadPlatform();
         downloadPlatformTools();
         downloadBuildTools();
+        downloadGradle();
     }
 
 
@@ -110,6 +117,8 @@ public class SDKDownloader {
 
         unzip(platformToolsZipPath, androidSdkRoot);
         unzip(skdToolsZipPath, androidSdkRoot);
+
+        unzip(gradleZipPath, pathManager.getDependenciesRoot());
 
         //BUILD TOOLS
         String buildTools = androidSdkRoot + "/build-tools/";
@@ -126,6 +135,7 @@ public class SDKDownloader {
         delete(buildToolsZipPath);
         delete(armImage);
         delete(x86Image);
+        delete(gradleZipPath);
     }
 
     private static void download(String urlString, String output) {
