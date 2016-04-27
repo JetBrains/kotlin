@@ -5089,6 +5089,33 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/makeConstructorParameterProperty")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class MakeConstructorParameterProperty extends AbstractQuickFixTest {
+        public void testAllFilesPresentInMakeConstructorParameterProperty() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/makeConstructorParameterProperty"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("inner.kt")
+        public void testInner() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/makeConstructorParameterProperty/inner.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("val.kt")
+        public void testVal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/makeConstructorParameterProperty/val.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("var.kt")
+        public void testVar() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/makeConstructorParameterProperty/var.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/migration")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

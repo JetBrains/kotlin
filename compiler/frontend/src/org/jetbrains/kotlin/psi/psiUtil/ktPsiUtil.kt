@@ -454,3 +454,8 @@ fun checkReservedPrefixWord(sink: DiagnosticSink, element: PsiElement, word: Str
     }
 }
 
+fun KtElement.nonStaticOuterClasses(): Sequence<KtClass> {
+    return generateSequence(containingClass()) { if (it.isInner()) it.containingClass() else null }
+}
+
+fun KtElement.containingClass(): KtClass? = getStrictParentOfType<KtClass>()
