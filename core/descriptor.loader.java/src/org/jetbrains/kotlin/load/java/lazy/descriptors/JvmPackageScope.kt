@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.incremental.record
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.getValue
@@ -47,6 +48,8 @@ class JvmPackageScope(
     }
 
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
+        if (!SpecialNames.isSafeIdentifier(name)) return null
+
         recordLookup(location, name)
 
         val javaClassifier = javaScope.getContributedClassifier(name, location)
