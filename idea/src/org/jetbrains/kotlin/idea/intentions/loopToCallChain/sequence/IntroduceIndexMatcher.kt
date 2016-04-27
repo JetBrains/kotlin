@@ -39,7 +39,7 @@ object IntroduceIndexMatcher : TransformationMatcher {
         // there should be no continuation of the loop in statements before index increment
         if (restStatements.any { statement -> statement.anyDescendantOfType<KtContinueExpression>(::isContinueOfThisLoopOrOuter) }) return null
 
-        val variableInitialization = operand.detectInitializationBeforeLoop(state.outerLoop, checkNoOtherUsagesInLoop = false)
+        val variableInitialization = operand.isVariableInitializedBeforeLoop(state.outerLoop, checkNoOtherUsagesInLoop = false)
                                      ?: return null
         if ((variableInitialization.initializer as? KtConstantExpression)?.text != "0") return null
 

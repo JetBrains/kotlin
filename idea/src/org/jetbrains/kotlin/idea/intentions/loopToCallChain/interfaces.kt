@@ -52,6 +52,8 @@ interface Transformation {
             presentation
     }
 
+    fun mergeWithPrevious(previousTransformation: SequenceTransformation): Transformation?
+
     fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression
 
     val chainCallCount: Int
@@ -65,7 +67,7 @@ interface Transformation {
  * Represents a transformation of input sequence into another sequence
  */
 interface SequenceTransformation : Transformation {
-    fun mergeWithPrevious(previousTransformation: SequenceTransformation): SequenceTransformation? = null
+    override fun mergeWithPrevious(previousTransformation: SequenceTransformation): SequenceTransformation? = null
 
     val affectsIndex: Boolean
 }
@@ -74,7 +76,7 @@ interface SequenceTransformation : Transformation {
  * Represents a final transformation of sequence which produces the result of the whole loop (for example, assigning a found value into a variable).
  */
 interface ResultTransformation : Transformation {
-    fun mergeWithPrevious(previousTransformation: SequenceTransformation): ResultTransformation? = null
+    override fun mergeWithPrevious(previousTransformation: SequenceTransformation): ResultTransformation? = null
 
     val commentSavingRange: PsiChildRange
 

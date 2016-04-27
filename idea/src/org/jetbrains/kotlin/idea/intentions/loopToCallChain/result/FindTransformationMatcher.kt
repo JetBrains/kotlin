@@ -78,7 +78,7 @@ object FindTransformationMatcher : TransformationMatcher {
         val left = binaryExpression.left ?: return null
         val right = binaryExpression.right ?: return null
 
-        val initialization = left.detectInitializationBeforeLoop(state.outerLoop, checkNoOtherUsagesInLoop = true) ?: return null
+        val initialization = left.isVariableInitializedBeforeLoop(state.outerLoop, checkNoOtherUsagesInLoop = true) ?: return null
 
         if (initialization.variable.countUsages(state.outerLoop) != 1) return null // this should be the only usage of this variable inside the loop
 

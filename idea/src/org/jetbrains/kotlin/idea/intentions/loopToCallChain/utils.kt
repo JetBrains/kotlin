@@ -97,7 +97,7 @@ data class VariableInitialization(
         val initializer: KtExpression)
 
 //TODO: we need more correctness checks (if variable is non-local or is local but can be changed by some local functions)
-fun KtExpression.detectInitializationBeforeLoop(
+fun KtExpression.isVariableInitializedBeforeLoop(
         loop: KtForExpression,
         checkNoOtherUsagesInLoop: Boolean
 ): VariableInitialization? {
@@ -147,6 +147,7 @@ enum class CollectionKind {
 }
 
 fun KtExpression.isSimpleCollectionInstantiation(): CollectionKind? {
+    //TODO: support mutableListOf() etc
     val callExpression = this as? KtCallExpression ?: return null //TODO: it can be qualified too
     if (callExpression.valueArguments.isNotEmpty()) return null
     val bindingContext = callExpression.analyze(BodyResolveMode.PARTIAL)
