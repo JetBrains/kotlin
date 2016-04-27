@@ -17,17 +17,24 @@
 package org.jetbrains.kotlin.j2k.usageProcessing
 
 import com.intellij.psi.*
+import com.intellij.psi.util.PsiUtil
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.j2k.AccessorKind
 import org.jetbrains.kotlin.j2k.CodeConverter
 import org.jetbrains.kotlin.j2k.ast.*
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
-class FieldToPropertyProcessing(val field: PsiField, val propertyName: String, val isNullable: Boolean) : UsageProcessing {
+class FieldToPropertyProcessing(
+        private val field: PsiField,
+        private val propertyName: String,
+        private val isNullable: Boolean,
+        private val replaceReadWithFieldReference: Boolean,
+        private val replaceWriteWithFieldReference: Boolean
+) : UsageProcessing {
     override val targetElement: PsiElement get() = this.field
 
     override val convertedCodeProcessor: ConvertedCodeProcessor? =
-            if (field.name != propertyName) MyConvertedCodeProcessor() else null
+            if (field.name != propertyName || replaceReadWithFieldReference || replaceWriteWithFieldReference) MyConvertedCodeProcessor() else null
 
     override var javaCodeProcessors =
             if (field.hasModifierProperty(PsiModifier.PRIVATE))
@@ -45,17 +52,21 @@ class FieldToPropertyProcessing(val field: PsiField, val propertyName: String, v
 
     private inner class MyConvertedCodeProcessor : ConvertedCodeProcessor {
         override fun convertVariableUsage(expression: PsiReferenceExpression, codeConverter: CodeConverter): Expression? {
-            val identifier = Identifier(propertyName, isNullable).assignNoPrototype()
+            val useFieldReference = replaceReadWithFieldReference && PsiUtil.isAccessedForReading(expression)
+                                    || replaceWriteWithFieldReference && PsiUtil.isAccessedForWriting(expression)
+
+            //TODO: what if local "field" is declared? Should be rare case though
+            val identifier = Identifier(if (useFieldReference) "field" else propertyName, isNullable).assignNoPrototype()
 
             val qualifier = expression.qualifierExpression
-            if (qualifier != null) {
+            if (qualifier != null && !useFieldReference) {
                 return QualifiedExpression(codeConverter.convertExpression(qualifier), identifier)
             }
             else {
                 // check if field name is shadowed
                 val elementFactory = PsiElementFactory.SERVICE.getInstance(expression.project)
                 val refExpr = try {
-                    elementFactory.createExpressionFromText(propertyName, expression) as? PsiReferenceExpression ?: return identifier
+                    elementFactory.createExpressionFromText(identifier.name, expression) as? PsiReferenceExpression ?: return identifier
                 }
                 catch(e: IncorrectOperationException) {
                     return identifier
