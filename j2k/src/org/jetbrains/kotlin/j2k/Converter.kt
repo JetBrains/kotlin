@@ -336,7 +336,9 @@ class Converter private constructor(
 
             //TODO: usage processings for converting method's to property
             if (field != null) {
-                addUsageProcessing(FieldToPropertyProcessing(field, propertyInfo.name, propertyType.isNullable))
+                addUsageProcessing(FieldToPropertyProcessing(field, propertyInfo.name, propertyType.isNullable,
+                                                             replaceReadWithFieldReference = propertyInfo.getMethod != null && !propertyInfo.isGetMethodBodyFieldAccess,
+                                                             replaceWriteWithFieldReference = propertyInfo.setMethod != null && !propertyInfo.isSetMethodBodyFieldAccess))
             }
 
             //TODO: doc-comments
@@ -366,7 +368,7 @@ class Converter private constructor(
             var setter: PropertyAccessor? = null
             if (propertyInfo.needExplicitSetter) {
                 val accessorModifiers = Modifiers(propertyInfo.specialSetterAccess.singletonOrEmptyList()).assignNoPrototype()
-                if (setMethod != null) {
+                if (setMethod != null && !propertyInfo.isSetMethodBodyFieldAccess) {
                     val method = setMethod.let { convertMethod(it, null, null, null, classKind)!! }
                     val convertedParameter = method.parameterList!!.parameters.single() as FunctionParameter
                     val parameterAnnotations = convertedParameter.annotations
