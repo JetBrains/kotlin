@@ -124,7 +124,7 @@ public class Emulator {
         GeneralCommandLine commandLine = createAdbCommand();
         commandLine.addParameter("start-server");
         System.out.println("Start adb server...");
-        OutputUtils.checkResult(RunUtils.execute(commandLine));
+        OutputUtils.checkResult(RunUtils.execute(new RunUtils.RunSettings(commandLine, null, true, "ADB START:", true)));
     }
 
     public void startEmulator() {
