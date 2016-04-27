@@ -58,8 +58,8 @@ private class ClassClsStubBuilder(
         private val classProto: ProtoBuf.Class,
         private val nameResolver: NameResolver,
         private val classId: ClassId,
-        private val source: SourceElement?,
-        private val outerContext: ClsStubBuilderContext
+        source: SourceElement?,
+        outerContext: ClsStubBuilderContext
 ) {
     private val thisAsProtoContainer = ProtoContainer.Class(
             classProto, nameResolver, TypeTable(classProto.typeTable), source, outerContext.protoContainer

@@ -306,8 +306,8 @@ class TypeInstantiationItems(
 
     private inner class InheritanceSearcher(
             private val psiClass: PsiClass,
-            private val classDescriptor: ClassDescriptor,
-            private val typeArgs: List<TypeProjection>,
+            classDescriptor: ClassDescriptor,
+            typeArgs: List<TypeProjection>,
             private val freeParameters: Collection<TypeParameterDescriptor>,
             private val tail: Tail?) : InheritanceItemsSearcher {
 

@@ -31,7 +31,7 @@ class LookupElementsCollector(
         private val prefixMatcher: PrefixMatcher,
         private val completionParameters: CompletionParameters,
         resultSet: CompletionResultSet,
-        private val sorter: CompletionSorter
+        sorter: CompletionSorter
 ) {
 
     private val elements = ArrayList<LookupElement>()

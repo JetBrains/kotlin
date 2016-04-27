@@ -196,7 +196,7 @@ private class Prioritizer(private val file: KtFile, private val compareNames: Bo
     private val classifier = ImportableFqNameClassifier(file)
     private val proximityComparator = PsiProximityComparator(file)
 
-    inner class Priority(private val descriptor: DeclarationDescriptor) : Comparable<Priority> {
+    inner class Priority(descriptor: DeclarationDescriptor) : Comparable<Priority> {
         private val isDeprecated = KotlinBuiltIns.isDeprecated(descriptor)
         private val fqName = descriptor.importableFqName!!
         private val classification = classifier.classify(fqName, false)
@@ -226,7 +226,7 @@ private class Prioritizer(private val file: KtFile, private val compareNames: Bo
     data class VariantWithPriority(val variant: AutoImportVariant, val priority: Priority)
 }
 
-private class DescriptorGroupPrioritizer(private val file: KtFile) {
+private class DescriptorGroupPrioritizer(file: KtFile) {
     private val prioritizer = Prioritizer(file, false)
 
     inner class Priority(val descriptors: List<DeclarationDescriptor>) : Comparable<Priority> {

@@ -159,7 +159,7 @@ interface OutputValue {
             val elementsToReplace: List<KtExpression>,
             val elementToInsertAfterCall: KtElement?,
             val conditional: Boolean,
-            private val builtIns: KotlinBuiltIns
+            builtIns: KotlinBuiltIns
     ): OutputValue {
         override val originalExpressions: List<KtExpression> get() = elementsToReplace
         override val valueType: KotlinType = with(builtIns) { if (conditional) booleanType else unitType }
