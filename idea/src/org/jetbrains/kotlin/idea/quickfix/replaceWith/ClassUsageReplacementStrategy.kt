@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.check
 class ClassUsageReplacementStrategy(
         typeReplacement: KtUserType?,
         constructorReplacement: ReplaceWithAnnotationAnalyzer.ReplacementExpression?,
-        private val project: Project
+        project: Project
 ) : UsageReplacementStrategy {
 
     private val factory = KtPsiFactory(project)
