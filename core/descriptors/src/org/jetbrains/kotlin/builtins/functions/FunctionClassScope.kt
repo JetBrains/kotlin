@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.util.ArrayList
 
 class FunctionClassScope(
-        private val storageManager: StorageManager,
+        storageManager: StorageManager,
         private val functionClass: FunctionClassDescriptor
 ) : MemberScopeImpl() {
     private val allDescriptors = storageManager.createLazyValue {

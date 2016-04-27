@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 
 class BuiltInsClassDataFinder(
-        private val proto: BuiltInsProtoBuf.BuiltIns,
+        proto: BuiltInsProtoBuf.BuiltIns,
         private val nameResolver: NameResolver
 ) : ClassDataFinder {
     private val classIdToProto =
