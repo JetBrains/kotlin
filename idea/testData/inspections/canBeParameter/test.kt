@@ -121,3 +121,9 @@ class UsedInDelegate(val x: Int) {
 class UsedInParent(val x: UsedInParent?) {
     val y = x?.x
 }
+// NO
+class UsedInObjectLiteral(val x: Int) {
+    val y = object: Any() {
+        fun bar() = x
+    }
+}
