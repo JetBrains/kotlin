@@ -1,0 +1,5 @@
+package
+
+public val concurrent: java.util.concurrent.ConcurrentMap<kotlin.String, kotlin.Int>
+public val concurrentHash: java.util.concurrent.ConcurrentHashMap<kotlin.String, kotlin.Int>
+public fun foo(): kotlin.Unit

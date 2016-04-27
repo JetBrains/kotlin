@@ -16,10 +16,11 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.name.ClassId
 import java.util.*
 
-fun <T> signatures(block: SignatureBuildingComponents.() -> T) = with(SignatureBuildingComponents, block)
+inline fun <T> signatures(block: SignatureBuildingComponents.() -> T) = with(SignatureBuildingComponents, block)
 
 object SignatureBuildingComponents {
     fun javaLang(name: String) = "java/lang/$name"
@@ -33,5 +34,6 @@ object SignatureBuildingComponents {
     fun inClass(internalName: String, vararg signatures: String) = signatures.mapTo(LinkedHashSet()) { internalName + "." + it }
 
     fun signature(classDescriptor: ClassDescriptor, jvmDescriptor: String) = signature(classDescriptor.internalName, jvmDescriptor)
+    fun signature(classId: ClassId, jvmDescriptor: String) = signature(classId.internalName, jvmDescriptor)
     fun signature(internalName: String, jvmDescriptor: String) = internalName + "." + jvmDescriptor
 }
