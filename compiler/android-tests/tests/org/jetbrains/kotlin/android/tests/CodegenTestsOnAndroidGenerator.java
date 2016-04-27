@@ -261,7 +261,8 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
         for (String annotation : FILE_NAME_ANNOTATIONS) {
             if (text.contains(annotation)) {
                 int indexOf = text.indexOf(annotation);
-                return packageFqName.child(Name.identifier(text.substring(text.indexOf("(\"", indexOf) + 2, text.indexOf("\")", indexOf))));
+                String annotationParameter = text.substring(text.indexOf("(\"", indexOf) + 2, text.indexOf("\")", indexOf));
+                return packageFqName.child(Name.identifier(annotationParameter));
             }
         }
 
@@ -272,17 +273,17 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
         return text.contains("fun box()");
     }
 
-    private String changePackage(String packageName, String text, Ref<FqName> oldPackage) {
+    private String changePackage(String newPackageName, String text, Ref<FqName> oldPackage) {
         if (text.contains("package ")) {
             Matcher matcher = packagePattern.matcher(text);
             assert matcher.find();
-            String group = matcher.toMatchResult().group(1);
-            oldPackage.set(FqName.fromSegments(Arrays.asList(group.split("\\."))));
-            return matcher.replaceAll("package " + packageName);
+            String oldPackageName = matcher.toMatchResult().group(1);
+            oldPackage.set(new FqName(oldPackageName));
+            return matcher.replaceAll("package " + newPackageName);
         }
         else {
             oldPackage.set(FqName.ROOT);
-            String packageDirective = "package " + packageName + ";\n";
+            String packageDirective = "package " + newPackageName + ";\n";
             if (text.contains("@file:")) {
                 int index = text.lastIndexOf("@file:");
                 int packageDirectiveIndex = text.indexOf("\n", index);
