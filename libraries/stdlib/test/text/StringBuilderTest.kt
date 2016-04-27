@@ -5,6 +5,12 @@ import org.junit.Test as test
 
 class StringBuilderTest {
 
+    @test fun stringBuildWithInitialCapacity() {
+        val s = buildString(123) {
+            assertEquals(123, capacity())
+        }
+    }
+
     @test fun stringBuild() {
         val s = buildString {
             append("a")
