@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 class DelegationTranslator(
-        private val classDeclaration: KtClassOrObject,
+        classDeclaration: KtClassOrObject,
         context: TranslationContext
 ) : AbstractTranslator(context) {
 
