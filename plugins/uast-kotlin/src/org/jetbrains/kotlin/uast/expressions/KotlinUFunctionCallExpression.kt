@@ -81,7 +81,7 @@ class KotlinUFunctionCallExpression(
 
 class KotlinUComponentFunctionCallExpression(
         override val psi: PsiElement,
-        val n: Int,
+        n: Int,
         override val parent: UElement
 ) : UCallExpression, PsiElementBacked {
     override val valueArgumentCount = 0
