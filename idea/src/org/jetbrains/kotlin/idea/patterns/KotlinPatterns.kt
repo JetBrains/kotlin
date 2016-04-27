@@ -33,8 +33,8 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 // Methods in this class are used through reflection
 @Suppress("unused")
 object KotlinPatterns: StandardPatterns() {
-    @JvmStatic fun psiParameter() = KtParameterPattern()
-    @JvmStatic fun psiMethod() = KotlinFunctionPattern()
+    @JvmStatic fun kotlinParameter() = KtParameterPattern()
+    @JvmStatic fun kotlinFunction() = KotlinFunctionPattern()
     @JvmStatic fun receiver() = KotlinReceiverPattern()
 }
 
@@ -94,7 +94,7 @@ open class KotlinFunctionPattern : PsiElementPattern<KtFunction, KotlinFunctionP
 // Methods in this class are used through reflection during pattern construction
 @Suppress("unused")
 class KtParameterPattern : PsiElementPattern<KtParameter, KtParameterPattern>(KtParameter::class.java) {
-    fun ofMethod(index: Int, pattern: ElementPattern<Any>): KtParameterPattern {
+    fun ofFunction(index: Int, pattern: ElementPattern<Any>): KtParameterPattern {
         return with(object : PatternConditionPlus<KtParameter, KtFunction>("KtParameterPattern-ofMethod", pattern) {
             override fun processValues(ktParameter: KtParameter,
                                        context: ProcessingContext,
@@ -128,7 +128,7 @@ class KtParameterPattern : PsiElementPattern<KtParameter, KtParameterPattern>(Kt
 
 @Suppress("unused")
 class KotlinReceiverPattern : PsiElementPattern<KtTypeReference, KotlinReceiverPattern>(KtTypeReference::class.java) {
-    fun ofMethod(pattern: ElementPattern<Any>): KotlinReceiverPattern {
+    fun ofFunction(pattern: ElementPattern<Any>): KotlinReceiverPattern {
         return with(object : PatternConditionPlus<KtTypeReference, KtFunction>("KtReceiverPattern-ofMethod", pattern) {
             override fun processValues(typeReference: KtTypeReference, context: ProcessingContext?, processor: PairProcessor<KtFunction, ProcessingContext>): Boolean {
                 return processor.process(typeReference.parent as? KtFunction, context)

@@ -3,10 +3,10 @@
     <injection language="RegExp" injector-id="kotlin">
         <display-name>Kotlin</display-name>
         <place><![CDATA[
-            psiParameter().ofMethod(0, psiMethod().withName("Regex").definedInClass("kotlin.text.Regex"))
+            kotlinParameter().ofFunction(0, kotlinFunction().withName("Regex").definedInClass("kotlin.text.Regex"))
             ]]></place>
         <place><![CDATA[
-            receiver().ofMethod(psiMethod().withName("toRegex").withReceiver("kotlin.String").definedInPackage("kotlin.text"))
+            receiver().ofFunction(kotlinFunction().withName("toRegex").withReceiver("kotlin.String").definedInPackage("kotlin.text"))
             ]]></place>
     </injection>
 </component>
