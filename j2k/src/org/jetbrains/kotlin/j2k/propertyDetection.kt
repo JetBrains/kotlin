@@ -127,7 +127,7 @@ private class PropertyDetector(
         }
 
         val propertyNamesWithConflict = HashSet<String>()
-        val prohibitedPropertyNames = psiClass.fields.map { it.name }.toMutableSet() //TODO: fields from base
+        val prohibitedPropertyNames = psiClass.fields.mapNotNull { it.name }.toMutableSet() //TODO: fields from base
 
         val propertyNameToGetterInfo = detectGetters(methodsToCheck, prohibitedPropertyNames, propertyNamesWithConflict)
 
@@ -223,7 +223,7 @@ private class PropertyDetector(
 
     private fun detectGetters(
             methodsToCheck: List<Pair<PsiMethod, SuperInfo.Property?>>,
-            prohibitedPropertyNames: MutableSet<String?>,
+            prohibitedPropertyNames: MutableSet<String>,
             propertyNamesWithConflict: MutableSet<String>
     ): Map<String, AccessorInfo> {
         val propertyNameToGetterInfo = LinkedHashMap<String, AccessorInfo>()
@@ -244,7 +244,7 @@ private class PropertyDetector(
 
     private fun detectSetters(
             methodsToCheck: List<Pair<PsiMethod, SuperInfo.Property?>>,
-            prohibitedPropertyNames: MutableSet<String?>,
+            prohibitedPropertyNames: MutableSet<String>,
             propertyNamesFromGetters: Set<String>,
             propertyNamesWithConflict: MutableSet<String>
     ): Map<String, AccessorInfo> {
