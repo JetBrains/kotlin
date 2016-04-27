@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
-class LazySyntheticElementResolveContext(private val module: ModuleDescriptor, private val storageManager: StorageManager) {
+class LazySyntheticElementResolveContext(private val module: ModuleDescriptor, storageManager: StorageManager) {
     private val context = storageManager.createLazyValue {
         module.createResolveContext()
     }
