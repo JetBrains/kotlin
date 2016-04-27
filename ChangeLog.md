@@ -23,6 +23,7 @@ New features:
 - [KT-11807](https://youtrack.jetbrains.com/issue/KT-11807) Use function body template when generating overriding functions with default body
 - [KT-12079](https://youtrack.jetbrains.com/issue/KT-12079) Support "Autowired members defined in invalid Spring bean" inspection on Kotlin declarations
 - [KT-11704](https://youtrack.jetbrains.com/issue/KT-11704) Support file path references inside of Kotlin string literals
+- [KT-12092](https://youtrack.jetbrains.com/issue/KT-12092) Implement bean references in @Qualifier annotations
 
 Issues fixed:
 

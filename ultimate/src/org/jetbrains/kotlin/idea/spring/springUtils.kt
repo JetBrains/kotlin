@@ -18,8 +18,11 @@ package org.jetbrains.kotlin.idea.spring
 
 import com.intellij.codeInsight.AnnotationUtil
 import com.intellij.openapi.module.ModuleUtilCore
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiModifierListOwner
+import com.intellij.spring.CommonSpringModel
 import com.intellij.spring.model.jam.utils.JamAnnotationTypeUtil
+import com.intellij.spring.model.utils.SpringModelUtils
 
 internal fun PsiModifierListOwner.isAnnotatedWith(annotationFqName: String): Boolean {
     val module = ModuleUtilCore.findModuleForPsiElement(this) ?: return false
@@ -28,3 +31,6 @@ internal fun PsiModifierListOwner.isAnnotatedWith(annotationFqName: String): Boo
             .mapNotNull { it.qualifiedName }
             .any { AnnotationUtil.isAnnotated(this, it, true) }
 }
+
+internal val PsiElement.springModel: CommonSpringModel?
+    get() = SpringModelUtils.getInstance().getSpringModel(this)

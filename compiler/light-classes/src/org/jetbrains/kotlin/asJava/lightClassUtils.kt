@@ -132,10 +132,14 @@ private fun isNonAbstractMember(member: KtDeclaration?): Boolean {
 private val DEFAULT_IMPLS_CLASS_NAME = Name.identifier(JvmAbi.DEFAULT_IMPLS_CLASS_NAME)
 fun FqName.defaultImplsChild() = child(DEFAULT_IMPLS_CLASS_NAME)
 
+@Suppress("unused")
 fun KtAnnotationEntry.toLightAnnotation(): PsiAnnotation? {
     val ktDeclaration = getStrictParentOfType<KtModifierList>()?.parent as? KtDeclaration ?: return null
-    val lightElement = ktDeclaration.toLightElements().firstOrNull() as? PsiModifierListOwner ?: return null
-    return lightElement.modifierList?.annotations?.firstOrNull { it is KtLightAnnotation && it.kotlinOrigin == this }
+    for (lightElement in ktDeclaration.toLightElements()) {
+        if (lightElement !is PsiModifierListOwner) continue
+        lightElement.modifierList?.annotations?.firstOrNull { it is KtLightAnnotation && it.kotlinOrigin == this }?.let { return it }
+    }
+    return null
 }
 
 fun propertyNameByAccessor(name: String, accessor: KtLightMethod): String? {

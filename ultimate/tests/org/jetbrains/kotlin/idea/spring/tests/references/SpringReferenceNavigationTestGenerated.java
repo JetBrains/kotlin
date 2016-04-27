@@ -47,6 +47,12 @@ public class SpringReferenceNavigationTestGenerated extends AbstractSpringRefere
         doTest(fileName);
     }
 
+    @TestMetadata("qualifierReference.kt")
+    public void testQualifierReference() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("ultimate/testData/spring/core/references/navigation/qualifierReference.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("scopeReference.kt")
     public void testScopeReference() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("ultimate/testData/spring/core/references/navigation/scopeReference.kt");

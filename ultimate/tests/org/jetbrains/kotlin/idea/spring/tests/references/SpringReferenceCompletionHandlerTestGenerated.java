@@ -35,6 +35,18 @@ public class SpringReferenceCompletionHandlerTestGenerated extends AbstractSprin
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("ultimate/testData/spring/core/references/completion/handler"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
+    @TestMetadata("qualifierReferenceEnter.kt")
+    public void testQualifierReferenceEnter() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("ultimate/testData/spring/core/references/completion/handler/qualifierReferenceEnter.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("qualifierReferenceTab.kt")
+    public void testQualifierReferenceTab() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("ultimate/testData/spring/core/references/completion/handler/qualifierReferenceTab.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("scopeReference.kt")
     public void testScopeReference() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("ultimate/testData/spring/core/references/completion/handler/scopeReference.kt");
