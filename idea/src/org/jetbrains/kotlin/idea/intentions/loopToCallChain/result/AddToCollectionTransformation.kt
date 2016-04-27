@@ -122,7 +122,7 @@ class AddToCollectionTransformation(
                 targetCollection: KtExpression,
                 addOperationArgument: KtExpression
         ): TransformationMatch.Result? {
-            val collectionInitialization = targetCollection.detectInitializationBeforeLoop(state.outerLoop, checkNoOtherUsagesInLoop = true) ?: return null
+            val collectionInitialization = targetCollection.isVariableInitializedBeforeLoop(state.outerLoop, checkNoOtherUsagesInLoop = true) ?: return null
             val collectionKind = collectionInitialization.initializer.isSimpleCollectionInstantiation() ?: return null
             val argumentIsInputVariable = addOperationArgument.isVariableReference(state.inputVariable)
             when (collectionKind) {
@@ -223,7 +223,7 @@ class FilterToTransformation private constructor(
                 condition: KtExpression,
                 isInverse: Boolean
         ): ResultTransformation {
-            val initialization = targetCollection.detectInitializationBeforeLoop(loop, checkNoOtherUsagesInLoop = true)
+            val initialization = targetCollection.isVariableInitializedBeforeLoop(loop, checkNoOtherUsagesInLoop = true)
             if (initialization != null && initialization.initializer.hasNoSideEffect()) {
                 val transformation = FilterToTransformation(loop, inputVariable, indexVariable, initialization.initializer, condition, isInverse)
                 return AssignToVariableResultTransformation.createDelegated(transformation, initialization)
@@ -252,7 +252,7 @@ class FilterNotNullToTransformation private constructor(
                 loop: KtForExpression,
                 targetCollection: KtExpression
         ): ResultTransformation {
-            val initialization = targetCollection.detectInitializationBeforeLoop(loop, checkNoOtherUsagesInLoop = true)
+            val initialization = targetCollection.isVariableInitializedBeforeLoop(loop, checkNoOtherUsagesInLoop = true)
             if (initialization != null && initialization.initializer.hasNoSideEffect()) {
                 val transformation = FilterNotNullToTransformation(loop, initialization.initializer)
                 return AssignToVariableResultTransformation.createDelegated(transformation, initialization)
@@ -298,7 +298,7 @@ class MapToTransformation private constructor(
                 mapping: KtExpression,
                 mapNotNull: Boolean
         ): ResultTransformation {
-            val initialization = targetCollection.detectInitializationBeforeLoop(loop, checkNoOtherUsagesInLoop = true)
+            val initialization = targetCollection.isVariableInitializedBeforeLoop(loop, checkNoOtherUsagesInLoop = true)
             if (initialization != null && initialization.initializer.hasNoSideEffect()) {
                 val transformation = MapToTransformation(loop, inputVariable, indexVariable, initialization.initializer, mapping, mapNotNull)
                 return AssignToVariableResultTransformation.createDelegated(transformation, initialization)
@@ -332,7 +332,7 @@ class FlatMapToTransformation private constructor(
                 targetCollection: KtExpression,
                 transform: KtExpression
         ): ResultTransformation {
-            val initialization = targetCollection.detectInitializationBeforeLoop(loop, checkNoOtherUsagesInLoop = true)
+            val initialization = targetCollection.isVariableInitializedBeforeLoop(loop, checkNoOtherUsagesInLoop = true)
             if (initialization != null && initialization.initializer.hasNoSideEffect()) {
                 val transformation = FlatMapToTransformation(loop, inputVariable, initialization.initializer, transform)
                 return AssignToVariableResultTransformation.createDelegated(transformation, initialization)

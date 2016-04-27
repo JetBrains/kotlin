@@ -287,7 +287,7 @@ private fun MatchResult.generateCallChain(loop: KtForExpression): KtExpression {
 }
 
 private fun mergeTransformations(match: TransformationMatch.Result): TransformationMatch.Result {
-    val transformations = ArrayList<Transformation>().apply { addAll(match.sequenceTransformations); add(match.resultTransformation) }
+    val transformations = (match.sequenceTransformations + match.resultTransformation).toMutableList()
 
     var anyChange: Boolean
     do {
@@ -295,12 +295,7 @@ private fun mergeTransformations(match: TransformationMatch.Result): Transformat
         for (index in 0..transformations.lastIndex - 1) {
             val transformation = transformations[index] as SequenceTransformation
             val next = transformations[index + 1]
-            val merged = when (next) {
-                is SequenceTransformation -> next.mergeWithPrevious(transformation)
-                is ResultTransformation -> next.mergeWithPrevious(transformation)
-                else -> error("Unknown transformation type: $next")
-            } ?: continue
-
+            val merged = next.mergeWithPrevious(transformation) ?: continue
             transformations[index] = merged
             transformations.removeAt(index + 1)
             anyChange = true
