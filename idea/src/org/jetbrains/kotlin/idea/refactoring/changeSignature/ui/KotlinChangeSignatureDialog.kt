@@ -408,12 +408,13 @@ class KotlinChangeSignatureDialog(
 
         private fun getTypeCodeFragmentContext(startFrom: PsiElement): KtElement {
             return startFrom.parents.mapNotNull {
-                when (it) {
-                    is KtNamedFunction -> it.bodyExpression
-                    is KtPropertyAccessor -> it.bodyExpression
-                    is KtConstructor<*> -> it
-                    is KtClassOrObject -> it
-                    is KtFile -> it
+                when {
+                    it is KtNamedFunction -> it.bodyExpression
+                    it is KtPropertyAccessor -> it.bodyExpression
+                    it is KtDeclaration && KtPsiUtil.isLocal(it) -> null
+                    it is KtConstructor<*> -> it
+                    it is KtClassOrObject -> it
+                    it is KtFile -> it
                     else -> null
                 }
             }.first()
