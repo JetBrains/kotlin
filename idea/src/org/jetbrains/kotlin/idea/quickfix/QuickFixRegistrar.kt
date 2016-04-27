@@ -19,13 +19,9 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors.*
-import org.jetbrains.kotlin.idea.inspections.PlatformUnresolvedProvider
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementAsConstructorParameter
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
-import org.jetbrains.kotlin.idea.inspections.AddModifierFixFactory
-import org.jetbrains.kotlin.idea.inspections.AddReflectionQuickFix
-import org.jetbrains.kotlin.idea.inspections.AddTestLibQuickFix
-import org.jetbrains.kotlin.idea.inspections.InfixCallFix
+import org.jetbrains.kotlin.idea.inspections.*
 import org.jetbrains.kotlin.idea.intentions.AddValVarToConstructorParameterAction
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable.*
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromCallWithConstructorCalleeActionFactory
@@ -380,6 +376,8 @@ class QuickFixRegistrar : QuickFixContributor {
         DATA_CLASS_NOT_PROPERTY_PARAMETER.registerFactory(AddValVarToConstructorParameterAction.QuickFixFactory)
 
         NON_LOCAL_RETURN_NOT_ALLOWED.registerFactory(AddCrossInlineFix)
+
+        UNRESOLVED_REFERENCE.registerFactory(MakeConstructorParameterPropertyFix)
 
         SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE.registerFactory(ConvertExtensionToFunctionTypeFix)
     }
