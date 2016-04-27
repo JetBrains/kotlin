@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.utils.Printer
 import java.util.*
 
-class DynamicCallableDescriptors(private val builtIns: KotlinBuiltIns) {
+class DynamicCallableDescriptors(builtIns: KotlinBuiltIns) {
 
     val dynamicType = createDynamicType(builtIns)
 

@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.psi.psiUtil.parents
  */
 class KotlinCodeBlockModificationListener(
         modificationTracker: PsiModificationTracker,
-        private val project: Project,
+        project: Project,
         private val treeAspect: TreeAspect
 ) {
     init {

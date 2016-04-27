@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.psi.*
 
 class ManualVariance(val descriptor: TypeParameterDescriptor, val variance: Variance)
 
-class VarianceChecker(private val trace: BindingTrace) {
+class VarianceChecker(trace: BindingTrace) {
     private val core = VarianceCheckerCore(trace.bindingContext, trace)
 
     fun check(c: TopDownAnalysisContext) {
