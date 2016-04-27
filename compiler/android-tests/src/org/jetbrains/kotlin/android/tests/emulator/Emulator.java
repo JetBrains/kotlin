@@ -131,7 +131,8 @@ public class Emulator {
         startServer();
         System.out.println("Starting emulator...");
         RunUtils.executeOnSeparateThread(new RunUtils.RunSettings(getStartCommand(), null, false, "START: ", true));
-        printLog();
+        //disabled cause of missed test results
+        //printLog();
     }
 
     public void printLog() {
@@ -173,6 +174,13 @@ public class Emulator {
 
     public void stopEmulator() {
         System.out.println("Stopping emulator...");
+        try {
+            //added cause of missed test results
+            Thread.sleep(20000);
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         GeneralCommandLine command = createAdbCommand();
         command.addParameter("-s");
@@ -234,6 +242,15 @@ public class Emulator {
                 RunUtils.execute(killCommand);
             }
         }
+    }
+
+    public String runTestsViaAdb() {
+        System.out.println("Running tests via adb...");
+        GeneralCommandLine adbCommand = createAdbCommand();
+        //adb shell am instrument -w -r org.jetbrains.kotlin.android.tests/android.test.InstrumentationTestRunner
+        adbCommand.addParameters("shell", "am", "instrument", "-w", "-r", "org.jetbrains.kotlin.android.tests/android.test.InstrumentationTestRunner");
+        RunResult execute = RunUtils.execute(adbCommand);
+        return execute.getOutput();
     }
 
     private void stopRedundantEmulators(PathManager pathManager) {
