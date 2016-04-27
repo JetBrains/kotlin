@@ -1,10 +1,7 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
-<beans>
-    <bean id="fooBean" class="java.lang.String"/>
-    <bean id="barBean" class="java.lang.String"/>
-    <bean id="scopedBean" class="test.ScopedBean"/>
-
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
     <bean class="bean.MultiHolder" name="existingBean1">
         <constructor-arg name="thing" value="1"/>
     </bean>
