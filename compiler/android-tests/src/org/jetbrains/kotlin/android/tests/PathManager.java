@@ -74,6 +74,10 @@ public class PathManager {
         return rootFolder + "/android.tests.dependencies";
     }
 
+    public String getGradleBinFolder() {
+        return getDependenciesRoot() + "/gradle-2.12/bin";
+    }
+
     public String getRootForDownload() {
         return getDependenciesRoot() + "/download";
     }
