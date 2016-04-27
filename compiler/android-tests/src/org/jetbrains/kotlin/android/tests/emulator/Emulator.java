@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.android.tests.OutputUtils;
 import org.jetbrains.kotlin.android.tests.PathManager;
 import org.jetbrains.kotlin.android.tests.run.RunResult;
 import org.jetbrains.kotlin.android.tests.run.RunUtils;
+import org.junit.Assert;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -145,6 +146,29 @@ public class Emulator {
     public void waitEmulatorStart() {
         System.out.println("Waiting for emulator start...");
         OutputUtils.checkResult(RunUtils.execute(getWaitCommand()));
+        GeneralCommandLine bootCheckCommand = createAdbCommand();
+        bootCheckCommand.addParameter("shell");
+        bootCheckCommand.addParameter("getprop");
+        bootCheckCommand.addParameter("sys.boot_completed");
+        int counter = 0;
+        RunResult execute = RunUtils.execute(bootCheckCommand);
+        while (counter < 12) {
+            String output = execute.getOutput();
+            if (output.trim().endsWith("1")) {
+                System.out.println("Emulator fully booted!");
+                return;
+            }
+            System.out.println("Waiting for emulator boot (" + counter + ")...");
+            try {
+                Thread.sleep(10000);
+            }
+            catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            counter++;
+            execute = RunUtils.execute(bootCheckCommand);
+        }
+        Assert.fail("Can't find booted emulator: " + execute.getOutput());
     }
 
     public void stopEmulator() {
