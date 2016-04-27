@@ -36,7 +36,7 @@ class SpringTestFixtureExtension() : TestFixtureExtension {
     enum class SpringFramework(val version: String, vararg val artifactIds: String) {
         FRAMEWORK_4_2_0(
                 "4.2.0.RELEASE",
-                "core", "beans", "context", "tx"
+                "core", "beans", "context", "tx", "web"
         )
     }
 

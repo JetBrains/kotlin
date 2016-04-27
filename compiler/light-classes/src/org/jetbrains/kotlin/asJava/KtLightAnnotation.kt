@@ -92,6 +92,8 @@ class KtLightAnnotation(
         }
     }
 
+    override fun isPhysical() = true
+
     override fun getName() = null
     override fun setName(newName: String) = throw IncorrectOperationException()
 

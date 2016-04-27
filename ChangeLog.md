@@ -21,6 +21,7 @@ New features:
 - Apply injection for the literals in property initializer through property usages
 - Enable injection from Java or Kotlin function declaration by annotating parameter with @Language annotation
 - [KT-11807](https://youtrack.jetbrains.com/issue/KT-11807) Use function body template when generating overriding functions with default body
+- [KT-12079](https://youtrack.jetbrains.com/issue/KT-12079) Support "Autowired members defined in invalid Spring bean" inspection on Kotlin declarations
 
 Issues fixed:
 
