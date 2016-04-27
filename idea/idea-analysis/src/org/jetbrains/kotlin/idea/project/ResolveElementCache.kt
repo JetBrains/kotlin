@@ -243,6 +243,14 @@ class ResolveElementCache(
                 return elementOfAdditionalResolve
             }
 
+            is KtDeclaration -> {
+                if (element is KtParameter && !KtPsiUtil.isLocal(element)) {
+                    return null
+                }
+
+                return elementOfAdditionalResolve
+            }
+
             else -> return elementOfAdditionalResolve
         }
     }
