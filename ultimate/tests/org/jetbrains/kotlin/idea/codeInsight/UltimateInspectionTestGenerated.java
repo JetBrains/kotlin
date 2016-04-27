@@ -35,6 +35,12 @@ public class UltimateInspectionTestGenerated extends AbstractInspectionTest {
         KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("ultimate/testData/inspections"), Pattern.compile("^(inspections\\.test)$"));
     }
 
+    @TestMetadata("spring/autowiredMembersInInvalidClass/inspectionData/inspections.test")
+    public void testSpring_autowiredMembersInInvalidClass_inspectionData_Inspections_test() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("ultimate/testData/inspections/spring/autowiredMembersInInvalidClass/inspectionData/inspections.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("spring/finalSpringAnnotatedDeclaration/inspectionData/inspections.test")
     public void testSpring_finalSpringAnnotatedDeclaration_inspectionData_Inspections_test() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("ultimate/testData/inspections/spring/finalSpringAnnotatedDeclaration/inspectionData/inspections.test");
