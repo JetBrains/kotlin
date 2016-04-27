@@ -54,11 +54,6 @@ class LookupElementsCollector(
             resultSet.addAllElements(elements)
             elements.clear()
             isResultEmpty = false
-
-            for (element in elements) {
-                val matchingDegree = RealPrefixMatchingWeigher.getBestMatchingDegree(element, prefixMatcher)
-                bestMatchingDegree = Math.max(bestMatchingDegree, matchingDegree)
-            }
         }
     }
 
@@ -138,6 +133,9 @@ class LookupElementsCollector(
         }
 
         elements.add(result)
+
+        val matchingDegree = RealPrefixMatchingWeigher.getBestMatchingDegree(result, prefixMatcher)
+        bestMatchingDegree = Math.max(bestMatchingDegree, matchingDegree)
     }
 
     // used to avoid insertion of spaces before/after ',', '=' on just typing
