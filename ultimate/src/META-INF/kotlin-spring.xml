@@ -22,6 +22,14 @@
                        enabledByDefault="true"
                        level="WARNING"
                        implementationClass="org.jetbrains.kotlin.idea.spring.inspections.KotlinSpringFacetCodeInspection"/>
+      <localInspection language="kotlin"
+                       displayName="Autowired members defined in invalid Spring bean (Kotlin)"
+                       groupBundle="resources.messages.SpringBundle"
+                       groupKey="inspection.group.code"
+                       groupPath="Spring,Spring Core"
+                       enabledByDefault="true"
+                       level="WARNING"
+                       implementationClass="org.jetbrains.kotlin.idea.spring.inspections.SpringKotlinAutowiredMembersInspection"/>
   </extensions>
 
   <actions>

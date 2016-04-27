@@ -32,6 +32,7 @@
         <get-spring-library lib="spring-beans" version="4.2.0.RELEASE"/>
         <get-spring-library lib="spring-context" version="4.2.0.RELEASE"/>
         <get-spring-library lib="spring-tx" version="4.2.0.RELEASE"/>
+        <get-spring-library lib="spring-web" version="4.2.0.RELEASE"/>
     </target>
 
     <!-- Override fetch-third-party from the main buildfile -->
