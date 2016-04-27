@@ -38,6 +38,10 @@ abstract class KtClassOrObject :
 
     fun addSuperTypeListEntry(superTypeListEntry: KtSuperTypeListEntry): KtSuperTypeListEntry {
         getSuperTypeList()?.let {
+            val single = it.entries.singleOrNull()
+            if (single != null && single.typeReference?.typeElement == null) {
+                return single.replace(superTypeListEntry) as KtSuperTypeListEntry
+            }
             return EditCommaSeparatedListHelper.addItem(it, getSuperTypeListEntries(), superTypeListEntry)
         }
 
