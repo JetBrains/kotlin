@@ -1,19 +1,19 @@
 package org.jetbrains.kotlin.annotation
 
-sealed class AnnotatedElementDescriptor(val classFqName: String) {
-    class Class(classFqName: String) : AnnotatedElementDescriptor(classFqName) {
+sealed class AnnotatedElement(val classFqName: String) {
+    class Class(classFqName: String) : AnnotatedElement(classFqName) {
         override fun equals(other: Any?) = other is Class && classFqName == other.classFqName
 
         override fun hashCode() = classFqName.hashCode()
     }
 
-    class Method(classFqName: String, val methodName: String) : AnnotatedElementDescriptor(classFqName) {
+    class Method(classFqName: String, val methodName: String) : AnnotatedElement(classFqName) {
         override fun equals(other: Any?) = other is Method && methodName == other.methodName && classFqName == other.classFqName
 
         override fun hashCode() = 31 * classFqName.hashCode() + methodName.hashCode()
     }
 
-    class Constructor(classFqName: String) : AnnotatedElementDescriptor(classFqName) {
+    class Constructor(classFqName: String) : AnnotatedElement(classFqName) {
         companion object {
             const val METHOD_NAME = "<init>"
         }
@@ -23,25 +23,25 @@ sealed class AnnotatedElementDescriptor(val classFqName: String) {
         override fun hashCode() = 31 * classFqName.hashCode() + METHOD_NAME.hashCode()
     }
 
-    class Field(classFqName: String, val fieldName: String) : AnnotatedElementDescriptor(classFqName) {
+    class Field(classFqName: String, val fieldName: String) : AnnotatedElement(classFqName) {
         override fun equals(other: Any?) = other is Field && fieldName == other.fieldName && classFqName == other.classFqName
 
         override fun hashCode() = 31 * classFqName.hashCode() + fieldName.hashCode()
     }
 }
 
-fun AnnotationWriter.writeAnnotatedElement(annotation: String, element: AnnotatedElementDescriptor) {
+fun AnnotationWriter.writeAnnotatedElement(annotation: String, element: AnnotatedElement) {
     when (element) {
-        is AnnotatedElementDescriptor.Class -> {
+        is AnnotatedElement.Class -> {
             writeAnnotatedClass(annotation, element.classFqName)
         }
-        is AnnotatedElementDescriptor.Constructor -> {
-            writeAnnotatedMethod(annotation, element.classFqName, AnnotatedElementDescriptor.Constructor.METHOD_NAME)
+        is AnnotatedElement.Constructor -> {
+            writeAnnotatedMethod(annotation, element.classFqName, AnnotatedElement.Constructor.METHOD_NAME)
         }
-        is AnnotatedElementDescriptor.Method -> {
+        is AnnotatedElement.Method -> {
             writeAnnotatedMethod(annotation, element.classFqName, element.methodName)
         }
-        is AnnotatedElementDescriptor.Field -> {
+        is AnnotatedElement.Field -> {
             writeAnnotatedField(annotation, element.classFqName, element.fieldName)
         }
     }

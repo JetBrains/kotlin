@@ -27,13 +27,13 @@ open class KotlinAnnotationProvider(annotationsReader: Reader) {
     constructor() : this(StringReader(""))
 
     protected val kotlinClassesInternal = hashSetOf<String>()
-    protected val annotatedKotlinElementsInternal = hashMapOf<String, MutableSet<AnnotatedElementDescriptor>>()
+    protected val annotatedKotlinElementsInternal = hashMapOf<String, MutableSet<AnnotatedElement>>()
 
     init {
         readAnnotations(annotationsReader)
     }
 
-    val annotatedKotlinElements: Map<String, Set<AnnotatedElementDescriptor>>
+    val annotatedKotlinElements: Map<String, Set<AnnotatedElement>>
         get() = annotatedKotlinElementsInternal
 
     val kotlinClasses: Set<String>
@@ -84,18 +84,18 @@ open class KotlinAnnotationProvider(annotationsReader: Reader) {
 
                         val set = annotatedKotlinElementsInternal.getOrPut(annotationName) { HashSet() }
                         set.add(when (type) {
-                            Notation.ANNOTATED_CLASS -> AnnotatedElementDescriptor.Class(classFqName)
+                            Notation.ANNOTATED_CLASS -> AnnotatedElement.Class(classFqName)
                             Notation.ANNOTATED_FIELD -> {
                                 val name = elementName ?: throw AssertionError("Name for field must be provided")
-                                AnnotatedElementDescriptor.Field(classFqName, name)
+                                AnnotatedElement.Field(classFqName, name)
                             }
                             Notation.ANNOTATED_METHOD -> {
                                 val name = elementName ?: throw AssertionError("Name for method must be provided")
 
-                                if (AnnotatedElementDescriptor.Constructor.METHOD_NAME == name)
-                                    AnnotatedElementDescriptor.Constructor(classFqName)
+                                if (AnnotatedElement.Constructor.METHOD_NAME == name)
+                                    AnnotatedElement.Constructor(classFqName)
                                 else
-                                    AnnotatedElementDescriptor.Method(classFqName, name)
+                                    AnnotatedElement.Method(classFqName, name)
                             }
                             else -> throw AssertionError("Unknown type: $type")
                         })

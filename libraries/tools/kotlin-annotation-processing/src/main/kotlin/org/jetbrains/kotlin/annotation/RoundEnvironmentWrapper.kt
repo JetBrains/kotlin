@@ -66,16 +66,16 @@ internal class RoundEnvironmentWrapper(
         val descriptorsWithKotlin = descriptors.fold(hashSetOf<Element>()) { set, descriptor ->
             val clazz = processingEnv.elementUtils.getTypeElement(descriptor.classFqName) ?: return@fold set
             when (descriptor) {
-                is AnnotatedElementDescriptor.Class -> set.add(clazz)
-                is AnnotatedElementDescriptor.Constructor -> {
+                is AnnotatedElement.Class -> set.add(clazz)
+                is AnnotatedElement.Constructor -> {
                     set.addAll(clazz.filterEnclosedElements(ElementKind.CONSTRUCTOR)
                             .filter { it.hasAnnotation(annotationFqName) })
                 }
-                is AnnotatedElementDescriptor.Field -> {
+                is AnnotatedElement.Field -> {
                     set.addAll(clazz.filterEnclosedElements(ElementKind.FIELD, descriptor.fieldName)
                             .filter { it.hasAnnotation(annotationFqName) })
                 }
-                is AnnotatedElementDescriptor.Method -> {
+                is AnnotatedElement.Method -> {
                     set.addAll(clazz.filterEnclosedElements(ElementKind.METHOD, descriptor.methodName)
                             .filter { it.hasAnnotation(annotationFqName) })
                 }

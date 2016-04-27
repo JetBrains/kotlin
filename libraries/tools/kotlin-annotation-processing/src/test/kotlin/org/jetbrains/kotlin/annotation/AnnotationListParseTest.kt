@@ -67,10 +67,13 @@ open class AnnotationListParseTest {
             for (element in it.value) {
                 actualAnnotations.append(it.key).append(' ').append(element.classFqName)
                 when (element) {
-                    is AnnotatedElementDescriptor.Method -> actualAnnotations.append(' ').append(element.methodName)
-                    is AnnotatedElementDescriptor.Field -> actualAnnotations.append(' ').append(element.fieldName)
-                    is AnnotatedElementDescriptor.Constructor -> actualAnnotations.append(" ${AnnotatedElementDescriptor.Constructor.METHOD_NAME}")
-                    is AnnotatedElementDescriptor.Class -> {}
+                    is AnnotatedElement.Method ->
+                        actualAnnotations.append(' ').append(element.methodName)
+                    is AnnotatedElement.Field ->
+                        actualAnnotations.append(' ').append(element.fieldName)
+                    is AnnotatedElement.Constructor ->
+                        actualAnnotations.append(" ${AnnotatedElement.Constructor.METHOD_NAME}")
+                    is AnnotatedElement.Class -> {}
                 }
                 actualAnnotations.append('\n')
             }
