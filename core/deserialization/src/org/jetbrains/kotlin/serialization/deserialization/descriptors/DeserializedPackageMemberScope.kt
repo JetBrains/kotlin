@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
@@ -49,8 +48,7 @@ open class DeserializedPackageMemberScope(
             = computeDescriptors(kindFilter, nameFilter, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS)
 
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
-        if (SpecialNames.isSafeIdentifier(name) &&
-            (name in classNames || c.components.fictitiousClassDescriptorFactory.shouldCreateClass(packageFqName, name))) {
+        if (name in classNames || c.components.fictitiousClassDescriptorFactory.shouldCreateClass(packageFqName, name)) {
             return getClassDescriptor(name)
         }
         return null

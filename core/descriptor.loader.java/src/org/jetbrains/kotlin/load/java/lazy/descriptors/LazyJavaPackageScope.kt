@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.storage.NullableLazyValue
 
@@ -103,18 +102,16 @@ class LazyJavaPackageScope(
         override fun hashCode() = name.hashCode()
     }
 
-    override fun getContributedClassifier(name: Name, location: LookupLocation) = findClassifier(name, null)
-
-    private fun findClassifier(name: Name, javaClass: JavaClass?): ClassDescriptor? {
-        if (!SpecialNames.isSafeIdentifier(name)) return null
-
+    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassDescriptor? {
         val knownClassNamesInPackage = knownClassNamesInPackage()
-        if (javaClass == null && knownClassNamesInPackage != null && name.asString() !in knownClassNamesInPackage) {
+        if (knownClassNamesInPackage != null && name.asString() !in knownClassNamesInPackage) {
             return null
         }
 
-        return classes(FindClassRequest(name, javaClass))
+        return findClassifier(name, null)
     }
+
+    private fun findClassifier(name: Name, javaClass: JavaClass?): ClassDescriptor? = classes(FindClassRequest(name, javaClass))
 
     internal fun findClassifierByJavaClass(javaClass: JavaClass) = findClassifier(javaClass.name, javaClass)
 
