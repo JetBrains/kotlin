@@ -118,6 +118,29 @@ private class PropertyDetector(
     private val isOpenClass = converter.needOpenModifier(psiClass)
 
     fun detectProperties(): Map<PsiMember, PropertyInfo> {
+        val propertyInfos = detectPropertyCandidates()
+
+        val memberToPropertyInfo = buildMemberToPropertyInfoMap(propertyInfos)
+
+        dropPropertiesWithConflictingAccessors(memberToPropertyInfo)
+
+        dropPropertiesConflictingWithFields(memberToPropertyInfo)
+
+        val mappedFields = memberToPropertyInfo.values
+                .mapNotNull { it.field }
+                .toSet()
+
+        // map all other fields
+        for (field in psiClass.fields) {
+            if (field !in mappedFields) {
+                memberToPropertyInfo[field] = PropertyInfo.fromFieldWithNoAccessors(field, converter)
+            }
+        }
+
+        return memberToPropertyInfo
+    }
+
+    private fun detectPropertyCandidates(): List<PropertyInfo> {
         val methodsToCheck = ArrayList<Pair<PsiMethod, SuperInfo.Property?>>()
         for (method in psiClass.methods) {
             val name = method.name
@@ -209,7 +232,10 @@ private class PropertyDetector(
                                             superProperty)
             propertyInfos.add(propertyInfo)
         }
+        return propertyInfos
+    }
 
+    private fun buildMemberToPropertyInfoMap(propertyInfos: List<PropertyInfo>): MutableMap<PsiMember, PropertyInfo> {
         val memberToPropertyInfo = HashMap<PsiMember, PropertyInfo>()
         for (propertyInfo in propertyInfos) {
             val field = propertyInfo.field
@@ -225,22 +251,6 @@ private class PropertyDetector(
             propertyInfo.getMethod?.let { memberToPropertyInfo[it] = propertyInfo }
             propertyInfo.setMethod?.let { memberToPropertyInfo[it] = propertyInfo }
         }
-
-        dropPropertiesWithConflictingAccessors(memberToPropertyInfo)
-
-        dropPropertiesConflictingWithFields(memberToPropertyInfo)
-
-        val mappedFields = memberToPropertyInfo.values
-                .mapNotNull { it.field }
-                .toSet()
-
-        // map all other fields
-        for (field in psiClass.fields) {
-            if (field !in mappedFields) {
-                memberToPropertyInfo[field] = PropertyInfo.fromFieldWithNoAccessors(field, converter)
-            }
-        }
-
         return memberToPropertyInfo
     }
 
@@ -316,7 +326,7 @@ private class PropertyDetector(
         }
     }
 
-    private fun dropPropertiesConflictingWithFields(memberToPropertyInfo: HashMap<PsiMember, PropertyInfo>) {
+    private fun dropPropertiesConflictingWithFields(memberToPropertyInfo: MutableMap<PsiMember, PropertyInfo>) {
         val fieldsByName = psiClass.fields.associateBy { it.name } //TODO: fields from base
 
         fun isPropertyNameProhibited(name: String): Boolean {
