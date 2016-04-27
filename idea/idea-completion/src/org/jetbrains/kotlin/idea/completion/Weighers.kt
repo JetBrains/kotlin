@@ -257,7 +257,7 @@ class SmartCompletionInBasicWeigher(
     }
 }
 
-class PreferContextElementsWeigher(private val context: DeclarationDescriptor) : LookupElementWeigher("kotlin.preferContextElements", true, false) {
+class PreferContextElementsWeigher(context: DeclarationDescriptor) : LookupElementWeigher("kotlin.preferContextElements", true, false) {
     private val contextElements = context.parentsWithSelf
             .takeWhile { it !is PackageFragmentDescriptor }
             .toList()

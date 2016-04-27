@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-class KotlinDebuggerCaches(private val project: Project) {
+class KotlinDebuggerCaches(project: Project) {
 
     private val cachedCompiledData = CachedValuesManager.getManager(project).createCachedValue(
             {
