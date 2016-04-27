@@ -33,7 +33,7 @@ public class PermissionManager {
             setExecPermissionForSimpleNamedFiles(new File(pathManager.getToolsFolderInAndroidSdk()));
             setExecPermissionForSimpleNamedFiles(new File(pathManager.getBuildToolsFolderInAndroidSdk() + "/" + SDKDownloader.BUILD_TOOLS));
             setExecPermissionForSimpleNamedFiles(new File(pathManager.getPlatformToolsFolderInAndroidSdk()));
-            RunUtils.execute(generateChmodCmd(pathManager.getTmpFolder() + "/gradlew"));
+            RunUtils.execute(generateChmodCmd(pathManager.getGradleBinFolder() + "/gradle"));
         }
     }
 
