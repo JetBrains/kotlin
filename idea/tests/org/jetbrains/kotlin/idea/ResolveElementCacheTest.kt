@@ -323,6 +323,22 @@ class C(param1: String = "", param2: Int = 0) {
         )
     }
 
+    fun testNoBodyResolveOnFunctionParameterAnalyze() {
+        val file = configureWithKotlin(
+                """
+                fun test(a: String) {
+                    unresolved // Check diagnostics is empty even in FULL mode when starting analyzing for parameter
+                }
+                """)
+
+        val function = file.declarations[0] as KtNamedFunction
+        val functionParameter = function.valueParameters.first()
+
+        val context = functionParameter.analyze(BodyResolveMode.FULL)
+
+        assertEmpty(context.diagnostics.all())
+    }
+
     private fun configureWithKotlin(@Language("kotlin") text: String): KtFile {
         return myFixture.configureByText("Test.kt", text.trimIndent()) as KtFile
     }
