@@ -22,10 +22,10 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.OverloadUtil
+import org.jetbrains.kotlin.resolve.OverloadChecker
 
 
-abstract class AbstractLocalRedeclarationChecker : LocalRedeclarationChecker {
+abstract class AbstractLocalRedeclarationChecker(val overloadChecker: OverloadChecker) : LocalRedeclarationChecker {
     override fun checkBeforeAddingToScope(scope: LexicalScope, newDescriptor: DeclarationDescriptor) {
         val name = newDescriptor.name
         val location = NoLookupLocation.WHEN_CHECK_REDECLARATIONS
@@ -47,7 +47,7 @@ abstract class AbstractLocalRedeclarationChecker : LocalRedeclarationChecker {
                             otherFunctions
 
                 for (overloadedDescriptor in potentiallyConflictingOverloads) {
-                    if (!OverloadUtil.isOverloadable(overloadedDescriptor, newDescriptor)) {
+                    if (!overloadChecker.isOverloadable(overloadedDescriptor, newDescriptor)) {
                         handleConflictingOverloads(newDescriptor, overloadedDescriptor)
                         break
                     }
@@ -61,7 +61,7 @@ abstract class AbstractLocalRedeclarationChecker : LocalRedeclarationChecker {
     protected abstract fun handleConflictingOverloads(first: CallableMemberDescriptor, second: CallableMemberDescriptor)
 }
 
-object ThrowingLocalRedeclarationChecker : AbstractLocalRedeclarationChecker() {
+class ThrowingLocalRedeclarationChecker(overloadChecker: OverloadChecker) : AbstractLocalRedeclarationChecker(overloadChecker) {
     override fun handleRedeclaration(first: DeclarationDescriptor, second: DeclarationDescriptor) {
         throw IllegalStateException(String.format("Redeclaration: %s (%s) and %s (%s) (no line info available)",
                                                   DescriptorUtils.getFqName(first), first,
@@ -75,7 +75,7 @@ object ThrowingLocalRedeclarationChecker : AbstractLocalRedeclarationChecker() {
     }
 }
 
-class TraceBasedLocalRedeclarationChecker(val trace: BindingTrace): AbstractLocalRedeclarationChecker() {
+class TraceBasedLocalRedeclarationChecker(val trace: BindingTrace, overloadChecker: OverloadChecker): AbstractLocalRedeclarationChecker(overloadChecker) {
     override fun handleRedeclaration(first: DeclarationDescriptor, second: DeclarationDescriptor) {
         reportRedeclaration(first)
         reportRedeclaration(second)

@@ -41,7 +41,10 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
-import org.jetbrains.kotlin.types.*;
+import org.jetbrains.kotlin.types.CommonSupertypes;
+import org.jetbrains.kotlin.types.ErrorUtils;
+import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils.ResolveConstruct;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
@@ -97,8 +100,8 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         KtExpression elseBranch = ifExpression.getElse();
         KtExpression thenBranch = ifExpression.getThen();
 
-        LexicalWritableScope thenScope = newWritableScopeImpl(context, LexicalScopeKind.THEN);
-        LexicalWritableScope elseScope = newWritableScopeImpl(context, LexicalScopeKind.ELSE);
+        LexicalWritableScope thenScope = newWritableScopeImpl(context, LexicalScopeKind.THEN, components.overloadChecker);
+        LexicalWritableScope elseScope = newWritableScopeImpl(context, LexicalScopeKind.ELSE, components.overloadChecker);
         DataFlowInfo thenInfo = components.dataFlowAnalyzer.extractDataFlowInfoFromCondition(condition, true, context).and(conditionDataFlowInfo);
         DataFlowInfo elseInfo = components.dataFlowAnalyzer.extractDataFlowInfoFromCondition(condition, false, context).and(conditionDataFlowInfo);
 
@@ -234,7 +237,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         KotlinTypeInfo bodyTypeInfo;
         DataFlowInfo conditionInfo = components.dataFlowAnalyzer.extractDataFlowInfoFromCondition(condition, true, context).and(dataFlowInfo);
         if (body != null) {
-            LexicalWritableScope scopeToExtend = newWritableScopeImpl(context, LexicalScopeKind.WHILE_BODY);
+            LexicalWritableScope scopeToExtend = newWritableScopeImpl(context, LexicalScopeKind.WHILE_BODY, components.overloadChecker);
             bodyTypeInfo = components.expressionTypingServices.getBlockReturnedTypeWithWritableScope(
                     scopeToExtend, Collections.singletonList(body),
                     CoercionStrategy.NO_COERCION, context.replaceDataFlowInfo(conditionInfo));
@@ -330,7 +333,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             bodyTypeInfo = facade.getTypeInfo(body, context.replaceScope(context.scope));
         }
         else if (body != null) {
-            LexicalWritableScope writableScope = newWritableScopeImpl(context, LexicalScopeKind.DO_WHILE_BODY);
+            LexicalWritableScope writableScope = newWritableScopeImpl(context, LexicalScopeKind.DO_WHILE_BODY, components.overloadChecker);
             conditionScope = writableScope;
             List<KtExpression> block;
             if (body instanceof KtBlockExpression) {
@@ -398,7 +401,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             loopRangeInfo = TypeInfoFactoryKt.noTypeInfo(context);
         }
 
-        LexicalWritableScope loopScope = newWritableScopeImpl(context, LexicalScopeKind.FOR);
+        LexicalWritableScope loopScope = newWritableScopeImpl(context, LexicalScopeKind.FOR, components.overloadChecker);
 
         KtParameter loopParameter = expression.getLoopParameter();
         if (loopParameter != null) {
@@ -497,7 +500,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 KotlinType throwableType = components.builtIns.getThrowable().getDefaultType();
                 components.dataFlowAnalyzer.checkType(catchParameterType, catchParameter, context.replaceExpectedType(throwableType));
                 if (catchBody != null) {
-                    LexicalWritableScope catchScope = newWritableScopeImpl(context, LexicalScopeKind.CATCH);
+                    LexicalWritableScope catchScope = newWritableScopeImpl(context, LexicalScopeKind.CATCH, components.overloadChecker);
                     catchScope.addVariableDescriptor(variableDescriptor);
                     KotlinType type = facade.getTypeInfo(catchBody, context.replaceScope(catchScope)).getType();
                     if (type != null) {

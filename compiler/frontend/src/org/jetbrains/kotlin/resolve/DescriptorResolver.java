@@ -76,6 +76,7 @@ public class DescriptorResolver {
     @NotNull private final SupertypeLoopChecker supertypeLoopsResolver;
     @NotNull private final VariableTypeResolver variableTypeResolver;
     @NotNull private final ExpressionTypingServices expressionTypingServices;
+    @NotNull private final OverloadChecker overloadChecker;
 
     public DescriptorResolver(
             @NotNull AnnotationResolver annotationResolver,
@@ -84,7 +85,8 @@ public class DescriptorResolver {
             @NotNull TypeResolver typeResolver,
             @NotNull SupertypeLoopChecker supertypeLoopsResolver,
             @NotNull VariableTypeResolver variableTypeResolver,
-            @NotNull ExpressionTypingServices expressionTypingServices
+            @NotNull ExpressionTypingServices expressionTypingServices,
+            @NotNull OverloadChecker overloadChecker
     ) {
         this.annotationResolver = annotationResolver;
         this.builtIns = builtIns;
@@ -93,6 +95,7 @@ public class DescriptorResolver {
         this.supertypeLoopsResolver = supertypeLoopsResolver;
         this.variableTypeResolver = variableTypeResolver;
         this.expressionTypingServices = expressionTypingServices;
+        this.overloadChecker = overloadChecker;
     }
 
     public List<KotlinType> resolveSupertypes(
@@ -722,7 +725,7 @@ public class DescriptorResolver {
             }
             else {
                 LexicalWritableScope writableScope = new LexicalWritableScope(
-                        scope, containingDeclaration, false, null, new TraceBasedLocalRedeclarationChecker(trace),
+                        scope, containingDeclaration, false, null, new TraceBasedLocalRedeclarationChecker(trace, overloadChecker),
                         LexicalScopeKind.PROPERTY_HEADER);
                 typeParameterDescriptors = resolveTypeParametersForCallableDescriptor(
                         propertyDescriptor, writableScope, scope, typeParameters, trace);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,17 +23,19 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.OverloadUtil
+import org.jetbrains.kotlin.resolve.OverloadChecker
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.typeUtil.immediateSupertypes
-import java.util.ArrayList
+import java.util.*
 
 class KotlinMemberInfoStorage(
-        classOrObject: PsiNamedElement,
+        classOrObject: KtClassOrObject,
         filter: (KtNamedDeclaration) -> Boolean = { true }
 ): AbstractMemberInfoStorage<KtNamedDeclaration, PsiNamedElement, KotlinMemberInfo>(classOrObject, filter) {
     override fun memberConflict(member1: KtNamedDeclaration, member: KtNamedDeclaration): Boolean {
@@ -43,7 +45,8 @@ class KotlinMemberInfoStorage(
 
         return when {
             descriptor1 is FunctionDescriptor && descriptor is FunctionDescriptor -> {
-                !OverloadUtil.isOverloadable(descriptor1, descriptor)
+                val overloadUtil = member1.getResolutionFacade().frontendService<OverloadChecker>()
+                !overloadUtil.isOverloadable(descriptor1, descriptor)
             }
             descriptor1 is PropertyDescriptor && descriptor is PropertyDescriptor ||
             descriptor1 is ClassDescriptor && descriptor is ClassDescriptor -> true

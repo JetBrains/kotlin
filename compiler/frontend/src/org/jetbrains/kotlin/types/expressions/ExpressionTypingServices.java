@@ -163,8 +163,10 @@ public class ExpressionTypingServices {
         List<KtExpression> block = StatementFilterKt.filterStatements(statementFilter, expression);
 
         DeclarationDescriptor containingDescriptor = context.scope.getOwnerDescriptor();
-        LexicalWritableScope scope = new LexicalWritableScope(context.scope, containingDescriptor, false, null,
-                                                              new TraceBasedLocalRedeclarationChecker(context.trace), LexicalScopeKind.CODE_BLOCK);
+        TraceBasedLocalRedeclarationChecker redeclarationChecker
+                = new TraceBasedLocalRedeclarationChecker(context.trace, expressionTypingComponents.overloadChecker);
+        LexicalWritableScope scope = new LexicalWritableScope(context.scope, containingDescriptor, false, null, redeclarationChecker,
+                                                              LexicalScopeKind.CODE_BLOCK);
 
         KotlinTypeInfo r;
         if (block.isEmpty()) {
@@ -194,7 +196,8 @@ public class ExpressionTypingServices {
     ) {
         KtExpression bodyExpression = function.getBodyExpression();
         assert bodyExpression != null;
-        LexicalScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(outerScope, functionDescriptor, trace);
+        LexicalScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(outerScope, functionDescriptor, trace,
+                                                                                       expressionTypingComponents.overloadChecker);
 
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 trace, functionInnerScope, dataFlowInfo, NO_EXPECTED_TYPE
