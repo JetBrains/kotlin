@@ -171,7 +171,7 @@ class NewResolutionOldInference(
             val candidateTrace = TemporaryBindingTrace.create(basicCallContext.trace, "Context for resolve candidate")
             val resolvedCall = ResolvedCallImpl.create(candidate, candidateTrace, tracing, basicCallContext.dataFlowInfoForArguments)
 
-            if (candidate.descriptor.isHiddenInResolution()) {
+            if (candidate.descriptor.isHiddenInResolution(basicCallContext.isSuperCall)) {
                 return@mapNotNull MyCandidate(ResolutionCandidateStatus(listOf(HiddenDescriptor)), resolvedCall)
             }
 
@@ -312,7 +312,7 @@ class NewResolutionOldInference(
                 return MyCandidate(ResolutionCandidateStatus(listOf(ExtensionWithStaticTypeWithDynamicReceiver)), candidateCall)
             }
 
-            if (towerCandidate.descriptor.isHiddenInResolution()) {
+            if (towerCandidate.descriptor.isHiddenInResolution(basicCallContext.isSuperCall)) {
                 return MyCandidate(ResolutionCandidateStatus(listOf(HiddenDescriptor)), candidateCall)
             }
 
@@ -425,3 +425,5 @@ internal fun createPreviousResolveError(status: ResolutionStatus): PreviousResol
     }
     return PreviousResolutionError(level)
 }
+
+private val BasicCallResolutionContext.isSuperCall: Boolean get() = call.explicitReceiver is SuperCallReceiverValue

@@ -584,8 +584,14 @@ internal class DescriptorRendererImpl(
             renderOverride(function, builder)
             renderMemberKind(function, builder)
 
-            if (verbose && function.isHiddenToOvercomeSignatureClash) {
-                builder.append("/*isHiddenToOvercomeSignatureClash*/ ")
+            if (verbose) {
+                if (function.isHiddenToOvercomeSignatureClash) {
+                    builder.append("/*isHiddenToOvercomeSignatureClash*/ ")
+                }
+
+                if (function.isHiddenForResolutionEverywhereBesideSupercalls) {
+                    builder.append("/*isHiddenForResolutionEverywhereBesideSupercalls*/ ")
+                }
             }
 
             builder.append(renderKeyword("fun")).append(" ")
