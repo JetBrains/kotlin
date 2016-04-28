@@ -77,6 +77,12 @@ public class CastTestGenerated extends AbstractCastTest {
         doTest(fileName);
     }
 
+    @TestMetadata("noRuntimeTypeCheck.kt")
+    public void testNoRuntimeTypeCheck() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/noRuntimeTypeCheck.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("reifiedToNotNull.kt")
     public void testReifiedToNotNull() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/reifiedToNotNull.kt");
