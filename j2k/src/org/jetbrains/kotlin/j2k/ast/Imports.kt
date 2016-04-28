@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.asJava.KtLightClassForFacade
 import org.jetbrains.kotlin.j2k.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
 class Import(val name: String) : Element() {
     override fun generateCode(builder: CodeBuilder) {
@@ -77,17 +78,15 @@ private fun Converter.filterImport(name: String, ref: PsiJavaCodeReferenceElemen
     else if (target is KtLightClass) {
         if (isFacadeClassFromLibrary(target)) return null
 
-        if (isUnderDefaultImports(target)) return null
+        if (isImportedByDefault(target)) return null
     }
 
     return name
 }
 
-val DEFAULT_IMPORTS = setOf("java.lang",
-        "kotlin", "kotlin.annotation", "kotlin.jvm",
-        "kotlin.collections", "kotlin.ranges", "kotlin.sequences",
-        "kotlin.text", "kotlin.io")
+private val DEFAULT_IMPORTS_SET: Set<FqName> = JvmPlatform.defaultModuleParameters.defaultImports
+        .filter { it.isAllUnder }
+        .map { it.fqnPart() }
+        .toSet()
 
-fun isUnderDefaultImports(c: KtLightClass): Boolean {
-    return c.getFqName().parent().asString() in DEFAULT_IMPORTS
-}
+private fun isImportedByDefault(c: KtLightClass) = c.getFqName().parent() in DEFAULT_IMPORTS_SET
