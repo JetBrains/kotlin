@@ -18,60 +18,136 @@ package org.jetbrains.kotlin.j2k
 
 import com.intellij.psi.PsiImportList
 import com.intellij.psi.PsiImportStatementBase
+import com.intellij.psi.PsiImportStaticStatement
 import com.intellij.psi.PsiJavaCodeReferenceElement
 import org.jetbrains.kotlin.asJava.KtLightClass
 import org.jetbrains.kotlin.asJava.KtLightClassForFacade
+import org.jetbrains.kotlin.asJava.KtLightDeclaration
+import org.jetbrains.kotlin.asJava.KtLightMethod
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.j2k.ast.Import
 import org.jetbrains.kotlin.j2k.ast.ImportList
 import org.jetbrains.kotlin.j2k.ast.assignPrototype
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.renderer.render
+import org.jetbrains.kotlin.resolve.annotations.hasJvmStaticAnnotation
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
-fun Converter.convertImportList(importList: PsiImportList): ImportList =
-        ImportList(importList.allImportStatements.mapNotNull { convertImport(it, true) }).assignPrototype(importList)
+fun Converter.convertImportList(importList: PsiImportList): ImportList {
+    val imports = importList.allImportStatements
+            .flatMap { convertImport(it, true) }
+            .distinctBy { it.name } // duplicated imports may appear
+    return ImportList(imports).assignPrototype(importList)
+}
 
-fun Converter.convertImport(anImport: PsiImportStatementBase, filter: Boolean): Import? {
-    fun doConvert(): Import? {
-        val reference = anImport.importReference ?: return null
-        val qualifiedName = quoteKeywords(reference.qualifiedName!!)
-        if (anImport.isOnDemand) {
-            return Import(qualifiedName + ".*")
+fun Converter.convertImport(anImport: PsiImportStatementBase, filter: Boolean): List<Import> {
+    fun doConvert(): List<Import> {
+        val reference = anImport.importReference ?: return emptyList()
+        val fqName = FqName(reference.qualifiedName!!)
+        val onDemand = anImport.isOnDemand
+        return if (filter) {
+            filterImport(fqName, reference, onDemand, anImport is PsiImportStaticStatement)
+                    .map { Import(it) }
         }
         else {
-            return if (filter) {
-                val filteredName = filterImport(qualifiedName, reference)
-                if (filteredName != null) Import(filteredName) else null
+            listOf(Import(renderImportName(fqName, onDemand)))
+        }
+    }
+
+    return doConvert().map { it.assignPrototype(anImport) }
+}
+
+private fun Converter.filterImport(fqName: FqName, ref: PsiJavaCodeReferenceElement, isOnDemand: Boolean, isImportStatic: Boolean): List<String> {
+    if (!isOnDemand) {
+        if (annotationConverter.isImportNotRequired(fqName)) return emptyList()
+
+        // If imported class has a kotlin analog, drop the import
+        if (!JavaToKotlinClassMap.INSTANCE.mapPlatformClass(fqName, DefaultBuiltIns.Instance).isEmpty()) return emptyList()
+    }
+
+    //TODO: how to detect compiled Kotlin here?
+    val target = ref.resolve()
+    if (isImportStatic) {
+        if (isOnDemand) {
+            when (target) {
+                is KtLightClassForFacade -> return listOf(target.getFqName().parent().render() + ".*")
+
+                is KtLightClass -> {
+                    val kotlinOrigin = target.kotlinOrigin
+                    val importFromObject = when (kotlinOrigin) {
+                        is KtObjectDeclaration -> kotlinOrigin
+                        is KtClass -> kotlinOrigin.getCompanionObjects().singleOrNull()
+                        else -> null
+                    }
+                    if (importFromObject != null) {
+                        val objectFqName = importFromObject.fqName
+                        if (objectFqName != null) {
+                            // cannot import on demand from object, generate imports for all members
+                            return importFromObject.declarations
+                                    .mapNotNull {
+                                        val descriptor = services.resolverForConverter.resolveToDescriptor(it) ?: return@mapNotNull null
+                                        if (descriptor.hasJvmStaticAnnotation() || descriptor is PropertyDescriptor && descriptor.isConst)
+                                            descriptor.name
+                                        else
+                                            null
+                                    }
+                                    .distinct()
+                                    .map { objectFqName.child(it).render() }
+                        }
+                    }
+                }
             }
-            else {
-                Import(qualifiedName)
+        }
+        else {
+            if (target is KtLightDeclaration<*, *>) {
+                val kotlinOrigin = target.kotlinOrigin
+
+                val nameToImport = if (target is KtLightMethod && kotlinOrigin is KtProperty)
+                    kotlinOrigin.nameAsName
+                else
+                    fqName.shortName()
+
+                if (nameToImport != null) {
+                    val originParent = kotlinOrigin?.parent
+                    when (originParent) {
+                        is KtFile -> { // import of function or property accessor from file facade
+                            return listOf(originParent.packageFqName.child(nameToImport).render())
+                        }
+
+                        is KtClassBody -> {
+                            val parentClass = originParent.parent as KtClassOrObject
+                            if (parentClass is KtObjectDeclaration && parentClass.isCompanion()) {
+                                return parentClass.getFqName()?.child(nameToImport)?.render().singletonOrEmptyList()
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    else {
+        when (target) {
+            is KtLightClassForFacade -> return listOf(target.getFqName().parent().render() + ".*")
+
+            is KtLightClass -> {
+                if (!isOnDemand) {
+                    if (isFacadeClassFromLibrary(target)) return emptyList()
+
+                    if (isImportedByDefault(target)) return emptyList()
+                }
             }
         }
     }
 
-    return doConvert()?.assignPrototype(anImport)
+    return listOf(renderImportName(fqName, isOnDemand))
 }
 
-private fun Converter.filterImport(name: String, ref: PsiJavaCodeReferenceElement): String? {
-    if (annotationConverter.isImportNotRequired(name)) return null
-
-    // If imported class has a kotlin analog, drop the import
-    if (!JavaToKotlinClassMap.INSTANCE.mapPlatformClass(FqName(name), DefaultBuiltIns.Instance).isEmpty()) return null
-
-    val target = ref.resolve()
-    if (target is KtLightClassForFacade) {
-        return target.getFqName().parent().render() + ".*"
-    }
-    else if (target is KtLightClass) {
-        if (isFacadeClassFromLibrary(target)) return null
-
-        if (isImportedByDefault(target)) return null
-    }
-
-    return name
-}
+private fun renderImportName(fqName: FqName, isOnDemand: Boolean)
+        = if (isOnDemand) fqName.render() + ".*" else fqName.render()
 
 private val DEFAULT_IMPORTS_SET: Set<FqName> = JvmPlatform.defaultModuleParameters.defaultImports
         .filter { it.isAllUnder }

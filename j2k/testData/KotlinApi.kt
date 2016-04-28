@@ -9,14 +9,19 @@ public open class KotlinClass(public var field: Int) {
     fun get(i: Int) = 0
 
     companion object {
+        @JvmStatic
         public fun staticFun(p: Int): Int = p
+        @JvmStatic
         public var staticVar: Int = 1
+        @JvmStatic
         public var staticProperty: Int
             get() = 1
             set(value) {}
 
         public fun nullableStaticFun(p: Int?): Int? = p
         public var nullableStaticVar: Int? = 1
+
+        const val CONST = 0
     }
 }
 
@@ -43,7 +48,9 @@ public var String.extensionProperty: Int
   set(value) {}
 
 public object KotlinObject {
+    @JvmStatic
     public fun foo(): Int = 1
+    @JvmStatic
     public var property1: Int = 1
     public var property2: Int
         get() = 1

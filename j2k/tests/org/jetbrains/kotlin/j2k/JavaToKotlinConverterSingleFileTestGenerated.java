@@ -3033,6 +3033,42 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/kotlinApiAccess/Property2.java");
             doTest(fileName);
         }
+
+        @TestMetadata("StaticImportAllFromFileFacade.java")
+        public void testStaticImportAllFromFileFacade() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/kotlinApiAccess/StaticImportAllFromFileFacade.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("StaticImportAllFromObject.java")
+        public void testStaticImportAllFromObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/kotlinApiAccess/StaticImportAllFromObject.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("StaticImportFromCompanionObject.java")
+        public void testStaticImportFromCompanionObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/kotlinApiAccess/StaticImportFromCompanionObject.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("StaticImportFromCompanionObject2.java")
+        public void testStaticImportFromCompanionObject2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/kotlinApiAccess/StaticImportFromCompanionObject2.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("StaticImportFromCompanionObject3.java")
+        public void testStaticImportFromCompanionObject3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/kotlinApiAccess/StaticImportFromCompanionObject3.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("StaticImportFromFileFacade.java")
+        public void testStaticImportFromFileFacade() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/kotlinApiAccess/StaticImportFromFileFacade.java");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("j2k/testData/fileOrElement/labelStatement")
