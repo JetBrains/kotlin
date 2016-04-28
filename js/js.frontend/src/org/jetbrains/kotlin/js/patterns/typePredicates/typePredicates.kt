@@ -20,7 +20,7 @@ import com.google.common.base.Predicate
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 
-interface TypePredicate : Predicate<KotlinType> {
+public interface TypePredicate : Predicate<KotlinType> {
     override fun apply(type: KotlinType?): Boolean
 }
 
