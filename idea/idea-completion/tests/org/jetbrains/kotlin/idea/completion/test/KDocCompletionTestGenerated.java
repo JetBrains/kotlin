@@ -77,6 +77,18 @@ public class KDocCompletionTestGenerated extends AbstractJvmBasicCompletionTest 
         doTest(fileName);
     }
 
+    @TestMetadata("TagNameInClass.kt")
+    public void testTagNameInClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/kdoc/TagNameInClass.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("TagNameInExtensionFunction.kt")
+    public void testTagNameInExtensionFunction() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/kdoc/TagNameInExtensionFunction.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("TagNameMiddle.kt")
     public void testTagNameMiddle() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/kdoc/TagNameMiddle.kt");

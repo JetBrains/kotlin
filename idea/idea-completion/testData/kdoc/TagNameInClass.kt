@@ -1,10 +1,12 @@
 /**
  * <caret>
  */
-fun f(x: Int): Int {
+class C<T> {
 }
 
 // EXIST: @param
-// EXIST: @return
 // EXIST: @suppress
+// EXIST: @constructor
+// EXIST: @property
+// ABSENT: @return
 // ABSENT: @receiver
