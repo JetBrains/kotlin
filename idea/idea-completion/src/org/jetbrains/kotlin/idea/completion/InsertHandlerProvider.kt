@@ -31,16 +31,12 @@ import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
 class InsertHandlerProvider(
-        private val callType: CallType<*>?,
+        private val callType: CallType<*>,
         expectedInfosCalculator: () -> Collection<ExpectedInfo>
 ) {
     private val expectedInfos by lazy(LazyThreadSafetyMode.NONE) { expectedInfosCalculator() }
 
     fun insertHandler(descriptor: DeclarationDescriptor): InsertHandler<LookupElement> {
-        if (callType == null) {
-            error("Cannot create InsertHandler when no CallType known")
-        }
-
         return when (descriptor) {
             is FunctionDescriptor -> {
                 when (callType) {
@@ -48,7 +44,7 @@ class InsertHandlerProvider(
                         val needTypeArguments = needTypeArguments(descriptor)
                         val parameters = descriptor.valueParameters
                         when (parameters.size) {
-                            0 -> KotlinFunctionInsertHandler.Normal(needTypeArguments, inputValueArguments = false)
+                            0 -> KotlinFunctionInsertHandler.Normal(callType, needTypeArguments, inputValueArguments = false)
 
                             1 -> {
                                 if (callType != CallType.SUPER_MEMBERS) { // for super call we don't suggest to generate "super.foo { ... }" (seems to be non-typical use)
@@ -57,28 +53,28 @@ class InsertHandlerProvider(
                                         if (getValueParametersCountFromFunctionType(parameterType) <= 1) {
                                             // otherwise additional item with lambda template is to be added
                                             return KotlinFunctionInsertHandler.Normal(
-                                                    needTypeArguments, inputValueArguments = false,
+                                                    callType, needTypeArguments, inputValueArguments = false,
                                                     lambdaInfo = GenerateLambdaInfo(parameterType, false)
                                             )
                                         }
                                     }
                                 }
 
-                                KotlinFunctionInsertHandler.Normal(needTypeArguments, inputValueArguments = true)
+                                KotlinFunctionInsertHandler.Normal(callType, needTypeArguments, inputValueArguments = true)
                             }
 
-                            else -> KotlinFunctionInsertHandler.Normal(needTypeArguments, inputValueArguments = true)
+                            else -> KotlinFunctionInsertHandler.Normal(callType, needTypeArguments, inputValueArguments = true)
                         }
                     }
 
                     CallType.INFIX -> KotlinFunctionInsertHandler.Infix
 
-                    else -> KotlinFunctionInsertHandler.OnlyName
+                    else -> KotlinFunctionInsertHandler.OnlyName(callType)
                 }
 
             }
 
-            is PropertyDescriptor -> KotlinPropertyInsertHandler
+            is PropertyDescriptor -> KotlinPropertyInsertHandler(callType)
 
             is ClassifierDescriptor -> KotlinClassifierInsertHandler
 

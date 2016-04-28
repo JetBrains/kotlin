@@ -153,7 +153,7 @@ class TypeInstantiationItems(
         var allLookupStrings = setOf(lookupString)
         var itemText = lookupString
         var signatureText: String? = null
-        var typeText = IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(classifier)
+        val typeText = IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(classifier)
 
         val insertHandler: InsertHandler<LookupElement>
         if (isAbstract) {
@@ -218,12 +218,12 @@ class TypeInstantiationItems(
             }
 
             val baseInsertHandler = when (visibleConstructors.size) {
-                0 -> KotlinFunctionInsertHandler.Normal(inputTypeArguments = false, inputValueArguments = false, argumentsOnly = true)
+                0 -> KotlinFunctionInsertHandler.Normal(CallType.DEFAULT, inputTypeArguments = false, inputValueArguments = false, argumentsOnly = true)
 
                 1 -> (lookupElementFactory.insertHandlerProvider.insertHandler(visibleConstructors.single()) as KotlinFunctionInsertHandler.Normal)
                         .copy(argumentsOnly = true)
 
-                else -> KotlinFunctionInsertHandler.Normal(inputTypeArguments = false, inputValueArguments = true, argumentsOnly = true)
+                else -> KotlinFunctionInsertHandler.Normal(CallType.DEFAULT, inputTypeArguments = false, inputValueArguments = true, argumentsOnly = true)
             }
 
             insertHandler = object : InsertHandler<LookupElement> {
