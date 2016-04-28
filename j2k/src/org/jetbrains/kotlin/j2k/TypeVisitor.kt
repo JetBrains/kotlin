@@ -105,10 +105,7 @@ class TypeVisitor(
         if (classType is PsiClassReferenceType) {
             val targetClass = classType.reference.resolve() as? PsiClass
             if (targetClass != null) {
-                return targetClass.typeParameters.map {
-                    val superType = it.superTypes.first() // there must be at least one super type always
-                    typeConverter.convertType(superType, Nullability.Default, mutability, inAnnotationType).assignNoPrototype()
-                }
+                return targetClass.typeParameters.map { StarProjectionType().assignNoPrototype() }
             }
         }
         return listOf()

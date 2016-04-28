@@ -2698,6 +2698,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("rawType.java")
+        public void testRawType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/isOperator/rawType.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("simpleReference.java")
         public void testSimpleReference() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/isOperator/simpleReference.java");
@@ -4076,12 +4082,6 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
     public static class RawGenerics extends AbstractJavaToKotlinConverterSingleFileTest {
         public void testAllFilesPresentInRawGenerics() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/rawGenerics"), Pattern.compile("^(.+)\\.java$"), true);
-        }
-
-        @TestMetadata("cycle.java")
-        public void testCycle() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/rawGenerics/cycle.java");
-            doTest(fileName);
         }
 
         @TestMetadata("kt-540.java")
