@@ -209,6 +209,8 @@ public final enum class DeprecationLevel : kotlin.Enum<kotlin.DeprecationLevel> 
         public final override /*1*/ /*fake_override*/ fun <get-ordinal>(): kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.DeprecationLevel): kotlin.Int
+    protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<kotlin.DeprecationLevel!>!
 
     // Static members
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): kotlin.DeprecationLevel
@@ -299,6 +301,8 @@ public abstract class Enum</*0*/ E : kotlin.Enum<E>> : kotlin.Comparable<E>, jav
         public final fun <get-ordinal>(): kotlin.Int
     protected final fun clone(): kotlin.Any
     public final override /*1*/ fun compareTo(/*0*/ other: E): kotlin.Int
+    protected/*protected and package*/ final /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+    public final /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<E!>!
 
     public companion object Companion {
         /*primary*/ private constructor Companion()

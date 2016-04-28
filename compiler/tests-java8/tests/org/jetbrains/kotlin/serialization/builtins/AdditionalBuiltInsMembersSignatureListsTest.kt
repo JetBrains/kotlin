@@ -63,7 +63,9 @@ class AdditionalBuiltInsMembersSignatureListsTest : KotlinTestWithEnvironment() 
         val blackList =
                 JvmBuiltInsSettings.BLACK_LIST_METHOD_SIGNATURES +
                 JvmBuiltInsSettings.MUTABLE_METHOD_SIGNATURES +
-                JvmBuiltInsSettings.BLACK_LIST_CONSTRUCTOR_SIGNATURES
+                JvmBuiltInsSettings.BLACK_LIST_CONSTRUCTOR_SIGNATURES +
+                JvmBuiltInsSettings.WHITE_LIST_METHOD_SIGNATURES +
+                JvmBuiltInsSettings.WHITE_LIST_CONSTRUCTOR_SIGNATURES
 
         val groupedByInternalName = blackList.groupBy({ it.split(".")[0] }) { it.split(".")[1] }
 

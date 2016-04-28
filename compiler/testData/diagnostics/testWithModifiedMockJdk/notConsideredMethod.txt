@@ -1,0 +1,21 @@
+package
+
+public fun foo(/*0*/ x: kotlin.collections.MutableCollection<kotlin.Int>, /*1*/ y: kotlin.collections.Collection<kotlin.String>, /*2*/ z: A): kotlin.Unit
+
+public interface A : kotlin.collections.MutableCollection<kotlin.String> {
+    public abstract override /*1*/ /*fake_override*/ val size: kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun add(/*0*/ element: kotlin.String): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun addAll(/*0*/ elements: kotlin.collections.Collection<kotlin.String>): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun clear(): kotlin.Unit
+    public abstract override /*1*/ /*fake_override*/ fun contains(/*0*/ element: kotlin.String): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun containsAll(/*0*/ elements: kotlin.collections.Collection<kotlin.String>): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun iterator(): kotlin.collections.MutableIterator<kotlin.String>
+    public open override /*1*/ fun nonExistingMethod(/*0*/ x: kotlin.String): kotlin.String
+    public abstract override /*1*/ /*fake_override*/ fun remove(/*0*/ element: kotlin.String): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun removeAll(/*0*/ elements: kotlin.collections.Collection<kotlin.String>): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun retainAll(/*0*/ elements: kotlin.collections.Collection<kotlin.String>): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -18,6 +18,9 @@ package org.jetbrains.kotlin.test;
 
 public enum TestJdkKind {
     MOCK_JDK,
+    // Differs from common mock JDK only by one additional 'nonExistingMethod' in Collection and constructor from Double in Throwable
+    // It's needed to test the way we load additional built-ins members that neither in black nor white lists
+    MODIFIED_MOCK_JDK,
     FULL_JDK,
     ANDROID_API,
 }
