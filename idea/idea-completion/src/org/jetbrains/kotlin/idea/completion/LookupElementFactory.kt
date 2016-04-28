@@ -63,7 +63,7 @@ data /* we need copy() */
 class LookupElementFactory(
         val basicFactory: BasicLookupElementFactory,
         private val receiverTypes: Collection<KotlinType>?,
-        private val callType: CallType<*>?,
+        private val callType: CallType<*>,
         private val inDescriptor: DeclarationDescriptor,
         private val contextVariablesProvider: ContextVariablesProvider,
         private val standardLookupElementsPostProcessor: (LookupElement) -> LookupElement = { it }
@@ -188,7 +188,7 @@ class LookupElementFactory(
             }
 
             override fun handleInsert(context: InsertionContext) {
-                KotlinFunctionInsertHandler.Normal(inputTypeArguments, inputValueArguments = false, lambdaInfo = lambdaInfo).handleInsert(context, this)
+                KotlinFunctionInsertHandler.Normal(callType, inputTypeArguments, inputValueArguments = false, lambdaInfo = lambdaInfo).handleInsert(context, this)
             }
         }
 
@@ -235,7 +235,8 @@ class LookupElementFactory(
         }
 
         override fun handleInsert(context: InsertionContext) {
-            KotlinFunctionInsertHandler.Normal(inputTypeArguments = needTypeArguments, inputValueArguments = false, argumentText = argumentText).handleInsert(context, this)
+            KotlinFunctionInsertHandler.Normal(callType, inputTypeArguments = needTypeArguments, inputValueArguments = false, argumentText = argumentText)
+                    .handleInsert(context, this)
         }
     }
 
