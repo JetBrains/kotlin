@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.kdoc.parser;
+package org.jetbrains.kotlin.kdoc.parser
 
-import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.util.text.StringUtil
 
-public enum KDocKnownTag {
+enum class KDocKnownTag private constructor(val isReferenceRequired: Boolean, val isSectionStart: Boolean) {
     AUTHOR(false, false),
     THROWS(true, false),
     EXCEPTION(true, false),
@@ -31,31 +31,20 @@ public enum KDocKnownTag {
     SAMPLE(true, false),
     SUPPRESS(false, false);
 
-    private final boolean takesReference;
-    private final boolean startsSection;
 
-    KDocKnownTag(boolean takesReference, boolean startsSection) {
-        this.takesReference = takesReference;
-        this.startsSection = startsSection;
-    }
+    companion object {
+        fun findByTagName(tagName: CharSequence): KDocKnownTag? {
+            var tagName = tagName
+            if (StringUtil.startsWith(tagName, "@")) {
+                tagName = tagName.subSequence(1, tagName.length)
+            }
+            try {
+                return valueOf(tagName.toString().toUpperCase())
+            }
+            catch (ignored: IllegalArgumentException) {
+            }
 
-    public boolean isReferenceRequired() {
-        return takesReference;
-    }
-
-    public boolean isSectionStart() {
-        return startsSection;
-    }
-
-    public static KDocKnownTag findByTagName(CharSequence tagName) {
-        if (StringUtil.startsWith(tagName, "@")) {
-            tagName = tagName.subSequence(1, tagName.length());
+            return null
         }
-        try {
-            return valueOf(tagName.toString().toUpperCase());
-        }
-        catch (IllegalArgumentException ignored) {
-        }
-        return null;
     }
 }

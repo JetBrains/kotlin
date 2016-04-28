@@ -76,7 +76,7 @@ CODE_FENCE_END=("```" | "~~~")
                                             return KDocTokens.LEADING_ASTERISK; }
 
 <CONTENTS_BEGINNING> "@"{TAG_NAME} {
-    KDocKnownTag tag = KDocKnownTag.findByTagName(zzBuffer.subSequence(zzStartRead, zzMarkedPos));
+    KDocKnownTag tag = KDocKnownTag.Companion.findByTagName(zzBuffer.subSequence(zzStartRead, zzMarkedPos));
     yybegin(tag != null && tag.isReferenceRequired() ? TAG_BEGINNING : TAG_TEXT_BEGINNING);
     return KDocTokens.TAG_NAME;
 }
