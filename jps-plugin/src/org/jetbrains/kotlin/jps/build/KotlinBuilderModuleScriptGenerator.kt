@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.jps.build.JpsUtils.getAllDependencies
 import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
+import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.alwaysNull
 import java.io.File
@@ -42,7 +43,7 @@ object KotlinBuilderModuleScriptGenerator {
 
     // TODO used reflection to be compatible with IDEA from both 143 and 144 branches,
     // TODO switch to directly using when "since-build" will be >= 144.3357.4
-    private val getRelatedProductionModule: (JpsModule) -> JpsModule? = run {
+    internal val getRelatedProductionModule: (JpsModule) -> JpsModule? = run {
         val klass =
                 try {
                     Class.forName("org.jetbrains.jps.model.module.JpsTestModuleProperties")
@@ -105,14 +106,15 @@ object KotlinBuilderModuleScriptGenerator {
 
             val targetType = target.targetType
             assert(targetType is JavaModuleBuildTargetType)
+            val targetId = TargetId(target)
             builder.addModule(
-                    target.id,
+                    targetId.name,
                     outputDir.absolutePath,
                     moduleSources,
                     findSourceRoots(context, target),
                     findClassPathRoots(target),
-                    (targetType as JavaModuleBuildTargetType).typeId,
-                    targetType.isTests,
+                    targetId.type,
+                    (targetType as JavaModuleBuildTargetType).isTests,
                     // this excludes the output directories from the class path, to be removed for true incremental compilation
                     outputDirs,
                     friendDirs)
