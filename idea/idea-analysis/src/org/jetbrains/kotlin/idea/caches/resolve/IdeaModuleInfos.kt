@@ -330,7 +330,7 @@ internal data class CustomizedScriptModuleInfo(val project: Project, val module:
             }) ?: emptyList())
 }
 
-private class FileLibraryScope(project: Project, private val libraryRoot: VirtualFile) : GlobalSearchScope(project) {
+class FileLibraryScope(project: Project, private val libraryRoot: VirtualFile) : GlobalSearchScope(project) {
     val cachedEntries : MutableSet<VirtualFile> = hashSetOf()
 
     override fun contains(file: VirtualFile): Boolean =
