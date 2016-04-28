@@ -52,7 +52,7 @@ public abstract class AbstractQuickDocProviderTest extends KotlinLightCodeInsigh
 
         File testDataFile = new File(path);
         String textData = FileUtil.loadFile(testDataFile, true);
-        List<String> directives = InTextDirectivesUtils.findLinesWithPrefixesRemoved(textData, "INFO:");
+        List<String> directives = InTextDirectivesUtils.findLinesWithPrefixesRemoved(textData, false, "INFO:");
 
         if (directives.isEmpty()) {
             throw new FileComparisonFailure(
