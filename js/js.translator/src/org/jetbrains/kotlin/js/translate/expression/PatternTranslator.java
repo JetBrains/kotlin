@@ -163,6 +163,8 @@ public final class PatternTranslator extends AbstractTranslator {
 
         if (isArray(type)) return Namer.IS_ARRAY_FUN_REF;
 
+        if (TypePredicatesKt.getCHAR_SEQUENCE().apply(type)) return namer().isCharSequence();
+
         if (TypePredicatesKt.getCOMPARABLE().apply(type)) return namer().isComparable();
 
         return null;
