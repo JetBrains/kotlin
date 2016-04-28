@@ -23,38 +23,57 @@ import org.jetbrains.kotlin.idea.util.addAnnotation
 import org.jetbrains.kotlin.idea.util.findAnnotation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 private val annotationFqName = FqName("kotlin.jvm.JvmOverloads")
 
-class AddJvmOverloadsIntention : SelfTargetingIntention<KtParameterList>(
-        KtParameterList::class.java, "Add '@JvmOverloads' annotation"
+class AddJvmOverloadsIntention : SelfTargetingIntention<KtModifierListOwner>(
+        KtModifierListOwner::class.java, "Add '@JvmOverloads' annotation"
 ), LowPriorityAction {
 
-    override fun isApplicableTo(element: KtParameterList, caretOffset: Int): Boolean {
-        val parent = element.parent as? KtModifierListOwner ?: return false
-        val target = when (parent) {
-            is KtNamedFunction -> "function '${parent.name}'"
-            is KtPrimaryConstructor -> "primary constructor"
-            is KtSecondaryConstructor -> "secondary constructor"
+    override fun isApplicableTo(element: KtModifierListOwner, caretOffset: Int): Boolean {
+        val (targetName, parameterList) = when (element) {
+            is KtNamedFunction -> {
+                val funKeyword = element.funKeyword ?: return false
+                val valueParameterList = element.valueParameterList ?: return false
+                if (caretOffset !in funKeyword.startOffset..valueParameterList.endOffset) {
+                    return false
+                }
+
+                "function '${element.name}'" to valueParameterList
+            }
+            is KtSecondaryConstructor -> {
+                val constructorKeyword = element.getConstructorKeyword()
+                val valueParameterList = element.valueParameterList ?: return false
+                if (caretOffset !in constructorKeyword.startOffset..valueParameterList.endOffset) {
+                    return false
+                }
+
+                "secondary constructor" to valueParameterList
+            }
+            is KtPrimaryConstructor -> "primary constructor" to element.valueParameterList
             else -> return false
         }
-        text = "Add '@JvmOverloads' annotation to $target"
+        val parameters = parameterList?.parameters ?: return false
+
+        text = "Add '@JvmOverloads' annotation to $targetName"
 
         return !ProjectStructureUtil.isJsKotlinModule(element.getContainingKtFile())
-               && element.parameters.any { it.hasDefaultValue() }
-               && parent.findAnnotation(annotationFqName) == null
+               && parameters.size > 1
+               && parameters.any { it.hasDefaultValue() }
+               && element.findAnnotation(annotationFqName) == null
     }
 
-    override fun applyTo(element: KtParameterList, editor: Editor?) {
-        val parent = element.parent as KtModifierListOwner
-
-        if (parent is KtPrimaryConstructor && parent.getConstructorKeyword() == null) {
-            val keyword = KtPsiFactory(parent).createConstructorKeyword()
-            parent.addBefore(keyword, element)
-            parent.addAnnotation(annotationFqName, whiteSpaceText = " ")
+    override fun applyTo(element: KtModifierListOwner, editor: Editor?) {
+        if (element is KtPrimaryConstructor) {
+            if (element.getConstructorKeyword() == null) {
+                element.addBefore(KtPsiFactory(element).createConstructorKeyword(), element.valueParameterList)
+            }
+            element.addAnnotation(annotationFqName, whiteSpaceText = " ")
         }
         else {
-            parent.addAnnotation(annotationFqName)
+            element.addAnnotation(annotationFqName)
         }
     }
 

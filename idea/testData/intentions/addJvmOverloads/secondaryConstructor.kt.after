@@ -3,5 +3,5 @@
 
 class A {
     @JvmOverloads
-    constructor(a: String = ""<caret>)
+    constructor(a: String = ""<caret>, b: Int)
 }

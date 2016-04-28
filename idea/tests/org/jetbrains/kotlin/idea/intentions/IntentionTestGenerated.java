@@ -220,9 +220,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("onlyOneParameter.kt")
+        public void testOnlyOneParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addJvmOverloads/onlyOneParameter.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("primaryConstructor.kt")
         public void testPrimaryConstructor() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addJvmOverloads/primaryConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("primaryConstructorWithConstructorKeyword.kt")
+        public void testPrimaryConstructorWithConstructorKeyword() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addJvmOverloads/primaryConstructorWithConstructorKeyword.kt");
             doTest(fileName);
         }
 

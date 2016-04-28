@@ -2,5 +2,5 @@
 // INTENTION_TEXT: "Add '@JvmOverloads' annotation to function 'foo'"
 
 @JvmOverloads
-fun foo(a: String = ""<caret>) {
+fun foo(a: String = ""<caret>, b: Int) {
 }
