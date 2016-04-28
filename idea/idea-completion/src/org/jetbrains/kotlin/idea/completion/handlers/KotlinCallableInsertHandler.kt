@@ -20,14 +20,17 @@ import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.idea.completion.isAfterDot
+import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
+import org.jetbrains.kotlin.idea.imports.importableFqName
+import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
-abstract class KotlinCallableInsertHandler : BaseDeclarationInsertHandler() {
+abstract class KotlinCallableInsertHandler(val callType: CallType<*>) : BaseDeclarationInsertHandler() {
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
         super.handleInsert(context, item)
 
@@ -40,18 +43,20 @@ abstract class KotlinCallableInsertHandler : BaseDeclarationInsertHandler() {
         val file = context.file
         val o = item.`object`
         if (file is KtFile && o is DeclarationLookupObject) {
-            val descriptor = o.descriptor as? CallableDescriptor
-            if (descriptor != null) {
-                // for completion after dot, import insertion may be required only for extensions
-                if (context.isAfterDot() && descriptor.extensionReceiverParameter == null) {
-                    return
-                }
-
+            val descriptor = o.descriptor as? CallableDescriptor ?: return
+            if (descriptor.extensionReceiverParameter != null || callType == CallType.CALLABLE_REFERENCE) {
                 if (DescriptorUtils.isTopLevelDeclaration(descriptor)) {
                     runWriteAction {
-                        ImportInsertHelper.getInstance(context.getProject()).importDescriptor(file, descriptor)
+                        ImportInsertHelper.getInstance(context.project).importDescriptor(file, descriptor)
                     }
                 }
+            }
+            else if (callType == CallType.DEFAULT) {
+                val fqName = descriptor.importableFqName ?: return
+                context.document.replaceString(context.startOffset, context.tailOffset, fqName.render())
+
+                PsiDocumentManager.getInstance(context.project).commitAllDocuments()
+                ShortenReferences.DEFAULT.process(file, context.startOffset, context.tailOffset)
             }
         }
     }
