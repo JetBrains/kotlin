@@ -53,9 +53,10 @@ public class FunctionDescriptorUtil {
 
     @NotNull
     public static LexicalScope getFunctionInnerScope(
-            @NotNull LexicalScope outerScope, @NotNull FunctionDescriptor descriptor, @NotNull BindingTrace trace
+            @NotNull LexicalScope outerScope, @NotNull FunctionDescriptor descriptor,
+            @NotNull BindingTrace trace, @NotNull OverloadChecker overloadChecker
     ) {
-        return getFunctionInnerScope(outerScope, descriptor, new TraceBasedLocalRedeclarationChecker(trace));
+        return getFunctionInnerScope(outerScope, descriptor, new TraceBasedLocalRedeclarationChecker(trace, overloadChecker));
     }
 
     @NotNull

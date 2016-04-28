@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,11 +31,11 @@ import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
-object OverloadUtil {
+class OverloadChecker {
     /**
      * Does not check names.
      */
-    @JvmStatic fun isOverloadable(a: DeclarationDescriptor, b: DeclarationDescriptor): Boolean {
+    fun isOverloadable(a: DeclarationDescriptor, b: DeclarationDescriptor): Boolean {
         val aCategory = getDeclarationCategory(a)
         val bCategory = getDeclarationCategory(b)
 
@@ -96,7 +96,7 @@ object OverloadUtil {
                     error("Unexpected declaration kind: $a")
             }
 
-    @JvmStatic fun groupModulePackageMembersByFqName(
+    fun groupModulePackageMembersByFqName(
             c: BodiesResolveContext,
             overloadFilter: OverloadFilter
     ): MultiMap<FqNameUnsafe, DeclarationDescriptorNonRoot> {
@@ -172,7 +172,7 @@ object OverloadUtil {
             this is DeclarationDescriptorWithVisibility &&
             Visibilities.isPrivate(this.visibility)
 
-    @JvmStatic fun getPossibleRedeclarationGroups(
+    fun getPossibleRedeclarationGroups(
             members: Collection<DeclarationDescriptorNonRoot>
     ): Collection<Collection<DeclarationDescriptorNonRoot>> {
         val result = arrayListOf<Collection<DeclarationDescriptorNonRoot>>()

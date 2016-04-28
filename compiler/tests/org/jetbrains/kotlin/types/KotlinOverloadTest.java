@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.psi.KtNamedFunction;
 import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
 import org.jetbrains.kotlin.resolve.FunctionDescriptorResolver;
-import org.jetbrains.kotlin.resolve.OverloadUtil;
+import org.jetbrains.kotlin.resolve.OverloadChecker;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.test.ConfigurationKind;
@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.tests.di.InjectionKt;
 public class KotlinOverloadTest extends KotlinTestWithEnvironment {
     private final ModuleDescriptor root = KotlinTestUtils.createEmptyModule("<test_root>");
     private FunctionDescriptorResolver functionDescriptorResolver;
+    private final OverloadChecker overloadChecker = new OverloadChecker();
 
     @Override
     protected KotlinCoreEnvironment createEnvironment() {
@@ -154,10 +155,12 @@ public class KotlinOverloadTest extends KotlinTestWithEnvironment {
         FunctionDescriptor a = makeFunction(funA);
         FunctionDescriptor b = makeFunction(funB);
 
-        boolean aOverloadableWithB = OverloadUtil.isOverloadable(a, b);
+
+
+        boolean aOverloadableWithB = overloadChecker.isOverloadable(a, b);
         assertEquals(expectedIsError, !aOverloadableWithB);
 
-        boolean bOverloadableWithA = OverloadUtil.isOverloadable(b, a);
+        boolean bOverloadableWithA = overloadChecker.isOverloadable(b, a);
         assertEquals(expectedIsError, !bOverloadableWithA);
     }
 

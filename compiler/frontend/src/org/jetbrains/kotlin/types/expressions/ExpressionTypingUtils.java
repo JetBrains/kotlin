@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.ObservableBindingTrace;
+import org.jetbrains.kotlin.resolve.OverloadChecker;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
@@ -80,9 +81,10 @@ public class ExpressionTypingUtils {
     }
 
     @NotNull
-    public static LexicalWritableScope newWritableScopeImpl(ExpressionTypingContext context, @NotNull LexicalScopeKind scopeKind) {
+    public static LexicalWritableScope newWritableScopeImpl(
+            @NotNull ExpressionTypingContext context, @NotNull LexicalScopeKind scopeKind, @NotNull OverloadChecker overloadChecker) {
         return new LexicalWritableScope(context.scope, context.scope.getOwnerDescriptor(), false, null,
-                                        new TraceBasedLocalRedeclarationChecker(context.trace), scopeKind);
+                                        new TraceBasedLocalRedeclarationChecker(context.trace, overloadChecker), scopeKind);
     }
 
     public static KtExpression createFakeExpressionOfType(

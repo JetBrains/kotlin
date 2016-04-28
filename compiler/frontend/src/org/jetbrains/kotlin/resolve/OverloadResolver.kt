@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.check
 
 class OverloadResolver(
         private val trace: BindingTrace,
-        private val overloadFilter: OverloadFilter) {
+        private val overloadFilter: OverloadFilter,
+        private val overloadChecker: OverloadChecker
+) {
 
     fun checkOverloads(c: BodiesResolveContext) {
         val inClasses = findConstructorsInNestedClasses(c)
@@ -63,7 +65,7 @@ class OverloadResolver(
     }
 
     private fun checkOverloadsInPackages(c: BodiesResolveContext) {
-        val membersByName = OverloadUtil.groupModulePackageMembersByFqName(c, overloadFilter)
+        val membersByName = overloadChecker.groupModulePackageMembersByFqName(c, overloadFilter)
 
         for (e in membersByName.entrySet()) {
             checkOverloadsInPackage(e.value)
@@ -91,7 +93,7 @@ class OverloadResolver(
 
     private fun checkOverloadsInPackage(members: Collection<DeclarationDescriptorNonRoot>) {
         if (members.size == 1) return
-        for (redeclarationGroup in OverloadUtil.getPossibleRedeclarationGroups(members)) {
+        for (redeclarationGroup in overloadChecker.getPossibleRedeclarationGroups(members)) {
             reportRedeclarations(findRedeclarations(redeclarationGroup))
         }
     }
@@ -114,7 +116,7 @@ class OverloadResolver(
                 if (isConstructorsOfDifferentRedeclaredClasses(member1, member2)) continue
                 if (isTopLevelMainInDifferentFiles(member1, member2)) continue
 
-                if (!OverloadUtil.isOverloadable(member1, member2)) {
+                if (!overloadChecker.isOverloadable(member1, member2)) {
                     val ktDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(member1) as KtDeclaration?
                     redeclarations.add(ktDeclaration to member1)
                 }

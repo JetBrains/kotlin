@@ -69,6 +69,7 @@ public class BodyResolver {
     @NotNull private final ValueParameterResolver valueParameterResolver;
     @NotNull private final BodyResolveCache bodyResolveCache;
     @NotNull private final KotlinBuiltIns builtIns;
+    @NotNull private final OverloadChecker overloadChecker;
 
     public BodyResolver(
             @NotNull AnnotationResolver annotationResolver,
@@ -82,7 +83,8 @@ public class BodyResolver {
             @NotNull BindingTrace trace,
             @NotNull ValueParameterResolver valueParameterResolver,
             @NotNull AnnotationChecker annotationChecker,
-            @NotNull KotlinBuiltIns builtIns
+            @NotNull KotlinBuiltIns builtIns,
+            @NotNull OverloadChecker overloadChecker
     ) {
         this.annotationResolver = annotationResolver;
         this.bodyResolveCache = bodyResolveCache;
@@ -93,6 +95,7 @@ public class BodyResolver {
         this.expressionTypingServices = expressionTypingServices;
         this.functionAnalyzerExtension = functionAnalyzerExtension;
         this.annotationChecker = annotationChecker;
+        this.overloadChecker = overloadChecker;
         this.trace = new ObservableBindingTrace(trace);
         this.valueParameterResolver = valueParameterResolver;
         this.builtIns = builtIns;
@@ -259,7 +262,7 @@ public class BodyResolver {
         final LexicalScope scopeForConstructor =
                 primaryConstructor == null
                 ? null
-                : FunctionDescriptorUtil.getFunctionInnerScope(scopeForConstructorResolution, primaryConstructor, trace);
+                : FunctionDescriptorUtil.getFunctionInnerScope(scopeForConstructorResolution, primaryConstructor, trace, overloadChecker);
         final ExpressionTypingServices typeInferrer = expressionTypingServices; // TODO : flow
 
         final Map<KtTypeReference, KotlinType> supertypes = Maps.newLinkedHashMap();
@@ -778,7 +781,7 @@ public class BodyResolver {
             @Nullable Function1<LexicalScope, LexicalScope> headerScopeFactory
     ) {
         PreliminaryDeclarationVisitor.Companion.createForDeclaration(function, trace);
-        LexicalScope innerScope = FunctionDescriptorUtil.getFunctionInnerScope(scope, functionDescriptor, trace);
+        LexicalScope innerScope = FunctionDescriptorUtil.getFunctionInnerScope(scope, functionDescriptor, trace, overloadChecker);
         List<KtParameter> valueParameters = function.getValueParameters();
         List<ValueParameterDescriptor> valueParameterDescriptors = functionDescriptor.getValueParameters();
 
