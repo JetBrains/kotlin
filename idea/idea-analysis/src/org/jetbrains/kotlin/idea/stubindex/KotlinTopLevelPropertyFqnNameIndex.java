@@ -49,4 +49,10 @@ public class KotlinTopLevelPropertyFqnNameIndex extends StringStubIndexExtension
     public Collection<KtProperty> get(@NotNull String s, @NotNull Project project, @NotNull GlobalSearchScope scope) {
         return StubIndex.getElements(KEY, s, project, KotlinSourceFilterScope.sourcesAndLibraries(scope, project), KtProperty.class);
     }
+
+    // temporary hack, see comments in findCandidateDeclarationsInIndex (findDecompiledDeclaration.kt)
+    @NotNull
+    public Collection<KtProperty> getNoScopeWrap(@NotNull String s, @NotNull Project project, @NotNull GlobalSearchScope scope) {
+        return StubIndex.getElements(KEY, s, project, scope, KtProperty.class);
+    }
 }

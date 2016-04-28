@@ -50,4 +50,10 @@ public class KotlinFullClassNameIndex extends StringStubIndexExtension<KtClassOr
     public Collection<KtClassOrObject> get(@NotNull String fqName, @NotNull Project project, @NotNull GlobalSearchScope scope) {
         return StubIndex.getElements(KEY, fqName, project, KotlinSourceFilterScope.sourcesAndLibraries(scope, project), KtClassOrObject.class);
     }
+
+    // temporary hack, see comments in findCandidateDeclarationsInIndex (findDecompiledDeclaration.kt)
+    @NotNull
+    public Collection<KtClassOrObject> getNoScopeWrap(@NotNull String fqName, @NotNull Project project, @NotNull GlobalSearchScope scope) {
+        return StubIndex.getElements(KEY, fqName, project, scope, KtClassOrObject.class);
+    }
 }
