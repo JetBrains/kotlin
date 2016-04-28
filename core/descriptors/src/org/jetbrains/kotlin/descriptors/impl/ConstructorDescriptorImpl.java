@@ -134,6 +134,7 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
             @Nullable FunctionDescriptor original,
             @NotNull Kind kind,
             @Nullable Name newName,
+            @NotNull Annotations annotations,
             boolean preserveSource
     ) {
         if (kind != Kind.DECLARATION && kind != Kind.SYNTHESIZED) {
@@ -146,7 +147,7 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
         return new ConstructorDescriptorImpl(
                 (ClassDescriptor) newOwner,
                 this,
-                getAnnotations(),
+                annotations,
                 isPrimary,
                 Kind.DECLARATION,
                 getSourceToUseForCopy(preserveSource, original)

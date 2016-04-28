@@ -57,6 +57,7 @@ class DeserializedSimpleFunctionDescriptor(
             original: FunctionDescriptor?,
             kind: CallableMemberDescriptor.Kind,
             newName: Name?,
+            annotations: Annotations,
             preserveSource: Boolean
     ): FunctionDescriptorImpl {
         return DeserializedSimpleFunctionDescriptor(
@@ -117,6 +118,7 @@ class DeserializedConstructorDescriptor(
             original: FunctionDescriptor?,
             kind: CallableMemberDescriptor.Kind,
             newName: Name?,
+            annotations: Annotations,
             preserveSource: Boolean
     ): DeserializedConstructorDescriptor {
         return DeserializedConstructorDescriptor(

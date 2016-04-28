@@ -144,6 +144,7 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : SyntheticScope 
                 original: FunctionDescriptor?,
                 kind: CallableMemberDescriptor.Kind,
                 newName: Name?,
+                annotations: Annotations,
                 preserveSource: Boolean
         ): MyFunctionDescriptor {
             return MyFunctionDescriptor(

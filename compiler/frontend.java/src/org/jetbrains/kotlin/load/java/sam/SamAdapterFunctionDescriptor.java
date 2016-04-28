@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
+import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.SamAdapterDescriptor;
 import org.jetbrains.kotlin.name.Name;
@@ -56,6 +57,7 @@ import org.jetbrains.kotlin.name.Name;
             @Nullable FunctionDescriptor original,
             @NotNull Kind kind,
             @Nullable Name newName,
+            @NotNull Annotations annotations,
             boolean preserveSource
     ) {
         return new SamAdapterFunctionDescriptor(newOwner, (SimpleFunctionDescriptor) original, kind, declaration);

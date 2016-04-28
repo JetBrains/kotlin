@@ -45,7 +45,9 @@ class FunctionInvokeDescriptor private constructor(
             newOwner: DeclarationDescriptor,
             original: FunctionDescriptor?,
             kind: CallableMemberDescriptor.Kind,
-            newName: Name?, preserveSource: Boolean
+            newName: Name?,
+            annotations: Annotations,
+            preserveSource: Boolean
     ): FunctionDescriptorImpl {
         return FunctionInvokeDescriptor(newOwner, original as FunctionInvokeDescriptor?, kind)
     }
