@@ -103,7 +103,7 @@ internal class A {
         true.toString()
         1.11f.toString()
         3.14.toString()
-        Object().toString()
+        Any().toString()
 
         String.format(Locale.FRENCH, "Je ne mange pas %d jours", 6)
         String.format("Operation completed with %s", "success")
