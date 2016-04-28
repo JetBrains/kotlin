@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.j2k.ast.*
 import org.jetbrains.kotlin.j2k.ast.Annotation
 import org.jetbrains.kotlin.load.java.components.JavaAnnotationTargetMapper
+import org.jetbrains.kotlin.name.FqName
 import java.lang.annotation.ElementType
 import java.lang.annotation.Target
 
@@ -31,8 +32,9 @@ class AnnotationConverter(private val converter: Converter) {
             + NullableNotNullManager.getInstance(converter.project).nullables
             + listOf(CommonClassNames.JAVA_LANG_OVERRIDE, ElementType::class.java.name)).toSet()
 
-    fun isImportNotRequired(annotationName: String): Boolean {
-        return annotationName in annotationsToRemove || annotationName == Target::class.java.name
+    fun isImportNotRequired(fqName: FqName): Boolean {
+        val nameAsString = fqName.asString()
+        return nameAsString in annotationsToRemove || nameAsString == Target::class.java.name
     }
 
     fun convertAnnotations(owner: PsiModifierListOwner): Annotations

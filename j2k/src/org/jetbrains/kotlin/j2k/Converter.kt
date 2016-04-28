@@ -114,7 +114,7 @@ class Converter private constructor(
         is PsiStatement -> createDefaultCodeConverter().convertStatement(element)
         is PsiExpression -> createDefaultCodeConverter().convertExpression(element)
         is PsiImportList -> convertImportList(element)
-        is PsiImportStatementBase -> convertImport(element, false)
+        is PsiImportStatementBase -> convertImport(element, false).singleOrNull()
         is PsiAnnotation -> annotationConverter.convertAnnotation(element, newLineAfter = false)
         is PsiPackageStatement -> PackageStatement(quoteKeywords(element.packageName ?: "")).assignPrototype(element)
         is PsiJavaCodeReferenceElement -> {
