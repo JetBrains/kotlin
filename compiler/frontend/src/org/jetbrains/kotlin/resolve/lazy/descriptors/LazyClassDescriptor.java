@@ -282,6 +282,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                     @Nullable FunctionDescriptor original,
                     @NotNull Kind kind,
                     @Nullable Name newName,
+                    @NotNull Annotations annotations,
                     boolean preserveSource
             ) {
                 throw new UnsupportedOperationException();

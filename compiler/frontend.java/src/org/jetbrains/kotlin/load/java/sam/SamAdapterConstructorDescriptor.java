@@ -53,9 +53,10 @@ import org.jetbrains.kotlin.load.java.descriptors.SamAdapterDescriptor;
             @NotNull ClassDescriptor newOwner,
             @Nullable JavaConstructorDescriptor original,
             @NotNull Kind kind,
-            @NotNull SourceElement sourceElement
+            @NotNull SourceElement sourceElement,
+            @NotNull Annotations annotations
     ) {
-        return new SamAdapterConstructorDescriptor(newOwner, original, getAnnotations(), isPrimary, kind, sourceElement, declaration);
+        return new SamAdapterConstructorDescriptor(newOwner, original, annotations, isPrimary, kind, sourceElement, declaration);
     }
 
     @NotNull

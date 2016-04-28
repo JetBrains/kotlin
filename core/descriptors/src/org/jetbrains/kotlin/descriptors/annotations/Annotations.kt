@@ -132,3 +132,10 @@ class CompositeAnnotations(
 
     override fun iterator() = delegates.asSequence().flatMap { it.asSequence() }.iterator()
 }
+
+fun composeAnnotations(first: Annotations, second: Annotations) =
+        when {
+            first.isEmpty() -> second
+            second.isEmpty() -> first
+            else -> CompositeAnnotations(first, second)
+        }

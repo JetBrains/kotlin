@@ -77,13 +77,13 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
             @Nullable FunctionDescriptor original,
             @NotNull Kind kind,
             @Nullable Name newName,
+            @NotNull Annotations annotations,
             boolean preserveSource
     ) {
         return new SimpleFunctionDescriptorImpl(
                 newOwner,
                 (SimpleFunctionDescriptor) original,
-                // TODO : safeSubstitute
-                getAnnotations(),
+                annotations,
                 newName != null ? newName : getName(),
                 kind,
                 getSourceToUseForCopy(preserveSource, original)

@@ -78,6 +78,7 @@ public class JavaConstructorDescriptor extends ConstructorDescriptorImpl impleme
             @Nullable FunctionDescriptor original,
             @NotNull Kind kind,
             @Nullable Name newName,
+            @NotNull Annotations annotations,
             boolean preserveSource
     ) {
         if (kind != Kind.DECLARATION && kind != Kind.SYNTHESIZED) {
@@ -92,7 +93,7 @@ public class JavaConstructorDescriptor extends ConstructorDescriptorImpl impleme
         assert newName == null : "Attempt to rename constructor: " + this;
 
         JavaConstructorDescriptor result = createDescriptor((ClassDescriptor) newOwner, (JavaConstructorDescriptor) original, kind,
-                                                            getSourceToUseForCopy(preserveSource, original));
+                                                            getSourceToUseForCopy(preserveSource, original), annotations);
         result.setHasStableParameterNames(hasStableParameterNames());
         result.setHasSynthesizedParameterNames(hasSynthesizedParameterNames());
         return result;
@@ -103,10 +104,11 @@ public class JavaConstructorDescriptor extends ConstructorDescriptorImpl impleme
             @NotNull ClassDescriptor newOwner,
             @Nullable JavaConstructorDescriptor original,
             @NotNull Kind kind,
-            @NotNull SourceElement sourceElement
+            @NotNull SourceElement sourceElement,
+            @NotNull Annotations annotations
     ) {
         return new JavaConstructorDescriptor(
-                newOwner, original, getAnnotations(), isPrimary, kind,
+                newOwner, original, annotations, isPrimary, kind,
                 sourceElement
         );
     }
@@ -118,7 +120,8 @@ public class JavaConstructorDescriptor extends ConstructorDescriptorImpl impleme
             @NotNull List<KotlinType> enhancedValueParametersTypes,
             @NotNull KotlinType enhancedReturnType
     ) {
-        JavaConstructorDescriptor enhanced = createSubstitutedCopy(getContainingDeclaration(), /* original = */ null, getKind(), null, true);
+        JavaConstructorDescriptor enhanced = createSubstitutedCopy(
+                getContainingDeclaration(), /* original = */ null, getKind(), null, getAnnotations(), true);
         // We do not use doSubstitute here as in JavaMethodDescriptor.enhance because type parameters of constructor belongs to class
         enhanced.initialize(
                 enhancedReceiverType,
