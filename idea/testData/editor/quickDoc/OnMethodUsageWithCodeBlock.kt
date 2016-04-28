@@ -3,7 +3,9 @@
  *
  * ```
  * Code block
- * Second line
+ *     Second line
+ *
+ * Third line
  * ```
  */
 fun testMethod() {
@@ -20,5 +22,7 @@ fun test() {
 //INFO: <b>public</b> <b>fun</b> testMethod(): Unit <i>defined in</i> root package<p>Some documentation.</p>
 //INFO: <pre><code>
 //INFO: Code block
-//INFO: Second line
+//INFO:     Second line
+//INFO:
+//INFO: Third line
 //INFO: </code><pre>
