@@ -130,13 +130,6 @@ class Kotlin2JvmSourceSetProcessor(
     }
 
     override fun doTargetSpecificProcessing() {
-        kotlinTask.kotlinDestinationDir = File(project.buildDir, "kotlin-classes/$sourceSetName")
-
-        val javaTask = project.tasks.findByName(sourceSet.compileJavaTaskName) as AbstractCompile?
-        if (javaTask != null) {
-            setUpKotlinToJavaDependency(kotlinTask, javaTask, logger)
-        }
-
         val kotlinAnnotationProcessingDep = cachedKotlinAnnotationProcessingDep ?: run {
             val projectVersion = loadKotlinVersionFromResource(project.logger)
             val dep = "org.jetbrains.kotlin:kotlin-annotation-processing:$projectVersion"
@@ -148,6 +141,8 @@ class Kotlin2JvmSourceSetProcessor(
 
         project.afterEvaluate { project ->
             if (project != null) {
+                kotlinTask.kotlinDestinationDir = File(project.buildDir, "kotlin-classes/$sourceSetName")
+
                 for (dir in sourceSet.getJava().srcDirs) {
                     kotlinDirSet?.srcDir(dir)
                 }
@@ -155,7 +150,12 @@ class Kotlin2JvmSourceSetProcessor(
                 val subpluginEnvironment = loadSubplugins(project)
                 subpluginEnvironment.addSubpluginArguments(project, kotlinTask)
 
-                if (aptConfiguration.dependencies.size > 1 && javaTask is JavaCompile) {
+                val javaTask = project.tasks.findByName(sourceSet.compileJavaTaskName)
+                if (javaTask !is JavaCompile) return@afterEvaluate
+
+                var kotlinAfterJavaTask: AbstractCompile? = null
+
+                if (aptConfiguration.dependencies.size > 1) {
                     javaTask.dependsOn(aptConfiguration.buildDependencies)
 
                     val (aptOutputDir, aptWorkingDir) = project.getAptDirsForSourceSet(sourceSetName)
@@ -163,17 +163,19 @@ class Kotlin2JvmSourceSetProcessor(
                     val kaptManager = AnnotationProcessingManager(kotlinTask, javaTask, sourceSetName,
                             aptConfiguration.resolve(), aptOutputDir, aptWorkingDir, tasksProvider.tasksLoader)
 
-                    val kotlinAfterJavaTask = project.initKapt(kotlinTask, javaTask, kaptManager,
+                    kotlinAfterJavaTask = project.initKapt(kotlinTask, javaTask, kaptManager,
                             sourceSetName, null, subpluginEnvironment) {
                         createKotlinCompileTask(it)
                     }
 
                     if (kotlinAfterJavaTask != null) {
                         javaTask.doFirst {
-                            kotlinAfterJavaTask.classpath = project.files(kotlinTask.classpath, javaTask.destinationDir)
+                            kotlinAfterJavaTask!!.classpath = project.files(kotlinTask.classpath, javaTask.destinationDir)
                         }
                     }
                 }
+
+                configureJavaTask(kotlinTask, javaTask, kotlinAfterJavaTask, logger)
             }
         }
     }
@@ -423,6 +425,7 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
 
             val (aptOutputDir, aptWorkingDir) = project.getAptDirsForSourceSet(variantDataName)
             variantData.addJavaSourceFoldersToModel(aptOutputDir)
+            var kotlinAfterJavaTask: AbstractCompile? = null
 
             if (javaTask is JavaCompile && aptFiles.isNotEmpty()) {
                 val kaptManager = AnnotationProcessingManager(kotlinTask, javaTask, variantDataName,
@@ -430,12 +433,12 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
 
                 kotlinTask.storeKaptAnnotationsFile(kaptManager)
 
-                project.initKapt(kotlinTask, javaTask, kaptManager, variantDataName, kotlinOptions, subpluginEnvironment) {
+                kotlinAfterJavaTask = project.initKapt(kotlinTask, javaTask, kaptManager, variantDataName, kotlinOptions, subpluginEnvironment) {
                     tasksProvider.createKotlinJVMTask(project, kotlinTaskName + KOTLIN_AFTER_JAVA_TASK_SUFFIX)
                 }
             }
 
-            setUpKotlinToJavaDependency(kotlinTask, javaTask, logger)
+            configureJavaTask(kotlinTask, javaTask, kotlinAfterJavaTask, logger)
         }
     }
 
@@ -451,7 +454,7 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
     }
 }
 
-private fun setUpKotlinToJavaDependency(kotlinTask: AbstractCompile, javaTask: AbstractCompile, logger: Logger) {
+private fun configureJavaTask(kotlinTask: AbstractCompile, javaTask: AbstractCompile, kotlinAfterJavaTask: AbstractCompile?, logger: Logger) {
     // Since we cannot update classpath statically, java not able to detect changes in the classpath after kotlin compiler.
     // Therefore this (probably inefficient since java cannot decide "uptodateness" by the list of changed class files, but told
     // explicitly being out of date whenever any kotlin files are compiled
@@ -476,7 +479,9 @@ private fun setUpKotlinToJavaDependency(kotlinTask: AbstractCompile, javaTask: A
      * ex. it adds some support libraries jars after execution of prepareComAndroidSupportSupportV42311Library task,
      * so it's only safe to modify javaTask.classpath right before its usage
      */
-    javaTask.appendClasspathDynamically(kotlinTask.kotlinDestinationDir!!)
+    if (kotlinAfterJavaTask == null) {
+        javaTask.appendClasspathDynamically(kotlinTask.kotlinDestinationDir!!)
+    }
 }
 
 private fun loadSubplugins(project: Project): SubpluginEnvironment {
