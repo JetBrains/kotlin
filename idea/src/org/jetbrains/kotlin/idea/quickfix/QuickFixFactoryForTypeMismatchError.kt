@@ -86,6 +86,14 @@ class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
             actions.add(NumberConversionFix(diagnosticElement, expectedType))
         }
 
+        if (KotlinBuiltIns.isCharSequenceOrNullableCharSequence(expectedType)
+            || KotlinBuiltIns.isStringOrNullableString(expectedType)) {
+            actions.add(AddToStringFix(diagnosticElement, false))
+            if (expectedType.isMarkedNullable && expressionType.isMarkedNullable) {
+                actions.add(AddToStringFix(diagnosticElement, true))
+            }
+        }
+
         if (expectedType.isInterface()) {
             val expressionTypeDeclaration = expressionType.constructor.declarationDescriptor?.let {
                 DescriptorToSourceUtils.descriptorToDeclaration(it)
