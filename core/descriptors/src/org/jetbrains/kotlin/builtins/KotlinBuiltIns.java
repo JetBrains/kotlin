@@ -874,6 +874,14 @@ public abstract class KotlinBuiltIns {
         return type != null && isNotNullConstructedFromGivenClass(type, FQ_NAMES.string);
     }
 
+    public static boolean isCharSequenceOrNullableCharSequence(@Nullable KotlinType type) {
+        return type != null && isConstructedFromGivenClass(type, FQ_NAMES.charSequence);
+    }
+
+    public static boolean isStringOrNullableString(@Nullable KotlinType type) {
+        return type != null && isConstructedFromGivenClass(type, FQ_NAMES.string);
+    }
+
     public static boolean isCollectionOrNullableCollection(@NotNull KotlinType type) {
         return isConstructedFromGivenClass(type, FQ_NAMES._collection);
     }
