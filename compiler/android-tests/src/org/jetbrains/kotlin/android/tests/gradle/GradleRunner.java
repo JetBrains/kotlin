@@ -50,6 +50,17 @@ public class GradleRunner {
         OutputUtils.checkResult(result);
     }
 
+    public void installDebugAndroidTest() {
+        System.out.println("Install tests...");
+        OutputUtils.checkResult(RunUtils.execute(generateCommandLine("installDebug")));
+        OutputUtils.checkResult(RunUtils.execute(generateCommandLine("installDebugAndroidTest")));
+    }
+
+    public void uninstallDebugAndroidTest() {
+        System.out.println("Uninstall tests...");
+        RunUtils.execute(generateCommandLine("uninstallDebugAndroidTest"));
+        RunUtils.execute(generateCommandLine("uninstallDebug"));
+    }
 
     public String connectedDebugAndroidTest() {
         System.out.println("Starting tests...");

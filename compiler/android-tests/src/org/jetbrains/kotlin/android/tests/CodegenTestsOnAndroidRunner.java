@@ -98,6 +98,7 @@ public class CodegenTestsOnAndroidRunner {
 
             try {
                 emulator.waitEmulatorStart();
+                //runTestsViaAdb(emulator, gradleRunner);
                 return gradleRunner.connectedDebugAndroidTest();
             }
             catch (RuntimeException e) {
@@ -121,6 +122,14 @@ public class CodegenTestsOnAndroidRunner {
             }
             emulator.finishEmulatorProcesses();
         }
+    }
+
+    private String runTestsViaAdb(Emulator emulator, GradleRunner gradleRunner) {
+        gradleRunner.installDebugAndroidTest();
+        String result = emulator.runTestsViaAdb();
+        System.out.println(result);
+        gradleRunner.uninstallDebugAndroidTest();
+        return result;
     }
 
     private static List<TestCase> parseSingleReportInFolder(String reportFolder) throws
