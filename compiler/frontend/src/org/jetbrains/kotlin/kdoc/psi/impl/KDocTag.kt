@@ -56,7 +56,7 @@ open class KDocTag(node: ASTNode) : KDocElementImpl(node) {
 
     val knownTag: KDocKnownTag?
         get() {
-            return if (name != null) KDocKnownTag.findByTagName(name) else null
+            return name?.let { KDocKnownTag.findByTagName(it) }
         }
 
     private fun hasSubject(contentChildren: List<ASTNode>): Boolean {

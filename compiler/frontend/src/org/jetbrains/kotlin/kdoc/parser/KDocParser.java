@@ -59,7 +59,7 @@ public class KDocParser implements PsiParser {
 
     private static PsiBuilder.Marker parseTag(PsiBuilder builder, PsiBuilder.Marker currentSectionMarker) {
         String tagName = builder.getTokenText();
-        KDocKnownTag knownTag = KDocKnownTag.findByTagName(tagName);
+        KDocKnownTag knownTag = KDocKnownTag.Companion.findByTagName(tagName);
         if (knownTag != null && knownTag.isSectionStart()) {
             currentSectionMarker.done(KDocElementTypes.KDOC_SECTION);
             currentSectionMarker = builder.mark();
