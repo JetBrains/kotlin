@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.j2k.ast.ImportList
 import org.jetbrains.kotlin.j2k.ast.assignPrototype
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
+import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
 fun Converter.convertImportList(importList: PsiImportList): ImportList =
@@ -61,7 +62,7 @@ private fun Converter.filterImport(name: String, ref: PsiJavaCodeReferenceElemen
 
     val target = ref.resolve()
     if (target is KtLightClassForFacade) {
-        return quoteKeywords(target.getFqName().parent().toString()) + ".*"
+        return target.getFqName().parent().render() + ".*"
     }
     else if (target is KtLightClass) {
         if (isFacadeClassFromLibrary(target)) return null
