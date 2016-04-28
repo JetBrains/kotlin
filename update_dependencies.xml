@@ -5,8 +5,8 @@
     <property name="idea.kotlin.branch" value="rc"/>
 
 
-    <property name="kotlin.bootstrap.branch" value=""/>
-    <property name="kotlin.bootstrap.branch.locator" value=""/>
+    <property name="kotlin.bootstrap.branch" value="1.0.3"/>
+    <property name="kotlin.bootstrap.branch.locator" value=",branch:1.0.3"/>
     <property name="kotlin.bootstrap.locator" value="buildType:bt345,tag:bootstrap,status:SUCCESS${kotlin.bootstrap.branch.locator}"/>
     <property name="kotlin.bootstrap.locator.force" value="false"/>
 
