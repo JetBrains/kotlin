@@ -385,9 +385,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
 
             targets.forEach { getIncrementalCache(it).let {
                 it.markOutputClassesDirty(removedAndModified)
-                if (!kaptStubGeneratingMode) {
-                    it.removeClassfilesBySources(removedAndModified)
-                }
+                it.removeClassfilesBySources(removedAndModified)
             }}
 
             // can be empty if only removed sources are present
