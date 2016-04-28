@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtBinaryExpressionWithTypeRHS;
@@ -73,6 +74,8 @@ public final class PatternTranslator extends AbstractTranslator {
         assert isCastExpression(expression): "Expected cast expression, got " + expression;
         KtExpression left = expression.getLeft();
         JsExpression expressionToCast = Translation.translateAsExpression(left, context());
+        if (JsAstUtils.isEmptyExpression(expressionToCast)) return expressionToCast;
+
         TemporaryVariable temporary = context().declareTemporary(expressionToCast);
 
         KtTypeReference typeReference = expression.getRight();
@@ -105,6 +108,8 @@ public final class PatternTranslator extends AbstractTranslator {
 
     @NotNull
     public JsExpression translateIsCheck(@NotNull JsExpression subject, @NotNull KtTypeReference typeReference) {
+        if (JsAstUtils.isEmptyExpression(subject)) return subject;
+
         KotlinType type = BindingUtils.getTypeByReference(bindingContext(), typeReference);
         JsExpression checkFunReference = doGetIsTypeCheckCallable(type);
         boolean isReifiedType = isReifiedTypeParameter(type);
