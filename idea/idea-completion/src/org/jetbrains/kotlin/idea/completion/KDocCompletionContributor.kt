@@ -32,8 +32,13 @@ import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.substituteExtensionIfCallable
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
+import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -134,9 +139,19 @@ object KDocTagCompletionProvider: CompletionProvider<CompletionParameters>() {
         if (prefix.length > 0 && !prefix.startsWith('@')) {
             return
         }
+        val kdocOwner = parameters.position.getNonStrictParentOfType<KDoc>()?.getOwner()
         val resultWithPrefix = result.withPrefixMatcher(prefix)
         KDocKnownTag.values().forEach {
-            resultWithPrefix.addElement(LookupElementBuilder.create("@" + it.name.toLowerCase()))
+            if (kdocOwner == null || it.isApplicable(kdocOwner)) {
+                resultWithPrefix.addElement(LookupElementBuilder.create("@" + it.name.toLowerCase()))
+            }
         }
+    }
+
+    private fun KDocKnownTag.isApplicable(declaration: KtDeclaration) = when(this) {
+        KDocKnownTag.CONSTRUCTOR, KDocKnownTag.PROPERTY -> declaration is KtClassOrObject
+        KDocKnownTag.RETURN -> declaration is KtNamedFunction
+        KDocKnownTag.RECEIVER -> declaration is KtNamedFunction && declaration.receiverTypeReference != null
+        else -> true
     }
 }

@@ -23,6 +23,7 @@ enum class KDocKnownTag private constructor(val isReferenceRequired: Boolean, va
     THROWS(true, false),
     EXCEPTION(true, false),
     PARAM(true, false),
+    RECEIVER(false, false),
     RETURN(false, false),
     SEE(true, false),
     SINCE(false, false),

@@ -33,6 +33,7 @@ object KDocRenderer {
         result.append(markdownToHtml(content, allowSingleParagraph = true))
         if (docComment is KDocSection) {
             result.append("\n")
+            renderTag(docComment.findTagByName("receiver"), "Receiver", result)
             val paramTags = docComment.findTagsByName("param").filter { it.getSubjectName() != null }
             renderTagList(paramTags, "Parameters", result)
 
