@@ -26,6 +26,7 @@ import com.intellij.psi.search.EverythingGlobalScope
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.containers.ConcurrentFactoryMap
 import org.jetbrains.kotlin.idea.caches.resolve.CustomizedScriptModuleSearchScope
+import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
 
 @Suppress("unused") // project extension
 class KotlinScriptDependenciesClassFinder(project: Project,
@@ -33,13 +34,22 @@ class KotlinScriptDependenciesClassFinder(project: Project,
 ) : NonClasspathClassFinder(project) {
 
     private val myCaches = object : ConcurrentFactoryMap<VirtualFile, PackageDirectoryCache>() {
-        override fun create(file: VirtualFile): PackageDirectoryCache? = NonClasspathClassFinder.createCache( kotlinScriptConfigurationManager.getScriptClasspath(file))
+        override fun create(file: VirtualFile): PackageDirectoryCache? {
+
+            val scriptClasspath = kotlinScriptConfigurationManager.getScriptClasspath(file)
+            val v = NonClasspathClassFinder.createCache(scriptClasspath)
+            return v
+        }
     }
 
     override fun calcClassRoots(): List<VirtualFile> = kotlinScriptConfigurationManager.getAllScriptsClasspath()
 
     override fun getCache(scope: GlobalSearchScope?): PackageDirectoryCache =
-            (scope as? CustomizedScriptModuleSearchScope)?.let { myCaches.get(it.scriptFile) } ?: super.getCache(scope)
+            (scope as? CustomizedScriptModuleSearchScope ?:
+             (scope as? JavaClassFinderImpl.DelegatingGlobalSearchScopeWithBaseAccess)?.base as? CustomizedScriptModuleSearchScope
+            )?.let {
+                myCaches.get(it.scriptFile)
+            } ?: super.getCache(scope)
 
     override fun clearCache() {
         super.clearCache()
@@ -50,6 +60,7 @@ class KotlinScriptDependenciesClassFinder(project: Project,
         super.findClass(qualifiedName, scope)?.let { aClass ->
             when {
                 scope is CustomizedScriptModuleSearchScope ||
+                (scope as? JavaClassFinderImpl.DelegatingGlobalSearchScopeWithBaseAccess)?.base is CustomizedScriptModuleSearchScope ||
                 scope is EverythingGlobalScope ||
                 aClass.containingFile?.virtualFile.let { file ->
                     file != null &&

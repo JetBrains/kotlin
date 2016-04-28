@@ -17,14 +17,20 @@
 package org.jetbrains.kotlin.idea.script
 
 import com.intellij.openapi.components.AbstractProjectComponent
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.util.indexing.IndexableSetContributor
+import com.intellij.util.io.URLUtil
+import org.jetbrains.kotlin.idea.caches.resolve.FileLibraryScope
 import org.jetbrains.kotlin.script.*
 import java.io.File
+import java.io.FileNotFoundException
 
 @Suppress("unused") // project component
 class KotlinScriptConfigurationManager(private val project: Project,
@@ -75,9 +81,18 @@ class KotlinScriptConfigurationManager(private val project: Project,
             } }
         }
         return project.baseDir.vfsWalkFiles { getScriptClasspathRaw(it) }
-                .mapNotNull { StandardFileSystems.local()?.findFileByPath(it) }
                 .distinct()
+                .mapNotNull {
+                    if (File(it).isDirectory)
+                        StandardFileSystems.local()?.findFileByPath(it) ?: throw FileNotFoundException("Classpath entry points to a non-existent location: $it")
+                    else
+                        StandardFileSystems.jar()?.findFileByPath(it + URLUtil.JAR_SEPARATOR) ?: throw FileNotFoundException("Classpath entry points to a file that is not a JAR archive: $it")
+
+                }
     }
+
+    fun getAllScriptsClasspathScope(): GlobalSearchScope =
+            GlobalSearchScope.union(getAllScriptsClasspath().map { FileLibraryScope(project, it) }.toTypedArray())
 
     private fun getScriptClasspathRaw(file: VirtualFile): List<String> =
             scriptDefinitionProvider.findScriptDefinition(file)?.getScriptDependenciesClasspath()?.let {
@@ -92,6 +107,21 @@ class KotlinScriptConfigurationManager(private val project: Project,
             }
         }
     }
+
+    companion object {
+        @JvmStatic
+        fun getInstance(project: Project): KotlinScriptConfigurationManager =
+                project.getComponent(KotlinScriptConfigurationManager::class.java)
+    }
 }
 
+
+class KotlinScriptDependenciesIndexableSetContributor : IndexableSetContributor() {
+
+    override fun getAdditionalProjectRootsToIndex(project: Project): Set<VirtualFile> =
+            super.getAdditionalProjectRootsToIndex(project) +
+                KotlinScriptConfigurationManager.getInstance(project).getAllScriptsClasspath()
+
+    override fun getAdditionalRootsToIndex(): Set<VirtualFile> = emptySet()
+}
 

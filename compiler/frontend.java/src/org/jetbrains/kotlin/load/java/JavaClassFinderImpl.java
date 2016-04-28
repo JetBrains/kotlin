@@ -61,9 +61,20 @@ public class JavaClassFinderImpl implements JavaClassFinder {
         // Only activate post create
     }
 
+    public class DelegatingGlobalSearchScopeWithBaseAccess extends DelegatingGlobalSearchScope {
+
+        public DelegatingGlobalSearchScopeWithBaseAccess(@NotNull GlobalSearchScope baseScope) {
+            super(baseScope);
+        }
+
+        public GlobalSearchScope getBase() {
+            return myBaseScope;
+        }
+    }
+
     @PostConstruct
     public void initialize() {
-        javaSearchScope = new DelegatingGlobalSearchScope(baseScope) {
+        javaSearchScope = new DelegatingGlobalSearchScopeWithBaseAccess(baseScope) {
             @Override
             public boolean contains(@NotNull VirtualFile file) {
                 return myBaseScope.contains(file) && (file.isDirectory() || file.getFileType() != KotlinFileType.INSTANCE);
