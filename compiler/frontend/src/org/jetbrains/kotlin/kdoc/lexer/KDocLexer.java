@@ -28,7 +28,7 @@ public class KDocLexer extends MergingLexerAdapter {
                 new FlexAdapter(
                         new _KDocLexer((Reader) null)
                 ),
-                TokenSet.create(KDocTokens.TEXT)
+                TokenSet.create(KDocTokens.TEXT, KDocTokens.CODE_BLOCK_TEXT)
         );
     }
 }
