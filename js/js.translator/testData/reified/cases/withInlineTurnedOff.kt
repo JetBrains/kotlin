@@ -1,7 +1,7 @@
 package foo
 
 // NO_INLINE
-// CHECK_CALLED_IN_SCOPE: scope=box function=isInstance
+// CHECK_CALLED_IN_SCOPE: scope=box function=isInstanceOf
 
 class A
 class B
