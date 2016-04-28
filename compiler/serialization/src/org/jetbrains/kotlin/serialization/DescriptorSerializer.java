@@ -459,7 +459,12 @@ public class DescriptorSerializer {
 
     @NotNull
     private ProtoBuf.Type.Builder type(@NotNull KotlinType type) {
-        assert !type.isError() : "Can't serialize error types: " + type; // TODO
+        ProtoBuf.Type.Builder builder = ProtoBuf.Type.newBuilder();
+
+        if (type.isError()) {
+            extension.serializeErrorType(type, builder);
+            return builder;
+        }
 
         if (FlexibleTypesKt.isFlexible(type)) {
             Flexibility flexibility = FlexibleTypesKt.flexibility(type);
@@ -474,8 +479,6 @@ public class DescriptorSerializer {
             }
             return lowerBound;
         }
-
-        ProtoBuf.Type.Builder builder = ProtoBuf.Type.newBuilder();
 
         ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
         if (descriptor instanceof ClassDescriptor) {
