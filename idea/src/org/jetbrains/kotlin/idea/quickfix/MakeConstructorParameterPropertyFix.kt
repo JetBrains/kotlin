@@ -27,12 +27,17 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
-import org.jetbrains.kotlin.psi.psiUtil.getPrimaryConstructorParameterWithSameName
+import org.jetbrains.kotlin.psi.psiUtil.nonStaticOuterClasses
 
-class MakeConstructorParameterPropertyFix(element: KtParameter, private val kotlinValVar: KotlinValVar) : KotlinQuickFixAction<KtParameter>(element) {
+class MakeConstructorParameterPropertyFix(
+        element: KtParameter, private val kotlinValVar: KotlinValVar, private val className: String?
+) : KotlinQuickFixAction<KtParameter>(element) {
     override fun getFamilyName() = "Make primary constructor parameter a property"
-    override fun getText() = "Make primary constructor parameter '${element.name}' a property"
+
+    private val suffix = if (className != null) " in class '$className'" else ""
+    override fun getText() = "Make primary constructor parameter '${element.name}' a property" + suffix
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
         return super.isAvailable(project, editor, file) && !element.hasValOrVar()
@@ -46,10 +51,20 @@ class MakeConstructorParameterPropertyFix(element: KtParameter, private val kotl
 
         override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
             val ktReference = Errors.UNRESOLVED_REFERENCE.cast(diagnostic).a as? KtNameReferenceExpression ?: return emptyList()
-            val ktParameter = ktReference.getPrimaryConstructorParameterWithSameName() ?: return emptyList()
+
             val valOrVar = if (ktReference.getAssignmentByLHS() != null) KotlinValVar.Var else KotlinValVar.Val
 
-            return listOf(MakeConstructorParameterPropertyFix(ktParameter, valOrVar))
+            val ktParameter = ktReference.getPrimaryConstructorParameterWithSameName() ?: return emptyList()
+            val containingClass = ktParameter.containingClass()!!
+            val className = if (containingClass != ktReference.containingClass()) containingClass.nameAsSafeName.asString() else null
+
+            return listOf(MakeConstructorParameterPropertyFix(ktParameter, valOrVar, className))
         }
     }
+}
+
+fun KtNameReferenceExpression.getPrimaryConstructorParameterWithSameName(): KtParameter? {
+    return nonStaticOuterClasses()
+            .mapNotNull { it.getPrimaryConstructor()?.valueParameters?.firstOrNull { it.name == getReferencedName() } }
+            .firstOrNull()
 }

@@ -454,17 +454,8 @@ fun checkReservedPrefixWord(sink: DiagnosticSink, element: PsiElement, word: Str
     }
 }
 
-fun KtNameReferenceExpression.getPrimaryConstructorParameterWithSameName(): KtParameter? {
-    return getPrimaryConstructorParameterWithName(getReferencedName())
+fun KtElement.nonStaticOuterClasses(): Sequence<KtClass> {
+    return generateSequence(containingClass()) { if (it.isInner()) it.containingClass() else null }
 }
 
-private fun KtElement.getPrimaryConstructorParameterWithName(name: String): KtParameter? {
-    val ktClass = getStrictParentOfType<KtClass>() ?: return null
-    val result = ktClass.getPrimaryConstructor()?.valueParameters?.firstOrNull { it.name == name }
-
-    return when {
-        result != null -> result
-        ktClass.isInner() -> ktClass.getPrimaryConstructorParameterWithName(name)
-        else -> null
-    }
-}
+fun KtElement.containingClass(): KtClass? = getStrictParentOfType<KtClass>()
