@@ -7265,6 +7265,39 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/toString")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ToString extends AbstractQuickFixTest {
+        public void testAllFilesPresentInToString() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/toString"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("notNullableExpectedNullable.kt")
+        public void testNotNullableExpectedNullable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/toString/notNullableExpectedNullable.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nullableExpectedNotNullable.kt")
+        public void testNullableExpectedNotNullable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/toString/nullableExpectedNotNullable.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nullableExpectedNullable.kt")
+        public void testNullableExpectedNullable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/toString/nullableExpectedNullable.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/toString/simple.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/typeAddition")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
