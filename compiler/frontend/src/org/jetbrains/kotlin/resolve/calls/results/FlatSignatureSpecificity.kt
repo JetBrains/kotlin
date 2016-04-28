@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.CallHandle
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.valueParameterPosition
-import org.jetbrains.kotlin.types.Flexibility
-import org.jetbrains.kotlin.types.Flexibility.SpecificityRelation
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.Variance
@@ -31,10 +29,19 @@ interface SpecificityComparisonCallbacks {
     fun isNonSubtypeNotLessSpecific(specific: KotlinType, general: KotlinType): Boolean
 }
 
+interface TypeSpecificityComparator {
+    fun isDefinitelyLessSpecific(specific: KotlinType, general: KotlinType): Boolean
+
+    object NONE: TypeSpecificityComparator {
+        override fun isDefinitelyLessSpecific(specific: KotlinType, general: KotlinType) = false
+    }
+}
+
 fun <T> isSignatureNotLessSpecific(
         specific: FlatSignature<T>,
         general: FlatSignature<T>,
         callbacks: SpecificityComparisonCallbacks,
+        specificityComparator: TypeSpecificityComparator,
         callHandle: CallHandle = CallHandle.NONE
 ): Boolean {
     if (specific.hasExtensionReceiver != general.hasExtensionReceiver) return false
@@ -48,7 +55,7 @@ fun <T> isSignatureNotLessSpecific(
     for ((specificType, generalType) in specific.valueParameterTypes.zip(general.valueParameterTypes)) {
         if (specificType == null || generalType == null) continue
 
-        if (isDefinitelyLessSpecificByTypeSpecificity(specificType, generalType)) {
+        if (specificityComparator.isDefinitelyLessSpecific(specificType, generalType)) {
             return false
         }
 
@@ -68,14 +75,4 @@ fun <T> isSignatureNotLessSpecific(
     constraintSystemBuilder.fixVariables()
     val constraintSystem = constraintSystemBuilder.build()
     return !constraintSystem.status.hasContradiction()
-}
-
-private fun KotlinType.getSpecificityRelationTo(otherType: KotlinType) =
-        this.getCapability(Flexibility::class.java)?.getSpecificityRelationTo(otherType) ?: Flexibility.SpecificityRelation.DONT_KNOW
-
-private fun isDefinitelyLessSpecificByTypeSpecificity(specific: KotlinType, general: KotlinType): Boolean {
-    val sThanG = specific.getSpecificityRelationTo(general)
-    val gThanS = general.getSpecificityRelationTo(specific)
-    return sThanG == SpecificityRelation.LESS_SPECIFIC &&
-           gThanS != SpecificityRelation.LESS_SPECIFIC
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.ModuleParameters
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.checkers.*
+import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.resolve.validation.DeprecatedSymbolValidator
 import org.jetbrains.kotlin.resolve.validation.InfixValidator
@@ -50,6 +51,7 @@ abstract class TargetPlatform(
                     override fun configure(container: StorageComponentContainer) {
                         super.configure(container)
                         container.useInstance(SyntheticScopes.Empty)
+                        container.useInstance(TypeSpecificityComparator.NONE)
                     }
                 }
     }

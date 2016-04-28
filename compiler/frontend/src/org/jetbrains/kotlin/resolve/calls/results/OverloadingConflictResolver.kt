@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,10 @@ import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 
-class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
+class OverloadingConflictResolver(
+        private val builtIns: KotlinBuiltIns,
+        private val specificityComparator: TypeSpecificityComparator
+) {
 
     fun <D : CallableDescriptor> findMaximallySpecific(
             candidates: Set<MutableResolvedCall<D>>,
@@ -157,7 +160,7 @@ class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
             if (isGeneric1 && isGeneric2) return false
         }
 
-        return isSignatureNotLessSpecific(call1, call2, SpecificityComparisonWithNumerics, call1.callHandle())
+        return isSignatureNotLessSpecific(call1, call2, SpecificityComparisonWithNumerics, specificityComparator, call1.callHandle())
     }
 
     private val SpecificityComparisonWithNumerics = object : SpecificityComparisonCallbacks {
@@ -243,7 +246,7 @@ class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
 
         val fSignature = FlatSignature.createFromCallableDescriptor(f)
         val gSignature = FlatSignature.createFromCallableDescriptor(g)
-        return isSignatureNotLessSpecific(fSignature, gSignature, SpecificityComparisonWithNumerics)
+        return isSignatureNotLessSpecific(fSignature, gSignature, SpecificityComparisonWithNumerics, specificityComparator)
     }
 
     private fun isNotLessSpecificCallableReference(f: CallableDescriptor, g: CallableDescriptor): Boolean =

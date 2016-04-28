@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.load.java.lazy.types
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -34,9 +33,7 @@ import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.Flexibility.SpecificityRelation
 import org.jetbrains.kotlin.types.Variance.*
-import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.createProjection
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
@@ -315,21 +312,6 @@ class LazyJavaTypeResolver(
                        else create(replacement, TypeUtils.makeNullable(replacement))
             }
 
-            override fun getSpecificityRelationTo(otherType: KotlinType): SpecificityRelation {
-                // For primitive types we have to take care of the case when there are two overloaded methods like
-                //    foo(int) and foo(Integer)
-                // if we do not discriminate one of them, any call to foo(kotlin.Int) will result in overload resolution ambiguity
-                // so, for such cases, we discriminate Integer in favour of int
-                if (!KotlinBuiltIns.isPrimitiveType(otherType) || !KotlinBuiltIns.isPrimitiveType(lowerBound)) {
-                    return SpecificityRelation.DONT_KNOW
-                }
-                // Int! >< Int?
-                if (otherType.isFlexible()) return SpecificityRelation.DONT_KNOW
-                // Int? >< Int!
-                if (otherType.isMarkedNullable) return SpecificityRelation.DONT_KNOW
-                // Int! lessSpecific Int
-                return SpecificityRelation.LESS_SPECIFIC
-            }
         }
     }
 

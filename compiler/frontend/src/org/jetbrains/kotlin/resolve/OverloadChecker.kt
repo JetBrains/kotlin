@@ -21,17 +21,14 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.calls.results.FlatSignature
-import org.jetbrains.kotlin.resolve.calls.results.SpecificityComparisonCallbacks
-import org.jetbrains.kotlin.resolve.calls.results.isSignatureNotLessSpecific
-import org.jetbrains.kotlin.resolve.calls.results.varargParameterPosition
+import org.jetbrains.kotlin.resolve.calls.results.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasLowPriorityInOverloadResolution
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
-class OverloadChecker {
+class OverloadChecker(val specificityComparator: TypeSpecificityComparator) {
     /**
      * Does not check names.
      */
@@ -64,8 +61,8 @@ class OverloadChecker {
         val aSignature = FlatSignature.createFromCallableDescriptor(a)
         val bSignature = FlatSignature.createFromCallableDescriptor(b)
 
-        val aIsNotLessSpecificThanB = isSignatureNotLessSpecific(aSignature, bSignature, OverloadabilitySpecificityCallbacks)
-        val bIsNotLessSpecificThanA = isSignatureNotLessSpecific(bSignature, aSignature, OverloadabilitySpecificityCallbacks)
+        val aIsNotLessSpecificThanB = isSignatureNotLessSpecific(aSignature, bSignature, OverloadabilitySpecificityCallbacks, specificityComparator)
+        val bIsNotLessSpecificThanA = isSignatureNotLessSpecific(bSignature, aSignature, OverloadabilitySpecificityCallbacks, specificityComparator)
 
         return !(aIsNotLessSpecificThanB && bIsNotLessSpecificThanA)
     }
