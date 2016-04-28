@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen.serialization;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.codegen.ClassBuilderMode;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
@@ -43,6 +44,7 @@ public class JvmSerializerExtension extends SerializerExtension {
     private final AnnotationSerializer annotationSerializer;
     private final boolean useTypeTable;
     private final String moduleName;
+    private final ClassBuilderMode classBuilderMode;
 
     public JvmSerializerExtension(@NotNull JvmSerializationBindings bindings, @NotNull GenerationState state) {
         this.bindings = bindings;
@@ -50,6 +52,7 @@ public class JvmSerializerExtension extends SerializerExtension {
         this.annotationSerializer = new AnnotationSerializer(stringTable);
         this.useTypeTable = state.getUseTypeTableInSerializer();
         this.moduleName = state.getModuleName();
+        this.classBuilderMode = state.getClassBuilderMode();
     }
 
     @NotNull
@@ -142,6 +145,16 @@ public class JvmSerializerExtension extends SerializerExtension {
         );
 
         proto.setExtension(JvmProtoBuf.propertySignature, signature);
+    }
+
+    @Override
+    public void serializeErrorType(@NotNull KotlinType type, @NotNull ProtoBuf.Type.Builder builder) {
+        if (classBuilderMode == ClassBuilderMode.LIGHT_CLASSES_WITH_METADATA) {
+            builder.setClassName(stringTable.getStringIndex("error.NonExistingClass"));
+            return;
+        }
+
+        super.serializeErrorType(type, builder);
     }
 
     private class SignatureSerializer {
