@@ -37,6 +37,12 @@ public class LoadJava8TestGenerated extends AbstractLoadJava8Test {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava8/compiledJava"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
+        @TestMetadata("MapRemove.java")
+        public void testMapRemove() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava8/compiledJava/MapRemove.java");
+            doTestCompiledJava(fileName);
+        }
+
         @TestMetadata("TypeAnnotations.java")
         public void testTypeAnnotations() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava8/compiledJava/TypeAnnotations.java");
@@ -56,6 +62,12 @@ public class LoadJava8TestGenerated extends AbstractLoadJava8Test {
     public static class SourceJava extends AbstractLoadJava8Test {
         public void testAllFilesPresentInSourceJava() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava8/sourceJava"), Pattern.compile("^(.+)\\.java$"), true);
+        }
+
+        @TestMetadata("MapRemove.java")
+        public void testMapRemove() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava8/sourceJava/MapRemove.java");
+            doTestSourceJava(fileName);
         }
 
         @TestMetadata("TypeAnnotations.java")

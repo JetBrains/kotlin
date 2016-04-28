@@ -19,14 +19,16 @@ package org.jetbrains.kotlin.codegen
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERRIDE
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.getSpecialSignatureInfo
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.isBuiltinWithSpecialDescriptorInJvm
+import org.jetbrains.kotlin.load.java.isFromBuiltins
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.NonReportingOverrideStrategy
 import org.jetbrains.kotlin.resolve.OverrideResolver
-import org.jetbrains.kotlin.resolve.OverridingStrategy
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.descriptorUtil.overriddenTreeUniqueAsSequence
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
@@ -80,7 +82,7 @@ class CollectionStubMethodGenerator(
             // Bind fake overrides and for each fake override originated from the MutableCollection, save its signature to generate a stub
             // or save its descriptor to generate all the needed bridges
             for (method in findFakeOverridesForMethodsFromMutableCollection(child, mutableClass)) {
-                if (method.modality == Modality.ABSTRACT) {
+                if (method.modality == Modality.ABSTRACT || isDefaultInJdk(method)) {
                     // If the fake override is abstract and it's _declared_ as abstract in the class, skip it because the method is already
                     // present in the bytecode (abstract) and we don't want a duplicate signature error
                     if (method.findOverriddenFromDirectSuperClass(descriptor)?.kind == DECLARATION) continue
@@ -148,6 +150,12 @@ class CollectionStubMethodGenerator(
             generateMethodStub(signature, synthetic = true)
         }
     }
+
+    private fun isDefaultInJdk(method: FunctionDescriptor) =
+        method.modality != Modality.ABSTRACT &&
+        method.original.overriddenTreeUniqueAsSequence(useOriginal = true).all {
+            (it as FunctionDescriptor).kind == FAKE_OVERRIDE || it.isFromBuiltins()
+        }
 
     private data class CollectionClassPair(
             val readOnlyClass: ClassDescriptor,

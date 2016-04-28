@@ -201,6 +201,10 @@ class DeserializedClassDescriptor(
                 fromSupertypes.addAll(supertype.memberScope.getContributedFunctions(name, NoLookupLocation.FOR_ALREADY_TRACKED))
             }
 
+            functions.retainAll {
+                c.components.platformDependentDeclarationFilter.isFunctionAvailable(this@DeserializedClassDescriptor, it)
+            }
+
             functions.addAll(c.components.additionalClassPartsProvider.getFunctions(name, this@DeserializedClassDescriptor))
             generateFakeOverrides(name, fromSupertypes, functions)
         }

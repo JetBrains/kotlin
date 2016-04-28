@@ -23,8 +23,11 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAllTo
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.GenerationUtils
+import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
+import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.org.objectweb.asm.*
 import org.junit.Assert
 import java.io.File
@@ -39,8 +42,13 @@ abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
 
     override fun setUp() {
         super.setUp()
-        jetCoreEnvironment = KotlinTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable)
+        jetCoreEnvironment =
+                KotlinTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
+                        myTestRootDisposable, ConfigurationKind.ALL, jdkKind)
     }
+
+    protected open val jdkKind: TestJdkKind
+        get() = TestJdkKind.MOCK_JDK
 
     override fun tearDown() {
         jetCoreEnvironment = null
@@ -64,19 +72,35 @@ abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
     }
 
     private class SignatureExpectation(val header: String, val name: String, val expectedJvmSignature: String?, expectedGenericSignature: String) {
-        private var checked = false
-        private val expectedSignature = formatSignature(header, expectedJvmSignature, expectedGenericSignature)
+        private val expectedFormattedSignature = formatSignature(header, expectedJvmSignature, expectedGenericSignature)
+        private val jvmDescriptorToFormattedSignature = mutableMapOf<String, String>()
 
-        fun isChecked(): Boolean = checked
-
-        fun check(name: String, actualJvmSignature: String, actualGenericSignature: String) {
+        fun accept(name: String, actualJvmSignature: String, actualGenericSignature: String) {
             if (this.name == name) {
-                checked = true
-                val actualSignature = formatSignature(header, expectedJvmSignature?.let { actualJvmSignature }, actualGenericSignature)
-                Assert.assertEquals(expectedSignature, actualSignature)
+                Assert.assertFalse(jvmDescriptorToFormattedSignature.containsKey(actualJvmSignature))
+
+                jvmDescriptorToFormattedSignature[actualJvmSignature] =
+                        formatSignature(header, expectedJvmSignature?.let { actualJvmSignature }, actualGenericSignature)
             }
         }
 
+        fun check() {
+            val formattedActualSignature =
+                    if (expectedJvmSignature == null) {
+                        Assert.assertTrue(
+                                "Expected single declaration, but ${jvmDescriptorToFormattedSignature.keys} found",
+                                jvmDescriptorToFormattedSignature.size == 1)
+
+                        jvmDescriptorToFormattedSignature.values.single()
+                    }
+                    else {
+                        jvmDescriptorToFormattedSignature[expectedJvmSignature].sure {
+                            "Expected $expectedJvmSignature but only ${jvmDescriptorToFormattedSignature.keys} found for $name"
+                        }
+                    }
+
+            Assert.assertEquals(expectedFormattedSignature, formattedActualSignature)
+        }
     }
 
     private inner class PackageExpectationsSuite() {
@@ -102,17 +126,17 @@ abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
             val classFileName = "$tmpdir/${className.replace('.', '/')}.class"
             val classFile = File(classFileName)
 
-            checkClassFile(checker, classFile)
+            processClassFile(checker, classFile)
 
             if (className.endsWith("Package")) {
                 // This class is a package facade. We should also check package parts.
-                checkPackageParts(checker, classFile)
+                processPackageParts(checker, classFile)
             }
 
-            assertAllChecked()
+            checkCollectedSignatures()
         }
 
-        private fun checkPackageParts(checker: Checker, classFile: File) {
+        private fun processPackageParts(checker: Checker, classFile: File) {
             // Look for package parts in the same directory.
             // Package part file names for package SomePackage look like SomePackage$<hash>.class.
             val classDir = classFile.parentFile
@@ -121,21 +145,15 @@ abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
             classDir.listFiles { dir, lastName ->
                 lastName.startsWith(packageFacadePrefix) && lastName.endsWith(".class")
             }.forEach { packageFacadeFile ->
-                checkClassFile(checker, packageFacadeFile)
+                processClassFile(checker, packageFacadeFile)
             }
         }
 
-        private fun assertAllChecked() {
-            val uncheckedExpectations = ArrayList<SignatureExpectation>()
-            classExpectations.filterNotTo(uncheckedExpectations) { it.isChecked() }
-            methodExpectations.filterNotTo(uncheckedExpectations) { it.isChecked() }
-            fieldExpectations.filterNotTo(uncheckedExpectations) { it.isChecked() }
-            Assert.assertTrue(
-                    "Unchecked expectations (${uncheckedExpectations.size} total):\n  " + uncheckedExpectations.joinToString("\n  "),
-                    uncheckedExpectations.isEmpty())
+        private fun checkCollectedSignatures() {
+            (classExpectations + methodExpectations + fieldExpectations).forEach(SignatureExpectation::check)
         }
 
-        private fun checkClassFile(checker: Checker, classFile: File) {
+        private fun processClassFile(checker: Checker, classFile: File) {
             val classInputStream = FileInputStream(classFile)
             try {
                 ClassReader(classInputStream).accept(checker,
@@ -148,17 +166,17 @@ abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
 
         private inner class Checker : ClassVisitor(Opcodes.ASM5) {
             override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String?, interfaces: Array<out String>?) {
-                classExpectations.forEach { it.check(name, name, signature ?: "null") }
+                classExpectations.forEach { it.accept(name, name, signature ?: "null") }
                 super.visit(version, access, name, signature, superName, interfaces)
             }
 
             override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
-                methodExpectations.forEach { it.check(name, desc, signature ?: "null") }
+                methodExpectations.forEach { it.accept(name, desc, signature ?: "null") }
                 return super.visitMethod(access, name, desc, signature, exceptions)
             }
 
             override fun visitField(access: Int, name: String, desc: String, signature: String?, value: Any?): FieldVisitor? {
-                fieldExpectations.forEach { it.check(name, desc, signature ?: "null") }
+                fieldExpectations.forEach { it.accept(name, desc, signature ?: "null") }
                 return super.visitField(access, name, desc, signature, value)
             }
         }

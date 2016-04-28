@@ -367,6 +367,10 @@ fun main(args: Array<String>) {
         testClass<AbstractCompileKotlinAgainstKotlinTest>() {
             model("compileKotlinAgainstKotlinJava8")
         }
+
+        testClass<AbstractJava8WriteSignatureTest>() {
+            model("codegen/java8/writeSignature")
+        }
     }
 
     testGroup("idea/tests", "idea/testData") {
