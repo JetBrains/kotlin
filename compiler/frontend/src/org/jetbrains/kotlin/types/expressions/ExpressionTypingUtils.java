@@ -82,7 +82,10 @@ public class ExpressionTypingUtils {
 
     @NotNull
     public static LexicalWritableScope newWritableScopeImpl(
-            @NotNull ExpressionTypingContext context, @NotNull LexicalScopeKind scopeKind, @NotNull OverloadChecker overloadChecker) {
+            @NotNull ExpressionTypingContext context,
+            @NotNull LexicalScopeKind scopeKind,
+            @NotNull OverloadChecker overloadChecker
+    ) {
         return new LexicalWritableScope(context.scope, context.scope.getOwnerDescriptor(), false, null,
                                         new TraceBasedLocalRedeclarationChecker(context.trace, overloadChecker), scopeKind);
     }

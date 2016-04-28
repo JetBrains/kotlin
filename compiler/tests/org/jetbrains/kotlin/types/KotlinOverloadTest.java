@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.psi.KtNamedFunction;
 import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
 import org.jetbrains.kotlin.resolve.FunctionDescriptorResolver;
 import org.jetbrains.kotlin.resolve.OverloadChecker;
+import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.test.ConfigurationKind;
@@ -34,7 +35,7 @@ import org.jetbrains.kotlin.tests.di.InjectionKt;
 public class KotlinOverloadTest extends KotlinTestWithEnvironment {
     private final ModuleDescriptor root = KotlinTestUtils.createEmptyModule("<test_root>");
     private FunctionDescriptorResolver functionDescriptorResolver;
-    private final OverloadChecker overloadChecker = new OverloadChecker();
+    private final OverloadChecker overloadChecker = new OverloadChecker(TypeSpecificityComparator.NONE.INSTANCE);
 
     @Override
     protected KotlinCoreEnvironment createEnvironment() {
@@ -154,8 +155,6 @@ public class KotlinOverloadTest extends KotlinTestWithEnvironment {
     private void assertOverloadabilityRelation(String funA, String funB, boolean expectedIsError) {
         FunctionDescriptor a = makeFunction(funA);
         FunctionDescriptor b = makeFunction(funB);
-
-
 
         boolean aOverloadableWithB = overloadChecker.isOverloadable(a, b);
         assertEquals(expectedIsError, !aOverloadableWithB);

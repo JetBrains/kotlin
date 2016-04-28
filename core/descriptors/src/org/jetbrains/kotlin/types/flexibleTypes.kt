@@ -49,13 +49,6 @@ interface Flexibility : TypeCapability, SubtypingRepresentatives {
 
     fun makeNullableAsSpecified(nullable: Boolean): KotlinType
 
-    enum class SpecificityRelation {
-        LESS_SPECIFIC,
-        MORE_SPECIFIC,
-        DONT_KNOW
-    }
-
-    fun getSpecificityRelationTo(otherType: KotlinType): SpecificityRelation
 }
 
 fun KotlinType.isFlexible(): Boolean = this.getCapability(Flexibility::class.java) != null
