@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.js.translate.context.TemporaryVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.general.Translation;
-import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
@@ -40,19 +39,21 @@ import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtIsExpression;
 import org.jetbrains.kotlin.psi.KtTypeReference;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.types.DynamicTypesKt;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeIntersector;
+import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 import static org.jetbrains.kotlin.builtins.FunctionTypesKt.isFunctionTypeOrSubtype;
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isAnyOrNullableAny;
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isArray;
 import static org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsKt.getNameIfStandardType;
+import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getTypeByReference;
+import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getTypeForExpression;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.equality;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.negated;
 import static org.jetbrains.kotlin.psi.KtPsiUtil.findChildByType;
-import static org.jetbrains.kotlin.types.TypeUtils.getTypeParameterDescriptorOrNull;
-import static org.jetbrains.kotlin.types.TypeUtils.isNullableType;
-import static org.jetbrains.kotlin.types.TypeUtils.isReifiedTypeParameter;
+import static org.jetbrains.kotlin.types.TypeUtils.*;
 
 public final class PatternTranslator extends AbstractTranslator {
 
@@ -80,7 +81,10 @@ public final class PatternTranslator extends AbstractTranslator {
 
         KtTypeReference typeReference = expression.getRight();
         assert typeReference != null: "Cast expression must have type reference";
-        JsExpression isCheck = translateIsCheck(temporary.assignmentExpression(), typeReference);
+        KotlinType sourceType = getTypeForExpression(bindingContext(), left);
+        JsExpression isCheck = translateIsCheck(temporary.assignmentExpression(), sourceType, typeReference);
+        if (isCheck == null) return expressionToCast;
+
         JsExpression onFail;
 
         if (isSafeCast(expression)) {
@@ -99,23 +103,28 @@ public final class PatternTranslator extends AbstractTranslator {
         JsExpression left = Translation.translateAsExpression(expression.getLeftHandSide(), context());
         KtTypeReference typeReference = expression.getTypeReference();
         assert typeReference != null;
-        JsExpression result = translateIsCheck(left, typeReference);
+        KotlinType sourceType = getTypeForExpression(bindingContext(), expression.getLeftHandSide());
+        JsExpression result = translateIsCheck(left, sourceType, typeReference);
+        if (result == null) return JsLiteral.getBoolean(!expression.isNegated());
+
         if (expression.isNegated()) {
             return negated(result);
         }
         return result;
     }
 
-    @NotNull
-    public JsExpression translateIsCheck(@NotNull JsExpression subject, @NotNull KtTypeReference typeReference) {
+    @Nullable
+    public JsExpression translateIsCheck(@NotNull JsExpression subject, @Nullable KotlinType sourceType,
+            @NotNull KtTypeReference targetTypeReference) {
         if (JsAstUtils.isEmptyExpression(subject)) return subject;
 
-        KotlinType type = BindingUtils.getTypeByReference(bindingContext(), typeReference);
-        JsExpression checkFunReference = doGetIsTypeCheckCallable(type);
-        boolean isReifiedType = isReifiedTypeParameter(type);
+        KotlinType targetType = getTypeByReference(bindingContext(), targetTypeReference);
+        if (sourceType != null && !DynamicTypesKt.isDynamic(sourceType) && TypeUtilsKt.isSubtypeOf(sourceType, targetType)) return null;
 
-        if (!isReifiedType && isNullableType(type) ||
-            isReifiedType && findChildByType(typeReference, KtNodeTypes.NULLABLE_TYPE) != null
+        JsExpression checkFunReference = doGetIsTypeCheckCallable(targetType);
+        boolean isReifiedType = isReifiedTypeParameter(targetType);
+        if (!isReifiedType && isNullableType(targetType) ||
+            isReifiedType && findChildByType(targetTypeReference, KtNodeTypes.NULLABLE_TYPE) != null
         ) {
             checkFunReference = namer().orNull(checkFunReference);
         }

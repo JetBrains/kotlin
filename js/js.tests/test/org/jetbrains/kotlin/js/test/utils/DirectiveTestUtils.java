@@ -67,6 +67,13 @@ public class DirectiveTestUtils {
         }
     };
 
+    private static final DirectiveHandler METHOD_NOT_CALLED_IN_SCOPE = new DirectiveHandler("CHECK_METHOD_NOT_CALLED_IN_SCOPE") {
+        @Override
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
+            checkMethodNotCalledInScope(ast, arguments.getNamedArgument("function"), arguments.getNamedArgument("scope"));
+        }
+    };
+
     private static final DirectiveHandler FUNCTIONS_HAVE_SAME_LINES = new DirectiveHandler("CHECK_FUNCTIONS_HAVE_SAME_LINES") {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
@@ -189,6 +196,7 @@ public class DirectiveTestUtils {
             FUNCTION_NOT_CALLED,
             FUNCTION_CALLED_IN_SCOPE,
             FUNCTION_NOT_CALLED_IN_SCOPE,
+            METHOD_NOT_CALLED_IN_SCOPE,
             FUNCTIONS_HAVE_SAME_LINES,
             COUNT_LABELS,
             COUNT_VARS,
@@ -241,6 +249,15 @@ public class DirectiveTestUtils {
         assertTrue(errorMessage, isCalledInScope(node, functionName, scopeFunctionName));
     }
 
+    private static void checkMethodNotCalledInScope(
+            @NotNull JsNode node,
+            @NotNull String functionName,
+            @NotNull String scopeFunctionName
+    ) throws Exception {
+        String errorMessage = functionName + " is called inside " + scopeFunctionName;
+        assertTrue(errorMessage, isMethodCalledInScope(node, functionName, scopeFunctionName));
+    }
+
     private static boolean isCalledInScope(
             @NotNull JsNode node,
             @NotNull String functionName,
@@ -250,6 +267,17 @@ public class DirectiveTestUtils {
 
         CallCounter counter = CallCounter.countCalls(scope);
         return counter.getQualifiedCallsCount(functionName) == 0;
+    }
+
+    private static boolean isMethodCalledInScope(
+            @NotNull JsNode node,
+            @NotNull String functionName,
+            @NotNull String scopeFunctionName
+    ) throws Exception {
+        JsNode scope = AstSearchUtil.getFunction(node, scopeFunctionName);
+
+        CallCounter counter = CallCounter.countCalls(scope);
+        return counter.getUnqualifiedCallsCount(functionName) == 0;
     }
 
     private abstract static class DirectiveHandler {
