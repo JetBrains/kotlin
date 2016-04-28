@@ -27,11 +27,12 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.containers.ConcurrentFactoryMap
 import org.jetbrains.kotlin.idea.caches.resolve.CustomizedScriptModuleSearchScope
 import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
+import org.jetbrains.kotlin.resolve.jvm.KotlinSafeClassFinder
 
 @Suppress("unused") // project extension
 class KotlinScriptDependenciesClassFinder(project: Project,
                                          private val kotlinScriptConfigurationManager: KotlinScriptConfigurationManager
-) : NonClasspathClassFinder(project) {
+) : NonClasspathClassFinder(project), KotlinSafeClassFinder {
 
     private val myCaches = object : ConcurrentFactoryMap<VirtualFile, PackageDirectoryCache>() {
         override fun create(file: VirtualFile): PackageDirectoryCache? {

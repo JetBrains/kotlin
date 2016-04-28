@@ -172,7 +172,8 @@ public class KotlinJavaPsiFacade {
                 getProject().getExtensions(PsiElementFinder.EP_NAME), new Function1<PsiElementFinder, Boolean>() {
                     @Override
                     public Boolean invoke(PsiElementFinder finder) {
-                        return !(finder instanceof NonClasspathClassFinder || finder instanceof KotlinFinderMarker || finder instanceof PsiElementFinderImpl);
+                        return (finder instanceof KotlinSafeClassFinder) ||
+                               !(finder instanceof NonClasspathClassFinder || finder instanceof KotlinFinderMarker || finder instanceof PsiElementFinderImpl);
                     }
                 });
 
