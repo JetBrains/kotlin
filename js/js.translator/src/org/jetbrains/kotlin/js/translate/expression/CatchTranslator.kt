@@ -90,9 +90,10 @@ class CatchTranslator(
 
         if (paramType.isThrowable) return thenBlock
 
+        // translateIsCheck won't ever return `null` if its second argument is `null`
         val typeCheck = with (patternTranslator(context())) {
-            translateIsCheck(parameterRef, paramType)
-        }
+            translateIsCheck(parameterRef, null, paramType)
+        }!!
 
         val elseBlock = translateCatches(parameterRef, catches)
         return JsIf(typeCheck, thenBlock, elseBlock)

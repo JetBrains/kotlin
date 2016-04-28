@@ -17,7 +17,7 @@
 (function (Kotlin) {
     "use strict";
 
-    Kotlin.CharSequence = Kotlin.createTraitNow(null);
+    var CharSequence = Kotlin.createTraitNow(null);
 
     // Shims for String
     if (typeof String.prototype.startsWith === "undefined") {
@@ -138,7 +138,7 @@
     };
     
     Kotlin.isCharSequence = function (value) {
-        return typeof value === "string" || Kotlin.isType(value, Kotlin.CharSequence);
+        return typeof value === "string" || Kotlin.isType(value, CharSequence);
     };
 
     Kotlin.charInc = function (value) {
@@ -1146,7 +1146,7 @@
     };
 
 
-    Kotlin.StringBuilder = Kotlin.createClassNow([Kotlin.CharSequence],
+    Kotlin.StringBuilder = Kotlin.createClassNow([CharSequence],
         function (content) {
             this.string = typeof(content) == "string" ? content : "";
         }, {

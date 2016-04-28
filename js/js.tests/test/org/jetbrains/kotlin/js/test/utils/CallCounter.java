@@ -41,7 +41,7 @@ public class CallCounter extends RecursiveJsVisitor {
         return visitor;
     }
 
-    CallCounter(@NotNull Set<String> exceptFunctionNames) {
+    private CallCounter(@NotNull Set<String> exceptFunctionNames) {
         this.exceptFunctionNames = exceptFunctionNames;
     }
 
@@ -56,6 +56,19 @@ public class CallCounter extends RecursiveJsVisitor {
 
         for (JsNameRef callNameRef : callsNameRefs) {
             if (matchesQualifiers(callNameRef, expectedQualifierChain)) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    public int getUnqualifiedCallsCount(String expectedName) {
+        int count = 0;
+
+        for (JsNameRef callNameRef : callsNameRefs) {
+            JsName name = callNameRef.getName();
+            if (name != null && name.getIdent().equals(expectedName)) {
                 count++;
             }
         }
