@@ -31,6 +31,7 @@ fun createBuiltInPackageFragmentProvider(
         module: ModuleDescriptor,
         packageFqNames: Set<FqName>,
         classDescriptorFactory: ClassDescriptorFactory,
+        platformDependentDeclarationFilter: PlatformDependentDeclarationFilter,
         additionalClassPartsProvider: AdditionalClassPartsProvider = AdditionalClassPartsProvider.None,
         loadResource: (String) -> InputStream?
 ): PackageFragmentProvider {
@@ -54,7 +55,8 @@ fun createBuiltInPackageFragmentProvider(
             FlexibleTypeFactory.ThrowException,
             classDescriptorFactory,
             notFoundClasses,
-            additionalClassPartsProvider = additionalClassPartsProvider
+            additionalClassPartsProvider = additionalClassPartsProvider,
+            platformDependentDeclarationFilter = platformDependentDeclarationFilter
     )
 
     localClassResolver.setDeserializationComponents(components)

@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
-import org.jetbrains.kotlin.builtins.DefaultBuiltIns
+import org.jetbrains.kotlin.builtins.BuiltInsInitializer
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
@@ -35,7 +35,10 @@ import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.AdditionalClassPartsProvider
+import org.jetbrains.kotlin.serialization.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.serialization.deserialization.PlatformDependentDeclarationFilter
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.DelegatingType
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.DFS
@@ -44,10 +47,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.io.Serializable
 import java.util.*
 
-open class JvmBuiltInsAdditionalClassPartsProvider(
+open class JvmBuiltInsSettings(
         private val moduleDescriptor: ModuleDescriptor,
         deferredOwnerModuleDescriptor: () -> ModuleDescriptor
-) : AdditionalClassPartsProvider {
+) : AdditionalClassPartsProvider, PlatformDependentDeclarationFilter {
     private val j2kClassMap = JavaToKotlinClassMap.INSTANCE
 
     private val ownerModuleDescriptor: ModuleDescriptor by lazy(deferredOwnerModuleDescriptor)
@@ -107,7 +110,7 @@ open class JvmBuiltInsAdditionalClassPartsProvider(
     ): Collection<SimpleFunctionDescriptor> {
         val javaAnalogueDescriptor = classDescriptor.getJavaAnalogue() ?: return emptyList()
 
-        val kotlinClassDescriptors = j2kClassMap.mapPlatformClass(javaAnalogueDescriptor.fqNameSafe, DefaultBuiltIns.Instance)
+        val kotlinClassDescriptors = j2kClassMap.mapPlatformClass(javaAnalogueDescriptor.fqNameSafe, FallbackBuiltIns.Instance)
         val kotlinMutableClassIfContainer = kotlinClassDescriptors.lastOrNull() ?: return emptyList()
         val kotlinVersions = SmartSet.create(kotlinClassDescriptors.map { it.fqNameSafe })
 
@@ -181,7 +184,7 @@ open class JvmBuiltInsAdditionalClassPartsProvider(
         val javaAnalogueDescriptor = classDescriptor.getJavaAnalogue() ?: return emptyList()
 
         val defaultKotlinVersion =
-                j2kClassMap.mapJavaToKotlin(javaAnalogueDescriptor.fqNameSafe, DefaultBuiltIns.Instance) ?: return emptyList()
+                j2kClassMap.mapJavaToKotlin(javaAnalogueDescriptor.fqNameSafe, FallbackBuiltIns.Instance) ?: return emptyList()
 
         val substitutor = createMappedTypeParametersSubstitution(defaultKotlinVersion, javaAnalogueDescriptor).buildSubstitutor()
 
@@ -205,6 +208,17 @@ open class JvmBuiltInsAdditionalClassPartsProvider(
                 setSubstitution(substitutor.substitution)
             }.build() as ConstructorDescriptor
         }
+    }
+
+    override fun isFunctionAvailable(classDescriptor: DeserializedClassDescriptor, functionDescriptor: SimpleFunctionDescriptor): Boolean {
+        if (!functionDescriptor.annotations.hasAnnotation(PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME)) return true
+        val javaAnalogueClassDescriptor = classDescriptor.getJavaAnalogue() ?: return true
+
+        val jvmDescriptor = functionDescriptor.computeJvmDescriptor()
+        return javaAnalogueClassDescriptor
+                    .unsubstitutedMemberScope
+                    .getContributedFunctions(functionDescriptor.name, NoLookupLocation.FROM_BUILTINS)
+                    .any { it.computeJvmDescriptor() == jvmDescriptor }
     }
 
     private fun ConstructorDescriptor.isTrivialCopyConstructorFor(classDescriptor: DeserializedClassDescriptor): Boolean
@@ -318,3 +332,17 @@ open class JvmBuiltInsAdditionalClassPartsProvider(
 }
 
 private val ClassDescriptor.isAny: Boolean get() = fqNameUnsafe == KotlinBuiltIns.FQ_NAMES.any
+
+private class FallbackBuiltIns private constructor() : KotlinBuiltIns(LockBasedStorageManager()) {
+    companion object {
+        private val initializer = BuiltInsInitializer {
+            FallbackBuiltIns()
+        }
+
+        @JvmStatic
+        val Instance: KotlinBuiltIns
+            get() = initializer.get()
+    }
+
+    override fun getPlatformDependentDeclarationFilter() = PlatformDependentDeclarationFilter.All
+}

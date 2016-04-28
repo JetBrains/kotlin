@@ -344,7 +344,7 @@ public class FunctionCodegen {
         KotlinTypeMapper typeMapper = parentCodegen.typeMapper;
         if (BuiltinSpecialBridgesUtil.shouldHaveTypeSafeBarrier(functionDescriptor, getSignatureMapper(typeMapper))) {
             generateTypeCheckBarrierIfNeeded(
-                    new InstructionAdapter(mv), functionDescriptor, signature.getReturnType(), /* delegateParameterType = */null);
+                    new InstructionAdapter(mv), functionDescriptor, signature.getReturnType(), /* delegateParameterTypes = */null);
         }
 
         Label methodEnd;
@@ -890,8 +890,8 @@ public class FunctionCodegen {
         InstructionAdapter iv = new InstructionAdapter(mv);
         MemberCodegen.markLineNumberForDescriptor(owner.getThisDescriptor(), iv);
 
-        if (delegateTo.getArgumentTypes().length == 1 && isSpecialBridge) {
-            generateTypeCheckBarrierIfNeeded(iv, descriptor, bridge.getReturnType(), delegateTo.getArgumentTypes()[0]);
+        if (delegateTo.getArgumentTypes().length > 0 && isSpecialBridge) {
+            generateTypeCheckBarrierIfNeeded(iv, descriptor, bridge.getReturnType(), delegateTo.getArgumentTypes());
         }
 
         iv.load(0, OBJECT_TYPE);
@@ -921,37 +921,42 @@ public class FunctionCodegen {
             @NotNull InstructionAdapter iv,
             @NotNull FunctionDescriptor descriptor,
             @NotNull Type returnType,
-            @Nullable final Type delegateParameterType
+            @Nullable Type[] delegateParameterTypes
     ) {
         BuiltinMethodsWithSpecialGenericSignature.DefaultValue defaultValue =
                 BuiltinMethodsWithSpecialGenericSignature.getDefaultValueForOverriddenBuiltinFunction(descriptor);
         if (defaultValue == null) return;
 
-        assert descriptor.getValueParameters().size() == 1 : "Should be descriptor with one value parameter, but found: " + descriptor;
+        Label defaultBranch = new Label();
 
-        boolean isCheckForAny = delegateParameterType == null || OBJECT_TYPE.equals(delegateParameterType);
+        for (int i = 0; i < descriptor.getValueParameters().size(); i++) {
+            boolean isCheckForAny = delegateParameterTypes == null || OBJECT_TYPE.equals(delegateParameterTypes[i]);
 
-        final KotlinType kotlinType = descriptor.getValueParameters().get(0).getType();
+            KotlinType kotlinType = descriptor.getValueParameters().get(i).getType();
 
-        if (isCheckForAny && TypeUtils.isNullableType(kotlinType)) return;
+            if (isCheckForAny && TypeUtils.isNullableType(kotlinType)) continue;
 
-        iv.load(1, OBJECT_TYPE);
+            iv.load(1 + i, OBJECT_TYPE);
 
-        Label afterBarrier = new Label();
-
-        if (isCheckForAny) {
-            assert !TypeUtils.isNullableType(kotlinType) : "Only bridges for not-nullable types are necessary";
-            iv.ifnonnull(afterBarrier);
+            if (isCheckForAny) {
+                assert !TypeUtils.isNullableType(kotlinType) : "Only bridges for not-nullable types are necessary";
+                iv.ifnull(defaultBranch);
+            }
+            else {
+                CodegenUtilKt.generateIsCheck(iv, kotlinType, boxType(delegateParameterTypes[i]));
+                iv.ifeq(defaultBranch);
+            }
         }
-        else {
-            CodegenUtilKt.generateIsCheck(iv, kotlinType, boxType(delegateParameterType));
-            iv.ifne(afterBarrier);
-        }
 
+        Label afterDefaultBranch = new Label();
+
+        iv.goTo(afterDefaultBranch);
+
+        iv.visitLabel(defaultBranch);
         StackValue.constant(defaultValue.getValue(), returnType).put(returnType, iv);
         iv.areturn(returnType);
 
-        iv.visitLabel(afterBarrier);
+        iv.visitLabel(afterDefaultBranch);
     }
 
     public void genSamDelegate(@NotNull FunctionDescriptor functionDescriptor, FunctionDescriptor overriddenDescriptor, StackValue field) {

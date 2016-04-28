@@ -112,6 +112,9 @@ object BuiltinMethodsWithSpecialGenericSignature {
                             .method("containsKey", "Ljava/lang/Object;", JvmPrimitiveType.BOOLEAN.desc)          to DefaultValue.FALSE,
                     javaUtil("Map")
                             .method("containsValue", "Ljava/lang/Object;", JvmPrimitiveType.BOOLEAN.desc)        to DefaultValue.FALSE,
+                    javaUtil("Map")
+                            .method("remove", "Ljava/lang/Object;Ljava/lang/Object;",
+                                    JvmPrimitiveType.BOOLEAN.desc)                                               to DefaultValue.FALSE,
 
                     javaUtil("Map")
                             .method("get", "Ljava/lang/Object;", "Ljava/lang/Object;")                           to DefaultValue.NULL,

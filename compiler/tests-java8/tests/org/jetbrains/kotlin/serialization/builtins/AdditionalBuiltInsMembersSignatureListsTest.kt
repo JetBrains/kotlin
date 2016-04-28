@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.descriptors.resolveClassByFqName
 import org.jetbrains.kotlin.frontend.java.di.createContainerForTopDownAnalyzerForJvm
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.load.kotlin.JvmBuiltInsAdditionalClassPartsProvider
+import org.jetbrains.kotlin.load.kotlin.JvmBuiltInsSettings
 import org.jetbrains.kotlin.load.kotlin.computeJvmDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.JvmBuiltIns
@@ -61,9 +61,9 @@ class AdditionalBuiltInsMembersSignatureListsTest : KotlinTestWithEnvironment() 
         emptyModule.setDependencies(emptyModule)
 
         val blackList =
-                JvmBuiltInsAdditionalClassPartsProvider.BLACK_LIST_METHOD_SIGNATURES +
-                JvmBuiltInsAdditionalClassPartsProvider.MUTABLE_METHOD_SIGNATURES +
-                JvmBuiltInsAdditionalClassPartsProvider.BLACK_LIST_CONSTRUCTOR_SIGNATURES
+                JvmBuiltInsSettings.BLACK_LIST_METHOD_SIGNATURES +
+                JvmBuiltInsSettings.MUTABLE_METHOD_SIGNATURES +
+                JvmBuiltInsSettings.BLACK_LIST_CONSTRUCTOR_SIGNATURES
 
         val groupedByInternalName = blackList.groupBy({ it.split(".")[0] }) { it.split(".")[1] }
 

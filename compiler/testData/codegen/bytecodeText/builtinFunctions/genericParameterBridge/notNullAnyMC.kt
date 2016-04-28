@@ -7,5 +7,5 @@ abstract class A8 : MutableCollection<Any> {
 // 1 bridge
 // 1 public final bridge size
 // 0 INSTANCEOF
-/* Only 1 IFNONNULL should be within contains method */
-// 1 IFNONNULL
+/* Only 1 IFNULL should be within contains method */
+// 1 IFNULL
