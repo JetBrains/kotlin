@@ -7,6 +7,9 @@
  * [C]
  *
  * [See **this** class][C]
+ *
+ * This is _emphasized text_ but text_with_underscores has to preserve the underscores.
+ * Single stars embedded in a word like Embedded*Star have to be preserved as well.
  */
 fun testMethod() {
 
@@ -23,3 +26,4 @@ fun test() {
 //INFO: <p><a href="http://www.kotlinlang.org">Kotlin</a> <a href="http://www.ibm.com">a<strong>b</strong><strong>d</strong>kas</a></p>
 //INFO: <p><a href="psi_element://C">C</a></p>
 //INFO: <p><a href="psi_element://C">See<strong>this</strong>class</a></p>
+//INFO: <p>This is <em>emphasized text</em> but text_with_underscores has to preserve the underscores. Single stars embedded in a word like Embedded*Star have to be preserved as well.</p>

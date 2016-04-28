@@ -210,6 +210,13 @@ object KDocRenderer {
                     }
                 }
 
+                MarkdownTokenTypes.EMPH -> {
+                    val parentNodeType = node.parent?.type
+                    if (parentNodeType != MarkdownElementTypes.EMPH && parentNodeType != MarkdownElementTypes.STRONG) {
+                        sb.append(node.text)
+                    }
+                }
+
                 else -> {
                     processChildren()
                 }
