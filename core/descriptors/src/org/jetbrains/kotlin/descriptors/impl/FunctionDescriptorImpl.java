@@ -44,6 +44,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     private boolean isInline = false;
     private boolean isTailrec = false;
     private boolean isHidden = false;
+    private boolean isHiddenForResolutionEverywhereBesideSupercalls = false;
     private boolean hasStableParameterNames = true;
     private boolean hasSynthesizedParameterNames = false;
     private Collection<? extends FunctionDescriptor> overriddenFunctions = null;
@@ -129,6 +130,10 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
 
     public void setHidden(boolean hidden) {
         isHidden = hidden;
+    }
+
+    private void setHiddenForResolutionEverywhereBesideSupercalls(boolean hiddenForResolutionEverywhereBesideSupercalls) {
+        isHiddenForResolutionEverywhereBesideSupercalls = hiddenForResolutionEverywhereBesideSupercalls;
     }
 
     public void setReturnType(@NotNull KotlinType unsubstitutedReturnType) {
@@ -236,6 +241,12 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     public void setOverriddenDescriptors(@NotNull Collection<? extends CallableMemberDescriptor> overriddenDescriptors) {
         //noinspection unchecked
         overriddenFunctions = (Collection<? extends FunctionDescriptor>) overriddenDescriptors;
+        for (FunctionDescriptor function : overriddenFunctions) {
+            if (function.isHiddenForResolutionEverywhereBesideSupercalls()) {
+                isHiddenForResolutionEverywhereBesideSupercalls = true;
+                break;
+            }
+        }
     }
 
     @Override
@@ -291,6 +302,11 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         return extensionReceiverParameter.getType();
     }
 
+    @Override
+    public boolean isHiddenForResolutionEverywhereBesideSupercalls() {
+        return isHiddenForResolutionEverywhereBesideSupercalls;
+    }
+
     public class CopyConfiguration implements SimpleFunctionDescriptor.CopyBuilder<FunctionDescriptor> {
         protected @NotNull TypeSubstitution substitution;
         protected @NotNull DeclarationDescriptor newOwner;
@@ -310,6 +326,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         private boolean isHiddenToOvercomeSignatureClash;
         private List<TypeParameterDescriptor> newTypeParameters = null;
         private Annotations additionalAnnotations = null;
+        private boolean isHiddenForResolutionEverywhereBesideSupercalls;
 
         public CopyConfiguration(
                 @NotNull TypeSubstitution substitution,
@@ -333,6 +350,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             this.newReturnType = newReturnType;
             this.name = name;
             this.isHiddenToOvercomeSignatureClash = isHiddenToOvercomeSignatureClash();
+            this.isHiddenForResolutionEverywhereBesideSupercalls = isHiddenForResolutionEverywhereBesideSupercalls();
         }
 
         @Override
@@ -444,6 +462,13 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         @NotNull
         public CopyConfiguration setHiddenToOvercomeSignatureClash() {
             isHiddenToOvercomeSignatureClash = true;
+            return this;
+        }
+
+        @Override
+        @NotNull
+        public CopyConfiguration setHiddenForResolutionEverywhereBesideSupercalls() {
+            isHiddenForResolutionEverywhereBesideSupercalls = true;
             return this;
         }
 
@@ -574,6 +599,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         substitutedDescriptor.setHasStableParameterNames(hasStableParameterNames);
         substitutedDescriptor.setHasSynthesizedParameterNames(hasSynthesizedParameterNames);
         substitutedDescriptor.setHidden(configuration.isHiddenToOvercomeSignatureClash);
+        substitutedDescriptor.setHiddenForResolutionEverywhereBesideSupercalls(configuration.isHiddenForResolutionEverywhereBesideSupercalls);
 
         if (configuration.signatureChange || getInitialSignatureDescriptor() != null) {
             FunctionDescriptor initialSignature = (getInitialSignatureDescriptor() != null ? getInitialSignatureDescriptor() : this);

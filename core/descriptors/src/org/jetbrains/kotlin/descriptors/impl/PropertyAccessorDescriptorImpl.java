@@ -209,4 +209,9 @@ public abstract class PropertyAccessorDescriptorImpl extends DeclarationDescript
     public boolean isHiddenToOvercomeSignatureClash() {
         return false;
     }
+
+    @Override
+    public boolean isHiddenForResolutionEverywhereBesideSupercalls() {
+        return false;
+    }
 }
