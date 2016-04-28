@@ -155,6 +155,12 @@ public class QuickDocProviderTestGenerated extends AbstractQuickDocProviderTest 
         doTest(fileName);
     }
 
+    @TestMetadata("OnMethodUsageWithTypeParameter.kt")
+    public void testOnMethodUsageWithTypeParameter() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/OnMethodUsageWithTypeParameter.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("TopLevelMethodFromJava.java")
     public void testTopLevelMethodFromJava() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/TopLevelMethodFromJava.java");

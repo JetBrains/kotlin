@@ -102,7 +102,7 @@ fun getParamDescriptors(fromDescriptor: DeclarationDescriptor): List<Declaration
     // TODO resolve parameters of functions passed as parameters
     when (fromDescriptor) {
         is CallableDescriptor ->
-            return fromDescriptor.valueParameters
+            return fromDescriptor.valueParameters + fromDescriptor.typeParameters
         is ClassifierDescriptor -> {
             val typeParams = fromDescriptor.typeConstructor.parameters
             if (fromDescriptor is ClassDescriptor) {
