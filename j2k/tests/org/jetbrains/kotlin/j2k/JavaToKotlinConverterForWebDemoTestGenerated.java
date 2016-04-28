@@ -3460,6 +3460,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("javaLangObject.java")
+        public void testJavaLangObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/newClassExpression/javaLangObject.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("lineBreaks.java")
         public void testLineBreaks() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/newClassExpression/lineBreaks.java");

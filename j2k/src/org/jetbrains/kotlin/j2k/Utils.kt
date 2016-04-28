@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.j2k
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiMethodUtil
 import org.jetbrains.kotlin.asJava.KtLightClass
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.j2k.ast.*
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
@@ -129,3 +130,45 @@ fun PsiExpression.isNullLiteral() = this is PsiLiteralExpression && type == PsiT
 
 // TODO: set origin for facade classes in library
 fun isFacadeClassFromLibrary(element: PsiElement?) = element is KtLightClass && element.kotlinOrigin == null
+
+fun Converter.convertToKotlinAnalog(classQualifiedName: String?, mutability: Mutability): String? {
+    if (classQualifiedName == null) return null
+    return (if (mutability.isMutable(settings)) toKotlinMutableTypesMap[classQualifiedName] else null)
+           ?: toKotlinTypesMap[classQualifiedName]
+}
+
+fun Converter.convertToKotlinAnalogIdentifier(classQualifiedName: String?, mutability: Mutability): Identifier? {
+    val kotlinClassName = convertToKotlinAnalog(classQualifiedName, mutability) ?: return null
+    return Identifier(kotlinClassName.substringAfterLast('.')).assignNoPrototype()
+}
+
+private val toKotlinTypesMap: Map<String, String> = mapOf(
+        CommonClassNames.JAVA_LANG_OBJECT to KotlinBuiltIns.FQ_NAMES.any.asString(),
+        CommonClassNames.JAVA_LANG_BYTE to KotlinBuiltIns.FQ_NAMES._byte.asString(),
+        CommonClassNames.JAVA_LANG_CHARACTER to KotlinBuiltIns.FQ_NAMES._char.asString(),
+        CommonClassNames.JAVA_LANG_DOUBLE to KotlinBuiltIns.FQ_NAMES._double.asString(),
+        CommonClassNames.JAVA_LANG_FLOAT to KotlinBuiltIns.FQ_NAMES._float.asString(),
+        CommonClassNames.JAVA_LANG_INTEGER to KotlinBuiltIns.FQ_NAMES._int.asString(),
+        CommonClassNames.JAVA_LANG_LONG to KotlinBuiltIns.FQ_NAMES._long.asString(),
+        CommonClassNames.JAVA_LANG_SHORT to KotlinBuiltIns.FQ_NAMES._short.asString(),
+        CommonClassNames.JAVA_LANG_BOOLEAN to KotlinBuiltIns.FQ_NAMES._boolean.asString(),
+        CommonClassNames.JAVA_LANG_ITERABLE to KotlinBuiltIns.FQ_NAMES.iterable.asString(),
+        CommonClassNames.JAVA_UTIL_ITERATOR to KotlinBuiltIns.FQ_NAMES.iterator.asString(),
+        CommonClassNames.JAVA_UTIL_LIST to KotlinBuiltIns.FQ_NAMES.list.asString(),
+        CommonClassNames.JAVA_UTIL_COLLECTION to KotlinBuiltIns.FQ_NAMES.collection.asString(),
+        CommonClassNames.JAVA_UTIL_SET to KotlinBuiltIns.FQ_NAMES.set.asString(),
+        CommonClassNames.JAVA_UTIL_MAP to KotlinBuiltIns.FQ_NAMES.map.asString(),
+        CommonClassNames.JAVA_UTIL_MAP_ENTRY to KotlinBuiltIns.FQ_NAMES.mapEntry.asString(),
+        java.util.ListIterator::class.java.canonicalName to KotlinBuiltIns.FQ_NAMES.listIterator.asString()
+
+)
+
+val toKotlinMutableTypesMap: Map<String, String> = mapOf(
+        CommonClassNames.JAVA_UTIL_ITERATOR to KotlinBuiltIns.FQ_NAMES.mutableIterator.asString(),
+        CommonClassNames.JAVA_UTIL_LIST to KotlinBuiltIns.FQ_NAMES.mutableList.asString(),
+        CommonClassNames.JAVA_UTIL_COLLECTION to KotlinBuiltIns.FQ_NAMES.mutableCollection.asString(),
+        CommonClassNames.JAVA_UTIL_SET to KotlinBuiltIns.FQ_NAMES.mutableSet.asString(),
+        CommonClassNames.JAVA_UTIL_MAP to KotlinBuiltIns.FQ_NAMES.mutableMap.asString(),
+        CommonClassNames.JAVA_UTIL_MAP_ENTRY to KotlinBuiltIns.FQ_NAMES.mutableMapEntry.asString(),
+        java.util.ListIterator::class.java.canonicalName to KotlinBuiltIns.FQ_NAMES.mutableListIterator.asString()
+)

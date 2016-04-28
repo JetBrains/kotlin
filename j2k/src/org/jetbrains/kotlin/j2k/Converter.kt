@@ -155,7 +155,7 @@ class Converter private constructor(
     }
 
     private fun convertFile(javaFile: PsiJavaFile): File {
-        var convertedChildren = javaFile.children.mapNotNull { convertTopElement(it) }
+        val convertedChildren = javaFile.children.mapNotNull { convertTopElement(it) }
         return File(convertedChildren).assignPrototype(javaFile)
     }
 
@@ -537,10 +537,10 @@ class Converter private constructor(
                 }
             }
 
-            var params = convertParameterList(method, overloadReducer)
+            val params = convertParameterList(method, overloadReducer)
 
             val typeParameterList = convertTypeParameterList(method.typeParameterList)
-            var body = deferredElement { codeConverter: CodeConverter ->
+            val body = deferredElement { codeConverter: CodeConverter ->
                 val body = codeConverter.withMethodReturnType(method.returnType).convertBlock(method.body)
                 postProcessBody(body)
             }
@@ -617,6 +617,12 @@ class Converter private constructor(
     fun convertCodeReferenceElement(element: PsiJavaCodeReferenceElement, hasExternalQualifier: Boolean, typeArgsConverted: List<Element>? = null): ReferenceElement {
         val typeArgs = typeArgsConverted ?: typeConverter.convertTypes(element.typeParameters)
 
+        val targetClass = element.resolve() as? PsiClass
+        if (targetClass != null) {
+            convertToKotlinAnalogIdentifier(targetClass.qualifiedName, Mutability.Default)
+                    ?.let { return ReferenceElement(it, typeArgs).assignNoPrototype() }
+        }
+
         if (element.isQualified) {
             var result = Identifier.toKotlin(element.referenceName!!)
             var qualifier = element.qualifier
@@ -630,7 +636,6 @@ class Converter private constructor(
         else {
             if (!hasExternalQualifier) {
                 // references to nested classes may need correction
-                val targetClass = element.resolve() as? PsiClass
                 if (targetClass != null) {
                     val identifier = constructNestedClassReferenceIdentifier(targetClass, specialContext ?: element)
                     if (identifier != null) {
