@@ -121,6 +121,10 @@ object KDocRenderer {
     }
 
     fun MarkdownNode.toHtml(): String {
+        if (node.type == MarkdownTokenTypes.WHITE_SPACE) {
+            return text   // do not trim trailing whitespace
+        }
+
         val sb = StringBuilder()
         visit { node, processChildren ->
             fun wrapChildren(tag: String, newline: Boolean = false) {
