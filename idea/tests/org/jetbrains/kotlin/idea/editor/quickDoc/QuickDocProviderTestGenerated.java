@@ -143,6 +143,12 @@ public class QuickDocProviderTestGenerated extends AbstractQuickDocProviderTest 
         doTest(fileName);
     }
 
+    @TestMetadata("OnMethodUsageWithReturnAndLink.kt")
+    public void testOnMethodUsageWithReturnAndLink() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/OnMethodUsageWithReturnAndLink.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("OnMethodUsageWithReturnAndThrows.kt")
     public void testOnMethodUsageWithReturnAndThrows() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/OnMethodUsageWithReturnAndThrows.kt");
