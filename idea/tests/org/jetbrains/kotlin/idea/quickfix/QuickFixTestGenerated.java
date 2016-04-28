@@ -6352,9 +6352,21 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/superTypeIsExtensionType"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
+        @TestMetadata("typeWith1Argument.kt")
+        public void testTypeWith1Argument() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/superTypeIsExtensionType/typeWith1Argument.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("typeWithNoArgument.kt")
         public void testTypeWithNoArgument() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/superTypeIsExtensionType/typeWithNoArgument.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("typeWithTypeArgument.kt")
+        public void testTypeWithTypeArgument() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/superTypeIsExtensionType/typeWithTypeArgument.kt");
             doTest(fileName);
         }
     }
