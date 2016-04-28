@@ -330,6 +330,12 @@ public class KotlinTestUtils {
         return new File(getHomeDirectory(), "compiler/testData/mockJDK/jre/lib/rt.jar");
     }
 
+    // Differs from common mock JDK only by one additional 'nonExistingMethod' in Collection and constructor from Double in Throwable
+    // It's needed to test the way we load additional built-ins members that neither in black nor white lists
+    public static File findMockJdkRtModified() {
+        return new File(getHomeDirectory(), "compiler/testData/mockJDKModified/rt.jar");
+    }
+
     public static File findAndroidApiJar() {
         return new File(getHomeDirectory(), "dependencies/android.jar");
     }
@@ -437,6 +443,9 @@ public class KotlinTestUtils {
         JvmContentRootsKt.addJavaSourceRoots(configuration, javaSource);
         if (jdkKind == TestJdkKind.MOCK_JDK) {
             JvmContentRootsKt.addJvmClasspathRoot(configuration, findMockJdkRtJar());
+        }
+        else if (jdkKind == TestJdkKind.MODIFIED_MOCK_JDK) {
+            JvmContentRootsKt.addJvmClasspathRoot(configuration, findMockJdkRtModified());
         }
         else if (jdkKind == TestJdkKind.ANDROID_API) {
             JvmContentRootsKt.addJvmClasspathRoot(configuration, findAndroidApiJar());

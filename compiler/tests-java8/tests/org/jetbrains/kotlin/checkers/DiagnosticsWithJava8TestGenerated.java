@@ -121,6 +121,12 @@ public class DiagnosticsWithJava8TestGenerated extends AbstractDiagnosticsWithFu
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJava8/targetedBuiltIns"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("blackListed.kt")
+        public void testBlackListed() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/targetedBuiltIns/blackListed.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("concurrentMapRemove.kt")
         public void testConcurrentMapRemove() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/targetedBuiltIns/concurrentMapRemove.kt");
