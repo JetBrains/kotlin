@@ -41,7 +41,7 @@ class ConvertExtensionToFunctionTypeFix(element: KtTypeReference, type: KotlinTy
     private val targetTypeStringLong = type.renderType(IdeDescriptorRenderers.SOURCE_CODE)
 
     override fun getText() = "Convert supertype to '$targetTypeStringShort'"
-    override fun getFamilyName() = "Convert extension function type to regular function type."
+    override fun getFamilyName() = "Convert extension function type to regular function type"
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val replaced = element.replaced(KtPsiFactory(project).createType(targetTypeStringLong))
