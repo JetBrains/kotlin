@@ -132,4 +132,8 @@ public class EvaluationOrderTest extends AbstractExpressionTest {
     public void testLoopWithBreakContinueReturnInCondition() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testCastWithBreakContinueReturn() throws Exception {
+        checkFooBoxIsOk();
+    }
 }
