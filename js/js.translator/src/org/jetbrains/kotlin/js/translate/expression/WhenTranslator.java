@@ -24,11 +24,13 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.js.translate.operation.InOperationTranslator;
+import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -179,7 +181,13 @@ public final class WhenTranslator extends AbstractTranslator {
         KtTypeReference typeReference = conditionIsPattern.getTypeReference();
         assert typeReference != null : "An is-check must have a type reference.";
 
-        return Translation.patternTranslator(context).translateIsCheck(expressionToMatch, typeReference);
+        KtExpression expressionToMatchNonTranslated = whenExpression.getSubjectExpression();
+        assert expressionToMatchNonTranslated != null : "expressionToMatch != null => expressionToMatchNonTranslated != null: " +
+                                                        PsiUtilsKt.getTextWithLocation(conditionIsPattern);
+        KotlinType expressionToMatchType = BindingUtils.getTypeForExpression(bindingContext(), expressionToMatchNonTranslated);
+        JsExpression result = Translation.patternTranslator(context).translateIsCheck(expressionToMatch, expressionToMatchType,
+                                                                                      typeReference);
+        return result != null ? result : JsLiteral.TRUE;
     }
 
     @NotNull
