@@ -17,6 +17,8 @@
 (function (Kotlin) {
     "use strict";
 
+    Kotlin.CharSequence = Kotlin.createTraitNow(null);
+
     // Shims for String
     if (typeof String.prototype.startsWith === "undefined") {
         String.prototype.startsWith = function(searchString, position) {
@@ -133,6 +135,10 @@
                type === "boolean" ||
                Kotlin.isNumber(value) ||
                Kotlin.isType(value, Kotlin.Comparable);
+    };
+    
+    Kotlin.isCharSequence = function (value) {
+        return typeof value === "string" || Kotlin.isType(value, Kotlin.CharSequence);
     };
 
     Kotlin.charInc = function (value) {
@@ -1140,7 +1146,7 @@
     };
 
 
-    Kotlin.StringBuilder = Kotlin.createClassNow(null,
+    Kotlin.StringBuilder = Kotlin.createClassNow([Kotlin.CharSequence],
         function (content) {
             this.string = typeof(content) == "string" ? content : "";
         }, {

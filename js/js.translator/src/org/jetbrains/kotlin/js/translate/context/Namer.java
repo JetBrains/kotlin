@@ -61,6 +61,7 @@ public final class Namer {
     public static final String PRIMITIVE_COMPARE_TO = "primitiveCompareTo";
     public static final String IS_CHAR = "isChar";
     public static final String IS_NUMBER = "isNumber";
+    public static final String IS_CHAR_SEQUENCE = "isCharSequence";
 
     public static final String CALLEE_NAME = "$fun";
 
@@ -410,6 +411,11 @@ public final class Namer {
     @NotNull
     public JsExpression isComparable() {
         return kotlin("isComparable");
+    }
+
+    @NotNull
+    public JsExpression isCharSequence() {
+        return kotlin(IS_CHAR_SEQUENCE);
     }
 
     @NotNull
