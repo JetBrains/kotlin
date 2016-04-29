@@ -35,7 +35,7 @@ private class TypeCheckRewritingVisitor(private val context: TranslationContext)
 
     override fun visit(x: JsFunction, ctx: JsContext<*>): Boolean {
         scopes.push(x.scope)
-        localVars.push(IdentitySet())
+        localVars.push(IdentitySet<JsName>().apply { this += x.parameters.map { it.name } })
         return super.visit(x, ctx)
     }
 
@@ -50,19 +50,14 @@ private class TypeCheckRewritingVisitor(private val context: TranslationContext)
         super.endVisit(x, ctx)
     }
 
-    override fun endVisit(x: JsConditional, ctx: JsContext<JsNode>) {
-        val test = x.testExpression
-
-    }
-
     override fun visit(x: JsInvocation, ctx: JsContext<JsNode>): Boolean {
         // callee(calleeArgument)(argument)
         val callee = x.qualifier as? JsInvocation
-        val calleeArgument = callee?.arguments?.firstOrNull()
+        val calleeArguments = callee?.arguments
         val argument = x.arguments.firstOrNull()
 
-        if (callee != null && argument != null) {
-            val replacement = getReplacement(callee, calleeArgument, argument)
+        if (callee != null && argument != null && calleeArguments != null) {
+            val replacement = getReplacement(callee, calleeArguments, argument)
 
             if (replacement != null) {
                 ctx.replaceMe(accept(replacement))
@@ -73,64 +68,100 @@ private class TypeCheckRewritingVisitor(private val context: TranslationContext)
         return true
     }
 
-    private fun getReplacement(callee: JsInvocation, calleeArgument: JsExpression?, argument: JsExpression): JsExpression? {
-        if (calleeArgument == null) {
-            // `Kotlin.isAny()(argument)` -> `argument != null`
-            if (callee.typeCheck == TypeCheck.IS_ANY) {
-                return TranslationUtils.isNotNullCheck(argument)
+    private fun getReplacement(callee: JsInvocation, calleeArguments: List<JsExpression>, argument: JsExpression): JsExpression? {
+        val typeCheck = callee.typeCheck
+        return when (typeCheck) {
+            TypeCheck.IS_ANY -> {
+                // `Kotlin.isAny()(argument)` -> `argument != null`
+                if (calleeArguments.isEmpty()) TranslationUtils.isNotNullCheck(argument) else null
             }
 
-            return null
-        }
-
-        // `Kotlin.isTypeOf(calleeArgument)(argument)` -> `typeOf argument === calleeArgument`
-        if (callee.typeCheck == TypeCheck.TYPEOF) {
-            return typeOfIs(argument, calleeArgument as JsStringLiteral)
-        }
-
-        // `Kotlin.isInstanceOf(calleeArgument)(argument)` -> `argument instanceof calleeArgument`
-        if (callee.typeCheck == TypeCheck.INSTANCEOF) {
-            return context.namer().isInstanceOf(argument, calleeArgument)
-        }
-
-        // `Kotlin.orNull(calleeArgument)(argument)` -> `(tmp = argument) == null || calleeArgument(tmp)`
-        if (callee.typeCheck == TypeCheck.OR_NULL) {
-            if (calleeArgument is JsInvocation && calleeArgument.typeCheck == TypeCheck.OR_NULL) {
-                return JsInvocation(calleeArgument, argument)
+            TypeCheck.TYPEOF -> {
+                // `Kotlin.isTypeOf(calleeArgument)(argument)` -> `typeOf argument === calleeArgument`
+                if (calleeArguments.size == 1) typeOfIs(argument, calleeArguments[0] as JsStringLiteral) else null
             }
 
-            var nullCheckTarget = argument
-            var nextCheckTarget = argument
-
-            if (argument.isAssignmentToLocalVar) {
-                // `Kotlin.orNull(Kotlin.isInstance(SomeType))(localVar=someExpr)` -> `(localVar=someExpr) != null || Kotlin.isInstance(SomeType)(localVar)`
-                val localVar = (argument as JsBinaryOperation).getArg1()
-                nextCheckTarget = localVar
-            }
-            else if (!argument.isLocalVar) {
-                val currentScope = scopes.peek()
-                val tmp = currentScope.declareTemporary()
-                val statementContext = lastStatementLevelContext
-                statementContext.addPrevious(newVar(tmp, null))
-                nullCheckTarget = assignment(tmp.makeRef(), argument)
-                nextCheckTarget = tmp.makeRef()
+            TypeCheck.INSTANCEOF -> {
+                // `Kotlin.isInstanceOf(calleeArgument)(argument)` -> `argument instanceof calleeArgument`
+                if (calleeArguments.size == 1) context.namer().isInstanceOf(argument, calleeArguments[0]) else null
             }
 
-            val isNull = TranslationUtils.isNullCheck(nullCheckTarget)
-            return or(isNull, JsInvocation(calleeArgument, nextCheckTarget))
+            TypeCheck.OR_NULL -> {
+                // `Kotlin.orNull(calleeArgument)(argument)` -> `(tmp = argument) == null || calleeArgument(tmp)`
+                if (calleeArguments.size == 1) getReplacementForOrNull(argument, calleeArguments[0]) else null
+            }
+
+            TypeCheck.AND_PREDICATE -> {
+                // `Kotlin.andPredicate(p1, p2)(argument)` -> `p1(tmp = argument) && p2(tmp)`
+                if (calleeArguments.size == 2) {
+                    getReplacementForAndPredicate(argument, calleeArguments[0], calleeArguments[1])
+                }
+                else {
+                    null
+                }
+            }
+
+            null -> null
         }
-
-        return null
     }
 
-    private val JsExpression.isLocalVar: Boolean
-        get() {
-            if (localVars.empty() || this !is JsNameRef) return false
-
-            val name = this.getName()
-            return name != null && localVars.peek().contains(name)
+    private fun getReplacementForOrNull(argument: JsExpression, calleeArgument: JsExpression): JsExpression {
+        if (calleeArgument is JsInvocation && calleeArgument.typeCheck == TypeCheck.OR_NULL) {
+            return JsInvocation(calleeArgument, argument)
         }
 
+        var nullCheckTarget = argument
+        var nextCheckTarget = argument
+
+        if (argument.isAssignmentToLocalVar) {
+            // `Kotlin.orNull(Kotlin.isInstance(SomeType))(localVar=someExpr)` ->
+            // `(localVar=someExpr) != null || Kotlin.isInstance(SomeType)(localVar)`
+            val localVar = (argument as JsBinaryOperation).arg1
+            nextCheckTarget = localVar
+        }
+        else if (argument.needsAlias) {
+            val currentScope = scopes.peek()
+            val tmp = currentScope.declareTemporary()
+            val statementContext = lastStatementLevelContext
+            statementContext.addPrevious(newVar(tmp, null))
+            nullCheckTarget = assignment(tmp.makeRef(), argument)
+            nextCheckTarget = tmp.makeRef()
+        }
+
+        val isNull = TranslationUtils.isNullCheck(nullCheckTarget)
+        return or(isNull, JsInvocation(calleeArgument, nextCheckTarget))
+    }
+
+    private fun getReplacementForAndPredicate(argument: JsExpression, p1: JsExpression, p2: JsExpression): JsExpression {
+        val (arg1, arg2) = if (!argument.needsAlias) {
+            Pair(argument, argument)
+        }
+        else if (argument.isAssignmentToLocalVar) {
+            Pair(argument, JsAstUtils.decomposeAssignment(argument)!!.first)
+        }
+        else {
+            val currentScope = scopes.peek()
+            val tmp = currentScope.declareTemporary()
+            val statementContext = lastStatementLevelContext
+            statementContext.addPrevious(newVar(tmp, null))
+            Pair(assignment(tmp.makeRef(), argument), tmp.makeRef())
+        }
+
+        val first = accept(JsInvocation(p1, arg1) as JsExpression)
+        val second = accept(JsInvocation(p2, arg2) as JsExpression)
+        return JsAstUtils.and(first, second)
+    }
+
+    private val JsExpression.needsAlias: Boolean
+        get() = when (this) {
+            is JsStringLiteral -> false
+            else -> !isLocalVar
+        }
+
+    private val JsExpression.isLocalVar: Boolean
+        get() = localVars.isNotEmpty() && this is JsNameRef && name.let { it != null && it in localVars.peek() }
+
     private val JsExpression.isAssignmentToLocalVar: Boolean
-        get() = this is JsBinaryOperation && getOperator() == JsBinaryOperator.ASG
+        get() = localVars.isNotEmpty() &&
+                JsAstUtils.decomposeAssignmentToVariable(this).let { it != null && it.first in localVars.peek() }
 }

@@ -59,6 +59,12 @@ public class CastTestGenerated extends AbstractCastTest {
         doTest(fileName);
     }
 
+    @TestMetadata("castToGenericTypeWithMultipleUpperBounds.kt")
+    public void testCastToGenericTypeWithMultipleUpperBounds() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/castToGenericTypeWithMultipleUpperBounds.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("castToGenericTypeWithUpperBound.kt")
     public void testCastToGenericTypeWithUpperBound() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/castToGenericTypeWithUpperBound.kt");

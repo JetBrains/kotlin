@@ -61,5 +61,6 @@ enum class TypeCheck {
     TYPEOF,
     INSTANCEOF,
     OR_NULL,
-    IS_ANY
+    IS_ANY,
+    AND_PREDICATE
 }
