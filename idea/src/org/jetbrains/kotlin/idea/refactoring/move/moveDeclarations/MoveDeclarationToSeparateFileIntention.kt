@@ -58,6 +58,8 @@ class MoveDeclarationToSeparateFileIntention :
         return TextRange(startOffset, endOffset)
     }
 
+    override fun startInWriteAction() = false
+
     override fun applyTo(element: KtClassOrObject, editor: Editor?) {
         if (editor == null) throw IllegalArgumentException("This intention requires an editor")
         val file = element.getContainingKtFile()
