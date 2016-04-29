@@ -380,5 +380,7 @@ class QuickFixRegistrar : QuickFixContributor {
         DATA_CLASS_NOT_PROPERTY_PARAMETER.registerFactory(AddValVarToConstructorParameterAction.QuickFixFactory)
 
         NON_LOCAL_RETURN_NOT_ALLOWED.registerFactory(AddCrossInlineFix)
+
+        SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE.registerFactory(ConvertExtensionToFunctionTypeFix)
     }
 }
