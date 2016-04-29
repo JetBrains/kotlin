@@ -110,51 +110,41 @@ private class TypeCheckRewritingVisitor(private val context: TranslationContext)
             return JsInvocation(calleeArgument, argument)
         }
 
-        var nullCheckTarget = argument
-        var nextCheckTarget = argument
-
-        if (argument.isAssignmentToLocalVar) {
-            // `Kotlin.orNull(Kotlin.isInstance(SomeType))(localVar=someExpr)` ->
-            // `(localVar=someExpr) != null || Kotlin.isInstance(SomeType)(localVar)`
-            val localVar = (argument as JsBinaryOperation).arg1
-            nextCheckTarget = localVar
-        }
-        else if (argument.needsAlias) {
-            val currentScope = scopes.peek()
-            val tmp = currentScope.declareTemporary()
-            val statementContext = lastStatementLevelContext
-            statementContext.addPrevious(newVar(tmp, null))
-            nullCheckTarget = assignment(tmp.makeRef(), argument)
-            nextCheckTarget = tmp.makeRef()
-        }
-
+        val (nullCheckTarget, nextCheckTarget) = expandArgumentForTwoInvocations(argument)
         val isNull = TranslationUtils.isNullCheck(nullCheckTarget)
         return or(isNull, JsInvocation(calleeArgument, nextCheckTarget))
     }
 
     private fun getReplacementForAndPredicate(argument: JsExpression, p1: JsExpression, p2: JsExpression): JsExpression {
-        val (arg1, arg2) = if (!argument.needsAlias) {
-            Pair(argument, argument)
-        }
-        else if (argument.isAssignmentToLocalVar) {
-            Pair(argument, JsAstUtils.decomposeAssignment(argument)!!.first)
-        }
-        else {
-            val currentScope = scopes.peek()
-            val tmp = currentScope.declareTemporary()
-            val statementContext = lastStatementLevelContext
-            statementContext.addPrevious(newVar(tmp, null))
-            Pair(assignment(tmp.makeRef(), argument), tmp.makeRef())
-        }
-
+        val (arg1, arg2) = expandArgumentForTwoInvocations(argument)
         val first = accept(JsInvocation(p1, arg1) as JsExpression)
         val second = accept(JsInvocation(p2, arg2) as JsExpression)
         return JsAstUtils.and(first, second)
     }
 
+    private fun expandArgumentForTwoInvocations(argument: JsExpression) = when {
+        // `(P * Q)(localVar=someExpr)` -> `P(localVar=someExpr), Q(localVar)`
+        // Where P, Q - predicate, * - function composition
+        argument.isAssignmentToLocalVar -> Pair(argument, (argument as JsBinaryOperation).arg1)
+
+        // `(P * Q)(expression)` -> `P(tmp = expression), Q(tmp)`
+        argument.needsAlias -> generateAlias(argument)
+
+        // `(P * Q)(primitive)` -> `P(primitive), Q(primitive)`
+        else -> Pair(argument, argument)
+    }
+
+    private fun generateAlias(argument: JsExpression): Pair<JsExpression, JsExpression> {
+        val currentScope = scopes.peek()
+        val tmp = currentScope.declareTemporary()
+        val statementContext = lastStatementLevelContext
+        statementContext.addPrevious(newVar(tmp, null))
+        return Pair(assignment(tmp.makeRef(), argument), tmp.makeRef())
+    }
+
     private val JsExpression.needsAlias: Boolean
         get() = when (this) {
-            is JsStringLiteral -> false
+            is JsLiteral.JsValueLiteral -> false
             else -> !isLocalVar
         }
 
