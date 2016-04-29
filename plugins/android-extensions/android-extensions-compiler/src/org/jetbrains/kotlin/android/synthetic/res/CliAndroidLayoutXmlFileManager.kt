@@ -57,7 +57,7 @@ class CliAndroidLayoutXmlFileManager(
         return resources
     }
 
-    protected fun initSAX(): SAXParser {
+    private fun initSAX(): SAXParser {
         val saxFactory = SAXParserFactory.newInstance()
         saxFactory.isNamespaceAware = true
         return saxFactory.newSAXParser()

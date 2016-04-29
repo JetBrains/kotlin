@@ -74,7 +74,7 @@ class KotlinInplacePropertyIntroducer(
 
     private var replaceAll: Boolean = true
 
-    protected var property: KtProperty
+    private var property: KtProperty
         get() = myDeclaration
         set(value: KtProperty) {
             myDeclaration = value

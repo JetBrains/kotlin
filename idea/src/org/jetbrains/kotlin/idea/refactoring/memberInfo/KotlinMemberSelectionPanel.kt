@@ -36,7 +36,7 @@ class KotlinMemberSelectionPanel(title: String,
         add(scrollPane, BorderLayout.CENTER)
     }
 
-    protected fun createMemberSelectionTable(
+    private fun createMemberSelectionTable(
             memberInfo: List<KotlinMemberInfo>,
             abstractColumnHeader: String?
     ): KotlinMemberSelectionTable {

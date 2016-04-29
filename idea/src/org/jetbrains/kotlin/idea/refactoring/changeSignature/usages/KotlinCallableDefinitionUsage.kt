@@ -146,7 +146,7 @@ class KotlinCallableDefinitionUsage<T : PsiElement>(
         return true
     }
 
-    protected fun changeReturnTypeIfNeeded(changeInfo: KotlinChangeInfo, element: PsiElement) {
+    private fun changeReturnTypeIfNeeded(changeInfo: KotlinChangeInfo, element: PsiElement) {
         if (element !is KtCallableDeclaration) return
         if (element is KtConstructor<*>) return
 
