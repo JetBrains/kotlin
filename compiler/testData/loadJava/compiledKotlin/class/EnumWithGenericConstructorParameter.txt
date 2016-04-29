@@ -8,6 +8,8 @@ public final enum class EnumWithGenericConstructorParameter : kotlin.Enum<test.E
         public final override /*1*/ /*fake_override*/ fun <get-ordinal>(): kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.EnumWithGenericConstructorParameter): kotlin.Int
+    protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<test.EnumWithGenericConstructorParameter!>!
 
     // Static members
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.EnumWithGenericConstructorParameter

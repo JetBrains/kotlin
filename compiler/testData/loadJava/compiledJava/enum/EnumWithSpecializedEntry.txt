@@ -10,6 +10,8 @@ public open enum class EnumWithSpecializedEntry : kotlin.Enum<test.EnumWithSpeci
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.EnumWithSpecializedEntry!): kotlin.Int
+    protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<test.EnumWithSpecializedEntry!>!
 
     public/*package*/ open class Nested {
         public/*package*/ constructor Nested()
