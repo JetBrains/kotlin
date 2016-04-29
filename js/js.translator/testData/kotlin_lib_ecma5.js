@@ -560,6 +560,12 @@ var Kotlin = {};
             return object != null;
         }
     };
+    
+    Kotlin.andPredicate = function (a, b) {
+        return function (object) {
+            return a(object) && b(object);
+        }
+    };
 
     Kotlin.kotlinModuleMetadata = function (abiVersion, moduleName, data) {
     };
