@@ -28,6 +28,7 @@ import com.intellij.util.containers.Stack;
 import kotlin.Pair;
 import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
+import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -1418,7 +1419,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         assert descriptor != null : "Function is not resolved to descriptor: " + declaration.getText();
 
         return genClosure(
-                declaration, descriptor, new FunctionGenerationStrategy.FunctionDefault(state, descriptor, declaration), samType, null
+                declaration, descriptor, new FunctionGenerationStrategy.FunctionDefault(state, descriptor, declaration), samType, null, null
         );
     }
 
@@ -1428,7 +1429,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             @NotNull FunctionDescriptor descriptor,
             @NotNull FunctionGenerationStrategy strategy,
             @Nullable SamType samType,
-            @Nullable FunctionDescriptor functionReferenceTarget
+            @Nullable FunctionDescriptor functionReferenceTarget,
+            @Nullable StackValue functionReferenceReceiver
     ) {
         ClassBuilder cv = state.getFactory().newVisitor(
                 JvmDeclarationOriginKt.OtherOrigin(declaration, descriptor),
@@ -1448,7 +1450,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             propagateChildReifiedTypeParametersUsages(closureCodegen.getReifiedTypeParametersUsages());
         }
 
-        return closureCodegen.putInstanceOnStack(this);
+        return closureCodegen.putInstanceOnStack(this, functionReferenceReceiver);
     }
 
     @Override
@@ -1466,7 +1468,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 v.anew(type);
                 v.dup();
 
-                pushClosureOnStack(classDescriptor, true, defaultCallGenerator);
+                pushClosureOnStack(classDescriptor, true, defaultCallGenerator, /* functionReferenceReceiver = */ null);
 
                 ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
                 assert primaryConstructor != null : "There should be primary constructor for object literal";
@@ -1510,7 +1512,12 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         });
     }
 
-    public void pushClosureOnStack(@NotNull ClassDescriptor classDescriptor, boolean putThis, @NotNull CallGenerator callGenerator) {
+    public void pushClosureOnStack(
+            @NotNull ClassDescriptor classDescriptor,
+            boolean putThis,
+            @NotNull CallGenerator callGenerator,
+            @Nullable StackValue functionReferenceReceiver
+    ) {
         CalculatedClosure closure = bindingContext.get(CLOSURE, classDescriptor);
         if (closure == null) return;
 
@@ -1528,7 +1535,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         KotlinType captureReceiver = closure.getCaptureReceiverType();
         if (captureReceiver != null) {
             Type asmType = typeMapper.mapType(captureReceiver);
-            StackValue.Local capturedReceiver = StackValue.local(AsmUtil.getReceiverIndex(context, context.getContextDescriptor()), asmType);
+            StackValue capturedReceiver =
+                    functionReferenceReceiver != null ? functionReferenceReceiver :
+                    StackValue.local(AsmUtil.getReceiverIndex(context, context.getContextDescriptor()), asmType);
             callGenerator.putCapturedValueOnStack(capturedReceiver, capturedReceiver.type, paramIndex++);
         }
 
@@ -1545,9 +1554,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         ClassDescriptor superClass = DescriptorUtilsKt.getSuperClassNotAny(classDescriptor);
         if (superClass != null) {
             pushClosureOnStack(
-                    superClass,
-                    putThis && closure.getCaptureThis() == null,
-                    callGenerator
+                    superClass, putThis && closure.getCaptureThis() == null, callGenerator, /* functionReferenceReceiver = */ null
             );
         }
     }
@@ -2852,17 +2859,28 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     @Override
     public StackValue visitCallableReferenceExpression(@NotNull KtCallableReferenceExpression expression, StackValue data) {
         ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCallWithAssert(expression.getCallableReference(), bindingContext);
+
+        KotlinType receiverExpressionType = expressionJetType(expression.getReceiverExpression());
+        Type receiverAsmType = receiverExpressionType != null ? asmType(receiverExpressionType) : null;
+        StackValue receiverValue = receiverExpressionType != null ? gen(expression.getReceiverExpression()) : null;
+
         FunctionDescriptor functionDescriptor = bindingContext.get(FUNCTION, expression);
         if (functionDescriptor != null) {
-            FunctionReferenceGenerationStrategy strategy = new FunctionReferenceGenerationStrategy(state, functionDescriptor, resolvedCall);
-            return genClosure(expression, functionDescriptor, strategy, null, (FunctionDescriptor) resolvedCall.getResultingDescriptor());
+            FunctionReferenceGenerationStrategy strategy =
+                    new FunctionReferenceGenerationStrategy(state, functionDescriptor, resolvedCall, receiverAsmType, null);
+
+            return genClosure(
+                    expression, functionDescriptor, strategy, null,
+                    (FunctionDescriptor) resolvedCall.getResultingDescriptor(), receiverValue
+            );
         }
 
         VariableDescriptor variableDescriptor = bindingContext.get(VARIABLE, expression);
         if (variableDescriptor != null) {
-            return generatePropertyReference(expression, variableDescriptor,
-                                             (VariableDescriptor) resolvedCall.getResultingDescriptor(),
-                                             resolvedCall.getDispatchReceiver());
+            return generatePropertyReference(
+                    expression, variableDescriptor, (VariableDescriptor) resolvedCall.getResultingDescriptor(),
+                    resolvedCall.getDispatchReceiver(), receiverAsmType, receiverValue
+            );
         }
 
         throw new UnsupportedOperationException("Unsupported callable reference expression: " + expression.getText());
@@ -2873,7 +2891,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             @NotNull KtElement element,
             @NotNull VariableDescriptor variableDescriptor,
             @NotNull VariableDescriptor target,
-            @Nullable ReceiverValue dispatchReceiver
+            @Nullable ReceiverValue dispatchReceiver,
+            @Nullable final Type receiverAsmType,
+            @Nullable final StackValue receiverValue
     ) {
         ClassDescriptor classDescriptor = CodegenBinding.anonymousClassForCallable(bindingContext, variableDescriptor);
 
@@ -2885,11 +2905,18 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         PropertyReferenceCodegen codegen = new PropertyReferenceCodegen(
                 state, parentCodegen, context.intoAnonymousClass(classDescriptor, this, OwnerKind.IMPLEMENTATION),
-                element, classBuilder, target, dispatchReceiver
+                element, classBuilder, target, dispatchReceiver, receiverAsmType
         );
         codegen.generate();
 
-        return codegen.putInstanceOnStack();
+        return codegen.putInstanceOnStack(receiverValue == null ? null : new Function0<Unit>() {
+            @Override
+            public Unit invoke() {
+                assert receiverAsmType != null : "Receiver type should not be null when receiver value is not null: " + receiverValue;
+                receiverValue.put(receiverAsmType, v);
+                return Unit.INSTANCE;
+            }
+        });
     }
 
     @NotNull
@@ -3524,8 +3551,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             @NotNull StackValue metadataVar
     ) {
         //noinspection ConstantConditions
-        StackValue value =
-                generatePropertyReference(variable.getDelegate(), variableDescriptor, variableDescriptor, null);
+        StackValue value = generatePropertyReference(variable.getDelegate(), variableDescriptor, variableDescriptor, null, null, null);
         value.put(K_PROPERTY0_TYPE, v);
         metadataVar.storeSelector(K_PROPERTY0_TYPE, v);
     }
@@ -3570,7 +3596,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
                 // Resolved call to local class constructor doesn't have dispatchReceiver, so we need to generate closure on stack
                 // See StackValue.receiver for more info
-                pushClosureOnStack(containingDeclaration, dispatchReceiver == null, defaultCallGenerator);
+                pushClosureOnStack(
+                        containingDeclaration, dispatchReceiver == null, defaultCallGenerator, /* functionReferenceReceiver = */ null
+                );
 
                 constructor = SamCodegenUtil.resolveSamAdapter(constructor);
                 CallableMethod method = typeMapper.mapToCallableMethod(constructor, false);

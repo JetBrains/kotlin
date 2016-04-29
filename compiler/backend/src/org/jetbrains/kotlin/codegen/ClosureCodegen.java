@@ -241,7 +241,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
     }
 
     @NotNull
-    public StackValue putInstanceOnStack(@NotNull final ExpressionCodegen codegen) {
+    public StackValue putInstanceOnStack(@NotNull final ExpressionCodegen codegen, @Nullable final StackValue functionReferenceReceiver) {
         return StackValue.operation(
                 functionReferenceTarget != null ? K_FUNCTION : asmType,
                 new Function1<InstructionAdapter, Unit>() {
@@ -254,7 +254,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
                             v.anew(asmType);
                             v.dup();
 
-                            codegen.pushClosureOnStack(classDescriptor, true, codegen.defaultCallGenerator);
+                            codegen.pushClosureOnStack(classDescriptor, true, codegen.defaultCallGenerator, functionReferenceReceiver);
                             v.invokespecial(asmType.getInternalName(), "<init>", constructor.getDescriptor(), false);
                         }
 

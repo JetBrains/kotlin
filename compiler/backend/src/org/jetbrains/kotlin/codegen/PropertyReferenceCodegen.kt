@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.codegen.AsmUtil.method
+import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.context.ClassContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.*
@@ -46,7 +47,8 @@ class PropertyReferenceCodegen(
         expression: KtElement,
         classBuilder: ClassBuilder,
         private val target: VariableDescriptor,
-        dispatchReceiver: ReceiverValue?
+        dispatchReceiver: ReceiverValue?,
+        private val receiverType: Type? // non-null for bound references
 ) : MemberCodegen<KtElement>(state, parentCodegen, context, expression, classBuilder) {
     private val classDescriptor = context.contextDescriptor
     private val asmType = typeMapper.mapClass(classDescriptor)
@@ -55,13 +57,27 @@ class PropertyReferenceCodegen(
     private val extensionReceiverType = target.extensionReceiverParameter?.type
 
     private val receiverCount =
-            (if (dispatchReceiverType != null) 1 else 0) + (if (extensionReceiverType != null) 1 else 0)
+            (if (dispatchReceiverType != null) 1 else 0) +
+            (if (extensionReceiverType != null) 1 else 0) -
+            (if (receiverType != null) 1 else 0)
 
     // e.g. MutablePropertyReference0
     private val superAsmType = typeMapper.mapClass(classDescriptor.getSuperClassNotAny().sure { "No super class for $classDescriptor" })
 
     // e.g. mutableProperty0(Lkotlin/jvm/internal/MutablePropertyReference0;)Lkotlin/reflect/KMutableProperty0;
     private val wrapperMethod = getWrapperMethodForPropertyReference(target, receiverCount)
+
+    private val closure = bindingContext.get(CodegenBinding.CLOSURE, classDescriptor)!!.apply {
+        assert((captureReceiverType != null) == (receiverType != null)) {
+            "Bound property reference can only be generated with the type of the receiver. " +
+            "Captured type = $captureReceiverType, actual type = $receiverType"
+        }
+    }
+
+    private val constructorArgs = ClosureCodegen.calculateConstructorParameters(typeMapper, closure, asmType).apply {
+        assert(size <= 1) { "Bound property reference should capture only one value: $this" }
+    }
+    private val constructor = method("<init>", Type.VOID_TYPE, *constructorArgs.map { it.fieldType }.toTypedArray())
 
     override fun generateDeclaration() {
         v.defineClass(
@@ -79,12 +95,14 @@ class PropertyReferenceCodegen(
 
     // TODO: ImplementationBodyCodegen.markLineNumberForSyntheticFunction?
     override fun generateBody() {
-        generateConstInstance(asmType, wrapperMethod.returnType)
-
-        generateMethod("property reference init", 0, method("<init>", Type.VOID_TYPE)) {
-            load(0, OBJECT_TYPE)
-            invokespecial(superAsmType.internalName, "<init>", "()V", false)
+        if (JvmCodegenUtil.isConst(closure)) {
+            generateConstInstance(asmType, wrapperMethod.returnType)
         }
+        else {
+            AsmUtil.genClosureFields(closure, v, typeMapper)
+        }
+
+        generateConstructor()
 
         generateMethod("property reference getName", ACC_PUBLIC, method("getName", JAVA_STRING_TYPE)) {
             aconst(target.name.asString())
@@ -99,6 +117,18 @@ class PropertyReferenceCodegen(
                 ClosureCodegen.generateCallableReferenceDeclarationContainer(this, target, state)
             }
             generateAccessors()
+        }
+    }
+
+    private fun generateConstructor() {
+        generateMethod("property reference init", 0, constructor) {
+            constructorArgs.fold(1) {
+                i, fieldInfo ->
+                AsmUtil.genAssignInstanceFieldFromParam(fieldInfo, i, this)
+            }
+
+            load(0, OBJECT_TYPE)
+            invokespecial(superAsmType.internalName, "<init>", "()V", false)
         }
     }
 
@@ -123,8 +153,14 @@ class PropertyReferenceCodegen(
                     StackValue.singleton(containingObject, typeMapper).put(typeMapper.mapClass(containingObject), this)
                 }
 
-                for ((index, type) in listOfNotNull(dispatchReceiverType, extensionReceiverType).withIndex()) {
-                    StackValue.local(index + 1, OBJECT_TYPE).put(typeMapper.mapType(type), this)
+                if (receiverType != null) {
+                    StackValue.field(receiverType, asmType, AsmUtil.CAPTURED_RECEIVER_FIELD, /* isStatic = */ false, StackValue.LOCAL_0)
+                            .put(receiverType, this)
+                }
+                else {
+                    for ((index, type) in listOfNotNull(dispatchReceiverType, extensionReceiverType).withIndex()) {
+                        StackValue.local(index + 1, OBJECT_TYPE).put(typeMapper.mapType(type), this)
+                    }
                 }
 
                 val value = if (target is LocalVariableDescriptor) {
@@ -166,10 +202,21 @@ class PropertyReferenceCodegen(
         writeSyntheticClassMetadata(v)
     }
 
-    fun putInstanceOnStack(): StackValue =
-            StackValue.operation(wrapperMethod.returnType) { iv ->
+    fun putInstanceOnStack(receiverValue: (() -> Unit)?): StackValue {
+        return StackValue.operation(wrapperMethod.returnType) { iv ->
+            if (JvmCodegenUtil.isConst(closure)) {
+                assert(receiverValue == null) { "No receiver expected for unbound property reference: $classDescriptor" }
                 iv.getstatic(asmType.internalName, JvmAbi.INSTANCE_FIELD, wrapperMethod.returnType.descriptor)
             }
+            else {
+                assert(receiverValue != null) { "Receiver expected for bound property reference: $classDescriptor" }
+                iv.anew(asmType)
+                iv.dup()
+                receiverValue!!()
+                iv.invokespecial(asmType.internalName, "<init>", constructor.descriptor, false)
+            }
+        }
+    }
 
     companion object {
         @JvmStatic

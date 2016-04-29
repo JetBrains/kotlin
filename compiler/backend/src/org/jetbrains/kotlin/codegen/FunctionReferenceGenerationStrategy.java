@@ -39,15 +39,24 @@ import java.util.*;
 public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrategy.CodegenBased<FunctionDescriptor> {
     private final ResolvedCall<?> resolvedCall;
     private final FunctionDescriptor referencedFunction;
+    private final Type receiverType; // non-null for bound references
+    private final StackValue receiverValue;
 
     public FunctionReferenceGenerationStrategy(
             @NotNull GenerationState state,
             @NotNull FunctionDescriptor functionDescriptor,
-            @NotNull ResolvedCall<?> resolvedCall
+            @NotNull ResolvedCall<?> resolvedCall,
+            @Nullable Type receiverType,
+            @Nullable StackValue receiverValue
     ) {
         super(state, functionDescriptor);
         this.resolvedCall = resolvedCall;
         this.referencedFunction = (FunctionDescriptor) resolvedCall.getResultingDescriptor();
+        this.receiverType = receiverType;
+        this.receiverValue = receiverValue;
+        assert receiverType != null || receiverValue == null
+                : "A receiver value is provided for unbound function reference. Either this is a bound reference and you forgot " +
+                  "to pass receiverType, or you accidentally passed some receiverValue for a reference without receiver";
     }
 
     @Override
@@ -142,7 +151,8 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
 
     private void computeAndSaveArguments(@NotNull List<? extends ValueArgument> fakeArguments, @NotNull ExpressionCodegen codegen) {
         int receivers = (referencedFunction.getDispatchReceiverParameter() != null ? 1 : 0) +
-                        (referencedFunction.getExtensionReceiverParameter() != null ? 1 : 0);
+                        (referencedFunction.getExtensionReceiverParameter() != null ? 1 : 0) -
+                        (receiverType != null ? 1 : 0);
 
         List<ValueParameterDescriptor> parameters = CollectionsKt.drop(callableDescriptor.getValueParameters(), receivers);
         for (int i = 0; i < parameters.size(); i++) {
@@ -163,14 +173,22 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
     ) {
         if (receiver == null) return null;
 
-        KtExpression receiverExpression = KtPsiFactoryKt
-                .KtPsiFactory(state.getProject()).createExpression("callableReferenceFakeReceiver");
-        codegen.tempVariables.put(receiverExpression, receiverParameterStackValue(signature));
+        KtExpression receiverExpression = KtPsiFactoryKt.KtPsiFactory(state.getProject()).createExpression("callableReferenceFakeReceiver");
+        codegen.tempVariables.put(receiverExpression, receiverParameterStackValue(signature, codegen));
         return ExpressionReceiver.Companion.create(receiverExpression, receiver.getType(), BindingContext.EMPTY);
     }
 
     @NotNull
-    private static StackValue.Local receiverParameterStackValue(@NotNull JvmMethodSignature signature) {
+    private StackValue receiverParameterStackValue(@NotNull JvmMethodSignature signature, @NotNull ExpressionCodegen codegen) {
+        if (receiverValue != null) return receiverValue;
+
+        if (receiverType != null) {
+            return StackValue.field(
+                    receiverType, Type.getObjectType(codegen.getParentCodegen().getClassName()), AsmUtil.CAPTURED_RECEIVER_FIELD,
+                    /* isStatic = */ false, StackValue.LOCAL_0
+            );
+        }
+
         // 0 is this (the callable reference class), 1 is the invoke() method's first parameter
         return StackValue.local(1, signature.getAsmMethod().getArgumentTypes()[0]);
     }

@@ -288,17 +288,22 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         CallableDescriptor callableDescriptor;
         Collection<KotlinType> supertypes;
 
+        KtExpression receiverExpression = expression.getReceiverExpression();
+        KotlinType receiverType = receiverExpression != null ? bindingContext.getType(receiverExpression) : null;
+
         if (target instanceof FunctionDescriptor) {
             callableDescriptor = bindingContext.get(FUNCTION, expression);
             if (callableDescriptor == null) return;
 
-            supertypes = runtimeTypes.getSupertypesForFunctionReference((FunctionDescriptor) target);
+            supertypes = runtimeTypes.getSupertypesForFunctionReference((FunctionDescriptor) target, receiverType != null);
         }
         else if (target instanceof PropertyDescriptor) {
             callableDescriptor = bindingContext.get(VARIABLE, expression);
             if (callableDescriptor == null) return;
 
-            supertypes = Collections.singleton(runtimeTypes.getSupertypeForPropertyReference((PropertyDescriptor) target));
+            supertypes = Collections.singleton(
+                    runtimeTypes.getSupertypeForPropertyReference((PropertyDescriptor) target, receiverType != null)
+            );
         }
         else {
             return;
@@ -306,7 +311,11 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
 
         String name = inventAnonymousClassName();
         ClassDescriptor classDescriptor = recordClassForCallable(expression, callableDescriptor, supertypes, name);
-        recordClosure(classDescriptor, name);
+        MutableClosure closure = recordClosure(classDescriptor, name);
+
+        if (receiverType != null) {
+            closure.setCaptureReceiverType(receiverType);
+        }
 
         classStack.push(classDescriptor);
         nameStack.push(name);
@@ -315,9 +324,11 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         classStack.pop();
     }
 
-    private void recordClosure(@NotNull ClassDescriptor classDescriptor, @NotNull String name) {
-        CodegenBinding.recordClosure(bindingTrace, classDescriptor, peekFromStack(classStack), Type.getObjectType(name),
-                                     fileClassesProvider);
+    @NotNull
+    private MutableClosure recordClosure(@NotNull ClassDescriptor classDescriptor, @NotNull String name) {
+        return CodegenBinding.recordClosure(
+                bindingTrace, classDescriptor, peekFromStack(classStack), Type.getObjectType(name), fileClassesProvider
+        );
     }
 
     private void recordLocalVariablePropertyMetadata(LocalVariableDescriptor variableDescriptor) {
@@ -369,7 +380,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         if (delegate != null && descriptor instanceof VariableDescriptorWithAccessors) {
             VariableDescriptorWithAccessors variableDescriptor = (VariableDescriptorWithAccessors) descriptor;
             String name = inventAnonymousClassName();
-            KotlinType supertype = runtimeTypes.getSupertypeForPropertyReference(variableDescriptor);
+            KotlinType supertype = runtimeTypes.getSupertypeForPropertyReference(variableDescriptor, /* bound = */ false);
             ClassDescriptor classDescriptor = recordClassForCallable(delegate, variableDescriptor, Collections.singleton(supertype), name);
             recordClosure(classDescriptor, name);
         }
