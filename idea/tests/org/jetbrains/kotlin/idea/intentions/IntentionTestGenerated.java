@@ -194,6 +194,57 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/addJvmOverloads")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddJvmOverloads extends AbstractIntentionTest {
+        public void testAllFilesPresentInAddJvmOverloads() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/addJvmOverloads"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("alreadyHasAnnotation.kt")
+        public void testAlreadyHasAnnotation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addJvmOverloads/alreadyHasAnnotation.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("method.kt")
+        public void testMethod() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addJvmOverloads/method.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noDefaultParams.kt")
+        public void testNoDefaultParams() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addJvmOverloads/noDefaultParams.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("primaryConstructor.kt")
+        public void testPrimaryConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addJvmOverloads/primaryConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("primaryConstructorOneWithDefault.kt")
+        public void testPrimaryConstructorOneWithDefault() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addJvmOverloads/primaryConstructorOneWithDefault.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("primaryConstructorWithConstructorKeyword.kt")
+        public void testPrimaryConstructorWithConstructorKeyword() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addJvmOverloads/primaryConstructorWithConstructorKeyword.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("secondaryConstructor.kt")
+        public void testSecondaryConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addJvmOverloads/secondaryConstructor.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/addNameToArgument")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
