@@ -4,6 +4,6 @@ fun foo(): Boolean {
 
 fun main() {
     <caret>if (foo()) {
-
+        //TODO
     }
 }
