@@ -31,6 +31,7 @@ import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.Convertor;
+import junit.framework.ComparisonFailure;
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
@@ -42,7 +43,6 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.junit.Assert;
-import org.junit.ComparisonFailure;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -198,7 +198,8 @@ public abstract class AbstractIntentionTest extends KotlinCodeInsightTestCase {
                                 checkResultByFile(canonicalPathToExpectedFile);
                             }
                             catch (ComparisonFailure e) {
-                                KotlinTestUtils.assertEqualsToFile(new File(canonicalPathToExpectedFile), getEditor().getDocument().getText());
+                                KotlinTestUtils
+                                        .assertEqualsToFile(new File(canonicalPathToExpectedFile), getEditor().getDocument().getText());
                             }
                         }
                         else {
