@@ -26,10 +26,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.completion.smart.ExpectedInfoMatch
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletionItemPriority
 import org.jetbrains.kotlin.idea.completion.smart.matchExpectedInfo
-import org.jetbrains.kotlin.idea.core.ExpectedInfo
-import org.jetbrains.kotlin.idea.core.IfConditionAdditionalData
-import org.jetbrains.kotlin.idea.core.WhenEntryAdditionalData
-import org.jetbrains.kotlin.idea.core.fuzzyType
+import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.idea.util.toFuzzyType
@@ -83,10 +80,13 @@ object KeywordValues {
             }
 
             val nullMatcher = { info: ExpectedInfo ->
-                if (info.fuzzyType != null && info.fuzzyType!!.type.isMarkedNullable)
-                    ExpectedInfoMatch.match(TypeSubstitutor.EMPTY)
-                else
-                    ExpectedInfoMatch.noMatch
+                when {
+                    (info.additionalData as? ComparisonOperandAdditionalData)?.suppressNullLiteral == true -> ExpectedInfoMatch.noMatch
+
+                    info.fuzzyType?.type?.isMarkedNullable == true -> ExpectedInfoMatch.match(TypeSubstitutor.EMPTY)
+
+                    else -> ExpectedInfoMatch.noMatch
+                }
             }
             consumer.consume("null", nullMatcher, SmartCompletionItemPriority.NULL) {
                 LookupElementBuilder.create(KeywordLookupObject(), "null").bold()

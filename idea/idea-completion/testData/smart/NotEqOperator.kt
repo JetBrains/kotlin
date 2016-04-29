@@ -3,12 +3,13 @@ enum class E {
     B
 }
 
-fun f(e1: E, e2: E?, x: Any) {
+fun f(e1: E?, e2: E, x: Any) {
     if (e1 != <caret>
 }
 
 // EXIST: { lookupString:"A", itemText:"E.A" }
 // EXIST: { lookupString:"B", itemText:"E.B" }
 // EXIST: e2
+// EXIST: null
 // ABSENT: e1
 // ABSENT: x
