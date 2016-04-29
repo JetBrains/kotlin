@@ -6227,6 +6227,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class InvertIfCondition extends AbstractIntentionTest {
+        @TestMetadata("addSurroundingBlock_preserveComments.kt")
+        public void testAddSurroundingBlock_preserveComments() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/invertIfCondition/addSurroundingBlock_preserveComments.kt");
+            doTest(fileName);
+        }
+
         public void testAllFilesPresentInInvertIfCondition() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/invertIfCondition"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
