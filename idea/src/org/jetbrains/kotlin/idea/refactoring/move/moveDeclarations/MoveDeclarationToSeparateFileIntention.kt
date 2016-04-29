@@ -60,6 +60,8 @@ class MoveDeclarationToSeparateFileIntention :
         return TextRange(startOffset, endOffset)
     }
 
+    override fun startInWriteAction() = false
+
     override fun applyTo(element: KtClassOrObject, editor: Editor?) {
         if (editor == null) throw IllegalArgumentException("This intention requires an editor")
         val file = element.getContainingKtFile()
@@ -108,6 +110,7 @@ class MoveDeclarationToSeparateFileIntention :
 
         val move = { MoveKotlinDeclarationsProcessor(project, moveOptions).run() }
         val optimizeImports = { OptimizeImportsProcessor(project, file).run() }
+
         move.runRefactoringWithPostprocessing(project, MoveKotlinDeclarationsProcessor.REFACTORING_ID, optimizeImports)
     }
 }
