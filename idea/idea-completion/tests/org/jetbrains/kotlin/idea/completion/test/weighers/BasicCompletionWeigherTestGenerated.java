@@ -41,6 +41,12 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/weighers/basic"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
     }
 
+    @TestMetadata("CallableReference_NothingLast.kt")
+    public void testCallableReference_NothingLast() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/CallableReference_NothingLast.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("Callables.kt")
     public void testCallables() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/Callables.kt");
