@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinParameterInfo
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.BindingContext
 
-data class CreateParameterData<E : KtElement>(
+data class CreateParameterData<out E : KtElement>(
         val context: BindingContext,
         val parameterInfo: KotlinParameterInfo,
         val originalExpression: E

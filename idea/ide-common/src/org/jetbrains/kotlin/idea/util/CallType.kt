@@ -108,7 +108,7 @@ sealed class CallType<TReceiver : KtElement?>(val descriptorKindFilter: Descript
     }
 }
 
-sealed class CallTypeAndReceiver<TReceiver : KtElement?, TCallType : CallType<TReceiver>>(
+sealed class CallTypeAndReceiver<TReceiver : KtElement?, out TCallType : CallType<TReceiver>>(
         val callType: TCallType,
         val receiver: TReceiver
 ) {

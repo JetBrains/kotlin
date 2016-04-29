@@ -21,7 +21,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.extensions.ExtensionPointName
 import java.lang.ref.WeakReference
 
-open class MappedExtensionProvider<T, R>
+open class MappedExtensionProvider<T, out R>
 protected constructor(
         private val epName: ExtensionPointName<T>,
         private val map: (List<T>) -> R

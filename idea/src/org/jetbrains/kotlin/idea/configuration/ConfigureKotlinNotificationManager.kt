@@ -28,7 +28,7 @@ object ConfigureKotlinNotificationManager: KotlinSingleNotificationManager<Confi
     }
 }
 
-interface KotlinSingleNotificationManager<T: Notification> {
+interface KotlinSingleNotificationManager<in T: Notification> {
     fun notify(project: Project, notification: T) {
         val notificationsManager = NotificationsManager.getNotificationsManager() ?: return
 

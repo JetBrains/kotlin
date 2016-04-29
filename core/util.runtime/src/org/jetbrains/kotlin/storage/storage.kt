@@ -18,20 +18,20 @@ package org.jetbrains.kotlin.storage
 
 import kotlin.reflect.KProperty
 
-interface MemoizedFunctionToNotNull<P, R : Any> : Function1<P, R> {
+interface MemoizedFunctionToNotNull<in P, out R : Any> : Function1<P, R> {
     fun isComputed(key: P): Boolean
 }
 
-interface MemoizedFunctionToNullable<P, R : Any> : Function1<P, R?> {
+interface MemoizedFunctionToNullable<in P, out R : Any> : Function1<P, R?> {
     fun isComputed(key: P): Boolean
 }
 
-interface NotNullLazyValue<T : Any> : Function0<T> {
+interface NotNullLazyValue<out T : Any> : Function0<T> {
     fun isComputed(): Boolean
     fun isComputing(): Boolean
 }
 
-interface NullableLazyValue<T : Any> : Function0<T?> {
+interface NullableLazyValue<out T : Any> : Function0<T?> {
     fun isComputed(): Boolean
     fun isComputing(): Boolean
 }

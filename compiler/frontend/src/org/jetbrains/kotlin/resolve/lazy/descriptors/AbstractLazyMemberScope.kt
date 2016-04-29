@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.util.*
 
-abstract class AbstractLazyMemberScope<D : DeclarationDescriptor, DP : DeclarationProvider>
+abstract class AbstractLazyMemberScope<out D : DeclarationDescriptor, out DP : DeclarationProvider>
 protected constructor(
         protected val c: LazyClassContext,
         protected val declarationProvider: DP,

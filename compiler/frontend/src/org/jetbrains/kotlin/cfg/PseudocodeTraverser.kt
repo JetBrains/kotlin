@@ -170,7 +170,7 @@ private fun <I : ControlFlowInfo<*>> updateEdgeDataForInstruction(
     }
 }
 
-data class Edges<T>(val incoming: T, val outgoing: T)
+data class Edges<out T>(val incoming: T, val outgoing: T)
 
 enum class TraverseInstructionResult {
     CONTINUE,

@@ -115,7 +115,7 @@ class JvmDependenciesIndex(_roots: List<JavaRoot>) {
         return result
     }
 
-    private data class HandleResult<T : Any>(val result: T?, val continueSearch: Boolean)
+    private data class HandleResult<out T : Any>(val result: T?, val continueSearch: Boolean)
 
     private fun <T : Any> search(
             request: SearchRequest,

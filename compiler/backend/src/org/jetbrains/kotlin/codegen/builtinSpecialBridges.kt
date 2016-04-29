@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import java.util.*
 
-class BridgeForBuiltinSpecial<Signature : Any>(
+class BridgeForBuiltinSpecial<out Signature : Any>(
         val from: Signature, val to: Signature,
         val isSpecial: Boolean = false,
         val isDelegateToSuper: Boolean = false
