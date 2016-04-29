@@ -153,7 +153,7 @@ fun computeExplicitReceiversForInvoke(
     }
 }
 
-abstract class CallCase<I : CallInfo> {
+abstract class CallCase<in I : CallInfo> {
 
     protected open fun I.unsupported(message: String = "") : Nothing = throw IllegalStateException("this case unsupported. $this")
 
@@ -186,7 +186,7 @@ abstract class FunctionCallCase : CallCase<FunctionCallInfo>()
 
 abstract class VariableAccessCase : CallCase<VariableAccessInfo>()
 
-interface DelegateIntrinsic<I : CallInfo> {
+interface DelegateIntrinsic<in I : CallInfo> {
     fun I.canBeApply(): Boolean = true
     fun I.getDescriptor(): CallableDescriptor
     fun I.getArgs(): List<JsExpression>

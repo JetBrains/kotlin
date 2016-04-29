@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import java.util.*
 
-data class ApproximationBounds<T>(
+data class ApproximationBounds<out T>(
         val lower: T,
         val upper: T
 )

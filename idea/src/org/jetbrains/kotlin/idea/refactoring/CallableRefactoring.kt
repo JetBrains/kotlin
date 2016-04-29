@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import java.util.*
 
-abstract class CallableRefactoring<T: CallableDescriptor>(
+abstract class CallableRefactoring<out T: CallableDescriptor>(
         val project: Project,
         val callableDescriptor: T,
         val commandName: String) {

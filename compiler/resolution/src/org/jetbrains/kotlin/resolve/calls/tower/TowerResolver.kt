@@ -38,7 +38,7 @@ interface Candidate<out D : CallableDescriptor> {
     val status: ResolutionCandidateStatus
 }
 
-interface TowerContext<D : CallableDescriptor, C: Candidate<D>> {
+interface TowerContext<D : CallableDescriptor, out C: Candidate<D>> {
     val name: Name
     val scopeTower: ScopeTower
 

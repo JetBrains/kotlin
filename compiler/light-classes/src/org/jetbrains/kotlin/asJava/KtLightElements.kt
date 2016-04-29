@@ -21,10 +21,10 @@ import com.intellij.psi.PsiNamedElement
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 
-interface KtLightElement<T : KtElement, D : PsiElement> : PsiNamedElement {
+interface KtLightElement<out T : KtElement, out D : PsiElement> : PsiNamedElement {
     val kotlinOrigin: T?
 
     val clsDelegate: D
 }
 
-interface KtLightDeclaration<T: KtDeclaration, D: PsiElement>: KtLightElement<T, D>
+interface KtLightDeclaration<out T: KtDeclaration, out D: PsiElement>: KtLightElement<T, D>

@@ -31,7 +31,7 @@ val CandidateWithBoundDispatchReceiver<*>.requiresExtensionReceiver: Boolean
 
 fun DataFlowDecorator.getAllPossibleTypes(receiver: ReceiverValue) = getSmartCastTypes(receiver) + receiver.type
 
-internal class CandidateWithBoundDispatchReceiverImpl<D : CallableDescriptor>(
+internal class CandidateWithBoundDispatchReceiverImpl<out D : CallableDescriptor>(
         override val dispatchReceiver: ReceiverValue?,
         override val descriptor: D,
         override val diagnostics: List<ResolutionDiagnostic>

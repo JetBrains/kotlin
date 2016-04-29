@@ -104,7 +104,7 @@ class TypeConverter(val converter: Converter) {
         }
     }
 
-    private abstract inner class TypeFlavor<T>(val default: T) {
+    private abstract inner class TypeFlavor<out T>(val default: T) {
         private val cache = HashMap<PsiElement, T>()
         private val typesBeingCalculated = HashSet<PsiElement>()
 

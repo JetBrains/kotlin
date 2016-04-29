@@ -26,7 +26,7 @@ enum class TryCatchPosition {
     INNER
 }
 
-class SplitPair<T: Interval>(val patchedPart: T, val newPart: T)
+class SplitPair<out T: Interval>(val patchedPart: T, val newPart: T)
 
 class SimpleInterval(override val startLabel: LabelNode, override val endLabel: LabelNode ) : Interval
 

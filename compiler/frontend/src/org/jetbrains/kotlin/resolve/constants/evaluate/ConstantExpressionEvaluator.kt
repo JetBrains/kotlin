@@ -896,8 +896,8 @@ internal fun <A> unaryOperation(
         checker: Function1<Long, Long>
 ) = UnaryOperationKey(a, functionName) to Pair(operation, checker) as Pair<Function1<Any?, Any>, Function1<Long, Long>>
 
-internal data class BinaryOperationKey<A, B>(val f: CompileTimeType<out A>, val s: CompileTimeType<out B>, val functionName: String)
-internal data class UnaryOperationKey<A>(val f: CompileTimeType<out A>, val functionName: String)
+internal data class BinaryOperationKey<out A, out B>(val f: CompileTimeType<out A>, val s: CompileTimeType<out B>, val functionName: String)
+internal data class UnaryOperationKey<out A>(val f: CompileTimeType<out A>, val functionName: String)
 
 fun ConstantValue<*>.isStandaloneOnlyConstant(): Boolean {
     return this is KClassValue || this is EnumValue || this is AnnotationValue || this is ArrayValue

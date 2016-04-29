@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.diagnostics.*
 sealed class RenderingContext {
     abstract operator fun <T> get(key: Key<T>): T
 
-    abstract class Key<T>(val name: String) {
+    abstract class Key<out T>(val name: String) {
         abstract fun compute(objectsToRender: Collection<Any?>): T
     }
 

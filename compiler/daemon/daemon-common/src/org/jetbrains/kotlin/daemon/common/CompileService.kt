@@ -38,7 +38,7 @@ interface CompileService : Remote {
 
     sealed class CallResult<out R> : Serializable {
 
-        class Good<R>(val result: R) : CallResult<R>() {
+        class Good<out R>(val result: R) : CallResult<R>() {
             override fun get(): R = result
             override fun equals(other: Any?): Boolean = other is Good<*> && this.result == other.result
             override fun hashCode(): Int = this.javaClass.hashCode() + (result?.hashCode() ?: 1)

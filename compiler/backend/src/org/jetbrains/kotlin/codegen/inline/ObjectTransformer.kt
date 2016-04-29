@@ -26,7 +26,7 @@ import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
 import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
-abstract class ObjectTransformer<T : TransformationInfo>(@JvmField val transformationInfo: T, val state: GenerationState) {
+abstract class ObjectTransformer<out T : TransformationInfo>(@JvmField val transformationInfo: T, val state: GenerationState) {
 
     abstract fun doTransform(parentRemapper: FieldRemapper): InlineResult
 

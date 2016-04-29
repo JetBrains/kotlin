@@ -86,7 +86,7 @@ open class LazyClassMemberScope(
         return result
     }
 
-    private interface MemberExtractor<T : CallableMemberDescriptor> {
+    private interface MemberExtractor<out T : CallableMemberDescriptor> {
         fun extract(extractFrom: KotlinType, name: Name): Collection<T>
     }
 
