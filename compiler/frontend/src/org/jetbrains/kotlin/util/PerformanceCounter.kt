@@ -83,11 +83,11 @@ abstract class PerformanceCounter protected constructor(val name: String) {
         }
     }
 
-    final fun increment() {
+    fun increment() {
         count++
     }
 
-    final fun <T> time(block: () -> T): T {
+    fun <T> time(block: () -> T): T {
         count++
         if (!enabled) return block()
 
@@ -105,7 +105,7 @@ abstract class PerformanceCounter protected constructor(val name: String) {
         totalTimeNanos = 0
     }
 
-    protected final fun incrementTime(delta: Long) {
+    protected fun incrementTime(delta: Long) {
         totalTimeNanos += delta
     }
 
