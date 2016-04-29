@@ -176,7 +176,7 @@ public class Emulator {
         System.out.println("Stopping emulator...");
         try {
             //added cause of missed test results
-            Thread.sleep(20000);
+            Thread.sleep(40000);
         }
         catch (InterruptedException e) {
             e.printStackTrace();

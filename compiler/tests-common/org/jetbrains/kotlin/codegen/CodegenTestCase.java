@@ -503,7 +503,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
     }
 
     @NotNull
-    private List<TestFile> createTestFiles(File file, String expectedText, final Ref<File> javaFilesDir) {
+    public static List<TestFile> createTestFiles(File file, String expectedText, final Ref<File> javaFilesDir) {
         return KotlinTestUtils.createTestFiles(file.getName(), expectedText, new KotlinTestUtils.TestFileFactoryNoModules<TestFile>() {
             @NotNull
             @Override
