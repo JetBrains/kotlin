@@ -131,6 +131,18 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("NamedParameters2.kt")
+    public void testNamedParameters2() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/NamedParameters2.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("NamedParameters3.kt")
+    public void testNamedParameters3() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/NamedParameters3.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("Packages.kt")
     public void testPackages() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/Packages.kt");

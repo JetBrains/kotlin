@@ -74,7 +74,6 @@ enum class ItemPriority {
     DEFAULT,
     IMPLEMENT,
     OVERRIDE,
-    NAMED_PARAMETER,
     STATIC_MEMBER_FROM_IMPORTS,
     STATIC_MEMBER
 }
