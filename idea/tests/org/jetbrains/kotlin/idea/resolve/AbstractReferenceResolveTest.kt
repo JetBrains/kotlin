@@ -151,7 +151,7 @@ abstract class AbstractReferenceResolveTest : KotlinLightPlatformCodeInsightFixt
 
         private fun replacePlaceholders(actualString: String): String {
             val replaced = PathUtil.toSystemIndependentName(actualString)
-                    .replace(PluginTestCaseBase.getTestDataPathBase(), "/<test dir>")
+                    .replace(PluginTestCaseBase.TEST_DATA_PROJECT_RELATIVE, "/<test dir>")
                     .replace("//", "/") // additional slashes to fix discrepancy between windows and unix
             if ("!/" in replaced) {
                 return replaced.replace(replaced.substringBefore("!/"), "<jar>")
