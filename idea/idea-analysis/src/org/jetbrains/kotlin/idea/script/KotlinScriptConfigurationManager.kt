@@ -19,9 +19,9 @@ package org.jetbrains.kotlin.idea.script
 import com.intellij.openapi.components.AbstractProjectComponent
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.StandardFileSystems
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.openapi.roots.ex.ProjectRootManagerEx
+import com.intellij.openapi.util.EmptyRunnable
+import com.intellij.openapi.vfs.*
 import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import com.intellij.psi.search.GlobalSearchScope
@@ -31,11 +31,14 @@ import org.jetbrains.kotlin.idea.caches.resolve.FileLibraryScope
 import org.jetbrains.kotlin.script.*
 import java.io.File
 import java.io.FileNotFoundException
+import java.io.InputStream
+import java.io.OutputStream
 
 @Suppress("unused") // project component
 class KotlinScriptConfigurationManager(private val project: Project,
                                        private val scriptDefinitionProvider: KotlinScriptDefinitionProvider,
-                                       private val scriptExtraImportsProvider: KotlinScriptExtraImportsProvider?
+                                       private val scriptExtraImportsProvider: KotlinScriptExtraImportsProvider?,
+                                       private val kotlinScriptDependenciesIndexableSetContributor: KotlinScriptDependenciesIndexableSetContributor?
 ) : AbstractProjectComponent(project) {
 
     private val kotlinEnvVars: Map<String, List<String>> by lazy { generateKotlinScriptClasspathEnvVarsForIdea(myProject) }
@@ -45,6 +48,7 @@ class KotlinScriptConfigurationManager(private val project: Project,
         val conn = myProject.messageBus.connect()
         conn.subscribe(VirtualFileManager.VFS_CHANGES, object : BulkFileListener.Adapter() {
             override fun after(events: List<VFileEvent>) {
+                var anyScriptExtraImportsChanged = false
                 var anyScriptDefinitionChanged = false
                 events.filter { it is VFileEvent }.forEach {
                     it.file?.let {
@@ -54,6 +58,9 @@ class KotlinScriptConfigurationManager(private val project: Project,
                         scriptExtraImportsProvider?.run {
                             if (isExtraImportsConfig(it)) {
                                 invalidateExtraImports(it)
+                                if (!anyScriptExtraImportsChanged) {
+                                    anyScriptExtraImportsChanged = true
+                                }
                             }
                         }
                     }
@@ -61,17 +68,23 @@ class KotlinScriptConfigurationManager(private val project: Project,
                 if (anyScriptDefinitionChanged) {
                     reloadScriptDefinitions()
                 }
+                if (anyScriptExtraImportsChanged) {
+                    ProjectRootManagerEx.getInstanceEx(project)?.makeRootsChange(EmptyRunnable.getInstance(), false, true)
+                }
             }
         })
     }
 
-    // TODO: cache
-    fun getScriptClasspath(file: VirtualFile): List<VirtualFile> =
-        getScriptClasspathRaw(file)
-                .mapNotNull { StandardFileSystems.local().findFileByPath(it) }
-                .distinct()
+    private val scriptClasspathCache = hashMapOf<VirtualFile, List<VirtualFile>>()
+    private var allScriptsClasspathCache: List<VirtualFile>? = null
 
-    // TODO: cache
+    fun getScriptClasspath(file: VirtualFile): List<VirtualFile> =
+            scriptClasspathCache.getOrPut(file, {
+                getScriptClasspathRaw(file)
+                        .mapNotNull { StandardFileSystems.local().findFileByPath(it) }
+                        .distinct()
+            })
+
     fun getAllScriptsClasspath(): List<VirtualFile> {
         fun<R> VirtualFile.vfsWalkFiles(onFile: (VirtualFile) -> List<R>?): List<R> {
             assert(isDirectory)
@@ -80,19 +93,26 @@ class KotlinScriptConfigurationManager(private val project: Project,
                 else -> onFile(it) ?: emptyList()
             } }
         }
-        return project.baseDir.vfsWalkFiles { getScriptClasspathRaw(it) }
-                .distinct()
-                .mapNotNull {
-                    if (File(it).isDirectory)
-                        StandardFileSystems.local()?.findFileByPath(it) ?: throw FileNotFoundException("Classpath entry points to a non-existent location: $it")
-                    else
-                        StandardFileSystems.jar()?.findFileByPath(it + URLUtil.JAR_SEPARATOR) ?: throw FileNotFoundException("Classpath entry points to a file that is not a JAR archive: $it")
+        if (allScriptsClasspathCache == null) {
+            allScriptsClasspathCache = project.baseDir.vfsWalkFiles { getScriptClasspathRaw(it) }
+                    .distinct()
+                    .mapNotNull {
+                        if (File(it).isDirectory)
+                            StandardFileSystems.local()?.findFileByPath(it) ?: throw FileNotFoundException("Classpath entry points to a non-existent location: $it")
+                        else
+                            StandardFileSystems.jar()?.findFileByPath(it + URLUtil.JAR_SEPARATOR) ?: throw FileNotFoundException("Classpath entry points to a file that is not a JAR archive: $it")
 
-                }
+                    }
+        }
+        return allScriptsClasspathCache!!
     }
 
-    fun getAllScriptsClasspathScope(): GlobalSearchScope =
-            GlobalSearchScope.union(getAllScriptsClasspath().map { FileLibraryScope(project, it) }.toTypedArray())
+    fun getAllScriptsClasspathScope(): GlobalSearchScope? {
+        return getAllScriptsClasspath().let { cp ->
+            if (cp.isEmpty()) null
+            else GlobalSearchScope.union(cp.map { FileLibraryScope(project, it) }.toTypedArray())
+        }
+    }
 
     private fun getScriptClasspathRaw(file: VirtualFile): List<String> =
             scriptDefinitionProvider.findScriptDefinition(file)?.getScriptDependenciesClasspath()?.let {
@@ -118,9 +138,10 @@ class KotlinScriptConfigurationManager(private val project: Project,
 
 class KotlinScriptDependenciesIndexableSetContributor : IndexableSetContributor() {
 
-    override fun getAdditionalProjectRootsToIndex(project: Project): Set<VirtualFile> =
-            super.getAdditionalProjectRootsToIndex(project) +
-                KotlinScriptConfigurationManager.getInstance(project).getAllScriptsClasspath()
+    override fun getAdditionalProjectRootsToIndex(project: Project): Set<VirtualFile> {
+        return super.getAdditionalProjectRootsToIndex(project) +
+            KotlinScriptConfigurationManager.getInstance(project).getAllScriptsClasspath()
+    }
 
     override fun getAdditionalRootsToIndex(): Set<VirtualFile> = emptySet()
 }
