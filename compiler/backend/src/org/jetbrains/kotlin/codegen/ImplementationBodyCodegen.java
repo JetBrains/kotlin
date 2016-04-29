@@ -158,7 +158,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
             if (!ktClass.hasModifier(KtTokens.OPEN_KEYWORD) && !isAbstract) {
                 // Light-class mode: Do not make enum classes final since PsiClass corresponding to enum is expected to be inheritable from
-                isFinal = !(ktClass.isEnum() && state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES);
+                isFinal = !(ktClass.isEnum() && state.getClassBuilderMode() != ClassBuilderMode.FULL);
             }
             isStatic = !ktClass.isInner();
         }
@@ -169,7 +169,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         int access = 0;
 
-        if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES && !DescriptorUtils.isTopLevelDeclaration(descriptor)) {
+        if (state.getClassBuilderMode() != ClassBuilderMode.FULL && !DescriptorUtils.isTopLevelDeclaration(descriptor)) {
             // ClassBuilderMode.LIGHT_CLASSES means we are generating light classes & looking at a nested or inner class
             // Light class generation is implemented so that Cls-classes only read bare code of classes,
             // without knowing whether these classes are inner or not (see ClassStubBuilder.EMPTY_STRATEGY)
@@ -265,7 +265,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private void writeEnclosingMethod() {
         // Do not emit enclosing method in "light-classes mode" since currently we generate local light classes as if they're top level
-        if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES) {
+        if (state.getClassBuilderMode() != ClassBuilderMode.FULL) {
             return;
         }
 

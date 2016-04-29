@@ -18,19 +18,19 @@ package org.jetbrains.kotlin.annotation
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAllTo
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAll
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import java.io.File
 
-class StubProducerExtension(val stubsOutputDir: File) : AnalysisCompletedHandlerExtension {
+class StubProducerExtension(val stubsOutputDir: File, val messageCollector: MessageCollector) : AnalysisCompletedHandlerExtension {
 
     override fun analysisCompleted(
             project: Project,
@@ -50,7 +50,7 @@ class StubProducerExtension(val stubsOutputDir: File) : AnalysisCompletedHandler
         KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION)
 
         if (!stubsOutputDir.exists()) stubsOutputDir.mkdirs()
-        generationState.factory.writeAllTo(stubsOutputDir)
+        generationState.factory.writeAll(stubsOutputDir, messageCollector)
 
         generationState.destroy()
         return AnalysisResult.success(BindingContext.EMPTY, module, shouldGenerateCode = false)
@@ -59,7 +59,7 @@ class StubProducerExtension(val stubsOutputDir: File) : AnalysisCompletedHandler
 
 private class StubClassBuilderFactory : ClassBuilderFactory {
 
-    override fun getClassBuilderMode() = ClassBuilderMode.LIGHT_CLASSES
+    override fun getClassBuilderMode() = ClassBuilderMode.LIGHT_CLASSES_WITH_METADATA
 
     override fun newClassBuilder(origin: JvmDeclarationOrigin) = AbstractClassBuilder.Concrete(
             ClassWriter(ClassWriter.COMPUTE_FRAMES or ClassWriter.COMPUTE_MAXS))

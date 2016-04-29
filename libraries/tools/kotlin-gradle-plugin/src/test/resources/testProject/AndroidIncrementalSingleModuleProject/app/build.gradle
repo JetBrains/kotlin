@@ -50,5 +50,6 @@ repositories {
 }
 
 dependencies {
+    compile 'com.android.support:appcompat-v7:23.1.1'
     compile "org.jetbrains.kotlin:kotlin-stdlib:0.1-SNAPSHOT"
 }

@@ -9,9 +9,16 @@ import kotlin.test.assertTrue
 
 class KotlinGradleIT: BaseGradleIT() {
 
+    companion object {
+        private const val GRADLE_VERSION = "2.10"
+    }
+
+    override fun defaultBuildOptions(): BuildOptions =
+            super.defaultBuildOptions().copy(withDaemon = true)
+
     @Test
     fun testCrossCompile() {
-        val project = Project("kotlinJavaProject", "1.6")
+        val project = Project("kotlinJavaProject", GRADLE_VERSION)
 
         project.build("compileDeployKotlin", "build") {
             assertSuccessful()
@@ -27,7 +34,7 @@ class KotlinGradleIT: BaseGradleIT() {
 
     @Test
     fun testKotlinOnlyCompile() {
-        val project = Project("kotlinProject", "1.6")
+        val project = Project("kotlinProject", GRADLE_VERSION)
 
         project.build("build") {
             assertSuccessful()
@@ -46,7 +53,7 @@ class KotlinGradleIT: BaseGradleIT() {
     // In order to stop daemon process, special exit task is used ( System.exit(0) ).
     @Test
     fun testKotlinOnlyDaemonMemory() {
-        val project = Project("kotlinProject", "2.4")
+        val project = Project("kotlinProject", GRADLE_VERSION)
         val VARIANT_CONSTANT = "ForTest"
         val userVariantArg = "-Duser.variant=$VARIANT_CONSTANT"
         val MEMORY_GROWTH_LIMIT_KB = 800
@@ -91,12 +98,12 @@ class KotlinGradleIT: BaseGradleIT() {
 
     @Test
     fun testLogLevelForceGC() {
-        val debugProject = Project("simpleProject", "1.12", minLogLevel = LogLevel.DEBUG)
+        val debugProject = Project("simpleProject", GRADLE_VERSION, minLogLevel = LogLevel.DEBUG)
         debugProject.build("build") {
             assertContains(CleanUpBuildListener.FORCE_SYSTEM_GC_MESSAGE)
         }
 
-        val infoProject = Project("simpleProject", "1.12", minLogLevel = LogLevel.INFO)
+        val infoProject = Project("simpleProject", GRADLE_VERSION, minLogLevel = LogLevel.INFO)
         infoProject.build("clean", "build") {
             assertNotContains(CleanUpBuildListener.FORCE_SYSTEM_GC_MESSAGE)
         }
@@ -104,7 +111,7 @@ class KotlinGradleIT: BaseGradleIT() {
 
     @Test
     fun testKotlinClasspath() {
-        Project("classpathTest", "1.6").build("build") {
+        Project("classpathTest", GRADLE_VERSION).build("build") {
             assertSuccessful()
             assertReportExists()
             assertContains(":compileKotlin", ":compileTestKotlin")
@@ -113,7 +120,7 @@ class KotlinGradleIT: BaseGradleIT() {
 
     @Test
     fun testInternalTest() {
-        Project("internalTest", "1.6").build("build") {
+        Project("internalTest", GRADLE_VERSION).build("build") {
             assertSuccessful()
             assertReportExists()
             assertContains(":compileKotlin", ":compileTestKotlin")
@@ -122,7 +129,7 @@ class KotlinGradleIT: BaseGradleIT() {
 
     @Test
     fun testMultiprojectPluginClasspath() {
-        Project("multiprojectClassPathTest", "1.6").build("build") {
+        Project("multiprojectClassPathTest", GRADLE_VERSION).build("build") {
             assertSuccessful()
             assertReportExists("subproject")
             assertContains(":subproject:compileKotlin", ":subproject:compileTestKotlin")
@@ -138,7 +145,7 @@ class KotlinGradleIT: BaseGradleIT() {
 
         val incremental = defaultBuildOptions().copy(incremental = true)
 
-        Project("multiprojectWithDependency", "1.6").build("assemble", options = incremental) {
+        Project("multiprojectWithDependency", GRADLE_VERSION).build("assemble", options = incremental) {
             assertSuccessful()
             assertReportExists("projA")
             assertContains(":projA:compileKotlin")
@@ -147,7 +154,7 @@ class KotlinGradleIT: BaseGradleIT() {
             assertContains(":projB:compileKotlin")
             assertNotContains("projB:compileKotlin UP-TO-DATE")
         }
-        Project("multiprojectWithDependency", "1.6").modify {
+        Project("multiprojectWithDependency", GRADLE_VERSION).modify {
             val oldSrc = File(this.projectDir, "projA/src/main/kotlin/a.kt")
             val newSrc = File(this.projectDir, "projA/src/main/kotlin/a.kt.new")
             assertTrue { oldSrc.exists() }
@@ -167,7 +174,7 @@ class KotlinGradleIT: BaseGradleIT() {
 
     @Test
     fun testKotlinInJavaRoot() {
-        Project("kotlinInJavaRoot", "1.6").build("build") {
+        Project("kotlinInJavaRoot", GRADLE_VERSION).build("build") {
             assertSuccessful()
             assertReportExists()
             assertContains(":compileKotlin", ":compileTestKotlin")
@@ -175,108 +182,8 @@ class KotlinGradleIT: BaseGradleIT() {
     }
 
     @Test
-    fun testKaptSimple() {
-        val project = Project("kaptSimple", "1.12")
-
-        project.build("build") {
-            assertSuccessful()
-            assertContains("kapt: Class file stubs are not used")
-            assertContains(":compileKotlin")
-            assertContains(":compileJava")
-            assertFileExists("build/tmp/kapt/main/wrappers/annotations.main.txt")
-            assertFileExists("build/generated/source/kapt/main/TestClassGenerated.java")
-            assertFileExists("build/classes/main/example/TestClass.class")
-            assertFileExists("build/classes/main/example/TestClassGenerated.class")
-        }
-
-        project.build("build") {
-            assertSuccessful()
-        }
-    }
-
-    @Test
-    fun testKaptStubs() {
-        val project = Project("kaptStubs", "1.12")
-
-        project.build("build") {
-            assertSuccessful()
-            assertContains("kapt: Using class file stubs")
-            assertContains(":compileKotlin")
-            assertContains(":compileJava")
-            assertFileExists("build/tmp/kapt/main/wrappers/annotations.main.txt")
-            assertFileExists("build/generated/source/kapt/main/TestClassGenerated.java")
-            assertFileExists("build/classes/main/example/TestClass.class")
-            assertFileExists("build/classes/main/example/TestClassGenerated.class")
-        }
-
-        project.build("build") {
-            assertSuccessful()
-        }
-    }
-
-    @Test
-    fun testKaptStubsIncrementalBuild() {
-        val project = Project("kaptStubs", "1.12")
-
-        project.build("build") {
-            assertSuccessful()
-
-            // Modify the Kotlin source file somehow
-            val someJavaFile = fileInWorkingDir("src/main/java/test.kt")
-            someJavaFile.appendText(" ")
-        }
-
-        project.build("build") {
-            assertSuccessful()
-            assertContains(":compileKotlin")
-            assertContains(":compileJava")
-            assertNotContains(":compileJava UP-TO-DATE")
-        }
-    }
-
-    @Test
-    fun testKaptArguments() {
-        Project("kaptArguments", "1.12").build("build") {
-            assertSuccessful()
-            assertContains("kapt: Using class file stubs")
-            assertContains(":compileKotlin")
-            assertContains(":compileJava")
-            assertFileExists("build/tmp/kapt/main/wrappers/annotations.main.txt")
-            assertFileExists("build/generated/source/kapt/main/TestClassCustomized.java")
-            assertFileExists("build/classes/main/example/TestClass.class")
-            assertFileExists("build/classes/main/example/TestClassCustomized.class")
-        }
-    }
-
-    @Test
-    fun testKaptInheritedAnnotations() {
-        Project("kaptInheritedAnnotations", "1.12").build("build") {
-            assertSuccessful()
-            assertFileExists("build/generated/source/kapt/main/TestClassGenerated.java")
-            assertFileExists("build/generated/source/kapt/main/AncestorClassGenerated.java")
-            assertFileExists("build/classes/main/example/TestClassGenerated.class")
-            assertFileExists("build/classes/main/example/AncestorClassGenerated.class")
-        }
-    }
-
-    @Test
-    fun testKaptOutputKotlinCode() {
-        Project("kaptOutputKotlinCode", "1.12").build("build") {
-            assertSuccessful()
-            assertContains("kapt: Using class file stubs")
-            assertContains(":compileKotlin")
-            assertContains(":compileJava")
-            assertFileExists("build/tmp/kapt/main/wrappers/annotations.main.txt")
-            assertFileExists("build/generated/source/kapt/main/TestClassCustomized.java")
-            assertFileExists("build/tmp/kapt/main/kotlinGenerated/TestClass.kt")
-            assertFileExists("build/classes/main/example/TestClass.class")
-            assertFileExists("build/classes/main/example/TestClassCustomized.class")
-        }
-    }
-
-    @Test
     fun testIncrementalPropertyFromLocalPropertiesFile() {
-        val project = Project("kotlinProject", "2.10")
+        val project = Project("kotlinProject", GRADLE_VERSION)
         project.setupWorkingDir()
 
         val localPropertyFile = File(project.projectDir, "local.properties")

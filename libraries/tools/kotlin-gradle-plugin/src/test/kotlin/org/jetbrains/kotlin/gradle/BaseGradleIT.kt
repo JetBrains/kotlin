@@ -82,8 +82,16 @@ abstract class BaseGradleIT {
             copyDirRecursively(File(resourcesRootFile, "GradleWrapper-$wrapperVersion"), projectDir)
         }
 
-        fun relativePaths(files: Iterable<File>): List<String> =
+        fun relativize(files: Iterable<File>): List<String> =
                 files.map { it.relativeTo(projectDir).path }
+
+        fun relativize(vararg files: File): List<String> =
+                files.map { it.relativeTo(projectDir).path }
+
+        fun relativizeToSubproject(subproject: String, vararg files: File): List<String> {
+            val subprojectSir = File(projectDir, subproject)
+            return files.map { it.relativeTo(subprojectSir).path }
+        }
     }
 
     class CompiledProject(val project: Project, val output: String, val resultCode: Int) {
@@ -127,14 +135,14 @@ abstract class BaseGradleIT {
 
     fun CompiledProject.assertContains(vararg expected: String): CompiledProject {
         for (str in expected) {
-            assertTrue(output.contains(str.normalize()), "Should contain '$str', actual output: $output")
+            assertTrue(output.contains(str.normalize()), "Output should contain '$str'")
         }
         return this
     }
 
     fun CompiledProject.assertNotContains(vararg expected: String): CompiledProject {
         for (str in expected) {
-            assertFalse(output.contains(str.normalize()), "Should not contain '$str', actual output: $output")
+            assertFalse(output.contains(str.normalize()), "Output should not contain '$str'")
         }
         return this
     }

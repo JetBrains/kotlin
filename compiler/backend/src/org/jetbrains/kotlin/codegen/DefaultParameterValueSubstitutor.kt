@@ -134,7 +134,7 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
             annotationCodegen.genAnnotations(it.value, signature.valueParameters[it.index].asmType)
         }
 
-        if (state.classBuilderMode == ClassBuilderMode.LIGHT_CLASSES) {
+        if (state.classBuilderMode != ClassBuilderMode.FULL) {
             FunctionCodegen.generateLocalVariablesForParameters(mv, signature, null, Label(), Label(), remainingParameters, isStatic)
             mv.visitEnd()
             return
