@@ -33,7 +33,7 @@ class AddJvmOverloadsIntention : SelfTargetingIntention<KtModifierListOwner>(
 ), LowPriorityAction {
 
     override fun isApplicableTo(element: KtModifierListOwner, caretOffset: Int): Boolean {
-        val (targetName, parameterList) = when (element) {
+        val (targetName, parameters) = when (element) {
             is KtNamedFunction -> {
                 val funKeyword = element.funKeyword ?: return false
                 val valueParameterList = element.valueParameterList ?: return false
@@ -41,7 +41,7 @@ class AddJvmOverloadsIntention : SelfTargetingIntention<KtModifierListOwner>(
                     return false
                 }
 
-                "function '${element.name}'" to valueParameterList
+                "function '${element.name}'" to valueParameterList.parameters
             }
             is KtSecondaryConstructor -> {
                 val constructorKeyword = element.getConstructorKeyword()
@@ -50,17 +50,25 @@ class AddJvmOverloadsIntention : SelfTargetingIntention<KtModifierListOwner>(
                     return false
                 }
 
-                "secondary constructor" to valueParameterList
+                "secondary constructor" to valueParameterList.parameters
             }
-            is KtPrimaryConstructor -> "primary constructor" to element.valueParameterList
+            is KtPrimaryConstructor -> {
+                val parameters = (element.valueParameterList ?: return false).parameters
+
+                // For primary constructors with all default values, a zero-arg constructor is generated anyway. If there's only one
+                // parameter and it has a default value, the bytecode with and without @JvmOverloads is exactly the same.
+                if (parameters.singleOrNull()?.hasDefaultValue() == true) {
+                    return false
+                }
+
+                "primary constructor" to parameters
+            }
             else -> return false
         }
-        val parameters = parameterList?.parameters ?: return false
 
         text = "Add '@JvmOverloads' annotation to $targetName"
 
         return !ProjectStructureUtil.isJsKotlinModule(element.getContainingKtFile())
-               && parameters.size > 1
                && parameters.any { it.hasDefaultValue() }
                && element.findAnnotation(annotationFqName) == null
     }

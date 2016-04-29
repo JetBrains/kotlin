@@ -1,5 +1,5 @@
 // WITH_RUNTIME
 // INTENTION_TEXT: "Add '@JvmOverloads' annotation to function 'foo'"
 
-fun foo(a: String = ""<caret>, b: Int) {
+fun foo(a: String = ""<caret>) {
 }
