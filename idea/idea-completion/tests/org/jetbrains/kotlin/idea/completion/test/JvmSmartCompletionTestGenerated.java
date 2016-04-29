@@ -137,6 +137,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
 
+    @TestMetadata("EqOperatorPlatformType.kt")
+    public void testEqOperatorPlatformType() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/EqOperatorPlatformType.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ExtensionFunctionTypeVariables.kt")
     public void testExtensionFunctionTypeVariables() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/ExtensionFunctionTypeVariables.kt");
