@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.psi.KtTypeReference;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.types.DynamicTypesKt;
 import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.TypeIntersector;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 import static org.jetbrains.kotlin.builtins.FunctionTypesKt.isFunctionTypeOrSubtype;
@@ -157,7 +156,13 @@ public final class PatternTranslator extends AbstractTranslator {
                 return getIsTypeCheckCallableForReifiedType(typeParameterDescriptor);
             }
 
-            return doGetIsTypeCheckCallable(TypeIntersector.getUpperBoundsAsType(typeParameterDescriptor));
+            JsExpression result = null;
+            for (KotlinType upperBound : typeParameterDescriptor.getUpperBounds()) {
+                JsExpression next = doGetIsTypeCheckCallable(upperBound);
+                result = result != null ? namer().andPredicate(result, next) : next;
+            }
+            assert result != null : "KotlinType is expected to return at least one upper bound: " + type;
+            return result;
         }
 
         JsNameRef typeName = getClassNameReference(type);
