@@ -156,7 +156,7 @@ fun Collection<FuzzyType>.matchExpectedInfo(expectedInfo: ExpectedInfo): Expecte
     return ExpectedInfoMatch.noMatch
 }
 
-fun FuzzyType.classifyExpectedInfo(expectedInfo: ExpectedInfo) = listOf(this).matchExpectedInfo(expectedInfo)
+fun FuzzyType.matchExpectedInfo(expectedInfo: ExpectedInfo) = listOf(this).matchExpectedInfo(expectedInfo)
 
 fun<TDescriptor: DeclarationDescriptor?> MutableCollection<LookupElement>.addLookupElements(
         descriptor: TDescriptor,
@@ -290,7 +290,7 @@ fun DeclarationDescriptor.fuzzyTypesForSmartCompletion(
     }
 
     if (this is CallableDescriptor) {
-        var returnType = fuzzyReturnType() ?: return emptyList()
+        val returnType = fuzzyReturnType() ?: return emptyList()
         // skip declarations of type Nothing or of generic parameter type which has no real bounds
         if (returnType.type.isNothing() || returnType.isAlmostEverything()) return emptyList()
 
