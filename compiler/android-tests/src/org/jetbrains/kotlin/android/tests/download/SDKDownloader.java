@@ -38,7 +38,8 @@ public class SDKDownloader {
 
     private final PathManager pathManager;
 
-    private static final String PLATFORM_TOOLS = "23.1.0";
+    //NOTE: PLATFORM_TOOLS 23.1.0 requires only 64 bit build agents
+    private static final String PLATFORM_TOOLS = "23.0.1";
     private static final String SDK_TOOLS = "25.1.1";
     public static final String BUILD_TOOLS = "23.0.3";
     private static final int ANDROID_VERSION = 16;
