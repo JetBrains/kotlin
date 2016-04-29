@@ -127,6 +127,8 @@ package uninitialized_reassigned_variables {
         protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: uninitialized_reassigned_variables.ProtocolState): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+        public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<uninitialized_reassigned_variables.ProtocolState!>!
         public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public abstract fun signal(): uninitialized_reassigned_variables.ProtocolState
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

@@ -15,6 +15,8 @@ public final enum class Enum : kotlin.Enum<test.Enum> {
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Enum): kotlin.Int
     public final fun f(): kotlin.Int
+    protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<test.Enum!>!
 
     public final inner class Inner {
         /*primary*/ public constructor Inner()

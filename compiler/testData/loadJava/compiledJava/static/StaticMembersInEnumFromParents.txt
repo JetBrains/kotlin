@@ -22,6 +22,8 @@ public/*package*/ final enum class StaticMembersInEnum : kotlin.Enum<test.Static
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.StaticMembersInEnum!): kotlin.Int
+    protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<test.StaticMembersInEnum!>!
 
     // Static members
     public const final override /*1*/ /*fake_override*/ val a: kotlin.Int
