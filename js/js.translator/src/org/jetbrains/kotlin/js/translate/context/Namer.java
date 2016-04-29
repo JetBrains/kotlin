@@ -34,6 +34,8 @@ import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static com.google.dart.compiler.backend.js.ast.JsScopesKt.JsObjectScope;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.fqnWithoutSideEffects;
@@ -404,8 +406,13 @@ public final class Namer {
     }
 
     @NotNull
+    public JsExpression andPredicate(@NotNull JsExpression a, @NotNull JsExpression b) {
+        return invokeFunctionAndSetTypeCheckMetadata("andPredicate", Arrays.asList(a, b), TypeCheck.AND_PREDICATE);
+    }
+
+    @NotNull
     public JsExpression isAny() {
-        return invokeFunctionAndSetTypeCheckMetadata("isAny", null, TypeCheck.IS_ANY);
+        return invokeFunctionAndSetTypeCheckMetadata("isAny", Collections.<JsExpression>emptyList(), TypeCheck.IS_ANY);
     }
 
     @NotNull
@@ -424,12 +431,18 @@ public final class Namer {
             @Nullable JsExpression argument,
             @NotNull TypeCheck metadata
     ) {
+        List<JsExpression> arguments = argument != null ? Collections.singletonList(argument) : Collections.<JsExpression>emptyList();
+        return invokeFunctionAndSetTypeCheckMetadata(functionName, arguments, metadata);
+    }
+
+    @NotNull
+    private JsExpression invokeFunctionAndSetTypeCheckMetadata(
+            @NotNull String functionName,
+            @NotNull List<JsExpression> arguments,
+            @NotNull TypeCheck metadata
+    ) {
         JsInvocation invocation = new JsInvocation(kotlin(functionName));
-
-        if (argument != null) {
-            invocation.getArguments().add(argument);
-        }
-
+        invocation.getArguments().addAll(arguments);
         MetadataProperties.setTypeCheck(invocation, metadata);
         MetadataProperties.setSideEffects(invocation, false);
         return invocation;

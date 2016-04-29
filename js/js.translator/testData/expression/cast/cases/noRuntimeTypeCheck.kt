@@ -1,6 +1,6 @@
 package foo
 
-// CHECK_METHOD_NOT_CALLED_IN_SCOPE: scope=box function=isType
+// CHECK_NOT_CALLED_IN_SCOPE: scope=box function=isType
 
 open class A()
 
