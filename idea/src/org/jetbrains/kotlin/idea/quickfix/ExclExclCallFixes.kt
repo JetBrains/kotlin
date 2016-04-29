@@ -86,7 +86,7 @@ class AddExclExclCallFix(val psiElement: PsiElement) : ExclExclCallFix() {
         modifiedExpression.replace(exclExclExpression)
     }
 
-    protected fun getExpressionForIntroduceCall(): KtExpression? {
+    private fun getExpressionForIntroduceCall(): KtExpression? {
         if (psiElement is LeafPsiElement && psiElement.elementType == KtTokens.DOT) {
             val sibling = psiElement.prevSibling
             if (sibling is KtExpression) {

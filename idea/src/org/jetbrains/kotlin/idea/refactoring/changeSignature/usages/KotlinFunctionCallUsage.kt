@@ -107,7 +107,7 @@ class KotlinFunctionCallUsage(
             return resolvedCall?.resultingDescriptor is JavaMethodDescriptor
         }
 
-    protected fun changeNameIfNeeded(changeInfo: KotlinChangeInfo, element: KtCallElement) {
+    private fun changeNameIfNeeded(changeInfo: KotlinChangeInfo, element: KtCallElement) {
         if (!changeInfo.isNameChanged) return
 
         val callee = element.calleeExpression

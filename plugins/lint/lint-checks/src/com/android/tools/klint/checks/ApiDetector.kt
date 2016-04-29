@@ -188,7 +188,7 @@ open class ApiDetector : Detector(), UastScanner {
                    || fqName.startsWith("dalvik.")
         }
 
-        protected fun getMinSdk(context: UastAndroidContext): Int {
+        private fun getMinSdk(context: UastAndroidContext): Int {
             if (mMinApi == -1) {
                 val minSdkVersion = context.lintContext.mainProject.minSdkVersion
                 mMinApi = minSdkVersion.featureLevel
