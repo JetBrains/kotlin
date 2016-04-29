@@ -127,3 +127,12 @@ class UsedInObjectLiteral(val x: Int) {
         fun bar() = x
     }
 }
+// NO
+class UsedInLocalFunction(val x: Int) {
+    init {
+        fun local() {
+            val y = x
+        }
+        local()
+    }
+}
