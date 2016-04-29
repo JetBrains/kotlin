@@ -201,7 +201,7 @@ class SmartCompletionSession(
 
     override fun createSorter(): CompletionSorter {
         return super.createSorter()
-                .weighBefore(KindWeigher.toString(), NameSimilarityWeigher, SmartCompletionPriorityWeigher)
+                .weighBefore(KindWeigher.toString(), NameSimilarityWeigher, SmartCompletionPriorityWeigher, CallableReferenceWeigher(callTypeAndReceiver.callType))
     }
 
     override fun createLookupElementFactory(contextVariablesProvider: ContextVariablesProvider): LookupElementFactory {
