@@ -95,7 +95,7 @@ public class JvmRuntimeTypes {
     }
 
     @NotNull
-    public Collection<KotlinType> getSupertypesForFunctionReference(@NotNull FunctionDescriptor descriptor) {
+    public Collection<KotlinType> getSupertypesForFunctionReference(@NotNull FunctionDescriptor descriptor, boolean isBound) {
         ReceiverParameterDescriptor extensionReceiver = descriptor.getExtensionReceiverParameter();
         ReceiverParameterDescriptor dispatchReceiver = descriptor.getDispatchReceiverParameter();
 
@@ -106,7 +106,7 @@ public class JvmRuntimeTypes {
         KotlinType functionType = FunctionTypeResolveUtilsKt.createFunctionType(
                 DescriptorUtilsKt.getBuiltIns(descriptor),
                 Annotations.Companion.getEMPTY(),
-                receiverType,
+                isBound ? null : receiverType,
                 ExpressionTypingUtils.getValueParametersTypes(descriptor.getValueParameters()),
                 descriptor.getReturnType()
         );
@@ -115,13 +115,14 @@ public class JvmRuntimeTypes {
     }
 
     @NotNull
-    public KotlinType getSupertypeForPropertyReference(@NotNull VariableDescriptorWithAccessors descriptor) {
+    public KotlinType getSupertypeForPropertyReference(@NotNull VariableDescriptorWithAccessors descriptor, boolean isBound) {
         if (descriptor instanceof LocalVariableDescriptor) {
             return (descriptor.isVar() ? mutableLocalVariableReference : localVariableReference).getDefaultType();
         }
 
         int arity = (descriptor.getExtensionReceiverParameter() != null ? 1 : 0) +
-                    (descriptor.getDispatchReceiverParameter() != null ? 1 : 0);
+                    (descriptor.getDispatchReceiverParameter() != null ? 1 : 0) -
+                    (isBound ? 1 : 0);
         return (descriptor.isVar() ? mutablePropertyReferences : propertyReferences).get(arity).getDefaultType();
     }
 }

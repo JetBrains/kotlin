@@ -490,16 +490,26 @@ public class InlineCodegen extends CallGenerator {
                          : state.getTypeMapper().mapImplementationOwner(descriptor).getInternalName()
         );
 
-        FunctionGenerationStrategy strategy =
-                expression instanceof KtCallableReferenceExpression ?
-                new FunctionReferenceGenerationStrategy(
-                        state,
-                        descriptor,
-                        CallUtilKt.getResolvedCallWithAssert(
-                                ((KtCallableReferenceExpression) expression).getCallableReference(), codegen.getBindingContext()
-                        )
-                ) :
-                new FunctionGenerationStrategy.FunctionDefault(state, descriptor, (KtDeclarationWithBody) expression);
+        FunctionGenerationStrategy strategy;
+        if (expression instanceof KtCallableReferenceExpression) {
+            KtCallableReferenceExpression callableReferenceExpression = (KtCallableReferenceExpression) expression;
+            KtExpression receiverExpression = callableReferenceExpression.getReceiverExpression();
+            StackValue receiverValue =
+                    receiverExpression != null && codegen.getBindingContext().getType(receiverExpression) != null
+                    ? codegen.gen(receiverExpression)
+                    : null;
+
+            strategy = new FunctionReferenceGenerationStrategy(
+                    state,
+                    descriptor,
+                    CallUtilKt.getResolvedCallWithAssert(callableReferenceExpression.getCallableReference(), codegen.getBindingContext()),
+                    receiverValue != null ? receiverValue.type : null,
+                    receiverValue
+            );
+        }
+        else {
+            strategy = new FunctionGenerationStrategy.FunctionDefault(state, descriptor, (KtDeclarationWithBody) expression);
+        }
 
         FunctionCodegen.generateMethodBody(adapter, descriptor, context, jvmMethodSignature, strategy, parentCodegen);
 
@@ -735,7 +745,7 @@ public class InlineCodegen extends CallGenerator {
     private void putClosureParametersOnStack() {
         for (LambdaInfo next : expressionMap.values()) {
             activeLambda = next;
-            codegen.pushClosureOnStack(next.getClassDescriptor(), true, this);
+            codegen.pushClosureOnStack(next.getClassDescriptor(), true, this, /* functionReferenceReceiver = */ null);
         }
         activeLambda = null;
     }

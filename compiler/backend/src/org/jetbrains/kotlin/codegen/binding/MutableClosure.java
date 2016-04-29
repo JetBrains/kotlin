@@ -33,11 +33,12 @@ public final class MutableClosure implements CalculatedClosure {
     private final CallableDescriptor enclosingFunWithReceiverDescriptor;
 
     private boolean captureThis;
-    private boolean captureReceiver;
+    private boolean captureEnclosingReceiver;
 
     private Map<DeclarationDescriptor, EnclosedValueDescriptor> captureVariables;
     private Map<DeclarationDescriptor, Integer> parameterOffsetInConstructor;
     private List<Pair<String, Type>> recordedFields;
+    private KotlinType captureReceiverType;
 
     MutableClosure(@NotNull ClassDescriptor classDescriptor, @Nullable ClassDescriptor enclosingClass) {
         this.enclosingClass = enclosingClass;
@@ -72,7 +73,11 @@ public final class MutableClosure implements CalculatedClosure {
 
     @Override
     public KotlinType getCaptureReceiverType() {
-        if (captureReceiver) {
+        if (captureReceiverType != null) {
+            return captureReceiverType;
+        }
+
+        if (captureEnclosingReceiver) {
             ReceiverParameterDescriptor parameter = getEnclosingReceiverDescriptor();
             assert parameter != null : "Receiver parameter should exist in " + enclosingFunWithReceiverDescriptor;
             return parameter.getType();
@@ -85,13 +90,17 @@ public final class MutableClosure implements CalculatedClosure {
         if (enclosingFunWithReceiverDescriptor == null) {
             throw new IllegalStateException("Extension receiver parameter should exist");
         }
-        this.captureReceiver = true;
+        this.captureEnclosingReceiver = true;
     }
 
     @NotNull
     @Override
     public Map<DeclarationDescriptor, EnclosedValueDescriptor> getCaptureVariables() {
         return captureVariables != null ? captureVariables : Collections.<DeclarationDescriptor, EnclosedValueDescriptor>emptyMap();
+    }
+
+    public void setCaptureReceiverType(@NotNull KotlinType type) {
+        this.captureReceiverType = type;
     }
 
     @NotNull

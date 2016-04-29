@@ -139,7 +139,8 @@ public class CodegenBinding {
         return classDescriptor.isInner() || !(classDescriptor.getContainingDeclaration() instanceof ClassDescriptor);
     }
 
-    static void recordClosure(
+    @NotNull
+    static MutableClosure recordClosure(
             @NotNull BindingTrace trace,
             @NotNull ClassDescriptor classDescriptor,
             @Nullable ClassDescriptor enclosing,
@@ -164,6 +165,8 @@ public class CodegenBinding {
         if (enclosing != null && !JvmCodegenUtil.isArgumentWhichWillBeInlined(trace.getBindingContext(), classDescriptor)) {
             recordInnerClass(trace, enclosing, classDescriptor);
         }
+
+        return closure;
     }
 
     private static void recordInnerClass(
