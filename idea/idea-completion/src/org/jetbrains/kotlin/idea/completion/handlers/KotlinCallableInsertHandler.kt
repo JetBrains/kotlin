@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
-import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -46,9 +45,7 @@ abstract class KotlinCallableInsertHandler(val callType: CallType<*>) : BaseDecl
             val descriptor = o.descriptor as? CallableDescriptor ?: return
             if (descriptor.extensionReceiverParameter != null || callType == CallType.CALLABLE_REFERENCE) {
                 if (DescriptorUtils.isTopLevelDeclaration(descriptor)) {
-                    runWriteAction {
-                        ImportInsertHelper.getInstance(context.project).importDescriptor(file, descriptor)
-                    }
+                    ImportInsertHelper.getInstance(context.project).importDescriptor(file, descriptor)
                 }
             }
             else if (callType == CallType.DEFAULT) {
