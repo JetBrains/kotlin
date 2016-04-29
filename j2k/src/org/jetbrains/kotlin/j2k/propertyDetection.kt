@@ -329,7 +329,7 @@ private class PropertyDetector(
     private fun dropPropertiesConflictingWithFields(memberToPropertyInfo: MutableMap<PsiMember, PropertyInfo>) {
         val fieldsByName = psiClass.fields.associateBy { it.name } //TODO: fields from base
 
-        fun isPropertyNameProhibited(name: String): Boolean {
+        fun isPropertyNameInUse(name: String): Boolean {
             val field = fieldsByName[name] ?: return false
             return !memberToPropertyInfo.containsKey(field)
         }
@@ -338,7 +338,7 @@ private class PropertyDetector(
         do {
             repeatLoop = false
             for (propertyInfo in memberToPropertyInfo.values.distinct()) {
-                if (isPropertyNameProhibited(propertyInfo.name)) {
+                if (isPropertyNameInUse(propertyInfo.name)) {
                     //TODO: what about overrides in this case?
                     memberToPropertyInfo.dropProperty(propertyInfo)
 
