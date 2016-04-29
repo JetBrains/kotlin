@@ -55,6 +55,8 @@ public class SpecialFiles {
         excludedFiles.add("recursiveInnerAnonymousObject.kt"); // Cannot change package name
         excludedFiles.add("approximateCapturedTypes.kt"); // Cannot change package name
         excludedFiles.add("classForEnumEntry.kt"); // Cannot change package name
+        excludedFiles.add("kt10143.kt"); // Cannot change package name
+        excludedFiles.add("internalTopLevelOtherPackage.kt"); // Cannot change package name
 
         excludedFiles.add("kt684.kt"); // StackOverflow with StringBuilder (escape())
 
@@ -73,14 +75,13 @@ public class SpecialFiles {
 
         excludedFiles.add("smap"); // Line numbers
 
-        // TODO: fix import processing
-        excludedFiles.add("useImportedMemberFromCompanion.kt");
-        excludedFiles.add("useImportedMember.kt");
-        excludedFiles.add("importStaticMemberFromObject.kt");
         //TODO: fix KT-12127
         excludedFiles.add("genericProperty.kt");
 
         excludedFiles.add("external"); //native methods
+
+        excludedFiles.add("enclosingInfo"); //  Wrong enclosing info after package renaming
+        excludedFiles.add("signature"); //  Wrong signature after package renaming
     }
 
     private SpecialFiles() {

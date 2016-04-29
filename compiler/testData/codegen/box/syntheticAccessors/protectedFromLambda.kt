@@ -1,12 +1,13 @@
 // FILE: A.kt
 
 package first
+import second.C
 
 open class A {
     protected open fun test(): String = "FAIL (A)"
 }
 
-fun box() = second.C().value()
+fun box() = C().value()
 
 // FILE: B.kt
 

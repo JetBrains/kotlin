@@ -28,5 +28,5 @@ fun box(): String {
 
     foo2()().run()
 
-    return test.sideEffects
+    return sideEffects
 }
