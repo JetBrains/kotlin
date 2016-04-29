@@ -165,7 +165,7 @@ abstract class CallCase<in I : CallInfo> {
 
     protected open fun I.bothReceivers(): JsExpression = unsupported()
 
-    final fun translate(callInfo: I): JsExpression {
+    fun translate(callInfo: I): JsExpression {
         val result = if (callInfo.dispatchReceiver == null) {
             if (callInfo.extensionReceiver == null)
                 callInfo.noReceivers()
