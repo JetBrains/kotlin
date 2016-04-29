@@ -36,7 +36,7 @@ fun File.withReplacedExtensionOrNull(oldExt: String, newExt: String): File? {
  * If this file matches the [base] directory an empty path is returned.
  * If this file does not belong to the [base] directory, it is returned unchanged.
  */
-public fun File.descendantRelativeTo(base: File): File {
+fun File.descendantRelativeTo(base: File): File {
     val prefix = base.canonicalPath
     val answer = this.canonicalPath
     return if (answer.startsWith(prefix)) {
