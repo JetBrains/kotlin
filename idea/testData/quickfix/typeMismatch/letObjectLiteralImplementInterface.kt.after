@@ -1,0 +1,9 @@
+// "Let the anonymous object implement interface 'Runnable'" "true"
+
+fun foo(r: Runnable) {}
+
+fun bar() {
+    foo(object: Runnable {})
+}
+
+interface Runnable
