@@ -84,7 +84,7 @@ class StaticMembers(
             val matcher: (ExpectedInfo) -> ExpectedInfoMatch
             if (descriptor is CallableDescriptor) {
                 val returnType = descriptor.fuzzyReturnType() ?: return
-                matcher = { expectedInfo -> returnType.classifyExpectedInfo(expectedInfo) }
+                matcher = { expectedInfo -> returnType.matchExpectedInfo(expectedInfo) }
             }
             else if (DescriptorUtils.isEnumEntry(descriptor) && !enumEntriesToSkip.contains(descriptor)) {
                 matcher = { ExpectedInfoMatch.match(TypeSubstitutor.EMPTY) } /* we do not need to check type of enum entry because it's taken from proper enum */
