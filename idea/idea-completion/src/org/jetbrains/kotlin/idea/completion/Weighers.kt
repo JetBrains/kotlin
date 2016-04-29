@@ -31,10 +31,10 @@ import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.core.completion.PackageLookupObject
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.CallType
-import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.toFuzzyType
 import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.findOriginalTopMostOverriddenDescriptors
+import org.jetbrains.kotlin.types.typeUtil.isNothing
 
 object PriorityWeigher : LookupElementWeigher("kotlin.priority") {
     override fun weigh(element: LookupElement, context: WeighingContext)
@@ -297,5 +297,15 @@ object PreferLessParametersWeigher : LookupElementWeigher("kotlin.preferLessPara
         val lookupObject = element.`object` as? DeclarationLookupObject ?: return null
         val function = lookupObject.descriptor as? FunctionDescriptor ?: return null
         return function.valueParameters.size
+    }
+}
+
+class CallableReferenceWeigher(private val callType: CallType<*>) : LookupElementWeigher("kotlin.callableReference") {
+    override fun weigh(element: LookupElement): Int? {
+        if (callType == CallType.CALLABLE_REFERENCE || element.getUserData(SMART_COMPLETION_ITEM_PRIORITY_KEY) == SmartCompletionItemPriority.CALLABLE_REFERENCE) {
+            val descriptor = (element.`object` as? DeclarationLookupObject)?.descriptor as? CallableDescriptor
+            return if (descriptor?.returnType?.isNothing() == true) 1 else 0
+        }
+        return null
     }
 }
