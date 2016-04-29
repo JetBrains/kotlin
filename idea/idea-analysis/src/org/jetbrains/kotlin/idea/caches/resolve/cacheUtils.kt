@@ -20,7 +20,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.CachedValueProvider
 
-class SynchronizedCachedValue<V>(project: Project, provider: () -> CachedValueProvider.Result<V>, trackValue: Boolean = true) {
+class SynchronizedCachedValue<out V>(project: Project, provider: () -> CachedValueProvider.Result<V>, trackValue: Boolean = true) {
     private val cachedValue = CachedValuesManager.getManager(project).createCachedValue(
             provider,
             trackValue

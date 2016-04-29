@@ -136,7 +136,7 @@ object NonExpansiveInheritanceRestrictionChecker {
         }
     }
 
-    private data class ExpansiveEdge<T>(val from: T, val to: T)
+    private data class ExpansiveEdge<out T>(val from: T, val to: T)
 
     private interface  Graph<T> {
         fun getNeighbors(node: T): Collection<T>

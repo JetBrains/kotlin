@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.utils.keysToMap
 
 data class DecompiledText(val text: String, val index: DecompiledTextIndex)
 
-interface DecompiledTextIndexer<T: Any> {
+interface DecompiledTextIndexer<out T: Any> {
     fun indexDescriptor(descriptor: DeclarationDescriptor): Collection<T>
 }
 

@@ -347,7 +347,7 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any, 
         }
     }
 
-    private class Storage<A, C>(
+    private class Storage<out A, out C>(
             val memberAnnotations: Map<MemberSignature, List<A>>,
             val propertyConstants: Map<MemberSignature, C>
     )

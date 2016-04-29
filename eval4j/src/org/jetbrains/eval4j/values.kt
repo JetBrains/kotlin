@@ -53,7 +53,7 @@ class NotInitialized(override val asmType: Type): Value {
     override fun toString() = "NotInitialized: $asmType"
 }
 
-abstract class AbstractValueBase<V>(
+abstract class AbstractValueBase<out V>(
         override val asmType: Type
 ) : Value {
     override val valid = true

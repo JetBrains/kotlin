@@ -197,7 +197,7 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
         return visitor.getDescriptorsToImport()
     }
 
-    private abstract class ShorteningVisitor<T : KtElement>(
+    private abstract class ShorteningVisitor<in T : KtElement>(
             protected val file: KtFile,
             protected val elementFilter: (PsiElement) -> FilterResult,
             protected val failedToImportDescriptors: Set<DeclarationDescriptor>

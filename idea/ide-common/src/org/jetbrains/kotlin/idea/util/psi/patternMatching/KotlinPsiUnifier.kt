@@ -544,7 +544,7 @@ class KotlinPsiUnifier(
                 decl2: KtClassOrObject,
                 desc1: ClassDescriptor,
                 desc2: ClassDescriptor): Status? {
-            class OrderInfo<T>(
+            class OrderInfo<out T>(
                     val orderSensitive: List<T>,
                     val orderInsensitive: List<T>
             )
