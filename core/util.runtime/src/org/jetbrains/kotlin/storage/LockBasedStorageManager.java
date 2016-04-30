@@ -111,7 +111,7 @@ public class LockBasedStorageManager implements StorageManager {
             @NotNull Function1<? super K, ? extends V> compute,
             @NotNull ConcurrentMap<K, Object> map
     ) {
-        return new MapBasedMemoizedFunctionToNotNull<K, V>(map, compute);
+        return new MapBasedMemoizedFunctionToNotNull<K, V>(this, map, compute);
     }
 
     @NotNull
@@ -126,13 +126,13 @@ public class LockBasedStorageManager implements StorageManager {
             @NotNull Function1<? super K, ? extends V> compute,
             @NotNull ConcurrentMap<K, Object> map
     ) {
-        return new MapBasedMemoizedFunction<K, V>(map, compute);
+        return new MapBasedMemoizedFunction<K, V>(this, map, compute);
     }
 
     @NotNull
     @Override
     public <T> NotNullLazyValue<T> createLazyValue(@NotNull Function0<? extends T> computable) {
-        return new LockBasedNotNullLazyValue<T>(computable);
+        return new LockBasedNotNullLazyValue<T>(this, computable);
     }
 
     @NotNull
@@ -140,7 +140,7 @@ public class LockBasedStorageManager implements StorageManager {
     public <T> NotNullLazyValue<T> createRecursionTolerantLazyValue(
             @NotNull Function0<? extends T> computable, @NotNull final T onRecursiveCall
     ) {
-        return new LockBasedNotNullLazyValue<T>(computable) {
+        return new LockBasedNotNullLazyValue<T>(this, computable) {
             @NotNull
             @Override
             protected RecursionDetectedResult<T> recursionDetected(boolean firstTime) {
@@ -156,7 +156,7 @@ public class LockBasedStorageManager implements StorageManager {
             final Function1<? super Boolean, ? extends T> onRecursiveCall,
             @NotNull final Function1<? super T, Unit> postCompute
     ) {
-        return new LockBasedNotNullLazyValue<T>(computable) {
+        return new LockBasedNotNullLazyValue<T>(this, computable) {
             @NotNull
             @Override
             protected RecursionDetectedResult<T> recursionDetected(boolean firstTime) {
@@ -176,13 +176,13 @@ public class LockBasedStorageManager implements StorageManager {
     @NotNull
     @Override
     public <T> NullableLazyValue<T> createNullableLazyValue(@NotNull Function0<? extends T> computable) {
-        return new LockBasedLazyValue<T>(computable);
+        return new LockBasedLazyValue<T>(this, computable);
     }
 
     @NotNull
     @Override
     public <T> NullableLazyValue<T> createRecursionTolerantNullableLazyValue(@NotNull Function0<? extends T> computable, final T onRecursiveCall) {
-        return new LockBasedLazyValue<T>(computable) {
+        return new LockBasedLazyValue<T>(this, computable) {
             @NotNull
             @Override
             protected RecursionDetectedResult<T> recursionDetected(boolean firstTime) {
@@ -196,7 +196,7 @@ public class LockBasedStorageManager implements StorageManager {
     public <T> NullableLazyValue<T> createNullableLazyValueWithPostCompute(
             @NotNull Function0<? extends T> computable, @NotNull final Function1<? super T, Unit> postCompute
     ) {
-        return new LockBasedLazyValue<T>(computable) {
+        return new LockBasedLazyValue<T>(this, computable) {
             @Override
             protected void postCompute(@Nullable T value) {
                 postCompute.invoke(value);
@@ -270,14 +270,16 @@ public class LockBasedStorageManager implements StorageManager {
         RECURSION_WAS_DETECTED
     }
 
-    private class LockBasedLazyValue<T> implements NullableLazyValue<T> {
-
+    // Being static is memory optimization to prevent capturing outer-class reference at each level of inheritance hierarchy
+    private static class LockBasedLazyValue<T> implements NullableLazyValue<T> {
+        private final LockBasedStorageManager storageManager;
         private final Function0<? extends T> computable;
 
         @Nullable
         private volatile Object value = NotValue.NOT_COMPUTED;
 
-        public LockBasedLazyValue(@NotNull Function0<? extends T> computable) {
+        public LockBasedLazyValue(@NotNull LockBasedStorageManager storageManager, @NotNull Function0<? extends T> computable) {
+            this.storageManager = storageManager;
             this.computable = computable;
         }
 
@@ -296,7 +298,7 @@ public class LockBasedStorageManager implements StorageManager {
             Object _value = value;
             if (!(_value instanceof NotValue)) return WrappedValues.unescapeThrowable(_value);
 
-            lock.lock();
+            storageManager.lock.lock();
             try {
                 _value = value;
                 if (!(_value instanceof NotValue)) return WrappedValues.unescapeThrowable(_value);
@@ -328,11 +330,11 @@ public class LockBasedStorageManager implements StorageManager {
                         // Store only if it's a genuine result, not something thrown through recursionDetected()
                         value = WrappedValues.escapeThrowable(throwable);
                     }
-                    throw exceptionHandlingStrategy.handleException(throwable);
+                    throw storageManager.exceptionHandlingStrategy.handleException(throwable);
                 }
             }
             finally {
-                lock.unlock();
+                storageManager.lock.unlock();
             }
         }
 
@@ -342,7 +344,7 @@ public class LockBasedStorageManager implements StorageManager {
          */
         @NotNull
         protected RecursionDetectedResult<T> recursionDetected(boolean firstTime) {
-            return recursionDetectedDefault();
+            return storageManager.recursionDetectedDefault();
         }
 
         protected void postCompute(T value) {
@@ -350,10 +352,10 @@ public class LockBasedStorageManager implements StorageManager {
         }
     }
 
-    private class LockBasedNotNullLazyValue<T> extends LockBasedLazyValue<T> implements NotNullLazyValue<T> {
+    private static class LockBasedNotNullLazyValue<T> extends LockBasedLazyValue<T> implements NotNullLazyValue<T> {
 
-        public LockBasedNotNullLazyValue(@NotNull Function0<? extends T> computable) {
-            super(computable);
+        public LockBasedNotNullLazyValue(@NotNull LockBasedStorageManager storageManager, @NotNull Function0<? extends T> computable) {
+            super(storageManager, computable);
         }
 
         @Override
@@ -365,11 +367,17 @@ public class LockBasedStorageManager implements StorageManager {
         }
     }
 
-    private class MapBasedMemoizedFunction<K, V> implements MemoizedFunctionToNullable<K, V> {
+    private static class MapBasedMemoizedFunction<K, V> implements MemoizedFunctionToNullable<K, V> {
+        private final LockBasedStorageManager storageManager;
         private final ConcurrentMap<K, Object> cache;
         private final Function1<? super K, ? extends V> compute;
 
-        public MapBasedMemoizedFunction(@NotNull ConcurrentMap<K, Object> map, @NotNull Function1<? super K, ? extends V> compute) {
+        public MapBasedMemoizedFunction(
+                @NotNull LockBasedStorageManager storageManager,
+                @NotNull ConcurrentMap<K, Object> map,
+                @NotNull Function1<? super K, ? extends V> compute
+        ) {
+            this.storageManager = storageManager;
             this.cache = map;
             this.compute = compute;
         }
@@ -380,7 +388,7 @@ public class LockBasedStorageManager implements StorageManager {
             Object value = cache.get(input);
             if (value != null && value != NotValue.COMPUTING) return WrappedValues.unescapeExceptionOrNull(value);
 
-            lock.lock();
+            storageManager.lock.lock();
             try {
                 value = cache.get(input);
                 if (value == NotValue.COMPUTING) {
@@ -406,25 +414,25 @@ public class LockBasedStorageManager implements StorageManager {
                     return typedValue;
                 }
                 catch (Throwable throwable) {
-                    if (throwable == error) throw exceptionHandlingStrategy.handleException(throwable);
+                    if (throwable == error) throw storageManager.exceptionHandlingStrategy.handleException(throwable);
 
                     Object oldValue = cache.put(input, WrappedValues.escapeThrowable(throwable));
                     if (oldValue != NotValue.COMPUTING) {
                         throw raceCondition(input, oldValue);
                     }
 
-                    throw exceptionHandlingStrategy.handleException(throwable);
+                    throw storageManager.exceptionHandlingStrategy.handleException(throwable);
                 }
             }
             finally {
-                lock.unlock();
+                storageManager.lock.unlock();
             }
         }
 
         @NotNull
         private AssertionError recursionDetected(K input) {
             return sanitizeStackTrace(
-                    new AssertionError("Recursion detected on input: " + input + " under " + LockBasedStorageManager.this)
+                    new AssertionError("Recursion detected on input: " + input + " under " + storageManager)
             );
         }
 
@@ -432,7 +440,7 @@ public class LockBasedStorageManager implements StorageManager {
         private AssertionError raceCondition(K input, Object oldValue) {
             return sanitizeStackTrace(
                     new AssertionError("Race condition detected on input " + input + ". Old value is " + oldValue +
-                                       " under " + LockBasedStorageManager.this)
+                                       " under " + storageManager)
             );
         }
 
@@ -441,22 +449,26 @@ public class LockBasedStorageManager implements StorageManager {
             Object value = cache.get(key);
             return value != null && value != NotValue.COMPUTING;
         }
+
+        protected LockBasedStorageManager getStorageManager() {
+            return storageManager;
+        }
     }
 
-    private class MapBasedMemoizedFunctionToNotNull<K, V> extends MapBasedMemoizedFunction<K, V> implements MemoizedFunctionToNotNull<K, V> {
+    private static class MapBasedMemoizedFunctionToNotNull<K, V> extends MapBasedMemoizedFunction<K, V> implements MemoizedFunctionToNotNull<K, V> {
 
         public MapBasedMemoizedFunctionToNotNull(
-                @NotNull ConcurrentMap<K, Object> map,
+                @NotNull LockBasedStorageManager storageManager, @NotNull ConcurrentMap<K, Object> map,
                 @NotNull Function1<? super K, ? extends V> compute
         ) {
-            super(map, compute);
+            super(storageManager, map, compute);
         }
 
         @NotNull
         @Override
         public V invoke(K input) {
             V result = super.invoke(input);
-            assert result != null : "compute() returned null under " + LockBasedStorageManager.this;
+            assert result != null : "compute() returned null under " + getStorageManager();
             return result;
         }
     }
