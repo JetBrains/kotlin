@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.script.*
 import org.jetbrains.kotlin.types.KotlinType
 import java.io.File
+import java.net.URL
 import java.net.URLClassLoader
 import kotlin.reflect.KClass
 
@@ -80,8 +81,17 @@ fun classpathFromProperty(): List<String> =
                 .map { File(it).canonicalPath }
     } ?: emptyList()
 
+private fun URL.toFile() =
+    try {
+        File(toURI().schemeSpecificPart)
+    }
+    catch (e: java.net.URISyntaxException) {
+        if (protocol != "file") null
+        else File(file)
+    }
+
 fun classpathFromClassloader(classLoader: ClassLoader): List<String> =
     (classLoader as? URLClassLoader)?.urLs
-            ?.map { File(it.toURI()).canonicalPath }
+            ?.mapNotNull { it.toFile()?.canonicalPath }
             ?: emptyList()
 
