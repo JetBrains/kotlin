@@ -42,7 +42,7 @@ public class SDKDownloader {
     private static final String PLATFORM_TOOLS = "23.0.1";
     private static final String SDK_TOOLS = "25.1.1";
     public static final String BUILD_TOOLS = "23.0.3";
-    private static final int ANDROID_VERSION = 16;
+    private static final int ANDROID_VERSION = 19;
 
 
     public SDKDownloader(PathManager pathManager) {
@@ -57,12 +57,12 @@ public class SDKDownloader {
     }
 
     public void downloadPlatform() {
-        download("https://dl-ssl.google.com/android/repository/android-" + ANDROID_VERSION + "_r05.zip", platformZipPath);  //Same for all platforms
+        download("https://dl-ssl.google.com/android/repository/android-" + ANDROID_VERSION + "_r04.zip", platformZipPath);  //Same for all platforms
     }
 
     private void downloadAbi() {
-        download("https://dl.google.com/android/repository/sys-img/android/sysimg_armv7a-" + ANDROID_VERSION + "_r04.zip", armImage);  //Same for all platforms
-        download("https://dl.google.com/android/repository/sys-img/android/sysimg_x86-" + ANDROID_VERSION + "_r02.zip", x86Image);  //Same for all platforms
+        download("https://dl.google.com/android/repository/sys-img/android/sysimg_armv7a-" + ANDROID_VERSION + "_r03.zip", armImage);  //Same for all platforms
+        download("https://dl.google.com/android/repository/sys-img/android/sysimg_x86-" + ANDROID_VERSION + "_r03.zip", x86Image);  //Same for all platforms
     }
 
     public void downloadPlatformTools() {
@@ -111,7 +111,7 @@ public class SDKDownloader {
     public void unzipAll() {
         String androidSdkRoot = pathManager.getAndroidSdkRoot();
         unzip(platformZipPath, pathManager.getPlatformFolderInAndroidSdk());
-        new File(pathManager.getPlatformFolderInAndroidSdk() + "/android-4.1.2").renameTo(new File(pathManager.getPlatformFolderInAndroidSdk() + "/android-16"));
+        new File(pathManager.getPlatformFolderInAndroidSdk() + "/android-4.4.2").renameTo(new File(pathManager.getPlatformFolderInAndroidSdk() + "/android-" + ANDROID_VERSION));
 
         unzip(armImage, androidSdkRoot + "/system-images/android-" + ANDROID_VERSION + "/default/");
         unzip(x86Image, androidSdkRoot + "/system-images/android-" + ANDROID_VERSION + "/default/");
