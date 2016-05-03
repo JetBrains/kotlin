@@ -20,6 +20,7 @@ import com.intellij.codeInsight.AnnotationUtil
 import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInsight.daemon.QuickFixBundle
 import com.intellij.codeInsight.daemon.impl.analysis.HighlightUtil
+import com.intellij.codeInsight.daemon.impl.analysis.JavaHighlightUtil
 import com.intellij.codeInsight.intention.QuickFixFactory
 import com.intellij.codeInspection.*
 import com.intellij.codeInspection.deadCode.UnusedDeclarationInspection
@@ -40,6 +41,7 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.safeDelete.SafeDeleteHandler
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -95,6 +97,10 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             return false
         }
 
+        private fun KtNamedFunction.isSerializationImplicitlyUsedMethod(): Boolean {
+            return toLightMethods().any { JavaHighlightUtil.isSerializationRelatedMethod(it, it.containingClass) }
+        }
+
         // variation of IDEA's AnnotationUtil.checkAnnotatedUsingPatterns()
         private fun checkAnnotatedUsingPatterns(annotated: Annotated, annotationPatterns: Collection<String>): Boolean {
             val annotationsPresent = annotated.annotations
@@ -147,6 +153,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
                 if (declaration.resolveToDescriptorIfAny() == null) return
                 if (isEntryPoint(declaration)) return
                 if (declaration is KtProperty && declaration.isSerializationImplicitlyUsedField()) return
+                if (declaration is KtNamedFunction && declaration.isSerializationImplicitlyUsedMethod()) return
                 // properties can be referred by component1/component2, which is too expensive to search, don't mark them as unused
                 if (declaration is KtParameter && declaration.dataClassComponentFunction() != null) return
 
