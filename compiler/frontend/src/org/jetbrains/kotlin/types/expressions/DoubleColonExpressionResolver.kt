@@ -28,11 +28,14 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.callableReferences.createReflectionTypeForResolvedCallableReference
-import org.jetbrains.kotlin.resolve.callableReferences.resolveCallableReferenceTarget
+import org.jetbrains.kotlin.resolve.callableReferences.resolvePossiblyAmbiguousCallableReference
 import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver
 import org.jetbrains.kotlin.resolve.calls.CallResolver
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache
+import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
+import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
@@ -202,18 +205,18 @@ class DoubleColonExpressionResolver(
     }
 
     fun visitCallableReferenceExpression(expression: KtCallableReferenceExpression, c: ExpressionTypingContext): KotlinTypeInfo {
-        val lhs = expression.receiverExpression?.let { resolveDoubleColonLHS(it, expression, c) }
-        val receiverType = lhs?.type // TODO: handle .Expression and .Type
-
         val callableReference = expression.callableReference
         if (callableReference.getReferencedName().isEmpty()) {
+            expression.receiverExpression?.let { resolveDoubleColonLHS(it, expression, c) }
             c.trace.report(UNRESOLVED_REFERENCE.on(callableReference, callableReference))
             val errorType = ErrorUtils.createErrorType("Empty callable reference")
             return dataFlowAnalyzer.createCheckedTypeInfo(errorType, c, expression)
         }
 
         val trace = TemporaryBindingTrace.create(c.trace, "Callable reference type")
-        val result = getCallableReferenceType(expression, receiverType, lhs is DoubleColonLHS.Expression, c.replaceBindingTrace(trace))
+        val context = c.replaceBindingTrace(trace)
+        val (lhs, resolutionResults) = resolveCallableReference(expression, context, ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS)
+        val result = getCallableReferenceType(expression, lhs, resolutionResults, context)
         val hasErrors = hasErrors(trace) // Do not inline this local variable (execution order is important)
         trace.commit()
         if (!hasErrors && result != null) {
@@ -257,18 +260,22 @@ class DoubleColonExpressionResolver(
 
     private fun getCallableReferenceType(
             expression: KtCallableReferenceExpression,
-            lhsType: KotlinType?,
-            isBound: Boolean,
+            lhs: DoubleColonLHS?,
+            resolutionResults: OverloadResolutionResults<*>?,
             context: ExpressionTypingContext
     ): KotlinType? {
         val reference = expression.callableReference
 
-        val resolved = BooleanArray(1)
-        val descriptor = resolveCallableReferenceTarget(expression, lhsType, context, resolved, callResolver)
-        if (!resolved[0]) {
-            context.trace.report(UNRESOLVED_REFERENCE.on(reference, reference))
-        }
-        if (descriptor == null) return null
+        val descriptor =
+                if (resolutionResults != null && !resolutionResults.isNothing) {
+                    OverloadResolutionResultsUtil.getResultingCall(resolutionResults, context.contextDependency)?.let { call ->
+                        call.resultingDescriptor
+                    } ?: return null
+                }
+                else {
+                    context.trace.report(UNRESOLVED_REFERENCE.on(reference, reference))
+                    return null
+                }
 
         if (expression.isEmptyLHS &&
             (descriptor.dispatchReceiverParameter != null || descriptor.extensionReceiverParameter != null)) {
@@ -283,7 +290,23 @@ class DoubleColonExpressionResolver(
             context.trace.report(CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR.on(reference))
         }
 
-        val ignoreReceiver = isBound || expression.isEmptyLHS
-        return createReflectionTypeForResolvedCallableReference(expression, lhsType, ignoreReceiver, descriptor, context, reflectionTypes)
+        val ignoreReceiver = lhs is DoubleColonLHS.Expression || expression.isEmptyLHS
+        return createReflectionTypeForResolvedCallableReference(
+                expression, lhs?.type, ignoreReceiver, descriptor, context, reflectionTypes
+        )
+    }
+
+    fun resolveCallableReference(
+            expression: KtCallableReferenceExpression,
+            context: ExpressionTypingContext,
+            resolveArgumentsMode: ResolveArgumentsMode
+    ): Pair<DoubleColonLHS?, OverloadResolutionResults<*>?> {
+        val lhsResult = expression.receiverExpression?.let { resolveDoubleColonLHS(it, expression, context) }
+
+        val resolutionResults = resolvePossiblyAmbiguousCallableReference(
+                expression, lhsResult?.type, context, resolveArgumentsMode, callResolver
+        )
+
+        return lhsResult to resolutionResults
     }
 }

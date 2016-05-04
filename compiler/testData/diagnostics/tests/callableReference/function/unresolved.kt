@@ -8,5 +8,5 @@ fun main() {
     
     A::<!UNRESOLVED_REFERENCE!>bar<!>
     
-    <!UNRESOLVED_REFERENCE!>B<!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>bar<!>
+    <!UNRESOLVED_REFERENCE!>B<!>::<!UNRESOLVED_REFERENCE!>bar<!>
 }
