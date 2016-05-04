@@ -1106,21 +1106,6 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
     }
 
-    @TestMetadata("compiler/testData/codegen/bytecodeText/signature")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class Signature extends AbstractBytecodeTextTest {
-        public void testAllFilesPresentInSignature() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/signature"), Pattern.compile("^(.+)\\.kt$"), true);
-        }
-
-        @TestMetadata("noSignatureInSyntheticAccessor.kt")
-        public void testNoSignatureInSyntheticAccessor() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/signature/noSignatureInSyntheticAccessor.kt");
-            doTest(fileName);
-        }
-    }
-
     @TestMetadata("compiler/testData/codegen/bytecodeText/statements")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
