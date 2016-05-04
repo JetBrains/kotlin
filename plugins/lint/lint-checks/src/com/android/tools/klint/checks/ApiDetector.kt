@@ -86,7 +86,7 @@ open class ApiDetector : Detector(), UastScanner {
         }
 
         override fun visitClassLiteralExpression(node: UClassLiteralExpression): Boolean {
-            val clazz = node.type.resolve(context)
+            val clazz = node.type?.resolve(context)
             if (clazz != null) {
                 checkVersion(context, node, clazz)
             }

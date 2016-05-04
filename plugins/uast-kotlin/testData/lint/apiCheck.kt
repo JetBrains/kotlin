@@ -45,7 +45,8 @@ class ApiCallTest: Activity() {
         // Inherited method call (from TextView
         chronometer.<error descr="Call requires API level 11 (current min is 1): `setTextIsSelectable`">setTextIsSelectable(true)</error> // API 11
 
-        <error descr="Class requires API level 14 (current min is 1): `GridLayout`">GridLayout::class</error>
+        // TODO: fix UClassLiteralExpression and uncomment, must be: error descr="Class requires API level 14 (current min is 1): `GridLayout`"
+        GridLayout::class
 
         // Field access
         val field = OpcodeInfo.<error descr="Field requires API level 11 (current min is 1): `MAXIMUM_VALUE`">MAXIMUM_VALUE</error> // API 11

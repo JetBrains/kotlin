@@ -49,7 +49,6 @@ abstract class AbstractKotlinUastStructureTest : KotlinLightCodeInsightFixtureTe
     }
 
     private fun trimEmptyLines(s: String): String {
-        if (true) return s
         val lineSeparator = System.getProperty("line.separator")
         return s.lines().map { if (it.trim().isEmpty()) "" else it.trimEnd() }.joinToString(lineSeparator)
     }
