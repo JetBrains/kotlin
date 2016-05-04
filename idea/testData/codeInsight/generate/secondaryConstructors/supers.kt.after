@@ -7,7 +7,6 @@ class Foo : Base {
     val x = 1
 
     <caret>constructor(a: Int, b: Int) : super(a, b)
-
     constructor(n: Int) : super(n)
 
     fun foo() {

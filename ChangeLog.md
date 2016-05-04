@@ -24,6 +24,7 @@ New features:
 - [KT-12079](https://youtrack.jetbrains.com/issue/KT-12079) Support "Autowired members defined in invalid Spring bean" inspection on Kotlin declarations
 - [KT-11704](https://youtrack.jetbrains.com/issue/KT-11704) Support file path references inside of Kotlin string literals
 - [KT-12092](https://youtrack.jetbrains.com/issue/KT-12092) Implement bean references in @Qualifier annotations
+- [KT-12175](https://youtrack.jetbrains.com/issue/KT-12175) Don't enforce empty line after one-line constructor
 
 Issues fixed:
 

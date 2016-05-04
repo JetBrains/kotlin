@@ -4,7 +4,6 @@ open class <caret>A(n: Int) {
 
 open class B: A {
     constructor(n: Int) : super(n)
-
     constructor(b: Boolean, n: Int): super(n)
 }
 

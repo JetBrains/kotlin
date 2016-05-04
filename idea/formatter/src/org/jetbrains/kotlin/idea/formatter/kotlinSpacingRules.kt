@@ -59,6 +59,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             inPosition(left = FUN, right = FUN).emptyLinesIfLineBreakInLeft(1)
             inPosition(left = PROPERTY, right = FUN).emptyLinesIfLineBreakInLeft(1)
             inPosition(left = FUN, right = PROPERTY).emptyLinesIfLineBreakInLeft(1)
+            inPosition(left = SECONDARY_CONSTRUCTOR, right = SECONDARY_CONSTRUCTOR).emptyLinesIfLineBreakInLeft(1)
 
             // Case left for alternative constructors
             inPosition(left = FUN, right = CLASS).emptyLinesIfLineBreakInLeft(1)
