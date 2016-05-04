@@ -7,6 +7,7 @@ internal object Test {
         if (toIndex > size)
             throw IndexOutOfBoundsException("toIndex = " + toIndex)
         if (fromIndex > toIndex)
-            throw IllegalArgumentException("fromIndex($fromIndex) > toIndex($toIndex)")
+            throw IllegalArgumentException("fromIndex(" + fromIndex
+                    + ") > toIndex(" + toIndex + ")")
     }
 }
