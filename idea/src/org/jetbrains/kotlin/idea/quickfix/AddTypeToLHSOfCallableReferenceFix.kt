@@ -21,8 +21,8 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -40,8 +40,8 @@ class AddTypeToLHSOfCallableReferenceFix(
         val receiver = with(resolvedCall) {
             dispatchReceiver ?: extensionReceiver ?: return
         }
-        val type = KtPsiFactory(project).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(receiver.type))
-        element.setTypeReference(type)
+        val expression = KtPsiFactory(project).createExpression(IdeDescriptorRenderers.SOURCE_CODE.renderType(receiver.type))
+        element.setReceiverExpression(expression)
         ShortenReferences.DEFAULT.process(element)
     }
 

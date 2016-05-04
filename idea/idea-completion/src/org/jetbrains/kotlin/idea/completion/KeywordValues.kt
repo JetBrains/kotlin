@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.KotlinTypeImpl
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 import org.jetbrains.kotlin.types.typeUtil.isBooleanOrNullableBoolean
 
 object KeywordValues {
@@ -94,7 +95,9 @@ object KeywordValues {
         }
 
         if (callTypeAndReceiver is CallTypeAndReceiver.CALLABLE_REFERENCE && callTypeAndReceiver.receiver != null) {
-            val qualifierType = bindingContext[BindingContext.TYPE, callTypeAndReceiver.receiver]
+            val receiverExpression = callTypeAndReceiver.receiver!!
+            val qualifierType = (bindingContext.get(BindingContext.DOUBLE_COLON_LHS, receiverExpression) as? DoubleColonLHS.Type)?.type
+
             if (qualifierType != null) {
                 val kClassDescriptor = resolutionFacade.getFrontendService(ReflectionTypes::class.java).kClass
                 val classLiteralType = KotlinTypeImpl.create(Annotations.EMPTY, kClassDescriptor, false, listOf(TypeProjectionImpl(qualifierType)))

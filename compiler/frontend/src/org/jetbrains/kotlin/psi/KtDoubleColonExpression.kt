@@ -42,13 +42,13 @@ abstract class KtDoubleColonExpression(node: ASTNode) : KtExpressionImpl(node) {
     val doubleColonTokenReference: PsiElement
         get() = findChildByType(KtTokens.COLONCOLON)!!
 
-    fun setTypeReference(typeReference: KtTypeReference) {
-        val oldTypeReference = this.typeReference
-        if (oldTypeReference != null) {
-            oldTypeReference.replace(typeReference)
+    fun setReceiverExpression(newReceiverExpression: KtExpression) {
+        val oldReceiverExpression = this.receiverExpression
+        if (oldReceiverExpression != null) {
+            oldReceiverExpression.replace(newReceiverExpression)
         }
         else {
-            addBefore(typeReference, doubleColonTokenReference)
+            addBefore(newReceiverExpression, doubleColonTokenReference)
         }
     }
 

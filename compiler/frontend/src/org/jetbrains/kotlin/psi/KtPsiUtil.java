@@ -421,7 +421,8 @@ public class KtPsiUtil {
         if (expression instanceof KtPostfixExpression ||
             expression instanceof KtQualifiedExpression ||
             expression instanceof KtCallExpression ||
-            expression instanceof KtArrayAccessExpression) {
+            expression instanceof KtArrayAccessExpression ||
+            expression instanceof KtDoubleColonExpression) {
             return maxPriority - 1;
         }
 

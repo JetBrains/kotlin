@@ -7,4 +7,5 @@ fun foo() {
     val v1 = <caret>myJavaClass<List<*>>()
     val v2 = myJavaClass<List<String>>()
     val v3 = myJavaClass<Array<String>>()
+    val v4 = myJavaClass<java.util.Random>()
 }
