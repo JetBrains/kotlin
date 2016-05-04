@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.js.inline.clean
 
 import com.google.dart.compiler.backend.js.ast.*
-import com.google.dart.compiler.backend.js.ast.metadata.HasMetadata
 import com.google.dart.compiler.backend.js.ast.metadata.synthetic
 import org.jetbrains.kotlin.js.inline.util.canHaveSideEffect
 import org.jetbrains.kotlin.js.inline.util.collectDefinedNames
@@ -28,7 +27,7 @@ internal class TemporaryAssignmentElimination(private val root: JsBlock) {
     private val usageCount = mutableMapOf<JsName, Int>()
     private val usages = mutableMapOf<JsName, Usage>()
     private val statementsToRemove = mutableSetOf<JsStatement>()
-    private val mappedUsages = mutableMapOf<JsName, Usage>()
+    private val mappedUsages = mutableMapOf<JsName, UsageHolder?>()
     private val syntheticNames = mutableSetOf<JsName>()
     private var hasChanges = false
     private val namesToProcess = mutableSetOf<JsName>()
@@ -82,7 +81,7 @@ internal class TemporaryAssignmentElimination(private val root: JsBlock) {
             }
 
             override fun visitVars(x: JsVars) {
-                // TODO: generalize for multliple declarations per one statement
+                // TODO: generalize for multiple declarations per one statement
                 if (x.vars.size == 1) {
                     val declaration = x.vars[0]
                     val initExpression = declaration.initExpression
@@ -121,34 +120,35 @@ internal class TemporaryAssignmentElimination(private val root: JsBlock) {
         usages.keys.retainAll(syntheticNames)
     }
 
-    private fun getUsage(name: JsName): Usage? {
+    private fun getUsage(name: JsName): UsageHolder? {
         return mappedUsages.getOrPut(name) {
             if (usageCount[name] != 1) return null
 
             val usage = usages[name]
-            return when (usage) {
+            val mappedUsage: UsageHolder? = when (usage) {
                 is Usage.VariableAssignment -> {
                     val result = getUsage(usage.target)
                     if (result != null) {
-                        result.statements.addAll(usage.statements)
-                        result
+                        UsageHolder(result.value, usage.statement, result)
                     }
                     else {
-                        usage
+                        UsageHolder(usage, usage.statement, null)
                     }
                 }
                 is Usage.VariableDeclaration -> {
                     val result = getUsage(usage.target)
                     if (result != null) {
-                        result.statements.addAll(usage.statements)
-                        result
+                        UsageHolder(result.value, usage.statement, result)
                     }
                     else {
-                        usage
+                        UsageHolder(usage, usage.statement, null)
                     }
                 }
-                else -> usage
+                null -> null
+                else -> UsageHolder(usage, usage.statement, null)
             }
+
+            mappedUsage
         }
     }
 
@@ -159,7 +159,7 @@ internal class TemporaryAssignmentElimination(private val root: JsBlock) {
             override fun visitExpressionStatement(x: JsExpressionStatement) {
                 val assignment = JsAstUtils.decomposeAssignmentToVariable(x.expression)
                 if (assignment != null) {
-                    val usage = getUsage(assignment.first)
+                    val usage = getUsage(assignment.first)?.value
                     if (usage is Usage.VariableDeclaration) {
                         usage.count++
                     }
@@ -181,8 +181,9 @@ internal class TemporaryAssignmentElimination(private val root: JsBlock) {
                 val assignment = JsAstUtils.decomposeAssignmentToVariable(x.expression)
                 if (assignment != null) {
                     val (name, value) = assignment
-                    val usage = getUsage(name)
-                    if (usage != null) {
+                    val usageHolder = getUsage(name)
+                    if (usageHolder != null) {
+                        val usage = usageHolder.value
                         val replacement = when (usage) {
                             is Usage.Return -> JsReturn(value).apply { source(x.expression.source) }
                             is Usage.VariableAssignment -> {
@@ -197,7 +198,8 @@ internal class TemporaryAssignmentElimination(private val root: JsBlock) {
                                     val result = JsExpressionStatement(expr)
                                     result.synthetic = usage.target in syntheticNames
                                     result
-                                } else {
+                                }
+                                else {
                                     val declaration = JsAstUtils.newVar(usage.target, value)
                                     declaration.source(x.expression.source)
                                     declaration.synthetic = usage.target in syntheticNames
@@ -211,8 +213,8 @@ internal class TemporaryAssignmentElimination(private val root: JsBlock) {
                         }
                         hasChanges = true
                         ctx.replaceMe(replacement)
-                        statementsToRemove += usage.statements
-                        return false
+                        statementsToRemove += usageHolder.collectStatements()
+                        return false;
                     }
                 }
                 return super.visit(x, ctx)
@@ -265,9 +267,7 @@ internal class TemporaryAssignmentElimination(private val root: JsBlock) {
         usageCount[name] = 1 + (usageCount[name] ?: 0)
     }
 
-    private sealed class Usage(statement: JsStatement) {
-        val statements = mutableSetOf(statement)
-
+    private sealed class Usage(val statement: JsStatement) {
         class Return(statement: JsStatement) : Usage(statement)
 
         class VariableAssignment(statement: JsStatement, val target: JsName) : Usage(statement)
@@ -277,5 +277,9 @@ internal class TemporaryAssignmentElimination(private val root: JsBlock) {
         }
 
         class PropertyMutation(statement: JsStatement, val target: JsExpression) : Usage(statement)
+    }
+
+    private class UsageHolder(val value: Usage, val statement: JsStatement, val next: UsageHolder?) {
+        fun collectStatements() = generateSequence (this) { it.next }.map { it.statement }
     }
 }

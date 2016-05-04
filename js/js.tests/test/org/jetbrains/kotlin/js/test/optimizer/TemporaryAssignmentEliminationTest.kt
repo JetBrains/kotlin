@@ -26,4 +26,6 @@ class TemporaryAssignmentEliminationTest : BasicOptimizerTest("temporary-assignm
     @Test fun declaration() = box()
 
     @Test fun skipsGlobalDeclarations() = box()
+
+    @Test fun transitiveAssignment() = box()
 }
