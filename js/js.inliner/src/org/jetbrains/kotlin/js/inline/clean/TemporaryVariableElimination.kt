@@ -488,8 +488,16 @@ internal class TemporaryVariableElimination(private val root: JsStatement) {
         return (expr != null && isTrivial(expr)) || usages[name] ?: 0 == 1
     }
 
-    private fun isTrivial(expr: JsExpression) = when (expr) {
-        is JsNameRef -> expr.qualifier == null && (expr.name?.let { definitions[it] ?: 0 <= 1 } ?: false)
+    private fun isTrivial(expr: JsExpression): Boolean = when (expr) {
+        is JsNameRef -> {
+            val qualifier = expr.qualifier
+            if (qualifier == null) {
+                !expr.sideEffects || (expr.name?.let { definitions[it] ?: 0 <= 1 } ?: false)
+            }
+            else {
+                !expr.sideEffects && isTrivial(qualifier)
+            }
+        }
         is JsLiteral.JsValueLiteral -> true
         else -> false
     }
