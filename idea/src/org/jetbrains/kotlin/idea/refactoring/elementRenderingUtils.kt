@@ -124,17 +124,6 @@ fun KtElement.renderTrimmed(): String {
             expression.selectorExpression?.accept(this)
         }
 
-        override fun visitClassLiteralExpression(expression: KtClassLiteralExpression) {
-            expression.typeReference?.accept(this)
-            builder.append("::class")
-        }
-
-        override fun visitCallableReferenceExpression(expression: KtCallableReferenceExpression) {
-            expression.typeReference?.accept(this)
-            builder.append("::")
-            builder.append(expression.callableReference.getReferencedName())
-        }
-
         override fun visitThisExpression(expression: KtThisExpression) {
             builder.append("this")
             expression.getLabelName()?.let { builder.append("@$it") }

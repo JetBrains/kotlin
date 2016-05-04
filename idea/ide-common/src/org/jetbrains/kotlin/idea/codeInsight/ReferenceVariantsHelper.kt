@@ -23,7 +23,10 @@ import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.psi.KtVariableDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
@@ -35,6 +38,7 @@ import org.jetbrains.kotlin.resolve.scopes.utils.collectDescriptorsFiltered
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
@@ -223,14 +227,16 @@ class ReferenceVariantsHelper(
     }
 
     private fun getVariantsForCallableReference(
-            qualifierTypeRef: KtTypeReference?,
+            receiverExpression: KtExpression?,
             resolutionScope: LexicalScope,
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean
     ): Collection<DeclarationDescriptor> {
         val descriptors = LinkedHashSet<DeclarationDescriptor>()
-        if (qualifierTypeRef != null) {
-            val type = bindingContext[BindingContext.TYPE, qualifierTypeRef] ?: return emptyList()
+        if (receiverExpression != null) {
+            val type =
+                    (bindingContext.get(BindingContext.DOUBLE_COLON_LHS, receiverExpression) as? DoubleColonLHS.Type)?.type
+                    ?: return emptyList()
 
             descriptors.addNonExtensionMembers(listOf(type), kindFilter, nameFilter, constructorFilter = { true })
 
