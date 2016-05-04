@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.js.inline.util.replaceNames
 
 class NamingContext(
         private val scope: JsScope,
-        private val statementContext: JsContext<JsStatement>
+        private val statementConsumer: (List<JsStatement>) -> Unit
 ) {
     private val renamings = IdentityHashMap<JsName, JsExpression>()
     private val declarations = ArrayList<JsVars>()
@@ -35,7 +35,7 @@ class NamingContext(
 
     fun applyRenameTo(target: JsNode): JsNode {
         if (!addedDeclarations) {
-            statementContext.addPrevious(declarations)
+            statementConsumer(declarations)
             addedDeclarations = true
         }
 

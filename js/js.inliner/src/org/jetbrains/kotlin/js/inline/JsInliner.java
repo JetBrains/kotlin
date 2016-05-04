@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.js.inline;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.backend.js.ast.metadata.MetadataProperties;
 import com.intellij.psi.PsiElement;
+import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -58,7 +59,6 @@ public class JsInliner extends JsVisitorWithContextImpl {
             if (!(node instanceof JsInvocation)) return false;
 
             JsInvocation call = (JsInvocation) node;
-
             return hasToBeInlined(call);
         }
     };
@@ -199,7 +199,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
 
         if (currentStatement instanceof JsExpressionStatement &&
             ((JsExpressionStatement) currentStatement).getExpression() == call &&
-            (resultExpression == null || !SideEffectUtilsKt.canHaveSideEffect(resultExpression))
+            resultExpression == null
         ) {
             statementContext.removeMe();
         }
@@ -267,7 +267,13 @@ public class JsInliner extends JsVisitorWithContextImpl {
         @Override
         public NamingContext newNamingContext() {
             JsScope scope = getFunctionContext().getScope();
-            return new NamingContext(scope, getStatementContext());
+            return new NamingContext(scope, new Function1<List<? extends JsStatement>, Unit>() {
+                @Override
+                public Unit invoke(List<? extends JsStatement> statements) {
+                    getStatementContext().addPrevious(statements);
+                    return null;
+                }
+            });
         }
 
         @NotNull
