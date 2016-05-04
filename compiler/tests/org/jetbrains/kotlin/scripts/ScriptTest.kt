@@ -53,7 +53,7 @@ class ScriptTest {
     fun testStandardScriptWithParams() {
         val aClass = compileScript("fib_std.kts", StandardScriptDefinition)
         Assert.assertNotNull(aClass)
-        val anObj = KotlinToJVMBytecodeCompiler.tryConstructClassPub(aClass!!.kotlin, listOf("4", "comment"))
+        val anObj = KotlinToJVMBytecodeCompiler.tryConstructClassPub(aClass!!, listOf("4", "comment"))
         Assert.assertNotNull(anObj)
     }
 
@@ -61,7 +61,7 @@ class ScriptTest {
     fun testStandardScriptWithoutParams() {
         val aClass = compileScript("fib_std.kts", StandardScriptDefinition)
         Assert.assertNotNull(aClass)
-        val anObj = KotlinToJVMBytecodeCompiler.tryConstructClassPub(aClass!!.kotlin, emptyList())
+        val anObj = KotlinToJVMBytecodeCompiler.tryConstructClassPub(aClass!!, emptyList())
         Assert.assertNotNull(anObj)
     }
 
@@ -69,7 +69,7 @@ class ScriptTest {
     fun testScriptWithParamConversion() {
         val aClass = compileScript("fib.kts", SimpleParamsTestScriptDefinition(".kts", numIntParam()))
         Assert.assertNotNull(aClass)
-        val anObj = KotlinToJVMBytecodeCompiler.tryConstructClassPub(aClass!!.kotlin, listOf("4"))
+        val anObj = KotlinToJVMBytecodeCompiler.tryConstructClassPub(aClass!!, listOf("4"))
         Assert.assertNotNull(anObj)
     }
 
@@ -138,7 +138,7 @@ class ScriptTest {
         Assert.assertNotNull(aClass)
         var exceptionThrown = false
         try {
-            KotlinToJVMBytecodeCompiler.tryConstructClassPub(aClass!!.kotlin, emptyList())
+            KotlinToJVMBytecodeCompiler.tryConstructClassPub(aClass!!, emptyList())
         }
         catch (e: InvocationTargetException) {
             Assert.assertTrue(e.cause is IllegalStateException)
