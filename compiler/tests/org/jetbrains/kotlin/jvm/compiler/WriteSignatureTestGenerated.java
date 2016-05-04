@@ -137,6 +137,12 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
         doTest(fileName);
     }
 
+    @TestMetadata("syntheticAccessorForGeneric.kt")
+    public void testSyntheticAccessorForGeneric() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/syntheticAccessorForGeneric.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("VarargCharSequence.kt")
     public void testVarargCharSequence() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/VarargCharSequence.kt");
