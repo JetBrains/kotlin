@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,6 +54,7 @@ import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.junit.Assert
 import java.io.*
+import java.net.URLClassLoader
 import java.util.*
 import java.util.regex.Pattern
 import java.util.zip.ZipOutputStream
@@ -530,6 +531,15 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         val result = makeAll()
         result.assertFailed()
         result.checkErrors()
+    }
+
+    fun testInternalFromSpecialRelatedModule() {
+        initProject()
+        makeAll().assertSuccessful()
+
+        val classpath = listOf("out/production/module1", "out/test/module2").map { File(workDir, it).toURI().toURL() }.toTypedArray()
+        val clazz = URLClassLoader(classpath).loadClass("test2.BarKt")
+        clazz.getMethod("box").invoke(null)
     }
 
     fun testCircularDependenciesInternalFromAnotherModule() {
