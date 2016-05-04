@@ -19,7 +19,6 @@ class A {
     }
 
     constructor()
-
     constructor() {
     }
 }

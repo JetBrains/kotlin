@@ -3,7 +3,6 @@ class Foo<U> : Base<U, Int> {
     val x = 1
 
     <caret>constructor(x: U) : super(x)
-
     constructor(x: U, y: Int?) : super(x, y)
 
     fun foo() {
