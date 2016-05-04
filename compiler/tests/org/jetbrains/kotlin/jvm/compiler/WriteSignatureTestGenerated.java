@@ -47,6 +47,12 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
         doTest(fileName);
     }
 
+    @TestMetadata("backingFieldForGenericDelegated.kt")
+    public void testBackingFieldForGenericDelegated() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/backingFieldForGenericDelegated.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("Comparable.kt")
     public void testComparable() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/Comparable.kt");
