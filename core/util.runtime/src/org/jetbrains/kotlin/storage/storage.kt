@@ -39,3 +39,11 @@ interface NullableLazyValue<T : Any> : Function0<T?> {
 operator fun <T : Any> NotNullLazyValue<T>.getValue(_this: Any?, p: KProperty<*>): T = invoke()
 
 operator fun <T : Any> NullableLazyValue<T>.getValue(_this: Any?, p: KProperty<*>): T? = invoke()
+
+interface CacheWithNullableValues<in K, V : Any> {
+    fun computeIfAbsent(key: K, computation: () -> V?): V?
+}
+
+interface CacheWithNotNullValues<in K, V : Any> {
+    fun computeIfAbsent(key: K, computation: () -> V): V
+}

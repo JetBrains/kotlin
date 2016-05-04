@@ -61,7 +61,7 @@ public abstract class KotlinBuiltIns {
             BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("internal"))
     );
 
-    protected final ModuleDescriptorImpl builtInsModule;
+    private final ModuleDescriptorImpl builtInsModule;
     private final PackageFragmentDescriptor builtInsPackageFragment;
     private final PackageFragmentDescriptor collectionsPackageFragment;
     private final PackageFragmentDescriptor rangesPackageFragment;
@@ -72,10 +72,12 @@ public abstract class KotlinBuiltIns {
     private final Map<PrimitiveType, KotlinType> primitiveTypeToArrayKotlinType;
     private final Map<KotlinType, KotlinType> primitiveKotlinTypeToKotlinArrayType;
     private final Map<KotlinType, KotlinType> kotlinArrayTypeToPrimitiveKotlinType;
+    private final StorageManager storageManager;
 
     public static final FqNames FQ_NAMES = new FqNames();
 
     protected KotlinBuiltIns(@NotNull StorageManager storageManager) {
+        this.storageManager = storageManager;
         builtInsModule = new ModuleDescriptorImpl(
                 Name.special("<built-ins module>"), storageManager, ModuleParameters.Empty.INSTANCE, this
         );
@@ -142,6 +144,11 @@ public abstract class KotlinBuiltIns {
         PackageFragmentDescriptor packageFragment = single(fragmentProvider.getPackageFragments(packageFqName));
         packageNameToPackageFragment.put(packageFqName, packageFragment);
         return packageFragment;
+    }
+
+    @NotNull
+    protected StorageManager getStorageManager() {
+        return storageManager;
     }
 
     @SuppressWarnings("WeakerAccess")
