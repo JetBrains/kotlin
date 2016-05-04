@@ -5,7 +5,6 @@ open class A {
 
 open class B: A {
     constructor(n: Int) : super(n)
-
     constructor(b: Boolean, n: Int): super(n)
 }
 
