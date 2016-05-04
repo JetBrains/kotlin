@@ -1675,6 +1675,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("kt12040.kt")
+                public void testKt12040() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifWhen/whenToIf/kt12040.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("whenWithDotQualifiedExpression.kt")
                 public void testWhenWithDotQualifiedExpression() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifWhen/whenToIf/whenWithDotQualifiedExpression.kt");
