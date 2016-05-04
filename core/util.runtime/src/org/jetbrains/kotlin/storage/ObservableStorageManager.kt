@@ -38,6 +38,14 @@ abstract class ObservableStorageManager(private val delegate: StorageManager) : 
         return delegate.createMemoizedFunctionWithNullableValues(compute.observable, map)
     }
 
+    override fun <K, V : Any> createCacheWithNullableValues(): CacheWithNullableValues<K, V> {
+        return delegate.createCacheWithNullableValues()
+    }
+
+    override fun <K, V : Any> createCacheWithNotNullValues(): CacheWithNotNullValues<K, V> {
+        return delegate.createCacheWithNotNullValues()
+    }
+
     override fun <T: Any> createLazyValue(computable: () -> T): NotNullLazyValue<T> {
         return delegate.createLazyValue(computable.observable)
     }

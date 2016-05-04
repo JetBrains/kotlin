@@ -38,7 +38,7 @@ class JvmBuiltIns(storageManager: StorageManager) : KotlinBuiltIns(storageManage
     // Here we know order in which KotlinBuiltIns constructor calls these methods
     override fun getPlatformDependentDeclarationFilter(): PlatformDependentDeclarationFilter {
         settings = JvmBuiltInsSettings(
-                builtInsModule,
+                builtInsModule, storageManager,
                 { ownerModuleDescriptor.sure { "JvmBuiltins has not been initialized properly" } }
         )
 

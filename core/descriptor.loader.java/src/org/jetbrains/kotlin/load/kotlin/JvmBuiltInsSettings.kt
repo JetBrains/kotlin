@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.serialization.deserialization.PLATFORM_DEPENDENT_ANN
 import org.jetbrains.kotlin.serialization.deserialization.PlatformDependentDeclarationFilter
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.DelegatingType
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.DFS
@@ -49,6 +50,7 @@ import java.util.*
 
 open class JvmBuiltInsSettings(
         private val moduleDescriptor: ModuleDescriptor,
+        storageManager: StorageManager,
         deferredOwnerModuleDescriptor: () -> ModuleDescriptor
 ) : AdditionalClassPartsProvider, PlatformDependentDeclarationFilter {
     private val j2kClassMap = JavaToKotlinClassMap.INSTANCE
@@ -56,6 +58,8 @@ open class JvmBuiltInsSettings(
     private val ownerModuleDescriptor: ModuleDescriptor by lazy(deferredOwnerModuleDescriptor)
 
     private val mockSerializableType = createMockJavaIoSerializableType()
+
+    private val javaAnalogueClassesWithCustomSupertypeCache = storageManager.createCacheWithNotNullValues<FqName, ClassDescriptor>()
 
     private fun createMockJavaIoSerializableType(): KotlinType {
         val mockJavaIoPackageFragment = object : PackageFragmentDescriptorImpl(moduleDescriptor, FqName("java.io")) {
@@ -116,10 +120,11 @@ open class JvmBuiltInsSettings(
 
         val isMutable = j2kClassMap.isMutable(classDescriptor)
 
-        val fakeJavaClassDescriptor =
-                javaAnalogueDescriptor.copy(
-                        javaResolverCache = JavaResolverCache.EMPTY,
-                        additionalSupertypeClassDescriptor = kotlinMutableClassIfContainer)
+        val fakeJavaClassDescriptor = javaAnalogueClassesWithCustomSupertypeCache.computeIfAbsent(javaAnalogueDescriptor.fqNameSafe) {
+            javaAnalogueDescriptor.copy(
+                    javaResolverCache = JavaResolverCache.EMPTY,
+                    additionalSupertypeClassDescriptor = kotlinMutableClassIfContainer)
+        }
 
         val scope = fakeJavaClassDescriptor.unsubstitutedMemberScope
 

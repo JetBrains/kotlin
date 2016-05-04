@@ -501,4 +501,84 @@ public class LockBasedStorageManager implements StorageManager {
         throwable.setStackTrace(list.toArray(new StackTraceElement[list.size()]));
         return throwable;
     }
+
+    @NotNull
+    @Override
+    public <K, V> CacheWithNullableValues<K, V> createCacheWithNullableValues() {
+        return new CacheWithNullableValuesBasedOnMemoizedFunction<K, V>(
+                this, LockBasedStorageManager.<KeyWithComputation<K,V>>createConcurrentHashMap());
+    }
+
+    private static class CacheWithNullableValuesBasedOnMemoizedFunction<K, V> extends MapBasedMemoizedFunction<KeyWithComputation<K, V>, V> implements CacheWithNullableValues<K, V> {
+
+        private CacheWithNullableValuesBasedOnMemoizedFunction(
+                @NotNull LockBasedStorageManager storageManager,
+                @NotNull ConcurrentMap<KeyWithComputation<K, V>, Object> map
+        ) {
+            super(storageManager, map, new Function1<KeyWithComputation<K, V>, V>() {
+                @Override
+                public V invoke(KeyWithComputation<K, V> computation) {
+                    return computation.computation.invoke();
+                }
+            });
+        }
+
+        @Nullable
+        @Override
+        public V computeIfAbsent(K key, @NotNull Function0<? extends V> computation) {
+            return invoke(new KeyWithComputation<K, V>(key, computation));
+        }
+    }
+
+    @NotNull
+    @Override
+    public <K, V> CacheWithNotNullValues<K, V> createCacheWithNotNullValues() {
+        return new CacheWithNotNullValuesBasedOnMemoizedFunction<K, V>(this, LockBasedStorageManager.<KeyWithComputation<K,V>>createConcurrentHashMap());
+    }
+
+    private static class CacheWithNotNullValuesBasedOnMemoizedFunction<K, V> extends CacheWithNullableValuesBasedOnMemoizedFunction<K, V> implements CacheWithNotNullValues<K, V> {
+
+        private CacheWithNotNullValuesBasedOnMemoizedFunction(
+                @NotNull LockBasedStorageManager storageManager,
+                @NotNull ConcurrentMap<KeyWithComputation<K, V>, Object> map
+        ) {
+            super(storageManager, map);
+        }
+
+        @NotNull
+        @Override
+        public V computeIfAbsent(K key, @NotNull Function0<? extends V> computation) {
+            V result = super.computeIfAbsent(key, computation);
+            assert result != null : "computeIfAbsent() returned null under " + getStorageManager();
+            return result;
+        }
+    }
+
+    // equals and hashCode use only key
+    private static class KeyWithComputation<K, V> {
+        private final K key;
+        private final Function0<? extends V> computation;
+
+        public KeyWithComputation(K key, Function0<? extends V> computation) {
+            this.key = key;
+            this.computation = computation;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            KeyWithComputation<?, ?> that = (KeyWithComputation<?, ?>) o;
+
+            if (!key.equals(that.key)) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            return key.hashCode();
+        }
+    }
 }
