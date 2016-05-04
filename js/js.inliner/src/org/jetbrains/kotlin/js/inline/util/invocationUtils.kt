@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -121,3 +121,19 @@ private fun getStaticRef(invocation: JsInvocation): JsNode? {
     val qualifierName = (qualifier as? HasName)?.name
     return qualifierName?.staticRef
 }
+
+/**
+ * If an expression A references to another expression B, which in turn references to C, or a corresponding expression
+ * at the end of a chain of references. They are usually JsNameRef expressions with JsFunction at the very end.
+ * This chain is produced when there are lots of aliases created from aliases, i.e. `var $tmp1 = foo; var $tmp2 = $tmp1;`.
+ * So for `$tmp2` we should get reference to `foo`.
+ */
+val JsExpression.transitiveStaticRef: JsExpression
+    get() {
+        var qualifier = this
+        while (qualifier is JsNameRef) {
+            val staticRef = qualifier.name?.staticRef as? JsExpression ?: break
+            qualifier = staticRef
+        }
+        return qualifier
+    }
