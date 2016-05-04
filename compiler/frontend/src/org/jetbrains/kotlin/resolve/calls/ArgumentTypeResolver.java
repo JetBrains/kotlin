@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin.resolve.calls;
 
 import com.google.common.collect.Lists;
+import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.builtins.ReflectionTypes;
-import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.*;
@@ -45,10 +45,10 @@ import org.jetbrains.kotlin.types.FunctionPlaceholdersKt;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
-import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo;
+import org.jetbrains.kotlin.types.expressions.*;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 
+import javax.inject.Inject;
 import java.util.Collections;
 import java.util.List;
 
@@ -63,29 +63,34 @@ import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 
 public class ArgumentTypeResolver {
     @NotNull private final TypeResolver typeResolver;
-    @NotNull private final CallResolver callResolver;
-    @NotNull private final ExpressionTypingServices expressionTypingServices;
+    @NotNull private final DoubleColonExpressionResolver doubleColonExpressionResolver;
     @NotNull private final KotlinBuiltIns builtIns;
     @NotNull private final ReflectionTypes reflectionTypes;
     @NotNull private final ConstantExpressionEvaluator constantExpressionEvaluator;
     @NotNull private final FunctionPlaceholders functionPlaceholders;
 
+    private ExpressionTypingServices expressionTypingServices;
+
     public ArgumentTypeResolver(
             @NotNull TypeResolver typeResolver,
-            @NotNull CallResolver callResolver,
-            @NotNull ExpressionTypingServices expressionTypingServices,
+            @NotNull DoubleColonExpressionResolver doubleColonExpressionResolver,
             @NotNull KotlinBuiltIns builtIns,
             @NotNull ReflectionTypes reflectionTypes,
             @NotNull ConstantExpressionEvaluator constantExpressionEvaluator,
             @NotNull FunctionPlaceholders functionPlaceholders
     ) {
         this.typeResolver = typeResolver;
-        this.callResolver = callResolver;
-        this.expressionTypingServices = expressionTypingServices;
+        this.doubleColonExpressionResolver = doubleColonExpressionResolver;
         this.builtIns = builtIns;
         this.reflectionTypes = reflectionTypes;
         this.constantExpressionEvaluator = constantExpressionEvaluator;
         this.functionPlaceholders = functionPlaceholders;
+    }
+
+    // component dependency cycle
+    @Inject
+    public void setExpressionTypingServices(@NotNull ExpressionTypingServices expressionTypingServices) {
+        this.expressionTypingServices = expressionTypingServices;
     }
 
     public static boolean isSubtypeOfForArgumentType(
@@ -238,14 +243,17 @@ public class ArgumentTypeResolver {
             @NotNull CallResolutionContext<?> context,
             boolean expectedTypeIsUnknown
     ) {
-        KotlinType receiverType =
-                CallableReferencesResolutionUtilsKt.resolveCallableReferenceReceiverType(callableReferenceExpression, context, typeResolver);
-        OverloadResolutionResults<CallableDescriptor> overloadResolutionResults =
-                CallableReferencesResolutionUtilsKt.resolvePossiblyAmbiguousCallableReference(
-                        callableReferenceExpression, receiverType, context, ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS,
-                        callResolver);
+        Pair<DoubleColonLHS, OverloadResolutionResults<?>> pair =
+                doubleColonExpressionResolver.resolveCallableReference(
+                        callableReferenceExpression,
+                        ExpressionTypingContext.newContext(context),
+                        SHAPE_FUNCTION_ARGUMENTS
+                );
+        DoubleColonLHS lhs = pair.getFirst();
+
+        KotlinType receiverType = lhs != null ? lhs.getType() : null;
         return CallableReferencesResolutionUtilsKt.getResolvedCallableReferenceShapeType(
-                callableReferenceExpression, receiverType, overloadResolutionResults, context, expectedTypeIsUnknown,
+                callableReferenceExpression, receiverType, pair.getSecond(), context, expectedTypeIsUnknown,
                 reflectionTypes, builtIns, functionPlaceholders
         );
     }
