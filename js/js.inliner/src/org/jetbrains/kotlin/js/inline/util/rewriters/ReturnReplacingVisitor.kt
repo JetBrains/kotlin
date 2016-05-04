@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.metadata.functionDescriptor
 import com.google.dart.compiler.backend.js.ast.metadata.returnTarget
 import com.google.dart.compiler.backend.js.ast.metadata.synthetic
-import org.jetbrains.kotlin.js.inline.util.canHaveSideEffect
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
 class ReturnReplacingVisitor(
@@ -55,14 +54,16 @@ class ReturnReplacingVisitor(
     }
 
     private fun getReturnReplacement(returnExpression: JsExpression?): JsExpression? {
-        if (returnExpression != null) {
+        return if (returnExpression != null) {
             if (resultRef != null) {
-                return JsAstUtils.assignment(resultRef, returnExpression).apply { synthetic = true }
+                JsAstUtils.assignment(resultRef, returnExpression).apply { synthetic = true }
             }
-
-            if (returnExpression.canHaveSideEffect()) return returnExpression
+            else {
+                returnExpression
+            }
         }
-
-        return null
+        else {
+            null
+        }
     }
 }

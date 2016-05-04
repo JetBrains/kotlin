@@ -69,7 +69,7 @@ internal class TemporaryAssignmentElimination(private val root: JsBlock) {
                 val propertyMutation = JsAstUtils.decomposeAssignment(x.expression)
                 if (propertyMutation != null) {
                     val (target, value) = propertyMutation
-                    if (!target.canHaveSideEffect()) {
+                    if (!target.canHaveSideEffect(namesToProcess)) {
                         val usage = Usage.PropertyMutation(x, target)
                         tryRecord(value, usage)
                         accept(value)

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.js.translate.expression
 import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.metadata.functionDescriptor
 import com.google.dart.compiler.backend.js.ast.metadata.isLocal
+import com.google.dart.compiler.backend.js.ast.metadata.sideEffects
 import com.google.dart.compiler.backend.js.ast.metadata.staticRef
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.js.inline.util.getInnerFunction
@@ -62,7 +63,7 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
         }
 
         lambda.isLocal = true
-        return invokingContext.define(descriptor, lambda)
+        return invokingContext.define(descriptor, lambda).apply { sideEffects = false }
     }
 }
 
