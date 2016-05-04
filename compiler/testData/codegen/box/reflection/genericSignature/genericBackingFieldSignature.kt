@@ -48,35 +48,35 @@ fun box(): String {
     val classField = clz.getDeclaredField("classField1");
 
     if (classField.getGenericType().toString() != "Z<T>")
-        return "fail1:" + classField.getGenericType();
+        return "fail1: " + classField.getGenericType();
 
 
     val classField2 = clz.getDeclaredField("classField2");
 
     if (classField2.getGenericType().toString() != "Z<java.lang.String>")
-        return "fail2:" + classField2.getGenericType();
+        return "fail2: " + classField2.getGenericType();
 
 
     val classField3 = clz.getDeclaredField("classField3");
 
     if (classField3.getGenericType().toString() != "Zout<java.lang.String>")
-        return "fail3:" + classField3.getGenericType();
+        return "fail3: " + classField3.getGenericType();
 
 
     val classField4 = clz.getDeclaredField("classField4");
 
     if (classField4.getGenericType().toString() != "Zin<TParam>")
-        return "fail4:" + classField4.getGenericType();
+        return "fail4: " + classField4.getGenericType();
 
     val classField5 = clz.getDeclaredField("delegateLazy\$delegate");
 
-    if (classField5.getGenericType().toString() != "kotlin.Lazy<Z<TParam>>")
-        return "fail5:" + classField5.getGenericType();
+    if (classField5.getGenericType().toString() != "interface kotlin.Lazy")
+        return "fail5: " + classField5.getGenericType();
 
     val classField6 = clz.getDeclaredField("delegateNotNull\$delegate");
 
-    if (classField6.getGenericType().toString() != "kotlin.properties.ReadWriteProperty<java.lang.Object, Z<TParam>>")
-        return "fail6:" + classField6.getGenericType();
+    if (classField6.getGenericType().toString() != "interface kotlin.properties.ReadWriteProperty")
+        return "fail6: " + classField6.getGenericType();
 
 
     return "OK"

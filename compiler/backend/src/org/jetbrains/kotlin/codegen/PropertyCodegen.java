@@ -348,7 +348,7 @@ public class PropertyCodegen {
 
         FieldVisitor fv = builder.newField(
                 JvmDeclarationOriginKt.OtherOrigin(element, propertyDescriptor), modifiers, name, type.getDescriptor(),
-                typeMapper.mapFieldSignature(kotlinType, propertyDescriptor), defaultValue
+                isDelegate ? null : typeMapper.mapFieldSignature(kotlinType, propertyDescriptor), defaultValue
         );
 
         Annotated fieldAnnotated = new AnnotatedWithFakeAnnotations(propertyDescriptor, annotations);
