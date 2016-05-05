@@ -16,10 +16,13 @@
 
 package org.jetbrains.kotlin.idea.codeInsight.moveUpDown
 
+import com.intellij.codeInsight.editorActions.moveLeftRight.MoveElementLeftAction
+import com.intellij.codeInsight.editorActions.moveLeftRight.MoveElementRightAction
 import com.intellij.codeInsight.editorActions.moveUpDown.MoveStatementDownAction
 import com.intellij.codeInsight.editorActions.moveUpDown.MoveStatementUpAction
 import com.intellij.codeInsight.editorActions.moveUpDown.StatementUpDownMover
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.editor.actionSystem.EditorAction
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.LightCodeInsightTestCase
@@ -32,7 +35,7 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
-abstract class AbstractCodeMoverTest : LightCodeInsightTestCase() {
+abstract class AbstractMoveStatementTest : AbstractCodeMoverTest() {
     protected fun doTestClassBodyDeclaration(path: String) {
         doTest(path, KotlinDeclarationMover::class.java)
     }
@@ -41,53 +44,53 @@ abstract class AbstractCodeMoverTest : LightCodeInsightTestCase() {
         doTest(path, KotlinExpressionMover::class.java)
     }
 
-    private fun doTest(path: String, moverClass: Class<out StatementUpDownMover>) {
+    private fun doTest(path: String, defaultMoverClass: Class<out StatementUpDownMover>) {
+        doTest(path) { isApplicableExpected, direction ->
+            val movers = Extensions.getExtensions(StatementUpDownMover.STATEMENT_UP_DOWN_MOVER_EP)
+            val info = StatementUpDownMover.MoveInfo()
+            val actualMover = movers.firstOrNull {
+                it.checkAvailable(LightPlatformCodeInsightTestCase.getEditor(), LightPlatformCodeInsightTestCase.getFile(), info, direction == "down")
+            } ?: error("No mover found")
+
+            assertEquals("Unmatched movers", defaultMoverClass.name, actualMover.javaClass.name)
+            assertEquals("Invalid applicability", isApplicableExpected, info.toMove2 != null)
+        }
+    }
+}
+
+abstract class AbstractCodeMoverTest : LightCodeInsightTestCase() {
+    protected fun doTest(path: String, isApplicableChecker: (isApplicableExpected: Boolean, direction: String) -> Unit = { isApplicableExpected, direction ->  }) {
         configureByFile(path)
 
         val fileText = FileUtil.loadFile(File(path), true)
         val direction = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// MOVE: ")
+                        ?: error("No MOVE directive found")
 
-        var down = true
-        if ("up" == direction) {
-            down = false
-        }
-        else if ("down" == direction) {
-            down = true
-        }
-        else {
-            fail("Direction is not specified")
+        val action = when (direction) {
+            "up" -> MoveStatementUpAction()
+            "down" -> MoveStatementDownAction()
+            "left" -> MoveElementLeftAction()
+            "right" -> MoveElementRightAction()
+            else -> error("Unknown direction: $direction")
         }
 
         val isApplicableString = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// IS_APPLICABLE: ")
         val isApplicableExpected = isApplicableString == null || isApplicableString == "true"
 
-        val movers = Extensions.getExtensions(StatementUpDownMover.STATEMENT_UP_DOWN_MOVER_EP)
-        val info = StatementUpDownMover.MoveInfo()
-        var actualMover: StatementUpDownMover? = null
-        for (mover in movers) {
-            if (mover.checkAvailable(LightPlatformCodeInsightTestCase.getEditor(), LightPlatformCodeInsightTestCase.getFile(), info, down)) {
-                actualMover = mover
-                break
-            }
-        }
-
-        assertTrue("No mover found", actualMover != null)
-        assertEquals("Unmatched movers", moverClass.name, actualMover!!.javaClass.name)
-        assertEquals("Invalid applicability", isApplicableExpected, info.toMove2 != null)
+        isApplicableChecker(isApplicableExpected, direction)
 
         if (isApplicableExpected) {
-            invokeAndCheck(fileText, path, down)
+            invokeAndCheck(fileText, path, action)
         }
     }
 
-    private fun invokeAndCheck(fileText: String, path: String, down: Boolean) {
+    private fun invokeAndCheck(fileText: String, path: String, action: EditorAction) {
         val codeStyleSettings = FormatSettingsUtil.getSettings()
         val configurator = FormatSettingsUtil.createConfigurator(fileText, codeStyleSettings)
         configurator.configureSettings()
 
         try {
             ApplicationManager.getApplication().runWriteAction {
-                val action = if (down) MoveStatementDownAction() else MoveStatementUpAction()
                 action.actionPerformed(LightPlatformCodeInsightTestCase.getEditor(), LightPlatformCodeInsightTestCase.getCurrentEditorDataContext())
             }
 
