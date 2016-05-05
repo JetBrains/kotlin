@@ -149,7 +149,7 @@ public class JvmSerializerExtension extends SerializerExtension {
 
     @Override
     public void serializeErrorType(@NotNull KotlinType type, @NotNull ProtoBuf.Type.Builder builder) {
-        if (classBuilderMode == ClassBuilderMode.LIGHT_CLASSES_WITH_METADATA) {
+        if (classBuilderMode == ClassBuilderMode.KAPT) {
             builder.setClassName(stringTable.getStringIndex("error.NonExistingClass"));
             return;
         }

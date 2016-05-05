@@ -59,7 +59,7 @@ class StubProducerExtension(val stubsOutputDir: File, val messageCollector: Mess
 
 private class StubClassBuilderFactory : ClassBuilderFactory {
 
-    override fun getClassBuilderMode() = ClassBuilderMode.LIGHT_CLASSES_WITH_METADATA
+    override fun getClassBuilderMode() = ClassBuilderMode.KAPT
 
     override fun newClassBuilder(origin: JvmDeclarationOrigin) = AbstractClassBuilder.Concrete(
             ClassWriter(ClassWriter.COMPUTE_FRAMES or ClassWriter.COMPUTE_MAXS))
