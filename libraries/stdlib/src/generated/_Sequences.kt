@@ -457,6 +457,7 @@ public fun <T> Sequence<T>.sortedWith(comparator: Comparator<in T>): Sequence<T>
  * Returns a [Map] containing key-value pairs provided by [transform] function
  * applied to elements of the given sequence.
  * If any of two pairs would have the same key the last one gets added to the map.
+ * The returned map preserves the entry iteration order of the original sequence.
  */
 public inline fun <T, K, V> Sequence<T>.associate(transform: (T) -> Pair<K, V>): Map<K, V> {
     return associateTo(LinkedHashMap<K, V>(), transform)
@@ -466,6 +467,7 @@ public inline fun <T, K, V> Sequence<T>.associate(transform: (T) -> Pair<K, V>):
  * Returns a [Map] containing the elements from the given sequence indexed by the key
  * returned from [keySelector] function applied to each element.
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * The returned map preserves the entry iteration order of the original sequence.
  */
 public inline fun <T, K> Sequence<T>.associateBy(keySelector: (T) -> K): Map<K, T> {
     return associateByTo(LinkedHashMap<K, T>(), keySelector)
@@ -474,6 +476,7 @@ public inline fun <T, K> Sequence<T>.associateBy(keySelector: (T) -> K): Map<K, 
 /**
  * Returns a [Map] containing the values provided by [valueTransform] and indexed by [keySelector] functions applied to elements of the given sequence.
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * The returned map preserves the entry iteration order of the original sequence.
  */
 public inline fun <T, K, V> Sequence<T>.associateBy(keySelector: (T) -> K, valueTransform: (T) -> V): Map<K, V> {
     return associateByTo(LinkedHashMap<K, V>(), keySelector, valueTransform)
@@ -550,6 +553,7 @@ public fun <T> Sequence<T>.toMutableList(): MutableList<T> {
 
 /**
  * Returns a [Set] of all elements.
+ * The returned set preserves the element iteration order of the original sequence.
  */
 public fun <T> Sequence<T>.toSet(): Set<T> {
     return toCollection(LinkedHashSet<T>()).optimizeReadOnlySet()
@@ -593,6 +597,7 @@ public inline fun <T, R, C : MutableCollection<in R>> Sequence<T>.flatMapTo(dest
 /**
  * Groups elements of the original sequence by the key returned by the given [keySelector] function
  * applied to each element and returns a map where each group key is associated with a list of corresponding elements.
+ * The returned map preserves the entry iteration order of the keys produced from the original sequence.
  * @sample test.collections.CollectionTest.groupBy
  */
 public inline fun <T, K> Sequence<T>.groupBy(keySelector: (T) -> K): Map<K, List<T>> {
@@ -603,6 +608,7 @@ public inline fun <T, K> Sequence<T>.groupBy(keySelector: (T) -> K): Map<K, List
  * Groups values returned by the [valueTransform] function applied to each element of the original sequence
  * by the key returned by the given [keySelector] function applied to the element
  * and returns a map where each group key is associated with a list of corresponding values.
+ * The returned map preserves the entry iteration order of the keys produced from the original sequence.
  * @sample test.collections.CollectionTest.groupByKeysAndValues
  */
 public inline fun <T, K, V> Sequence<T>.groupBy(keySelector: (T) -> K, valueTransform: (T) -> V): Map<K, List<V>> {
@@ -745,6 +751,7 @@ public fun <T, K> Sequence<T>.distinctBy(selector: (T) -> K): Sequence<T> {
 
 /**
  * Returns a mutable set containing all distinct elements from the given sequence.
+ * The returned set preserves the element iteration order of the original sequence.
  */
 public fun <T> Sequence<T>.toMutableSet(): MutableSet<T> {
     val set = LinkedHashSet<T>()
