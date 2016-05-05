@@ -21,7 +21,6 @@ import com.google.dart.compiler.backend.js.ast.JsConditional
 import com.google.dart.compiler.backend.js.ast.JsExpression
 import com.google.dart.compiler.backend.js.ast.JsLiteral
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
@@ -32,7 +31,6 @@ import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
-import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
 interface CallInfo {
@@ -101,8 +99,8 @@ fun TranslationContext.getCallInfo(resolvedCall: ResolvedCall<out FunctionDescri
     return FunctionCallInfo(callInfo, argumentsInfo)
 }
 
-private fun TranslationContext.getDispatchReceiver(receiverValue: ReceiverValue, allowSuperCall: Boolean): JsExpression {
-    return getDispatchReceiver(getReceiverParameterForReceiver(receiverValue), allowSuperCall)
+private fun TranslationContext.getDispatchReceiver(receiverValue: ReceiverValue): JsExpression {
+    return getDispatchReceiver(getReceiverParameterForReceiver(receiverValue))
 }
 
 private fun TranslationContext.createCallInfo(resolvedCall: ResolvedCall<out CallableDescriptor>, explicitReceivers: ExplicitReceivers): CallInfo {
@@ -111,17 +109,11 @@ private fun TranslationContext.createCallInfo(resolvedCall: ResolvedCall<out Cal
     // I'm not sure if it's a proper code, and why it should work. Just copied similar logic from ExpressionCodegen.generateConstructorCall.
     // See box/classes/inner/instantiateInDerived.kt
     // TODO: revisit this code later, write more tests (or borrow them from JVM backend)
-    fun isConstructorCall(): Boolean {
-        val descriptor = resolvedCall.resultingDescriptor.original
-        return descriptor is ConstructorDescriptor && descriptor.containingDeclaration.isInner &&
-               resolvedCall.dispatchReceiver is ImplicitClassReceiver
-    }
-
     fun getDispatchReceiver(): JsExpression? {
         val receiverValue = resolvedCall.dispatchReceiver ?: return null
         return when (receiverKind) {
             DISPATCH_RECEIVER, BOTH_RECEIVERS -> explicitReceivers.extensionOrDispatchReceiver
-            else -> this.getDispatchReceiver(receiverValue, isConstructorCall())
+            else -> getDispatchReceiver(receiverValue)
         }
     }
 
@@ -130,7 +122,7 @@ private fun TranslationContext.createCallInfo(resolvedCall: ResolvedCall<out Cal
         return when (receiverKind) {
             EXTENSION_RECEIVER -> explicitReceivers.extensionOrDispatchReceiver
             BOTH_RECEIVERS -> explicitReceivers.extensionReceiver
-            else -> this.getDispatchReceiver(receiverValue as ReceiverValue, isConstructorCall())
+            else -> getDispatchReceiver(receiverValue)
         }
     }
 
