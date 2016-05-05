@@ -25,11 +25,7 @@ import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiJavaFile
-import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.*
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.codeInsight.KotlinCopyPasteReferenceProcessor
@@ -48,6 +44,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtStringTemplateEntryWithExpression
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import java.awt.datatransfer.Transferable
 import java.util.*
 
@@ -83,10 +80,7 @@ class ConvertJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransferab
         val document = editor.document
         val targetFile = PsiDocumentManager.getInstance(project).getPsiFile(document) as? KtFile ?: return
 
-        val elementAt = targetFile.findElementAt(caretOffset)
-        if (PsiTreeUtil.getParentOfType(elementAt, KtStringTemplateExpression::class.java, false, KtStringTemplateEntryWithExpression::class.java) is KtStringTemplateExpression) {
-            return
-        }
+        if (isNoConversionPosition(targetFile, bounds.startOffset)) return
 
         data class Result(val text: String?, val referenceData: Collection<KotlinReferenceData>, val explicitImports: Set<FqName>)
 
@@ -149,7 +143,7 @@ class ConvertJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransferab
                 val endOffsetAfterCopy = startOffset + text.length
                 editor.caretModel.moveToOffset(endOffsetAfterCopy)
 
-                var newBounds = insertImports(TextRange(startOffset, endOffsetAfterCopy), referenceData, explicitImports)
+                val newBounds = insertImports(TextRange(startOffset, endOffsetAfterCopy), referenceData, explicitImports)
 
                 PsiDocumentManager.getInstance(project).commitAllDocuments()
                 AfterConversionPass(project, J2kPostProcessor(formatCode = true)).run(targetFile, newBounds)
@@ -157,56 +151,6 @@ class ConvertJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransferab
                 conversionPerformed = true
             }
         }
-    }
-
-    private class ConversionResult(
-            val text: String,
-            val parseContext: ParseContext,
-            val importsToAdd: Set<FqName>,
-            val textChanged: Boolean
-    )
-
-    private fun convertCopiedCodeToKotlin(elementsAndTexts: Collection<Any>, project: Project): ConversionResult {
-        val converter = JavaToKotlinConverter(
-                project,
-                ConverterSettings.defaultSettings,
-                IdeaJavaToKotlinServices
-        )
-
-        val inputElements = elementsAndTexts.filterIsInstance<PsiElement>()
-        val results = converter.elementsToKotlin(inputElements).results
-        val importsToAdd = LinkedHashSet<FqName>()
-
-        var resultIndex = 0
-        val convertedCodeBuilder = StringBuilder()
-        val originalCodeBuilder = StringBuilder()
-        var parseContext: ParseContext? = null
-        for (o in elementsAndTexts) {
-            if (o is PsiElement) {
-                val originalText = o.text
-                originalCodeBuilder.append(originalText)
-
-                val result = results[resultIndex++]
-                if (result != null) {
-                    convertedCodeBuilder.append(result.text)
-                    if (parseContext == null) { // use parse context of the first converted element as parse context for the whole text
-                        parseContext = result.parseContext
-                    }
-                    importsToAdd.addAll(result.importsToAdd)
-                }
-                else { // failed to convert element to Kotlin, insert "as is"
-                    convertedCodeBuilder.append(originalText)
-                }
-            }
-            else {
-                originalCodeBuilder.append(o)
-                convertedCodeBuilder.append(o as String)
-            }
-        }
-
-        val convertedCode = convertedCodeBuilder.toString()
-        val originalCode = originalCodeBuilder.toString()
-        return ConversionResult(convertedCode, parseContext ?: ParseContext.CODE_BLOCK, importsToAdd, convertedCode != originalCode)
     }
 
     private fun buildReferenceData(text: String, parseContext: ParseContext, importsAndPackage: String, targetFile: KtFile): Collection<KotlinReferenceData> {
@@ -244,7 +188,7 @@ class ConvertJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransferab
     }
 
     private fun okFromDialog(project: Project): Boolean {
-        val dialog = KotlinPasteFromJavaDialog(project)
+        val dialog = KotlinPasteFromJavaDialog(project, false)
         dialog.show()
         return dialog.isOK
     }
@@ -252,4 +196,65 @@ class ConvertJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransferab
     companion object {
         @TestOnly var conversionPerformed: Boolean = false
     }
+}
+
+internal class ConversionResult(
+        val text: String,
+        val parseContext: ParseContext,
+        val importsToAdd: Set<FqName>,
+        val textChanged: Boolean
+)
+
+internal fun convertCopiedCodeToKotlin(elementsAndTexts: Collection<Any>, project: Project): ConversionResult {
+    val converter = JavaToKotlinConverter(
+            project,
+            ConverterSettings.defaultSettings,
+            IdeaJavaToKotlinServices
+    )
+
+    val inputElements = elementsAndTexts.filterIsInstance<PsiElement>()
+    val results = converter.elementsToKotlin(inputElements).results
+    val importsToAdd = LinkedHashSet<FqName>()
+
+    var resultIndex = 0
+    val convertedCodeBuilder = StringBuilder()
+    val originalCodeBuilder = StringBuilder()
+    var parseContext: ParseContext? = null
+    for (o in elementsAndTexts) {
+        if (o is PsiElement) {
+            val originalText = o.text
+            originalCodeBuilder.append(originalText)
+
+            val result = results[resultIndex++]
+            if (result != null) {
+                convertedCodeBuilder.append(result.text)
+                if (parseContext == null) { // use parse context of the first converted element as parse context for the whole text
+                    parseContext = result.parseContext
+                }
+                importsToAdd.addAll(result.importsToAdd)
+            }
+            else { // failed to convert element to Kotlin, insert "as is"
+                convertedCodeBuilder.append(originalText)
+            }
+        }
+        else {
+            originalCodeBuilder.append(o)
+            convertedCodeBuilder.append(o as String)
+        }
+    }
+
+    val convertedCode = convertedCodeBuilder.toString()
+    val originalCode = originalCodeBuilder.toString()
+    return ConversionResult(convertedCode, parseContext ?: ParseContext.CODE_BLOCK, importsToAdd, convertedCode != originalCode)
+}
+
+internal fun isNoConversionPosition(file: KtFile, offset: Int): Boolean {
+    if (offset == 0) return false
+    val token = file.findElementAt(offset - 1)!!
+    for (element in token.parentsWithSelf) {
+        if (element is PsiComment) return true
+        if (element is KtStringTemplateEntryWithExpression) return false
+        if (element is KtStringTemplateExpression) return true
+    }
+    return false
 }

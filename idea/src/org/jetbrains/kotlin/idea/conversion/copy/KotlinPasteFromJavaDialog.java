@@ -30,26 +30,31 @@ import java.awt.*;
  */
 @SuppressWarnings("UnusedDeclaration")
 public class KotlinPasteFromJavaDialog extends DialogWrapper {
-    private JPanel myPanel;
+    private JPanel panel;
     private JCheckBox donTShowThisCheckBox;
+    private JLabel questionLabel;
     private JButton buttonOK;
 
-    public KotlinPasteFromJavaDialog(Project project) {
+    public KotlinPasteFromJavaDialog(@NotNull Project project, boolean isPlainText) {
         super(project, true);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
         setTitle("Convert Code From Java");
+        if (isPlainText) {
+            questionLabel.setText("Clipboard content seems to be Java code. Do you want to convert it to Kotlin? ");
+            //TODO: should we also use different set of settings?
+        }
         init();
     }
 
     @Override
     protected JComponent createCenterPanel() {
-        return myPanel;
+        return panel;
     }
 
     @Override
     public Container getContentPane() {
-        return myPanel;
+        return panel;
     }
 
     @NotNull
