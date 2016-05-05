@@ -1,0 +1,8 @@
+// MOVE: left
+enum class E {
+    A, B, C<caret>
+
+    ;
+
+    fun foo(){}
+}

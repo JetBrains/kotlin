@@ -1,0 +1,5 @@
+// MOVE: right
+class A {
+    fun foo(a: Int, <caret>b: Int, c: Int) {
+    }
+}
