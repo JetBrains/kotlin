@@ -535,6 +535,8 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
         fun isNullable(target: PsiVariable): Boolean {
             if (typeConverter.variableNullability(target).isNullable(codeConverter.settings)) return true
 
+            if (!converter.inConversionScope(target)) return false
+
             val canChangeType = when (target) {
                 is PsiLocalVariable -> codeConverter.canChangeType(target)
                 is PsiField -> target.hasModifierProperty(PsiModifier.PRIVATE)
