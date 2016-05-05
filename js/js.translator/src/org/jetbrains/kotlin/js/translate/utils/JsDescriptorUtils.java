@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -145,6 +145,10 @@ public final class JsDescriptorUtils {
 
     private static boolean isDefaultAccessor(@Nullable PropertyAccessorDescriptor accessorDescriptor) {
         return accessorDescriptor == null || accessorDescriptor.isDefault();
+    }
+
+    public static boolean sideEffectsPossible(@NotNull PropertyDescriptor property) {
+        return isDefaultAccessor(property.getGetter()) && !ModalityKt.isOverridableOrOverrides(property);
     }
 
     public static boolean isSimpleFinalProperty(@NotNull PropertyDescriptor propertyDescriptor) {
