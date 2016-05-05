@@ -20,6 +20,8 @@ public class JavaClass {
 
     public void test() {
         System.out.println(example.TestClassGenerated.class.getName());
+        System.out.println(example.BinaryAnnotatedTestClassGenerated.class.getName());
+        System.out.println(example.RuntimeAnnotatedTestClassGenerated.class.getName());
     }
 
 }
