@@ -20,9 +20,8 @@ function test2() {
     init();
 
     var $tmp2 = foo(2);
-    var $tmp1 = foo(1);
 
-    return foo($tmp1 + $tmp2);
+    return foo(foo(1) + $tmp2);
 }
 
 function test3() {
