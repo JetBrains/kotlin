@@ -958,6 +958,7 @@ public fun Collection<Short>.toShortArray(): ShortArray {
  * Returns a [Map] containing key-value pairs provided by [transform] function
  * applied to elements of the given collection.
  * If any of two pairs would have the same key the last one gets added to the map.
+ * The returned map preserves the entry iteration order of the original collection.
  */
 public inline fun <T, K, V> Iterable<T>.associate(transform: (T) -> Pair<K, V>): Map<K, V> {
     @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
@@ -969,6 +970,7 @@ public inline fun <T, K, V> Iterable<T>.associate(transform: (T) -> Pair<K, V>):
  * Returns a [Map] containing the elements from the given collection indexed by the key
  * returned from [keySelector] function applied to each element.
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * The returned map preserves the entry iteration order of the original collection.
  */
 public inline fun <T, K> Iterable<T>.associateBy(keySelector: (T) -> K): Map<K, T> {
     @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
@@ -979,6 +981,7 @@ public inline fun <T, K> Iterable<T>.associateBy(keySelector: (T) -> K): Map<K, 
 /**
  * Returns a [Map] containing the values provided by [valueTransform] and indexed by [keySelector] functions applied to elements of the given collection.
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * The returned map preserves the entry iteration order of the original collection.
  */
 public inline fun <T, K, V> Iterable<T>.associateBy(keySelector: (T) -> K, valueTransform: (T) -> V): Map<K, V> {
     @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
@@ -1073,6 +1076,7 @@ public fun <T> Collection<T>.toMutableList(): MutableList<T> {
 
 /**
  * Returns a [Set] of all elements.
+ * The returned set preserves the element iteration order of the original collection.
  */
 public fun <T> Iterable<T>.toSet(): Set<T> {
     if (this is Collection) {
@@ -1123,6 +1127,7 @@ public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(dest
 /**
  * Groups elements of the original collection by the key returned by the given [keySelector] function
  * applied to each element and returns a map where each group key is associated with a list of corresponding elements.
+ * The returned map preserves the entry iteration order of the keys produced from the original collection.
  * @sample test.collections.CollectionTest.groupBy
  */
 public inline fun <T, K> Iterable<T>.groupBy(keySelector: (T) -> K): Map<K, List<T>> {
@@ -1133,6 +1138,7 @@ public inline fun <T, K> Iterable<T>.groupBy(keySelector: (T) -> K): Map<K, List
  * Groups values returned by the [valueTransform] function applied to each element of the original collection
  * by the key returned by the given [keySelector] function applied to the element
  * and returns a map where each group key is associated with a list of corresponding values.
+ * The returned map preserves the entry iteration order of the keys produced from the original collection.
  * @sample test.collections.CollectionTest.groupByKeysAndValues
  */
 public inline fun <T, K, V> Iterable<T>.groupBy(keySelector: (T) -> K, valueTransform: (T) -> V): Map<K, List<V>> {
@@ -1284,6 +1290,7 @@ public inline fun <T, K> Iterable<T>.distinctBy(selector: (T) -> K): List<T> {
 
 /**
  * Returns a set containing all elements that are contained by both this set and the specified collection.
+ * The returned set preserves the element iteration order of the original collection.
  */
 public infix fun <T> Iterable<T>.intersect(other: Iterable<T>): Set<T> {
     val set = this.toMutableSet()
@@ -1292,7 +1299,8 @@ public infix fun <T> Iterable<T>.intersect(other: Iterable<T>): Set<T> {
 }
 
 /**
- * Returns a set containing all elements that are contained by this set and not contained by the specified collection.
+ * Returns a set containing all elements that are contained by this collection and not contained by the specified collection.
+ * The returned set preserves the element iteration order of the original collection.
  */
 public infix fun <T> Iterable<T>.subtract(other: Iterable<T>): Set<T> {
     val set = this.toMutableSet()
@@ -1302,6 +1310,7 @@ public infix fun <T> Iterable<T>.subtract(other: Iterable<T>): Set<T> {
 
 /**
  * Returns a mutable set containing all distinct elements from the given collection.
+ * The returned set preserves the element iteration order of the original collection.
  */
 public fun <T> Iterable<T>.toMutableSet(): MutableSet<T> {
     return when (this) {
@@ -1312,6 +1321,9 @@ public fun <T> Iterable<T>.toMutableSet(): MutableSet<T> {
 
 /**
  * Returns a set containing all distinct elements from both collections.
+ * The returned set preserves the element iteration order of the original collection.
+ * Those elements of the [other] collection that are unique are iterated in the end
+ * in the order of the [other] collection.
  */
 public infix fun <T> Iterable<T>.union(other: Iterable<T>): Set<T> {
     val set = this.toMutableSet()

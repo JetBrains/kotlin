@@ -21,7 +21,12 @@ fun snapshots(): List<GenericFunction> {
     }
 
     templates add f("toSet()") {
-        doc { f -> "Returns a [Set] of all ${f.element.pluralize()}." }
+        doc { f ->
+            """
+            Returns a [Set] of all ${f.element.pluralize()}.
+            The returned set preserves the element iteration order of the original ${f.collection}.
+            """
+        }
         returns("Set<T>")
         body(Iterables) {
             """
@@ -168,6 +173,7 @@ fun snapshots(): List<GenericFunction> {
             Returns a [Map] containing key-value pairs provided by [transform] function
             applied to ${f.element.pluralize()} of the given ${f.collection}.
             If any of two pairs would have the same key the last one gets added to the map.
+            The returned map preserves the entry iteration order of the original ${f.collection}.
             """
         }
         body {
@@ -231,6 +237,7 @@ fun snapshots(): List<GenericFunction> {
             Returns a [Map] containing the ${f.element.pluralize()} from the given ${f.collection} indexed by the key
             returned from [keySelector] function applied to each ${f.element}.
             If any two ${f.element.pluralize()} would have the same key returned by [keySelector] the last one gets added to the map.
+            The returned map preserves the entry iteration order of the original ${f.collection}.
             """
         }
         returns("Map<K, T>")
@@ -301,6 +308,7 @@ fun snapshots(): List<GenericFunction> {
             """
             Returns a [Map] containing the values provided by [valueTransform] and indexed by [keySelector] functions applied to ${f.element.pluralize()} of the given ${f.collection}.
             If any two ${f.element.pluralize()} would have the same key returned by [keySelector] the last one gets added to the map.
+            The returned map preserves the entry iteration order of the original ${f.collection}.
             """
         }
         returns("Map<K, V>")

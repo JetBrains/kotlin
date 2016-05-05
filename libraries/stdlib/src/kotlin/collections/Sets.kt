@@ -25,20 +25,30 @@ internal object EmptySet : Set<Nothing>, Serializable {
 
 /** Returns an empty read-only set.  The returned set is serializable (JVM). */
 public fun <T> emptySet(): Set<T> = EmptySet
-/** Returns a new read-only ordered set with the given elements.  The returned set is serializable (JVM). */
+/**
+ * Returns a new read-only set with the given elements.
+ * Elements of the set are iterated in the order they were specified.
+ * The returned set is serializable (JVM).
+ */
 public fun <T> setOf(vararg elements: T): Set<T> = if (elements.size > 0) elements.toSet() else emptySet()
 
 /** Returns an empty read-only set.  The returned set is serializable (JVM). */
 @kotlin.internal.InlineOnly
 public inline fun <T> setOf(): Set<T> = emptySet()
 
-/** Returns a new [MutableSet] with the given elements. */
+/**
+ * Returns a new [MutableSet] with the given elements.
+ * Elements of the set are iterated in the order they were specified.
+ */
 public fun <T> mutableSetOf(vararg elements: T): MutableSet<T> = elements.toCollection(LinkedHashSet(mapCapacity(elements.size)))
 
 /** Returns a new [HashSet] with the given elements. */
 public fun <T> hashSetOf(vararg elements: T): HashSet<T> = elements.toCollection(HashSet(mapCapacity(elements.size)))
 
-/** Returns a new [LinkedHashSet] with the given elements. */
+/**
+ * Returns a new [LinkedHashSet] with the given elements.
+ * Elements of the set are iterated in the order they were specified.
+ */
 public fun <T> linkedSetOf(vararg elements: T): LinkedHashSet<T> = elements.toCollection(LinkedHashSet(mapCapacity(elements.size)))
 
 /** Returns this Set if it's not `null` and the empty set otherwise. */
