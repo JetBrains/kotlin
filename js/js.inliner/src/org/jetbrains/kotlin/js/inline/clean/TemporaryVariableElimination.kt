@@ -33,6 +33,7 @@ internal class TemporaryVariableElimination(private val root: JsStatement) {
     private val namesToProcess = mutableSetOf<JsName>()
     private val statementsToRemove = mutableSetOf<JsNode>()
     private val namesToSubstitute = mutableSetOf<JsName>()
+    private val variablesToRemove = mutableSetOf<JsName>()
 
     fun apply(): Boolean {
         analyze()
@@ -268,7 +269,13 @@ internal class TemporaryVariableElimination(private val root: JsStatement) {
                         }
                         return
                     }
+                    else if (shouldConsiderUnused(name)) {
+                        variablesToRemove += name
+                        handleTopLevel(value)
+                        return
+                    }
                 }
+
                 handleTopLevel(expression)
             }
 
@@ -383,6 +390,9 @@ internal class TemporaryVariableElimination(private val root: JsStatement) {
                             }
                         }
                         else {
+                            if (shouldConsiderUnused(name)) {
+                                variablesToRemove += name
+                            }
                             handleTopLevel(initializer)
                         }
                     }
@@ -428,8 +438,33 @@ internal class TemporaryVariableElimination(private val root: JsStatement) {
 
     private fun cleanUp() {
         object : JsVisitorWithContextImpl() {
-            override fun visit(x: JsVars, ctx: JsContext<*>): Boolean {
-                x.vars.removeAll { it in statementsToRemove }
+            override fun visit(x: JsVars, ctx: JsContext<JsNode>): Boolean {
+                x.vars.removeAll(statementsToRemove)
+
+                var lastDroppedIndex = 0
+                for ((index, v) in x.vars.toList().withIndex()) {
+                    val name = v.name
+                    if (name in variablesToRemove) {
+                        hasChanges = true
+                        if (index > lastDroppedIndex) {
+                            val droppedVars = JsVars(*x.vars.subList(lastDroppedIndex, index).toTypedArray())
+                            droppedVars.synthetic = x.synthetic
+                            ctx.addPrevious(droppedVars)
+                        }
+                        val initExpression = v.initExpression
+                        if (initExpression != null) {
+                            ctx.addPrevious(JsExpressionStatement(initExpression).apply {
+                                synthetic = true
+                                accept(this)
+                            })
+                        }
+                        lastDroppedIndex = index + 1
+                    }
+                }
+                if (lastDroppedIndex > 0) {
+                    x.vars.subList(0, lastDroppedIndex).clear()
+                }
+
                 if (x.vars.isEmpty()) {
                     ctx.removeMe()
                     hasChanges = true
@@ -438,12 +473,27 @@ internal class TemporaryVariableElimination(private val root: JsStatement) {
                 return super.visit(x, ctx)
             }
 
-            override fun visit(x: JsExpressionStatement, ctx: JsContext<*>): Boolean {
+            override fun visit(x: JsExpressionStatement, ctx: JsContext<JsNode>): Boolean {
                 if (x in statementsToRemove) {
                     ctx.removeMe()
                     hasChanges = true
                     return false
                 }
+
+                val assignment = JsAstUtils.decomposeAssignmentToVariable(x.expression)
+                if (assignment != null) {
+                    val (name, value) = assignment
+                    if (name in variablesToRemove) {
+                        hasChanges = true
+                        JsExpressionStatement(value).apply {
+                            synthetic = true
+                            accept(this)
+                            ctx.replaceMe(this)
+                        }
+                        return false
+                    }
+                }
+
                 return super.visit(x, ctx)
             }
 
@@ -480,6 +530,8 @@ internal class TemporaryVariableElimination(private val root: JsStatement) {
     private fun useVariable(name: JsName) {
         usages[name] = (usages[name] ?: 0) + 1
     }
+
+    private fun shouldConsiderUnused(name: JsName) = (definitions[name] ?: 0) == 1 && (usages[name] ?: 0) == 0 && name in temporary
 
     private fun shouldConsiderTemporary(name: JsName): Boolean {
         if (definitions[name] ?: 0 != 1 || name !in temporary) return false
