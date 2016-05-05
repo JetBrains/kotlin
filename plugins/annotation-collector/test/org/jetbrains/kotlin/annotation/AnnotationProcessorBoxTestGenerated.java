@@ -83,6 +83,12 @@ public class AnnotationProcessorBoxTestGenerated extends AbstractAnnotationProce
         doTest(fileName);
     }
 
+    @TestMetadata("inheritedSimple")
+    public void testInheritedSimple() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/annotation-collector/testData/collectToFile/inheritedSimple/");
+        doTest(fileName);
+    }
+
     @TestMetadata("inheritedTopLevel")
     public void testInheritedTopLevel() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/annotation-collector/testData/collectToFile/inheritedTopLevel/");
@@ -122,6 +128,30 @@ public class AnnotationProcessorBoxTestGenerated extends AbstractAnnotationProce
     @TestMetadata("platformStatic")
     public void testPlatformStatic() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/annotation-collector/testData/collectToFile/platformStatic/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("retentionPoliciesJavaAnnotations")
+    public void testRetentionPoliciesJavaAnnotations() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/annotation-collector/testData/collectToFile/retentionPoliciesJavaAnnotations/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("retentionPoliciesJavaAnnotationsStubs")
+    public void testRetentionPoliciesJavaAnnotationsStubs() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/annotation-collector/testData/collectToFile/retentionPoliciesJavaAnnotationsStubs/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("retentionPoliciesKotlinAnnotations")
+    public void testRetentionPoliciesKotlinAnnotations() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/annotation-collector/testData/collectToFile/retentionPoliciesKotlinAnnotations/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("retentionPoliciesKotlinAnnotationsStubs")
+    public void testRetentionPoliciesKotlinAnnotationsStubs() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/annotation-collector/testData/collectToFile/retentionPoliciesKotlinAnnotationsStubs/");
         doTest(fileName);
     }
 

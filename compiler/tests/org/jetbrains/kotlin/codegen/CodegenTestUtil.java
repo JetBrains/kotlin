@@ -70,7 +70,10 @@ public class CodegenTestUtil {
                 /* useTypeTableInSerializer = */ false,
                 configuration.get(JVMConfigurationKeys.INHERIT_MULTIFILE_PARTS, false)
         );
-        KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
+
+        if (analysisResult.getShouldGenerateCode()) {
+            KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
+        }
 
         // For JVM-specific errors
         AnalyzingUtils.throwExceptionOnErrors(state.getCollectedExtraJvmDiagnostics());
