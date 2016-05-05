@@ -466,6 +466,7 @@
     <backspaceHandlerDelegate implementation="org.jetbrains.kotlin.idea.editor.KotlinStringTemplateBackspaceHandler"/>
 
     <copyPastePostProcessor implementation="org.jetbrains.kotlin.idea.conversion.copy.ConvertJavaCopyPasteProcessor"/>
+    <copyPastePostProcessor implementation="org.jetbrains.kotlin.idea.conversion.copy.ConvertTextJavaCopyPasteProcessor"/>
     <copyPastePostProcessor implementation="org.jetbrains.kotlin.idea.codeInsight.KotlinCopyPasteReferenceProcessor"/>
 
     <lang.documentationProvider language="JAVA" implementationClass="org.jetbrains.kotlin.idea.KotlinQuickDocumentationProvider" order="first"/>

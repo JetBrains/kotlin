@@ -59,6 +59,7 @@ import org.jetbrains.kotlin.idea.completion.test.handlers.AbstractSmartCompletio
 import org.jetbrains.kotlin.idea.completion.test.weighers.AbstractBasicCompletionWeigherTest
 import org.jetbrains.kotlin.idea.completion.test.weighers.AbstractSmartCompletionWeigherTest
 import org.jetbrains.kotlin.idea.conversion.copy.AbstractJavaToKotlinCopyPasteConversionTest
+import org.jetbrains.kotlin.idea.conversion.copy.AbstractTextJavaToKotlinCopyPasteConversionTest
 import org.jetbrains.kotlin.idea.coverage.AbstractKotlinCoverageOutputFilesTest
 import org.jetbrains.kotlin.idea.debugger.AbstractBeforeExtractFunctionInsertionTest
 import org.jetbrains.kotlin.idea.debugger.AbstractKotlinSteppingTest
@@ -645,6 +646,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractJavaToKotlinCopyPasteConversionTest>() {
             model("copyPaste/conversion", pattern = """^([^\.]+)\.java$""")
+        }
+
+        testClass<AbstractTextJavaToKotlinCopyPasteConversionTest>() {
+            model("copyPaste/plainTextConversion", pattern = """^([^\.]+)\.txt$""")
         }
 
         testClass<AbstractInsertImportOnPasteTest>() {
