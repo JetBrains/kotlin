@@ -152,7 +152,7 @@ class JavaToKotlinConverter(
 
         val map: Map<PsiElement, Collection<UsageProcessing>> = usageProcessings.values
                 .flatMap { it }
-                .filter { it.javaCodeProcessors != null || it.kotlinCodeProcessors != null }
+                .filter { it.javaCodeProcessors.isNotEmpty() || it.kotlinCodeProcessors.isNotEmpty() }
                 .groupBy { it.targetElement }
         if (map.isEmpty()) return null
 
@@ -171,8 +171,8 @@ class JavaToKotlinConverter(
 
                     ProgressManager.getInstance().runProcess(
                             {
-                                val searchJava = processings.any { it.javaCodeProcessors != null }
-                                val searchKotlin = processings.any { it.kotlinCodeProcessors != null }
+                                val searchJava = processings.any { it.javaCodeProcessors.isNotEmpty() }
+                                val searchKotlin = processings.any { it.kotlinCodeProcessors.isNotEmpty() }
                                 services.referenceSearcher.findUsagesForExternalCodeProcessing(psiElement, searchJava, searchKotlin)
                                         .filterNot { inConversionScope(it.element) }
                                         .mapTo(refs) { ReferenceInfo(it, psiElement, it.element.containingFile, processings) }
