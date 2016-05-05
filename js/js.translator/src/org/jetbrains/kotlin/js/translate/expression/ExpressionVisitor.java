@@ -23,11 +23,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
-import org.jetbrains.kotlin.descriptors.VariableDescriptor;
-import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention;
@@ -69,8 +64,10 @@ import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.convertToStatem
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.newVar;
 import static org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getReceiverParameterForDeclaration;
 import static org.jetbrains.kotlin.js.translate.utils.TranslationUtils.translateInitializerForProperty;
-import static org.jetbrains.kotlin.resolve.BindingContext.*;
+import static org.jetbrains.kotlin.resolve.BindingContext.DECLARATION_TO_DESCRIPTOR;
+import static org.jetbrains.kotlin.resolve.BindingContext.LABEL_TARGET;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.isVarCapturedInClosure;
+import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt.getResolvedCallWithAssert;
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionExpression;
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionLiteral;
 
@@ -489,8 +486,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
                 getDescriptorForReferenceExpression(context.bindingContext(), expression.getInstanceReference());
         assert thisExpression != null : "This expression must reference a descriptor: " + expression.getText();
 
-        // TODO: not sure if `false` is a proper argument here, revisit this code later
-        return context.getDispatchReceiver(getReceiverParameterForDeclaration(thisExpression), false).source(expression);
+        return context.getDispatchReceiver(getReceiverParameterForDeclaration(thisExpression)).source(expression);
     }
 
     @Override
@@ -503,11 +499,8 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @Override
     @NotNull
     public JsNode visitSuperExpression(@NotNull KtSuperExpression expression, @NotNull TranslationContext context) {
-        DeclarationDescriptor superTarget = getSuperTarget(context, expression);
-        ReceiverParameterDescriptor receiver = getReceiverParameterForDeclaration(superTarget);
-
-        // TODO: not sure if `true` is a proper argument here, revisit this code later
-        return context.getDispatchReceiver(receiver, true);
+        ResolvedCall<? extends CallableDescriptor> resolvedCall = getResolvedCallWithAssert(expression, context.bindingContext());
+        return context.getDispatchReceiver((ReceiverParameterDescriptor) resolvedCall.getResultingDescriptor());
     }
 
     @Override
@@ -598,18 +591,6 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         }
 
         return super.visitAnnotatedExpression(expression, context);
-    }
-
-    @NotNull
-    private static DeclarationDescriptor getSuperTarget(TranslationContext context, KtSuperExpression expression) {
-        BindingContext bindingContext = context.bindingContext();
-        PsiElement labelPsi = bindingContext.get(LABEL_TARGET, expression.getTargetLabel());
-        ClassDescriptor labelTarget = (ClassDescriptor) bindingContext.get(DECLARATION_TO_DESCRIPTOR, labelPsi);
-        if (labelTarget != null) return labelTarget;
-
-        DeclarationDescriptor descriptor = bindingContext.get(REFERENCE_TARGET, expression.getInstanceReference());
-        assert descriptor != null : "Missing declaration descriptor: " + PsiUtilsKt.getTextWithLocation(expression);
-        return descriptor;
     }
 
     @Override
