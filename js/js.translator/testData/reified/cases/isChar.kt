@@ -7,5 +7,9 @@ fun box(): String {
     assertEquals(false, isInstance<Char>(""))
     assertEquals(false, isInstance<Char>("cc"))
 
+    assertEquals(true, isInstance<Char?>('c'), "isInstance<Char?>('c')")
+    assertEquals(true, isInstance<Char?>(null), "isInstance<Char?>(null)")
+    assertEquals(false, isInstance<Char?>("cc"), "isInstance<Char?>(\"cc\")")
+
     return "OK"
 }

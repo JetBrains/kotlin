@@ -22,6 +22,8 @@ import com.google.dart.compiler.backend.js.ast.metadata.MetadataProperties;
 import com.google.dart.compiler.backend.js.ast.metadata.TypeCheck;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
@@ -32,6 +34,8 @@ import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static com.google.dart.compiler.backend.js.ast.JsScopesKt.JsObjectScope;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.fqnWithoutSideEffects;
@@ -59,6 +63,7 @@ public final class Namer {
     public static final String PRIMITIVE_COMPARE_TO = "primitiveCompareTo";
     public static final String IS_CHAR = "isChar";
     public static final String IS_NUMBER = "isNumber";
+    public static final String IS_CHAR_SEQUENCE = "isCharSequence";
 
     public static final String CALLEE_NAME = "$fun";
 
@@ -92,9 +97,11 @@ public final class Namer {
     public static final String ANOTHER_THIS_PARAMETER_NAME = "$this";
 
     private static final String THROW_NPE_FUN_NAME = "throwNPE";
+    private static final String THROW_CLASS_CAST_EXCEPTION_FUN_NAME = "throwCCE";
     private static final String PROTOTYPE_NAME = "prototype";
     private static final String CAPTURED_VAR_FIELD = "v";
 
+    public static final JsNameRef IS_ARRAY_FUN_REF = new JsNameRef("isArray", "Array");
     public static final String DEFINE_INLINE_FUNCTION = "defineInlineFunction";
 
     private static final JsNameRef JS_OBJECT = new JsNameRef("Object");
@@ -364,6 +371,11 @@ public final class Namer {
     }
 
     @NotNull
+    public JsExpression throwClassCastExceptionFunRef() {
+        return new JsNameRef(THROW_CLASS_CAST_EXCEPTION_FUN_NAME, kotlinObject());
+    }
+
+    @NotNull
     public static JsNameRef kotlin(@NotNull JsName name) {
         return fqnWithoutSideEffects(name, kotlinObject());
     }
@@ -380,16 +392,58 @@ public final class Namer {
 
     @NotNull
     public JsExpression isTypeOf(@NotNull JsExpression type) {
-        JsInvocation invocation = new JsInvocation(kotlin("isTypeOf"), type);
-        MetadataProperties.setTypeCheck(invocation, TypeCheck.TYPEOF);
-        MetadataProperties.setSideEffects(invocation, false);
-        return invocation;
+        return invokeFunctionAndSetTypeCheckMetadata("isTypeOf", type, TypeCheck.TYPEOF);
     }
 
     @NotNull
     public JsExpression isInstanceOf(@NotNull JsExpression type) {
-        JsInvocation invocation = new JsInvocation(kotlin("isInstanceOf"), type);
-        MetadataProperties.setTypeCheck(invocation, TypeCheck.INSTANCEOF);
+        return invokeFunctionAndSetTypeCheckMetadata("isInstanceOf", type, TypeCheck.INSTANCEOF);
+    }
+
+    @NotNull
+    public JsExpression orNull(@NotNull JsExpression callable) {
+        return invokeFunctionAndSetTypeCheckMetadata("orNull", callable, TypeCheck.OR_NULL);
+    }
+
+    @NotNull
+    public JsExpression andPredicate(@NotNull JsExpression a, @NotNull JsExpression b) {
+        return invokeFunctionAndSetTypeCheckMetadata("andPredicate", Arrays.asList(a, b), TypeCheck.AND_PREDICATE);
+    }
+
+    @NotNull
+    public JsExpression isAny() {
+        return invokeFunctionAndSetTypeCheckMetadata("isAny", Collections.<JsExpression>emptyList(), TypeCheck.IS_ANY);
+    }
+
+    @NotNull
+    public JsExpression isComparable() {
+        return kotlin("isComparable");
+    }
+
+    @NotNull
+    public JsExpression isCharSequence() {
+        return kotlin(IS_CHAR_SEQUENCE);
+    }
+
+    @NotNull
+    private JsExpression invokeFunctionAndSetTypeCheckMetadata(
+            @NotNull String functionName,
+            @Nullable JsExpression argument,
+            @NotNull TypeCheck metadata
+    ) {
+        List<JsExpression> arguments = argument != null ? Collections.singletonList(argument) : Collections.<JsExpression>emptyList();
+        return invokeFunctionAndSetTypeCheckMetadata(functionName, arguments, metadata);
+    }
+
+    @NotNull
+    private JsExpression invokeFunctionAndSetTypeCheckMetadata(
+            @NotNull String functionName,
+            @NotNull List<JsExpression> arguments,
+            @NotNull TypeCheck metadata
+    ) {
+        JsInvocation invocation = new JsInvocation(kotlin(functionName));
+        invocation.getArguments().addAll(arguments);
+        MetadataProperties.setTypeCheck(invocation, metadata);
         MetadataProperties.setSideEffects(invocation, false);
         return invocation;
     }

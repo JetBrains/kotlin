@@ -17,6 +17,8 @@
 (function (Kotlin) {
     "use strict";
 
+    var CharSequence = Kotlin.createTraitNow(null);
+
     // Shims for String
     if (typeof String.prototype.startsWith === "undefined") {
         String.prototype.startsWith = function(searchString, position) {
@@ -126,6 +128,19 @@
         return (typeof value) == "string" && value.length == 1;
     };
 
+    Kotlin.isComparable = function (value) {
+        var type = typeof value;
+
+        return type === "string" ||
+               type === "boolean" ||
+               Kotlin.isNumber(value) ||
+               Kotlin.isType(value, Kotlin.Comparable);
+    };
+    
+    Kotlin.isCharSequence = function (value) {
+        return typeof value === "string" || Kotlin.isType(value, CharSequence);
+    };
+
     Kotlin.charInc = function (value) {
         return String.fromCharCode(value.charCodeAt(0)+1);
     };
@@ -199,11 +214,16 @@
     Kotlin.IllegalStateException = createClassNowWithMessage(Kotlin.RuntimeException);
     Kotlin.UnsupportedOperationException = createClassNowWithMessage(Kotlin.RuntimeException);
     Kotlin.IndexOutOfBoundsException = createClassNowWithMessage(Kotlin.RuntimeException);
+    Kotlin.ClassCastException = createClassNowWithMessage(Kotlin.RuntimeException);
     Kotlin.IOException = createClassNowWithMessage(Kotlin.Exception);
     Kotlin.AssertionError = createClassNowWithMessage(Kotlin.Error);
 
     Kotlin.throwNPE = function (message) {
         throw new Kotlin.NullPointerException(message);
+    };
+
+    Kotlin.throwCCE = function () {
+        throw new Kotlin.ClassCastException("Illegal cast");
     };
 
     function throwAbstractFunctionInvocationError(funName) {
@@ -1126,7 +1146,7 @@
     };
 
 
-    Kotlin.StringBuilder = Kotlin.createClassNow(null,
+    Kotlin.StringBuilder = Kotlin.createClassNow([CharSequence],
         function (content) {
             this.string = typeof(content) == "string" ? content : "";
         }, {

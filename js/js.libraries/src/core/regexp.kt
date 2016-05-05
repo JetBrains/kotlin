@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ package kotlin.text.js
 
     public fun test(str: String): Boolean = noImpl
 
-    public fun exec(str: String): Array<String?>? = noImpl
+    public fun exec(str: String): RegExpMatch? = noImpl
 
     public override fun toString(): String = noImpl
 
@@ -43,4 +43,8 @@ public fun RegExp.reset() {
 @native public interface RegExpMatch {
     public val index: Int
     public val input: String
+    public val length: Int
+
+    @nativeGetter
+    public operator fun get(index: Int): String?
 }

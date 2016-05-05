@@ -533,23 +533,39 @@ var Kotlin = {};
         Object.defineProperty(Kotlin.modules, id, {value: declaration});
     };
 
-    function defineInlineFunction(tag, fun) {
+    Kotlin.defineInlineFunction = function(tag, fun) {
         return fun;
-    }
+    };
 
-    Kotlin.defineInlineFunction = defineInlineFunction;
-
-    Kotlin.isTypeOf = defineInlineFunction('stdlib.kotlin.isTypeOf', function (type) {
+    Kotlin.isTypeOf = function(type) {
         return function (object) {
             return typeof object === type;
         }
-    });
+    };
 
-    Kotlin.isInstanceOf = defineInlineFunction('stdlib.kotlin.isInstanceOf', function (klass) {
+    Kotlin.isInstanceOf = function (klass) {
         return function (object) {
             return Kotlin.isType(object, klass);
         }
-    });
+    };
+
+    Kotlin.orNull = function (fn) {
+        return function (object) {
+            return object == null || fn(object);
+        }
+    };
+
+    Kotlin.isAny = function () {
+        return function (object) {
+            return object != null;
+        }
+    };
+    
+    Kotlin.andPredicate = function (a, b) {
+        return function (object) {
+            return a(object) && b(object);
+        }
+    };
 
     Kotlin.kotlinModuleMetadata = function (abiVersion, moduleName, data) {
     };
