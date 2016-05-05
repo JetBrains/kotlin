@@ -2813,9 +2813,12 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
     }
 
-    public int indexOfLocal(KtReferenceExpression lhs) {
+    public int indexOfLocalNotDelegated(KtReferenceExpression lhs) {
         DeclarationDescriptor declarationDescriptor = bindingContext.get(REFERENCE_TARGET, lhs);
         if (isVarCapturedInClosure(bindingContext, declarationDescriptor)) {
+            return -1;
+        }
+        if (declarationDescriptor instanceof LocalVariableDescriptor && ((LocalVariableDescriptor) declarationDescriptor).isDelegated()) {
             return -1;
         }
         return lookupLocalIndex(declarationDescriptor);
@@ -3346,7 +3349,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             // Optimization for j = i++, when j and i are Int without any smart cast: we just work with primitive int
             if (operand instanceof KtReferenceExpression && asmResultType == Type.INT_TYPE &&
                 bindingContext.get(BindingContext.SMARTCAST, operand) == null) {
-                int index = indexOfLocal((KtReferenceExpression) operand);
+                int index = indexOfLocalNotDelegated((KtReferenceExpression) operand);
                 if (index >= 0) {
                     return StackValue.postIncrement(index, increment);
                 }
