@@ -34,4 +34,10 @@ class TemporaryVariableEliminationTest : BasicOptimizerTest("temporary-variable"
     @Test fun nonSideEffect() = box()
 
     @Test fun propertyAccess() = box()
+
+    @Test fun removeUnused() = box()
+
+    @Test fun innerExpressionProcessed() = box()
+
+    @Test fun transitiveNotConsideredTrivial() = box()
 }
