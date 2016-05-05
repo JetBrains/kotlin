@@ -1225,4 +1225,121 @@ public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
             doTestExpression(fileName);
         }
     }
+
+    @TestMetadata("idea/testData/codeInsight/moveUpDown/parametersAndArguments")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ParametersAndArguments extends AbstractCodeMoverTest {
+        public void testAllFilesPresentInParametersAndArguments() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/moveUpDown/parametersAndArguments"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("callArgs1.kt")
+        public void testCallArgs1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/parametersAndArguments/callArgs1.kt");
+            doTestExpression(fileName);
+        }
+
+        @TestMetadata("callArgs2.kt")
+        public void testCallArgs2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/parametersAndArguments/callArgs2.kt");
+            doTestExpression(fileName);
+        }
+
+        @TestMetadata("callArgs3.kt")
+        public void testCallArgs3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/parametersAndArguments/callArgs3.kt");
+            doTestExpression(fileName);
+        }
+
+        @TestMetadata("callArgs4.kt")
+        public void testCallArgs4() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/parametersAndArguments/callArgs4.kt");
+            doTestExpression(fileName);
+        }
+
+        @TestMetadata("callArgs5.kt")
+        public void testCallArgs5() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/parametersAndArguments/callArgs5.kt");
+            doTestExpression(fileName);
+        }
+
+        @TestMetadata("callArgs6.kt")
+        public void testCallArgs6() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/parametersAndArguments/callArgs6.kt");
+            doTestExpression(fileName);
+        }
+
+        @TestMetadata("classParams1.kt")
+        public void testClassParams1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/parametersAndArguments/classParams1.kt");
+            doTestExpression(fileName);
+        }
+
+        @TestMetadata("classParams2.kt")
+        public void testClassParams2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/parametersAndArguments/classParams2.kt");
+            doTestExpression(fileName);
+        }
+
+        @TestMetadata("classParams3.kt")
+        public void testClassParams3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/parametersAndArguments/classParams3.kt");
+            doTestExpression(fileName);
+        }
+
+        @TestMetadata("classParams4.kt")
+        public void testClassParams4() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/parametersAndArguments/classParams4.kt");
+            doTestExpression(fileName);
+        }
+
+        @TestMetadata("classParams5.kt")
+        public void testClassParams5() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/parametersAndArguments/classParams5.kt");
+            doTestExpression(fileName);
+        }
+
+        @TestMetadata("classParams6.kt")
+        public void testClassParams6() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/parametersAndArguments/classParams6.kt");
+            doTestExpression(fileName);
+        }
+
+        @TestMetadata("funParams1.kt")
+        public void testFunParams1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/parametersAndArguments/funParams1.kt");
+            doTestExpression(fileName);
+        }
+
+        @TestMetadata("funParams2.kt")
+        public void testFunParams2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/parametersAndArguments/funParams2.kt");
+            doTestExpression(fileName);
+        }
+
+        @TestMetadata("funParams3.kt")
+        public void testFunParams3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/parametersAndArguments/funParams3.kt");
+            doTestExpression(fileName);
+        }
+
+        @TestMetadata("funParams4.kt")
+        public void testFunParams4() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/parametersAndArguments/funParams4.kt");
+            doTestExpression(fileName);
+        }
+
+        @TestMetadata("funParams5.kt")
+        public void testFunParams5() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/parametersAndArguments/funParams5.kt");
+            doTestExpression(fileName);
+        }
+
+        @TestMetadata("funParams6.kt")
+        public void testFunParams6() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/parametersAndArguments/funParams6.kt");
+            doTestExpression(fileName);
+        }
+    }
 }
