@@ -28,5 +28,5 @@ public enum ClassBuilderMode {
     /**
      * Function signatures + metadata (to support incremental compilation with kapt)
      */
-    LIGHT_CLASSES_WITH_METADATA;
+    KAPT;
 }
