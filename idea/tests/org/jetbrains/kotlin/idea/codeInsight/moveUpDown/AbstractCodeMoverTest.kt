@@ -41,7 +41,7 @@ abstract class AbstractCodeMoverTest : LightCodeInsightTestCase() {
         doTest(path, KotlinExpressionMover::class.java)
     }
 
-    private fun doTest(path: String, defaultMoverClass: Class<out StatementUpDownMover>) {
+    private fun doTest(path: String, moverClass: Class<out StatementUpDownMover>) {
         configureByFile(path)
 
         val fileText = FileUtil.loadFile(File(path), true)
@@ -71,13 +71,8 @@ abstract class AbstractCodeMoverTest : LightCodeInsightTestCase() {
             }
         }
 
-        var moverClassName = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// MOVER_CLASS: ")
-        if (moverClassName == null) {
-            moverClassName = defaultMoverClass.name
-        }
-
         assertTrue("No mover found", actualMover != null)
-        assertEquals("Unmatched movers", moverClassName, actualMover!!.javaClass.name)
+        assertEquals("Unmatched movers", moverClass.name, actualMover!!.javaClass.name)
         assertEquals("Invalid applicability", isApplicableExpected, info.toMove2 != null)
 
         if (isApplicableExpected) {
