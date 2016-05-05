@@ -279,7 +279,7 @@ public abstract class AnnotationCodegen {
         ClassifierDescriptor classifierDescriptor = annotationDescriptor.getType().getConstructor().getDeclarationDescriptor();
         assert classifierDescriptor != null : "Annotation descriptor has no class: " + annotationDescriptor;
         RetentionPolicy rp = getRetentionPolicy(classifierDescriptor);
-        if (rp == RetentionPolicy.SOURCE && typeMapper.getClassBuilderMode() != ClassBuilderMode.LIGHT_CLASSES) {
+        if (rp == RetentionPolicy.SOURCE && typeMapper.getClassBuilderMode() == ClassBuilderMode.FULL) {
             return null;
         }
 
@@ -404,7 +404,7 @@ public abstract class AnnotationCodegen {
                     case FULL:
                         throw new IllegalStateException("Don't know how to compile annotation value " + value);
                     case LIGHT_CLASSES:
-                    case LIGHT_CLASSES_WITH_METADATA:
+                    case KAPT:
                         return null;
                     default:
                         throw new IllegalStateException("Unknown builder mode: " + mode);
