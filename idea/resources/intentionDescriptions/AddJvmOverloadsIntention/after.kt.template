@@ -1,0 +1,3 @@
+<spot>@JvmOverloads</spot>
+fun foo(a: String = "") {
+}
