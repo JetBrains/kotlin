@@ -1,3 +1,5 @@
-void foo(AAA a) {
-    a.setX(a.getX() + 1)
+class JavaClass {
+    void foo(AAA a) {
+        a.setX(a.getX() + 1)
+    }
 }
