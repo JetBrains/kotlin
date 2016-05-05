@@ -21,13 +21,15 @@ import com.intellij.codeInsight.editorActions.moveLeftRight.MoveElementRightActi
 import com.intellij.codeInsight.editorActions.moveUpDown.MoveStatementDownAction
 import com.intellij.codeInsight.editorActions.moveUpDown.MoveStatementUpAction
 import com.intellij.codeInsight.editorActions.moveUpDown.StatementUpDownMover
-import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.actionSystem.Presentation
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.editor.actionSystem.EditorAction
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.LightCodeInsightTestCase
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase
 import junit.framework.ComparisonFailure
+import junit.framework.TestCase
 import org.jetbrains.kotlin.formatter.FormatSettingsUtil
 import org.jetbrains.kotlin.idea.codeInsight.upDownMover.KotlinDeclarationMover
 import org.jetbrains.kotlin.idea.codeInsight.upDownMover.KotlinExpressionMover
@@ -58,8 +60,14 @@ abstract class AbstractMoveStatementTest : AbstractCodeMoverTest() {
     }
 }
 
+abstract class AbstractMoveLeftRightTest : AbstractCodeMoverTest() {
+    protected fun doTest(path: String) {
+        doTest(path) { isApplicableExpected, direction ->  }
+    }
+}
+
 abstract class AbstractCodeMoverTest : LightCodeInsightTestCase() {
-    protected fun doTest(path: String, isApplicableChecker: (isApplicableExpected: Boolean, direction: String) -> Unit = { isApplicableExpected, direction ->  }) {
+    protected fun doTest(path: String, isApplicableChecker: (isApplicableExpected: Boolean, direction: String) -> Unit) {
         configureByFile(path)
 
         val fileText = FileUtil.loadFile(File(path), true)
@@ -79,29 +87,33 @@ abstract class AbstractCodeMoverTest : LightCodeInsightTestCase() {
 
         isApplicableChecker(isApplicableExpected, direction)
 
-        if (isApplicableExpected) {
-            invokeAndCheck(fileText, path, action)
-        }
+        invokeAndCheck(fileText, path, action, isApplicableExpected)
     }
 
-    private fun invokeAndCheck(fileText: String, path: String, action: EditorAction) {
+    private fun invokeAndCheck(fileText: String, path: String, action: EditorAction, isApplicableExpected: Boolean) {
         val codeStyleSettings = FormatSettingsUtil.getSettings()
         val configurator = FormatSettingsUtil.createConfigurator(fileText, codeStyleSettings)
         configurator.configureSettings()
 
         try {
-            ApplicationManager.getApplication().runWriteAction {
-                action.actionPerformed(LightPlatformCodeInsightTestCase.getEditor(), LightPlatformCodeInsightTestCase.getCurrentEditorDataContext())
-            }
+            val editor = LightPlatformCodeInsightTestCase.getEditor()
+            val dataContext = LightPlatformCodeInsightTestCase.getCurrentEditorDataContext()
 
-            val afterFilePath = path + ".after"
-            try {
-                checkResultByFile(afterFilePath)
-            }
-            catch (e: ComparisonFailure) {
-                KotlinTestUtils.assertEqualsToFile(File(afterFilePath), LightPlatformCodeInsightTestCase.getEditor())
-            }
+            val presentation = Presentation()
+            action.update(editor, presentation, dataContext)
+            TestCase.assertEquals(isApplicableExpected, presentation.isEnabled)
 
+            if (isApplicableExpected) {
+                runWriteAction { action.actionPerformed(editor, dataContext) }
+
+                val afterFilePath = path + ".after"
+                try {
+                    checkResultByFile(afterFilePath)
+                }
+                catch (e: ComparisonFailure) {
+                    KotlinTestUtils.assertEqualsToFile(File(afterFilePath), editor)
+                }
+            }
         }
         finally {
             codeStyleSettings.clearCodeStyleSettings()
