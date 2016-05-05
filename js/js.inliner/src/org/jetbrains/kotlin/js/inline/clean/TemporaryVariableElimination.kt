@@ -264,6 +264,7 @@ internal class TemporaryVariableElimination(private val root: JsStatement) {
                             namesToSubstitute += name
                         }
                         else {
+                            lastAssignedVars.clear()
                             lastAssignedVars += Pair(name, x)
                             sideEffectOccurred = false
                         }
@@ -385,6 +386,7 @@ internal class TemporaryVariableElimination(private val root: JsStatement) {
                                 namesToSubstitute += name
                             }
                             else {
+                                lastAssignedVars.clear()
                                 lastAssignedVars += Pair(name, v)
                                 sideEffectOccurred = false
                             }
@@ -453,7 +455,7 @@ internal class TemporaryVariableElimination(private val root: JsStatement) {
                         }
                         val initExpression = v.initExpression
                         if (initExpression != null) {
-                            ctx.addPrevious(JsExpressionStatement(initExpression).apply {
+                            ctx.addPrevious(JsExpressionStatement(initExpression).run {
                                 synthetic = true
                                 accept(this)
                             })
@@ -485,11 +487,10 @@ internal class TemporaryVariableElimination(private val root: JsStatement) {
                     val (name, value) = assignment
                     if (name in variablesToRemove) {
                         hasChanges = true
-                        JsExpressionStatement(value).apply {
+                        ctx.replaceMe(JsExpressionStatement(value).run {
                             synthetic = true
                             accept(this)
-                            ctx.replaceMe(this)
-                        }
+                        })
                         return false
                     }
                 }
