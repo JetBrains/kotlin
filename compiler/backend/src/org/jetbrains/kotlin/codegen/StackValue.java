@@ -672,7 +672,16 @@ public abstract class StackValue {
                 @NotNull CallableMethod getter,
                 @Nullable CallableMethod setter
         ) {
-            super(type, false, false, new Receiver(OBJECT_TYPE, delegateValue, constant(null, OBJECT_TYPE), metadataValue), false);
+            super(type, false, false, new Receiver(OBJECT_TYPE, delegateValue, constant(null, OBJECT_TYPE), metadataValue) {
+                @Override
+                public void dup(@NotNull InstructionAdapter v, boolean withReceiver) {
+                    //UGLY HACK
+                    //TODO rethink Receiver/StackValue concept
+                    //We need to make duplication of delegated var, owner (null) and property metadata: dup 3.
+                    //As HACK Type.LONG_TYPE and Type.INT_TYPE passed to dup util to simulate dup 3.
+                    AsmUtil.dup(v, Type.LONG_TYPE, Type.INT_TYPE);
+                }
+            }, false);
             this.delegateValue = delegateValue;
             this.metadataValue = metadataValue;
             this.getter = getter;
