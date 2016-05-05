@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.js.inline.clean
 
 import com.google.dart.compiler.backend.js.ast.*
-import com.google.dart.compiler.backend.js.ast.metadata.synthetic
 import com.google.dart.compiler.backend.js.ast.metadata.sideEffects
+import com.google.dart.compiler.backend.js.ast.metadata.synthetic
 import org.jetbrains.kotlin.js.inline.util.collectDefinedNames
 import org.jetbrains.kotlin.js.inline.util.collectFreeVariables
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
@@ -545,13 +545,25 @@ internal class TemporaryVariableElimination(private val root: JsStatement) {
         is JsNameRef -> {
             val qualifier = expr.qualifier
             if (qualifier == null) {
-                !expr.sideEffects || (expr.name?.let { definitions[it] ?: 0 <= 1 } ?: false)
+                if (!expr.sideEffects) {
+                    true
+                }
+                else {
+                    val name = expr.name
+                    name != null && when (definitions[name] ?: 0) {
+                        0 -> true
+                        1 -> name !in namesToSubstitute || definedValues[name]?.let { isTrivial(it) } ?: false
+                        else -> false
+                    }
+                }
             }
             else {
                 !expr.sideEffects && isTrivial(qualifier)
             }
         }
         is JsLiteral.JsValueLiteral -> true
+        is JsInvocation -> !expr.sideEffects && isTrivial(expr.qualifier) && expr.arguments.all { isTrivial(it) }
+        is JsArrayAccess -> isTrivial(expr.arrayExpression) && isTrivial(expr.indexExpression)
         else -> false
     }
 }
