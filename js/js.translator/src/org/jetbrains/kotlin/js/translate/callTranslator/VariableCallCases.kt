@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,12 @@ package org.jetbrains.kotlin.js.translate.callTranslator
 import com.google.dart.compiler.backend.js.ast.JsExpression
 import com.google.dart.compiler.backend.js.ast.JsInvocation
 import com.google.dart.compiler.backend.js.ast.JsNameRef
+import com.google.dart.compiler.backend.js.ast.metadata.sideEffects
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.js.translate.context.Namer.getCapturedVarAccessor
+import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.resolve.BindingContextUtils.isVarCapturedInClosure
 import java.util.*
@@ -70,7 +72,12 @@ object DefaultVariableAccessCase : VariableAccessCase() {
     }
 
     override fun VariableAccessInfo.dispatchReceiver(): JsExpression {
-        return constructAccessExpression(JsNameRef(variableName, dispatchReceiver!!))
+        val accessor = JsNameRef(variableName, dispatchReceiver!!)
+        val descriptor = callableDescriptor
+        if (descriptor is PropertyDescriptor && JsDescriptorUtils.sideEffectsPossible(descriptor)) {
+            accessor.sideEffects = false
+        }
+        return constructAccessExpression(accessor)
     }
 
     override fun VariableAccessInfo.extensionReceiver(): JsExpression {
