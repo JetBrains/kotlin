@@ -32,15 +32,11 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
-import org.jetbrains.kotlin.resolve.lazy.*
+import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.data.KtClassLikeInfo
 import org.jetbrains.kotlin.resolve.lazy.declarations.*
-import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor
-import org.jetbrains.kotlin.resolve.scopes.ImportingScope
-import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
-import org.jetbrains.kotlin.resolve.scopes.utils.replaceImportingScopes
+import org.jetbrains.kotlin.resolve.repl.ReplState
 import org.jetbrains.kotlin.script.ScriptPriorities
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
 class CliReplAnalyzerEngine(private val environment: KotlinCoreEnvironment) {
     private val topDownAnalysisContext: TopDownAnalysisContext
@@ -166,53 +162,4 @@ class CliReplAnalyzerEngine(private val environment: KotlinCoreEnvironment) {
             }
         }
     }
-}
-
-class ReplState {
-    private val lines = hashMapOf<KtFile, LineInfo>()
-    private val successfulLines = arrayListOf<SuccessfulLine>()
-
-    val successfulLinesCount: Int
-        get() = successfulLines.size
-
-    fun submitLine(ktFile: KtFile) {
-        val line = SubmittedLine(ktFile, successfulLines.lastOrNull())
-        lines[ktFile] = line
-        ktFile.fileScopesCustomizer = object : FileScopesCustomizer {
-            override fun createFileScopes(fileScopeFactory: FileScopeFactory): FileScopes {
-                return lineInfo(ktFile)?.computeFileScopes(fileScopeFactory) ?: fileScopeFactory.createScopesForFile(ktFile)
-            }
-        }
-    }
-
-    fun lineSuccess(ktFile: KtFile, scriptDescriptor: LazyScriptDescriptor) {
-        val successfulLine = SuccessfulLine(ktFile, successfulLines.lastOrNull(), scriptDescriptor)
-        lines[ktFile] = successfulLine
-        successfulLines.add(successfulLine)
-    }
-
-    fun lineFailure(ktFile: KtFile) {
-        lines[ktFile] = FailedLine(ktFile, successfulLines.lastOrNull())
-    }
-
-    fun lineInfo(ktFile: KtFile) = lines[ktFile]
-
-    inner abstract class LineInfo {
-        abstract val linePsi: KtFile
-        abstract val parentLine: SuccessfulLine?
-
-        fun computeFileScopes(fileScopeFactory: FileScopeFactory): FileScopes {
-            // create scope that wraps previous line lexical scope and adds imports from this line
-            val lexicalScopeAfterLastLine = parentLine?.lineDescriptor?.scopeForInitializerResolution
-                                            ?: return fileScopeFactory.createScopesForFile(linePsi)
-            val lastLineImports = lexicalScopeAfterLastLine.parentsWithSelf.firstIsInstance<ImportingScope>()
-            val scopesForThisLine = fileScopeFactory.createScopesForFile(linePsi, lastLineImports)
-            val combinedLexicalScopes = lexicalScopeAfterLastLine.replaceImportingScopes(scopesForThisLine.importingScope)
-            return FileScopes(combinedLexicalScopes, scopesForThisLine.importingScope, scopesForThisLine.importResolver)
-        }
-    }
-
-    inner class SubmittedLine(override val linePsi: KtFile, override val parentLine: SuccessfulLine?) : LineInfo()
-    inner class SuccessfulLine(override val linePsi: KtFile, override val parentLine: SuccessfulLine?, val lineDescriptor: LazyScriptDescriptor) : LineInfo()
-    inner class FailedLine(override val linePsi: KtFile, override val parentLine: SuccessfulLine?) : LineInfo()
 }
