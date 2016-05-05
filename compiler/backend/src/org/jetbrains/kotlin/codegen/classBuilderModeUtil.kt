@@ -17,4 +17,4 @@
 package org.jetbrains.kotlin.codegen
 
 fun ClassBuilderMode.shouldGenerateMetadata() =
-        this == ClassBuilderMode.FULL || this == ClassBuilderMode.LIGHT_CLASSES_WITH_METADATA
+        this == ClassBuilderMode.FULL || this == ClassBuilderMode.KAPT
