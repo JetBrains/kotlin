@@ -47,6 +47,12 @@ public class JavaToKotlinConverterMultiFileTestGenerated extends AbstractJavaToK
         doTest(fileName);
     }
 
+    @TestMetadata("KT11952")
+    public void testKT11952() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/multiFile/KT11952/");
+        doTest(fileName);
+    }
+
     @TestMetadata("ProtectedVisibility")
     public void testProtectedVisibility() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/multiFile/ProtectedVisibility/");
