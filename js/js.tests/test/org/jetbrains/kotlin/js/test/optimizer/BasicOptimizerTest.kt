@@ -72,7 +72,7 @@ abstract class BasicOptimizerTest(private var basePath: String) {
         for (statement in unoptimizedAst) {
             object : RecursiveJsVisitor() {
                 override fun visitFunction(x: JsFunction) {
-                    FunctionPostProcessor(x.body).apply()
+                    FunctionPostProcessor(x).apply()
                     super.visitFunction(x)
                 }
             }.accept(statement)
