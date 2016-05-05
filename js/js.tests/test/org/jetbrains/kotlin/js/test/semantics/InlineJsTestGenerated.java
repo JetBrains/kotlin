@@ -89,6 +89,12 @@ public class InlineJsTestGenerated extends AbstractInlineJsTest {
         doTest(fileName);
     }
 
+    @TestMetadata("dontInlineFunctionCall.kt")
+    public void testDontInlineFunctionCall() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inline/cases/dontInlineFunctionCall.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("expressionBodyWithLambdaCall.kt")
     public void testExpressionBodyWithLambdaCall() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inline/cases/expressionBodyWithLambdaCall.kt");
