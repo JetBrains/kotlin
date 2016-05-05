@@ -26,6 +26,9 @@ class KaptIT: BaseGradleIT() {
             assertFileExists("build/generated/source/kapt/main/TestClassGenerated.java")
             assertFileExists("build/classes/main/example/TestClass.class")
             assertFileExists("build/classes/main/example/TestClassGenerated.class")
+            assertNoSuchFile("build/classes/main/example/SourceAnnotatedTestClassGenerated.class")
+            assertFileExists("build/classes/main/example/BinaryAnnotatedTestClassGenerated.class")
+            assertFileExists("build/classes/main/example/RuntimeAnnotatedTestClassGenerated.class")
         }
 
         project.build("build") {
@@ -46,6 +49,9 @@ class KaptIT: BaseGradleIT() {
             assertFileExists("build/generated/source/kapt/main/TestClassGenerated.java")
             assertFileExists("build/classes/main/example/TestClass.class")
             assertFileExists("build/classes/main/example/TestClassGenerated.class")
+            assertFileExists("build/classes/main/example/SourceAnnotatedTestClassGenerated.class")
+            assertFileExists("build/classes/main/example/BinaryAnnotatedTestClassGenerated.class")
+            assertFileExists("build/classes/main/example/RuntimeAnnotatedTestClassGenerated.class")
         }
 
         project.build("build") {
