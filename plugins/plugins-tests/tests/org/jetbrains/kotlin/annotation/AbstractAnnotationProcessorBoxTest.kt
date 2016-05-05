@@ -16,12 +16,14 @@
 
 package org.jetbrains.kotlin.annotation
 
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.codegen.CodegenTestUtil
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
+import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
@@ -29,13 +31,26 @@ import java.io.File
 import java.io.StringWriter
 
 abstract class AbstractAnnotationProcessorBoxTest : CodegenTestCase() {
-    override fun doTest(path: String) {
-        val testName = getTestName(true)
-        val ktFiles = File(path).listFiles { file -> file.isFile && file.extension.toLowerCase() == "kt" }
-        val testFiles = ktFiles.map { TestFile(it.name, it.readText()) }
-        val supportInheritedAnnotations = testName.startsWith("inherited")
+   override fun doTest(path: String) {
+        val testDir = File(path)
 
-        val collectorExtension = createTestEnvironment(supportInheritedAnnotations)
+        fun filesByExtension(ext: String) = testDir.listFiles { file -> file.isFile && file.extension.equals(ext, ignoreCase = true) }
+
+        val testName = getTestName(true)
+        val ktFiles = filesByExtension("kt")
+        val testFiles = ktFiles.map { TestFile(it.name, it.readText()) }
+        val supportInheritedAnnotations = testName.contains("inherited", ignoreCase = true)
+        val supportStubs = testName.contains("stubs", ignoreCase = true)
+
+        val javaSourceRoots = mutableListOf<File>()
+        val javaFiles = filesByExtension("java")
+        if (javaFiles.isNotEmpty()) {
+            val javaFilesDir = KotlinTestUtils.tmpDir("java-files")
+            javaFiles.forEach { it.copyTo(File(javaFilesDir, it.name)) }
+            javaSourceRoots.add(javaFilesDir)
+        }
+
+        val collectorExtension = createTestEnvironment(supportInheritedAnnotations, supportStubs, javaSourceRoots)
         loadMultiFiles(testFiles)
         CodegenTestUtil.generateFiles(myEnvironment, myFiles)
 
@@ -49,13 +64,26 @@ abstract class AbstractAnnotationProcessorBoxTest : CodegenTestCase() {
         return "plugins/annotation-collector/testData/codegen/"
     }
 
-    private fun createTestEnvironment(supportInheritedAnnotations: Boolean): AnnotationCollectorExtensionForTests {
-        val configuration = KotlinTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK)
+    private fun createTestEnvironment(
+            supportInheritedAnnotations: Boolean,
+            supportStubs: Boolean,
+            javaSourceRoots: List<File>
+    ): AnnotationCollectorExtensionForTests {
+        val configuration = KotlinTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL,
+                                                                          TestJdkKind.MOCK_JDK,
+                                                                          /* classpath = */ emptyList(),
+                                                                          javaSourceRoots)
         val environment = KotlinCoreEnvironment.createForTests(testRootDisposable!!, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
         val project = environment.project
 
         val collectorExtension = AnnotationCollectorExtensionForTests(supportInheritedAnnotations)
         ClassBuilderInterceptorExtension.registerExtension(project, collectorExtension)
+
+        if (supportStubs) {
+            val stubsDir = KotlinTestUtils.tmpDir("class-stubs")
+            val stubProducerExtension = StubProducerExtension(stubsDir, MessageCollector.NONE)
+            AnalysisCompletedHandlerExtension.registerExtension(project, stubProducerExtension)
+        }
 
         myEnvironment = environment
 
