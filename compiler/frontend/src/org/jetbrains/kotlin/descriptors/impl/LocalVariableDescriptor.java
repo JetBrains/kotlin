@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 
 public class LocalVariableDescriptor extends VariableDescriptorWithInitializerImpl implements VariableDescriptorWithAccessors {
-    private final boolean withAccessors;
+    private final boolean isDelegated;
     private VariableAccessorDescriptor getter;
     private VariableAccessorDescriptor setter;
 
@@ -35,17 +35,17 @@ public class LocalVariableDescriptor extends VariableDescriptorWithInitializerIm
             @NotNull Name name,
             @Nullable KotlinType type,
             boolean mutable,
-            boolean withAccessors,
+            boolean isDelegated,
             @NotNull SourceElement source
     ) {
         super(containingDeclaration, annotations, name, type, mutable, source);
-        this.withAccessors = withAccessors;
+        this.isDelegated = isDelegated;
     }
 
     @Override
     public void setOutType(KotlinType outType) {
         super.setOutType(outType);
-        if (withAccessors) {
+        if (isDelegated) {
             this.getter = new LocalVariableAccessorDescriptor.Getter(this);
             if (isVar()) {
                 this.setter = new LocalVariableAccessorDescriptor.Setter(this);
@@ -81,5 +81,9 @@ public class LocalVariableDescriptor extends VariableDescriptorWithInitializerIm
     @Override
     public VariableAccessorDescriptor getSetter() {
         return setter;
+    }
+
+    public boolean isDelegated() {
+        return isDelegated;
     }
 }

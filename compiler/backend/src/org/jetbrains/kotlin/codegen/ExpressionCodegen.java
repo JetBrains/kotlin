@@ -1628,7 +1628,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     private static boolean isDelegatedLocalVariable(@NotNull DeclarationDescriptor descriptor) {
-        return descriptor instanceof LocalVariableDescriptor && ((VariableDescriptorWithAccessors) descriptor).getGetter() != null;
+        return descriptor instanceof LocalVariableDescriptor && ((LocalVariableDescriptor) descriptor).isDelegated();
     }
 
     private static boolean isSharedVarType(@NotNull Type type) {
