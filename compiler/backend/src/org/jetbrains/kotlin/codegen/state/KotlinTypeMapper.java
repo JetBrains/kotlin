@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableAccessorDescriptor;
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.fileClasses.FileClasses;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
@@ -1369,9 +1370,8 @@ public class KotlinTypeMapper {
             return StackValue.sharedTypeForType(mapType(receiverParameter.getType()));
         }
 
-        if (descriptor instanceof VariableDescriptorWithAccessors) {
-            VariableDescriptorWithAccessors withAccessors = (VariableDescriptorWithAccessors) descriptor;
-            if (withAccessors.getGetter() != null || withAccessors.getSetter() != null) return null;
+        if (descriptor instanceof LocalVariableDescriptor && ((LocalVariableDescriptor) descriptor).isDelegated()) {
+            return null;
         }
 
         if (descriptor instanceof VariableDescriptor && isVarCapturedInClosure(bindingContext, descriptor)) {
