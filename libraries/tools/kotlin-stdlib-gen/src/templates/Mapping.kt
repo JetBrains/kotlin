@@ -294,6 +294,7 @@ fun mapping(): List<GenericFunction> {
             """
             Groups ${f.element.pluralize()} of the original ${f.collection} by the key returned by the given [keySelector] function
             applied to each ${f.element} and returns a map where each group key is associated with a list of corresponding ${f.element.pluralize()}.
+            The returned map preserves the entry iteration order of the keys produced from the original ${f.collection}.
             @sample test.collections.CollectionTest.groupBy
             """
         }
@@ -339,6 +340,7 @@ fun mapping(): List<GenericFunction> {
             Groups values returned by the [valueTransform] function applied to each ${f.element} of the original ${f.collection}
             by the key returned by the given [keySelector] function applied to the ${f.element}
             and returns a map where each group key is associated with a list of corresponding values.
+            The returned map preserves the entry iteration order of the keys produced from the original ${f.collection}.
             @sample test.collections.CollectionTest.groupByKeysAndValues
             """
         }
