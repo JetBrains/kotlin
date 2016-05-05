@@ -19,9 +19,7 @@ package org.jetbrains.kotlin.js.inline.context
 import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.metadata.descriptor
 import org.jetbrains.kotlin.js.inline.FunctionReader
-import org.jetbrains.kotlin.js.inline.util.getSimpleName
-import org.jetbrains.kotlin.js.inline.util.isCallInvocation
-import org.jetbrains.kotlin.js.inline.util.transitiveStaticRef
+import org.jetbrains.kotlin.js.inline.util.*
 
 abstract class FunctionContext(
         private val function: JsFunction,
@@ -86,7 +84,7 @@ abstract class FunctionContext(
         /** process cases 2, 3 */
         val qualifier = callQualifier.transitiveStaticRef
         return when (qualifier) {
-            is JsInvocation -> lookUpStaticFunction(getSimpleName(qualifier)!!)
+            is JsInvocation -> lookUpStaticFunction(getSimpleName(qualifier)!!)?.let { if (isFunctionCreator(it)) it else null }
             is JsNameRef -> lookUpStaticFunction(qualifier.name)
             is JsFunction -> qualifier
             else -> null
