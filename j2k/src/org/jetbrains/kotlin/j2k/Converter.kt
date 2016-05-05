@@ -451,6 +451,8 @@ class Converter private constructor(
     }
 
     fun shouldDeclareVariableType(variable: PsiVariable, type: Type, canChangeType: Boolean): Boolean {
+        assert(inConversionScope(variable))
+
         val initializer = variable.initializer
         if (initializer == null || initializer.isNullLiteral()) return true
         if (initializer.type is PsiPrimitiveType && type is PrimitiveType) {
