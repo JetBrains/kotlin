@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.idea.codeInsight.generate.AbstractCodeInsightActionT
 import org.jetbrains.kotlin.idea.codeInsight.generate.AbstractGenerateHashCodeAndEqualsActionTest
 import org.jetbrains.kotlin.idea.codeInsight.generate.AbstractGenerateTestSupportMethodActionTest
 import org.jetbrains.kotlin.idea.codeInsight.generate.AbstractGenerateToStringActionTest
+import org.jetbrains.kotlin.idea.codeInsight.moveUpDown.AbstractMoveLeftRightTest
 import org.jetbrains.kotlin.idea.codeInsight.moveUpDown.AbstractMoveStatementTest
 import org.jetbrains.kotlin.idea.codeInsight.surroundWith.AbstractSurroundWithTest
 import org.jetbrains.kotlin.idea.codeInsight.unwrap.AbstractUnwrapRemoveTest
@@ -509,6 +510,10 @@ fun main(args: Array<String>) {
             model("codeInsight/moveUpDown/closingBraces", testMethod = "doTestExpression")
             model("codeInsight/moveUpDown/expressions", testMethod = "doTestExpression")
             model("codeInsight/moveUpDown/parametersAndArguments", testMethod = "doTestExpression")
+        }
+
+        testClass<AbstractMoveLeftRightTest>() {
+            model("codeInsight/moveLeftRight")
         }
 
         testClass<AbstractInlineTest>() {

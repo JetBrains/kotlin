@@ -1,0 +1,4 @@
+// MOVE: left
+fun foo(list: List<String>) {
+    bar(<caret>*list, 1)
+}
