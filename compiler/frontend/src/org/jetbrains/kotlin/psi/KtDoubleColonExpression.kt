@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 
 abstract class KtDoubleColonExpression(node: ASTNode) : KtExpressionImpl(node) {
@@ -35,9 +34,6 @@ abstract class KtDoubleColonExpression(node: ASTNode) : KtExpressionImpl(node) {
             }
             error("Double colon expression must have '::': $text")
         }
-
-    val typeReference: KtTypeReference?
-        get() = findChildByType(KtNodeTypes.TYPE_REFERENCE)
 
     val doubleColonTokenReference: PsiElement
         get() = findChildByType(KtTokens.COLONCOLON)!!
