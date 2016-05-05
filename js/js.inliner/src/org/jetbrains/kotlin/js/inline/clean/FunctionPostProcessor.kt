@@ -16,16 +16,17 @@
 
 package org.jetbrains.kotlin.js.inline.clean
 
-import com.google.dart.compiler.backend.js.ast.JsBlock
+import com.google.dart.compiler.backend.js.ast.JsFunction
 
-class FunctionPostProcessor(private val root: JsBlock) {
+class FunctionPostProcessor(root: JsFunction) {
     val optimizations = listOf(
-        { TemporaryAssignmentElimination(root).apply() },
-        { RedundantLabelRemoval(root).apply() },
-        { TemporaryVariableElimination(root).apply() },
-        { IfStatementReduction(root).apply() },
-        { DeadCodeElimination(root).apply() },
-        { RedundantVariableDeclarationElimination(root).apply() }
+        { TemporaryAssignmentElimination(root.body).apply() },
+        { RedundantLabelRemoval(root.body).apply() },
+        { TemporaryVariableElimination(root.body).apply() },
+        { IfStatementReduction(root.body).apply() },
+        { DeadCodeElimination(root.body).apply() },
+        { RedundantVariableDeclarationElimination(root.body).apply() },
+        { IneffectiveStatementElimination(root).apply() }
     )
     // TODO: reduce to A || B, A && B if possible
 

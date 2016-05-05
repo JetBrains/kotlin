@@ -103,7 +103,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
         RemoveUnusedLocalFunctionDeclarationsKt.removeUnusedLocalFunctionDeclarations(function);
         processedFunctions.add(function);
 
-        new FunctionPostProcessor(function.getBody()).apply();
+        new FunctionPostProcessor(function).apply();
 
         assert inProcessFunctions.contains(function);
         inProcessFunctions.remove(function);
