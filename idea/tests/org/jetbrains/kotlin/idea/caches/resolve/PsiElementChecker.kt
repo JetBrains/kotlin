@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.caches.resolve
 import com.intellij.openapi.util.Key
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.KtLightElement
+import org.jetbrains.kotlin.asJava.KtLightModifierList
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.junit.Assert
 
@@ -39,7 +40,7 @@ object PsiElementChecker {
     }
 
     private fun checkPsiElement(element: PsiElement) {
-        if (element !is KtLightElement<*, *>) return
+        if (element !is KtLightElement<*, *> && element !is KtLightModifierList) return
 
         if (element is PsiModifierListOwner) {
             val modifierList = element.modifierList
