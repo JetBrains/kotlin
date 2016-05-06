@@ -147,7 +147,7 @@ internal class ExpressionDecomposer private constructor(
 
         val tmp = Temporary(arg1)
         addStatement(tmp.variable)
-        var test = if (operator == JsBinaryOperator.OR) not(tmp.nameRef) else tmp.nameRef
+        val test = if (operator == JsBinaryOperator.OR) not(tmp.nameRef) else tmp.nameRef
         val arg2Eval = withNewAdditionalStatements {
             arg2 = accept(arg2)
             addStatement(tmp.assign(arg2))
@@ -260,7 +260,7 @@ internal class ExpressionDecomposer private constructor(
 
     private fun Callable.process() {
         qualifier = accept(qualifier)
-        var matchedIndices = arguments.indicesOfExtractable
+        val matchedIndices = arguments.indicesOfExtractable
         if (!matchedIndices.hasNext()) return
 
         if (qualifier in containsNodeWithSideEffect) {
