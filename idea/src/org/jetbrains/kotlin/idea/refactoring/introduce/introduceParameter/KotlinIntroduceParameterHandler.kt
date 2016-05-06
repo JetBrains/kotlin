@@ -134,48 +134,47 @@ fun getParametersToRemove(
 }
 
 fun IntroduceParameterDescriptor.performRefactoring() {
-    runWriteAction {
-        val config = object : KotlinChangeSignatureConfiguration {
-            override fun configure(originalDescriptor: KotlinMethodDescriptor): KotlinMethodDescriptor {
-                return originalDescriptor.modify { methodDescriptor ->
-                    if (!withDefaultValue) {
-                        val parameters = callable.getValueParameters()
-                        val withReceiver = methodDescriptor.receiver != null
-                        parametersToRemove
-                                .map {
-                                    if (it is KtParameter) {
-                                        parameters.indexOf(it) + if (withReceiver) 1 else 0
-                                    } else 0
-                                }
-                                .sortedDescending()
-                                .forEach { methodDescriptor.removeParameter(it) }
-                    }
-
-                    val defaultValue = if (newArgumentValue is KtProperty) (newArgumentValue as KtProperty).initializer else newArgumentValue
-                    val parameterInfo = KotlinParameterInfo(callableDescriptor = callableDescriptor,
-                                                            name = newParameterName,
-                                                            defaultValueForCall = if (withDefaultValue) null else defaultValue,
-                                                            defaultValueForParameter = if (withDefaultValue) defaultValue else null,
-                                                            valOrVar = valVar)
-                    parameterInfo.currentTypeInfo = KotlinTypeInfo(false, null, newParameterTypeText)
-                    methodDescriptor.addParameter(parameterInfo)
+    val config = object : KotlinChangeSignatureConfiguration {
+        override fun configure(originalDescriptor: KotlinMethodDescriptor): KotlinMethodDescriptor {
+            return originalDescriptor.modify { methodDescriptor ->
+                if (!withDefaultValue) {
+                    val parameters = callable.getValueParameters()
+                    val withReceiver = methodDescriptor.receiver != null
+                    parametersToRemove
+                            .map {
+                                if (it is KtParameter) {
+                                    parameters.indexOf(it) + if (withReceiver) 1 else 0
+                                } else 0
+                            }
+                            .sortedDescending()
+                            .forEach { methodDescriptor.removeParameter(it) }
                 }
-            }
 
-            override fun performSilently(affectedFunctions: Collection<PsiElement>): Boolean = true
+                val defaultValue = if (newArgumentValue is KtProperty) (newArgumentValue as KtProperty).initializer else newArgumentValue
+                val parameterInfo = KotlinParameterInfo(callableDescriptor = callableDescriptor,
+                                                        name = newParameterName,
+                                                        defaultValueForCall = if (withDefaultValue) null else defaultValue,
+                                                        defaultValueForParameter = if (withDefaultValue) defaultValue else null,
+                                                        valOrVar = valVar)
+                parameterInfo.currentTypeInfo = KotlinTypeInfo(false, null, newParameterTypeText)
+                methodDescriptor.addParameter(parameterInfo)
+            }
         }
 
-        val project = callable.project
-        val changeSignature = { runChangeSignature(project, callableDescriptor, config, callable, INTRODUCE_PARAMETER) }
-        changeSignature.runRefactoringWithPostprocessing(project, "refactoring.changeSignature") {
-            try {
-                occurrencesToReplace.forEach { occurrenceReplacer(it) }
-            }
-            finally {
-                project.messageBus
-                        .syncPublisher(RefactoringEventListener.REFACTORING_EVENT_TOPIC)
-                        .refactoringDone(INTRODUCE_PARAMETER_REFACTORING_ID, null)
-            }
+        override fun performSilently(affectedFunctions: Collection<PsiElement>): Boolean = true
+    }
+
+    val project = callable.project
+    val changeSignature = { runChangeSignature(project, callableDescriptor, config, callable, INTRODUCE_PARAMETER) }
+
+    changeSignature.runRefactoringWithPostprocessing(project, "refactoring.changeSignature") {
+        try {
+            occurrencesToReplace.forEach { occurrenceReplacer(it) }
+        }
+        finally {
+            project.messageBus
+                    .syncPublisher(RefactoringEventListener.REFACTORING_EVENT_TOPIC)
+                    .refactoringDone(INTRODUCE_PARAMETER_REFACTORING_ID, null)
         }
     }
 }
