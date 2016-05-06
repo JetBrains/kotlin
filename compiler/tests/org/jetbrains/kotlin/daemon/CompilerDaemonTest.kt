@@ -437,7 +437,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
             val file = File(tmpdir, "largeKotlinFile.kt")
             file.writeText(generateLargeKotlinFile(10))
-            val jar = tmpdir.absolutePath + File.separator + "largeKotlinFile.jar"
+            val jar = File(tmpdir, "largeKotlinFile.jar").absolutePath
 
             var callbackServices: CompilerCallbackServicesFacadeServer? = null
             callbackServices = CompilerCallbackServicesFacadeServer(compilationCanceledStatus = object : CompilationCanceledStatus {
