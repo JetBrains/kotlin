@@ -113,7 +113,8 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             for (pattern in annotationPatterns) {
                 val hasAnnotation = if (pattern.endsWith(".*")) {
                     annotationsPresent.any { it.startsWith(pattern.dropLast(1)) }
-                } else {
+                }
+                else {
                     pattern in annotationsPresent
                 }
                 if (hasAnnotation) return true
@@ -208,7 +209,8 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             for (name in listOf(declaration.name) + declaration.getAccessorNames() + declaration.getClassNameForCompanionObject().singletonOrEmptyList()) {
                 assert(name != null) { "Name is null for " + declaration.getElementTextWithContext() }
                 when (psiSearchHelper.isCheapEnoughToSearch(name!!, useScope, null, null)) {
-                    ZERO_OCCURRENCES -> {} // go on, check other names
+                    ZERO_OCCURRENCES -> {
+                    } // go on, check other names
                     FEW_OCCURRENCES -> zeroOccurrences = false
                     TOO_MANY_OCCURRENCES -> return true // searching usages is too expensive; behave like it is used
                 }
@@ -232,7 +234,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
     }
 
     private fun hasReferences(declaration: KtNamedDeclaration, useScope: SearchScope): Boolean {
-        return !ReferencesSearch.search(declaration, useScope).forEach(fun (ref: PsiReference): Boolean {
+        return !ReferencesSearch.search(declaration, useScope).forEach(fun(ref: PsiReference): Boolean {
             if (declaration.isAncestor(ref.element)) return true // usages inside element's declaration are not counted
 
             if (ref.element.parent is KtValueArgumentName) return true // usage of parameter in form of named argument is not counted
