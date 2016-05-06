@@ -380,5 +380,7 @@ class QuickFixRegistrar : QuickFixContributor {
         UNRESOLVED_REFERENCE.registerFactory(MakeConstructorParameterPropertyFix)
 
         SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE.registerFactory(ConvertExtensionToFunctionTypeFix)
+
+        UNUSED_LAMBDA_EXPRESSION.registerFactory(AddRunToLambdaFix)
     }
 }
