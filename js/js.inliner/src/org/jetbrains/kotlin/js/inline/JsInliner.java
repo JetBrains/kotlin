@@ -43,7 +43,7 @@ import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.flattenStatemen
 
 public class JsInliner extends JsVisitorWithContextImpl {
 
-    private final IdentityHashMap<JsName, JsFunction> functions;
+    private final Map<JsName, JsFunction> functions;
     private final Stack<JsInliningContext> inliningContexts = new Stack<JsInliningContext>();
     private final Set<JsFunction> processedFunctions = CollectionUtilsKt.IdentitySet();
     private final Set<JsFunction> inProcessFunctions = CollectionUtilsKt.IdentitySet();
@@ -73,7 +73,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
     }
 
     private JsInliner(
-            @NotNull IdentityHashMap<JsName, JsFunction> functions,
+            @NotNull Map<JsName, JsFunction> functions,
             @NotNull FunctionReader functionReader,
             @NotNull DiagnosticSink trace
     ) {
