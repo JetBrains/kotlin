@@ -41,4 +41,12 @@ class ExceptionTest {
         val bytes = assertNotNull(byteBuffer.toByteArray())
         assertTrue(bytes.size > 10)
     }
+
+    @test fun changeStackTrace() {
+        val exception = RuntimeException("Fail")
+        var stackTrace = exception.stackTrace
+        stackTrace = stackTrace.dropLast(1).toTypedArray()
+        exception.stackTrace = stackTrace
+        assertArrayNotSameButEquals(stackTrace, exception.stackTrace)
+    }
 }
