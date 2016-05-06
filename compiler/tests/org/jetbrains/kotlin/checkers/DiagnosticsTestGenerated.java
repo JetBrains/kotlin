@@ -15960,6 +15960,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("initializeValInConstructor.kt")
+            public void testInitializeValInConstructor() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/initializeValInConstructor.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kt6992.kt")
             public void testKt6992() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/kt6992.kt");
