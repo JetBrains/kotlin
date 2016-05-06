@@ -214,7 +214,7 @@ internal class TemporaryAssignmentElimination(private val root: JsBlock) {
                         hasChanges = true
                         ctx.replaceMe(replacement)
                         statementsToRemove += usageHolder.collectStatements()
-                        return false;
+                        return false
                     }
                 }
                 return super.visit(x, ctx)
