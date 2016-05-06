@@ -160,7 +160,7 @@ object KDocRenderer {
                     sb.trimEnd()
                     sb.append("<pre><code>")
                     processChildren()
-                    sb.append("</code><pre>")
+                    sb.append("</code></pre>")
                 }
                 MarkdownElementTypes.SHORT_REFERENCE_LINK,
                 MarkdownElementTypes.FULL_REFERENCE_LINK -> {
