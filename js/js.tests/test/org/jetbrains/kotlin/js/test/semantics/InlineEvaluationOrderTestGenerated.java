@@ -179,6 +179,18 @@ public class InlineEvaluationOrderTestGenerated extends AbstractInlineEvaluation
         doTest(fileName);
     }
 
+    @TestMetadata("inlineFunctionAsParameterOfQualifiedCall.kt")
+    public void testInlineFunctionAsParameterOfQualifiedCall() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/inlineFunctionAsParameterOfQualifiedCall.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("lambdaPropertyExtracted.kt")
+    public void testLambdaPropertyExtracted() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/lambdaPropertyExtracted.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("lambdaWithClosure.kt")
     public void testLambdaWithClosure() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/lambdaWithClosure.kt");
@@ -248,6 +260,18 @@ public class InlineEvaluationOrderTestGenerated extends AbstractInlineEvaluation
     @TestMetadata("propertyAccessWithSideEffect.kt")
     public void testPropertyAccessWithSideEffect() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/propertyAccessWithSideEffect.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("propertyWithSideEffectExtracted.kt")
+    public void testPropertyWithSideEffectExtracted() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/propertyWithSideEffectExtracted.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("propertyWithSideEffectPassedToInlineFunction.kt")
+    public void testPropertyWithSideEffectPassedToInlineFunction() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/propertyWithSideEffectPassedToInlineFunction.kt");
         doTest(fileName);
     }
 

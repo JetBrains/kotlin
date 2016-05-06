@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.js.inline
 
 import com.google.dart.compiler.backend.js.ast.*
+import com.google.dart.compiler.backend.js.ast.metadata.HasMetadata
+import com.google.dart.compiler.backend.js.ast.metadata.sideEffects
 import com.google.dart.compiler.backend.js.ast.metadata.staticRef
 import com.google.dart.compiler.backend.js.ast.metadata.synthetic
 import com.intellij.util.SmartList
@@ -265,7 +267,13 @@ internal class ExpressionDecomposer private constructor(
             val callee = qualifier as? JsNameRef
             val receiver = callee?.qualifier
 
-            if (callee != null && receiver != null && receiver in containsNodeWithSideEffect) {
+            // Qualifier might be a reference to lambda property. See KT-7674
+            // An exception here is `fn.call()`, which are marked as side effect free. Further recognition of such
+            // case in inliner might be quite difficult, so never extract such call (and other calls marked this way).
+            if (qualifier in containsNodeWithSideEffect && (qualifier as? HasMetadata)?.sideEffects ?: true) {
+                qualifier = qualifier.extractToTemporary()
+            }
+            else if (callee != null && receiver != null && receiver in containsNodeWithSideEffect) {
                 val receiverTmp = receiver.extractToTemporary()
                 callee.qualifier = receiverTmp
             }
