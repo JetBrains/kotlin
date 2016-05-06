@@ -68,8 +68,8 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
 }
 
 fun JsFunction.withCapturedParameters(context: TranslationContext, invokingContext: TranslationContext, descriptor: MemberDescriptor): JsExpression {
-    val ref = invokingContext.define(descriptor, this)
-    val invocation = JsInvocation(ref)
+    val ref = invokingContext.define(descriptor, this).apply { sideEffects = false }
+    val invocation = JsInvocation(ref).apply { sideEffects = false }
 
     val invocationArguments = invocation.arguments
     val functionParameters = this.parameters
