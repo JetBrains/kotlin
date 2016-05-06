@@ -21,13 +21,14 @@ import com.google.dart.compiler.backend.js.ast.JsBinaryOperator;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
+import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.psi.KtBinaryExpression;
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.getOperationToken;
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.isAssignment;
+import static org.jetbrains.kotlin.js.translate.utils.TranslationUtils.isSimpleNameExpressionNotDelegatedLocalVar;
 
 public final class IntrinsicAssignmentTranslator extends AssignmentTranslator {
 
@@ -53,7 +54,7 @@ public final class IntrinsicAssignmentTranslator extends AssignmentTranslator {
 
     @NotNull
     private JsExpression translateAsAssignmentOperation() {
-        if (expression.getLeft() instanceof KtSimpleNameExpression) {
+        if (isSimpleNameExpressionNotDelegatedLocalVar(expression.getLeft(), context())) {
             return translateAsPlainAssignmentOperation();
         }
         return translateAsAssignToCounterpart();
