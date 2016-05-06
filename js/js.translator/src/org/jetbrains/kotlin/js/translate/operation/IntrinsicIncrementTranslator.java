@@ -21,11 +21,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression;
 import org.jetbrains.kotlin.psi.KtUnaryExpression;
 
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.getOperationToken;
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.isPrefix;
+import static org.jetbrains.kotlin.js.translate.utils.TranslationUtils.isSimpleNameExpressionNotDelegatedLocalVar;
 
 
 public final class IntrinsicIncrementTranslator extends IncrementTranslator {
@@ -44,14 +44,10 @@ public final class IntrinsicIncrementTranslator extends IncrementTranslator {
 
     @NotNull
     private JsExpression translate() {
-        if (isPrimitiveExpressionIncrement()) {
+        if (isSimpleNameExpressionNotDelegatedLocalVar(expression.getBaseExpression(), context())) {
             return primitiveExpressionIncrement();
         }
         return translateIncrementExpression();
-    }
-
-    private boolean isPrimitiveExpressionIncrement() {
-        return expression.getBaseExpression() instanceof KtSimpleNameExpression;
     }
 
     @NotNull

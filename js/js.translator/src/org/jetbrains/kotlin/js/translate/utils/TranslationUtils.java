@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.js.translate.context.TemporaryConstVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.types.KotlinType;
 
@@ -294,5 +295,13 @@ public final class TranslationUtils {
             suggestedName += context.getNameForDescriptor(descriptor).getIdent();
         }
         return suggestedName;
+    }
+
+    public static boolean isSimpleNameExpressionNotDelegatedLocalVar(@Nullable KtExpression expression, @NotNull TranslationContext context) {
+        if (!(expression instanceof KtSimpleNameExpression)) {
+            return false;
+        }
+        DeclarationDescriptor descriptor = context.bindingContext().get(BindingContext.REFERENCE_TARGET, ((KtSimpleNameExpression) expression));
+        return !(descriptor instanceof LocalVariableDescriptor) || !((LocalVariableDescriptor) descriptor).isDelegated();
     }
 }
