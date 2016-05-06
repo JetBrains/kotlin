@@ -7,6 +7,11 @@
  *
  * Third line
  * ```
+ *
+ * Text between code blocks.
+ * ```
+ * ```
+ * Text after code block.
  */
 fun testMethod() {
 
@@ -25,4 +30,6 @@ fun test() {
 //INFO:     Second line
 //INFO:
 //INFO: Third line
-//INFO: </code><pre>
+//INFO: </code></pre><p>Text between code blocks.</p>
+//INFO: <pre><code>
+//INFO: </code></pre><p>Text after code block.</p>
