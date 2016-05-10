@@ -468,7 +468,8 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
                 getDescriptorForReferenceExpression(context.bindingContext(), expression.getInstanceReference());
         assert thisExpression != null : "This expression must reference a descriptor: " + expression.getText();
 
-        return context.getDispatchReceiver(getReceiverParameterForDeclaration(thisExpression)).source(expression);
+        // TODO: not sure if `false` is a proper argument here, revisit this code later
+        return context.getDispatchReceiver(getReceiverParameterForDeclaration(thisExpression), false).source(expression);
     }
 
     @Override
@@ -483,7 +484,9 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     public JsNode visitSuperExpression(@NotNull KtSuperExpression expression, @NotNull TranslationContext context) {
         DeclarationDescriptor superTarget = getSuperTarget(context, expression);
         ReceiverParameterDescriptor receiver = getReceiverParameterForDeclaration(superTarget);
-        return context.getDispatchReceiver(receiver);
+
+        // TODO: not sure if `true` is a proper argument here, revisit this code later
+        return context.getDispatchReceiver(receiver, true);
     }
 
     @Override
@@ -524,7 +527,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         List<JsExpression> closureArgs = new ArrayList<JsExpression>();
         if (closure != null) {
             for (DeclarationDescriptor capturedValue : closure) {
-                closureArgs.add(context.getParameterNameRefForInvocation(capturedValue));
+                closureArgs.add(context.getArgumentForClosureConstructor(capturedValue));
             }
         }
 

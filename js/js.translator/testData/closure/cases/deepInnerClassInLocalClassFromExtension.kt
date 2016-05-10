@@ -3,7 +3,7 @@ package foo
 class A() {
     fun test(): Int {
         open class B(open val x: Int) {
-            inner class C(override val x: Int) : B(x * 10) {
+            inner class C(x: Int) : B(x * 10) {
                 inner class D() {
                     fun baz() = bar()
                 }
