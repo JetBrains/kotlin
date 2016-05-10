@@ -19,64 +19,48 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 
-abstract class ReplaceCallFix protected constructor(val psiElement: PsiElement) : IntentionAction {
+abstract class ReplaceCallFix(
+        expression: KtQualifiedExpression,
+        private val operation: String
+) : KotlinQuickFixAction<KtQualifiedExpression>(expression) {
 
-    override fun getFamilyName(): String = text
+    override fun getFamilyName() = text
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
-        if (file is KtFile) {
-            return getCallExpression() != null
-        }
-        return false
+        return super.isAvailable(project, editor, file) && element.selectorExpression != null
     }
 
-    override fun invoke(project: Project, editor: Editor?, file: PsiFile) {
-        val callExpression = getCallExpression() ?: return
-
-        val selector = callExpression.selectorExpression
-        if (selector != null) {
-            val newElement = KtPsiFactory(callExpression).createExpression(
-                    callExpression.receiverExpression.text + operation + selector.text) as KtQualifiedExpression
-
-            callExpression.replace(newElement)
-        }
-    }
-
-    override fun startInWriteAction(): Boolean = true
-
-    private fun getCallExpression(): KtQualifiedExpression? {
-        return PsiTreeUtil.getParentOfType(psiElement, classToReplace)
-    }
-
-    abstract val operation: String
-    abstract val classToReplace: Class<out KtQualifiedExpression>
-}
-
-class ReplaceWithSafeCallFix(psiElement: PsiElement): ReplaceCallFix(psiElement) {
-    override fun getText(): String = "Replace with safe (?.) call"
-    override val operation: String get() = "?."
-    override val classToReplace: Class<out KtQualifiedExpression> get() = KtDotQualifiedExpression::class.java
-
-    companion object : KotlinSingleIntentionActionFactory() {
-        override fun createAction(diagnostic: Diagnostic): IntentionAction
-                = ReplaceWithSafeCallFix(diagnostic.psiElement)
+    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val newExpression = KtPsiFactory(element).createExpressionByPattern("$0$operation$1",
+                                                                            element.receiverExpression, element.selectorExpression!!)
+        element.replace(newExpression)
     }
 }
 
-class ReplaceWithDotCallFix(psiElement: PsiElement): ReplaceCallFix(psiElement), CleanupFix {
-    override fun getText(): String = KotlinBundle.message("replace.with.dot.call")
-    override val operation: String get() = "."
-    override val classToReplace: Class<out KtQualifiedExpression> get() = KtSafeQualifiedExpression::class.java
+class ReplaceWithSafeCallFix(expression: KtDotQualifiedExpression): ReplaceCallFix(expression, "?.") {
+
+    override fun getText() = "Replace with safe (?.) call"
 
     companion object : KotlinSingleIntentionActionFactory() {
-        override fun createAction(diagnostic: Diagnostic): IntentionAction
-                = ReplaceWithDotCallFix(diagnostic.psiElement)
+        override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+            val qualifiedExpression = diagnostic.psiElement.getParentOfType<KtDotQualifiedExpression>(strict = false) ?: return null
+            return ReplaceWithSafeCallFix(qualifiedExpression)
+        }
+    }
+}
+
+class ReplaceWithDotCallFix(expression: KtSafeQualifiedExpression): ReplaceCallFix(expression, "."), CleanupFix {
+    override fun getText() = "Replace with dot call"
+
+    companion object : KotlinSingleIntentionActionFactory() {
+        override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+            val qualifiedExpression = diagnostic.psiElement.getParentOfType<KtSafeQualifiedExpression>(strict = false) ?: return null
+            return ReplaceWithDotCallFix(qualifiedExpression)
+        }
     }
 }
