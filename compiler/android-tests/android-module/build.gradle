@@ -5,7 +5,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.0.0'
+        classpath 'com.android.tools.build:gradle:2.1.0'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -56,6 +56,15 @@ android {
     //TODO run under java 6, cause there is error on implicit 'stream' import in 'asWithMutable' test
     lintOptions {
         abortOnError false
+    }
+
+    compileOptions {
+        incremental = false
+    }
+
+    dexOptions {
+        dexInProcess false
+        javaMaxHeapSize "600m"
     }
 }
 
