@@ -26,9 +26,11 @@ import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.codegen.CodegenTestFiles;
 import org.jetbrains.kotlin.codegen.GenerationUtils;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
+import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.name.FqName;
@@ -53,6 +55,8 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
     private static final String baseTestClassPackage = "org.jetbrains.kotlin.android.tests";
     private static final String baseTestClassName = "AbstractCodegenTestCaseOnAndroid";
     private static final String generatorName = "CodegenTestsOnAndroidGenerator";
+
+    private static int MODULE_INDEX = 1;
 
     private final List<String> generatedTestNames = Lists.newArrayList();
 
@@ -149,7 +153,7 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
             return isFullJdkAndRuntime ?
                    KotlinTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
                            myTestRootDisposable, ConfigurationKind.ALL, TestJdkKind.FULL_JDK
-                   ) :
+                                                ) :
                    KotlinTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, ConfigurationKind.JDK_ONLY);
         }
 
@@ -184,11 +188,15 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
                                                                                    ? " (full jdk and runtime)" : "") + "...");
             OutputFileCollection outputFiles;
             try {
+                //hack to pass module name
+                CompilerConfiguration configuration = environment.getConfiguration().copy();
+                configuration.put(JVMConfigurationKeys.MODULE_NAME, "android-module-" + MODULE_INDEX++);
+                configuration.setReadOnly(true);
                 outputFiles = GenerationUtils.compileManyFilesGetGenerationStateForTest(
                         filesToCompile.iterator().next().getProject(),
                         filesToCompile,
                         new JvmPackagePartProvider(environment),
-                        null
+                        configuration
                 ).getFactory();
             }
             catch (Throwable e) {
