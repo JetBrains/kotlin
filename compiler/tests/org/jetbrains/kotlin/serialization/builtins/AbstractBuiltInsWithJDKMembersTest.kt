@@ -20,6 +20,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.*
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.config.LanguageFeatureSettings
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.frontend.java.di.createContainerForTopDownAnalyzerForJvm
@@ -61,9 +62,10 @@ abstract class AbstractBuiltInsWithJDKMembersTest : KotlinTestWithEnvironment() 
         val providerFactory = FileBasedDeclarationProviderFactory(moduleContext.storageManager, emptyList())
 
         val container = createContainerForTopDownAnalyzerForJvm(
-                moduleContext,
-                CliLightClassGenerationSupport.CliBindingTrace(), providerFactory,
-                GlobalSearchScope.allScope(environment.project), LookupTracker.DO_NOTHING, PackagePartProvider.EMPTY)
+                moduleContext, CliLightClassGenerationSupport.CliBindingTrace(), providerFactory,
+                GlobalSearchScope.allScope(environment.project), LookupTracker.DO_NOTHING, PackagePartProvider.EMPTY,
+                LanguageFeatureSettings.LATEST
+        )
 
         emptyModule.initialize(container.javaDescriptorResolver.packageFragmentProvider)
         emptyModule.setDependencies(emptyModule)

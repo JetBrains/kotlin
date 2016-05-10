@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.frontend.java.di
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.config.LanguageFeatureSettings
 import org.jetbrains.kotlin.container.*
 import org.jetbrains.kotlin.context.LazyResolveToken
 import org.jetbrains.kotlin.context.ModuleContext
@@ -41,7 +42,12 @@ import org.jetbrains.kotlin.resolve.lazy.FileScopeProviderImpl
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 
-fun StorageComponentContainer.configureJavaTopDownAnalysis(moduleContentScope: GlobalSearchScope, project: Project, lookupTracker: LookupTracker) {
+fun StorageComponentContainer.configureJavaTopDownAnalysis(
+        moduleContentScope: GlobalSearchScope,
+        project: Project,
+        lookupTracker: LookupTracker,
+        languageFeatureSettings: LanguageFeatureSettings
+) {
     useInstance(moduleContentScope)
     useInstance(lookupTracker)
     useImpl<ResolveSession>()
@@ -65,19 +71,26 @@ fun StorageComponentContainer.configureJavaTopDownAnalysis(moduleContentScope: G
     useImpl<JavaSourceElementFactoryImpl>()
     useImpl<JavaLazyAnalyzerPostConstruct>()
     useInstance(InternalFlexibleTypeTransformer)
+
+    useInstance(languageFeatureSettings)
 }
 
 fun createContainerForLazyResolveWithJava(
-        moduleContext: ModuleContext, bindingTrace: BindingTrace, declarationProviderFactory: DeclarationProviderFactory,
-        moduleContentScope: GlobalSearchScope, moduleClassResolver: ModuleClassResolver,
+        moduleContext: ModuleContext,
+        bindingTrace: BindingTrace,
+        declarationProviderFactory: DeclarationProviderFactory,
+        moduleContentScope: GlobalSearchScope,
+        moduleClassResolver: ModuleClassResolver,
         targetEnvironment: TargetEnvironment = CompilerEnvironment,
-        packagePartProvider: PackagePartProvider
+        packagePartProvider: PackagePartProvider,
+        languageFeatureSettings: LanguageFeatureSettings
 ): ComponentProvider = createContainer("LazyResolveWithJava") {
     //TODO: idea specific code
     useInstance(packagePartProvider)
 
     configureModule(moduleContext, JvmPlatform, bindingTrace)
-    configureJavaTopDownAnalysis(moduleContentScope, moduleContext.project, LookupTracker.DO_NOTHING)
+
+    configureJavaTopDownAnalysis(moduleContentScope, moduleContext.project, LookupTracker.DO_NOTHING, languageFeatureSettings)
 
     useInstance(moduleClassResolver)
 
@@ -97,12 +110,13 @@ fun createContainerForTopDownAnalyzerForJvm(
         declarationProviderFactory: DeclarationProviderFactory,
         moduleContentScope: GlobalSearchScope,
         lookupTracker: LookupTracker,
-        packagePartProvider: PackagePartProvider
+        packagePartProvider: PackagePartProvider,
+        languageFeatureSettings: LanguageFeatureSettings
 ): ContainerForTopDownAnalyzerForJvm = createContainer("TopDownAnalyzerForJvm") {
     useInstance(packagePartProvider)
 
     configureModule(moduleContext, JvmPlatform, bindingTrace)
-    configureJavaTopDownAnalysis(moduleContentScope, moduleContext.project, lookupTracker)
+    configureJavaTopDownAnalysis(moduleContentScope, moduleContext.project, lookupTracker, languageFeatureSettings)
 
     useInstance(declarationProviderFactory)
 

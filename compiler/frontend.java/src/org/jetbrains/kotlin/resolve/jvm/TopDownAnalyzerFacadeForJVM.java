@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.JVMConfigurationKeys;
+import org.jetbrains.kotlin.config.LanguageFeatureSettings;
 import org.jetbrains.kotlin.context.ContextKt;
 import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.context.MutableModuleContext;
@@ -76,7 +77,9 @@ public enum TopDownAnalyzerFacadeForJVM {
         IncrementalCompilationComponents incrementalCompilationComponents =
                 configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS);
         LookupTracker lookupTracker =
-                incrementalCompilationComponents != null ? incrementalCompilationComponents.getLookupTracker() : LookupTracker.Companion.getDO_NOTHING();
+                incrementalCompilationComponents != null
+                ? incrementalCompilationComponents.getLookupTracker()
+                : LookupTracker.Companion.getDO_NOTHING();
 
         List<TargetId> targetIds = null;
         List<Module> modules = configuration.get(JVMConfigurationKeys.MODULES);
@@ -88,7 +91,9 @@ public enum TopDownAnalyzerFacadeForJVM {
             }
         }
 
-        packagePartProvider = IncrementalPackagePartProvider.create(packagePartProvider, files, targetIds, incrementalCompilationComponents, moduleContext.getStorageManager());
+        packagePartProvider = IncrementalPackagePartProvider.create(
+                packagePartProvider, files, targetIds, incrementalCompilationComponents, moduleContext.getStorageManager()
+        );
 
         ContainerForTopDownAnalyzerForJvm container = InjectionKt.createContainerForTopDownAnalyzerForJvm(
                 moduleContext,
@@ -96,7 +101,8 @@ public enum TopDownAnalyzerFacadeForJVM {
                 providerFactory,
                 GlobalSearchScope.allScope(project),
                 lookupTracker,
-                packagePartProvider
+                packagePartProvider,
+                configuration.get(CommonConfigurationKeys.LANGUAGE_FEATURE_SETTINGS, LanguageFeatureSettings.LATEST)
         );
 
         List<PackageFragmentProvider> additionalProviders = new ArrayList<PackageFragmentProvider>();

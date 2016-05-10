@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentException;
 import org.jetbrains.kotlin.cli.jvm.compiler.CompilerJarLocator;
 import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
+import org.jetbrains.kotlin.config.LanguageFeatureSettings;
 import org.jetbrains.kotlin.config.Services;
 import org.jetbrains.kotlin.progress.CompilationCanceledException;
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus;
@@ -241,6 +242,13 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
         CompilerJarLocator locator = services.get(CompilerJarLocator.class);
         if (locator != null) {
             configuration.put(CLIConfigurationKeys.COMPILER_JAR_LOCATOR, locator);
+        }
+
+        if (arguments.languageVersion != null) {
+            configuration.put(
+                    CommonConfigurationKeys.LANGUAGE_FEATURE_SETTINGS,
+                    LanguageFeatureSettings.fromLanguageVersion(arguments.languageVersion)
+            );
         }
     }
 

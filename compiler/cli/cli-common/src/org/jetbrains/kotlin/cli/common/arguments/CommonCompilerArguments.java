@@ -25,6 +25,10 @@ import java.util.List;
 public abstract class CommonCompilerArguments {
     public static final String PLUGIN_OPTION_FORMAT = "plugin:<pluginId>:<optionName>=<value>";
 
+    @Argument(value = "language-version", description = "Provide source compatibility with specified language version")
+    @ValueDescription("<version>")
+    public String languageVersion;
+
     @Argument(value = "nowarn", description = "Generate no warnings")
     public boolean suppressWarnings;
 
