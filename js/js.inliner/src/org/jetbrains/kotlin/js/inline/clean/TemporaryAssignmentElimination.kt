@@ -121,6 +121,16 @@ internal class TemporaryAssignmentElimination(private val root: JsBlock) {
             override fun visitBreak(x: JsBreak) { }
 
             override fun visitContinue(x: JsContinue) { }
+
+            override fun visitFor(x: JsFor) {
+                x.initVars?.let { it.vars.forEach { it.initExpression?.let { accept(it) } } }
+                x.initExpression?.let { accept(it) }
+                x.condition?.let { accept(it) }
+                x.body?.let { accept(it) }
+                x.incrementExpression?.let { accept(it) }
+
+                super.visitFor(x)
+            }
         }.accept(root)
 
         usages.keys.retainAll(syntheticNames)

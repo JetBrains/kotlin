@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.declaration.ClassTranslator;
-import org.jetbrains.kotlin.js.translate.expression.loopTranslator.LoopTranslator;
 import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.js.translate.general.TranslatorVisitor;
 import org.jetbrains.kotlin.js.translate.operation.BinaryOperationTranslator;

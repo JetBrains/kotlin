@@ -302,6 +302,12 @@ public final class JsAstUtils {
         return new JsBinaryOperation(JsBinaryOperator.ASG, left, right);
     }
 
+    public static JsStatement asSyntheticStatement(@NotNull JsExpression expression) {
+        JsExpressionStatement statement = new JsExpressionStatement(expression);
+        MetadataProperties.setSynthetic(statement, true);
+        return statement;
+    }
+
     @Nullable
     public static Pair<JsExpression, JsExpression> decomposeAssignment(@NotNull JsExpression expr) {
         if (!(expr instanceof JsBinaryOperation)) return null;
