@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.js.translate.context;
 
 import com.google.dart.compiler.backend.js.ast.*;
+import com.google.dart.compiler.backend.js.ast.metadata.MetadataProperties;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -57,11 +58,14 @@ public final class DynamicContext {
     public TemporaryVariable declareTemporary(@Nullable JsExpression initExpression) {
         if (vars == null) {
             vars = new JsVars();
+            MetadataProperties.setSynthetic(vars, true);
             currentBlock.getStatements().add(vars);
         }
 
         JsName temporaryName = currentScope.declareTemporary();
-        vars.add(new JsVar(temporaryName, null));
+        JsVar var = new JsVar(temporaryName, null);
+        MetadataProperties.setSynthetic(var, true);
+        vars.add(var);
         return TemporaryVariable.create(temporaryName, initExpression);
     }
 

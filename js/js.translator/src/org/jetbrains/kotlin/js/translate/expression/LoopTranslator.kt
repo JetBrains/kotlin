@@ -16,14 +16,13 @@
 
 @file:JvmName("LoopTranslator")
 
-package org.jetbrains.kotlin.js.translate.expression.loopTranslator
+package org.jetbrains.kotlin.js.translate.expression
 
 import com.google.dart.compiler.backend.js.ast.*
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator
 import org.jetbrains.kotlin.js.translate.context.TemporaryVariable
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
-import org.jetbrains.kotlin.js.translate.expression.DestructuringDeclarationTranslator
 import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.CompositeFIF
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getHasNextCallable
@@ -33,7 +32,6 @@ import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getTypeForExpression
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getLoopParameter
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getLoopRange
-import org.jetbrains.kotlin.js.translate.utils.TemporariesUtils.temporariesInitialization
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtBinaryExpression
@@ -117,16 +115,16 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
 
     val destructuringParameter: KtDestructuringDeclaration? = expression.destructuringParameter
 
-    fun declareParameter(): JsName {
+    fun declareParameter(): Pair<JsName, Boolean> {
         val loopParameter = getLoopParameter(expression)
         if (loopParameter != null) {
-            return context.getNameForElement(loopParameter)
+            return Pair(context.getNameForElement(loopParameter), false)
         }
         assert(destructuringParameter != null) { "If loopParameter is null, multi parameter must be not null ${expression.text}" }
-        return context.scope().declareTemporary()
+        return Pair(context.scope().declareTemporary(), true)
     }
 
-    val parameterName: JsName = declareParameter()
+    val (parameterName, parameterIsTemporary) = declareParameter()
 
     fun translateBody(itemValue: JsExpression?): JsStatement? {
         val realBody = expression.body?.let { Translation.translateAsStatementAndMergeInBlockIfNeeded(it, context) }
@@ -135,10 +133,12 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
         }
         else {
             val currentVarInit =
-                if (destructuringParameter == null)
+                if (destructuringParameter == null) {
                     newVar(parameterName, itemValue)
-                else
+                }
+                else {
                     DestructuringDeclarationTranslator.translate(destructuringParameter, parameterName, itemValue, context)
+                }
 
             if (realBody == null) return JsBlock(currentVarInit)
 
@@ -170,12 +170,16 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
         val rangeEnd = context.declareTemporary(rightExpression)
 
         val body = translateBody(null)
-        val initExpression = newVar(parameterName, rangeStart)
         val conditionExpression = lessThanEq(parameterName.makeRef(), rangeEnd.reference())
         val incrementExpression = JsPostfixOperation(JsUnaryOperator.INC, parameterName.makeRef())
 
-        context.addStatementToCurrentBlock(temporariesInitialization(rangeEnd).makeStmt())
-        return JsFor(initExpression, conditionExpression, incrementExpression, body)
+        context.addStatementToCurrentBlock(asSyntheticStatement(rangeEnd.assignmentExpression()))
+        return if (parameterIsTemporary) {
+            JsFor(assignment(parameterName.makeRef(), rangeStart), conditionExpression, incrementExpression, body)
+        }
+        else {
+            JsFor(newVar(parameterName, rangeStart), conditionExpression, incrementExpression, body)
+        }
     }
 
     fun translateForOverRange(): JsStatement {
@@ -188,12 +192,21 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
         val increment = context.declareTemporary(getProperty("step"))
 
         val body = translateBody(null)
-        val initExpression = newVar(parameterName, start.reference())
-        val  conditionExpression = lessThanEq(parameterName.makeRef(), end.reference())
+
+        val conditionExpression = lessThanEq(parameterName.makeRef(), end.reference())
         val incrementExpression = addAssign(parameterName.makeRef(), increment.reference())
 
-        context.addStatementToCurrentBlock(temporariesInitialization(rangeExpression, start, end, increment).makeStmt())
-        return JsFor(initExpression, conditionExpression, incrementExpression, body)
+        context.addStatementToCurrentBlock(asSyntheticStatement(rangeExpression.assignmentExpression()))
+        context.addStatementToCurrentBlock(asSyntheticStatement(start.assignmentExpression()))
+        context.addStatementToCurrentBlock(asSyntheticStatement(end.assignmentExpression()))
+        context.addStatementToCurrentBlock(asSyntheticStatement(increment.assignmentExpression()))
+
+        return if (parameterIsTemporary) {
+            JsFor(assignment(parameterName.makeRef(), start.reference()), conditionExpression, incrementExpression, body)
+        }
+        else {
+            JsFor(newVar(parameterName, start.reference()), conditionExpression, incrementExpression, body)
+        }
     }
 
     fun translateForOverArray(): JsStatement {
@@ -204,11 +217,12 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
 
         val arrayAccess = JsArrayAccess(rangeExpression.reference(), index.reference())
         val body = translateBody(arrayAccess)
-        val initExpression = newVar(index.name(), context.program().getNumberLiteral(0))
+        val initExpression = assignment(index.name().makeRef(), context.program().getNumberLiteral(0))
         val conditionExpression = inequality(index.reference(), end.reference())
         val incrementExpression = JsPrefixOperation(JsUnaryOperator.INC, index.reference())
 
-        context.addStatementToCurrentBlock(temporariesInitialization(rangeExpression, end).makeStmt())
+        context.addStatementToCurrentBlock(asSyntheticStatement(rangeExpression.assignmentExpression()))
+        context.addStatementToCurrentBlock(asSyntheticStatement(end.assignmentExpression()))
         return JsFor(initExpression, conditionExpression, incrementExpression, body)
     }
 
