@@ -52,7 +52,7 @@ public abstract class CommonCompilerArguments {
     @ValueDescription("<path>")
     public String[] pluginClasspaths;
 
-    @Argument(value = "P", description = "\n                             Pass an option to a plugin")
+    @Argument(value = "P", description = "Pass an option to a plugin")
     @ValueDescription(PLUGIN_OPTION_FORMAT)
     public String[] pluginOptions;
 
