@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.CompilerConfigurationKey;
 import org.jetbrains.kotlin.descriptors.PackagePartProvider;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 
@@ -102,7 +103,11 @@ public class GenerationUtils {
                 getConfigurationValueOrDefault(configuration, JVMConfigurationKeys.DISABLE_INLINE, false),
                 getConfigurationValueOrDefault(configuration, JVMConfigurationKeys.DISABLE_OPTIMIZATION, false),
                 useTypeTableInSerializer,
-                getConfigurationValueOrDefault(configuration, JVMConfigurationKeys.INHERIT_MULTIFILE_PARTS, false)
+                getConfigurationValueOrDefault(configuration, JVMConfigurationKeys.INHERIT_MULTIFILE_PARTS, false),
+                Collections.<FqName>emptySet(),
+                Collections.<FqName>emptySet(),
+                null,
+                configuration == null ? null : configuration.get(JVMConfigurationKeys.MODULE_NAME)
         );
         KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
         return state;

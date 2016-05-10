@@ -36,7 +36,10 @@ public class SpecialFiles {
     private static void fillExcludedFiles() {
         excludedFiles.add("native"); // Reflection is used to check full class name
 
-        excludedFiles.add("reflection");
+        excludedFiles.add("enclosing"); //reflection tests
+        excludedFiles.add("noReflectAtRuntime"); //reflection tests
+        excludedFiles.add("methodsFromAny"); //reflection tests
+
         excludedFiles.add("kt3238.kt"); // Reflection
         excludedFiles.add("kt1482_2279.kt"); // Reflection
         excludedFiles.add("extensionMethod.kt"); // Reflection loadClass
@@ -61,11 +64,18 @@ public class SpecialFiles {
         excludedFiles.add("kt6990.kt"); // Cannot change package name
         excludedFiles.add("mainInFiles.kt"); // Cannot change package name
         excludedFiles.add("noClassForSimpleEnum.kt"); // Cannot change package name
+        excludedFiles.add("simpleClassLiteral.kt"); // Cannot change package name
+        excludedFiles.add("jvmName.kt"); // Cannot change package name
+        excludedFiles.add("qualifiedName.kt"); // Cannot change package name
+        excludedFiles.add("topLevelProperty.kt"); // Cannot change package name
+        excludedFiles.add("typeParameters.kt"); // Cannot change package name
 
         excludedFiles.add("kt684.kt"); // StackOverflow with StringBuilder (escape())
 
         excludedFiles.add("genericBackingFieldSignature.kt"); // Wrong signature after package renaming
         excludedFiles.add("genericMethodSignature.kt"); // Wrong signature after package renaming
+        excludedFiles.add("kt11121.kt"); // Wrong signature after package renaming
+        excludedFiles.add("kt5112.kt"); // Wrong signature after package renaming
 
         excludedFiles.add("classpath.kt"); // Some classes are not visible on android
 
@@ -75,6 +85,10 @@ public class SpecialFiles {
 
         excludedFiles.add("enclosingInfo"); //  Wrong enclosing info after package renaming
         excludedFiles.add("signature"); //  Wrong signature after package renaming
+
+        excludedFiles.add("functionNtoStringNoReflect.kt"); // disabled cause test executed with reflection
+
+        excludedFiles.add("nestedClasses.kt"); // additional nested class in 'Thread' class on Android
 
         //excludedFiles.add("simpleThrow.kt"); // jack and jill fail
     }
