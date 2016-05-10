@@ -65,7 +65,7 @@ public class KotlinTestJSCompilerMojo extends K2JSCompilerMojo {
     private List<String> sourceDirs;
 
     @Override
-    public List<String> getSources() {
+    public List<String> getSourceFilePaths() {
         if (sourceDirs != null && !sourceDirs.isEmpty()) return sourceDirs;
         return defaultSourceDirs;
     }
