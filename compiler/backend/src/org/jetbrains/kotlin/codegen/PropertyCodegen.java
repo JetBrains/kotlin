@@ -445,6 +445,10 @@ public class PropertyCodegen {
         else if (parent instanceof KtFile) {
             container = (KtFile) parent;
         }
+        else if (KtPsiUtil.isScriptDeclaration(property)) {
+            container = KtPsiUtil.getScript(property);
+            assert  container != null : "Script declaration for property '" + property.getText() + "' should be not null!";
+        }
         else {
             throw new UnsupportedOperationException("Unknown delegated property container: " + parent);
         }

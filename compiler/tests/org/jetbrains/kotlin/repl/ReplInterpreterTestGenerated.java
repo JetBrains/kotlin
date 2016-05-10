@@ -107,6 +107,12 @@ public class ReplInterpreterTestGenerated extends AbstractReplInterpreterTest {
         doTest(fileName);
     }
 
+    @TestMetadata("topLevelLocalDelegatedProperty.repl")
+    public void testTopLevelLocalDelegatedProperty() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/topLevelLocalDelegatedProperty.repl");
+        doTest(fileName);
+    }
+
     @TestMetadata("twoClosures.repl")
     public void testTwoClosures() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/twoClosures.repl");

@@ -400,14 +400,6 @@ class DeclarationsChecker(
         exposedChecker.checkProperty(property, propertyDescriptor)
         checkPropertyTypeParametersAreUsedInReceiverType(propertyDescriptor)
         checkImplicitCallableType(property, propertyDescriptor)
-        checkDelegatedPropertyInScript(property)
-    }
-
-    private fun checkDelegatedPropertyInScript(property: KtProperty) {
-        val delegate = property.delegate
-        if (delegate != null && KtPsiUtil.isScriptDeclaration(property)) {
-            trace.report(SCRIPT_TOP_LEVEL_LOCAL_VARIABLE_WITH_DELEGATE.on(delegate))
-        }
     }
 
     private fun checkPropertyTypeParametersAreUsedInReceiverType(descriptor: PropertyDescriptor) {
