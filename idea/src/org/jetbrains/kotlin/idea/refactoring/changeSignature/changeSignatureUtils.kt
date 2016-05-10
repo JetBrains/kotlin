@@ -88,6 +88,7 @@ fun DeclarationDescriptor.createDeepCopy() = (this as? JavaMethodDescriptor)?.su
 private object ForceTypeCopySubstitution : TypeSubstitution() {
     override fun get(key: KotlinType) =
             with(key) {
+                if (isError) return@with asTypeProjection()
                 KotlinTypeImpl.create(
                         annotations, constructor, isMarkedNullable, arguments, memberScope, capabilities).asTypeProjection()
             }
