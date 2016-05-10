@@ -20,10 +20,9 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.psi.KtBinaryExpression
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.createExpressionByPattern
+import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
 class ReplaceInfixCallFix(element: KtBinaryExpression) : KotlinQuickFixAction<KtBinaryExpression>(element) {
@@ -33,9 +32,18 @@ class ReplaceInfixCallFix(element: KtBinaryExpression) : KotlinQuickFixAction<Kt
     override fun getFamilyName() = text
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
-        val newExpression = KtPsiFactory(file).createExpressionByPattern(
-                "$0?.$1($2)", element.left!!, element.operationReference, element.right!!)
-        element.replace(newExpression)
+        val psiFactory = KtPsiFactory(file)
+        if (element.operationToken == KtTokens.IDENTIFIER) {
+            val newExpression = psiFactory.createExpressionByPattern("$0?.$1($2)", element.left!!, element.operationReference, element.right!!)
+            element.replace(newExpression)
+        }
+        else {
+            val nameExpression = OperatorToFunctionIntention.convert(element).second
+            val callExpression = nameExpression.parent as KtCallExpression
+            val qualifiedExpression = callExpression.parent as KtDotQualifiedExpression
+            val safeExpression = psiFactory.createExpressionByPattern("$0?.$1", qualifiedExpression.receiverExpression, callExpression)
+            qualifiedExpression.replace(safeExpression)
+        }
     }
 
     override fun startInWriteAction() = true
