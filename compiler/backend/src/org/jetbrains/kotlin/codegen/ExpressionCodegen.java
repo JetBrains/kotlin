@@ -3348,7 +3348,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
                 Type storeType;
                 if (isPrimitiveNumberClassDescriptor && AsmUtil.isPrimitive(asmBaseType)) {
-                    genIncrement(asmResultType, asmBaseType, increment, v);
+                    genIncrement(asmBaseType, increment, v);
                     storeType = asmBaseType;
                 }
                 else {
