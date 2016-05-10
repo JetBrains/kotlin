@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.types.expressions
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.config.LanguageFeatureSettings
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.GlobalContext
 import org.jetbrains.kotlin.context.withModule
@@ -57,9 +58,9 @@ class LocalClassifierAnalyzer(
         private val typeResolver: TypeResolver,
         private val annotationResolver: AnnotationResolver,
         private val platform: TargetPlatform,
-        private val dynamicTypesSettings: DynamicTypesSettings,
         private val lookupTracker: LookupTracker,
-        private val supertypeLoopChecker: SupertypeLoopChecker
+        private val supertypeLoopChecker: SupertypeLoopChecker,
+        private val languageFeatureSettings: LanguageFeatureSettings
 ) {
     fun processClassOrObject(
             scope: LexicalWritableScope?,
@@ -74,6 +75,7 @@ class LocalClassifierAnalyzer(
                 context.trace,
                 platform,
                 lookupTracker,
+                languageFeatureSettings,
                 LocalClassDescriptorHolder(
                         scope,
                         classOrObject,
