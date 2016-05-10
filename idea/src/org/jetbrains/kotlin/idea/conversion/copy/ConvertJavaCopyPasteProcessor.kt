@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtStringTemplateEntryWithExpression
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import java.awt.datatransfer.Transferable
 import java.util.*
@@ -71,11 +72,9 @@ class ConvertJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransferab
 
     override fun processTransferableData(project: Project, editor: Editor, bounds: RangeMarker, caretOffset: Int, indented: Ref<Boolean>, values: List<TextBlockTransferableData>) {
         if (DumbService.getInstance(project).isDumb) return
-        val jetEditorOptions = KotlinEditorOptions.getInstance()
-        if (!jetEditorOptions.isEnableJavaToKotlinConversion) return
+        if (!KotlinEditorOptions.getInstance().isEnableJavaToKotlinConversion) return
 
-        val data = values.single()
-        if (data !is CopiedJavaCode) return
+        val data = values.single() as CopiedJavaCode
 
         val document = editor.document
         val targetFile = PsiDocumentManager.getInstance(project).getPsiFile(document) as? KtFile ?: return
@@ -128,8 +127,7 @@ class ConvertJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransferab
             if (doConversionAndInsertImportsIfUnchanged()) return
         }
 
-        val needConvert = jetEditorOptions.isDonTShowConversionDialog || okFromDialog(project)
-        if (needConvert) {
+        if (confirmConvertJavaOnPaste(project, isPlainText = false)) {
             if (conversionResult == null) {
                 if (doConversionAndInsertImportsIfUnchanged()) return
             }
@@ -185,12 +183,6 @@ class ConvertJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransferab
             if (convertedCode.indexOf(name) < 0) return name
             i++
         }
-    }
-
-    private fun okFromDialog(project: Project): Boolean {
-        val dialog = KotlinPasteFromJavaDialog(project, false)
-        dialog.show()
-        return dialog.isOK
     }
 
     companion object {
@@ -251,6 +243,9 @@ internal fun convertCopiedCodeToKotlin(elementsAndTexts: Collection<Any>, projec
 internal fun isNoConversionPosition(file: KtFile, offset: Int): Boolean {
     if (offset == 0) return false
     val token = file.findElementAt(offset - 1)!!
+
+    if (token !is PsiWhiteSpace && token.endOffset != offset) return true // pasting into the middle of token
+
     for (element in token.parentsWithSelf) {
         if (element is PsiComment) return true
         if (element is KtStringTemplateEntryWithExpression) return false
@@ -258,3 +253,12 @@ internal fun isNoConversionPosition(file: KtFile, offset: Int): Boolean {
     }
     return false
 }
+
+internal fun confirmConvertJavaOnPaste(project: Project, isPlainText: Boolean): Boolean {
+    if (KotlinEditorOptions.getInstance().isDonTShowConversionDialog) return true
+
+    val dialog = KotlinPasteFromJavaDialog(project, isPlainText)
+    dialog.show()
+    return dialog.isOK
+}
+

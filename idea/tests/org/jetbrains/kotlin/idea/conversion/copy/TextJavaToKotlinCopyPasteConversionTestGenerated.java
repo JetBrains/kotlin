@@ -47,6 +47,12 @@ public class TextJavaToKotlinCopyPasteConversionTestGenerated extends AbstractTe
         doTest(fileName);
     }
 
+    @TestMetadata("InsideIdentifier.txt")
+    public void testInsideIdentifier() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/plainTextConversion/InsideIdentifier.txt");
+        doTest(fileName);
+    }
+
     @TestMetadata("IntoComment.txt")
     public void testIntoComment() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/plainTextConversion/IntoComment.txt");
