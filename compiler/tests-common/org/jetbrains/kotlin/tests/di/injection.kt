@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.tests.di
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.config.LanguageFeatureSettings
 import org.jetbrains.kotlin.container.*
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -33,6 +34,7 @@ fun createContainerForTests(project: Project, module: ModuleDescriptor): Contain
     return ContainerForTests(createContainer("Tests") {
         configureModule(ModuleContext(module, project), JvmPlatform)
         useInstance(LookupTracker.DO_NOTHING)
+        useInstance(LanguageFeatureSettings.LATEST)
         useImpl<ExpressionTypingServices>()
     })
 }

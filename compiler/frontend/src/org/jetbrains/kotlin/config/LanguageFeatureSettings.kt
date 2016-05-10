@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,20 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.config;
+package org.jetbrains.kotlin.config
 
-public class CommonConfigurationKeys {
-    private CommonConfigurationKeys() {
+class LanguageFeatureSettings {
+    companion object {
+        private val SETTINGS = mapOf(
+                "1.0" to LanguageFeatureSettings()
+        )
+
+        private val LATEST_VERSION = "1.0"
+
+        @JvmField
+        val LATEST: LanguageFeatureSettings = fromLanguageVersion(LATEST_VERSION)!!
+
+        @JvmStatic
+        fun fromLanguageVersion(source: String): LanguageFeatureSettings? = SETTINGS[source]
     }
-
-    public static final CompilerConfigurationKey<LanguageFeatureSettings> LANGUAGE_FEATURE_SETTINGS =
-            CompilerConfigurationKey.create("language feature settings");
 }

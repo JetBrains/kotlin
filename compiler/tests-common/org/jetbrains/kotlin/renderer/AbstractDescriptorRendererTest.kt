@@ -21,6 +21,7 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.getModuleName
+import org.jetbrains.kotlin.config.LanguageFeatureSettings
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -62,7 +63,8 @@ abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment() {
                 FileBasedDeclarationProviderFactory(context.storageManager, listOf(psiFile)),
                 CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(),
                 JvmPlatform,
-                targetEnvironment
+                targetEnvironment,
+                LanguageFeatureSettings.LATEST
         )
 
         val resolveSession = container.get<ResolveSession>()

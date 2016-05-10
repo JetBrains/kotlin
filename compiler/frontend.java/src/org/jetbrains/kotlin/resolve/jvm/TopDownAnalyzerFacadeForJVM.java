@@ -21,6 +21,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
+import org.jetbrains.kotlin.config.LanguageFeatureSettings;
 import org.jetbrains.kotlin.context.ContextKt;
 import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.context.MutableModuleContext;
@@ -97,7 +98,9 @@ public enum TopDownAnalyzerFacadeForJVM {
                 new FileBasedDeclarationProviderFactory(moduleContext.getStorageManager(), allFiles);
 
         LookupTracker lookupTracker =
-                incrementalCompilationComponents != null ? incrementalCompilationComponents.getLookupTracker() : LookupTracker.Companion.getDO_NOTHING();
+                incrementalCompilationComponents != null
+                ? incrementalCompilationComponents.getLookupTracker()
+                : LookupTracker.Companion.getDO_NOTHING();
 
         List<TargetId> targetIds = null;
         if (modules != null) {
@@ -108,7 +111,9 @@ public enum TopDownAnalyzerFacadeForJVM {
             }
         }
 
-        packagePartProvider = IncrementalPackagePartProvider.create(packagePartProvider, files, targetIds, incrementalCompilationComponents, moduleContext.getStorageManager());
+        packagePartProvider = IncrementalPackagePartProvider.create(
+                packagePartProvider, files, targetIds, incrementalCompilationComponents, moduleContext.getStorageManager()
+        );
 
         ContainerForTopDownAnalyzerForJvm container = InjectionKt.createContainerForTopDownAnalyzerForJvm(
                 moduleContext,
@@ -116,7 +121,8 @@ public enum TopDownAnalyzerFacadeForJVM {
                 providerFactory,
                 GlobalSearchScope.allScope(project),
                 lookupTracker,
-                packagePartProvider
+                packagePartProvider,
+                LanguageFeatureSettings.LATEST
         );
 
         List<PackageFragmentProvider> additionalProviders = new ArrayList<PackageFragmentProvider>();

@@ -21,6 +21,7 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
+import org.jetbrains.kotlin.config.LanguageFeatureSettings;
 import org.jetbrains.kotlin.context.ContextKt;
 import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.descriptors.*;
@@ -110,7 +111,8 @@ public class DefaultModalityModifiersTest extends KotlinTestWithEnvironment {
                     new FileBasedDeclarationProviderFactory(moduleContext.getStorageManager(),
                                                             Collections.singleton(aClass.getContainingKtFile())),
                     new BindingTraceContext(),
-                    TargetPlatform.Default.INSTANCE
+                    TargetPlatform.Default.INSTANCE,
+                    LanguageFeatureSettings.LATEST
             );
 
             return (ClassDescriptorWithResolutionScopes) resolveSession.getClassDescriptor(aClass, NoLookupLocation.FROM_TEST);

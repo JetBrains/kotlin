@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
-import org.jetbrains.kotlin.cli.jvm.compiler.CompilerJarLocator;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
@@ -97,10 +96,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         CompilerConfiguration configuration = new CompilerConfiguration();
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector);
 
-        CompilerJarLocator locator = services.get(CompilerJarLocator.class);
-        if (locator != null) {
-            configuration.put(CLIConfigurationKeys.COMPILER_JAR_LOCATOR, locator);
-        }
+        setupCommonArgumentsAndServices(configuration, arguments, services);
 
         ContentRootsKt.addKotlinSourceRoots(configuration, arguments.freeArgs);
         KotlinCoreEnvironment environmentForJS =
