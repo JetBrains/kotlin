@@ -69,6 +69,7 @@ public class ScriptCodegen extends MemberCodegen<KtScript> {
     private final KtScript scriptDeclaration;
     private final ScriptContext context;
     private final ScriptDescriptor scriptDescriptor;
+    private final Type classAsmType;
 
     private ScriptCodegen(
             @NotNull KtScript scriptDeclaration,
@@ -80,16 +81,15 @@ public class ScriptCodegen extends MemberCodegen<KtScript> {
         this.scriptDeclaration = scriptDeclaration;
         this.context = context;
         this.scriptDescriptor = context.getScriptDescriptor();
+        classAsmType = typeMapper.mapClass(context.getContextDescriptor());
     }
 
     @Override
     protected void generateDeclaration() {
-        Type classType = typeMapper.mapClass(context.getContextDescriptor());
-
         v.defineClass(scriptDeclaration,
                       V1_6,
                       ACC_PUBLIC | ACC_SUPER,
-                      classType.getInternalName(),
+                      classAsmType.getInternalName(),
                       null,
                       "java/lang/Object",
                       ArrayUtil.EMPTY_STRING_ARRAY);
@@ -101,6 +101,11 @@ public class ScriptCodegen extends MemberCodegen<KtScript> {
         genFieldsForParameters(scriptDescriptor, v);
         genConstructor(scriptDescriptor, v,
                        context.intoFunction(scriptDescriptor.getUnsubstitutedPrimaryConstructor()));
+    }
+
+    @Override
+    protected void generateSyntheticParts() {
+        generatePropertyMetadataArrayFieldIfNeeded(classAsmType);
     }
 
     @Override

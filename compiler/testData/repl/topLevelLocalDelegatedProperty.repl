@@ -1,0 +1,23 @@
+>>> import kotlin.reflect.KProperty;
+>>> class Delegate {
+...    var inner = 1
+...    operator fun getValue(t: Any?, p: KProperty<*>): Int = inner
+...    operator fun setValue(t: Any?, p: KProperty<*>, i: Int) {
+...        inner = i
+...    }
+...}
+
+>>> var prop1: Int = 1
+>>> prop1
+1
+>>> prop1 = 2
+>>> prop1
+2
+>>> var prop2: Int = 100
+>>> prop2
+100
+>>> prop2 = prop2 + 2
+>>> prop2
+102
+>>> prop1
+2

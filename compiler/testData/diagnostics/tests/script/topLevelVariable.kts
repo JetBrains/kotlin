@@ -8,7 +8,7 @@ class Delegate {
     }
 }
 
-val a: Int <!SCRIPT_TOP_LEVEL_LOCAL_VARIABLE_WITH_DELEGATE!>by Delegate()<!>
+val a: Int by Delegate()
 
 class Foo {
     val a: Int by Delegate()

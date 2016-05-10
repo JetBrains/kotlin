@@ -149,6 +149,12 @@ public class ScriptCodegenTestGenerated extends AbstractScriptCodegenTest {
         doTest(fileName);
     }
 
+    @TestMetadata("topLevelLocalDelegatedProperty.kts")
+    public void testTopLevelLocalDelegatedProperty() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/topLevelLocalDelegatedProperty.kts");
+        doTest(fileName);
+    }
+
     @TestMetadata("topLevelProperty.kts")
     public void testTopLevelProperty() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/topLevelProperty.kts");
