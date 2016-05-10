@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
-import kotlin.test.assertEquals
 
 abstract class AbstractTextJavaToKotlinCopyPasteConversionTest : AbstractCopyPasteTest() {
     private val BASE_PATH = PluginTestCaseBase.getTestDataPathBase() + "/copyPaste/plainTextConversion"
@@ -61,11 +60,17 @@ abstract class AbstractTextJavaToKotlinCopyPasteConversionTest : AbstractCopyPas
         configureTargetFile(testName + ".to.kt")
 
         ConvertTextJavaCopyPasteProcessor.conversionPerformed = false
+        ConvertTextJavaCopyPasteProcessor.convertOnCopyInsideIDE = true
 
-        myFixture.performEditorAction(IdeActions.ACTION_PASTE)
+        try {
+            myFixture.performEditorAction(IdeActions.ACTION_PASTE)
+        }
+        finally {
+            ConvertTextJavaCopyPasteProcessor.convertOnCopyInsideIDE = false
+        }
 
-        assertEquals(noConversionExpected, !ConvertTextJavaCopyPasteProcessor.conversionPerformed,
-                     if (noConversionExpected) "Conversion to Kotlin should not be suggested" else "No conversion to Kotlin suggested")
+        kotlin.test.assertEquals(noConversionExpected, !ConvertTextJavaCopyPasteProcessor.conversionPerformed,
+                                 if (noConversionExpected) "Conversion to Kotlin should not be suggested" else "No conversion to Kotlin suggested")
 
         KotlinTestUtils.assertEqualsToFile(File(path.replace(".txt", ".expected.kt")), myFixture.file.text)
     }

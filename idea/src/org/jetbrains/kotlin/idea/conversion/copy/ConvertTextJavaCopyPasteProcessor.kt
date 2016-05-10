@@ -48,18 +48,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.Transferable
 
-class CopiedKotlinCodeTransferableData : TextBlockTransferableData {
-    override fun getFlavor() = DATA_FLAVOR
-    override fun getOffsetCount() = 0
-
-    override fun getOffsets(offsets: IntArray?, index: Int) = index
-    override fun setOffsets(offsets: IntArray?, index: Int) = index
-
-    companion object {
-        val DATA_FLAVOR: DataFlavor = DataFlavor(CopiedKotlinCodeTransferableData::class.java, "class: KotlinCodeTransferableData")
-    }
-}
-
 class ConvertTextJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransferableData>() {
     private val LOG = Logger.getInstance(ConvertTextJavaCopyPasteProcessor::class.java)
 
@@ -77,17 +65,16 @@ class ConvertTextJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
     }
 
     override fun collectTransferableData(file: PsiFile, editor: Editor, startOffsets: IntArray, endOffsets: IntArray): List<TextBlockTransferableData> {
-        if (file is KtFile) {
-            return listOf(CopiedKotlinCodeTransferableData())
-        }
         return emptyList()
     }
 
     override fun extractTransferableData(content: Transferable): List<TextBlockTransferableData> {
         try {
             if (content.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-                if (content.isDataFlavorSupported(CopiedJavaCode.DATA_FLAVOR)) return emptyList() // it's handled by ConvertJavaCopyPasteProcessor
-                if (content.isDataFlavorSupported(CopiedKotlinCodeTransferableData.DATA_FLAVOR)) return emptyList() // just an optimization
+                // check if it's copied from within IDEA
+                if (!Companion.convertOnCopyInsideIDE && content.transferDataFlavors.any { TextBlockTransferableData::class.java.isAssignableFrom(it.representationClass) }) {
+                    return emptyList()
+                }
 
                 val text = content.getTransferData(DataFlavor.stringFlavor) as String
                 return listOf(MyTransferableData(text))
@@ -101,11 +88,9 @@ class ConvertTextJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
 
     override fun processTransferableData(project: Project, editor: Editor, bounds: RangeMarker, caretOffset: Int, indented: Ref<Boolean>, values: List<TextBlockTransferableData>) {
         if (DumbService.getInstance(project).isDumb) return
-        val options = KotlinEditorOptions.getInstance()
-        if (!options.isEnableJavaToKotlinConversion) return //TODO: use another option?
+        if (!KotlinEditorOptions.getInstance().isEnableJavaToKotlinConversion) return //TODO: use another option?
 
-        val data = values.single() as MyTransferableData
-        val text = data.text
+        val text = (values.single() as MyTransferableData).text
 
         val psiDocumentManager = PsiDocumentManager.getInstance(project)
         psiDocumentManager.commitDocument(editor.document)
@@ -115,8 +100,7 @@ class ConvertTextJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
 
         val conversionContext = detectConversionContext(pasteContext, text, project) ?: return
 
-        val needConvert = options.isDonTShowConversionDialog || okFromDialog(project)
-        if (!needConvert) return
+        if (!confirmConvertJavaOnPaste(project, isPlainText = true)) return
 
         val convertedText = convertCodeToKotlin(text, conversionContext, project)
 
@@ -240,13 +224,8 @@ class ConvertTextJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
         return CopiedJavaCode(fileText, intArrayOf(index), intArrayOf(index + text.length))
     }
 
-    private fun okFromDialog(project: Project): Boolean {
-        val dialog = KotlinPasteFromJavaDialog(project, true)
-        dialog.show()
-        return dialog.isOK
-    }
-
     companion object {
         @TestOnly var conversionPerformed: Boolean = false
+        @TestOnly var convertOnCopyInsideIDE: Boolean = false
     }
 }
