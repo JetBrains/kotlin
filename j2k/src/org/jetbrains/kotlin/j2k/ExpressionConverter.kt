@@ -581,13 +581,21 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
 
         if (!converter.inConversionScope(target)) return false
 
-        if (converter.settings.specifyFieldTypeByDefault) return false
+        val canChangeType: Boolean
+        when (target) {
+            is PsiLocalVariable -> {
+                if (converter.settings.specifyLocalVariableTypeByDefault) return false
+                canChangeType = codeConverter.canChangeType(target)
+            }
 
-        val canChangeType = when (target) {
-            is PsiLocalVariable -> codeConverter.canChangeType(target)
-            is PsiField -> target.hasModifierProperty(PsiModifier.PRIVATE)
+            is PsiField -> {
+                if (converter.settings.specifyFieldTypeByDefault) return false
+                canChangeType = target.hasModifierProperty(PsiModifier.PRIVATE)
+            }
+
             else -> return false
         }
+
         if (converter.shouldDeclareVariableType(target, converter.typeConverter.convertVariableType(target), canChangeType)) return false
 
         // if variable type won't be specified then check nullability of the initializer
