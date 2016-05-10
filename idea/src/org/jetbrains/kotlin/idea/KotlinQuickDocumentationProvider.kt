@@ -29,16 +29,16 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
-import org.jetbrains.kotlin.idea.kdoc.KDocFinder
 import org.jetbrains.kotlin.idea.kdoc.KDocRenderer
+import org.jetbrains.kotlin.idea.kdoc.findKDoc
 import org.jetbrains.kotlin.idea.kdoc.resolveKDocLink
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
@@ -134,7 +134,7 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
             if (!quickNavigation) {
                 renderedDecl = "<pre>" + renderedDecl + "</pre>"
             }
-            val comment = KDocFinder.findKDoc(declarationDescriptor)
+            val comment = declarationDescriptor.findKDoc()
             if (comment != null) {
                 val renderedComment = KDocRenderer.renderKDoc(comment)
                 if (renderedComment.startsWith("<p>")) {

@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.core.ExpectedInfo
 import org.jetbrains.kotlin.idea.kdoc.getParamDescriptors
-import org.jetbrains.kotlin.idea.kdoc.getResolutionScope
+import org.jetbrains.kotlin.idea.kdoc.getKDocLinkResolutionScope
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.substituteExtensionIfCallable
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
@@ -101,7 +101,7 @@ class KDocNameCompletionSession(
     }
 
     private fun addLinkCompletions(declarationDescriptor: DeclarationDescriptor) {
-        val scope = getResolutionScope(resolutionFacade, declarationDescriptor)
+        val scope = getKDocLinkResolutionScope(resolutionFacade, declarationDescriptor)
         val implicitReceivers = scope.getImplicitReceiversHierarchy().map { it.value }
 
         fun isApplicable(descriptor: DeclarationDescriptor): Boolean {
