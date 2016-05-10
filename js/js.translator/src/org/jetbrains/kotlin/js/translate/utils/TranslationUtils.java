@@ -166,7 +166,7 @@ public final class TranslationUtils {
             @NotNull PropertyDescriptor descriptor,
             @NotNull JsExpression assignTo) {
         JsNameRef backingFieldReference = backingFieldReference(context, descriptor);
-        return assignment(backingFieldReference, assignTo);
+        return !JsAstUtils.isEmptyExpression(assignTo) ? assignment(backingFieldReference, assignTo) : assignTo;
     }
 
     @Nullable
