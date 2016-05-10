@@ -19016,6 +19016,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Typealias extends AbstractDiagnosticsTest {
+            @TestMetadata("aliasesOnly.kt")
+            public void testAliasesOnly() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/aliasesOnly.kt");
+                doTest(fileName);
+            }
+
             public void testAllFilesPresentInTypealias() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/typealias"), Pattern.compile("^(.+)\\.kt$"), true);
             }
