@@ -22,10 +22,7 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.KtScript
+import org.jetbrains.kotlin.psi.*
 import java.util.*
 
 object PackagePartClassUtils {
@@ -64,7 +61,8 @@ object PackagePartClassUtils {
             file.declarations.any {
                 it is KtProperty ||
                 it is KtNamedFunction ||
-                it is KtScript
+                it is KtScript ||
+                it is KtTypeAlias
             }
 
     @JvmStatic fun getFilePartShortName(fileName: String): String =
