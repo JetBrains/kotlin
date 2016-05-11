@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.TypeSubstitutor
@@ -40,24 +41,35 @@ class TypeAliasDescriptorImpl(
         TypeAliasDescriptor {
 
     // TODO kotlinize some interfaces
-    private lateinit var fDeclaredTypeParameters: List<TypeParameterDescriptor>
-    private lateinit var lazyUnderlyingType: NotNullLazyValue<KotlinType>
+    private lateinit var declaredTypeParametersImpl: List<TypeParameterDescriptor>
+    private lateinit var underlyingTypeImpl: NotNullLazyValue<KotlinType>
+    private lateinit var expandedTypeImpl: NotNullLazyValue<KotlinType>
 
-    override val underlyingType: KotlinType get() = lazyUnderlyingType()
+    override val underlyingType: KotlinType get() = underlyingTypeImpl()
+    override val expandedType: KotlinType get() = expandedTypeImpl()
 
-    fun initialize(declaredTypeParameters: List<TypeParameterDescriptor>, lazyUnderlyingType: NotNullLazyValue<KotlinType>) {
-        this.fDeclaredTypeParameters = declaredTypeParameters
-        this.lazyUnderlyingType = lazyUnderlyingType
+    fun initialize(
+            declaredTypeParameters: List<TypeParameterDescriptor>,
+            lazyUnderlyingType: NotNullLazyValue<KotlinType>,
+            lazyExpandedType: NotNullLazyValue<KotlinType>
+    ) {
+        this.declaredTypeParametersImpl = declaredTypeParameters
+        this.underlyingTypeImpl = lazyUnderlyingType
+        this.expandedTypeImpl = lazyExpandedType
     }
 
     override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R =
             visitor.visitTypeAliasDescriptor(this, data)
 
-    override fun getDeclaredTypeParameters(): List<TypeParameterDescriptor> =
-            fDeclaredTypeParameters
+    override fun isInner(): Boolean = false // TODO treat all nested type aliases as inner?
 
-    override val underlyingClassDescriptor: ClassDescriptor
-        get() = underlyingType.constructor.declarationDescriptor as ClassDescriptor  // TODO
+    override fun getDeclaredTypeParameters(): List<TypeParameterDescriptor> =
+            declaredTypeParametersImpl
+
+    override val classDescriptor: ClassDescriptor?
+        get() = expandedType.let { expandedType ->
+            if (expandedType.isError) null else expandedType.constructor.declarationDescriptor as ClassDescriptor
+        }
 
     override fun getModality() = Modality.FINAL
 

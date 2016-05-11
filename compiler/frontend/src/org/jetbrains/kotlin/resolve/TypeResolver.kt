@@ -81,9 +81,11 @@ class TypeResolver(
         val cachedType = c.trace.getBindingContext().get(BindingContext.TYPE, typeReference)
         if (cachedType != null) return type(cachedType)
 
+        val resolvedTypeSlice = if (c.abbreviated) BindingContext.ABBREVIATED_TYPE else BindingContext.TYPE
+
         val debugType = typeReference.debugTypeInfo
         if (debugType != null) {
-            c.trace.record(BindingContext.TYPE, typeReference, debugType)
+            c.trace.record(resolvedTypeSlice, typeReference, debugType)
             return type(debugType)
         }
 
@@ -100,13 +102,13 @@ class TypeResolver(
             }
 
             val lazyKotlinType = LazyKotlinType()
-            c.trace.record(BindingContext.TYPE, typeReference, lazyKotlinType)
+            c.trace.record(resolvedTypeSlice, typeReference, lazyKotlinType)
             return type(lazyKotlinType)
         }
 
         val type = doResolvePossiblyBareType(c, typeReference)
         if (!type.isBare()) {
-            c.trace.record(BindingContext.TYPE, typeReference, type.getActualType())
+            c.trace.record(resolvedTypeSlice, typeReference, type.getActualType())
         }
         return type
     }

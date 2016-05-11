@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.codegen.serialization
 
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.load.kotlin.JvmNameResolver
 import org.jetbrains.kotlin.name.ClassId
@@ -53,7 +54,7 @@ class JvmStringTable(private val typeMapper: KotlinTypeMapper) : StringTable {
         return !hasPredefinedIndex() && !hasOperation() && substringIndexCount == 0 && replaceCharCount == 0
     }
 
-    override fun getFqNameIndex(descriptor: ClassDescriptor): Int {
+    override fun getFqNameIndex(descriptor: ClassifierDescriptorWithTypeParameters): Int {
         if (ErrorUtils.isError(descriptor)) {
             throw IllegalStateException("Cannot get FQ name of error class: " + descriptor)
         }
@@ -109,7 +110,7 @@ class JvmStringTable(private val typeMapper: KotlinTypeMapper) : StringTable {
         return index
     }
 
-    private val ClassDescriptor.classId: ClassId
+    private val ClassifierDescriptorWithTypeParameters.classId: ClassId
         get() {
             val container = containingDeclaration
             return when (container) {

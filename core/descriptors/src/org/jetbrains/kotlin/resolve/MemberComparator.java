@@ -48,7 +48,10 @@ public class MemberComparator implements Comparator<DeclarationDescriptor> {
     }
 
     private static int getDeclarationPriority(DeclarationDescriptor descriptor) {
-        if (isEnumEntry(descriptor)) {
+        if (descriptor instanceof TypeAliasDescriptor) {
+            return 8;
+        }
+        else if (isEnumEntry(descriptor)) {
             return 7;
         }
         else if (descriptor instanceof ConstructorDescriptor) {
@@ -92,7 +95,17 @@ public class MemberComparator implements Comparator<DeclarationDescriptor> {
             return namesCompareTo;
         }
 
-        if (o1 instanceof CallableDescriptor && o2 instanceof CallableDescriptor) {
+        if (o1 instanceof TypeAliasDescriptor && o2 instanceof TypeAliasDescriptor) {
+            TypeAliasDescriptor ta1 = (TypeAliasDescriptor) o1;
+            TypeAliasDescriptor ta2 = (TypeAliasDescriptor) o2;
+            String r1 = RENDERER.renderType(ta1.getUnderlyingType());
+            String r2 = RENDERER.renderType(ta2.getUnderlyingType());
+            int underlyingTypesCompareTo = r1.compareTo(r2);
+            if (underlyingTypesCompareTo != 0) {
+                return underlyingTypesCompareTo;
+            }
+        }
+        else if (o1 instanceof CallableDescriptor && o2 instanceof CallableDescriptor) {
             CallableDescriptor c1 = (CallableDescriptor) o1;
             CallableDescriptor c2 = (CallableDescriptor) o2;
 

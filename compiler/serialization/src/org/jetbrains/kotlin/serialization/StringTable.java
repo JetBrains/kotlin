@@ -18,13 +18,14 @@ package org.jetbrains.kotlin.serialization;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters;
 
 import java.io.OutputStream;
 
 public interface StringTable {
     int getStringIndex(@NotNull String string);
 
-    int getFqNameIndex(@NotNull ClassDescriptor descriptor);
+    int getFqNameIndex(@NotNull ClassifierDescriptorWithTypeParameters descriptor);
 
     void serializeTo(@NotNull OutputStream output);
 }

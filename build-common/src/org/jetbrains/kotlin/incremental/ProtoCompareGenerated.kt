@@ -39,6 +39,8 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
 
         if (!checkEqualsPackageProperty(old, new)) return false
 
+        if (!checkEqualsPackageTypeAlias(old, new)) return false
+
         if (old.hasTypeTable() != new.hasTypeTable()) return false
         if (old.hasTypeTable()) {
             if (!checkEquals(old.typeTable, new.typeTable)) return false
@@ -54,6 +56,7 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
     enum class ProtoBufPackageKind {
         FUNCTION_LIST,
         PROPERTY_LIST,
+        TYPE_ALIAS_LIST,
         TYPE_TABLE,
         PACKAGE_MODULE_NAME
     }
@@ -64,6 +67,8 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         if (!checkEqualsPackageFunction(old, new)) result.add(ProtoBufPackageKind.FUNCTION_LIST)
 
         if (!checkEqualsPackageProperty(old, new)) result.add(ProtoBufPackageKind.PROPERTY_LIST)
+
+        if (!checkEqualsPackageTypeAlias(old, new)) result.add(ProtoBufPackageKind.TYPE_ALIAS_LIST)
 
         if (old.hasTypeTable() != new.hasTypeTable()) result.add(ProtoBufPackageKind.TYPE_TABLE)
         if (old.hasTypeTable()) {
@@ -105,6 +110,8 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
 
         if (!checkEqualsClassProperty(old, new)) return false
 
+        if (!checkEqualsClassTypeAlias(old, new)) return false
+
         if (!checkEqualsClassEnumEntry(old, new)) return false
 
         if (old.hasTypeTable() != new.hasTypeTable()) return false
@@ -130,6 +137,7 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         CONSTRUCTOR_LIST,
         FUNCTION_LIST,
         PROPERTY_LIST,
+        TYPE_ALIAS_LIST,
         ENUM_ENTRY_LIST,
         TYPE_TABLE,
         CLASS_MODULE_NAME
@@ -163,6 +171,8 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         if (!checkEqualsClassFunction(old, new)) result.add(ProtoBufClassKind.FUNCTION_LIST)
 
         if (!checkEqualsClassProperty(old, new)) result.add(ProtoBufClassKind.PROPERTY_LIST)
+
+        if (!checkEqualsClassTypeAlias(old, new)) result.add(ProtoBufClassKind.TYPE_ALIAS_LIST)
 
         if (!checkEqualsClassEnumEntry(old, new)) result.add(ProtoBufClassKind.ENUM_ENTRY_LIST)
 
@@ -287,6 +297,39 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         return true
     }
 
+    open fun checkEquals(old: ProtoBuf.TypeAlias, new: ProtoBuf.TypeAlias): Boolean {
+        if (old.hasFlags() != new.hasFlags()) return false
+        if (old.hasFlags()) {
+            if (old.flags != new.flags) return false
+        }
+
+        if (!checkStringEquals(old.name, new.name)) return false
+
+        if (!checkEqualsTypeAliasTypeParameter(old, new)) return false
+
+        if (old.hasUnderlyingType() != new.hasUnderlyingType()) return false
+        if (old.hasUnderlyingType()) {
+            if (!checkEquals(old.underlyingType, new.underlyingType)) return false
+        }
+
+        if (old.hasUnderlyingTypeId() != new.hasUnderlyingTypeId()) return false
+        if (old.hasUnderlyingTypeId()) {
+            if (old.underlyingTypeId != new.underlyingTypeId) return false
+        }
+
+        if (old.hasExpandedType() != new.hasExpandedType()) return false
+        if (old.hasExpandedType()) {
+            if (!checkEquals(old.expandedType, new.expandedType)) return false
+        }
+
+        if (old.hasExpandedTypeId() != new.hasExpandedTypeId()) return false
+        if (old.hasExpandedTypeId()) {
+            if (old.expandedTypeId != new.expandedTypeId) return false
+        }
+
+        return true
+    }
+
     open fun checkEquals(old: ProtoBuf.TypeTable, new: ProtoBuf.TypeTable): Boolean {
         if (!checkEqualsTypeTableType(old, new)) return false
 
@@ -364,6 +407,11 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             if (!checkStringEquals(old.typeParameterName, new.typeParameterName)) return false
         }
 
+        if (old.hasTypeAliasName() != new.hasTypeAliasName()) return false
+        if (old.hasTypeAliasName()) {
+            if (!checkStringEquals(old.typeAliasName, new.typeAliasName)) return false
+        }
+
         if (old.hasOuterType() != new.hasOuterType()) return false
         if (old.hasOuterType()) {
             if (!checkEquals(old.outerType, new.outerType)) return false
@@ -372,6 +420,16 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         if (old.hasOuterTypeId() != new.hasOuterTypeId()) return false
         if (old.hasOuterTypeId()) {
             if (old.outerTypeId != new.outerTypeId) return false
+        }
+
+        if (old.hasAbbreviatedType() != new.hasAbbreviatedType()) return false
+        if (old.hasAbbreviatedType()) {
+            if (!checkEquals(old.abbreviatedType, new.abbreviatedType)) return false
+        }
+
+        if (old.hasAbbreviatedTypeId() != new.hasAbbreviatedTypeId()) return false
+        if (old.hasAbbreviatedTypeId()) {
+            if (old.abbreviatedTypeId != new.abbreviatedTypeId) return false
         }
 
         if (old.getExtensionCount(JvmProtoBuf.typeAnnotation) != new.getExtensionCount(JvmProtoBuf.typeAnnotation)) return false
@@ -597,6 +655,16 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         return true
     }
 
+    open fun checkEqualsPackageTypeAlias(old: ProtoBuf.Package, new: ProtoBuf.Package): Boolean {
+        if (old.typeAliasCount != new.typeAliasCount) return false
+
+        for(i in 0..old.typeAliasCount - 1) {
+            if (!checkEquals(old.getTypeAlias(i), new.getTypeAlias(i))) return false
+        }
+
+        return true
+    }
+
     open fun checkEqualsClassTypeParameter(old: ProtoBuf.Class, new: ProtoBuf.Class): Boolean {
         if (old.typeParameterCount != new.typeParameterCount) return false
 
@@ -667,6 +735,16 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         return true
     }
 
+    open fun checkEqualsClassTypeAlias(old: ProtoBuf.Class, new: ProtoBuf.Class): Boolean {
+        if (old.typeAliasCount != new.typeAliasCount) return false
+
+        for(i in 0..old.typeAliasCount - 1) {
+            if (!checkEquals(old.getTypeAlias(i), new.getTypeAlias(i))) return false
+        }
+
+        return true
+    }
+
     open fun checkEqualsClassEnumEntry(old: ProtoBuf.Class, new: ProtoBuf.Class): Boolean {
         if (old.enumEntryCount != new.enumEntryCount) return false
 
@@ -698,6 +776,16 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
     }
 
     open fun checkEqualsPropertyTypeParameter(old: ProtoBuf.Property, new: ProtoBuf.Property): Boolean {
+        if (old.typeParameterCount != new.typeParameterCount) return false
+
+        for(i in 0..old.typeParameterCount - 1) {
+            if (!checkEquals(old.getTypeParameter(i), new.getTypeParameter(i))) return false
+        }
+
+        return true
+    }
+
+    open fun checkEqualsTypeAliasTypeParameter(old: ProtoBuf.TypeAlias, new: ProtoBuf.TypeAlias): Boolean {
         if (old.typeParameterCount != new.typeParameterCount) return false
 
         for(i in 0..old.typeParameterCount - 1) {
@@ -819,6 +907,10 @@ fun ProtoBuf.Package.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) 
         hashCode = 31 * hashCode + getProperty(i).hashCode(stringIndexes, fqNameIndexes)
     }
 
+    for(i in 0..typeAliasCount - 1) {
+        hashCode = 31 * hashCode + getTypeAlias(i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
     if (hasTypeTable()) {
         hashCode = 31 * hashCode + typeTable.hashCode(stringIndexes, fqNameIndexes)
     }
@@ -869,6 +961,10 @@ fun ProtoBuf.Class.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) ->
 
     for(i in 0..propertyCount - 1) {
         hashCode = 31 * hashCode + getProperty(i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    for(i in 0..typeAliasCount - 1) {
+        hashCode = 31 * hashCode + getTypeAlias(i).hashCode(stringIndexes, fqNameIndexes)
     }
 
     for(i in 0..enumEntryCount - 1) {
@@ -986,6 +1082,38 @@ fun ProtoBuf.Property.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int)
     return hashCode
 }
 
+fun ProtoBuf.TypeAlias.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
+    var hashCode = 1
+
+    if (hasFlags()) {
+        hashCode = 31 * hashCode + flags
+    }
+
+    hashCode = 31 * hashCode + stringIndexes(name)
+
+    for(i in 0..typeParameterCount - 1) {
+        hashCode = 31 * hashCode + getTypeParameter(i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    if (hasUnderlyingType()) {
+        hashCode = 31 * hashCode + underlyingType.hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    if (hasUnderlyingTypeId()) {
+        hashCode = 31 * hashCode + underlyingTypeId
+    }
+
+    if (hasExpandedType()) {
+        hashCode = 31 * hashCode + expandedType.hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    if (hasExpandedTypeId()) {
+        hashCode = 31 * hashCode + expandedTypeId
+    }
+
+    return hashCode
+}
+
 fun ProtoBuf.TypeTable.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
     var hashCode = 1
 
@@ -1065,12 +1193,24 @@ fun ProtoBuf.Type.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> 
         hashCode = 31 * hashCode + stringIndexes(typeParameterName)
     }
 
+    if (hasTypeAliasName()) {
+        hashCode = 31 * hashCode + stringIndexes(typeAliasName)
+    }
+
     if (hasOuterType()) {
         hashCode = 31 * hashCode + outerType.hashCode(stringIndexes, fqNameIndexes)
     }
 
     if (hasOuterTypeId()) {
         hashCode = 31 * hashCode + outerTypeId
+    }
+
+    if (hasAbbreviatedType()) {
+        hashCode = 31 * hashCode + abbreviatedType.hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    if (hasAbbreviatedTypeId()) {
+        hashCode = 31 * hashCode + abbreviatedTypeId
     }
 
     for(i in 0..getExtensionCount(JvmProtoBuf.typeAnnotation) - 1) {

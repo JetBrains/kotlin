@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
+import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
@@ -112,9 +113,14 @@ public class PackagePartCodegen extends MemberCodegen<KtFile> {
             if (declaration instanceof KtNamedFunction) {
                 SimpleFunctionDescriptor functionDescriptor = bindingContext.get(BindingContext.FUNCTION, declaration);
                 members.add(functionDescriptor);
-            } else if (declaration instanceof KtProperty) {
+            }
+            else if (declaration instanceof KtProperty) {
                 VariableDescriptor property = bindingContext.get(BindingContext.VARIABLE, declaration);
                 members.add(property);
+            }
+            else if (declaration instanceof KtTypeAlias) {
+                TypeAliasDescriptor typeAlias = bindingContext.get(BindingContext.TYPE_ALIAS, declaration);
+                members.add(typeAlias);
             }
         }
 

@@ -1,5 +1,5 @@
 package
 
-public val x: [ERROR : Recursive type alias: A]
 public typealias A = B
 public typealias B = A
+public val x: [ERROR : Recursive type alias: A]

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.serialization;
 import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.kotlin.name.FqName;
@@ -73,7 +74,7 @@ public class StringTableImpl implements StringTable {
     }
 
     @Override
-    public int getFqNameIndex(@NotNull ClassDescriptor descriptor) {
+    public int getFqNameIndex(@NotNull ClassifierDescriptorWithTypeParameters descriptor) {
         if (ErrorUtils.isError(descriptor)) {
             throw new IllegalStateException("Cannot get FQ name of error class: " + descriptor);
         }
