@@ -129,11 +129,13 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return object : KtVisitorVoid() {
-            override fun visitNamedDeclaration(declaration: KtNamedDeclaration) {
+            override fun visitDeclaration(declaration: KtDeclaration) {
+                if (declaration !is KtNamedDeclaration) return
                 val messageKey = when (declaration) {
                     is KtClass -> "unused.class"
                     is KtObjectDeclaration -> "unused.object"
                     is KtNamedFunction -> "unused.function"
+                    is KtSecondaryConstructor -> "unused.constructor"
                     is KtProperty, is KtParameter -> "unused.property"
                     is KtTypeParameter -> "unused.type.parameter"
                     else -> return
@@ -143,7 +145,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
 
                 // Simple PSI-based checks
                 if (declaration is KtObjectDeclaration && declaration.isCompanion()) return // never mark companion object as unused (there are too many reasons it can be needed for)
-                if (declaration.name == null) return
+                declaration.name ?: return
                 if (declaration is KtEnumEntry) return
                 if (declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return
                 if (declaration is KtProperty && declaration.isLocal) return
@@ -162,8 +164,9 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
                 if (hasNonTrivialUsages(declaration)) return
                 if (declaration is KtClassOrObject && classOrObjectHasTextUsages(declaration)) return
 
+                val psiElement = declaration.nameIdentifier ?: (declaration as? KtConstructor<*>)?.getConstructorKeyword() ?: return
                 val problemDescriptor = holder.manager.createProblemDescriptor(
-                        declaration.nameIdentifier!!,
+                        psiElement,
                         null,
                         KotlinBundle.message(messageKey, declaration.name),
                         ProblemHighlightType.LIKE_UNUSED_SYMBOL,
@@ -301,7 +304,9 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
 }
 
 class SafeDeleteFix(val declaration: KtDeclaration) : LocalQuickFix {
-    override fun getName() = QuickFixBundle.message("safe.delete.text", declaration.name)
+    override fun getName() =
+            if (declaration is KtConstructor<*>) "Safe delete constructor"
+            else QuickFixBundle.message("safe.delete.text", declaration.name)
 
     override fun getFamilyName() = "Safe delete"
 

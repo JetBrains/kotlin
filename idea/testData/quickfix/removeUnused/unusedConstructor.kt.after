@@ -1,0 +1,3 @@
+// "Safe delete constructor" "true"
+class Owner(val x: Int) {
+}
