@@ -90,6 +90,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         public void testAllFilesPresentInAddBraces() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/addBraces"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
+
+        @TestMetadata("notInsideElseIfBlock.kt")
+        public void testNotInsideElseIfBlock() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addBraces/notInsideElseIfBlock.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/intentions/addConstModifier")
