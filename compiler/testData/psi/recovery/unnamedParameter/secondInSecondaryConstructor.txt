@@ -35,10 +35,10 @@ JetFile: secondInSecondaryConstructor.kt
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('Int')
           PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
         CONSTRUCTOR_DELEGATION_CALL
           CONSTRUCTOR_DELEGATION_REFERENCE
             <empty list>
+        PsiWhiteSpace(' ')
         BLOCK
           PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n\n    ')

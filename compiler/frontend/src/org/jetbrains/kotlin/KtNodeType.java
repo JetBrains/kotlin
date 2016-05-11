@@ -27,11 +27,7 @@ import org.jetbrains.kotlin.psi.KtElementImpl;
 import java.lang.reflect.Constructor;
 
 public class KtNodeType extends IElementType {
-    private Constructor<? extends KtElement> myPsiFactory;
-
-    public KtNodeType(@NotNull @NonNls String debugName) {
-        this(debugName, null);
-    }
+    private final Constructor<? extends KtElement> myPsiFactory;
 
     public KtNodeType(@NotNull @NonNls String debugName, Class<? extends KtElement> psiClass) {
         super(debugName, KotlinLanguage.INSTANCE);
@@ -52,6 +48,17 @@ public class KtNodeType extends IElementType {
             return myPsiFactory.newInstance(node);
         } catch (Exception e) {
             throw new RuntimeException("Error creating psi element for node", e);
+        }
+    }
+
+    public static class KtLeftBoundNodeType extends KtNodeType {
+        public KtLeftBoundNodeType(@NotNull @NonNls String debugName, Class<? extends KtElement> psiClass) {
+            super(debugName, psiClass);
+        }
+
+        @Override
+        public boolean isLeftBound() {
+            return true;
         }
     }
 }
