@@ -17,10 +17,10 @@ JetFile: recoveryNoDelegationCallAfterColon.kt
           PsiElement(LPAR)('(')
           PsiElement(RPAR)(')')
         PsiElement(COLON)(':')
-        PsiWhiteSpace('\n    ')
         CONSTRUCTOR_DELEGATION_CALL
           PsiErrorElement:Expecting a 'this' or 'super' constructor call
             <empty list>
+      PsiWhiteSpace('\n    ')
       PROPERTY
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
@@ -37,29 +37,29 @@ JetFile: recoveryNoDelegationCallAfterColon.kt
           PsiElement(LPAR)('(')
           PsiElement(RPAR)(')')
         PsiElement(COLON)(':')
-        PsiWhiteSpace('\n    ')
         CONSTRUCTOR_DELEGATION_CALL
           PsiErrorElement:Expecting a 'this' or 'super' constructor call
             <empty list>
+      PsiWhiteSpace('\n    ')
       SECONDARY_CONSTRUCTOR
         PsiElement(constructor)('constructor')
         VALUE_PARAMETER_LIST
           PsiElement(LPAR)('(')
           PsiElement(RPAR)(')')
-        PsiWhiteSpace('\n\n    ')
         CONSTRUCTOR_DELEGATION_CALL
           CONSTRUCTOR_DELEGATION_REFERENCE
             <empty list>
+      PsiWhiteSpace('\n\n    ')
       SECONDARY_CONSTRUCTOR
         PsiElement(constructor)('constructor')
         VALUE_PARAMETER_LIST
           PsiElement(LPAR)('(')
           PsiElement(RPAR)(')')
         PsiElement(COLON)(':')
-        PsiWhiteSpace(' ')
         CONSTRUCTOR_DELEGATION_CALL
           PsiErrorElement:Expecting a 'this' or 'super' constructor call
             <empty list>
+        PsiWhiteSpace(' ')
         BLOCK
           PsiElement(LBRACE)('{')
           PsiElement(RBRACE)('}')
@@ -78,10 +78,10 @@ JetFile: recoveryNoDelegationCallAfterColon.kt
           PsiElement(LPAR)('(')
           PsiElement(RPAR)(')')
         PsiElement(COLON)(':')
-        PsiWhiteSpace('\n')
         CONSTRUCTOR_DELEGATION_CALL
           PsiErrorElement:Expecting a 'this' or 'super' constructor call
             <empty list>
+      PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
   CLASS

@@ -16,10 +16,10 @@ JetFile: emptyBody.kt
         VALUE_PARAMETER_LIST
           PsiElement(LPAR)('(')
           PsiElement(RPAR)(')')
-        PsiWhiteSpace('\n    ')
         CONSTRUCTOR_DELEGATION_CALL
           CONSTRUCTOR_DELEGATION_REFERENCE
             <empty list>
+      PsiWhiteSpace('\n    ')
       FUN
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
@@ -41,10 +41,10 @@ JetFile: emptyBody.kt
         VALUE_PARAMETER_LIST
           PsiElement(LPAR)('(')
           PsiElement(RPAR)(')')
-        PsiWhiteSpace('\n    ')
         CONSTRUCTOR_DELEGATION_CALL
           CONSTRUCTOR_DELEGATION_REFERENCE
             <empty list>
+      PsiWhiteSpace('\n    ')
       PROPERTY
         PsiElement(val)('val')
         PsiWhiteSpace(' ')

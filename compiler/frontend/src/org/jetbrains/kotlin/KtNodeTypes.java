@@ -81,9 +81,8 @@ public interface KtNodeTypes {
     IElementType TYPE_CONSTRAINT_LIST    = KtStubElementTypes.TYPE_CONSTRAINT_LIST;
     IElementType TYPE_CONSTRAINT         = KtStubElementTypes.TYPE_CONSTRAINT;
 
-    IElementType CONSTRUCTOR_DELEGATION_CALL = new KtNodeType("CONSTRUCTOR_DELEGATION_CALL", KtConstructorDelegationCall.class);
-    KtNodeType CONSTRUCTOR_DELEGATION_REFERENCE =
-            new KtNodeType("CONSTRUCTOR_DELEGATION_REFERENCE", KtConstructorDelegationReferenceExpression.class);
+    IElementType CONSTRUCTOR_DELEGATION_CALL = new KtNodeType.KtLeftBoundNodeType("CONSTRUCTOR_DELEGATION_CALL", KtConstructorDelegationCall.class);
+    KtNodeType CONSTRUCTOR_DELEGATION_REFERENCE = new KtNodeType.KtLeftBoundNodeType("CONSTRUCTOR_DELEGATION_REFERENCE", KtConstructorDelegationReferenceExpression.class);
 
     // TODO: Not sure if we need separate NT for each kind of constants
     KtNodeType NULL               = new KtNodeType("NULL", KtConstantExpression.class);
