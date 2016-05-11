@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.result.AddToCollectionTransformation
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.result.CountTransformation
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.result.FindTransformationMatcher
+import org.jetbrains.kotlin.idea.intentions.loopToCallChain.result.ForEachTransformation
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.FilterTransformation
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.FlatMapTransformation
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.IntroduceIndexMatcher
@@ -52,7 +53,8 @@ object MatcherRegistrar {
             IntroduceIndexMatcher,
             FilterTransformation.Matcher,
             MapTransformation.Matcher,
-            FlatMapTransformation.Matcher
+            FlatMapTransformation.Matcher,
+            ForEachTransformation.Matcher
     )
 }
 
@@ -74,7 +76,8 @@ fun match(loop: KtForExpression): MatchResult? {
             innerLoop = loop,
             statements = listOf(loop.body ?: return null),
             inputVariable = inputVariable,
-            indexVariable = indexVariable
+            indexVariable = indexVariable,
+            previousTransformations = sequenceTransformations
     )
 
     MatchLoop@

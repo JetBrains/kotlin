@@ -101,7 +101,8 @@ data class MatchingState(
          * Matchers can assume that indexVariable is null if it's not used in the rest of the loop
          */
         val indexVariable: KtCallableDeclaration?,
-        val initializationStatementsToDelete: Collection<KtExpression> = emptyList()
+        val initializationStatementsToDelete: Collection<KtExpression> = emptyList(),
+        val previousTransformations: List<SequenceTransformation>
 )
 
 interface TransformationMatcher {

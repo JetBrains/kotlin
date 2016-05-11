@@ -1,0 +1,7 @@
+// WITH_RUNTIME
+// INTENTION_TEXT: "Replace with 'filter{}.forEach{}'"
+fun foo(list: List<String>) {
+    list
+            .filter { it.isNotBlank() }
+            .forEach { println(it) }
+}
