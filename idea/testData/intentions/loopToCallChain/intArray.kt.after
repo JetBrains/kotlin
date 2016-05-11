@@ -1,0 +1,7 @@
+// WITH_RUNTIME
+import java.util.ArrayList
+
+fun foo(array: IntArray): List<Int> {
+    val result = array.filter { it % 3 == 0 }
+    return result
+}
