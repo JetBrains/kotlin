@@ -200,7 +200,11 @@ public final class WhenTranslator extends AbstractTranslator {
             return Translation.patternTranslator(context).translateExpressionForExpressionPattern(patternExpression);
         }
         else {
-            return Translation.patternTranslator(context).translateExpressionPattern(expressionToMatch, patternExpression);
+            KtExpression subject = whenExpression.getSubjectExpression();
+            assert subject != null : "Subject must be non-null since expressionToMatch is non-null: " +
+                                     PsiUtilsKt.getTextWithLocation(condition);
+            KotlinType type = BindingUtils.getTypeForExpression(bindingContext(), whenExpression.getSubjectExpression());
+            return Translation.patternTranslator(context).translateExpressionPattern(type, expressionToMatch, patternExpression);
         }
     }
 

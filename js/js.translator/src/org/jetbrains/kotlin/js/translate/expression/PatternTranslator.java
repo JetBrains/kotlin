@@ -20,6 +20,8 @@ import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
@@ -31,7 +33,10 @@ import org.jetbrains.kotlin.js.translate.context.TemporaryVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.general.Translation;
+import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.TopLevelFIF;
+import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
+import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtBinaryExpressionWithTypeRHS;
@@ -39,9 +44,12 @@ import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtIsExpression;
 import org.jetbrains.kotlin.psi.KtTypeReference;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.types.DynamicTypesKt;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
+
+import java.util.Collections;
 
 import static org.jetbrains.kotlin.builtins.FunctionTypesKt.isFunctionTypeOrSubtype;
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isAnyOrNullableAny;
@@ -235,9 +243,43 @@ public final class PatternTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    public JsExpression translateExpressionPattern(@NotNull JsExpression expressionToMatch, @NotNull KtExpression patternExpression) {
+    public JsExpression translateExpressionPattern(
+            @NotNull KotlinType type,
+            @NotNull JsExpression expressionToMatch,
+            @NotNull KtExpression patternExpression
+    ) {
         JsExpression expressionToMatchAgainst = translateExpressionForExpressionPattern(patternExpression);
-        return equality(expressionToMatch, expressionToMatchAgainst);
+        KotlinType patternType = BindingUtils.getTypeForExpression(bindingContext(), patternExpression);
+
+        EqualityType matchEquality = equalityType(type);
+        EqualityType patternEquality = equalityType(patternType);
+
+        if (matchEquality == EqualityType.PRIMITIVE && patternEquality == EqualityType.PRIMITIVE) {
+            return equality(expressionToMatch, expressionToMatchAgainst);
+        }
+        else if (expressionToMatchAgainst == JsLiteral.NULL) {
+            return TranslationUtils.nullCheck(expressionToMatch, false);
+        }
+        else {
+            return TopLevelFIF.KOTLIN_EQUALS.apply(expressionToMatch, Collections.singletonList(expressionToMatchAgainst), context());
+        }
+    }
+
+    @NotNull
+    private static EqualityType equalityType(@NotNull KotlinType type) {
+        DeclarationDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
+        if (!(descriptor instanceof ClassDescriptor)) return EqualityType.GENERAL;
+
+        PrimitiveType primitive = KotlinBuiltIns.getPrimitiveTypeByFqName(DescriptorUtilsKt.getFqNameUnsafe(descriptor));
+        if (primitive == null) return EqualityType.GENERAL;
+
+        return primitive == PrimitiveType.LONG ? EqualityType.LONG : EqualityType.PRIMITIVE;
+    }
+
+    private enum EqualityType {
+        PRIMITIVE,
+        LONG,
+        GENERAL
     }
 
     @NotNull
