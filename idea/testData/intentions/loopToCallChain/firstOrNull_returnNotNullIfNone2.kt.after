@@ -1,0 +1,7 @@
+// WITH_RUNTIME
+fun foo(list: List<String?>): String? {
+    list
+            .filter { it == null || it.isNotEmpty() }
+            .forEach { return it }
+    return ""
+}
