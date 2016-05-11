@@ -16,8 +16,15 @@
 
 package org.jetbrains.kotlin.idea.util
 
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
 fun KtFunctionLiteral.findLabelAndCall(): Pair<Name?, KtCallExpression?> {
     val literalParent = (this.parent as KtLambdaExpression).parent
@@ -42,5 +49,17 @@ fun KtFunctionLiteral.findLabelAndCall(): Pair<Name?, KtCallExpression?> {
         else -> {
             return Pair(null, null)
         }
+    }
+}
+
+fun SmartCastManager.getSmartCastVariantsWithLessSpecificExcluded(
+        receiverToCast: ReceiverValue,
+        bindingContext: BindingContext,
+        containingDeclarationOrModule: DeclarationDescriptor,
+        dataFlowInfo: DataFlowInfo
+): List<KotlinType> {
+    val variants = getSmartCastVariants(receiverToCast, bindingContext, containingDeclarationOrModule, dataFlowInfo).distinct()
+    return variants.filter { type ->
+        variants.none { another -> another !== type && KotlinTypeChecker.DEFAULT.isSubtypeOf(another, type) }
     }
 }
