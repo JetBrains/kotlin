@@ -252,6 +252,12 @@ public class Flags {
                ;
     }
 
+    public static int getTypeAliasFlags(boolean hasAnnotations, Visibility visibility) {
+        return HAS_ANNOTATIONS.toFlags(hasAnnotations)
+                | VISIBILITY.toFlags(visibility(visibility))
+                ;
+    }
+
     // Infrastructure
 
     public static abstract class FlagField<E> {

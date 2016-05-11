@@ -135,7 +135,7 @@ public class DescriptorSerializer {
             builder.setFlags(flags);
         }
 
-        builder.setFqName(getClassId(classDescriptor));
+        builder.setFqName(getClassifierId(classDescriptor));
 
         for (TypeParameterDescriptor typeParameterDescriptor : classDescriptor.getDeclaredTypeParameters()) {
             builder.addTypeParameter(typeParameter(typeParameterDescriptor));
@@ -358,6 +358,32 @@ public class DescriptorSerializer {
     }
 
     @NotNull
+    public ProtoBuf.TypeAlias.Builder typeAliasProto(@NotNull TypeAliasDescriptor descriptor) {
+        ProtoBuf.TypeAlias.Builder builder = ProtoBuf.TypeAlias.newBuilder();
+
+        int flags = Flags.getTypeAliasFlags(hasAnnotations(descriptor), descriptor.getVisibility());
+        if (flags != builder.getFlags()) {
+            builder.setFlags(flags);
+        }
+
+        builder.setName(getSimpleNameIndex(descriptor.getName()));
+
+        for (TypeParameterDescriptor typeParameterDescriptor : descriptor.getDeclaredTypeParameters()) {
+            builder.addTypeParameter(typeParameter(typeParameterDescriptor));
+        }
+
+        KotlinType underlyingType = descriptor.getUnderlyingType();
+        if (useTypeTable()) {
+            builder.setUnderlyingTypeId(typeId(underlyingType));
+        }
+        else {
+            builder.setUnderlyingType(type(underlyingType));
+        }
+
+        return builder;
+    }
+
+    @NotNull
     public ProtoBuf.EnumEntry.Builder enumEntryProto(@NotNull ClassDescriptor descriptor) {
         ProtoBuf.EnumEntry.Builder builder = ProtoBuf.EnumEntry.newBuilder();
         builder.setName(getSimpleNameIndex(descriptor.getName()));
@@ -499,6 +525,11 @@ public class DescriptorSerializer {
 
             assert type.getArguments().isEmpty() : "Found arguments for type constructor build on type parameter: " + descriptor;
         }
+        if (descriptor instanceof TypeAliasDescriptor) {
+            PossiblyInnerType possiblyInnerType = TypeParameterUtilsKt.buildPossiblyInnerType(type);
+            assert possiblyInnerType != null : "possiblyInnerType should not be null in case of type alias";
+            fillFromPossiblyInnerType(builder, possiblyInnerType);
+        }
 
         if (type.isMarkedNullable() != builder.getNullable()) {
             builder.setNullable(type.isMarkedNullable());
@@ -513,7 +544,14 @@ public class DescriptorSerializer {
             @NotNull ProtoBuf.Type.Builder builder,
             @NotNull PossiblyInnerType type
     ) {
-        builder.setClassName(getClassId(type.getClassDescriptor()));
+        ClassifierDescriptorWithTypeParameters classifierDescriptor = type.getClassifierDescriptor();
+        int classifierId = getClassifierId(classifierDescriptor);
+        if (classifierDescriptor instanceof ClassDescriptor) {
+            builder.setClassName(classifierId);
+        }
+        else {
+            builder.setTypeAliasName(classifierId);
+        }
 
         for (TypeProjection projection : type.getArguments()) {
             builder.addArgument(typeArgument(projection));
@@ -606,6 +644,9 @@ public class DescriptorSerializer {
             else if (declaration instanceof FunctionDescriptor) {
                 builder.addFunction(functionProto((FunctionDescriptor) declaration));
             }
+            else if (declaration instanceof TypeAliasDescriptor) {
+                builder.addTypeAlias(typeAliasProto((TypeAliasDescriptor) declaration));
+            }
         }
 
         ProtoBuf.TypeTable typeTableProto = typeTable.serialize();
@@ -631,7 +672,7 @@ public class DescriptorSerializer {
         throw new IllegalStateException("Unknown projectionKind: " + projectionKind);
     }
 
-    private int getClassId(@NotNull ClassDescriptor descriptor) {
+    private int getClassifierId(@NotNull ClassifierDescriptorWithTypeParameters descriptor) {
         return getStringTable().getFqNameIndex(descriptor);
     }
 

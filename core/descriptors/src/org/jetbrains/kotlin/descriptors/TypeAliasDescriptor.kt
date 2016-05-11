@@ -22,7 +22,9 @@ import org.jetbrains.kotlin.types.TypeSubstitutor
 interface TypeAliasDescriptor : ClassifierDescriptorWithTypeParameters, MemberDescriptor {
     val underlyingType: KotlinType
 
-    val underlyingClassDescriptor: ClassDescriptor
+    val expandedType: KotlinType
+
+    val classDescriptor: ClassDescriptor?
 
     override fun substitute(substitutor: TypeSubstitutor): TypeAliasDescriptor
 }

@@ -273,8 +273,8 @@ internal class DescriptorRendererImpl(
             possiblyInnerType.outerType?.let {
                 append(renderPossiblyInnerType(it))
                 append('.')
-                append(renderName(possiblyInnerType.classDescriptor.name))
-            } ?: append(renderTypeConstructor(possiblyInnerType.classDescriptor.typeConstructor))
+                append(renderName(possiblyInnerType.classifierDescriptor.name))
+            } ?: append(renderTypeConstructor(possiblyInnerType.classifierDescriptor.typeConstructor))
 
             append(renderTypeArguments(possiblyInnerType.arguments))
         }

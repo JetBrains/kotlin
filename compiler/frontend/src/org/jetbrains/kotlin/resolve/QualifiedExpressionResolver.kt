@@ -371,7 +371,7 @@ class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageValidator
             val nextPackageOrClassDescriptor =
                     when (currentDescriptor) {
                         is TypeAliasDescriptor -> // TODO type aliases as qualifiers? (would break some assumptions in TypeResolver)
-                            currentDescriptor.underlyingClassDescriptor.getContributedClassifier(qualifierPart)
+                            currentDescriptor.classDescriptor?.getContributedClassifier(qualifierPart)
                         is ClassDescriptor ->
                             currentDescriptor.getContributedClassifier(qualifierPart)
                         is PackageViewDescriptor -> {

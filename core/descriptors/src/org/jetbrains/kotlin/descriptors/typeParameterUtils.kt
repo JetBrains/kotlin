@@ -60,17 +60,21 @@ private class CapturedTypeParameterDescriptor(
 }
 
 class PossiblyInnerType(
-        val classDescriptor: ClassDescriptor,
+        val classifierDescriptor: ClassifierDescriptorWithTypeParameters,
         val arguments: List<TypeProjection>,
-        val outerType: PossiblyInnerType?) {
+        val outerType: PossiblyInnerType?
+) {
+    val classDescriptor: ClassDescriptor
+        get() = classifierDescriptor as ClassDescriptor
+
     fun segments(): List<PossiblyInnerType> = outerType?.segments().orEmpty() + this
 }
 
 fun KotlinType.buildPossiblyInnerType(): PossiblyInnerType? {
-    return buildPossiblyInnerType(constructor.declarationDescriptor as? ClassDescriptor, 0)
+    return buildPossiblyInnerType(constructor.declarationDescriptor as? ClassifierDescriptorWithTypeParameters, 0)
 }
 
-private fun KotlinType.buildPossiblyInnerType(classDescriptor: ClassDescriptor?, index: Int): PossiblyInnerType? {
+private fun KotlinType.buildPossiblyInnerType(classDescriptor: ClassifierDescriptorWithTypeParameters?, index: Int): PossiblyInnerType? {
     if (classDescriptor == null || ErrorUtils.isError(classDescriptor)) return null
 
     val toIndex = classDescriptor.declaredTypeParameters.size + index
@@ -85,5 +89,5 @@ private fun KotlinType.buildPossiblyInnerType(classDescriptor: ClassDescriptor?,
     val argumentsSubList = arguments.subList(index, toIndex)
     return PossiblyInnerType(
             classDescriptor, argumentsSubList,
-            buildPossiblyInnerType(classDescriptor.containingDeclaration as? ClassDescriptor, toIndex))
+            buildPossiblyInnerType(classDescriptor.containingDeclaration as? ClassifierDescriptorWithTypeParameters, toIndex))
 }

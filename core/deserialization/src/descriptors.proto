@@ -128,9 +128,13 @@ message Type {
   optional int32 type_parameter = 7; // id of the type parameter
   // Name of the type parameter in the immediate owner
   optional int32 type_parameter_name = 9 [(name_id_in_table) = true];
+  optional int32 type_alias_name = 12 [(name_id_in_table) = true];
 
   optional Type outer_type = 10;
   optional int32 outer_type_id = 11;
+
+  optional Type abbreviated_type = 13;
+  optional int32 abbreviated_type_id = 14;
 
   extensions 100 to 199;
 }
@@ -191,6 +195,7 @@ message Class {
   repeated Constructor constructor = 8;
   repeated Function function = 9;
   repeated Property property = 10;
+  repeated TypeAlias type_alias = 11;
 
   repeated EnumEntry enum_entry = 13;
 
@@ -202,6 +207,7 @@ message Class {
 message Package {
   repeated Function function = 3;
   repeated Property property = 4;
+  repeated TypeAlias type_alias = 5;
 
   optional TypeTable type_table = 30;
 
@@ -318,6 +324,26 @@ message ValueParameter {
 
   optional Type vararg_element_type = 4;
   optional int32 vararg_element_type_id = 6;
+
+  extensions 100 to 199;
+}
+
+message TypeAlias {
+  /*
+    hasAnnotations
+    Visibility
+  */
+  optional int32 flags = 1 [default = 0];
+
+  required int32 name = 2 [(name_id_in_table) = true];
+
+  repeated TypeParameter type_parameter = 3;
+
+  optional Type underlying_type = 4;
+  optional int32 underlying_type_id = 5;
+
+  optional Type expanded_type = 6;
+  optional int32 expanded_type_id = 7;
 
   extensions 100 to 199;
 }

@@ -80,11 +80,6 @@ public interface ClassDescriptor extends ClassifierDescriptorWithTypeParameters,
     @NotNull
     Visibility getVisibility();
 
-    /**
-     * @return <code>true</code> if this class contains a reference to its outer class (as opposed to static nested class)
-     */
-    boolean isInner();
-
     boolean isCompanionObject();
 
     boolean isData();
