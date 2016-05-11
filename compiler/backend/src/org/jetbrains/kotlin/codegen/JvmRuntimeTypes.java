@@ -50,12 +50,11 @@ public class JvmRuntimeTypes {
                 LockBasedStorageManager.NO_LOCKS,
                 DefaultBuiltIns.getInstance());
         PackageFragmentDescriptor kotlinJvmInternal = new MutablePackageFragmentDescriptor(module, new FqName("kotlin.jvm.internal"));
-        PackageFragmentDescriptor kotlinReflectJvmInternal = new MutablePackageFragmentDescriptor(module, new FqName("kotlin.reflect.jvm.internal"));
 
         this.lambda = createClass(kotlinJvmInternal, "Lambda");
         this.functionReference = createClass(kotlinJvmInternal, "FunctionReference");
-        this.localVariableReference = createClass(kotlinReflectJvmInternal, "LocalVariableReference");
-        this.mutableLocalVariableReference = createClass(kotlinReflectJvmInternal, "MutableLocalVariableReference");
+        this.localVariableReference = createClass(kotlinJvmInternal, "LocalVariableReference");
+        this.mutableLocalVariableReference = createClass(kotlinJvmInternal, "MutableLocalVariableReference");
         this.propertyReferences = new ArrayList<ClassDescriptor>(3);
         this.mutablePropertyReferences = new ArrayList<ClassDescriptor>(3);
 

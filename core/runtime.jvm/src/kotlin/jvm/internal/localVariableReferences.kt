@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,25 @@
  * limitations under the License.
  */
 
-package kotlin.reflect.jvm.internal
+package kotlin.jvm.internal
 
-import kotlin.jvm.internal.MutablePropertyReference0
-import kotlin.jvm.internal.PropertyReference0
 import kotlin.reflect.KDeclarationContainer
 
+private fun notSupportedError(): Nothing {
+    throw UnsupportedOperationException("Not supported for local property reference.")
+}
+
 open class LocalVariableReference : PropertyReference0() {
-    override fun getOwner(): KDeclarationContainer = EmptyContainerForLocal
+    override fun getOwner(): KDeclarationContainer = notSupportedError()
+
+    override fun get(): Any? = notSupportedError()
+
 }
 
 open class MutableLocalVariableReference : MutablePropertyReference0() {
-    override fun getOwner(): KDeclarationContainer = EmptyContainerForLocal
+    override fun getOwner(): KDeclarationContainer = notSupportedError()
+
+    override fun get(): Any? = notSupportedError()
+
+    override fun set(value: Any?): Unit = notSupportedError()
 }
