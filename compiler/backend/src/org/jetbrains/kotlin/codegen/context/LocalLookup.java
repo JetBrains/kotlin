@@ -58,7 +58,6 @@ public interface LocalLookup {
 
                 boolean delegatedVar = false;
                 VariableDescriptor delegateVariableDescriptor = state.getBindingContext().get(LOCAL_VARIABLE_DELEGATE, vd);
-                VariableDescriptor metadataVariableDescriptor = state.getBindingContext().get(LOCAL_VARIABLE_PROPERTY_METADATA, vd);
                 if (delegateVariableDescriptor != null) {
                     vd = delegateVariableDescriptor;
                     delegatedVar = true;
@@ -81,6 +80,7 @@ public interface LocalLookup {
                 else {
                     innerValue = StackValue.field(type, classType, fieldName, false, thiz, vd);
                     if (delegatedVar) {
+                        VariableDescriptor metadataVariableDescriptor = getDelegatedLocalVariableMetadata(originalVariableDescriptor, state.getBindingContext());
                         StackValue metadataValue = innerValue(metadataVariableDescriptor, localLookup, state, closure, classType);
                         assert metadataValue != null : originalVariableDescriptor;
 

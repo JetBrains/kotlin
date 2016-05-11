@@ -250,4 +250,14 @@ public class CodegenBinding {
 
         return allInnerClasses;
     }
+
+    @NotNull
+    public static VariableDescriptor getDelegatedLocalVariableMetadata(
+            @NotNull VariableDescriptor variableDescriptor,
+            @NotNull BindingContext bindingContext
+    ) {
+        VariableDescriptor metadataVariableDescriptor = bindingContext.get(LOCAL_VARIABLE_PROPERTY_METADATA, variableDescriptor);
+        assert metadataVariableDescriptor != null : "Metadata for local delegated property should be not null: " + variableDescriptor;
+        return metadataVariableDescriptor;
+    }
 }
