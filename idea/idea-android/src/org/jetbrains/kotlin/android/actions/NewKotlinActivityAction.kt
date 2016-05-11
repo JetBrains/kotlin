@@ -40,7 +40,7 @@ import kotlin.reflect.memberFunctions
 private val NEW_KOTLIN_ACTIVITY_START_LABEL = "Start New Kotlin Activity Action"
 private val NEW_KOTLIN_ACTIVITY_END_LABEL = "Finish New Kotlin Activity Action"
 
-class NewKotlinActivityAction: AnAction(KotlinIcons.FILE) {
+class NewKotlinActivityAction: AnAction(KotlinIcons.ACTIVITY) {
 
     companion object {
         internal fun attachGradleSyncListener(project: Project) {

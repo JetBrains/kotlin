@@ -30,6 +30,7 @@ public interface KotlinIcons {
     Icon CLASS = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/classKotlin.png");
     Icon ENUM = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/enumKotlin.png");
     Icon FILE = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/kotlin_file.png");
+    Icon ACTIVITY = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/kotlin_activity.png");
     Icon OBJECT = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/objectKotlin.png");
     Icon TRAIT = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/interfaceKotlin.png");
     Icon FUNCTION = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/function.png");
