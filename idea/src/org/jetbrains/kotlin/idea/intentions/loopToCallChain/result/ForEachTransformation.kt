@@ -24,15 +24,21 @@ import org.jetbrains.kotlin.psi.KtForExpression
 class ForEachTransformation(
         loop: KtForExpression,
         private val inputVariable: KtCallableDeclaration,
+        private val indexVariable: KtCallableDeclaration?,
         private val statement: KtExpression
 ) : ReplaceLoopResultTransformation(loop) {
 
+    private val functionName = if (indexVariable != null) "forEachIndexed" else "forEach"
+
     override val presentation: String
-        get() = "forEach{}"
+        get() = functionName + "{}"
 
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
-        val lambda = generateLambda(inputVariable, statement)
-        return chainedCallGenerator.generate("forEach $0:'{}'", lambda)
+        val lambda = if (indexVariable != null)
+            generateLambda(statement, indexVariable, inputVariable)
+        else
+            generateLambda(inputVariable, statement)
+        return chainedCallGenerator.generate("$functionName $0:'{}'", lambda)
     }
 
     /**
@@ -44,13 +50,13 @@ class ForEachTransformation(
      */
     object Matcher : TransformationMatcher {
         override val indexVariableAllowed: Boolean
-            get() = false //TODO: support forEachIndexed
+            get() = true
 
         override fun match(state: MatchingState): TransformationMatch.Result? {
-            if (state.previousTransformations.isEmpty()) return null // do not suggest conversion to just ".forEach{}"
+            if (state.previousTransformations.isEmpty() && state.indexVariable == null) return null // do not suggest conversion to just ".forEach{}"
 
             val statement = state.statements.singleOrNull() ?: return null
-            val transformation = ForEachTransformation(state.outerLoop, state.inputVariable, statement)
+            val transformation = ForEachTransformation(state.outerLoop, state.inputVariable, state.indexVariable, statement)
             return TransformationMatch.Result(transformation)
         }
     }
