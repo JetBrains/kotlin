@@ -678,7 +678,7 @@
                 <copy file="@{download.file.archive.jps-build-test}" tofile="@{jps-test}/jps-build-test.jar"/>
 
                 <mkdir dir="@{sources}"/>
-                <copy file="@{download.file.archive.sources}" tofile="@{sources}/sources.jar" overwrite="true"/>
+                <copy file="@{download.file.archive.sources}" tofile="@{sources}/sources.jar" overwrite="true" failonerror="false"/>
             </sequential>
 
             <build-protobuf-java-lite/>
@@ -698,7 +698,7 @@
             <property name="idea.id" value="idea${sdk.version.prefix}"/>
 
             <get src="@{base.repository.url}/ideaIC/@{idea.maven.version}/ideaIC-@{idea.maven.version}-sources.jar"
-                 dest="@{download.dir}/ideaIC-@{idea.maven.version}-sources.jar" usetimestamp="true"/>
+                 dest="@{download.dir}/ideaIC-@{idea.maven.version}-sources.jar" usetimestamp="true" ignoreerrors="true"/>
 
             <get src="@{base.repository.url}/${idea.id}/@{idea.maven.version}/${idea.id}-@{idea.maven.version}.zip"
                  dest="@{download.dir}/${idea.id}-@{idea.maven.version}.zip" usetimestamp="true"/>
