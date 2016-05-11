@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,15 +23,14 @@ import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 abstract class AbstractMultiFileJvmBasicCompletionTest : KotlinCompletionTestCase() {
     protected fun doTest(testPath: String) {
         configureByFile(getTestName(false) + ".kt", "")
-        // several tests require disabling this check after adding InclusiveRange, need to investigate why
-//        val shouldFail = testPath.contains("NoSpecifiedType")
-//        AstAccessControl.testWithControlledAccessToAst(shouldFail, getFile().getVirtualFile(), getProject(), getTestRootDisposable(), {
+        val shouldFail = testPath.contains("NoSpecifiedType")
+        AstAccessControl.testWithControlledAccessToAst(shouldFail, getFile().getVirtualFile(), getProject(), getTestRootDisposable(), {
             testCompletion(file.text, JvmPlatform, { completionType, invocationCount ->
                 setType(completionType)
                 complete(invocationCount)
                 myItems
             }, CompletionType.BASIC, 0)
-//        })
+        })
     }
 
     override fun getTestDataPath(): String {

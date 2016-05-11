@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,14 +28,13 @@ abstract class AbstractMultiFileSmartCompletionTest : KotlinCompletionTestCase()
 
     protected fun doTest(testPath: String) {
         configureByFile(getTestName(false) + ".kt", "")
-        // several tests require disabling this check after adding InclusiveRange, need to investigate why
-//        AstAccessControl.testWithControlledAccessToAst(false, getFile().getVirtualFile(), getProject(), getTestRootDisposable(), {
+        AstAccessControl.testWithControlledAccessToAst(false, getFile().getVirtualFile(), getProject(), getTestRootDisposable(), {
             testCompletion(file.text, JvmPlatform, { completionType, invocationCount ->
                 setType(completionType)
                 complete(invocationCount)
                 myItems
             }, CompletionType.SMART, 1)
-//        })
+        })
     }
 
     override fun getTestDataPath(): String {
