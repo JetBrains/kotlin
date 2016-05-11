@@ -268,4 +268,10 @@ public class InlineEvaluationOrderTestGenerated extends AbstractInlineEvaluation
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/whileComplex.kt");
         doTest(fileName);
     }
+
+    @TestMetadata("whileConditionExtracted.kt")
+    public void testWhileConditionExtracted() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/whileConditionExtracted.kt");
+        doTest(fileName);
+    }
 }
