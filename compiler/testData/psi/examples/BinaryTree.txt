@@ -175,10 +175,10 @@ JetFile: BinaryTree.kt
                           PsiElement(IDENTIFIER)('T')
                   PsiElement(GT)('>')
           PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
         CONSTRUCTOR_DELEGATION_CALL
           CONSTRUCTOR_DELEGATION_REFERENCE
             <empty list>
+        PsiWhiteSpace(' ')
         BLOCK
           PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n    ')

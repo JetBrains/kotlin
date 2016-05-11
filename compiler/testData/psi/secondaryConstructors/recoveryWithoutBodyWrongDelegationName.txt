@@ -17,10 +17,10 @@ JetFile: recoveryWithoutBodyWrongDelegationName.kt
           PsiElement(LPAR)('(')
           PsiElement(RPAR)(')')
         PsiElement(COLON)(':')
-        PsiWhiteSpace(' ')
         CONSTRUCTOR_DELEGATION_CALL
           PsiErrorElement:Expecting a 'this' or 'super' constructor call
             <empty list>
+      PsiWhiteSpace(' ')
       PsiErrorElement:Expecting member declaration
         PsiElement(IDENTIFIER)('thi')
       PsiErrorElement:Expecting member declaration
@@ -45,10 +45,10 @@ JetFile: recoveryWithoutBodyWrongDelegationName.kt
           PsiElement(LPAR)('(')
           PsiElement(RPAR)(')')
         PsiElement(COLON)(':')
-        PsiWhiteSpace('\n\n    ')
         CONSTRUCTOR_DELEGATION_CALL
           PsiErrorElement:Expecting a 'this' or 'super' constructor call
             <empty list>
+      PsiWhiteSpace('\n\n    ')
       FUN
         MODIFIER_LIST
           ANNOTATION_ENTRY
@@ -72,10 +72,10 @@ JetFile: recoveryWithoutBodyWrongDelegationName.kt
           PsiElement(LPAR)('(')
           PsiElement(RPAR)(')')
         PsiElement(COLON)(':')
-        PsiWhiteSpace(' ')
         CONSTRUCTOR_DELEGATION_CALL
           PsiErrorElement:Expecting a 'this' or 'super' constructor call
             <empty list>
+      PsiWhiteSpace(' ')
       PsiErrorElement:Expecting member declaration
         PsiElement(IDENTIFIER)('sup')
       PsiWhiteSpace('\n\n    ')
@@ -85,10 +85,10 @@ JetFile: recoveryWithoutBodyWrongDelegationName.kt
           PsiElement(LPAR)('(')
           PsiElement(RPAR)(')')
         PsiElement(COLON)(':')
-        PsiWhiteSpace(' ')
         CONSTRUCTOR_DELEGATION_CALL
           PsiErrorElement:Expecting a 'this' or 'super' constructor call
             <empty list>
+      PsiWhiteSpace(' ')
       PsiErrorElement:Expecting member declaration
         PsiElement(IDENTIFIER)('thi')
       PsiErrorElement:Expecting member declaration
