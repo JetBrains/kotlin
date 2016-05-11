@@ -86,12 +86,6 @@ class PropertyReferenceCodegen(
             invokespecial(superAsmType.internalName, "<init>", "()V", false)
         }
 
-        if (target !is LocalVariableDescriptor) {
-            generateMethod("property reference getOwner", ACC_PUBLIC, method("getOwner", K_DECLARATION_CONTAINER_TYPE)) {
-                ClosureCodegen.generateCallableReferenceDeclarationContainer(this, target, state)
-            }
-        }
-
         generateMethod("property reference getName", ACC_PUBLIC, method("getName", JAVA_STRING_TYPE)) {
             aconst(target.name.asString())
         }
@@ -100,7 +94,12 @@ class PropertyReferenceCodegen(
             aconst(getPropertyReferenceSignature(target as VariableDescriptorWithAccessors, state))
         }
 
-        generateAccessors()
+        if (target !is LocalVariableDescriptor) {
+            generateMethod("property reference getOwner", ACC_PUBLIC, method("getOwner", K_DECLARATION_CONTAINER_TYPE)) {
+                ClosureCodegen.generateCallableReferenceDeclarationContainer(this, target, state)
+            }
+            generateAccessors()
+        }
     }
 
     private fun generateAccessors() {
