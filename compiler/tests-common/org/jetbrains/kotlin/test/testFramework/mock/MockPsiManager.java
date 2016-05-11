@@ -21,6 +21,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileFilter;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.PsiManagerEx;
 import com.intellij.psi.impl.PsiModificationTrackerImpl;
@@ -137,6 +138,9 @@ public class MockPsiManager extends PsiManagerEx {
   public boolean isBatchFilesProcessingMode() {
     return false;
   }
+
+  @Override
+  public void setAssertOnFileLoadingFilter(@NotNull VirtualFileFilter filter, @NotNull Disposable parentDisposable) {}
 
   @Override
   public boolean isAssertOnFileLoading(@NotNull VirtualFile file) {
