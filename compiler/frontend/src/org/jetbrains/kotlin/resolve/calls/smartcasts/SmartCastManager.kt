@@ -55,18 +55,6 @@ class SmartCastManager {
         return result
     }
 
-    fun getSmartCastVariantsWithLessSpecificExcluded(
-            receiverToCast: ReceiverValue,
-            bindingContext: BindingContext,
-            containingDeclarationOrModule: DeclarationDescriptor,
-            dataFlowInfo: DataFlowInfo
-    ): List<KotlinType> {
-        val variants = getSmartCastVariants(receiverToCast, bindingContext, containingDeclarationOrModule, dataFlowInfo).distinct()
-        return variants.filter { type ->
-            variants.none { another -> another !== type && KotlinTypeChecker.DEFAULT.isSubtypeOf(another, type) }
-        }
-    }
-
     /**
      * @return variants @param receiverToCast may be cast to according to context dataFlowInfo, receiverToCast itself is NOT included
      */
