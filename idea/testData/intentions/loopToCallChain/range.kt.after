@@ -1,0 +1,7 @@
+// WITH_RUNTIME
+import java.util.*
+
+fun foo(): List<Int> {
+    val <caret>result = (1..10).filter { it % 3 == 0 }
+    return result
+}

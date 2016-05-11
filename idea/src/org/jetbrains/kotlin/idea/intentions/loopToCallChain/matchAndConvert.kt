@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.idea.intentions.loopToCallChain
 
 import com.intellij.openapi.util.Key
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
@@ -27,7 +29,9 @@ import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.FilterTrans
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.FlatMapTransformation
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.IntroduceIndexMatcher
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.MapTransformation
+import org.jetbrains.kotlin.idea.project.builtIns
 import org.jetbrains.kotlin.idea.util.CommentSaver
+import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -174,14 +178,35 @@ private fun extractLoopData(loop: KtForExpression): LoopData? {
         val qualifiedExpression = loopRange as? KtDotQualifiedExpression
         if (qualifiedExpression != null) {
             val call = qualifiedExpression.selectorExpression as? KtCallExpression
-            //TODO: check that it's the correct "withIndex"
             if (call != null && call.calleeExpression.isSimpleName(Name.identifier("withIndex")) && call.valueArguments.isEmpty()) {
-                return LoopData(destructuringParameter.entries[1], destructuringParameter.entries[0], qualifiedExpression.receiverExpression)
+                val receiver = qualifiedExpression.receiverExpression
+                if (!isExpressionTypeSupported(receiver)) return null
+                return LoopData(destructuringParameter.entries[1], destructuringParameter.entries[0], receiver)
             }
         }
     }
 
+    if (!isExpressionTypeSupported(loopRange)) return null
+
     return LoopData(loop.loopParameter ?: return null, null, loopRange)
+}
+
+private fun isExpressionTypeSupported(expression: KtExpression): Boolean {
+    val type = expression.analyze(BodyResolveMode.PARTIAL).getType(expression) ?: return false
+
+    val builtIns = expression.builtIns
+    return when {
+        type.isSubtypeOf(builtIns.iterable) -> true
+        type.isSubtypeOf(builtIns.array) -> true
+        KotlinBuiltIns.isPrimitiveArray(type) -> true
+        // TODO: support Sequence<T>
+        else -> false
+    }
+}
+
+private fun KotlinType.isSubtypeOf(classDescriptor: ClassDescriptor): Boolean {
+    val fuzzyType = FuzzyType(classDescriptor.defaultType, classDescriptor.declaredTypeParameters)
+    return fuzzyType.checkIsSuperTypeOf(this) != null
 }
 
 private fun checkSmartCastsPreserved(loop: KtForExpression, matchResult: MatchResult): Boolean {
