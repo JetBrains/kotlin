@@ -235,6 +235,10 @@ public class ViewTypeDetector extends ResourceXmlDetector implements UastScanner
     }
 
     private UBinaryExpressionWithType findContainingTypeCast(UElement expression) {
+        if (expression == null) {
+            return null;
+        }
+
         if (isTypeCast(expression)) {
             return (UBinaryExpressionWithType) expression;
         } else if (expression instanceof UQualifiedExpression) {
@@ -244,7 +248,7 @@ public class ViewTypeDetector extends ResourceXmlDetector implements UastScanner
             }
             return findContainingTypeCast(parent);
         } else if (expression instanceof UParenthesizedExpression) {
-            return findContainingTypeCast(((UParenthesizedExpression) expression).getExpression());
+            return findContainingTypeCast(expression.getParent());
         } else {
             return null;
         }
