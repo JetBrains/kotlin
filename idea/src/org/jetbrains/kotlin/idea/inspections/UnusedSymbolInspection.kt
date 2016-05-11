@@ -74,10 +74,11 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             val lightElement: PsiElement? = when (declaration) {
                 is KtClassOrObject -> declaration.toLightClass()
                 is KtNamedFunction, is KtSecondaryConstructor -> LightClassUtil.getLightClassMethod(declaration as KtFunction)
-                is KtProperty -> {
+                is KtProperty, is KtParameter -> {
+                    if (declaration is KtParameter && !declaration.hasValOrVar()) return false
                     // can't rely on light element, check annotation ourselves
                     val descriptor = declaration.descriptor ?: return false
-                    val entryPointsManager = EntryPointsManager.getInstance(declaration.getProject()) as EntryPointsManagerBase
+                    val entryPointsManager = EntryPointsManager.getInstance(declaration.project) as EntryPointsManagerBase
                     return checkAnnotatedUsingPatterns(
                             descriptor,
                             entryPointsManager.additionalAnnotations + entryPointsManager.ADDITIONAL_ANNOTATIONS
