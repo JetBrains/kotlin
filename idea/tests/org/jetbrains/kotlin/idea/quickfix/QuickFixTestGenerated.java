@@ -75,6 +75,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("abstractPropertyInCompanionObject.kt")
+        public void testAbstractPropertyInCompanionObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/abstract/abstractPropertyInCompanionObject.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("abstractPropertyInNonAbstractClass1.kt")
         public void testAbstractPropertyInNonAbstractClass1() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/abstract/abstractPropertyInNonAbstractClass1.kt");
