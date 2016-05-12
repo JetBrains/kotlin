@@ -16,13 +16,12 @@
 
 package org.jetbrains.kotlin.idea.spring.inspections
 
-import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.spring.model.highlighting.SpringJavaAutowiredMembersInspection
 import org.jetbrains.kotlin.asJava.toLightClass
-import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
+import org.jetbrains.kotlin.idea.inspections.registerWithElementsUnwrapped
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtVisitorVoid
 
@@ -37,17 +36,7 @@ class SpringKotlinAutowiredMembersInspection : AbstractKotlinInspection() {
         return object: KtVisitorVoid() {
             override fun visitClassOrObject(classOrObject: KtClassOrObject) {
                 val lightClass = classOrObject.toLightClass() ?: return
-                javaInspection.checkClass(lightClass, holder.manager, isOnTheFly)?.forEach {
-                    @Suppress("UNCHECKED_CAST")
-                    val descriptor = holder.manager.createProblemDescriptor(
-                            it.psiElement.unwrapped ?: it.psiElement,
-                            it.descriptionTemplate,
-                            isOnTheFly,
-                            it.fixes as? Array<LocalQuickFix> ?: LocalQuickFix.EMPTY_ARRAY,
-                            it.highlightType
-                    )
-                    holder.registerProblem(descriptor)
-                }
+                javaInspection.checkClass(lightClass, holder.manager, isOnTheFly)?.registerWithElementsUnwrapped(holder, isOnTheFly)
             }
         }
     }
