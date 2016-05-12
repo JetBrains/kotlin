@@ -22,8 +22,10 @@ import com.intellij.codeInsight.completion.CompletionSorter
 import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.codeInsight.completion.impl.CamelHumpMatcher
 import com.intellij.codeInsight.lookup.LookupElement
+import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.util.ProcessingContext
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
@@ -221,6 +223,12 @@ abstract class CompletionSession(
     }
 
     fun complete(): Boolean {
+        // we restart completion when prefix becomes "get" or "set" to ensure that properties get lower priority comparing to get/set functions (see KT-12299)
+        val prefixPattern = StandardPatterns.string().with(object : PatternCondition<String>("get or set prefix") {
+            override fun accepts(prefix: String, context: ProcessingContext?) = prefix == "get" || prefix == "set"
+        })
+        collector.restartCompletionOnPrefixChange(prefixPattern)
+
         val statisticsContext = calcContextForStatisticsInfo()
         if (statisticsContext != null) {
             collector.addLookupElementPostProcessor { lookupElement ->
@@ -250,7 +258,7 @@ abstract class CompletionSession(
     protected open fun createSorter(): CompletionSorter {
         var sorter = CompletionSorter.defaultSorter(parameters, prefixMatcher)!!
 
-        sorter = sorter.weighBefore("stats", DeprecatedWeigher, PriorityWeigher,
+        sorter = sorter.weighBefore("stats", DeprecatedWeigher, PriorityWeigher, PreferGetSetMethodsToPropertyWeigher,
                                     NotImportedWeigher(importableFqNameClassifier),
                                     NotImportedStaticMemberWeigher(importableFqNameClassifier),
                                     KindWeigher, CallableWeigher)
