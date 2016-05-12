@@ -19,15 +19,14 @@ package org.jetbrains.kotlin.annotation
 import java.io.File
 import java.io.Reader
 import java.io.StringReader
-import java.util.*
 import org.jetbrains.kotlin.annotation.CompactNotationType as Notation
 
 open class KotlinAnnotationProvider(annotationsReader: Reader) {
     constructor(annotationsFile: File) : this(annotationsFile.reader().buffered())
     constructor() : this(StringReader(""))
 
-    protected val kotlinClassesInternal = hashSetOf<String>()
-    protected val annotatedKotlinElementsInternal = hashMapOf<String, MutableSet<AnnotatedElement>>()
+    protected val kotlinClassesInternal = linkedSetOf<String>()
+    protected val annotatedKotlinElementsInternal = linkedMapOf<String, MutableSet<AnnotatedElement>>()
 
     init {
         readAnnotations(annotationsReader)
@@ -49,8 +48,8 @@ open class KotlinAnnotationProvider(annotationsReader: Reader) {
             cache.put(id, name)
         }
 
-        val shortenedAnnotationCache = hashMapOf<String, String>()
-        val shortenedPackageNameCache = hashMapOf<String, String>()
+        val shortenedAnnotationCache = linkedMapOf<String, String>()
+        val shortenedPackageNameCache = linkedMapOf<String, String>()
 
         fun expandAnnotation(s: String) = shortenedAnnotationCache.getOrElse(s) { s }
 
@@ -82,7 +81,7 @@ open class KotlinAnnotationProvider(annotationsReader: Reader) {
                         val classFqName = expandClassName(lineParts[2]).replace('$', '.')
                         val elementName = if (lineParts.size == 4) lineParts[3] else null
 
-                        val set = annotatedKotlinElementsInternal.getOrPut(annotationName) { HashSet() }
+                        val set = annotatedKotlinElementsInternal.getOrPut(annotationName) { linkedSetOf() }
                         set.add(when (type) {
                             Notation.ANNOTATED_CLASS -> AnnotatedElement.Class(classFqName)
                             Notation.ANNOTATED_FIELD -> {
