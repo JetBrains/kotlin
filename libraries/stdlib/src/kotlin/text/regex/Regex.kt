@@ -89,7 +89,7 @@ public data class MatchGroup(public val value: String, public val range: IntRang
 /**
  * Represents an immutable regular expression.
  *
- * For pattern syntax reference see [java.util.regex.Pattern]
+ * For pattern syntax reference see [Pattern]
  */
 public class Regex
 @kotlin.internal.InlineExposed
