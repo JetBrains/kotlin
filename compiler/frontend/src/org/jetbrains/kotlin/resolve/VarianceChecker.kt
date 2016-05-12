@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.descriptors.impl.PropertyAccessorDescriptorImpl
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.types.*
 
 class ManualVariance(val descriptor: TypeParameterDescriptor, val variance: Variance)
 
@@ -160,41 +161,21 @@ class VarianceCheckerCore(
     private fun KtTypeReference.checkTypePosition(trace: BindingContext, position: Variance)
             = createTypeBinding(trace)?.checkTypePosition(position)
 
-    private fun TypeBinding<PsiElement>.checkTypePosition(position: Variance) = checkTypePosition(kotlinType, position)
+    private fun TypeBinding<PsiElement>.checkTypePosition(position: Variance) = checkTypePosition(type, position)
 
-    private fun TypeBinding<PsiElement>.checkTypePosition(containingType: KotlinType, position: Variance): Boolean {
-        val classifierDescriptor = kotlinType.constructor.declarationDescriptor
-        if (classifierDescriptor is TypeParameterDescriptor) {
-            val declarationVariance = classifierDescriptor.varianceWithManual()
-            if (!declarationVariance.allowsPosition(position)
-                && !kotlinType.annotations.hasAnnotation(KotlinBuiltIns.FQ_NAMES.unsafeVariance)) {
-                diagnosticSink.report(
-                        Errors.TYPE_VARIANCE_CONFLICT.on(
-                                psiElement,
-                                VarianceConflictDiagnosticData(containingType, classifierDescriptor, position)
-                        )
-                )
-            }
-            return declarationVariance.allowsPosition(position)
-        }
-
-        var noError = true
-        for (argumentBinding in getArgumentBindings()) {
-            if (argumentBinding == null || argumentBinding.typeParameterDescriptor == null) continue
-
-            val projectionKind = getEffectiveProjectionKind(argumentBinding.typeParameterDescriptor!!, argumentBinding.typeProjection)!!
-            val newPosition = when (projectionKind) {
-                OUT -> position
-                IN -> position.opposite()
-                INV -> INVARIANT
-                STAR -> null // CONFLICTING_PROJECTION error was reported
-            }
-            if (newPosition != null) {
-                noError = noError and argumentBinding.typeBinding.checkTypePosition(containingType, newPosition)
-            }
-        }
-        return noError
-    }
+    private fun TypeBinding<PsiElement>.checkTypePosition(containingType: KotlinType, position: Variance): Boolean =
+        checkTypePosition(
+                position,
+                {   typeParameterDescriptor, typeBinding, errorPosition ->
+                    diagnosticSink.report(
+                            Errors.TYPE_VARIANCE_CONFLICT.on(
+                                    typeBinding.psiElement,
+                                    VarianceConflictDiagnosticData(containingType, typeParameterDescriptor, errorPosition)
+                            )
+                    )
+                },
+                customVariance = { it.varianceWithManual() }
+        )
 
     private fun isIrrelevant(descriptor: CallableDescriptor): Boolean {
         val containingClass = descriptor.containingDeclaration as? ClassDescriptor ?: return true

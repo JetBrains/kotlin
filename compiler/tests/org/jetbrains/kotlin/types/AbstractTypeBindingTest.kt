@@ -75,9 +75,9 @@ abstract class AbstractTypeBindingTest : KotlinTestWithEnvironment() {
                 println("null")
                 return this
             }
-            println("typeParameter: ${argument.typeParameterDescriptor.render()}")
+            println("typeParameter: ${argument.typeParameter.render()}")
 
-            val projection = argument.typeProjection.projectionKind.label.let {
+            val projection = argument.projection.projectionKind.label.let {
                 if (it.isNotEmpty())
                     "$it "
                 else
@@ -85,10 +85,10 @@ abstract class AbstractTypeBindingTest : KotlinTestWithEnvironment() {
             }
 
             print("typeProjection: ")
-            if (argument.typeProjection.isStarProjection)
+            if (argument.projection.isStarProjection)
                 printlnWithNoIndent("*")
-            else printlnWithNoIndent("${projection}${argument.typeProjection.type.render()}")
-            print(argument.typeBinding)
+            else printlnWithNoIndent("${projection}${argument.projection.type.render()}")
+            print(argument.holder)
             return this
         }
 
@@ -99,9 +99,9 @@ abstract class AbstractTypeBindingTest : KotlinTestWithEnvironment() {
             }
 
             println("psi: ${binding.psiElement.text}")
-            println("type: ${binding.kotlinType.render()}")
+            println("type: ${binding.type.render()}")
 
-            printCollection(binding.getArgumentBindings()) {
+            printCollection(binding.arguments) {
                 print(it)
             }
             return this
