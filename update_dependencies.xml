@@ -218,8 +218,9 @@
 
         <!-- jflex 1.4 -->
         <mkdir dir="${dependencies}/jflex"/>
-        <get src="https://raw.github.com/JetBrains/intellij-community/master/tools/lexer/jflex-1.4/lib/JFlex.jar"
-             dest="${dependencies}/jflex/JFlex.jar" usetimestamp="true"/>
+        <get-maven-library prefix="de/jflex" lib="jflex" version="1.4.3" src="false"
+                           target.jar.name.base="JFlex"
+                           dependencies="${dependencies}/jflex"/>
         <get src="https://raw.github.com/JetBrains/intellij-community/master/tools/lexer/idea-flex.skeleton"
              dest="${dependencies}/jflex/idea-flex.skeleton" usetimestamp="true"/>
 
