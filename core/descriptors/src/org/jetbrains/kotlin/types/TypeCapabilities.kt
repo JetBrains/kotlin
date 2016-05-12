@@ -47,6 +47,14 @@ fun <T : TypeCapability> TypeCapabilities.addCapability(clazz: Class<T>, typeCap
     return CompositeTypeCapabilities(this, newCapabilities)
 }
 
+fun <T : TypeCapability> TypeCapabilities.overrideCapability(clazz: Class<T>, typeCapability: T): TypeCapabilities {
+    if (getCapability(clazz) === typeCapability) return this
+    val newCapabilities = SingletonTypeCapabilities(clazz, typeCapability)
+    if (this === org.jetbrains.kotlin.types.TypeCapabilities.NONE) return newCapabilities
+
+    return CompositeTypeCapabilities(newCapabilities, this)
+}
+
 inline fun <reified T : TypeCapability> KotlinType.getCapability(): T? = getCapability(T::class.java)
 
 
