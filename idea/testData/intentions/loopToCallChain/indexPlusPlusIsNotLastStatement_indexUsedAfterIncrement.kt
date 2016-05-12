@@ -1,12 +1,12 @@
 // WITH_RUNTIME
-// INTENTION_TEXT: "Replace with 'filterNot{}.mapIndexed{}.firstOrNull{}'"
+// IS_APPLICABLE: false
 fun foo(list: List<String>): Int? {
     var index = 0
     <caret>for (s in list) {
         if (s.isBlank()) continue
         val x = s.length * index
         index++
-        if (x > 0) return x
+        if ((x + index) % 3 == 0) return x
     }
     return null
 }

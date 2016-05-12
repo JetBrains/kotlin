@@ -1,12 +1,12 @@
 // WITH_RUNTIME
-// INTENTION_TEXT: "Replace with 'filterNot{}.mapIndexed{}.firstOrNull{}'"
+// INTENTION_TEXT: "Replace with 'mapIndexed{}.mapIndexed{}.firstOrNull{}'"
 fun foo(list: List<String>): Int? {
     var index = 0
     <caret>for (s in list) {
-        if (s.isBlank()) continue
         val x = s.length * index
-        index++
-        if (x > 0) return x
+        val y = x * index++
+        if (y > 1000) continue
+        return y
     }
     return null
 }

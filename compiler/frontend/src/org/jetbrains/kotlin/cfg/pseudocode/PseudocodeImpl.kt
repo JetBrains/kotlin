@@ -30,17 +30,14 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.LocalFunctionDec
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineEnterInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineExitInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineSinkInstruction
-import org.jetbrains.kotlin.cfg.pseudocodeTraverser.*
-import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraverseInstructionResult
-import org.jetbrains.kotlin.psi.KtElement
-
-import java.util.*
-
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder.BACKWARD
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder.FORWARD
+import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraverseInstructionResult
+import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverseFollowingInstructions
+import org.jetbrains.kotlin.psi.KtElement
+import java.util.*
 
 class PseudocodeImpl(override val correspondingElement: KtElement) : Pseudocode {
-
     inner class PseudocodeLabel internal constructor(private val name: String, private val comment: String?) : Label {
         var targetInstructionIndex: Int? = null
             private set
@@ -89,8 +86,8 @@ class PseudocodeImpl(override val correspondingElement: KtElement) : Pseudocode 
     override val localDeclarations: Set<LocalFunctionDeclarationInstruction> by lazy {
         getLocalDeclarations(this)
     }
-    //todo getters
-    private val representativeInstructions = HashMap<KtElement, Instruction>()
+
+    private val representativeInstructions = HashMap<KtElement, KtElementInstruction>()
 
     private val labels = ArrayList<PseudocodeLabel>()
 
@@ -191,7 +188,9 @@ class PseudocodeImpl(override val correspondingElement: KtElement) : Pseudocode 
         instruction.owner = this
 
         if (instruction is KtElementInstruction) {
-            representativeInstructions.put(instruction.element, instruction)
+            if (!representativeInstructions.containsKey(instruction.element)) {
+                representativeInstructions.put(instruction.element, instruction)
+            }
         }
 
         if (instruction is MergeInstruction) {
@@ -377,6 +376,10 @@ class PseudocodeImpl(override val correspondingElement: KtElement) : Pseudocode 
         val result = PseudocodeImpl(correspondingElement)
         result.repeatWhole(this)
         return result
+    }
+
+    override fun instructionForElement(element: KtElement): KtElementInstruction? {
+        return representativeInstructions[element]
     }
 
     private fun repeatWhole(originalPseudocode: PseudocodeImpl) {

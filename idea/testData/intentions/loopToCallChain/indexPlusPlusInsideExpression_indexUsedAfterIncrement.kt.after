@@ -1,0 +1,9 @@
+// WITH_RUNTIME
+//TODO: should not be available without "asSequence()"!
+fun foo(list: List<String>): Int? {
+    var index = 0
+    return list
+            .filterNot { it.isBlank() }
+            .map { it.length * index++ }
+            .firstOrNull { it * 100 > index * index }
+}
