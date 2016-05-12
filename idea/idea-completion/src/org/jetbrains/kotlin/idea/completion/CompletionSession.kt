@@ -118,7 +118,7 @@ abstract class CompletionSession(
 
     protected val descriptorNameFilter: (Name) -> Boolean = run {
         val nameFilter = prefixMatcher.asNameFilter()
-        val getOrSetPrefix = listOf("get", "set").firstOrNull { prefix.startsWith(it) }
+        val getOrSetPrefix = listOf("get", "set", "ge", "se", "g", "s").firstOrNull { prefix.startsWith(it) }
         if (getOrSetPrefix != null)
             nameFilter or prefixMatcher.cloneWithPrefix(prefix.removePrefix(getOrSetPrefix).decapitalizeSmart()).asNameFilter()
         else
