@@ -53,7 +53,6 @@ abstract class KtCodeFragment(
     private var thisType: PsiType? = null
     private var superType: PsiType? = null
     private var exceptionHandler: JavaCodeFragment.ExceptionHandler? = null
-    private var isPhysical = true
 
     abstract fun getContentElement(): KtElement?
 
@@ -63,7 +62,7 @@ abstract class KtCodeFragment(
 
     override fun getForcedResolveScope() = resolveScope
 
-    override fun isPhysical() = isPhysical
+    override fun isPhysical() = true
 
     override fun isValid() = true
 
@@ -73,10 +72,9 @@ abstract class KtCodeFragment(
 
     override fun clone(): KtCodeFragment {
         val clone = cloneImpl(calcTreeElement().clone() as FileElement) as KtCodeFragment
-        clone.isPhysical = false
         clone.originalFile = this
         clone.imports = imports
-        clone.viewProvider = SingleRootFileViewProvider(PsiManager.getInstance(_project), LightVirtualFile(name, KotlinFileType.INSTANCE, text), false)
+        clone.viewProvider = SingleRootFileViewProvider(PsiManager.getInstance(_project), LightVirtualFile(name, KotlinFileType.INSTANCE, text), true)
         clone.viewProvider.forceCachedPsi(clone)
         return clone
     }
