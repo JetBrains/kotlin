@@ -161,6 +161,12 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("PreferGetMethodToProperty.kt")
+    public void testPreferGetMethodToProperty() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/PreferGetMethodToProperty.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("PropertiesBeforeKeywords.kt")
     public void testPropertiesBeforeKeywords() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/PropertiesBeforeKeywords.kt");

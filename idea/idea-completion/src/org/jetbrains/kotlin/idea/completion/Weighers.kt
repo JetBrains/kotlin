@@ -155,6 +155,19 @@ object VariableOrFunctionWeigher : LookupElementWeigher("kotlin.variableOrFuncti
     }
 }
 
+/**
+ * Decreases priority of properties when prefix starts with "get" or "set" (and the property name does not)
+ */
+object PreferGetSetMethodsToPropertyWeigher : LookupElementWeigher("kotlin.preferGetSetMethodsToProperty", false, true){
+    override fun weigh(element: LookupElement, context: WeighingContext): Int {
+        val property = (element.`object` as? DeclarationLookupObject)?.descriptor as? PropertyDescriptor ?: return 0
+        val prefixMatcher = context.itemMatcher(element)
+        if (prefixMatcher.prefixMatches(property.name.asString())) return 0
+        val matchedLookupStrings = element.allLookupStrings.filter { prefixMatcher.prefixMatches(it) }
+        if (matchedLookupStrings.all { it.startsWith("get") || it.startsWith("set") }) return 1 else return 0
+    }
+}
+
 object DeprecatedWeigher : LookupElementWeigher("kotlin.deprecated") {
     override fun weigh(element: LookupElement): Int {
         val o = element.`object` as? DeclarationLookupObject ?: return 0
