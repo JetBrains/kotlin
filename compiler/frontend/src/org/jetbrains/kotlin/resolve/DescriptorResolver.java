@@ -1169,22 +1169,15 @@ public class DescriptorResolver {
     }
 
     public static void checkBoundsInTypeAlias(
-            @NotNull KtUserType typeAliasElement,
+            @NotNull TypeAliasExpansionReportStrategy reportStrategy,
             @NotNull KotlinType typeArgument,
             @NotNull TypeParameterDescriptor typeParameterDescriptor,
-            @NotNull TypeSubstitutor substitutor,
-            @NotNull BindingTrace trace
+            @NotNull TypeSubstitutor substitutor
     ) {
-        DeclarationDescriptor containingDeclaration = typeParameterDescriptor.getContainingDeclaration();
-        assert containingDeclaration instanceof ClassifierDescriptor :
-                "Containing declaration of a type parameter should be a classifier, got " + containingDeclaration;
-        ClassifierDescriptor containingClassifier = (ClassifierDescriptor) containingDeclaration;
-
         for (KotlinType bound : typeParameterDescriptor.getUpperBounds()) {
             KotlinType substitutedBound = substitutor.safeSubstitute(bound, Variance.INVARIANT);
             if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(typeArgument, substitutedBound)) {
-                trace.report(UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION.on(
-                        typeAliasElement, substitutedBound, typeArgument, containingClassifier));
+                reportStrategy.boundsViolationInSubstitution(substitutedBound, typeArgument, typeParameterDescriptor);
             }
         }
     }
