@@ -245,6 +245,12 @@ public class SmartCompletionWeigherTestGenerated extends AbstractSmartCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("StaticMemberAndPrefix.kt")
+    public void testStaticMemberAndPrefix() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/smart/StaticMemberAndPrefix.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("SuperMembers.kt")
     public void testSuperMembers() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/smart/SuperMembers.kt");
