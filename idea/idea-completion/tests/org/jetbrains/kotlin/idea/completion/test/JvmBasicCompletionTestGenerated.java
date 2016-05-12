@@ -2647,6 +2647,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("KT9166.kt")
+        public void testKT9166() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/KT9166.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("NoDuplicationForImportedJavaClass.kt")
         public void testNoDuplicationForImportedJavaClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/NoDuplicationForImportedJavaClass.kt");
