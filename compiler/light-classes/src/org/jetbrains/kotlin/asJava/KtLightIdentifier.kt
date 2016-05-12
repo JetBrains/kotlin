@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.asJava
 
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.impl.light.LightIdentifier
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
@@ -25,6 +26,9 @@ class KtLightIdentifier(
         private val lightOwner: PsiNameIdentifierOwner,
         private val ktDeclaration: KtNamedDeclaration?
 ) : LightIdentifier(lightOwner.manager, ktDeclaration?.name ?: "") {
+    val origin: PsiElement?
+        get() = ktDeclaration?.nameIdentifier
+
     override fun isPhysical() = true
     override fun getParent() = lightOwner
     override fun getTextRange() = ktDeclaration?.nameIdentifier?.textRange ?: TextRange.EMPTY_RANGE

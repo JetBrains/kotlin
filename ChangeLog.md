@@ -51,6 +51,7 @@ Issues fixed:
 - [KT-12018](https://youtrack.jetbrains.com/issue/KT-12018) Auto-format spaces between function name and arguments in infix calls
 - [KT-12067](https://youtrack.jetbrains.com/issue/KT-12067) Deadlock in Kotlin debugger is fixed
 - [KT-12070](https://youtrack.jetbrains.com/issue/KT-12070) Add empty line in error message of Maven and Gradle configuration
+- [KT-12091](https://youtrack.jetbrains.com/issue/KT-12091) Fixed unstable behavior of Spring line markers
 
 #### Debugger
 
