@@ -88,6 +88,7 @@ class ClassTranslator private constructor(
         invocationArguments += getSuperclassReferences(context)
 
         val nonConstructorContext = context.innerWithUsageTracker(scope, descriptor)
+        nonConstructorContext.startDeclaration()
         val delegationTranslator = DelegationTranslator(classDeclaration, nonConstructorContext)
         translatePropertiesAsConstructorParameters(nonConstructorContext, properties)
         val bodyVisitor = DeclarationBodyVisitor(properties, staticProperties, scope)
@@ -105,7 +106,7 @@ class ClassTranslator private constructor(
 
         val dataClassGenerator = JsDataClassGenerator(classDeclaration, context, properties)
 
-        emitConstructors(nonConstructorContext)
+        emitConstructors(nonConstructorContext, nonConstructorContext.endDeclaration())
         for (constructor in allConstructors) {
             addClosureParameters(constructor, nonConstructorContext, dataClassGenerator)
         }
@@ -240,9 +241,18 @@ class ClassTranslator private constructor(
             return if (primary != null) sequenceOf(primary) + secondaryConstructors else secondaryConstructors.asSequence()
         }
 
-    private fun emitConstructors(nonConstructorContext: TranslationContext) {
+    private fun emitConstructors(nonConstructorContext: TranslationContext, callSites: List<DeferredCallSite>) {
         // Build map that maps constructor to all constructors called via this()
         val constructorMap = allConstructors.map { it.descriptor to it }.toMap()
+
+        fun mapConstructor(constructor: ConstructorDescriptor) =
+                if (constructor.isPrimary) constructor.containingDeclaration else constructor
+
+        val callSiteMap = callSites
+                .map { mapConstructor(it.constructor) }.distinct()
+                .map { Pair(it, mutableListOf<DeferredCallSite>()) }
+                .toMap()
+        callSites.forEach { callSiteMap[mapConstructor(it.constructor)]!! += it }
 
         val thisCalls = secondaryConstructors.map {
             val set = mutableSetOf<ConstructorInfo>()
@@ -273,6 +283,15 @@ class ClassTranslator private constructor(
 
             val descriptor = constructor.descriptor
             nonConstructorContext.putClassOrConstructorClosure(descriptor, capturedVars)
+
+            val constructorCallSites = callSiteMap[constructor.descriptor].orEmpty()
+            for (callSite in constructorCallSites) {
+                capturedVars.forEach { nonConstructorUsageTracker.used(it) }
+                val closureArgs = capturedVars
+                        .map { nonConstructorUsageTracker.capturedDescriptorToJsName[it]!! }
+                        .map { JsAstUtils.fqnWithoutSideEffects(it, JsLiteral.THIS) }
+                callSite.invocationArgs.addAll(0, closureArgs)
+            }
         }
     }
 

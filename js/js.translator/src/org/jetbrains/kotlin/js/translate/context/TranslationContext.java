@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.js.translate.context;
 
 import com.google.dart.compiler.backend.js.ast.*;
 import com.intellij.psi.PsiElement;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.ReflectionTypes;
@@ -32,9 +34,7 @@ import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.jetbrains.kotlin.js.translate.context.UsageTrackerKt.getNameForCapturedDescriptor;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getDescriptorForElement;
@@ -454,10 +454,13 @@ public class TranslationContext {
     }
 
     @Nullable
-    public List<DeclarationDescriptor> getClassOrConstructorClosure(@NotNull MemberDescriptor localClass) {
-        List<DeclarationDescriptor> result = staticContext.getClassOrConstructorClosure(localClass);
-        if (result == null && localClass instanceof ConstructorDescriptor && ((ConstructorDescriptor) localClass).isPrimary()) {
-            result = staticContext.getClassOrConstructorClosure((ClassDescriptor) localClass.getContainingDeclaration());
+    public List<DeclarationDescriptor> getClassOrConstructorClosure(@NotNull MemberDescriptor classOrConstructor) {
+        List<DeclarationDescriptor> result = staticContext.getClassOrConstructorClosure(classOrConstructor);
+        if (result == null &&
+            classOrConstructor instanceof ConstructorDescriptor &&
+            ((ConstructorDescriptor) classOrConstructor).isPrimary()
+        ) {
+            result = staticContext.getClassOrConstructorClosure((ClassDescriptor) classOrConstructor.getContainingDeclaration());
         }
         return result;
     }
@@ -505,5 +508,38 @@ public class TranslationContext {
         }
 
         return staticContext.getScopeForDescriptor(descriptor).declareName(Namer.OUTER_FIELD_NAME);
+    }
+
+    public void startDeclaration() {
+        ClassDescriptor classDescriptor = this.classDescriptor;
+        if (classDescriptor != null && !(classDescriptor.getContainingDeclaration() instanceof ClassOrPackageFragmentDescriptor)) {
+            staticContext.getDeferredCallSites().put(classDescriptor, new ArrayList<DeferredCallSite>());
+        }
+    }
+
+    @NotNull
+    public List<DeferredCallSite> endDeclaration() {
+        List<DeferredCallSite> result = null;
+        ClassDescriptor classDescriptor = this.classDescriptor;
+        if (classDescriptor != null) {
+            result = staticContext.getDeferredCallSites().remove(classDescriptor);
+        }
+        if (result == null) {
+            result = Collections.emptyList();
+        }
+        return result;
+    }
+
+    public boolean isDeferred(@NotNull ConstructorDescriptor constructor) {
+        ClassDescriptor classDescriptor = constructor.getContainingDeclaration();
+        return staticContext.getDeferredCallSites().containsKey(classDescriptor);
+    }
+
+    public void deferConstructorCall(@NotNull ConstructorDescriptor constructor, @NotNull List<JsExpression> invocationArgs) {
+        ClassDescriptor classDescriptor = constructor.getContainingDeclaration();
+        List<DeferredCallSite> callSites = staticContext.getDeferredCallSites().get(classDescriptor);
+        if (callSites == null) throw new IllegalStateException("This method should be call only when `isDeferred` method " +
+                                                               "reports true for given constructor: " + constructor);
+        callSites.add(new DeferredCallSite(constructor, invocationArgs));
     }
 }

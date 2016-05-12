@@ -13009,6 +13009,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("localClassesWithSelfInstantiation.kt")
+        public void testLocalClassesWithSelfInstantiation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/localClassesWithSelfInstantiation.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("superCallPrimary.kt")
         public void testSuperCallPrimary() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/superCallPrimary.kt");

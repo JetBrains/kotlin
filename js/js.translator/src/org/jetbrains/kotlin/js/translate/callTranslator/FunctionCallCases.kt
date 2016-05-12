@@ -204,20 +204,29 @@ object ConstructorCallCase : FunctionCallCase() {
 
     override fun FunctionCallInfo.dispatchReceiver() = doTranslate { argsWithReceiver(dispatchReceiver!!) }
 
-    private inline fun FunctionCallInfo.doTranslate(getArguments: CallArgumentTranslator.ArgumentsInfo.() -> List<JsExpression>): JsExpression {
+    private inline fun FunctionCallInfo.doTranslate(
+            getArguments: CallArgumentTranslator.ArgumentsInfo.() -> List<JsExpression>
+    ): JsExpression {
         val fqName = context.getQualifiedReference(callableDescriptor)
         val functionRef = if (isNative()) fqName else context.aliasOrValue(callableDescriptor) { fqName }
-        val arguments = argumentsInfo.getArguments()
+
+        val invocationArguments = mutableListOf<JsExpression>()
 
         val constructorDescriptor = callableDescriptor as ConstructorDescriptor
-        val closure = context.getClassOrConstructorClosure(constructorDescriptor)
-        val closureArgs = closure?.map { context.getArgumentForClosureConstructor(it) } ?: emptyList()
-
-        if (constructorDescriptor.isPrimary || AnnotationsUtils.isNativeObject(constructorDescriptor)) {
-            return JsNew(functionRef, closureArgs + arguments)
+        if (context.isDeferred(constructorDescriptor)) {
+            context.deferConstructorCall(constructorDescriptor, invocationArguments)
         }
         else {
-            return JsInvocation(functionRef, closureArgs + arguments)
+            val closure = context.getClassOrConstructorClosure(constructorDescriptor)
+            invocationArguments += closure?.map { context.getArgumentForClosureConstructor(it) }.orEmpty()
+        }
+
+        invocationArguments += argumentsInfo.getArguments()
+        return if (constructorDescriptor.isPrimary || AnnotationsUtils.isNativeObject(constructorDescriptor)) {
+            JsNew(functionRef, invocationArguments)
+        }
+        else {
+            JsInvocation(functionRef, invocationArguments)
         }
     }
 }
