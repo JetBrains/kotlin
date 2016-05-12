@@ -23,22 +23,15 @@ import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtTypeElement
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeProjection
-import org.jetbrains.kotlin.types.TypeProjectionImpl
+import org.jetbrains.kotlin.types.*
 
 
-interface TypeBinding<out P : PsiElement> {
+interface TypeBinding<out P : PsiElement> : TypeHolder<TypeBinding<P>> {
     val psiElement: P
-    val kotlinType: KotlinType
-    fun getArgumentBindings(): List<TypeArgumentBinding<P>?>
+    override val arguments: List<TypeArgumentBinding<P>?>
 }
 
-interface TypeArgumentBinding<out P: PsiElement> {
-    val typeProjection: TypeProjection
-    val typeParameterDescriptor: TypeParameterDescriptor?
-    val typeBinding: TypeBinding<P>
-}
+interface TypeArgumentBinding<out P: PsiElement> : TypeHolderArgument<TypeBinding<P>>
 
 fun KtTypeReference.createTypeBinding(trace: BindingContext): TypeBinding<KtTypeElement>? {
     val jetType = trace[BindingContext.TYPE, this]
@@ -62,24 +55,25 @@ fun KtCallableDeclaration.createTypeBindingForReturnType(trace: BindingContext):
 }
 
 private class TypeArgumentBindingImpl<out P: PsiElement>(
-        override val typeProjection: TypeProjection,
-        override val typeParameterDescriptor: TypeParameterDescriptor?,
-        override val typeBinding: TypeBinding<P>
+        override val projection: TypeProjection,
+        override val typeParameter: TypeParameterDescriptor?,
+        override val holder: TypeBinding<P>
 ) : TypeArgumentBinding<P>
 
 private class ExplicitTypeBinding(
         private val trace: BindingContext,
         override val psiElement: KtTypeElement,
-        override val kotlinType: KotlinType
+        override val type: KotlinType
 ) : TypeBinding<KtTypeElement> {
 
-    override fun getArgumentBindings(): List<TypeArgumentBinding<KtTypeElement>?> {
-        val psiTypeArguments = psiElement.typeArgumentsAsTypes
-        val isErrorBinding = run {
-            val sizeIsEqual = psiTypeArguments.size == kotlinType.arguments.size
-                              && psiTypeArguments.size == kotlinType.constructor.parameters.size
-            kotlinType.isError || !sizeIsEqual
-        }
+    override val arguments: List<TypeArgumentBinding<KtTypeElement>?>
+        get() {
+            val psiTypeArguments = psiElement.typeArgumentsAsTypes
+            val isErrorBinding = run {
+                val sizeIsEqual = psiTypeArguments.size == type.arguments.size
+                                  && psiTypeArguments.size == type.constructor.parameters.size
+                type.isError || !sizeIsEqual
+            }
 
         return psiTypeArguments.indices.map { index: Int ->
             // todo fix for List<*>
@@ -91,39 +85,40 @@ private class ExplicitTypeBinding(
                 val nextJetType = trace[BindingContext.TYPE, jetTypeReference]
                 if (nextJetType == null) return@map null
 
+                    return@map TypeArgumentBindingImpl(
+                            TypeProjectionImpl(nextJetType),
+                            null,
+                            ExplicitTypeBinding(trace, jetTypeElement, nextJetType)
+                    )
+                }
+
+                val typeProjection = type.arguments[index]
                 return@map TypeArgumentBindingImpl(
-                        TypeProjectionImpl(nextJetType),
-                        null,
-                        ExplicitTypeBinding(trace, jetTypeElement, nextJetType)
+                        typeProjection,
+                        type.constructor.parameters[index],
+                        ExplicitTypeBinding(trace, jetTypeElement, typeProjection.type)
                 )
             }
-
-            val typeProjection = kotlinType.arguments[index]
-            return@map TypeArgumentBindingImpl(
-                    typeProjection,
-                    kotlinType.constructor.parameters[index],
-                    ExplicitTypeBinding(trace, jetTypeElement, typeProjection.type)
-            )
         }
-    }
 }
 
 private class NoTypeElementBinding<out P : PsiElement>(
         private val trace: BindingContext,
         override val psiElement: P,
-        override val kotlinType: KotlinType
+        override val type: KotlinType
 ): TypeBinding<P> {
 
-    override fun getArgumentBindings(): List<TypeArgumentBinding<P>?> {
-        val isErrorBinding = kotlinType.isError || kotlinType.constructor.parameters.size != kotlinType.arguments.size
-        return kotlinType.arguments.indices.map {
-            val typeProjection = kotlinType.arguments[it]
-            TypeArgumentBindingImpl(
-                    typeProjection,
-                    if (isErrorBinding) null else kotlinType.constructor.parameters[it],
-                    NoTypeElementBinding(trace, psiElement, typeProjection.type)
-            )
+    override val arguments: List<TypeArgumentBinding<P>?>
+        get() {
+            val isErrorBinding = type.isError || type.constructor.parameters.size != type.arguments.size
+            return type.arguments.indices.map {
+                val typeProjection = type.arguments[it]
+                TypeArgumentBindingImpl(
+                        typeProjection,
+                        if (isErrorBinding) null else type.constructor.parameters[it],
+                        NoTypeElementBinding(trace, psiElement, typeProjection.type)
+                )
+            }
         }
-    }
 }
 
