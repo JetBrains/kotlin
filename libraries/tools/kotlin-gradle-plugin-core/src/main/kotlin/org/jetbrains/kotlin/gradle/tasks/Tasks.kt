@@ -351,6 +351,12 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
             if (exitCode != ExitCode.OK) {
                 cleanupOnError()
             }
+
+            lookupStorage.flush(false)
+            lookupStorage.close()
+            caches.values.forEach { it.flush(false); it.close() }
+            logger.debug("flushed incremental caches")
+
             when (exitCode) {
                 ExitCode.COMPILATION_ERROR -> throw GradleException("Compilation error. See log for more details")
                 ExitCode.INTERNAL_ERROR -> throw GradleException("Internal compiler error. See log for more details")
@@ -379,6 +385,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
             kaptAnnotationsFileUpdater = null
         }
 
+        var exitCode = ExitCode.OK
         while (sourcesToCompile.any() || currentRemoved.any()) {
             val removedAndModified = (sourcesToCompile + currentRemoved).toList()
             val outdatedClasses = targets.flatMap { getIncrementalCache(it).classesBySources(removedAndModified) }
@@ -399,7 +406,8 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
             val text = existingSource.map { it.canonicalPath }.joinToString(separator = System.getProperty("line.separator"))
             dirtySourcesSinceLastTimeFile.writeText(text)
 
-            val (exitCode, generatedFiles) = compileChanged(targets, existingSource.toSet(), outputDir, args, ::getIncrementalCache, lookupTracker)
+            val compilerOutput = compileChanged(targets, existingSource.toSet(), outputDir, args, ::getIncrementalCache, lookupTracker)
+            exitCode = compilerOutput.exitCode
 
             if (exitCode == ExitCode.OK) {
                 dirtySourcesSinceLastTimeFile.delete()
@@ -407,18 +415,18 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
             }
             else {
                 kaptAnnotationsFileUpdater?.revert()
+                break
             }
 
-            allGeneratedFiles.addAll(generatedFiles)
-            val compilationResult = updateIncrementalCaches(targets, generatedFiles,
+            allGeneratedFiles.addAll(compilerOutput.generatedFiles)
+            val compilationResult = updateIncrementalCaches(targets, compilerOutput.generatedFiles,
                                                             compiledWithErrors = exitCode != ExitCode.OK,
                                                             getIncrementalCache = { caches[it]!! })
 
             lookupStorage.update(lookupTracker, sourcesToCompile, currentRemoved)
             cacheVersions.forEach { it.saveIfNeeded() }
-            processCompilerExitCode(exitCode)
 
-            if (!isIncrementalDecided) break;
+            if (!isIncrementalDecided) break
 
             val (dirtyLookupSymbols, dirtyClassFqNames) = compilationResult.getDirtyData(caches.values, logAction)
             sourcesToCompile = mapLookupSymbolsToFiles(lookupStorage, dirtyLookupSymbols, logAction, ::projectRelativePath, excludes = sourcesToCompile) +
@@ -428,12 +436,9 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
                 currentRemoved = listOf()
             }
         }
-        lookupStorage.flush(false)
-        lookupStorage.close()
-        caches.values.forEach { it.flush(false); it.close() }
-        if (allGeneratedFiles.isNotEmpty()) {
-            anyClassesCompiled = true
-        }
+
+        anyClassesCompiled = allGeneratedFiles.isNotEmpty()
+        processCompilerExitCode(exitCode)
     }
 
     private data class CompileChangedResults(val exitCode: ExitCode, val generatedFiles: List<GeneratedFile<TargetId>>)
