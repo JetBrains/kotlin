@@ -56,6 +56,7 @@ class ForEachTransformation(
             if (state.previousTransformations.isEmpty() && state.indexVariable == null) return null // do not suggest conversion to just ".forEach{}"
 
             val statement = state.statements.singleOrNull() ?: return null
+            //TODO: should we disallow it for complicated statements like loops, if, when?
             val transformation = ForEachTransformation(state.outerLoop, state.inputVariable, state.indexVariable, statement)
             return TransformationMatch.Result(transformation)
         }
