@@ -304,7 +304,13 @@ internal data class CustomizedScriptModuleInfo(val project: Project, val module:
 
     override val name: Name = Name.special("<$SCRIPT_NAME_PREFIX${scriptDefinition.name}>")
 
-    override fun contentScope() = CustomizedScriptModuleSearchScope(virtualFile, GlobalSearchScope.union(dependenciesRoots().map { FileLibraryScope(project, it) }.toTypedArray()))
+    override fun contentScope(): CustomizedScriptModuleSearchScope {
+        val dependenciesRoots = dependenciesRoots()
+        return CustomizedScriptModuleSearchScope(
+                virtualFile,
+                if (dependenciesRoots.isEmpty()) GlobalSearchScope.EMPTY_SCOPE
+                else GlobalSearchScope.union(dependenciesRoots.map { FileLibraryScope(project, it) }.toTypedArray()))
+    }
 
     private fun dependenciesRoots(): List<VirtualFile> {
         // TODO: find out whether it should be cashed (some changes listener should be implemented for the cached roots)
