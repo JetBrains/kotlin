@@ -89,6 +89,12 @@ public class InlineMultiModuleTestGenerated extends AbstractInlineMultiModuleTes
         doTest(fileName);
     }
 
+    @TestMetadata("parameterWithDefaultValue")
+    public void testParameterWithDefaultValue() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/parameterWithDefaultValue/");
+        doTest(fileName);
+    }
+
     @TestMetadata("simple")
     public void testSimple() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/simple/");
