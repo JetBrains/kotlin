@@ -21,6 +21,8 @@ import com.google.dart.compiler.backend.js.ast.metadata.*
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.js.inline.util.IdentitySet
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
+import org.jetbrains.kotlin.js.inline.util.canHaveOwnSideEffect
+import org.jetbrains.kotlin.js.inline.util.rewriters.ContinueReplacingVisitor
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*
 import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.*
 
@@ -93,17 +95,26 @@ internal class ExpressionDecomposer private constructor(
         return false
     }
 
+    override fun visit(x: JsLabel, ctx: JsContext<JsNode>): Boolean {
+        val statement = x.statement
+        when (statement) {
+            is JsDoWhile -> statement.process(false, x.name)
+            is JsWhile -> statement.process(true, x.name)
+        }
+        return false
+    }
+
     override fun visit(x: JsWhile, ctx: JsContext<JsNode>): Boolean {
-        x.process(true)
+        x.process(true, null)
         return false
     }
 
     override fun visit(x: JsDoWhile, ctx: JsContext<JsNode>): Boolean {
-        x.process(false)
+        x.process(false, null)
         return false
     }
 
-    private fun JsWhile.process(addBreakToBegin: Boolean) {
+    private fun JsWhile.process(addBreakToBegin: Boolean, loopLabel: JsName?) {
         if (test !in containsExtractable) return
 
         withNewAdditionalStatements {
@@ -118,7 +129,13 @@ internal class ExpressionDecomposer private constructor(
                 addStatements(bodyStatements)
             }
             else {
-                addStatements(0, bodyStatements)
+                // See KT-12275
+                val guardName = scope.declareFreshName("guard$")
+                val label = JsLabel(guardName).apply { synthetic = true }
+                label.statement = JsBlock(bodyStatements)
+                addStatements(0, listOf(label))
+                ContinueReplacingVisitor(loopLabel, guardName).acceptList(bodyStatements)
+
                 addStatement(breakIfNotTest)
             }
 
@@ -362,7 +379,6 @@ internal open class JsExpressionVisitor() : JsVisitorWithContextImpl() {
     override fun visit(x: JsBlock, ctx: JsContext<JsNode>): Boolean = false
     override fun visit(x: JsTry, ctx: JsContext<JsNode>): Boolean = false
     override fun visit(x: JsDebugger, ctx: JsContext<JsNode>): Boolean = false
-    override fun visit(x: JsLabel, ctx: JsContext<JsNode>): Boolean = false
     override fun visit(x: JsFunction, ctx: JsContext<JsNode>): Boolean = false
     override fun visit(x: JsObjectLiteral, ctx: JsContext<JsNode>): Boolean = false
     override fun visit(x: JsPropertyInitializer, ctx: JsContext<JsNode>): Boolean = false
@@ -405,6 +421,11 @@ internal open class JsExpressionVisitor() : JsVisitorWithContextImpl() {
 
     override fun visit(x: JsDoWhile, ctx: JsContext<JsNode>): Boolean {
         x.test = accept(x.test)
+        return false
+    }
+
+    override fun visit(x: JsLabel, ctx: JsContext<JsNode>): Boolean {
+        x.statement = accept(x.statement)
         return false
     }
 
