@@ -131,13 +131,14 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
         return object : KtVisitorVoid() {
             override fun visitDeclaration(declaration: KtDeclaration) {
                 if (declaration !is KtNamedDeclaration) return
-                val messageKey = when (declaration) {
-                    is KtClass -> "unused.class"
-                    is KtObjectDeclaration -> "unused.object"
-                    is KtNamedFunction -> "unused.function"
-                    is KtSecondaryConstructor -> "unused.constructor"
-                    is KtProperty, is KtParameter -> "unused.property"
-                    is KtTypeParameter -> "unused.type.parameter"
+                val name = declaration.name ?: return
+                val message = when (declaration) {
+                    is KtClass -> "Class ''$name'' is never used"
+                    is KtObjectDeclaration -> "Object ''$name'' is never used"
+                    is KtNamedFunction -> "Function ''$name'' is never used"
+                    is KtSecondaryConstructor -> "Constructor is never used"
+                    is KtProperty, is KtParameter -> "Property ''$name'' is never used"
+                    is KtTypeParameter -> "Type parameter ''$name'' is never used"
                     else -> return
                 }
 
@@ -145,7 +146,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
 
                 // Simple PSI-based checks
                 if (declaration is KtObjectDeclaration && declaration.isCompanion()) return // never mark companion object as unused (there are too many reasons it can be needed for)
-                declaration.name ?: return
+
                 if (declaration is KtEnumEntry) return
                 if (declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return
                 if (declaration is KtProperty && declaration.isLocal) return
@@ -168,7 +169,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
                 val problemDescriptor = holder.manager.createProblemDescriptor(
                         psiElement,
                         null,
-                        KotlinBundle.message(messageKey, declaration.name),
+                        message,
                         ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                         true,
                         *createQuickFixes(declaration).toTypedArray()
