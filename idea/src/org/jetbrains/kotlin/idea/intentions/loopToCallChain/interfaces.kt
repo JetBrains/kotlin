@@ -103,7 +103,7 @@ data class MatchingState(
          */
         val indexVariable: KtCallableDeclaration?,
         val initializationStatementsToDelete: Collection<KtExpression> = emptyList(),
-        val previousTransformations: List<SequenceTransformation>,
+        val previousTransformations: MutableList<SequenceTransformation> = arrayListOf(),
         val pseudocodeProvider: () -> Pseudocode
 )
 

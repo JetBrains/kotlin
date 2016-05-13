@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.check
-import java.util.*
 
 object MatcherRegistrar {
     val matchers: Collection<TransformationMatcher> = listOf(
@@ -70,30 +69,10 @@ data class MatchResult(
 fun match(loop: KtForExpression): MatchResult? {
     val (inputVariable, indexVariable, sequenceExpression) = extractLoopData(loop) ?: return null
 
+    var state = createInitialMatchingState(loop, inputVariable, indexVariable) ?: return null
+
     // used just as optimization to avoid unnecessary checks
     val loopContainsEmbeddedBreakOrContinue = loop.containsEmbeddedBreakOrContinue()
-
-    val sequenceTransformations = ArrayList<SequenceTransformation>()
-
-    val pseudocodeProvider: () -> Pseudocode = object : () -> Pseudocode {
-        val pseudocode: Pseudocode by lazy {
-            val declaration = loop.containingDeclarationForPseudocode!!
-            val bindingContext = loop.analyze(BodyResolveMode.FULL)
-            PseudocodeUtil.generatePseudocode(declaration, bindingContext)
-        }
-
-        override fun invoke() = pseudocode
-    }
-
-    var state = MatchingState(
-            outerLoop = loop,
-            innerLoop = loop,
-            statements = listOf(loop.body ?: return null),
-            inputVariable = inputVariable,
-            indexVariable = indexVariable,
-            previousTransformations = sequenceTransformations,
-            pseudocodeProvider = pseudocodeProvider
-    )
 
     MatchLoop@
     while (true) {
@@ -116,7 +95,7 @@ fun match(loop: KtForExpression): MatchResult? {
             if (match != null) {
                 if (!inputVariableUsed && match.allTransformations.any { it.shouldUseInputVariable }) return null
 
-                sequenceTransformations.addAll(match.sequenceTransformations)
+                state.previousTransformations += match.sequenceTransformations
 
                 when (match) {
                     is TransformationMatch.Sequence -> {
@@ -143,7 +122,7 @@ fun match(loop: KtForExpression): MatchResult? {
                     is TransformationMatch.Result -> {
                         if (restContainsEmbeddedBreakOrContinue && !matcher.embeddedBreakOrContinuePossible) continue@MatchersLoop
 
-                        return TransformationMatch.Result(match.resultTransformation, sequenceTransformations)
+                        return TransformationMatch.Result(match.resultTransformation, state.previousTransformations)
                                 .let { mergeTransformations(it) }
                                 .let { MatchResult(sequenceExpression, it, state.initializationStatementsToDelete) }
                                 .check { checkSmartCastsPreserved(loop, it) }
@@ -207,6 +186,32 @@ private fun extractLoopData(loop: KtForExpression): LoopData? {
     if (!isExpressionTypeSupported(loopRange)) return null
 
     return LoopData(loop.loopParameter ?: return null, null, loopRange)
+}
+
+private fun createInitialMatchingState(
+        loop: KtForExpression,
+        inputVariable: KtCallableDeclaration,
+        indexVariable: KtCallableDeclaration?
+): MatchingState? {
+
+    val pseudocodeProvider: () -> Pseudocode = object : () -> Pseudocode {
+        val pseudocode: Pseudocode by lazy {
+            val declaration = loop.containingDeclarationForPseudocode!!
+            val bindingContext = loop.analyze(BodyResolveMode.FULL)
+            PseudocodeUtil.generatePseudocode(declaration, bindingContext)
+        }
+
+        override fun invoke() = pseudocode
+    }
+
+    return MatchingState(
+            outerLoop = loop,
+            innerLoop = loop,
+            statements = listOf(loop.body ?: return null),
+            inputVariable = inputVariable,
+            indexVariable = indexVariable,
+            pseudocodeProvider = pseudocodeProvider
+    )
 }
 
 private fun isExpressionTypeSupported(expression: KtExpression): Boolean {
