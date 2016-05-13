@@ -47,6 +47,6 @@ public class KotlinExactPackagesIndex extends StringStubIndexExtension<KtFile> {
     @NotNull
     @Override
     public Collection<KtFile> get(@NotNull String fqName, @NotNull Project project, @NotNull GlobalSearchScope scope) {
-        return StubIndex.getElements(KEY, fqName, project, KotlinSourceFilterScope.sourcesAndLibraries(scope, project), KtFile.class);
+        return StubIndex.getElements(KEY, fqName, project, scope, KtFile.class);
     }
 }

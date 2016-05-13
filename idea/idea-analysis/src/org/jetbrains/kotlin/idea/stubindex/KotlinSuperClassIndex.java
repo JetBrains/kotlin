@@ -47,6 +47,6 @@ public class KotlinSuperClassIndex extends StringStubIndexExtension<KtClassOrObj
     @NotNull
     @Override
     public Collection<KtClassOrObject> get(@NotNull String s, @NotNull Project project, @NotNull GlobalSearchScope scope) {
-        return StubIndex.getElements(KEY, s, project, KotlinSourceFilterScope.sourcesAndLibraries(scope, project), KtClassOrObject.class);
+        return StubIndex.getElements(KEY, s, project, scope, KtClassOrObject.class);
     }
 }

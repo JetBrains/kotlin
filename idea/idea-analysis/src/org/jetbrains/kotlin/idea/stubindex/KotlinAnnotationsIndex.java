@@ -46,7 +46,7 @@ public class KotlinAnnotationsIndex extends StringStubIndexExtension<KtAnnotatio
     @NotNull
     @Override
     public Collection<KtAnnotationEntry> get(@NotNull String s, @NotNull Project project, @NotNull GlobalSearchScope scope) {
-        return StubIndex.getElements(KEY, s, project, KotlinSourceFilterScope.sourcesAndLibraries(scope, project), KtAnnotationEntry.class);
+        return StubIndex.getElements(KEY, s, project, scope, KtAnnotationEntry.class);
     }
 
     @Override

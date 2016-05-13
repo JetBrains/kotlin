@@ -85,10 +85,7 @@ private fun findCandidateDeclarationsInIndex(
 
     val containingClass = DescriptorUtils.getParentOfType(referencedDescriptor, ClassDescriptor::class.java, false)
     if (containingClass != null) {
-        return if (scriptsScope != null)
-            KotlinFullClassNameIndex.getInstance().getNoScopeWrap(containingClass.fqNameSafe.asString(), project, scope)
-        else
-            KotlinFullClassNameIndex.getInstance().get(containingClass.fqNameSafe.asString(), project, scope)
+        return KotlinFullClassNameIndex.getInstance().get(containingClass.fqNameSafe.asString(), project, scope)
     }
 
     val topLevelDeclaration = DescriptorUtils.getParentOfType(referencedDescriptor, PropertyDescriptor::class.java, false)
@@ -98,18 +95,12 @@ private fun findCandidateDeclarationsInIndex(
     if (!DescriptorUtils.isTopLevelDeclaration(topLevelDeclaration)) return emptyList()
 
     val fqName = topLevelDeclaration.fqNameSafe.asString()
-    when (topLevelDeclaration) {
+    return when (topLevelDeclaration) {
         is FunctionDescriptor -> {
-            return if (scriptsScope != null)
-                KotlinTopLevelFunctionFqnNameIndex.getInstance().getNoScopeWrap(fqName, project, scope)
-            else
-                KotlinTopLevelFunctionFqnNameIndex.getInstance().get(fqName, project, scope)
+            KotlinTopLevelFunctionFqnNameIndex.getInstance().get(fqName, project, scope)
         }
         is PropertyDescriptor -> {
-            return if (scriptsScope != null)
-                KotlinTopLevelPropertyFqnNameIndex.getInstance().getNoScopeWrap(fqName, project, scope)
-            else
-                KotlinTopLevelPropertyFqnNameIndex.getInstance().get(fqName, project, scope)
+            KotlinTopLevelPropertyFqnNameIndex.getInstance().get(fqName, project, scope)
         }
         else -> error("Referenced non local declaration that is not inside top level function, property of class:\n $referencedDescriptor")
     }
