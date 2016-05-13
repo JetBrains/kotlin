@@ -162,18 +162,36 @@ class MapTest {
         assertEquals("Mells", m2["location2"])
     }
 
-    @test fun createUsingPairs() {
-        val map = mapOf(Pair("a", 1), Pair("b", 2))
-        assertEquals(2, map.size)
-        assertEquals(1, map["a"])
-        assertEquals(2, map["b"])
+    @test fun createFrom() {
+        val pairs = arrayOf("a" to 1, "b" to 2)
+        val expected = mapOf(*pairs)
+
+        assertEquals(expected, pairs.toMap())
+        assertEquals(expected, pairs.asIterable().toMap())
+        assertEquals(expected, pairs.asSequence().toMap())
+        assertEquals(expected, expected.toMap())
+
+        val mutableMap = expected.toMutableMap()
+        assertEquals(expected, mutableMap)
+        mutableMap += "c" to 3
+        assertNotEquals(expected, mutableMap)
     }
 
-    @test fun createFromIterable() {
-        val map = listOf(Pair("a", 1), Pair("b", 2)).toMap()
-        assertEquals(2, map.size)
-        assertEquals(1, map.get("a"))
-        assertEquals(2, map.get("b"))
+    @test fun populateTo() {
+        val pairs = arrayOf("a" to 1, "b" to 2)
+        val expected = mapOf(*pairs)
+
+        val linkedMap: LinkedHashMap<String, Int> = pairs.toMap(linkedMapOf())
+        assertEquals(expected, linkedMap)
+
+        val hashMap: HashMap<String, Int> = pairs.asIterable().toMap(hashMapOf())
+        assertEquals(expected, hashMap)
+
+        val mutableMap: MutableMap<String, Int> = pairs.asSequence().toMap(mutableMapOf())
+        assertEquals(expected, mutableMap)
+
+        val mutableMap2 = mutableMap.toMap(mutableMapOf())
+        assertEquals(expected, mutableMap2)
     }
 
     @test fun createWithSelector() {

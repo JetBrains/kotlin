@@ -1532,10 +1532,13 @@ public final class kotlin/collections/MapsKt {
 	public static final fun toList (Ljava/util/Map;)Ljava/util/List;
 	public static final fun toMap (Ljava/lang/Iterable;)Ljava/util/Map;
 	public static final fun toMap (Ljava/lang/Iterable;Ljava/util/Map;)Ljava/util/Map;
+	public static final fun toMap (Ljava/util/Map;)Ljava/util/Map;
+	public static final fun toMap (Ljava/util/Map;Ljava/util/Map;)Ljava/util/Map;
 	public static final fun toMap (Lkotlin/sequences/Sequence;)Ljava/util/Map;
 	public static final fun toMap (Lkotlin/sequences/Sequence;Ljava/util/Map;)Ljava/util/Map;
 	public static final fun toMap ([Lkotlin/Pair;)Ljava/util/Map;
 	public static final fun toMap ([Lkotlin/Pair;Ljava/util/Map;)Ljava/util/Map;
+	public static final fun toMutableMap (Ljava/util/Map;)Ljava/util/Map;
 	public static final fun toSortedMap (Ljava/util/Map;)Ljava/util/SortedMap;
 	public static final fun toSortedMap (Ljava/util/Map;Ljava/util/Comparator;)Ljava/util/SortedMap;
 	public static final fun withDefault (Ljava/util/Map;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;

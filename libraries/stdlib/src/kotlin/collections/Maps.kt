@@ -439,6 +439,29 @@ public fun <K, V, M : MutableMap<in K, in V>> Sequence<Pair<K, V>>.toMap(destina
         = destination.apply { putAll(this@toMap) }
 
 /**
+ * Returns a new read-only map containing all key-value pairs from the original map.
+ *
+ * The returned map preserves the entry iteration order of the original map.
+ */
+public fun <K, V> Map<out K, V>.toMap(): Map<K, V> = when (size) {
+    0 -> emptyMap()
+    else -> toMutableMap()
+}
+
+/**
+ * Returns a new mutable map containing all key-value pairs from the original map.
+ *
+ * The returned map preserves the entry iteration order of the original map.
+ */
+public fun <K, V> Map<out K, V>.toMutableMap(): MutableMap<K, V> = LinkedHashMap(this)
+
+/**
+ * Populates and returns the [destination] mutable map with key-value pairs from the given map.
+ */
+public fun <K, V, M : MutableMap<in K, in V>> Map<out K, V>.toMap(destination: M): M
+        = destination.apply { putAll(this@toMap) }
+
+/**
  * Creates a new read-only map by replacing or adding an entry to this map from a given key-value [pair].
  *
  * The returned map preserves the entry iteration order of the original map.
@@ -532,6 +555,7 @@ internal fun <K, V> Map<K, V>.optimizeReadOnlyMap() = when (size) {
     else -> this
 }
 
+// creates a singleton copy of map, if it there is specialization available in target platform
 @kotlin.jvm.JvmVersion
 internal fun <K, V> Map<K, V>.toSingletonMap(): Map<K, V>
         = with (entries.iterator().next()) { Collections.singletonMap(key, value) }
