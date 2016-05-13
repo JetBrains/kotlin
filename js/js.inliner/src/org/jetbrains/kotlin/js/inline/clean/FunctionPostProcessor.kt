@@ -22,6 +22,7 @@ class FunctionPostProcessor(root: JsFunction) {
     val optimizations = listOf(
         { TemporaryAssignmentElimination(root.body).apply() },
         { RedundantLabelRemoval(root.body).apply() },
+        { DoWhileGuardElimination(root.body).apply() },
         { TemporaryVariableElimination(root).apply() },
         { RedundantBindElimination(root.body).apply() },
         { IfStatementReduction(root.body).apply() },
