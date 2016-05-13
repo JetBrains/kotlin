@@ -149,7 +149,7 @@ class BasicCompletionSession(
             }
 
             if (callTypeAndReceiver.shouldCompleteCallableExtensions()) {
-                filter = filter.exclude(topLevelExtensionsExclude) // completed via indices
+                filter = filter.exclude(TopLevelExtensionsExclude) // completed via indices
             }
 
             filter
