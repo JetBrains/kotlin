@@ -26,7 +26,7 @@ class KotlinScriptFqnIndex private constructor() : StringStubIndexExtension<KtSc
     override fun getKey() = KEY
 
     override fun get(fqName: String, project: Project, scope: GlobalSearchScope): Collection<KtScript> {
-        return StubIndex.getElements(KEY, fqName, project, KotlinSourceFilterScope.sourcesAndLibraries(scope, project), KtScript::class.java)
+        return StubIndex.getElements(KEY, fqName, project, scope, KtScript::class.java)
     }
 
     companion object {

@@ -46,6 +46,6 @@ public class KotlinTopLevelClassByPackageIndex extends StringStubIndexExtension<
     @NotNull
     @Override
     public Collection<KtClassOrObject> get(@NotNull String fqName, @NotNull Project project, @NotNull GlobalSearchScope scope) {
-        return StubIndex.getElements(KEY, fqName, project, KotlinSourceFilterScope.sourcesAndLibraries(scope, project), KtClassOrObject.class);
+        return StubIndex.getElements(KEY, fqName, project, scope, KtClassOrObject.class);
     }
 }

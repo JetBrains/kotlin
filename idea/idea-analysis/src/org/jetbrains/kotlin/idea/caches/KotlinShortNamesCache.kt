@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.asJava.defaultImplsChild
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.stubindex.KotlinClassShortNameIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinFileFacadeShortNameIndex
+import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import java.util.*
@@ -51,12 +52,13 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
      * Return class names form kotlin sources in given scope which should be visible as Java classes.
      */
     override fun getClassesByName(name: String, scope: GlobalSearchScope): Array<PsiClass> {
+        val effectiveScope = KotlinSourceFilterScope.sourcesAndLibraries(scope, project)
         val allFqNames = HashSet<FqName?>()
 
-        KotlinClassShortNameIndex.getInstance().get(name, project, scope)
+        KotlinClassShortNameIndex.getInstance().get(name, project, effectiveScope)
                 .mapTo(allFqNames) { it.fqName }
 
-        KotlinFileFacadeShortNameIndex.INSTANCE.get(name, project, scope)
+        KotlinFileFacadeShortNameIndex.INSTANCE.get(name, project, effectiveScope)
                 .mapTo(allFqNames) { it.javaFileFacadeFqName }
 
         val result = ArrayList<PsiClass>()
@@ -70,7 +72,7 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
 
             val fqNameToSearch = if (isInterfaceDefaultImpl) fqName.defaultImplsChild() else fqName
 
-            val psiClass = JavaElementFinder.getInstance(project).findClass(fqNameToSearch.asString(), scope)
+            val psiClass = JavaElementFinder.getInstance(project).findClass(fqNameToSearch.asString(), effectiveScope)
             if (psiClass != null) {
                 result.add(psiClass)
             }

@@ -46,6 +46,6 @@ public class KotlinTopLevelFunctionByPackageIndex extends StringStubIndexExtensi
     @NotNull
     @Override
     public Collection<KtNamedFunction> get(@NotNull String fqName, @NotNull Project project, @NotNull GlobalSearchScope scope) {
-        return StubIndex.getElements(KEY, fqName, project, KotlinSourceFilterScope.sourcesAndLibraries(scope, project), KtNamedFunction.class);
+        return StubIndex.getElements(KEY, fqName, project, scope, KtNamedFunction.class);
     }
 }
