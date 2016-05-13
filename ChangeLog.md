@@ -9,6 +9,10 @@
 
 ### Compiler
 
+### JS
+
+- Improve performance of maps and sets
+
 #### Analysis & diagnostics
 
 - Combination of 'open' and 'override' is no longer a warning
