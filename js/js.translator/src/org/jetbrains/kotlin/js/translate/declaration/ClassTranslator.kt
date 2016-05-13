@@ -99,20 +99,18 @@ class ClassTranslator private constructor(
         classDeclaration.getSecondaryConstructors().forEach { generateSecondaryConstructor(context, it) }
         generatedBridgeMethods(properties)
 
+        if (descriptor.isData) {
+            JsDataClassGenerator(classDeclaration, context, properties).generate()
+        }
+
         if (isEnumClass(descriptor)) {
             val enumEntries = JsObjectLiteral(bodyVisitor.enumEntryList, true)
             invocationArguments += simpleReturnFunction(nonConstructorContext.getScopeForDescriptor(descriptor), enumEntries)
         }
 
-        val dataClassGenerator = JsDataClassGenerator(classDeclaration, context, properties)
-
         emitConstructors(nonConstructorContext, nonConstructorContext.endDeclaration())
         for (constructor in allConstructors) {
-            addClosureParameters(constructor, nonConstructorContext, dataClassGenerator)
-        }
-
-        if (descriptor.isData) {
-            dataClassGenerator.generate()
+            addClosureParameters(constructor, nonConstructorContext)
         }
 
         // ExpressionVisitor.visitObjectLiteralExpression uses DefinitionPlace of the translated class to generate call to
@@ -295,8 +293,7 @@ class ClassTranslator private constructor(
         }
     }
 
-    private fun addClosureParameters(constructor: ConstructorInfo, nonConstructorContext: TranslationContext,
-                                     dataClassGenerator: JsDataClassGenerator) {
+    private fun addClosureParameters(constructor: ConstructorInfo, nonConstructorContext: TranslationContext) {
         val usageTracker = constructor.context.usageTracker()!!
         val capturedVars = context().getClassOrConstructorClosure(constructor.descriptor) ?: return
         val nonConstructorUsageTracker = nonConstructorContext.usageTracker()!!
@@ -310,7 +307,6 @@ class ClassTranslator private constructor(
             function.parameters.add(i, JsParameter(name))
             if (fieldName != null && constructor == primaryConstructor) {
                 additionalStatements += JsAstUtils.defineSimpleProperty(fieldName.ident, name.makeRef())
-                dataClassGenerator.addClosureVariable(fieldName)
             }
         }
 

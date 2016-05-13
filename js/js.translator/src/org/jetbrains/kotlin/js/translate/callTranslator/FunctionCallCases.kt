@@ -213,7 +213,7 @@ object ConstructorCallCase : FunctionCallCase() {
         val invocationArguments = mutableListOf<JsExpression>()
 
         val constructorDescriptor = callableDescriptor as ConstructorDescriptor
-        if (context.isDeferred(constructorDescriptor)) {
+        if (context.shouldBeDeferred(constructorDescriptor)) {
             context.deferConstructorCall(constructorDescriptor, invocationArguments)
         }
         else {
