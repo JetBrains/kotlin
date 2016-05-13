@@ -47,4 +47,12 @@
         <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Constructor parameter is never used as a property</problem_class>
         <description>Constructor parameter is never used as a property</description>
     </problem>
+    <problem>
+        <file>test.kt</file>
+        <line>141</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Constructor parameter is never used as a property</problem_class>
+        <description>Constructor parameter is never used as a property</description>
+    </problem>
 </problems>
