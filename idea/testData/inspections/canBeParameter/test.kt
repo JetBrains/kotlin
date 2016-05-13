@@ -136,3 +136,18 @@ class UsedInLocalFunction(val x: Int) {
         local()
     }
 }
+// YES
+open class Base1(s: String)
+class UsedInSuper(val bar123: String) : Base1(bar123)
+// NO
+class UsedInLocalSuper(val bar456: String) {
+    fun foo() {
+        class Local : Base1(bar456)
+    }
+}
+// NO
+class UsedInObjectSuper(val bar456: String) {
+    fun foo() {
+        object : Base1(bar456) {}
+    }
+}
