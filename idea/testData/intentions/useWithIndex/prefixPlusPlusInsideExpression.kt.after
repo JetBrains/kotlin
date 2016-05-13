@@ -1,0 +1,8 @@
+// WITH_RUNTIME
+fun foo(list: List<String>) {
+    for ((i, s) in list.withIndex()) {
+        println(i)
+        val x = s.length * (i + 1)
+        if (x > 1000) break
+    }
+}

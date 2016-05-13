@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtForExpression
+import org.jetbrains.kotlin.psi.KtUnaryExpression
 import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.psi.psiUtil.siblings
@@ -102,9 +103,10 @@ data class MatchingState(
          * Matchers can assume that indexVariable is null if it's not used in the rest of the loop
          */
         val indexVariable: KtCallableDeclaration?,
+        val pseudocodeProvider: () -> Pseudocode,
         val initializationStatementsToDelete: Collection<KtExpression> = emptyList(),
         val previousTransformations: MutableList<SequenceTransformation> = arrayListOf(),
-        val pseudocodeProvider: () -> Pseudocode
+        val incrementExpressions: Collection<KtUnaryExpression> = emptyList()
 )
 
 interface TransformationMatcher {

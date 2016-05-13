@@ -83,15 +83,19 @@ fun generateLambda(expression: KtExpression, indexVariable: KtCallableDeclaratio
         }
     }
     if (indexPlusPlus != null) {
-        val operand = indexPlusPlus.baseExpression!!
-        val replacement = if (indexPlusPlus is KtPostfixExpression) // index++
-            operand
-        else // ++index
-            KtPsiFactory(operand).createExpressionByPattern("$0 + 1", operand)
-        indexPlusPlus.replace(replacement)
+        removePlusPlus(indexPlusPlus)
     }
 
     return lambdaExpression
+}
+
+fun removePlusPlus(indexPlusPlus: KtUnaryExpression) {
+    val operand = indexPlusPlus.baseExpression!!
+    val replacement = if (indexPlusPlus is KtPostfixExpression) // index++
+        operand
+    else // ++index
+        KtPsiFactory(operand).createExpressionByPattern("$0 + 1", operand)
+    indexPlusPlus.replace(replacement)
 }
 
 fun generateLambda(expression: KtExpression, vararg inputVariables: KtCallableDeclaration): KtLambdaExpression {

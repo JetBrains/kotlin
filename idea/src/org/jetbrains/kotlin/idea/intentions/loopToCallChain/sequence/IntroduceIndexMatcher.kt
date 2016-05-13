@@ -72,7 +72,8 @@ object IntroduceIndexMatcher : TransformationMatcher {
         val restStatements = state.statements - incrementExpression // if it is among statements then drop it, otherwise "index++" will be replaced with "index" by generateLambda()
         val newState = state.copy(statements = restStatements,
                                   indexVariable = variable,
-                                  initializationStatementsToDelete = state.initializationStatementsToDelete + variableInitialization.initializationStatement)
+                                  initializationStatementsToDelete = state.initializationStatementsToDelete + variableInitialization.initializationStatement,
+                                  incrementExpressions = state.incrementExpressions + incrementExpression)
         return TransformationMatch.Sequence(emptyList(), newState)
     }
 
