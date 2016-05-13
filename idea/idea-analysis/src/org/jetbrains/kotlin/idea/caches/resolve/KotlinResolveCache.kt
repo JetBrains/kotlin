@@ -137,6 +137,8 @@ private object KotlinResolveDataProvider {
             is KtParameter -> PsiTreeUtil.getParentOfType(topmostElement, KtClassOrObject::class.java, KtCallableDeclaration::class.java)
             else -> topmostElement
         }
+        // Primary constructor should never be returned
+        if (analyzableElement is KtPrimaryConstructor) return analyzableElement.getContainingClassOrObject()
         return analyzableElement
                     // if none of the above worked, take the outermost declaration
                     ?: PsiTreeUtil.getTopmostParentOfType(element, KtDeclaration::class.java)
