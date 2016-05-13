@@ -199,7 +199,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                     compileTimeConstant != null ? ((TypedCompileTimeConstant) compileTimeConstant).getConstantValue() : null;
             boolean hasError = constantChecker.checkConstantExpressionType(constantValue, expression, context.expectedType);
             if (hasError) {
-                return TypeInfoFactoryKt.createTypeInfo(getDefaultType(elementType), context);
+                return TypeInfoFactoryKt.createTypeInfo(constantValue != null ? constantValue.getType() : getDefaultType(elementType),
+                                                        context);
             }
         }
 

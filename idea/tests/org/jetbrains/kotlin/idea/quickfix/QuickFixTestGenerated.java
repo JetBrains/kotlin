@@ -7741,6 +7741,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("intToShortTypeMismatch.kt")
+        public void testIntToShortTypeMismatch() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/intToShortTypeMismatch.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("letClassImplementAdditionalInterface.kt")
         public void testLetClassImplementAdditionalInterface() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/letClassImplementAdditionalInterface.kt");
@@ -7819,6 +7825,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("longToDoubleTypeMismatch.kt")
+        public void testLongToDoubleTypeMismatch() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/longToDoubleTypeMismatch.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("longToIntTypeMismatch.kt")
+        public void testLongToIntTypeMismatch() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/longToIntTypeMismatch.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("makeReturnTypeNullable.kt")
         public void testMakeReturnTypeNullable() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/makeReturnTypeNullable.kt");
@@ -7858,6 +7876,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("returnTypeMismatch.kt")
         public void testReturnTypeMismatch() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/returnTypeMismatch.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("shortToByteTypeMismatch.kt")
+        public void testShortToByteTypeMismatch() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/shortToByteTypeMismatch.kt");
             doTest(fileName);
         }
 
