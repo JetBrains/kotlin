@@ -130,7 +130,7 @@ internal class ExpressionDecomposer private constructor(
             }
             else {
                 // See KT-12275
-                val guardName = scope.declareFreshName("guard$")
+                val guardName = scope.declareFreshName("guard\$${(loopLabel?.ident.orEmpty())}")
                 val label = JsLabel(guardName).apply { synthetic = true }
                 label.statement = JsBlock(bodyStatements)
                 addStatements(0, listOf(label))
