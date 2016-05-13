@@ -132,6 +132,12 @@ public abstract class PropertyAccessorDescriptorImpl extends DeclarationDescript
         this.visibility = visibility;
     }
 
+    @NotNull
+    @Override
+    public VariableDescriptorWithAccessors getCorrespondingVariable() {
+        return correspondingProperty;
+    }
+
     @Override
     @NotNull
     public PropertyDescriptor getCorrespondingProperty() {

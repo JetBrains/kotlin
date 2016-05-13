@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.load.java.JvmAbi;
@@ -423,11 +424,16 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
 
         for (DeclarationDescriptor descriptor : closure.getCaptureVariables().keySet()) {
             if (descriptor instanceof VariableDescriptor && !(descriptor instanceof PropertyDescriptor)) {
-                Type sharedVarType = typeMapper.getSharedVarType(descriptor);
-
-                Type type = sharedVarType != null
-                                  ? sharedVarType
-                                  : typeMapper.mapType((VariableDescriptor) descriptor);
+                Type type = typeMapper.getSharedVarType(descriptor);
+                if (type == null && descriptor instanceof LocalVariableDescriptor) {
+                    KotlinType delegateType = JvmCodegenUtil.getPropertyDelegateType((LocalVariableDescriptor) descriptor, bindingContext);
+                    if (delegateType != null) {
+                        type = typeMapper.mapType(delegateType);
+                    }
+                }
+                if (type == null) {
+                    type = typeMapper.mapType((VariableDescriptor) descriptor);
+                }
                 args.add(FieldInfo.createForHiddenField(ownerType, type, "$" + descriptor.getName().asString()));
             }
             else if (ExpressionTypingUtils.isLocalFunction(descriptor)) {

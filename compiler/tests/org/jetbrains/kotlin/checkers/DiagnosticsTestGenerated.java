@@ -19641,6 +19641,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/script/SimpleScript.kts");
             doTest(fileName);
         }
+
+        @TestMetadata("topLevelVariable.kts")
+        public void testTopLevelVariable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/script/topLevelVariable.kts");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/diagnostics")

@@ -655,6 +655,7 @@ public class DescriptorResolver {
                 KtPsiUtil.safeName(parameter.getName()),
                 type,
                 false,
+                false,
                 KotlinSourceElementKt.toSourceElement(parameter)
         );
         trace.record(BindingContext.VALUE_PARAMETER, parameter, variableDescriptor);

@@ -23,10 +23,12 @@ import org.jetbrains.kotlin.types.TypeSubstitutor;
 import java.util.Collection;
 import java.util.List;
 
-public interface PropertyDescriptor extends VariableDescriptor, CallableMemberDescriptor {
+public interface PropertyDescriptor extends VariableDescriptorWithAccessors, CallableMemberDescriptor {
+    @Override
     @Nullable
     PropertyGetterDescriptor getGetter();
 
+    @Override
     @Nullable
     PropertySetterDescriptor getSetter();
 

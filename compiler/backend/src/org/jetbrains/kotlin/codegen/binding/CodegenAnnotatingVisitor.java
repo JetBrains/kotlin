@@ -23,6 +23,7 @@ import com.intellij.util.containers.Stack;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.ReflectionTypes;
 import org.jetbrains.kotlin.cfg.WhenChecker;
 import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
@@ -30,6 +31,8 @@ import org.jetbrains.kotlin.codegen.state.TypeMapperUtilsKt;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegenUtil;
 import org.jetbrains.kotlin.codegen.when.WhenByEnumsMapping;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.annotations.Annotations;
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.fileClasses.FileClasses;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor;
@@ -46,7 +49,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.EnumValue;
 import org.jetbrains.kotlin.resolve.constants.NullValue;
-import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.org.objectweb.asm.Type;
 
@@ -317,11 +320,42 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
                                      fileClassesProvider);
     }
 
+    private void recordLocalVariablePropertyMetadata(LocalVariableDescriptor variableDescriptor) {
+        KotlinType delegateType = JvmCodegenUtil.getPropertyDelegateType(variableDescriptor, bindingContext);
+        if (delegateType == null) return;
+
+        LocalVariableDescriptor delegateVariableDescriptor = new LocalVariableDescriptor(
+                variableDescriptor.getContainingDeclaration(),
+                Annotations.Companion.getEMPTY(),
+                variableDescriptor.getName(),
+                delegateType,
+                false,
+                false,
+                SourceElement.NO_SOURCE
+        );
+        bindingTrace.record(LOCAL_VARIABLE_DELEGATE, variableDescriptor, delegateVariableDescriptor);
+
+        LocalVariableDescriptor metadataVariableDescriptor = new LocalVariableDescriptor(
+                variableDescriptor.getContainingDeclaration(),
+                Annotations.Companion.getEMPTY(),
+                Name.identifier(variableDescriptor.getName().asString() + "$metadata"),
+                ReflectionTypes.Companion.createKPropertyStarType(DescriptorUtilsKt.getModule(variableDescriptor)),
+                false,
+                false,
+                SourceElement.NO_SOURCE
+        );
+        bindingTrace.record(LOCAL_VARIABLE_PROPERTY_METADATA, variableDescriptor, metadataVariableDescriptor);
+    }
+
     @Override
     public void visitProperty(@NotNull KtProperty property) {
         DeclarationDescriptor descriptor = bindingContext.get(DECLARATION_TO_DESCRIPTOR, property);
         // working around a problem with shallow analysis
         if (descriptor == null) return;
+
+        if (descriptor instanceof LocalVariableDescriptor) {
+            recordLocalVariablePropertyMetadata((LocalVariableDescriptor) descriptor);
+        }
 
         String nameForClassOrPackageMember = getNameForClassOrPackageMember(descriptor);
         if (nameForClassOrPackageMember != null) {
@@ -332,11 +366,11 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         }
 
         KtPropertyDelegate delegate = property.getDelegate();
-        if (delegate != null && descriptor instanceof PropertyDescriptor) {
-            PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
+        if (delegate != null && descriptor instanceof VariableDescriptorWithAccessors) {
+            VariableDescriptorWithAccessors variableDescriptor = (VariableDescriptorWithAccessors) descriptor;
             String name = inventAnonymousClassName();
-            KotlinType supertype = runtimeTypes.getSupertypeForPropertyReference(propertyDescriptor);
-            ClassDescriptor classDescriptor = recordClassForCallable(delegate, propertyDescriptor, Collections.singleton(supertype), name);
+            KotlinType supertype = runtimeTypes.getSupertypeForPropertyReference(variableDescriptor);
+            ClassDescriptor classDescriptor = recordClassForCallable(delegate, variableDescriptor, Collections.singleton(supertype), name);
             recordClosure(classDescriptor, name);
         }
 

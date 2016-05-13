@@ -696,34 +696,12 @@ public class BodyResolver {
             @NotNull KtExpression delegateExpression,
             @NotNull LexicalScope propertyHeaderScope
     ) {
-        KtPropertyAccessor getter = property.getGetter();
-        if (getter != null && getter.hasBody()) {
-            trace.report(ACCESSOR_FOR_DELEGATED_PROPERTY.on(getter));
-        }
-
-        KtPropertyAccessor setter = property.getSetter();
-        if (setter != null && setter.hasBody()) {
-            trace.report(ACCESSOR_FOR_DELEGATED_PROPERTY.on(setter));
-        }
-
-        LexicalScope delegateFunctionsScope = ScopeUtils.makeScopeForDelegateConventionFunctions(propertyHeaderScope, propertyDescriptor);
-
-        LexicalScope initializerScope = ScopeUtils.makeScopeForPropertyInitializer(propertyHeaderScope, propertyDescriptor);
-
-        KotlinType delegateType = delegatedPropertyResolver.resolveDelegateExpression(
-                delegateExpression, property, propertyDescriptor, initializerScope, trace,
-                outerDataFlowInfo);
-
-        delegatedPropertyResolver.resolveDelegatedPropertyGetMethod(propertyDescriptor, delegateExpression, delegateType,
-                                                                    trace, delegateFunctionsScope);
-
-        if (property.isVar()) {
-            delegatedPropertyResolver.resolveDelegatedPropertySetMethod(propertyDescriptor, delegateExpression, delegateType,
-                                                                        trace, delegateFunctionsScope);
-        }
-
-        delegatedPropertyResolver.resolveDelegatedPropertyPDMethod(propertyDescriptor, delegateExpression, delegateType,
-                                                                   trace, delegateFunctionsScope);
+        delegatedPropertyResolver.resolvePropertyDelegate(outerDataFlowInfo,
+                                                          property,
+                                                          propertyDescriptor,
+                                                          delegateExpression,
+                                                          propertyHeaderScope,
+                                                          trace);
     }
 
     private void resolvePropertyInitializer(

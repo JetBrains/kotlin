@@ -69,10 +69,10 @@ public final class ScopeUtils {
     @NotNull
     public static LexicalScope makeScopeForDelegateConventionFunctions(
             @NotNull LexicalScope parent,
-            @NotNull PropertyDescriptor propertyDescriptor
+            @NotNull VariableDescriptorWithAccessors variableDescriptor
     ) {
         // todo: very strange scope!
-        return new LexicalScopeImpl(parent, propertyDescriptor, true, propertyDescriptor.getExtensionReceiverParameter(),
+        return new LexicalScopeImpl(parent, variableDescriptor, true, variableDescriptor.getExtensionReceiverParameter(),
                                     LexicalScopeKind.PROPERTY_DELEGATE_METHOD
         );
     }

@@ -1,0 +1,60 @@
+== Delegate ==
+class Delegate {
+    operator fun getValue(t: Any?, p: KProperty<*>): Int = 1
+}
+---------------------
+L0:
+  1 <START>
+L1:
+    <END>      NEXT:[<SINK>]
+error:
+    <ERROR>    PREV:[]
+sink:
+    <SINK>     PREV:[<ERROR>, <END>]
+=====================
+== getValue ==
+operator fun getValue(t: Any?, p: KProperty<*>): Int = 1
+---------------------
+L0:
+  1 <START>
+    v(t: Any?)
+    magic[FAKE_INITIALIZER](t: Any?) -> <v0>
+    w(t|<v0>)
+    v(p: KProperty<*>)
+    magic[FAKE_INITIALIZER](p: KProperty<*>) -> <v1>
+    w(p|<v1>)
+    r(1) -> <v2>
+    ret(*|<v2>) L1
+L1:
+    <END>                                               NEXT:[<SINK>]
+error:
+    <ERROR>                                             PREV:[]
+sink:
+    <SINK>                                              PREV:[<ERROR>, <END>]
+=====================
+== foo ==
+fun foo(): Int {
+    val prop: Int by Delegate()
+    return prop
+}
+---------------------
+L0:
+  1 <START>
+  2 mark({ val prop: Int by Delegate() return prop })
+    v(val prop: Int by Delegate())
+    magic[UNRECOGNIZED_WRITE_RHS](val prop: Int by Delegate()) -> <v0>
+    w(prop|<v0>)
+    mark(Delegate())
+    call(Delegate(), <init>) -> <v1>
+    magic[FAKE_INITIALIZER](val prop: Int by Delegate()) -> <v2>
+    w(prop|<v2>)
+    magic[VALUE_CONSUMER](val prop: Int by Delegate()|<v1>) -> <v3>
+    r(prop) -> <v4>
+    ret(*|<v4>) L1
+L1:
+  1 <END>                                                                 NEXT:[<SINK>]
+error:
+    <ERROR>                                                               PREV:[]
+sink:
+    <SINK>                                                                PREV:[<ERROR>, <END>]
+=====================

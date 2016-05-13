@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor;
 import org.jetbrains.kotlin.name.FqName;
@@ -39,6 +40,8 @@ public class JvmRuntimeTypes {
     private final ClassDescriptor functionReference;
     private final List<ClassDescriptor> propertyReferences;
     private final List<ClassDescriptor> mutablePropertyReferences;
+    private final ClassDescriptor localVariableReference;
+    private final ClassDescriptor mutableLocalVariableReference;
 
     public JvmRuntimeTypes() {
         ModuleDescriptorImpl module = TargetPlatformKt.createModule(
@@ -47,9 +50,12 @@ public class JvmRuntimeTypes {
                 LockBasedStorageManager.NO_LOCKS,
                 DefaultBuiltIns.getInstance());
         PackageFragmentDescriptor kotlinJvmInternal = new MutablePackageFragmentDescriptor(module, new FqName("kotlin.jvm.internal"));
+        PackageFragmentDescriptor kotlinReflectJvmInternal = new MutablePackageFragmentDescriptor(module, new FqName("kotlin.reflect.jvm.internal"));
 
         this.lambda = createClass(kotlinJvmInternal, "Lambda");
         this.functionReference = createClass(kotlinJvmInternal, "FunctionReference");
+        this.localVariableReference = createClass(kotlinReflectJvmInternal, "LocalVariableReference");
+        this.mutableLocalVariableReference = createClass(kotlinReflectJvmInternal, "MutableLocalVariableReference");
         this.propertyReferences = new ArrayList<ClassDescriptor>(3);
         this.mutablePropertyReferences = new ArrayList<ClassDescriptor>(3);
 
@@ -110,7 +116,11 @@ public class JvmRuntimeTypes {
     }
 
     @NotNull
-    public KotlinType getSupertypeForPropertyReference(@NotNull PropertyDescriptor descriptor) {
+    public KotlinType getSupertypeForPropertyReference(@NotNull VariableDescriptorWithAccessors descriptor) {
+        if (descriptor instanceof LocalVariableDescriptor) {
+            return (descriptor.isVar() ? mutableLocalVariableReference : localVariableReference).getDefaultType();
+        }
+
         int arity = (descriptor.getExtensionReceiverParameter() != null ? 1 : 0) +
                     (descriptor.getDispatchReceiverParameter() != null ? 1 : 0);
         return (descriptor.isVar() ? mutablePropertyReferences : propertyReferences).get(arity).getDefaultType();

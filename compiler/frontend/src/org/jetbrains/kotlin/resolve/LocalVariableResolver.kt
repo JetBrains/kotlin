@@ -35,12 +35,12 @@ import org.jetbrains.kotlin.types.expressions.*
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
 
 class LocalVariableResolver(
-        private val expressionTypingServices: ExpressionTypingServices,
         private val modifiersChecker: ModifiersChecker,
         private val identifierChecker: IdentifierChecker,
         private val dataFlowAnalyzer: DataFlowAnalyzer,
         private val annotationResolver: AnnotationResolver,
-        private val variableTypeResolver: VariableTypeResolver
+        private val variableTypeResolver: VariableTypeResolver,
+        private val delegatedPropertyResolver: DelegatedPropertyResolver
 ) {
 
     fun process(
@@ -65,13 +65,18 @@ class LocalVariableResolver(
             context.trace.report(LOCAL_VARIABLE_WITH_SETTER.on(setter))
         }
 
+        val propertyDescriptor = resolveLocalVariableDescriptor(scope, property, context.dataFlowInfo, context.trace)
+
         val delegateExpression = property.delegateExpression
-        if (delegateExpression != null) {
-            expressionTypingServices.getTypeInfo(delegateExpression, context)
-            context.trace.report(LOCAL_VARIABLE_WITH_DELEGATE.on(property.delegate!!))
+        if (delegateExpression != null && propertyDescriptor is VariableDescriptorWithAccessors) {
+            delegatedPropertyResolver.resolvePropertyDelegate(typingContext.dataFlowInfo,
+                                                              property,
+                                                              propertyDescriptor,
+                                                              delegateExpression,
+                                                              typingContext.scope,
+                                                              typingContext.trace);
         }
 
-        val propertyDescriptor = resolveLocalVariableDescriptor(scope, property, context.dataFlowInfo, context.trace)
         val initializer = property.initializer
         var typeInfo: KotlinTypeInfo
         if (initializer != null) {
@@ -167,12 +172,14 @@ class LocalVariableResolver(
             type: KotlinType?,
             trace: BindingTrace
     ): LocalVariableDescriptor {
+        val hasDelegate = variable is KtProperty && variable.hasDelegate();
         val variableDescriptor = LocalVariableDescriptor(
                 scope.ownerDescriptor,
                 annotationResolver.resolveAnnotationsWithArguments(scope, variable.modifierList, trace),
                 KtPsiUtil.safeName(variable.name),
                 type,
                 variable.isVar,
+                hasDelegate,
                 variable.toSourceElement()
         )
         trace.record(BindingContext.VARIABLE, variable, variableDescriptor)
