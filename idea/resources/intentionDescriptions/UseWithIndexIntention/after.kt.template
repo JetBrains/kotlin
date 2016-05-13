@@ -1,0 +1,5 @@
+fun foo(list: List<String>) {
+    for (<spot>(index, s) in list.withIndex()</spot>) {
+        print(s.substring(<spot>index</spot>))
+    }
+}

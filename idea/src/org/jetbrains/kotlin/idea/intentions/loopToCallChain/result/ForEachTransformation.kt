@@ -53,7 +53,7 @@ class ForEachTransformation(
             get() = true
 
         override fun match(state: MatchingState): TransformationMatch.Result? {
-            if (state.previousTransformations.isEmpty() && state.indexVariable == null) return null // do not suggest conversion to just ".forEach{}"
+            if (state.previousTransformations.isEmpty()) return null // do not suggest conversion to just ".forEach{}" or ".forEachIndexed{}"
 
             val statement = state.statements.singleOrNull() ?: return null
             //TODO: should we disallow it for complicated statements like loops, if, when?

@@ -1,5 +1,5 @@
 // WITH_RUNTIME
-// INTENTION_TEXT: "Replace with 'forEachIndexed{}'"
+// IS_APPLICABLE: false
 fun foo(list: List<String>) {
     <caret>for ((index, s) in list.withIndex()) {
         println(s.hashCode() * index)

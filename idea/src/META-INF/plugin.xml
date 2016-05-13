@@ -1019,6 +1019,11 @@
     </intentionAction>
 
     <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.loopToCallChain.UseWithIndexIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.SwapBinaryExpressionIntention</className>
       <category>Kotlin</category>
     </intentionAction>
@@ -1514,6 +1519,13 @@
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.loopToCallChain.LoopToCallChainInspection"
                      displayName="Loop can be replaced with stdlib operations"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     level="INFO"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.loopToCallChain.UseWithIndexInspection"
+                     displayName="Manually incremented index variable can be replaced with use of 'withIndex()'"
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="INFO"

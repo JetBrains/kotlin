@@ -10517,4 +10517,43 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
     }
+
+    @TestMetadata("idea/testData/intentions/useWithIndex")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class UseWithIndex extends AbstractIntentionTest {
+        public void testAllFilesPresentInUseWithIndex() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/useWithIndex"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("alreadyWithIndex.kt")
+        public void testAlreadyWithIndex() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/useWithIndex/alreadyWithIndex.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("customTypeWithIterator.kt")
+        public void testCustomTypeWithIterator() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/useWithIndex/customTypeWithIterator.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("indexPlusPlusInsideExpression.kt")
+        public void testIndexPlusPlusInsideExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/useWithIndex/indexPlusPlusInsideExpression.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("prefixPlusPlusInsideExpression.kt")
+        public void testPrefixPlusPlusInsideExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/useWithIndex/prefixPlusPlusInsideExpression.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/useWithIndex/simple.kt");
+            doTest(fileName);
+        }
+    }
 }

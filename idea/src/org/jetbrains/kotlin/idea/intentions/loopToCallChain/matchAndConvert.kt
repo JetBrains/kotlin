@@ -355,3 +355,23 @@ private fun mergeTransformations(match: TransformationMatch.Result): Transformat
     return TransformationMatch.Result(transformations.last() as ResultTransformation, transformations.dropLast(1) as List<SequenceTransformation>)
 }
 
+data class IntroduceIndexData(
+        val indexVariable: KtCallableDeclaration,
+        val initializationStatement: KtExpression,
+        val incrementExpression: KtUnaryExpression
+)
+
+fun matchIndexToIntroduce(loop: KtForExpression): IntroduceIndexData? {
+    val (inputVariable, indexVariable) = extractLoopData(loop) ?: return null
+    if (indexVariable != null) return null // loop is already with "withIndex"
+
+    val state = createInitialMatchingState(loop, inputVariable, indexVariable)?.unwrapBlock() ?: return null
+
+    val match = IntroduceIndexMatcher.match(state) ?: return null
+    assert(match.sequenceTransformations.isEmpty())
+    val newState = match.newState
+
+    val initializationStatement = newState.initializationStatementsToDelete.single()
+    val incrementExpression = newState.incrementExpressions.single()
+    return IntroduceIndexData(newState.indexVariable!!, initializationStatement, incrementExpression)
+}
