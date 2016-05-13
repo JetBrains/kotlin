@@ -125,6 +125,12 @@ public class KotlinGotoImplementationTestGenerated extends AbstractKotlinGotoImp
         doTest(fileName);
     }
 
+    @TestMetadata("ObjectImported.kt")
+    public void testObjectImported() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/implementations/ObjectImported.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("OverridesInEnumEntries.kt")
     public void testOverridesInEnumEntries() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/implementations/OverridesInEnumEntries.kt");
