@@ -530,7 +530,7 @@ public class TranslationContext {
         return result;
     }
 
-    public boolean isDeferred(@NotNull ConstructorDescriptor constructor) {
+    public boolean shouldBeDeferred(@NotNull ConstructorDescriptor constructor) {
         ClassDescriptor classDescriptor = constructor.getContainingDeclaration();
         return staticContext.getDeferredCallSites().containsKey(classDescriptor);
     }
@@ -538,7 +538,7 @@ public class TranslationContext {
     public void deferConstructorCall(@NotNull ConstructorDescriptor constructor, @NotNull List<JsExpression> invocationArgs) {
         ClassDescriptor classDescriptor = constructor.getContainingDeclaration();
         List<DeferredCallSite> callSites = staticContext.getDeferredCallSites().get(classDescriptor);
-        if (callSites == null) throw new IllegalStateException("This method should be call only when `isDeferred` method " +
+        if (callSites == null) throw new IllegalStateException("This method should be call only when `shouldBeDeferred` method " +
                                                                "reports true for given constructor: " + constructor);
         callSites.add(new DeferredCallSite(constructor, invocationArgs));
     }
