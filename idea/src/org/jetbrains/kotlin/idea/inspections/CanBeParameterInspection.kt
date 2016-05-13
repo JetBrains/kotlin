@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.getAccessorNames
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 class CanBeParameterInspection : AbstractKotlinInspection() {
     private fun PsiReference.usedAsPropertyIn(klass: KtClass): Boolean {
@@ -55,13 +56,15 @@ class CanBeParameterInspection : AbstractKotlinInspection() {
         do {
             parameterUser = PsiTreeUtil.getParentOfType(parameterUser, KtProperty::class.java, KtPropertyAccessor::class.java,
                                                         KtClassInitializer::class.java, KtSecondaryConstructor::class.java,
-                                                        KtFunction::class.java, KtObjectDeclaration::class.java) ?: return true
+                                                        KtFunction::class.java, KtObjectDeclaration::class.java,
+                                                        KtSuperTypeCallEntry::class.java) ?: return true
         } while (parameterUser is KtProperty && parameterUser.isLocal)
         return when (parameterUser) {
             is KtProperty -> parameterUser.containingClassOrObject !== klass
             is KtClassInitializer -> parameterUser.containingDeclaration !== klass
             is KtSecondaryConstructor -> parameterUser.getContainingClassOrObject() !== klass
             is KtFunction, is KtObjectDeclaration, is KtPropertyAccessor -> true
+            is KtSuperTypeCallEntry -> parameterUser.getStrictParentOfType<KtClassOrObject>() !== klass
             else -> true
         }
     }
