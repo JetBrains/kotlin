@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea
 import com.intellij.psi.PsiDocumentManager
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
@@ -341,5 +342,23 @@ class C(param1: String = "", param2: Int = 0) {
 
     private fun configureWithKotlin(@Language("kotlin") text: String): KtFile {
         return myFixture.configureByText("Test.kt", text.trimIndent()) as KtFile
+    }
+
+    fun testPrimaryConstructorParameterFullAnalysis() {
+        val file = myFixture.configureByText("Test.kt", """
+        class My(param: Int = 0)
+        """) as KtFile
+
+        val defaultValue = ((file.declarations[0]) as KtClass).getPrimaryConstructor()!!.valueParameters[0].defaultValue!!
+        defaultValue.analyzeFullyAndGetResult()
+    }
+
+    fun testPrimaryConstructorAnnotationFullAnalysis() {
+        val file = myFixture.configureByText("Test.kt", """
+        class My @Deprecated("xyz") protected constructor(param: Int)
+        """) as KtFile
+
+        val annotationArguments = ((file.declarations[0]) as KtClass).getPrimaryConstructor()!!.annotationEntries[0].valueArgumentList!!
+        annotationArguments.analyzeFullyAndGetResult()
     }
 }
