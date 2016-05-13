@@ -12,7 +12,7 @@ class UsedInInitializer(val x: Int) {
         y = x
     }
 }
-// YES
+// NO!
 class UsedInConstructor(val x: Int) {
     fun foo(arg: Int) = arg
 
