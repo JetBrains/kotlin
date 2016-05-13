@@ -118,20 +118,18 @@ fun rethrowWithCancelIndicator(exception: ProcessCanceledException): ProcessCanc
     return exception
 }
 
-fun PrefixMatcher.asNameFilter() = { name: Name ->
-    if (name.isSpecial) {
-        false
-    }
-    else {
-        val identifier = name.identifier
-        if (prefix.startsWith("$")) { // we need properties from scope for backing field completion
-            prefixMatches("$" + identifier)
-        }
-        else {
-            prefixMatches(identifier)
-        }
-    }
+fun PrefixMatcher.asNameFilter(): (Name) -> Boolean {
+    return { name -> !name.isSpecial && prefixMatches(name.identifier) }
 }
+
+fun PrefixMatcher.asStringNameFilter() = { name: String -> prefixMatches(name) }
+
+fun ((String) -> Boolean).toNameFilter(): (Name) -> Boolean {
+    return { name -> !name.isSpecial && this(name.identifier) }
+}
+
+infix fun <T> ((T) -> Boolean).or(otherFilter: (T) -> Boolean): (T) -> Boolean
+        = { this(it) || otherFilter(it) }
 
 fun LookupElementPresentation.prependTailText(text: String, grayed: Boolean) {
     val tails = tailFragments
