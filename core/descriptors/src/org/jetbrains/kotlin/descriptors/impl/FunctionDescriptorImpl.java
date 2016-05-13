@@ -43,7 +43,10 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     private boolean isExternal = false;
     private boolean isInline = false;
     private boolean isTailrec = false;
-    private boolean isHidden = false;
+    // Difference between these hidden kinds:
+    // 1. isHiddenToOvercomeSignatureClash prohibit calling such functions even in super-call context
+    // 2. isHiddenForResolutionEverywhereBesideSupercalls propagates to it's overrides descriptors while isHiddenToOvercomeSignatureClash does not
+    private boolean isHiddenToOvercomeSignatureClash = false;
     private boolean isHiddenForResolutionEverywhereBesideSupercalls = false;
     private boolean hasStableParameterNames = true;
     private boolean hasSynthesizedParameterNames = false;
@@ -128,8 +131,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         this.isTailrec = isTailrec;
     }
 
-    public void setHidden(boolean hidden) {
-        isHidden = hidden;
+    public void setHiddenToOvercomeSignatureClash(boolean hiddenToOvercomeSignatureClash) {
+        isHiddenToOvercomeSignatureClash = hiddenToOvercomeSignatureClash;
     }
 
     private void setHiddenForResolutionEverywhereBesideSupercalls(boolean hiddenForResolutionEverywhereBesideSupercalls) {
@@ -234,7 +237,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
 
     @Override
     public boolean isHiddenToOvercomeSignatureClash() {
-        return isHidden;
+        return isHiddenToOvercomeSignatureClash;
     }
 
     @Override
@@ -598,7 +601,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         substitutedDescriptor.setTailrec(isTailrec);
         substitutedDescriptor.setHasStableParameterNames(hasStableParameterNames);
         substitutedDescriptor.setHasSynthesizedParameterNames(hasSynthesizedParameterNames);
-        substitutedDescriptor.setHidden(configuration.isHiddenToOvercomeSignatureClash);
+        substitutedDescriptor.setHiddenToOvercomeSignatureClash(configuration.isHiddenToOvercomeSignatureClash);
         substitutedDescriptor.setHiddenForResolutionEverywhereBesideSupercalls(configuration.isHiddenForResolutionEverywhereBesideSupercalls);
 
         if (configuration.signatureChange || getInitialSignatureDescriptor() != null) {
