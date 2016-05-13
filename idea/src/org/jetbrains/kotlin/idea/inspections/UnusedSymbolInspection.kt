@@ -251,6 +251,9 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
                                                    as? KtClassOrObject ?: return true
                         return importedFrom.declarations.none { it is KtNamedDeclaration && hasNonTrivialUsages(it) }
                     }
+                    else if (import.aliasName != null && import.aliasName != declaration.name) {
+                        return false
+                    }
                     else {
                         if (import.importedFqName != declaration.fqName) {
                             val importedDeclaration = import.importedReference?.getQualifiedElementSelector()?.mainReference?.resolve() as? KtNamedDeclaration

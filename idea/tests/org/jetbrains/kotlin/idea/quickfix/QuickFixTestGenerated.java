@@ -6477,6 +6477,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeUnused/unusedTypeParameter.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("usedObjectAsAlias.kt")
+        public void testUsedObjectAsAlias() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeUnused/usedObjectAsAlias.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/quickfix/removeUnusedReceiver")

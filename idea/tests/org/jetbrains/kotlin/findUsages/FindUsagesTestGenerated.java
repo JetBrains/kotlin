@@ -744,6 +744,12 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("kotlinImportedObjectUsages.0.kt")
+            public void testKotlinImportedObjectUsages() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findObjectUsages/kotlinImportedObjectUsages.0.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kotlinLocalObjectUsages1.0.kt")
             public void testKotlinLocalObjectUsages1() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findObjectUsages/kotlinLocalObjectUsages1.0.kt");
