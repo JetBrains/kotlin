@@ -155,6 +155,12 @@ public class InlineEvaluationOrderTestGenerated extends AbstractInlineEvaluation
         doTest(fileName);
     }
 
+    @TestMetadata("continueInExtractedDoWhile.kt")
+    public void testContinueInExtractedDoWhile() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/continueInExtractedDoWhile.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("doWhile.kt")
     public void testDoWhile() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/doWhile.kt");
@@ -242,6 +248,12 @@ public class InlineEvaluationOrderTestGenerated extends AbstractInlineEvaluation
     @TestMetadata("multiDeclarationComplex.kt")
     public void testMultiDeclarationComplex() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/multiDeclarationComplex.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("nestedContinueInExtractedDoWhile.kt")
+    public void testNestedContinueInExtractedDoWhile() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/nestedContinueInExtractedDoWhile.kt");
         doTest(fileName);
     }
 
