@@ -167,6 +167,12 @@ public class SecondaryConstructorTestGenerated extends AbstractSecondaryConstruc
         doTest(fileName);
     }
 
+    @TestMetadata("localDataClass.kt")
+    public void testLocalDataClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/localDataClass.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("superCallPrimary.kt")
     public void testSuperCallPrimary() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/superCallPrimary.kt");

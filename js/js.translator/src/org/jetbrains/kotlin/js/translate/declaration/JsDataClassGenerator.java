@@ -38,16 +38,11 @@ import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.or;
 class JsDataClassGenerator extends DataClassMethodGenerator {
     private final TranslationContext context;
     private final List<? super JsPropertyInitializer> output;
-    private final List<JsName> closureFieldNames = new ArrayList<JsName>();
 
     JsDataClassGenerator(KtClassOrObject klass, TranslationContext context, List<? super JsPropertyInitializer> output) {
         super(klass, context.bindingContext());
         this.context = context;
         this.output = output;
-    }
-
-    public void addClosureVariable(@NotNull JsName name) {
-        closureFieldNames.add(name);
     }
 
     @Override
@@ -67,10 +62,6 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
         assert function.getValueParameters().size() == constructorParameters.size();
 
         List<JsExpression> constructorArguments = new ArrayList<JsExpression>(constructorParameters.size());
-
-        for (JsName closureFieldName : closureFieldNames) {
-            constructorArguments.add(JsAstUtils.fqnWithoutSideEffects(closureFieldName, JsLiteral.THIS));
-        }
 
         for (int i = 0; i < constructorParameters.size(); i++) {
             KtParameter constructorParam = constructorParameters.get(i);
@@ -106,6 +97,9 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
         JsExpression constructorRef = context.getQualifiedReference(constructor);
 
         JsExpression returnExpression = new JsNew(constructorRef, constructorArguments);
+        if (context.shouldBeDeferred(constructor)) {
+            context.deferConstructorCall(constructor, constructorArguments);
+        }
         functionObj.getBody().getStatements().add(new JsReturn(returnExpression));
     }
 
