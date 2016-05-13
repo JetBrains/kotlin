@@ -42,7 +42,7 @@
     <orderEntry type="module" module-name="android-extensions-compiler" scope="TEST" />
     <orderEntry type="module" module-name="android-extensions-idea" scope="TEST" />
     <orderEntry type="library" name="markdown" level="project" />
-    <orderEntry type="module" module-name="idea-completion" scope="TEST" />
+    <orderEntry type="module" module-name="idea-completion" />
     <orderEntry type="module" module-name="idea-test-framework" scope="TEST" />
     <orderEntry type="module" module-name="js.serializer" />
     <orderEntry type="module" module-name="daemon-client" />
