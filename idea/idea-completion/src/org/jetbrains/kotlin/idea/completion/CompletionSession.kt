@@ -118,17 +118,16 @@ abstract class CompletionSession(
 
     protected val prefixMatcher = CamelHumpMatcher(prefix)
 
-    protected val descriptorNameFilter: (Name) -> Boolean = run {
-        val nameFilter = prefixMatcher.asNameFilter()
+    private val descriptorStringNameFilter: (String) -> Boolean = run {
+        val nameFilter = prefixMatcher.asStringNameFilter()
         val getOrSetPrefix = listOf("get", "set", "ge", "se", "g", "s").firstOrNull { prefix.startsWith(it) }
         if (getOrSetPrefix != null)
-            nameFilter or prefixMatcher.cloneWithPrefix(prefix.removePrefix(getOrSetPrefix).decapitalizeSmart()).asNameFilter()
+            prefixMatcher.cloneWithPrefix(prefix.removePrefix(getOrSetPrefix).decapitalizeSmart()).asStringNameFilter() or nameFilter
         else
             nameFilter
     }
 
-    private infix fun ((Name) -> Boolean).or(otherFilter: (Name) -> Boolean): (Name) -> Boolean
-            = { this(it) || otherFilter(it) }
+    protected val descriptorNameFilter: (Name) -> Boolean = descriptorStringNameFilter.toNameFilter()
 
     protected val isVisibleFilter: (DeclarationDescriptor) -> Boolean = { isVisibleDescriptor(it, completeNonAccessible = configuration.completeNonAccessibleDeclarations) }
     protected val isVisibleFilterCheckAlways: (DeclarationDescriptor) -> Boolean = { isVisibleDescriptor(it, completeNonAccessible = false) }
@@ -318,12 +317,11 @@ abstract class CompletionSession(
 
         var notImportedExtensions: Collection<CallableDescriptor> = emptyList()
         if (callTypeAndReceiver.shouldCompleteCallableExtensions()) {
-            val nameFilter: (String) -> Boolean = { prefixMatcher.prefixMatches(it) }
             val indicesHelper = indicesHelper(true)
             val extensions = if (runtimeReceiver != null)
-                indicesHelper.getCallableTopLevelExtensions(callTypeAndReceiver, listOf(runtimeReceiver.type), nameFilter)
+                indicesHelper.getCallableTopLevelExtensions(callTypeAndReceiver, listOf(runtimeReceiver.type), descriptorStringNameFilter)
             else
-                indicesHelper.getCallableTopLevelExtensions(callTypeAndReceiver, expression!!, bindingContext, nameFilter)
+                indicesHelper.getCallableTopLevelExtensions(callTypeAndReceiver, expression!!, bindingContext, descriptorStringNameFilter)
 
             val pair = extensions.partition { isImportableDescriptorImported(it) }
             variants += pair.first
