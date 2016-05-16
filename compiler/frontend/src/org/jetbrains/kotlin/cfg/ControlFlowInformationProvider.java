@@ -957,6 +957,9 @@ public class ControlFlowInformationProvider {
                         // is this a recursive call?
                         CallableDescriptor functionDescriptor = resolvedCall.getResultingDescriptor();
                         if (!functionDescriptor.getOriginal().equals(subroutineDescriptor)) return;
+                        // Overridden functions using default arguments at tail call are not included: KT-4285
+                        if (resolvedCall.getCall().getValueArguments().size() != functionDescriptor.getValueParameters().size() &&
+                            !functionDescriptor.getOverriddenDescriptors().isEmpty()) return;
 
                         KtElement element = callInstruction.getElement();
                         //noinspection unchecked
