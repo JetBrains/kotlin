@@ -564,6 +564,12 @@ public abstract class kotlin/jvm/internal/Lambda : kotlin/jvm/internal/FunctionI
 	public fun toString ()Ljava/lang/String;
 }
 
+public class kotlin/jvm/internal/LocalVariableReference : kotlin/jvm/internal/PropertyReference0 {
+	public fun <init> ()V
+	public fun get ()Ljava/lang/Object;
+	public fun getOwner ()Lkotlin/reflect/KDeclarationContainer;
+}
+
 public final class kotlin/jvm/internal/LongCompanionObject {
 	public static final field INSTANCE Lkotlin/jvm/internal/LongCompanionObject;
 	public static final field MAX_VALUE J
@@ -575,6 +581,13 @@ public final class kotlin/jvm/internal/LongSpreadBuilder : kotlin/jvm/internal/P
 	public final fun add (J)V
 	public synthetic fun getSize (Ljava/lang/Object;)I
 	public final fun toArray ()[J
+}
+
+public class kotlin/jvm/internal/MutableLocalVariableReference : kotlin/jvm/internal/MutablePropertyReference0 {
+	public fun <init> ()V
+	public fun get ()Ljava/lang/Object;
+	public fun getOwner ()Lkotlin/reflect/KDeclarationContainer;
+	public fun set (Ljava/lang/Object;)V
 }
 
 public abstract class kotlin/jvm/internal/MutablePropertyReference : kotlin/jvm/internal/PropertyReference, kotlin/reflect/KMutableProperty {
