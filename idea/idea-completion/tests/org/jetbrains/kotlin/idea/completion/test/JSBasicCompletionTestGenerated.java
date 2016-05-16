@@ -2393,6 +2393,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/substitutedSignature/SubstitutedSignature6.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("SubstitutedSignatureSOE.kt")
+            public void testSubstitutedSignatureSOE() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/substitutedSignature/SubstitutedSignatureSOE.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("idea/idea-completion/testData/basic/common/super")

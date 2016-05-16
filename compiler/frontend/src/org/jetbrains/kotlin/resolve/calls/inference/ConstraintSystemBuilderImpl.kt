@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -114,7 +114,7 @@ class ConstraintSystemBuilderImpl(private val mode: Mode = ConstraintSystemBuild
             type.getNestedTypeParameters().mapNotNull { getMyTypeVariable(it) }
 
     override fun addSubtypeConstraint(constrainingType: KotlinType?, subjectType: KotlinType?, constraintPosition: ConstraintPosition) {
-        addConstraint(SUB_TYPE, constrainingType, subjectType, ConstraintContext(constraintPosition, initial = true))
+        addConstraint(SUB_TYPE, constrainingType, subjectType, ConstraintContext(constraintPosition, initial = true, initialReduction = true))
     }
 
     fun addConstraint(
@@ -126,7 +126,8 @@ class ConstraintSystemBuilderImpl(private val mode: Mode = ConstraintSystemBuild
         val constraintPosition = constraintContext.position
 
         // when processing nested constraints, `derivedFrom` information should be reset
-        val newConstraintContext = ConstraintContext(constraintContext.position, derivedFrom = null, initial = false)
+        val newConstraintContext = ConstraintContext(constraintContext.position, derivedFrom = null, initial = false,
+                                                     initialReduction = constraintContext.initialReduction)
         val typeCheckingProcedure = TypeCheckingProcedure(object : TypeCheckingProcedureCallbacks {
             private var depth = 0
 
@@ -194,7 +195,7 @@ class ConstraintSystemBuilderImpl(private val mode: Mode = ConstraintSystemBuild
         if (isErrorOrSpecialType(subType, constraintPosition) || isErrorOrSpecialType(superType, constraintPosition)) return
         if (subType == null || superType == null) return
 
-        if ((subType.hasExactAnnotation() || superType.hasExactAnnotation()) && (constraintKind != EQUAL)) {
+        if (constraintContext.initialReduction && (subType.hasExactAnnotation() || superType.hasExactAnnotation()) && (constraintKind != EQUAL)) {
             return doAddConstraint(EQUAL, subType, superType, constraintContext, typeCheckingProcedure)
         }
 

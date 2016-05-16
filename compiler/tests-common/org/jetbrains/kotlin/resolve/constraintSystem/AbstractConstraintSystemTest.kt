@@ -94,7 +94,7 @@ abstract class AbstractConstraintSystemTest : KotlinTestWithEnvironment() {
         for (constraint in constraints) {
             val firstType = getType(constraint.firstType)
             val secondType = getType(constraint.secondType)
-            val context = ConstraintContext(SPECIAL.position(), initial = true)
+            val context = ConstraintContext(SPECIAL.position(), initial = true, initialReduction = true)
             when (constraint.kind) {
                 MyConstraintKind.SUBTYPE -> builder.addSubtypeConstraint(firstType, secondType, context.position)
                 MyConstraintKind.SUPERTYPE -> builder.addSubtypeConstraint(secondType, firstType, context.position)
