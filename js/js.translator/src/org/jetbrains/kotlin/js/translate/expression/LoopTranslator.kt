@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getHasNextCallable
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getIteratorFunction
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getNextFunction
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getTypeForExpression
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getLoopParameter
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getLoopRange
@@ -46,7 +47,6 @@ fun createWhile(doWhile: Boolean, expression: KtWhileExpressionBase, context: Tr
                               throw IllegalArgumentException("condition expression should not be null: ${expression.text}")
     val conditionBlock = JsBlock()
     var jsCondition = Translation.translateAsExpression(conditionExpression, context, conditionBlock)
-    val isEmptyLoopCondition = isEmptyExpression(jsCondition)
     val body = expression.body
     var bodyStatement =
         if (body != null)
@@ -62,29 +62,17 @@ fun createWhile(doWhile: Boolean, expression: KtWhileExpressionBase, context: Tr
         if (doWhile) {
             // translate to: tmpSecondRun = false; do { if(tmpSecondRun) { <expr> if(!tmpExprVar) break; } else tmpSecondRun=true; <body> } while(true)
             val secondRun = context.declareTemporary(JsLiteral.FALSE)
-            context.addStatementToCurrentBlock(secondRun.assignmentExpression().makeStmt())
-            if (!isEmptyLoopCondition) {
-                conditionBlock.statements.add(breakIfConditionIsFalseStatement)
-            }
+            context.addStatementToCurrentBlock(JsAstUtils.asSyntheticStatement(secondRun.assignmentExpression()))
+            conditionBlock.statements.add(breakIfConditionIsFalseStatement)
             val ifStatement = JsIf(secondRun.reference(), conditionBlock, assignment(secondRun.reference(), JsLiteral.TRUE).makeStmt())
             bodyBlock.statements.add(0, ifStatement)
         }
         else {
-            // translate to: while (true) { <expr> if(!tmpExprVar) break; <body> }
-            if (isEmptyLoopCondition) {
-                bodyBlock.statements.clear()
-                context.addStatementsToCurrentBlockFrom(conditionBlock)
-            }
-            else {
-                conditionBlock.statements.add(breakIfConditionIsFalseStatement)
-                bodyBlock.statements.addAll(0, conditionBlock.statements)
-            }
+            conditionBlock.statements.add(breakIfConditionIsFalseStatement)
+            bodyBlock.statements.addAll(0, conditionBlock.statements)
         }
 
         bodyStatement = bodyBlock
-    }
-    else if (isEmptyLoopCondition) {
-        jsCondition = JsLiteral.FALSE
     }
 
     val result = if (doWhile) JsDoWhile() else JsWhile()
@@ -159,7 +147,7 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
         val rangeStart =
             if (TranslationUtils.isCacheNeeded(leftExpression)) {
                 val startVar = context.declareTemporary(leftExpression)
-                context.addStatementToCurrentBlock(startVar.assignmentExpression().makeStmt())
+                context.addStatementToCurrentBlock(asSyntheticStatement(startVar.assignmentExpression()))
                 startVar.reference()
             }
             else {

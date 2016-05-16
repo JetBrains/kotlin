@@ -83,7 +83,6 @@ public final class PatternTranslator extends AbstractTranslator {
         assert isCastExpression(expression): "Expected cast expression, got " + expression;
         KtExpression left = expression.getLeft();
         JsExpression expressionToCast = Translation.translateAsExpression(left, context());
-        if (JsAstUtils.isEmptyExpression(expressionToCast)) return expressionToCast;
 
         TemporaryVariable temporary = context().declareTemporary(expressionToCast);
 
@@ -124,8 +123,6 @@ public final class PatternTranslator extends AbstractTranslator {
     @Nullable
     public JsExpression translateIsCheck(@NotNull JsExpression subject, @Nullable KotlinType sourceType,
             @NotNull KtTypeReference targetTypeReference) {
-        if (JsAstUtils.isEmptyExpression(subject)) return subject;
-
         KotlinType targetType = getTypeByReference(bindingContext(), targetTypeReference);
         if (sourceType != null && !DynamicTypesKt.isDynamic(sourceType) && TypeUtilsKt.isSubtypeOf(sourceType, targetType)) return null;
 

@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.reference.CallArgumentTranslator
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.asSyntheticStatement
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getReceiverParameterForReceiver
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
@@ -87,7 +88,7 @@ fun TranslationContext.getCallInfo(resolvedCall: ResolvedCall<out FunctionDescri
             var receiverRef = explicitReceivers.extensionReceiver
             if (receiverRef != null) {
                 receiverRef = this.declareTemporary(null).reference()
-                this.addStatementToCurrentBlock(JsAstUtils.assignment(receiverRef, explicitReceivers.extensionReceiver!!).makeStmt())
+                addStatementToCurrentBlock(asSyntheticStatement(JsAstUtils.assignment(receiverRef, explicitReceivers.extensionReceiver!!)))
             }
             ExplicitReceivers(receiverOrThisRef, receiverRef)
         }

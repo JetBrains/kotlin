@@ -46,6 +46,7 @@ import java.util.Collections;
 import static org.jetbrains.kotlin.js.translate.operation.AssignmentTranslator.isAssignmentOperator;
 import static org.jetbrains.kotlin.js.translate.operation.CompareToTranslator.isCompareToCall;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getCallableDescriptorForOperationExpression;
+import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.asSyntheticStatement;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.not;
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.*;
 
@@ -124,9 +125,6 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
     @NotNull
     private JsExpression translateElvis() {
         JsExpression leftExpression = Translation.translateAsExpression(leftKtExpression, context());
-        if (JsAstUtils.isEmptyExpression(leftExpression)) {
-            return leftExpression;
-        }
 
         JsBlock rightBlock = new JsBlock();
         JsExpression rightExpression = Translation.translateAsExpression(rightKtExpression, context(), rightBlock);
@@ -141,19 +139,17 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
             if (TranslationUtils.isCacheNeeded(leftExpression)) {
                 TemporaryVariable resultVar = context().declareTemporary(leftExpression);
                 result = resultVar.reference();
-                context().addStatementToCurrentBlock(resultVar.assignmentExpression().makeStmt());
+                context().addStatementToCurrentBlock(asSyntheticStatement(resultVar.assignmentExpression()));
             }
             else {
                 result = leftExpression;
             }
             JsExpression testExpression = TranslationUtils.isNullCheck(result);
-            if (!JsAstUtils.isEmptyExpression(rightExpression)) {
-                rightBlock.getStatements().add(JsAstUtils.assignment(result, rightExpression).makeStmt());
-            }
+            rightBlock.getStatements().add(JsAstUtils.assignment(result, rightExpression).makeStmt());
             ifStatement = JsAstUtils.newJsIf(testExpression, rightBlock);
         }
         else {
-            result = context().getEmptyExpression();
+            result = JsLiteral.NULL;
             JsExpression testExpression = TranslationUtils.isNullCheck(leftExpression);
             ifStatement = JsAstUtils.newJsIf(testExpression, rightBlock);
         }
@@ -169,9 +165,6 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
     @NotNull
     private JsExpression applyIntrinsic(@NotNull BinaryOperationIntrinsic intrinsic) {
         JsExpression leftExpression = Translation.translateAsExpression(leftKtExpression, context());
-        if (JsAstUtils.isEmptyExpression(leftExpression)) {
-            return leftExpression;
-        }
 
         JsBlock rightBlock = new JsBlock();
         JsExpression rightExpression = Translation.translateAsExpression(rightKtExpression, context(), rightBlock);
@@ -180,17 +173,9 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
             return intrinsic.apply(expression, leftExpression, rightExpression, context());
         }
 
-        if (JsAstUtils.isEmptyExpression(rightExpression)) {
-            if (TranslationUtils.isCacheNeeded(leftExpression)) {
-                context().addStatementToCurrentBlock(leftExpression.makeStmt());
-            }
-            context().addStatementsToCurrentBlockFrom(rightBlock);
-            return context().getEmptyExpression();
-        }
-
         if (TranslationUtils.isCacheNeeded(leftExpression)) {
             TemporaryVariable temporaryVariable = context().declareTemporary(null);
-            context().addStatementToCurrentBlock(JsAstUtils.assignment(temporaryVariable.reference(), leftExpression).makeStmt());
+            context().addStatementToCurrentBlock(asSyntheticStatement(JsAstUtils.assignment(temporaryVariable.reference(), leftExpression)));
             leftExpression = temporaryVariable.reference();
         }
         context().addStatementsToCurrentBlockFrom(rightBlock);
@@ -207,9 +192,6 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
         assert OperatorConventions.NOT_OVERLOADABLE.contains(operationToken);
         JsBinaryOperator operator = OperatorTable.getBinaryOperator(operationToken);
         JsExpression leftExpression = Translation.translateAsExpression(leftKtExpression, context());
-        if (JsAstUtils.isEmptyExpression(leftExpression)) {
-            return leftExpression;
-        }
 
         JsBlock rightBlock = new JsBlock();
         JsExpression rightExpression = Translation.translateAsExpression(rightKtExpression, context(), rightBlock);
@@ -230,25 +212,19 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
         JsIf ifStatement;
         JsExpression result;
         if (BindingContextUtilsKt.isUsedAsExpression(expression, context().bindingContext())) {
-            if (!JsAstUtils.isEmptyExpression(rightExpression)) {
-                if (rightExpression instanceof JsNameRef) {
-                    result = rightExpression; // Reuse tmp variable
-                } else {
-                    TemporaryVariable resultVar = context().declareTemporary(rightExpression);
-                    result = resultVar.reference();
-                    rightBlock.getStatements().add(resultVar.assignmentExpression().makeStmt());
-                }
-                JsStatement assignmentStatement = JsAstUtils.assignment(result, literalResult).makeStmt();
-                ifStatement = JsAstUtils.newJsIf(leftExpression, rightBlock, assignmentStatement);
+            if (rightExpression instanceof JsNameRef) {
+                result = rightExpression; // Reuse tmp variable
+            } else {
+                TemporaryVariable resultVar = context().declareTemporary(rightExpression);
+                result = resultVar.reference();
+                rightBlock.getStatements().add(resultVar.assignmentExpression().makeStmt());
             }
-            else {
-                ifStatement = JsAstUtils.newJsIf(leftExpression, rightBlock);
-                result = literalResult;
-            }
+            JsStatement assignmentStatement = JsAstUtils.assignment(result, literalResult).makeStmt();
+            ifStatement = JsAstUtils.newJsIf(leftExpression, rightBlock, assignmentStatement);
         }
         else {
             ifStatement = JsAstUtils.newJsIf(leftExpression, rightBlock);
-            result = context().getEmptyExpression();
+            result = JsLiteral.NULL;
         }
         context().addStatementToCurrentBlock(ifStatement);
         return result;

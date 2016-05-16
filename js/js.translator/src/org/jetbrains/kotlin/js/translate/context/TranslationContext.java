@@ -320,11 +320,6 @@ public class TranslationContext {
         return dynamicContext.jsBlock();
     }
 
-    @NotNull
-    public JsExpression getEmptyExpression() {
-        return program().getEmptyExpression();
-    }
-
     @Nullable
     public JsExpression getAliasForDescriptor(@NotNull DeclarationDescriptor descriptor) {
         JsNameRef nameRef = captureIfNeedAndGetCapturedName(descriptor);

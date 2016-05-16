@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.js.translate.expression;
 
 import com.google.dart.compiler.backend.js.ast.*;
-import com.google.dart.compiler.backend.js.ast.metadata.MetadataProperties;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.translate.context.TemporaryVariable;
@@ -27,7 +26,6 @@ import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.js.translate.operation.InOperationTranslator;
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
-import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
@@ -36,6 +34,7 @@ import org.jetbrains.kotlin.types.KotlinType;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.asSyntheticStatement;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.negated;
 
 public final class WhenTranslator extends AbstractTranslator {
@@ -58,14 +57,9 @@ public final class WhenTranslator extends AbstractTranslator {
         KtExpression subject = expression.getSubjectExpression();
         if (subject != null) {
             JsExpression subjectExpression = Translation.translateAsExpression(subject, context);
-            if (!JsAstUtils.isEmptyExpression(subjectExpression)) {
-                TemporaryVariable subjectVar = context.declareTemporary(null);
-                JsExpressionStatement subjectAssignment = new JsExpressionStatement(
-                        JsAstUtils.assignment(subjectVar.reference(), subjectExpression));
-                MetadataProperties.setSynthetic(subjectAssignment, true);
-                context.addStatementToCurrentBlock(subjectAssignment);
-                subjectExpression = subjectVar.reference();
-            }
+            TemporaryVariable subjectVar = context.declareTemporary(null);
+            context.addStatementToCurrentBlock(asSyntheticStatement(JsAstUtils.assignment(subjectVar.reference(), subjectExpression)));
+            subjectExpression = subjectVar.reference();
             expressionToMatch = subjectExpression;
         }
         else {
@@ -74,10 +68,6 @@ public final class WhenTranslator extends AbstractTranslator {
     }
 
     private JsNode translate() {
-        if (expressionToMatch != null && JsAstUtils.isEmptyExpression(expressionToMatch)) {
-            return JsEmpty.INSTANCE;
-        }
-
         JsIf currentIf = null;
         JsIf resultIf = null;
         for (KtWhenEntry entry : whenExpression.getEntries()) {
@@ -106,7 +96,7 @@ public final class WhenTranslator extends AbstractTranslator {
                 currentIf = nextIf;
             }
         }
-        return resultIf != null ? resultIf : context().getEmptyExpression();
+        return resultIf != null ? resultIf : JsLiteral.NULL;
     }
 
     @NotNull

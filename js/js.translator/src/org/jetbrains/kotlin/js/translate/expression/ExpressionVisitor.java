@@ -71,7 +71,7 @@ import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFun
 public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @Override
     protected JsNode emptyResult(@NotNull TranslationContext context) {
-        return context.getEmptyExpression();
+        return JsLiteral.NULL;
     }
 
     @Override
@@ -154,9 +154,6 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         }
         else {
             JsExpression jsReturnExpression = translateAsExpression(returned, context);
-            if (JsAstUtils.isEmptyExpression(jsReturnExpression)) {
-                return context.getEmptyExpression();
-            }
 
             jsReturn = new JsReturn(jsReturnExpression);
         }
@@ -218,9 +215,6 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     public JsNode visitProperty(@NotNull KtProperty expression, @NotNull TranslationContext context) {
         VariableDescriptor descriptor = BindingContextUtils.getNotNull(context.bindingContext(), BindingContext.VARIABLE, expression);
         JsExpression initializer = translateInitializerForProperty(expression, context);
-        if (initializer != null && JsAstUtils.isEmptyExpression(initializer)) {
-            return context.getEmptyExpression();
-        }
 
         JsName name = context.getNameForDescriptor(descriptor);
         if (isVarCapturedInClosure(context.bindingContext(), descriptor)) {
@@ -251,9 +245,6 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     public JsNode visitIfExpression(@NotNull KtIfExpression expression, @NotNull TranslationContext context) {
         assert expression.getCondition() != null : "condition should not ne null: " + expression.getText();
         JsExpression testExpression = Translation.translateAsExpression(expression.getCondition(), context);
-        if (JsAstUtils.isEmptyExpression(testExpression)) {
-            return testExpression;
-        }
 
         boolean isKotlinExpression = BindingContextUtilsKt.isUsedAsExpression(expression, context.bindingContext());
 
