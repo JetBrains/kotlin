@@ -32,6 +32,8 @@ class DisjointKeysUnionTypeSubstitution private constructor(
     }
 
     override fun get(key: KotlinType) = first[key] ?: second[key]
+    override fun prepareTopLevelType(topLevelType: KotlinType, position: Variance) =
+            second.prepareTopLevelType(first.prepareTopLevelType(topLevelType, position), position)
 
     override fun isEmpty() = false
 

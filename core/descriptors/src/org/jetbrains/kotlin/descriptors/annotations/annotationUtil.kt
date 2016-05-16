@@ -57,4 +57,12 @@ fun KotlinBuiltIns.createDeprecatedAnnotation(
             SourceElement.NO_SOURCE)
 }
 
+fun KotlinBuiltIns.createUnsafeVarianceAnnotation(): AnnotationDescriptor {
+    val unsafeVarianceAnnotation = getBuiltInClassByFqName(KotlinBuiltIns.FQ_NAMES.unsafeVariance)
+    return AnnotationDescriptorImpl(
+            unsafeVarianceAnnotation.defaultType,
+            emptyMap(),
+            SourceElement.NO_SOURCE)
+}
+
 private operator fun Collection<ValueParameterDescriptor>.get(parameterName: String) = single { it.name.asString() == parameterName }
