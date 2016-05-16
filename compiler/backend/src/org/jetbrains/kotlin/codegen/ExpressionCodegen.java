@@ -3972,12 +3972,9 @@ The "returned" value of try expression with no finally is either the last expres
     }
 
     private boolean isExhaustive(@NotNull KtWhenExpression whenExpression, boolean isStatement) {
-        if (isStatement) {
-            return Boolean.TRUE.equals(bindingContext.get(BindingContext.IMPLICIT_EXHAUSTIVE_WHEN, whenExpression));
-        }
-        else {
-            return Boolean.TRUE.equals(bindingContext.get(BindingContext.EXHAUSTIVE_WHEN, whenExpression));
-        }
+        boolean exhaustive = Boolean.TRUE.equals(bindingContext.get(BindingContext.EXHAUSTIVE_WHEN, whenExpression));
+        return isStatement ? exhaustive || Boolean.TRUE.equals(bindingContext.get(BindingContext.IMPLICIT_EXHAUSTIVE_WHEN, whenExpression))
+                           : exhaustive;
     }
 
     public void putUnitInstanceOntoStackForNonExhaustiveWhen(
