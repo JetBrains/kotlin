@@ -206,6 +206,7 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
                     /* declaresDefaultValue = */ false,
                     /* isCrossinline = */ false,
                     /* isNoinline = */ false,
+                    /* isCoroutine = */ false,
                     varargElementType,
                     c.components.sourceElementFactory.source(javaParameter)
             )
@@ -329,7 +330,7 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
     protected abstract fun getClassNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name>
 
     override fun toString() = "Lazy scope for $ownerDescriptor"
-    
+
     override fun printScopeStructure(p: Printer) {
         p.println(javaClass.simpleName, " {")
         p.pushIndent()

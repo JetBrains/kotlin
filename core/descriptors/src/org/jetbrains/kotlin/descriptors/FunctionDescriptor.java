@@ -80,6 +80,8 @@ public interface FunctionDescriptor extends CallableMemberDescriptor {
 
     boolean isHiddenForResolutionEverywhereBesideSupercalls();
 
+    boolean isSuspend();
+
     @NotNull
     CopyBuilder<? extends FunctionDescriptor> newCopyBuilder();
 

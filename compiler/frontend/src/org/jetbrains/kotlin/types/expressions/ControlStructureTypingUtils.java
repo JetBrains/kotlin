@@ -162,6 +162,7 @@ public class ControlStructureTypingUtils {
                     /* declaresDefaultValue = */ false,
                     /* isCrossinline = */ false,
                     /* isNoinline = */ false,
+                    /* isCoroutine = */ false,
                     null, SourceElement.NO_SOURCE
             );
             valueParameters.add(valueParameter);
@@ -473,7 +474,7 @@ public class ControlStructureTypingUtils {
             }
         };
     }
-    
+
     private abstract static class ThrowingOnErrorTracingStrategy implements TracingStrategy {
         private final String debugName;
 

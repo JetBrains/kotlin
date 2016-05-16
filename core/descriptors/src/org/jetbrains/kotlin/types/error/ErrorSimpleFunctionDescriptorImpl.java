@@ -186,6 +186,11 @@ public class ErrorSimpleFunctionDescriptorImpl extends SimpleFunctionDescriptorI
     }
 
     @Override
+    public boolean isSuspend() {
+        return false;
+    }
+
+    @Override
     public void setOverriddenDescriptors(@NotNull Collection<? extends CallableMemberDescriptor> overriddenDescriptors) {
         // nop
     }

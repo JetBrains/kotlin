@@ -48,6 +48,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     // 2. isHiddenForResolutionEverywhereBesideSupercalls propagates to it's overrides descriptors while isHiddenToOvercomeSignatureClash does not
     private boolean isHiddenToOvercomeSignatureClash = false;
     private boolean isHiddenForResolutionEverywhereBesideSupercalls = false;
+    private boolean isSuspend = false;
     private boolean hasStableParameterNames = true;
     private boolean hasSynthesizedParameterNames = false;
     private Collection<? extends FunctionDescriptor> overriddenFunctions = null;
@@ -137,6 +138,10 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
 
     private void setHiddenForResolutionEverywhereBesideSupercalls(boolean hiddenForResolutionEverywhereBesideSupercalls) {
         isHiddenForResolutionEverywhereBesideSupercalls = hiddenForResolutionEverywhereBesideSupercalls;
+    }
+
+    public void setSuspend(boolean suspend) {
+        isSuspend = suspend;
     }
 
     public void setReturnType(@NotNull KotlinType unsubstitutedReturnType) {
@@ -233,6 +238,11 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     @Override
     public boolean isTailrec() {
         return isTailrec;
+    }
+
+    @Override
+    public boolean isSuspend() {
+        return isSuspend;
     }
 
     @Override
@@ -599,6 +609,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         substitutedDescriptor.setExternal(isExternal);
         substitutedDescriptor.setInline(isInline);
         substitutedDescriptor.setTailrec(isTailrec);
+        substitutedDescriptor.setSuspend(isSuspend);
         substitutedDescriptor.setHasStableParameterNames(hasStableParameterNames);
         substitutedDescriptor.setHasSynthesizedParameterNames(hasSynthesizedParameterNames);
         substitutedDescriptor.setHiddenToOvercomeSignatureClash(configuration.isHiddenToOvercomeSignatureClash);
@@ -685,6 +696,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
                             unsubstitutedValueParameter.declaresDefaultValue(),
                             unsubstitutedValueParameter.isCrossinline(),
                             unsubstitutedValueParameter.isNoinline(),
+                            unsubstitutedValueParameter.isCoroutine(),
                             substituteVarargElementType,
                             SourceElement.NO_SOURCE
                     )

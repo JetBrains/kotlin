@@ -179,6 +179,7 @@ class FunctionDescriptorResolver(
         functionDescriptor.isExternal = function.hasModifier(KtTokens.EXTERNAL_KEYWORD)
         functionDescriptor.isInline = function.hasModifier(KtTokens.INLINE_KEYWORD)
         functionDescriptor.isTailrec = function.hasModifier(KtTokens.TAILREC_KEYWORD)
+        functionDescriptor.isSuspend = function.hasModifier(KtTokens.SUSPEND_KEYWORD)
         receiverType?.let { ForceResolveUtil.forceResolveAllContents(it.annotations) }
         for (valueParameterDescriptor in valueParameterDescriptors) {
             ForceResolveUtil.forceResolveAllContents(valueParameterDescriptor.type.annotations)
@@ -200,6 +201,7 @@ class FunctionDescriptorResolver(
                 val it = ValueParameterDescriptorImpl(functionDescriptor, null, 0, Annotations.EMPTY, Name.identifier("it"),
                                                       valueParameterDescriptor.type, valueParameterDescriptor.declaresDefaultValue(),
                                                       valueParameterDescriptor.isCrossinline, valueParameterDescriptor.isNoinline,
+                                                      valueParameterDescriptor.isCoroutine,
                                                       valueParameterDescriptor.varargElementType, SourceElement.NO_SOURCE)
                 trace.record(BindingContext.AUTO_CREATED_IT, it)
                 return listOf(it)

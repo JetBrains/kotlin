@@ -55,6 +55,10 @@ JetFile: SoftKeywords.kt
       PsiElement(in)('in')
       PsiWhiteSpace('\n')
       PsiElement(out)('out')
+      PsiWhiteSpace('\n')
+      PsiElement(suspend)('suspend')
+      PsiWhiteSpace('\n')
+      PsiElement(coroutine)('coroutine')
     PsiWhiteSpace('\n ')
     PsiElement(class)('class')
     PsiWhiteSpace(' ')
@@ -313,6 +317,16 @@ JetFile: SoftKeywords.kt
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('const')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('suspend')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('coroutine')
         PsiWhiteSpace('\n      ')
         PROPERTY_ACCESSOR
           PsiElement(get)('get')

@@ -17,4 +17,8 @@ data class Modifiers(val x: Int) {
     override operator fun equals(other: Any?) = false
 
     annotation class Ann
+
+    suspend fun suspend(x: Continuation<Int>) {}
+
+    fun builder(coroutine c: Any.() -> Continuation<Unit>) {}
 }

@@ -32,6 +32,7 @@ class ValueParameterDescriptorImpl(
         private val declaresDefaultValue: Boolean,
         override val isCrossinline: Boolean,
         override val isNoinline: Boolean,
+        override val isCoroutine: Boolean,
         override val varargElementType: KotlinType?,
         source: SourceElement
 ) : VariableDescriptorImpl(containingDeclaration, annotations, name, outType, source), ValueParameterDescriptor {
@@ -61,7 +62,7 @@ class ValueParameterDescriptorImpl(
     override fun copy(newOwner: CallableDescriptor, newName: Name): ValueParameterDescriptor {
         return ValueParameterDescriptorImpl(
                 newOwner, null, index, annotations, newName, type, declaresDefaultValue(),
-                isCrossinline, isNoinline, varargElementType, SourceElement.NO_SOURCE
+                isCrossinline, isNoinline, isCoroutine, varargElementType, SourceElement.NO_SOURCE
         )
     }
 
