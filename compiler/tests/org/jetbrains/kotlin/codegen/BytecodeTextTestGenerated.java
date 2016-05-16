@@ -1294,6 +1294,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             doTest(fileName);
         }
 
+        @TestMetadata("exhaustiveWhenUnit.kt")
+        public void testExhaustiveWhenUnit() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/when/exhaustiveWhenUnit.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("integralWhenWithNoInlinedConstants.kt")
         public void testIntegralWhenWithNoInlinedConstants() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/when/integralWhenWithNoInlinedConstants.kt");
