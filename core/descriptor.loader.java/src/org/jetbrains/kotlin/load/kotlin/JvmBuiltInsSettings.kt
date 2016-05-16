@@ -386,7 +386,7 @@ open class JvmBuiltInsSettings(
             signatures {
                 inJavaUtil("Collection", "removeIf(Ljava/util/function/Predicate;)Z") +
 
-                inJavaUtil("List", "replaceAll(Ljava/util/function/UnaryOperator;)V") +
+                inJavaUtil("List", "replaceAll(Ljava/util/function/UnaryOperator;)V", "sort(Ljava/util/Comparator;)V") +
 
                 inJavaUtil("Map",
                            "computeIfAbsent(Ljava/lang/Object;Ljava/util/function/Function;)Ljava/lang/Object;",
