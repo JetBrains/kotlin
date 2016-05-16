@@ -22,6 +22,7 @@ import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.idea.decompiler.stubBuilder.flags.FlagsToModifiers
 import org.jetbrains.kotlin.idea.stubindex.KotlinFileStubForIde
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -162,90 +163,6 @@ fun createStubForTypeName(
     }
 
     return recCreateStubForType(parent, level = 0)
-}
-
-enum class FlagsToModifiers {
-    MODALITY {
-        override fun getModifiers(flags: Int): KtModifierKeywordToken {
-            val modality = Flags.MODALITY.get(flags)
-            return when (modality) {
-                ProtoBuf.Modality.ABSTRACT -> KtTokens.ABSTRACT_KEYWORD
-                ProtoBuf.Modality.FINAL -> KtTokens.FINAL_KEYWORD
-                ProtoBuf.Modality.OPEN -> KtTokens.OPEN_KEYWORD
-                ProtoBuf.Modality.SEALED -> KtTokens.SEALED_KEYWORD
-                null -> throw IllegalStateException("Unexpected modality: null")
-            }
-        }
-    },
-
-    VISIBILITY {
-        override fun getModifiers(flags: Int): KtModifierKeywordToken? {
-            val visibility = Flags.VISIBILITY.get(flags)
-            return when (visibility) {
-                ProtoBuf.Visibility.PRIVATE, ProtoBuf.Visibility.PRIVATE_TO_THIS -> KtTokens.PRIVATE_KEYWORD
-                ProtoBuf.Visibility.INTERNAL -> KtTokens.INTERNAL_KEYWORD
-                ProtoBuf.Visibility.PROTECTED -> KtTokens.PROTECTED_KEYWORD
-                ProtoBuf.Visibility.PUBLIC -> KtTokens.PUBLIC_KEYWORD
-                else -> throw IllegalStateException("Unexpected visibility: $visibility")
-            }
-        }
-    },
-
-    INNER {
-        override fun getModifiers(flags: Int): KtModifierKeywordToken? {
-            return if (Flags.IS_INNER.get(flags)) KtTokens.INNER_KEYWORD else null
-        }
-    },
-
-    CONST {
-        override fun getModifiers(flags: Int): KtModifierKeywordToken? {
-            return if (Flags.IS_CONST.get(flags)) KtTokens.CONST_KEYWORD else null
-        }
-    },
-
-    LATEINIT {
-        override fun getModifiers(flags: Int): KtModifierKeywordToken? {
-            return if (Flags.IS_LATEINIT.get(flags)) KtTokens.LATEINIT_KEYWORD else null
-        }
-    },
-
-    OPERATOR {
-        override fun getModifiers(flags: Int): KtModifierKeywordToken? {
-            return if (Flags.IS_OPERATOR.get(flags)) KtTokens.OPERATOR_KEYWORD else null
-        }
-    },
-
-    INFIX {
-        override fun getModifiers(flags: Int): KtModifierKeywordToken? {
-            return if (Flags.IS_INFIX.get(flags)) KtTokens.INFIX_KEYWORD else null
-        }
-    },
-
-    DATA {
-        override fun getModifiers(flags: Int): KtModifierKeywordToken? {
-            return if (Flags.IS_DATA.get(flags)) KtTokens.DATA_KEYWORD else null
-        }
-    },
-
-    EXTERNAL_FUN {
-        override fun getModifiers(flags: Int): KtModifierKeywordToken? {
-            return if (Flags.IS_EXTERNAL_FUNCTION.get(flags)) KtTokens.EXTERNAL_KEYWORD else null
-        }
-    },
-
-    INLINE {
-        override fun getModifiers(flags: Int): KtModifierKeywordToken? {
-            return if (Flags.IS_INLINE.get(flags)) KtTokens.INLINE_KEYWORD else null
-        }
-    },
-
-    TAILREC {
-        override fun getModifiers(flags: Int): KtModifierKeywordToken? {
-            return if (Flags.IS_TAILREC.get(flags)) KtTokens.TAILREC_KEYWORD else null
-        }
-    };
-
-    abstract fun getModifiers(flags: Int): KtModifierKeywordToken?
 }
 
 fun createModifierListStubForDeclaration(
