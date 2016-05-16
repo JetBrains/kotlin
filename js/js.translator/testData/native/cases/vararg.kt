@@ -72,6 +72,8 @@ fun box(): String {
     if (paramCount() != 0)
         return "failed when call native function without args"
 
+    if (paramCount(1) != 1) return "failed when call native function with single vararg"
+
     if (paramCount(1, 2, 3) != 3)
         return "failed when call native function with some args"
 
@@ -89,6 +91,12 @@ fun box(): String {
 
     if (!Bar(5).test(0, 1, 1, 2, 3, 4, 5))
         return "failed when call method with some args"
+
+    if (!spreadInMethodCall(2, 1, 2))
+        return "failed when call method using spread operator"
+
+    if (!Bar(1).test(0, 1, 1))
+        return "failed when call method with single arg"
 
     if (!spreadInMethodCall(2, 1, 2))
         return "failed when call method using spread operator"
