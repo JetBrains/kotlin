@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.asSyntheticStatement;
+
 public final class AccessTranslationUtils {
     private AccessTranslationUtils() {
     }
@@ -66,7 +68,8 @@ public final class AccessTranslationUtils {
                 JsExpression jsIndexExpression = Translation.translateAsExpression(indexExpression, context);
                 if (TranslationUtils.isCacheNeeded(jsIndexExpression)) {
                     TemporaryVariable temporaryVariable = context.declareTemporary(null);
-                    context.addStatementToCurrentBlock(JsAstUtils.assignment(temporaryVariable.reference(), jsIndexExpression).makeStmt());
+                    context.addStatementToCurrentBlock(
+                            asSyntheticStatement(JsAstUtils.assignment(temporaryVariable.reference(), jsIndexExpression)));
                     jsIndexExpression = temporaryVariable.reference();
                 }
                 indexesMap.put(indexExpression, jsIndexExpression);

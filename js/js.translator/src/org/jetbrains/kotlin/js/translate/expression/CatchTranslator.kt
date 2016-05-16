@@ -101,11 +101,12 @@ class CatchTranslator(
 
     private fun translateCatchBody(context: TranslationContext, catchClause: KtCatchClause): JsBlock {
         val catchBody = catchClause.catchBody
-        val jsCatchBody =
-                if (catchBody != null)
-                    translateAsStatementAndMergeInBlockIfNeeded(catchBody, context)
-                else
-                    context.emptyExpression.makeStmt()
+        val jsCatchBody = if (catchBody != null) {
+            translateAsStatementAndMergeInBlockIfNeeded(catchBody, context)
+        }
+        else {
+            JsAstUtils.asSyntheticStatement(JsLiteral.NULL)
+        }
 
         return convertToBlock(jsCatchBody)
     }

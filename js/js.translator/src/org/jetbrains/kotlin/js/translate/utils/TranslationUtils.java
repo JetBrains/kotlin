@@ -247,7 +247,6 @@ public final class TranslationUtils {
 
     public static boolean isCacheNeeded(@NotNull JsExpression expression) {
         return !(expression instanceof JsLiteral.JsValueLiteral) &&
-               !JsAstUtils.isEmptyExpression(expression) &&
                (!(expression instanceof JsNameRef) || ((JsNameRef) expression).getQualifier() != null);
     }
 

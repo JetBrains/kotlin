@@ -56,7 +56,11 @@ public final class JsAstUtils {
         assert (jsNode instanceof JsExpression) || (jsNode instanceof JsStatement)
                 : "Unexpected node of type: " + jsNode.getClass().toString();
         if (jsNode instanceof JsExpression) {
-            return ((JsExpression) jsNode).makeStmt();
+            JsExpressionStatement statement = new JsExpressionStatement((JsExpression) jsNode);
+            if (jsNode instanceof JsNullLiteral) {
+                MetadataProperties.setSynthetic(statement, true);
+            }
+            return statement;
         }
         return (JsStatement) jsNode;
     }
@@ -116,10 +120,6 @@ public final class JsAstUtils {
 
     public static boolean isEmptyStatement(@NotNull JsStatement statement) {
         return statement instanceof JsEmpty;
-    }
-
-    public static boolean isEmptyExpression(@NotNull JsExpression expression) {
-        return expression instanceof JsEmptyExpression;
     }
 
     @NotNull

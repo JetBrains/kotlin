@@ -45,7 +45,7 @@ object CallableReferenceTranslator {
 
     private fun reportNotSupported(context: TranslationContext, expression: KtCallableReferenceExpression): JsExpression {
         context.bindingTrace().report(ErrorsJs.REFERENCE_TO_BUILTIN_MEMBERS_NOT_SUPPORTED.on(expression, expression))
-        return context.emptyExpression
+        return JsLiteral.NULL
     }
 
     private fun translateForFunction(descriptor: FunctionDescriptor, context: TranslationContext, expression: KtCallableReferenceExpression): JsExpression {
