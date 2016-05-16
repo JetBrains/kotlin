@@ -101,6 +101,7 @@ class FunctionInvokeDescriptor private constructor(
                     /* declaresDefaultValue = */ false,
                     /* isCrossinline = */ false,
                     /* isNoinline = */ false,
+                    /* isCoroutine = */ false,
                     /* varargElementType = */ null,
                     SourceElement.NO_SOURCE
             )

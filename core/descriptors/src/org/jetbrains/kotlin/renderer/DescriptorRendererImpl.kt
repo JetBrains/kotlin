@@ -498,6 +498,9 @@ internal class DescriptorRendererImpl(
         if (functionDescriptor.isTailrec) {
             builder.append("tailrec ")
         }
+        if (functionDescriptor.isSuspend) {
+            builder.append("suspend ")
+        }
     }
 
     override fun render(declarationDescriptor: DeclarationDescriptor): String {
@@ -724,8 +727,13 @@ internal class DescriptorRendererImpl(
         if (valueParameter.isCrossinline) {
             builder.append("crossinline ")
         }
+
         if (valueParameter.isNoinline) {
             builder.append("noinline ")
+        }
+
+        if (valueParameter.isCoroutine) {
+            builder.append("coroutine ")
         }
 
         renderVariable(valueParameter, includeName, builder, topLevel)

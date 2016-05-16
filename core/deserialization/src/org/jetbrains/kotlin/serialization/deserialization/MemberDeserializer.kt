@@ -164,6 +164,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
         function.isExternal = Flags.IS_EXTERNAL_FUNCTION.get(flags)
         function.isInline = Flags.IS_INLINE.get(flags)
         function.isTailrec = Flags.IS_TAILREC.get(flags)
+        function.isSuspend = Flags.IS_SUSPEND.get(flags)
         return function
     }
 
@@ -252,6 +253,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
                     Flags.DECLARES_DEFAULT_VALUE.get(flags),
                     Flags.IS_CROSSINLINE.get(flags),
                     Flags.IS_NOINLINE.get(flags),
+                    Flags.IS_COROUTINE.get(flags),
                     proto.varargElementType(c.typeTable)?.let { c.typeDeserializer.type(it) },
                     SourceElement.NO_SOURCE
             )

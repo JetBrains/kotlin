@@ -51,6 +51,7 @@ public class Flags {
     public static final BooleanFlagField IS_INLINE = FlagField.booleanAfter(IS_INFIX);
     public static final BooleanFlagField IS_TAILREC = FlagField.booleanAfter(IS_INLINE);
     public static final BooleanFlagField IS_EXTERNAL_FUNCTION = FlagField.booleanAfter(IS_TAILREC);
+    public static final BooleanFlagField IS_SUSPEND = FlagField.booleanAfter(IS_EXTERNAL_FUNCTION);
 
     // Properties
 
@@ -66,6 +67,7 @@ public class Flags {
     public static final BooleanFlagField DECLARES_DEFAULT_VALUE = FlagField.booleanAfter(HAS_ANNOTATIONS);
     public static final BooleanFlagField IS_CROSSINLINE = FlagField.booleanAfter(DECLARES_DEFAULT_VALUE);
     public static final BooleanFlagField IS_NOINLINE = FlagField.booleanAfter(IS_CROSSINLINE);
+    public static final BooleanFlagField IS_COROUTINE = FlagField.booleanAfter(IS_NOINLINE);
 
     // Accessors
 
@@ -132,7 +134,8 @@ public class Flags {
             boolean isInfix,
             boolean isInline,
             boolean isTailrec,
-            boolean isExternal
+            boolean isExternal,
+            boolean isSuspend
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
                | VISIBILITY.toFlags(visibility(visibility))
@@ -143,6 +146,7 @@ public class Flags {
                | IS_INLINE.toFlags(isInline)
                | IS_TAILREC.toFlags(isTailrec)
                | IS_EXTERNAL_FUNCTION.toFlags(isExternal)
+               | IS_SUSPEND.toFlags(isSuspend)
                 ;
     }
 
@@ -243,12 +247,14 @@ public class Flags {
             boolean hasAnnotations,
             boolean declaresDefaultValue,
             boolean isCrossinline,
-            boolean isNoinline
+            boolean isNoinline,
+            boolean isCoroutine
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
                | DECLARES_DEFAULT_VALUE.toFlags(declaresDefaultValue)
                | IS_CROSSINLINE.toFlags(isCrossinline)
                | IS_NOINLINE.toFlags(isNoinline)
+               | IS_COROUTINE.toFlags(isCoroutine)
                ;
     }
 

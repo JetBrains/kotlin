@@ -295,7 +295,7 @@ public class DescriptorSerializer {
         int flags = Flags.getFunctionFlags(
                 hasAnnotations(descriptor), descriptor.getVisibility(), descriptor.getModality(), descriptor.getKind(),
                 descriptor.isOperator(), descriptor.isInfix(), descriptor.isInline(), descriptor.isTailrec(),
-                descriptor.isExternal()
+                descriptor.isExternal(), descriptor.isSuspend()
         );
         if (flags != builder.getFlags()) {
             builder.setFlags(flags);
@@ -419,7 +419,7 @@ public class DescriptorSerializer {
         ProtoBuf.ValueParameter.Builder builder = ProtoBuf.ValueParameter.newBuilder();
 
         int flags = Flags.getValueParameterFlags(hasAnnotations(descriptor), descriptor.declaresDefaultValue(),
-                                                 descriptor.isCrossinline(), descriptor.isNoinline());
+                                                 descriptor.isCrossinline(), descriptor.isNoinline(), descriptor.isCoroutine());
         if (flags != builder.getFlags()) {
             builder.setFlags(flags);
         }

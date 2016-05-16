@@ -25,6 +25,7 @@ enum class Test {
 // EXIST:  external
 // EXIST:  annotation class
 // EXIST:  const
+// EXIST:  suspend
 // EXIST: fun
 
 /* TODO: items below are not valid here */

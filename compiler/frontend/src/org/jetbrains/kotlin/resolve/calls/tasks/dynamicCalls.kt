@@ -164,6 +164,7 @@ class DynamicCallableDescriptors(builtIns: KotlinBuiltIns) {
                     /* declaresDefaultValue = */ false,
                     /* isCrossinline = */ false,
                     /* isNoinline = */ false,
+                    /* isCoroutine = */ false,
                     varargElementType,
                     SourceElement.NO_SOURCE
             ))

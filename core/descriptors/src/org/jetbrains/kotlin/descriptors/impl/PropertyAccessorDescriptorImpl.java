@@ -94,6 +94,11 @@ public abstract class PropertyAccessorDescriptorImpl extends DeclarationDescript
         return false;
     }
 
+    @Override
+    public boolean isSuspend() {
+        return false;
+    }
+
     @NotNull
     @Override
     public FunctionDescriptor substitute(@NotNull TypeSubstitutor substitutor) {

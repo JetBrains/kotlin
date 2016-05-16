@@ -42,6 +42,7 @@ internal fun createValueParametersForInvokeInFunctionType(
                 /* declaresDefaultValue = */ false,
                 /* isCrossinline = */ false,
                 /* isNoinline = */ false,
+                /* isCoroutine = */ false,
                 null, SourceElement.NO_SOURCE
         )
     }

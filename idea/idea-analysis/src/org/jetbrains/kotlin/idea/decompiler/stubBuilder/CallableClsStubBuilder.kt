@@ -130,7 +130,7 @@ private class FunctionClsStubBuilder(
         val modalityModifier = if (isTopLevel) listOf() else listOf(MODALITY)
         val modifierListStubImpl = createModifierListStubForDeclaration(
                 callableStub, functionProto.flags,
-                listOf(VISIBILITY, OPERATOR, INFIX, EXTERNAL_FUN, INLINE, TAILREC) + modalityModifier
+                listOf(VISIBILITY, OPERATOR, INFIX, EXTERNAL_FUN, INLINE, TAILREC, SUSPEND) + modalityModifier
         )
 
         val annotationIds = c.components.annotationLoader.loadCallableAnnotations(

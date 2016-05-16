@@ -39,4 +39,5 @@ class A {
 // EXIST:  external
 // EXIST:  annotation class
 // EXIST:  const
+// EXIST:  suspend
 // NOTHING_ELSE
