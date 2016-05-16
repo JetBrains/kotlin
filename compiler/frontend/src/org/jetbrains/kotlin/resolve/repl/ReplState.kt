@@ -29,49 +29,49 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
 class ReplState {
     private val lines = hashMapOf<KtFile, LineInfo>()
-    private val successfulLines = arrayListOf<SuccessfulLine>()
+    private val successfulLines = arrayListOf<LineInfo.SuccessfulLine>()
 
     val successfulLinesCount: Int
         get() = successfulLines.size
 
     fun submitLine(ktFile: KtFile) {
-        val line = SubmittedLine(ktFile, successfulLines.lastOrNull())
+        val line = LineInfo.SubmittedLine(ktFile, successfulLines.lastOrNull())
         lines[ktFile] = line
         ktFile.fileScopesCustomizer = object : FileScopesCustomizer {
             override fun createFileScopes(fileScopeFactory: FileScopeFactory): FileScopes {
-                return lineInfo(ktFile)?.computeFileScopes(fileScopeFactory) ?: fileScopeFactory.createScopesForFile(ktFile)
+                return lineInfo(ktFile)?.let { computeFileScopes(it, fileScopeFactory) } ?: fileScopeFactory.createScopesForFile(ktFile)
             }
         }
     }
 
     fun lineSuccess(ktFile: KtFile, scriptDescriptor: LazyScriptDescriptor) {
-        val successfulLine = SuccessfulLine(ktFile, successfulLines.lastOrNull(), scriptDescriptor)
+        val successfulLine = LineInfo.SuccessfulLine(ktFile, successfulLines.lastOrNull(), scriptDescriptor)
         lines[ktFile] = successfulLine
         successfulLines.add(successfulLine)
     }
 
     fun lineFailure(ktFile: KtFile) {
-        lines[ktFile] = FailedLine(ktFile, successfulLines.lastOrNull())
+        lines[ktFile] = LineInfo.FailedLine(ktFile, successfulLines.lastOrNull())
     }
 
-    fun lineInfo(ktFile: KtFile) = lines[ktFile]
+    private fun lineInfo(ktFile: KtFile) = lines[ktFile]
 
-    inner abstract class LineInfo {
+    // use sealed?
+    private sealed class LineInfo {
         abstract val linePsi: KtFile
         abstract val parentLine: SuccessfulLine?
 
-        fun computeFileScopes(fileScopeFactory: FileScopeFactory): FileScopes {
-            // create scope that wraps previous line lexical scope and adds imports from this line
-            val lexicalScopeAfterLastLine = parentLine?.lineDescriptor?.scopeForInitializerResolution
-                                            ?: return fileScopeFactory.createScopesForFile(linePsi)
-            val lastLineImports = lexicalScopeAfterLastLine.parentsWithSelf.firstIsInstance<ImportingScope>()
-            val scopesForThisLine = fileScopeFactory.createScopesForFile(linePsi, lastLineImports)
-            val combinedLexicalScopes = lexicalScopeAfterLastLine.replaceImportingScopes(scopesForThisLine.importingScope)
-            return FileScopes(combinedLexicalScopes, scopesForThisLine.importingScope, scopesForThisLine.importResolver)
-        }
+        class SubmittedLine(override val linePsi: KtFile, override val parentLine: SuccessfulLine?) : LineInfo()
+        class SuccessfulLine(override val linePsi: KtFile, override val parentLine: SuccessfulLine?, val lineDescriptor: LazyScriptDescriptor) : LineInfo()
+        class FailedLine(override val linePsi: KtFile, override val parentLine: SuccessfulLine?) : LineInfo()
     }
 
-    inner class SubmittedLine(override val linePsi: KtFile, override val parentLine: SuccessfulLine?) : LineInfo()
-    inner class SuccessfulLine(override val linePsi: KtFile, override val parentLine: SuccessfulLine?, val lineDescriptor: LazyScriptDescriptor) : LineInfo()
-    inner class FailedLine(override val linePsi: KtFile, override val parentLine: SuccessfulLine?) : LineInfo()
+    private fun computeFileScopes(lineInfo: LineInfo, fileScopeFactory: FileScopeFactory): FileScopes? {
+        // create scope that wraps previous line lexical scope and adds imports from this line
+        val lexicalScopeAfterLastLine = lineInfo.parentLine?.lineDescriptor?.scopeForInitializerResolution ?: return null
+        val lastLineImports = lexicalScopeAfterLastLine.parentsWithSelf.firstIsInstance<ImportingScope>()
+        val scopesForThisLine = fileScopeFactory.createScopesForFile(lineInfo.linePsi, lastLineImports)
+        val combinedLexicalScopes = lexicalScopeAfterLastLine.replaceImportingScopes(scopesForThisLine.importingScope)
+        return FileScopes(combinedLexicalScopes, scopesForThisLine.importingScope, scopesForThisLine.importResolver)
+    }
 }
