@@ -20,7 +20,9 @@ import org.jetbrains.kotlin.builtins.BuiltInsInitializer
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
+import org.jetbrains.kotlin.descriptors.annotations.composeAnnotations
 import org.jetbrains.kotlin.descriptors.annotations.createDeprecatedAnnotation
+import org.jetbrains.kotlin.descriptors.annotations.createUnsafeVarianceAnnotation
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -43,8 +45,8 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
-import org.jetbrains.kotlin.types.DelegatingType
-import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addToStdlib.check
@@ -104,13 +106,17 @@ open class JvmBuiltInsSettings(
             }
             .mapNotNull {
                 additionalMember ->
-                additionalMember.newCopyBuilder().apply {
+                val substitutedWithKotlinTypeParameters =
+                        additionalMember.substitute(
+                                createMappedTypeParametersSubstitution
+                                (additionalMember.containingDeclaration as ClassDescriptor, classDescriptor).buildSubstitutor()
+                        ) as SimpleFunctionDescriptor
+
+                substitutedWithKotlinTypeParameters.newCopyBuilder().apply {
                     setOwner(classDescriptor)
                     setDispatchReceiverParameter(classDescriptor.thisAsReceiverParameter)
                     setPreserveSourceElement()
-                    setSubstitution(createMappedTypeParametersSubstitution(
-                            additionalMember.containingDeclaration as ClassDescriptor, classDescriptor))
-
+                    setSubstitution(UnsafeVarianceTypeSubstitution(moduleDescriptor.builtIns))
 
                     val memberStatus = additionalMember.getJdkMethodStatus()
                     when (memberStatus) {

@@ -32,9 +32,9 @@ public interface Collection</*0*/ out E> : kotlin.collections.Iterable<E> {
     public open override /*1*/ /*fake_override*/ fun forEach(/*0*/ p0: java.util.function.Consumer<in E!>!): kotlin.Unit
     public abstract fun isEmpty(): kotlin.Boolean
     public abstract override /*1*/ fun iterator(): kotlin.collections.Iterator<E>
-    public open fun parallelStream(): java.util.stream.Stream<E!>!
-    public open override /*1*/ fun spliterator(): java.util.Spliterator<E!>!
-    public open fun stream(): java.util.stream.Stream<E!>!
+    public open fun parallelStream(): java.util.stream.Stream<@kotlin.UnsafeVariance() E!>!
+    public open override /*1*/ fun spliterator(): java.util.Spliterator<@kotlin.UnsafeVariance() E!>!
+    public open fun stream(): java.util.stream.Stream<@kotlin.UnsafeVariance() E!>!
 }
 
 public abstract class DoubleIterator : kotlin.collections.Iterator<kotlin.Double> {
@@ -64,7 +64,7 @@ public abstract class IntIterator : kotlin.collections.Iterator<kotlin.Int> {
 public interface Iterable</*0*/ out T> {
     public open fun forEach(/*0*/ p0: java.util.function.Consumer<in T!>!): kotlin.Unit
     public abstract operator fun iterator(): kotlin.collections.Iterator<T>
-    public open fun spliterator(): java.util.Spliterator<T!>!
+    public open fun spliterator(): java.util.Spliterator<@kotlin.UnsafeVariance() T!>!
 }
 
 public interface Iterator</*0*/ out T> {
@@ -87,7 +87,7 @@ public interface List</*0*/ out E> : kotlin.collections.Collection<E> {
     public abstract fun listIterator(): kotlin.collections.ListIterator<E>
     public abstract fun listIterator(/*0*/ index: kotlin.Int): kotlin.collections.ListIterator<E>
     public open override /*1*/ /*fake_override*/ fun parallelStream(): java.util.stream.Stream<E!>!
-    public open override /*1*/ fun spliterator(): java.util.Spliterator<E!>!
+    public open override /*1*/ fun spliterator(): java.util.Spliterator<@kotlin.UnsafeVariance() E!>!
     public open override /*1*/ /*fake_override*/ fun stream(): java.util.stream.Stream<E!>!
     public abstract fun subList(/*0*/ fromIndex: kotlin.Int, /*1*/ toIndex: kotlin.Int): kotlin.collections.List<E>
 }
@@ -123,7 +123,7 @@ public interface Map</*0*/ K, /*1*/ out V> {
     public abstract fun containsValue(/*0*/ value: @kotlin.UnsafeVariance() V): kotlin.Boolean
     public open fun forEach(/*0*/ p0: java.util.function.BiConsumer<in K!, in V!>!): kotlin.Unit
     public abstract operator fun get(/*0*/ key: K): V?
-    public open fun getOrDefault(/*0*/ p0: kotlin.Any!, /*1*/ p1: V!): V!
+    public open fun getOrDefault(/*0*/ p0: kotlin.Any!, /*1*/ p1: @kotlin.UnsafeVariance() V!): V!
     public abstract fun isEmpty(): kotlin.Boolean
 
     public interface Entry</*0*/ out K, /*1*/ out V> {
@@ -279,7 +279,7 @@ public interface Set</*0*/ out E> : kotlin.collections.Collection<E> {
     public abstract override /*1*/ fun isEmpty(): kotlin.Boolean
     public abstract override /*1*/ fun iterator(): kotlin.collections.Iterator<E>
     public open override /*1*/ /*fake_override*/ fun parallelStream(): java.util.stream.Stream<E!>!
-    public open override /*1*/ fun spliterator(): java.util.Spliterator<E!>!
+    public open override /*1*/ fun spliterator(): java.util.Spliterator<@kotlin.UnsafeVariance() E!>!
     public open override /*1*/ /*fake_override*/ fun stream(): java.util.stream.Stream<E!>!
 }
 
