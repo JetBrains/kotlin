@@ -29,9 +29,10 @@ import java.io.IOException
 class VirtualFileKotlinClass private constructor(
         val file: VirtualFile,
         className: ClassId,
+        classVersion: Int,
         classHeader: KotlinClassHeader,
-        innerClasses: FileBasedKotlinClass.InnerClassesInfo
-) : FileBasedKotlinClass(className, classHeader, innerClasses) {
+        innerClasses: InnerClassesInfo
+) : FileBasedKotlinClass(className, classVersion, classHeader, innerClasses) {
 
     override val location: String
         get() = file.path
@@ -63,8 +64,8 @@ class VirtualFileKotlinClass private constructor(
                     val byteContent = fileContent ?: file.contentsToByteArray(false)
                     if (!byteContent.isEmpty()) {
                         return@time FileBasedKotlinClass.create(byteContent) {
-                            name, header, innerClasses ->
-                            VirtualFileKotlinClass(file, name, header, innerClasses)
+                            name, classVersion, header, innerClasses ->
+                            VirtualFileKotlinClass(file, name, classVersion, header, innerClasses)
                         }
                     }
                 }

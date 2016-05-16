@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.load.kotlin;
 
 import com.intellij.openapi.util.Ref;
-import kotlin.jvm.functions.Function3;
+import kotlin.jvm.functions.Function4;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.SourceElement;
@@ -38,15 +38,18 @@ import static org.jetbrains.org.objectweb.asm.Opcodes.ASM5;
 
 public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
     private final ClassId classId;
+    private final int classVersion;
     private final KotlinClassHeader classHeader;
     private final InnerClassesInfo innerClasses;
 
     protected FileBasedKotlinClass(
             @NotNull ClassId classId,
+            int classVersion,
             @NotNull KotlinClassHeader classHeader,
             @NotNull InnerClassesInfo innerClasses
     ) {
         this.classId = classId;
+        this.classVersion = classVersion;
         this.classHeader = classHeader;
         this.innerClasses = innerClasses;
     }
@@ -84,15 +87,17 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
     @Nullable
     public static <T extends FileBasedKotlinClass> T create(
             @NotNull byte[] fileContents,
-            @NotNull Function3<ClassId, KotlinClassHeader, InnerClassesInfo, T> factory
+            @NotNull Function4<ClassId, Integer, KotlinClassHeader, InnerClassesInfo, T> factory
     ) {
         final ReadKotlinClassHeaderAnnotationVisitor readHeaderVisitor = new ReadKotlinClassHeaderAnnotationVisitor();
         final Ref<String> classNameRef = Ref.create();
+        final Ref<Integer> classVersion = Ref.create();
         final InnerClassesInfo innerClasses = new InnerClassesInfo();
         new ClassReader(fileContents).accept(new ClassVisitor(ASM5) {
             @Override
             public void visit(int version, int access, @NotNull String name, String signature, String superName, String[] interfaces) {
                 classNameRef.set(name);
+                classVersion.set(version);
             }
 
             @Override
@@ -118,13 +123,17 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
         if (header == null) return null;
 
         ClassId id = resolveNameByInternalName(className, innerClasses);
-        return factory.invoke(id, header, innerClasses);
+        return factory.invoke(id, classVersion.get(), header, innerClasses);
     }
 
     @NotNull
     @Override
     public ClassId getClassId() {
         return classId;
+    }
+
+    public int getClassVersion() {
+        return classVersion;
     }
 
     @NotNull
