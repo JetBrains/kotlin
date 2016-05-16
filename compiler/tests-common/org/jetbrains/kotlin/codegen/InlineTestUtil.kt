@@ -178,8 +178,8 @@ object InlineTestUtil {
 
     private fun loadBinaryClass(file: OutputFile): KotlinJvmBinaryClass {
         val klass = FileBasedKotlinClass.create(file.asByteArray()) {
-            className, classHeader, innerClasses ->
-            object : FileBasedKotlinClass(className, classHeader, innerClasses) {
+            className, classVersion, classHeader, innerClasses ->
+            object : FileBasedKotlinClass(className, classVersion, classHeader, innerClasses) {
                 override val location: String
                     get() = throw UnsupportedOperationException()
                 override fun getFileContents(): ByteArray = throw UnsupportedOperationException()
