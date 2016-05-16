@@ -115,7 +115,12 @@ class CallArgumentTranslator private constructor(
                     }
                 }
                 else {
-                    kind = translateVarargArgument(arguments, result, argContext, !isNativeFunctionCall)
+                    kind = if (isNativeFunctionCall) {
+                        translateValueArguments(arguments, result, argContext)
+                    }
+                    else {
+                        translateVarargArgument(arguments, result, argContext, true)
+                    }
                 }
             }
             else {
