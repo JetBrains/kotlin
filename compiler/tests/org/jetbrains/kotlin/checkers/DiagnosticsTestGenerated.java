@@ -679,6 +679,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("tailRecOverridden.kt")
+        public void testTailRecOverridden() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/tailRecOverridden.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("TraitOverrideObjectMethods.kt")
         public void testTraitOverrideObjectMethods() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/TraitOverrideObjectMethods.kt");
@@ -19769,6 +19775,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 @TestMetadata("defaultArgs.kt")
                 public void testDefaultArgs() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/defaultArgs.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("defaultArgsOverridden.kt")
+                public void testDefaultArgsOverridden() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/defaultArgsOverridden.kt");
                     doTest(fileName);
                 }
 
