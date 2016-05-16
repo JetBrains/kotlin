@@ -5078,6 +5078,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("defaultArgsOverridden.kt")
+                public void testDefaultArgsOverridden() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/defaultArgsOverridden.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("extensionTailCall.kt")
                 public void testExtensionTailCall() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/extensionTailCall.kt");
