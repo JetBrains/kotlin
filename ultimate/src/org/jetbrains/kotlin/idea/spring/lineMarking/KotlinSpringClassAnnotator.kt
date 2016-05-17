@@ -50,7 +50,11 @@ class KotlinSpringClassAnnotator : SpringClassAnnotator() {
             }
             return classForLightMethod?.toLightClass()?.methods?.firstOrNull { (it as? KtLightMethod)?.kotlinOrigin == function }
         }
+        psiElement.getParentOfTypeAndBranch<KtConstructor<*>> { getConstructorKeyword() ?: getValueParameterList() }?.let {
+            return it.toLightMethods().firstOrNull()
+        }
         psiElement.getParentOfTypeAndBranch<KtProperty> { nameIdentifier }?.let { return it }
+        psiElement.getParentOfTypeAndBranch<KtParameter> { nameIdentifier }?.let { if (it.valOrVarKeyword != null) return it }
         psiElement.getParentOfTypeAndBranch<KtAnnotationEntry> {
             (typeReference?.typeElement as? KtUserType)?.referenceExpression?.getReferencedNameElement()
         }?.let { return it.toLightAnnotation() }
@@ -58,8 +62,8 @@ class KotlinSpringClassAnnotator : SpringClassAnnotator() {
     }
 
     private fun doCollectMarkers(psiElement: PsiElement, result: MutableCollection<in RelatedItemLineMarkerInfo<PsiElement>>?) {
-        if (psiElement is KtProperty) {
-            for (it in psiElement.toLightElements()) {
+        if (psiElement is KtProperty || psiElement is KtParameter) {
+            for (it in (psiElement as KtDeclaration).toLightElements()) {
                 val nameIdentifier = (it as? PsiNameIdentifierOwner)?.nameIdentifier ?: continue
                 super.collectNavigationMarkers(nameIdentifier, result)
             }

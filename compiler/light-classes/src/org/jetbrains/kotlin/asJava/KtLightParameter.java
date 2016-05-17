@@ -100,6 +100,9 @@ public class KtLightParameter extends LightParameter implements KtLightDeclarati
         else if (declaration instanceof KtProperty) {
             setter = ((KtProperty) declaration).getSetter();
         }
+        else if (declaration instanceof KtParameter) {
+            return (KtParameter) declaration;
+        }
 
         return setter != null ? setter.getParameter() : null;
     }
