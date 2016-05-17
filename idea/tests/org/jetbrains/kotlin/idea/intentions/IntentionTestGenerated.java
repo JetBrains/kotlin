@@ -6513,9 +6513,33 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("DataClassDependentLocal.kt")
+        public void testDataClassDependentLocal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/DataClassDependentLocal.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("DataClassFirstNPropertiesUsed.kt")
         public void testDataClassFirstNPropertiesUsed() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/DataClassFirstNPropertiesUsed.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("DataClassFirstVariable.kt")
+        public void testDataClassFirstVariable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/DataClassFirstVariable.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("DataClassNoVariablesInside.kt")
+        public void testDataClassNoVariablesInside() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/DataClassNoVariablesInside.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("DataClassNoVariablesMultiUsages.kt")
+        public void testDataClassNoVariablesMultiUsages() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/DataClassNoVariablesMultiUsages.kt");
             doTest(fileName);
         }
 
@@ -6531,9 +6555,39 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("DataClassPropertyBetweenUsages.kt")
+        public void testDataClassPropertyBetweenUsages() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/DataClassPropertyBetweenUsages.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("DataClassSecondVariable.kt")
+        public void testDataClassSecondVariable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/DataClassSecondVariable.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("DataClassUnused.kt")
         public void testDataClassUnused() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/DataClassUnused.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("DataClassWithAssignmentInside.kt")
+        public void testDataClassWithAssignmentInside() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/DataClassWithAssignmentInside.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("DataClassWithExternalUsage.kt")
+        public void testDataClassWithExternalUsage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/DataClassWithExternalUsage.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("DataClassWithIncrementInside.kt")
+        public void testDataClassWithIncrementInside() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/DataClassWithIncrementInside.kt");
             doTest(fileName);
         }
 
@@ -6546,6 +6600,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("Getters.kt")
         public void testGetters() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/Getters.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("MapNoProperties.kt")
+        public void testMapNoProperties() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/MapNoProperties.kt");
             doTest(fileName);
         }
 
