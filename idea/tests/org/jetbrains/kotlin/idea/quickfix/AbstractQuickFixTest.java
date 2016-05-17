@@ -124,6 +124,10 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
         }), LocalInspectionTool.class);
     }
 
+    protected void configExtra(String options) {
+
+    }
+
     private void doKotlinQuickFixTest(final String testName, final QuickFixTestCase quickFixTestCase) {
         String relativePath = notNull(quickFixTestCase.getBasePath(), "") + "/" + StringsKt.decapitalize(testName);
         final String testFullPath = quickFixTestCase.getTestDataPath().replace(File.separatorChar, '/') + relativePath;
@@ -149,6 +153,8 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
                     quickFixTestCase.bringRealEditorBack();
 
                     checkForUnexpectedActions();
+
+                    configExtra(fileText);
 
                     applyAction(contents, quickFixTestCase, testName, testFullPath);
 
