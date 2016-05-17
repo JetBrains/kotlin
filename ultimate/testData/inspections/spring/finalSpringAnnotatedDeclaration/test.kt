@@ -99,3 +99,17 @@ open class Trans2 {
     @MyTransactional
     open fun foo4() = Component4()
 }
+
+// Object declarations
+
+@Configuration
+object Application5
+
+@MyConfiguration
+object Application6
+
+@Component
+object Component3
+
+@Transactional
+object Trans3

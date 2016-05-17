@@ -127,4 +127,36 @@
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Final Kotlin class or function with Spring annotation</problem_class>
         <description>@Transactional function should be declared open</description>
     </problem>
+    <problem>
+        <file>test.kt</file>
+        <line>106</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Final Kotlin class or function with Spring annotation</problem_class>
+        <description>@Configuration should not be applied to object declaration</description>
+    </problem>
+    <problem>
+        <file>test.kt</file>
+        <line>109</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Final Kotlin class or function with Spring annotation</problem_class>
+        <description>@Configuration should not be applied to object declaration</description>
+    </problem>
+    <problem>
+        <file>test.kt</file>
+        <line>112</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Final Kotlin class or function with Spring annotation</problem_class>
+        <description>@Component should not be applied to object declaration</description>
+    </problem>
+    <problem>
+        <file>test.kt</file>
+        <line>115</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Final Kotlin class or function with Spring annotation</problem_class>
+        <description>@Transactional should not be applied to object declaration</description>
+    </problem>
 </problems>
