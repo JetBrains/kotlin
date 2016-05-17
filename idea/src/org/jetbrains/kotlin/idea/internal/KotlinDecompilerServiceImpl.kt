@@ -16,30 +16,39 @@
 
 package org.jetbrains.kotlin.idea.internal
 
+import com.intellij.openapi.fileTypes.StdFileTypes
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
+import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.java.decompiler.IdeaLogger
 import org.jetbrains.java.decompiler.main.decompiler.BaseDecompiler
 import org.jetbrains.java.decompiler.main.extern.IBytecodeProvider
 import org.jetbrains.java.decompiler.main.extern.IFernflowerPreferences
 import org.jetbrains.java.decompiler.main.extern.IResultSaver
+import org.jetbrains.kotlin.idea.actions.canBeDecompiledToJava
 import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 import java.util.jar.Manifest
 
 class KotlinDecompilerServiceImpl : KotlinDecompilerService {
-    override fun decompile(file: KtFile): String {
-        val generationState = KotlinBytecodeToolWindow.compileSingleFile(file, true, true, true)
+    override fun decompile(file: KtFile): String? {
 
-        val bytecodeMap = hashMapOf<File, ByteArray>()
-        generationState.factory.asList().filter { FileUtilRt.extensionEquals(it.relativePath, "class") }.forEach {
-            bytecodeMap[File("/${it.relativePath}").absoluteFile] = it.asByteArray()
+        val bytecodeMap = when {
+            file.canBeDecompiledToJava() -> bytecodeMapForExistingClassfile(file.virtualFile)
+            !file.isCompiled -> bytecodeMapForSourceFile(file)
+            else -> return null
         }
-
-        val bytecodeProvider = KotlinBytecodeProvider(bytecodeMap)
         val resultSaver = KotlinResultSaver()
         val options = hashMapOf<String, Any>(
-            IFernflowerPreferences.REMOVE_BRIDGE to "0"
+                IFernflowerPreferences.REMOVE_BRIDGE to "0"
         )
+
+        val bytecodeProvider = IBytecodeProvider {
+            externalPath, internalPath ->
+            val path = File(FileUtil.toSystemIndependentName(externalPath))
+            bytecodeMap[path]?.invoke()
+        }
+
         val decompiler = BaseDecompiler(bytecodeProvider, resultSaver, options, IdeaLogger())
         for (path in bytecodeMap.keys) {
             decompiler.addSpace(path, true)
@@ -48,10 +57,27 @@ class KotlinDecompilerServiceImpl : KotlinDecompilerService {
         return resultSaver.resultText
     }
 
-    class KotlinBytecodeProvider(val bytecodeMap: Map<File, ByteArray>) : IBytecodeProvider {
-        override fun getBytecode(externalPath: String?, internalPath: String?): ByteArray? {
-            return bytecodeMap[File(externalPath)]
+    fun bytecodeMapForExistingClassfile(file: VirtualFile): Map<File, () -> ByteArray> {
+        val mask = "${file.nameWithoutExtension}$"
+        val files =
+                mapOf(file.path to file) +
+                file.parent.children.filter {
+                    it.nameWithoutExtension.startsWith(mask) && it.fileType === StdFileTypes.CLASS
+                }.map { it.path to it }
+
+        return files.entries.associate {
+            Pair(File(it.key), { it.value.contentsToByteArray() })
         }
+    }
+
+    fun bytecodeMapForSourceFile(file: KtFile): Map<File, () -> ByteArray> {
+        val generationState = KotlinBytecodeToolWindow.compileSingleFile(file, true, true, true)
+
+        val bytecodeMap = hashMapOf<File, () -> ByteArray>()
+        generationState.factory.asList().filter { FileUtilRt.extensionEquals(it.relativePath, "class") }.forEach {
+            bytecodeMap[File("/${it.relativePath}").absoluteFile] = { it.asByteArray() }
+        }
+        return bytecodeMap
     }
 
     class KotlinResultSaver : IResultSaver {

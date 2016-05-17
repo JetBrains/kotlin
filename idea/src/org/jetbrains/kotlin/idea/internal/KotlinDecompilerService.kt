@@ -20,7 +20,7 @@ import com.intellij.openapi.components.ServiceManager
 import org.jetbrains.kotlin.psi.KtFile
 
 interface KotlinDecompilerService {
-    fun decompile(file: KtFile): String
+    fun decompile(file: KtFile): String?
 
     companion object {
         fun getInstance(): KotlinDecompilerService? {
