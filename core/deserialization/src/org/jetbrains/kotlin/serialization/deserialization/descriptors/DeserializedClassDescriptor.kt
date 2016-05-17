@@ -65,6 +65,7 @@ class DeserializedClassDescriptor(
     private val containingDeclaration = outerContext.containingDeclaration
     private val primaryConstructor = c.storageManager.createNullableLazyValue { computePrimaryConstructor() }
     private val constructors = c.storageManager.createLazyValue { computeConstructors() }
+    private val nestedTypeAliases = c.storageManager.createLazyValue { computeTypeAliases() }
     private val companionObjectDescriptor = c.storageManager.createNullableLazyValue { computeCompanionObjectDescriptor() }
 
     internal val thisAsProtoContainer: ProtoContainer.Class = ProtoContainer.Class(
@@ -121,6 +122,11 @@ class DeserializedClassDescriptor(
     private fun computeSecondaryConstructors(): List<ConstructorDescriptor> =
             classProto.constructorList.filter { Flags.IS_SECONDARY.get(it.flags) }.map {
                 c.memberDeserializer.loadConstructor(it, false)
+            }
+
+    private fun computeTypeAliases(): List<TypeAliasDescriptor> =
+            classProto.typeAliasList.map {
+                c.memberDeserializer.loadTypeAlias(it)
             }
 
     override fun getConstructors() = constructors()
@@ -185,7 +191,9 @@ class DeserializedClassDescriptor(
             get() = SupertypeLoopChecker.EMPTY
     }
 
-    private inner class DeserializedClassMemberScope : DeserializedMemberScope(c, classProto.functionList, classProto.propertyList) {
+    private inner class DeserializedClassMemberScope : DeserializedMemberScope(
+            c, classProto.functionList, classProto.propertyList, classProto.typeAliasList
+    ) {
         private val classDescriptor: DeserializedClassDescriptor get() = this@DeserializedClassDescriptor
         private val allDescriptors = c.storageManager.createLazyValue {
             computeDescriptors(DescriptorKindFilter.ALL, MemberScope.ALL_NAME_FILTER, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS)
@@ -255,13 +263,21 @@ class DeserializedClassDescriptor(
             }
         }
 
+        override fun getNonDeclaredTypeAliasNames(location: LookupLocation): Set<Name> {
+            return classDescriptor.typeConstructor.supertypes.flatMapTo(LinkedHashSet()) {
+                it.memberScope.getContributedDescriptors().filterIsInstance<TypeAliasDescriptor>().map { it.name }
+            }
+        }
+
         override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
             recordLookup(name, location)
             return classDescriptor.enumEntries?.findEnumEntry(name) ?: classDescriptor.nestedClasses?.findNestedClass(name)
         }
 
-        override fun addClassDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean) {
+        override fun addClassifierDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean) {
             result.addAll(classDescriptor.nestedClasses?.all().orEmpty())
+            result.addAll(classDescriptor.nestedTypeAliases())
+            // TODO non-declared type aliases
         }
 
         override fun addEnumEntryDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean) {

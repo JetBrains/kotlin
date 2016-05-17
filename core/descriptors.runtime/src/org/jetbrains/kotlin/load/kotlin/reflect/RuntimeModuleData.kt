@@ -36,13 +36,13 @@ import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
-import org.jetbrains.kotlin.serialization.deserialization.LocalClassResolver
+import org.jetbrains.kotlin.serialization.deserialization.LocalClassifierResolver
 import org.jetbrains.kotlin.serialization.deserialization.NotFoundClasses
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 class RuntimeModuleData private constructor(val deserialization: DeserializationComponents, val packageFacadeProvider: RuntimePackagePartProvider) {
     val module: ModuleDescriptor get() = deserialization.moduleDescriptor
-    val localClassResolver: LocalClassResolver get() = deserialization.localClassResolver
+    val localClassifierResolver: LocalClassifierResolver get() = deserialization.localClassifierResolver
 
     companion object {
         fun create(classLoader: ClassLoader): RuntimeModuleData {

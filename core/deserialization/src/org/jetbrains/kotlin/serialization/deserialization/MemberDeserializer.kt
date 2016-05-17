@@ -167,6 +167,25 @@ class MemberDeserializer(private val c: DeserializationContext) {
         return function
     }
 
+    fun loadTypeAlias(proto: ProtoBuf.TypeAlias): TypeAliasDescriptor {
+        val annotations = Annotations.EMPTY // TODO generate & load type alias annotations
+
+        val visibility = Deserialization.visibility(Flags.VISIBILITY.get(proto.flags))
+        val typeAlias = DeserializedTypeAliasDescriptor(
+                c.containingDeclaration, annotations, c.nameResolver.getName(proto.name),
+                visibility, proto, c.nameResolver, c.typeTable, c.containerSource
+        )
+
+        val local = c.childContext(typeAlias, proto.typeParameterList)
+        typeAlias.initialize(
+                local.typeDeserializer.ownTypeParameters,
+                local.typeDeserializer.type(proto.underlyingType(c.typeTable)),
+                local.typeDeserializer.type(proto.expandedType(c.typeTable))
+        )
+
+        return typeAlias
+    }
+
     private fun getDispatchReceiverParameter(): ReceiverParameterDescriptor? {
         return (c.containingDeclaration as? ClassDescriptor)?.thisAsReceiverParameter
     }

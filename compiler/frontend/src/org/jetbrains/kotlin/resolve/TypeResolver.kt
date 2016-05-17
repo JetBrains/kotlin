@@ -484,15 +484,6 @@ class TypeResolver(
         }
     }
 
-    private class AbbreviatedTypeImpl(override val abbreviatedType: KotlinType): AbbreviatedType
-
-    private fun KotlinType.withAbbreviatedType(abbreviatedType: KotlinType): KotlinType =
-            if (isError)
-                this
-            else
-                replace(newCapabilities = capabilities.overrideCapability(AbbreviatedType::class.java,
-                                                                          AbbreviatedTypeImpl(abbreviatedType)))
-
     private class TypeAliasExpansion(
             val parent: TypeAliasExpansion?,
             val descriptor: TypeAliasDescriptor,

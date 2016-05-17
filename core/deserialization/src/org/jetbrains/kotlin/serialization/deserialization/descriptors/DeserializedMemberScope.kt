@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.serialization.deserialization.descriptors
 
 import com.google.protobuf.MessageLite
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -35,7 +32,8 @@ import java.util.*
 abstract class DeserializedMemberScope protected constructor(
         protected val c: DeserializationContext,
         functionList: Collection<ProtoBuf.Function>,
-        propertyList: Collection<ProtoBuf.Property>
+        propertyList: Collection<ProtoBuf.Property>,
+        typeAliasList: Collection<ProtoBuf.TypeAlias>
 ) : MemberScopeImpl() {
 
     private data class ProtoKey(val name: Name, val isExtension: Boolean)
@@ -48,11 +46,21 @@ abstract class DeserializedMemberScope protected constructor(
             c.storageManager.createLazyValue {
                 groupByKey(propertyList, { it.name }) { it.receiverType(c.typeTable) != null }
             }
+    private val typeAliasProtos =
+            c.storageManager.createLazyValue {
+                typeAliasList.groupBy { c.nameResolver.getName(it.name) }
+            }
+    protected val typeAliasNames =
+            c.storageManager.createLazyValue {
+                typeAliasList.map { c.nameResolver.getName(it.name) }
+            }
 
     private val functions =
             c.storageManager.createMemoizedFunction<Name, Collection<SimpleFunctionDescriptor>> { computeFunctions(it) }
     private val properties =
             c.storageManager.createMemoizedFunction<Name, Collection<PropertyDescriptor>> { computeProperties(it) }
+    private val typeAliases =
+            c.storageManager.createMemoizedFunction<Name, Collection<TypeAliasDescriptor>> { computeTypeAliases(it) }
 
     private fun <M : MessageLite> groupByKey(
             protos: Collection<M>, getNameIndex: (M) -> Int, isExtension: (M) -> Boolean
@@ -97,9 +105,23 @@ abstract class DeserializedMemberScope protected constructor(
     protected open fun computeNonDeclaredProperties(name: Name, descriptors: MutableCollection<PropertyDescriptor>) {
     }
 
+    private fun computeTypeAliases(name: Name): Collection<TypeAliasDescriptor> {
+        val protos = typeAliasProtos()[name].orEmpty()
+        val descriptors = protos.mapTo(linkedSetOf()) {
+            c.memberDeserializer.loadTypeAlias(it)
+        }
+        computeNonDeclaredTypeAliases(name, descriptors)
+        return descriptors.toReadOnlyList()
+    }
+
+    protected open fun computeNonDeclaredTypeAliases(name: Name, descriptors: MutableCollection<TypeAliasDescriptor>) {
+    }
+
     override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> = properties(name)
 
-    protected abstract fun addClassDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean)
+    protected fun getContributedTypeAliases(name: Name): Collection<TypeAliasDescriptor> = typeAliases(name)
+
+    protected abstract fun addClassifierDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean)
 
     protected fun computeDescriptors(
             kindFilter: DescriptorKindFilter,
@@ -119,7 +141,7 @@ abstract class DeserializedMemberScope protected constructor(
         addNonDeclaredDescriptors(result, location)
 
         if (kindFilter.acceptsKinds(DescriptorKindFilter.CLASSIFIERS_MASK)) {
-            addClassDescriptors(result, nameFilter)
+            addClassifierDescriptors(result, nameFilter)
         }
 
         return result.toReadOnlyList()
@@ -161,6 +183,7 @@ abstract class DeserializedMemberScope protected constructor(
 
     protected abstract fun getNonDeclaredFunctionNames(location: LookupLocation): Set<Name>
     protected abstract fun getNonDeclaredVariableNames(location: LookupLocation): Set<Name>
+    protected abstract fun getNonDeclaredTypeAliasNames(location: LookupLocation): Set<Name>
 
     protected abstract fun addEnumEntryDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean)
 

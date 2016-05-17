@@ -39,7 +39,7 @@ open class DeserializedPackageMemberScope(
         classNames: () -> Collection<Name>
 ) : DeserializedMemberScope(
         components.createContext(packageDescriptor, nameResolver, TypeTable(proto.typeTable), containerSource),
-        proto.functionList, proto.propertyList
+        proto.functionList, proto.propertyList, proto.typeAliasList
 ) {
     private val packageFqName = packageDescriptor.fqName
 
@@ -53,22 +53,28 @@ open class DeserializedPackageMemberScope(
             (name in classNames || c.components.fictitiousClassDescriptorFactory.shouldCreateClass(packageFqName, name))) {
             return getClassDescriptor(name)
         }
-        return null
+        return getContributedTypeAliases(name).singleOrNull()
     }
 
     private fun getClassDescriptor(name: Name): ClassDescriptor? =
             c.components.deserializeClass(ClassId(packageFqName, name))
 
-    override fun addClassDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean) {
+    override fun addClassifierDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean) {
         for (className in classNames) {
             if (nameFilter(className)) {
                 result.addIfNotNull(getClassDescriptor(className))
+            }
+        }
+        for (typeAliasName in typeAliasNames()) {
+            if (nameFilter(typeAliasName)) {
+                result.addAll(getContributedTypeAliases(typeAliasName))
             }
         }
     }
 
     override fun getNonDeclaredFunctionNames(location: LookupLocation): Set<Name> = emptySet()
     override fun getNonDeclaredVariableNames(location: LookupLocation): Set<Name> = emptySet()
+    override fun getNonDeclaredTypeAliasNames(location: LookupLocation): Set<Name> = emptySet()
 
     override fun addEnumEntryDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean) {
         // Do nothing

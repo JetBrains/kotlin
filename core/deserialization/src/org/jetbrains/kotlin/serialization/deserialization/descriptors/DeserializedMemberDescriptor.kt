@@ -19,16 +19,14 @@ package org.jetbrains.kotlin.serialization.deserialization.descriptors
 import com.google.protobuf.MessageLite
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl
-import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
-import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
-import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.TypeTable
+import org.jetbrains.kotlin.types.KotlinType
 
-interface DeserializedCallableMemberDescriptor : CallableMemberDescriptor {
+interface DeserializedMemberDescriptor : MemberDescriptor {
     val proto: MessageLite
 
     val nameResolver: NameResolver
@@ -38,6 +36,8 @@ interface DeserializedCallableMemberDescriptor : CallableMemberDescriptor {
     // Information about the origin of this callable's container (class or package part on JVM) or null if there's no such information.
     val containerSource: SourceElement?
 }
+
+interface DeserializedCallableMemberDescriptor : DeserializedMemberDescriptor, CallableMemberDescriptor
 
 class DeserializedSimpleFunctionDescriptor(
         containingDeclaration: DeclarationDescriptor,
@@ -132,4 +132,33 @@ class DeserializedConstructorDescriptor(
     override fun isInline(): Boolean = false
 
     override fun isTailrec(): Boolean = false
+}
+
+class DeserializedTypeAliasDescriptor(
+        containingDeclaration: DeclarationDescriptor,
+        annotations: Annotations,
+        name: Name,
+        visibility: Visibility,
+        override val proto: ProtoBuf.TypeAlias,
+        override val nameResolver: NameResolver,
+        override val typeTable: TypeTable,
+        override val containerSource: SourceElement?
+) : AbstractTypeAliasDescriptor(containingDeclaration, annotations, name, SourceElement.NO_SOURCE, visibility),
+        DeserializedMemberDescriptor {
+
+    private lateinit var underlyingTypeImpl: KotlinType
+    private lateinit var expandedTypeImpl: KotlinType
+
+    override val underlyingType: KotlinType get() = underlyingTypeImpl
+    override val expandedType: KotlinType get() = expandedTypeImpl
+
+    fun initialize(
+            declaredTypeParameters: List<TypeParameterDescriptor>,
+            underlyingType: KotlinType,
+            expandedType: KotlinType
+    ) {
+        initialize(declaredTypeParameters)
+        underlyingTypeImpl = underlyingType
+        expandedTypeImpl = expandedType
+    }
 }

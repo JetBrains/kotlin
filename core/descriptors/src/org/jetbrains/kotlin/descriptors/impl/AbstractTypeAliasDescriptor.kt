@@ -14,48 +14,31 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve.lazy.descriptors
+package org.jetbrains.kotlin.descriptors.impl
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorNonRootImpl
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.storage.NotNullLazyValue
-import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.TypeSubstitutor
 
-class TypeAliasDescriptorImpl(
+abstract class AbstractTypeAliasDescriptor(
         containingDeclaration: DeclarationDescriptor,
         annotations: Annotations,
         name: Name,
         sourceElement: SourceElement,
-        private val fVisibility: Visibility
+        private val visibilityImpl: Visibility
 ) : DeclarationDescriptorNonRootImpl(containingDeclaration, annotations, name, sourceElement),
         TypeAliasDescriptor {
 
     // TODO kotlinize some interfaces
     private lateinit var declaredTypeParametersImpl: List<TypeParameterDescriptor>
-    private lateinit var underlyingTypeImpl: NotNullLazyValue<KotlinType>
-    private lateinit var expandedTypeImpl: NotNullLazyValue<KotlinType>
 
-    override val underlyingType: KotlinType get() = underlyingTypeImpl()
-    override val expandedType: KotlinType get() = expandedTypeImpl()
-
-    fun initialize(
-            declaredTypeParameters: List<TypeParameterDescriptor>,
-            lazyUnderlyingType: NotNullLazyValue<KotlinType>,
-            lazyExpandedType: NotNullLazyValue<KotlinType>
-    ) {
+    fun initialize(declaredTypeParameters: List<TypeParameterDescriptor>) {
         this.declaredTypeParametersImpl = declaredTypeParameters
-        this.underlyingTypeImpl = lazyUnderlyingType
-        this.expandedTypeImpl = lazyExpandedType
     }
 
     override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R =
@@ -73,7 +56,7 @@ class TypeAliasDescriptorImpl(
 
     override fun getModality() = Modality.FINAL
 
-    override fun getVisibility() = fVisibility
+    override fun getVisibility() = visibilityImpl
 
     override fun substitute(substitutor: TypeSubstitutor): TypeAliasDescriptor =
             if (substitutor.isEmpty) this
@@ -89,7 +72,7 @@ class TypeAliasDescriptorImpl(
 
     private val typeConstructor = object : TypeConstructor {
         override fun getDeclarationDescriptor(): TypeAliasDescriptor =
-                this@TypeAliasDescriptorImpl
+                this@AbstractTypeAliasDescriptor
 
         override fun getParameters(): List<TypeParameterDescriptor> =
                 declarationDescriptor.declaredTypeParameters // TODO type parameters of outer class
@@ -110,14 +93,4 @@ class TypeAliasDescriptorImpl(
                 declarationDescriptor.annotations
     }
 
-    companion object {
-        @JvmStatic fun create(
-                containingDeclaration: DeclarationDescriptor,
-                annotations: Annotations,
-                name: Name,
-                sourceElement: SourceElement,
-                visibility: Visibility
-        ): TypeAliasDescriptorImpl =
-                TypeAliasDescriptorImpl(containingDeclaration, annotations, name, sourceElement, visibility)
-    }
 }

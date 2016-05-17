@@ -90,3 +90,16 @@ fun ProtoBuf.Type.outerType(typeTable: TypeTable): ProtoBuf.Type? {
         else -> null
     }
 }
+
+fun ProtoBuf.Type.abbreviatedType(typeTable: TypeTable): ProtoBuf.Type? =
+        when {
+            hasAbbreviatedType() -> abbreviatedType
+            hasAbbreviatedTypeId() -> typeTable[abbreviatedTypeId]
+            else -> null
+        }
+
+fun ProtoBuf.TypeAlias.underlyingType(typeTable: TypeTable): ProtoBuf.Type =
+        if (hasUnderlyingTypeId()) typeTable[underlyingTypeId] else underlyingType
+
+fun ProtoBuf.TypeAlias.expandedType(typeTable: TypeTable): ProtoBuf.Type =
+        if (hasExpandedTypeId()) typeTable[expandedTypeId] else expandedType

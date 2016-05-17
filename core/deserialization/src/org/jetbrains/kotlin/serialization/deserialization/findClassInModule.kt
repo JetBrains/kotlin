@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.serialization.deserialization
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.ClassId
 
@@ -43,3 +44,22 @@ fun ModuleDescriptor.findNonGenericClassAcrossDependencies(classId: ClassId, not
 
     return notFoundClasses.get(classId, typeParametersCount).declarationDescriptor as ClassDescriptor
 }
+
+fun ModuleDescriptor.findTypeAliasAcrossModuleDependencies(classId: ClassId): TypeAliasDescriptor? {
+    // TODO refactor with findClassAcrossModuleDependencies
+    // TODO what if typealias becomes a class / interface?
+
+    val packageViewDescriptor = getPackage(classId.packageFqName)
+    val segments = classId.relativeClassName.pathSegments()
+    val lastNameIndex = segments.size - 1
+    val topLevelClassifier = packageViewDescriptor.memberScope.getContributedClassifier(segments.first(), NoLookupLocation.FROM_DESERIALIZATION)
+    if (lastNameIndex == 0) return topLevelClassifier as? TypeAliasDescriptor
+
+    var currentClass = topLevelClassifier as? ClassDescriptor ?: return null
+    for (name in segments.subList(1, lastNameIndex)) {
+        currentClass = currentClass.unsubstitutedInnerClassesScope.getContributedClassifier(name, NoLookupLocation.FROM_DESERIALIZATION) as? ClassDescriptor ?: return null
+    }
+    val lastName = segments[lastNameIndex]
+    return currentClass.unsubstitutedMemberScope.getContributedClassifier(lastName, NoLookupLocation.FROM_DESERIALIZATION) as? TypeAliasDescriptor
+}
+
