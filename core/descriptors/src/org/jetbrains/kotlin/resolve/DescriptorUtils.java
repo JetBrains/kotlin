@@ -129,8 +129,8 @@ public class DescriptorUtils {
         return getFqNameFromTopLevelClass(containingDeclaration).child(name);
     }
 
-    public static boolean isTopLevelDeclaration(@NotNull DeclarationDescriptor descriptor) {
-        return descriptor.getContainingDeclaration() instanceof PackageFragmentDescriptor;
+    public static boolean isTopLevelDeclaration(@Nullable DeclarationDescriptor descriptor) {
+        return descriptor != null && descriptor.getContainingDeclaration() instanceof PackageFragmentDescriptor;
     }
 
     public static boolean isExtension(@NotNull CallableDescriptor descriptor) {
@@ -276,6 +276,10 @@ public class DescriptorUtils {
         return isKindOf(descriptor, ClassKind.OBJECT) && ((ClassDescriptor) descriptor).isCompanionObject();
     }
 
+    public static boolean isSealedClass(@Nullable DeclarationDescriptor descriptor) {
+        return isKindOf(descriptor, ClassKind.CLASS) && ((ClassDescriptor) descriptor).getModality() == Modality.SEALED;
+    }
+
     public static boolean isAnonymousObject(@NotNull DeclarationDescriptor descriptor) {
         return isClass(descriptor) && descriptor.getName().equals(SpecialNames.NO_NAME_PROVIDED);
     }
@@ -369,7 +373,7 @@ public class DescriptorUtils {
     @NotNull
     public static Visibility getDefaultConstructorVisibility(@NotNull ClassDescriptor classDescriptor) {
         ClassKind classKind = classDescriptor.getKind();
-        if (classKind == ClassKind.ENUM_CLASS || classKind.isSingleton() || classDescriptor.getModality() == Modality.SEALED) {
+        if (classKind == ClassKind.ENUM_CLASS || classKind.isSingleton() || isSealedClass(classDescriptor)) {
             return Visibilities.PRIVATE;
         }
         if (isAnonymousObject(classDescriptor)) {
@@ -456,7 +460,7 @@ public class DescriptorUtils {
 
     public static boolean classCanHaveAbstractMembers(@NotNull ClassDescriptor classDescriptor) {
         return classDescriptor.getModality() == Modality.ABSTRACT
-               || classDescriptor.getModality() == Modality.SEALED
+               || isSealedClass(classDescriptor)
                || classDescriptor.getKind() == ClassKind.ENUM_CLASS;
     }
 

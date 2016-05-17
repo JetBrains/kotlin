@@ -55,6 +55,8 @@ import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 
 public class BodyResolver {
+    private static final boolean ALLOW_TOP_LEVEL_SEALED_INHERITANCE = true;
+
     @NotNull private final AnnotationChecker annotationChecker;
     @NotNull private final ExpressionTypingServices expressionTypingServices;
     @NotNull private final CallResolver callResolver;
@@ -384,18 +386,26 @@ public class BodyResolver {
     @NotNull
     private static Set<TypeConstructor> getAllowedFinalSupertypes(
             @NotNull ClassDescriptor descriptor,
-            @NotNull KtClassOrObject jetClass
+            @NotNull Map<KtTypeReference, KotlinType> supertypes,
+            @NotNull KtClassOrObject ktClassOrObject
     ) {
-        Set<TypeConstructor> parentEnumOrSealed;
-        if (jetClass instanceof KtEnumEntry) {
+        Set<TypeConstructor> parentEnumOrSealed = Collections.emptySet();
+        if (ktClassOrObject instanceof KtEnumEntry) {
             parentEnumOrSealed = Collections.singleton(((ClassDescriptor) descriptor.getContainingDeclaration()).getTypeConstructor());
         }
+        else if (ALLOW_TOP_LEVEL_SEALED_INHERITANCE && DescriptorUtils.isTopLevelDeclaration(descriptor)) {
+            for (KotlinType superType : supertypes.values()) {
+                ClassifierDescriptor classifierDescriptor = superType.getConstructor().getDeclarationDescriptor();
+                if (DescriptorUtils.isSealedClass(classifierDescriptor) && DescriptorUtils.isTopLevelDeclaration(classifierDescriptor)) {
+                    parentEnumOrSealed = Collections.singleton(classifierDescriptor.getTypeConstructor());
+                }
+            }
+        }
         else {
-            parentEnumOrSealed = Collections.emptySet();
             ClassDescriptor currentDescriptor = descriptor;
             while (currentDescriptor.getContainingDeclaration() instanceof ClassDescriptor) {
                 currentDescriptor = (ClassDescriptor) currentDescriptor.getContainingDeclaration();
-                if (currentDescriptor.getModality() == Modality.SEALED) {
+                if (DescriptorUtils.isSealedClass(currentDescriptor)) {
                     if (parentEnumOrSealed.isEmpty()) {
                         parentEnumOrSealed = new HashSet<TypeConstructor>();
                     }
@@ -418,9 +428,9 @@ public class BodyResolver {
     private void checkSupertypeList(
             @NotNull ClassDescriptor supertypeOwner,
             @NotNull Map<KtTypeReference, KotlinType> supertypes,
-            @NotNull KtClassOrObject jetClass
+            @NotNull KtClassOrObject ktClassOrObject
     ) {
-        Set<TypeConstructor> allowedFinalSupertypes = getAllowedFinalSupertypes(supertypeOwner, jetClass);
+        Set<TypeConstructor> allowedFinalSupertypes = getAllowedFinalSupertypes(supertypeOwner, supertypes, ktClassOrObject);
         Set<TypeConstructor> typeConstructors = Sets.newHashSet();
         boolean classAppeared = false;
         for (Map.Entry<KtTypeReference, KotlinType> entry : supertypes.entrySet()) {
@@ -458,13 +468,13 @@ public class BodyResolver {
                         trace.report(INTERFACE_WITH_SUPERCLASS.on(typeReference));
                         addSupertype = false;
                     }
-                    else if (jetClass.hasModifier(KtTokens.DATA_KEYWORD)) {
+                    else if (ktClassOrObject.hasModifier(KtTokens.DATA_KEYWORD)) {
                         trace.report(DATA_CLASS_CANNOT_HAVE_CLASS_SUPERTYPES.on(typeReference));
                         addSupertype = false;
                     }
                     else if (DescriptorUtils.isSubclass(classDescriptor, builtIns.getThrowable()) &&
                              !supertypeOwner.getDeclaredTypeParameters().isEmpty()) {
-                        trace.report(GENERIC_THROWABLE_SUBCLASS.on(jetClass.getTypeParameterList()));
+                        trace.report(GENERIC_THROWABLE_SUBCLASS.on(ktClassOrObject.getTypeParameterList()));
                         addSupertype = false;
                     }
 
@@ -492,7 +502,7 @@ public class BodyResolver {
                 }
             }
             else if (!allowedFinalSupertypes.contains(constructor)) {
-                if (classDescriptor.getModality() == Modality.SEALED) {
+                if (DescriptorUtils.isSealedClass(classDescriptor)) {
                     DeclarationDescriptor containingDescriptor = supertypeOwner.getContainingDeclaration();
                     while (containingDescriptor != null && containingDescriptor != classDescriptor) {
                         containingDescriptor = containingDescriptor.getContainingDeclaration();

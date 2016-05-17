@@ -15657,6 +15657,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/sealed"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("DerivedTopLevel.kt")
+            public void testDerivedTopLevel() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sealed/DerivedTopLevel.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("DoubleInner.kt")
             public void testDoubleInner() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sealed/DoubleInner.kt");
@@ -15735,9 +15741,9 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("NeverDerived.kt")
-            public void testNeverDerived() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sealed/NeverDerived.kt");
+            @TestMetadata("NeverDerivedFromNested.kt")
+            public void testNeverDerivedFromNested() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sealed/NeverDerivedFromNested.kt");
                 doTest(fileName);
             }
 
@@ -19581,6 +19587,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("ReservedExhaustiveWhen.kt")
             public void testReservedExhaustiveWhen() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/ReservedExhaustiveWhen.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("TopLevelSealed.kt")
+            public void testTopLevelSealed() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/TopLevelSealed.kt");
                 doTest(fileName);
             }
 
