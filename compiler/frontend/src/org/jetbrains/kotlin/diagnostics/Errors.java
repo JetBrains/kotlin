@@ -28,9 +28,9 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.resolve.VarianceConflictDiagnosticData;
 import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.VarianceConflictDiagnosticData;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import java.lang.reflect.Field;
@@ -501,8 +501,6 @@ public interface Errors {
     // Call resolution
 
     DiagnosticFactory1<KtExpression, String> ILLEGAL_SELECTOR = DiagnosticFactory1.create(ERROR);
-
-    DiagnosticFactory0<PsiElement> SAFE_CALL_IN_QUALIFIER = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory2<KtExpression, KtExpression, KotlinType> FUNCTION_EXPECTED = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory2<KtExpression, KtExpression, Boolean> FUNCTION_CALL_EXPECTED = DiagnosticFactory2.create(ERROR, CALL_EXPRESSION);
