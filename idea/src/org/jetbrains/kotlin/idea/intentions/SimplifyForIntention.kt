@@ -26,12 +26,13 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import kotlin.collections.forEach as forEachStdLib
+import kotlin.collections.forEach
 
 class SimplifyForInspection : IntentionBasedInspection<KtForExpression>(SimplifyForIntention())
 
@@ -41,13 +42,19 @@ class SimplifyForIntention : SelfTargetingRangeIntention<KtForExpression>(
         "Simplify 'for'"
 ) {
     override fun applyTo(element: KtForExpression, editor: Editor?) {
-        val (propertiesToRemove, removeSelectorInLoopRange) = collectPropertiesToRemove(element) ?: return
+        val (usagesToRemove, removeSelectorInLoopRange) = collectUsagesToRemove(element) ?: return
 
         val loopRange = element.loopRange ?: return
         val loopParameter = element.loopParameter ?: return
 
-        loopParameter.replace(KtPsiFactory(element).createDestructuringDeclarationInFor("(${propertiesToRemove.joinToString { it.name!! }})"))
-        propertiesToRemove.forEachStdLib { p -> p.delete() }
+        val factory = KtPsiFactory(element)
+        loopParameter.replace(factory.createDestructuringDeclarationInFor("(${usagesToRemove.joinToString { it.name!! }})"))
+        usagesToRemove.forEach { p ->
+            p.property?.delete()
+            p.usersToReplace.forEach {
+                it.replace(factory.createExpression(p.name!!))
+            }
+        }
 
         if (removeSelectorInLoopRange && loopRange is KtDotQualifiedExpression) {
             loopRange.replace(loopRange.receiverExpression)
@@ -57,15 +64,15 @@ class SimplifyForIntention : SelfTargetingRangeIntention<KtForExpression>(
     override fun applicabilityRange(element: KtForExpression): TextRange? {
         if (element.destructuringParameter != null) return null
 
-        val propertiesToRemove = collectPropertiesToRemove(element)
-        if (propertiesToRemove != null && propertiesToRemove.first.isNotEmpty()) {
+        val usagesToRemove = collectUsagesToRemove(element)
+        if (usagesToRemove != null && usagesToRemove.first.isNotEmpty()) {
             return element.loopParameter!!.textRange
         }
         return null
     }
 
     // Note: list should contains properties in order to create destructing declaration
-    private fun collectPropertiesToRemove(element: KtForExpression): Pair<List<KtProperty>, Boolean>? {
+    private fun collectUsagesToRemove(element: KtForExpression): Pair<List<UsageData>, Boolean>? {
         val loopParameter = element.loopParameter ?: return null
 
         val context = element.analyzeFullyAndGetResult().bindingContext
@@ -74,45 +81,41 @@ class SimplifyForIntention : SelfTargetingRangeIntention<KtForExpression>(
         val classDescriptor = loopParameterDescriptor.type.constructor.declarationDescriptor as? ClassDescriptor ?: return null
 
         var otherUsages = false
-        var removeSelectorInLoopRange = false
-        val propertiesToRemove: Array<KtProperty?>
+        val usagesToRemove : Array<UsageData?>
 
         if (DescriptorUtils.isSubclass(classDescriptor, classDescriptor.builtIns.mapEntry)) {
             val loopRangeDescriptorName = element.loopRange.getResolvedCall(context)?.resultingDescriptor?.name
-            if (loopRangeDescriptorName != null &&
-                (loopRangeDescriptorName.asString().equals("entries") || loopRangeDescriptorName.asString().equals("entrySet"))) {
-                removeSelectorInLoopRange = true
-            }
+            val removeSelectorInLoopRange = loopRangeDescriptorName?.asString().let { it == "entries" || it == "entrySet" }
 
-            propertiesToRemove = arrayOfNulls<KtProperty>(2)
+            usagesToRemove = arrayOfNulls(2)
 
             ReferencesSearch.search(loopParameter).iterateOverMapEntryPropertiesUsages(
                     context,
-                    { index, property -> propertiesToRemove[index] = property },
+                    { index, usageData -> usagesToRemove[index] += usageData.named(if (index == 0) "key" else "value") },
                     { otherUsages = true }
             )
 
-            if (!otherUsages && propertiesToRemove.all { it != null }) {
-                return propertiesToRemove.mapNotNull { it } to removeSelectorInLoopRange
+            if (!otherUsages && usagesToRemove.all { it != null && it.name != null}) {
+                return usagesToRemove.mapNotNull { it } to removeSelectorInLoopRange
             }
         }
         else if (classDescriptor.isData) {
             val valueParameters = classDescriptor.unsubstitutedPrimaryConstructor?.valueParameters ?: return null
-            propertiesToRemove = arrayOfNulls<KtProperty>(valueParameters.size)
+            usagesToRemove = arrayOfNulls(valueParameters.size)
 
             ReferencesSearch.search(loopParameter).iterateOverDataClassPropertiesUsagesWithIndex(
                     context,
                     classDescriptor,
-                    { index, property -> propertiesToRemove[index] = property },
+                    { index, usageData -> usagesToRemove[index] += usageData.named(valueParameters[index].name.asString()) },
                     { otherUsages = true }
             )
 
             if (otherUsages) return null
 
-            val notNullProperties = propertiesToRemove.filterNotNull()
-            val droppedLastUnused = propertiesToRemove.dropLastWhile { it == null }
-            if (droppedLastUnused.size == notNullProperties.size) {
-                return notNullProperties to removeSelectorInLoopRange
+            val notNullUsages = usagesToRemove.filterNotNull().filter { it.name != null }
+            val droppedLastUnused = usagesToRemove.dropLastWhile { it == null }
+            if (droppedLastUnused.size == notNullUsages.size) {
+                return notNullUsages to false
             }
         }
 
@@ -121,20 +124,20 @@ class SimplifyForIntention : SelfTargetingRangeIntention<KtForExpression>(
 
     private fun Query<PsiReference>.iterateOverMapEntryPropertiesUsages(
             context: BindingContext,
-            process: (Int, KtProperty) -> Unit,
+            process: (Int, UsageData) -> Unit,
             cancel: () -> Unit
     ) {
         // TODO: Remove SAM-constructor when KT-11265 will be fixed
         forEach(Processor forEach@{
             val applicableUsage = getDataIfUsageIsApplicable(it, context)
             if (applicableUsage != null) {
-                val (property, descriptor) = applicableUsage
-                if (descriptor.name.asString().equals("key") || descriptor.name.asString().equals("getKey")) {
-                    process(0, property)
+                val descriptorName = applicableUsage.descriptor.name.asString()
+                if (descriptorName.equals("key") || descriptorName.equals("getKey")) {
+                    process(0, applicableUsage)
                     return@forEach true
                 }
-                else if (descriptor.name.asString().equals("value") || descriptor.name.asString().equals("getValue")) {
-                    process(1, property)
+                else if (descriptorName.equals("value") || descriptorName.equals("getValue")) {
+                    process(1, applicableUsage)
                     return@forEach true
                 }
             }
@@ -147,7 +150,7 @@ class SimplifyForIntention : SelfTargetingRangeIntention<KtForExpression>(
     private fun Query<PsiReference>.iterateOverDataClassPropertiesUsagesWithIndex(
             context: BindingContext,
             dataClass: ClassDescriptor,
-            process: (Int, KtProperty) -> Unit,
+            process: (Int, UsageData) -> Unit,
             cancel: () -> Unit
     ) {
         val valueParameters = dataClass.unsubstitutedPrimaryConstructor?.valueParameters ?: return
@@ -155,10 +158,9 @@ class SimplifyForIntention : SelfTargetingRangeIntention<KtForExpression>(
         forEach(Processor forEach@{
             val applicableUsage = getDataIfUsageIsApplicable(it, context)
             if (applicableUsage != null) {
-                val (property, descriptor) = applicableUsage
                 for (valueParameter in valueParameters) {
-                    if (context.get(BindingContext.VALUE_PARAMETER_AS_PROPERTY, valueParameter) == descriptor) {
-                        process(valueParameter.index, property)
+                    if (context.get(BindingContext.VALUE_PARAMETER_AS_PROPERTY, valueParameter) == applicableUsage.descriptor) {
+                        process(valueParameter.index, applicableUsage)
                         return@forEach true
                     }
                 }
@@ -171,12 +173,37 @@ class SimplifyForIntention : SelfTargetingRangeIntention<KtForExpression>(
 
     private fun getDataIfUsageIsApplicable(usage: PsiReference, context: BindingContext): UsageData? {
         val parentCall = usage.element.parent as? KtExpression ?: return null
-        val property = parentCall.parent as? KtProperty ?: return null
+        val userParent = parentCall.parent
+        if (userParent is KtBinaryExpression) {
+            if (userParent.operationToken in KtTokens.ALL_ASSIGNMENTS &&
+                userParent.left === parentCall) return null
+        }
+        if (userParent is KtUnaryExpression) {
+            if (userParent.operationToken === KtTokens.PLUSPLUS || userParent.operationToken === KtTokens.MINUSMINUS) return null
+        }
+
+        val property = parentCall.parent as? KtProperty
         val resolvedCall = parentCall.getResolvedCall(context) ?: return null
 
         val descriptor = resolvedCall.resultingDescriptor
-        return UsageData(property, descriptor)
+        return UsageData(property, parentCall, descriptor)
     }
 
-    private data class UsageData(val property: KtProperty, val descriptor: CallableDescriptor)
+    private data class UsageData(val property: KtProperty?,
+                                 val usersToReplace: List<KtExpression>,
+                                 val descriptor: CallableDescriptor,
+                                 val name: String? = property?.name
+    ) {
+        constructor(property: KtProperty?, user: KtExpression, descriptor: CallableDescriptor):
+                this(property, if (property != null) emptyList() else listOf(user), descriptor)
+
+        fun named(suggested: String) = if (name != null) this else copy(name = suggested)
+    }
+
+    private operator fun UsageData?.plus(newData: UsageData): UsageData {
+        if (this == null) return newData
+        val allUsersToReplace = usersToReplace + newData.usersToReplace
+        if (property != null) return copy(usersToReplace = allUsersToReplace)
+        else return newData.copy(usersToReplace = allUsersToReplace)
+    }
 }
