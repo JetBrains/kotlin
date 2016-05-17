@@ -90,7 +90,7 @@ class ClassTranslator private constructor(
         val nonConstructorContext = context.innerWithUsageTracker(scope, descriptor)
         val delegationTranslator = DelegationTranslator(classDeclaration, nonConstructorContext)
         translatePropertiesAsConstructorParameters(nonConstructorContext, properties)
-        val bodyVisitor = DeclarationBodyVisitor(properties, staticProperties)
+        val bodyVisitor = DeclarationBodyVisitor(properties, staticProperties, scope)
         bodyVisitor.traverseContainer(classDeclaration, nonConstructorContext)
         delegationTranslator.generateDelegated(properties)
 
