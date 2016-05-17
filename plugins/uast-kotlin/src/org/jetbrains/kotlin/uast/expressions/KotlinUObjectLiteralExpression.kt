@@ -16,9 +16,15 @@
 
 package org.jetbrains.kotlin.uast
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.KtObjectLiteralExpression
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UObjectLiteralExpression
+import org.jetbrains.uast.UType
 import org.jetbrains.uast.psi.PsiElementBacked
 
 class KotlinUObjectLiteralExpression(
@@ -26,4 +32,10 @@ class KotlinUObjectLiteralExpression(
         override val parent: UElement
 ) : UObjectLiteralExpression, PsiElementBacked, KotlinUElementWithType {
     override val declaration by lz { KotlinUClass(psi.objectDeclaration, this, true) }
+    override fun getExpressionType(): UType? {
+        val obj = psi.objectDeclaration
+        val bindingContext = obj.analyze(BodyResolveMode.PARTIAL)
+        val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, obj] as? ClassDescriptor ?: return null
+        return KotlinConverter.convert(descriptor.getSuperClassOrAny().defaultType, psi.project, null)
+    }
 }
