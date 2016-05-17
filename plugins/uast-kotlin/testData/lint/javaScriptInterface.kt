@@ -12,6 +12,10 @@ class JavaScriptTestK {
         webview.addJavascriptInterface(InheritsFromAnnotated(), "myobj")
         webview.addJavascriptInterface(NonAnnotatedObject(), "myobj")
 
+        webview.addJavascriptInterface(null, "nothing")
+        webview.addJavascriptInterface(object : Any() { @JavascriptInterface fun method() {} }, "nothing")
+        webview.addJavascriptInterface(JavascriptFace(), "nothing")
+
         var o: Any = NonAnnotatedObject()
         webview.addJavascriptInterface(o, "myobj")
         o = InheritsFromAnnotated()
@@ -55,4 +59,8 @@ class JavaScriptTestK {
         override fun test2() {}
     }
 
+}
+
+class JavascriptFace {
+    fun method() {}
 }
