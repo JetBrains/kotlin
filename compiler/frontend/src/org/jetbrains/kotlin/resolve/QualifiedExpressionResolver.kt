@@ -141,7 +141,7 @@ class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageValidator
             packageFragmentForVisibilityCheck: PackageFragmentDescriptor?
     ): ImportingScope? { // null if some error happened
         val importedReference = importDirective.importedReference ?: return null
-        val path = importedReference.asQualifierPartList(trace)
+        val path = importedReference.asQualifierPartList()
         val lastPart = path.lastOrNull() ?: return null
         val packageFragmentForCheck =
                 when {
@@ -270,7 +270,7 @@ class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageValidator
         storeResult(trace, lastPart.expression, descriptors, shouldBeVisibleFrom = null, position = QualifierPosition.IMPORT, isQualifier = false)
     }
 
-    private fun KtExpression.asQualifierPartList(trace: BindingTrace): List<QualifierPart> {
+    private fun KtExpression.asQualifierPartList(): List<QualifierPart> {
         val result = SmartList<QualifierPart>()
         var expression: KtExpression? = this
         loop@ while (expression != null) {
@@ -284,9 +284,6 @@ class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageValidator
                         result.add(QualifierPart(it.getReferencedNameAsName(), it))
                     }
                     expression = expression.receiverExpression
-                    if (expression is KtSafeQualifiedExpression) {
-                        trace.report(Errors.SAFE_CALL_IN_QUALIFIER.on(expression.operationTokenNode.psi))
-                    }
                 }
                 else -> expression = null
             }
