@@ -28,10 +28,6 @@ import org.jetbrains.kotlin.psi.KtVisitorVoid
 class SpringKotlinAutowiredMembersInspection : AbstractKotlinInspection() {
     private val javaInspection by lazy { SpringJavaAutowiredMembersInspection() }
 
-    override fun getDisplayName() = "Autowired members defined in invalid Spring bean (Kotlin)"
-
-    override fun getGroupDisplayName() = "Code"
-
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return object: KtVisitorVoid() {
             override fun visitClassOrObject(classOrObject: KtClassOrObject) {
