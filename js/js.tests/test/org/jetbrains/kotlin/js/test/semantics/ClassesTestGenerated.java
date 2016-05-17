@@ -37,12 +37,6 @@ public class ClassesTestGenerated extends AbstractClassesTest {
         doTest(fileName);
     }
 
-    @TestMetadata("classObjectAsStaticInitializer.kt")
-    public void ignoredClassObjectAsStaticInitializer() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/classObjectAsStaticInitializer.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("classObjectToString.kt")
     public void ignoredClassObjectToString() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/classObjectToString.kt");
@@ -128,6 +122,12 @@ public class ClassesTestGenerated extends AbstractClassesTest {
     @TestMetadata("classObjectAsExtensionReceiver.kt")
     public void testClassObjectAsExtensionReceiver() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/classObjectAsExtensionReceiver.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("classObjectAsStaticInitializer.kt")
+    public void testClassObjectAsStaticInitializer() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/classObjectAsStaticInitializer.kt");
         doTest(fileName);
     }
 
