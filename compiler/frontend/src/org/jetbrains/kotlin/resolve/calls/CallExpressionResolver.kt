@@ -20,7 +20,9 @@ import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
@@ -214,7 +216,7 @@ class CallExpressionResolver(
                 if (DescriptorUtils.isEnumClass(containingDescriptor)) {
                     context.trace.report(ENUM_CLASS_CONSTRUCTOR_CALL.on(callExpression))
                 }
-                if (containingDescriptor is ClassDescriptor && containingDescriptor.modality === Modality.SEALED) {
+                if (DescriptorUtils.isSealedClass(containingDescriptor)) {
                     context.trace.report(SEALED_CLASS_CONSTRUCTOR_CALL.on(callExpression))
                 }
             }

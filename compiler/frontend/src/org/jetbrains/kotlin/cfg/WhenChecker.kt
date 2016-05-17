@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,29 +16,30 @@
 
 package org.jetbrains.kotlin.cfg
 
-import org.jetbrains.kotlin.psi.*
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.checkReservedPrefixWord
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeUtils
-
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumClass
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.isFlexible
 import java.util.*
 
 interface WhenMissingCase {
@@ -229,9 +230,8 @@ private object WhenOnSealedExhaustivenessChecker : WhenOnClassExhaustivenessChec
             subjectDescriptor: ClassDescriptor?,
             nullable: Boolean
     ): List<WhenMissingCase> {
-        assert(subjectDescriptor != null) { "isWhenOnSealedClassExhaustive should be called with not-null subject class descriptor" }
-        assert(subjectDescriptor!!.modality === Modality.SEALED) {
-            "isWhenOnSealedClassExhaustive should be called with a sealed class descriptor"
+        assert(DescriptorUtils.isSealedClass(subjectDescriptor)) {
+            "isWhenOnSealedClassExhaustive should be called with a sealed class descriptor: $subjectDescriptor"
         }
         val memberClassDescriptors = LinkedHashSet<ClassDescriptor>()
         collectNestedSubclasses(subjectDescriptor!!, subjectDescriptor, memberClassDescriptors)
@@ -241,21 +241,27 @@ private object WhenOnSealedExhaustivenessChecker : WhenOnClassExhaustivenessChec
     }
 
     override fun isApplicable(subjectType: KotlinType): Boolean {
-        return TypeUtils.getClassDescriptor(subjectType)?.modality == Modality.SEALED
+        return DescriptorUtils.isSealedClass(TypeUtils.getClassDescriptor(subjectType))
     }
 
     private fun collectNestedSubclasses(
             baseDescriptor: ClassDescriptor,
             currentDescriptor: ClassDescriptor,
-            subclasses: MutableSet<ClassDescriptor>) {
-        for (descriptor in DescriptorUtils.getAllDescriptors(currentDescriptor.unsubstitutedInnerClassesScope)) {
-            if (descriptor is ClassDescriptor) {
-                if (DescriptorUtils.isDirectSubclass(descriptor, baseDescriptor)) {
-                    subclasses.add(descriptor)
+            subclasses: MutableSet<ClassDescriptor>
+    ) {
+        fun collectSubclasses(scope: MemberScope, collectNested: Boolean) {
+            for (descriptor in scope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS)) {
+                if (descriptor is ClassDescriptor) {
+                    if (DescriptorUtils.isDirectSubclass(descriptor, baseDescriptor)) subclasses.add(descriptor)
+
+                    if (collectNested) collectNestedSubclasses(baseDescriptor, descriptor, subclasses)
                 }
-                collectNestedSubclasses(baseDescriptor, descriptor, subclasses)
             }
         }
+        if (currentDescriptor == baseDescriptor && DescriptorUtils.isTopLevelDeclaration(currentDescriptor)) {
+            collectSubclasses((currentDescriptor.containingDeclaration as PackageFragmentDescriptor).getMemberScope(), collectNested = false)
+        }
+        collectSubclasses(currentDescriptor.unsubstitutedInnerClassesScope, collectNested = true)
     }
 }
 

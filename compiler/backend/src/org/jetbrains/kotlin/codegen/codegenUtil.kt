@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,21 +18,27 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext
+import org.jetbrains.kotlin.codegen.context.PackageContext
 import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.SpecialSignatureInfo
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
+import java.util.*
 
 fun generateIsCheck(
         v: InstructionAdapter,
@@ -125,4 +131,48 @@ fun populateCompanionBackingFieldNamesToOuterContextIfNeeded(companion: KtObject
         }
     }
 
+}
+
+// Top level subclasses of a sealed class should be generated before that sealed class,
+// so that we'd generate the necessary accessor for its constructor afterwards
+fun sortTopLevelClassesAndPrepareContextForSealedClasses(
+        classOrObjects: List<KtClassOrObject>,
+        packagePartContext: PackageContext,
+        state: GenerationState
+): List<KtClassOrObject> {
+    fun prepareContextIfNeeded(descriptor: ClassDescriptor?) {
+        if (DescriptorUtils.isSealedClass(descriptor)) {
+            // save context for sealed class
+            packagePartContext.intoClass(descriptor!!, OwnerKind.IMPLEMENTATION, state)
+        }
+    }
+
+    // optimization
+    when (classOrObjects.size) {
+        0 -> return emptyList()
+        1 -> {
+            prepareContextIfNeeded(state.bindingContext.get(BindingContext.CLASS, classOrObjects.first()))
+            return classOrObjects
+        }
+    }
+
+    val result = ArrayList<KtClassOrObject>(classOrObjects.size)
+    val descriptorToPsi = LinkedHashMap<ClassDescriptor, KtClassOrObject>()
+    for (classOrObject in classOrObjects) {
+        val descriptor = state.bindingContext.get(BindingContext.CLASS, classOrObject)
+        if (descriptor == null) {
+            result.add(classOrObject)
+        }
+        else {
+            prepareContextIfNeeded(descriptor)
+            descriptorToPsi[descriptor] = classOrObject
+        }
+    }
+
+    // topologicalOrder(listOf(1, 2, 3)) { emptyList() } = listOf(3, 2, 1). Because of this used keys.reversed().
+    val sortedDescriptors = DFS.topologicalOrder(descriptorToPsi.keys.reversed()) {
+        it.typeConstructor.supertypes.map { it.constructor.declarationDescriptor as? ClassDescriptor }.filter { it in descriptorToPsi.keys }
+    }
+    sortedDescriptors.mapTo(result) { descriptorToPsi[it]!! }
+    return result
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -274,15 +274,16 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     }
 
     @NotNull
-    public ClassContext intoClass(ClassDescriptor descriptor, OwnerKind kind, GenerationState state) {
-        if (descriptor.isCompanionObject()) {
-            CodegenContext companionContext = this.findChildContext(descriptor);
-            if (companionContext != null) {
-                assert companionContext.getContextKind() == kind : "Kinds should be same, but: " +
-                                                                   companionContext.getContextKind() + "!= " + kind;
-                return (ClassContext) companionContext;
+    public ClassContext intoClass(@NotNull ClassDescriptor descriptor, @NotNull OwnerKind kind, @NotNull GenerationState state) {
+        if (shouldAddChild(descriptor)) {
+            CodegenContext savedContext = this.findChildContext(descriptor);
+            if (savedContext != null) {
+                assert savedContext.getContextKind() == kind : "Kinds should be same, but: " +
+                                                                   savedContext.getContextKind() + "!= " + kind;
+                return (ClassContext) savedContext;
             }
         }
+
         ClassContext classContext = new ClassContext(state.getTypeMapper(), descriptor, kind, this, null);
 
         if (descriptor.getCompanionObjectDescriptor() != null) {
@@ -571,6 +572,17 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             descriptorContext = ExpressionCodegen.getParentContextSubclassOf((ClassDescriptor) enclosed, this);
         }
 
+        if (descriptorContext == null && descriptor instanceof ConstructorDescriptor) {
+            ClassDescriptor classDescriptor = ((ConstructorDescriptor) descriptor).getContainingDeclaration();
+            if (DescriptorUtils.isSealedClass(classDescriptor)) {
+                CodegenContext parentContextForClass = findParentContextWithDescriptor(classDescriptor.getContainingDeclaration());
+                if (parentContextForClass != null) {
+                    //generate super constructor calls for top-level sealed classes from top level child
+                    descriptorContext = parentContextForClass.findChildContext(classDescriptor);
+                }
+            }
+        }
+
         if (descriptorContext == null) {
             return descriptor;
         }
@@ -630,7 +642,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     }
 
     private void addChild(@NotNull CodegenContext child) {
-        if (shouldAddChild(child)) {
+        if (shouldAddChild(child.contextDescriptor)) {
             if (childContexts == null) {
                 childContexts = new HashMap<DeclarationDescriptor, CodegenContext>();
             }
@@ -639,8 +651,8 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         }
     }
 
-    protected boolean shouldAddChild(@NotNull CodegenContext child) {
-        return DescriptorUtils.isCompanionObject(child.contextDescriptor);
+    private static boolean shouldAddChild(@NotNull DeclarationDescriptor childContextDescriptor) {
+        return DescriptorUtils.isCompanionObject(childContextDescriptor) || DescriptorUtils.isSealedClass(childContextDescriptor);
     }
 
     @Nullable

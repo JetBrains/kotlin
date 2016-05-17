@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,9 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.org.objectweb.asm.Type;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class PackageCodegen {
     private final GenerationState state;
@@ -76,6 +78,12 @@ public class PackageCodegen {
         }
     }
 
+    private void generateClassesAndObjectsInFile(@NotNull List<KtClassOrObject> classOrObjects, @NotNull PackageContext packagePartContext) {
+        for (KtClassOrObject classOrObject : CodegenUtilKt.sortTopLevelClassesAndPrepareContextForSealedClasses(classOrObjects, packagePartContext, state)) {
+            generateClassOrObject(classOrObject, packagePartContext);
+        }
+    }
+
     private void generateFile(@NotNull KtFile file) {
         JvmFileClassInfo fileClassInfo = state.getFileClassesProvider().getFileClassInfo(file);
 
@@ -88,6 +96,8 @@ public class PackageCodegen {
 
         boolean generatePackagePart = false;
 
+        List<KtClassOrObject> classOrObjects = new ArrayList<KtClassOrObject>();
+
         for (KtDeclaration declaration : file.getDeclarations()) {
             if (declaration instanceof KtProperty || declaration instanceof KtNamedFunction) {
                 generatePackagePart = true;
@@ -95,7 +105,7 @@ public class PackageCodegen {
             else if (declaration instanceof KtClassOrObject) {
                 KtClassOrObject classOrObject = (KtClassOrObject) declaration;
                 if (state.getGenerateDeclaredClassFilter().shouldGenerateClass(classOrObject)) {
-                    generateClassOrObject(classOrObject, packagePartContext);
+                    classOrObjects.add(classOrObject);
                 }
             }
             else if (declaration instanceof KtScript) {
@@ -106,6 +116,7 @@ public class PackageCodegen {
                 }
             }
         }
+        generateClassesAndObjectsInFile(classOrObjects, packagePartContext);
 
         if (!generatePackagePart || !state.getGenerateDeclaredClassFilter().shouldGeneratePackagePart(file)) return;
 
