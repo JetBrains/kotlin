@@ -57,7 +57,8 @@ class SimplifyForIntention : SelfTargetingRangeIntention<KtForExpression>(
     override fun applicabilityRange(element: KtForExpression): TextRange? {
         if (element.destructuringParameter != null) return null
 
-        if (collectPropertiesToRemove(element) != null) {
+        val propertiesToRemove = collectPropertiesToRemove(element)
+        if (propertiesToRemove != null && propertiesToRemove.first.isNotEmpty()) {
             return element.loopParameter!!.textRange
         }
         return null
