@@ -213,6 +213,7 @@
 ###### New features
 
 - Added "Decompile" button to Kotlin bytecode toolwindow
+- [`KT-11657`](https://youtrack.jetbrains.com/issue/KT-11657) Allow viewing decompiled Java source code for Kotlin-compiled classes
 - [`KT-11704`](https://youtrack.jetbrains.com/issue/KT-11704) Support file path references inside of Kotlin string literals
 
 ###### Issues fixed:
