@@ -1007,30 +1007,6 @@ public class LintUtils {
     }
 
     /**
-     * Returns true if the given Gradle model is older than the given version number
-     */
-    public static boolean isModelOlderThan(@Nullable AndroidProject project,
-            int major, int minor, int micro) {
-        if (project != null) {
-            String modelVersion = project.getModelVersion();
-            try {
-                FullRevision version = FullRevision.parseRevision(modelVersion);
-                if (version.getMajor() != major) {
-                    return version.getMajor() < major;
-                }
-                if (version.getMinor() != minor) {
-                    return version.getMinor() < minor;
-                }
-                return version.getMicro() < micro;
-            } catch (NumberFormatException e) {
-                // ignore
-            }
-        }
-
-        return false;
-    }
-
-    /**
      * Looks for a certain string within a larger string, which should immediately follow
      * the given prefix and immediately precede the given suffix.
      *
