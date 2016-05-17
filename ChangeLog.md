@@ -7,12 +7,64 @@
 
 ## 1.0.3
 
+###
+
 ### Compiler
+
+#### Analysis & diagnostics
+
+- KT-11111 Overridding by inline function should be a warning, overriding by a function with reified type parameter should be an error //TODO_R: humanize
+- KT-4829 Equal conditions in "when" should be a warning //TODO_R: humanize
+
+Issues fixed:
+
+- KT-11750 Exceptions when creating various entries with the name "name" in enums
+- KT-4764 Spurious "Variable must be initialized" in try/catch/finally
+- KT-11998 Smart cast to not-null is not performed on a boolean property in 'if' condition
+- KT-4285 No warning for a non-tail call when the method inherits default arguments from superclass
+
+#### JVM code generation
+
+- Optimize coercion to Unit. POP operations are backward-propagated.
+
+Issues fixed:
+- KT-11499 Compiler crashes with "Incompatible stack heights"
+- KT-11943 CompilationException with extension property of KClass
+- KT-12125 Wrong increment/decrement on Byte/Char/Short.MAX_VALUE/MIN_VALUE
+- KT-12192 Exhaustiveness check isn't generated for when expression returing Unit
+
+#### Performance
+
+- Reduced number of IO operation when loading kotlin compiled classes
 
 ### IDE
 
+- Completion (features and bugs): //TODO:
+  * KT-8527 Include non-imported declarations on the first completion
+  * Smart completion after "by" and "in"
+  * KT-12068 Special completion item for "[]" get-operator access
+  * Fixed enum members being present in completion as static members
+  * Completion in bodies of overridden members (when no type is specified)
+  * Fixed QuickDoc not working for properties generated for java classes
+  * KT-11912 String interpolation is not converted to ${} form when accessing this.property
+  * KT-11890 Completion for callable references does not propose static Java members
+  * KT-11784 Completion for 'if' statement should add parentheses automatically
+  * KT-11957 No "catch" and "finally" keywords in completion
+  * Improved presentation of completion items for property accessors
+  * Fixed keyword completion after 'try' in assignment expression
+  * KT-11680 Code completion of label for existing return with value inserts redundant whitespace
+  * KT-12103 Smart completion for nested SAM-adapter produces short unresolved name
+  * KT-12150 Smart completion suggests to compare non-nullable with null
+  * KT-12138 Do not show "::error" in smart completion when any function type accepting one argument is expected
+  * KT-12080 Parameter names are now higher up in completion list
+
 New features:
 
+- KT-11450 Add "modality is redundant" inspection
+- KT-11090 Inspection: add variance modifiers to type parameters
+- KT-10844 Quick fix to add crossinline modifier
+- KT-11806 Quick-fix to increase visibility for invisible member
+- KT-11768 "Introduce local variable" intention
 - [KT-11768](https://youtrack.jetbrains.com/issue/KT-11768) Implement "Introduce local variable" intention
 - [KT-11692](https://youtrack.jetbrains.com/issue/KT-11692) Support Spring model diagrams for Kotlin classes
 - [KT-11574](https://youtrack.jetbrains.com/issue/KT-11574) Support predefined Java positions for language injection
@@ -27,6 +79,18 @@ New features:
 - [KT-12175](https://youtrack.jetbrains.com/issue/KT-12175) Don't enforce empty line after one-line constructor
 - Added "Decompile" button to Kotlin bytecode toolwindow
 - [KT-12278](https://youtrack.jetbrains.com/issue/KT-12278) Implement Spring @Autowired inspection
+- KT-11807 Configurable code template for "Implement abstract function" intention action
+- KT-11920 "Increase visibility" and "Decrease visibility" quickfixes for exposed visibility errors
+- "Change visibility on exposure" and "Make visible" fixes now support all possible visibilities
+- KT-12121 "Add 'toString()' call" quickfix
+- KT-11876 Quickfix for "Extension function type is not allowed as supertype" error
+- KT-12089 Quickfix "Make primary constructor parameter a property"
+- KT-11523 "Add @JvmOverloads annotation" intention
+- KT-5010 "Redundant semicolon" inspection with quickfix
+- KT-9757 Quickfix for "Unused lambda expression" warning
+- KT-11255 Move Element Left/Right actions
+- KT-4727 Convert Java code copied from browser or other sources
+- New icon for "New -> Kotlin Activity" action
 
 Issues fixed:
 
@@ -51,7 +115,6 @@ Issues fixed:
 - [KT-10174](https://youtrack.jetbrains.com/issue/KT-10174) Optimize imports after applying "Move declaration to separate file" intention
 - [KT-12035](https://youtrack.jetbrains.com/issue/KT-12035) Auto-format cast expressions
 - [KT-12018](https://youtrack.jetbrains.com/issue/KT-12018) Auto-format spaces between function name and arguments in infix calls
-- [KT-12067](https://youtrack.jetbrains.com/issue/KT-12067) Deadlock in Kotlin debugger is fixed
 - [KT-12070](https://youtrack.jetbrains.com/issue/KT-12070) Add empty line in error message of Maven and Gradle configuration
 - [KT-12091](https://youtrack.jetbrains.com/issue/KT-12091) Fixed unstable behavior of Spring line markers
 - [KT-12147](https://youtrack.jetbrains.com/issue/KT-12147) Fixed exception on analyzing object declaration with @Component annotation
@@ -62,11 +125,110 @@ Issues fixed:
 - [KT-12143](https://youtrack.jetbrains.com/issue/KT-12143) Fixed "Spring Facet Code Configuration (Kotlin)" inspection description
 - [KT-12384](https://youtrack.jetbrains.com/issue/KT-12384) Fixed bean references in factory method calls
 - [KT-12120](https://youtrack.jetbrains.com/issue/KT-12120) Show autowiring candidates line markers for @Autowired-annotated constructors and constructor parameters
+- KT-11609 No named arguments completion should be after dot
+- KT-11764 Intention "Replace with a 'forEach' function call should replace 'continue' with 'return@forEach'
+- KT-11724 False suggestion to replace with compound assignment
+- KT-11805 Invert if-condition intention breaks code in case of end of line comment
+- KT-11811 "Make protected" intention for a val declared in parameters of constructor
+- KT-11710 "Replace 'if' with elvis operator": incorrect code generated for 'if' expression
+- KT-11849 Replace explicit parameter with `it` changes the meaning of code because of the shadowing
+- KT-11633 Wrong indentation after completing a statement in data class
+- KT-11870 "Replace with Elvis" refactoring doesn't change the variable type from T? to T
+- KT-11145 Introduce Parameter runs usages search without progress or ability to cancel
+- KT-11155 JUnit support: Allow running Java and Kotlin tests together from the context menu
+- KT-11495 Gutter icon for the recursive function call is not shown in case of extension functions
+- KT-11659 Override/implement generates red code when invoked for methods from Any in an interface
+- KT-11866 "Create secondary constructor" quick fix is not suggested if primary and some secondary constructor exist
+- KT-11908 Generation of equals() and hashCode() does not offer vars with custom setter
+- KT-11961 Formatter doesn't handle space before angle bracket in method definition
+- KT-11366 object 'Companion' is never used warning in intellij
+- Improved message for "Can be declared as 'val'" inspection
+- KT-11275 Inconsistent behaviour of "move lambda argument out of parentheses" intention action when using lambda calls with function arguments without parentheses
+- KT-11594 "Add non-null asserted (!!) call" applied to unsafe cast to nullable type causes AE at KtPsiFactory.createExpression()
+- KT-11955 Copy/Paste inserts fully qualified name when copying function with overloads
+- KT-11982 False "Redundant final modifier" reported
+- KT-11642 Kotlin Maven configurator tags order
+- KT-12070 Missing new line in error message
+- Fixed "Convert property initializer getter" intention being available inside lambda initializer
+- KT-12069 Specify language for all Kotlin code inspections
+- KT-10770 "Optimize imports" will not keep import if a type is only referenced by kdoc.
+- KT-12046 Java to Kotlin converter: recursive property setter
+- KT-12039 Java to Kotlin converter: static imports converted missing ".Companion"
+- KT-12054 Java to Kotlin converter: wrong conversion of 'instanceof' checks with raw types
+- KT-12045 Java to Kotlin converter: convert `Object()` to `Any()`
+- KT-12040 "Replace when with if" produce invalid code for first entry which has comment
+- KT-12204 'Use classpath of module' option in existing Kotlin run configuration may be changed when a new run configuration is created
+- KT-10635 Don't mark private writeObject and readObject methods of Serializable classes as unused
+- KT-11466 "Make abstract" quick fix applies to outer class of object with accidentally abstract function
+- KT-11120 Constructor parameter/field reported as unused symbol even if it have 'used' annotation
+- KT-11974 Invert if-condition intention loses comments
+- KT-11952 Java to Kotlin converter: Assertion failed in PropertyDetectionCache.get on conversion of access to Java constant of anonymous type
+- KT-12175 Formatter: Don't enforce empty line between secondary constructors without body
+- KT-10812 Globally unused constructors are not marked as such
+- KT-11320 Don't mark @BeforeClass (JUnit4) annotated functions as unused
+- KT-12267 "Change type" quick fix converts to Int for Long literal
+- KT-11949 Various problems fixed with "Constructor parameter is never used as a property" inspection  //TODO_R: other cases( 97330a72cdc2c0ba1d785c92b78b55c66cc3a224 82c331d03db37cc374406376c02c66062f6f8eca )
+- KT-11716 "Simply 'for' using destructuring declaration" intention: incorrect behavior for data classes
+- KT-12145 "Simplify 'for' using destructuring declaration" should work even when no variables declared inside loop
+- KT-11933 Entities used only by alias are marked as unused
+
+
+#### KDoc
+
+New features:
+- Support for @receiver tag
+
+Issues fixed:
+- KT-12001 Allow to annotate type parameter
+- KT-11791 Markdown links rendering
+- Rendering of '_' and '*' standalone characters
+- KT-9933 Indentation in code fragments is not preserved
+- KT-10998 Spaces around links are missing in return block
+- Rendering of code blocks
+
+#### Maven
+
+New features:
+- KT-11643 Inspections and intentions to fix erroneously configured Maven pom file
+- KT-11701 "Add Maven Dependency quick fix" in Kotlin source files
+- KT-11743 Intention to replace kotlin-test with kotlin-test-junit
+- Inspections that check that kotlin IDEA plugin, kotlin Maven plugin and kotlin stdlib are of the same version
+
+Issues fixed:
+- KT-11642 Kotlin Maven configurator tags order
+- KT-9492 Configuring multiple Maven Modules
+- KT-11436 "Choose Configurator" control opens dialogs with inconsistent modality (linux)
+- KT-11731 Default maven integration doesn't include documentation
 
 #### Debugger
 
+New features:
+- KT-11438 Support navigation from stacktrace to inline function call site
+
+Issues fixed:
 - Do not step into inline lambda argument during step over inside inline function body
 - Fix step over for inline argument with non-local return
+- [KT-12067](https://youtrack.jetbrains.com/issue/KT-12067) Deadlock in Kotlin debugger is fixed
+- KT-12232 No code completion in Evaluate Expression and Throwable at CodeCompletionHandlerBase.invokeCompletion()
+- KT-12137 Evaluate expression: code completion/intention actions allows to use symbols from modules that are not referenced
+
+### Reflection
+
+Issues fixed:
+- KT-11531 Optimize "KCallable.name"
+
+### JS
+
+Issues fixed:
+- KT-7228 Wrong AbstractList signature
+- KT-11346 Make stdlib functions dependent on reified is checks available in JS
+- KT-12305 Incorrect translation of `vararg` in `@native` functions
+- KT-8299 JS: wrong access to private member in autogenerated code in data class
+- KT-12254 JsEmptyExpression in initalizer when compiling code like `val x = throw Exception()`
+
+### Tools
+- KT-12074 Building Kotlin maven projects using a parent pom will silently fail
+- KT-10932 compileKotlin Gradle tasks not "UP-TO-DATE" on a build with no changes
 
 ## 1.0.2
 

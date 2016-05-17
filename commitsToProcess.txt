@@ -1,0 +1,34 @@
++ 8a0641a6396c3cdd6a95f38e76fcb376be240c79 Warning about override / open redundancy is no more reported //TODO_R: ?
++ d79e3f322fa0bc1b3c420e6ab9afc754c2497c91 Redundant modality modifier inspection #KT-11450 Fixed //TODO_R: ?
+
++ 9495257de3ba24cd7df57a97e15f0dae989ab284 Add QuickFix to add 'crossinline' to parameter (#852) //TODO_R: thanks to Kirill Rakhman?
+
+
++ 693ea83924a5b80314659adb78ea72f9a4e17111 KT-11556 "Kotlin not configured" in Kotlin/JS project //TODO_R: wtf? target version 1.0.2?
++ 1f5a861402cd010bd726a2c44611b121efc287c6 Add quickfix to add 'toString' (#866) // TODO_R: Kirill Rakhman
+
++ 6f874e6dbc7c3d679aabf33ec49347452ca9cd30 Add intrinsic for KCallable.name property Fixes #KT-11531 //TODO_R: Kirill again
++ 17cfee37b9bba26a6805c73f354aa5cd4b0c9951  Quick fix for SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE Fixes #KT-11876 (cherry picked from commit 1c5322b) //TODO_R: Kirill
++ d506346db30fbdf4221a8f885d5d5b158d64bb6c Add quickfix to make referenced primary constructor parameter a property Fixes #KT-12089 (cherry picked from commit f309920) //TODO_R: Kirill
++ ce84e168d1afc5e08903f50b92776a1f5367f991 Implement Intention to add @JvmOverloads Fixes #KT-11523 (cherry picked from commit 8e5481b) //TODO_R: Kiril
+
++ 3b9dcc11b2080047f8a09bac079578e585a40351 Use list iterators instead of indexed access in operations on lists taking a lambda. Related to #KT-9607 // TODO_R: stdlib
++ 3b187abbe1ad782d7de65dd9ad9ffebfd5586f4d Do not use indexed access for lists not supporting RandomAccess Add RandomAccess specialization. //TODO_R:
++ 40e901f46e2bd1631f3b92cb2828528d87ec6180 Remove runtime specialization in inline last and lastOrNull to prevent double inlining of predicate body.
++ 2a7814b2bb4015d4e59e11fad61bca1b50eb7503 Optimize operations to return special collection implementations when result is empty or has single element. #KT-9990
++ 64f7009480c4106c3f21f542161d592ae6804d29 Change evaluation test data not to encounter special implementation of single element list.
++ 5f4d716f5e6b0baa80e804085a0ca3170ee93066 Handle special cases of drop, take, takeLast when it is known in advance that the result is a single-item list.  #KT-9990
+
+
++ e634881f960caeb5bf4bd7c35a5dcb1153501bf0 Implement graceful connection failure behavior on daemon connect and cancellation check
+
++ 294f5cf98df11009cd8055885ca7225dfcecd4ee Don't mark magic Serializable methods as unused Fixes #KT-10635 (cherry picked from commit 5b6a8dc) //TODO_R: Kirill
++ 70e567a09dfe2c503515aeb297dbd0ef237a377d Add quickfix for UNUSED_LAMBDA_EXPRESSION (#867) //TODO_R: Kirill
++ c1153eda3ac520e39b3f9c153eeb142435627edb Document functions which return set or map preserving the order of elements/entries. #KT-11632 Fixed // TODO_R: stdlib
++ 832497773b44d4df753a7f9ba19647363c717fce Can be parameter inspection: usages in all functions are now handled as property usage (cherry picked from commit 48ba63f)
+
++ d062b478bd4cab08c26bf1560928235c89e8af98 Change Signature: Do not force substitution of error types  #EA-81021 Fixed (cherry picked from commit d4aa179)
+
++ 3e9da49c2fd56f8b7bad776e1febf486780c37fd Fix KT-11839 maven goal to execute kotlin script // TODO_R: yarolsav ulanovych, Tools Maven support
+
++ 6c4223ee449ba2830c8171c4376321b31ed09ac3 Do not return primary constructor as an analyzable parent, probably #EA-73679 Fixed (cherry picked from commit 79852e9)
