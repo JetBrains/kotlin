@@ -6531,6 +6531,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("DataClassUnused.kt")
+        public void testDataClassUnused() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/DataClassUnused.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("EntriesCallIsMissing.kt")
         public void testEntriesCallIsMissing() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/EntriesCallIsMissing.kt");
