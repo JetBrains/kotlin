@@ -61,6 +61,7 @@ Issues fixed:
 - [KT-12148](https://youtrack.jetbrains.com/issue/KT-12148) Warn about object declarations annotated with Spring `@Configuration`/`@Component`/etc.
 - [KT-12143](https://youtrack.jetbrains.com/issue/KT-12143) Fixed "Spring Facet Code Configuration (Kotlin)" inspection description
 - [KT-12384](https://youtrack.jetbrains.com/issue/KT-12384) Fixed bean references in factory method calls
+- [KT-12120](https://youtrack.jetbrains.com/issue/KT-12120) Show autowiring candidates line markers for @Autowired-annotated constructors and constructor parameters
 
 #### Debugger
 
