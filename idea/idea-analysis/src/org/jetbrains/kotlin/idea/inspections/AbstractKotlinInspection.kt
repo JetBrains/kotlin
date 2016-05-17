@@ -63,16 +63,18 @@ private fun toSeverity(highlightDisplayLevel: HighlightDisplayLevel): Severity  
 }
 
 @Suppress("unused")
-fun Array<ProblemDescriptor>.registerWithElementsUnwrapped(holder: ProblemsHolder, isOnTheFly: Boolean) {
-    forEach {
+fun Array<ProblemDescriptor>.registerWithElementsUnwrapped(
+        holder: ProblemsHolder,
+        isOnTheFly: Boolean,
+        quickFixSubstitutor: ((LocalQuickFix, PsiElement) -> LocalQuickFix?)? = null) {
+    forEach { problem ->
         @Suppress("UNCHECKED_CAST")
-        val descriptor = holder.manager.createProblemDescriptor(
-                it.psiElement.unwrapped ?: it.psiElement,
-                it.descriptionTemplate,
-                isOnTheFly,
-                it.fixes as? Array<LocalQuickFix> ?: LocalQuickFix.EMPTY_ARRAY,
-                it.highlightType
-        )
+        val originalFixes = problem.fixes as? Array<LocalQuickFix> ?: LocalQuickFix.EMPTY_ARRAY
+        val newElement = problem.psiElement.unwrapped ?: return@forEach
+        val newFixes = quickFixSubstitutor?.let { subst ->
+            originalFixes.mapNotNull { subst(it, newElement) }.toTypedArray()
+        } ?: originalFixes
+        val descriptor = holder.manager.createProblemDescriptor(newElement, problem.descriptionTemplate, isOnTheFly, newFixes, problem.highlightType)
         holder.registerProblem(descriptor)
     }
 }

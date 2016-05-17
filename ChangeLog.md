@@ -26,6 +26,7 @@ New features:
 - [KT-12092](https://youtrack.jetbrains.com/issue/KT-12092) Implement bean references in @Qualifier annotations
 - [KT-12175](https://youtrack.jetbrains.com/issue/KT-12175) Don't enforce empty line after one-line constructor
 - Added "Decompile" button to Kotlin bytecode toolwindow
+- [KT-12278](https://youtrack.jetbrains.com/issue/KT-12278) Implement Spring @Autowired inspection
 
 Issues fixed:
 
@@ -53,6 +54,9 @@ Issues fixed:
 - [KT-12067](https://youtrack.jetbrains.com/issue/KT-12067) Deadlock in Kotlin debugger is fixed
 - [KT-12070](https://youtrack.jetbrains.com/issue/KT-12070) Add empty line in error message of Maven and Gradle configuration
 - [KT-12091](https://youtrack.jetbrains.com/issue/KT-12091) Fixed unstable behavior of Spring line markers
+- [KT-12147](https://youtrack.jetbrains.com/issue/KT-12147) Fixed exception on analyzing object declaration with @Component annotation
+- [KT-12366](https://youtrack.jetbrains.com/issue/KT-12366) Fixed exception on analyzing class declaration upon annotation typing
+- [KT-12122](https://youtrack.jetbrains.com/issue/KT-12122) Fixed line marker popup on functions with @Qualifier-annotated parameters
 
 #### Debugger
 

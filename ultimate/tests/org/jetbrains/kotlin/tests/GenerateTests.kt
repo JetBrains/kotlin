@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin.tests
 
 import org.jetbrains.kotlin.generators.tests.testGroup
-import org.jetbrains.kotlin.idea.codeInsight.AbstractInspectionTest
-import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixTest
 import org.jetbrains.kotlin.idea.spring.tests.findUsages.AbstractSpringFindUsagesTest
 import org.jetbrains.kotlin.idea.spring.tests.generate.AbstractGenerateSpringDependencyActionTest
 import org.jetbrains.kotlin.idea.spring.tests.gutter.AbstractSpringClassAnnotatorTest
+import org.jetbrains.kotlin.idea.spring.tests.inspections.AbstractSpringInspectionTest
+import org.jetbrains.kotlin.idea.spring.tests.quickfixes.AbstractSpringQuickFixTest
 import org.jetbrains.kotlin.idea.spring.tests.references.AbstractSpringReferenceCompletionHandlerTest
 import org.jetbrains.kotlin.idea.spring.tests.references.AbstractSpringReferenceCompletionTest
 import org.jetbrains.kotlin.idea.spring.tests.references.AbstractSpringReferenceNavigationTest
@@ -31,12 +31,12 @@ fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
 
     testGroup("ultimate/tests", "ultimate/testData") {
-        testClass<AbstractInspectionTest>("UltimateInspectionTestGenerated") {
-            model("inspections", pattern = "^(inspections\\.test)$", singleClass = true)
+        testClass<AbstractSpringInspectionTest> {
+            model("inspections/spring", pattern = "^(inspections\\.test)$", singleClass = true)
         }
 
-        testClass<AbstractQuickFixTest>("UltimateQuickFixTestGenerated") {
-            model("quickFixes", pattern = "^([\\w\\-_]+)\\.kt$", filenameStartsLowerCase = true)
+        testClass<AbstractSpringQuickFixTest> {
+            model("quickFixes/spring", pattern = "^([\\w\\-_]+)\\.kt$", filenameStartsLowerCase = true)
         }
 
         testClass<AbstractSpringClassAnnotatorTest>() {
