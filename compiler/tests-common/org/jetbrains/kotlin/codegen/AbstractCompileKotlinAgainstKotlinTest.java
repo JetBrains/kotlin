@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.codegen;
 
+import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import kotlin.Pair;
@@ -38,6 +39,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTestCase {
@@ -67,10 +69,10 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
         assert files.size() == 2 : "There should be exactly two files in this test";
         TestFile fileA = files.get(0);
         TestFile fileB = files.get(1);
-        ClassFileFactory factoryA = compileA(fileA.name, fileA.content, files);
+        ClassFileFactory factoryA = compileA(fileA, files);
         ClassFileFactory factoryB = null;
         try {
-            factoryB = compileB(fileB.name, fileB.content, files);
+            factoryB = compileB(fileB, files);
             invokeBox(PackagePartClassUtils.getFilePartShortName(new File(fileB.name).getName()));
         }
         catch (Throwable e) {
@@ -99,25 +101,32 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
     }
 
     @NotNull
-    private ClassFileFactory compileA(@NotNull String fileName, @NotNull String content, List<TestFile> files) throws IOException {
+    private ClassFileFactory compileA(@NotNull TestFile testFile, List<TestFile> files) throws IOException {
         Disposable compileDisposable = createDisposable("compileA");
-        KotlinCoreEnvironment environment =
-                KotlinTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(compileDisposable, ConfigurationKind.ALL, getJdkKind(files));
-        return compileKotlin(fileName, content, aDir, environment, compileDisposable);
+        CompilerConfiguration configuration =
+                createConfiguration(ConfigurationKind.ALL, getJdkKind(files),
+                                    Collections.singletonList(KotlinTestUtils.getAnnotationsJar()),
+                                    Collections.<File>emptyList(), Collections.singletonList(testFile));
+
+        KotlinCoreEnvironment environment = KotlinCoreEnvironment.createForTests(
+                compileDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
+
+        return compileKotlin(testFile.name, testFile.content, aDir, environment, compileDisposable);
     }
 
     @NotNull
-    private ClassFileFactory compileB(@NotNull String fileName, @NotNull String content, List<TestFile> files) throws IOException {
-        CompilerConfiguration configurationWithADirInClasspath = KotlinTestUtils.newConfiguration(
-                ConfigurationKind.ALL, getJdkKind(files), KotlinTestUtils.getAnnotationsJar(), aDir
-        );
+    private ClassFileFactory compileB(@NotNull TestFile testFile, List<TestFile> files) throws IOException {
+        CompilerConfiguration configurationWithADirInClasspath =
+                createConfiguration(ConfigurationKind.ALL, getJdkKind(files),
+                                    Lists.newArrayList(KotlinTestUtils.getAnnotationsJar(), aDir),
+                                    Collections.<File>emptyList(), Collections.singletonList(testFile));
 
         Disposable compileDisposable = createDisposable("compileB");
         KotlinCoreEnvironment environment = KotlinCoreEnvironment.createForTests(
                 compileDisposable, configurationWithADirInClasspath, EnvironmentConfigFiles.JVM_CONFIG_FILES
         );
 
-        return compileKotlin(fileName, content, bDir, environment, compileDisposable);
+        return compileKotlin(testFile.name, testFile.content, bDir, environment, compileDisposable);
     }
 
     private Disposable createDisposable(String debugName) {
