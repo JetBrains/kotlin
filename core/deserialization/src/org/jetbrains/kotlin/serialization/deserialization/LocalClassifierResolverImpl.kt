@@ -17,11 +17,13 @@
 package org.jetbrains.kotlin.serialization.deserialization
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.name.ClassId
 import javax.inject.Inject
 import kotlin.properties.Delegates
 
-class LocalClassResolverImpl : LocalClassResolver {
+class LocalClassifierResolverImpl : LocalClassifierResolver {
     var components: DeserializationComponents by Delegates.notNull()
 
     // component dependency cycle
@@ -31,5 +33,9 @@ class LocalClassResolverImpl : LocalClassResolver {
 
     override fun resolveLocalClass(classId: ClassId): ClassDescriptor? {
         return components.deserializeClass(classId)
+    }
+
+    override fun resolveLocalTypeAlias(typeAliasId: ClassId): ClassifierDescriptor? {
+        return components.deserializeTypeAlias(typeAliasId)
     }
 }

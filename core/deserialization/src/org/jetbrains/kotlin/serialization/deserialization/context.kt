@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.serialization.deserialization.TypeAliasDeserializer
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.FlexibleTypeFactory
 
@@ -32,7 +33,7 @@ class DeserializationComponents(
         val classDataFinder: ClassDataFinder,
         val annotationAndConstantLoader: AnnotationAndConstantLoader<AnnotationDescriptor, ConstantValue<*>, AnnotationWithTarget>,
         val packageFragmentProvider: PackageFragmentProvider,
-        val localClassResolver: LocalClassResolver,
+        val localClassifierResolver: LocalClassifierResolver,
         val errorReporter: ErrorReporter,
         val lookupTracker: LookupTracker,
         val flexibleTypeFactory: FlexibleTypeFactory,
@@ -43,6 +44,7 @@ class DeserializationComponents(
         val platformDependentDeclarationFilter: PlatformDependentDeclarationFilter = PlatformDependentDeclarationFilter.All
 ) {
     val classDeserializer: ClassDeserializer = ClassDeserializer(this)
+    val typeAliasDeserializer: TypeAliasDeserializer = TypeAliasDeserializer(this)
 
     fun deserializeClass(classId: ClassId): ClassDescriptor? = classDeserializer.deserializeClass(classId)
 
@@ -54,6 +56,8 @@ class DeserializationComponents(
     ): DeserializationContext =
             DeserializationContext(this, nameResolver, descriptor, typeTable, containerSource,
                                    parentTypeDeserializer = null, typeParameters = listOf())
+
+    fun deserializeTypeAlias(typeAliasId: ClassId): TypeAliasDescriptor? = typeAliasDeserializer.deserializeTypeAlias(typeAliasId)
 }
 
 

@@ -380,6 +380,14 @@ public class DescriptorSerializer {
             builder.setUnderlyingType(type(underlyingType));
         }
 
+        KotlinType expandedType = descriptor.getExpandedType();
+        if (useTypeTable()) {
+            builder.setExpandedTypeId(typeId(expandedType));
+        }
+        else {
+            builder.setExpandedType(type(expandedType));
+        }
+
         return builder;
     }
 
@@ -535,6 +543,16 @@ public class DescriptorSerializer {
             builder.setNullable(type.isMarkedNullable());
         }
 
+        KotlinType abbreviatedType = TypeCapabilitiesKt.getAbbreviatedType(type);
+        if (abbreviatedType != null) {
+            if (useTypeTable()) {
+                builder.setAbbreviatedTypeId(typeId(abbreviatedType));
+            }
+            else {
+                builder.setAbbreviatedType(type(abbreviatedType));
+            }
+        }
+
         extension.serializeType(type, builder);
 
         return builder;
@@ -549,7 +567,7 @@ public class DescriptorSerializer {
         if (classifierDescriptor instanceof ClassDescriptor) {
             builder.setClassName(classifierId);
         }
-        else {
+        else if (classifierDescriptor instanceof TypeAliasDescriptor) {
             builder.setTypeAliasName(classifierId);
         }
 

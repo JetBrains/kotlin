@@ -40,7 +40,7 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
         val classId = classId
 
         val descriptor =
-                if (classId.isLocal) moduleData.localClassResolver.resolveLocalClass(classId)
+                if (classId.isLocal) moduleData.localClassifierResolver.resolveLocalClass(classId)
                 else moduleData.module.findClassAcrossModuleDependencies(classId)
 
         descriptor ?: reportUnresolvedClass()

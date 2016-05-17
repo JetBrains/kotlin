@@ -102,3 +102,11 @@ fun KotlinType.hasAbbreviatedType(): Boolean =
 
 fun KotlinType.getAbbreviatedType(): KotlinType? =
         getCapability(AbbreviatedType::class.java)?.abbreviatedType
+
+private class AbbreviatedTypeImpl(override val abbreviatedType: KotlinType): AbbreviatedType
+
+fun TypeCapabilities.withAbbreviatedType(abbreviatedType: KotlinType): TypeCapabilities =
+        overrideCapability(AbbreviatedType::class.java, AbbreviatedTypeImpl(abbreviatedType))
+
+fun KotlinType.withAbbreviatedType(abbreviatedType: KotlinType): KotlinType =
+        if (!isError) replace(newCapabilities = capabilities.withAbbreviatedType(abbreviatedType)) else this

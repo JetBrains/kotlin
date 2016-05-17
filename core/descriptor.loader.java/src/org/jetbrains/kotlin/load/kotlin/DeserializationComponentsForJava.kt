@@ -38,7 +38,7 @@ class DeserializationComponentsForJava(
     val components: DeserializationComponents
 
     init {
-        val localClassResolver = LocalClassResolverImpl()
+        val localClassResolver = LocalClassifierResolverImpl()
         val settings = JvmBuiltInsSettings(moduleDescriptor, storageManager, { moduleDescriptor })
         components = DeserializationComponents(
                 storageManager, moduleDescriptor, classDataFinder, annotationAndConstantLoader, packageFragmentProvider, localClassResolver,

@@ -41,7 +41,7 @@ fun createBuiltInPackageFragmentProvider(
     val provider = PackageFragmentProviderImpl(packageFragments)
 
     val notFoundClasses = NotFoundClasses(storageManager, module)
-    val localClassResolver = LocalClassResolverImpl()
+    val localClassResolver = LocalClassifierResolverImpl()
 
     val components = DeserializationComponents(
             storageManager,

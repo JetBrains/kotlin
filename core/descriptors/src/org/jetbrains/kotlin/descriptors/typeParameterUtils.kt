@@ -74,20 +74,20 @@ fun KotlinType.buildPossiblyInnerType(): PossiblyInnerType? {
     return buildPossiblyInnerType(constructor.declarationDescriptor as? ClassifierDescriptorWithTypeParameters, 0)
 }
 
-private fun KotlinType.buildPossiblyInnerType(classDescriptor: ClassifierDescriptorWithTypeParameters?, index: Int): PossiblyInnerType? {
-    if (classDescriptor == null || ErrorUtils.isError(classDescriptor)) return null
+private fun KotlinType.buildPossiblyInnerType(classifierDescriptor: ClassifierDescriptorWithTypeParameters?, index: Int): PossiblyInnerType? {
+    if (classifierDescriptor == null || ErrorUtils.isError(classifierDescriptor)) return null
 
-    val toIndex = classDescriptor.declaredTypeParameters.size + index
-    if (!classDescriptor.isInner) {
-        assert(toIndex == arguments.size || DescriptorUtils.isLocal(classDescriptor)) {
+    val toIndex = classifierDescriptor.declaredTypeParameters.size + index
+    if (!classifierDescriptor.isInner) {
+        assert(toIndex == arguments.size || DescriptorUtils.isLocal(classifierDescriptor)) {
             "${arguments.size - toIndex} trailing arguments were found in $this type"
         }
 
-        return PossiblyInnerType(classDescriptor, arguments.subList(index, arguments.size), null)
+        return PossiblyInnerType(classifierDescriptor, arguments.subList(index, arguments.size), null)
     }
 
     val argumentsSubList = arguments.subList(index, toIndex)
     return PossiblyInnerType(
-            classDescriptor, argumentsSubList,
-            buildPossiblyInnerType(classDescriptor.containingDeclaration as? ClassifierDescriptorWithTypeParameters, toIndex))
+            classifierDescriptor, argumentsSubList,
+            buildPossiblyInnerType(classifierDescriptor.containingDeclaration as? ClassifierDescriptorWithTypeParameters, toIndex))
 }

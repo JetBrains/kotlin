@@ -17,8 +17,10 @@
 package org.jetbrains.kotlin.serialization.deserialization
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.name.ClassId
 
-interface LocalClassResolver {
+interface LocalClassifierResolver {
     fun resolveLocalClass(classId: ClassId): ClassDescriptor?
+    fun resolveLocalTypeAlias(typeAliasId: ClassId): ClassifierDescriptor?
 }

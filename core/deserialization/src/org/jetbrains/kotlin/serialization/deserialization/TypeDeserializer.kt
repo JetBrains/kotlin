@@ -16,9 +16,7 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedTypeParameterDescriptor
@@ -34,6 +32,10 @@ class TypeDeserializer(
 ) {
     private val classDescriptors: (Int) -> ClassDescriptor? = c.storageManager.createMemoizedFunctionWithNullableValues {
         fqNameIndex -> computeClassDescriptor(fqNameIndex)
+    }
+
+    private val typeAliasDescriptors: (Int) -> ClassifierDescriptor? = c.storageManager.createMemoizedFunctionWithNullableValues {
+        fqNameIndex -> computeTypeAliasDescriptor(fqNameIndex)
     }
 
     private val typeParameterDescriptors = c.storageManager.createLazyValue {
@@ -88,6 +90,10 @@ class TypeDeserializer(
                     val parameter = typeParameters.find { it.name.asString() == name }
                     parameter?.typeConstructor ?: ErrorUtils.createErrorType("Deserialized type parameter $name in $container").constructor
                 }
+                proto.hasTypeAliasName() -> {
+                    typeAliasDescriptors(proto.typeAliasName)?.typeConstructor
+                    ?: TODO("not found type aliases")
+                }
                 else -> ErrorUtils.createErrorType("Unknown type").constructor
             }
 
@@ -99,9 +105,19 @@ class TypeDeserializer(
         val id = c.nameResolver.getClassId(fqNameIndex)
         if (id.isLocal) {
             // Local classes can't be found in scopes
-            return c.components.localClassResolver.resolveLocalClass(id)
+            return c.components.localClassifierResolver.resolveLocalClass(id)
         }
         return c.components.moduleDescriptor.findClassAcrossModuleDependencies(id)
+    }
+
+    private fun computeTypeAliasDescriptor(fqNameIndex: Int): ClassifierDescriptor? {
+        val id = c.nameResolver.getClassId(fqNameIndex)
+        return if (id.isLocal) {
+            c.components.localClassifierResolver.resolveLocalTypeAlias(id)
+        }
+        else {
+            c.components.moduleDescriptor.findTypeAliasAcrossModuleDependencies(id)
+        }
     }
 
     fun typeArgument(parameter: TypeParameterDescriptor?, typeArgumentProto: ProtoBuf.Type.Argument): TypeProjection {
