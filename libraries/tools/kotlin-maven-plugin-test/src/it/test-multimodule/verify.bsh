@@ -1,0 +1,8 @@
+source(new File(basedir, "../../../verify-common.bsh").getAbsolutePath());
+
+assertBuildLogHasLineThatContains("kotlin-maven-plugin");
+
+File classFile = new File(basedir, "sub/target/classes/org/jetbrains/HelloWorldKt.class");
+if (!classFile.exists()) {
+    throw new FileNotFoundException("Could not find generated class file: " + classFile);
+}
