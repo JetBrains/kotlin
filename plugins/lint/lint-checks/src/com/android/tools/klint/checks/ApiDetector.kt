@@ -166,7 +166,8 @@ open class ApiDetector : Detector(), UastScanner {
 
             val parentClass = declaration.parent as? UClass ?: return
             if (!isSdkClass(parentClass) || checkAosp(parentClass)) return
-            val parentInternalName = parentClass.internalName ?: return
+            val parentInternalName = (node as? UCallExpression)?.getReceiver()?.getExpressionType()?.resolveClass(context)?.internalName
+                                     ?: parentClass.internalName ?: return
 
             when (declaration) {
                 is UFunction -> {
