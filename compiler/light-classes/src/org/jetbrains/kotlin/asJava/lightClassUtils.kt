@@ -109,7 +109,12 @@ fun KtTypeParameter.toPsiTypeParameters(): List<PsiTypeParameter> {
 
 // Returns original declaration if given PsiElement is a Kotlin light element, and element itself otherwise
 val PsiElement.unwrapped: PsiElement?
-    get() = if (this is KtLightElement<*, *>) kotlinOrigin else this
+    get() = when {
+        this is KtLightElement<*, *> -> kotlinOrigin
+        this is KtLightIdentifier -> origin
+        this is KtLightAnnotation.LightExpressionValue -> originalExpression
+        else -> this
+    }
 
 val PsiElement.namedUnwrappedElement: PsiNamedElement?
     get() = unwrapped?.getNonStrictParentOfType<PsiNamedElement>()

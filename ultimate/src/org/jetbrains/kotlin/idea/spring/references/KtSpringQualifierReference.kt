@@ -23,21 +23,44 @@ import com.intellij.spring.model.converters.SpringConverterUtil
 import com.intellij.spring.model.highlighting.SpringAutowireUtil
 import com.intellij.spring.model.jam.qualifiers.SpringJamQualifier
 import com.intellij.spring.model.utils.SpringModelSearchers
+import com.intellij.spring.references.SpringQualifierReference
+import com.intellij.util.IncorrectOperationException
+import org.jetbrains.kotlin.asJava.KtLightElement
 import org.jetbrains.kotlin.asJava.toLightAnnotation
 import org.jetbrains.kotlin.asJava.toLightElements
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.imports.importableFqName
+import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.spring.springModel
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.plainContent
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import java.util.*
 
 // Based on com.intellij.spring.references.SpringQualifierReference
-class KtSpringQualifierReference(element: KtStringTemplateExpression) : PsiReferenceBase.Poly<KtStringTemplateExpression>(element, false) {
+// It inherits from SpringQualifierReference to allow reuse of existing Java inspections which explicitly check for SpringQualifierReference
+class KtSpringQualifierReference(element: KtStringTemplateExpression) : SpringQualifierReference(StringTemplatePsiLiteralWrapper(element)) {
+    class StringTemplatePsiLiteralWrapper(
+            val element: KtStringTemplateExpression
+    ) : PsiElement by element, PsiLiteralExpression, KtLightElement<KtStringTemplateExpression, KtStringTemplateExpression>, PsiCompiledElement {
+        override fun getName() = null
+        override fun setName(newName: String) = throw IncorrectOperationException()
+
+        override fun getValue() = element.plainContent
+        override fun getType() = PsiType.getJavaLangString(element.manager, element.project.allScope())
+
+        override val clsDelegate: KtStringTemplateExpression
+            get() = element
+        override val kotlinOrigin: KtStringTemplateExpression
+            get() = element
+
+        override fun getMirror() = null
+    }
+
     private fun getAnnotationFqName(): String? {
         val annotationEntry = element.getStrictParentOfType<KtAnnotationEntry>() ?: return null
         val context = annotationEntry.analyze(BodyResolveMode.PARTIAL)

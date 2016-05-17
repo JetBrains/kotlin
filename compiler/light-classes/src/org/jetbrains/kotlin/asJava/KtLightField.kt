@@ -52,6 +52,8 @@ sealed class KtLightFieldImpl(
 
     override fun getContainingClass() = containingClass
 
+    override fun getContainingFile() = containingClass.containingFile
+
     override fun getType() = clsDelegate.type
 
     override fun getTypeElement() = clsDelegate.typeElement
