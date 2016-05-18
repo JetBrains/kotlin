@@ -140,7 +140,7 @@ sealed class TransformationMatch(val sequenceTransformations: List<SequenceTrans
      */
     class Result(val resultTransformation: ResultTransformation, sequenceTransformations: List<SequenceTransformation>) : TransformationMatch(sequenceTransformations) {
         constructor(resultTransformation: ResultTransformation, vararg sequenceTransformations: SequenceTransformation)
-        : this(resultTransformation, sequenceTransformations.asList())
+            : this(resultTransformation, sequenceTransformations.asList())
 
         override val allTransformations = sequenceTransformations + resultTransformation
     }
