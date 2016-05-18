@@ -64,7 +64,6 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.WARNING
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
-import org.jetbrains.kotlin.cli.jvm.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRoot
@@ -351,7 +350,7 @@ class KotlinCoreEnvironment private constructor(
         }
 
         private fun registerApplicationExtensionPointsAndExtensionsFrom(configuration: CompilerConfiguration, configFilePath: String) {
-            val locator = configuration.get(JVMConfigurationKeys.COMPILER_JAR_LOCATOR)
+            val locator = configuration.get(CLIConfigurationKeys.COMPILER_JAR_LOCATOR)
             var pluginRoot = if (locator == null) PathUtil.getPathUtilJar() else locator.compilerJar
 
             val app = ApplicationManager.getApplication()
