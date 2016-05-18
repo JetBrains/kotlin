@@ -28,7 +28,7 @@ class JavaUType(
 ) : JavaAbstractUElement(), UType {
     override val name: String
         get() = when (psi) {
-            is PsiClassType -> psi.className.substringAfterLast('.')
+            is PsiClassType -> psi.className?.substringAfterLast('.').orAnonymous("type")
             else -> psi?.canonicalText?.substringAfterLast('.')
         }.orAnonymous("type")
 
