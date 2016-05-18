@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
 import org.jetbrains.kotlin.resolve.BindingContext.TYPE
 import org.jetbrains.kotlin.resolve.BindingContext.TYPE_PARAMETER
 import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveAbstractMembers
@@ -146,6 +147,20 @@ class DeclarationsChecker(
         modifiersChecker.checkModifiersForDeclaration(declaration, constructorDescriptor)
         identifierChecker.checkDeclaration(declaration, trace)
         checkVarargParameters(trace, constructorDescriptor)
+        checkConstructorVisibility(constructorDescriptor, declaration)
+    }
+
+    private fun checkConstructorVisibility(constructorDescriptor: ConstructorDescriptor, declaration: KtDeclaration) {
+        val visibilityModifier = declaration.visibilityModifier()
+        if (visibilityModifier != null && visibilityModifier.node?.elementType != KtTokens.PRIVATE_KEYWORD) {
+            val classDescriptor = constructorDescriptor.containingDeclaration
+            if (classDescriptor.kind == ClassKind.ENUM_CLASS) {
+                trace.report(NON_PRIVATE_CONSTRUCTOR_IN_ENUM.on(visibilityModifier));
+            }
+            else if (classDescriptor.modality == Modality.SEALED) {
+                trace.report(NON_PRIVATE_CONSTRUCTOR_IN_SEALED.on(visibilityModifier));
+            }
+        }
     }
 
     private fun checkModifiersAndAnnotationsInPackageDirective(file: KtFile) {

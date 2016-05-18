@@ -124,6 +124,8 @@ class QuickFixRegistrar : QuickFixContributor {
         REDUNDANT_MODIFIER_FOR_TARGET.registerFactory(removeModifierFactory)
         WRONG_MODIFIER_CONTAINING_DECLARATION.registerFactory(removeModifierFactory)
         REPEATED_MODIFIER.registerFactory(removeModifierFactory)
+        NON_PRIVATE_CONSTRUCTOR_IN_ENUM.registerFactory(removeModifierFactory)
+        NON_PRIVATE_CONSTRUCTOR_IN_SEALED.registerFactory(removeModifierFactory)
 
         UNRESOLVED_REFERENCE.registerFactory(AutoImportFix)
         UNRESOLVED_REFERENCE.registerFactory(AddTestLibQuickFix)

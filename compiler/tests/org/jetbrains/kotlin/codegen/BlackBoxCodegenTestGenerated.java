@@ -5560,12 +5560,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
-        @TestMetadata("publicConstructorWithDefault.kt")
-        public void testPublicConstructorWithDefault() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/publicConstructorWithDefault.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/simple.kt");

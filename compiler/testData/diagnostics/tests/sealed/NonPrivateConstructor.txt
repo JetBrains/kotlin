@@ -1,0 +1,19 @@
+package
+
+public sealed class Sealed {
+    public constructor Sealed()
+    protected constructor Sealed(/*0*/ x: kotlin.Int)
+    private constructor Sealed(/*0*/ y: kotlin.Int, /*1*/ z: kotlin.Int)
+    public final val x: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public object FIRST : Sealed {
+        private constructor FIRST()
+        public final override /*1*/ /*fake_override*/ val x: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
