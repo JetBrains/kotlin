@@ -49,7 +49,7 @@ class SimplifyForIntention : SelfTargetingRangeIntention<KtForExpression>(
         val factory = KtPsiFactory(element)
         loopParameter.replace(factory.createDestructuringDeclarationInFor("(${usagesToRemove.joinToString { it.name!! }})"))
         usagesToRemove.forEachStdLib { p ->
-            p.property?.delete()
+            p.properties.firstOrNull()?.delete()
             p.usersToReplace.forEachStdLib {
                 it.replace(factory.createExpression(p.name!!))
             }
@@ -96,7 +96,7 @@ class SimplifyForIntention : SelfTargetingRangeIntention<KtForExpression>(
                     { otherUsages = true }
             )
 
-            if (!otherUsages && usagesToRemove.all { it != null && it.name != null}) {
+            if (!otherUsages && usagesToRemove.all { it != null && it.name != null && it.properties.size <= 1 }) {
                 return usagesToRemove.mapNotNull { it } to removeSelectorInLoopRange
             }
         }
@@ -115,7 +115,7 @@ class SimplifyForIntention : SelfTargetingRangeIntention<KtForExpression>(
 
             val notNullUsages = usagesToRemove.filterNotNull().filter { it.name != null }
             val droppedLastUnused = usagesToRemove.dropLastWhile { it == null }
-            if (droppedLastUnused.size == notNullUsages.size) {
+            if (droppedLastUnused.size == notNullUsages.size && droppedLastUnused.all { it != null && it.properties.size <= 1 } ) {
                 return notNullUsages to false
             }
         }
@@ -190,13 +190,13 @@ class SimplifyForIntention : SelfTargetingRangeIntention<KtForExpression>(
         return UsageData(property, parentCall, descriptor)
     }
 
-    private data class UsageData(val property: KtProperty?,
+    private data class UsageData(val properties: List<KtProperty>,
                                  val usersToReplace: List<KtExpression>,
                                  val descriptor: CallableDescriptor,
-                                 val name: String? = property?.name
+                                 val name: String? = properties.firstOrNull()?.name
     ) {
         constructor(property: KtProperty?, user: KtExpression, descriptor: CallableDescriptor):
-                this(property, if (property != null) emptyList() else listOf(user), descriptor)
+                this(listOfNotNull(property), if (property != null) emptyList() else listOf(user), descriptor)
 
         fun named(suggested: String) = if (name != null) this else copy(name = suggested)
     }
@@ -204,7 +204,8 @@ class SimplifyForIntention : SelfTargetingRangeIntention<KtForExpression>(
     private operator fun UsageData?.plus(newData: UsageData): UsageData {
         if (this == null) return newData
         val allUsersToReplace = usersToReplace + newData.usersToReplace
-        if (property != null) return copy(usersToReplace = allUsersToReplace)
-        else return newData.copy(usersToReplace = allUsersToReplace)
+        val allProperties = properties + newData.properties
+        if (properties.isNotEmpty()) return copy(properties = allProperties, usersToReplace = allUsersToReplace)
+        else return newData.copy(properties = allProperties, usersToReplace = allUsersToReplace)
     }
 }
