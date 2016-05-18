@@ -2,19 +2,19 @@
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
 @kotlin.Metadata
-public abstract class ClsAnn
+public annotation class ClsAnn
 
 @kotlin.annotation.Target
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
 @kotlin.Metadata
-public abstract class ExprAnn
+public annotation class ExprAnn
 
 @kotlin.annotation.Target
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
 @kotlin.Metadata
-public abstract class FunAnn
+public annotation class FunAnn
 
 @kotlin.Metadata
 final class LiteralsKt$foo$1 {

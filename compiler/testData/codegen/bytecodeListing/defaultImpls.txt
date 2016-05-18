@@ -1,13 +1,13 @@
 @kotlin.Metadata
-public abstract class A
+public interface A
 
 @kotlin.Metadata
-public abstract class B {
+public interface B {
     public abstract method foo(): void
 }
 
 @kotlin.Metadata
-public abstract class C {
+public interface C {
     public abstract method getBar(): int
 }
 
@@ -18,7 +18,7 @@ public final class D$DefaultImpls {
 }
 
 @kotlin.Metadata
-public abstract class D {
+public interface D {
     inner class D$DefaultImpls
     public abstract method baz(): int
 }
@@ -30,6 +30,6 @@ public final class E$InsideE {
 }
 
 @kotlin.Metadata
-public abstract class E {
+public interface E {
     inner class E$InsideE
 }
