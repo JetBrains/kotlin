@@ -134,7 +134,7 @@ class AddToCollectionTransformation(
                             }
                             else {
                                 val mapTransformation = MapTransformation(state.outerLoop, state.inputVariable, null, addOperationArgument, mapNotNull = false)
-                                AssignSequenceTransformationResultTransformation(mapTransformation, collectionInitialization)
+                                AssignSequenceResultTransformation(mapTransformation, collectionInitialization)
                             }
                             return TransformationMatch.Result(transformation)
                         }
@@ -354,7 +354,7 @@ class AssignToListTransformation(
 
     override fun mergeWithPrevious(previousTransformation: SequenceTransformation): ResultTransformation? {
         //TODO: can be any SequenceTransformation's that return not List<T>? Also this code needs to be changed when .asSequence() used
-        return AssignSequenceTransformationResultTransformation(previousTransformation, initialization)
+        return AssignSequenceResultTransformation(previousTransformation, initialization)
     }
 
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {

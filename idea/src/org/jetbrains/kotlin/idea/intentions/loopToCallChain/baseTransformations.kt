@@ -88,7 +88,7 @@ abstract class AssignToVariableResultTransformation(
     }
 }
 
-class AssignSequenceTransformationResultTransformation(
+class AssignSequenceResultTransformation(
         private val sequenceTransformation: SequenceTransformation,
         initialization: VariableInitialization
 ) : AssignToVariableResultTransformation(sequenceTransformation.loop, initialization) {
