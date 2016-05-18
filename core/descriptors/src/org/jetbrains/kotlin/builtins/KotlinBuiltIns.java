@@ -58,6 +58,7 @@ public abstract class KotlinBuiltIns {
             RANGES_PACKAGE_FQ_NAME,
             ANNOTATION_PACKAGE_FQ_NAME,
             ReflectionTypesKt.getKOTLIN_REFLECT_FQ_NAME(),
+            BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("coroutines")),
             BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("internal"))
     );
 

@@ -45,6 +45,7 @@ private val DEFAULT_IMPORTS_FOR_JVM: List<ImportPath> = ArrayList<ImportPath>().
     add(ImportPath("kotlin.annotation.*"))
     add(ImportPath("kotlin.jvm.*"))
     add(ImportPath("kotlin.collections.*"))
+    add(ImportPath("kotlin.coroutines.*"))
     add(ImportPath("kotlin.ranges.*"))
     add(ImportPath("kotlin.sequences.*"))
     add(ImportPath("kotlin.text.*"))
