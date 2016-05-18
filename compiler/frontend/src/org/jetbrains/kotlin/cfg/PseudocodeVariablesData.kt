@@ -163,9 +163,7 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
             else {
                 enterResult = UseControlFlowInfo()
                 for (edgeData in incomingEdgesData) {
-                    for (entry in edgeData.entries) {
-                        val variableDescriptor = entry.key
-                        val variableUseState = entry.value
+                    for ((variableDescriptor, variableUseState) in edgeData) {
                         enterResult.put(variableDescriptor, variableUseState.merge(enterResult[variableDescriptor]))
                     }
                 }
