@@ -2,6 +2,7 @@
   <dictionary name="dzharkov">
     <words>
       <w>checkcast</w>
+      <w>coroutine</w>
       <w>insn</w>
     </words>
   </dictionary>
