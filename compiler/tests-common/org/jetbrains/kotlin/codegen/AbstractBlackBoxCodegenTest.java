@@ -19,15 +19,9 @@ package org.jetbrains.kotlin.codegen;
 import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.Processor;
-import kotlin.collections.ArraysKt;
 import kotlin.io.FilesKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
-import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootsKt;
-import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.psi.KtDeclaration;
 import org.jetbrains.kotlin.psi.KtFile;
@@ -35,18 +29,13 @@ import org.jetbrains.kotlin.psi.KtNamedFunction;
 import org.jetbrains.kotlin.psi.KtProperty;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-
-import static org.jetbrains.kotlin.test.KotlinTestUtils.getAnnotationsJar;
 
 public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
     private boolean addRuntime = false;
@@ -83,39 +72,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
             @NotNull TestJdkKind jdkKind,
             @NotNull List<String> javacOptions
     ) {
-        CompilerConfiguration configuration = createConfiguration(
-                configurationKind, jdkKind,
-                Collections.singletonList(getAnnotationsJar()),
-                ArraysKt.filterNotNull(new File[] {javaSourceDir}),
-                files
-        );
-
-        myEnvironment = KotlinCoreEnvironment.createForTests(
-                getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES
-        );
-
-        loadMultiFiles(files);
-
-        classFileFactory = GenerationUtils.compileFiles(myFiles.getPsiFiles(), myEnvironment).getFactory();
-
-        if (javaSourceDir != null) {
-            // If there are Java files, they should be compiled against the class files produced by Kotlin, so we dump them to the disk
-            File kotlinOut;
-            try {
-                kotlinOut = KotlinTestUtils.tmpDir(toString());
-            }
-            catch (IOException e) {
-                throw ExceptionUtilsKt.rethrow(e);
-            }
-
-            OutputUtilsKt.writeAllTo(classFileFactory, kotlinOut);
-
-            File output = CodegenTestUtil.compileJava(
-                    findJavaSourcesInDirectory(javaSourceDir), Collections.singletonList(kotlinOut.getPath()), javacOptions
-            );
-            // Add javac output to classpath so that the created class loader can find generated Java classes
-            JvmContentRootsKt.addJvmClasspathRoot(configuration, output);
-        }
+        compile(files, javaSourceDir, configurationKind, jdkKind, javacOptions);
 
         blackBox();
     }
