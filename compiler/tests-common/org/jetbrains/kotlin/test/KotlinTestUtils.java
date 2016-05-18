@@ -94,7 +94,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.jetbrains.kotlin.cli.jvm.config.JVMConfigurationKeys.MODULE_NAME;
+import static org.jetbrains.kotlin.config.JVMConfigurationKeys.MODULE_NAME;
 import static org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil.compileKotlinToDirAndGetAnalysisResult;
 import static org.jetbrains.kotlin.test.ConfigurationKind.ALL;
 

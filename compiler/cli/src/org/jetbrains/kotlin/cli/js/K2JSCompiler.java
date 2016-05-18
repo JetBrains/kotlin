@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.CompilerJarLocator;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
-import org.jetbrains.kotlin.cli.jvm.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.ContentRootsKt;
 import org.jetbrains.kotlin.config.Services;
@@ -100,7 +99,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
         CompilerJarLocator locator = services.get(CompilerJarLocator.class);
         if (locator != null) {
-            configuration.put(JVMConfigurationKeys.COMPILER_JAR_LOCATOR, locator);
+            configuration.put(CLIConfigurationKeys.COMPILER_JAR_LOCATOR, locator);
         }
 
         ContentRootsKt.addKotlinSourceRoots(configuration, arguments.freeArgs);
