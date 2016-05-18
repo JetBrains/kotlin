@@ -1174,7 +1174,7 @@ private fun computePrefixFunction(pattern: CharSequence): IntArray {
     var matches = 0
     for (i in 1..pattern.length - 1) {
         while (matches > 0 && pattern[matches] != pattern[i]) {
-            matches = resultTable[matches]
+            matches = resultTable[matches - 1]
         }
 
         if (pattern[matches] == pattern[i]) {
