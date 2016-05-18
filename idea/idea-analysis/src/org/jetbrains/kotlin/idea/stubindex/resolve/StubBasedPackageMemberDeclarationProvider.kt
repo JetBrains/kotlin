@@ -46,6 +46,7 @@ class StubBasedPackageMemberDeclarationProvider(
 
         if (kindFilter.acceptsKinds(DescriptorKindFilter.CLASSIFIERS_MASK)) {
             addFromIndex(KotlinTopLevelClassByPackageIndex.getInstance())
+            addFromIndex(KotlinTopLevelTypeAliasByPackageIndex.getInstance())
         }
 
         if (kindFilter.acceptsKinds(DescriptorKindFilter.FUNCTIONS_MASK)) {
@@ -82,11 +83,12 @@ class StubBasedPackageMemberDeclarationProvider(
     }
 
     override fun getPackageFiles(): Collection<KtFile> {
-       return PackageIndexUtil.findFilesWithExactPackage(fqName, searchScope, project)
+        return PackageIndexUtil.findFilesWithExactPackage(fqName, searchScope, project)
     }
 
-    override fun getTypeAliasDeclarations(name: Name): Collection<KtTypeAlias> =
-            emptyList() // TODO stub index for type aliases
+    override fun getTypeAliasDeclarations(name: Name): Collection<KtTypeAlias> {
+        return KotlinTopLevelTypeAliasFqNameIndex.getInstance().get(childName(name), project, searchScope)
+    }
 
     private fun childName(name: Name): String {
         return fqName.child(ResolveSessionUtils.safeNameForLazyResolve(name)).asString()

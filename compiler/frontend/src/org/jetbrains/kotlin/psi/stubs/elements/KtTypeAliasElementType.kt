@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.psi.stubs.elements
 
+import com.intellij.psi.stubs.IndexSink
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
@@ -46,5 +47,9 @@ class KtTypeAliasElementType(debugName: String) :
         val fqName = dataStream.readName()
         val isTopLevel = dataStream.readBoolean()
         return KotlinTypeAliasStubImpl(KtStubElementTypes.TYPEALIAS, parentStub, name, fqName, isTopLevel)
+    }
+
+    override fun indexStub(stub: KotlinTypeAliasStub, sink: IndexSink) {
+        StubIndexService.getInstance().indexTypeAlias(stub, sink)
     }
 }

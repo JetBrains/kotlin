@@ -563,6 +563,7 @@
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelClassByPackageIndex"/>
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionByPackageIndex"/>
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelPropertyByPackageIndex"/>
+    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelTypeAliasByPackageIndex"/>
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinClassShortNameIndex"/>
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex"/>
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinPropertyShortNameIndex"/>
@@ -570,6 +571,7 @@
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinSuperClassIndex"/>
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionFqnNameIndex"/>
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelPropertyFqnNameIndex"/>
+    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelTypeAliasFqNameIndex"/>
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelExtensionsByReceiverTypeIndex"/>
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinAnnotationsIndex"/>
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinProbablyNothingFunctionShortNameIndex"/>

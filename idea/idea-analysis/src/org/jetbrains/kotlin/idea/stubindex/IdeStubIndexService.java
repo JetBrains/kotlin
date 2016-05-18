@@ -143,6 +143,19 @@ public class IdeStubIndexService extends StubIndexService {
     }
 
     @Override
+    public void indexTypeAlias(KotlinTypeAliasStub stub, IndexSink sink) {
+        // TODO short name index for type aliases?
+
+        if (stub.isTopLevel()) {
+            FqName fqName = stub.getFqName();
+            if (fqName != null) {
+                sink.occurrence(KotlinTopLevelTypeAliasFqNameIndex.getInstance().getKey(), fqName.asString());
+                sink.occurrence(KotlinTopLevelTypeAliasByPackageIndex.getInstance().getKey(), fqName.parent().asString());
+            }
+        }
+    }
+
+    @Override
     public void indexProperty(KotlinPropertyStub stub, IndexSink sink) {
         String name = stub.getName();
         if (name != null) {
