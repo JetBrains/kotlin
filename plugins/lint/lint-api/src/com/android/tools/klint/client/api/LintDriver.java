@@ -1490,7 +1490,7 @@ public class LintDriver {
             @NotNull List<UastScanner> detectors,
             @NotNull List<File> files) {
         com.intellij.openapi.project.Project intellijProject = mClient.getProject();
-        if (intellijProject == null) {
+        if (intellijProject == null || intellijProject.isDisposed()) {
             return;
         }
 
