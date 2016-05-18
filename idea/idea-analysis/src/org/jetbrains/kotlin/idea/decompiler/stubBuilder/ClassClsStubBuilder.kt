@@ -56,7 +56,7 @@ fun createClassStub(
 private class ClassClsStubBuilder(
         private val parentStub: StubElement<out PsiElement>,
         private val classProto: ProtoBuf.Class,
-        private val nameResolver: NameResolver,
+        nameResolver: NameResolver,
         private val classId: ClassId,
         source: SourceElement?,
         outerContext: ClsStubBuilderContext

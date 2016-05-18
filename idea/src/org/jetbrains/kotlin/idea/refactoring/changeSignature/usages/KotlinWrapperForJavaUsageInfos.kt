@@ -23,7 +23,7 @@ import com.intellij.usageView.UsageInfo
 class KotlinWrapperForJavaUsageInfos(
         val javaChangeInfo: JavaChangeInfo,
         val javaUsageInfos: Array<UsageInfo>,
-        val primaryMethod: PsiElement
+        primaryMethod: PsiElement
 ): UsageInfo(primaryMethod) {
     override fun hashCode() = javaChangeInfo.method.hashCode()
 

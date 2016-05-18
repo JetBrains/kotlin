@@ -249,7 +249,7 @@ class NumberCompare(
 }
 
 class ObjectCompare(
-        val opToken: IElementType,
+        opToken: IElementType,
         operandType: Type,
         left: StackValue,
         right: StackValue

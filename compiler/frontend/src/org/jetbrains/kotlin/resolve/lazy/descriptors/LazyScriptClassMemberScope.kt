@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
 import org.jetbrains.kotlin.utils.toReadOnlyList
 
 class LazyScriptClassMemberScope(
-        private val resolveSession: ResolveSession,
+        resolveSession: ResolveSession,
         declarationProvider: ClassMemberDeclarationProvider,
         private val scriptDescriptor: LazyScriptDescriptor,
         trace: BindingTrace)

@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.utils.toReadOnlyList
 
 class JvmPackageScope(
         private val c: LazyJavaResolverContext,
-        private val jPackage: JavaPackage,
+        jPackage: JavaPackage,
         private val packageFragment: LazyJavaPackageFragment
 ): MemberScope {
     internal val javaScope = LazyJavaPackageScope(c, jPackage, packageFragment)
