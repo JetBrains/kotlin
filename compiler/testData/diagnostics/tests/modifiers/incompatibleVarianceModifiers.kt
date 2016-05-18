@@ -14,7 +14,7 @@ fun test3() {
 }
 
 class A {
-    fun <<!VARIANCE_ON_TYPE_PARAMETER_OF_FUNCTION_OR_PROPERTY!>out<!> <!REPEATED_MODIFIER!>out<!> T> bar() {
+    fun <<!VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED!>out<!> <!REPEATED_MODIFIER!>out<!> T> bar() {
     }
 }
 
