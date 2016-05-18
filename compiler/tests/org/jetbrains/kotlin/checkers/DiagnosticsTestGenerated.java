@@ -6099,6 +6099,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("NonPrivateConstructor.kt")
+            public void testNonPrivateConstructor() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/NonPrivateConstructor.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("openMemberInEnum.kt")
             public void testOpenMemberInEnum() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/openMemberInEnum.kt");
@@ -15786,6 +15792,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("NonExhaustiveWhenWithAnyCase.kt")
             public void testNonExhaustiveWhenWithAnyCase() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sealed/NonExhaustiveWhenWithAnyCase.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NonPrivateConstructor.kt")
+            public void testNonPrivateConstructor() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sealed/NonPrivateConstructor.kt");
                 doTest(fileName);
             }
 
