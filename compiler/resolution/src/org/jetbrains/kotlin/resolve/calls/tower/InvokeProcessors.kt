@@ -87,7 +87,7 @@ abstract class AbstractInvokeTowerProcessor<F : Candidate<FunctionDescriptor>, V
 // todo KT-9522 Allow invoke convention for synthetic property
 class InvokeTowerProcessor<F : Candidate<FunctionDescriptor>, V : Candidate<VariableDescriptor>>(
         invokeContext: InvokeTowerContext<F, V>,
-        private val explicitReceiver: Receiver?
+        explicitReceiver: Receiver?
 ) : AbstractInvokeTowerProcessor<F, V>(
         invokeContext,
         createVariableProcessor(invokeContext.contextForVariable(stripExplicitReceiver = false), explicitReceiver)

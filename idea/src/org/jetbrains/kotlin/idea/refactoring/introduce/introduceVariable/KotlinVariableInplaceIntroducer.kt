@@ -42,8 +42,8 @@ import org.jetbrains.kotlin.types.KotlinType
 
 class KotlinVariableInplaceIntroducer(
         val addedVariable: KtProperty,
-        val originalExpression: KtExpression?,
-        val occurrencesToReplace: Array<KtExpression>,
+        originalExpression: KtExpression?,
+        occurrencesToReplace: Array<KtExpression>,
         suggestedNames: Collection<String>,
         val isVar: Boolean,
         val doNotChangeVar: Boolean,

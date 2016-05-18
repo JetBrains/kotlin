@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.kotlin.psi.psiUtil.nonStaticOuterClasses
 
 class MakeConstructorParameterPropertyFix(
-        element: KtParameter, private val kotlinValVar: KotlinValVar, private val className: String?
+        element: KtParameter, private val kotlinValVar: KotlinValVar, className: String?
 ) : KotlinQuickFixAction<KtParameter>(element) {
     override fun getFamilyName() = "Make primary constructor parameter a property"
 

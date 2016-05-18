@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.util.*
 
 class LazyJavaClassDescriptor(
-        private val outerContext: LazyJavaResolverContext,
+        outerContext: LazyJavaResolverContext,
         containingDeclaration: DeclarationDescriptor,
         private val jClass: JavaClass
 ) : ClassDescriptorBase(outerContext.storageManager, containingDeclaration, jClass.name,

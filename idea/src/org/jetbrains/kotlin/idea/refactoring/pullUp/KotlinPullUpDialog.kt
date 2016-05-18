@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.psi.*
 
 class KotlinPullUpDialog(
         project: Project,
-        private val classOrObject: KtClassOrObject,
+        classOrObject: KtClassOrObject,
         superClasses: List<PsiNamedElement>,
         memberInfoStorage: KotlinMemberInfoStorage
 ) : KotlinPullUpDialogBase(

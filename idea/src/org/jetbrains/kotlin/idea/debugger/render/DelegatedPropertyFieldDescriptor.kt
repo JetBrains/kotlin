@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.name.Name
 
 class DelegatedPropertyFieldDescriptor(
         project: Project,
-        val objectRef: ObjectReference,
+        objectRef: ObjectReference,
         val delegate: Field,
         val renderDelegatedProperty: Boolean
 ) : FieldDescriptorImpl(project, objectRef, delegate) {

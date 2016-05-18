@@ -166,7 +166,7 @@ internal open class ScopeBasedTowerLevel protected constructor(
 }
 internal class ImportingScopeBasedTowerLevel(
         scopeTower: ScopeTower,
-        private val importingScope: ImportingScope
+        importingScope: ImportingScope
 ): ScopeBasedTowerLevel(scopeTower, importingScope)
 
 internal class SyntheticScopeBasedTowerLevel(
