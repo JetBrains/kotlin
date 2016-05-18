@@ -190,6 +190,12 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("unnecessaryJavaUsage/inspectionData/inspections.test")
+        public void testUnnecessaryJavaUsage_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/unnecessaryJavaUsage/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
         @TestMetadata("unusedImport/inspectionData/inspections.test")
         public void testUnusedImport_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/unusedImport/inspectionData/inspections.test");

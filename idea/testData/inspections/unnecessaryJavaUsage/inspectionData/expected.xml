@@ -1,0 +1,10 @@
+<problems>
+    <problem>
+        <file>unnecessaryJavaUsage.kt</file>
+        <line>2</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="unnecessaryJavaUsage.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unnecessary java usage</problem_class>
+        <description>Unnecessary java usage</description>
+    </problem>
+</problems>
