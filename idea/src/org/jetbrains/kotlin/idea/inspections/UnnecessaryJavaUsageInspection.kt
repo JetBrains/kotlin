@@ -43,7 +43,7 @@ class UnnecessaryJavaUsageInspection : AbstractKotlinInspection(), CleanupLocalI
 
                 holder.registerProblem(expression,
                                        "Unnecessary java usage",
-                                       ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                                       ProblemHighlightType.WEAK_WARNING,
                                        UnnecessaryJavaUsageFix(patterns[pattern]!!, value))
             }
         }
