@@ -2089,8 +2089,6 @@ public abstract interface class kotlin/text/MatchGroupCollection : java/util/Col
 	public abstract fun remove (Lkotlin/text/MatchGroup;)Z
 	public abstract fun removeAll (Ljava/util/Collection;)Z
 	public abstract fun retainAll (Ljava/util/Collection;)Z
-	public abstract fun toArray ()[Ljava/lang/Object;
-	public abstract fun toArray ([Ljava/lang/Object;)[Ljava/lang/Object;
 }
 
 public abstract interface class kotlin/text/MatchResult {
