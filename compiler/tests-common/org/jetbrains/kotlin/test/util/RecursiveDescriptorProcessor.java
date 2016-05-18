@@ -111,8 +111,8 @@ public class RecursiveDescriptorProcessor {
 
         @Override
         public Boolean visitTypeAliasDescriptor(TypeAliasDescriptor descriptor, D data) {
-            // TODO typealias
-            return true;
+            return applyWorker(descriptor, data)
+                   && visitChildren(descriptor.getDeclaredTypeParameters(), data);
         }
 
         @Override

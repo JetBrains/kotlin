@@ -480,7 +480,7 @@ class TypeResolver(
         }
 
         override fun boundsViolationInSubstitution(bound: KotlinType, argument: KotlinType, typeParameter: TypeParameterDescriptor) {
-            TODO()
+            TODO("boundsViolationInSubstitution")
         }
     }
 
@@ -529,9 +529,11 @@ class TypeResolver(
             "Type alias expansion: result for ${typeAliasExpansion.descriptor} is ${expandedProjection.projectionKind}, should be invariant"
         }
 
-        val abbreviatedType = KotlinTypeImpl.create(annotations, typeAliasExpansion.descriptor.typeConstructor,
+        val abbreviatedType = KotlinTypeImpl.create(annotations,
+                                                    typeAliasExpansion.descriptor.typeConstructor,
                                                     originalProjection.type.isMarkedNullable,
-                                                    typeAliasExpansion.arguments, MemberScope.Empty)
+                                                    typeAliasExpansion.arguments,
+                                                    MemberScope.Empty)
 
         return expandedType.withAbbreviatedType(abbreviatedType)
     }

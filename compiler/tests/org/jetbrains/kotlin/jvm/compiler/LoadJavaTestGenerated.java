@@ -4796,6 +4796,27 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             }
         }
 
+        @TestMetadata("compiler/testData/loadJava/compiledKotlin/typealias")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Typealias extends AbstractLoadJavaTest {
+            public void testAllFilesPresentInTypealias() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/typealias"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("Basic.kt")
+            public void testBasic() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/typealias/Basic.kt");
+                doTestCompiledKotlin(fileName);
+            }
+
+            @TestMetadata("Generic.kt")
+            public void testGeneric() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/typealias/Generic.kt");
+                doTestCompiledKotlin(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/loadJava/compiledKotlin/visibility")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
