@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.org.objectweb.asm.*
+import org.jetbrains.org.objectweb.asm.Opcodes.*
 import java.io.File
 
 abstract class AbstractBytecodeListingTest : CodegenTestCase() {
@@ -40,7 +41,7 @@ abstract class AbstractBytecodeListingTest : CodegenTestCase() {
         KotlinTestUtils.assertEqualsToFile(txtFile, generatedFiles)
     }
 
-    private class TextCollectingVisitor : ClassVisitor(Opcodes.ASM5) {
+    private class TextCollectingVisitor : ClassVisitor(ASM5) {
         private class Declaration(val text: String, val annotations: MutableList<String> = arrayListOf())
 
         private val declarationsInsideClass = arrayListOf<Declaration>()
@@ -58,22 +59,32 @@ abstract class AbstractBytecodeListingTest : CodegenTestCase() {
         }
 
         private fun handleModifiers(access: Int, list: MutableList<String> = declarationsInsideClass.last().annotations) {
-            if ((access and Opcodes.ACC_PUBLIC) != 0) addModifier("public", list)
-            if ((access and Opcodes.ACC_PROTECTED) != 0) addModifier("protected", list)
-            if ((access and Opcodes.ACC_PRIVATE) != 0) addModifier("private", list)
+            if (access and ACC_PUBLIC != 0) addModifier("public", list)
+            if (access and ACC_PROTECTED != 0) addModifier("protected", list)
+            if (access and ACC_PRIVATE != 0) addModifier("private", list)
 
-            if ((access and Opcodes.ACC_SYNTHETIC) != 0) addModifier("synthetic", list)
-            if ((access and Opcodes.ACC_DEPRECATED) != 0) addModifier("deprecated", list)
-            if ((access and Opcodes.ACC_FINAL) != 0) addModifier("final", list)
-            if ((access and Opcodes.ACC_ABSTRACT) != 0) addModifier("abstract", list)
-            if ((access and Opcodes.ACC_STATIC) != 0) addModifier("static", list)
+            if (access and ACC_SYNTHETIC != 0) addModifier("synthetic", list)
+            if (access and ACC_DEPRECATED != 0) addModifier("deprecated", list)
+            if (access and ACC_FINAL != 0) addModifier("final", list)
+            if (access and ACC_ABSTRACT != 0 && access and ACC_INTERFACE == 0) addModifier("abstract", list)
+            if (access and ACC_STATIC != 0) addModifier("static", list)
+        }
+
+        private fun classOrInterface(access: Int): String {
+            return when {
+                access and ACC_ANNOTATION != 0 -> "annotation class"
+                access and ACC_ENUM != 0 -> "enum class"
+                access and ACC_INTERFACE != 0 -> "interface"
+                else -> "class"
+            }
         }
 
         val text: String
             get() = StringBuilder().apply {
                 append(classAnnotations.joinToString("\n", postfix = "\n"))
                 arrayListOf<String>().apply { handleModifiers(classAccess, this) }.forEach { append(it) }
-                append("class ")
+                append(classOrInterface(classAccess))
+                append(" ")
                 append(className)
                 if (declarationsInsideClass.isNotEmpty()) {
                     append(" {\n")
@@ -98,7 +109,7 @@ abstract class AbstractBytecodeListingTest : CodegenTestCase() {
 
             handleModifiers(access, methodAnnotations)
 
-            return object : MethodVisitor(Opcodes.ASM5) {
+            return object : MethodVisitor(ASM5) {
                 override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
                     val type = Type.getType(desc).className
                     methodAnnotations += "@$type "
@@ -127,7 +138,7 @@ abstract class AbstractBytecodeListingTest : CodegenTestCase() {
             declarationsInsideClass.add(Declaration("field $name: $type"))
             handleModifiers(access)
 
-            return object : FieldVisitor(Opcodes.ASM5) {
+            return object : FieldVisitor(ASM5) {
                 override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
                     addAnnotation(desc)
                     return super.visitAnnotation(desc, visible)
