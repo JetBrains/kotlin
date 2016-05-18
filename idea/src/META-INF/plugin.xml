@@ -1516,7 +1516,7 @@
                      groupName="Kotlin"
                      enabledByDefault="true"
                      cleanupTool="true"
-                     level="WARNING"
+                     level="WEAK_WARNING"
                      language="kotlin"
     />
 
