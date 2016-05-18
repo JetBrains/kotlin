@@ -6579,6 +6579,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("DataClassTwoDifferentLocals.kt")
+        public void testDataClassTwoDifferentLocals() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/DataClassTwoDifferentLocals.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("DataClassUnused.kt")
         public void testDataClassUnused() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/DataClassUnused.kt");
