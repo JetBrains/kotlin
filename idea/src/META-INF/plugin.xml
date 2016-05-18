@@ -1525,7 +1525,7 @@
                      groupName="Kotlin"
                      enabledByDefault="true"
                      cleanupTool="true"
-                     level="WEAK_WARNING"
+                     level="WEAK WARNING"
                      language="kotlin"
     />
 
