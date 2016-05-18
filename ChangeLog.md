@@ -60,6 +60,7 @@ Issues fixed:
 - [KT-12363](https://youtrack.jetbrains.com/issue/KT-12363) Fixed "Autowired members defined in invalid Spring bean (Kotlin)" inspection description
 - [KT-12148](https://youtrack.jetbrains.com/issue/KT-12148) Warn about object declarations annotated with Spring `@Configuration`/`@Component`/etc.
 - [KT-12143](https://youtrack.jetbrains.com/issue/KT-12143) Fixed "Spring Facet Code Configuration (Kotlin)" inspection description
+- [KT-12384](https://youtrack.jetbrains.com/issue/KT-12384) Fixed bean references in factory method calls
 
 #### Debugger
 
