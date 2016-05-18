@@ -185,6 +185,7 @@ class SimplifyForIntention : SelfTargetingRangeIntention<KtForExpression>(
         }
 
         val property = parentCall.parent as? KtProperty
+        if (property != null && property.isVar) return null
         val resolvedCall = parentCall.getResolvedCall(context) ?: return null
 
         val descriptor = resolvedCall.resultingDescriptor

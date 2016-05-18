@@ -6603,6 +6603,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("DataClassWithLocalPropertyModified.kt")
+        public void testDataClassWithLocalPropertyModified() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/DataClassWithLocalPropertyModified.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("EntriesCallIsMissing.kt")
         public void testEntriesCallIsMissing() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/EntriesCallIsMissing.kt");
