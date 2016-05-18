@@ -6,6 +6,7 @@ void assertBuildLogHasLine(String expectedLine) {
         String line;
         int i = 0;
         while ((line = reader.readLine()) != null) {
+            line = line.replaceAll("\\u001b[^m]*m", "");
             i++;
             if (line.equals(expectedLine)) {
                 print("Expected line was found at line " + i + " of build log: " + "\"" + expectedLine + "\"");
