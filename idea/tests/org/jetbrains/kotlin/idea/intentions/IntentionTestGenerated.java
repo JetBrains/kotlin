@@ -6555,6 +6555,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("DataClassNullable.kt")
+        public void testDataClassNullable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/DataClassNullable.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("DataClassParametersOrder.kt")
         public void testDataClassParametersOrder() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/DataClassParametersOrder.kt");

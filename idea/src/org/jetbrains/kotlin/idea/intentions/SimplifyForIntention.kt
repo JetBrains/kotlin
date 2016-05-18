@@ -78,7 +78,9 @@ class SimplifyForIntention : SelfTargetingRangeIntention<KtForExpression>(
         val context = element.analyzeFullyAndGetResult().bindingContext
 
         val loopParameterDescriptor = context.get(BindingContext.VALUE_PARAMETER, loopParameter) ?: return null
-        val classDescriptor = loopParameterDescriptor.type.constructor.declarationDescriptor as? ClassDescriptor ?: return null
+        val loopParameterType = loopParameterDescriptor.type
+        if (loopParameterType.isMarkedNullable) return null
+        val classDescriptor = loopParameterType.constructor.declarationDescriptor as? ClassDescriptor ?: return null
 
         var otherUsages = false
         val usagesToRemove : Array<UsageData?>
