@@ -109,10 +109,9 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
         if (instruction is MagicInstruction) {
             if (instruction.kind === MagicKind.EXHAUSTIVE_WHEN_ELSE) {
                 val exitInstructionData = enterInstructionData.copy()
-                for (entry in enterInstructionData.entries) {
-                    if (!entry.value.definitelyInitialized()) {
-                        exitInstructionData.put(entry.key,
-                                                VariableControlFlowState.createInitializedExhaustively(entry.value.isDeclared))
+                for ((key, value) in enterInstructionData) {
+                    if (!value.definitelyInitialized()) {
+                        exitInstructionData.put(key, VariableControlFlowState.createInitializedExhaustively(value.isDeclared))
                     }
                 }
                 return exitInstructionData

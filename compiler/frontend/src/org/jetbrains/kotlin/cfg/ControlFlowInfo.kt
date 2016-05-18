@@ -43,9 +43,9 @@ class InitControlFlowInfo(map: MutableMap<VariableDescriptor, VariableControlFlo
     // merge = input of MergeInstruction
     // returns true if definite initialization in when happens here
     fun checkDefiniteInitializationInWhen(merge: InitControlFlowInfo): Boolean {
-        for (entry in entries) {
-            if (entry.value.initState == InitState.INITIALIZED_EXHAUSTIVELY &&
-                merge[entry.key]?.initState == InitState.INITIALIZED) {
+        for ((key, value) in entries) {
+            if (value.initState == InitState.INITIALIZED_EXHAUSTIVELY &&
+                merge[key]?.initState == InitState.INITIALIZED) {
                 return true
             }
         }

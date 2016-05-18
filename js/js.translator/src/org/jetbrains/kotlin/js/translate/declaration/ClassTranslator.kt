@@ -361,9 +361,9 @@ class ClassTranslator private constructor(
     }
 
     private fun generateBridgesToTraitImpl(properties: MutableList<JsPropertyInitializer>) {
-        for (entry in CodegenUtil.getNonPrivateTraitMethods(descriptor).entries) {
-            if (!areNamesEqual(entry.key, entry.value)) {
-                properties += generateDelegateCall(entry.value, entry.key, JsLiteral.THIS, context())
+        for ((key, value) in CodegenUtil.getNonPrivateTraitMethods(descriptor)) {
+            if (!areNamesEqual(key, value)) {
+                properties += generateDelegateCall(value, key, JsLiteral.THIS, context())
             }
         }
     }
