@@ -607,16 +607,14 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 context.trace.report(NOT_A_RETURN_LABEL.on(expression, expression.getLabelName()));
             }
         }
+
         if (returnedExpression != null) {
             facade.getTypeInfo(returnedExpression, context.replaceExpectedType(expectedType).replaceScope(context.scope)
                     .replaceContextDependency(INDEPENDENT));
         }
         else {
-            if (expectedType != null &&
-                !noExpectedType(expectedType) &&
-                !KotlinBuiltIns.isUnit(expectedType) &&
-                !isDontCarePlaceholder(expectedType)) // for lambda with implicit return type Unit
-            {
+            // for lambda with implicit return type Unit
+            if (!noExpectedType(expectedType) && !KotlinBuiltIns.isUnit(expectedType) && !isDontCarePlaceholder(expectedType)) {
                 context.trace.report(RETURN_TYPE_MISMATCH.on(expression, expectedType));
             }
         }
