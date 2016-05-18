@@ -50,6 +50,8 @@ class AndroidModelFacade(val facet: AndroidFacet) {
                     ?.call(facet)
         }
 
+        val model = model ?: return null
+
         return modelClass?.kotlin?.memberFunctions
                 ?.firstOrNull { it.name == methodName }
                 ?.call(model)
