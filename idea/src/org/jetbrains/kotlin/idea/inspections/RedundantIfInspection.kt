@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
-import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.*
 
 class RedundantIfInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
@@ -43,11 +42,11 @@ class RedundantIfInspection : AbstractKotlinInspection(), CleanupLocalInspection
         val thenReturn = getReturnedExpression(expression.then) ?: return false
         val elseReturn = getReturnedExpression(expression.`else`) ?: return false
 
-        if (KtPsiUtil.isTrueConstant(thenReturn) && !KtPsiUtil.isTrueConstant(elseReturn)) {
+        if (KtPsiUtil.isTrueConstant(thenReturn) && KtPsiUtil.isFalseConstant(elseReturn)) {
             return true
         }
 
-        if (!KtPsiUtil.isTrueConstant(thenReturn) && KtPsiUtil.isTrueConstant(elseReturn)) {
+        if (KtPsiUtil.isFalseConstant(thenReturn) && KtPsiUtil.isTrueConstant(elseReturn)) {
             return true
         }
 
@@ -58,13 +57,8 @@ class RedundantIfInspection : AbstractKotlinInspection(), CleanupLocalInspection
         if (expression == null) return null
         if (expression !is KtBlockExpression) return null
         if (expression.statements.size != 1) return null
-
-        val statement = expression.statements[0]
-        if (statement !is KtReturnExpression) return null
-
+        val statement = expression.statements.singleOrNull() as? KtReturnExpression ?: return null
         val returnedExpression = statement.returnedExpression ?: return null
-        if (returnedExpression.node.elementType != KtNodeTypes.BOOLEAN_CONSTANT) return null
-
         return returnedExpression
     }
 
