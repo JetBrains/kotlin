@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.script.ScriptPriorities
 import org.jetbrains.kotlin.types.TypeSubstitutor
 
 class LazyScriptDescriptor(
-        private val resolveSession: ResolveSession,
+        resolveSession: ResolveSession,
         containingDeclaration: DeclarationDescriptor,
         name: Name,
         internal val scriptInfo: KtScriptInfo
