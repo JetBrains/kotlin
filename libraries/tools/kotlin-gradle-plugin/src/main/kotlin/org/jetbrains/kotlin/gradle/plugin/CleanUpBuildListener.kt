@@ -85,6 +85,8 @@ class CleanUpBuildListener(pluginClassLoader: ClassLoader, private val project: 
 
         log.lifecycle(FORCE_SYSTEM_GC_MESSAGE)
         System.gc()
+        System.runFinalization()
+        System.gc()
         val rt = Runtime.getRuntime()
         return (rt.totalMemory() - rt.freeMemory()) / 1024
     }
