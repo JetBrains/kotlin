@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.codegen.optimization.fixStack
 
-import com.intellij.util.SmartList
 import com.intellij.util.containers.Stack
 import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil
 import org.jetbrains.kotlin.codegen.optimization.common.MethodAnalyzer
@@ -26,11 +25,9 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.JumpInsnNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
-import org.jetbrains.org.objectweb.asm.tree.TryCatchBlockNode
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.Interpreter
-import java.util.*
 
 internal class FixStackAnalyzer(
         owner: String,
