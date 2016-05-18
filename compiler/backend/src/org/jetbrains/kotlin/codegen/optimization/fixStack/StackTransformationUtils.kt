@@ -16,40 +16,17 @@
 
 package org.jetbrains.kotlin.codegen.optimization.fixStack
 
-import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil
-import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
-import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsn
-import org.jetbrains.kotlin.codegen.pseudoInsns.parsePseudoInsnOrNull
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.*
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.Value
 
-inline fun InsnList.forEachPseudoInsn(block: (PseudoInsn, AbstractInsnNode) -> Unit) {
-    InsnSequence(this).forEach { insn ->
-        parsePseudoInsnOrNull(insn)?.let { block(it, insn) }
-    }
-}
-
-inline fun InsnList.forEachInlineMarker(block: (String, MethodInsnNode) -> Unit) {
-    InsnSequence(this).forEach { insn ->
-        if (InlineCodegenUtil.isInlineMarker(insn)) {
-            val methodInsnNode = insn as MethodInsnNode
-            block(methodInsnNode.name, methodInsnNode)
-        }
-    }
-}
-
 fun <V : Value> Frame<V>.top(): V? =
         peek(0)
 
 fun <V : Value> Frame<V>.peek(offset: Int): V? =
         if (stackSize >= offset) getStack(stackSize - offset - 1) else null
-
-fun MethodNode.updateMaxLocals(newMaxLocals: Int) {
-    maxLocals = Math.max(maxLocals, newMaxLocals)
-}
 
 class SavedStackDescriptor(
         val savedValues: List<BasicValue>,
@@ -63,7 +40,6 @@ class SavedStackDescriptor(
 
     fun isNotEmpty(): Boolean = savedValues.isNotEmpty()
 }
-
 
 fun saveStack(methodNode: MethodNode, nodeToReplace: AbstractInsnNode, savedStackDescriptor: SavedStackDescriptor,
               restoreImmediately: Boolean) {
@@ -148,4 +124,3 @@ fun replaceMarkerWithPops(methodNode: MethodNode, node: AbstractInsnNode, expect
         remove(node)
     }
 }
-

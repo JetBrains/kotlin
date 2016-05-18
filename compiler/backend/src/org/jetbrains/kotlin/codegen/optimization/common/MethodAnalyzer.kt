@@ -208,7 +208,7 @@ open class MethodAnalyzer<V : Value>(
 
     private fun mergeControlFlowEdge(insn: Int, frame: Frame<V>) {
         val oldFrame = frames[insn]
-        var changes: Boolean
+        val changes: Boolean
 
         if (oldFrame == null) {
             frames[insn] = newFrame(frame)
