@@ -28,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider;
+import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.context.ContextKt;
 import org.jetbrains.kotlin.context.GlobalContext;
 import org.jetbrains.kotlin.context.ModuleContext;
@@ -238,17 +239,16 @@ public abstract class AbstractDiagnosticsTest extends BaseDiagnosticsTest {
 
     protected void analyzeModuleContents(
             @NotNull ModuleContext moduleContext,
-            @NotNull List<KtFile> jetFiles,
+            @NotNull List<KtFile> files,
             @NotNull BindingTrace moduleTrace
     ) {
         // New JavaDescriptorResolver is created for each module, which is good because it emulates different Java libraries for each module,
         // albeit with same class names
         TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
                 moduleContext,
-                jetFiles,
+                files,
                 moduleTrace,
-                null,
-                null,
+                getEnvironment().getConfiguration(),
                 new JvmPackagePartProvider(getEnvironment())
         );
     }

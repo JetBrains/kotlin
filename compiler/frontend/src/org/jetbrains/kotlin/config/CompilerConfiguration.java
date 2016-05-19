@@ -24,8 +24,14 @@ import java.util.*;
 
 @SuppressWarnings("unchecked")
 public class CompilerConfiguration {
+    public static CompilerConfiguration EMPTY = new CompilerConfiguration();
+
     private final Map<Key, Object> map = new HashMap<Key, Object>();
     private boolean readOnly = false;
+
+    static {
+        EMPTY.setReadOnly(true);
+    }
 
     @Nullable
     public <T> T get(@NotNull CompilerConfigurationKey<T> key) {

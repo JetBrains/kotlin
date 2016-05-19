@@ -18,11 +18,11 @@ package org.jetbrains.kotlin.idea.decompiler.textBuilder
 
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.idea.caches.resolve.IDEPackagePartProvider
-import org.jetbrains.kotlin.idea.decompiler.classFile.DeserializerForClassfileDecompiler
 import org.jetbrains.kotlin.idea.decompiler.classFile.buildDecompiledTextForClassFile
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
@@ -51,7 +51,7 @@ class DecompiledTextConsistencyTest : TextConsistencyBaseTest() {
     override fun getModuleDescriptor(): ModuleDescriptor =
             TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
                     TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project, JvmResolveUtil.TEST_MODULE_NAME),
-                    listOf(), BindingTraceContext(), null, null,
+                    listOf(), BindingTraceContext(), CompilerConfiguration.EMPTY,
                     IDEPackagePartProvider(GlobalSearchScope.allScope(project))
             ).moduleDescriptor
 

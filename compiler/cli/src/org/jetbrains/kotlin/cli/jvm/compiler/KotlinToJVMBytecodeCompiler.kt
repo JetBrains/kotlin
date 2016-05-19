@@ -323,16 +323,16 @@ object KotlinToJVMBytecodeCompiler {
                 environment.getSourceFiles(), object : AnalyzerWithCompilerReport.Analyzer {
             override fun analyze(): AnalysisResult {
                 val sharedTrace = CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace()
-                val moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(environment.project,
-                                                                                              environment.getModuleName())
+                val moduleContext =
+                        TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(environment.project, environment.getModuleName())
 
                 return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
                         moduleContext,
                         environment.getSourceFiles(),
                         sharedTrace,
-                        environment.configuration.get(JVMConfigurationKeys.MODULES),
-                        environment.configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS),
-                        JvmPackagePartProvider(environment))
+                        environment.configuration,
+                        JvmPackagePartProvider(environment)
+                )
             }
 
             override fun reportEnvironmentErrors() {

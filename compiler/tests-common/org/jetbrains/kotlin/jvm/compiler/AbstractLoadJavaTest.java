@@ -155,14 +155,13 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                 KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
 
         BindingTrace trace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
-        ModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(environment.getProject(),
-                                                                                                ModuleNameKt.getModuleName(environment));
+        ModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(
+                environment.getProject(), ModuleNameKt.getModuleName(environment)
+        );
 
-        TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationNoIncremental(
-                moduleContext,
-                environment.getSourceFiles(),
-                trace,
-                TopDownAnalysisMode.TopLevelDeclarations,
+        TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
+                moduleContext, environment.getSourceFiles(), trace,
+                TopDownAnalysisMode.TopLevelDeclarations, configuration,
                 new JvmPackagePartProvider(environment)
         );
 

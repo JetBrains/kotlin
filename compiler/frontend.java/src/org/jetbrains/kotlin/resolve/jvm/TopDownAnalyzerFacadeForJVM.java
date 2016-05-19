@@ -19,8 +19,9 @@ package org.jetbrains.kotlin.resolve.jvm;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
+import org.jetbrains.kotlin.config.CompilerConfiguration;
+import org.jetbrains.kotlin.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.context.ContextKt;
 import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.context.MutableModuleContext;
@@ -58,38 +59,25 @@ public enum TopDownAnalyzerFacadeForJVM {
     INSTANCE;
 
     @NotNull
-    public static AnalysisResult analyzeFilesWithJavaIntegrationNoIncremental(
-            @NotNull ModuleContext moduleContext,
-            @NotNull Collection<KtFile> files,
-            @NotNull BindingTrace trace,
-            @NotNull TopDownAnalysisMode topDownAnalysisMode,
-            PackagePartProvider packagePartProvider
-    ) {
-        return analyzeFilesWithJavaIntegration(moduleContext, files, trace, topDownAnalysisMode, null, null, packagePartProvider);
-    }
-
-    @NotNull
     public static AnalysisResult analyzeFilesWithJavaIntegrationWithCustomContext(
             @NotNull ModuleContext moduleContext,
             @NotNull Collection<KtFile> files,
             @NotNull BindingTrace trace,
-            @Nullable List<Module> modules,
-            @Nullable IncrementalCompilationComponents incrementalCompilationComponents,
+            @NotNull CompilerConfiguration configuration,
             @NotNull PackagePartProvider packagePartProvider
     ) {
         return analyzeFilesWithJavaIntegration(
-                moduleContext, files, trace, TopDownAnalysisMode.TopLevelDeclarations, modules, incrementalCompilationComponents,
-                packagePartProvider);
+                moduleContext, files, trace, TopDownAnalysisMode.TopLevelDeclarations, configuration, packagePartProvider
+        );
     }
 
     @NotNull
-    private static AnalysisResult analyzeFilesWithJavaIntegration(
+    public static AnalysisResult analyzeFilesWithJavaIntegration(
             @NotNull ModuleContext moduleContext,
             @NotNull Collection<KtFile> files,
             @NotNull BindingTrace trace,
             @NotNull TopDownAnalysisMode topDownAnalysisMode,
-            @Nullable List<Module> modules,
-            @Nullable IncrementalCompilationComponents incrementalCompilationComponents,
+            @NotNull CompilerConfiguration configuration,
             @NotNull PackagePartProvider packagePartProvider
     ) {
         Project project = moduleContext.getProject();
@@ -98,10 +86,13 @@ public enum TopDownAnalyzerFacadeForJVM {
         FileBasedDeclarationProviderFactory providerFactory =
                 new FileBasedDeclarationProviderFactory(moduleContext.getStorageManager(), allFiles);
 
+        IncrementalCompilationComponents incrementalCompilationComponents =
+                configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS);
         LookupTracker lookupTracker =
                 incrementalCompilationComponents != null ? incrementalCompilationComponents.getLookupTracker() : LookupTracker.Companion.getDO_NOTHING();
 
         List<TargetId> targetIds = null;
+        List<Module> modules = configuration.get(JVMConfigurationKeys.MODULES);
         if (modules != null) {
             targetIds = new ArrayList<TargetId>(modules.size());
 
