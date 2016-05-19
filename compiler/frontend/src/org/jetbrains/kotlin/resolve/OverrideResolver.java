@@ -32,6 +32,7 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ReadOnly;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory2;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactoryWithPsiElement;
@@ -618,11 +619,38 @@ public class OverrideResolver {
     private static List<CallableMemberDescriptor> collectImplementations(@NotNull Set<CallableMemberDescriptor> relevantDirectlyOverridden) {
         List<CallableMemberDescriptor> result = new ArrayList<CallableMemberDescriptor>(relevantDirectlyOverridden.size());
         for (CallableMemberDescriptor overriddenDescriptor : relevantDirectlyOverridden) {
-            if (overriddenDescriptor.getModality() != Modality.ABSTRACT) {
+            if (isImplementation(overriddenDescriptor)) {
                 result.add(overriddenDescriptor);
             }
         }
         return result;
+    }
+
+    private static boolean isImplementation(@NotNull CallableMemberDescriptor callableMemberDescriptor) {
+        // An abstract member is not an implementation.
+        if (callableMemberDescriptor.getModality() == Modality.ABSTRACT) return false;
+
+        // Interfaces contain fake overrides for 'toString', 'hashCode', 'equals'.
+        // They are not considered implementations if their dispatch receiver type is 'Any'.
+        DeclarationDescriptor containingDeclaration = callableMemberDescriptor.getContainingDeclaration();
+        assert containingDeclaration instanceof ClassDescriptor :
+                "ClassDescriptor expected, got " + containingDeclaration + " for " + callableMemberDescriptor;
+        ClassDescriptor containingClassDescriptor = (ClassDescriptor) containingDeclaration;
+        if (containingClassDescriptor.getKind() == ClassKind.INTERFACE && callableMemberDescriptor.getKind() == FAKE_OVERRIDE) {
+            ReceiverParameterDescriptor dispatchReceiverParameter = callableMemberDescriptor.getDispatchReceiverParameter();
+            if (dispatchReceiverParameter == null) return false;
+            if (KotlinBuiltIns.isAny(dispatchReceiverParameter.getType())) return false;
+        }
+
+        // A FAKE_OVERRIDE is an implementation iff it overrides an implementation.
+        if (callableMemberDescriptor.getKind() == FAKE_OVERRIDE) {
+            for (CallableMemberDescriptor overriddenDescriptor : callableMemberDescriptor.getOverriddenDescriptors()) {
+                if (isImplementation(overriddenDescriptor)) return true;
+            }
+            return false;
+        }
+
+        return true;
     }
 
     private static void filterNotSynthesizedDescriptorsByModality(
