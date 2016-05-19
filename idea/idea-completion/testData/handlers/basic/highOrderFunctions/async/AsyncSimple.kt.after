@@ -1,7 +1,0 @@
-fun async(a: () -> Unit) {}
-
-fun test() {
-    async() { <caret> }
-}
-
-// ELEMENT: async

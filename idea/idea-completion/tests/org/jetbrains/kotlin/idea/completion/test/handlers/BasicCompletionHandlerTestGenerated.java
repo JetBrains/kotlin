@@ -402,39 +402,6 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/highOrderFunctions/WithArgsNonEmptyLambdaAfter.kt");
             doTest(fileName);
         }
-
-        @TestMetadata("idea/idea-completion/testData/handlers/basic/highOrderFunctions/async")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class Async extends AbstractBasicCompletionHandlerTest {
-            public void testAllFilesPresentInAsync() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/basic/highOrderFunctions/async"), Pattern.compile("^(.+)\\.kt$"), true);
-            }
-
-            @TestMetadata("AsyncSimple.kt")
-            public void testAsyncSimple() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/highOrderFunctions/async/AsyncSimple.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("AsyncWithoutLambda.kt")
-            public void testAsyncWithoutLambda() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/highOrderFunctions/async/AsyncWithoutLambda.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("FromFooToAsync.kt")
-            public void testFromFooToAsync() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/highOrderFunctions/async/FromFooToAsync.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("FromFooToAsync2.kt")
-            public void testFromFooToAsync2() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/highOrderFunctions/async/FromFooToAsync2.kt");
-                doTest(fileName);
-            }
-        }
     }
 
     @TestMetadata("idea/idea-completion/testData/handlers/basic/override")

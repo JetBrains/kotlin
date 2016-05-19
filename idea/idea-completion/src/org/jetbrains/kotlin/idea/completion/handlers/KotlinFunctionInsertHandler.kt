@@ -25,7 +25,6 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
-import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -77,10 +76,10 @@ sealed class KotlinFunctionInsertHandler(callType: CallType<*>) : KotlinCallable
             val startOffset = context.startOffset
             val element = context.file.findElementAt(startOffset) ?: return
 
-            addArguments(context, element, item)
+            addArguments(context, element)
         }
 
-        private fun addArguments(context: InsertionContext, offsetElement: PsiElement, item: LookupElement) {
+        private fun addArguments(context : InsertionContext, offsetElement : PsiElement) {
             val completionChar = context.completionChar
             if (completionChar == '(') { //TODO: more correct behavior related to braces type
                 context.setAddCompletionChar(false)
@@ -123,12 +122,6 @@ sealed class KotlinFunctionInsertHandler(callType: CallType<*>) : KotlinCallable
             if (insertTypeArguments) {
                 document.insertString(offset, "<>")
                 editor.caretModel.moveToOffset(offset + 1)
-                offset += 2
-            }
-
-            // insert additional brackets for reserved syntax: "async {}"
-            if (insertLambda && (item.`object` as? DeclarationLookupObject)?.name?.identifier == "async") {
-                document.insertString(offset, "()")
                 offset += 2
             }
 
