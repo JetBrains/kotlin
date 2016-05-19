@@ -98,7 +98,7 @@ object InlineAnalyzerExtension : FunctionAnalyzerExtension.AnalyzerExtension {
             }
         }
 
-        if (functionDescriptor.modality == Modality.FINAL) {
+        if (functionDescriptor.isEffectivelyFinal()) {
             if (overridesAnything) {
                 trace.report(Errors.OVERRIDE_BY_INLINE.on(function))
             }
@@ -108,6 +108,11 @@ object InlineAnalyzerExtension : FunctionAnalyzerExtension.AnalyzerExtension {
         trace.report(Errors.DECLARATION_CANT_BE_INLINED.on(function))
     }
 
+    private fun FunctionDescriptor.isEffectivelyFinal(): Boolean =
+            modality == Modality.FINAL ||
+            containingDeclaration.let { containingDeclaration ->
+                containingDeclaration is ClassDescriptor && containingDeclaration.modality == Modality.FINAL
+            }
 
     private fun checkHasInlinableAndNullability(
             functionDescriptor: FunctionDescriptor,
