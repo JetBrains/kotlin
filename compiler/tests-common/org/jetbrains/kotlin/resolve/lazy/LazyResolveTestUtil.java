@@ -58,21 +58,12 @@ public class LazyResolveTestUtil {
     ) {
         ModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project, JvmResolveUtil.TEST_MODULE_NAME);
 
-        TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationNoIncremental(
-                moduleContext, sourceFiles, trace, TopDownAnalysisMode.TopLevelDeclarations,
+        TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
+                moduleContext, sourceFiles, trace, TopDownAnalysisMode.TopLevelDeclarations, environment.getConfiguration(),
                 new JvmPackagePartProvider(environment)
         );
 
         return moduleContext.getModule();
-    }
-
-    @NotNull
-    public static KotlinCodeAnalyzer resolveLazilyWithSession(
-            @NotNull List<KtFile> files,
-            @NotNull KotlinCoreEnvironment environment,
-            boolean addBuiltIns
-    ) {
-        return LazyResolveTestUtilsKt.createResolveSessionForFiles(environment.getProject(), files, addBuiltIns);
     }
 
     public static ModuleDescriptor resolveLazily(List<KtFile> files, KotlinCoreEnvironment environment) {
@@ -80,7 +71,7 @@ public class LazyResolveTestUtil {
     }
 
     public static ModuleDescriptor resolveLazily(List<KtFile> files, KotlinCoreEnvironment environment, boolean addBuiltIns) {
-        return resolveLazilyWithSession(files, environment, addBuiltIns).getModuleDescriptor();
+        return LazyResolveTestUtilsKt.createResolveSessionForFiles(environment.getProject(), files, addBuiltIns).getModuleDescriptor();
     }
 
     @NotNull
