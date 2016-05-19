@@ -72,7 +72,7 @@ class DestructuringDeclarationResolver(
         val expectedType = getExpectedTypeForComponent(context, entry)
         val results = fakeCallResolver.resolveFakeCall(
                 context.replaceExpectedType(expectedType), receiver, componentName,
-                entry, initializer, FakeCallKind.COMPONENT
+                entry, initializer, FakeCallKind.COMPONENT, emptyList()
         )
 
         if (!results.isSuccess) {

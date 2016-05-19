@@ -138,7 +138,7 @@ public class CallResolver {
 
     @NotNull
     public OverloadResolutionResults<FunctionDescriptor> resolveCallWithGivenName(
-            @NotNull ExpressionTypingContext context,
+            @NotNull ResolutionContext<?> context,
             @NotNull Call call,
             @NotNull KtReferenceExpression functionReference,
             @NotNull Name name

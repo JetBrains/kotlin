@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.calls.CallResolver
+import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
-import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
@@ -66,7 +66,7 @@ class FakeCallResolver(
 
     @JvmOverloads
     fun resolveFakeCall(
-            context: ExpressionTypingContext,
+            context: ResolutionContext<*>,
             receiver: ReceiverValue,
             name: Name,
             callElement: KtExpression,
@@ -79,7 +79,7 @@ class FakeCallResolver(
 
     fun makeAndResolveFakeCall(
             receiver: ReceiverValue?,
-            context: ExpressionTypingContext,
+            context: ResolutionContext<*>,
             valueArguments: List<KtExpression>,
             name: Name,
             callElement: KtExpression?,
@@ -132,7 +132,7 @@ class FakeCallResolver(
 
     @JvmOverloads fun makeAndResolveFakeCallInContext(
             receiver: ReceiverValue?,
-            context: ExpressionTypingContext,
+            context: ResolutionContext<*>,
             valueArguments: List<KtExpression>,
             name: Name,
             callElement: KtExpression?,
