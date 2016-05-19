@@ -29,3 +29,4 @@ switch
 undefined
 void
 with
+yield

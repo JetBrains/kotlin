@@ -52,7 +52,6 @@ public class KeywordStringsGenerated {
         "do",
         "when",
         "interface",
-        "yield",
         "typeof"
     ));
 }

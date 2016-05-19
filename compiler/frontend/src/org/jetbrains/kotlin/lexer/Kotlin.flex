@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 
     private final Stack<State> states = new Stack<State>();
     private int lBraceCount;
-    
+
     private int commentStart;
     private int commentDepth;
 
@@ -246,7 +246,6 @@ LONG_TEMPLATE_ENTRY_START=\$\{
 "throw"      { return KtTokens.THROW_KEYWORD ;}
 "false"      { return KtTokens.FALSE_KEYWORD ;}
 "super"      { return KtTokens.SUPER_KEYWORD ;}
-"yield"      { return KtTokens.YIELD_KEYWORD ;}
 "typeof"     { return KtTokens.TYPEOF_KEYWORD ;}
 "when"       { return KtTokens.WHEN_KEYWORD ;}
 "true"       { return KtTokens.TRUE_KEYWORD ;}
