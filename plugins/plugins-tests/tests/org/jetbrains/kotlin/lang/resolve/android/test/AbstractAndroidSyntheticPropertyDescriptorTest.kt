@@ -16,10 +16,8 @@
 
 package org.jetbrains.kotlin.lang.resolve.android.test
 
-import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.android.synthetic.res.AndroidPackageFragmentProviderExtension
 import org.jetbrains.kotlin.android.synthetic.res.AndroidSyntheticPackageFragmentProvider
-import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
@@ -32,7 +30,6 @@ import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import java.io.File
 
 abstract class AbstractAndroidSyntheticPropertyDescriptorTest : KtUsefulTestCase() {
-
     fun doTest(path: String) {
         val config = KotlinTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.ANDROID_API)
         val env = createAndroidTestEnvironment(config, getResPaths(path))
@@ -40,7 +37,7 @@ abstract class AbstractAndroidSyntheticPropertyDescriptorTest : KtUsefulTestCase
 
         val ext = PackageFragmentProviderExtension.getInstances(project).first { it is AndroidPackageFragmentProviderExtension }
 
-        val analysisResult = JvmResolveUtil.analyzeFilesWithJavaIntegrationAndCheckForErrors(project, listOf(), JvmPackagePartProvider(env))
+        val analysisResult = JvmResolveUtil.analyzeAndCheckForErrors(listOf(), env)
 
         val fragmentProvider = ext.getPackageFragmentProvider(project, analysisResult.moduleDescriptor, LockBasedStorageManager.NO_LOCKS,
                                        KotlinTestUtils.DUMMY_EXCEPTION_ON_ERROR_TRACE, null) as AndroidSyntheticPackageFragmentProvider

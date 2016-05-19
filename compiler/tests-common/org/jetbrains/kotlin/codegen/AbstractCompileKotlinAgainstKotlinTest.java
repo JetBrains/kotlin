@@ -22,7 +22,6 @@ import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder;
-import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
@@ -85,7 +84,7 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
         return new Pair<ClassFileFactory, ClassFileFactory>(factoryA, factoryB);
     }
 
-    protected void invokeBox(@NotNull String className) throws Exception {
+    private void invokeBox(@NotNull String className) throws Exception {
         Method box = createGeneratedClassLoader().loadClass(className).getMethod("box");
         String result = (String) box.invoke(null);
         assertEquals("OK", result);
@@ -100,7 +99,7 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
     }
 
     @NotNull
-    protected ClassFileFactory compileA(@NotNull String fileName, @NotNull String content, List<TestFile> files) throws IOException {
+    private ClassFileFactory compileA(@NotNull String fileName, @NotNull String content, List<TestFile> files) throws IOException {
         Disposable compileDisposable = createDisposable("compileA");
         KotlinCoreEnvironment environment =
                 KotlinTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(compileDisposable, ConfigurationKind.ALL, getJdkKind(files));
@@ -108,7 +107,7 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
     }
 
     @NotNull
-    protected ClassFileFactory compileB(@NotNull String fileName, @NotNull String content, List<TestFile> files) throws IOException {
+    private ClassFileFactory compileB(@NotNull String fileName, @NotNull String content, List<TestFile> files) throws IOException {
         CompilerConfiguration configurationWithADirInClasspath = KotlinTestUtils
                 .compilerConfigurationForTests(ConfigurationKind.ALL, getJdkKind(files), KotlinTestUtils.getAnnotationsJar(), aDir);
 
@@ -132,11 +131,11 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
     ) throws IOException {
         KtFile psiFile = KotlinTestUtils.createFile(fileName, content, environment.getProject());
 
-        ModuleVisibilityManager.SERVICE.getInstance(environment.getProject()).addModule(new ModuleBuilder("module for test", tmpdir.getAbsolutePath(), "test"));
+        ModuleVisibilityManager.SERVICE.getInstance(environment.getProject()).addModule(
+                new ModuleBuilder("module for test", tmpdir.getAbsolutePath(), "test")
+        );
 
-        ClassFileFactory outputFiles = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile, environment);
-
-        OutputUtilsKt.writeAllTo(outputFiles, outputDir);
+        ClassFileFactory outputFiles = GenerationUtils.compileFileTo(psiFile, environment, outputDir);
 
         Disposer.dispose(disposable);
         return outputFiles;

@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.jvm.compiler;
 
 import com.google.common.collect.Iterables;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import kotlin.Pair;
@@ -68,7 +67,7 @@ import static org.jetbrains.kotlin.resolve.DescriptorUtils.isObject;
 import static org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile;
 
 public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
-    public static final String TEST_DATA_PATH = "compiler/testData/compileKotlinAgainstCustomBinaries/";
+    private static final String TEST_DATA_PATH = "compiler/testData/compileKotlinAgainstCustomBinaries/";
     private static final Pattern JAVA_FILES = Pattern.compile(".*\\.java$");
 
     @NotNull
@@ -107,10 +106,10 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
 
     @NotNull
     private PackageViewDescriptor analyzeFileToPackageView(@NotNull File... extraClassPath) throws IOException {
-        Project project = createEnvironment(Arrays.asList(extraClassPath)).getProject();
+        KotlinCoreEnvironment environment = createEnvironment(Arrays.asList(extraClassPath));
 
-        AnalysisResult result = JvmResolveUtil.analyzeOneFileWithJavaIntegrationAndCheckForErrors(
-                KotlinTestUtils.loadJetFile(project, getTestDataFileWithExtension("kt"))
+        AnalysisResult result = JvmResolveUtil.analyzeAndCheckForErrors(
+                KotlinTestUtils.loadJetFile(environment.getProject(), getTestDataFileWithExtension("kt")), environment
         );
 
         PackageViewDescriptor packageView = result.getModuleDescriptor().getPackage(LoadDescriptorUtil.TEST_PACKAGE_FQNAME);
@@ -271,10 +270,10 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
                 Arrays.asList("-d", tmpdir.getPath())
         );
 
-        Project project = createEnvironment(Collections.singletonList(tmpdir)).getProject();
+        KotlinCoreEnvironment environment = createEnvironment(Collections.singletonList(tmpdir));
 
-        AnalysisResult result = JvmResolveUtil.analyzeOneFileWithJavaIntegration(
-                KotlinTestUtils.loadJetFile(project, getTestDataFileWithExtension("kt"))
+        AnalysisResult result = JvmResolveUtil.analyze(
+                KotlinTestUtils.loadJetFile(environment.getProject(), getTestDataFileWithExtension("kt")), environment
         );
         result.throwIfError();
 

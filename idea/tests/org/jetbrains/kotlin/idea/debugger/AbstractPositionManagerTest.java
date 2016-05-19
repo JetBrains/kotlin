@@ -129,13 +129,14 @@ public abstract class AbstractPositionManagerTest extends KotlinLightCodeInsight
     private void performTest() {
         Project project = getProject();
         List<KtFile> files = new ArrayList<KtFile>(PluginJetFilesProvider.allFilesInProject(project));
+        if (files.isEmpty()) return;
 
         final List<Breakpoint> breakpoints = Lists.newArrayList();
         for (KtFile file : files) {
             breakpoints.addAll(extractBreakpointsInfo(file, file.getText()));
         }
 
-        GenerationState state = GenerationUtils.compileManyFilesGetGenerationStateForTest(project, files);
+        GenerationState state = GenerationUtils.compileFiles(files, null);
 
         Map<String, ReferenceType> referencesByName = getReferenceMap(state.getFactory());
 

@@ -25,11 +25,8 @@ import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
-import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
-import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
-import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
@@ -47,14 +44,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public abstract class AbstractLineNumberTest extends TestCaseWithTmpdir {
-
     private static final String LINE_NUMBER_FUN = "lineNumber";
     private static final Pattern TEST_LINE_NUMBER_PATTERN = Pattern.compile("^.*test." + LINE_NUMBER_FUN + "\\(\\).*$");
-
-    @NotNull
-    private static String getTestDataPath() {
-        return KotlinTestUtils.getTestDataPathBase() + "/lineNumber";
-    }
 
     @NotNull
     private KotlinCoreEnvironment createEnvironment() {
@@ -70,13 +61,13 @@ public abstract class AbstractLineNumberTest extends TestCaseWithTmpdir {
         super.setUp();
 
         KotlinCoreEnvironment environment = createEnvironment();
-        KtFile psiFile = KotlinTestUtils.createFile(LINE_NUMBER_FUN + ".kt",
-                                               "package test;\n\npublic fun " + LINE_NUMBER_FUN + "(): Int = 0\n",
-                                                    environment.getProject());
+        KtFile psiFile = KotlinTestUtils.createFile(
+                LINE_NUMBER_FUN + ".kt",
+                "package test;\n\npublic fun " + LINE_NUMBER_FUN + "(): Int = 0\n",
+                environment.getProject()
+        );
 
-        OutputFileCollection outputFiles =
-                GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile, environment);
-        OutputUtilsKt.writeAllTo(outputFiles, tmpdir);
+        GenerationUtils.compileFileTo(psiFile, environment, tmpdir);
     }
 
     @NotNull
@@ -92,7 +83,9 @@ public abstract class AbstractLineNumberTest extends TestCaseWithTmpdir {
             throw ExceptionUtilsKt.rethrow(e);
         }
 
-        return new Pair(KotlinTestUtils.createFile(file.getName(), text, environment.getProject()), environment);
+        return new Pair<KtFile, KotlinCoreEnvironment>(
+                KotlinTestUtils.createFile(file.getName(), text, environment.getProject()), environment
+        );
     }
 
     private void doTest(@NotNull String filename, boolean custom) {
@@ -100,17 +93,17 @@ public abstract class AbstractLineNumberTest extends TestCaseWithTmpdir {
         KtFile psiFile = fileAndEnv.getFirst();
         KotlinCoreEnvironment environment = fileAndEnv.getSecond();
 
-        GenerationState state = GenerationUtils.compileFileGetGenerationStateForTest(psiFile, environment);
+        ClassFileFactory classFileFactory = GenerationUtils.compileFile(psiFile, environment);
 
         if (custom) {
-            List<Integer> actualLineNumbers = extractActualLineNumbersFromBytecode(state, false);
+            List<Integer> actualLineNumbers = extractActualLineNumbersFromBytecode(classFileFactory, false);
             String text = psiFile.getText();
             String newFileText = text.substring(0, text.indexOf("// ")) + getActualLineNumbersAsString(actualLineNumbers);
             KotlinTestUtils.assertEqualsToFile(new File(filename), newFileText);
         }
         else {
             List<Integer> expectedLineNumbers = extractSelectedLineNumbersFromSource(psiFile);
-            List<Integer> actualLineNumbers = extractActualLineNumbersFromBytecode(state, true);
+            List<Integer> actualLineNumbers = extractActualLineNumbersFromBytecode(classFileFactory, true);
             assertSameElements(actualLineNumbers, expectedLineNumbers);
         }
 
@@ -126,8 +119,7 @@ public abstract class AbstractLineNumberTest extends TestCaseWithTmpdir {
     }
 
     @NotNull
-    private static List<Integer> extractActualLineNumbersFromBytecode(@NotNull GenerationState state, boolean testFunInvoke) {
-        ClassFileFactory factory = state.getFactory();
+    private static List<Integer> extractActualLineNumbersFromBytecode(@NotNull ClassFileFactory factory, boolean testFunInvoke) {
         List<Integer> actualLineNumbers = Lists.newArrayList();
         for (OutputFile outputFile : ClassFileUtilsKt.getClassFiles(factory)) {
             ClassReader cr = new ClassReader(outputFile.asByteArray());

@@ -50,10 +50,10 @@ abstract class AbstractResolvedCallsTest : KotlinTestWithEnvironment() {
     fun doTest(filePath: String) {
         val text = KotlinTestUtils.doLoadFile(File(filePath))!!
 
-        val jetFile = KtPsiFactory(project).createFile(text.replace("<caret>", ""))
-        val bindingContext = JvmResolveUtil.analyzeOneFileWithJavaIntegration(jetFile, environment).bindingContext
+        val ktFile = KtPsiFactory(project).createFile(text.replace("<caret>", ""))
+        val bindingContext = JvmResolveUtil.analyze(ktFile, environment).bindingContext
 
-        val (element, cachedCall) = buildCachedCall(bindingContext, jetFile, text)
+        val (element, cachedCall) = buildCachedCall(bindingContext, ktFile, text)
 
         val resolvedCall = if (cachedCall !is VariableAsFunctionResolvedCall) cachedCall
             else if ("(" == element?.text) cachedCall.functionCall

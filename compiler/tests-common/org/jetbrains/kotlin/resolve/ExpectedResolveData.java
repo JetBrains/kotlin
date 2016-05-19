@@ -18,13 +18,11 @@ package org.jetbrains.kotlin.resolve;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiQualifiedNamedElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.descriptors.*;
@@ -139,9 +137,7 @@ public abstract class ExpectedResolveData {
             return BindingContext.EMPTY;
         }
 
-        Project project = files.iterator().next().getProject();
-        AnalysisResult analysisResult = JvmResolveUtil.analyzeFilesWithJavaIntegration(project, files, environment);
-        return analysisResult.getBindingContext();
+        return JvmResolveUtil.analyze(files, environment).getBindingContext();
     }
 
     public final void checkResult(BindingContext bindingContext) {

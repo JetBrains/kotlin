@@ -48,7 +48,7 @@ public class CheckerTestUtilTest extends KotlinTestWithEnvironment {
 
     protected void doTest(TheTest theTest) throws Exception {
         String text = KotlinTestUtils.doLoadFile(getTestDataPath(), "test.kt");
-        theTest.test(TestCheckerUtil.createCheckAndReturnPsiFile("test.kt", text, getProject()));
+        theTest.test(TestCheckerUtil.createCheckAndReturnPsiFile("test.kt", text, getProject()), getEnvironment());
     }
 
     public void testEquals() throws Exception {
@@ -142,12 +142,14 @@ public class CheckerTestUtilTest extends KotlinTestWithEnvironment {
             this.expected = expectedMessages;
         }
 
-        public void test(@NotNull PsiFile psiFile) {
-            BindingContext bindingContext = JvmResolveUtil.analyzeOneFileWithJavaIntegration(
-                    (KtFile) psiFile)
-                    .getBindingContext();
+        public void test(@NotNull PsiFile psiFile, @NotNull KotlinCoreEnvironment environment) {
+            BindingContext bindingContext =
+                    JvmResolveUtil.analyze((KtFile) psiFile, environment).getBindingContext();
 
-            String expectedText = CheckerTestUtil.addDiagnosticMarkersToText(psiFile, CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, psiFile, false, null)).toString();
+            String expectedText = CheckerTestUtil.addDiagnosticMarkersToText(
+                    psiFile,
+                    CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, psiFile, false, null)
+            ).toString();
 
             List<DiagnosedRange> diagnosedRanges = Lists.newArrayList();
             CheckerTestUtil.parseDiagnosedRanges(expectedText, diagnosedRanges);

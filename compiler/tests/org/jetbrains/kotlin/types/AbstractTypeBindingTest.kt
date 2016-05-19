@@ -38,7 +38,7 @@ abstract class AbstractTypeBindingTest : KotlinTestWithEnvironment() {
         val testFile = File(path)
         val testKtFile = loadJetFile(project, testFile)
 
-        val analyzeResult = JvmResolveUtil.analyzeFilesWithJavaIntegration(project, listOf(testKtFile), environment)
+        val analyzeResult = JvmResolveUtil.analyze(testKtFile, environment)
 
         val testDeclaration = testKtFile.declarations.last()!! as KtCallableDeclaration
 

@@ -54,18 +54,17 @@ import static org.jetbrains.kotlin.test.InTextDirectivesUtils.findStringWithPref
  * FLAGS: ACC_STATIC, ACC_FINAL, ACC_PRIVATE
  */
 public abstract class AbstractWriteFlagsTest extends KtUsefulTestCase {
-
-    private KotlinCoreEnvironment jetCoreEnvironment;
+    private KotlinCoreEnvironment environment;
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        jetCoreEnvironment = KotlinTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, ConfigurationKind.JDK_ONLY);
+        environment = KotlinTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, ConfigurationKind.JDK_ONLY);
     }
 
     @Override
     protected void tearDown() throws Exception {
-        jetCoreEnvironment = null;
+        environment = null;
         super.tearDown();
     }
 
@@ -75,19 +74,17 @@ public abstract class AbstractWriteFlagsTest extends KtUsefulTestCase {
 
         String fileText = FileUtil.loadFile(ktFile, true);
 
-        KtFile psiFile = KotlinTestUtils.createFile(ktFile.getName(), fileText, jetCoreEnvironment.getProject());
+        KtFile psiFile = KotlinTestUtils.createFile(ktFile.getName(), fileText, environment.getProject());
 
-        OutputFileCollection outputFiles = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile, jetCoreEnvironment);
+        OutputFileCollection outputFiles = GenerationUtils.compileFile(psiFile, environment);
 
         List<TestedObject> testedObjects = parseExpectedTestedObject(fileText);
         for (TestedObject testedObject : testedObjects) {
             String className = null;
             for (OutputFile outputFile : outputFiles.asList()) {
                 String filePath = outputFile.getRelativePath();
-                if (testedObject.isFullContainingClassName && filePath.equals(testedObject.containingClass + ".class")) {
-                    className = filePath;
-                }
-                else if (!testedObject.isFullContainingClassName && filePath.startsWith(testedObject.containingClass)) {
+                if (testedObject.isFullContainingClassName && filePath.equals(testedObject.containingClass + ".class") ||
+                    !testedObject.isFullContainingClassName && filePath.startsWith(testedObject.containingClass)) {
                     className = filePath;
                 }
             }
@@ -118,7 +115,7 @@ public abstract class AbstractWriteFlagsTest extends KtUsefulTestCase {
 
     private static List<TestedObject> parseExpectedTestedObject(String testDescription) {
         String[] testObjectData = testDescription.substring(testDescription.indexOf("// TESTED_OBJECT_KIND")).split("\n\n");
-        ArrayList<TestedObject> objects = new ArrayList<TestedObject>();
+        List<TestedObject> objects = new ArrayList<TestedObject>();
 
         for (String testData : testObjectData) {
             if (testData.isEmpty()) continue;

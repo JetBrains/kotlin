@@ -290,7 +290,7 @@ public class KotlinTestUtils {
 
     @NotNull
     public static AnalysisResult analyzeFile(@NotNull KtFile file, @NotNull KotlinCoreEnvironment environment) {
-        return JvmResolveUtil.analyzeOneFileWithJavaIntegration(file, environment);
+        return JvmResolveUtil.analyze(file, environment);
     }
 
     @NotNull
@@ -467,7 +467,7 @@ public class KotlinTestUtils {
 
         JvmContentRootsKt.addJvmClasspathRoots(configuration, classpath);
 
-        configuration.put(MODULE_NAME, "compilerConfigurationForTests");
+        configuration.put(MODULE_NAME, JvmResolveUtil.TEST_MODULE_NAME);
 
         return configuration;
     }
