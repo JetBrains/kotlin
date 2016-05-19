@@ -17,25 +17,14 @@
 package org.jetbrains.kotlin.coroutines
 
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.types.KotlinType
-
-@JvmField
-val CONTINUATION_INTERFACE_FQ_NAME = FqName("kotlin.coroutines.Continuation")
-
-@JvmField
-val HANDLE_RESULT_NAME = Name.identifier("handleResult")
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /**
- * @returns type of first value parameter if function is 'operator handleResult' in coroutine controller
+ * @returns type of first value parameter if function is 'operator handleResult' in coroutines controller
  */
 fun SimpleFunctionDescriptor.getExpectedTypeForCoroutineControllerHandleResult(): KotlinType? {
-    if (name != HANDLE_RESULT_NAME) return null
-    if (valueParameters.size != 2) return null
+    if (!isOperator || name != OperatorNameConventions.COROUTINE_HANDLE_RESULT) return null
 
-    if (valueParameters[1].type.constructor.declarationDescriptor?.fqNameUnsafe != CONTINUATION_INTERFACE_FQ_NAME.toUnsafe()) return null
-
-    return valueParameters[0].type
+    return valueParameters.getOrNull(0)?.type
 }

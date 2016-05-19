@@ -179,7 +179,9 @@ fun getEffectiveExpectedType(parameterDescriptor: ValueParameterDescriptor, argu
 
         val newExpectedLambdaReturnType =
                 receiverType.memberScope
-                        .getContributedFunctions(HANDLE_RESULT_NAME, KotlinLookupLocation(argument.asElement())).mapNotNull {
+                        .getContributedFunctions(
+                                OperatorNameConventions.COROUTINE_HANDLE_RESULT, KotlinLookupLocation(argument.asElement())
+                        ).mapNotNull {
                                 it.getExpectedTypeForCoroutineControllerHandleResult()
                         }.singleOrNull()
                 // If no handleResult function found, then expected return type for lambda is Unit
