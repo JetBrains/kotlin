@@ -30,6 +30,7 @@ class CodeConformanceTest : TestCase() {
                 "android.tests.dependencies",
                 "core/reflection.jvm/src/kotlin/reflect/jvm/internal/pcollections",
                 "libraries/tools/kotlin-reflect/target/copied-sources",
+                "libraries/tools/binary-compatibility-validator/src/main/kotlin/org.jetbrains.kotlin.tools",
                 "dependencies",
                 "js/js.translator/qunit/qunit.js",
                 "libraries/tools/kotlin-js-tests/src/test/web/qunit.js",
@@ -96,7 +97,14 @@ class CodeConformanceTest : TestCase() {
                         { source ->
                             "kotlin.reflect.jvm.internal.impl" in source
                         }
-                )
+                ),
+                TestData(
+                        "%d source files contain references to package org.objectweb.asm.\n" +
+                        "Package org.jetbrains.org.objectweb.asm should be used instead to avoid troubles with different asm versions in classpath. " +
+                        "Please consider changing the package in these files:\n%s",
+                        { source ->
+                            " org.objectweb.asm" in source
+                        })
         )
 
         for (sourceFile in FileUtil.findFilesByMask(SOURCES_FILE_PATTERN, File("."))) {
