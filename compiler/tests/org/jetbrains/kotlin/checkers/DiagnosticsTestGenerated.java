@@ -12264,6 +12264,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("kt8990.kt")
+            public void testKt8990() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/override/kt8990.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("MissingDelegate.kt")
             public void testMissingDelegate() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/override/MissingDelegate.kt");
