@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.psi.psiUtil.checkReservedPrefixWord
 import org.jetbrains.kotlin.psi.psiUtil.getAnnotationEntries
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.BindingContext.EXPECTED_RETURN_TYPE
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getCorrespondingParameterForFunctionArgument
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope
 import org.jetbrains.kotlin.resolve.source.toSourceElement
@@ -170,7 +171,8 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
         val functionDescriptor = AnonymousFunctionDescriptor(
             context.scope.ownerDescriptor,
             components.annotationResolver.resolveAnnotationsWithArguments(context.scope, expression.getAnnotationEntries(), context.trace),
-            CallableMemberDescriptor.Kind.DECLARATION, functionLiteral.toSourceElement()
+            CallableMemberDescriptor.Kind.DECLARATION, functionLiteral.toSourceElement(),
+            expression.getCorrespondingParameterForFunctionArgument(context.trace.bindingContext)?.isCoroutine ?: false
         )
         components.functionDescriptorResolver.
                 initializeFunctionDescriptorAndExplicitReturnType(context.scope.ownerDescriptor, context.scope, functionLiteral,

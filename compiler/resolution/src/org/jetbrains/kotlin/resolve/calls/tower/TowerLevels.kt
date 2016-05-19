@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.smartcasts.getReceiverValueWithSmartCast
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
+import org.jetbrains.kotlin.resolve.coroutine.CoroutineReceiverValue
+import org.jetbrains.kotlin.resolve.coroutine.createCoroutineSuspensionFunctionView
 import org.jetbrains.kotlin.resolve.descriptorUtil.HIDES_MEMBERS_NAME_LIST
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasClassValueDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasHidesMembersAnnotation
@@ -114,6 +116,16 @@ internal class ReceiverScopeTowerLevel(
             scopeTower.dynamicScope.getMembers(null).mapTo(result) {
                 createCandidateDescriptor(it, dispatchReceiver, DynamicDescriptorDiagnostic)
             }
+        }
+
+        if (dispatchReceiver is CoroutineReceiverValue) {
+            result.addAll(result.mapNotNull {
+                val realDescriptor = it.descriptor
+                val suspensionFunctionView =
+                        (realDescriptor as? SimpleFunctionDescriptor)?.createCoroutineSuspensionFunctionView() ?: return@mapNotNull null
+                @Suppress("UNCHECKED_CAST")
+                createCandidateDescriptor(suspensionFunctionView as D, dispatchReceiver)
+            })
         }
 
         return result
