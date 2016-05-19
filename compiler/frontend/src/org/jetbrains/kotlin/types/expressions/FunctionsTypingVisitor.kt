@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.types.expressions
 
 import com.google.common.collect.Lists
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionType
@@ -28,9 +27,7 @@ import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.diagnostics.Errors.*
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.checkReservedPrefixWord
 import org.jetbrains.kotlin.psi.psiUtil.getAnnotationEntries
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.BindingContext.EXPECTED_RETURN_TYPE
@@ -58,7 +55,6 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
             isDeclaration: Boolean,
             statementScope: LexicalWritableScope? // must be not null if isDeclaration
     ): KotlinTypeInfo {
-        checkReservedAsync(context, function)
         if (!isDeclaration) {
             // function expression
             if (!function.getTypeParameters().isEmpty()) {
@@ -135,8 +131,6 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
     }
 
     override fun visitLambdaExpression(expression: KtLambdaExpression, context: ExpressionTypingContext): KotlinTypeInfo? {
-        checkReservedAsync(context, expression)
-
         if (!expression.functionLiteral.hasBody()) return null
 
         val expectedType = context.expectedType
@@ -157,10 +151,6 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
         }
 
         return components.dataFlowAnalyzer.createCheckedTypeInfo(resultType, context, expression)
-    }
-
-    private fun checkReservedAsync(context: ExpressionTypingContext, expression: PsiElement) {
-        checkReservedPrefixWord(context.trace, expression, "async", "async block/lambda. Use 'async() { ... }' or 'async(fun...)'")
     }
 
     private fun createFunctionLiteralDescriptor(

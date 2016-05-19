@@ -1,5 +1,0 @@
-package
-
-public fun async(/*0*/ f: () -> kotlin.Unit): kotlin.Unit
-public fun test(/*0*/ foo: kotlin.Any): kotlin.Unit
-public infix fun kotlin.Any.async(/*0*/ f: () -> kotlin.Unit): kotlin.Unit
