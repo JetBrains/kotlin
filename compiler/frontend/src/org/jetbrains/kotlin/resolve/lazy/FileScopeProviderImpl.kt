@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -202,7 +202,7 @@ open class FileScopeProviderImpl(
         override fun getSource() = sourceElement
 
         override fun getOriginal() = this
-        override fun getAnnotations() = Annotations.EMPTY
+        override val annotations: Annotations get() = Annotations.EMPTY
         override fun substitute(substitutor: TypeSubstitutor) = this
 
         override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>?, data: D): R {

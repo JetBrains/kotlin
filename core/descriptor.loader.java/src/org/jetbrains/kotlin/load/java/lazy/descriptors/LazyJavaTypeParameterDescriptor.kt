@@ -42,9 +42,7 @@ class LazyJavaTypeParameterDescriptor(
         index,
         SourceElement.NO_SOURCE, c.components.supertypeLoopChecker
 ) {
-    private val annotations = LazyJavaAnnotations(c, javaTypeParameter)
-
-    override fun getAnnotations() = annotations
+    override val annotations = LazyJavaAnnotations(c, javaTypeParameter)
 
     override fun resolveUpperBounds(): List<KotlinType> {
         val bounds = javaTypeParameter.upperBounds

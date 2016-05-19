@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,10 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.components.JavaResolverCache
 import org.jetbrains.kotlin.load.java.components.TypeUsage
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
-import org.jetbrains.kotlin.load.java.lazy.*
+import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
+import org.jetbrains.kotlin.load.java.lazy.child
+import org.jetbrains.kotlin.load.java.lazy.replaceComponents
+import org.jetbrains.kotlin.load.java.lazy.resolveAnnotations
 import org.jetbrains.kotlin.load.java.lazy.types.toAttributes
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
@@ -40,6 +43,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.scopes.InnerClassesScopeWrapper
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.NotFoundClasses
+import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.toReadOnlyList
@@ -106,8 +110,7 @@ class LazyJavaClassDescriptor(
 
     override fun getConstructors() = unsubstitutedMemberScope.constructors()
 
-    private val annotations = c.storageManager.createLazyValue { c.resolveAnnotations(jClass) }
-    override fun getAnnotations() = annotations()
+    override val annotations by c.storageManager.createLazyValue { c.resolveAnnotations(jClass) }
 
     private val functionTypeForSamInterface = c.storageManager.createNullableLazyValue {
         c.components.samConversionResolver.resolveFunctionTypeIfSamInterface(this)
@@ -200,7 +203,7 @@ class LazyJavaClassDescriptor(
 
         private fun getPurelyImplementsFqNameFromAnnotation(): FqName? {
             val annotation =
-                    this@LazyJavaClassDescriptor.getAnnotations().findAnnotation(JvmAnnotationNames.PURELY_IMPLEMENTS_ANNOTATION)
+                    this@LazyJavaClassDescriptor.annotations.findAnnotation(JvmAnnotationNames.PURELY_IMPLEMENTS_ANNOTATION)
                     ?: return null
 
             val fqNameString = (annotation.allValueArguments.values.singleOrNull() as? StringValue)?.value ?: return null
@@ -212,7 +215,7 @@ class LazyJavaClassDescriptor(
         override val supertypeLoopChecker: SupertypeLoopChecker
             get() = c.components.supertypeLoopChecker
 
-        override fun getAnnotations() = Annotations.EMPTY
+        override val annotations: Annotations get() = Annotations.EMPTY
 
         override fun isFinal(): Boolean = isFinalClass
 

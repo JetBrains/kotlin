@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
 open class KotlinTypeImpl
 private constructor(
-        private val annotations: Annotations,
+        override val annotations: Annotations,
         override val constructor: TypeConstructor,
         override val isMarkedNullable: Boolean,
         override val arguments: List<TypeProjection>,
@@ -75,8 +75,6 @@ private constructor(
             throw IllegalStateException("JetTypeImpl should not be created for error type: $memberScope\n$constructor")
         }
     }
-
-    override fun getAnnotations() = annotations
 
     override val isError: Boolean get() = false
 }

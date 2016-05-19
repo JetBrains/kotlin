@@ -42,7 +42,7 @@ class DeserializedType(
     private fun ProtoBuf.Type.collectAllArguments(): List<ProtoBuf.Type.Argument> =
             argumentList + outerType(c.typeTable)?.collectAllArguments().orEmpty()
 
-    private val annotations = DeserializedAnnotationsWithPossibleTargets(c.storageManager) {
+    override val annotations = DeserializedAnnotationsWithPossibleTargets(c.storageManager) {
         c.components.annotationAndConstantLoader
                 .loadTypeAnnotations(typeProto, c.nameResolver)
                 .map { AnnotationWithTarget(it, null) } + additionalAnnotations.getAllAnnotations()
@@ -55,8 +55,6 @@ class DeserializedType(
             val descriptor = constructor.declarationDescriptor
             return descriptor != null && ErrorUtils.isError(descriptor)
         }
-
-    override fun getAnnotations(): Annotations = annotations
 
     override val capabilities: TypeCapabilities get() = typeCapabilities()
 

@@ -54,7 +54,7 @@ abstract class AbstractLazyType(storageManager: StorageManager) : AbstractKotlin
 
     override val isError: Boolean get() = constructor.declarationDescriptor?.let { d -> ErrorUtils.isError(d) } ?: false
 
-    override fun getAnnotations() = Annotations.EMPTY
+    override val annotations: Annotations get() = Annotations.EMPTY
 
     override fun toString() = when {
         !typeConstructor.isComputed() -> "[Not-computed]"

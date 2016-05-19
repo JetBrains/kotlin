@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,13 +36,11 @@ class DeserializedTypeParameterDescriptor(
         c.storageManager, c.containingDeclaration, c.nameResolver.getName(proto.name),
         Deserialization.variance(proto.variance), proto.reified, index, SourceElement.NO_SOURCE, SupertypeLoopChecker.EMPTY
 ) {
-    private val annotations = DeserializedAnnotationsWithPossibleTargets(c.storageManager) {
+    override val annotations = DeserializedAnnotationsWithPossibleTargets(c.storageManager) {
         c.components.annotationAndConstantLoader
                 .loadTypeParameterAnnotations(proto, c.nameResolver)
                 .map { AnnotationWithTarget(it, null) }
     }
-
-    override fun getAnnotations(): Annotations = annotations
 
     override fun resolveUpperBounds(): List<KotlinType> {
         val upperBounds = proto.upperBounds(c.typeTable)
