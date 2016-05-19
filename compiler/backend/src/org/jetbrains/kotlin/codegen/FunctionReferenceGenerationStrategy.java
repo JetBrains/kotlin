@@ -36,9 +36,10 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
 import java.util.*;
 
-public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrategy.CodegenBased<FunctionDescriptor> {
+public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrategy.CodegenBased {
     private final ResolvedCall<?> resolvedCall;
     private final FunctionDescriptor referencedFunction;
+    private final FunctionDescriptor functionDescriptor;
     private final Type receiverType; // non-null for bound references
     private final StackValue receiverValue;
 
@@ -49,9 +50,10 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
             @Nullable Type receiverType,
             @Nullable StackValue receiverValue
     ) {
-        super(state, functionDescriptor);
+        super(state);
         this.resolvedCall = resolvedCall;
         this.referencedFunction = (FunctionDescriptor) resolvedCall.getResultingDescriptor();
+        this.functionDescriptor = functionDescriptor;
         this.receiverType = receiverType;
         this.receiverValue = receiverValue;
         assert receiverType != null || receiverValue == null
@@ -82,7 +84,7 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
             {
                 argumentMap = new LinkedHashMap<ValueParameterDescriptor, ResolvedValueArgument>(fakeArguments.size());
                 int index = 0;
-                List<ValueParameterDescriptor> parameters = callableDescriptor.getValueParameters();
+                List<ValueParameterDescriptor> parameters = functionDescriptor.getValueParameters();
                 for (ValueArgument argument : fakeArguments) {
                     argumentMap.put(parameters.get(index), new ExpressionValueArgument(argument));
                     index++;
@@ -154,7 +156,7 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
                         (referencedFunction.getExtensionReceiverParameter() != null ? 1 : 0) -
                         (receiverType != null ? 1 : 0);
 
-        List<ValueParameterDescriptor> parameters = CollectionsKt.drop(callableDescriptor.getValueParameters(), receivers);
+        List<ValueParameterDescriptor> parameters = CollectionsKt.drop(functionDescriptor.getValueParameters(), receivers);
         for (int i = 0; i < parameters.size(); i++) {
             ValueParameterDescriptor parameter = parameters.get(i);
             ValueArgument fakeArgument = fakeArguments.get(i);

@@ -430,7 +430,7 @@ public class PropertyCodegen {
             }
         }
         else {
-            strategy = new FunctionGenerationStrategy.FunctionDefault(state, accessorDescriptor, accessor);
+            strategy = new FunctionGenerationStrategy.FunctionDefault(state, accessor);
         }
 
         functionCodegen.generateMethod(JvmDeclarationOriginKt.OtherOrigin(accessor != null ? accessor : p, accessorDescriptor), accessorDescriptor, strategy);
@@ -467,15 +467,17 @@ public class PropertyCodegen {
     }
 
 
-    private static class DefaultPropertyAccessorStrategy extends FunctionGenerationStrategy.CodegenBased<PropertyAccessorDescriptor> {
+    private static class DefaultPropertyAccessorStrategy extends FunctionGenerationStrategy.CodegenBased {
+        private final PropertyAccessorDescriptor propertyAccessorDescriptor;
         public DefaultPropertyAccessorStrategy(@NotNull GenerationState state, @NotNull PropertyAccessorDescriptor descriptor) {
-            super(state, descriptor);
+            super(state);
+            propertyAccessorDescriptor = descriptor;
         }
 
         @Override
         public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
             InstructionAdapter v = codegen.v;
-            PropertyDescriptor propertyDescriptor = callableDescriptor.getCorrespondingProperty();
+            PropertyDescriptor propertyDescriptor = propertyAccessorDescriptor.getCorrespondingProperty();
             StackValue property = codegen.intermediateValueForProperty(propertyDescriptor, true, null, StackValue.LOCAL_0);
 
             PsiElement jetProperty = DescriptorToSourceUtils.descriptorToDeclaration(propertyDescriptor);
@@ -483,22 +485,22 @@ public class PropertyCodegen {
                 codegen.markLineNumber((KtElement) jetProperty, false);
             }
 
-            if (callableDescriptor instanceof PropertyGetterDescriptor) {
+            if (propertyAccessorDescriptor instanceof PropertyGetterDescriptor) {
                 Type type = signature.getReturnType();
                 property.put(type, v);
                 v.areturn(type);
             }
-            else if (callableDescriptor instanceof PropertySetterDescriptor) {
-                List<ValueParameterDescriptor> valueParameters = callableDescriptor.getValueParameters();
-                assert valueParameters.size() == 1 : "Property setter should have only one value parameter but has " + callableDescriptor;
+            else if (propertyAccessorDescriptor instanceof PropertySetterDescriptor) {
+                List<ValueParameterDescriptor> valueParameters = propertyAccessorDescriptor.getValueParameters();
+                assert valueParameters.size() == 1 : "Property setter should have only one value parameter but has " + propertyAccessorDescriptor;
                 int parameterIndex = codegen.lookupLocalIndex(valueParameters.get(0));
-                assert parameterIndex >= 0 : "Local index for setter parameter should be positive or zero: " + callableDescriptor;
+                assert parameterIndex >= 0 : "Local index for setter parameter should be positive or zero: " + propertyAccessorDescriptor;
                 Type type = codegen.typeMapper.mapType(propertyDescriptor);
                 property.store(StackValue.local(parameterIndex, type), codegen.v);
                 v.visitInsn(RETURN);
             }
             else {
-                throw new IllegalStateException("Unknown property accessor: " + callableDescriptor);
+                throw new IllegalStateException("Unknown property accessor: " + propertyAccessorDescriptor);
             }
         }
     }
@@ -545,12 +547,14 @@ public class PropertyCodegen {
         return codegen.invokeFunction(resolvedCall, delegatedProperty);
     }
 
-    private static class DelegatedPropertyAccessorStrategy extends FunctionGenerationStrategy.CodegenBased<PropertyAccessorDescriptor> {
+    private static class DelegatedPropertyAccessorStrategy extends FunctionGenerationStrategy.CodegenBased {
         private final int index;
+        private final PropertyAccessorDescriptor propertyAccessorDescriptor;
 
         public DelegatedPropertyAccessorStrategy(@NotNull GenerationState state, @NotNull PropertyAccessorDescriptor descriptor, int index) {
-            super(state, descriptor);
+            super(state);
             this.index = index;
+            propertyAccessorDescriptor = descriptor;
         }
 
         @Override
@@ -559,10 +563,10 @@ public class PropertyCodegen {
 
             BindingContext bindingContext = state.getBindingContext();
             ResolvedCall<FunctionDescriptor> resolvedCall =
-                    bindingContext.get(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, callableDescriptor);
+                    bindingContext.get(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, propertyAccessorDescriptor);
             assert resolvedCall != null : "Resolve call should be recorded for delegate call " + signature.toString();
 
-            StackValue lastValue = invokeDelegatedPropertyConventionMethod(callableDescriptor.getCorrespondingProperty(),
+            StackValue lastValue = invokeDelegatedPropertyConventionMethod(propertyAccessorDescriptor.getCorrespondingProperty(),
                                                                            codegen, state.getTypeMapper(), resolvedCall, index, 1);
             Type asmType = signature.getReturnType();
             lastValue.put(asmType, v);

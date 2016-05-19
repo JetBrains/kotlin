@@ -114,7 +114,7 @@ class InterfaceImplBodyCodegen(
         functionCodegen.generateMethod(
                 DelegationToTraitImpl(DescriptorToSourceUtils.descriptorToDeclaration(descriptor), descriptor),
                 descriptor,
-                object : FunctionGenerationStrategy.CodegenBased<FunctionDescriptor>(state, descriptor) {
+                object : FunctionGenerationStrategy.CodegenBased(state) {
                     override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
                         val iv = codegen.v
 
@@ -126,7 +126,7 @@ class InterfaceImplBodyCodegen(
                             throw AssertionError(
                                     "Method from super interface has a different signature.\n" +
                                     "This method:\n%s\n%s\n%s\nSuper method:\n%s\n%s\n%s".format(
-                                            callableDescriptor, signature, myParameters, delegateTo, method, calleeParameters
+                                            descriptor, signature, myParameters, delegateTo, method, calleeParameters
                                     )
                             )
                         }
