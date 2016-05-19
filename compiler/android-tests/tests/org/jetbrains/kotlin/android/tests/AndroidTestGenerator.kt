@@ -69,7 +69,11 @@ internal fun genFiles(file: File, fileContent: String, filesHolder: CodegenTests
         }.patchSelfImports(file.newPackage)
     }
 
-    resultFiles.forEach { resultFile -> filesHolder.addFile(resultFile.name, resultFile.content) }
+    resultFiles.forEach { resultFile ->
+        if (resultFile.name.endsWith(".kt") || resultFile.name.endsWith(".kts")) {
+            filesHolder.addFile(resultFile.name, resultFile.content)
+        }
+    }
 
     val boxFiles = resultFiles.filter { hasBoxMethod(it.content) }
     if (boxFiles.size != 1) {
