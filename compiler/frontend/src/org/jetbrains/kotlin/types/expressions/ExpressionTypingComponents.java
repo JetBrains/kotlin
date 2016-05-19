@@ -39,6 +39,7 @@ public class ExpressionTypingComponents {
     /*package*/ PlatformToKotlinClassMap platformToKotlinClassMap;
     /*package*/ ControlStructureTypingUtils controlStructureTypingUtils;
     /*package*/ ForLoopConventionsChecker forLoopConventionsChecker;
+    /*package*/ FakeCallResolver fakeCallResolver;
     /*package*/ ReflectionTypes reflectionTypes;
     /*package*/ SymbolUsageValidator symbolUsageValidator;
     /*package*/ DynamicTypesSettings dynamicTypesSettings;
@@ -91,6 +92,11 @@ public class ExpressionTypingComponents {
     @Inject
     public void setForLoopConventionsChecker(@NotNull ForLoopConventionsChecker forLoopConventionsChecker) {
         this.forLoopConventionsChecker = forLoopConventionsChecker;
+    }
+
+    @Inject
+    public void setFakeCallResolver(@NotNull FakeCallResolver fakeCallResolver) {
+        this.fakeCallResolver = fakeCallResolver;
     }
 
     @Inject

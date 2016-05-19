@@ -23,6 +23,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.coroutines.CoroutineUtilKt;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -602,6 +603,9 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                     context.trace.report(RETURN_NOT_ALLOWED.on(expression));
                     resultType = ErrorUtils.createErrorType(RETURN_NOT_ALLOWED_MESSAGE);
                 }
+
+                CoroutineUtilKt.resolveCoroutineHandleResultCallIfNeeded(
+                        components.fakeCallResolver, expression, expression.getReturnedExpression(), functionDescriptor, context);
             }
             else {
                 context.trace.report(NOT_A_RETURN_LABEL.on(expression, expression.getLabelName()));
