@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,14 +18,14 @@ package org.jetbrains.kotlin.idea.structureView
 
 import com.intellij.ide.util.InheritedMembersNodeProvider
 import com.intellij.ide.util.treeView.smartTree.TreeElement
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.resolve.BindingContext
-import java.util.ArrayList
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import com.intellij.psi.NavigatablePsiElement
-import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.resolve.BindingContext
+import java.util.*
 
 class KotlinInheritedMembersNodeProvider: InheritedMembersNodeProvider<TreeElement>() {
     override fun provideNodes(node: TreeElement): Collection<TreeElement> {
@@ -44,7 +44,7 @@ class KotlinInheritedMembersNodeProvider: InheritedMembersNodeProvider<TreeEleme
         val children = ArrayList<TreeElement>()
 
         val defaultType = descriptor.getDefaultType()
-        for (memberDescriptor in defaultType.getMemberScope().getContributedDescriptors()) {
+        for (memberDescriptor in defaultType.memberScope.getContributedDescriptors()) {
             if (memberDescriptor !is CallableMemberDescriptor) continue
 
             when (memberDescriptor.getKind()) {

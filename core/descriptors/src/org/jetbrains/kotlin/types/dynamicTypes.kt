@@ -57,6 +57,6 @@ object DynamicTypeFactory : FlexibleTypeFactory {
             return createDynamicType(delegateType.builtIns)
         }
 
-        override fun isMarkedNullable() = false
+        override val isMarkedNullable: Boolean get() = false
     }
 }

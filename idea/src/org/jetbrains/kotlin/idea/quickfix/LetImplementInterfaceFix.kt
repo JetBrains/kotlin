@@ -21,10 +21,10 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.containsStarProjections
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -61,7 +61,7 @@ class LetImplementInterfaceFix(
         validExpectedType = with (expectedType) {
             isInterface() &&
             !containsStarProjections() &&
-            constructor !in TypeUtils.getAllSupertypes(expressionType).map(KotlinType::getConstructor)
+            constructor !in TypeUtils.getAllSupertypes(expressionType).map(KotlinType::constructor)
         }
     }
 

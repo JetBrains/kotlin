@@ -89,8 +89,8 @@ class TypeResolver(
                 override fun getDelegate() = _delegate()
 
                 override fun forceResolveAllContents() {
-                    ForceResolveUtil.forceResolveAllContents(getConstructor())
-                    getArguments().forEach { ForceResolveUtil.forceResolveAllContents(it.getType()) }
+                    ForceResolveUtil.forceResolveAllContents(constructor)
+                    arguments.forEach { ForceResolveUtil.forceResolveAllContents(it.type) }
                 }
             }
 

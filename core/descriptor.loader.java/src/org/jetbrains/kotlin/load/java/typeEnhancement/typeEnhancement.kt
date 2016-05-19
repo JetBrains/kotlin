@@ -95,7 +95,7 @@ private fun KotlinType.enhanceInflexible(qualifiers: (Int) -> JavaTypeQualifiers
 
     var globalArgIndex = index + 1
     var wereChanges = enhancedMutabilityAnnotations != null
-    val enhancedArguments = getArguments().mapIndexed {
+    val enhancedArguments = arguments.mapIndexed {
         localArgIndex, arg ->
         if (arg.isStarProjection) {
             globalArgIndex++
@@ -138,7 +138,7 @@ private fun KotlinType.enhanceInflexible(qualifiers: (Int) -> JavaTypeQualifiers
             enhancedArguments,
             if (enhancedClassifier is ClassDescriptor)
                 enhancedClassifier.getMemberScope(newSubstitution)
-            else enhancedClassifier.getDefaultType().getMemberScope(),
+            else enhancedClassifier.getDefaultType().memberScope,
             newCapabilities
     )
     return Result(enhancedType, subtreeSize, wereChanges = true)
@@ -180,12 +180,12 @@ private fun ClassifierDescriptor.enhanceMutability(qualifiers: JavaTypeQualifier
 }
 
 private fun KotlinType.getEnhancedNullability(qualifiers: JavaTypeQualifiers, position: TypeComponentPosition): EnhancementResult<Boolean> {
-    if (!position.shouldEnhance()) return this.isMarkedNullable().noChange()
+    if (!position.shouldEnhance()) return this.isMarkedNullable.noChange()
 
     return when (qualifiers.nullability) {
         NULLABLE -> true.enhancedNullability()
         NOT_NULL -> false.enhancedNullability()
-        else -> this.isMarkedNullable().noChange()
+        else -> this.isMarkedNullable.noChange()
     }
 }
 

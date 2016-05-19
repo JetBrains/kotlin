@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -147,8 +147,8 @@ class OperatorToFunctionIntention : SelfTargetingIntention<KtExpression>(KtExpre
                 KtTokens.MULTEQ -> if (functionName == "multAssign") "$0.multAssign($1)" else "$0 = $0.mult($1)"
                 KtTokens.DIVEQ -> if (functionName == "divAssign") "$0.divAssign($1)" else "$0 = $0.div($1)"
                 KtTokens.PERCEQ -> if (functionName == "modAssign") "$0.modAssign($1)" else "$0 = $0.mod($1)"
-                KtTokens.EQEQ -> if (elemType?.isMarkedNullable() ?: true) "$0?.equals($1) ?: ($1 == null)" else "$0.equals($1)"
-                KtTokens.EXCLEQ -> if (elemType?.isMarkedNullable() ?: true) "!($0?.equals($1) ?: ($1 == null))" else "!$0.equals($1)"
+                KtTokens.EQEQ -> if (elemType?.isMarkedNullable ?: true) "$0?.equals($1) ?: ($1 == null)" else "$0.equals($1)"
+                KtTokens.EXCLEQ -> if (elemType?.isMarkedNullable ?: true) "!($0?.equals($1) ?: ($1 == null))" else "!$0.equals($1)"
                 KtTokens.GT -> "$0.compareTo($1) > 0"
                 KtTokens.LT -> "$0.compareTo($1) < 0"
                 KtTokens.GTEQ -> "$0.compareTo($1) >= 0"
