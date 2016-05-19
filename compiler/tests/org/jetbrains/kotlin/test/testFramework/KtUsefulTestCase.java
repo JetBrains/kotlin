@@ -91,7 +91,8 @@ public abstract class KtUsefulTestCase extends TestCase {
         boolean isPerformanceTest = isPerformanceTest();
         ApplicationInfoImpl.setInPerformanceTest(isPerformanceTest);
         // turn off Disposer debugging for performance tests
-        oldDisposerDebug = Disposer.setDebugMode(Disposer.isDebugMode() && !isPerformanceTest);
+        oldDisposerDebug = Disposer.isDebugMode() && !isPerformanceTest;
+        Disposer.setDebugMode(oldDisposerDebug);
     }
 
     @Override

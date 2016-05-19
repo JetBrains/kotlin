@@ -122,7 +122,7 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
     }
 
     private Disposable createDisposable(String debugName) {
-        Disposable disposable = Disposer.newDisposable("CompileDisposable" + debugName);
+        Disposable disposable = Disposer.newDisposable();
         Disposer.register(getTestRootDisposable(), disposable);
         return disposable;
     }

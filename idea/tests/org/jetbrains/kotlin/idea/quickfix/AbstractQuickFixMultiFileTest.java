@@ -393,10 +393,4 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
             this.content = content;
         }
     }
-
-    @NotNull
-    private VirtualFile findVirtualFile(@NotNull String filePath) {
-        String absolutePath = getTestDataPath() + filePath;
-        return VfsTestUtil.findFileByCaseSensitivePath(absolutePath);
-    }
 }
