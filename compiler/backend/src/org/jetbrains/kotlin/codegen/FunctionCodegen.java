@@ -541,8 +541,8 @@ public class FunctionCodegen {
     private static String renderByteCodeIfAvailable(MethodVisitor mv) {
         String bytecode = null;
 
-        if (mv instanceof OptimizationMethodVisitor) {
-            mv = ((OptimizationMethodVisitor) mv).getTraceMethodVisitorIfPossible();
+        if (mv instanceof TransformationMethodVisitor) {
+            mv = ((TransformationMethodVisitor) mv).getTraceMethodVisitorIfPossible();
         }
 
         if (mv instanceof TraceMethodVisitor) {
