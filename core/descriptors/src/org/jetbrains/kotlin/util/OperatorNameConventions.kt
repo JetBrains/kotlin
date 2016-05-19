@@ -56,6 +56,7 @@ object OperatorNameConventions {
     @JvmField val MOD_ASSIGN = Name.identifier("modAssign")
     @JvmField val PLUS_ASSIGN = Name.identifier("plusAssign")
     @JvmField val MINUS_ASSIGN = Name.identifier("minusAssign")
+    @JvmField val COROUTINE_HANDLE_RESULT = Name.identifier("handleResult")
 
     // If you add new unary, binary or assignment operators, add it to OperatorConventions as well
 

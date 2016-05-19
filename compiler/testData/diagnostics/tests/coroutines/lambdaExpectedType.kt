@@ -1,15 +1,15 @@
 // !CHECK_TYPE
 // !DIAGNOSTICS: -UNUSED_PARAMETER -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_VARIABLE
 class IntController {
-    fun handleResult(x: Int, c: Continuation<Nothing>) { }
+    operator fun handleResult(x: Int, c: Continuation<Nothing>) { }
 }
 
 class GenericController<T> {
-    fun handleResult(x: T, c: Continuation<Nothing>) { }
+    operator fun handleResult(x: T, c: Continuation<Nothing>) { }
 }
 
 class UnitController {
-    fun handleResult(x: Unit, c: Continuation<Nothing>) { }
+    operator fun handleResult(x: Unit, c: Continuation<Nothing>) { }
 }
 
 class EmptyController

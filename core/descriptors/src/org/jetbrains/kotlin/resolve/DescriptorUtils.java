@@ -51,6 +51,7 @@ public class DescriptorUtils {
     public static final FqName JVM_NAME = new FqName("kotlin.jvm.JvmName");
     public static final FqName VOLATILE = new FqName("kotlin.jvm.Volatile");
     public static final FqName SYNCHRONIZED = new FqName("kotlin.jvm.Synchronized");
+    public static final FqName CONTINUATION_INTERFACE_FQ_NAME = new FqName("kotlin.coroutines.Continuation");
 
     private DescriptorUtils() {
     }

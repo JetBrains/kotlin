@@ -18,7 +18,7 @@ public final class EmptyController {
 public final class GenericController</*0*/ T> {
     public constructor GenericController</*0*/ T>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public final fun handleResult(/*0*/ x: T, /*1*/ c: kotlin.coroutines.Continuation<kotlin.Nothing>): kotlin.Unit
+    public final operator fun handleResult(/*0*/ x: T, /*1*/ c: kotlin.coroutines.Continuation<kotlin.Nothing>): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
@@ -26,7 +26,7 @@ public final class GenericController</*0*/ T> {
 public final class IntController {
     public constructor IntController()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public final fun handleResult(/*0*/ x: kotlin.Int, /*1*/ c: kotlin.coroutines.Continuation<kotlin.Nothing>): kotlin.Unit
+    public final operator fun handleResult(/*0*/ x: kotlin.Int, /*1*/ c: kotlin.coroutines.Continuation<kotlin.Nothing>): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
@@ -34,7 +34,7 @@ public final class IntController {
 public final class UnitController {
     public constructor UnitController()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public final fun handleResult(/*0*/ x: kotlin.Unit, /*1*/ c: kotlin.coroutines.Continuation<kotlin.Nothing>): kotlin.Unit
+    public final operator fun handleResult(/*0*/ x: kotlin.Unit, /*1*/ c: kotlin.coroutines.Continuation<kotlin.Nothing>): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
