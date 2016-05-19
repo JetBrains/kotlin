@@ -98,7 +98,7 @@ class LazyJavaTypeResolver(
             private val javaType: JavaClassifierType,
             private val attr: JavaTypeAttributes
     ) : AbstractLazyType(c.storageManager) {
-        private val annotations = CompositeAnnotations(listOf(LazyJavaAnnotations(c, javaType), attr.typeAnnotations))
+        override val annotations = CompositeAnnotations(listOf(LazyJavaAnnotations(c, javaType), attr.typeAnnotations))
 
         private val classifier = c.storageManager.createNullableLazyValue { javaType.classifier }
 
@@ -278,8 +278,6 @@ class LazyJavaTypeResolver(
         }
 
         override val isMarkedNullable: Boolean get() = nullable()
-
-        override fun getAnnotations() = annotations
     }
 
     object FlexibleJavaClassifierTypeFactory : FlexibleTypeFactory {

@@ -116,7 +116,7 @@ private fun KotlinType.enhanceInflexible(qualifiers: (Int) -> JavaTypeQualifiers
     if (!wereChanges) return Result(this, subtreeSize, wereChanges = false)
 
     val newAnnotations = listOf(
-            getAnnotations(),
+            annotations,
             enhancedMutabilityAnnotations,
             enhancedNullabilityAnnotations
     ).filterNotNull().compositeAnnotationsOrSingle()

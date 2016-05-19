@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,7 +72,7 @@ class DeserializedClassDescriptor(
             (containingDeclaration as? DeserializedClassDescriptor)?.thisAsProtoContainer
     )
 
-    private val annotations =
+    override val annotations =
             if (!Flags.HAS_ANNOTATIONS.get(classProto.flags)) {
                 Annotations.EMPTY
             }
@@ -93,8 +93,6 @@ class DeserializedClassDescriptor(
     override fun isInner() = Flags.IS_INNER.get(classProto.flags)
 
     override fun isData() = Flags.IS_DATA.get(classProto.flags)
-
-    override fun getAnnotations() = annotations
 
     override fun getUnsubstitutedMemberScope(): MemberScope = memberScope
 
@@ -178,7 +176,7 @@ class DeserializedClassDescriptor(
 
         override fun getDeclarationDescriptor() = this@DeserializedClassDescriptor
 
-        override fun getAnnotations(): Annotations = Annotations.EMPTY // TODO
+        override val annotations: Annotations get() = Annotations.EMPTY // TODO
 
         override fun toString() = getName().toString()
 

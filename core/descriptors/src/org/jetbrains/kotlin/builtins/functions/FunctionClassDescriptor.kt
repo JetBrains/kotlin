@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -101,7 +101,7 @@ class FunctionClassDescriptor(
     override fun isCompanionObject() = false
     override fun isInner() = false
     override fun isData() = false
-    override fun getAnnotations() = Annotations.EMPTY
+    override val annotations: Annotations get() = Annotations.EMPTY
     override fun getSource() = SourceElement.NO_SOURCE
 
     override fun getDeclaredTypeParameters() = parameters
@@ -143,7 +143,7 @@ class FunctionClassDescriptor(
         override fun getDeclarationDescriptor() = this@FunctionClassDescriptor
         override fun isDenotable() = true
         override fun isFinal() = false
-        override fun getAnnotations() = Annotations.EMPTY
+        override val annotations: Annotations get() = Annotations.EMPTY
 
         override fun toString() = declarationDescriptor.toString()
 

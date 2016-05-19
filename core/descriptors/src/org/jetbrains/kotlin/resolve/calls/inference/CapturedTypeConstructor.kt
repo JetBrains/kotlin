@@ -49,7 +49,7 @@ class CapturedTypeConstructor(
 
     override fun getDeclarationDescriptor() = null
 
-    override fun getAnnotations() = Annotations.EMPTY
+    override val annotations: Annotations get() = Annotations.EMPTY
 
     override fun toString() = "CapturedTypeConstructor($typeProjection)"
 

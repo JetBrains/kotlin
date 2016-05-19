@@ -179,7 +179,7 @@ class FunctionDescriptorResolver(
         functionDescriptor.isExternal = function.hasModifier(KtTokens.EXTERNAL_KEYWORD)
         functionDescriptor.isInline = function.hasModifier(KtTokens.INLINE_KEYWORD)
         functionDescriptor.isTailrec = function.hasModifier(KtTokens.TAILREC_KEYWORD)
-        receiverType?.let { ForceResolveUtil.forceResolveAllContents(it.getAnnotations()) }
+        receiverType?.let { ForceResolveUtil.forceResolveAllContents(it.annotations) }
         for (valueParameterDescriptor in valueParameterDescriptors) {
             ForceResolveUtil.forceResolveAllContents(valueParameterDescriptor.type.annotations)
         }

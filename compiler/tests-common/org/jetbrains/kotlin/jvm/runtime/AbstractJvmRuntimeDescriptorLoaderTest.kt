@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAllTo
 import org.jetbrains.kotlin.codegen.GenerationUtils
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.jvm.compiler.ExpectedLoadErrorsUtil
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil
@@ -214,8 +215,9 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
         override fun getOriginal() = throw UnsupportedOperationException()
         override fun substitute(substitutor: TypeSubstitutor) = throw UnsupportedOperationException()
         override fun acceptVoid(visitor: DeclarationDescriptorVisitor<Void, Void>?) = throw UnsupportedOperationException()
-        override fun getAnnotations() = throw UnsupportedOperationException()
         override fun getName() = throw UnsupportedOperationException()
+        override val annotations: Annotations
+            get() = throw UnsupportedOperationException()
         override val fragments: Nothing
             get() = throw UnsupportedOperationException()
     }
