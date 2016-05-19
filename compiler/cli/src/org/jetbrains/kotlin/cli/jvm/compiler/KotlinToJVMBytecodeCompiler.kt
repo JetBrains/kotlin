@@ -326,7 +326,7 @@ object KotlinToJVMBytecodeCompiler {
                 val moduleContext =
                         TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(environment.project, environment.getModuleName())
 
-                return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
+                return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
                         moduleContext,
                         environment.getSourceFiles(),
                         sharedTrace,

@@ -59,24 +59,10 @@ public enum TopDownAnalyzerFacadeForJVM {
     INSTANCE;
 
     @NotNull
-    public static AnalysisResult analyzeFilesWithJavaIntegrationWithCustomContext(
-            @NotNull ModuleContext moduleContext,
-            @NotNull Collection<KtFile> files,
-            @NotNull BindingTrace trace,
-            @NotNull CompilerConfiguration configuration,
-            @NotNull PackagePartProvider packagePartProvider
-    ) {
-        return analyzeFilesWithJavaIntegration(
-                moduleContext, files, trace, TopDownAnalysisMode.TopLevelDeclarations, configuration, packagePartProvider
-        );
-    }
-
-    @NotNull
     public static AnalysisResult analyzeFilesWithJavaIntegration(
             @NotNull ModuleContext moduleContext,
             @NotNull Collection<KtFile> files,
             @NotNull BindingTrace trace,
-            @NotNull TopDownAnalysisMode topDownAnalysisMode,
             @NotNull CompilerConfiguration configuration,
             @NotNull PackagePartProvider packagePartProvider
     ) {
@@ -135,7 +121,7 @@ public enum TopDownAnalyzerFacadeForJVM {
             if (provider != null) additionalProviders.add(provider);
         }
 
-        container.getLazyTopDownAnalyzerForTopLevel().analyzeFiles(topDownAnalysisMode, allFiles, additionalProviders);
+        container.getLazyTopDownAnalyzerForTopLevel().analyzeFiles(TopDownAnalysisMode.TopLevelDeclarations, allFiles, additionalProviders);
 
         BindingContext bindingContext = trace.getBindingContext();
         ModuleDescriptor module = moduleContext.getModule();

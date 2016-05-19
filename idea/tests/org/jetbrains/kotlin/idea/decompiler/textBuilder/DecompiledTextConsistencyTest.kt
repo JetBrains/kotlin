@@ -49,7 +49,7 @@ class DecompiledTextConsistencyTest : TextConsistencyBaseTest() {
             (resolver?.let { buildDecompiledTextForClassFile(packageFile, it) } ?: buildDecompiledTextForClassFile(packageFile)).text
 
     override fun getModuleDescriptor(): ModuleDescriptor =
-            TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
+            TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
                     TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project, JvmResolveUtil.TEST_MODULE_NAME),
                     listOf(), BindingTraceContext(), CompilerConfiguration.EMPTY,
                     IDEPackagePartProvider(GlobalSearchScope.allScope(project))
