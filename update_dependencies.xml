@@ -1,7 +1,7 @@
 <project name="Update Dependencies" default="update" xmlns:if="ant:if" xmlns:unless="ant:unless">
 
     <property name="automerge_dummy" value="This property is used to trick git merge. Do not delete empty lines around."/>
-    <property name="ideaVersion" value="2016.1"/>
+    <property name="ideaVersion" value="143.2287.1"/>
     <property name="idea.kotlin.branch" value="rc"/>
 
 
@@ -697,7 +697,7 @@
                         <file file="@{idea.dir}/lib/jdom.jar"/>
                         <file file="@{idea.dir}/lib/jna.jar"/>
                         <file file="@{idea.dir}/lib/log4j.jar"/>
-                        <file file="@{idea.dir}/lib/xstream-1.4.8.jar"/>
+                        <file file="@{idea.dir}/lib/xstream-1.4.3.jar"/>
                         <file file="@{idea.dir}/lib/xpp3-1.1.4-min.jar"/>
                         <file file="@{idea.dir}/lib/jsr166e.jar"/>
                         <file file="@{idea.dir}/lib/asm-all.jar"/>
@@ -747,15 +747,6 @@
         <sequential>
             <delete dir="@{download.dir}"/>
             <mkdir dir="@{download.dir}"/>
-
-            <!-- For running compiler tests with Java 1.6 -->
-            <get src="@{base.repository.url}/ideaIC/15.0.5/ideaIC-15.0.5.zip" dest="@{download.dir}/ideaIC-15.0.5.zip" usetimestamp="true"/>
-            <unzip src="@{download.dir}/ideaIC-15.0.5.zip" dest="@{download.dir}/idea-15-for-tests">
-                <patternset>
-                    <include name="**/lib/openapi.jar"/>
-                    <include name="**/lib/idea_rt.jar"/>
-                </patternset>
-            </unzip>
 
             <property name="idea.id" value="idea${sdk.version.prefix}"/>
 
