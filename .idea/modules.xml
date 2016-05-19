@@ -49,6 +49,7 @@
       <module fileurl="file://$PROJECT_DIR$/compiler/preloader/instrumentation/instrumentation.iml" filepath="$PROJECT_DIR$/compiler/preloader/instrumentation/instrumentation.iml" group="compiler/cli" />
       <module fileurl="file://$PROJECT_DIR$/j2k/j2k.iml" filepath="$PROJECT_DIR$/j2k/j2k.iml" group="j2k" />
       <module fileurl="file://$PROJECT_DIR$/jps-plugin/jps-plugin.iml" filepath="$PROJECT_DIR$/jps-plugin/jps-plugin.iml" group="ide/jps" />
+      <module fileurl="file://$PROJECT_DIR$/jps-plugin/jps-tests/jps-tests.iml" filepath="$PROJECT_DIR$/jps-plugin/jps-tests/jps-tests.iml" group="ide/jps" />
       <module fileurl="file://$PROJECT_DIR$/js/js.dart-ast/js.dart-ast.iml" filepath="$PROJECT_DIR$/js/js.dart-ast/js.dart-ast.iml" group="compiler/js" />
       <module fileurl="file://$PROJECT_DIR$/js/js.frontend/js.frontend.iml" filepath="$PROJECT_DIR$/js/js.frontend/js.frontend.iml" group="compiler/js" />
       <module fileurl="file://$PROJECT_DIR$/js/js.inliner/js.inliner.iml" filepath="$PROJECT_DIR$/js/js.inliner/js.inliner.iml" group="compiler/js" />
@@ -59,12 +60,12 @@
       <module fileurl="file://$PROJECT_DIR$/jps-plugin/kannotator-jps-plugin-test/kannotator-jps-plugin-test.iml" filepath="$PROJECT_DIR$/jps-plugin/kannotator-jps-plugin-test/kannotator-jps-plugin-test.iml" group="ide/jps" />
       <module fileurl="file://$PROJECT_DIR$/compiler/light-classes/light-classes.iml" filepath="$PROJECT_DIR$/compiler/light-classes/light-classes.iml" group="compiler/java" />
       <module fileurl="file://$PROJECT_DIR$/compiler/plugin-api/plugin-api.iml" filepath="$PROJECT_DIR$/compiler/plugin-api/plugin-api.iml" group="compiler" />
+      <module fileurl="file://$PROJECT_DIR$/plugins/plugins-tests/plugins-tests.iml" filepath="$PROJECT_DIR$/plugins/plugins-tests/plugins-tests.iml" group="plugins" />
       <module fileurl="file://$PROJECT_DIR$/compiler/preloader/preloader.iml" filepath="$PROJECT_DIR$/compiler/preloader/preloader.iml" group="compiler/cli" />
       <module fileurl="file://$PROJECT_DIR$/core/reflection.jvm/reflection.jvm.iml" filepath="$PROJECT_DIR$/core/reflection.jvm/reflection.jvm.iml" group="core" />
       <module fileurl="file://$PROJECT_DIR$/compiler/resolution/resolution.iml" filepath="$PROJECT_DIR$/compiler/resolution/resolution.iml" group="compiler" />
       <module fileurl="file://$PROJECT_DIR$/core/runtime.jvm/runtime.jvm.iml" filepath="$PROJECT_DIR$/core/runtime.jvm/runtime.jvm.iml" group="core" />
       <module fileurl="file://$PROJECT_DIR$/compiler/serialization/serialization.iml" filepath="$PROJECT_DIR$/compiler/serialization/serialization.iml" group="compiler" />
-      <module fileurl="file://$PROJECT_DIR$/temp-jdk8/temp-jdk8.iml" filepath="$PROJECT_DIR$/temp-jdk8/temp-jdk8.iml" />
       <module fileurl="file://$PROJECT_DIR$/compiler/util/util.iml" filepath="$PROJECT_DIR$/compiler/util/util.iml" />
       <module fileurl="file://$PROJECT_DIR$/core/util.runtime/util.runtime.iml" filepath="$PROJECT_DIR$/core/util.runtime/util.runtime.iml" group="core" />
     </modules>

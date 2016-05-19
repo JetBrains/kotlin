@@ -1,6 +1,6 @@
-[kotlinTopLevelPropertyUsages.1.kt] Receiver (8: 35) println("length: ${server.foo.length()}")
-[kotlinTopLevelPropertyUsages.1.kt] Usage in import (3: 15) import server.foo
-[kotlinTopLevelPropertyUsages.1.kt] Value read (7: 33) println("foo = ${server.foo}")
-[kotlinTopLevelPropertyUsages.2.java] Unclassified usage (7: 72) System.out.println("foo = " + KotlinTopLevelPropertyUsages_0Kt.getFoo());
-[kotlinTopLevelPropertyUsages.2.java] Unclassified usage (8: 74) System.out.println("length: " + KotlinTopLevelPropertyUsages_0Kt.getFoo().length());
-[kotlinTopLevelPropertyUsages.2.java] Unclassified usage (9: 42) KotlinTopLevelPropertyUsages_0Kt.setFoo("");
+[kotlinTopLevelPropertyUsages.1.kt] Receiver 8 println("length: ${server.foo.length()}")
+[kotlinTopLevelPropertyUsages.1.kt] Usage in import 3 import server.foo
+[kotlinTopLevelPropertyUsages.1.kt] Value read 7 println("foo = ${server.foo}")
+[kotlinTopLevelPropertyUsages.2.java] Unclassified usage 7 System.out.println("foo = " + KotlinTopLevelPropertyUsages_0Kt.getFoo());
+[kotlinTopLevelPropertyUsages.2.java] Unclassified usage 8 System.out.println("length: " + KotlinTopLevelPropertyUsages_0Kt.getFoo().length());
+[kotlinTopLevelPropertyUsages.2.java] Unclassified usage 9 KotlinTopLevelPropertyUsages_0Kt.setFoo("");

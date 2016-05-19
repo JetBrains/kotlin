@@ -1,2 +1,2 @@
-Unclassified usage (7: 35) int n = new Outer.Inner().getFoo();
-Unclassified usage (8: 27) new Outer.Inner().setFoo(2);
+Unclassified usage 7 int n = new Outer.Inner().getFoo();
+Unclassified usage 8 new Outer.Inner().setFoo(2);

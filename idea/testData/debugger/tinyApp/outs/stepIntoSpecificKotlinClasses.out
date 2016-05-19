@@ -5,8 +5,8 @@ stepIntoSpecificKotlinClasses.kt:8
 MyJavaClass.java:12
 stepIntoSpecificKotlinClasses.kt:8
 Intrinsics.!EXT!
+Intrinsics.!EXT!
 stepIntoSpecificKotlinClasses.kt:8
-stepIntoSpecificKotlinClasses.kt:9
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0

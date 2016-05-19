@@ -1,1 +1,1 @@
-Function call (13: 7) a.foo()
+Function call 13 a.foo()

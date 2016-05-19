@@ -1,4 +1,4 @@
-Unclassified usage (1: 19) public open class X: A()
-Unclassified usage (3: 18) public interface T: A
-Unclassified usage (5: 19) public open class Y: X()
-Unclassified usage (7: 14) public class Z: Y(), T
+Unclassified usage 1 public open class X: A()
+Unclassified usage 3 public interface T: A
+Unclassified usage 5 public open class Y: X()
+Unclassified usage 7 public class Z: Y(), T

@@ -15,7 +15,7 @@ fun main(args: Array<String>) {
 
 // PRINT_FRAME
 Compile bytecode for a
- frame    = foo():5, A {evFunctionDeclaration}
+ frame    = foo:5, A {evFunctionDeclaration}
    this     = this = {evFunctionDeclaration.A@uniqueID}
      field    = a: int = 1 (sp = evFunctionDeclaration.kt, 3)
    extra    = a

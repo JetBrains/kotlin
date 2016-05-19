@@ -1,2 +1,2 @@
-Unclassified usage (11: 16) object O2: Z
-Unclassified usage (8: 12) object O1: A()
+Unclassified usage 11 object O2: Z
+Unclassified usage 8 object O1: A()

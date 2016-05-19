@@ -21,7 +21,7 @@ fun main(args: Array<String>) {
 
 // PRINT_FRAME
 Compile bytecode for prop
- frame    = test():8, A {evPropertyRefExpr}
+ frame    = test:8, A {evPropertyRefExpr}
    this     = this = {evPropertyRefExpr.A@uniqueID}
      field    = prop: int = 1 (sp = evPropertyRefExpr.kt, 4)
    extra    = prop

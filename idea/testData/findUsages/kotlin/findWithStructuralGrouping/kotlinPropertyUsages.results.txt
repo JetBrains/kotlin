@@ -1,6 +1,6 @@
-[kotlinPropertyUsages.0.kt] Value read (B) (14: 29) return super<A>.foo
-[kotlinPropertyUsages.0.kt] Value write (B) (18: 22) super<A>.foo = value
-[kotlinPropertyUsages.1.kt] Value read (Client) (11: 30) println("b.foo = ${b.foo}")
-[kotlinPropertyUsages.1.kt] Value read (Client) (7: 30) println("a.foo = ${a.foo}")
-[kotlinPropertyUsages.1.kt] Value write (Client) (10: 11) b.foo = "b"
-[kotlinPropertyUsages.1.kt] Value write (Client) (6: 11) a.foo = "a"
+[kotlinPropertyUsages.0.kt] Value read (B) 14 return super<A>.foo
+[kotlinPropertyUsages.0.kt] Value write (B) 18 super<A>.foo = value
+[kotlinPropertyUsages.1.kt] Value read (Client) 11 println("b.foo = ${b.foo}")
+[kotlinPropertyUsages.1.kt] Value read (Client) 7 println("a.foo = ${a.foo}")
+[kotlinPropertyUsages.1.kt] Value write (Client) 10 b.foo = "b"
+[kotlinPropertyUsages.1.kt] Value write (Client) 6 a.foo = "a"

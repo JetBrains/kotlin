@@ -4,8 +4,8 @@ import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 
 @Test class A {
-    @DataProvider(name = "Name")
-    fun Name(): Array<Array<Any>> {
+    @DataProvider(name = "name")
+    fun name(): Array<Array<Any>> {
         throw UnsupportedOperationException()
     }
 }

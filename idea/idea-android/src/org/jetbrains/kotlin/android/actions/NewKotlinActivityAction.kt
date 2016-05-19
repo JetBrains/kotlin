@@ -28,6 +28,7 @@ import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiJavaFile
+import com.intellij.util.messages.Topic
 import org.jetbrains.android.facet.AndroidFacet
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.actions.JavaToKotlinAction
@@ -91,7 +92,8 @@ class NewKotlinActivityAction: AnAction(KotlinIcons.FILE) {
                 else {
                     // AS 1.5
                     val connection = project.messageBus.connect(project)
-                    connection.subscribe(GradleSyncState.GRADLE_SYNC_TOPIC, gradleSyncListener)
+                    val gradleSyncTopic = (GradleSyncState::class.java).getDeclaredField("GRADLE_SYNC_TOPIC").get(null) as Topic<GradleSyncListener>
+                    connection.subscribe(gradleSyncTopic, gradleSyncListener)
                 }
             }
             catch(e: Throwable) {

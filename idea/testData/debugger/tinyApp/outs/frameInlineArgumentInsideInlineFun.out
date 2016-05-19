@@ -41,7 +41,7 @@ fun main(args: Array<String>) {
 
 // EXPRESSION: element
 // RESULT: 1: I
- frame    = bar():16, C {frameInlineArgumentInsideInlineFun}
+ frame    = bar:16, C {frameInlineArgumentInsideInlineFun}
    this     = this = {frameInlineArgumentInsideInlineFun.C@uniqueID}
               - Class has no fields
    local    = element: float = 1.0 (sp = frameInlineArgumentInsideInlineFun.kt, 13)

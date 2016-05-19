@@ -323,7 +323,6 @@ class KotlinCoreEnvironment private constructor(
         }
 
         private fun createApplicationEnvironment(parentDisposable: Disposable, configuration: CompilerConfiguration, configFilePaths: List<String>): JavaCoreApplicationEnvironment {
-
             Extensions.cleanRootArea(parentDisposable)
             registerAppExtensionPoints()
             val applicationEnvironment = JavaCoreApplicationEnvironment(parentDisposable)

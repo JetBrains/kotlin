@@ -1,2 +1,2 @@
-[javaDerivedInterfaceUsages1.0.kt] Unclassified usage (15: 11) interface Z: A {
-[javaDerivedInterfaceUsages1.1.java] Unclassified usage (9: 11) interface U extends Z {
+[javaDerivedInterfaceUsages1.0.kt] Unclassified usage 15 interface Z: A {
+[javaDerivedInterfaceUsages1.1.java] Unclassified usage 9 interface U extends Z {

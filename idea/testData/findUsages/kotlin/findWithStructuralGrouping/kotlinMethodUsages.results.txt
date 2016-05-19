@@ -1,2 +1,2 @@
-Function call (Client) (5: 18) Server().processRequest()
-Function call (Client) (6: 20) ServerEx().processRequest()
+Function call (Client) 5 Server().processRequest()
+Function call (Client) 6 ServerEx().processRequest()

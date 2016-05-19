@@ -1,7 +1,7 @@
-Function call (20: 18) super<A>.foo()
-Function call (7: 11) A.foos()
-New instance creation (2: 20) var next: A? = A()
-New instance creation (32: 18) fun X.bar(a: A = A()) {
-Supertype (1: 39) public class X(bar: String? = A.BAR): A() {
-Supertype (23: 23) companion object: A() {
-Supertype (28: 11) object O: A() {
+Function call 20 super<A>.foo()
+Function call 7 A.foos()
+New instance creation 2 var next: A? = A()
+New instance creation 32 fun X.bar(a: A = A()) {
+Supertype 1 public class X(bar: String? = A.BAR): A() {
+Supertype 23 companion object: A() {
+Supertype 28 object O: A() {

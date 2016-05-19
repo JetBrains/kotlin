@@ -899,7 +899,7 @@ fun main(args: Array<String>) {
         }
     }
 
-    testGroup("jps-plugin/test", "jps-plugin/testData") {
+    testGroup("jps-plugin/jps-tests/test", "jps-plugin/testData") {
         testClass<AbstractIncrementalJpsTest>() {
             model("incremental/multiModule", extension = null, excludeParentDirs = true)
             model("incremental/pureKotlin", extension = null, recursive = false)
@@ -919,7 +919,7 @@ fun main(args: Array<String>) {
         }
     }
 
-    testGroup("jps-plugin/test", "jps-plugin/testData") {
+    testGroup("jps-plugin/jps-tests/test", "jps-plugin/testData") {
         testClass<AbstractExperimentalIncrementalJpsTest>() {
             model("incremental/multiModule", extension = null, excludeParentDirs = true)
             model("incremental/pureKotlin", extension = null, recursive = false)
@@ -945,7 +945,7 @@ fun main(args: Array<String>) {
         }
     }
 
-    testGroup("jps-plugin/test", "jps-plugin/testData") {
+    testGroup("jps-plugin/jps-tests/test", "jps-plugin/testData") {
         testClass<AbstractProtoComparisonTest>() {
             model("comparison/classSignatureChange", extension = null, excludeParentDirs = true)
             model("comparison/classPrivateOnlyChange", extension = null, excludeParentDirs = true)
@@ -955,7 +955,7 @@ fun main(args: Array<String>) {
         }
     }
 
-    testGroup("plugins/android-extensions/android-extensions-compiler/tests", "plugins/android-extensions/android-extensions-compiler/testData") {
+    testGroup("plugins/plugins-tests/tests",  "plugins/android-extensions/android-extensions-compiler/testData") {
         testClass<AbstractAndroidSyntheticPropertyDescriptorTest>() {
             model("descriptors", recursive = false, extension = null)
         }
@@ -970,7 +970,7 @@ fun main(args: Array<String>) {
         }
     }
 
-    testGroup("plugins/annotation-collector/test", "plugins/annotation-collector/testData") {
+    testGroup("plugins/plugins-tests/tests", "plugins/annotation-collector/testData") {
         testClass<AbstractAnnotationProcessorBoxTest>() {
             model("collectToFile", recursive = false, extension = null)
         }
@@ -1000,7 +1000,7 @@ fun main(args: Array<String>) {
         }
     }
 
-    testGroup("plugins/android-extensions/android-extensions-jps/tests", "plugins/android-extensions/android-extensions-jps/testData") {
+    testGroup("plugins/plugins-tests/tests", "plugins/android-extensions/android-extensions-jps/testData") {
         testClass<AbstractAndroidJpsTestCase>() {
             model("android", recursive = false, extension = null)
         }

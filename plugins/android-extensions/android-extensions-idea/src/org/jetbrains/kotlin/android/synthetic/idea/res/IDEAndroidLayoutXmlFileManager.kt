@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.android.synthetic.idea.res
 
 import com.android.builder.model.SourceProvider
+import com.android.tools.idea.gradle.AndroidGradleModel
 import com.intellij.openapi.module.Module
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -111,27 +112,22 @@ class IDEAndroidLayoutXmlFileManager(val module: Module) : AndroidLayoutXmlFileM
         val applicationPackage = manifest?.`package`?.toString()
 
         if (applicationPackage != null) {
-            // This code is needed for compatibility with AS 2.0 and IDEA 15.0, because of difference in android plugins
-            val modelClass = try {
-                Class.forName("com.android.tools.idea.gradle.AndroidGradleModel")
-            }
-            catch(e: ClassNotFoundException) {
-                null
-            }
             val mainVariant = mainSourceProvider.toVariant()
-            if (modelClass == null) {
-                val flavorVariants = flavorSourceProviders?.map { it.toVariant() } ?: listOf()
-                return AndroidModule(applicationPackage, listOf(mainVariant) + flavorVariants)
+
+            val method = try { javaClass.getMethod("getFlavorSourceProviders") } catch (e: NoSuchMethodException) { null }
+            val variants: List<AndroidVariant>? = if (method != null) {
+                val sourceProviders = method.invoke(this) as List<SourceProvider>?
+                sourceProviders?.map { it.toVariant() } ?: listOf()
             }
             else {
-                val model = modelClass.getDeclaredMethod("get", Module::class.java).invoke(null, module)
-                if (model != null) {
-                    val sourceProviders = modelClass.getDeclaredMethod("getFlavorSourceProviders").invoke(model) as List<SourceProvider>
-                    return AndroidModule(applicationPackage, listOf(mainVariant) + sourceProviders.map { it.toVariant() })
-                }
+                val model = AndroidGradleModel.get(module)
+                model?.flavorSourceProviders?.map { it.toVariant() }
+            }
+
+            if (variants != null) {
+                return AndroidModule(applicationPackage, listOf(mainVariant) + variants)
             }
         }
         return null
     }
-
 }

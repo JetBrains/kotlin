@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.test;
 
-import com.intellij.testFramework.UsefulTestCase;
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase;
 
 import java.io.File;
 
-public abstract class TestCaseWithTmpdir extends UsefulTestCase {
+public abstract class TestCaseWithTmpdir extends KtUsefulTestCase {
     protected File tmpdir;
 
     @Override

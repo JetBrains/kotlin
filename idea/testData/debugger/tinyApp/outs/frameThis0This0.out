@@ -49,7 +49,7 @@ fun foo(f: () -> Unit) {
 
 // EXPRESSION: myFun()
 // RESULT: 1: I
- frame    = invoke():17, A$test$1$1 {frameThis0This0}
+ frame    = invoke:17, A$test$1$1 {frameThis0This0}
    this     = this = {frameThis0This0.A$test$1$1@uniqueID}Function0<kotlin.Unit>
      field    = this$0: frameThis0This0.A$test$1 = {frameThis0This0.A$test$1@uniqueID}Function0<kotlin.Unit> (sp = null)
        field    = this$0: frameThis0This0.A = {frameThis0This0.A@uniqueID} (sp = null)

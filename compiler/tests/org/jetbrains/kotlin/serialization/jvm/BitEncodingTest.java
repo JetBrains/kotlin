@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.serialization.jvm;
 
-import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase;
 
 import java.util.Random;
 
@@ -25,7 +25,7 @@ import static org.jetbrains.kotlin.serialization.jvm.BitEncoding.decodeBytes;
 import static org.jetbrains.kotlin.serialization.jvm.BitEncoding.encodeBytes;
 import static org.junit.Assert.assertArrayEquals;
 
-public class BitEncodingTest extends UsefulTestCase {
+public class BitEncodingTest extends KtUsefulTestCase {
     private static final int[] BIG_LENGTHS = new int[]
             {1000, 32000, 33000, 65000, 65534, 65535, 65536, 65537, 100000, 131074, 239017, 314159, 1000000};
 

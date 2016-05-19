@@ -1,1 +1,1 @@
-Function call (9: 10) B(1).invoke(2)
+Function call 9 B(1).invoke(2)

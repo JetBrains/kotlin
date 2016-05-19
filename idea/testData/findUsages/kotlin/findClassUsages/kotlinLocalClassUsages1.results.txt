@@ -1,1 +1,1 @@
-New instance creation (6: 12) return Bar()
+New instance creation 6 return Bar()

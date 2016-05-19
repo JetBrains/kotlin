@@ -1,1 +1,1 @@
-New instance creation (5: 9) val a = Test()
+New instance creation 5 val a = Test()

@@ -1,6 +1,7 @@
 -injars '<output>/kotlin-compiler-before-shrink.jar'(
 !com/thoughtworks/xstream/converters/extended/ISO8601**,
 !com/thoughtworks/xstream/converters/reflection/CGLIBEnhancedConverter**,
+!com/thoughtworks/xstream/io/xml/JDom**,
 !com/thoughtworks/xstream/io/xml/Dom4J**,
 !com/thoughtworks/xstream/io/xml/Xom**,
 !com/thoughtworks/xstream/io/xml/Wstx**,
@@ -8,6 +9,7 @@
 !com/thoughtworks/xstream/io/xml/BEAStax**,
 !com/thoughtworks/xstream/io/json/Jettison**,
 !com/thoughtworks/xstream/mapper/CGLIBMapper**,
+!com/thoughtworks/xstream/mapper/LambdaMapper**,
 !org/apache/log4j/jmx/Agent*,
 !org/apache/log4j/net/JMS*,
 !org/apache/log4j/net/SMTP*,
@@ -31,10 +33,13 @@ messages/**)
 -dontwarn org.xerial.snappy.SnappyBundleActivator
 -dontwarn com.intellij.util.CompressionUtil
 -dontwarn com.intellij.util.SnappyInitializer
+-dontwarn com.intellij.util.SVGLoader
+-dontwarn com.intellij.util.SVGLoader$MyTranscoder
 -dontwarn net.sf.cglib.**
 -dontwarn org.objectweb.asm.** # this is ASM3, the old version that we do not use
 -dontwarn com.sun.jna.NativeString
 -dontwarn com.sun.jna.WString
+-dontwarn com.intellij.psi.util.PsiClassUtil
 
 -libraryjars '<rtjar>'
 -libraryjars '<jssejar>'

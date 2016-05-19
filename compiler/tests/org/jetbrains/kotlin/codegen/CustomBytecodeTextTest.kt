@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.codegen
 
-import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 
 class CustomBytecodeTextTest : AbstractBytecodeTextTest() {
     fun testEnumMapping() {
@@ -39,7 +39,7 @@ class CustomBytecodeTextTest : AbstractBytecodeTextTest() {
 
         val text = generateToText()
         val getstatics = text.lines().filter { it.contains("GETSTATIC MyEnum.") }.map { it.trim() }
-        UsefulTestCase.assertOrderedEquals("actual bytecode:\n" + text, listOf(
+        KtUsefulTestCase.assertOrderedEquals("actual bytecode:\n" + text, listOf(
                 "GETSTATIC MyEnum.${'$'}VALUES : [LMyEnum;",
                 "GETSTATIC MyEnum.ENTRY4 : LMyEnum;",
                 "GETSTATIC MyEnum.ENTRY3 : LMyEnum;",

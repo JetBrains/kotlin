@@ -30,7 +30,7 @@ import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.roots.ContentEntry
 
 class HighlightingWithDependentLibrariesTest : KotlinLightCodeInsightFixtureTestCase() {
-    private val TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/highlightingWithDependentLibraries"
+    private val TEST_DATA_PATH = PluginTestCaseBase.TEST_DATA_DIR + "/highlightingWithDependentLibraries"
 
     override fun getProjectDescriptor() = object : KotlinLightProjectDescriptor() {
         override fun configureModule(module: Module, model: ModifiableRootModel) {

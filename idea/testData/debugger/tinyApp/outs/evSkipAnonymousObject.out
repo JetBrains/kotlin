@@ -29,7 +29,7 @@ fun foo(i: Int) {}
 
 // PRINT_FRAME
 Compile bytecode for a1.prop
- frame    = main():12, EvSkipAnonymousObjectKt {evSkipAnonymousObject}
+ frame    = main:12, EvSkipAnonymousObjectKt {evSkipAnonymousObject}
    local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = evSkipAnonymousObject.kt, 7)
    local    = a1: evSkipAnonymousObject.A = {evSkipAnonymousObject.A@uniqueID} (sp = evSkipAnonymousObject.kt, 8)
      field    = prop: int = 1 (sp = evSkipAnonymousObject.kt, 4)

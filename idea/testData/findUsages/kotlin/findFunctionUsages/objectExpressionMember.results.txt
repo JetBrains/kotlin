@@ -1,1 +1,1 @@
-Function call (11: 17) localObject.f()
+Function call 11 localObject.f()

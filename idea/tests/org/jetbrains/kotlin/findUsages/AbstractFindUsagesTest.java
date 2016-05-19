@@ -28,6 +28,7 @@ import com.intellij.find.findUsages.*;
 import com.intellij.find.impl.FindManagerImpl;
 import com.intellij.lang.properties.psi.PropertiesFile;
 import com.intellij.lang.properties.psi.Property;
+import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
@@ -38,6 +39,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.usageView.UsageInfo;
+import com.intellij.usages.TextChunk;
 import com.intellij.usages.UsageGroup;
 import com.intellij.usages.UsageInfo2UsageAdapter;
 import com.intellij.usages.UsageViewPresentation;
@@ -49,6 +51,7 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.CommonProcessors;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
+import org.gradle.util.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.findUsages.KotlinClassFindUsagesOptions;
@@ -66,7 +69,6 @@ import org.jetbrains.kotlin.test.KotlinTestUtils;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -422,10 +424,16 @@ public abstract class AbstractFindUsagesTest extends KotlinLightCodeInsightFixtu
                 UsageType usageType = getUsageType(usageAdapter.getElement());
                 String usageTypeAsString = usageType == null ? "null" : usageType.toString(USAGE_VIEW_PRESENTATION);
 
+                List<TextChunk> usageChunks = new ArrayList<TextChunk>();
+                CollectionUtils.addAll(usageChunks, usageAdapter.getPresentation().getText());
+
+                // Add space after line number
+                usageChunks.add(1, new TextChunk(new TextAttributes(), " "));
+
                 return (appendFileName ? "[" + usageAdapter.getFile().getName() + "] " : "") +
                        usageTypeAsString + " " +
                        groupAsString +
-                       Joiner.on("").join(Arrays.asList(usageAdapter.getPresentation().getText()));
+                       Joiner.on("").join(usageChunks);
             }
         };
 

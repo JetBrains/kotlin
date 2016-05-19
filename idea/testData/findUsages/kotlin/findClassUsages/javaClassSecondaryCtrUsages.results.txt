@@ -1,1 +1,1 @@
-New instance creation (3: 13) new A()
+New instance creation 3 new A()

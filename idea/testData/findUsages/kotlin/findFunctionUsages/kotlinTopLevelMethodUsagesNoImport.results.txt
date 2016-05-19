@@ -1,2 +1,2 @@
-Callable reference (6: 23) val methodRef = ::processRequest()
-Function call (10: 9) processRequest()
+Callable reference 6 val methodRef = ::processRequest()
+Function call 10 processRequest()
