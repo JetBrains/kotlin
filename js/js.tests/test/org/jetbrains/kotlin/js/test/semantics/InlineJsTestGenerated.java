@@ -35,6 +35,12 @@ public class InlineJsTestGenerated extends AbstractInlineJsTest {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/inline/cases"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
+    @TestMetadata("anonymousFunction.kt")
+    public void testAnonymousFunction() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inline/cases/anonymousFunction.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("anonymousObjectInlineMethod.kt")
     public void testAnonymousObjectInlineMethod() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inline/cases/anonymousObjectInlineMethod.kt");
