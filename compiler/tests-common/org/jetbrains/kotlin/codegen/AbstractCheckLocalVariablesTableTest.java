@@ -44,9 +44,8 @@ import java.util.regex.Pattern;
  */
 
 public abstract class AbstractCheckLocalVariablesTableTest extends TestCaseWithTmpdir {
-
     private File ktFile;
-    private KotlinCoreEnvironment jetCoreEnvironment;
+    private KotlinCoreEnvironment environment;
 
     public AbstractCheckLocalVariablesTableTest() {
     }
@@ -54,12 +53,12 @@ public abstract class AbstractCheckLocalVariablesTableTest extends TestCaseWithT
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        jetCoreEnvironment = KotlinTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable);
+        environment = KotlinTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable);
     }
 
     @Override
     protected void tearDown() throws Exception {
-        jetCoreEnvironment = null;
+        environment = null;
         super.tearDown();
     }
 
@@ -67,9 +66,9 @@ public abstract class AbstractCheckLocalVariablesTableTest extends TestCaseWithT
         ktFile = new File(ktFileName);
         String text = FileUtil.loadFile(ktFile, true);
 
-        KtFile psiFile = KotlinTestUtils.createFile(ktFile.getName(), text, jetCoreEnvironment.getProject());
+        KtFile psiFile = KotlinTestUtils.createFile(ktFile.getName(), text, environment.getProject());
 
-        OutputFileCollection outputFiles = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile, jetCoreEnvironment);
+        OutputFileCollection outputFiles = GenerationUtils.compileFile(psiFile, environment);
 
         String classAndMethod = parseClassAndMethodSignature();
         String[] split = classAndMethod.split("\\.");

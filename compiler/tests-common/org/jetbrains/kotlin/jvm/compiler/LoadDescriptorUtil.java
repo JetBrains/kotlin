@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
-import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.GenerationUtils;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
@@ -67,12 +66,11 @@ public final class LoadDescriptorUtil {
             @NotNull ConfigurationKind configurationKind,
             boolean useTypeTableInSerializer
     ) {
-        KtFilesAndAnalysisResult
-                filesAndResult = KtFilesAndAnalysisResult.createJetFilesAndAnalyze(kotlinFiles, disposable, configurationKind);
+        KtFilesAndAnalysisResult filesAndResult =
+                KtFilesAndAnalysisResult.createJetFilesAndAnalyze(kotlinFiles, disposable, configurationKind);
         AnalysisResult result = filesAndResult.getAnalysisResult();
-        List<KtFile> files = filesAndResult.getKtFiles();
-        GenerationState state = GenerationUtils.compileFilesGetGenerationState(
-                files.get(0).getProject(), result, files, useTypeTableInSerializer
+        GenerationState state = GenerationUtils.compileFiles(
+                result, filesAndResult.getKtFiles(), useTypeTableInSerializer, CompilerConfiguration.EMPTY
         );
         OutputUtilsKt.writeAllTo(state.getFactory(), outDir);
         return result;
@@ -131,22 +129,22 @@ public final class LoadDescriptorUtil {
                 @NotNull Disposable disposable,
                 @NotNull ConfigurationKind configurationKind
         ) {
-            final KotlinCoreEnvironment jetCoreEnvironment = createEnvironmentWithMockJdkAndIdeaAnnotations(disposable, configurationKind);
-            List<KtFile> jetFiles = ContainerUtil.map(kotlinFiles, new Function<File, KtFile>() {
+            final KotlinCoreEnvironment environment = createEnvironmentWithMockJdkAndIdeaAnnotations(disposable, configurationKind);
+            List<KtFile> ktFiles = ContainerUtil.map(kotlinFiles, new Function<File, KtFile>() {
                 @Override
                 public KtFile fun(File kotlinFile) {
                     try {
                         return KotlinTestUtils.createFile(
-                                kotlinFile.getName(), FileUtil.loadFile(kotlinFile, true), jetCoreEnvironment.getProject());
+                                kotlinFile.getName(), FileUtil.loadFile(kotlinFile, true), environment.getProject()
+                        );
                     }
                     catch (IOException e) {
                         throw new AssertionError(e);
                     }
                 }
             });
-            AnalysisResult result = JvmResolveUtil.analyzeFilesWithJavaIntegrationAndCheckForErrors(
-                    jetCoreEnvironment.getProject(), jetFiles, new JvmPackagePartProvider(jetCoreEnvironment));
-            return new KtFilesAndAnalysisResult(jetFiles, result);
+            AnalysisResult result = JvmResolveUtil.analyzeAndCheckForErrors(ktFiles, environment);
+            return new KtFilesAndAnalysisResult(ktFiles, result);
         }
 
         private final List<KtFile> ktFiles;

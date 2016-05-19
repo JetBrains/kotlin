@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.jvm.runtime
 
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAllTo
 import org.jetbrains.kotlin.codegen.GenerationUtils
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.descriptors.*
@@ -138,8 +137,8 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
                 val environment = KotlinTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
                         myTestRootDisposable, ConfigurationKind.ALL, jdkKind
                 )
-                val jetFile = KotlinTestUtils.createFile(file.path, text, environment.project)
-                GenerationUtils.compileFileGetClassFileFactoryForTest(jetFile, environment).writeAllTo(tmpdir)
+                val ktFile = KotlinTestUtils.createFile(file.path, text, environment.project)
+                GenerationUtils.compileFileTo(ktFile, environment, tmpdir)
             }
         }
     }

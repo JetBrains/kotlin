@@ -21,7 +21,6 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
-import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
@@ -48,11 +47,7 @@ public class CodegenTestUtil {
 
     @NotNull
     public static ClassFileFactory generateFiles(@NotNull KotlinCoreEnvironment environment, @NotNull CodegenTestFiles files) {
-        AnalysisResult analysisResult = JvmResolveUtil.analyzeFilesWithJavaIntegrationAndCheckForErrors(
-                environment.getProject(),
-                files.getPsiFiles(),
-                new JvmPackagePartProvider(environment)
-        );
+        AnalysisResult analysisResult = JvmResolveUtil.analyzeAndCheckForErrors(files.getPsiFiles(), environment);
         analysisResult.throwIfError();
         AnalyzingUtils.throwExceptionOnErrors(analysisResult.getBindingContext());
         CompilerConfiguration configuration = environment.getConfiguration();

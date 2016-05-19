@@ -67,7 +67,7 @@ abstract class AbstractConstraintSystemTest : KotlinTestWithEnvironment() {
         val fileName = "declarations.kt"
 
         val psiFile = KotlinTestUtils.createFile(fileName, KotlinTestUtils.doLoadFile(testDataPath, fileName), project)
-        val bindingContext = JvmResolveUtil.analyzeOneFileWithJavaIntegrationAndCheckForErrors(psiFile).bindingContext
+        val bindingContext = JvmResolveUtil.analyzeAndCheckForErrors(psiFile, environment).bindingContext
         return ConstraintSystemTestData(bindingContext, project, typeResolver)
     }
 

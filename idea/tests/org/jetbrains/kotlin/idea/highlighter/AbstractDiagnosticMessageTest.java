@@ -74,7 +74,7 @@ public abstract class AbstractDiagnosticMessageTest extends KotlinTestWithEnviro
 
     @NotNull
     protected AnalysisResult analyze(@NotNull KtFile file) {
-        return JvmResolveUtil.analyzeOneFileWithJavaIntegration(file);
+        return JvmResolveUtil.analyze(file, getEnvironment());
     }
 
     public void doTest(String filePath) throws Exception {

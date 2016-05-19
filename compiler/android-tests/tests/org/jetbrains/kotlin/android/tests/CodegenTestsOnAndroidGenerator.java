@@ -25,7 +25,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
-import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.CodegenTestFiles;
 import org.jetbrains.kotlin.codegen.GenerationUtils;
@@ -200,12 +199,7 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
                                 : isFullJdkAndRuntime ? " (full jdk and runtime)" : "") + "...");
             OutputFileCollection outputFiles;
             try {
-                outputFiles = GenerationUtils.compileManyFilesGetGenerationStateForTest(
-                        filesToCompile.iterator().next().getProject(),
-                        filesToCompile,
-                        new JvmPackagePartProvider(environment),
-                        environment.getConfiguration()
-                ).getFactory();
+                outputFiles = GenerationUtils.compileFiles(filesToCompile, environment).getFactory();
             }
             catch (Throwable e) {
                 throw new RuntimeException(e);

@@ -38,7 +38,7 @@ abstract class AbstractFunctionDescriptorInExpressionRendererTest : KotlinTestWi
     fun doTest(path: String) {
         val fileText = FileUtil.loadFile(File(path), true)
         val file = KtPsiFactory(project).createFile(fileText)
-        val bindingContext = JvmResolveUtil.analyzeOneFileWithJavaIntegration(file).bindingContext
+        val bindingContext = JvmResolveUtil.analyze(file, environment).bindingContext
 
         val descriptors = arrayListOf<DeclarationDescriptor>()
 

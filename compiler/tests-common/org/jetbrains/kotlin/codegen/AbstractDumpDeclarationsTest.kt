@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.psi.KtFile
@@ -51,18 +50,14 @@ abstract class AbstractDumpDeclarationsTest : CodegenTestCase() {
     }
 
     private fun compileManyFilesGetDeclarationsDump(files: List<KtFile>): File {
-        val project = myEnvironment.project
-        val packagePartProvider = JvmPackagePartProvider(myEnvironment)
-
-        val analysisResult = JvmResolveUtil.analyzeFilesWithJavaIntegrationAndCheckForErrors(
-                project, files, packagePartProvider)
+        val analysisResult = JvmResolveUtil.analyzeAndCheckForErrors(files, myEnvironment)
 
         analysisResult.throwIfError()
 
         val dumpToFile = KotlinTestUtils.tmpDirForTest(this).resolve(this.name + ".json")
 
         val state = GenerationState(
-                project, ClassBuilderFactories.TEST,
+                myEnvironment.project, ClassBuilderFactories.TEST,
                 analysisResult.moduleDescriptor, analysisResult.bindingContext,
                 files,
                 disableCallAssertions = false,

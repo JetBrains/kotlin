@@ -85,12 +85,11 @@ public class DefaultModalityModifiersTest extends KotlinTestWithEnvironment {
 
         @NotNull
         private LexicalScope createScope(@NotNull MemberScope libraryScope) {
-            KtFile file = KtPsiFactoryKt
-                    .KtPsiFactory(getProject()).createFile("abstract class C { abstract fun foo(); abstract val a: Int }");
-            List<KtDeclaration> declarations = file.getDeclarations();
-            KtDeclaration aClass = declarations.get(0);
+            KtFile file =
+                    KtPsiFactoryKt.KtPsiFactory(getProject()).createFile("abstract class C { abstract fun foo(); abstract val a: Int }");
+            KtDeclaration aClass = file.getDeclarations().get(0);
             assert aClass instanceof KtClass;
-            AnalysisResult bindingContext = JvmResolveUtil.analyzeOneFileWithJavaIntegrationAndCheckForErrors(file);
+            AnalysisResult bindingContext = JvmResolveUtil.analyzeAndCheckForErrors(file, getEnvironment());
             final DeclarationDescriptor classDescriptor = bindingContext.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, aClass);
             return new LexicalScopeImpl(ScopeUtilsKt.memberScopeAsImportingScope(libraryScope), root, false, null,
                                         LexicalScopeKind.SYNTHETIC, LocalRedeclarationChecker.DO_NOTHING.INSTANCE,

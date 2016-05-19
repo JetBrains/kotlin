@@ -20,7 +20,6 @@ import com.google.common.io.Closeables
 import com.google.common.io.Files
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAllTo
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.GenerationUtils
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -36,22 +35,21 @@ import java.nio.charset.Charset
 import java.util.*
 import java.util.regex.MatchResult
 
-
 abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
-    private var jetCoreEnvironment: KotlinCoreEnvironment? = null
+    private var environment: KotlinCoreEnvironment? = null
 
     override fun setUp() {
         super.setUp()
-        jetCoreEnvironment =
-                KotlinTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
-                        myTestRootDisposable, ConfigurationKind.ALL, jdkKind)
+        environment = KotlinTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
+                myTestRootDisposable, ConfigurationKind.ALL, jdkKind
+        )
     }
 
     protected open val jdkKind: TestJdkKind
         get() = TestJdkKind.MOCK_JDK
 
     override fun tearDown() {
-        jetCoreEnvironment = null
+        environment = null
         super.tearDown()
     }
 
@@ -59,11 +57,9 @@ abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
         val ktFile = File(ktFileName)
         val text = FileUtil.loadFile(ktFile, true)
 
-        val psiFile = KotlinTestUtils.createFile(ktFile.name, text, jetCoreEnvironment!!.project)
+        val psiFile = KotlinTestUtils.createFile(ktFile.name, text, environment!!.project)
 
-        val outputFiles = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile, jetCoreEnvironment!!)
-
-        outputFiles.writeAllTo(tmpdir)
+        GenerationUtils.compileFileTo(psiFile, environment!!, tmpdir)
 
         Disposer.dispose(myTestRootDisposable)
 

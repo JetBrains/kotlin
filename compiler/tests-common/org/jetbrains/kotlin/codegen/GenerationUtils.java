@@ -16,109 +16,79 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import com.intellij.openapi.project.Project;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
+import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
-import org.jetbrains.kotlin.config.CompilerConfigurationKey;
 import org.jetbrains.kotlin.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.descriptors.PackagePartProvider;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
 public class GenerationUtils {
-
     private GenerationUtils() {
     }
 
     @NotNull
-    public static ClassFileFactory compileFileGetClassFileFactoryForTest(
-            @NotNull KtFile psiFile,
-            @NotNull KotlinCoreEnvironment environment
-    ) {
-        return compileFileGetGenerationStateForTest(psiFile, environment).getFactory();
+    public static ClassFileFactory compileFileTo(@NotNull KtFile ktFile, @NotNull KotlinCoreEnvironment environment, @NotNull File output) {
+        ClassFileFactory factory = compileFile(ktFile, environment);
+        OutputUtilsKt.writeAllTo(factory, output);
+        return factory;
     }
 
     @NotNull
-    public static GenerationState compileFileGetGenerationStateForTest(
-            @NotNull KtFile psiFile,
-            @NotNull KotlinCoreEnvironment environment
-    ) {
+    public static ClassFileFactory compileFile(@NotNull KtFile ktFile, @NotNull KotlinCoreEnvironment environment) {
+        AnalysisResult analysisResult = JvmResolveUtil.analyzeAndCheckForErrors(ktFile, environment);
+        GenerationState state = compileFiles(analysisResult, Collections.singletonList(ktFile), false, environment.getConfiguration());
+        return state.getFactory();
+    }
+
+    @NotNull
+    public static GenerationState compileFiles(@NotNull List<KtFile> files, @Nullable KotlinCoreEnvironment environment) {
+        PackagePartProvider packagePartProvider =
+                environment == null ? PackagePartProvider.Companion.getEMPTY() : new JvmPackagePartProvider(environment);
+        CompilerConfiguration configuration =
+                environment == null ? CompilerConfiguration.EMPTY : environment.getConfiguration();
         AnalysisResult analysisResult =
-                JvmResolveUtil.analyzeOneFileWithJavaIntegrationAndCheckForErrors(psiFile, new JvmPackagePartProvider(environment));
-        return compileFilesGetGenerationState(psiFile.getProject(), analysisResult, Collections.singletonList(psiFile), false, null);
+                JvmResolveUtil.analyzeAndCheckForErrors(CollectionsKt.first(files).getProject(), files, configuration, packagePartProvider);
+        return compileFiles(analysisResult, files, false, configuration);
     }
 
     @NotNull
-    public static GenerationState compileManyFilesGetGenerationStateForTest(@NotNull Project project, @NotNull List<KtFile> files) {
-        return compileManyFilesGetGenerationStateForTest(project, files, PackagePartProvider.Companion.getEMPTY(), null);
-    }
-
-    @NotNull
-    public static GenerationState compileManyFilesGetGenerationStateForTest(
-            @NotNull Project project,
-            @NotNull List<KtFile> files,
-            @NotNull PackagePartProvider packagePartProvider,
-            @Nullable CompilerConfiguration configuration
-    ) {
-        AnalysisResult analysisResult = JvmResolveUtil.analyzeFilesWithJavaIntegrationAndCheckForErrors(
-                project, files, packagePartProvider);
-        return compileFilesGetGenerationState(project, analysisResult, files, false, configuration);
-    }
-
-    @NotNull
-    public static GenerationState compileFilesGetGenerationState(
-            @NotNull Project project,
-            @NotNull AnalysisResult analysisResult,
-            @NotNull List<KtFile> files,
-            boolean useTypeTableInSerializer
-    ) {
-        return compileFilesGetGenerationState(project, analysisResult, files, useTypeTableInSerializer, null);
-    }
-
-    @NotNull
-    public static GenerationState compileFilesGetGenerationState(
-            @NotNull Project project,
+    public static GenerationState compileFiles(
             @NotNull AnalysisResult analysisResult,
             @NotNull List<KtFile> files,
             boolean useTypeTableInSerializer,
-            @Nullable CompilerConfiguration configuration
+            @NotNull CompilerConfiguration configuration
     ) {
         analysisResult.throwIfError();
         GenerationState state = new GenerationState(
-                project, ClassBuilderFactories.TEST,
+                CollectionsKt.first(files).getProject(), ClassBuilderFactories.TEST,
                 analysisResult.getModuleDescriptor(), analysisResult.getBindingContext(),
                 files,
-                getConfigurationValueOrDefault(configuration, JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS, false),
-                getConfigurationValueOrDefault(configuration, JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS, false),
+                configuration.get(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS, false),
+                configuration.get(JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS, false),
                 GenerationState.GenerateClassFilter.GENERATE_ALL,
-                getConfigurationValueOrDefault(configuration, JVMConfigurationKeys.DISABLE_INLINE, false),
-                getConfigurationValueOrDefault(configuration, JVMConfigurationKeys.DISABLE_OPTIMIZATION, false),
+                configuration.get(JVMConfigurationKeys.DISABLE_INLINE, false),
+                configuration.get(JVMConfigurationKeys.DISABLE_OPTIMIZATION, false),
                 useTypeTableInSerializer,
-                getConfigurationValueOrDefault(configuration, JVMConfigurationKeys.INHERIT_MULTIFILE_PARTS, false),
+                configuration.get(JVMConfigurationKeys.INHERIT_MULTIFILE_PARTS, false),
                 Collections.<FqName>emptySet(),
                 Collections.<FqName>emptySet(),
                 null,
-                configuration == null ? null : configuration.get(JVMConfigurationKeys.MODULE_NAME)
+                configuration.get(JVMConfigurationKeys.MODULE_NAME)
         );
         KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
         return state;
-    }
-
-    private static <T> T getConfigurationValueOrDefault(
-            @Nullable CompilerConfiguration configuration,
-            @NotNull CompilerConfigurationKey<T> key,
-            T defaultValue
-    ) {
-        if (configuration == null) return defaultValue;
-        return configuration.get(key, defaultValue);
     }
 }
