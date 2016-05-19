@@ -16,7 +16,9 @@
 
 package org.jetbrains.kotlin.coroutines
 
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -28,3 +30,10 @@ fun SimpleFunctionDescriptor.getExpectedTypeForCoroutineControllerHandleResult()
 
     return valueParameters.getOrNull(0)?.type
 }
+
+val CallableDescriptor.controllerTypeIfCoroutine: KotlinType?
+    get() {
+        if (this !is AnonymousFunctionDescriptor || !this.isCoroutine) return null
+
+        return this.extensionReceiverParameter?.returnType
+    }

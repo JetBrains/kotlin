@@ -23,12 +23,20 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
 
 public class AnonymousFunctionDescriptor extends SimpleFunctionDescriptorImpl {
+    private final boolean isCoroutine;
+
     public AnonymousFunctionDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Annotations annotations,
             @NotNull Kind kind,
-            @NotNull SourceElement source
+            @NotNull SourceElement source,
+            boolean isCoroutine
     ) {
         super(containingDeclaration, null, annotations, Name.special("<anonymous>"), kind, source);
+        this.isCoroutine = isCoroutine;
+    }
+
+    public boolean isCoroutine() {
+        return isCoroutine;
     }
 }

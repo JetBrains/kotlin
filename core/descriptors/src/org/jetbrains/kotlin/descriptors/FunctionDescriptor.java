@@ -120,7 +120,7 @@ public interface FunctionDescriptor extends CallableMemberDescriptor {
         CopyBuilder<D> setDispatchReceiverParameter(@Nullable ReceiverParameterDescriptor dispatchReceiverParameter);
 
         @NotNull
-        CopyBuilder<D> setOriginal(@NotNull FunctionDescriptor original);
+        CopyBuilder<D> setOriginal(@Nullable FunctionDescriptor original);
 
         @NotNull
         CopyBuilder<D> setSignatureChange();
