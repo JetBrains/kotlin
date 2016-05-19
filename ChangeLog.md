@@ -94,10 +94,8 @@
 - KT-11090 "Add variance modifiers to type parameters" inspection
 - KT-10844 Quick fix to add crossinline modifier
 - KT-11806 Quick-fix to increase visibility for invisible member
-- KT-11768 "Introduce local variable" intention
 - [KT-11768](https://youtrack.jetbrains.com/issue/KT-11768) "Introduce local variable" intention
 - [KT-11807](https://youtrack.jetbrains.com/issue/KT-11807) Use function body template when generating overriding functions with default body
-- KT-11807 Configurable code template for "Implement abstract function" intention
 - KT-11920 "Increase visibility" and "Decrease visibility" quickfixes for exposed visibility errors
 - "Change visibility on exposure" and "Make visible" fixes now support all possible visibilities
 - KT-12121 "Add 'toString()' call" quickfix
@@ -124,8 +122,6 @@
 - KT-11710 "Replace 'if' with elvis operator": incorrect code generated for 'if' expression
 - KT-11849 Replace explicit parameter with `it` changes the meaning of code because of the shadowing
 - KT-11870 "Replace with Elvis" refactoring doesn't change the variable type from T? to T
-- KT-11659 Override/implement generates red code when invoked for methods from Any in an interface
-- KT-11866 "Create secondary constructor" quick fix is not suggested if primary and some secondary constructor exist
 - Fixed "Convert property initializer getter" intention being available inside lambda initializer
 - KT-12069 Specify language for all Kotlin code inspections
 - KT-11366 "object 'Companion' is never used" warning in intellij
@@ -227,8 +223,6 @@
 - KT-11961 Formatter doesn't handle space before angle bracket in method definition
 - KT-12175 Formatter: Don't enforce empty line between secondary constructors without body
 - [KT-11908](https://youtrack.jetbrains.com/issue/KT-11908) Allow properties with custom setters to be used in generated equals/hashCode/toString
-- [KT-11845](https://youtrack.jetbrains.com/issue/KT-11845) Fixed exception on attempt to find derived classes
-- [KT-11736](https://youtrack.jetbrains.com/issue/KT-11736) Fixed searching of Java usages for @JvmStatic properties and @JvmStatic @JvmOverloads functions
 - [KT-8817](https://youtrack.jetbrains.com/issue/KT-8817) Fixed rename of Java getters/setters through synthetic property references in Kotlin
 - [KT-11617](https://youtrack.jetbrains.com/issue/KT-11617) Fixed title of Introduce Parameter declaration chooser
 - [KT-11817](https://youtrack.jetbrains.com/issue/KT-11817) Fixed rename of Kotlin enum constants through Java references
@@ -256,7 +250,6 @@
 ### Tools
 
 ###### Issues fixed:
-- KT-10932 compileKotlin Gradle tasks not "UP-TO-DATE" on a build with no changes
 - KT-12074 Building Kotlin maven projects using a parent pom will silently fail
 
 ## 1.0.2
