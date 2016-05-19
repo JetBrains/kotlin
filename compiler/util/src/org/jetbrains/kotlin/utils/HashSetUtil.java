@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,12 +21,13 @@ import com.intellij.util.containers.hash.HashSet;
 import com.intellij.util.containers.hash.LinkedHashMap;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
 public class HashSetUtil {
     @NotNull
-    public static <T> Set<T> linkedHashSet(@NotNull Set<T> set,  @NotNull EqualityPolicy<T> policy) {
+    public static <T> Set<T> linkedHashSet(@NotNull Collection<T> set,  @NotNull EqualityPolicy<T> policy) {
         // this implementation of LinkedHashMap doesn't admit nulls as values
         Map<T, String> map = new LinkedHashMap<T, String>(policy);
         for (T t : set) {
