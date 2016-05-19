@@ -19,7 +19,11 @@ package org.jetbrains.kotlin.resolve.calls.callResolverUtil
 import com.google.common.collect.Lists
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.builtins.ReflectionTypes
+import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
+import org.jetbrains.kotlin.builtins.isExtensionFunctionType
+import org.jetbrains.kotlin.coroutines.getExpectedTypeForCoroutineControllerHandleResult
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.incremental.KotlinLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
@@ -28,6 +32,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.Constrain
 import org.jetbrains.kotlin.resolve.calls.inference.getNestedTypeVariables
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
@@ -36,6 +41,7 @@ import org.jetbrains.kotlin.resolve.validation.InfixValidator
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -163,6 +169,28 @@ fun getEffectiveExpectedType(parameterDescriptor: ValueParameterDescriptor, argu
     val varargElementType = parameterDescriptor.varargElementType
     if (varargElementType != null) {
         return varargElementType
+    }
+
+    if (parameterDescriptor.isCoroutine &&
+            argument.getArgumentExpression() is KtLambdaExpression &&
+            parameterDescriptor.type.isExtensionFunctionType
+    ) {
+        val receiverType = getReceiverTypeFromFunctionType(parameterDescriptor.type)!!
+
+        val newExpectedLambdaReturnType =
+                receiverType.memberScope
+                        .getContributedFunctions(HANDLE_RESULT_NAME, KotlinLookupLocation(argument.asElement())).mapNotNull {
+                                it.getExpectedTypeForCoroutineControllerHandleResult()
+                        }.singleOrNull()
+                // If no handleResult function found, then expected return type for lambda is Unit
+                ?: parameterDescriptor.module.builtIns.unitType
+
+        // replace return type for lambda with the one we got from single 'handleResult'
+        val newFunctionTypeArguments = parameterDescriptor.type.arguments.toMutableList()
+        newFunctionTypeArguments[newFunctionTypeArguments.lastIndex] = newExpectedLambdaReturnType.asTypeProjection()
+
+        return parameterDescriptor.type.replace(
+                newArguments = newFunctionTypeArguments)
     }
 
     return parameterDescriptor.type
