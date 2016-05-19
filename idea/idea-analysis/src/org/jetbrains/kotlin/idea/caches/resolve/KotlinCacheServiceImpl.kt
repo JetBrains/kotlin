@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.container.getService
+import org.jetbrains.kotlin.context.GlobalContextImpl
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.idea.project.AnalyzerFacadeProvider
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
@@ -64,14 +65,16 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
                 }
             }
 
+    private val globalContext = GlobalContext(logProcessCanceled = true)
+
     private inner class GlobalFacade(platform: TargetPlatform, sdk: Sdk?) {
-        val facadeForLibraries = ProjectResolutionFacade(project) {
+        val facadeForLibraries = ProjectResolutionFacade(project, globalContext.storageManager) {
             globalResolveSessionProvider(
                     "project libraries for platform $platform",
                     project,
                     platform,
                     sdk,
-                    logProcessCanceled = true,
+                    commonGlobalContext = globalContext,
                     moduleFilter = { it.isLibraryClasses() },
                     dependencies = listOf(
                             LibraryModificationTracker.getInstance(project),
@@ -80,12 +83,13 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
             )
         }
 
-        val facadeForModules = ProjectResolutionFacade(project) {
+        val facadeForModules = ProjectResolutionFacade(project, globalContext.storageManager) {
             globalResolveSessionProvider(
                     "project source roots and libraries for platform $platform",
                     project,
                     platform,
                     sdk,
+                    commonGlobalContext = globalContext,
                     reuseDataFrom = facadeForLibraries,
                     moduleFilter = { !it.isLibraryClasses() },
                     dependencies = listOf(PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT))
@@ -120,12 +124,13 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         return when {
             syntheticFileModule is ModuleSourceInfo -> {
                 val dependentModules = syntheticFileModule.getDependentModules()
-                ProjectResolutionFacade(project) {
+                ProjectResolutionFacade(project, globalContext.storageManager) {
                     globalResolveSessionProvider(
                             debugName,
                             project,
                             targetPlatform,
                             sdk,
+                            commonGlobalContext = globalContext,
                             syntheticFiles = files,
                             reuseDataFrom = globalFacade(targetPlatform, sdk),
                             moduleFilter = { it in dependentModules },
@@ -135,12 +140,13 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
             }
 
             syntheticFileModule is LibrarySourceInfo || syntheticFileModule is NotUnderContentRootModuleInfo -> {
-                ProjectResolutionFacade(project) {
+                ProjectResolutionFacade(project, globalContext.storageManager) {
                     globalResolveSessionProvider(
                             debugName,
                             project,
                             targetPlatform,
                             sdk,
+                            commonGlobalContext = globalContext,
                             syntheticFiles = files,
                             reuseDataFrom = librariesFacade(targetPlatform, sdk),
                             moduleFilter = { it == syntheticFileModule },
@@ -154,12 +160,13 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
                 // currently the only known scenario is when we cannot determine that file is a library source
                 // (file under both classes and sources root)
                 LOG.warn("Creating cache with synthetic files ($files) in classes of library $syntheticFileModule")
-                ProjectResolutionFacade(project) {
+                ProjectResolutionFacade(project, globalContext.storageManager) {
                     globalResolveSessionProvider(
                             debugName,
                             project,
                             targetPlatform,
                             sdk,
+                            commonGlobalContext = globalContext,
                             syntheticFiles = files,
                             moduleFilter = { true },
                             dependencies = dependenciesForSyntheticFileCache
@@ -250,15 +257,13 @@ private fun globalResolveSessionProvider(
         sdk: Sdk?,
         dependencies: Collection<Any>,
         moduleFilter: (IdeaModuleInfo) -> Boolean,
+        commonGlobalContext: GlobalContextImpl,
         reuseDataFrom: ProjectResolutionFacade? = null,
-        syntheticFiles: Collection<KtFile> = listOf(),
-        logProcessCanceled: Boolean = false
+        syntheticFiles: Collection<KtFile> = listOf()
 ): CachedValueProvider.Result<ModuleResolverProvider> {
     val delegateResolverProvider = reuseDataFrom?.moduleResolverProvider
     val delegateResolverForProject = delegateResolverProvider?.resolverForProject ?: EmptyResolverForProject()
-    val globalContext = (delegateResolverProvider as? ModuleResolverProviderImpl)?.globalContext
-                                ?.withCompositeExceptionTrackerUnderSameLock()
-                        ?: GlobalContext(logProcessCanceled)
+    val globalContext = commonGlobalContext.withCompositeExceptionTrackerUnderSameLock()
 
     val builtIns: KotlinBuiltIns = when (platform) {
         is JsPlatform -> JsPlatform.builtIns

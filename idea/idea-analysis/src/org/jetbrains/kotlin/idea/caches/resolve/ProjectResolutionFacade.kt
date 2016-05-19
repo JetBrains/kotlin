@@ -36,15 +36,20 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CompositeBindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
+import org.jetbrains.kotlin.storage.StorageManager
 
 internal class ProjectResolutionFacade(
         val project: Project,
+        private val storageManager: StorageManager,
         computeModuleResolverProvider: () -> CachedValueProvider.Result<ModuleResolverProvider>
 ) {
-    private val resolverCache = SynchronizedCachedValue(project, computeModuleResolverProvider, trackValue = false)
+    private val cachedValue = CachedValuesManager.getManager(project).createCachedValue(
+            computeModuleResolverProvider,
+            /* trackValue = */ false
+    )
 
     val moduleResolverProvider: ModuleResolverProvider
-        get() = resolverCache.getValue()
+        get() = storageManager.compute { cachedValue.value }
 
     fun resolverForModuleInfo(moduleInfo: IdeaModuleInfo) = moduleResolverProvider.resolverForProject.resolverForModule(moduleInfo)
     fun resolverForDescriptor(moduleDescriptor: ModuleDescriptor) = moduleResolverProvider.resolverForProject.resolverForModuleDescriptor(moduleDescriptor)
