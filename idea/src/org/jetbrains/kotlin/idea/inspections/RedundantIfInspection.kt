@@ -55,11 +55,15 @@ class RedundantIfInspection : AbstractKotlinInspection(), CleanupLocalInspection
 
     private fun getReturnedExpression(expression: KtExpression?) : KtExpression? {
         if (expression == null) return null
-        if (expression !is KtBlockExpression) return null
-        if (expression.statements.size != 1) return null
-        val statement = expression.statements.singleOrNull() as? KtReturnExpression ?: return null
-        val returnedExpression = statement.returnedExpression ?: return null
-        return returnedExpression
+
+        when(expression) {
+            is KtReturnExpression -> return expression.returnedExpression
+            is KtBlockExpression -> {
+                val statement = expression.statements.singleOrNull() as? KtReturnExpression ?: return null
+                return statement.returnedExpression
+            }
+            else -> return null
+        }
     }
 
     private object RemoveRedundantIf : LocalQuickFix {
