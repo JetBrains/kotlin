@@ -509,7 +509,7 @@ public class InlineCodegen extends CallGenerator {
             );
         }
         else {
-            strategy = new FunctionGenerationStrategy.FunctionDefault(state, descriptor, (KtDeclarationWithBody) expression);
+            strategy = new FunctionGenerationStrategy.FunctionDefault(state, (KtDeclarationWithBody) expression);
         }
 
         FunctionCodegen.generateMethodBody(adapter, descriptor, context, jvmMethodSignature, strategy, parentCodegen);

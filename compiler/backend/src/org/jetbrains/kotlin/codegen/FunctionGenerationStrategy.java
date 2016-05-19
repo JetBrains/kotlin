@@ -33,15 +33,14 @@ public abstract class FunctionGenerationStrategy {
             @NotNull MemberCodegen<?> parentCodegen
     );
 
-    public static class FunctionDefault extends CodegenBased<CallableDescriptor> {
+    public static class FunctionDefault extends CodegenBased {
         private final KtDeclarationWithBody declaration;
 
         public FunctionDefault(
                 @NotNull GenerationState state,
-                @NotNull CallableDescriptor descriptor,
                 @NotNull KtDeclarationWithBody declaration
         ) {
-            super(state, descriptor);
+            super(state);
             this.declaration = declaration;
         }
 
@@ -51,13 +50,11 @@ public abstract class FunctionGenerationStrategy {
         }
     }
 
-    public abstract static class CodegenBased<T extends CallableDescriptor> extends FunctionGenerationStrategy {
+    public abstract static class CodegenBased extends FunctionGenerationStrategy {
         protected final GenerationState state;
-        protected final T callableDescriptor;
 
-        public CodegenBased(@NotNull GenerationState state, @NotNull T callableDescriptor) {
+        public CodegenBased(@NotNull GenerationState state) {
             this.state = state;
-            this.callableDescriptor = callableDescriptor;
         }
 
         @Override

@@ -579,7 +579,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
             final FunctionDescriptor original = (FunctionDescriptor) accessorForCallableDescriptor.getCalleeDescriptor();
             functionCodegen.generateMethod(
                     Synthetic(null, original), accessor,
-                    new FunctionGenerationStrategy.CodegenBased<FunctionDescriptor>(state, accessor) {
+                    new FunctionGenerationStrategy.CodegenBased(state) {
                         @Override
                         public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
                             markLineNumberForElement(element, codegen.v);
@@ -595,9 +595,11 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
             final AccessorForPropertyDescriptor accessor = (AccessorForPropertyDescriptor) accessorForCallableDescriptor;
             final PropertyDescriptor original = accessor.getCalleeDescriptor();
 
-            class PropertyAccessorStrategy extends FunctionGenerationStrategy.CodegenBased<PropertyAccessorDescriptor> {
+            class PropertyAccessorStrategy extends FunctionGenerationStrategy.CodegenBased {
+                private final PropertyAccessorDescriptor callableDescriptor;
                 public PropertyAccessorStrategy(@NotNull PropertyAccessorDescriptor callableDescriptor) {
-                    super(MemberCodegen.this.state, callableDescriptor);
+                    super(MemberCodegen.this.state);
+                    this.callableDescriptor = callableDescriptor;
                 }
 
                 @Override

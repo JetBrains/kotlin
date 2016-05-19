@@ -43,7 +43,7 @@ class JvmStaticGenerator(
         codegen.functionCodegen.generateMethod(
                 Synthetic(originElement, staticFunctionDescriptor),
                 staticFunctionDescriptor,
-                object : FunctionGenerationStrategy.CodegenBased<FunctionDescriptor>(state, descriptor) {
+                object : FunctionGenerationStrategy.CodegenBased(state) {
                     override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
                         val iv = codegen.v
                         val classDescriptor = descriptor.containingDeclaration as ClassDescriptor
@@ -57,7 +57,7 @@ class JvmStaticGenerator(
                         }
                         if (descriptor is PropertyAccessorDescriptor) {
                             val propertyValue = codegen.intermediateValueForProperty(descriptor.correspondingProperty, false, null, StackValue.none())
-                            if (callableDescriptor is PropertyGetterDescriptor) {
+                            if (descriptor is PropertyGetterDescriptor) {
                                 propertyValue.put(signature.returnType, iv)
                             }
                             else {

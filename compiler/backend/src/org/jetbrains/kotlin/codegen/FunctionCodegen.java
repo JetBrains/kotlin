@@ -120,7 +120,7 @@ public class FunctionCodegen {
 
         if (owner.getContextKind() != OwnerKind.DEFAULT_IMPLS || function.hasBody()) {
             generateMethod(JvmDeclarationOriginKt.OtherOrigin(function, functionDescriptor), functionDescriptor,
-                           new FunctionGenerationStrategy.FunctionDefault(state, functionDescriptor, function));
+                           new FunctionGenerationStrategy.FunctionDefault(state, function));
         }
 
         generateDefaultIfNeeded(owner.intoFunction(functionDescriptor), functionDescriptor, owner.getContextKind(),
