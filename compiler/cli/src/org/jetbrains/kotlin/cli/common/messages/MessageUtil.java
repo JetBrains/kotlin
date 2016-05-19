@@ -31,7 +31,8 @@ public class MessageUtil {
     private MessageUtil() {}
 
     @NotNull
-    public static CompilerMessageLocation psiElementToMessageLocation(@NotNull PsiElement element) {
+    public static CompilerMessageLocation psiElementToMessageLocation(@Nullable PsiElement element) {
+        if (element == null) return CompilerMessageLocation.NO_LOCATION;
         PsiFile file = element.getContainingFile();
         return psiFileToMessageLocation(file, "<no path>", DiagnosticUtils.getLineAndColumnInPsiFile(file, element.getTextRange()));
     }

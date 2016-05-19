@@ -26,12 +26,12 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
 public class CompilationException extends RuntimeException {
     private final PsiElement element;
 
-    public CompilationException(@NotNull String message, @Nullable Throwable cause, @NotNull PsiElement element) {
+    public CompilationException(@NotNull String message, @Nullable Throwable cause, @Nullable PsiElement element) {
         super(getMessage(message, cause, element), cause);
         this.element = element;
     }
 
-    @NotNull
+    @Nullable
     public PsiElement getElement() {
         return element;
     }
@@ -45,7 +45,7 @@ public class CompilationException extends RuntimeException {
         return "unknown";
     }
 
-    public static String getMessage(@NotNull final String message, @Nullable final Throwable cause, @NotNull final PsiElement element) {
+    public static String getMessage(@NotNull final String message, @Nullable final Throwable cause, @Nullable final PsiElement element) {
         return ApplicationManager.getApplication().runReadAction(new Computable<String>() {
             @Override
             public String compute() {
@@ -55,8 +55,14 @@ public class CompilationException extends RuntimeException {
                     String causeMessage = cause.getMessage();
                     result.append("Cause: ").append(causeMessage == null ? cause.toString() : causeMessage).append("\n");
                 }
-                result.append("File being compiled and position: ").append(DiagnosticUtils.atLocation(element)).append("\n");
-                result.append("PsiElement: ").append(element.getText()).append("\n");
+                if (element != null) {
+                    result.append("File being compiled and position: ").append(DiagnosticUtils.atLocation(element)).append("\n");
+                    result.append("PsiElement: ").append(element.getText()).append("\n");
+                }
+                else {
+                    result.append("Element is unknown");
+                }
+
                 if (cause != null) {
                     result.append("The root cause was thrown at: ").append(where(cause));
                 }
