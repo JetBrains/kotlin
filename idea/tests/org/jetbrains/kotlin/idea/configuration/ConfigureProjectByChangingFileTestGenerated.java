@@ -48,6 +48,12 @@ public class ConfigureProjectByChangingFileTestGenerated extends AbstractConfigu
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/configuration/gradle/missedLibrary_before.gradle");
             doTestGradle(fileName);
         }
+
+        @TestMetadata("plugin_present_before.gradle")
+        public void testPlugin_present() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/configuration/gradle/plugin_present_before.gradle");
+            doTestGradle(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/configuration/maven")

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,13 +29,11 @@ import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.psi.ValueArgument;
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace;
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilKt;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus;
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
-import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeProjection;
@@ -77,7 +75,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
     private final D candidateDescriptor;
     private D resultingDescriptor; // Probably substituted
     private final ReceiverValue dispatchReceiver; // receiver object of a method
-    private final Receiver extensionReceiver; // receiver of an extension function
+    private final ReceiverValue extensionReceiver; // receiver of an extension function
     private final ExplicitReceiverKind explicitReceiverKind;
     private final TypeSubstitutor knownTypeParametersSubstitutor;
 
@@ -106,7 +104,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
         this.call = candidate.getCall();
         this.candidateDescriptor = candidate.getDescriptor();
         this.dispatchReceiver = candidate.getDispatchReceiver();
-        this.extensionReceiver = candidate.getReceiverArgument();
+        this.extensionReceiver = null; // ResolutionCandidate can have only dispatch receiver
         this.explicitReceiverKind = candidate.getExplicitReceiverKind();
         this.knownTypeParametersSubstitutor = candidate.getKnownTypeParametersResultingSubstitutor();
         this.trace = trace;
@@ -275,7 +273,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
 
     @Override
     @Nullable
-    public Receiver getExtensionReceiver() {
+    public ReceiverValue getExtensionReceiver() {
         return extensionReceiver;
     }
 
@@ -347,11 +345,6 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
     @Override
     public Map<TypeParameterDescriptor, KotlinType> getTypeArguments() {
         return typeArguments;
-    }
-
-    @Override
-    public boolean isSafeCall() {
-        return CallUtilKt.isSafeCall(call);
     }
 
     @NotNull

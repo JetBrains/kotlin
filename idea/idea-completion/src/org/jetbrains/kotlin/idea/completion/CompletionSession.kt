@@ -22,9 +22,7 @@ import com.intellij.codeInsight.completion.CompletionSorter
 import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.codeInsight.completion.impl.CamelHumpMatcher
 import com.intellij.codeInsight.lookup.LookupElement
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.patterns.StandardPatterns
-import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.*
@@ -70,6 +68,7 @@ fun CompletionSessionConfiguration(parameters: CompletionParameters) = Completio
 abstract class CompletionSession(
         protected val configuration: CompletionSessionConfiguration,
         protected val parameters: CompletionParameters,
+        protected val toFromOriginalFileMapper: ToFromOriginalFileMapper,
         resultSet: CompletionResultSet
 ) {
     protected val position = parameters.position
@@ -148,16 +147,15 @@ abstract class CompletionSession(
         LookupElementsCollector(prefixMatcher, parameters, resultSet, createSorter())
     }
 
-    protected val originalSearchScope: GlobalSearchScope = getResolveScope(parameters.getOriginalFile() as KtFile)
-
-    // we need to exclude the original file from scope because our resolve session is built with this file replaced by synthetic one
-    protected val searchScope: GlobalSearchScope = object : DelegatingGlobalSearchScope(originalSearchScope) {
-        override fun contains(file: VirtualFile) = super.contains(file) && file != parameters.originalFile.virtualFile
-    }
+    protected val searchScope: GlobalSearchScope = getResolveScope(parameters.originalFile as KtFile)
 
     protected fun indicesHelper(mayIncludeInaccessible: Boolean): KotlinIndicesHelper {
         val filter = if (mayIncludeInaccessible) isVisibleFilter else isVisibleFilterCheckAlways
-        return KotlinIndicesHelper(resolutionFacade, searchScope, filter, filterOutPrivate = !mayIncludeInaccessible)
+        return KotlinIndicesHelper(resolutionFacade,
+                                   searchScope,
+                                   filter,
+                                   filterOutPrivate = !mayIncludeInaccessible,
+                                   declarationTranslator = { toFromOriginalFileMapper.toSyntheticFile(it) })
     }
 
     // excludes top-level extensions except for ones declared in the current file - those that are fetched from indices

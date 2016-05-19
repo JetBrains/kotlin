@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.isAlmostEverything
+import org.jetbrains.kotlin.idea.util.toFuzzyType
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -55,6 +56,7 @@ class SmartCompletion(
         private val bindingContext: BindingContext,
         private val moduleDescriptor: ModuleDescriptor,
         private val visibilityFilter: (DeclarationDescriptor) -> Boolean,
+        private val indicesHelper: KotlinIndicesHelper,
         private val prefixMatcher: PrefixMatcher,
         private val inheritorSearchScope: GlobalSearchScope,
         private val toFromOriginalFileMapper: ToFromOriginalFileMapper,
@@ -208,7 +210,7 @@ class SmartCompletion(
                         .addTo(items, inheritanceSearchers, expectedInfos)
 
                 if (expression is KtSimpleNameExpression) {
-                    StaticMembers(bindingContext, lookupElementFactory, resolutionFacade)
+                    StaticMembers(bindingContext, lookupElementFactory, resolutionFacade, moduleDescriptor)
                             .addToCollection(items, expectedInfos, expression, descriptorsToSkip)
                 }
 
@@ -276,7 +278,7 @@ class SmartCompletion(
         if (shouldCompleteThisItems(prefixMatcher)) {
             val items = thisExpressionItems(bindingContext, place, prefixMatcher.prefix, resolutionFacade)
             for (item in items) {
-                val types = smartCastCalculator.types(item.receiverParameter).map { FuzzyType(it, emptyList()) }
+                val types = smartCastCalculator.types(item.receiverParameter).map { it.toFuzzyType(emptyList()) }
                 val matcher = { expectedInfo: ExpectedInfo -> types.matchExpectedInfo(expectedInfo) }
                 addLookupElements(null, expectedInfos, matcher) {
                     item.createLookupElement().assignSmartCompletionPriority(SmartCompletionItemPriority.THIS).singletonList()
@@ -302,7 +304,7 @@ class SmartCompletion(
         // if expected types are too general, try to use expected type from outer calls
         var count = 0
         while (true) {
-            val infos = ExpectedInfos(bindingContext, resolutionFacade, useOuterCallsExpectedTypeCount = count)
+            val infos = ExpectedInfos(bindingContext, resolutionFacade, indicesHelper, useOuterCallsExpectedTypeCount = count)
                     .calculate(expression)
             if (count == 2 /* use two outer calls maximum */ || infos.none { it.fuzzyType?.isAlmostEverything() ?: false }) {
                 return if (forBasicCompletion)

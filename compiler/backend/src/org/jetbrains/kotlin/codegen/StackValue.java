@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -504,7 +504,7 @@ public abstract class StackValue {
             callDispatchReceiver = ((SyntheticFieldDescriptor) descriptor).getDispatchReceiverForBackend();
         }
 
-        ReceiverValue callExtensionReceiver = (ReceiverValue) resolvedCall.getExtensionReceiver();
+        ReceiverValue callExtensionReceiver = resolvedCall.getExtensionReceiver();
         if (callDispatchReceiver != null || callExtensionReceiver != null
             || isLocalFunCall(callableMethod) || isCallToMemberObjectImportedByName(resolvedCall)) {
             ReceiverParameterDescriptor dispatchReceiverParameter = descriptor.getDispatchReceiverParameter();
@@ -850,7 +850,7 @@ public abstract class StackValue {
                 v.store(firstParamIndex, type);
             }
 
-            ReceiverValue receiverParameter = (ReceiverValue) resolvedGetCall.getExtensionReceiver();
+            ReceiverValue receiverParameter = resolvedGetCall.getExtensionReceiver();
             int receiverIndex = -1;
             if (receiverParameter != null) {
                 Type type = codegen.typeMapper.mapType(receiverParameter.getType());

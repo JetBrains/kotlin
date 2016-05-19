@@ -35,12 +35,10 @@ import org.jetbrains.kotlin.idea.completion.*
 import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
 import org.jetbrains.kotlin.idea.core.ExpectedInfo
 import org.jetbrains.kotlin.idea.core.Tail
-import org.jetbrains.kotlin.idea.core.fuzzyType
+import org.jetbrains.kotlin.idea.core.multipleFuzzyTypes
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
-import org.jetbrains.kotlin.idea.util.FuzzyType
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.idea.util.makeNotNullable
+import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
@@ -52,6 +50,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.utils.addIfNotNull
+import java.util.*
 
 class TypeInstantiationItems(
         val resolutionFacade: ResolutionFacade,
@@ -67,9 +66,14 @@ class TypeInstantiationItems(
             inheritanceSearchers: MutableCollection<InheritanceItemsSearcher>,
             expectedInfos: Collection<ExpectedInfo>
     ) {
-        val expectedInfosGrouped: Map<FuzzyType?, List<ExpectedInfo>> = expectedInfos.groupBy { it.fuzzyType?.makeNotNullable() }
+        val expectedInfosGrouped = LinkedHashMap<FuzzyType, MutableList<ExpectedInfo>>()
+        for (expectedInfo in expectedInfos) {
+            for (fuzzyType in expectedInfo.multipleFuzzyTypes) {
+                expectedInfosGrouped.getOrPut(fuzzyType.makeNotNullable()) { ArrayList() }.add(expectedInfo)
+            }
+        }
+
         for ((type, infos) in expectedInfosGrouped) {
-            if (type == null) continue
             val tail = mergeTails(infos.map { it.tail })
             addTo(items, inheritanceSearchers, type, tail)
         }
@@ -202,7 +206,14 @@ class TypeInstantiationItems(
             //TODO: when constructor has one parameter of lambda type with more than one parameter, generate special additional item
             signatureText = when (visibleConstructors.size) {
                 0 -> "()"
-                1 -> DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderFunctionParameters(visibleConstructors.single())
+
+                1 -> {
+                    val constructor = visibleConstructors.single()
+                    val substitutor = TypeSubstitutor.create(fuzzyType.presentationType())
+                    val substitutedConstructor = constructor.substitute(substitutor)
+                    DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderFunctionParameters(substitutedConstructor)
+                }
+
                 else -> "(...)"
             }
 
@@ -234,8 +245,7 @@ class TypeInstantiationItems(
             lookupElement = lookupElement.assignSmartCompletionPriority(SmartCompletionItemPriority.INSTANTIATION)
         }
 
-        //TODO: cannot use lookupElement from context due to KT-6344
-        class InstantiationLookupElement(lookupElement: LookupElement) : LookupElementDecorator<LookupElement>(lookupElement) {
+        class InstantiationLookupElement : LookupElementDecorator<LookupElement>(lookupElement) {
             override fun getLookupString() = lookupString
 
             override fun getAllLookupStrings() = allLookupStrings
@@ -269,7 +279,7 @@ class TypeInstantiationItems(
             override fun hashCode() = lookupString.hashCode()
         }
 
-        return InstantiationLookupElement(lookupElement).addTail(tail)
+        return InstantiationLookupElement().addTail(tail)
     }
 
     private fun KotlinType.areTypeParametersUsedInside(freeParameters: Collection<TypeParameterDescriptor>): Boolean {
@@ -303,7 +313,7 @@ class TypeInstantiationItems(
 
         private val baseHasTypeArgs = classDescriptor.declaredTypeParameters.isNotEmpty()
         private val expectedType = KotlinTypeImpl.create(Annotations.EMPTY, classDescriptor, false, typeArgs)
-        private val expectedFuzzyType = FuzzyType(expectedType, freeParameters)
+        private val expectedFuzzyType = expectedType.toFuzzyType(freeParameters)
 
         override fun search(nameFilter: (String) -> Boolean, consumer: (LookupElement) -> Unit) {
             val parameters = ClassInheritorsSearch.SearchParameters(psiClass, inheritorSearchScope, true, true, false, nameFilter)
@@ -314,13 +324,13 @@ class TypeInstantiationItems(
                 ) ?: continue
                 if (!visibilityFilter(descriptor)) continue
 
-                var inheritorFuzzyType = FuzzyType(descriptor.defaultType, descriptor.typeConstructor.parameters)
+                var inheritorFuzzyType = descriptor.defaultType.toFuzzyType(descriptor.typeConstructor.parameters)
                 val hasTypeArgs = descriptor.declaredTypeParameters.isNotEmpty()
                 if (hasTypeArgs || baseHasTypeArgs) {
                     val substitutor = inheritorFuzzyType.checkIsSubtypeOf(expectedFuzzyType) ?: continue
                     if (!substitutor.isEmpty) {
                         val inheritorTypeSubstituted = substitutor.substitute(inheritorFuzzyType.type, Variance.INVARIANT)!!
-                        inheritorFuzzyType = FuzzyType(inheritorTypeSubstituted, freeParameters + inheritorFuzzyType.freeParameters)
+                        inheritorFuzzyType = inheritorTypeSubstituted.toFuzzyType(freeParameters + inheritorFuzzyType.freeParameters)
                     }
                 }
 

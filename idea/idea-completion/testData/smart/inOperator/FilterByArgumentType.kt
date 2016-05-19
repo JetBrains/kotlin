@@ -1,13 +1,13 @@
 interface X {
-    fun contains(s: String): Boolean
+    operator fun contains(s: String): Boolean
 }
 
 interface Y {
-    fun contains(i: Int): Boolean
+    operator fun contains(i: Int): Boolean
 }
 
 interface Z {
-    fun contains(o: Any): Boolean
+    operator fun contains(o: Any): Boolean
 }
 
 fun foo(s: String, x: X, y: Y, z: Z) {

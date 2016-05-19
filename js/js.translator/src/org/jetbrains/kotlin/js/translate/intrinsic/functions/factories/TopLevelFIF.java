@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.js.translate.intrinsic.functions.factories;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsInvocation;
-import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import com.google.dart.compiler.backend.js.ast.JsNew;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,7 +41,6 @@ import org.jetbrains.kotlin.psi.KtQualifiedExpression;
 import org.jetbrains.kotlin.psi.KtReferenceExpression;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
-import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.KotlinType;
 
@@ -128,7 +126,7 @@ public final class TopLevelFIF extends CompositeFIF {
         @Nullable
         @Override
         protected ExpressionReceiver getExpressionReceiver(@NotNull ResolvedCall<?> resolvedCall) {
-            Receiver result = resolvedCall.getExtensionReceiver();
+            ReceiverValue result = resolvedCall.getExtensionReceiver();
             return result instanceof ExpressionReceiver ? (ExpressionReceiver) result : null;
         }
 
@@ -213,7 +211,7 @@ public final class TopLevelFIF extends CompositeFIF {
 
             String mangledName = getStableMangledNameForDescriptor(JsPlatform.INSTANCE.getBuiltIns().getMutableMap(), operationName());
 
-            return new JsInvocation(new JsNameRef(mangledName, thisOrReceiver), arguments);
+            return new JsInvocation(JsAstUtils.fqnWithoutSideEffects(mangledName, thisOrReceiver), arguments);
         }
     }
 

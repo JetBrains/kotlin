@@ -18,37 +18,54 @@ package org.jetbrains.kotlin.idea.completion.smart
 
 import com.intellij.codeInsight.lookup.LookupElement
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.completion.LookupElementFactory
 import org.jetbrains.kotlin.idea.completion.decorateAsStaticMember
 import org.jetbrains.kotlin.idea.core.ExpectedInfo
-import org.jetbrains.kotlin.idea.core.fuzzyType
+import org.jetbrains.kotlin.idea.core.PropertyDelegateAdditionalData
 import org.jetbrains.kotlin.idea.core.isVisible
+import org.jetbrains.kotlin.idea.core.multipleFuzzyTypes
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.fuzzyReturnType
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.types.TypeUtils
+import java.util.*
 
 // adds java static members, enum members and members from companion object
 class StaticMembers(
         private val bindingContext: BindingContext,
         private val lookupElementFactory: LookupElementFactory,
-        private val resolutionFacade: ResolutionFacade
+        private val resolutionFacade: ResolutionFacade,
+        private val moduleDescriptor: ModuleDescriptor
 ) {
-    fun addToCollection(collection: MutableCollection<LookupElement>,
-                               expectedInfos: Collection<ExpectedInfo>,
-                               context: KtSimpleNameExpression,
-                               enumEntriesToSkip: Set<DeclarationDescriptor>) {
+    fun addToCollection(
+            collection: MutableCollection<LookupElement>,
+            expectedInfos: Collection<ExpectedInfo>,
+            context: KtSimpleNameExpression,
+            enumEntriesToSkip: Set<DeclarationDescriptor>
+    ) {
+        val expectedInfosByClass = HashMap<ClassDescriptor, MutableList<ExpectedInfo>>()
+        for (expectedInfo in expectedInfos) {
+            for (fuzzyType in expectedInfo.multipleFuzzyTypes) {
+                val classDescriptor = fuzzyType.type.constructor.declarationDescriptor as? ClassDescriptor ?: continue
+                expectedInfosByClass.getOrPut(classDescriptor) { ArrayList() }.add(expectedInfo)
+            }
 
-        val expectedInfosByClass = expectedInfos.groupBy {
-            expectedInfo -> expectedInfo.fuzzyType?.type?.let { TypeUtils.getClassDescriptor(it) }
+            if (expectedInfo.additionalData is PropertyDelegateAdditionalData) {
+                val delegatesClass = resolutionFacade.resolveImportReference(moduleDescriptor, FqName("kotlin.properties.Delegates")).singleOrNull()
+                if (delegatesClass is ClassDescriptor) {
+                    addToCollection(collection, delegatesClass, listOf(expectedInfo), context, enumEntriesToSkip, SmartCompletionItemPriority.DELEGATES_STATIC_MEMBER)
+                }
+            }
         }
+
         for ((classDescriptor, expectedInfosForClass) in expectedInfosByClass) {
-            if (classDescriptor != null && !classDescriptor.name.isSpecial) {
-                addToCollection(collection, classDescriptor, expectedInfosForClass, context, enumEntriesToSkip)
+            if (!classDescriptor.name.isSpecial) {
+                addToCollection(collection, classDescriptor, expectedInfosForClass, context, enumEntriesToSkip, SmartCompletionItemPriority.STATIC_MEMBER)
             }
         }
     }
@@ -58,8 +75,9 @@ class StaticMembers(
             classDescriptor: ClassDescriptor,
             expectedInfos: Collection<ExpectedInfo>,
             context: KtSimpleNameExpression,
-            enumEntriesToSkip: Set<DeclarationDescriptor>) {
-
+            enumEntriesToSkip: Set<DeclarationDescriptor>,
+            priority: SmartCompletionItemPriority
+    ) {
         fun processMember(descriptor: DeclarationDescriptor) {
             if (descriptor is DeclarationDescriptorWithVisibility && !descriptor.isVisible(context, null, bindingContext, resolutionFacade)) return
 
@@ -75,7 +93,7 @@ class StaticMembers(
                 return
             }
 
-            collection.addLookupElements(descriptor, expectedInfos, matcher) { createLookupElements(it) }
+            collection.addLookupElements(descriptor, expectedInfos, matcher) { createLookupElements(it, priority) }
         }
 
         classDescriptor.staticScope.getContributedDescriptors().forEach(::processMember)
@@ -87,18 +105,21 @@ class StaticMembers(
                     .forEach(::processMember)
         }
 
-        var members = classDescriptor.defaultType.memberScope.getContributedDescriptors()
-        if (classDescriptor.kind != ClassKind.ENUM_CLASS) {
-            members = members.filter { DescriptorUtils.isNonCompanionObject(it) }
+        val members = classDescriptor.defaultType.memberScope.getContributedDescriptors().filter { member ->
+            when (classDescriptor.kind) {
+                ClassKind.ENUM_CLASS -> member is ClassDescriptor // enum member
+                ClassKind.OBJECT -> member is CallableMemberDescriptor || DescriptorUtils.isNonCompanionObject(member)
+                else -> DescriptorUtils.isNonCompanionObject(member)
+            }
         }
         members.forEach(::processMember)
     }
 
-    private fun createLookupElements(memberDescriptor: DeclarationDescriptor): Collection<LookupElement> {
+    private fun createLookupElements(memberDescriptor: DeclarationDescriptor, priority: SmartCompletionItemPriority): Collection<LookupElement> {
         return lookupElementFactory.createStandardLookupElementsForDescriptor(memberDescriptor, useReceiverTypes = false)
                 .map {
                     it.decorateAsStaticMember(memberDescriptor, classNameAsLookupString = true)!!
-                            .assignSmartCompletionPriority(SmartCompletionItemPriority.STATIC_MEMBER)
+                            .assignSmartCompletionPriority(priority)
                 }
     }
 }

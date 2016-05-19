@@ -59,7 +59,7 @@ fun renameLocalNames(
         context: NamingContext,
         function: JsFunction
 ) {
-    for (name in collectLocalNames(function)) {
+    for (name in collectDefinedNames(function.body)) {
         val freshName = context.getFreshName(name)
         context.replaceName(name, freshName.makeRef())
     }

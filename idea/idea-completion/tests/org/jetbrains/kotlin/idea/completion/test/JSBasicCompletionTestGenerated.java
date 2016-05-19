@@ -1437,6 +1437,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 doTest(fileName);
             }
 
+            @TestMetadata("PropertyDelegate.kt")
+            public void testPropertyDelegate() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/fromSmart/PropertyDelegate.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("WhenByEnum.kt")
             public void testWhenByEnum() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/fromSmart/WhenByEnum.kt");
@@ -1749,6 +1755,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             @TestMetadata("NoParamsFromUnapplicableOverload.kt")
             public void testNoParamsFromUnapplicableOverload() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/namedArguments/NoParamsFromUnapplicableOverload.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NotAfterDot.kt")
+            public void testNotAfterDot() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/namedArguments/NotAfterDot.kt");
                 doTest(fileName);
             }
 

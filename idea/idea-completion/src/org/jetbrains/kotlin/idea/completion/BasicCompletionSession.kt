@@ -57,9 +57,9 @@ import java.util.*
 class BasicCompletionSession(
         configuration: CompletionSessionConfiguration,
         parameters: CompletionParameters,
-        private val toFromOriginalFileMapper: ToFromOriginalFileMapper,
+        toFromOriginalFileMapper: ToFromOriginalFileMapper,
         resultSet: CompletionResultSet
-) : CompletionSession(configuration, parameters, resultSet) {
+) : CompletionSession(configuration, parameters, toFromOriginalFileMapper, resultSet) {
 
     private interface CompletionKind {
         val descriptorKindFilter: DescriptorKindFilter?
@@ -78,7 +78,7 @@ class BasicCompletionSession(
 
     private val smartCompletion = expression?.let {
         SmartCompletion(
-                it, resolutionFacade, bindingContext, moduleDescriptor, isVisibleFilter, prefixMatcher,
+                it, resolutionFacade, bindingContext, moduleDescriptor, isVisibleFilter, indicesHelper(false), prefixMatcher,
                 GlobalSearchScope.EMPTY_SCOPE, toFromOriginalFileMapper, callTypeAndReceiver,
                 isJvmModule, forBasicCompletion = true
         )
@@ -197,11 +197,11 @@ class BasicCompletionSession(
             // getting root packages from scope is very slow so we do this in alternative way
             if (callTypeAndReceiver.receiver == null && callTypeAndReceiver.callType.descriptorKindFilter.kindMask.and(DescriptorKindFilter.PACKAGES_MASK) != 0) {
                 //TODO: move this code somewhere else?
-                val packageNames = PackageIndexUtil.getSubPackageFqNames(FqName.ROOT, originalSearchScope, project, prefixMatcher.asNameFilter())
+                val packageNames = PackageIndexUtil.getSubPackageFqNames(FqName.ROOT, searchScope, project, prefixMatcher.asNameFilter())
                         .toMutableSet()
 
                 if (!ProjectStructureUtil.isJsKotlinModule(parameters.originalFile as KtFile)) {
-                    JavaPsiFacade.getInstance(project).findPackage("")?.getSubPackages(originalSearchScope)?.forEach { psiPackage ->
+                    JavaPsiFacade.getInstance(project).findPackage("")?.getSubPackages(searchScope)?.forEach { psiPackage ->
                         val name = psiPackage.name
                         if (Name.isValidIdentifier(name!!)) {
                             packageNames.add(FqName(name))
@@ -214,7 +214,7 @@ class BasicCompletionSession(
             
             flushToResultSet()
 
-            NamedArgumentCompletion.complete(collector, expectedInfos)
+            NamedArgumentCompletion.complete(collector, expectedInfos, callTypeAndReceiver.callType)
             flushToResultSet()
 
             val contextVariablesProvider = RealContextVariablesProvider(referenceVariantsHelper, position)
@@ -436,7 +436,7 @@ class BasicCompletionSession(
             get() = null
 
         override fun doComplete() {
-            NamedArgumentCompletion.complete(collector, expectedInfos)
+            NamedArgumentCompletion.complete(collector, expectedInfos, callTypeAndReceiver.callType)
         }
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
 class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
     override val suppressionKey: String get() = "unused"
@@ -69,7 +68,7 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
                     private fun isUsageOfReceiver(resolvedCall: ResolvedCall<*>, bindingContext: BindingContext): Boolean {
                         // As receiver of call
                         if (resolvedCall.dispatchReceiver.getThisReceiverOwner(bindingContext) == callable ||
-                            (resolvedCall.extensionReceiver as ReceiverValue?).getThisReceiverOwner(bindingContext) == callable) {
+                            resolvedCall.extensionReceiver.getThisReceiverOwner(bindingContext) == callable) {
                             return true
                         }
                         // As explicit "this"

@@ -102,6 +102,12 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Inspections extends AbstractInspectionTest {
+        @TestMetadata("addVarianceModifier/inspectionData/inspections.test")
+        public void testAddVarianceModifier_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/addVarianceModifier/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
         public void testAllFilesPresentInInspections() throws Exception {
             KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/inspections"), Pattern.compile("^(inspections\\.test)$"));
         }

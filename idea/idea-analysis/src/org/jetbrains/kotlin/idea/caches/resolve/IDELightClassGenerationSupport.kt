@@ -175,6 +175,8 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
     }
 
     override fun getMultifilePartClasses(partFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
+        if (partFqName.isRoot) return emptyList()
+
         val facadeKtFiles = StaticFacadeIndexUtil.getMultifileClassForPart(partFqName, scope, project)
         val partShortName = partFqName.shortName().asString()
         val partClassFileShortName = partShortName + ".class"

@@ -240,11 +240,10 @@ class KotlinCompletionContributor : CompletionContributor() {
 
     private fun performCompletion(parameters: CompletionParameters, result: CompletionResultSet) {
         val position = parameters.position
-        val positionFile = position.containingFile as? KtFile ?: return
-        val originalFile = parameters.originalFile as KtFile
-        if (originalFile.doNotComplete ?: false) return
+        if (position.containingFile !is KtFile) return
+        if ((parameters.originalFile as KtFile).doNotComplete ?: false) return
 
-        val toFromOriginalFileMapper = ToFromOriginalFileMapper(originalFile, positionFile, parameters.offset)
+        val toFromOriginalFileMapper = ToFromOriginalFileMapper.create(parameters)
 
         if (position.node.elementType == KtTokens.LONG_TEMPLATE_ENTRY_START) {
             val expression = (position.parent as KtBlockStringTemplateEntry).expression

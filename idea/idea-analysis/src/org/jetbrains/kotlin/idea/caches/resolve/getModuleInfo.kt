@@ -16,18 +16,18 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.asJava.KtLightElement
-import org.jetbrains.kotlin.psi.*
-import com.intellij.openapi.roots.ProjectFileIndex
-import com.intellij.openapi.roots.LibraryOrderEntry
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.JdkOrderEntry
+import com.intellij.openapi.roots.LibraryOrderEntry
+import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.roots.ProjectFileIndex
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.asJava.FakeLightClassForFileOfPackage
 import org.jetbrains.kotlin.asJava.KtLightClassForFacade
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.roots.ModuleRootManager
+import org.jetbrains.kotlin.asJava.KtLightElement
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.utils.sure
 
@@ -102,6 +102,8 @@ private fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFil
     val orderEntries = projectFileIndex.getOrderEntriesForFile(virtualFile)
 
     entries@ for (orderEntry in orderEntries) {
+        if (!orderEntry.isValid) continue@entries
+
         when (orderEntry) {
             is LibraryOrderEntry -> {
                 val library = orderEntry.library ?: continue@entries

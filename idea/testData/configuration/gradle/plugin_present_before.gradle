@@ -1,0 +1,21 @@
+apply plugin: "java"
+apply plugin: "kotlin"
+
+sourceCompatibility = 1.5
+version = '1.0'
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+sourceSets {
+    main.java.srcDirs += 'src/main/kotlin'
+}

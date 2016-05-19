@@ -1,5 +1,5 @@
 interface X {
-    fun contains(s: String): Boolean?
+    operator fun contains(s: String): Boolean?
 }
 
 fun foo(s: String, x: X) {

@@ -2,7 +2,8 @@ interface X
 interface Y : X
 interface Z
 
-fun X.contains(s: String): Boolean
+operator fun X.contains(s: String): Boolean = true
+fun Z.contains(s: String): Boolean = true
 
 fun foo(s: String, x: X, y: Y, z: Z) {
     if (s in <caret>)

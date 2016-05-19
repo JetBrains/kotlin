@@ -1,5 +1,5 @@
 interface X<T> {
-    fun contains(t: T): Boolean
+    operator fun contains(t: T): Boolean
 }
 
 interface A {
@@ -10,4 +10,4 @@ interface A {
     }
 }
 
-// EXIST: { lookupString:"createX", itemText: "createX", tailText: "(t: T)", typeText:"X<T>" }
+// EXIST: { lookupString:"createX", itemText: "createX", tailText: "(t: String)", typeText:"X<String>" }

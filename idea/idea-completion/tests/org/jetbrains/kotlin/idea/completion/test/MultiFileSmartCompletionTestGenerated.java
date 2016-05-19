@@ -137,6 +137,18 @@ public class MultiFileSmartCompletionTestGenerated extends AbstractMultiFileSmar
         doTest(fileName);
     }
 
+    @TestMetadata("NotImportedContains")
+    public void testNotImportedContains() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/NotImportedContains/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("NotImportedGetValue")
+    public void testNotImportedGetValue() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/NotImportedGetValue/");
+        doTest(fileName);
+    }
+
     @TestMetadata("StaticMembers1")
     public void testStaticMembers1() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/StaticMembers1/");

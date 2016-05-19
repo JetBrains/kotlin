@@ -4576,6 +4576,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("continueToReturnWithLabel.kt")
+        public void testContinueToReturnWithLabel() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToForEachFunctionCall/continueToReturnWithLabel.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("continueToReturnWithoutLabel.kt")
+        public void testContinueToReturnWithoutLabel() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToForEachFunctionCall/continueToReturnWithoutLabel.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("emptyBody.kt")
         public void testEmptyBody() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToForEachFunctionCall/emptyBody.kt");
@@ -4780,6 +4792,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("numberLiterals.kt")
         public void testNumberLiterals() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/numberLiterals.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("onMultipleLines.kt")
+        public void testOnMultipleLines() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/onMultipleLines.kt");
             doTest(fileName);
         }
 

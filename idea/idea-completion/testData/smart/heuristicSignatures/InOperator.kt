@@ -11,7 +11,7 @@ fun foo(a: A,  cA: Collection<A>, cB: Collection<B>, cC: Collection<C>, cAny: Co
 }
 
 // EXIST: cA
-// ABSENT: cB
+// EXIST: cB
 // ABSENT: cC
 // EXIST: cAny
 // EXIST: lA
@@ -19,6 +19,6 @@ fun foo(a: A,  cA: Collection<A>, cB: Collection<B>, cC: Collection<C>, cAny: Co
 // ABSENT: lC
 // EXIST: lAny
 // EXIST: aA
-// ABSENT: aB
+// EXIST: aB
 // ABSENT: aC
 // EXIST: aAny

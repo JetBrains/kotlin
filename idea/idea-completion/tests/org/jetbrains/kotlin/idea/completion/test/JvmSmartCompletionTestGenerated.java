@@ -185,6 +185,18 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
 
+    @TestMetadata("ImplicitlyTypedOverrideFunBody.kt")
+    public void testImplicitlyTypedOverrideFunBody() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/ImplicitlyTypedOverrideFunBody.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ImplicitlyTypedOverrideValInitializer.kt")
+    public void testImplicitlyTypedOverrideValInitializer() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/ImplicitlyTypedOverrideValInitializer.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ImplicitlyTypedValInitializer1.kt")
     public void testImplicitlyTypedValInitializer1() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/ImplicitlyTypedValInitializer1.kt");
@@ -203,9 +215,9 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
 
-    @TestMetadata("InClassObject.kt")
-    public void testInClassObject() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/InClassObject.kt");
+    @TestMetadata("InCompanionObject.kt")
+    public void testInCompanionObject() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/InCompanionObject.kt");
         doTest(fileName);
     }
 
@@ -224,6 +236,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestMetadata("InaccessibleDeclarations.kt")
     public void testInaccessibleDeclarations() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/InaccessibleDeclarations.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("IndexingOperator.kt")
+    public void testIndexingOperator() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/IndexingOperator.kt");
         doTest(fileName);
     }
 
@@ -1432,6 +1450,159 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         @TestMetadata("CallWithBrackets.kt")
         public void testCallWithBrackets() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/multipleArgsItem/CallWithBrackets.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/idea-completion/testData/smart/propertyDelegate")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class PropertyDelegate extends AbstractJvmSmartCompletionTest {
+        public void testAllFilesPresentInPropertyDelegate() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/smart/propertyDelegate"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("ConflictingSubstitutors.kt")
+        public void testConflictingSubstitutors() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/ConflictingSubstitutors.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("DelegatesDot.kt")
+        public void testDelegatesDot() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/DelegatesDot.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("DelegatesDotExplicitPropertyType.kt")
+        public void testDelegatesDotExplicitPropertyType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/DelegatesDotExplicitPropertyType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExplicitValType.kt")
+        public void testExplicitValType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/ExplicitValType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExplicitVarType.kt")
+        public void testExplicitVarType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/ExplicitVarType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExtensionSubstitution1.kt")
+        public void testExtensionSubstitution1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/ExtensionSubstitution1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExtensionSubstitution2.kt")
+        public void testExtensionSubstitution2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/ExtensionSubstitution2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExtensionSubstitution3.kt")
+        public void testExtensionSubstitution3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/ExtensionSubstitution3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExtensionSubstitution4.kt")
+        public void testExtensionSubstitution4() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/ExtensionSubstitution4.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExtensionVal.kt")
+        public void testExtensionVal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/ExtensionVal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExtensionVar.kt")
+        public void testExtensionVar() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/ExtensionVar.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("GenericOperator.kt")
+        public void testGenericOperator() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/GenericOperator.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("GenericVal.kt")
+        public void testGenericVal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/GenericVal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("GenericVar.kt")
+        public void testGenericVar() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/GenericVar.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NonConflictingSubstitutors.kt")
+        public void testNonConflictingSubstitutors() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/NonConflictingSubstitutors.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("Order.kt")
+        public void testOrder() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/Order.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("OverrideVal.kt")
+        public void testOverrideVal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/OverrideVal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("TopLevelVal.kt")
+        public void testTopLevelVal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/TopLevelVal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ValInClass.kt")
+        public void testValInClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/ValInClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ValInGenericClass1.kt")
+        public void testValInGenericClass1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/ValInGenericClass1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ValInGenericClass2.kt")
+        public void testValInGenericClass2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/ValInGenericClass2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ValInGenericClass3.kt")
+        public void testValInGenericClass3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/ValInGenericClass3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("VarInClass.kt")
+        public void testVarInClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/VarInClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("VarInGenericClass.kt")
+        public void testVarInGenericClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/VarInGenericClass.kt");
             doTest(fileName);
         }
     }

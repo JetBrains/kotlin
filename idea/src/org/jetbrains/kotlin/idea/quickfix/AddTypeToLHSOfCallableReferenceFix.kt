@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
 class AddTypeToLHSOfCallableReferenceFix(
         expression: KtCallableReferenceExpression
@@ -39,7 +38,7 @@ class AddTypeToLHSOfCallableReferenceFix(
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val resolvedCall = element.callableReference.getResolvedCall(element.analyze(BodyResolveMode.PARTIAL)) ?: return
         val receiver = with(resolvedCall) {
-            dispatchReceiver ?: extensionReceiver as? ReceiverValue ?: return
+            dispatchReceiver ?: extensionReceiver ?: return
         }
         val type = KtPsiFactory(project).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(receiver.type))
         element.setTypeReference(type)

@@ -1,0 +1,17 @@
+// WITH_RUNTIME
+fun main() {
+    outer@
+    <caret>(1..100).forEach { i ->
+        if (i % 2 == 0) return@forEach
+        inner@
+        for (j in 1..100) {
+            continue@inner
+        }
+        for (j in 1..100) {
+            for (k in 1..1) {
+                return@forEach
+            }
+            continue
+        }
+    }
+}

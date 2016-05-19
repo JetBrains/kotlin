@@ -41,7 +41,7 @@ class SmartCompletionSession(
         parameters: CompletionParameters,
         toFromOriginalFileMapper: ToFromOriginalFileMapper,
         resultSet: CompletionResultSet
-) : CompletionSession(configuration, parameters, resultSet) {
+) : CompletionSession(configuration, parameters, toFromOriginalFileMapper, resultSet) {
 
     override val descriptorKindFilter: DescriptorKindFilter by lazy {
         // we do not include SAM-constructors because they are handled separately and adding them requires iterating of java classes
@@ -59,8 +59,8 @@ class SmartCompletionSession(
 
     private val smartCompletion by lazy(LazyThreadSafetyMode.NONE) {
         expression?.let {
-            SmartCompletion(it, resolutionFacade, bindingContext, moduleDescriptor, isVisibleFilter,
-                            prefixMatcher, originalSearchScope, toFromOriginalFileMapper,
+            SmartCompletion(it, resolutionFacade, bindingContext, moduleDescriptor, isVisibleFilter, indicesHelper(false),
+                            prefixMatcher, searchScope, toFromOriginalFileMapper,
                             callTypeAndReceiver, isJvmModule)
         }
     }
@@ -70,7 +70,7 @@ class SmartCompletionSession(
 
     override fun doComplete() {
         if (nameExpression != null && NamedArgumentCompletion.isOnlyNamedArgumentExpected(nameExpression)) {
-            NamedArgumentCompletion.complete(collector, expectedInfos)
+            NamedArgumentCompletion.complete(collector, expectedInfos, callTypeAndReceiver.callType)
             return
         }
 
@@ -192,7 +192,7 @@ class SmartCompletionSession(
                     override fun getValueArgumentList() = throw UnsupportedOperationException()
                 }
 
-                val expectedInfos = ExpectedInfos(bindingContext, resolutionFacade)
+                val expectedInfos = ExpectedInfos(bindingContext, resolutionFacade, indicesHelper(false))
                         .calculateForArgument(dummyCall, dummyArgument)
                 collector.addElements(LambdaItems.collect(expectedInfos))
             }

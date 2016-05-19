@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.core
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.idea.util.FuzzyType
+import org.jetbrains.kotlin.idea.util.toFuzzyType
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -60,14 +61,14 @@ class IterableTypesDetection(
         }
 
         override fun isIterable(type: KotlinType, loopVarType: KotlinType?): Boolean
-                = isIterable(FuzzyType(type, emptyList()), loopVarType)
+                = isIterable(type.toFuzzyType(emptyList()), loopVarType)
 
         private fun elementType(type: FuzzyType): FuzzyType? {
             return cache.getOrPutNullable(type, { elementTypeNoCache(type) })
         }
 
         override fun elementType(type: KotlinType): FuzzyType?
-                = elementType(FuzzyType(type, emptyList()))
+                = elementType(type.toFuzzyType(emptyList()))
 
         private fun elementTypeNoCache(type: FuzzyType): FuzzyType? {
             // optimization
@@ -77,14 +78,14 @@ class IterableTypesDetection(
             val context = ExpressionTypingContext.newContext(BindingTraceContext(), scope, DataFlowInfo.EMPTY, TypeUtils.NO_EXPECTED_TYPE)
             val expressionReceiver = ExpressionReceiver.create(expression, type.type, context.trace.bindingContext)
             val elementType = forLoopConventionsChecker.checkIterableConvention(expressionReceiver, context)
-            return elementType?.let { FuzzyType(it, type.freeParameters) }
+            return elementType?.let { it.toFuzzyType(type.freeParameters) }
         }
 
         private fun canBeIterable(type: FuzzyType): Boolean {
             return type.type.memberScope.getContributedFunctions(iteratorName, NoLookupLocation.FROM_IDE).isNotEmpty() ||
                    typesWithExtensionIterator.any {
                        val freeParams = it.arguments.mapNotNull { it.type.constructor.declarationDescriptor as? TypeParameterDescriptor }
-                       type.checkIsSubtypeOf(FuzzyType(it, freeParams)) != null
+                       type.checkIsSubtypeOf(it.toFuzzyType(freeParams)) != null
                    }
         }
     }

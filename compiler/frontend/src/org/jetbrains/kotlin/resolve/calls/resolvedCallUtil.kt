@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.KtThisExpression
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
@@ -63,22 +64,22 @@ fun ResolvedCall<*>.hasThisOrNoDispatchReceiver(
 fun ResolvedCall<*>.getExplicitReceiverValue(): ReceiverValue? {
     return when (explicitReceiverKind) {
         ExplicitReceiverKind.DISPATCH_RECEIVER -> dispatchReceiver!!
-        ExplicitReceiverKind.EXTENSION_RECEIVER, ExplicitReceiverKind.BOTH_RECEIVERS -> extensionReceiver as ReceiverValue
+        ExplicitReceiverKind.EXTENSION_RECEIVER, ExplicitReceiverKind.BOTH_RECEIVERS -> extensionReceiver!!
         else -> null
     }
 }
 
 fun ResolvedCall<*>.getImplicitReceiverValue(): ReceiverValue? {
     return when (explicitReceiverKind) {
-        ExplicitReceiverKind.NO_EXPLICIT_RECEIVER -> if (extensionReceiver != null) extensionReceiver as ReceiverValue else dispatchReceiver
-        ExplicitReceiverKind.DISPATCH_RECEIVER -> extensionReceiver as ReceiverValue?
+        ExplicitReceiverKind.NO_EXPLICIT_RECEIVER -> extensionReceiver ?: dispatchReceiver
+        ExplicitReceiverKind.DISPATCH_RECEIVER -> extensionReceiver
         ExplicitReceiverKind.EXTENSION_RECEIVER -> dispatchReceiver
         else -> null
     }
 }
 
 private fun ResolvedCall<*>.hasSafeNullableReceiver(context: CallResolutionContext<*>): Boolean {
-    if (!isSafeCall) return false
+    if (!call.isSafeCall()) return false
     val receiverValue = getExplicitReceiverValue()?.let { DataFlowValueFactory.createDataFlowValue(it, context) }
                         ?: return false
     return context.dataFlowInfo.getPredictableNullability(receiverValue).canBeNull()

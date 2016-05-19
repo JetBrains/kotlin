@@ -38,15 +38,19 @@ class LetImplementInterfaceFix(
 
     private fun KotlinType.renderShort() = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(this)
 
-    private val expectedTypeName = expectedType.renderShort()
+    private val expectedTypeName: String
 
-    private val expectedTypeNameSourceCode = IdeDescriptorRenderers.SOURCE_CODE.renderType(expectedType)
+    private val expectedTypeNameSourceCode: String
 
     private val prefix: String
 
     private val validExpectedType: Boolean
 
     init {
+        val expectedTypeNotNullable = TypeUtils.makeNotNullable(expectedType)
+        expectedTypeName = expectedTypeNotNullable.renderShort()
+        expectedTypeNameSourceCode = IdeDescriptorRenderers.SOURCE_CODE.renderType(expectedTypeNotNullable)
+
         val verb = if (expressionType.isInterface()) "extend" else "implement"
         prefix = "Let '${expressionType.renderShort()}' $verb"
 
@@ -58,16 +62,10 @@ class LetImplementInterfaceFix(
     }
 
     override fun getFamilyName() = "Let type implement interface"
-    override fun getText(): String {
-        return "$prefix interface '$expectedTypeName'"
-    }
+    override fun getText() = "$prefix interface '$expectedTypeName'"
 
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
-        if (!super.isAvailable(project, editor, file)) return false
-        if (!validExpectedType) return false
-
-        return true
-    }
+    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile) =
+            super.isAvailable(project, editor, file) && validExpectedType
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val superTypeEntry = KtPsiFactory(element).createSuperTypeEntry(expectedTypeNameSourceCode)

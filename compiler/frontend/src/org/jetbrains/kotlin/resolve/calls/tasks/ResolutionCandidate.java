@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.psi.Call;
-import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 
@@ -29,18 +28,16 @@ public class ResolutionCandidate<D extends CallableDescriptor> {
     private final D candidateDescriptor;
     private final TypeSubstitutor knownTypeParametersResultingSubstitutor;
     private ReceiverValue dispatchReceiver; // receiver object of a method
-    private Receiver receiverArgument; // receiver of an extension function
     private ExplicitReceiverKind explicitReceiverKind;
 
     private ResolutionCandidate(
             @NotNull Call call, @NotNull D descriptor, @Nullable ReceiverValue dispatchReceiver,
-            @Nullable Receiver receiverArgument, @NotNull ExplicitReceiverKind explicitReceiverKind,
+            @NotNull ExplicitReceiverKind explicitReceiverKind,
             @Nullable TypeSubstitutor knownTypeParametersResultingSubstitutor
     ) {
         this.call = call;
         this.candidateDescriptor = descriptor;
         this.dispatchReceiver = dispatchReceiver;
-        this.receiverArgument = receiverArgument;
         this.explicitReceiverKind = explicitReceiverKind;
         this.knownTypeParametersResultingSubstitutor = knownTypeParametersResultingSubstitutor;
     }
@@ -48,32 +45,28 @@ public class ResolutionCandidate<D extends CallableDescriptor> {
     public static <D extends CallableDescriptor> ResolutionCandidate<D> create(
             @NotNull Call call, @NotNull D descriptor
     ) {
-        return new ResolutionCandidate<D>(call, descriptor, null, null, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, null);
+        return new ResolutionCandidate<D>(call, descriptor, null, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, null);
     }
 
     public static <D extends CallableDescriptor> ResolutionCandidate<D> create(
             @NotNull Call call, @NotNull D descriptor, @Nullable TypeSubstitutor knownTypeParametersResultingSubstitutor
     ) {
         return new ResolutionCandidate<D>(call, descriptor,
-                                          null, null, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
+                                          null, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
                                           knownTypeParametersResultingSubstitutor);
     }
 
     public static <D extends CallableDescriptor> ResolutionCandidate<D> create(
             @NotNull Call call, @NotNull D descriptor, @Nullable ReceiverValue dispatchReceiver,
-            @Nullable Receiver receiverArgument, @NotNull ExplicitReceiverKind explicitReceiverKind,
+            @NotNull ExplicitReceiverKind explicitReceiverKind,
             @Nullable TypeSubstitutor knownTypeParametersResultingSubstitutor
     ) {
-        return new ResolutionCandidate<D>(call, descriptor, dispatchReceiver, receiverArgument, explicitReceiverKind,
+        return new ResolutionCandidate<D>(call, descriptor, dispatchReceiver, explicitReceiverKind,
                                           knownTypeParametersResultingSubstitutor);
     }
 
     public void setDispatchReceiver(@Nullable ReceiverValue dispatchReceiver) {
         this.dispatchReceiver = dispatchReceiver;
-    }
-
-    public void setReceiverArgument(@Nullable ReceiverValue receiverArgument) {
-        this.receiverArgument = receiverArgument;
     }
 
     public void setExplicitReceiverKind(@NotNull ExplicitReceiverKind explicitReceiverKind) {
@@ -93,11 +86,6 @@ public class ResolutionCandidate<D extends CallableDescriptor> {
     @Nullable
     public ReceiverValue getDispatchReceiver() {
         return dispatchReceiver;
-    }
-
-    @Nullable
-    public Receiver getReceiverArgument() {
-        return receiverArgument;
     }
 
     @NotNull

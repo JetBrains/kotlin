@@ -46,9 +46,12 @@ import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag;
 %state TAG_BEGINNING
 %state TAG_TEXT_BEGINNING
 %state CONTENTS
+%state CODE_BLOCK
+%state CODE_BLOCK_LINE_BEGINNING
+%state CODE_BLOCK_CONTENTS_BEGINNING
 
-WHITE_SPACE_CHAR    =[\ \t\f\n\r]
-NOT_WHITE_SPACE_CHAR=[^\ \t\f\n\r]
+WHITE_SPACE_CHAR    =[\ \t\f\n]
+NOT_WHITE_SPACE_CHAR=[^\ \t\f\n]
 
 DIGIT=[0-9]
 ALPHA=[:jletter:]
@@ -58,6 +61,8 @@ QUALIFIED_NAME_START={ALPHA}
 QUALIFIED_NAME_CHAR={ALPHA}|{DIGIT}|[\.]
 QUALIFIED_NAME={QUALIFIED_NAME_START}{QUALIFIED_NAME_CHAR}*
 CODE_LINK=\[{QUALIFIED_NAME}\]
+CODE_FENCE_START=("```" | "~~~").*
+CODE_FENCE_END=("```" | "~~~")
 
 %%
 
@@ -143,6 +148,11 @@ CODE_LINK=\[{QUALIFIED_NAME}\]
         return KDocTokens.MARKDOWN_INLINE_LINK;
     }
 
+    {CODE_FENCE_START} {
+        yybegin(CODE_BLOCK_LINE_BEGINNING);
+        return KDocTokens.TEXT;
+    }
+
     /* We're only interested in parsing links that can become code references,
        meaning they contain only identifier characters and characters that can be
        used in type declarations. No brackets, backticks, asterisks or anything like that.
@@ -153,6 +163,49 @@ CODE_LINK=\[{QUALIFIED_NAME}\]
 
     .     { yybegin(CONTENTS);
             return KDocTokens.TEXT; }
+}
+
+<CODE_BLOCK_LINE_BEGINNING> {
+    "*"+ {
+        yybegin(CODE_BLOCK_CONTENTS_BEGINNING);
+        return KDocTokens.LEADING_ASTERISK;
+    }
+}
+
+<CODE_BLOCK_LINE_BEGINNING, CODE_BLOCK_CONTENTS_BEGINNING> {
+    {CODE_FENCE_END} / [ \t\f]* [\n] [ \t\f]* {
+        // Code fence end
+        yybegin(CONTENTS);
+        return KDocTokens.TEXT;
+    }
+
+    {WHITE_SPACE_CHAR}+ {
+        if (yytextContainLineBreaks()) {
+            yybegin(CODE_BLOCK_LINE_BEGINNING);
+            return TokenType.WHITE_SPACE;
+        }
+        return KDocTokens.TEXT;
+    }
+
+    . {
+        yybegin(CODE_BLOCK);
+        return KDocTokens.TEXT;
+    }
+}
+
+<CODE_BLOCK_LINE_BEGINNING, CODE_BLOCK_CONTENTS_BEGINNING, CODE_BLOCK> {
+
+    {WHITE_SPACE_CHAR}+ {
+        if (yytextContainLineBreaks()) {
+            yybegin(CODE_BLOCK_LINE_BEGINNING);
+            return TokenType.WHITE_SPACE;
+        }
+        return KDocTokens.TEXT;
+    }
+    . {
+        yybegin(CODE_BLOCK);
+        return KDocTokens.TEXT;
+    }
 }
 
 . { return TokenType.BAD_CHARACTER; }

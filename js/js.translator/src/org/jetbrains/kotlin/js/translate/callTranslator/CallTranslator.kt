@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -148,7 +148,7 @@ fun computeExplicitReceiversForInvoke(
     return when (Pair(dispatchReceiver != null, extensionReceiver != null)) {
         Pair(true, true)  -> ExplicitReceivers(dispatchReceiverExpression, explicitReceivers.extensionOrDispatchReceiver)
         Pair(true, false) -> ExplicitReceivers(dispatchReceiverExpression)
-        Pair(false, true) -> ExplicitReceivers(translateReceiverAsExpression(extensionReceiver as ReceiverValue))
+        Pair(false, true) -> ExplicitReceivers(translateReceiverAsExpression(extensionReceiver))
         else -> throw AssertionError("'Invoke' resolved call without receivers: $callElement")
     }
 }

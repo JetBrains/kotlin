@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.js.translate.reference.CallArgumentTranslator
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getReceiverParameterForReceiver
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
+import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
@@ -118,7 +119,7 @@ private fun TranslationContext.createCallInfo(resolvedCall: ResolvedCall<out Cal
         return when (receiverKind) {
             EXTENSION_RECEIVER -> explicitReceivers.extensionOrDispatchReceiver
             BOTH_RECEIVERS -> explicitReceivers.extensionReceiver
-            else -> this.getDispatchReceiver(receiverValue as ReceiverValue)
+            else -> this.getDispatchReceiver(receiverValue)
         }
     }
 
@@ -126,7 +127,7 @@ private fun TranslationContext.createCallInfo(resolvedCall: ResolvedCall<out Cal
     var extensionReceiver = getExtensionReceiver()
     var notNullConditional: JsConditional? = null
 
-    if (resolvedCall.isSafeCall) {
+    if (resolvedCall.call.isSafeCall()) {
         when (resolvedCall.explicitReceiverKind) {
             BOTH_RECEIVERS, EXTENSION_RECEIVER -> {
                 notNullConditional = TranslationUtils.notNullConditional(extensionReceiver!!, JsLiteral.NULL, this)

@@ -1,0 +1,2 @@
+// "Add 'out' variance" "true"
+interface Empty<out T>
