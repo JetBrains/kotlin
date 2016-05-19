@@ -470,8 +470,7 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
                 val evaluator =
                         EvaluatorBuilderImpl.build(item,
                                                    contextElement,
-                                                   sourcePosition,
-                                                   project)
+                                                   sourcePosition)
 
 
                 if (evaluator == null) throw AssertionError("Cannot create an Evaluator for Evaluate Expression")
