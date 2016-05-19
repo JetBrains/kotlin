@@ -571,12 +571,6 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("ReservedAsync.kt")
-        public void testReservedAsync() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/ReservedAsync.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("ResolveOfJavaGenerics.kt")
         public void testResolveOfJavaGenerics() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/ResolveOfJavaGenerics.kt");
