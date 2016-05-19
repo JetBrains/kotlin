@@ -125,6 +125,12 @@ public class BridgeTestGenerated extends AbstractBridgeTest {
         doTest(fileName);
     }
 
+    @TestMetadata("kt12416.kt")
+    public void testKt12416() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/bridges/kt12416.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("kt1939.kt")
     public void testKt1939() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/bridges/kt1939.kt");
@@ -284,6 +290,12 @@ public class BridgeTestGenerated extends AbstractBridgeTest {
     @TestMetadata("twoParentsWithDifferentMethodsTwoBridges.kt")
     public void testTwoParentsWithDifferentMethodsTwoBridges() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/bridges/twoParentsWithDifferentMethodsTwoBridges.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("twoParentsWithDifferentMethodsTwoBridges2.kt")
+    public void testTwoParentsWithDifferentMethodsTwoBridges2() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/bridges/twoParentsWithDifferentMethodsTwoBridges2.kt");
         doTest(fileName);
     }
 
