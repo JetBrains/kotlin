@@ -74,23 +74,3 @@ val x = C() willBeInfix 1
 fun infixTest() {
     arrayListOf(1, 2, 3) map { it }
 }
-
-fun async(f: () -> Unit) {}
-infix fun Any.async(f: () -> Unit) {}
-
-fun test(foo: Any) {
-    async {  }
-    async /**/ {  }
-    foo async {  }
-
-    async() { }
-
-    async({ })
-    foo async ({ })
-
-    foo async fun () {}
-    foo async (fun () {})
-
-    async (fun () {})
-}
-
