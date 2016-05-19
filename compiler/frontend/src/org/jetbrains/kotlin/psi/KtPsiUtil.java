@@ -24,7 +24,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.codeInsight.CommentUtilCore;
 import org.jetbrains.annotations.Contract;
@@ -598,21 +597,9 @@ public class KtPsiUtil {
         return prev;
     }
 
-    /**
-     * Example:
-     *      code: async* {}
-     *      element = "{}"
-     *      word = "async"
-     *      suffixTokens = [+, -, *, /, %]
-     *
-     *      result = async
-     */
     @Nullable
-    public static PsiElement getPreviousWord(@NotNull PsiElement element, @NotNull String word, @NotNull TokenSet suffixTokens) {
+    public static PsiElement getPreviousWord(@NotNull PsiElement element, @NotNull String word) {
         PsiElement prev = prevLeafIgnoringWhitespaceAndComments(element);
-        if (prev != null && suffixTokens.contains(prev.getNode().getElementType())) {
-            prev = PsiTreeUtil.prevLeaf(prev, false);
-        }
         if (prev != null && prev.getNode().getElementType() == KtTokens.IDENTIFIER && word.equals(prev.getText())) {
             return prev;
         }

@@ -1,18 +1,5 @@
 package
 
 public fun async(/*0*/ f: () -> kotlin.Unit): kotlin.Unit
-public fun test(): kotlin.Unit
 public fun test(/*0*/ foo: kotlin.Any): kotlin.Unit
 public infix fun kotlin.Any.async(/*0*/ f: () -> kotlin.Unit): kotlin.Unit
-
-public object async {
-    private constructor async()
-    public final operator fun div(/*0*/ f: () -> kotlin.Unit): kotlin.Unit
-    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public final operator fun minus(/*0*/ f: () -> kotlin.Unit): kotlin.Unit
-    public final operator fun mod(/*0*/ f: () -> kotlin.Unit): kotlin.Unit
-    public final operator fun plus(/*0*/ f: () -> kotlin.Unit): kotlin.Unit
-    public final operator fun times(/*0*/ f: () -> kotlin.Unit): kotlin.Unit
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-}

@@ -448,8 +448,8 @@ fun canPlaceAfterSimpleNameEntry(element: PsiElement?): Boolean {
     return !BAD_NEIGHBOUR_FOR_SIMPLE_TEMPLATE_ENTRY_PATTERN.matches(entryText)
 }
 
-fun checkReservedPrefixWord(sink: DiagnosticSink, element: PsiElement, word: String, suffixTokens: TokenSet, message: String) {
-    KtPsiUtil.getPreviousWord(element, word, suffixTokens)?.let {
+fun checkReservedPrefixWord(sink: DiagnosticSink, element: PsiElement, word: String, message: String) {
+    KtPsiUtil.getPreviousWord(element, word)?.let {
         sink.report(Errors.UNSUPPORTED.on(it, message))
     }
 }
