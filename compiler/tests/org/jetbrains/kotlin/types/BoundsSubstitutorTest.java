@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.types;
 
-import com.intellij.util.containers.ContainerUtil;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
@@ -27,12 +27,11 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
-import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
+import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
 
 import java.util.Collection;
-import java.util.Collections;
 
 public class BoundsSubstitutorTest extends KotlinTestWithEnvironment {
     @Override
@@ -71,14 +70,11 @@ public class BoundsSubstitutorTest extends KotlinTestWithEnvironment {
     //}
 
     private void doTest(String text, String expected) {
-        KtFile jetFile = KtPsiFactoryKt.KtPsiFactory(getProject()).createFile("fun.kt", text);
-        ModuleDescriptor module = LazyResolveTestUtil.resolveLazily(Collections.singletonList(jetFile), getEnvironment());
+        KtFile ktFile = KtPsiFactoryKt.KtPsiFactory(getProject()).createFile("fun.kt", text);
+        ModuleDescriptor module = JvmResolveUtil.analyze(ktFile, getEnvironment()).getModuleDescriptor();
         Collection<SimpleFunctionDescriptor> functions =
                 module.getPackage(FqName.ROOT).getMemberScope().getContributedFunctions(Name.identifier("f"), NoLookupLocation.FROM_TEST);
-        assert functions.size() == 1 : "Many functions defined";
-        FunctionDescriptor function = ContainerUtil.getFirstItem(functions);
-
-        FunctionDescriptor substituted = BoundsSubstitutor.substituteBounds(function);
+        FunctionDescriptor substituted = BoundsSubstitutor.substituteBounds(CollectionsKt.single(functions));
         String actual = DescriptorRenderer.COMPACT.render(substituted);
         assertEquals(expected, actual);
     }

@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier;
 import org.jetbrains.kotlin.renderer.DescriptorRendererOptions;
@@ -48,7 +47,7 @@ import static org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.valid
 public abstract class AbstractCompileJavaAgainstKotlinTest extends TestCaseWithTmpdir {
     // Do not render parameter names because there are test cases where classes inherit from JDK collections,
     // and some versions of JDK have debug information in the class files (including parameter names), and some don't
-    public static final RecursiveDescriptorComparator.Configuration CONFIGURATION = DONT_INCLUDE_METHODS_OF_OBJECT.withRenderer(
+    private static final RecursiveDescriptorComparator.Configuration CONFIGURATION = DONT_INCLUDE_METHODS_OF_OBJECT.withRenderer(
             DescriptorRenderer.Companion.withOptions(
                     new Function1<DescriptorRendererOptions, Unit>() {
                         @Override
@@ -81,8 +80,8 @@ public abstract class AbstractCompileJavaAgainstKotlinTest extends TestCaseWithT
                 EnvironmentConfigFiles.JVM_CONFIG_FILES
         );
 
-        AnalysisResult exhaust = JvmResolveUtil.analyze(Collections.<KtFile>emptySet(), environment);
-        PackageViewDescriptor packageView = exhaust.getModuleDescriptor().getPackage(LoadDescriptorUtil.TEST_PACKAGE_FQNAME);
+        AnalysisResult analysisResult = JvmResolveUtil.analyze(environment);
+        PackageViewDescriptor packageView = analysisResult.getModuleDescriptor().getPackage(LoadDescriptorUtil.TEST_PACKAGE_FQNAME);
         assertFalse("Nothing found in package " + LoadDescriptorUtil.TEST_PACKAGE_FQNAME, packageView.isEmpty());
 
         validateAndCompareDescriptorWithFile(packageView, CONFIGURATION, expectedFile);

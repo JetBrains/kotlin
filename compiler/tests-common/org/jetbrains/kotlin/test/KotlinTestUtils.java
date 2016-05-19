@@ -73,7 +73,6 @@ import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.TargetPlatform;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
-import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.test.util.JetTestUtilsKt;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -475,25 +474,25 @@ public class KotlinTestUtils {
     public static void resolveAllKotlinFiles(KotlinCoreEnvironment environment) throws IOException {
         List<ContentRoot> paths = environment.getConfiguration().get(CommonConfigurationKeys.CONTENT_ROOTS);
         if (paths == null) return;
-        List<KtFile> jetFiles = Lists.newArrayList();
+        List<KtFile> ktFiles = new ArrayList<KtFile>();
         for (ContentRoot root : paths) {
             if (!(root instanceof KotlinSourceRoot)) continue;
 
             String path = ((KotlinSourceRoot) root).getPath();
             File file = new File(path);
             if (file.isFile()) {
-                jetFiles.add(loadJetFile(environment.getProject(), file));
+                ktFiles.add(loadJetFile(environment.getProject(), file));
             }
             else {
                 //noinspection ConstantConditions
                 for (File childFile : file.listFiles()) {
                     if (childFile.getName().endsWith(".kt")) {
-                        jetFiles.add(loadJetFile(environment.getProject(), childFile));
+                        ktFiles.add(loadJetFile(environment.getProject(), childFile));
                     }
                 }
             }
         }
-        LazyResolveTestUtil.resolve(environment.getProject(), jetFiles, environment);
+        JvmResolveUtil.analyze(ktFiles, environment);
     }
 
     public static void assertEqualsToFile(@NotNull File expectedFile, @NotNull Editor editor) {

@@ -16,22 +16,19 @@
 
 package org.jetbrains.kotlin.resolve;
 
-import com.intellij.openapi.project.Project;
 import org.jetbrains.kotlin.checkers.TestCheckerUtil;
 import org.jetbrains.kotlin.psi.KtFile;
 
 public abstract class AbstractResolveTest extends ExtensibleResolveTestCase {
     @Override
     protected ExpectedResolveData getExpectedResolveData() {
-        final Project project = getProject();
-
         return new ExpectedResolveData(
-                ExpectedResolveDataUtil.prepareDefaultNameToDescriptors(project, getEnvironment()),
-                ExpectedResolveDataUtil.prepareDefaultNameToDeclaration(project, getEnvironment())
+                ExpectedResolveDataUtil.prepareDefaultNameToDescriptors(getEnvironment()),
+                ExpectedResolveDataUtil.prepareDefaultNameToDeclaration(getEnvironment())
         ) {
             @Override
             protected KtFile createKtFile(String fileName, String text) {
-                return TestCheckerUtil.createCheckAndReturnPsiFile(fileName, text, project);
+                return TestCheckerUtil.createCheckAndReturnPsiFile(fileName, text, getProject());
             }
         };
     }

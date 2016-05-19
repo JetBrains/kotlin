@@ -68,6 +68,11 @@ public class JvmResolveUtil {
     }
 
     @NotNull
+    public static AnalysisResult analyze(@NotNull KotlinCoreEnvironment environment) {
+        return analyze(Collections.<KtFile>emptySet(), environment);
+    }
+
+    @NotNull
     public static AnalysisResult analyze(@NotNull KtFile file, @NotNull KotlinCoreEnvironment environment) {
         return analyze(Collections.singleton(file), environment);
     }
