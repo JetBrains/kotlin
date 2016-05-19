@@ -77,6 +77,8 @@ import java.util.Set;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isNullableAny;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
+import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isAnnotationOrJvm6Interface;
+import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvm8InterfaceMember;
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.METHOD_FOR_FUNCTION;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION;
 import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*;
@@ -94,6 +96,13 @@ public class FunctionCodegen {
     private final CodegenContext owner;
     private final ClassBuilder v;
     private final MemberCodegen<?> memberCodegen;
+
+    private final Function1<DeclarationDescriptor, Boolean> IS_PURE_INTERFACE_CHECKER = new Function1<DeclarationDescriptor, Boolean>() {
+        @Override
+        public Boolean invoke(DeclarationDescriptor descriptor) {
+            return JvmCodegenUtil.isAnnotationOrJvm6Interface(descriptor, state);
+        }
+    };
 
     public FunctionCodegen(
             @NotNull CodegenContext owner,
@@ -565,7 +574,7 @@ public class FunctionCodegen {
     public void generateBridges(@NotNull FunctionDescriptor descriptor) {
         if (descriptor instanceof ConstructorDescriptor) return;
         if (owner.getContextKind() == OwnerKind.DEFAULT_IMPLS) return;
-        if (isInterface(descriptor.getContainingDeclaration())) return;
+        if (isAnnotationOrJvm6Interface(descriptor.getContainingDeclaration(), state)) return;
 
         // equals(Any?), hashCode(), toString() never need bridges
         if (isMethodOfAny(descriptor)) return;
@@ -579,7 +588,8 @@ public class FunctionCodegen {
         if (!isSpecial) {
             bridgesToGenerate = ImplKt.generateBridgesForFunctionDescriptor(
                     descriptor,
-                    getSignatureMapper(typeMapper)
+                    getSignatureMapper(typeMapper),
+                    IS_PURE_INTERFACE_CHECKER
             );
             if (!bridgesToGenerate.isEmpty()) {
                 PsiElement origin = descriptor.getKind() == DECLARATION ? getSourceFromDescriptor(descriptor) : null;
@@ -594,7 +604,8 @@ public class FunctionCodegen {
         else {
             Set<BridgeForBuiltinSpecial<Method>> specials = BuiltinSpecialBridgesUtil.generateBridgesForBuiltinSpecial(
                     descriptor,
-                    getSignatureMapper(typeMapper)
+                    getSignatureMapper(typeMapper),
+                    IS_PURE_INTERFACE_CHECKER
             );
 
             if (!specials.isEmpty()) {
@@ -914,7 +925,12 @@ public class FunctionCodegen {
             iv.invokespecial(parentInternalName, delegateTo.getName(), delegateTo.getDescriptor());
         }
         else {
-            iv.invokevirtual(v.getThisName(), delegateTo.getName(), delegateTo.getDescriptor());
+            if (isJvm8InterfaceMember(descriptor, state)) {
+                iv.invokeinterface(v.getThisName(), delegateTo.getName(), delegateTo.getDescriptor());
+            }
+            else {
+                iv.invokevirtual(v.getThisName(), delegateTo.getName(), delegateTo.getDescriptor());
+            }
         }
 
         StackValue.coerce(delegateTo.getReturnType(), bridge.getReturnType(), iv);
