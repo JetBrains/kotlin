@@ -20,4 +20,3 @@ try
 typeof
 var
 while
-yield
