@@ -1168,16 +1168,19 @@ public fun CharSequence.lines(): List<String> = lineSequence().toList()
  * the length of the longest suffix of a substring of pattern from 0 to i
  * that is also a prefix of the pattern itself.
  */
-private fun computePrefixFunction(pattern: CharSequence): IntArray {
+private fun computePrefixFunction(pattern: CharSequence, ignoreCase: Boolean): IntArray {
     val resultTable = IntArray(pattern.length)
 
     var matches = 0
     for (i in 1..pattern.length - 1) {
-        while (matches > 0 && pattern[matches] != pattern[i]) {
+        var charMatches = pattern[matches].equals(pattern[i], ignoreCase)
+
+        while (matches > 0 && !charMatches) {
             matches = resultTable[matches - 1]
+            charMatches = pattern[matches].equals(pattern[i], ignoreCase)
         }
 
-        if (pattern[matches] == pattern[i]) {
+        if (charMatches) {
             matches++
         }
         resultTable[i] = matches
@@ -1231,17 +1234,19 @@ public fun CharSequence.occurrencesOf(pattern: CharSequence, ignoreCase: Boolean
     // Non-trivial pattern matching, perform computation
     // using Knuth-Morris-Pratt
 
-    val prefixFunction = computePrefixFunction(pattern)
+    val prefixFunction = computePrefixFunction(pattern, ignoreCase)
 
     var i = 0
     var matches = 0
     return generateSequence {
         while (i < length) {
-            while (matches > 0 && !pattern[matches].equals(this[i], ignoreCase)) {
+            var charMatches = pattern[matches].equals(this[i], ignoreCase)
+            while (matches > 0 && !charMatches) {
                 matches = prefixFunction[matches - 1]
+                charMatches = pattern[matches].equals(this[i], ignoreCase)
             }
 
-            if (pattern[matches].equals(this[i], ignoreCase)) {
+            if (charMatches) {
                 matches++
             }
             if (matches == pattern.length) {

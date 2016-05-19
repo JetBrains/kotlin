@@ -721,6 +721,8 @@ class StringTest {
         assertEquals(listOf(0, 3), "Abaabaaababac".occurrencesOf("abaa", ignoreCase = true, matchOverlapping = true).toList())
         assertEquals(listOf(0, 3), "abaabaaababac".occurrencesOf("abAa", ignoreCase = true, matchOverlapping = true).toList())
         assertEquals(listOf(0, 4), "AAABAAABAAAB".occurrencesOf("AAABAAAB", matchOverlapping = true).toList())
+        assertEquals(listOf(0, 3), "AABAABAABA".occurrencesOf("aaBaAba", matchOverlapping = true, ignoreCase = true).toList())
+        assertEquals(emptyList(), "AABAABAABA".occurrencesOf("aaBaAba", matchOverlapping = true, ignoreCase = false).toList())
 
         // Big and small theta
         assertEquals(listOf(0, 1), "\u0398\u0398\u0398".occurrencesOf("\u0398\u0398", matchOverlapping = true).toList())
