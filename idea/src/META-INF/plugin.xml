@@ -1521,7 +1521,7 @@
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.UnnecessaryJavaUsageInspection"
-                     displayName="Unnecessary java usage"
+                     displayName="Use of Java API that has a Kotlin equivalent"
                      groupName="Kotlin"
                      enabledByDefault="true"
                      cleanupTool="true"
