@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,7 @@
 
 package org.jetbrains.kotlin.resolve
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo
 
 object DescriptorEquivalenceForOverrides {
@@ -33,8 +29,8 @@ object DescriptorEquivalenceForOverrides {
             a is TypeParameterDescriptor &&
             b is TypeParameterDescriptor -> areTypeParametersEquivalent(a, b)
 
-            a is CallableMemberDescriptor &&
-            b is CallableMemberDescriptor -> areCallableMemberDescriptorsEquivalent(a, b)
+            a is CallableDescriptor &&
+            b is CallableDescriptor -> areCallableDescriptorsEquivalent(a, b)
 
             a is PackageFragmentDescriptor &&
             b is PackageFragmentDescriptor -> (a).fqName == (b).fqName
@@ -61,7 +57,11 @@ object DescriptorEquivalenceForOverrides {
         return a.index == b.index // We ignore type parameter names
     }
 
-    private fun areCallableMemberDescriptorsEquivalent(a: CallableMemberDescriptor, b: CallableMemberDescriptor): Boolean {
+    fun areCallableDescriptorsEquivalent(
+            a: CallableDescriptor,
+            b: CallableDescriptor,
+            ignoreReturnType: Boolean = false
+    ): Boolean {
         if (a == b) return true
         if (a.name != b.name) return false
         if (a.containingDeclaration == b.containingDeclaration) return false
@@ -83,8 +83,8 @@ object DescriptorEquivalenceForOverrides {
             areTypeParametersEquivalent(d1, d2, {x, y -> x == a && y == b})
         }
 
-        return overridingUtil.isOverridableByIncludingReturnType(a, b).result == OverrideCompatibilityInfo.Result.OVERRIDABLE
-                && overridingUtil.isOverridableByIncludingReturnType(b, a).result == OverrideCompatibilityInfo.Result.OVERRIDABLE
+        return overridingUtil.isOverridableBy(a, b, null, !ignoreReturnType).result == OverrideCompatibilityInfo.Result.OVERRIDABLE
+                && overridingUtil.isOverridableBy(b, a, null, !ignoreReturnType).result == OverrideCompatibilityInfo.Result.OVERRIDABLE
 
     }
 
