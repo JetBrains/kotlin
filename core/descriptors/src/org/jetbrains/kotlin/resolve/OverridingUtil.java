@@ -321,6 +321,11 @@ public class OverridingUtil {
         createAndBindFakeOverrides(current, notOverridden, strategy);
     }
 
+    public static boolean isVisibleForOverride(@NotNull MemberDescriptor overriding, @NotNull MemberDescriptor fromSuper) {
+        return !Visibilities.isPrivate(fromSuper.getVisibility()) &&
+               Visibilities.isVisibleIgnoringReceiver(fromSuper, overriding);
+    }
+
     private static Collection<CallableMemberDescriptor> extractAndBindOverridesForMember(
             @NotNull CallableMemberDescriptor fromCurrent,
             @NotNull Collection<? extends CallableMemberDescriptor> descriptorsFromSuper,
@@ -332,16 +337,17 @@ public class OverridingUtil {
         for (CallableMemberDescriptor fromSupertype : descriptorsFromSuper) {
             OverrideCompatibilityInfo.Result result = DEFAULT.isOverridableBy(fromSupertype, fromCurrent, current).getResult();
 
-            boolean isVisible = Visibilities.isVisibleIgnoringReceiver(fromSupertype, current);
+            boolean isVisibleForOverride = isVisibleForOverride(fromCurrent, fromSupertype);
+
             switch (result) {
                 case OVERRIDABLE:
-                    if (isVisible) {
+                    if (isVisibleForOverride) {
                         overridden.add(fromSupertype);
                     }
                     bound.add(fromSupertype);
                     break;
                 case CONFLICT:
-                    if (isVisible) {
+                    if (isVisibleForOverride) {
                         strategy.overrideConflict(fromSupertype, fromCurrent);
                     }
                     bound.add(fromSupertype);

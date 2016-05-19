@@ -1080,7 +1080,7 @@ public class OverrideResolver {
             all.addAll((Collection) supertype.getMemberScope().getContributedVariables(declared.getName(), NoLookupLocation.WHEN_CHECK_OVERRIDES));
             for (CallableMemberDescriptor fromSuper : all) {
                 if (OverridingUtil.DEFAULT.isOverridableBy(fromSuper, declared, null).getResult() == OVERRIDABLE) {
-                    if (Visibilities.isVisibleIgnoringReceiver(fromSuper, declared)) {
+                    if (OverridingUtil.isVisibleForOverride(declared, fromSuper)) {
                         throw new IllegalStateException("Descriptor " + fromSuper + " is overridable by " + declared +
                                                         " and visible but does not appear in its getOverriddenDescriptors()");
                     }
