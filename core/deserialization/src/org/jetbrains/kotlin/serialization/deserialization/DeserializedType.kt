@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.types.AbstractLazyType
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.LazyType
+import org.jetbrains.kotlin.types.TypeCapabilities
 import org.jetbrains.kotlin.utils.toReadOnlyList
 
 class DeserializedType(
@@ -47,16 +48,17 @@ class DeserializedType(
                 .map { AnnotationWithTarget(it, null) } + additionalAnnotations.getAllAnnotations()
     }
 
-    override fun isMarkedNullable(): Boolean = typeProto.nullable
+    override val isMarkedNullable: Boolean get() = typeProto.nullable
 
-    override fun isError(): Boolean {
-        val descriptor = constructor.declarationDescriptor
-        return descriptor != null && ErrorUtils.isError(descriptor)
-    }
+    override val isError: Boolean
+        get() {
+            val descriptor = constructor.declarationDescriptor
+            return descriptor != null && ErrorUtils.isError(descriptor)
+        }
 
     override fun getAnnotations(): Annotations = annotations
 
-    override fun getCapabilities() = typeCapabilities()
+    override val capabilities: TypeCapabilities get() = typeCapabilities()
 
     private val typeCapabilities = c.storageManager.createLazyValue {
         c.components.typeCapabilitiesLoader.loadCapabilities(typeProto)

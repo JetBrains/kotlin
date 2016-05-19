@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -85,7 +85,7 @@ class LazyJavaAnnotationDescriptor(
         }
     }
 
-    private fun getAnnotationClass() = getType().getConstructor().declarationDescriptor as ClassDescriptor
+    private fun getAnnotationClass() = getType().constructor.declarationDescriptor as ClassDescriptor
 
     private fun resolveAnnotationArgument(argument: JavaAnnotationArgument?): ConstantValue<*>? {
         return when (argument) {
@@ -103,7 +103,7 @@ class LazyJavaAnnotationDescriptor(
     }
 
     private fun resolveFromArray(argumentName: Name, elements: List<JavaAnnotationArgument>): ConstantValue<*>? {
-        if (getType().isError()) return null
+        if (getType().isError) return null
 
         val valueParameter = DescriptorResolverUtils.getAnnotationParameterByName(argumentName, getAnnotationClass()) ?: return null
 

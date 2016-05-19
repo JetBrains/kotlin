@@ -183,12 +183,11 @@ class LazyJavaTypeResolver(
             // such as collections with no generics, so the Java types are not raw, formally, but they don't match with
             // their Kotlin analogs, so we treat them as raw to avoid exceptions
             // No type arguments, but some are expected => raw
-            return javaType.typeArguments.isEmpty() && !getConstructor().parameters.isEmpty()
+            return javaType.typeArguments.isEmpty() && !constructor.parameters.isEmpty()
         }
 
         override fun computeArguments(): List<TypeProjection> {
-            val typeConstructor = getConstructor()
-            val typeParameters = typeConstructor.parameters
+            val typeParameters = constructor.parameters
             if (isRaw()) {
                 return typeParameters.map {
                     parameter ->
@@ -259,7 +258,7 @@ class LazyJavaTypeResolver(
             return this != typeParameter.variance
         }
 
-        override fun getCapabilities(): TypeCapabilities = if (isRaw()) RawTypeCapabilities else TypeCapabilities.NONE
+        override val capabilities: TypeCapabilities get() = if (isRaw()) RawTypeCapabilities else TypeCapabilities.NONE
 
         private val nullable = c.storageManager.createLazyValue l@ {
             if (attr.flexibility == FLEXIBLE_LOWER_BOUND) return@l false
@@ -278,7 +277,7 @@ class LazyJavaTypeResolver(
             }
         }
 
-        override fun isMarkedNullable(): Boolean = nullable()
+        override val isMarkedNullable: Boolean get() = nullable()
 
         override fun getAnnotations() = annotations
     }

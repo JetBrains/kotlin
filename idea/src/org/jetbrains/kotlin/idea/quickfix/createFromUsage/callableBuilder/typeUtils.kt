@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,8 +65,9 @@ private fun KotlinType.render(typeParameterNameMap: Map<TypeParameterDescriptor,
                     override fun getTypeConstructor() = wrappingTypeConstructor
                 }
 
-                val wrappingType = object : KotlinType by typeParameter.defaultType {
-                    override fun getConstructor() = wrappingTypeConstructor
+                val wrappingType = object : DelegatingType()  {
+                    override fun getDelegate(): KotlinType? = typeParameter.defaultType
+                    override val constructor = wrappingTypeConstructor
                 }
 
                 TypeProjectionImpl(wrappingType)
