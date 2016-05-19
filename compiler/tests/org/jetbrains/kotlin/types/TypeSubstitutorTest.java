@@ -25,7 +25,7 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
+import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.psi.KtTypeReference;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator;
-import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
+import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.resolve.scopes.*;
 import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.test.ConfigurationKind;
@@ -53,7 +53,6 @@ import org.jetbrains.kotlin.tests.di.InjectionKt;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Map;
 
 @SuppressWarnings("unchecked")
@@ -84,31 +83,36 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
     private LexicalScope getContextScope() throws IOException {
         // todo comments
         String text = FileUtil.loadFile(new File("compiler/testData/type-substitutor.kt"), true);
-        KtFile jetFile = KtPsiFactoryKt.KtPsiFactory(getProject()).createFile(text);
-        BindingTrace trace = new CliLightClassGenerationSupport.CliBindingTrace();
-        ModuleDescriptor module = LazyResolveTestUtil.resolve(getProject(), trace, Collections.singletonList(jetFile), getEnvironment());
+        KtFile ktFile = KtPsiFactoryKt.KtPsiFactory(getProject()).createFile(text);
+        AnalysisResult analysisResult = JvmResolveUtil.analyze(ktFile, getEnvironment());
+        ModuleDescriptor module = analysisResult.getModuleDescriptor();
 
-        LexicalScope topLevelScope = trace.get(BindingContext.LEXICAL_SCOPE, jetFile);
-        final ClassifierDescriptor contextClass = ScopeUtilsKt.findClassifier(topLevelScope, Name.identifier("___Context"), NoLookupLocation.FROM_TEST);
+        LexicalScope topLevelScope = analysisResult.getBindingContext().get(BindingContext.LEXICAL_SCOPE, ktFile);
+        final ClassifierDescriptor contextClass =
+                ScopeUtilsKt.findClassifier(topLevelScope, Name.identifier("___Context"), NoLookupLocation.FROM_TEST);
         assert contextClass instanceof ClassDescriptor;
-        LocalRedeclarationChecker redeclarationChecker = new ThrowingLocalRedeclarationChecker(new OverloadChecker(
-                TypeSpecificityComparator.NONE.INSTANCE));
-        LexicalScope typeParameters = new LexicalScopeImpl(topLevelScope, module, false, null, LexicalScopeKind.SYNTHETIC,
-                                                           redeclarationChecker,
-                                                           new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
-                                                               @Override
-                                                               public Unit invoke(LexicalScopeImpl.InitializeHandler handler) {
-                                                                   for (TypeParameterDescriptor parameterDescriptor : contextClass.getTypeConstructor().getParameters()) {
-                                                                       handler.addClassifierDescriptor(parameterDescriptor);
-                                                                   }
-                                                                   return Unit.INSTANCE;
-                                                               }
-                                                           });
-        return new LexicalChainedScope(typeParameters, module, false, null, LexicalScopeKind.SYNTHETIC,
-                                       Arrays.asList(
-                                               contextClass.getDefaultType().getMemberScope(),
-                                               module.getBuiltIns().getBuiltInsPackageScope()
-                                       ));
+        LocalRedeclarationChecker redeclarationChecker =
+                new ThrowingLocalRedeclarationChecker(new OverloadChecker(TypeSpecificityComparator.NONE.INSTANCE));
+        LexicalScope typeParameters = new LexicalScopeImpl(
+                topLevelScope, module, false, null, LexicalScopeKind.SYNTHETIC,
+                redeclarationChecker,
+                new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
+                    @Override
+                    public Unit invoke(LexicalScopeImpl.InitializeHandler handler) {
+                        for (TypeParameterDescriptor parameterDescriptor : contextClass.getTypeConstructor().getParameters()) {
+                            handler.addClassifierDescriptor(parameterDescriptor);
+                        }
+                        return Unit.INSTANCE;
+                    }
+                }
+        );
+        return new LexicalChainedScope(
+                typeParameters, module, false, null, LexicalScopeKind.SYNTHETIC,
+                Arrays.asList(
+                        contextClass.getDefaultType().getMemberScope(),
+                        module.getBuiltIns().getBuiltInsPackageScope()
+                )
+        );
     }
 
     private void doTest(@Nullable String expectedTypeStr, String initialTypeStr, Pair<String, String>... substitutionStrs) {

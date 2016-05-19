@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
-import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
+import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
@@ -161,25 +161,26 @@ public class ResolveDescriptorsFromExternalLibraries {
             public void dispose() { }
         };
 
-        KotlinCoreEnvironment jetCoreEnvironment;
+        KotlinCoreEnvironment environment;
         if (jar != null) {
-            jetCoreEnvironment = KotlinCoreEnvironment.createForTests(
+            environment = KotlinCoreEnvironment.createForTests(
                     junk,
                     KotlinTestUtils.compilerConfigurationForTests(
                             ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, KotlinTestUtils.getAnnotationsJar(), jar
                     ),
-                    EnvironmentConfigFiles.JVM_CONFIG_FILES);
+                    EnvironmentConfigFiles.JVM_CONFIG_FILES
+            );
         }
         else {
             CompilerConfiguration configuration =
                     KotlinTestUtils.compilerConfigurationForTests(ConfigurationKind.JDK_ONLY, TestJdkKind.FULL_JDK);
-            jetCoreEnvironment = KotlinCoreEnvironment.createForTests(junk, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
+            environment = KotlinCoreEnvironment.createForTests(junk, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
             if (!findRtJar().equals(jar)) {
                 throw new RuntimeException("rt.jar mismatch: " + jar + ", " + findRtJar());
             }
         }
 
-        ModuleDescriptor module = LazyResolveTestUtil.resolveProject(jetCoreEnvironment.getProject(), jetCoreEnvironment);
+        ModuleDescriptor module = JvmResolveUtil.analyze(environment).getModuleDescriptor();
 
         boolean hasErrors;
         try {

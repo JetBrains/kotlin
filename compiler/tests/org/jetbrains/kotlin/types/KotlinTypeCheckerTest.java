@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.types;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
@@ -29,11 +29,10 @@ import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.BindingTraceContext;
 import org.jetbrains.kotlin.resolve.TypeResolver;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory;
-import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
+import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeImpl;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind;
@@ -575,15 +574,9 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
     @NotNull
     private LexicalScope getDeclarationsScope(String path) throws IOException {
         KtFile ktFile = KotlinTestUtils.loadJetFile(getProject(), new File(path));
-        BindingTrace trace = new CliLightClassGenerationSupport.CliBindingTrace();
-        LazyResolveTestUtil.resolve(
-                getProject(),
-                trace,
-                Collections.singletonList(ktFile),
-                getEnvironment()
-        );
-
-        return trace.get(BindingContext.LEXICAL_SCOPE, ktFile);
+        AnalysisResult result = JvmResolveUtil.analyze(ktFile, getEnvironment());
+        //noinspection ConstantConditions
+        return result.getBindingContext().get(BindingContext.LEXICAL_SCOPE, ktFile);
     }
 
     private KotlinType makeType(String typeStr) {

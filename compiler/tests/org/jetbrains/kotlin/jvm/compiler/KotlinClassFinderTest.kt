@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinder
-import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil
+import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironmentManagement
@@ -48,7 +48,7 @@ class KotlinClassFinderTest : KotlinTestWithEnvironmentManagement() {
     fun testNestedClass() {
         val tmpdir = KotlinTestUtils.tmpDirForTest(this)
         KotlinTestUtils.compileKotlinWithJava(
-                listOf(), listOf(File("compiler/testData/kotlinClassFinder/nestedClass.kt")), tmpdir, testRootDisposable!!, null
+                listOf(), listOf(File("compiler/testData/kotlinClassFinder/nestedClass.kt")), tmpdir, testRootDisposable, null
         )
 
         val environment = createEnvironment(tmpdir)
@@ -66,14 +66,13 @@ class KotlinClassFinderTest : KotlinTestWithEnvironmentManagement() {
     }
 
     private fun createEnvironment(tmpdir: File?): KotlinCoreEnvironment {
-        val environment = KotlinCoreEnvironment.createForTests(testRootDisposable!!,
-                                                               KotlinTestUtils.compilerConfigurationForTests(
-                                                                       ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, tmpdir),
-                                                               EnvironmentConfigFiles.JVM_CONFIG_FILES)
-
-        // Activate Kotlin light class finder
-        LazyResolveTestUtil.resolveProject(environment.project, environment)
-
-        return environment
+        return KotlinCoreEnvironment.createForTests(
+                testRootDisposable,
+                KotlinTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, tmpdir),
+                EnvironmentConfigFiles.JVM_CONFIG_FILES
+        ).apply {
+            // Activate Kotlin light class finder
+            JvmResolveUtil.analyze(this)
+        }
     }
 }

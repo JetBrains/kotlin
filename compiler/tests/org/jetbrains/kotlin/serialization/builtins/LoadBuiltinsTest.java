@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier;
 import org.jetbrains.kotlin.renderer.DescriptorRendererOptions;
 import org.jetbrains.kotlin.renderer.OverrideRenderingPolicy;
-import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
+import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtilsKt;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor;
 import org.jetbrains.kotlin.serialization.deserialization.AdditionalClassPartsProvider;
 import org.jetbrains.kotlin.serialization.deserialization.PlatformDependentDeclarationFilter;
@@ -87,7 +87,8 @@ public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
                 allFilesUnder("core/builtins/src")
         ));
 
-        final ModuleDescriptor module = LazyResolveTestUtil.resolveLazily(files, getEnvironment(), false);
+        ModuleDescriptor module =
+                LazyResolveTestUtilsKt.createResolveSessionForFiles(getEnvironment().getProject(), files, false).getModuleDescriptor();
 
         for (FqName packageFqName : CollectionsKt.listOf(BUILT_INS_PACKAGE_FQ_NAME, COLLECTIONS_PACKAGE_FQ_NAME, RANGES_PACKAGE_FQ_NAME)) {
             PackageFragmentDescriptor fromLazyResolve =
