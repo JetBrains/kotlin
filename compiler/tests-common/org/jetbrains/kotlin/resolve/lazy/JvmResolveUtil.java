@@ -84,7 +84,7 @@ public class JvmResolveUtil {
             @NotNull CompilerConfiguration configuration,
             @NotNull PackagePartProvider packagePartProvider
     ) {
-        return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
+        return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
                 TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project, TEST_MODULE_NAME),
                 files, new CliLightClassGenerationSupport.CliBindingTrace(), configuration, packagePartProvider
         );
