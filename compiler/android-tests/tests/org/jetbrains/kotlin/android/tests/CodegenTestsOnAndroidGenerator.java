@@ -24,6 +24,7 @@ import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.CodegenTestFiles;
@@ -142,7 +143,7 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
 
     class FilesWriter {
         private final boolean isFullJdkAndRuntime;
-        private boolean inheritMultifileParts;
+        private final boolean inheritMultifileParts;
 
         public List<KtFile> files = new ArrayList<KtFile>();
         private KotlinCoreEnvironment environment;
@@ -150,15 +151,19 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
         private FilesWriter(boolean isFullJdkAndRuntime, boolean inheritMultifileParts) {
             this.isFullJdkAndRuntime = isFullJdkAndRuntime;
             this.inheritMultifileParts = inheritMultifileParts;
-            environment = createEnvironment(isFullJdkAndRuntime);
+            this.environment = createEnvironment(isFullJdkAndRuntime);
         }
 
         private KotlinCoreEnvironment createEnvironment(boolean isFullJdkAndRuntime) {
-            return isFullJdkAndRuntime ?
-                   KotlinTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
-                           myTestRootDisposable, ConfigurationKind.ALL, TestJdkKind.FULL_JDK
-                                                ) :
-                   KotlinTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, ConfigurationKind.JDK_ONLY);
+            ConfigurationKind configurationKind = isFullJdkAndRuntime ? ConfigurationKind.ALL : ConfigurationKind.JDK_ONLY;
+            CompilerConfiguration configuration = KotlinTestUtils.compilerConfigurationForTests(
+                    configurationKind, TestJdkKind.FULL_JDK, KotlinTestUtils.getAnnotationsJar()
+            );
+            configuration.put(JVMConfigurationKeys.MODULE_NAME, "android-module-" + MODULE_INDEX++);
+            if (inheritMultifileParts) {
+                configuration.put(JVMConfigurationKeys.INHERIT_MULTIFILE_PARTS, true);
+            }
+            return KotlinCoreEnvironment.createForTests(myTestRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
         }
 
         public boolean shouldWriteFilesOnDisk() {
@@ -180,8 +185,9 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
         public void addFile(String name, String content) {
             try {
                 files.add(CodegenTestFiles.create(name, content, environment.getProject()).getPsiFile());
-            } catch (Throwable e) {
-                new RuntimeException("Problem during creating file " + name + ": \n" + content, e);
+            }
+            catch (Throwable e) {
+                throw new RuntimeException("Problem during creating file " + name + ": \n" + content, e);
             }
         }
 
@@ -194,18 +200,11 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
                                 : isFullJdkAndRuntime ? " (full jdk and runtime)" : "") + "...");
             OutputFileCollection outputFiles;
             try {
-                //hack to pass module name
-                CompilerConfiguration configuration = environment.getConfiguration().copy();
-                configuration.put(JVMConfigurationKeys.MODULE_NAME, "android-module-" + MODULE_INDEX++);
-                if (inheritMultifileParts) {
-                    configuration.put(JVMConfigurationKeys.INHERIT_MULTIFILE_PARTS, true);
-                }
-                configuration.setReadOnly(true);
                 outputFiles = GenerationUtils.compileManyFilesGetGenerationStateForTest(
                         filesToCompile.iterator().next().getProject(),
                         filesToCompile,
                         new JvmPackagePartProvider(environment),
-                        configuration
+                        environment.getConfiguration()
                 ).getFactory();
             }
             catch (Throwable e) {
