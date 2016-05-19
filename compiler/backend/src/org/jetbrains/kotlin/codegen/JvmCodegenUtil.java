@@ -28,11 +28,11 @@ import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.context.FacadePartWithSourceFile;
 import org.jetbrains.kotlin.codegen.context.MethodContext;
 import org.jetbrains.kotlin.codegen.context.RootContext;
+import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor;
-import org.jetbrains.kotlin.load.kotlin.ModuleMapping;
-import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityUtilsKt;
+import org.jetbrains.kotlin.load.kotlin.*;
 import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtFunction;
@@ -43,7 +43,9 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.org.objectweb.asm.Opcodes;
 
 import java.io.File;
 
@@ -56,6 +58,32 @@ import static org.jetbrains.kotlin.resolve.jvm.annotations.AnnotationUtilKt.hasJ
 public class JvmCodegenUtil {
 
     private JvmCodegenUtil() {
+    }
+
+    public static boolean isJvm6Interface(@NotNull DeclarationDescriptor descriptor, @NotNull GenerationState state) {
+        if (!DescriptorUtils.isInterface(descriptor)) {
+            return false;
+        }
+
+        if (descriptor instanceof DeserializedClassDescriptor) {
+            SourceElement source = ((DeserializedClassDescriptor) descriptor).getSource();
+            if (source instanceof KotlinJvmBinarySourceElement) {
+                KotlinJvmBinaryClass binaryClass = ((KotlinJvmBinarySourceElement) source).getBinaryClass();
+                assert binaryClass instanceof FileBasedKotlinClass :
+                        "KotlinJvmBinaryClass should be subclass of FileBasedKotlinClass, but " + binaryClass;
+                return ((FileBasedKotlinClass) binaryClass).getClassVersion() == Opcodes.V1_6;
+            }
+        }
+        return !state.isJvm8Target();
+    }
+
+    public static boolean isJvm8Interface(@NotNull DeclarationDescriptor descriptor, @NotNull GenerationState state) {
+        return DescriptorUtils.isInterface(descriptor) && !isJvm6Interface(descriptor, state);
+    }
+
+    public static boolean isJvm8InterfaceMember(@NotNull CallableMemberDescriptor descriptor, @NotNull GenerationState state) {
+        DeclarationDescriptor declaration = descriptor.getContainingDeclaration();
+        return DescriptorUtils.isInterface(declaration) && !isJvm6Interface(declaration, state);
     }
 
     public static boolean isJvmInterface(DeclarationDescriptor descriptor) {
