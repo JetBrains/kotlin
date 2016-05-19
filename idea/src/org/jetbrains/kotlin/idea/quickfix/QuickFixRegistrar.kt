@@ -378,8 +378,6 @@ class QuickFixRegistrar : QuickFixContributor {
 
         COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT.registerFactory(CommaInWhenConditionWithoutArgumentFix)
 
-        UNSUPPORTED.registerFactory(UnsupportedAsyncFix)
-
         DATA_CLASS_NOT_PROPERTY_PARAMETER.registerFactory(AddValVarToConstructorParameterAction.QuickFixFactory)
 
         NON_LOCAL_RETURN_NOT_ALLOWED.registerFactory(AddCrossInlineFix)

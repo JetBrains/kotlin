@@ -584,39 +584,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
-    @TestMetadata("idea/testData/quickfix/asyncUnsupported")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class AsyncUnsupported extends AbstractQuickFixTest {
-        public void testAllFilesPresentInAsyncUnsupported() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/asyncUnsupported"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
-        }
-
-        @TestMetadata("asyncInfixCall.kt")
-        public void testAsyncInfixCall() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/asyncUnsupported/asyncInfixCall.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("asyncInfixCallWithFun.kt")
-        public void testAsyncInfixCallWithFun() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/asyncUnsupported/asyncInfixCallWithFun.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("asyncWithLambda.kt")
-        public void testAsyncWithLambda() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/asyncUnsupported/asyncWithLambda.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("asyncWithLambdaAndComment.kt")
-        public void testAsyncWithLambdaAndComment() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/asyncUnsupported/asyncWithLambdaAndComment.kt");
-            doTest(fileName);
-        }
-    }
-
     @TestMetadata("idea/testData/quickfix/autoImports")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
