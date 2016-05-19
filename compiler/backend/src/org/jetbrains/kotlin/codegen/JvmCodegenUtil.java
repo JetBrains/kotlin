@@ -50,6 +50,8 @@ import org.jetbrains.org.objectweb.asm.Opcodes;
 import java.io.File;
 
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.LOCAL_VARIABLE_DELEGATE;
+import static org.jetbrains.kotlin.descriptors.ClassKind.ANNOTATION_CLASS;
+import static org.jetbrains.kotlin.descriptors.ClassKind.INTERFACE;
 import static org.jetbrains.kotlin.descriptors.Modality.ABSTRACT;
 import static org.jetbrains.kotlin.descriptors.Modality.FINAL;
 import static org.jetbrains.kotlin.resolve.BindingContext.DELEGATED_PROPERTY_CALL;
@@ -60,10 +62,11 @@ public class JvmCodegenUtil {
     private JvmCodegenUtil() {
     }
 
-    public static boolean isJvm6Interface(@NotNull DeclarationDescriptor descriptor, @NotNull GenerationState state) {
-        if (!DescriptorUtils.isInterface(descriptor)) {
+    public static boolean isAnnotationOrJvm6Interface(@NotNull DeclarationDescriptor descriptor, @NotNull GenerationState state) {
+        if (!isJvmInterface(descriptor)) {
             return false;
         }
+        if (ANNOTATION_CLASS == ((ClassDescriptor) descriptor).getKind()) return true;
 
         if (descriptor instanceof DeserializedClassDescriptor) {
             SourceElement source = ((DeserializedClassDescriptor) descriptor).getSource();
@@ -77,19 +80,19 @@ public class JvmCodegenUtil {
         return !state.isJvm8Target();
     }
 
-    public static boolean isJvm8Interface(@NotNull DeclarationDescriptor descriptor, @NotNull GenerationState state) {
-        return DescriptorUtils.isInterface(descriptor) && !isJvm6Interface(descriptor, state);
+    private static boolean isJvm8Interface(@NotNull DeclarationDescriptor descriptor, @NotNull GenerationState state) {
+        return DescriptorUtils.isInterface(descriptor) && !isAnnotationOrJvm6Interface(descriptor, state);
     }
 
     public static boolean isJvm8InterfaceMember(@NotNull CallableMemberDescriptor descriptor, @NotNull GenerationState state) {
         DeclarationDescriptor declaration = descriptor.getContainingDeclaration();
-        return DescriptorUtils.isInterface(declaration) && !isJvm6Interface(declaration, state);
+        return isJvm8Interface(declaration, state);
     }
 
     public static boolean isJvmInterface(DeclarationDescriptor descriptor) {
         if (descriptor instanceof ClassDescriptor) {
             ClassKind kind = ((ClassDescriptor) descriptor).getKind();
-            return kind == ClassKind.INTERFACE || kind == ClassKind.ANNOTATION_CLASS;
+            return kind == INTERFACE || kind == ANNOTATION_CLASS;
         }
         return false;
     }

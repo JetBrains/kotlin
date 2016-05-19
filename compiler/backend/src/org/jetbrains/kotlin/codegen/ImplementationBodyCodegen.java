@@ -1321,7 +1321,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generateTraitMethods() {
-        if (isJvm6Interface(descriptor, state)) return;
+        if (isAnnotationOrJvm6Interface(descriptor, state)) return;
 
         for (Map.Entry<FunctionDescriptor, FunctionDescriptor> entry : CodegenUtil.getNonPrivateTraitMethods(descriptor).entrySet()) {
             FunctionDescriptor traitFun = entry.getKey();
