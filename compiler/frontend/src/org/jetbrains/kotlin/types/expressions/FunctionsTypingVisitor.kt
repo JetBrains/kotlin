@@ -160,7 +160,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
     }
 
     private fun checkReservedAsync(context: ExpressionTypingContext, expression: PsiElement) {
-        checkReservedPrefixWord(context.trace, expression, "async", KtTokens.BINARY_OPERATIONS, "async block/lambda. Use 'async() { ... }' or 'async(fun...)'")
+        checkReservedPrefixWord(context.trace, expression, "async", "async block/lambda. Use 'async() { ... }' or 'async(fun...)'")
     }
 
     private fun createFunctionLiteralDescriptor(

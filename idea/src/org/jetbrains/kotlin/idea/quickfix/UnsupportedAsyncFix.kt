@@ -23,7 +23,6 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.codeInsight.surroundWith.expression.KotlinParenthesesSurrounder
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
@@ -34,15 +33,8 @@ class UnsupportedAsyncFix(val psiElement: PsiElement): KotlinQuickFixAction<PsiE
     override fun getText(): String  = familyName
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
-        if (element is KtBinaryExpression) {
-            if (element.operationToken != KtTokens.IDENTIFIER) {
-                // async+ {}
-                element.addBefore(KtPsiFactory(element).createWhiteSpace(), element.operationReference)
-            }
-            else if (element.right != null) {
-                // foo async {}
-                KotlinParenthesesSurrounder.surroundWithParentheses(element.right!!)
-            }
+        if (element is KtBinaryExpression && element.right != null) {
+            KotlinParenthesesSurrounder.surroundWithParentheses(element.right!!)
         }
 
         if (element is KtCallExpression) {

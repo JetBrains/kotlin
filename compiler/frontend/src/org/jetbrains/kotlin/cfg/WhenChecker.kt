@@ -398,6 +398,6 @@ object WhenChecker {
     }
 
     fun checkReservedPrefix(trace: BindingTrace, expression: KtWhenExpression) {
-        checkReservedPrefixWord(trace, expression.whenKeyword, "sealed", TokenSet.EMPTY, "sealed when")
+        checkReservedPrefixWord(trace, expression.whenKeyword, "sealed", "sealed when")
     }
 }
