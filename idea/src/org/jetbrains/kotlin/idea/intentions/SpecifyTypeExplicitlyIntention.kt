@@ -106,7 +106,7 @@ class SpecifyTypeExplicitlyIntention : SelfTargetingIntention<KtCallableDeclarat
 
                         object: DelegatingType() {
                             override fun getDelegate() = it
-                            override val arguments = newArguments
+                            override val arguments: List<TypeProjection> get() = newArguments
                         }
                     }
                     .ifEmpty { return null }

@@ -90,7 +90,7 @@ fun KotlinType.replaceAnnotations(newAnnotations: Annotations): KotlinType {
     return object : DelegatingType() {
         override fun getDelegate() = this@replaceAnnotations
 
-        override val annotations = newAnnotations
+        override val annotations: Annotations get() = newAnnotations
     }
 }
 
