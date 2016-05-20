@@ -41,6 +41,8 @@ import org.jetbrains.kotlin.codegen.ClassBuilderFactories;
 import org.jetbrains.kotlin.codegen.CompilationErrorHandler;
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
+import org.jetbrains.kotlin.config.CompilerConfiguration;
+import org.jetbrains.kotlin.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
@@ -73,7 +75,7 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
                                                "No Kotlin source file is opened.\n" +
                                                "*/";
 
-    public class UpdateBytecodeToolWindowTask extends LongRunningReadTask<Location, String> {
+    private class UpdateBytecodeToolWindowTask extends LongRunningReadTask<Location, String> {
         @Override
         protected Location prepareRequestInfo() {
             if (!toolWindow.isVisible()) {
@@ -109,10 +111,22 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
         @NotNull
         @Override
         protected String processRequest(@NotNull Location location) {
-            KtFile jetFile = location.getKFile();
-            assert jetFile != null;
+            KtFile ktFile = location.getKFile();
+            assert ktFile != null;
 
-            return getBytecodeForFile(jetFile, enableInline.isSelected(), enableAssertions.isSelected(), enableOptimization.isSelected());
+            CompilerConfiguration configuration = new CompilerConfiguration();
+            if (!enableInline.isSelected()) {
+                configuration.put(JVMConfigurationKeys.DISABLE_INLINE, true);
+            }
+            if (!enableAssertions.isSelected()) {
+                configuration.put(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS, true);
+                configuration.put(JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS, true);
+            }
+            if (!enableOptimization.isSelected()) {
+                configuration.put(JVMConfigurationKeys.DISABLE_OPTIMIZATION, true);
+            }
+
+            return getBytecodeForFile(ktFile, configuration);
         }
 
         @Override
@@ -161,7 +175,7 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
     private final JCheckBox enableAssertions;
     private final JButton decompile;
 
-    public KotlinBytecodeToolWindow(final Project project, ToolWindow toolWindow) {
+    public KotlinBytecodeToolWindow(Project project, ToolWindow toolWindow) {
         super(new BorderLayout());
         myProject = project;
         this.toolWindow = toolWindow;
@@ -214,15 +228,10 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
 
     // public for tests
     @NotNull
-    public static String getBytecodeForFile(
-            final KtFile jetFile,
-            boolean enableInline,
-            boolean enableAssertions,
-            boolean enableOptimization
-    ) {
+    public static String getBytecodeForFile(@NotNull KtFile ktFile, @NotNull CompilerConfiguration configuration) {
         GenerationState state;
         try {
-            state = compileSingleFile(jetFile, enableInline, enableAssertions, enableOptimization);
+            state = compileSingleFile(ktFile, configuration);
         }
         catch (ProcessCanceledException e) {
             throw e;
@@ -260,25 +269,19 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
     }
 
     @NotNull
-    public static GenerationState compileSingleFile(
-            final KtFile ktFile,
-            boolean enableInline,
-            boolean enableAssertions,
-            boolean enableOptimization
-    ) {
+    public static GenerationState compileSingleFile(@NotNull final KtFile ktFile, @NotNull CompilerConfiguration configuration) {
         ResolutionFacade resolutionFacade = ResolutionUtils.getResolutionFacade(ktFile);
 
         BindingContext bindingContextForFile = resolutionFacade.analyzeFullyAndGetResult(Collections.singletonList(ktFile)).getBindingContext();
 
         kotlin.Pair<BindingContext, List<KtFile>> result = DebuggerUtils.INSTANCE.analyzeInlinedFunctions(
-                resolutionFacade, bindingContextForFile, ktFile, !enableInline
+                resolutionFacade, bindingContextForFile, ktFile, configuration.get(JVMConfigurationKeys.DISABLE_INLINE, false)
         );
 
         BindingContext bindingContext = result.getFirst();
         List<KtFile> toProcess = result.getSecond();
 
         GenerationState.GenerateClassFilter generateClassFilter = new GenerationState.GenerateClassFilter() {
-
             @Override
             public boolean shouldGeneratePackagePart(@NotNull KtFile file) {
                 return file == ktFile;
@@ -300,15 +303,10 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
             }
         };
 
-        GenerationState state = new GenerationState(ktFile.getProject(), ClassBuilderFactories.TEST,
-                                    resolutionFacade.getModuleDescriptor(), bindingContext,
-                                    toProcess,
-                                    !enableAssertions,
-                                    !enableAssertions,
-                                    generateClassFilter,
-                                    !enableInline,
-                                    !enableOptimization,
-                                    /*useTypeTableInSerializer=*/false);
+        GenerationState state = new GenerationState(
+                ktFile.getProject(), ClassBuilderFactories.TEST, resolutionFacade.getModuleDescriptor(), bindingContext, toProcess,
+                configuration, generateClassFilter
+        );
         KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
         return state;
     }

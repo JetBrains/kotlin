@@ -397,13 +397,8 @@ object KotlinToJVMBytecodeCompiler {
                 result.moduleDescriptor,
                 result.bindingContext,
                 sourceFiles,
-                configuration.get(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS, false),
-                configuration.get(JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS, false),
+                configuration,
                 GenerationState.GenerateClassFilter.GENERATE_ALL,
-                configuration.get(JVMConfigurationKeys.DISABLE_INLINE, false),
-                configuration.get(JVMConfigurationKeys.DISABLE_OPTIMIZATION, false),
-                /* useTypeTableInSerializer = */ false,
-                configuration.get(JVMConfigurationKeys.INHERIT_MULTIFILE_PARTS, false),
                 packagesWithObsoleteParts,
                 obsoleteMultifileClasses,
                 targetId,
@@ -411,7 +406,8 @@ object KotlinToJVMBytecodeCompiler {
                 outputDirectory,
                 incrementalCompilationComponents,
                 onIndependentPartCompilationEnd = onIndependentPartCompilationEnd,
-                dumpBinarySignatureMappingTo = configuration.get(JVMConfigurationKeys.DECLARATIONS_JSON_PATH)?.let { File(it) })
+                dumpBinarySignatureMappingTo = configuration.get(JVMConfigurationKeys.DECLARATIONS_JSON_PATH)?.let { File(it) }
+        )
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
         val generationStart = PerformanceCounter.currentTime()

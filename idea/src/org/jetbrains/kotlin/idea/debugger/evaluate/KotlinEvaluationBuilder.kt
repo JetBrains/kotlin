@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.diagnostics.Severity
@@ -394,7 +395,9 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                         moduleDescriptor,
                         bindingContext,
                         files,
-                        generateDeclaredClassFilter = generateClassFilter)
+                        CompilerConfiguration.EMPTY,
+                        generateClassFilter
+                )
 
                 val frameVisitor = FrameVisitor(context)
 

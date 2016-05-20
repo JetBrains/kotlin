@@ -70,7 +70,7 @@ import java.net.URLClassLoader
 
 class ReplInterpreter(
         disposable: Disposable,
-        configuration: CompilerConfiguration,
+        private val configuration: CompilerConfiguration,
         private val ideMode: Boolean,
         private val replReader: ReplSystemInWrapper?
 ) {
@@ -239,7 +239,9 @@ class ReplInterpreter(
         val scriptDescriptor = doAnalyze(psiFile, errorHolder)
                                ?: return LineResult.compileError(errorHolder.renderedDiagnostics)
 
-        val state = GenerationState(psiFile.project, ClassBuilderFactories.BINARIES, module, trace.bindingContext, listOf(psiFile))
+        val state = GenerationState(
+                psiFile.project, ClassBuilderFactories.BINARIES, module, trace.bindingContext, listOf(psiFile), configuration
+        )
 
         compileScript(psiFile.script!!, earlierLines.map(EarlierLine::getScriptDescriptor), state, CompilationErrorHandler.THROW_EXCEPTION)
 

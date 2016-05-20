@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.asJava
 
-import com.google.common.collect.Lists
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProcessCanceledException
@@ -40,6 +39,7 @@ import com.intellij.util.containers.Stack
 import org.jetbrains.kotlin.codegen.CompilationErrorHandler
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.fileClasses.NoResolveFileClassesProvider
 import org.jetbrains.kotlin.fileClasses.getFileClassType
@@ -97,13 +97,10 @@ abstract class LightClassDataProvider<T : WithFileStubAndExtraDiagnostics>(
                     KotlinLightClassBuilderFactory(stubStack),
                     context.module,
                     context.bindingContext,
-                    Lists.newArrayList(files),
-                    disableCallAssertions = false,
-                    disableParamAssertions = false,
-                    generateDeclaredClassFilter = generateClassFilter,
-                    disableInline = false,
-                    disableOptimization = false,
-                    useTypeTableInSerializer = false)
+                    files.toMutableList(),
+                    CompilerConfiguration.EMPTY,
+                    generateClassFilter
+            )
             state.beforeCompile()
 
             bindingContext = state.bindingContext
