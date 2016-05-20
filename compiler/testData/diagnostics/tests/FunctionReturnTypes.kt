@@ -39,7 +39,7 @@ fun intBlock() : Int {return 1}
 fun intBlock1() : Int {<!UNUSED_EXPRESSION!>1<!><!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 
 fun intString(): Int = <!TYPE_MISMATCH!>"s"<!>
-fun intFunctionLiteral(): Int = <!TYPE_MISMATCH!>{ 10 }<!>
+fun intFunctionLiteral(): Int = <!TYPE_MISMATCH_DUE_TO_EQUALS_LAMBDA_IN_FUN!>{ 10 }<!>
 
 fun blockReturnUnitMismatch() : Int {<!RETURN_TYPE_MISMATCH!>return<!>}
 fun blockReturnValueTypeMismatch() : Int {return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>3.4<!>}

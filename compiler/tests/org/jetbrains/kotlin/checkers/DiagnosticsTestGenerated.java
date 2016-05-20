@@ -4512,6 +4512,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("ScalaLikeNamedFun.kt")
+            public void testScalaLikeNamedFun() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/ScalaLikeNamedFun.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("unambiguousObjectExpressionType.kt")
             public void testUnambiguousObjectExpressionType() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/unambiguousObjectExpressionType.kt");

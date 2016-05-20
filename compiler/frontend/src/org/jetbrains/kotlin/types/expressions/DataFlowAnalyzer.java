@@ -260,7 +260,8 @@ public class DataFlowAnalyzer {
         SmartCastResult castResult = checkPossibleCast(expressionType, expression, c);
         if (castResult != null) return castResult.getResultType();
 
-        if (!DiagnosticUtilsKt.reportTypeMismatchDueToTypeProjection(c, expression, c.expectedType, expressionType)) {
+        if (!DiagnosticUtilsKt.reportTypeMismatchDueToTypeProjection(c, expression, c.expectedType, expressionType) &&
+            !DiagnosticUtilsKt.reportTypeMismatchDueToScalaLikeNamedFunctionSyntax(c, expression, c.expectedType, expressionType)) {
             c.trace.report(TYPE_MISMATCH.on(expression, c.expectedType, expressionType));
         }
         hasError.set(true);
