@@ -19,14 +19,18 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class UnnecessaryJavaUsageInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
 
     val patterns = mapOf(
-            "System.out.println($0)" to "println($0)",
-            "System.out.print($0)" to "print($0)",
-            "Collections.sort($0)" to "$0.sort()"
+            "java.io.PrintStream.println" to "println($0)",
+            "java.io.PrintStream.print" to "print($0)",
+            "java.util.Collections.sort" to "$0.sort()"
     )
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
@@ -36,15 +40,18 @@ class UnnecessaryJavaUsageInspection : AbstractKotlinInspection(), CleanupLocalI
 
                 val selectorExpression = expression.selectorExpression ?: return
                 if (selectorExpression !is KtCallExpression) return
-                if (selectorExpression.valueArguments.size != 1) return
-                val value = selectorExpression.valueArguments[0].text
-                val pattern = expression.text.replace(value, "$0")
+                val value = selectorExpression.valueArguments.singleOrNull() ?: return
+
+                val calleeExpression = selectorExpression.calleeExpression as KtSimpleNameExpression
+                val bindingContext = calleeExpression.analyze(BodyResolveMode.PARTIAL)
+                val target = calleeExpression.mainReference.resolveToDescriptors(bindingContext).singleOrNull() ?: return
+                val pattern = target.fqNameSafe.asString()
                 if (!patterns.containsKey(pattern)) return
 
                 holder.registerProblem(expression,
                                        "Unnecessary java usage",
                                        ProblemHighlightType.WEAK_WARNING,
-                                       UnnecessaryJavaUsageFix(patterns[pattern]!!, value))
+                                       UnnecessaryJavaUsageFix(patterns[pattern]!!, value.text))
             }
         }
     }
