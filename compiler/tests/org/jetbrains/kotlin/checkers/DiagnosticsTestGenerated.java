@@ -13257,6 +13257,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/privateInFile"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("kt12429.kt")
+            public void testKt12429() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/privateInFile/kt12429.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("topLevelAnnotationCall.kt")
+            public void testTopLevelAnnotationCall() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/privateInFile/topLevelAnnotationCall.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("visibility.kt")
             public void testVisibility() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/privateInFile/visibility.kt");
