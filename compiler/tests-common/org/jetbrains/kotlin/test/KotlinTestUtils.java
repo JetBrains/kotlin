@@ -63,6 +63,7 @@ import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.diagnostics.Severity;
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
+import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtExpression;
@@ -95,8 +96,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.jetbrains.kotlin.config.JVMConfigurationKeys.MODULE_NAME;
-import static org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil.compileKotlinToDirAndGetAnalysisResult;
-import static org.jetbrains.kotlin.test.ConfigurationKind.ALL;
 
 public class KotlinTestUtils {
     public static final String TEST_GENERATOR_NAME = "org.jetbrains.kotlin.generators.tests.TestsPackage";
@@ -541,7 +540,8 @@ public class KotlinTestUtils {
             @Nullable File javaErrorFile
     ) throws IOException {
         if (!ktFiles.isEmpty()) {
-            compileKotlinToDirAndGetAnalysisResult(ktFiles, outDir, disposable, ALL, false);
+            KotlinCoreEnvironment environment = createEnvironmentWithMockJdkAndIdeaAnnotations(disposable);
+            LoadDescriptorUtil.compileKotlinToDirAndGetModule(ktFiles, outDir, environment);
         }
         else {
             boolean mkdirs = outDir.mkdirs();

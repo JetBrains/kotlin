@@ -20,7 +20,6 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import junit.framework.ComparisonFailure;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider;
@@ -29,6 +28,7 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootsKt;
 import org.jetbrains.kotlin.cli.jvm.config.ModuleNameKt;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.ContentRootsKt;
+import org.jetbrains.kotlin.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
@@ -78,7 +78,9 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         File sourcesDir = new File(expectedFileName.replaceFirst("\\.txt$", ""));
 
         List<File> kotlinSources = FileUtil.findFilesByMask(Pattern.compile(".+\\.kt"), sourcesDir);
-        compileKotlinToDirAndGetAnalysisResult(kotlinSources, tmpdir, myTestRootDisposable, ConfigurationKind.JDK_ONLY, false);
+        KotlinCoreEnvironment environment =
+                KotlinTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, ConfigurationKind.JDK_ONLY);
+        compileKotlinToDirAndGetModule(kotlinSources, tmpdir, environment);
 
         List<File> javaSources = FileUtil.findFilesByMask(Pattern.compile(".+\\.java"), sourcesDir);
         Pair<PackageViewDescriptor, BindingContext> binaryPackageAndContext = compileJavaAndLoadTestPackageAndBindingContextFromBinary(
@@ -109,11 +111,16 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
     ) throws Exception {
         File ktFile = new File(ktFileName);
         File txtFile = new File(ktFileName.replaceFirst("\\.kt$", ".txt"));
-        AnalysisResult result = compileKotlinToDirAndGetAnalysisResult(
-                Collections.singletonList(ktFile), tmpdir, getTestRootDisposable(), configurationKind, useTypeTableInSerializer
-        );
 
-        PackageViewDescriptor packageFromSource = result.getModuleDescriptor().getPackage(TEST_PACKAGE_FQNAME);
+        CompilerConfiguration configuration = compilerConfigurationForTests(configurationKind, TestJdkKind.MOCK_JDK, getAnnotationsJar());
+        if (useTypeTableInSerializer) {
+            configuration.put(JVMConfigurationKeys.USE_TYPE_TABLE, true);
+        }
+        KotlinCoreEnvironment environment =
+                KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
+        ModuleDescriptor module = compileKotlinToDirAndGetModule(Collections.singletonList(ktFile), tmpdir, environment);
+
+        PackageViewDescriptor packageFromSource = module.getPackage(TEST_PACKAGE_FQNAME);
         Assert.assertEquals("test", packageFromSource.getName().asString());
 
         PackageViewDescriptor packageFromBinary = LoadDescriptorUtil.loadTestPackageAndBindingContextFromJavaRoot(
@@ -128,10 +135,10 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
 
         DescriptorValidator.validate(errorTypesForbidden(), packageFromSource);
         DescriptorValidator.validate(new DeserializedScopeValidationVisitor(), packageFromBinary);
-        Configuration configuration = RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT
+        Configuration comparatorConfiguration = RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT
                 .checkPrimaryConstructors(true)
                 .checkPropertyAccessors(true);
-        compareDescriptors(packageFromSource, packageFromBinary, configuration, txtFile);
+        compareDescriptors(packageFromSource, packageFromBinary, comparatorConfiguration, txtFile);
     }
 
     protected void doTestJavaAgainstKotlin(String expectedFileName) throws Exception {

@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.JvmBytecodeBinaryVersion
-import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.org.objectweb.asm.*
@@ -37,9 +36,9 @@ class WrongBytecodeVersionTest : KtUsefulTestCase() {
         val usageSource = File(directory, "B.kt")
 
         val tmpdir = KotlinTestUtils.tmpDir(javaClass.simpleName)
-        LoadDescriptorUtil.compileKotlinToDirAndGetAnalysisResult(
-                listOf(librarySource), tmpdir, testRootDisposable, ConfigurationKind.ALL, false
-        )
+
+        val environment = KotlinTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(testRootDisposable)
+        LoadDescriptorUtil.compileKotlinToDirAndGetModule(listOf(librarySource), tmpdir, environment)
 
         for (classFile in File(tmpdir, "library").listFiles { file -> file.extension == JavaClassFileType.INSTANCE.defaultExtension }) {
             changeVersionInBytecode(classFile)

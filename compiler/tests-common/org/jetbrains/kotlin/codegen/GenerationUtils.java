@@ -48,9 +48,7 @@ public class GenerationUtils {
 
     @NotNull
     public static ClassFileFactory compileFile(@NotNull KtFile ktFile, @NotNull KotlinCoreEnvironment environment) {
-        AnalysisResult analysisResult = JvmResolveUtil.analyzeAndCheckForErrors(ktFile, environment);
-        GenerationState state = compileFiles(analysisResult, Collections.singletonList(ktFile), false, environment.getConfiguration());
-        return state.getFactory();
+        return compileFiles(Collections.singletonList(ktFile), environment).getFactory();
     }
 
     @NotNull
@@ -59,19 +57,11 @@ public class GenerationUtils {
                 environment == null ? PackagePartProvider.Companion.getEMPTY() : new JvmPackagePartProvider(environment);
         CompilerConfiguration configuration =
                 environment == null ? CompilerConfiguration.EMPTY : environment.getConfiguration();
+
         AnalysisResult analysisResult =
                 JvmResolveUtil.analyzeAndCheckForErrors(CollectionsKt.first(files).getProject(), files, configuration, packagePartProvider);
-        return compileFiles(analysisResult, files, false, configuration);
-    }
-
-    @NotNull
-    public static GenerationState compileFiles(
-            @NotNull AnalysisResult analysisResult,
-            @NotNull List<KtFile> files,
-            boolean useTypeTableInSerializer,
-            @NotNull CompilerConfiguration configuration
-    ) {
         analysisResult.throwIfError();
+
         GenerationState state = new GenerationState(
                 CollectionsKt.first(files).getProject(), ClassBuilderFactories.TEST,
                 analysisResult.getModuleDescriptor(), analysisResult.getBindingContext(),
@@ -81,7 +71,7 @@ public class GenerationUtils {
                 GenerationState.GenerateClassFilter.GENERATE_ALL,
                 configuration.get(JVMConfigurationKeys.DISABLE_INLINE, false),
                 configuration.get(JVMConfigurationKeys.DISABLE_OPTIMIZATION, false),
-                useTypeTableInSerializer,
+                configuration.get(JVMConfigurationKeys.USE_TYPE_TABLE, false),
                 configuration.get(JVMConfigurationKeys.INHERIT_MULTIFILE_PARTS, false),
                 Collections.<FqName>emptySet(),
                 Collections.<FqName>emptySet(),
