@@ -74,5 +74,12 @@ class ChangeVariableMutabilityFix(element: KtValVarKeywordOwner, private val mak
                 }
             }
         }
+
+        val VAR_ANNOTATION_PARAMETER_FACTORY: KotlinSingleIntentionActionFactory = object: KotlinSingleIntentionActionFactory() {
+            override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+                val element = diagnostic.psiElement as KtParameter
+                return ChangeVariableMutabilityFix(element, false)
+            }
+        }
     }
 }
