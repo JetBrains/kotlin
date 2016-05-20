@@ -27,6 +27,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import org.jdom.Element
 
+private val AFTER_CLASS_ANNOTATION_NAME = "org.junit.AfterClass"
+private val BEFORE_CLASS_ANNOTATION_NAME = "org.junit.BeforeClass"
+
 class KotlinJUnitStaticEntryPoint(@JvmField var wasSelected: Boolean = true) : EntryPoint() {
     override fun getDisplayName() = "JUnit static methods"
 
@@ -34,7 +37,7 @@ class KotlinJUnitStaticEntryPoint(@JvmField var wasSelected: Boolean = true) : E
 
     override fun isEntryPoint(refElement: RefElement, psiElement: PsiElement) = isEntryPoint(psiElement)
 
-    private val staticJUnitAnnotations = listOf(JUnitUtil.BEFORE_CLASS_ANNOTATION_NAME, JUnitUtil.AFTER_CLASS_ANNOTATION_NAME,
+    private val staticJUnitAnnotations = listOf(BEFORE_CLASS_ANNOTATION_NAME, AFTER_CLASS_ANNOTATION_NAME,
                                                 JUnitUtil.PARAMETRIZED_PARAMETERS_ANNOTATION_NAME)
 
     override fun isEntryPoint(psiElement: PsiElement) = psiElement is PsiMethod &&
