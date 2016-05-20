@@ -1,0 +1,35 @@
+package
+
+public val test3: () -> kotlin.Int
+public val test4: () -> kotlin.Int
+public fun outer(): kotlin.Unit
+public fun test1(): kotlin.Int
+public fun test2(): kotlin.Int
+public fun test5(): kotlin.Int
+public fun test6(): kotlin.Int
+
+public final class Outer {
+    public constructor Outer()
+    public final val test3: () -> kotlin.Int
+    public final val test4: () -> kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun test1(): kotlin.Int
+    public final fun test2(): kotlin.Int
+    public final fun test5(): kotlin.Int
+    public final fun test6(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final class Nested {
+        public constructor Nested()
+        public final val test3: () -> kotlin.Int
+        public final val test4: () -> kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final fun test1(): kotlin.Int
+        public final fun test2(): kotlin.Int
+        public final fun test5(): kotlin.Int
+        public final fun test6(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

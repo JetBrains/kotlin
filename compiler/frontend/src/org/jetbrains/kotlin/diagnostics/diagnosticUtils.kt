@@ -16,9 +16,14 @@
 
 package org.jetbrains.kotlin.diagnostics
 
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiWhiteSpace
+import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtLambdaExpression
+import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getEffectiveExpectedType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -115,3 +120,22 @@ class TypeMismatchDueToTypeProjectionsData(
         val receiverType: KotlinType,
         val callableDescriptor: CallableDescriptor
 )
+
+fun ResolutionContext<*>.reportTypeMismatchDueToScalaLikeNamedFunctionSyntax(
+        expression: KtElement,
+        expectedType: KotlinType,
+        expressionType: KotlinType?
+): Boolean {
+    if (expressionType == null) return false
+
+    if (expressionType.isFunctionType && !expectedType.isFunctionType && isScalaLikeEqualsBlock(expression)) {
+        trace.report(Errors.TYPE_MISMATCH_DUE_TO_EQUALS_LAMBDA_IN_FUN.on(expression, expectedType))
+        return true
+    }
+
+    return false
+}
+
+private fun isScalaLikeEqualsBlock(expression: KtElement): Boolean =
+        expression is KtLambdaExpression &&
+        expression.parent.let { it is KtNamedFunction && it.equalsToken != null }
