@@ -67,5 +67,3 @@ class UnnecessaryJavaUsageInspection : AbstractKotlinInspection(), CleanupLocalI
     }
 
 }
-
-
