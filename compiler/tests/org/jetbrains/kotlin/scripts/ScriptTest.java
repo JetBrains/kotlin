@@ -86,7 +86,7 @@ public class ScriptTest {
                     KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
 
             try {
-                return KotlinToJVMBytecodeCompiler.INSTANCE.compileScript(configuration, paths, environment);
+                return KotlinToJVMBytecodeCompiler.INSTANCE.compileScript(environment, paths);
             }
             catch (CompilationException e) {
                 messageCollector.report(CompilerMessageSeverity.EXCEPTION, OutputMessageUtil.renderException(e),

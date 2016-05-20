@@ -57,7 +57,7 @@ import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation.N
 import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR;
 
 public class CompileEnvironmentUtil {
-    private static Logger LOG = Logger.getInstance(CompileEnvironmentUtil.class);
+    private static final Logger LOG = Logger.getInstance(CompileEnvironmentUtil.class);
 
     @NotNull
     public static ModuleScriptData loadModuleDescriptions(String moduleDefinitionFile, MessageCollector messageCollector) {
@@ -162,9 +162,9 @@ public class CompileEnvironmentUtil {
             if (vFile == null) {
                 String message = "Source file or directory not found: " + sourceRootPath;
 
-                String moduleFilePath = configuration.get(JVMConfigurationKeys.MODULE_XML_FILE_PATH);
+                File moduleFilePath = configuration.get(JVMConfigurationKeys.MODULE_XML_FILE);
                 if (moduleFilePath != null) {
-                    String moduleFileContent = FileUtil.loadFile(new File(moduleFilePath));
+                    String moduleFileContent = FileUtil.loadFile(moduleFilePath);
                     LOG.warn(message +
                               "\n\nmodule file path: " + moduleFilePath +
                               "\ncontent:\n" + moduleFileContent);
