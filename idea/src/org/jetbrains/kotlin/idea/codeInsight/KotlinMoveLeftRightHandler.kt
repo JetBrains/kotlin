@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.idea.codeInsight
 
+/*
+
 import com.intellij.codeInsight.editorActions.moveLeftRight.MoveElementLeftRightHandler
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.*
@@ -35,3 +37,5 @@ class KotlinMoveLeftRightHandler : MoveElementLeftRightHandler() {
         return emptyArray()
     }
 }
+
+*/
