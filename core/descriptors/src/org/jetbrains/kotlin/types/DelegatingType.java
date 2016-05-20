@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
 import java.util.List;
 
-public abstract class DelegatingType implements KotlinType {
+public abstract class DelegatingType implements KotlinType, SimpleType { // TODO temporary upper bound
     protected abstract KotlinType getDelegate();
 
     @NotNull

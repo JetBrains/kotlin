@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -161,7 +161,7 @@ private fun KotlinType.isIntegerType(): Boolean {
 
 
 private fun CallableDescriptor.getParametersTypes(): List<KotlinType> {
-    val list = arrayListOf((containingDeclaration as ClassDescriptor).defaultType)
+    val list = arrayListOf<KotlinType>((containingDeclaration as ClassDescriptor).defaultType)
     valueParameters.map { it.type }.forEach {
         list.add(TypeUtils.makeNotNullable(it))
     }

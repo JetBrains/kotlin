@@ -33,10 +33,10 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import java.util.*;
 
 public class TypeUtils {
-    public static final KotlinType DONT_CARE = ErrorUtils.createErrorTypeWithCustomDebugName("DONT_CARE");
-    public static final KotlinType CANT_INFER_FUNCTION_PARAM_TYPE = ErrorUtils.createErrorType("Cannot be inferred");
+    public static final SimpleType DONT_CARE = ErrorUtils.createErrorTypeWithCustomDebugName("DONT_CARE");
+    public static final SimpleType CANT_INFER_FUNCTION_PARAM_TYPE = ErrorUtils.createErrorType("Cannot be inferred");
 
-    public static class SpecialType implements KotlinType {
+    public static class SpecialType implements SimpleType {
         private final String name;
 
         public SpecialType(String name) {
@@ -96,9 +96,9 @@ public class TypeUtils {
     }
 
     @NotNull
-    public static final KotlinType NO_EXPECTED_TYPE = new SpecialType("NO_EXPECTED_TYPE");
+    public static final SimpleType NO_EXPECTED_TYPE = new SpecialType("NO_EXPECTED_TYPE");
 
-    public static final KotlinType UNIT_EXPECTED_TYPE = new SpecialType("UNIT_EXPECTED_TYPE");
+    public static final SimpleType UNIT_EXPECTED_TYPE = new SpecialType("UNIT_EXPECTED_TYPE");
 
     public static boolean noExpectedType(@NotNull KotlinType type) {
         return type == NO_EXPECTED_TYPE || type == UNIT_EXPECTED_TYPE;
@@ -116,6 +116,21 @@ public class TypeUtils {
     @NotNull
     public static KotlinType makeNotNullable(@NotNull KotlinType type) {
         return makeNullableAsSpecified(type, false);
+    }
+
+    @NotNull
+    public static SimpleType makeNullable(@NotNull SimpleType type) {
+        return KotlinTypeKt.asSimpleType(makeNullableAsSpecified(type, true));
+    }
+
+    @NotNull
+    public static SimpleType makeNotNullable(@NotNull SimpleType type) {
+        return KotlinTypeKt.asSimpleType(makeNullableAsSpecified(type, false));
+    }
+
+    @NotNull
+    public static SimpleType makeNullableAsSpecified(@NotNull SimpleType type, boolean nullable) {
+        return KotlinTypeKt.asSimpleType(makeNullableAsSpecified((KotlinType) type, nullable));
     }
 
     @NotNull
@@ -229,7 +244,7 @@ public class TypeUtils {
     }
 
     @NotNull
-    public static KotlinType makeUnsubstitutedType(ClassifierDescriptor classifierDescriptor, MemberScope unsubstitutedMemberScope) {
+    public static SimpleType makeUnsubstitutedType(ClassifierDescriptor classifierDescriptor, MemberScope unsubstitutedMemberScope) {
         if (ErrorUtils.isError(classifierDescriptor)) {
             return ErrorUtils.createErrorType("Unsubstituted type for " + classifierDescriptor);
         }

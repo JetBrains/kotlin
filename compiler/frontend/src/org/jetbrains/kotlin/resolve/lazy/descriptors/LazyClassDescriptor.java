@@ -54,10 +54,7 @@ import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.storage.NullableLazyValue;
 import org.jetbrains.kotlin.storage.StorageManager;
-import org.jetbrains.kotlin.types.AbstractClassTypeConstructor;
-import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.TypeConstructor;
-import org.jetbrains.kotlin.types.TypeUtils;
+import org.jetbrains.kotlin.types.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -693,7 +690,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
         KtClassOrObject classOrObject = declarationProvider.getOwnerInfo().getCorrespondingClassOrObject();
         if (classOrObject == null) {
-            return Collections.singleton(c.getModuleDescriptor().getBuiltIns().getAnyType());
+            return Collections.<KotlinType>singleton(c.getModuleDescriptor().getBuiltIns().getAnyType());
         }
 
         List<KotlinType> allSupertypes =
