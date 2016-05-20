@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.idea.codeInsight.moveUpDown
 
-import com.intellij.codeInsight.editorActions.moveLeftRight.MoveElementLeftAction
-import com.intellij.codeInsight.editorActions.moveLeftRight.MoveElementRightAction
 import com.intellij.codeInsight.editorActions.moveUpDown.MoveStatementDownAction
 import com.intellij.codeInsight.editorActions.moveUpDown.MoveStatementUpAction
 import com.intellij.codeInsight.editorActions.moveUpDown.StatementUpDownMover
@@ -77,8 +75,6 @@ abstract class AbstractCodeMoverTest : LightCodeInsightTestCase() {
         val action = when (direction) {
             "up" -> MoveStatementUpAction()
             "down" -> MoveStatementDownAction()
-            "left" -> MoveElementLeftAction()
-            "right" -> MoveElementRightAction()
             else -> error("Unknown direction: $direction")
         }
 
