@@ -87,4 +87,20 @@
         <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant modality modifier</problem_class>
         <description>Redundant modality modifier</description>
     </problem>
+    <problem>
+        <file>redundantModalityModifier.kt</file>
+        <line>56</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/redundantModalityModifier.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant modality modifier</problem_class>
+        <description>Redundant modality modifier</description>
+    </problem>
+    <problem>
+        <file>redundantModalityModifier.kt</file>
+        <line>58</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/redundantModalityModifier.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant modality modifier</problem_class>
+        <description>Redundant modality modifier</description>
+    </problem>
 </problems>
