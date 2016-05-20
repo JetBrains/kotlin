@@ -368,6 +368,9 @@ class DeclarationsChecker(
             if (!parameter.hasValOrVar()) {
                 trace.report(MISSING_VAL_ON_ANNOTATION_PARAMETER.on(parameter))
             }
+            else if (parameter.isMutable) {
+                trace.report(VAR_ANNOTATION_PARAMETER.on(parameter))
+            }
         }
     }
 
