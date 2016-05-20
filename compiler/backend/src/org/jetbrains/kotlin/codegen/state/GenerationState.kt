@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
-import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
+import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -59,15 +59,12 @@ class GenerationState @JvmOverloads constructor(
         val obsoleteMultifileClasses: Collection<FqName> = emptySet(),
         // for PackageCodegen in incremental compilation mode
         val targetId: TargetId? = null,
-        moduleName: String? = null,
+        moduleName: String? = configuration.get(JVMConfigurationKeys.MODULE_NAME),
         // 'outDirectory' is a hack to correctly determine if a compiled class is from the same module as the callee during
         // partial compilation. Module chunks are treated as a single module.
         // TODO: get rid of it with the proper module infrastructure
         val outDirectory: File? = null,
-        val incrementalCompilationComponents: IncrementalCompilationComponents? = null,
-        val progress: Progress = Progress.DEAF,
-        private val onIndependentPartCompilationEnd: GenerationStateEventCallback = GenerationStateEventCallback.DO_NOTHING,
-        dumpBinarySignatureMappingTo: File? = null
+        private val onIndependentPartCompilationEnd: GenerationStateEventCallback = GenerationStateEventCallback.DO_NOTHING
 ) {
     abstract class GenerateClassFilter {
         abstract fun shouldAnnotateClass(processingClassOrObject: KtClassOrObject): Boolean
@@ -91,10 +88,10 @@ class GenerationState @JvmOverloads constructor(
     val fileClassesProvider: CodegenFileClassesProvider = CodegenFileClassesProvider()
     val inlineCache: InlineCache = InlineCache()
 
-    private fun getIncrementalCacheForThisTarget() =
-            if (incrementalCompilationComponents != null && targetId != null)
-                incrementalCompilationComponents.getIncrementalCache(targetId)
-            else null
+    fun getIncrementalCacheForThisTarget(): IncrementalCache? =
+            configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS)?.let { components ->
+                targetId?.let { components.getIncrementalCache(it) }
+            }
 
     val extraJvmDiagnosticsTrace: BindingTrace = DelegatingBindingTrace(bindingContext, false, "For extra diagnostics in ${this.javaClass}")
     private val interceptedBuilderFactory: ClassBuilderFactory
@@ -150,7 +147,8 @@ class GenerationState @JvmOverloads constructor(
                             getIncrementalCacheForThisTarget(),
                             this.moduleName).apply { duplicateSignatureFactory = this } },
                     { BuilderFactoryForDuplicateClassNameDiagnostics(it, diagnostics) },
-                    { dumpBinarySignatureMappingTo?.let { destination -> SignatureDumpingBuilderFactory(it, destination) } ?: it }
+                    { configuration.get(JVMConfigurationKeys.DECLARATIONS_JSON_PATH)
+                              ?.let { destination -> SignatureDumpingBuilderFactory(it, File(destination)) } ?: it }
                 )
                 .wrapWith(ClassBuilderInterceptorExtension.getInstances(project)) { builderFactory, extension ->
                     extension.interceptClassBuilderFactory(builderFactory, bindingContext, diagnostics)

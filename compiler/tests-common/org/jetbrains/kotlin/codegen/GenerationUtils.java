@@ -25,9 +25,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
-import org.jetbrains.kotlin.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.descriptors.PackagePartProvider;
-import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 
@@ -65,13 +63,7 @@ public class GenerationUtils {
         GenerationState state = new GenerationState(
                 CollectionsKt.first(files).getProject(), ClassBuilderFactories.TEST,
                 analysisResult.getModuleDescriptor(), analysisResult.getBindingContext(),
-                files,
-                configuration,
-                GenerationState.GenerateClassFilter.GENERATE_ALL,
-                Collections.<FqName>emptySet(),
-                Collections.<FqName>emptySet(),
-                null,
-                configuration.get(JVMConfigurationKeys.MODULE_NAME)
+                files, configuration
         );
         KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
         return state;

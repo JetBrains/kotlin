@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import com.google.common.collect.Lists;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.Function;
@@ -76,12 +75,13 @@ public class ClassFileFactory implements OutputFileCollection {
     public ClassBuilder newVisitor(
             @NotNull JvmDeclarationOrigin origin,
             @NotNull Type asmType,
-            @NotNull Collection<? extends PsiFile> sourceFiles) {
-        String outputFilePath = asmType.getInternalName() + ".class";
-        List<File> ioSourceFiles = toIoFilesIgnoringNonPhysical(sourceFiles);
-        state.getProgress().reportOutput(ioSourceFiles, new File(outputFilePath));
+            @NotNull Collection<? extends PsiFile> sourceFiles
+    ) {
         ClassBuilder answer = builderFactory.newClassBuilder(origin);
-        generators.put(outputFilePath, new ClassBuilderAndSourceFileList(answer, ioSourceFiles));
+        generators.put(
+                asmType.getInternalName() + ".class",
+                new ClassBuilderAndSourceFileList(answer, toIoFilesIgnoringNonPhysical(sourceFiles))
+        );
         return answer;
     }
 
@@ -107,7 +107,6 @@ public class ClassFileFactory implements OutputFileCollection {
         }
 
         if (builder.getPackagePartsCount() != 0) {
-            state.getProgress().reportOutput(packagePartSourceFiles, new File(outputFilePath));
             generators.put(outputFilePath, new OutAndSourceFileList(CollectionsKt.toList(packagePartSourceFiles)) {
                 @Override
                 public byte[] asBytes(ClassBuilderFactory factory) {
@@ -225,7 +224,7 @@ public class ClassFileFactory implements OutputFileCollection {
 
     @NotNull
     private static List<File> toIoFilesIgnoringNonPhysical(@NotNull Collection<? extends PsiFile> psiFiles) {
-        List<File> result = Lists.newArrayList();
+        List<File> result = new ArrayList<File>(psiFiles.size());
         for (PsiFile psiFile : psiFiles) {
             VirtualFile virtualFile = psiFile.getVirtualFile();
             // We ignore non-physical files here, because this code is needed to tell the make what inputs affect which outputs

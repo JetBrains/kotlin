@@ -32,8 +32,6 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
-import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents;
-import org.jetbrains.kotlin.modules.TargetId;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
@@ -910,12 +908,8 @@ public class InlineCodegen extends CallGenerator {
             @NotNull JvmMethodSignature jvmSignature,
             @NotNull GenerationState state
     ) {
-        IncrementalCompilationComponents incrementalCompilationComponents = state.getIncrementalCompilationComponents();
-        TargetId targetId = state.getTargetId();
-
-        if (incrementalCompilationComponents == null || targetId == null) return;
-
-        IncrementalCache incrementalCache = incrementalCompilationComponents.getIncrementalCache(targetId);
+        IncrementalCache incrementalCache = state.getIncrementalCacheForThisTarget();
+        if (incrementalCache == null) return;
         String classFilePath = InlineCodegenUtilsKt.getClassFilePath(sourceDescriptor, state.getTypeMapper(), incrementalCache);
         String sourceFilePath = InlineCodegenUtilsKt.getSourceFilePath(targetDescriptor);
         incrementalCache.registerInline(classFilePath, jvmSignature.toString(), sourceFilePath);
@@ -925,6 +919,5 @@ public class InlineCodegen extends CallGenerator {
     public void reorderArgumentsIfNeeded(
             @NotNull List<ArgumentAndDeclIndex> actualArgsWithDeclIndex, @NotNull List<? extends Type> valueParameterTypes
     ) {
-
     }
 }
