@@ -518,9 +518,6 @@ class DeclarationsChecker(
                 trace.report(ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS.on(property, property.name ?: "", classDescriptor))
                 return
             }
-            if (classDescriptor.kind == ClassKind.INTERFACE) {
-                trace.report(ABSTRACT_MODIFIER_IN_INTERFACE.on(property))
-            }
         }
 
         if (propertyDescriptor.modality == Modality.ABSTRACT) {
@@ -613,9 +610,6 @@ class DeclarationsChecker(
             val inTrait = containingDescriptor.kind == ClassKind.INTERFACE
             if (hasAbstractModifier && !classCanHaveAbstractMembers(containingDescriptor)) {
                 trace.report(ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS.on(function, functionDescriptor.name.asString(), containingDescriptor))
-            }
-            if (hasAbstractModifier && inTrait) {
-                trace.report(ABSTRACT_MODIFIER_IN_INTERFACE.on(function))
             }
             val hasBody = function.hasBody()
             if (hasBody && hasAbstractModifier) {
