@@ -1,0 +1,31 @@
+package
+
+package pp {
+    private const val foo: kotlin.String = "O"
+    @pp.A(s = "O") public val p1: kotlin.String = ""
+    @pp.A(s = "O") public val p2: kotlin.String = ""
+    @pp.A(s = "O") public fun f1(): kotlin.Unit
+    @pp.A(s = "O") public fun f2(): kotlin.Unit
+
+    private final annotation class A : kotlin.Annotation {
+        public constructor A(/*0*/ s: kotlin.String)
+        public final val s: kotlin.String
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    @pp.A(s = "O") public final class C1 {
+        public constructor C1()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    @pp.A(s = "O") public final class C2 {
+        public constructor C2()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

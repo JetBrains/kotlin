@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,13 @@
 
 package org.jetbrains.kotlin.resolve.lazy.descriptors
 
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
-import org.jetbrains.kotlin.psi.KtAnnotationUseSiteTarget
 import org.jetbrains.kotlin.resolve.AnnotationResolver
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -35,6 +33,7 @@ import org.jetbrains.kotlin.resolve.lazy.LazyEntity
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.types.TypeSubstitutor
 
 abstract class LazyAnnotationsContext(
         val annotationResolver: AnnotationResolver,
@@ -120,7 +119,7 @@ class LazyAnnotationDescriptor(
 
     private val type = c.storageManager.createLazyValue {
         c.annotationResolver.resolveAnnotationType(
-                c.scope,
+                scope,
                 annotationEntry,
                 c.trace
         )
@@ -132,12 +131,18 @@ class LazyAnnotationDescriptor(
 
     private val source = annotationEntry.toSourceElement()
 
+    val scope = if (c.scope.ownerDescriptor is PackageFragmentDescriptor) {
+        LexicalScope.Companion.empty(c.scope, FileDescriptorForVisibilityChecks(source, c.scope.ownerDescriptor))
+    } else {
+        c.scope
+    }
+
     override fun getType() = type()
 
     override fun getAllValueArguments() = valueArguments()
 
     private fun computeValueArguments(): Map<ValueParameterDescriptor, ConstantValue<*>> {
-        val resolutionResults = c.annotationResolver.resolveAnnotationCall(annotationEntry, c.scope, c.trace)
+        val resolutionResults = c.annotationResolver.resolveAnnotationCall(annotationEntry, scope, c.trace)
         AnnotationResolver.checkAnnotationType(annotationEntry, c.trace, resolutionResults)
 
         if (!resolutionResults.isSingleResult) return mapOf()
@@ -156,5 +161,23 @@ class LazyAnnotationDescriptor(
     override fun forceResolveAllContents() {
         ForceResolveUtil.forceResolveAllContents(getType())
         allValueArguments
+    }
+
+    private class FileDescriptorForVisibilityChecks(
+            private val source: SourceElement,
+            private val containingDeclaration: DeclarationDescriptor
+    ) : DeclarationDescriptorWithSource {
+        override val annotations: Annotations get() = Annotations.EMPTY
+        override fun getContainingDeclaration() = containingDeclaration
+        override fun getSource() = source
+        override fun getOriginal() = this
+        override fun getName() = Name.special("< file descriptor for annotation resolution >")
+
+        private fun error(): Nothing = error("This method should not be called")
+        override fun substitute(substitutor: TypeSubstitutor): DeclarationDescriptor? = error()
+        override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>?, data: D): R = error()
+        override fun acceptVoid(visitor: DeclarationDescriptorVisitor<Void, Void>?) = error()
+
+        override fun toString(): String = "${name.asString()} declared in LazyAnnotations.kt"
     }
 }
