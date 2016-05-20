@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.codegen
 
+import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -32,7 +34,6 @@ abstract class AbstractDumpDeclarationsTest : CodegenTestCase() {
         val expectedResult = KotlinTestUtils.replaceExtension(wholeFile, "json")
         compileAndCompareDump(files, expectedResult)
     }
-
 
     private fun compileAndCompareDump(files: List<TestFile>, expectedResult: File) {
         configurationKind = ConfigurationKind.NO_KOTLIN_REFLECT
@@ -50,19 +51,15 @@ abstract class AbstractDumpDeclarationsTest : CodegenTestCase() {
     }
 
     private fun compileManyFilesGetDeclarationsDump(files: List<KtFile>): File {
-        val analysisResult = JvmResolveUtil.analyzeAndCheckForErrors(files, myEnvironment)
-
-        analysisResult.throwIfError()
+        val (bindingContext, moduleDescriptor) =
+                JvmResolveUtil.analyzeAndCheckForErrors(files, myEnvironment).apply(AnalysisResult::throwIfError)
 
         val dumpToFile = KotlinTestUtils.tmpDirForTest(this).resolve(this.name + ".json")
 
         val state = GenerationState(
-                myEnvironment.project, ClassBuilderFactories.TEST,
-                analysisResult.moduleDescriptor, analysisResult.bindingContext,
-                files,
-                disableCallAssertions = false,
-                disableParamAssertions = false,
-                dumpBinarySignatureMappingTo = dumpToFile)
+                myEnvironment.project, ClassBuilderFactories.TEST, moduleDescriptor, bindingContext, files, CompilerConfiguration.EMPTY,
+                dumpBinarySignatureMappingTo = dumpToFile
+        )
         KotlinCodegenFacade.compileCorrectFiles(state, org.jetbrains.kotlin.codegen.CompilationErrorHandler.THROW_EXCEPTION)
 
         state.destroy()

@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
-import org.jetbrains.kotlin.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.resolve.AnalyzingUtils;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
@@ -57,13 +56,7 @@ public class CodegenTestUtil {
                 analysisResult.getModuleDescriptor(),
                 analysisResult.getBindingContext(),
                 files.getPsiFiles(),
-                configuration.get(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS, false),
-                configuration.get(JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS, false),
-                GenerationState.GenerateClassFilter.GENERATE_ALL,
-                configuration.get(JVMConfigurationKeys.DISABLE_INLINE, false),
-                configuration.get(JVMConfigurationKeys.DISABLE_OPTIMIZATION, false),
-                /* useTypeTableInSerializer = */ false,
-                configuration.get(JVMConfigurationKeys.INHERIT_MULTIFILE_PARTS, false)
+                configuration
         );
 
         if (analysisResult.getShouldGenerateCode()) {

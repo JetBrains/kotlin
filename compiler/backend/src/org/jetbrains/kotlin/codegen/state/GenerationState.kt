@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.inline.InlineCache
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.OptimizationClassBuilderFactory
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -51,13 +53,8 @@ class GenerationState @JvmOverloads constructor(
         val module: ModuleDescriptor,
         bindingContext: BindingContext,
         val files: List<KtFile>,
-        disableCallAssertions: Boolean = true,
-        disableParamAssertions: Boolean = true,
+        val configuration: CompilerConfiguration,
         val generateDeclaredClassFilter: GenerateClassFilter = GenerationState.GenerateClassFilter.GENERATE_ALL,
-        disableInline: Boolean = false,
-        disableOptimization: Boolean = false,
-        val useTypeTableInSerializer: Boolean = false,
-        val inheritMultifileParts: Boolean = false,
         val packagesWithObsoleteParts: Collection<FqName> = emptySet(),
         val obsoleteMultifileClasses: Collection<FqName> = emptySet(),
         // for PackageCodegen in incremental compilation mode
@@ -136,22 +133,18 @@ class GenerationState @JvmOverloads constructor(
         var hasResult: Boolean = false
     }
 
-    val isCallAssertionsEnabled: Boolean = !disableCallAssertions
-        @JvmName("isCallAssertionsEnabled") get
-
-    val isParamAssertionsEnabled: Boolean = !disableParamAssertions
-        @JvmName("isParamAssertionsEnabled") get
-
-    val isInlineEnabled: Boolean = !disableInline
-        @JvmName("isInlineEnabled") get
-
+    val isCallAssertionsEnabled: Boolean = !configuration.get(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS, false)
+    val isParamAssertionsEnabled: Boolean = !configuration.get(JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS, false)
+    val isInlineEnabled: Boolean = !configuration.get(JVMConfigurationKeys.DISABLE_INLINE, false)
+    val useTypeTableInSerializer: Boolean = configuration.get(JVMConfigurationKeys.USE_TYPE_TABLE, false)
+    val inheritMultifileParts: Boolean = configuration.get(JVMConfigurationKeys.INHERIT_MULTIFILE_PARTS, false)
 
     val rootContext: CodegenContext<*> = RootContext(this)
 
     init {
         this.interceptedBuilderFactory = builderFactory
                 .wrapWith(
-                    { OptimizationClassBuilderFactory(it, disableOptimization) },
+                    { OptimizationClassBuilderFactory(it, configuration.get(JVMConfigurationKeys.DISABLE_OPTIMIZATION, false)) },
                     { BuilderFactoryForDuplicateSignatureDiagnostics(
                             it, this.bindingContext, diagnostics, fileClassesProvider,
                             getIncrementalCacheForThisTarget(),

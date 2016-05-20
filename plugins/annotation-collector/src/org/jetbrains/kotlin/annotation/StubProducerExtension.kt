@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAll
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -31,21 +32,14 @@ import org.jetbrains.org.objectweb.asm.ClassWriter
 import java.io.File
 
 class StubProducerExtension(val stubsOutputDir: File, val messageCollector: MessageCollector) : AnalysisCompletedHandlerExtension {
-
     override fun analysisCompleted(
             project: Project,
             module: ModuleDescriptor,
             bindingContext: BindingContext,
             files: Collection<KtFile>
     ): AnalysisResult? {
-        val generationState = GenerationState(
-                project,
-                StubClassBuilderFactory(),
-                module,
-                bindingContext,
-                files.toList(),
-                disableCallAssertions = false,
-                disableParamAssertions = false)
+        val generationState =
+                GenerationState(project, StubClassBuilderFactory(), module, bindingContext, files.toList(), CompilerConfiguration.EMPTY)
 
         KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION)
 

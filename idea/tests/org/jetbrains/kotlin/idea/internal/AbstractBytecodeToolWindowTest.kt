@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.idea.internal
 
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
@@ -38,11 +40,13 @@ abstract class AbstractBytecodeToolWindowTest: KotlinLightCodeInsightFixtureTest
 
         val file = myFixture.file as KtFile
 
-        val enableInline = InTextDirectivesUtils.getPrefixedBoolean(mainFileText, "// INLINE:") ?: true
-        val bytecodes = KotlinBytecodeToolWindow.getBytecodeForFile(file, enableInline, true, true)
+        val configuration = CompilerConfiguration()
+        if (InTextDirectivesUtils.getPrefixedBoolean(mainFileText, "// INLINE:") == false) {
+            configuration.put(JVMConfigurationKeys.DISABLE_INLINE, true)
+        }
+        val bytecodes = KotlinBytecodeToolWindow.getBytecodeForFile(file, configuration)
         assert(bytecodes.contains("// ================")) {
             "The header \"// ================\" is missing.\n This means that there is an exception failed during compilation:\n$bytecodes"
         }
     }
 }
-

@@ -30,9 +30,11 @@ import com.intellij.util.containers.MultiMap
 import org.apache.log4j.Logger
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.eval4j.Value
+import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
@@ -152,38 +154,30 @@ class KotlinDebuggerCaches(project: Project) {
             }
         }
 
-        private fun createTypeMapperForLibraryFile(element: KtElement, file: KtFile): KotlinTypeMapper {
-            return runReadAction {
-                val analysisResult = element.analyzeAndGetResult()
-
-                val state = GenerationState(
-                        file.project,
-                        ClassBuilderFactories.THROW_EXCEPTION,
-                        analysisResult.moduleDescriptor,
-                        analysisResult.bindingContext,
-                        listOf(file))
-                state.beforeCompile()
-                state.typeMapper
-            }
-        }
-
         private fun getElementToCreateTypeMapperForLibraryFile(element: PsiElement?) =
                 runReadAction { if (element is KtElement) element else PsiTreeUtil.getParentOfType(element, KtElement::class.java)!! }
 
-        private fun createTypeMapperForSourceFile(file: KtFile): KotlinTypeMapper {
-            return runReadAction {
-                val analysisResult = file.analyzeFullyAndGetResult()
-                analysisResult.throwIfError()
+        private fun createTypeMapperForLibraryFile(element: KtElement, file: KtFile): KotlinTypeMapper =
+                runReadAction {
+                    createTypeMapper(file, element.analyzeAndGetResult())
+                }
 
-                val state = GenerationState(
-                        file.project,
-                        ClassBuilderFactories.THROW_EXCEPTION,
-                        analysisResult.moduleDescriptor,
-                        analysisResult.bindingContext,
-                        listOf(file))
-                state.beforeCompile()
-                state.typeMapper
-            }
+        private fun createTypeMapperForSourceFile(file: KtFile): KotlinTypeMapper =
+                runReadAction {
+                    createTypeMapper(file, file.analyzeFullyAndGetResult().apply(AnalysisResult::throwIfError))
+                }
+
+        private fun createTypeMapper(file: KtFile, analysisResult: AnalysisResult): KotlinTypeMapper {
+            val state = GenerationState(
+                    file.project,
+                    ClassBuilderFactories.THROW_EXCEPTION,
+                    analysisResult.moduleDescriptor,
+                    analysisResult.bindingContext,
+                    listOf(file),
+                    CompilerConfiguration.EMPTY
+            )
+            state.beforeCompile()
+            return state.typeMapper
         }
 
         @TestOnly fun addTypeMapper(file: KtFile, typeMapper: KotlinTypeMapper) {
