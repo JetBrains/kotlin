@@ -1,0 +1,8 @@
+{
+    springConfig: ["Config.kt"],
+    file: "foo/beans.kt",
+    icon: "SpringJavaBean",
+    tooltip: "Navigate to the spring bean declaration(s)",
+    naming: "generic",
+    targets: ["Config"]
+}

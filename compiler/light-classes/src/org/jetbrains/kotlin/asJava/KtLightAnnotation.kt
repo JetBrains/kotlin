@@ -87,6 +87,13 @@ class KtLightAnnotation(
         override fun getValue() = delegate.value
     }
 
+    inner class LightClassLiteral(
+            delegate: PsiClassObjectAccessExpression
+    ) : LightExpressionValue<PsiClassObjectAccessExpression>(delegate), PsiClassObjectAccessExpression {
+        override fun getType() = delegate.type
+        override fun getOperand(): PsiTypeElement = delegate.operand
+    }
+
     inner class LightArrayInitializerValue(private val delegate: PsiArrayInitializerMemberValue) : PsiArrayInitializerMemberValue by delegate {
         private val _initializers by lazy(LazyThreadSafetyMode.PUBLICATION) { delegate.initializers.map { wrapAnnotationValue(it) }.toTypedArray() }
 
@@ -97,6 +104,7 @@ class KtLightAnnotation(
     private fun wrapAnnotationValue(value: PsiAnnotationMemberValue): PsiAnnotationMemberValue {
         return when {
             value is PsiLiteralExpression && value.value is String -> LightStringLiteral(value)
+            value is PsiClassObjectAccessExpression -> LightClassLiteral(value)
             value is PsiExpression -> LightExpressionValue(value)
             value is PsiArrayInitializerMemberValue -> LightArrayInitializerValue(value)
             else -> value

@@ -71,6 +71,18 @@ public class SpringClassAnnotatorTestGenerated extends AbstractSpringClassAnnota
         doTest(fileName);
     }
 
+    @TestMetadata("componentScanWithBasePackageClasses/componentScanWithBasePackageClasses.test")
+    public void testComponentScanWithBasePackageClasses_ComponentScanWithBasePackageClasses() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("ultimate/testData/spring/core/gutter/componentScanWithBasePackageClasses/componentScanWithBasePackageClasses.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("componentScanWithBasePackages/componentScanWithBasePackages.test")
+    public void testComponentScanWithBasePackages_ComponentScanWithBasePackages() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("ultimate/testData/spring/core/gutter/componentScanWithBasePackages/componentScanWithBasePackages.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("contextBeanInjectionPoints/contextBeanInjectionPoints.test")
     public void testContextBeanInjectionPoints_ContextBeanInjectionPoints() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("ultimate/testData/spring/core/gutter/contextBeanInjectionPoints/contextBeanInjectionPoints.test");
@@ -80,6 +92,12 @@ public class SpringClassAnnotatorTestGenerated extends AbstractSpringClassAnnota
     @TestMetadata("contextBeanWithQualifierInjectionPoints/contextBeanWithQualifierInjectionPoints.test")
     public void testContextBeanWithQualifierInjectionPoints_ContextBeanWithQualifierInjectionPoints() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("ultimate/testData/spring/core/gutter/contextBeanWithQualifierInjectionPoints/contextBeanWithQualifierInjectionPoints.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("importConfigClasses/importConfigClasses.test")
+    public void testImportConfigClasses_ImportConfigClasses() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("ultimate/testData/spring/core/gutter/importConfigClasses/importConfigClasses.test");
         doTest(fileName);
     }
 
