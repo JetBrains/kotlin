@@ -1,0 +1,10 @@
+// "Make 'Nested' public" "true"
+// ACTION: Make 'Nested' internal
+
+class Outer {
+    class Nested
+}
+
+class Generic<T>
+
+internal fun foo(arg: Generic<Outer.Nested>) {}

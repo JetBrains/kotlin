@@ -24,7 +24,8 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
-import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.MultifileClassKind.*
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.MultifileClassKind.DELEGATING
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.MultifileClassKind.INHERITING
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtProperty
@@ -76,7 +77,7 @@ class MultifileClassPartCodegen(
             }
 
     override fun generate() {
-        if (state.classBuilderMode == ClassBuilderMode.LIGHT_CLASSES) return
+        if (state.classBuilderMode != ClassBuilderMode.FULL) return
 
         super.generate()
 
@@ -93,18 +94,24 @@ class MultifileClassPartCodegen(
 
         if (requiresDeferredStaticInitialization) {
             staticInitClassBuilder.apply {
+                newField(OtherOrigin(packageFragment), Opcodes.ACC_STATIC or Opcodes.ACC_PRIVATE or Opcodes.ACC_VOLATILE,
+                         CLINIT_SYNC_NAME, "I", null, null)
+
                 newSpecialMethod(packageFragment, CLINIT_TRIGGER_NAME).apply {
                     visitCode()
+                    visitFieldInsn(Opcodes.GETSTATIC, staticInitClassType.internalName, CLINIT_SYNC_NAME, "I")
                     visitInsn(Opcodes.RETURN)
-                    visitMaxs(0, 0)
+                    visitMaxs(1, 0)
                     visitEnd()
                 }
 
                 newSpecialMethod(packageFragment, "<clinit>").apply {
                     visitCode()
                     visitMethodInsn(Opcodes.INVOKESTATIC, partType.internalName, DEFERRED_PART_CLINIT_NAME, "()V", false)
+                    visitInsn(Opcodes.ICONST_0)
+                    visitFieldInsn(Opcodes.PUTSTATIC, staticInitClassType.internalName, CLINIT_SYNC_NAME, "I")
                     visitInsn(Opcodes.RETURN)
-                    visitMaxs(0, 0)
+                    visitMaxs(1, 0)
                     visitEnd()
                 }
             }
@@ -187,6 +194,7 @@ class MultifileClassPartCodegen(
 
         private val STATIC_INIT_CLASS_SUFFIX = "__Clinit"
         private val CLINIT_TRIGGER_NAME = "\$\$clinitTrigger"
+        private val CLINIT_SYNC_NAME = "\$\$clinitSync"
         private val DEFERRED_PART_CLINIT_NAME = "\$\$clinit"
 
         @JvmStatic fun isStaticInitTrigger(insn: AbstractInsnNode) =

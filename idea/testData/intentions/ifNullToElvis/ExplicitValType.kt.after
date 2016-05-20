@@ -1,0 +1,7 @@
+// WITH_RUNTIME
+fun foo(): String? = null
+
+fun bar() {
+    val v: String = foo() ?: throw Exception()
+    v.length
+}

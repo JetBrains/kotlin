@@ -80,6 +80,7 @@ fun <T: Any> T.check(predicate: (T) -> Boolean): T? = if (predicate(this)) this 
 
 fun <T : Any> constant(calculator: () -> T): T {
     val cached = constantMap[calculator]
+    @Suppress("UNCHECKED_CAST")
     if (cached != null) return cached as T
 
     // safety check

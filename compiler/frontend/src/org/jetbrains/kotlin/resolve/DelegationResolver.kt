@@ -88,7 +88,7 @@ class DelegationResolver<T : CallableMemberDescriptor> private constructor(
         }
     }
 
-    interface MemberExtractor<T : CallableMemberDescriptor> {
+    interface MemberExtractor<out T : CallableMemberDescriptor> {
         fun getMembersByType(type: KotlinType): Collection<T>
     }
 

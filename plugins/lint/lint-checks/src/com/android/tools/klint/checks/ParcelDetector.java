@@ -90,7 +90,18 @@ public class ParcelDetector extends Detector implements UastScanner {
                 String name = reference.getName();
                 if (name.equals("Parcelable")) {
                     UVariable field = UastUtils.findStaticMemberOfType(node, "CREATOR", UVariable.class);
-                    if (field == null) {
+                    boolean hasField = field != null && field.hasModifier(UastModifier.JVM_FIELD) && field.hasModifier(UastModifier.STATIC);
+                    boolean hasNamedCompanionObject = false;
+                    if (!hasField) {
+                        for (UClass companion : node.getCompanions()) {
+                            if (companion.getName().equals("CREATOR")) {
+                                hasNamedCompanionObject = true;
+                                break;
+                            }
+                        }
+
+                    }
+                    if (!hasField && !hasNamedCompanionObject) {
                         // Make doubly sure that we're really implementing
                         // android.os.Parcelable
                         UClass parcelable = reference.resolve(mContext);

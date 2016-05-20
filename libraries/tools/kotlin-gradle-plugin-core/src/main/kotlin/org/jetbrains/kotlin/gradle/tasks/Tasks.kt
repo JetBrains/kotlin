@@ -21,6 +21,7 @@ import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
+import org.jetbrains.kotlin.annotation.AnnotationFileUpdater
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
@@ -172,6 +173,9 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
                dataContainerCacheVersion(taskBuildDirectory),
                gradleCacheVersion(taskBuildDirectory))
     }
+
+    private var kaptAnnotationsFileUpdater: AnnotationFileUpdater? = null
+    private var kaptStubGeneratingMode = false
 
     override fun populateTargetSpecificArgs(args: K2JVMCompilerArguments) {
         // show kotlin compiler where to look for java source files
@@ -347,6 +351,12 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
             if (exitCode != ExitCode.OK) {
                 cleanupOnError()
             }
+
+            lookupStorage.flush(false)
+            lookupStorage.close()
+            caches.values.forEach { it.flush(false); it.close() }
+            logger.debug("flushed incremental caches")
+
             when (exitCode) {
                 ExitCode.COMPILATION_ERROR -> throw GradleException("Compilation error. See log for more details")
                 ExitCode.INTERNAL_ERROR -> throw GradleException("Internal compiler error. See log for more details")
@@ -370,9 +380,16 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
             // TODO: process as list here, merge into string later
             args.classpath = args.classpath + File.pathSeparator + outputDir.absolutePath
         }
+        else {
+            // there is no point in updating annotation file since all files will be compiled anyway
+            kaptAnnotationsFileUpdater = null
+        }
 
+        var exitCode = ExitCode.OK
         while (sourcesToCompile.any() || currentRemoved.any()) {
             val removedAndModified = (sourcesToCompile + currentRemoved).toList()
+            val outdatedClasses = targets.flatMap { getIncrementalCache(it).classesBySources(removedAndModified) }
+
             targets.forEach { getIncrementalCache(it).let {
                 it.markOutputClassesDirty(removedAndModified)
                 it.removeClassfilesBySources(removedAndModified)
@@ -389,37 +406,39 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
             val text = existingSource.map { it.canonicalPath }.joinToString(separator = System.getProperty("line.separator"))
             dirtySourcesSinceLastTimeFile.writeText(text)
 
-            val (exitCode, generatedFiles) = compileChanged(targets, existingSource.toSet(), outputDir, args, ::getIncrementalCache, lookupTracker)
+            val compilerOutput = compileChanged(targets, existingSource.toSet(), outputDir, args, ::getIncrementalCache, lookupTracker)
+            exitCode = compilerOutput.exitCode
 
             if (exitCode == ExitCode.OK) {
                 dirtySourcesSinceLastTimeFile.delete()
+                kaptAnnotationsFileUpdater?.updateAnnotations(outdatedClasses)
+            }
+            else {
+                kaptAnnotationsFileUpdater?.revert()
+                break
             }
 
-            allGeneratedFiles.addAll(generatedFiles)
-            val compilationResult = updateIncrementalCaches(targets, generatedFiles,
+            allGeneratedFiles.addAll(compilerOutput.generatedFiles)
+            val compilationResult = updateIncrementalCaches(targets, compilerOutput.generatedFiles,
                                                             compiledWithErrors = exitCode != ExitCode.OK,
                                                             getIncrementalCache = { caches[it]!! })
 
             lookupStorage.update(lookupTracker, sourcesToCompile, currentRemoved)
             cacheVersions.forEach { it.saveIfNeeded() }
-            processCompilerExitCode(exitCode)
 
-            if (!isIncrementalDecided) break;
+            if (!isIncrementalDecided) break
 
             val (dirtyLookupSymbols, dirtyClassFqNames) = compilationResult.getDirtyData(caches.values, logAction)
             sourcesToCompile = mapLookupSymbolsToFiles(lookupStorage, dirtyLookupSymbols, logAction, ::projectRelativePath, excludes = sourcesToCompile) +
-                               mapClassesFqNamesToFiles(caches.values, dirtyClassFqNames, logAction, ::projectRelativePath)
+                               mapClassesFqNamesToFiles(caches.values, dirtyClassFqNames, logAction, ::projectRelativePath, excludes = sourcesToCompile)
 
             if (currentRemoved.any()) {
                 currentRemoved = listOf()
             }
         }
-        lookupStorage.flush(false)
-        lookupStorage.close()
-        caches.values.forEach { it.flush(false); it.close() }
-        if (allGeneratedFiles.isNotEmpty()) {
-            anyClassesCompiled = true
-        }
+
+        anyClassesCompiled = allGeneratedFiles.isNotEmpty()
+        processCompilerExitCode(exitCode)
     }
 
     private data class CompileChangedResults(val exitCode: ExitCode, val generatedFiles: List<GeneratedFile<TargetId>>)
@@ -485,12 +504,17 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
     private fun handleKaptProperties(extraProperties: ExtraPropertiesExtension, pluginOptions: MutableList<String>) {
         val kaptAnnotationsFile = extraProperties.getOrNull<File>("kaptAnnotationsFile")
         if (kaptAnnotationsFile != null) {
+            if (incremental) {
+                kaptAnnotationsFileUpdater = AnnotationFileUpdater(kaptAnnotationsFile)
+            }
+
             if (kaptAnnotationsFile.exists()) kaptAnnotationsFile.delete()
             pluginOptions.add("plugin:$ANNOTATIONS_PLUGIN_NAME:output=" + kaptAnnotationsFile)
         }
 
         val kaptClassFileStubsDir = extraProperties.getOrNull<File>("kaptStubsDir")
         if (kaptClassFileStubsDir != null) {
+            kaptStubGeneratingMode = true
             pluginOptions.add("plugin:$ANNOTATIONS_PLUGIN_NAME:stubs=" + kaptClassFileStubsDir)
         }
 
@@ -514,6 +538,10 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
     }
 
     override fun afterCompileHook(args: K2JVMCompilerArguments) {
+        kaptAnnotationsFileUpdater?.dispose()
+
+        if (kaptStubGeneratingMode) return
+
         logger.debug("Copying resulting files to classes")
 
         // Copy kotlin classes to all classes directory

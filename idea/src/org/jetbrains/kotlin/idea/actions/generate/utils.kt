@@ -52,7 +52,7 @@ fun getPropertiesToUseInGeneratedMember(classOrObject: KtClassOrObject): List<Kt
             val descriptor = it.resolveToDescriptor()
             when (descriptor) {
                 is ValueParameterDescriptor -> true
-                is PropertyDescriptor -> descriptor.accessors.all { it.isDefault }
+                is PropertyDescriptor -> descriptor.getter?.isDefault ?: true
                 else -> false
             }
         }

@@ -88,4 +88,13 @@
         <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused import directive</problem_class>
         <description>Unused import directive</description>
     </problem>
+
+    <problem>
+        <file>kDocReferences.kt</file>
+        <line>2</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="kDocReferences.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused import directive</problem_class>
+        <description>Unused import directive</description>
+    </problem>
 </problems>

@@ -157,6 +157,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             doSingleBreakpointTest(fileName);
         }
 
+        @TestMetadata("genericCrossinlineArgument.kt")
+        public void testGenericCrossinlineArgument() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/genericCrossinlineArgument.kt");
+            doSingleBreakpointTest(fileName);
+        }
+
         @TestMetadata("imports.kt")
         public void testImports() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/imports.kt");
@@ -292,6 +298,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
         @TestMetadata("protectedMember.kt")
         public void testProtectedMember() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/protectedMember.kt");
+            doSingleBreakpointTest(fileName);
+        }
+
+        @TestMetadata("rawTypeskt11831.kt")
+        public void testRawTypeskt11831() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/rawTypeskt11831.kt");
             doSingleBreakpointTest(fileName);
         }
 

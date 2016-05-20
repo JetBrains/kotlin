@@ -32,7 +32,8 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
-import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.MultifileClassKind.*
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.MultifileClassKind.DELEGATING
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.MultifileClassKind.INHERITING
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
@@ -262,7 +263,7 @@ class MultifileClassCodegen(
         if (Visibilities.isPrivate(descriptor.visibility)) return false
         if (AsmUtil.getVisibilityAccessFlag(descriptor) == Opcodes.ACC_PRIVATE) return false
 
-        if (state.classBuilderMode == ClassBuilderMode.LIGHT_CLASSES) return true
+        if (state.classBuilderMode != ClassBuilderMode.FULL) return true
 
         if (shouldGeneratePartHierarchy) {
             if (descriptor !is PropertyDescriptor || !descriptor.isConst) return false
@@ -322,7 +323,7 @@ class MultifileClassCodegen(
     }
 
     private fun writeKotlinMultifileFacadeAnnotationIfNeeded() {
-        if (state.classBuilderMode != ClassBuilderMode.FULL) return
+        if (!state.classBuilderMode.shouldGenerateMetadata()) return
         if (files.any { it.isScript }) return
 
         writeKotlinMetadata(classBuilder, KotlinClassHeader.Kind.MULTIFILE_CLASS) { av ->

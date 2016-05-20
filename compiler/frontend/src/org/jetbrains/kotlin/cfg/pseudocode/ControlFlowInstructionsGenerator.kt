@@ -20,7 +20,7 @@ import com.intellij.util.containers.Stack
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cfg.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.LexicalScope
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.BlockScope
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.*
@@ -39,7 +39,7 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
         get() = builder ?: throw AssertionError("Builder stack is empty in ControlFlowInstructionsGenerator!")
 
     private val loopInfo = Stack<LoopInfo>()
-    private val lexicalScopes = Stack<LexicalScope>()
+    private val blockScopes = Stack<BlockScope>()
     private val elementToBlockInfo = HashMap<KtElement, BreakableBlockInfo>()
     private var labelCount = 0
 
@@ -72,13 +72,13 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
         else {
             pushBuilder(subroutine, subroutine)
         }
-        delegateBuilder.enterLexicalScope(subroutine)
+        delegateBuilder.enterBlockScope(subroutine)
         delegateBuilder.enterSubroutine(subroutine)
     }
 
     override fun exitSubroutine(subroutine: KtElement): Pseudocode {
         super.exitSubroutine(subroutine)
-        delegateBuilder.exitLexicalScope(subroutine)
+        delegateBuilder.exitBlockScope(subroutine)
         val worker = popBuilder()
         if (!builders.empty()) {
             val builder = builders.peek()
@@ -176,23 +176,23 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
             return elementToBlockInfo[labelElement]?.exitPoint
         }
 
-        private val currentScope: LexicalScope
-            get() = lexicalScopes.peek()
+        private val currentScope: BlockScope
+            get() = blockScopes.peek()
 
-        override fun enterLexicalScope(element: KtElement) {
-            val current = if (lexicalScopes.isEmpty()) null else currentScope
-            val scope = LexicalScope(current, element)
-            lexicalScopes.push(scope)
+        override fun enterBlockScope(block: KtElement) {
+            val current = if (blockScopes.isEmpty()) null else currentScope
+            val scope = BlockScope(current, block)
+            blockScopes.push(scope)
         }
 
-        override fun exitLexicalScope(element: KtElement) {
+        override fun exitBlockScope(block: KtElement) {
             val currentScope = currentScope
-            assert(currentScope.element === element) {
-                "Exit from not the current lexical scope.\n" +
-                "Current scope is for: " + currentScope.element + ".\n" +
-                "Exit from the scope for: " + element.text
+            assert(currentScope.block === block) {
+                "Exit from not the current block scope.\n" +
+                "Current scope is for a block: " + currentScope.block.text + ".\n" +
+                "Exit from the scope for: " + block.text
             }
-            lexicalScopes.pop()
+            blockScopes.pop()
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -200,18 +200,15 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
         private fun handleJumpInsideTryFinally(jumpTarget: Label) {
             val finallyBlocks = ArrayList<TryFinallyBlockInfo>()
 
-            for (i in allBlocks.indices.reversed()) {
-                val blockInfo = allBlocks[i]
-                if (blockInfo is BreakableBlockInfo) {
-                    if (blockInfo.referablePoints.contains(jumpTarget) || jumpTarget === error) {
-                        for (j in finallyBlocks.indices.reversed()) {
-                            finallyBlocks[j].generateFinallyBlock()
+            for (blockInfo in allBlocks.asReversed()) {
+                when (blockInfo) {
+                    is BreakableBlockInfo -> if (blockInfo.referablePoints.contains(jumpTarget) || jumpTarget === error) {
+                        for (finallyBlockInfo in finallyBlocks) {
+                            finallyBlockInfo.generateFinallyBlock()
                         }
-                        break
+                        return
                     }
-                }
-                else if (blockInfo is TryFinallyBlockInfo) {
-                    finallyBlocks.add(blockInfo)
+                    is TryFinallyBlockInfo -> finallyBlocks.add(blockInfo)
                 }
             }
         }

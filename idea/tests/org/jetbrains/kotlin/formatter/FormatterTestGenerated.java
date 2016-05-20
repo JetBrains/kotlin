@@ -91,6 +91,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("Cast.after.kt")
+        public void testCast() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/Cast.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("CatchFinallyOnNewLine.after.kt")
         public void testCatchFinallyOnNewLine() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/CatchFinallyOnNewLine.after.kt");
@@ -334,6 +340,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         @TestMetadata("IfSpacing.after.kt")
         public void testIfSpacing() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/IfSpacing.after.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("InfixCall.after.kt")
+        public void testInfixCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/InfixCall.after.kt");
             doTest(fileName);
         }
 

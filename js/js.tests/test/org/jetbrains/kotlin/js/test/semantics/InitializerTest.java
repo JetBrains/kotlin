@@ -34,4 +34,8 @@ public class InitializerTest extends SingleFileTranslationTest {
     public void testClassInitializer() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testDeclarationInitializedWithThrow() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

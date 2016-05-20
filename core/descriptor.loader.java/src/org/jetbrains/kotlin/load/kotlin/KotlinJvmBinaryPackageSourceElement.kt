@@ -19,30 +19,22 @@ package org.jetbrains.kotlin.load.kotlin
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.load.java.descriptors.getImplClassNameForDeserialized
-import org.jetbrains.kotlin.load.java.structure.JavaPackage
+import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 
 class KotlinJvmBinaryPackageSourceElement(
-        private val jPackage: JavaPackage,
-        kotlinBinaryClasses: List<KotlinJvmBinaryClass>
+        private val packageFragment: LazyJavaPackageFragment
 ) : SourceElement {
-    private val implClassNameToBinaryClass = run {
-        val result = hashMapOf<String, KotlinJvmBinaryClass>()
-        for (kotlinBinaryClass in kotlinBinaryClasses) {
-            result[kotlinBinaryClass.classId.shortClassName.asString()] = kotlinBinaryClass
-        }
-        result
-    }
+    override fun toString() = "$packageFragment: ${packageFragment.binaryClasses.keys}"
 
-    override fun toString(): String = "Binary package ${jPackage.fqName}: ${implClassNameToBinaryClass.keys}"
     override fun getContainingFile(): SourceFile = SourceFile.NO_SOURCE_FILE
 
     fun getRepresentativeBinaryClass(): KotlinJvmBinaryClass {
-        return implClassNameToBinaryClass.values.first()
+        return packageFragment.binaryClasses.values.first()
     }
 
     fun getContainingBinaryClass(descriptor: DeserializedCallableMemberDescriptor): KotlinJvmBinaryClass? {
         val name = descriptor.getImplClassNameForDeserialized() ?: return null
-        return implClassNameToBinaryClass[name.asString()]
+        return packageFragment.binaryClasses[name.asString()]
     }
 }

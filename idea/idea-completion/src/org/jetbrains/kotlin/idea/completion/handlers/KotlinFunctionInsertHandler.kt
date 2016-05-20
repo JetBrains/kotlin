@@ -27,6 +27,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
+import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtTypeArgumentList
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -34,15 +35,16 @@ import org.jetbrains.kotlin.types.KotlinType
 
 class GenerateLambdaInfo(val lambdaType: KotlinType, val explicitParameters: Boolean)
 
-sealed class KotlinFunctionInsertHandler : KotlinCallableInsertHandler() {
+sealed class KotlinFunctionInsertHandler(callType: CallType<*>) : KotlinCallableInsertHandler(callType) {
 
     class Normal(
+            callType: CallType<*>,
             val inputTypeArguments: Boolean,
             val inputValueArguments: Boolean,
             val argumentText: String = "",
             val lambdaInfo: GenerateLambdaInfo? = null,
             val argumentsOnly: Boolean = false
-    ) : KotlinFunctionInsertHandler() {
+    ) : KotlinFunctionInsertHandler(callType) {
         init {
             if (lambdaInfo != null) {
                 assert(argumentText == "")
@@ -51,12 +53,13 @@ sealed class KotlinFunctionInsertHandler : KotlinCallableInsertHandler() {
 
         //TODO: add 'data' or special annotation when supported
         fun copy(
+                callType: CallType<*> = this.callType,
                 inputTypeArguments: Boolean = this.inputTypeArguments,
                 inputValueArguments: Boolean = this.inputValueArguments,
                 argumentText: String = this.argumentText,
                 lambdaInfo: GenerateLambdaInfo? = this.lambdaInfo,
                 argumentsOnly: Boolean = this.argumentsOnly
-        ) = Normal(inputTypeArguments, inputValueArguments, argumentText, lambdaInfo, argumentsOnly)
+        ) = Normal(callType, inputTypeArguments, inputValueArguments, argumentText, lambdaInfo, argumentsOnly)
 
         override fun handleInsert(context: InsertionContext, item: LookupElement) {
             val psiDocumentManager = PsiDocumentManager.getInstance(context.project)
@@ -193,7 +196,7 @@ sealed class KotlinFunctionInsertHandler : KotlinCallableInsertHandler() {
                 = CodeStyleSettingsManager.getSettings(project).getCustomSettings(KotlinCodeStyleSettings::class.java)!!.INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD
     }
 
-    object Infix : KotlinFunctionInsertHandler() {
+    object Infix : KotlinFunctionInsertHandler(CallType.INFIX) {
         override fun handleInsert(context: InsertionContext, item: LookupElement) {
             super.handleInsert(context, item)
 
@@ -207,7 +210,7 @@ sealed class KotlinFunctionInsertHandler : KotlinCallableInsertHandler() {
         }
    }
 
-    object OnlyName : KotlinFunctionInsertHandler()
+    class OnlyName(callType: CallType<*>) : KotlinFunctionInsertHandler(callType)
 
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
         super.handleInsert(context, item)

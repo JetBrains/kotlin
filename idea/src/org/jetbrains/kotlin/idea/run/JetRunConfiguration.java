@@ -84,11 +84,6 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
         return Arrays.asList(ModuleManager.getInstance(getProject()).getModules());
     }
 
-    @Override
-    protected ModuleBasedConfiguration createInstance() {
-        return new JetRunConfiguration(getName(), getConfigurationModule(), getFactory());
-    }
-
     @NotNull
     @Override
     public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {

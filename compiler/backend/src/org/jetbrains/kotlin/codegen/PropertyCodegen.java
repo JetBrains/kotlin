@@ -142,9 +142,10 @@ public class PropertyCodegen {
 
         Annotations propertyAnnotations = annotationSplitter.getAnnotationsForTarget(AnnotationUseSiteTarget.PROPERTY);
 
-        // Fields and '$annotations' methods for const properties are generated in the multi-file facade
-        boolean isBackingFieldOwner =
-                descriptor.isConst() ? !(context instanceof MultifileClassPartContext) : CodegenContextUtil.isImplClassOwner(context);
+        // Fields and '$annotations' methods for non-private const properties are generated in the multi-file facade
+        boolean isBackingFieldOwner = descriptor.isConst() && !Visibilities.isPrivate(descriptor.getVisibility())
+                                      ? !(context instanceof MultifileClassPartContext)
+                                      : CodegenContextUtil.isImplClassOwner(context);
 
         if (isBackingFieldOwner) {
             Annotations fieldAnnotations = annotationSplitter.getAnnotationsForTarget(AnnotationUseSiteTarget.FIELD);
@@ -347,7 +348,7 @@ public class PropertyCodegen {
 
         FieldVisitor fv = builder.newField(
                 JvmDeclarationOriginKt.OtherOrigin(element, propertyDescriptor), modifiers, name, type.getDescriptor(),
-                typeMapper.mapFieldSignature(kotlinType, propertyDescriptor), defaultValue
+                isDelegate ? null : typeMapper.mapFieldSignature(kotlinType, propertyDescriptor), defaultValue
         );
 
         Annotated fieldAnnotated = new AnnotatedWithFakeAnnotations(propertyDescriptor, annotations);

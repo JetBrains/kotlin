@@ -120,7 +120,7 @@ public class CastDiagnosticsUtil {
         if (typeChecker.isSubtypeOf(supertype, subtype)) return false;
 
         // downcasting to a non-reified type parameter is always erased
-        if (TypeUtils.isNonReifiedTypeParemeter(subtype)) return true;
+        if (TypeUtils.isNonReifiedTypeParameter(subtype)) return true;
 
         // Check that we are actually casting to a generic type
         // NOTE: this does not account for 'as Array<List<T>>'

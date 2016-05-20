@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.isNumberedFunctionClassFqName
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.FlagsToModifiers.*
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -36,16 +37,20 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinObjectStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderStubImpl
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.*
+import org.jetbrains.kotlin.serialization.deserialization.NameResolver
+import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
+import org.jetbrains.kotlin.serialization.deserialization.TypeTable
+import org.jetbrains.kotlin.serialization.deserialization.supertypes
 
 fun createClassStub(
         parent: StubElement<out PsiElement>,
         classProto: ProtoBuf.Class,
         nameResolver: NameResolver,
         classId: ClassId,
+        source: SourceElement?,
         context: ClsStubBuilderContext
 ) {
-    ClassClsStubBuilder(parent, classProto, nameResolver, classId, context).build()
+    ClassClsStubBuilder(parent, classProto, nameResolver, classId, source, context).build()
 }
 
 private class ClassClsStubBuilder(
@@ -53,11 +58,17 @@ private class ClassClsStubBuilder(
         private val classProto: ProtoBuf.Class,
         private val nameResolver: NameResolver,
         private val classId: ClassId,
-        private val outerContext: ClsStubBuilderContext
+        source: SourceElement?,
+        outerContext: ClsStubBuilderContext
 ) {
-    private val classKind = Flags.CLASS_KIND[classProto.flags]
-    private val c = outerContext.child(classProto.typeParameterList, classKind, classId.shortClassName, nameResolver,
-                                       TypeTable(classProto.typeTable))
+    private val thisAsProtoContainer = ProtoContainer.Class(
+            classProto, nameResolver, TypeTable(classProto.typeTable), source, outerContext.protoContainer
+    )
+    private val classKind = thisAsProtoContainer.kind
+
+    private val c = outerContext.child(
+            classProto.typeParameterList, classId.shortClassName, nameResolver, thisAsProtoContainer.typeTable, thisAsProtoContainer
+    )
     private val typeStubBuilder = TypeClsStubBuilder(c)
     private val supertypeIds = run {
         val supertypeIds = classProto.supertypes(c.typeTable).map { c.nameResolver.getClassId(it.className) }
@@ -73,9 +84,6 @@ private class ClassClsStubBuilder(
     private val companionObjectName =
             if (classProto.hasCompanionObjectName()) c.nameResolver.getName(classProto.companionObjectName) else null
 
-    private val thisAsProtoContainer =
-            ProtoContainer.Class(classProto, c.nameResolver, c.typeTable, outerContext.classKind?.let { Deserialization.classKind(it) })
-
     private val classOrObjectStub = createClassOrObjectStubAndModifierListStub()
 
     fun build() {
@@ -90,7 +98,7 @@ private class ClassClsStubBuilder(
         val classOrObjectStub = doCreateClassOrObjectStub()
         val modifierList = createModifierListForClass(classOrObjectStub)
         if (Flags.HAS_ANNOTATIONS.get(classProto.flags)) {
-            createAnnotationStubs(c.components.annotationLoader.loadClassAnnotations(classProto, c.nameResolver), modifierList)
+            createAnnotationStubs(c.components.annotationLoader.loadClassAnnotations(thisAsProtoContainer), modifierList)
         }
         return classOrObjectStub
     }
@@ -249,7 +257,7 @@ private class ClassClsStubBuilder(
             return
         }
         val (nameResolver, classProto) = classDataWithSource.classData
-        createClassStub(classBody, classProto, nameResolver, nestedClassId, c)
+        createClassStub(classBody, classProto, nameResolver, nestedClassId, classDataWithSource.sourceElement, c)
     }
 
     companion object {

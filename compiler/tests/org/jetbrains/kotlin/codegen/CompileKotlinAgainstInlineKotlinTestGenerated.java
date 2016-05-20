@@ -1930,6 +1930,39 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             }
         }
 
+        @TestMetadata("compiler/testData/codegen/boxInline/smap/newsmap")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Newsmap extends AbstractCompileKotlinAgainstInlineKotlinTest {
+            public void testAllFilesPresentInNewsmap() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/newsmap"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("differentMapping.kt")
+            public void testDifferentMapping() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/newsmap/differentMapping.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("mappingInInlineFunLambda.kt")
+            public void testMappingInInlineFunLambda() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/newsmap/mappingInInlineFunLambda.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("mappingInSubInlineLambda.kt")
+            public void testMappingInSubInlineLambda() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/newsmap/mappingInSubInlineLambda.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("mappingInSubInlineLambdaSameFileInline.kt")
+            public void testMappingInSubInlineLambdaSameFileInline() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/newsmap/mappingInSubInlineLambdaSameFileInline.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/boxInline/smap/resolve")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

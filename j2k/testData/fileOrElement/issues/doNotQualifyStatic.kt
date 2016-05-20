@@ -1,5 +1,5 @@
 internal object Outer {
-    var o: Any? = Object()
+    var o: Any? = Any()
 
     class Nested {
         fun foo() {

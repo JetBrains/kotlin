@@ -17,9 +17,11 @@
 package org.jetbrains.kotlin.serialization.deserialization.descriptors
 
 import com.google.protobuf.MessageLite
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
-import org.jetbrains.kotlin.incremental.record
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
@@ -78,10 +80,7 @@ abstract class DeserializedMemberScope protected constructor(
     protected open fun computeNonDeclaredFunctions(name: Name, functions: MutableCollection<SimpleFunctionDescriptor>) {
     }
 
-    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> {
-        recordLookup(name, location)
-        return functions(name)
-    }
+    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> = functions(name)
 
     private fun computeProperties(name: Name): Collection<PropertyDescriptor> {
         val protos = propertyProtos()[ProtoKey(name, isExtension = false)].orEmpty() +
@@ -98,17 +97,7 @@ abstract class DeserializedMemberScope protected constructor(
     protected open fun computeNonDeclaredProperties(name: Name, descriptors: MutableCollection<PropertyDescriptor>) {
     }
 
-    override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
-        recordLookup(name, location)
-        return properties.invoke(name)
-    }
-
-    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
-        recordLookup(name, location)
-        return getClassDescriptor(name)
-    }
-
-    protected abstract fun getClassDescriptor(name: Name): ClassifierDescriptor?
+    override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> = properties(name)
 
     protected abstract fun addClassDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean)
 
@@ -177,9 +166,5 @@ abstract class DeserializedMemberScope protected constructor(
 
         p.popIndent()
         p.println("}")
-    }
-
-    private fun recordLookup(name: Name, from: LookupLocation) {
-        c.components.lookupTracker.record(from, c.containingDeclaration, name)
     }
 }

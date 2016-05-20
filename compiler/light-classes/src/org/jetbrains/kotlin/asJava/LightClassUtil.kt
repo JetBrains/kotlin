@@ -80,7 +80,7 @@ object LightClassUtil {
         return extractPropertyAccessors(property, getterWrapper, setterWrapper)
     }
 
-    private fun getLightClassBackingField(declaration: KtDeclaration): PsiField? {
+    fun getLightClassBackingField(declaration: KtDeclaration): PsiField? {
         var psiClass: PsiClass = getWrappingClass(declaration) ?: return null
 
         if (psiClass is KtLightClass) {

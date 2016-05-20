@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputVa
 import org.jetbrains.kotlin.idea.refactoring.isMultiLine
 import org.jetbrains.kotlin.idea.refactoring.removeTemplateEntryBracesIfPossible
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.idea.util.ShortenReferences
+import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.*
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.UnificationResult.StronglyMatched
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.UnificationResult.WeaklyMatched
@@ -111,9 +111,7 @@ private fun buildSignature(config: ExtractionGeneratorConfiguration, renderer: D
 fun ExtractionGeneratorConfiguration.getSignaturePreview(renderer: DescriptorRenderer) = buildSignature(this, renderer).asString()
 
 fun ExtractionGeneratorConfiguration.getDeclarationPattern(
-        descriptorRenderer: DescriptorRenderer = if (generatorOptions.flexibleTypesAllowed)
-                                                    DescriptorRenderer.FLEXIBLE_TYPES_FOR_CODE
-                                                 else IdeDescriptorRenderers.SOURCE_CODE
+        descriptorRenderer: DescriptorRenderer = IdeDescriptorRenderers.SOURCE_CODE
 ): String {
     val extractionTarget = generatorOptions.target
     if (!extractionTarget.isAvailable(descriptor)) {

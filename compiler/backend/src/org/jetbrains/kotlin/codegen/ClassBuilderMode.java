@@ -25,4 +25,8 @@ public enum ClassBuilderMode {
      * Generating light classes: Only function signatures
      */
     LIGHT_CLASSES,
+    /**
+     * Function signatures + metadata (to support incremental compilation with kapt)
+     */
+    KAPT;
 }

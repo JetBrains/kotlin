@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.search.KOTLIN_NAMED_ARGUMENT_SEARCH_CONTEXT
 import org.jetbrains.kotlin.idea.search.allScope
+import org.jetbrains.kotlin.idea.search.effectiveSearchScope
 import org.jetbrains.kotlin.idea.search.usagesSearch.*
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -69,7 +70,10 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
             (if (classNameForCompanionObject != null) listOf(classNameForCompanionObject) else emptyList())
         }
 
-        val effectiveSearchScope = runReadAction { queryParameters.effectiveSearchScope }
+        val effectiveSearchScope = runReadAction {
+            val elements = if (unwrappedElement is KtDeclaration) unwrappedElement.toLightElements() else listOf(unwrappedElement)
+            elements.fold(queryParameters.effectiveSearchScope) { scope, e -> scope.union(queryParameters.effectiveSearchScope(e)) }
+        }
 
         val refFilter: (PsiReference) -> Boolean = when {
             unwrappedElement is KtParameter -> ({ ref: PsiReference -> !ref.isNamedArgumentReference()/* they are processed later*/ })
@@ -210,17 +214,22 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
             }
         }
 
-        private fun findStaticMethodFromCompanionObject(function: KtFunction): PsiMethod? {
-            val originObject = function.parents
+        private fun findStaticMethodsFromCompanionObject(declaration: KtDeclaration): List<PsiMethod> {
+            val originObject = declaration.parents
                 .dropWhile { it is KtClassBody }
-                .firstOrNull() as? KtObjectDeclaration ?: return null
+                .firstOrNull() as? KtObjectDeclaration ?: return emptyList()
             if (originObject.isCompanion()) {
                 val originClass = originObject.getStrictParentOfType<KtClass>()
-                val originLightClass = originClass?.toLightClass()
-                val allMethods = originLightClass?.allMethods
-                return allMethods?.find { it is KtLightMethod && it.kotlinOrigin == function }
+                val originLightClass = originClass?.toLightClass() ?: return emptyList()
+                val allMethods = originLightClass.allMethods
+                return allMethods.filter { it is KtLightMethod && it.kotlinOrigin == declaration }
             }
-            return null
+            return emptyList()
+        }
+
+        private fun processStaticsFromCompanionObject(element: KtDeclaration, queryParameters: ReferencesSearch.SearchParameters) {
+            val staticsFromCompanionObject = runReadAction { findStaticMethodsFromCompanionObject(element) }
+            staticsFromCompanionObject.forEach { searchNamedElement(queryParameters, it) }
         }
 
         private fun searchPropertyMethods(queryParameters: ReferencesSearch.SearchParameters, parameter: KtParameter) {
@@ -252,15 +261,13 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
                         }
                     }
 
-                    val staticFromCompanionObject = runReadAction { findStaticMethodFromCompanionObject(element) }
-                    if (staticFromCompanionObject != null) {
-                        searchNamedElement(queryParameters, staticFromCompanionObject)
-                    }
+                    processStaticsFromCompanionObject(element, queryParameters)
                 }
 
                 is KtProperty -> {
                     val propertyMethods = runReadAction { LightClassUtil.getLightClassPropertyMethods(element) }
                     propertyMethods.allDeclarations.forEach { searchNamedElement(queryParameters, it) }
+                    processStaticsFromCompanionObject(element, queryParameters)
                 }
 
                 is KtParameter -> {
@@ -278,16 +285,14 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
                     val declaration = element.kotlinOrigin
                     if (declaration is KtProperty || (declaration is KtParameter && declaration.hasValOrVar())) {
                         searchNamedElement(queryParameters, declaration as PsiNamedElement)
+                        processStaticsFromCompanionObject(declaration, queryParameters)
                     }
                     else if (declaration is KtPropertyAccessor) {
                         val property = declaration.getStrictParentOfType<KtProperty>()
                         searchNamedElement(queryParameters, property)
                     }
                     else if (declaration is KtFunction) {
-                        val staticFromCompanionObject = runReadAction { findStaticMethodFromCompanionObject(declaration) }
-                        if (staticFromCompanionObject != null) {
-                            searchNamedElement(queryParameters, staticFromCompanionObject)
-                        }
+                        processStaticsFromCompanionObject(declaration, queryParameters)
                     }
                 }
 
@@ -313,7 +318,7 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
                                        element: PsiNamedElement?,
                                        name: String? = element?.name) {
             if (name != null && element != null) {
-                val scope = runReadAction { queryParameters.effectiveSearchScope }
+                val scope = runReadAction { queryParameters.effectiveSearchScope(element) }
                 val context = UsageSearchContext.IN_CODE + UsageSearchContext.IN_FOREIGN_LANGUAGES + UsageSearchContext.IN_COMMENTS
                 val kotlinOptions = (queryParameters as? KotlinReferencesSearchParameters)?.kotlinOptions
                                     ?: KotlinReferencesSearchOptions.Empty

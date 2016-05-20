@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import java.util.*
 
 class CompletionSessionConfiguration(
-        val completeNonImportedClasses: Boolean,
+        val useBetterPrefixMatcherForNonImportedClasses: Boolean,
         val completeNonAccessibleDeclarations: Boolean,
         val filterOutJavaGettersAndSetters: Boolean,
         val completeJavaClassesNotToBeUsed: Boolean,
@@ -58,7 +58,7 @@ class CompletionSessionConfiguration(
 )
 
 fun CompletionSessionConfiguration(parameters: CompletionParameters) = CompletionSessionConfiguration(
-        completeNonImportedClasses = parameters.invocationCount >= 2,
+        useBetterPrefixMatcherForNonImportedClasses = parameters.invocationCount < 2,
         completeNonAccessibleDeclarations = parameters.invocationCount >= 2,
         filterOutJavaGettersAndSetters = parameters.invocationCount < 2,
         completeJavaClassesNotToBeUsed = parameters.invocationCount >= 2,
@@ -181,8 +181,7 @@ abstract class CompletionSession(
 
     private fun isVisibleDescriptor(descriptor: DeclarationDescriptor, completeNonAccessible: Boolean): Boolean {
         if (!configuration.completeJavaClassesNotToBeUsed && descriptor is ClassDescriptor) {
-            val classification = descriptor.importableFqName?.let { importableFqNameClassifier.classify(it, isPackage = false) }
-            if (classification == ImportableFqNameClassifier.Classification.notToBeUsedInKotlin) return false
+            if (descriptor.importableFqName?.let { isJavaClassNotToBeUsedInKotlin(it) } == true) return false
         }
 
         if (descriptor is TypeParameterDescriptor && !isTypeParameterVisible(descriptor)) return false
@@ -413,14 +412,6 @@ abstract class CompletionSession(
                && this !is CallTypeAndReceiver.IMPORT_DIRECTIVE
     }
 
-    protected fun addClassesFromIndex(kindFilter: (ClassKind) -> Boolean) {
-        AllClassesCompletion(parameters, indicesHelper(true), prefixMatcher, resolutionFacade, kindFilter)
-                .collect(
-                        { descriptor -> collector.addElement(basicLookupElementFactory.createLookupElement(descriptor), notImported = true) },
-                        { javaClass -> collector.addElement(basicLookupElementFactory.createLookupElementForJavaClass(javaClass), notImported = true) }
-                )
-    }
-
     protected fun withCollectRequiredContextVariableTypes(action: (LookupElementFactory) -> Unit): Collection<FuzzyType> {
         val provider = CollectRequiredTypesContextVariablesProvider()
         val lookupElementFactory = createLookupElementFactory(provider)
@@ -450,7 +441,7 @@ abstract class CompletionSession(
                 predictableSmartCastsOnly = true /* we don't include smart cast receiver types for "unpredictable" receiver value to mark members grayed */)
 
         if (callTypeAndReceiver is CallTypeAndReceiver.SAFE || isDebuggerContext) {
-            receiverTypes = receiverTypes!!.map { it.makeNotNullable() }
+            receiverTypes = receiverTypes?.map { it.makeNotNullable() }
         }
 
         return callTypeAndReceiver to receiverTypes

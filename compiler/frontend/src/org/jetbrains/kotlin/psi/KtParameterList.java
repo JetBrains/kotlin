@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
@@ -38,6 +39,12 @@ public class KtParameterList extends KtElementImplStub<KotlinPlaceHolderStub<KtP
         return visitor.visitParameterList(this, data);
     }
 
+    @Override
+    public PsiElement getParent() {
+        KotlinPlaceHolderStub<KtParameterList> stub = getStub();
+        return stub != null ? stub.getParentStub().getPsi() : super.getParent();
+    }
+
     @NotNull
     public List<KtParameter> getParameters() {
         return getStubOrPsiChildrenAsList(KtStubElementTypes.VALUE_PARAMETER);
@@ -49,16 +56,17 @@ public class KtParameterList extends KtElementImplStub<KotlinPlaceHolderStub<KtP
     }
 
     @NotNull
-    public KtParameter addParameterAfter(@NotNull KtParameter parameter, @Nullable KtParameter anchor) {
-        return EditCommaSeparatedListHelper.INSTANCE.addItemAfter(this, getParameters(), parameter, anchor);
-    }
-
-    @NotNull
     public KtParameter addParameterBefore(@NotNull KtParameter parameter, @Nullable KtParameter anchor) {
         return EditCommaSeparatedListHelper.INSTANCE.addItemBefore(this, getParameters(), parameter, anchor);
     }
 
     public void removeParameter(@NotNull KtParameter parameter) {
         EditCommaSeparatedListHelper.INSTANCE.removeItem(parameter);
+    }
+
+    public KtFunction getOwnerFunction() {
+        PsiElement parent = getParentByStub();
+        if (!(parent instanceof KtFunction)) return null;
+        return (KtFunction) parent;
     }
 }

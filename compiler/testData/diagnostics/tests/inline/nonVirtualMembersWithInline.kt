@@ -13,11 +13,11 @@ abstract class A {
     inline final fun good4() {}
 
 
-    <!DECLARATION_CANT_BE_INLINED!>inline open protected fun wrong1() {}<!>
+    <!DECLARATION_CANT_BE_INLINED!>inline open protected fun wrong1()<!> {}
 
-    <!DECLARATION_CANT_BE_INLINED!>inline open public fun wrong2() {}<!>
+    <!DECLARATION_CANT_BE_INLINED!>inline open public fun wrong2()<!> {}
 
-    <!DECLARATION_CANT_BE_INLINED!>inline open fun wrong3() {}<!>
+    <!DECLARATION_CANT_BE_INLINED!>inline open fun wrong3()<!> {}
 
     <!DECLARATION_CANT_BE_INLINED!>inline abstract protected fun wrong4()<!>
 
@@ -31,13 +31,13 @@ interface B {
 
     inline private fun good1() {}
 
-    <!DECLARATION_CANT_BE_INLINED!>inline fun wrong1() {}<!>
+    <!DECLARATION_CANT_BE_INLINED!>inline fun wrong1()<!> {}
 
-    <!DECLARATION_CANT_BE_INLINED!>inline open fun wrong2() {}<!>
+    <!DECLARATION_CANT_BE_INLINED!>inline open fun wrong2()<!> {}
 
-    <!DECLARATION_CANT_BE_INLINED!>inline open public fun wrong3() {}<!>
+    <!DECLARATION_CANT_BE_INLINED!>inline open public fun wrong3()<!> {}
 
-    <!DECLARATION_CANT_BE_INLINED!>inline open fun wrong4() {}<!>
+    <!DECLARATION_CANT_BE_INLINED!>inline open fun wrong4()<!> {}
 
     <!DECLARATION_CANT_BE_INLINED!>inline fun wrong5()<!>
 

@@ -108,11 +108,11 @@ private class PropertyTranslator(
 
     private fun getCustomGetterDeclaration(): KtPropertyAccessor =
             declaration?.getter ?:
-            throw IllegalStateException("declaration and getter should not be null descriptor=${descriptor} declaration=${declaration}")
+            throw IllegalStateException("declaration and getter should not be null descriptor=$descriptor declaration=$declaration")
 
     private fun getCustomSetterDeclaration(): KtPropertyAccessor =
             declaration?.setter ?:
-            throw IllegalStateException("declaration and setter should not be null descriptor=${descriptor} declaration=${declaration}")
+            throw IllegalStateException("declaration and setter should not be null descriptor=$descriptor declaration=$declaration")
 
     private fun generateDefaultGetter(): JsPropertyInitializer {
         val getterDescriptor = descriptor.getter ?: throw IllegalStateException("Getter descriptor should not be null")
@@ -149,7 +149,7 @@ private class PropertyTranslator(
         if (getterDescriptor.isExtension) {
             val receiver = function.addParameter(getReceiverParameterName()).name
             val arguments = (delegatedJsCall as JsInvocation).arguments
-            arguments.set(0, receiver.makeRef())
+            arguments[0] = receiver.makeRef()
         }
 
         val returnResult = JsReturn(delegatedJsCall)
@@ -182,7 +182,7 @@ private class PropertyTranslator(
         assert(setterDescriptor.valueParameters.size == 1) { "Setter must have 1 parameter" }
         val correspondingPropertyName = setterDescriptor.correspondingProperty.name.asString()
         val valueParameter = function.addParameter(correspondingPropertyName).name
-        val withAliased = context().innerContextWithAliased(setterDescriptor.valueParameters.get(0), valueParameter.makeRef())
+        val withAliased = context().innerContextWithAliased(setterDescriptor.valueParameters[0], valueParameter.makeRef())
         val delegatedCall = context().bindingContext().get(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, setterDescriptor)
 
         if (delegatedCall != null) {
@@ -194,7 +194,7 @@ private class PropertyTranslator(
 
             if (setterDescriptor.isExtension) {
                 val receiver = function.addParameter(getReceiverParameterName(), 0).name
-                (delegatedJsCall as JsInvocation).arguments.set(0, receiver.makeRef())
+                (delegatedJsCall as JsInvocation).arguments[0] = receiver.makeRef()
             }
         }
         else {

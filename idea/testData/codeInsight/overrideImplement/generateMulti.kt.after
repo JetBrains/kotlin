@@ -8,14 +8,14 @@ interface Some<T> {
 
 class SomeOther<S> : Some<S> {
     override fun someFoo() {
-        <selection><caret>throw UnsupportedOperationException()</selection>
+        <selection><caret>throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.</selection>
     }
 
     override fun someGenericFoo(): S {
-        throw UnsupportedOperationException()
+        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun someOtherFoo(): Int {
-        throw UnsupportedOperationException()
+        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

@@ -26,9 +26,9 @@ abstract class AbstractKotlinSourceInJavaCompletionTest : KotlinFixtureCompletio
     override fun getPlatform() = JvmPlatform
 
     override fun doTest(testPath: String) {
-        val mockLibDir = File(COMPLETION_TEST_DATA_BASE_PATH + "/injava/mockLib")
+        val mockLibDir = File(RELATIVE_COMPLETION_TEST_DATA_BASE_PATH + "/injava/mockLib")
         val paths = mockLibDir.listFiles()!!.map {
-            FileUtil.toSystemIndependentName(it.absolutePath)
+            FileUtil.toSystemIndependentName(it.path)
         }.toTypedArray()
 
         myFixture.configureByFiles(*paths)

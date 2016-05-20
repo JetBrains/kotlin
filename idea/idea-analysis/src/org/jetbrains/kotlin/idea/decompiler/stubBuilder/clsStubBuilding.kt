@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.idea.stubindex.KotlinFileStubForIde
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -42,9 +43,14 @@ import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 
-fun createTopLevelClassStub(classId: ClassId, classProto: ProtoBuf.Class, context: ClsStubBuilderContext): KotlinFileStubImpl {
+fun createTopLevelClassStub(
+        classId: ClassId,
+        classProto: ProtoBuf.Class,
+        source: SourceElement?,
+        context: ClsStubBuilderContext
+): KotlinFileStubImpl {
     val fileStub = createFileStub(classId.packageFqName)
-    createClassStub(fileStub, classProto, context.nameResolver, classId, context)
+    createClassStub(fileStub, classProto, context.nameResolver, classId, source, context)
     return fileStub
 }
 
@@ -55,7 +61,7 @@ fun createPackageFacadeStub(
 ): KotlinFileStubImpl {
     val fileStub = KotlinFileStubForIde.forFile(packageFqName, packageFqName.isRoot)
     setupFileStub(fileStub, packageFqName)
-    createCallableStubs(fileStub, c, ProtoContainer.Package(packageFqName, c.nameResolver, c.typeTable, packagePartSource = null),
+    createCallableStubs(fileStub, c, ProtoContainer.Package(packageFqName, c.nameResolver, c.typeTable, source = null),
                         packageProto.functionList, packageProto.propertyList)
     return fileStub
 }

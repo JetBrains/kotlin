@@ -19,6 +19,7 @@ package kotlin.reflect.jvm.internal
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
 import org.jetbrains.kotlin.load.java.structure.reflect.*
+import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -108,22 +110,28 @@ internal sealed class JvmPropertySignature {
                 val (name, desc) =
                         JvmProtoBufUtil.getJvmFieldSignature(proto, nameResolver, typeTable) ?:
                         throw KotlinReflectionInternalError("No field signature for property: $descriptor")
-
-                val moduleSuffix =
-                        if (descriptor.visibility == Visibilities.INTERNAL &&
-                            descriptor.containingDeclaration is DeserializedClassDescriptor) {
-                            val classProto = (descriptor.containingDeclaration as DeserializedClassDescriptor).classProto
-                            val moduleName =
-                                    if (classProto.hasExtension(JvmProtoBuf.classModuleName))
-                                        nameResolver.getString(classProto.getExtension(JvmProtoBuf.classModuleName))
-                                    else JvmAbi.DEFAULT_MODULE_NAME
-                            "$" + JvmAbi.sanitizeAsJavaIdentifier(moduleName)
-                        }
-                        else {
-                            ""
-                        }
-                string = JvmAbi.getterName(name) + moduleSuffix + "()" + desc
+                string = JvmAbi.getterName(name) + getManglingSuffix() + "()" + desc
             }
+        }
+
+        private fun getManglingSuffix(): String {
+            val containingDeclaration = descriptor.containingDeclaration
+            if (descriptor.visibility == Visibilities.INTERNAL && containingDeclaration is DeserializedClassDescriptor) {
+                val classProto = containingDeclaration.classProto
+                val moduleName =
+                        if (classProto.hasExtension(JvmProtoBuf.classModuleName))
+                            nameResolver.getString(classProto.getExtension(JvmProtoBuf.classModuleName))
+                        else JvmAbi.DEFAULT_MODULE_NAME
+                return "$" + JvmAbi.sanitizeAsJavaIdentifier(moduleName)
+            }
+            if (descriptor.visibility == Visibilities.PRIVATE && containingDeclaration is PackageFragmentDescriptor) {
+                val packagePartSource = (descriptor as DeserializedPropertyDescriptor).containerSource
+                if (packagePartSource is JvmPackagePartSource && packagePartSource.facadeClassName != null) {
+                    return "$" + packagePartSource.simpleName.asString()
+                }
+            }
+
+            return ""
         }
 
         override fun asString(): String = string

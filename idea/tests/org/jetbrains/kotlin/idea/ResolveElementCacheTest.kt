@@ -17,7 +17,9 @@
 package org.jetbrains.kotlin.idea
 
 import com.intellij.psi.PsiDocumentManager
+import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
@@ -31,6 +33,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 class ResolveElementCacheTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor() = KotlinLightProjectDescriptor.INSTANCE
 
+    //language=kotlin
     private val FILE_TEXT =
 """
 class C(param1: String = "", param2: Int = 0) {
@@ -269,10 +272,11 @@ class C(param1: String = "", param2: Int = 0) {
     }
 
     fun testAnnotationEntry() {
-        val file = myFixture.configureByText("Test.kt", """
-        annotation class A
-        @A class B {}
-        """) as KtFile
+        val file = configureWithKotlin(
+                """
+                annotation class A
+                @A class B {}
+                """)
 
         val klass = file.declarations[1] as KtClass
         val annotationEntry = klass.annotationEntries.single()
@@ -282,10 +286,11 @@ class C(param1: String = "", param2: Int = 0) {
     }
 
     fun testFileAnnotationList() {
-        val file = myFixture.configureByText("Test.kt", """
-        @file:Suppress("Some")
-        @file:JvmName("Hi")
-        """) as KtFile
+        val file = configureWithKotlin(
+                """
+                @file:Suppress("Some")
+                @file:JvmName("Hi")
+                """)
 
         val fileAnnotationList = file.fileAnnotationList!!
         val context = fileAnnotationList.analyze(BodyResolveMode.PARTIAL)
@@ -304,9 +309,10 @@ class C(param1: String = "", param2: Int = 0) {
     }
 
     fun testNamedParametersInFunctionType() {
-        val file = myFixture.configureByText("Test.kt", """
-        fun <K, V> intercept(block: (key: K, next: (K) -> V, K) -> V) {}
-        """) as KtFile
+        val file = configureWithKotlin(
+                """
+                fun <K, V> intercept(block: (key: K, next: (K) -> V, K) -> V) {}
+                """)
 
         val function = file.declarations[0] as KtNamedFunction
         val functionType = function.valueParameters.first().typeReference!!.typeElement as KtFunctionType
@@ -316,5 +322,43 @@ class C(param1: String = "", param2: Int = 0) {
                 listOf("key", "next", SpecialNames.NO_NAME_PROVIDED.asString()) ==
                         descriptorsForParameters.map { it.name.asString() }
         )
+    }
+
+    fun testNoBodyResolveOnFunctionParameterAnalyze() {
+        val file = configureWithKotlin(
+                """
+                fun test(a: String) {
+                    unresolved // Check diagnostics is empty even in FULL mode when starting analyzing for parameter
+                }
+                """)
+
+        val function = file.declarations[0] as KtNamedFunction
+        val functionParameter = function.valueParameters.first()
+
+        val context = functionParameter.analyze(BodyResolveMode.FULL)
+
+        assertEmpty(context.diagnostics.all())
+    }
+
+    private fun configureWithKotlin(@Language("kotlin") text: String): KtFile {
+        return myFixture.configureByText("Test.kt", text.trimIndent()) as KtFile
+    }
+
+    fun testPrimaryConstructorParameterFullAnalysis() {
+        val file = myFixture.configureByText("Test.kt", """
+        class My(param: Int = 0)
+        """) as KtFile
+
+        val defaultValue = ((file.declarations[0]) as KtClass).getPrimaryConstructor()!!.valueParameters[0].defaultValue!!
+        defaultValue.analyzeFullyAndGetResult()
+    }
+
+    fun testPrimaryConstructorAnnotationFullAnalysis() {
+        val file = myFixture.configureByText("Test.kt", """
+        class My @Deprecated("xyz") protected constructor(param: Int)
+        """) as KtFile
+
+        val annotationArguments = ((file.declarations[0]) as KtClass).getPrimaryConstructor()!!.annotationEntries[0].valueArgumentList!!
+        annotationArguments.analyzeFullyAndGetResult()
     }
 }

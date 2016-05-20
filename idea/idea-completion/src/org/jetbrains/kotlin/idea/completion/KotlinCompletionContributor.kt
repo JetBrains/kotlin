@@ -180,19 +180,12 @@ class KotlinCompletionContributor : CompletionContributor() {
 
         val lambda = leaf?.parents?.firstOrNull { it is KtFunctionLiteral } ?: return null
 
-        val lambdaChild = leaf!!.parents.takeWhile { it != lambda }.lastOrNull() ?: return null
-        if (lambdaChild is KtParameterList) return CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED
+        val lambdaChild = leaf!!.parents.takeWhile { it != lambda }.lastOrNull()
 
-        if (lambdaChild !is KtBlockExpression) return null
-        val blockChild = leaf.parents.takeWhile { it != lambdaChild }.lastOrNull()
-        if (blockChild !is PsiErrorElement) return null
-        val inIncompleteSignature = blockChild.siblings(forward = false, withItself = false).all {
-            when (it) {
-                is PsiWhiteSpace, is PsiComment -> true
-                else -> false
-            }
-        }
-        return if (inIncompleteSignature) CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED + "->" else null
+        return if (lambdaChild is KtParameterList)
+            CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED
+        else
+            null
 
     }
 
@@ -309,7 +302,7 @@ class KotlinCompletionContributor : CompletionContributor() {
                 if (!somethingAdded && parameters.invocationCount < 2) {
                     // Rerun completion if nothing was found
                     val newConfiguration = CompletionSessionConfiguration(
-                            completeNonImportedClasses = true,
+                            useBetterPrefixMatcherForNonImportedClasses = false,
                             completeNonAccessibleDeclarations = false,
                             filterOutJavaGettersAndSetters = false,
                             completeJavaClassesNotToBeUsed = false,
@@ -343,9 +336,8 @@ class KotlinCompletionContributor : CompletionContributor() {
 
                 assert(startOffset > 1 && document.charsSequence[startOffset - 1] == '.')
                 val token = context.file.findElementAt(startOffset - 2)!!
-                assert(token.node.elementType == KtTokens.IDENTIFIER)
+                assert(token.node.elementType == KtTokens.IDENTIFIER || token.node.elementType == KtTokens.THIS_KEYWORD)
                 val nameRef = token.parent as KtNameReferenceExpression
-                assert(nameRef.parent is KtSimpleNameStringTemplateEntry)
 
                 document.insertString(nameRef.startOffset, "{")
 

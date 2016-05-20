@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.uast
 
 import org.jetbrains.android.inspections.klint.AndroidLintInspectionBase
 import org.jetbrains.kotlin.android.KotlinAndroidTestCase
+import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.findStringWithPrefixes
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
@@ -26,7 +27,13 @@ abstract class AbstractKotlinLintTest : KotlinAndroidTestCase() {
 
     override fun setUp() {
         super.setUp()
+        ConfigLibraryUtil.configureKotlinRuntime(myModule)
         AndroidLintInspectionBase.invalidateInspectionShortName2IssueMap()
+    }
+
+    override fun tearDown() {
+        ConfigLibraryUtil.unConfigureKotlinRuntime(myModule)
+        super.tearDown()
     }
 
     fun doTest(filename: String) {

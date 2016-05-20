@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.utils.Printer
 import java.util.*
 
 class AndroidSyntheticPackageData(
+        val layoutName: String,
         val moduleData: AndroidModuleData,
         val forView: Boolean,
         val isDeprecated: Boolean,
@@ -60,13 +61,15 @@ class AndroidSyntheticPackageFragmentDescriptor(
                 when (resource) {
                     is AndroidResource.Widget -> {
                         val resolvedWidget = resource.resolve(module)
-                        for (receiver in widgetReceivers) {
-                            properties += genPropertyForWidget(packageFragmentDescriptor, receiver, resolvedWidget, context)
+                        if (resolvedWidget != null) {
+                            for (receiver in widgetReceivers) {
+                                properties += genPropertyForWidget(packageFragmentDescriptor, receiver, resolvedWidget, context)
+                            }
                         }
                     }
                     is AndroidResource.Fragment -> if (!packageData.forView) {
                         for ((receiverType, type) in fragmentTypes) {
-                            properties += genPropertyForFragment(packageFragmentDescriptor, receiverType, type, resource, context)
+                            properties += genPropertyForFragment(packageFragmentDescriptor, receiverType, type, resource)
                         }
                     }
                 }

@@ -131,7 +131,7 @@ public class PrivateResourceDetector extends ResourceXmlDetector implements Uast
                 ResourceType resourceType = ResourceType.getEnum(type);
                 if (resourceType != null && isPrivate(context, resourceType, name)) {
                     String message = createUsageErrorMessage(context, resourceType, name);
-                    context.report(ISSUE, uastContext.getLocation(element), message);
+                    uastContext.report(ISSUE, element, uastContext.getLocation(element), message);
                 }
             }
         }

@@ -29,8 +29,8 @@ import com.intellij.debugger.ui.EditorEvaluationCommand
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressIndicator
-import com.intellij.openapi.project.Project
 import com.intellij.psi.CommonClassNames
+import com.intellij.psi.search.GlobalSearchScope
 import com.sun.jdi.ClassType
 import com.sun.jdi.Value
 import org.jetbrains.eval4j.jdi.asValue
@@ -73,16 +73,16 @@ abstract class KotlinRuntimeTypeEvaluator(
 
         val value = evaluator.evaluate(evaluationContext)
         if (value != null) {
-            return getCastableRuntimeType(project, value)
+            return getCastableRuntimeType(evaluationContext.debugProcess.searchScope, value)
         }
 
         throw EvaluateExceptionUtil.createEvaluateException(DebuggerBundle.message("evaluation.error.surrounded.expression.null"))
     }
 
     companion object {
-        private fun getCastableRuntimeType(project: Project, value: Value): KotlinType? {
+        private fun getCastableRuntimeType(scope: GlobalSearchScope, value: Value): KotlinType? {
             val myValue = value.asValue()
-            var psiClass = myValue.asmType.getClassDescriptor(project)
+            var psiClass = myValue.asmType.getClassDescriptor(scope)
             if (psiClass != null) {
                 return psiClass.defaultType
             }
@@ -91,14 +91,14 @@ abstract class KotlinRuntimeTypeEvaluator(
             if (type is ClassType) {
                 val superclass = type.superclass()
                 if (superclass != null && CommonClassNames.JAVA_LANG_OBJECT != superclass.name()) {
-                    psiClass = AsmType.getType(superclass.signature()).getClassDescriptor(project)
+                    psiClass = AsmType.getType(superclass.signature()).getClassDescriptor(scope)
                     if (psiClass != null) {
                         return psiClass.defaultType
                     }
                 }
 
                 for (interfaceType in type.interfaces()) {
-                    psiClass = AsmType.getType(interfaceType.signature()).getClassDescriptor(project)
+                    psiClass = AsmType.getType(interfaceType.signature()).getClassDescriptor(scope)
                     if (psiClass != null) {
                         return psiClass.defaultType
                     }

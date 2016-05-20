@@ -757,6 +757,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/class"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
+        @TestMetadata("anonymousClass.java")
+        public void testAnonymousClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/anonymousClass.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("class.java")
         public void testClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/class.java");
@@ -1362,6 +1368,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class DetectProperties extends AbstractJavaToKotlinConverterForWebDemoTest {
+        @TestMetadata("AbstractPropertyPrivateSetter.java")
+        public void testAbstractPropertyPrivateSetter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/AbstractPropertyPrivateSetter.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("AccessInGetterWithThis.java")
         public void testAccessInGetterWithThis() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/AccessInGetterWithThis.java");
@@ -1381,6 +1393,18 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
         @TestMetadata("AnonymousClass.java")
         public void testAnonymousClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/AnonymousClass.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("AssignFieldInsideSetter.java")
+        public void testAssignFieldInsideSetter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/AssignFieldInsideSetter.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("AssignFieldInsideSetter2.java")
+        public void testAssignFieldInsideSetter2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/AssignFieldInsideSetter2.java");
             doTest(fileName);
         }
 
@@ -1486,6 +1510,36 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("GetterWithSideEffect1.java")
+        public void testGetterWithSideEffect1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/GetterWithSideEffect1.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("GetterWithSideEffect2.java")
+        public void testGetterWithSideEffect2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/GetterWithSideEffect2.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("GetterWithSideEffect3.java")
+        public void testGetterWithSideEffect3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/GetterWithSideEffect3.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("GetterWithSideEffect4.java")
+        public void testGetterWithSideEffect4() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/GetterWithSideEffect4.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("GetterWithSideEffect5.java")
+        public void testGetterWithSideEffect5() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/GetterWithSideEffect5.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("InCompanionObject.java")
         public void testInCompanionObject() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/InCompanionObject.java");
@@ -1534,6 +1588,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("PropertyAndFieldConflicts.java")
+        public void testPropertyAndFieldConflicts() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/PropertyAndFieldConflicts.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("PropertyType.java")
         public void testPropertyType() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/PropertyType.java");
@@ -1543,6 +1603,42 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
         @TestMetadata("SetterTypeNotMatch.java")
         public void testSetterTypeNotMatch() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/SetterTypeNotMatch.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("SetterWithSideEffect1.java")
+        public void testSetterWithSideEffect1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/SetterWithSideEffect1.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("SetterWithSideEffect2.java")
+        public void testSetterWithSideEffect2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/SetterWithSideEffect2.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("SetterWithSideEffect3.java")
+        public void testSetterWithSideEffect3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/SetterWithSideEffect3.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("SetterWithSideEffect4.java")
+        public void testSetterWithSideEffect4() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/SetterWithSideEffect4.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("SetterWithSideEffect5.java")
+        public void testSetterWithSideEffect5() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/SetterWithSideEffect5.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("SetterWithSideEffect6.java")
+        public void testSetterWithSideEffect6() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/SetterWithSideEffect6.java");
             doTest(fileName);
         }
     }
@@ -2602,6 +2698,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("rawType.java")
+        public void testRawType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/isOperator/rawType.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("simpleReference.java")
         public void testSimpleReference() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/isOperator/simpleReference.java");
@@ -2935,6 +3037,42 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
         @TestMetadata("Property2.java")
         public void testProperty2() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/kotlinApiAccess/Property2.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("StaticImportAllFromFileFacade.java")
+        public void testStaticImportAllFromFileFacade() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/kotlinApiAccess/StaticImportAllFromFileFacade.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("StaticImportAllFromObject.java")
+        public void testStaticImportAllFromObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/kotlinApiAccess/StaticImportAllFromObject.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("StaticImportFromCompanionObject.java")
+        public void testStaticImportFromCompanionObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/kotlinApiAccess/StaticImportFromCompanionObject.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("StaticImportFromCompanionObject2.java")
+        public void testStaticImportFromCompanionObject2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/kotlinApiAccess/StaticImportFromCompanionObject2.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("StaticImportFromCompanionObject3.java")
+        public void testStaticImportFromCompanionObject3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/kotlinApiAccess/StaticImportFromCompanionObject3.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("StaticImportFromFileFacade.java")
+        public void testStaticImportFromFileFacade() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/kotlinApiAccess/StaticImportFromFileFacade.java");
             doTest(fileName);
         }
     }
@@ -3322,6 +3460,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("javaLangObject.java")
+        public void testJavaLangObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/newClassExpression/javaLangObject.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("lineBreaks.java")
         public void testLineBreaks() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/newClassExpression/lineBreaks.java");
@@ -3499,9 +3643,39 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("notNullCast.java")
+        public void testNotNullCast() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/notNullCast.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("nullableField.java")
         public void testNullableField() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/nullableField.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nullableInitializer1.java")
+        public void testNullableInitializer1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/nullableInitializer1.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nullableInitializer2.java")
+        public void testNullableInitializer2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/nullableInitializer2.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nullableInitializer3.java")
+        public void testNullableInitializer3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/nullableInitializer3.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nullableInitializer4.java")
+        public void testNullableInitializer4() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/nullableInitializer4.java");
             doTest(fileName);
         }
 
@@ -3914,12 +4088,6 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     public static class RawGenerics extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInRawGenerics() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/rawGenerics"), Pattern.compile("^(.+)\\.java$"), true);
-        }
-
-        @TestMetadata("cycle.java")
-        public void testCycle() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/rawGenerics/cycle.java");
-            doTest(fileName);
         }
 
         @TestMetadata("kt-540.java")

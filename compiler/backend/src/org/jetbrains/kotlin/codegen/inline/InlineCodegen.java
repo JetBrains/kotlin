@@ -350,6 +350,8 @@ public class InlineCodegen extends CallGenerator {
     }
 
     private InlineResult inlineCall(SMAPAndMethodNode nodeAndSmap) {
+        DefaultSourceMapper defaultSourceMapper = codegen.getParentCodegen().getOrCreateSourceMapper();
+        defaultSourceMapper.setCallSiteMarker(new CallSiteMarker(codegen.getLastLineNumber()));
         MethodNode node = nodeAndSmap.getNode();
         ReifiedTypeParametersUsages reificationResult = reifiedTypeInliner.reifyInstructions(node);
         generateClosuresBodies();
@@ -399,6 +401,8 @@ public class InlineCodegen extends CallGenerator {
         adapter.accept(new MethodBodyVisitor(codegen.v));
 
         addInlineMarker(codegen.v, false);
+
+        defaultSourceMapper.setCallSiteMarker(null);
 
         return result;
     }
@@ -897,7 +901,7 @@ public class InlineCodegen extends CallGenerator {
     }
 
     public static SourceMapper createNestedSourceMapper(@NotNull SMAPAndMethodNode nodeAndSmap, @NotNull SourceMapper parent) {
-        return new NestedSourceMapper(parent, nodeAndSmap.getRanges(), nodeAndSmap.getClassSMAP().getSourceInfo());
+        return new NestedSourceMapper(parent, nodeAndSmap.getSortedRanges(), nodeAndSmap.getClassSMAP().getSourceInfo());
     }
 
     static void reportIncrementalInfo(

@@ -30,7 +30,10 @@ import org.jetbrains.kotlin.resolve.constants.AnnotationValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValueFactory
 import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.*
+import org.jetbrains.kotlin.serialization.deserialization.AnnotationDeserializer
+import org.jetbrains.kotlin.serialization.deserialization.NameResolver
+import org.jetbrains.kotlin.serialization.deserialization.NotFoundClasses
+import org.jetbrains.kotlin.serialization.deserialization.findNonGenericClassAcrossDependencies
 import org.jetbrains.kotlin.storage.StorageManager
 import java.util.*
 
@@ -38,10 +41,9 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
         private val module: ModuleDescriptor,
         private val notFoundClasses: NotFoundClasses,
         storageManager: StorageManager,
-        kotlinClassFinder: KotlinClassFinder,
-        errorReporter: ErrorReporter
+        kotlinClassFinder: KotlinClassFinder
 ) : AbstractBinaryClassAnnotationAndConstantLoader<AnnotationDescriptor, ConstantValue<*>, AnnotationWithTarget>(
-        storageManager, kotlinClassFinder, errorReporter
+        storageManager, kotlinClassFinder
 ) {
     private val annotationDeserializer = AnnotationDeserializer(module, notFoundClasses)
     private val factory = ConstantValueFactory(module.builtIns)

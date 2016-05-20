@@ -8,4 +8,3 @@ class Test {
 // EXIST: StringBuilder
 // EXIST_JAVA_ONLY: StringBuffer
 // ABSENT: HTMLStyleElement
-// ABSENT: Statement

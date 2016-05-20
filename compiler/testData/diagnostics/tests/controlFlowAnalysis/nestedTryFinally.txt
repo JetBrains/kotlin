@@ -1,0 +1,4 @@
+package
+
+public fun sample(): kotlin.String?
+public fun use(/*0*/ arg: kotlin.String?): kotlin.String?

@@ -1,0 +1,9 @@
+// "Make 'x' public" "true"
+
+open class Base(protected open val x: Int)
+
+class First(public override val x: Int) : Base(x)
+
+class Second(f: First) {
+    val y = f.x
+}

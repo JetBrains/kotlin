@@ -21,7 +21,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
-import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +28,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.KtKeywordToken;
@@ -38,7 +36,6 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
-import org.jetbrains.kotlin.resolve.callableReferences.CallableReferencesResolutionUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
@@ -74,7 +71,6 @@ import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
@@ -201,7 +197,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                     compileTimeConstant != null ? ((TypedCompileTimeConstant) compileTimeConstant).getConstantValue() : null;
             boolean hasError = constantChecker.checkConstantExpressionType(constantValue, expression, context.expectedType);
             if (hasError) {
-                return TypeInfoFactoryKt.createTypeInfo(getDefaultType(elementType), context);
+                return TypeInfoFactoryKt.createTypeInfo(constantValue != null ? constantValue.getType() : getDefaultType(elementType),
+                                                        context);
             }
         }
 
@@ -591,128 +588,12 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public KotlinTypeInfo visitClassLiteralExpression(@NotNull KtClassLiteralExpression expression, ExpressionTypingContext c) {
-        KotlinType type = resolveClassLiteral(expression, c);
-        if (type != null && !type.isError()) {
-            return components.dataFlowAnalyzer.createCheckedTypeInfo(
-                    components.reflectionTypes.getKClassType(Annotations.Companion.getEMPTY(), type), c, expression
-            );
-        }
-
-        return TypeInfoFactoryKt.createTypeInfo(ErrorUtils.createErrorType("Unresolved class"), c);
-    }
-
-    @Nullable
-    private KotlinType resolveClassLiteral(@NotNull KtClassLiteralExpression expression, ExpressionTypingContext c) {
-        KtTypeReference typeReference = expression.getTypeReference();
-
-        if (typeReference == null) {
-            // "::class" will mean "this::class", a class of "this" instance
-            c.trace.report(UNSUPPORTED.on(expression, "Class literals with empty left hand side are not yet supported"));
-            return null;
-        }
-
-        TypeResolutionContext context =
-                new TypeResolutionContext(c.scope, c.trace, /* checkBounds = */ false, /* allowBareTypes = */ true, /* isDebuggerContext */ false);
-        PossiblyBareType possiblyBareType =
-                components.typeResolver.resolvePossiblyBareType(context, typeReference);
-
-        KotlinType type = null;
-        if (possiblyBareType.isBare()) {
-            if (!possiblyBareType.isNullable()) {
-                ClassifierDescriptor descriptor = possiblyBareType.getBareTypeConstructor().getDeclarationDescriptor();
-                if (descriptor instanceof ClassDescriptor) {
-                    ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
-                    if (KotlinBuiltIns.isNonPrimitiveArray(classDescriptor)) {
-                        context.trace.report(ARRAY_CLASS_LITERAL_REQUIRES_ARGUMENT.on(expression));
-                        return null;
-                    }
-                    type = substituteWithStarProjections(classDescriptor);
-                }
-            }
-        }
-        else {
-            KotlinType actualType = possiblyBareType.getActualType();
-            if (actualType.isError()) return null;
-            if (isAllowedInClassLiteral(actualType)) {
-                type = actualType;
-            }
-        }
-
-        if (type != null) {
-            return type;
-        }
-
-        context.trace.report(CLASS_LITERAL_LHS_NOT_A_CLASS.on(expression));
-        return null;
-    }
-
-    @NotNull
-    private static KotlinType substituteWithStarProjections(@NotNull ClassDescriptor descriptor) {
-        TypeConstructor typeConstructor = descriptor.getTypeConstructor();
-        List<TypeProjection> arguments =
-                CollectionsKt.map(typeConstructor.getParameters(), new Function1<TypeParameterDescriptor, TypeProjection>() {
-                    @Override
-                    public TypeProjection invoke(TypeParameterDescriptor descriptor) {
-                        return TypeUtils.makeStarProjection(descriptor);
-                    }
-                });
-
-        return KotlinTypeImpl.create(Annotations.Companion.getEMPTY(), descriptor, false, arguments);
-    }
-
-    private static boolean isAllowedInClassLiteral(@NotNull KotlinType type) {
-        return isClassAvailableAtRuntime(type, false);
-    }
-
-    private static boolean isClassAvailableAtRuntime(@NotNull KotlinType type, boolean canBeNullable) {
-        if (type.isMarkedNullable() && !canBeNullable) return false;
-
-        TypeConstructor typeConstructor = type.getConstructor();
-        ClassifierDescriptor typeDeclarationDescriptor = typeConstructor.getDeclarationDescriptor();
-        boolean typeIsArray = KotlinBuiltIns.isArray(type);
-
-        if (typeDeclarationDescriptor instanceof ClassDescriptor) {
-            List<TypeParameterDescriptor> parameters = typeConstructor.getParameters();
-            if (parameters.size() != type.getArguments().size()) return false;
-
-            Iterator<TypeProjection> typeArgumentsIterator = type.getArguments().iterator();
-            for (TypeParameterDescriptor parameter : parameters) {
-                if (!typeIsArray && !parameter.isReified()) return false;
-
-                TypeProjection typeArgument = typeArgumentsIterator.next();
-
-                if (typeArgument == null) return false;
-                if (typeArgument.isStarProjection()) return false;
-                if (!isClassAvailableAtRuntime(typeArgument.getType(), true)) return false;
-            }
-
-            return true;
-        }
-        else if (typeDeclarationDescriptor instanceof TypeParameterDescriptor) {
-            return ((TypeParameterDescriptor) typeDeclarationDescriptor).isReified();
-        }
-
-        return false;
+        return components.doubleColonExpressionResolver.visitClassLiteralExpression(expression, c);
     }
 
     @Override
     public KotlinTypeInfo visitCallableReferenceExpression(@NotNull KtCallableReferenceExpression expression, ExpressionTypingContext c) {
-        KtTypeReference typeReference = expression.getTypeReference();
-
-        KotlinType receiverType =
-                typeReference == null
-                ? null
-                : components.typeResolver.resolveType(c.scope, typeReference, c.trace, false);
-
-        KtSimpleNameExpression callableReference = expression.getCallableReference();
-        if (callableReference.getReferencedName().isEmpty()) {
-            c.trace.report(UNRESOLVED_REFERENCE.on(callableReference, callableReference));
-            KotlinType errorType = ErrorUtils.createErrorType("Empty callable reference");
-            return components.dataFlowAnalyzer.createCheckedTypeInfo(errorType, c, expression);
-        }
-
-        KotlinType result = getCallableReferenceType(expression, receiverType, c);
-        return components.dataFlowAnalyzer.createCheckedTypeInfo(result, c, expression);
+        return components.doubleColonExpressionResolver.visitCallableReferenceExpression(expression, c);
     }
 
     @Override
@@ -772,40 +653,6 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         context.trace.record(EXPRESSION_TYPE_INFO, expression, resultTypeInfo);
         context.trace.record(PROCESSED, expression);
         return resultTypeInfo;
-    }
-
-    @Nullable
-    private KotlinType getCallableReferenceType(
-            @NotNull KtCallableReferenceExpression expression,
-            @Nullable KotlinType lhsType,
-            @NotNull ExpressionTypingContext context
-    ) {
-        KtSimpleNameExpression reference = expression.getCallableReference();
-
-        boolean[] resolved = new boolean[1];
-        CallableDescriptor descriptor = CallableReferencesResolutionUtilsKt.resolveCallableReferenceTarget(
-                expression, lhsType, context, resolved, components.callResolver);
-        if (!resolved[0]) {
-            context.trace.report(UNRESOLVED_REFERENCE.on(reference, reference));
-        }
-        if (descriptor == null) return null;
-
-        if (expression.getTypeReference() == null &&
-            (descriptor.getDispatchReceiverParameter() != null || descriptor.getExtensionReceiverParameter() != null)) {
-            context.trace.report(CALLABLE_REFERENCE_TO_MEMBER_OR_EXTENSION_WITH_EMPTY_LHS.on(reference));
-        }
-
-        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-        if (DescriptorUtils.isObject(containingDeclaration)) {
-            context.trace.report(CALLABLE_REFERENCE_TO_OBJECT_MEMBER.on(reference));
-        }
-        if (descriptor instanceof ConstructorDescriptor && DescriptorUtils.isAnnotationClass(containingDeclaration)) {
-            context.trace.report(CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR.on(reference));
-        }
-
-        return CallableReferencesResolutionUtilsKt.createReflectionTypeForResolvedCallableReference(
-                expression, lhsType, descriptor, context, components.reflectionTypes
-        );
     }
 
     @Override
@@ -890,7 +737,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                     context.trace.record(BindingContext.VARIABLE_REASSIGNMENT, expression);
                     KtExpression stubExpression = ExpressionTypingUtils.createFakeExpressionOfType(
                             baseExpression.getProject(), context.trace, "e", type);
-                    checkLValue(context.trace, context, baseExpression, stubExpression);
+                    checkLValue(context.trace, context, baseExpression, stubExpression, expression);
                 }
                 // x++ type is x type, but ++x type is x.inc() type
                 DataFlowValue receiverValue = DataFlowValueFactory.createDataFlowValue(
@@ -1008,9 +855,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             @NotNull BindingTrace trace,
             @NotNull ExpressionTypingContext context,
             @NotNull KtExpression expression,
-            @Nullable KtExpression rightHandSide
+            @Nullable KtExpression rightHandSide,
+            @NotNull KtOperationExpression operationExpression
     ) {
-        return checkLValue(trace, context, expression, rightHandSide, false);
+        return checkLValue(trace, context, expression, rightHandSide, operationExpression, false);
     }
 
     private boolean checkLValue(
@@ -1018,6 +866,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             @NotNull ExpressionTypingContext context,
             @NotNull KtExpression expressionWithParenthesis,
             @Nullable KtExpression rightHandSide,
+            @NotNull KtOperationExpression operationExpression,
             boolean canBeThis
     ) {
         KtExpression expression = KtPsiUtil.deparenthesize(expressionWithParenthesis);
@@ -1029,6 +878,19 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             TemporaryBindingTrace ignoreReportsTrace = TemporaryBindingTrace.create(trace, "Trace for checking set function");
             ExpressionTypingContext findSetterContext = context.replaceBindingTrace(ignoreReportsTrace);
             KotlinTypeInfo info = resolveArrayAccessSetMethod(arrayAccessExpression, rightHandSide, findSetterContext, ignoreReportsTrace);
+
+            IElementType operationType = operationExpression.getOperationReference().getReferencedNameElementType();
+            if (KtTokens.AUGMENTED_ASSIGNMENTS.contains(operationType)
+                    || operationType == KtTokens.PLUSPLUS || operationType == KtTokens.MINUSMINUS) {
+                ResolvedCall<?> resolvedCall = ignoreReportsTrace.get(INDEXED_LVALUE_SET, expression);
+                if (resolvedCall != null) {
+                    CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
+                    // Call must be validated with the actual, not temporary trace in order to report operator diagnostic
+                    // Only unary assignment expressions (++, --) and +=/... must be checked, normal assignments have the proper trace
+                    components.symbolUsageValidator.validateCall(resolvedCall, descriptor, trace, expression);
+                }
+            }
+
             return info.getType() != null;
         }
 

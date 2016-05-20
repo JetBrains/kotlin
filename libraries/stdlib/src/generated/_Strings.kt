@@ -503,6 +503,7 @@ public inline fun String.reversed(): String {
  * Returns a [Map] containing key-value pairs provided by [transform] function
  * applied to characters of the given char sequence.
  * If any of two pairs would have the same key the last one gets added to the map.
+ * The returned map preserves the entry iteration order of the original char sequence.
  */
 public inline fun <K, V> CharSequence.associate(transform: (Char) -> Pair<K, V>): Map<K, V> {
     @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
@@ -514,6 +515,7 @@ public inline fun <K, V> CharSequence.associate(transform: (Char) -> Pair<K, V>)
  * Returns a [Map] containing the characters from the given char sequence indexed by the key
  * returned from [keySelector] function applied to each character.
  * If any two characters would have the same key returned by [keySelector] the last one gets added to the map.
+ * The returned map preserves the entry iteration order of the original char sequence.
  */
 public inline fun <K> CharSequence.associateBy(keySelector: (Char) -> K): Map<K, Char> {
     @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
@@ -524,6 +526,7 @@ public inline fun <K> CharSequence.associateBy(keySelector: (Char) -> K): Map<K,
 /**
  * Returns a [Map] containing the values provided by [valueTransform] and indexed by [keySelector] functions applied to characters of the given char sequence.
  * If any two characters would have the same key returned by [keySelector] the last one gets added to the map.
+ * The returned map preserves the entry iteration order of the original char sequence.
  */
 public inline fun <K, V> CharSequence.associateBy(keySelector: (Char) -> K, valueTransform: (Char) -> V): Map<K, V> {
     @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
@@ -606,6 +609,7 @@ public fun CharSequence.toMutableList(): MutableList<Char> {
 
 /**
  * Returns a [Set] of all characters.
+ * The returned set preserves the element iteration order of the original char sequence.
  */
 public fun CharSequence.toSet(): Set<Char> {
     return when (length) {
@@ -644,6 +648,7 @@ public inline fun <R, C : MutableCollection<in R>> CharSequence.flatMapTo(destin
 /**
  * Groups characters of the original char sequence by the key returned by the given [keySelector] function
  * applied to each character and returns a map where each group key is associated with a list of corresponding characters.
+ * The returned map preserves the entry iteration order of the keys produced from the original char sequence.
  * @sample test.collections.CollectionTest.groupBy
  */
 public inline fun <K> CharSequence.groupBy(keySelector: (Char) -> K): Map<K, List<Char>> {
@@ -654,6 +659,7 @@ public inline fun <K> CharSequence.groupBy(keySelector: (Char) -> K): Map<K, Lis
  * Groups values returned by the [valueTransform] function applied to each character of the original char sequence
  * by the key returned by the given [keySelector] function applied to the character
  * and returns a map where each group key is associated with a list of corresponding values.
+ * The returned map preserves the entry iteration order of the keys produced from the original char sequence.
  * @sample test.collections.CollectionTest.groupByKeysAndValues
  */
 public inline fun <K, V> CharSequence.groupBy(keySelector: (Char) -> K, valueTransform: (Char) -> V): Map<K, List<V>> {

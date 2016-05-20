@@ -15,9 +15,25 @@
  */
 package org.jetbrains.uast
 
+/**
+ * Interface for the Uast context.
+ *
+ * Context is needed for resolution, cause the reference can point to the element of the different language.
+ */
 interface UastContext {
+    /**
+     * Returns all active language plugins.
+     */
     val languagePlugins: List<UastLanguagePlugin>
 
+    /**
+     * Convert an element of some language-specific AST to Uast element.
+     * If two or more language plugins can convert the given [element] type,
+     *  the first converter in the [languagePlugins] list will be chosen.
+     *
+     * @param element the language-specific AST element
+     * @return [UElement] instance, or null if [element] type is not supported by any of the provided language plugins.
+     */
     fun convert(element: Any?): UElement? {
         if (element == null) {
             return null

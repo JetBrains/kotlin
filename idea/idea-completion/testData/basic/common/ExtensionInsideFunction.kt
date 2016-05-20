@@ -9,7 +9,7 @@ class StrSome {
 }
 
 class StrMore {
-  class StrAbsent
+  class StrInner
 }
 
 // INVOCATION_COUNT: 1
@@ -19,4 +19,4 @@ class StrMore {
 // EXIST: StrInFun
 // EXIST: StringBuilder
 // EXIST_JAVA_ONLY: StringBuffer
-// ABSENT: StrAbsent
+// EXIST: StrInner

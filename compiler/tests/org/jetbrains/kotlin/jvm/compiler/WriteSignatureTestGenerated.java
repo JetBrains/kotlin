@@ -47,6 +47,12 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
         doTest(fileName);
     }
 
+    @TestMetadata("backingFieldForGenericDelegated.kt")
+    public void testBackingFieldForGenericDelegated() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/backingFieldForGenericDelegated.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("Comparable.kt")
     public void testComparable() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/Comparable.kt");
@@ -128,6 +134,12 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
     @TestMetadata("StarProjectionOutsideClass.kt")
     public void testStarProjectionOutsideClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/StarProjectionOutsideClass.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("syntheticAccessorForGeneric.kt")
+    public void testSyntheticAccessorForGeneric() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/syntheticAccessorForGeneric.kt");
         doTest(fileName);
     }
 

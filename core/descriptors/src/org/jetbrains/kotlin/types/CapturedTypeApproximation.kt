@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,11 +23,10 @@ import org.jetbrains.kotlin.resolve.calls.inference.isCaptured
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.types.typeUtil.*
-import org.jetbrains.kotlin.utils.addToStdlib.check
+import org.jetbrains.kotlin.types.typeUtil.builtIns
 import java.util.*
 
-data class ApproximationBounds<T>(
+data class ApproximationBounds<out T>(
         val lower: T,
         val upper: T
 )
@@ -98,12 +97,10 @@ fun approximateCapturedTypes(type: KotlinType): ApproximationBounds<KotlinType> 
         val boundsForFlexibleLower = approximateCapturedTypes(type.lowerIfFlexible())
         val boundsForFlexibleUpper = approximateCapturedTypes(type.upperIfFlexible())
 
-        val extraCapabilities = type.flexibility().extraCapabilities
+        val factory = type.flexibility().factory
         return ApproximationBounds(
-                DelegatingFlexibleType.create(
-                        boundsForFlexibleLower.lower.lowerIfFlexible(), boundsForFlexibleUpper.lower.upperIfFlexible(), extraCapabilities),
-                DelegatingFlexibleType.create(
-                        boundsForFlexibleLower.upper.lowerIfFlexible(), boundsForFlexibleUpper.upper.upperIfFlexible(), extraCapabilities))
+                factory.create(boundsForFlexibleLower.lower.lowerIfFlexible(), boundsForFlexibleUpper.lower.upperIfFlexible()),
+                factory.create(boundsForFlexibleLower.upper.lowerIfFlexible(), boundsForFlexibleUpper.upper.upperIfFlexible()))
     }
 
     val typeConstructor = type.constructor

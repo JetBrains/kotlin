@@ -469,6 +469,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("KT12033.kt")
+        public void testKT12033() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/KT12033.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("LocalMultideclarationValues.kt")
         public void testLocalMultideclarationValues() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/LocalMultideclarationValues.kt");
@@ -1515,6 +1521,33 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             @TestMetadata("TopLevelObject.kt")
             public void testTopLevelObject() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/fromUnresolvedNames/TopLevelObject.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("idea/idea-completion/testData/basic/common/getOperator")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class GetOperator extends AbstractJvmBasicCompletionTest {
+            public void testAllFilesPresentInGetOperator() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/getOperator"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("Extension.kt")
+            public void testExtension() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/getOperator/Extension.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NotForSafeCall.kt")
+            public void testNotForSafeCall() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/getOperator/NotForSafeCall.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("Simple.kt")
+            public void testSimple() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/getOperator/Simple.kt");
                 doTest(fileName);
             }
         }
@@ -2629,6 +2662,18 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
         @TestMetadata("NoSyntheticClasses.kt")
         public void testNoSyntheticClasses() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/NoSyntheticClasses.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NonImportedPrefixMatching1.kt")
+        public void testNonImportedPrefixMatching1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/NonImportedPrefixMatching1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NonImportedPrefixMatching2.kt")
+        public void testNonImportedPrefixMatching2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/NonImportedPrefixMatching2.kt");
             doTest(fileName);
         }
 

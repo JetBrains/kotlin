@@ -7,7 +7,12 @@ fun sets(): List<GenericFunction> {
 
     templates add f("toMutableSet()") {
         exclude(Strings)
-        doc { f -> "Returns a mutable set containing all distinct ${f.element.pluralize()} from the given ${f.collection}." }
+        doc { f ->
+            """
+            Returns a mutable set containing all distinct ${f.element.pluralize()} from the given ${f.collection}.
+            The returned set preserves the element iteration order of the original ${f.collection}.
+            """
+        }
         returns("MutableSet<T>")
         body {
             """
@@ -24,7 +29,6 @@ fun sets(): List<GenericFunction> {
             return set
             """
         }
-        doc(Sequences) { "Returns a mutable set containing all distinct elements from the given sequence." }
         body(Sequences) {
             """
             val set = LinkedHashSet<T>()
@@ -90,7 +94,14 @@ fun sets(): List<GenericFunction> {
     templates add f("union(other: Iterable<T>)") {
         infix(true)
         exclude(Strings, Sequences)
-        doc { "Returns a set containing all distinct elements from both collections." }
+        doc { f ->
+            """
+            Returns a set containing all distinct elements from both collections.
+            The returned set preserves the element iteration order of the original ${f.collection}.
+            Those elements of the [other] collection that are unique are iterated in the end
+            in the order of the [other] collection.
+            """
+        }
         returns("Set<T>")
         body {
             """
@@ -104,7 +115,12 @@ fun sets(): List<GenericFunction> {
     templates add f("intersect(other: Iterable<T>)") {
         infix(true)
         exclude(Strings, Sequences)
-        doc { "Returns a set containing all elements that are contained by both this set and the specified collection." }
+        doc { f ->
+            """
+            Returns a set containing all elements that are contained by both this set and the specified collection.
+            The returned set preserves the element iteration order of the original ${f.collection}.
+            """
+        }
         returns("Set<T>")
         body {
             """
@@ -118,7 +134,12 @@ fun sets(): List<GenericFunction> {
     templates add f("subtract(other: Iterable<T>)") {
         infix(true)
         exclude(Strings, Sequences)
-        doc { "Returns a set containing all elements that are contained by this set and not contained by the specified collection." }
+        doc { f ->
+            """
+            Returns a set containing all elements that are contained by this ${f.collection} and not contained by the specified collection.
+            The returned set preserves the element iteration order of the original ${f.collection}.
+            """
+        }
         returns("Set<T>")
         body {
             """

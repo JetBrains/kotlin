@@ -17,11 +17,9 @@
 package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.codeHighlighting.HighlightDisplayLevel
-import com.intellij.codeInspection.CustomSuppressableInspectionTool
-import com.intellij.codeInspection.LocalInspectionTool
-import com.intellij.codeInspection.SuppressIntentionAction
-import com.intellij.codeInspection.SuppressManager
+import com.intellij.codeInspection.*
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.idea.highlighter.createSuppressWarningActions
@@ -64,3 +62,19 @@ private fun toSeverity(highlightDisplayLevel: HighlightDisplayLevel): Severity  
     }
 }
 
+@Suppress("unused")
+fun Array<ProblemDescriptor>.registerWithElementsUnwrapped(
+        holder: ProblemsHolder,
+        isOnTheFly: Boolean,
+        quickFixSubstitutor: ((LocalQuickFix, PsiElement) -> LocalQuickFix?)? = null) {
+    forEach { problem ->
+        @Suppress("UNCHECKED_CAST")
+        val originalFixes = problem.fixes as? Array<LocalQuickFix> ?: LocalQuickFix.EMPTY_ARRAY
+        val newElement = problem.psiElement.unwrapped ?: return@forEach
+        val newFixes = quickFixSubstitutor?.let { subst ->
+            originalFixes.mapNotNull { subst(it, newElement) }.toTypedArray()
+        } ?: originalFixes
+        val descriptor = holder.manager.createProblemDescriptor(newElement, problem.descriptionTemplate, isOnTheFly, newFixes, problem.highlightType)
+        holder.registerProblem(descriptor)
+    }
+}

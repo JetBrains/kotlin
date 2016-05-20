@@ -31,6 +31,12 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletionHandlerTest {
+    @TestMetadata("AddLabelToReturn.kt")
+    public void testAddLabelToReturn() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/AddLabelToReturn.kt");
+        doTest(fileName);
+    }
+
     public void testAllFilesPresentInBasic() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/basic"), Pattern.compile("^(.+)\\.kt$"), true);
     }
@@ -50,6 +56,12 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
     @TestMetadata("AnnotationInCompanionObjectAddImport.kt")
     public void testAnnotationInCompanionObjectAddImport() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/AnnotationInCompanionObjectAddImport.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ClassKeywordBeforeName.kt")
+    public void testClassKeywordBeforeName() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/ClassKeywordBeforeName.kt");
         doTest(fileName);
     }
 
@@ -107,9 +119,21 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("GetOperator.kt")
+    public void testGetOperator() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/GetOperator.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("InterfaceNameBeforeRunBug.kt")
     public void testInterfaceNameBeforeRunBug() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/InterfaceNameBeforeRunBug.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("KT11633.kt")
+    public void testKT11633() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/KT11633.kt");
         doTest(fileName);
     }
 
@@ -663,6 +687,12 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         @TestMetadata("AfterDot3.kt")
         public void testAfterDot3() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/stringTemplate/AfterDot3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("AfterThisDot.kt")
+        public void testAfterThisDot() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/stringTemplate/AfterThisDot.kt");
             doTest(fileName);
         }
 

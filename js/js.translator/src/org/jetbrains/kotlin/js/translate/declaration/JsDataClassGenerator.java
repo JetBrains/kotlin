@@ -25,14 +25,20 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.psi.KtClassOrObject;
 import org.jetbrains.kotlin.psi.KtParameter;
+import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.and;
+import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.or;
+
 class JsDataClassGenerator extends DataClassMethodGenerator {
     private final TranslationContext context;
     private final List<? super JsPropertyInitializer> output;
+    private final List<JsName> closureFieldNames = new ArrayList<JsName>();
 
     JsDataClassGenerator(KtClassOrObject klass, TranslationContext context, List<? super JsPropertyInitializer> output) {
         super(klass, context.bindingContext());
@@ -40,24 +46,43 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
         this.output = output;
     }
 
+    public void addClosureVariable(@NotNull JsName name) {
+        closureFieldNames.add(name);
+    }
+
     @Override
     public void generateComponentFunction(@NotNull FunctionDescriptor function, @NotNull ValueParameterDescriptor parameter) {
+        PropertyDescriptor propertyDescriptor = context.bindingContext().get(BindingContext.VALUE_PARAMETER_AS_PROPERTY, parameter);
+        assert propertyDescriptor != null : "Property descriptor is expected to be non-null";
+
         JsFunction functionObject = generateJsMethod(function);
-        JsExpression returnExpression = propertyAccessor(JsLiteral.THIS, context.getNameForDescriptor(parameter).toString());
+        JsExpression returnExpression = JsAstUtils.fqnWithoutSideEffects(context.getNameForDescriptor(propertyDescriptor), JsLiteral.THIS);
         functionObject.getBody().getStatements().add(new JsReturn(returnExpression));
     }
 
     @Override
     public void generateCopyFunction(@NotNull FunctionDescriptor function, @NotNull List<KtParameter> constructorParameters) {
         JsFunction functionObj = generateJsMethod(function);
-        JsFunctionScope funScope = functionObj.getScope();
 
         assert function.getValueParameters().size() == constructorParameters.size();
 
         List<JsExpression> constructorArguments = new ArrayList<JsExpression>(constructorParameters.size());
+
+        for (JsName closureFieldName : closureFieldNames) {
+            constructorArguments.add(JsAstUtils.fqnWithoutSideEffects(closureFieldName, JsLiteral.THIS));
+        }
+
         for (int i = 0; i < constructorParameters.size(); i++) {
             KtParameter constructorParam = constructorParameters.get(i);
-            JsName paramName = funScope.declareName(constructorParam.getName());
+
+            ValueParameterDescriptor parameterDescriptor = (ValueParameterDescriptor) BindingContextUtils.getNotNull(
+                    context.bindingContext(), BindingContext.VALUE_PARAMETER, constructorParam);
+
+            PropertyDescriptor propertyDescriptor = BindingContextUtils.getNotNull(
+                    context.bindingContext(), BindingContext.VALUE_PARAMETER_AS_PROPERTY, parameterDescriptor);
+
+            JsName fieldName = context.getNameForDescriptor(propertyDescriptor);
+            JsName paramName = context.getNameForDescriptor(parameterDescriptor);
 
             functionObj.getParameters().add(new JsParameter(paramName));
 
@@ -70,9 +95,7 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
             }
             else {
                 JsExpression defaultCondition = JsAstUtils.equality(new JsNameRef(paramName), Namer.getUndefinedExpression());
-                argumentValue = new JsConditional(defaultCondition,
-                                                  propertyAccessor(JsLiteral.THIS, constructorParam.getName()),
-                                                  parameterValue);
+                argumentValue = new JsConditional(defaultCondition, new JsNameRef(fieldName, JsLiteral.THIS), parameterValue);
             }
             constructorArguments.add(argumentValue);
         }
@@ -95,9 +118,10 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
         JsProgram jsProgram = context.program();
         JsExpression result = null;
         for (int i = 0; i < classProperties.size(); i++) {
-            String name = classProperties.get(i).getName().toString();
-            JsExpression literal = jsProgram.getStringLiteral((i == 0 ? (getClassDescriptor().getName() + "(") : ", ") + name + "=");
-            JsExpression expr = new JsInvocation(context.namer().kotlin("toString"), propertyAccessor(JsLiteral.THIS, name));
+            String printName = classProperties.get(i).getName().asString();
+            JsName name = context.getNameForDescriptor(classProperties.get(i));
+            JsExpression literal = jsProgram.getStringLiteral((i == 0 ? (getClassDescriptor().getName() + "(") : ", ") + printName + "=");
+            JsExpression expr = new JsInvocation(context.namer().kotlin("toString"), new JsNameRef(name, JsLiteral.THIS));
             JsExpression component = JsAstUtils.sum(literal, expr);
             if (result == null) {
                 result = component;
@@ -124,8 +148,8 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
 
         for (PropertyDescriptor prop : classProperties) {
             // TODO: we should statically check that we can call hashCode method directly.
-            JsExpression component = new JsInvocation(context.namer().kotlin("hashCode"),
-                                                      propertyAccessor(JsLiteral.THIS, prop.getName().toString()));
+            JsName name = context.getNameForDescriptor(prop);
+            JsExpression component = new JsInvocation(context.namer().kotlin("hashCode"), new JsNameRef(name, JsLiteral.THIS));
             JsExpression newHashValue = JsAstUtils.sum(JsAstUtils.mul(new JsNameRef(varName), jsProgram.getNumberLiteral(31)), component);
             JsExpression assignment = JsAstUtils.assignment(new JsNameRef(varName),
                                                             new JsBinaryOperation(JsBinaryOperator.BIT_OR, newHashValue,
@@ -154,27 +178,21 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
 
         JsExpression fieldChain = null;
         for (PropertyDescriptor prop : classProperties) {
-            String name = prop.getName().toString();
+            JsName name = context.getNameForDescriptor(prop);
             JsExpression next = new JsInvocation(context.namer().kotlin("equals"),
-                                                 propertyAccessor(JsLiteral.THIS, name),
-                                                 propertyAccessor(new JsNameRef(paramName), name));
+                                                 new JsNameRef(name, JsLiteral.THIS),
+                                                 new JsNameRef(name, new JsNameRef(paramName)));
             if (fieldChain == null) {
                 fieldChain = next;
             }
             else {
-                fieldChain = JsAstUtils.and(fieldChain, next);
+                fieldChain = and(fieldChain, next);
             }
         }
         assert fieldChain != null;
 
-        JsExpression returnExpression =
-                JsAstUtils.or(referenceEqual, JsAstUtils.and(isNotNull, JsAstUtils.and(otherIsObject, JsAstUtils.and(prototypeEqual, fieldChain))));
+        JsExpression returnExpression = or(referenceEqual, and(isNotNull, and(otherIsObject, and(prototypeEqual, fieldChain))));
         functionObj.getBody().getStatements().add(new JsReturn(returnExpression));
-    }
-
-    private static JsExpression propertyAccessor(JsExpression object, String propertyName) {
-        // Might be not accurate enough.
-        return new JsNameRef(propertyName, object);
     }
 
     private JsFunction generateJsMethod(@NotNull FunctionDescriptor functionDescriptor) {

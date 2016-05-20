@@ -66,7 +66,7 @@ object NamedArgumentCompletion {
                     .withTailText(" $typeText")
                     .withIcon(KotlinIcons.PARAMETER)
                     .withInsertHandler(NamedArgumentInsertHandler(name))
-                    .assignPriority(ItemPriority.NAMED_PARAMETER)
+            lookupElement.putUserData(SmartCompletionInBasicWeigher.NAMED_ARGUMENT_KEY, Unit)
             collector.addElement(lookupElement)
         }
     }

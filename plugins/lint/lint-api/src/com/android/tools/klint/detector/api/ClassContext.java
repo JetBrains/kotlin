@@ -21,8 +21,8 @@ import com.android.annotations.Nullable;
 import com.android.tools.klint.client.api.LintDriver;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Splitter;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.*;
+import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.tree.*;
 
 import java.io.File;
 import java.util.List;
@@ -269,8 +269,8 @@ public class ClassContext extends Context {
      * Detectors should only call this method if an error applies to the whole class
      * scope and there is no specific method or field that applies to the error.
      * If so, use
-     * {@link #report(Issue, org.objectweb.asm.tree.MethodNode, org.objectweb.asm.tree.AbstractInsnNode, Location, String)} or
-     * {@link #report(Issue, org.objectweb.asm.tree.FieldNode, Location, String)}, such that
+     * {@link #report(Issue, org.jetbrains.org.objectweb.asm.tree.MethodNode, org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode, Location, String)} or
+     * {@link #report(Issue, org.jetbrains.org.objectweb.asm.tree.FieldNode, Location, String)}, such that
      * suppress annotations are checked.
      *
      * @param issue the issue to report

@@ -52,6 +52,8 @@ sealed class KtLightFieldImpl(
 
     override fun getContainingClass() = containingClass
 
+    override fun getContainingFile() = containingClass.containingFile
+
     override fun getType() = clsDelegate.type
 
     override fun getTypeElement() = clsDelegate.typeElement
@@ -65,8 +67,10 @@ sealed class KtLightFieldImpl(
 
     override fun computeConstantValue() = clsDelegate.computeConstantValue()
 
-    @Throws(IncorrectOperationException::class)
-    override fun setName(@NonNls name: String) = throw IncorrectOperationException("Not supported")
+    override fun setName(@NonNls name: String): PsiElement {
+        (kotlinOrigin as? KtNamedDeclaration)?.setName(name)
+        return this
+    }
 
     private val _modifierList by lazy {
         if (lightMemberOrigin is LightMemberOriginForDeclaration)

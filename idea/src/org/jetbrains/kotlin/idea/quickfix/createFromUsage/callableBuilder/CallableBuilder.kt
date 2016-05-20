@@ -21,19 +21,16 @@ import com.intellij.codeInsight.navigation.NavigationUtil
 import com.intellij.codeInsight.template.*
 import com.intellij.codeInsight.template.impl.TemplateImpl
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl
-import com.intellij.ide.fileTemplates.FileTemplate
-import com.intellij.ide.fileTemplates.FileTemplateManager
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ScrollType
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
-import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.psi.*
+import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.codeStyle.JavaCodeStyleManager
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.getContainingPseudocode
@@ -45,14 +42,12 @@ import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaClassDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
-import org.jetbrains.kotlin.idea.core.CollectingNameValidator
-import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
+import org.jetbrains.kotlin.idea.core.*
+import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.ClassKind
-import org.jetbrains.kotlin.idea.quickfix.insertMember
 import org.jetbrains.kotlin.idea.refactoring.*
 import org.jetbrains.kotlin.idea.util.DialogWithEditor
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -65,7 +60,6 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.scopes.HierarchicalScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeImpl
@@ -81,10 +75,6 @@ import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
 import kotlin.properties.Delegates
-
-private val TEMPLATE_FROM_USAGE_FUNCTION_BODY = "New Kotlin Function Body.kt"
-private val TEMPLATE_FROM_USAGE_SECONDARY_CONSTRUCTOR_BODY = "New Kotlin Secondary Constructor Body.kt"
-private val ATTRIBUTE_FUNCTION_NAME = "FUNCTION_NAME"
 
 /**
  * Represents a single choice for a type (e.g. parameter type or return type).
@@ -204,7 +194,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             ApplicationManager.getApplication().invokeLater { context.showDialogIfNeeded() }
         }
         else {
-            ShortenReferences.DEFAULT.process(elementsToShorten)
+            runWriteAction { ShortenReferences.DEFAULT.process(elementsToShorten) }
         }
     }
 
@@ -690,35 +680,18 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
         private fun setupFunctionBody(func: KtFunction) {
             val oldBody = func.bodyExpression ?: return
-
-            val templateName = when (func) {
-                is KtSecondaryConstructor -> TEMPLATE_FROM_USAGE_SECONDARY_CONSTRUCTOR_BODY
-                is KtNamedFunction -> TEMPLATE_FROM_USAGE_FUNCTION_BODY
+            val templateKind = when (func) {
+                is KtSecondaryConstructor -> TemplateKind.SECONDARY_CONSTRUCTOR
+                is KtNamedFunction -> TemplateKind.FUNCTION
                 else -> throw AssertionError("Unexpected declaration: " + func.getElementTextWithContext())
             }
-            val fileTemplate = FileTemplateManager.getInstance(func.project)!!.getCodeTemplate(templateName)
-            val properties = Properties()
-            properties.setProperty(FileTemplate.ATTRIBUTE_RETURN_TYPE, if (skipReturnType) "Unit" else func.typeReference!!.text)
-            receiverClassDescriptor?.let {
-                properties.setProperty(FileTemplate.ATTRIBUTE_CLASS_NAME, DescriptorUtils.getFqName(it).asString())
-                properties.setProperty(FileTemplate.ATTRIBUTE_SIMPLE_CLASS_NAME, it.name.asString())
-            }
-            if (callableInfo.name.isNotEmpty()) {
-                properties.setProperty(ATTRIBUTE_FUNCTION_NAME, callableInfo.name)
-            }
-
-            val bodyText = try {
-                fileTemplate!!.getText(properties)
-            }
-            catch (e: ProcessCanceledException) {
-                throw e
-            }
-            catch (e: Exception) {
-                // TODO: This is dangerous.
-                // Is there any way to avoid catching all exceptions?
-                throw IncorrectOperationException("Failed to parse file template", e)
-            }
-
+            val bodyText = getFunctionBodyTextFromTemplate(
+                    func.project,
+                    templateKind,
+                    if (callableInfo.name.isNotEmpty()) callableInfo.name else null,
+                    if (skipReturnType) "Unit" else func.typeReference!!.text,
+                    receiverClassDescriptor?.importableFqName ?: receiverClassDescriptor?.name?.let { FqName.topLevel(it) }
+            )
             oldBody.replace(KtPsiFactory(func).createBlock(bodyText))
         }
 
@@ -1017,13 +990,15 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                             if (callElement != null) {
                                 setupCallTypeArguments(callElement, expression?.currentTypeParameters ?: Collections.emptyList())
                             }
-                        }
 
-                        // change short type names to fully qualified ones (to be shortened below)
-                        val typeRefsToShorten = setupTypeReferencesForShortening(newDeclaration, parameterTypeExpressions)
-                        if (!transformToJavaMemberIfApplicable(newDeclaration)) {
-                            elementsToShorten.addAll(typeRefsToShorten)
-                            setupEditor(newDeclaration)
+                            CodeStyleManager.getInstance(project).reformat(newDeclaration)
+
+                            // change short type names to fully qualified ones (to be shortened below)
+                            val typeRefsToShorten = setupTypeReferencesForShortening(newDeclaration, parameterTypeExpressions)
+                            if (!transformToJavaMemberIfApplicable(newDeclaration)) {
+                                elementsToShorten.addAll(typeRefsToShorten)
+                                setupEditor(newDeclaration)
+                            }
                         }
                     }
                     finally {

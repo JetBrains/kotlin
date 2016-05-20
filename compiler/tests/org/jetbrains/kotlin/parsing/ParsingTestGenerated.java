@@ -175,6 +175,12 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             doParsingTest(fileName);
         }
 
+        @TestMetadata("DoubleColon_ERR.kt")
+        public void testDoubleColon_ERR() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/DoubleColon_ERR.kt");
+            doParsingTest(fileName);
+        }
+
         @TestMetadata("DuplicateAccessor.kt")
         public void testDuplicateAccessor() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/DuplicateAccessor.kt");

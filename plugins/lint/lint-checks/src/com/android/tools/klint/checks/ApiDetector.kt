@@ -188,7 +188,7 @@ open class ApiDetector : Detector(), UastScanner {
                    || fqName.startsWith("dalvik.")
         }
 
-        protected fun getMinSdk(context: UastAndroidContext): Int {
+        private fun getMinSdk(context: UastAndroidContext): Int {
             if (mMinApi == -1) {
                 val minSdkVersion = context.lintContext.mainProject.minSdkVersion
                 mMinApi = minSdkVersion.featureLevel
@@ -225,7 +225,7 @@ open class ApiDetector : Detector(), UastScanner {
                             val value = (valueNode as ULiteralExpression).value as String
                             return SdkVersionInfo.getApiByBuildCode(value, true)
                         } else if (valueNode is UQualifiedExpression) {
-                            val codename = valueNode.getSelectorAsIdentifier();
+                            val codename = valueNode.getSelectorAsIdentifier() ?: return -1;
                             return SdkVersionInfo.getApiByBuildCode(codename, true)
                         } else if (valueNode is USimpleReferenceExpression) {
                             val codename = valueNode.identifier;
@@ -367,10 +367,7 @@ open class ApiDetector : Detector(), UastScanner {
                 Severity.ERROR,
                 Implementation(
                         ApiDetector::class.java,
-                        EnumSet.of(Scope.CLASS_FILE, Scope.RESOURCE_FILE, Scope.MANIFEST),
-                        Scope.RESOURCE_FILE_SCOPE,
-                        Scope.CLASS_FILE_SCOPE,
-                        Scope.MANIFEST_SCOPE))
+                        Scope.SOURCE_FILE_SCOPE))
 
         /** Accessing an inlined API on older platforms  */
         @JvmField

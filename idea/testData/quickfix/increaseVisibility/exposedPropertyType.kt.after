@@ -1,0 +1,8 @@
+// "Make 'Data' public" "true"
+// ACTION: Make 'foo' private
+
+data class Data(val x: Int)
+
+class First {
+    val foo = Data(13)
+}

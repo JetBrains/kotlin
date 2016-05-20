@@ -12,7 +12,7 @@ class UsedInInitializer(val x: Int) {
         y = x
     }
 }
-// YES
+// NO!
 class UsedInConstructor(val x: Int) {
     fun foo(arg: Int) = arg
 
@@ -31,7 +31,7 @@ class UsedInGetter(val x: Int) {
 }
 // NO
 class UsedInSetter(val x: Int) {
-    var y: Int
+    var y: Int = 0
         get() = field
         set(arg) { field = x + arg }
 }
@@ -55,7 +55,7 @@ class PrivateUsedInProperty(private val x: Int) {
 // NO
 open class Base(protected open val x: Int)
 // NO
-override class UsedOverridden(override val x: Int) {
+class UsedOverridden(override val x: Int) : Base(x) {
     val y = x
 }
 // YES
@@ -88,7 +88,7 @@ class UsedWithLabeledThisInInitProperty(val x: Int) {
 }
 // NO
 class UsedInFunctionProperty(val x: Int) {
-    fun get() {
+    fun get(): Int {
         val y = x
         return y
     }
@@ -100,6 +100,54 @@ class ModifiedInInit(var x: Int) {
     }
 }
 // NO
-open class UsedInOverride(val x: Int)
+open class UsedInOverride(open val x: Int)
 
 class UserInOverride(override val x: Int) : UsedInOverride(x)
+// NO
+class UsedInLambda(val x: Int) {
+    init {
+        run {
+            val y = x
+        }
+    }
+}
+// NO
+class UsedInDelegate(val x: Int) {
+    val y: Int by lazy {
+        x * x
+    }
+}
+// NO
+class UsedInParent(val x: UsedInParent?) {
+    val y = x?.x
+}
+// NO
+class UsedInObjectLiteral(val x: Int) {
+    val y = object: Any() {
+        fun bar() = x
+    }
+}
+// NO
+class UsedInLocalFunction(val x: Int) {
+    init {
+        fun local() {
+            val y = x
+        }
+        local()
+    }
+}
+// YES
+open class Base1(s: String)
+class UsedInSuper(val bar123: String) : Base1(bar123)
+// NO
+class UsedInLocalSuper(val bar456: String) {
+    fun foo() {
+        class Local : Base1(bar456)
+    }
+}
+// NO
+class UsedInObjectSuper(val bar456: String) {
+    fun foo() {
+        object : Base1(bar456) {}
+    }
+}

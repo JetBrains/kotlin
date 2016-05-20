@@ -22,11 +22,8 @@ import static com.android.SdkConstants.DOT_XML;
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.android.annotations.VisibleForTesting;
-import com.android.sdklib.repository.FullRevision;
-import com.android.sdklib.repository.descriptors.PkgType;
-import com.android.sdklib.repository.local.LocalPkgInfo;
-import com.android.sdklib.repository.local.LocalSdk;
 import com.android.tools.klint.client.api.LintClient;
+import com.android.tools.klint.client.api.SdkWrapper;
 import com.android.tools.klint.detector.api.LintUtils;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
@@ -138,15 +135,9 @@ public class ApiLookup {
     @VisibleForTesting
     @Nullable
     static String getPlatformVersion(@NonNull LintClient client) {
-        LocalSdk sdk = client.getSdk();
+        SdkWrapper sdk = client.getSdk();
         if (sdk != null) {
-            LocalPkgInfo pkgInfo = sdk.getPkgInfo(PkgType.PKG_PLATFORM_TOOLS);
-            if (pkgInfo != null) {
-                FullRevision version = pkgInfo.getDesc().getFullRevision();
-                if (version != null) {
-                    return version.toShortString();
-                }
-            }
+            return sdk.getPlatformVersion();
         }
 
         return null;
@@ -717,7 +708,7 @@ public class ApiLookup {
      *            fully qualified name (as returned by Class.getName(), but with
      *            '.' replaced by '/'.
      * @param name the method's name
-     * @param desc the method's descriptor - see {@link org.objectweb.asm.Type}
+     * @param desc the method's descriptor - see {@link org.jetbrains.org.objectweb.asm.Type}
      * @return the minimum API version the method is supported for, or -1 if
      *         it's unknown <b>or version 1</b>.
      */

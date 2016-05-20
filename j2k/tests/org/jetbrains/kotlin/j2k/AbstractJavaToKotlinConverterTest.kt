@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.j2k
 
+import com.intellij.openapi.roots.LanguageLevelProjectExtension
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
+import com.intellij.pom.java.LanguageLevel
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.invalidateLibraryCache
@@ -29,6 +31,11 @@ import java.io.File
 abstract class AbstractJavaToKotlinConverterTest : LightCodeInsightFixtureTestCase() {
     override fun setUp() {
         super.setUp()
+
+        val testName = getTestName(false)
+        if (testName.contains("Java8") || testName.contains("java8")) {
+            LanguageLevelProjectExtension.getInstance(project).languageLevel = LanguageLevel.JDK_1_8
+        }
 
         VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
 

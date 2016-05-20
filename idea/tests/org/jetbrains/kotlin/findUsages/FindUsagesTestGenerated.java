@@ -558,6 +558,18 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("jvmStaticFun.0.kt")
+            public void testJvmStaticFun() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findFunctionUsages/jvmStaticFun.0.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("jvmStaticJvmOverloadsFun.0.kt")
+            public void testJvmStaticJvmOverloadsFun() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findFunctionUsages/jvmStaticJvmOverloadsFun.0.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kotlinInternalMethodUsages.0.kt")
             public void testKotlinInternalMethodUsages() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findFunctionUsages/kotlinInternalMethodUsages.0.kt");
@@ -729,6 +741,12 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
             @TestMetadata("javaObjectUsages.0.kt")
             public void testJavaObjectUsages() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findObjectUsages/javaObjectUsages.0.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kotlinImportedObjectUsages.0.kt")
+            public void testKotlinImportedObjectUsages() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findObjectUsages/kotlinImportedObjectUsages.0.kt");
                 doTest(fileName);
             }
 
@@ -909,6 +927,12 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
             @TestMetadata("javaPropertyWriteUsages2.0.kt")
             public void testJavaPropertyWriteUsages2() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findPropertyUsages/javaPropertyWriteUsages2.0.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("jvmStaticProperty.0.kt")
+            public void testJvmStaticProperty() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findPropertyUsages/jvmStaticProperty.0.kt");
                 doTest(fileName);
             }
 

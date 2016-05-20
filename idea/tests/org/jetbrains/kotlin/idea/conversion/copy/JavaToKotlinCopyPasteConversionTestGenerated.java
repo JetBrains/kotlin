@@ -173,6 +173,12 @@ public class JavaToKotlinCopyPasteConversionTestGenerated extends AbstractJavaTo
         doTest(fileName);
     }
 
+    @TestMetadata("InsertIntoComment.java")
+    public void testInsertIntoComment() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/conversion/InsertIntoComment.java");
+        doTest(fileName);
+    }
+
     @TestMetadata("InsertIntoString.java")
     public void testInsertIntoString() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/conversion/InsertIntoString.java");

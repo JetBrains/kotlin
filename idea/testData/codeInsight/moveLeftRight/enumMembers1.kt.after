@@ -1,0 +1,4 @@
+// MOVE: right
+enum class E {
+    B, <caret>A, C
+}

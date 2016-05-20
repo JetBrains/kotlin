@@ -24,6 +24,7 @@ import com.intellij.codeInspection.ex.InspectionManagerEx
 import com.intellij.codeInspection.ex.LocalInspectionToolWrapper
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.psi.PsiFile
 import com.intellij.testFramework.IdeaTestUtil
 import com.intellij.testFramework.InspectionTestUtil
 import com.intellij.testFramework.LightProjectDescriptor
@@ -49,6 +50,10 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
     override fun tearDown() {
         EntryPointsManagerBase.getInstance(project).ADDITIONAL_ANNOTATIONS.remove(ENTRY_POINT_ANNOTATION)
         super.tearDown()
+    }
+
+    protected open fun configExtra(psiFiles: List<PsiFile>, options: String) {
+
     }
 
     protected fun doTest(path: String) {
@@ -109,6 +114,8 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
                 }
 
                 fixtureClasses.forEach { TestFixtureExtension.loadFixture(it, myFixture.module) }
+
+                configExtra(psiFiles, options)
 
                 val scope = AnalysisScope(project, psiFiles.map { it.virtualFile!! })
                 scope.invalidate()

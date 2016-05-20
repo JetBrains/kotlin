@@ -68,7 +68,7 @@
         <fileset dir="${basedir}/lib" includes="**/*.jar"/>
         <fileset dir="${dependencies.dir}" includes="jansi.jar"/>
         <fileset dir="${dependencies.dir}" includes="jline.jar"/>
-        <fileset dir="${dependencies.dir}" includes="cli-parser-1.1.1.jar"/>
+        <fileset dir="${dependencies.dir}" includes="cli-parser-1.1.2.jar"/>
         <fileset dir="${basedir}/ideaSDK/jps" includes="jps-model.jar"/>
     </path>
 
@@ -512,7 +512,7 @@
                 <zipfileset src="${idea.sdk}/lib/oromatcher.jar"/>
                 <zipfileset src="${idea.sdk}/jps/jps-model.jar"/>
                 <zipfileset src="${dependencies.dir}/jline.jar"/>
-                <zipfileset src="${dependencies.dir}/cli-parser-1.1.1.jar"/>
+                <zipfileset src="${dependencies.dir}/cli-parser-1.1.2.jar"/>
                 <zipfileset src="${protobuf.jar}"/>
 
                 <manifest>
@@ -902,7 +902,7 @@
 
         <pack-runtime-jar jar-name="kotlin-test.jar" implementation-title="${manifest.impl.title.kotlin.test}">
             <jar-content>
-                <fileset dir="${output}/classes/kotlin-test" includes="**/*" excludes="kotlin/internal/OnlyInputTypes*,kotlin/internal"/>
+                <fileset dir="${output}/classes/kotlin-test" includes="**/*" excludes="kotlin/internal/OnlyInputTypes*,kotlin/internal/InlineOnly*,kotlin/internal"/>
             </jar-content>
         </pack-runtime-jar>
     </target>

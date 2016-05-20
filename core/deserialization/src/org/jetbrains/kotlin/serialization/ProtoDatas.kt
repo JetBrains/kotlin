@@ -26,7 +26,7 @@ data class ClassData(
 
 data class ClassDataWithSource(
         val classData: ClassData,
-        val sourceElement: SourceElement = SourceElement.NO_SOURCE
+        val sourceElement: SourceElement
 )
 
 data class PackageData(

@@ -18,7 +18,11 @@ package org.jetbrains.kotlin.idea.refactoring.move.changePackage
 
 import com.intellij.CommonBundle
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.roots.JavaProjectRootsUtil
 import com.intellij.openapi.ui.Messages
+import com.intellij.psi.PsiManager
+import com.intellij.refactoring.PackageWrapper
+import com.intellij.refactoring.move.moveClassesOrPackages.AutocreatingSingleSourceRootMoveDestination
 import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesUtil
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesUtil
 import com.intellij.refactoring.util.RefactoringMessageUtil
@@ -41,11 +45,20 @@ class MoveFileToPackageMatchingDirectoryIntention : SelfTargetingOffsetIndepende
     override fun applyTo(element: KtPackageDirective, editor: Editor?) {
         val file = element.getContainingKtFile()
         val project = file.project
-        val targetDirectory = MoveClassesOrPackagesUtil.chooseDestinationPackage(
-                project,
-                element.qualifiedName,
-                file.containingDirectory
-        ) ?: return
+
+        val sourceRoots = JavaProjectRootsUtil.getSuitableDestinationSourceRoots(project)
+        val packageWrapper = PackageWrapper(PsiManager.getInstance(project), element.qualifiedName)
+        val fileToMove = element.containingFile
+        val chosenRoot =
+                sourceRoots.singleOrNull()
+                ?: MoveClassesOrPackagesUtil.chooseSourceRoot(packageWrapper, sourceRoots, fileToMove.containingDirectory)
+                ?: return
+        val targetDirFactory = AutocreatingSingleSourceRootMoveDestination(packageWrapper, chosenRoot)
+        targetDirFactory.verify(fileToMove)?.let {
+            Messages.showMessageDialog(project, it, CommonBundle.getErrorTitle(), Messages.getErrorIcon())
+            return
+        }
+        val targetDirectory = targetDirFactory.getTargetDirectory(fileToMove) ?: return
 
         RefactoringMessageUtil.checkCanCreateFile(targetDirectory, file.name)?.let {
             Messages.showMessageDialog(project, it, CommonBundle.getErrorTitle(), Messages.getErrorIcon())

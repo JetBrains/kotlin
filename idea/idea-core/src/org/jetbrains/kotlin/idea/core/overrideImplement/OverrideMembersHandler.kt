@@ -66,12 +66,16 @@ class OverrideMembersHandler(private val preferConstructorParameters: Boolean = 
                         immediateSupers.singleOrNull { (it.containingDeclaration as? ClassDescriptor)?.kind == ClassKind.CLASS } ?: immediateSupers.first()
                     }
 
-                    val bodyType = if (immediateSuperToUse.modality == Modality.ABSTRACT)
-                        OverrideMemberChooserObject.BodyType.EMPTY
-                    else if (realSupersToUse.size == 1)
-                        OverrideMemberChooserObject.BodyType.SUPER
-                    else
-                        OverrideMemberChooserObject.BodyType.QUALIFIED_SUPER
+                    val bodyType = when {
+                        descriptor.kind == ClassKind.INTERFACE && realSuper.builtIns.isMemberOfAny(realSuper) ->
+                            OverrideMemberChooserObject.BodyType.NO_BODY
+                        immediateSuperToUse.modality == Modality.ABSTRACT ->
+                            OverrideMemberChooserObject.BodyType.EMPTY
+                        realSupersToUse.size == 1 ->
+                            OverrideMemberChooserObject.BodyType.SUPER
+                        else ->
+                            OverrideMemberChooserObject.BodyType.QUALIFIED_SUPER
+                    }
 
                     result.add(OverrideMemberChooserObject.create(project, realSuper, immediateSuperToUse, bodyType, preferConstructorParameters))
                 }

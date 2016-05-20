@@ -74,7 +74,7 @@ import org.jetbrains.kotlin.idea.intentions.RemoveCurlyBracesFromTemplateIntenti
 import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
-import org.jetbrains.kotlin.idea.util.ShortenReferences
+import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.util.string.collapseSpaces
 import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.j2k.JavaToKotlinConverter
@@ -95,8 +95,11 @@ import java.lang.annotation.Retention
 import java.util.*
 import javax.swing.Icon
 
-fun getOrCreateKotlinFile(fileName: String, targetDir: PsiDirectory): KtFile? =
-        (targetDir.findFile(fileName) ?: createKotlinFile(fileName, targetDir)) as? KtFile
+@JvmOverloads
+fun getOrCreateKotlinFile(fileName: String,
+                          targetDir: PsiDirectory,
+                          packageName: String? = targetDir.getPackage()?.qualifiedName): KtFile? =
+        (targetDir.findFile(fileName) ?: createKotlinFile(fileName, targetDir, packageName)) as? KtFile
 
 fun createKotlinFile(fileName: String,
                      targetDir: PsiDirectory,

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.android.synthetic
 
+import org.jetbrains.kotlin.android.synthetic.res.ResourceIdentifier
 
 object AndroidConst {
     val SYNTHETIC_PACKAGE: String = "kotlinx.android.synthetic"
@@ -32,9 +33,7 @@ object AndroidConst {
     val ID_ATTRIBUTE: String = "$ANDROID_NAMESPACE:$ID_ATTRIBUTE_NO_NAMESPACE"
     val CLASS_ATTRIBUTE_NO_NAMESPACE: String = "class"
 
-    val ID_DECLARATION_PREFIX = "@+id/"
-    val ID_USAGE_PREFIX = "@id/"
-    val XML_ID_PREFIXES = arrayOf(ID_DECLARATION_PREFIX, ID_USAGE_PREFIX)
+    val IDENTIFIER_REGEX = "^@(\\+)?(([A-Za-z0-9_\\.]+)\\:)?id\\/([A-Za-z0-9_]+)$".toRegex()
 
     val CLEAR_FUNCTION_NAME = "clearFindViewByIdCache"
 
@@ -55,13 +54,10 @@ object AndroidConst {
     val FQNAME_RESOLVE_PACKAGES = listOf("android.widget", "android.webkit", "android.view")
 }
 
-fun androidIdToName(id: String): String? {
-    for (prefix in AndroidConst.XML_ID_PREFIXES) {
-        if (id.startsWith(prefix)) {
-            return id.substring(prefix.length)
-        }
-    }
-    return null
+fun androidIdToName(id: String): ResourceIdentifier? {
+    val values = AndroidConst.IDENTIFIER_REGEX.matchEntire(id)?.groupValues ?: return null
+    val packageName = values[3]
+    return ResourceIdentifier(values[4], if (packageName.isEmpty()) null else packageName)
 }
 
 fun isWidgetTypeIgnored(xmlType: String): Boolean {

@@ -20,17 +20,17 @@ import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.cfg.Label
 import java.util.Collections
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.LexicalScope
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.BlockScope
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithResult
 import org.jetbrains.kotlin.psi.KtReturnExpression
 
 class ReturnValueInstruction(
         returnExpression: KtExpression,
-        lexicalScope: LexicalScope,
+        blockScope: BlockScope,
         targetLabel: Label,
         val returnedValue: PseudoValue
-) : AbstractJumpInstruction(returnExpression, targetLabel, lexicalScope) {
+) : AbstractJumpInstruction(returnExpression, targetLabel, blockScope) {
     override val inputValues: List<PseudoValue> get() = Collections.singletonList(returnedValue)
 
     override fun accept(visitor: InstructionVisitor) {
@@ -45,8 +45,8 @@ class ReturnValueInstruction(
         return "ret(*|$returnedValue) $targetLabel"
     }
 
-    override fun createCopy(newLabel: Label, lexicalScope: LexicalScope): AbstractJumpInstruction {
-        return ReturnValueInstruction((element as KtExpression), lexicalScope, newLabel, returnedValue)
+    override fun createCopy(newLabel: Label, blockScope: BlockScope): AbstractJumpInstruction {
+        return ReturnValueInstruction((element as KtExpression), blockScope, newLabel, returnedValue)
     }
 
     val returnExpressionIfAny: KtReturnExpression? = element as? KtReturnExpression

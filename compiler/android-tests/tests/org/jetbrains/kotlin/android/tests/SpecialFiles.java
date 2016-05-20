@@ -36,40 +36,61 @@ public class SpecialFiles {
     private static void fillExcludedFiles() {
         excludedFiles.add("native"); // Reflection is used to check full class name
 
-        excludedFiles.add("reflection");
+        excludedFiles.add("enclosing"); //reflection tests
+        excludedFiles.add("noReflectAtRuntime"); //reflection tests
+        excludedFiles.add("methodsFromAny"); //reflection tests
+
         excludedFiles.add("kt3238.kt"); // Reflection
         excludedFiles.add("kt1482_2279.kt"); // Reflection
+        excludedFiles.add("extensionMethod.kt"); // Reflection loadClass
 
         excludedFiles.add("nestedInPackage.kt"); // Cannot change package name
-        excludedFiles.add("importNestedClass.kt"); // Cannot change package name
         excludedFiles.add("packageQualifiedMethod.kt"); // Cannot change package name
         excludedFiles.add("classObjectToString.kt"); // Cannot change package name
-        excludedFiles.add("invokeOnClassObjectOfNestedClass2.kt"); // Cannot change package name
-        excludedFiles.add("invokeOnImportedEnum1.kt"); // Cannot change package name
-        excludedFiles.add("invokeOnImportedEnum2.kt"); // Cannot change package name
-        excludedFiles.add("sortEnumEntries.kt"); // Cannot change package name
         excludedFiles.add("assertionStackTrace.kt"); // Cannot change package name
         excludedFiles.add("anonymousObjectReifiedSupertype.kt"); // Cannot change package name
         excludedFiles.add("innerAnonymousObject.kt"); // Cannot change package name
         excludedFiles.add("nestedReifiedSignature.kt"); // Cannot change package name
         excludedFiles.add("recursiveInnerAnonymousObject.kt"); // Cannot change package name
+        excludedFiles.add("approximateCapturedTypes.kt"); // Cannot change package name
+        excludedFiles.add("classForEnumEntry.kt"); // Cannot change package name
+        excludedFiles.add("kt10143.kt"); // Cannot change package name
+        excludedFiles.add("internalTopLevelOtherPackage.kt"); // Cannot change package name
+        excludedFiles.add("noPrivateDelegation.kt"); // Cannot change package name
+        excludedFiles.add("platformTypeAssertionStackTrace.kt"); // Cannot change package name
+        excludedFiles.add("packages.kt"); // Cannot change package name
+        excludedFiles.add("kt10259.kt"); // Cannot change package name
+        excludedFiles.add("kt11081.kt"); // Cannot change package name
+        excludedFiles.add("kt6990.kt"); // Cannot change package name
+        excludedFiles.add("mainInFiles.kt"); // Cannot change package name
+        excludedFiles.add("noClassForSimpleEnum.kt"); // Cannot change package name
+        excludedFiles.add("simpleClassLiteral.kt"); // Cannot change package name
+        excludedFiles.add("jvmName.kt"); // Cannot change package name
+        excludedFiles.add("qualifiedName.kt"); // Cannot change package name
+        excludedFiles.add("topLevelProperty.kt"); // Cannot change package name
+        excludedFiles.add("typeParameters.kt"); // Cannot change package name
 
         excludedFiles.add("kt684.kt"); // StackOverflow with StringBuilder (escape())
 
-        excludedFiles.add("kt529.kt");  // Bug
-        excludedFiles.add("kt344.kt");  // Bug
-
-        excludedFiles.add("comparisonWithNullCallsFun.kt"); // java.lang.NoClassDefFoundError: kotlin.Nothing
-        excludedFiles.add("kt3574.kt"); // java.lang.NoClassDefFoundError: kotlin.Nothing
-
         excludedFiles.add("genericBackingFieldSignature.kt"); // Wrong signature after package renaming
         excludedFiles.add("genericMethodSignature.kt"); // Wrong signature after package renaming
+        excludedFiles.add("kt11121.kt"); // Wrong signature after package renaming
+        excludedFiles.add("kt5112.kt"); // Wrong signature after package renaming
 
         excludedFiles.add("classpath.kt"); // Some classes are not visible on android
 
         excludedFiles.add("manyNumbers.kt"); // Out of memory
 
-        excludedFiles.add("smap"); // Line numbers
+        excludedFiles.add("external"); //native methods
+
+        excludedFiles.add("enclosingInfo"); //  Wrong enclosing info after package renaming
+        excludedFiles.add("signature"); //  Wrong signature after package renaming
+
+        excludedFiles.add("functionNtoStringNoReflect.kt"); // disabled cause test executed with reflection
+
+        excludedFiles.add("nestedClasses.kt"); // additional nested class in 'Thread' class on Android
+
+        //excludedFiles.add("simpleThrow.kt"); // jack and jill fail
     }
 
     private SpecialFiles() {

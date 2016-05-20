@@ -47,7 +47,8 @@ import org.jetbrains.kotlin.idea.codeInsight.generate.AbstractCodeInsightActionT
 import org.jetbrains.kotlin.idea.codeInsight.generate.AbstractGenerateHashCodeAndEqualsActionTest
 import org.jetbrains.kotlin.idea.codeInsight.generate.AbstractGenerateTestSupportMethodActionTest
 import org.jetbrains.kotlin.idea.codeInsight.generate.AbstractGenerateToStringActionTest
-import org.jetbrains.kotlin.idea.codeInsight.moveUpDown.AbstractCodeMoverTest
+import org.jetbrains.kotlin.idea.codeInsight.moveUpDown.AbstractMoveLeftRightTest
+import org.jetbrains.kotlin.idea.codeInsight.moveUpDown.AbstractMoveStatementTest
 import org.jetbrains.kotlin.idea.codeInsight.surroundWith.AbstractSurroundWithTest
 import org.jetbrains.kotlin.idea.codeInsight.unwrap.AbstractUnwrapRemoveTest
 import org.jetbrains.kotlin.idea.completion.test.*
@@ -57,8 +58,8 @@ import org.jetbrains.kotlin.idea.completion.test.handlers.AbstractKeywordComplet
 import org.jetbrains.kotlin.idea.completion.test.handlers.AbstractSmartCompletionHandlerTest
 import org.jetbrains.kotlin.idea.completion.test.weighers.AbstractBasicCompletionWeigherTest
 import org.jetbrains.kotlin.idea.completion.test.weighers.AbstractSmartCompletionWeigherTest
-import org.jetbrains.kotlin.idea.configuration.AbstractConfigureProjectByChangingFileTest
 import org.jetbrains.kotlin.idea.conversion.copy.AbstractJavaToKotlinCopyPasteConversionTest
+import org.jetbrains.kotlin.idea.conversion.copy.AbstractTextJavaToKotlinCopyPasteConversionTest
 import org.jetbrains.kotlin.idea.coverage.AbstractKotlinCoverageOutputFilesTest
 import org.jetbrains.kotlin.idea.debugger.AbstractBeforeExtractFunctionInsertionTest
 import org.jetbrains.kotlin.idea.debugger.AbstractKotlinSteppingTest
@@ -85,6 +86,8 @@ import org.jetbrains.kotlin.idea.intentions.declarations.AbstractJoinLinesTest
 import org.jetbrains.kotlin.idea.internal.AbstractBytecodeToolWindowTest
 import org.jetbrains.kotlin.idea.kdoc.AbstractKDocHighlightingTest
 import org.jetbrains.kotlin.idea.kdoc.AbstractKDocTypingTest
+import org.jetbrains.kotlin.idea.maven.AbstractKotlinMavenInspectionTest
+import org.jetbrains.kotlin.idea.maven.configuration.AbstractMavenConfigureProjectByChangingFileTest
 import org.jetbrains.kotlin.idea.navigation.AbstractGotoSuperTest
 import org.jetbrains.kotlin.idea.navigation.AbstractKotlinGotoImplementationTest
 import org.jetbrains.kotlin.idea.navigation.AbstractKotlinGotoTest
@@ -496,10 +499,15 @@ fun main(args: Array<String>) {
             model("hierarchy/overrides", extension = null, recursive = false, testMethod = "doOverrideHierarchyTest")
         }
 
-        testClass<AbstractCodeMoverTest>() {
+        testClass<AbstractMoveStatementTest>() {
             model("codeInsight/moveUpDown/classBodyDeclarations", testMethod = "doTestClassBodyDeclaration")
             model("codeInsight/moveUpDown/closingBraces", testMethod = "doTestExpression")
             model("codeInsight/moveUpDown/expressions", testMethod = "doTestExpression")
+            model("codeInsight/moveUpDown/parametersAndArguments", testMethod = "doTestExpression")
+        }
+
+        testClass<AbstractMoveLeftRightTest>() {
+            model("codeInsight/moveLeftRight")
         }
 
         testClass<AbstractInlineTest>() {
@@ -531,6 +539,7 @@ fun main(args: Array<String>) {
         testClass<AbstractSafeDeleteTest>() {
             model("refactoring/safeDelete/deleteClass/kotlinClass", testMethod = "doClassTest")
             model("refactoring/safeDelete/deleteClass/kotlinClassWithJava", testMethod = "doClassTestWithJava")
+            model("refactoring/safeDelete/deleteClass/javaClassWithKotlin", extension = "java", testMethod = "doJavaClassTest")
             model("refactoring/safeDelete/deleteObject/kotlinObject", testMethod = "doObjectTest")
             model("refactoring/safeDelete/deleteFunction/kotlinFunction", testMethod = "doFunctionTest")
             model("refactoring/safeDelete/deleteFunction/kotlinFunctionWithJava", testMethod = "doFunctionTestWithJava")
@@ -591,10 +600,8 @@ fun main(args: Array<String>) {
             model("multiFileInspections", extension = "test", singleClass = true)
         }
 
-        testClass<AbstractConfigureProjectByChangingFileTest>() {
+        testClass<org.jetbrains.kotlin.idea.configuration.AbstractGradleConfigureProjectByChangingFileTest>() {
             model("configuration/gradle", pattern = """(\w+)_before\.gradle$""", testMethod = "doTestGradle")
-            model("configuration/maven", extension = null, recursive = false, testMethod = "doTestWithMaven")
-            model("configuration/js-maven", extension = null, recursive = false, testMethod = "doTestWithJSMaven")
         }
 
         testClass<AbstractFormatterTest>() {
@@ -632,6 +639,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractJavaToKotlinCopyPasteConversionTest>() {
             model("copyPaste/conversion", pattern = """^([^\.]+)\.java$""")
+        }
+
+        testClass<AbstractTextJavaToKotlinCopyPasteConversionTest>() {
+            model("copyPaste/plainTextConversion", pattern = """^([^\.]+)\.txt$""")
         }
 
         testClass<AbstractInsertImportOnPasteTest>() {
@@ -788,6 +799,17 @@ fun main(args: Array<String>) {
 
         testClass<AbstractGenerateToStringActionTest>() {
             model("codeInsight/generate/toString")
+        }
+    }
+
+    testGroup("idea/idea-maven/test", "idea/idea-maven/testData") {
+        testClass<AbstractMavenConfigureProjectByChangingFileTest>() {
+            model("configurator/jvm", extension = null, recursive = false, testMethod = "doTestWithMaven")
+            model("configurator/js", extension = null, recursive = false, testMethod = "doTestWithJSMaven")
+        }
+
+        testClass<AbstractKotlinMavenInspectionTest> {
+            model("maven-inspections", pattern = "^([\\w\\-]+).xml$", singleClass = true)
         }
     }
 
@@ -998,6 +1020,10 @@ fun main(args: Array<String>) {
             model("android/rename", recursive = false, extension = null)
         }
 
+        testClass<AbstractAndroidLayoutRenameTest>() {
+            model("android/renameLayout", recursive = false, extension = null)
+        }
+
         testClass<AbstractAndroidFindUsagesTest>() {
             model("android/findUsages", recursive = false, extension = null)
         }
@@ -1061,6 +1087,14 @@ fun main(args: Array<String>) {
         testClass<AbstractReifiedTest>() {
             model("reified/cases")
         }
+
+        testClass<AbstractRttiTest>() {
+            model("rtti/cases")
+        }
+
+        testClass<AbstractCastTest>() {
+            model("expression/cast/cases")
+        }
     }
 
     testGroup("js/js.tests/test", "compiler/testData") {
@@ -1080,10 +1114,6 @@ fun main(args: Array<String>) {
             model("codegen/box/secondaryConstructors", targetBackend = TargetBackend.JS)
         }
 
-        testClass<AbstractNestedTypesTest>() {
-            model("codegen/box/classes/inner", targetBackend = TargetBackend.JS)
-        }
-
         testClass<AbstractClassesTest>() {
             model("codegen/box/classes/", targetBackend = TargetBackend.JS)
         }
@@ -1094,6 +1124,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractSuperTest>() {
             model("codegen/box/super/", targetBackend = TargetBackend.JS)
+        }
+
+        testClass<AbstractLocalClassesTest>() {
+            model("codegen/box/localClasses/", targetBackend = TargetBackend.JS)
         }
 
         testClass<AbstractNonLocalReturnsTest>() {
@@ -1157,7 +1191,7 @@ class TestGroup(val testsRoot: String, val testDataRoot: String) {
                     }
                     else {
                         SimpleTestClassModel(rootFile, recursive, excludeParentDirs,
-                                             compiledPattern, filenameStartsLowerCase, testMethod, className, 
+                                             compiledPattern, filenameStartsLowerCase, testMethod, className,
                                              targetBackend, excludeDirs)
                     }
             )

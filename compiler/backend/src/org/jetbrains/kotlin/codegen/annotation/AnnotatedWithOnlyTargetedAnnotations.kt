@@ -30,7 +30,7 @@ class AnnotatedWithFakeAnnotations(override val originalAnnotated: Annotated, pr
     override fun getAnnotations() = actual
 }
 
-class AnnotatedWithOnlyTargetedAnnotations(private val original: Annotated) : Annotated {
+class AnnotatedWithOnlyTargetedAnnotations(original: Annotated) : Annotated {
     private val annotations: Annotations = UseSiteTargetedAnnotations(original.annotations)
 
     override fun getAnnotations() = annotations

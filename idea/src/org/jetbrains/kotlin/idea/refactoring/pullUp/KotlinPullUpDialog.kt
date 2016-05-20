@@ -93,9 +93,9 @@ class KotlinPullUpDialog(
         }
     }
 
-    protected val memberInfoStorage: KotlinMemberInfoStorage get() = myMemberInfoStorage
+    private val memberInfoStorage: KotlinMemberInfoStorage get() = myMemberInfoStorage
 
-    protected val sourceClass: KtClassOrObject get() = myClass as KtClassOrObject
+    private val sourceClass: KtClassOrObject get() = myClass as KtClassOrObject
 
     override fun getDimensionServiceKey() = "#" + javaClass.name
 

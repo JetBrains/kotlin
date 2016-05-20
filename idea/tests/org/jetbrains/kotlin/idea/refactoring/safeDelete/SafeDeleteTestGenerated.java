@@ -67,6 +67,12 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
             doClassTest(fileName);
         }
 
+        @TestMetadata("enumEntry.kt")
+        public void testEnumEntry() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteClass/kotlinClass/enumEntry.kt");
+            doClassTest(fileName);
+        }
+
         @TestMetadata("localClass1.kt")
         public void testLocalClass1() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteClass/kotlinClass/localClass1.kt");
@@ -128,6 +134,27 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
         public void testClassWithDelegationCalls() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteClass/kotlinClassWithJava/classWithDelegationCalls.kt");
             doClassTestWithJava(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/refactoring/safeDelete/deleteClass/javaClassWithKotlin")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class JavaClassWithKotlin extends AbstractSafeDeleteTest {
+        public void testAllFilesPresentInJavaClassWithKotlin() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteClass/javaClassWithKotlin"), Pattern.compile("^(.+)\\.java$"), true);
+        }
+
+        @TestMetadata("javaInterfaceInSuperTypeList.java")
+        public void testJavaInterfaceInSuperTypeList() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteClass/javaClassWithKotlin/javaInterfaceInSuperTypeList.java");
+            doJavaClassTest(fileName);
+        }
+
+        @TestMetadata("javaInterfaceInSuperTypeListLast.java")
+        public void testJavaInterfaceInSuperTypeListLast() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteClass/javaClassWithKotlin/javaInterfaceInSuperTypeListLast.java");
+            doJavaClassTest(fileName);
         }
     }
 

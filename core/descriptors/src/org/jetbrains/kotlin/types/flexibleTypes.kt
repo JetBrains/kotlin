@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,35 +16,28 @@
 
 package org.jetbrains.kotlin.types
 
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
-interface FlexibleTypeCapabilities {
-    fun <T: TypeCapability> getCapability(capabilityClass: Class<T>, jetType: KotlinType, flexibility: Flexibility): T?
+interface FlexibleTypeFactory {
     val id: String
 
-    object NONE : FlexibleTypeCapabilities {
-        override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>, jetType: KotlinType, flexibility: Flexibility): T? = null
-        override val id: String get() = "NONE"
+    fun create(lowerBound: KotlinType, upperBound: KotlinType): KotlinType
+
+    object ThrowException : FlexibleTypeFactory {
+        private fun error(): Nothing = throw IllegalArgumentException("This factory should not be used.")
+        override val id: String
+            get() = error()
+
+        override fun create(lowerBound: KotlinType, upperBound: KotlinType): KotlinType = error()
     }
 }
 
 interface Flexibility : TypeCapability, SubtypingRepresentatives {
-    companion object {
-        // This is a "magic" classifier: when type resolver sees it in the code, e.g. ft<Foo, Foo?>, instead of creating a normal type,
-        // it creates a flexible type, e.g. (Foo..Foo?).
-        // This is used in tests and Evaluate Expression to have flexible types in the code,
-        // but normal users should not be referencing this classifier
-        val FLEXIBLE_TYPE_CLASSIFIER: ClassId = ClassId.topLevel(FqName("kotlin.internal.flexible.ft"))
-    }
-
     // lowerBound is a subtype of upperBound
     val lowerBound: KotlinType
     val upperBound: KotlinType
 
-    val extraCapabilities: FlexibleTypeCapabilities
+    val factory: FlexibleTypeFactory
 
     override val subTypeRepresentative: KotlinType
         get() = lowerBound
@@ -53,6 +46,16 @@ interface Flexibility : TypeCapability, SubtypingRepresentatives {
         get() = upperBound
 
     override fun sameTypeConstructor(type: KotlinType) = false
+
+    fun makeNullableAsSpecified(nullable: Boolean): KotlinType
+
+    enum class SpecificityRelation {
+        LESS_SPECIFIC,
+        MORE_SPECIFIC,
+        DONT_KNOW
+    }
+
+    fun getSpecificityRelationTo(otherType: KotlinType): SpecificityRelation
 }
 
 fun KotlinType.isFlexible(): Boolean = this.getCapability(Flexibility::class.java) != null
@@ -100,34 +103,12 @@ fun Collection<TypeProjection>.singleBestRepresentative(): TypeProjection? {
 fun KotlinType.lowerIfFlexible(): KotlinType = if (this.isFlexible()) this.flexibility().lowerBound else this
 fun KotlinType.upperIfFlexible(): KotlinType = if (this.isFlexible()) this.flexibility().upperBound else this
 
-interface NullAwareness : TypeCapability {
-    fun makeNullableAsSpecified(nullable: Boolean): KotlinType
-    fun computeIsNullable(): Boolean
-}
-
-interface FlexibleTypeDelegation : TypeCapability {
-    val delegateType: KotlinType
-}
-
-open class DelegatingFlexibleType protected constructor(
+abstract class DelegatingFlexibleType protected constructor(
         override val lowerBound: KotlinType,
         override val upperBound: KotlinType,
-        override val extraCapabilities: FlexibleTypeCapabilities
-) : DelegatingType(), NullAwareness, Flexibility, FlexibleTypeDelegation {
+        override val factory: FlexibleTypeFactory
+) : DelegatingType(), Flexibility {
     companion object {
-        internal val capabilityClasses = hashSetOf(
-                NullAwareness::class.java,
-                Flexibility::class.java,
-                SubtypingRepresentatives::class.java,
-                FlexibleTypeDelegation::class.java
-        )
-
-        @JvmStatic
-        fun create(lowerBound: KotlinType, upperBound: KotlinType, extraCapabilities: FlexibleTypeCapabilities): KotlinType {
-            if (lowerBound == upperBound) return lowerBound
-            return DelegatingFlexibleType(lowerBound, upperBound, extraCapabilities)
-        }
-
         @JvmField
         var RUN_SLOW_ASSERTIONS = false
     }
@@ -152,34 +133,25 @@ open class DelegatingFlexibleType protected constructor(
         }
     }
 
+    protected abstract val delegateType: KotlinType
+
     override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>): T? {
-        val extra = extraCapabilities.getCapability(capabilityClass, this, this)
-        if (extra != null) return extra
-
         @Suppress("UNCHECKED_CAST")
-        if (capabilityClass in capabilityClasses) return this as T
-
-        return super<DelegatingType>.getCapability(capabilityClass)
+        return when(capabilityClass) {
+            Flexibility::class.java, SubtypingRepresentatives::class.java -> this as T
+            else -> super<DelegatingType>.getCapability(capabilityClass)
+        }
     }
 
     override fun makeNullableAsSpecified(nullable: Boolean): KotlinType {
-        return create(
-                TypeUtils.makeNullableAsSpecified(lowerBound, nullable),
-                TypeUtils.makeNullableAsSpecified(upperBound, nullable),
-                extraCapabilities)
+        return factory.create(TypeUtils.makeNullableAsSpecified(lowerBound, nullable),
+                              TypeUtils.makeNullableAsSpecified(upperBound, nullable))
     }
 
-    override fun computeIsNullable() = delegateType.isMarkedNullable
-
-    override fun isMarkedNullable(): Boolean = getCapability(NullAwareness::class.java)!!.computeIsNullable()
-
-    override val delegateType: KotlinType
-        get() {
-            runAssertions()
-            return lowerBound
-        }
-
-    override fun getDelegate() = getCapability(FlexibleTypeDelegation::class.java)!!.delegateType
+    final override fun getDelegate(): KotlinType {
+        runAssertions()
+        return delegateType
+    }
 
     override fun toString() = "('$lowerBound'..'$upperBound')"
 }

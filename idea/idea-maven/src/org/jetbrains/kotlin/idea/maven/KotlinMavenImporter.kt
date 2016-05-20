@@ -1,0 +1,164 @@
+/*
+ * Copyright 2010-2016 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.jetbrains.kotlin.idea.maven
+
+import com.intellij.openapi.components.*
+import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.roots.OrderEnumerator
+import com.intellij.openapi.roots.OrderRootType
+import com.intellij.openapi.roots.libraries.Library
+import com.intellij.openapi.util.AsyncResult
+import org.jdom.Element
+import org.jetbrains.idea.maven.importing.MavenImporter
+import org.jetbrains.idea.maven.importing.MavenRootModelAdapter
+import org.jetbrains.idea.maven.model.MavenPlugin
+import org.jetbrains.idea.maven.project.*
+import org.jetbrains.jps.model.java.JavaSourceRootType
+import org.jetbrains.jps.model.module.JpsModuleSourceRootType
+import org.jetbrains.kotlin.idea.util.projectStructure.findLibrary
+import java.io.File
+import java.util.*
+
+private val KotlinPluginGroupId = "org.jetbrains.kotlin"
+private val KotlinPluginArtifactId = "kotlin-maven-plugin"
+private val KotlinPluginSourceDirsConfig = "sourceDirs"
+
+class KotlinMavenImporter : MavenImporter(KotlinPluginGroupId, KotlinPluginArtifactId) {
+    override fun preProcess(module: Module, mavenProject: MavenProject, changes: MavenProjectChanges, modifiableModelsProvider: IdeModifiableModelsProvider) {
+    }
+
+    override fun process(modifiableModelsProvider: IdeModifiableModelsProvider,
+                         module: Module,
+                         rootModel: MavenRootModelAdapter,
+                         mavenModel: MavenProjectsTree,
+                         mavenProject: MavenProject,
+                         changes: MavenProjectChanges,
+                         mavenProjectToModuleName: MutableMap<MavenProject, String>,
+                         postTasks: MutableList<MavenProjectsProcessorTask>) {
+
+        if (changes.plugins) {
+            contributeSourceDirectories(mavenProject, module, rootModel)
+        }
+    }
+
+    override fun postProcess(module: Module, mavenProject: MavenProject, changes: MavenProjectChanges, modifiableModelsProvider: IdeModifiableModelsProvider) {
+        super.postProcess(module, mavenProject, changes, modifiableModelsProvider)
+
+        if (changes.dependencies) {
+            // TODO: here we have to process all kotlin libraries but for now we only handle standard libraries
+            val artifacts = mavenProject.dependencyArtifactIndex.data[KotlinPluginGroupId]?.values?.flatMap { it.filter { it.isResolved } } ?: emptyList()
+
+            val librariesWithNoSources = ArrayList<Library>()
+            OrderEnumerator.orderEntries(module).forEachLibrary { library ->
+                if (library.modifiableModel.getFiles(OrderRootType.SOURCES).isEmpty()) {
+                    librariesWithNoSources.add(library)
+                }
+                true
+            }
+            val libraryNames = librariesWithNoSources.mapTo(HashSet()) { it.name }
+            val toBeDownloaded = artifacts.filter { it.libraryName in libraryNames }
+
+            if (toBeDownloaded.isNotEmpty()) {
+                MavenProjectsManager.getInstance(module.project).scheduleArtifactsDownloading(listOf(mavenProject), toBeDownloaded, true, false, AsyncResult())
+            }
+        }
+    }
+
+    // TODO in theory it should work like this but it doesn't as it couldn't unmark source roots that are not roots anymore.
+    //     I believe this is something should be done by the underlying maven importer implementation or somewhere else in the IDEA
+    //     For now there is a contributeSourceDirectories implementation that deals with the issue
+    //        see https://youtrack.jetbrains.com/issue/IDEA-148280
+
+    //    override fun collectSourceRoots(mavenProject: MavenProject, result: PairConsumer<String, JpsModuleSourceRootType<*>>) {
+    //        for ((type, dir) in collectSourceDirectories(mavenProject)) {
+    //            val jpsType: JpsModuleSourceRootType<*> = when (type) {
+    //                SourceType.PROD -> JavaSourceRootType.SOURCE
+    //                SourceType.TEST -> JavaSourceRootType.TEST_SOURCE
+    //            }
+    //
+    //            result.consume(dir, jpsType)
+    //        }
+    //    }
+
+    private fun contributeSourceDirectories(mavenProject: MavenProject, module: Module, rootModel: MavenRootModelAdapter) {
+        val directories = collectSourceDirectories(mavenProject)
+
+        val toBeAdded = directories.map { it.second }.toSet()
+        val state = module.kotlinImporterComponent
+
+        for ((type, dir) in directories) {
+            if (rootModel.getSourceFolder(File(dir)) == null) {
+                val jpsType: JpsModuleSourceRootType<*> = when (type) {
+                    SourceType.TEST -> JavaSourceRootType.TEST_SOURCE
+                    SourceType.PROD -> JavaSourceRootType.SOURCE
+                }
+
+                rootModel.addSourceFolder(dir, jpsType)
+            }
+        }
+
+        state.addedSources.filter { it !in toBeAdded }.forEach {
+            rootModel.unregisterAll(it, true, true)
+            state.addedSources.remove(it)
+        }
+        state.addedSources.addAll(toBeAdded)
+    }
+
+    private fun collectSourceDirectories(mavenProject: MavenProject): List<Pair<SourceType, String>> =
+            mavenProject.plugins.filter { it.isKotlinPlugin() }.flatMap { plugin ->
+                plugin.configurationElement.sourceDirectories().map { SourceType.PROD to it } +
+                plugin.executions.flatMap { execution -> execution.configurationElement.sourceDirectories().map { execution.sourceType() to it } }
+            }.distinct()
+}
+
+private fun MavenPlugin.isKotlinPlugin() = groupId == KotlinPluginGroupId && artifactId == KotlinPluginArtifactId
+private fun Element?.sourceDirectories(): List<String> = this?.getChildren(KotlinPluginSourceDirsConfig)?.flatMap { it.children ?: emptyList() }?.map { it.textTrim } ?: emptyList()
+private fun MavenPlugin.Execution.sourceType() =
+        goals.map { if (isTestGoalName(it)) SourceType.TEST else SourceType.PROD }
+                .distinct()
+                .singleOrNull() ?: SourceType.PROD
+
+private fun isTestGoalName(goalName: String) = goalName.startsWith("test-")
+
+private enum class SourceType {
+    PROD, TEST
+}
+
+@State(name = "AutoImportedSourceRoots",
+       storages = arrayOf(
+               Storage(id = "other", file = StoragePathMacros.MODULE_FILE)
+       ))
+class KotlinImporterComponent : PersistentStateComponent<KotlinImporterComponent.State> {
+    class State(var directories: List<String> = ArrayList())
+
+    val addedSources = Collections.synchronizedSet(HashSet<String>())
+
+    override fun loadState(state: State?) {
+        addedSources.clear()
+        if (state != null) {
+            addedSources.addAll(state.directories)
+        }
+    }
+
+    override fun getState(): State {
+        return State(addedSources.sorted())
+    }
+}
+
+private val Module.kotlinImporterComponent: KotlinImporterComponent
+    get() = getComponent(KotlinImporterComponent::class.java) ?: throw IllegalStateException("No maven importer state configured")

@@ -55,13 +55,13 @@ val COMPILE_DAEMON_DEFAULT_RUN_DIR_PATH: String get() =
 val CLASSPATH_ID_DIGEST = "MD5"
 
 
-open class PropMapper<C, V, P : KMutableProperty1<C, V>>(val dest: C,
-                                                         val prop: P,
-                                                         val names: List<String> = listOf(prop.name),
-                                                         val fromString: (String) -> V,
-                                                         val toString: ((V) -> String?) = { it.toString() },
-                                                         val skipIf: ((V) -> Boolean) = { false },
-                                                         val mergeDelimiter: String? = null) {
+open class PropMapper<C, V, out P : KMutableProperty1<C, V>>(val dest: C,
+                                                             val prop: P,
+                                                             val names: List<String> = listOf(prop.name),
+                                                             val fromString: (String) -> V,
+                                                             val toString: ((V) -> String?) = { it.toString() },
+                                                             val skipIf: ((V) -> Boolean) = { false },
+                                                             val mergeDelimiter: String? = null) {
     open fun toArgs(prefix: String = COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX): List<String> =
             when {
                 skipIf(prop.get(dest)) -> listOf<String>()
@@ -73,34 +73,34 @@ open class PropMapper<C, V, P : KMutableProperty1<C, V>>(val dest: C,
 }
 
 
-class NullablePropMapper<C, V : Any?, P : KMutableProperty1<C, V>>(dest: C,
-                                                                   prop: P,
-                                                                   names: List<String> = listOf(),
-                                                                   fromString: ((String) -> V),
-                                                                   toString: ((V) -> String?) = { it.toString() },
-                                                                   skipIf: ((V) -> Boolean) = { it == null },
-                                                                   mergeDelimiter: String? = null)
+class NullablePropMapper<C, V : Any?, out P : KMutableProperty1<C, V>>(dest: C,
+                                                                       prop: P,
+                                                                       names: List<String> = listOf(),
+                                                                       fromString: ((String) -> V),
+                                                                       toString: ((V) -> String?) = { it.toString() },
+                                                                       skipIf: ((V) -> Boolean) = { it == null },
+                                                                       mergeDelimiter: String? = null)
 : PropMapper<C, V, P>(dest = dest, prop = prop, names = if (names.any()) names else listOf(prop.name),
                       fromString = fromString, toString = toString, skipIf = skipIf, mergeDelimiter = mergeDelimiter)
 
 
-class StringPropMapper<C, P : KMutableProperty1<C, String>>(dest: C,
-                                                            prop: P,
-                                                            names: List<String> = listOf(),
-                                                            fromString: ((String) -> String) = { it },
-                                                            toString: ((String) -> String?) = { it.toString() },
-                                                            skipIf: ((String) -> Boolean) = { it.isEmpty() },
-                                                            mergeDelimiter: String? = null)
+class StringPropMapper<C, out P : KMutableProperty1<C, String>>(dest: C,
+                                                                prop: P,
+                                                                names: List<String> = listOf(),
+                                                                fromString: ((String) -> String) = { it },
+                                                                toString: ((String) -> String?) = { it.toString() },
+                                                                skipIf: ((String) -> Boolean) = { it.isEmpty() },
+                                                                mergeDelimiter: String? = null)
 : PropMapper<C, String, P>(dest = dest, prop = prop, names = if (names.any()) names else listOf(prop.name),
                            fromString = fromString, toString = toString, skipIf = skipIf, mergeDelimiter = mergeDelimiter)
 
 
-class BoolPropMapper<C, P : KMutableProperty1<C, Boolean>>(dest: C, prop: P, names: List<String> = listOf())
+class BoolPropMapper<C, out P : KMutableProperty1<C, Boolean>>(dest: C, prop: P, names: List<String> = listOf())
 : PropMapper<C, Boolean, P>(dest = dest, prop = prop, names = if (names.any()) names else listOf(prop.name),
                             fromString = { true }, toString = { null }, skipIf = { !prop.get(dest) })
 
 
-class RestPropMapper<C, P : KMutableProperty1<C, MutableCollection<String>>>(dest: C, prop: P)
+class RestPropMapper<C, out P : KMutableProperty1<C, MutableCollection<String>>>(dest: C, prop: P)
 : PropMapper<C, MutableCollection<String>, P>(dest = dest, prop = prop, toString = { null }, fromString = { arrayListOf() }) {
     override fun toArgs(prefix: String): List<String> = prop.get(dest).map { prefix + it }
     override fun apply(s: String) = add(s)

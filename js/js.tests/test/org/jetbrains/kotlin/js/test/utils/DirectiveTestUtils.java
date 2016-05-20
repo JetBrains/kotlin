@@ -56,16 +56,25 @@ public class DirectiveTestUtils {
     private static final DirectiveHandler FUNCTION_CALLED_IN_SCOPE = new DirectiveHandler("CHECK_CALLED_IN_SCOPE") {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
-            checkCalledInScope(ast, arguments.getNamedArgument("function"), arguments.getNamedArgument("scope"));
+            // Be more restrictive, check qualified match by default
+            checkCalledInScope(ast, arguments.getNamedArgument("function"), arguments.getNamedArgument("scope"),
+                               parseBooleanArgument(arguments, "qualified", true));
         }
     };
 
     private static final DirectiveHandler FUNCTION_NOT_CALLED_IN_SCOPE = new DirectiveHandler("CHECK_NOT_CALLED_IN_SCOPE") {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
-            checkNotCalledInScope(ast, arguments.getNamedArgument("function"), arguments.getNamedArgument("scope"));
+            // Be more restrictive, check unqualified match by default
+            checkNotCalledInScope(ast, arguments.getNamedArgument("function"), arguments.getNamedArgument("scope"),
+                                  parseBooleanArgument(arguments, "qualified", false));
         }
     };
+
+    private static boolean parseBooleanArgument(@NotNull ArgumentsHelper arguments, @NotNull String name, boolean defaultValue) {
+        String value = arguments.findNamedArgument(name);
+        return value != null ? Boolean.parseBoolean(value) : defaultValue;
+    }
 
     private static final DirectiveHandler FUNCTIONS_HAVE_SAME_LINES = new DirectiveHandler("CHECK_FUNCTIONS_HAVE_SAME_LINES") {
         @Override
@@ -146,6 +155,24 @@ public class DirectiveTestUtils {
 
     private static final DirectiveHandler COUNT_BREAKS = new CountNodesDirective<JsBreak>("CHECK_BREAKS_COUNT", JsBreak.class);
 
+    private static final DirectiveHandler COUNT_NULLS = new CountNodesDirective<JsNullLiteral>("CHECK_NULLS_COUNT", JsNullLiteral.class);
+
+    private static final DirectiveHandler NOT_REFERENCED = new DirectiveHandler("CHECK_NOT_REFERENCED") {
+        @Override
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
+            final String reference = arguments.getPositionalArgument(0);
+
+            JsVisitor visitor = new RecursiveJsVisitor() {
+                @Override
+                public void visitNameRef(@NotNull JsNameRef nameRef) {
+                    assertNotEquals(reference, nameRef.toString());
+                }
+            };
+
+            visitor.accept(ast);
+        }
+    };
+
     private static final DirectiveHandler HAS_INLINE_METADATA = new DirectiveHandler("CHECK_HAS_INLINE_METADATA") {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
@@ -175,6 +202,8 @@ public class DirectiveTestUtils {
             COUNT_LABELS,
             COUNT_VARS,
             COUNT_BREAKS,
+            COUNT_NULLS,
+            NOT_REFERENCED,
             HAS_INLINE_METADATA,
             HAS_NO_INLINE_METADATA
     );
@@ -206,30 +235,38 @@ public class DirectiveTestUtils {
     public static void checkCalledInScope(
             @NotNull JsNode node,
             @NotNull String functionName,
-            @NotNull String scopeFunctionName
+            @NotNull String scopeFunctionName,
+            boolean checkQualifier
     ) throws Exception {
         String errorMessage = functionName + " is not called inside " + scopeFunctionName;
-        assertFalse(errorMessage, isCalledInScope(node, functionName, scopeFunctionName));
+        assertFalse(errorMessage, isCalledInScope(node, functionName, scopeFunctionName, checkQualifier));
     }
 
     public static void checkNotCalledInScope(
             @NotNull JsNode node,
             @NotNull String functionName,
-            @NotNull String scopeFunctionName
+            @NotNull String scopeFunctionName,
+            boolean checkQualifier
     ) throws Exception {
         String errorMessage = functionName + " is called inside " + scopeFunctionName;
-        assertTrue(errorMessage, isCalledInScope(node, functionName, scopeFunctionName));
+        assertTrue(errorMessage, isCalledInScope(node, functionName, scopeFunctionName, checkQualifier));
     }
 
     private static boolean isCalledInScope(
             @NotNull JsNode node,
             @NotNull String functionName,
-            @NotNull String scopeFunctionName
+            @NotNull String scopeFunctionName,
+            boolean checkQualifier
     ) throws Exception {
         JsNode scope = AstSearchUtil.getFunction(node, scopeFunctionName);
 
         CallCounter counter = CallCounter.countCalls(scope);
-        return counter.getQualifiedCallsCount(functionName) == 0;
+        if (checkQualifier) {
+            return counter.getQualifiedCallsCount(functionName) == 0;
+        }
+        else {
+            return counter.getUnqualifiedCallsCount(functionName) == 0;
+        }
     }
 
     private abstract static class DirectiveHandler {

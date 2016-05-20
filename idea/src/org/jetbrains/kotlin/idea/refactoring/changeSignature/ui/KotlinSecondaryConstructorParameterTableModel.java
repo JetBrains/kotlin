@@ -23,11 +23,12 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescrip
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinParameterInfo;
 
 public class KotlinSecondaryConstructorParameterTableModel extends KotlinCallableParameterTableModel {
-    public KotlinSecondaryConstructorParameterTableModel(KotlinMethodDescriptor methodDescriptor, PsiElement context) {
+    public KotlinSecondaryConstructorParameterTableModel(KotlinMethodDescriptor methodDescriptor, PsiElement typeContext, PsiElement defaultValueContext) {
         super(methodDescriptor,
-              context,
-              new NameColumn(context.getProject()),
-              new TypeColumn(context.getProject(), KotlinFileType.INSTANCE),
-              new DefaultValueColumn<KotlinParameterInfo, ParameterTableModelItemBase<KotlinParameterInfo>>(context.getProject(), KotlinFileType.INSTANCE));
+              typeContext,
+              defaultValueContext,
+              new NameColumn(typeContext.getProject()),
+              new TypeColumn(typeContext.getProject(), KotlinFileType.INSTANCE),
+              new DefaultValueColumn<KotlinParameterInfo, ParameterTableModelItemBase<KotlinParameterInfo>>(typeContext.getProject(), KotlinFileType.INSTANCE));
     }
 }

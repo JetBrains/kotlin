@@ -16,28 +16,26 @@
 
 package org.jetbrains.kotlin.idea.completion
 
-import com.intellij.codeInsight.completion.CompletionParameters
-import com.intellij.codeInsight.completion.CompletionResultSet
-import com.intellij.codeInsight.completion.CompletionSorter
-import com.intellij.codeInsight.completion.CompletionType
+import com.intellij.codeInsight.completion.*
+import com.intellij.codeInsight.completion.impl.BetterPrefixMatcher
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.codeInsight.template.TemplateManager
 import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.JavaPsiFacade
-import com.intellij.psi.codeStyle.CodeStyleManager
+import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.ProcessingContext
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.idea.completion.handlers.createKeywordConstructLookupElement
 import org.jetbrains.kotlin.idea.completion.smart.ExpectedInfoMatch
 import org.jetbrains.kotlin.idea.completion.smart.SMART_COMPLETION_ITEM_PRIORITY_KEY
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletion
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletionItemPriority
 import org.jetbrains.kotlin.idea.core.ExpectedInfo
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
-import org.jetbrains.kotlin.idea.quickfix.moveCaret
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -131,7 +129,10 @@ class BasicCompletionSession(
 
         if (smartCompletion != null) {
             val smartCompletionInBasicWeigher = SmartCompletionInBasicWeigher(smartCompletion, callTypeAndReceiver.callType, resolutionFacade)
-            sorter = sorter.weighBefore(KindWeigher.toString(), smartCompletionInBasicWeigher, SmartCompletionPriorityWeigher)
+            sorter = sorter.weighBefore(KindWeigher.toString(),
+                                        smartCompletionInBasicWeigher,
+                                        SmartCompletionPriorityWeigher,
+                                        CallableReferenceWeigher(callTypeAndReceiver.callType))
         }
 
         sorter = completionKind.addWeighers(sorter)
@@ -211,7 +212,7 @@ class BasicCompletionSession(
 
                 packageNames.forEach { collector.addElement(basicLookupElementFactory.createLookupElementForPackage(it)) }
             }
-            
+
             flushToResultSet()
 
             NamedArgumentCompletion.complete(collector, expectedInfos, callTypeAndReceiver.callType)
@@ -272,7 +273,7 @@ class BasicCompletionSession(
                 }
             }
 
-            if (callTypeAndReceiver.receiver == null) {
+            if (callTypeAndReceiver.receiver == null && prefix.isNotEmpty()) {
                 val classKindFilter: ((ClassKind) -> Boolean)?
                 when (callTypeAndReceiver) {
                     is CallTypeAndReceiver.ANNOTATION -> classKindFilter = { it == ClassKind.ANNOTATION_CLASS }
@@ -280,12 +281,11 @@ class BasicCompletionSession(
                     else -> classKindFilter = null
                 }
                 if (classKindFilter != null) {
-                    if (configuration.completeNonImportedClasses) {
-                        addClassesFromIndex(classKindFilter)
-                    }
-                    else {
-                        collector.advertiseSecondCompletion()
-                    }
+                    val prefixMatcher = if (configuration.useBetterPrefixMatcherForNonImportedClasses)
+                        BetterPrefixMatcher(prefixMatcher, collector.bestMatchingDegree)
+                    else
+                        prefixMatcher
+                    addClassesFromIndex(classKindFilter, prefixMatcher)
                 }
             }
         }
@@ -376,8 +376,8 @@ class BasicCompletionSession(
                         collector.addElement(lookupElement)
 
                         if (!isUseSiteAnnotationTarget) {
-                            collector.addElement(createKeywordConstructLookupElement(keyword, "val v:Int get()=caret", "caret"))
-                            collector.addElement(createKeywordConstructLookupElement(keyword, "val v:Int get(){caret}", "caret", trimSpacesAroundCaret = true))
+                            collector.addElement(createKeywordConstructLookupElement(project, keyword, "val v:Int get()=caret"))
+                            collector.addElement(createKeywordConstructLookupElement(project, keyword, "val v:Int get(){caret}", trimSpacesAroundCaret = true))
                         }
                     }
 
@@ -385,49 +385,14 @@ class BasicCompletionSession(
                         collector.addElement(lookupElement)
 
                         if (!isUseSiteAnnotationTarget) {
-                            collector.addElement(createKeywordConstructLookupElement(keyword, "var v:Int set(value)=caret", "caret"))
-                            collector.addElement(createKeywordConstructLookupElement(keyword, "var v:Int set(value){caret}", "caret", trimSpacesAroundCaret = true))
+                            collector.addElement(createKeywordConstructLookupElement(project, keyword, "var v:Int set(value)=caret"))
+                            collector.addElement(createKeywordConstructLookupElement(project, keyword, "var v:Int set(value){caret}", trimSpacesAroundCaret = true))
                         }
                     }
 
                     else -> collector.addElement(lookupElement)
                 }
             }
-        }
-
-        private fun createKeywordConstructLookupElement(
-                keyword: String,
-                fileTextToReformat: String,
-                caretPlaceHolder: String,
-                trimSpacesAroundCaret: Boolean = false
-        ): LookupElement {
-            val file = KtPsiFactory(project).createFile(fileTextToReformat)
-            CodeStyleManager.getInstance(project).reformat(file)
-            val newFileText = file.text
-
-            val keywordOffset = newFileText.indexOf(keyword)
-            assert(keywordOffset >= 0)
-            val keywordEndOffset = keywordOffset + keyword.length
-
-            val caretOffset = newFileText.indexOf(caretPlaceHolder)
-            assert(caretOffset >= 0)
-            assert(caretOffset >= keywordEndOffset)
-
-            var tailBeforeCaret = newFileText.substring(keywordEndOffset, caretOffset)
-            var tailAfterCaret = newFileText.substring(caretOffset + caretPlaceHolder.length)
-
-            if (trimSpacesAroundCaret) {
-                tailBeforeCaret = tailBeforeCaret.trimEnd()
-                tailAfterCaret = tailAfterCaret.trimStart()
-            }
-
-            return LookupElementBuilder.create(KeywordLookupObject(), keyword + tailBeforeCaret + tailAfterCaret)
-                    .withPresentableText(keyword)
-                    .bold()
-                    .withTailText(tailBeforeCaret + tailAfterCaret)
-                    .withInsertHandler { insertionContext, lookupElement ->
-                        insertionContext.editor.moveCaret(insertionContext.editor.caretModel.offset - tailAfterCaret.length)
-                    }
         }
     }
 
@@ -585,4 +550,16 @@ class BasicCompletionSession(
             else -> return null
         }
     }
+
+    private fun addClassesFromIndex(kindFilter: (ClassKind) -> Boolean, prefixMatcher: PrefixMatcher) {
+        val classDescriptorCollector = { descriptor: ClassDescriptor ->
+            collector.addElement(basicLookupElementFactory.createLookupElement(descriptor), notImported = true)
+        }
+        val javaClassCollector = { javaClass: PsiClass ->
+            collector.addElement(basicLookupElementFactory.createLookupElementForJavaClass(javaClass), notImported = true)
+        }
+        AllClassesCompletion(parameters, indicesHelper(true), prefixMatcher, resolutionFacade, kindFilter, configuration.completeJavaClassesNotToBeUsed)
+                .collect(classDescriptorCollector, javaClassCollector)
+    }
+
 }

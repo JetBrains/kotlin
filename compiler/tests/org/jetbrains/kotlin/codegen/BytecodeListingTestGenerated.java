@@ -35,6 +35,12 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeListing"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
+    @TestMetadata("callableNameIntrinsic.kt")
+    public void testCallableNameIntrinsic() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/callableNameIntrinsic.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("defaultImpls.kt")
     public void testDefaultImpls() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/defaultImpls.kt");

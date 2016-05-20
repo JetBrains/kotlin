@@ -46,7 +46,7 @@ fun <R> Function<R>.reflect(): KFunction<R>? {
     val moduleData = javaClass.getOrCreateModule()
     val context = DeserializationContext(
             moduleData.deserialization, nameResolver, moduleData.module,
-            typeTable = TypeTable(proto.typeTable), packagePartSource = null, parentTypeDeserializer = null, typeParameters = listOf()
+            typeTable = TypeTable(proto.typeTable), containerSource = null, parentTypeDeserializer = null, typeParameters = listOf()
     )
     val descriptor = MemberDeserializer(context).loadFunction(proto)
     @Suppress("UNCHECKED_CAST")

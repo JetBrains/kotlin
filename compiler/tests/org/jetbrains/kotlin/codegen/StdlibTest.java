@@ -47,6 +47,8 @@ import java.io.File;
 import java.lang.reflect.Modifier;
 
 public class StdlibTest extends KotlinTestWithEnvironment {
+    private GeneratedClassLoader classLoader;
+
     @Override
     protected KotlinCoreEnvironment createEnvironment() {
         CompilerConfiguration configuration = KotlinTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.FULL_JDK);
@@ -68,9 +70,7 @@ public class StdlibTest extends KotlinTestWithEnvironment {
             fail("There were compilation errors");
         }
 
-        GeneratedClassLoader classLoader = new GeneratedClassLoader(
-                state.getFactory(), ForTestCompileRuntime.runtimeAndReflectJarClassLoader()
-        ) {
+        classLoader = new GeneratedClassLoader(state.getFactory(), ForTestCompileRuntime.runtimeAndReflectJarClassLoader()) {
             @Override
             public Class<?> loadClass(@NotNull String name) throws ClassNotFoundException {
                 if (name.startsWith("junit.") || name.startsWith("org.junit.")) {
@@ -105,6 +105,14 @@ public class StdlibTest extends KotlinTestWithEnvironment {
         if (!result.wasSuccessful()) {
             fail("Some stdlib tests failed, see stderr for details");
         }
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
+
+        // This is important to prevent a memory leak (ClassFileFactory transitively retains all code generation results)
+        classLoader.dispose();
     }
 
     @Nullable

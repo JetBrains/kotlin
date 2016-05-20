@@ -1,0 +1,5 @@
+fun t() {
+    for (<caret>)
+}
+
+// ELEMENT: for

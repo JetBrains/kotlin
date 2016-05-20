@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.completion
 
 import com.intellij.codeInsight.completion.*
+import com.intellij.codeInsight.completion.impl.RealPrefixMatchingWeigher
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.openapi.util.TextRange
@@ -31,8 +32,11 @@ class LookupElementsCollector(
         private val prefixMatcher: PrefixMatcher,
         private val completionParameters: CompletionParameters,
         resultSet: CompletionResultSet,
-        private val sorter: CompletionSorter
+        sorter: CompletionSorter
 ) {
+
+    var bestMatchingDegree = Int.MIN_VALUE
+        private set
 
     private val elements = ArrayList<LookupElement>()
 
@@ -42,6 +46,9 @@ class LookupElementsCollector(
 
     private val postProcessors = ArrayList<(LookupElement) -> LookupElement>()
 
+    var isResultEmpty: Boolean = true
+        private set
+
     fun flushToResultSet() {
         if (!elements.isEmpty()) {
             resultSet.addAllElements(elements)
@@ -49,9 +56,6 @@ class LookupElementsCollector(
             isResultEmpty = false
         }
     }
-
-    var isResultEmpty: Boolean = true
-        private set
 
     fun addLookupElementPostProcessor(processor: (LookupElement) -> LookupElement) {
         postProcessors.add(processor)
@@ -129,6 +133,9 @@ class LookupElementsCollector(
         }
 
         elements.add(result)
+
+        val matchingDegree = RealPrefixMatchingWeigher.getBestMatchingDegree(result, prefixMatcher)
+        bestMatchingDegree = Math.max(bestMatchingDegree, matchingDegree)
     }
 
     // used to avoid insertion of spaces before/after ',', '=' on just typing
@@ -140,10 +147,6 @@ class LookupElementsCollector(
 
     fun addElements(elements: Iterable<LookupElement>, notImported: Boolean = false) {
         elements.forEach { addElement(it, notImported) }
-    }
-
-    fun advertiseSecondCompletion() {
-        JavaCompletionContributor.advertiseSecondCompletion(completionParameters.originalFile.project, resultSet)
     }
 
     fun restartCompletionOnPrefixChange(prefixCondition: ElementPattern<String>) {

@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.cfg.Label
 import com.google.common.collect.Maps
 import com.google.common.collect.Lists
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.LexicalScope
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.BlockScope
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.KtElementInstructionImpl
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
@@ -32,9 +32,9 @@ import org.jetbrains.kotlin.utils.emptyOrSingletonList
 class NondeterministicJumpInstruction(
         element: KtElement,
         targetLabels: List<Label>,
-        lexicalScope: LexicalScope,
+        blockScope: BlockScope,
         val inputValue: PseudoValue?
-) : KtElementInstructionImpl(element, lexicalScope), JumpInstruction {
+) : KtElementInstructionImpl(element, blockScope), JumpInstruction {
     private var _next: Instruction? = null
     private val _resolvedTargets: MutableMap<Label, Instruction> = Maps.newLinkedHashMap()
 
@@ -85,6 +85,6 @@ class NondeterministicJumpInstruction(
     }
 
     private fun createCopy(newTargetLabels: List<Label>): InstructionImpl {
-        return NondeterministicJumpInstruction(element, newTargetLabels, lexicalScope, inputValue)
+        return NondeterministicJumpInstruction(element, newTargetLabels, blockScope, inputValue)
     }
 }

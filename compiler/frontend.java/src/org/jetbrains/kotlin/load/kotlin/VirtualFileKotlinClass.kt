@@ -33,7 +33,8 @@ class VirtualFileKotlinClass private constructor(
         innerClasses: FileBasedKotlinClass.InnerClassesInfo
 ) : FileBasedKotlinClass(className, classHeader, innerClasses) {
 
-    override fun getLocation() = file.path
+    override val location: String
+        get() = file.path
 
     override fun getFileContents(): ByteArray {
         try {

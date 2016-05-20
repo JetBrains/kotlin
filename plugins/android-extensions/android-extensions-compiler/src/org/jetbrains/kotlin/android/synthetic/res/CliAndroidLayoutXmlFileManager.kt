@@ -27,8 +27,8 @@ import javax.xml.parsers.SAXParserFactory
 
 class CliAndroidLayoutXmlFileManager(
         project: Project,
-        private val applicationPackage: String,
-        private val variants: List<AndroidVariant>
+        applicationPackage: String,
+        variants: List<AndroidVariant>
 ) : AndroidLayoutXmlFileManager(project) {
     private companion object {
         val LOG = Logger.getInstance(CliAndroidLayoutXmlFileManager::class.java)
@@ -57,7 +57,7 @@ class CliAndroidLayoutXmlFileManager(
         return resources
     }
 
-    protected fun initSAX(): SAXParser {
+    private fun initSAX(): SAXParser {
         val saxFactory = SAXParserFactory.newInstance()
         saxFactory.isNamespaceAware = true
         return saxFactory.newSAXParser()

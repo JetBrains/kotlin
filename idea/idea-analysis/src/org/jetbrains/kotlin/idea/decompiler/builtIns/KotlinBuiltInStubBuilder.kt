@@ -53,11 +53,13 @@ class KotlinBuiltInStubBuilder : ClsStubBuilder() {
                 val fileStub = createFileStub(packageFqName)
                 createCallableStubs(
                         fileStub, context,
-                        ProtoContainer.Package(packageFqName, context.nameResolver, context.typeTable, packagePartSource = null),
+                        ProtoContainer.Package(packageFqName, context.nameResolver, context.typeTable, source = null),
                         packageProto.functionList, packageProto.propertyList
                 )
                 for (classProto in file.classesToDecompile) {
-                    createClassStub(fileStub, classProto, nameResolver, nameResolver.getClassId(classProto.fqName), context)
+                    createClassStub(
+                            fileStub, classProto, nameResolver, nameResolver.getClassId(classProto.fqName), source = null, context = context
+                    )
                 }
                 return fileStub
             }

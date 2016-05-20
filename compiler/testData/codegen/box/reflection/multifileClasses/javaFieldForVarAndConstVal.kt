@@ -36,9 +36,26 @@ fun testY() {
     assertEquals("I am const y", field.get(null))
 }
 
+fun testZ() {
+    val field = refZ.javaField ?: throw AssertionError("No java field for ${refZ.name}")
+
+
+    try {
+        field.get(null)
+        throw AssertionError("IllegalAccessError expected")
+    }
+    catch (e: IllegalAccessException) {
+        // OK
+    }
+
+    field.setAccessible(true)
+    assertEquals("I am private const val Z", field.get(null))
+}
+
 fun box(): String {
     testX()
     testY()
+    testZ()
     return x
 }
 
@@ -50,3 +67,6 @@ package test
 
 var x = "I am x"
 const val y = "I am const y"
+private const val z = "I am private const val Z"
+
+val refZ = ::z

@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.android.facet
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.android.actions.NewKotlinActivityAction
 
-class KotlinAndroidStartupManager(private val project: Project) {
+class KotlinAndroidStartupManager(project: Project) {
     init {
         NewKotlinActivityAction.attachGradleSyncListener(project)
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
+import org.jetbrains.kotlin.types.FlexibleTypeFactory
 
 class KotlinBuiltInDeserializerForDecompiler(
         packageDirectory: VirtualFile,
@@ -48,7 +49,7 @@ class KotlinBuiltInDeserializerForDecompiler(
                 storageManager, moduleDescriptor, BuiltInsClassDataFinder(proto, nameResolver),
                 AnnotationAndConstantLoaderImpl(moduleDescriptor, notFoundClasses, BuiltInSerializerProtocol), packageFragmentProvider,
                 ResolveEverythingToKotlinAnyLocalClassResolver(targetPlatform.builtIns), LoggingErrorReporter(LOG),
-                LookupTracker.DO_NOTHING, FlexibleTypeCapabilitiesDeserializer.ThrowException, ClassDescriptorFactory.EMPTY,
+                LookupTracker.DO_NOTHING, FlexibleTypeFactory.ThrowException, ClassDescriptorFactory.EMPTY,
                 notFoundClasses
         )
     }
@@ -59,7 +60,7 @@ class KotlinBuiltInDeserializerForDecompiler(
         }
 
         val membersScope = DeserializedPackageMemberScope(
-                createDummyPackageFragment(facadeFqName), proto.`package`, nameResolver, packagePartSource = null,
+                createDummyPackageFragment(facadeFqName), proto.`package`, nameResolver, containerSource = null,
                 components = deserializationComponents
         ) { emptyList() }
 

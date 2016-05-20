@@ -33,6 +33,7 @@ object KDocRenderer {
         result.append(markdownToHtml(content, allowSingleParagraph = true))
         if (docComment is KDocSection) {
             result.append("\n")
+            renderTag(docComment.findTagByName("receiver"), "Receiver", result)
             val paramTags = docComment.findTagsByName("param").filter { it.getSubjectName() != null }
             renderTagList(paramTags, "Parameters", result)
 
@@ -121,6 +122,10 @@ object KDocRenderer {
     }
 
     fun MarkdownNode.toHtml(): String {
+        if (node.type == MarkdownTokenTypes.WHITE_SPACE) {
+            return text   // do not trim trailing whitespace
+        }
+
         val sb = StringBuilder()
         visit { node, processChildren ->
             fun wrapChildren(tag: String, newline: Boolean = false) {
@@ -155,13 +160,13 @@ object KDocRenderer {
                     sb.trimEnd()
                     sb.append("<pre><code>")
                     processChildren()
-                    sb.append("</code><pre>")
+                    sb.append("</code></pre>")
                 }
                 MarkdownElementTypes.SHORT_REFERENCE_LINK,
                 MarkdownElementTypes.FULL_REFERENCE_LINK -> {
                     val label = node.child(MarkdownElementTypes.LINK_LABEL)?.child(MarkdownTokenTypes.TEXT)?.text
                     if (label != null) {
-                        val linkText = node.child(MarkdownElementTypes.LINK_TEXT)?.child(MarkdownTokenTypes.TEXT)?.text ?: label
+                        val linkText = node.child(MarkdownElementTypes.LINK_TEXT)?.toHtml() ?: label
                         DocumentationManagerUtil.createHyperlink(sb, label, linkText, true)
                     }
                     else {
@@ -169,10 +174,10 @@ object KDocRenderer {
                     }
                 }
                 MarkdownElementTypes.INLINE_LINK -> {
-                    val label = node.child(MarkdownElementTypes.LINK_TEXT)?.child(MarkdownTokenTypes.TEXT)?.text
+                    val label = node.child(MarkdownElementTypes.LINK_TEXT)?.toHtml()
                     val destination = node.child(MarkdownElementTypes.LINK_DESTINATION)?.text
                     if (label != null && destination != null) {
-                        sb.append("<a href=\"$destination\">${label.htmlEscape()}</a>")
+                        sb.append("<a href=\"$destination\">$label</a>")
                     }
                     else {
                         sb.append(node.text)
@@ -202,6 +207,21 @@ object KDocRenderer {
                 }
                 MarkdownTokenTypes.GT -> sb.append("&gt;")
                 MarkdownTokenTypes.LT -> sb.append("&lt;")
+
+                MarkdownElementTypes.LINK_TEXT -> {
+                    val childrenWithoutBrackets = node.children.drop(1).dropLast(1)
+                    for (child in childrenWithoutBrackets) {
+                        sb.append(child.toHtml())
+                    }
+                }
+
+                MarkdownTokenTypes.EMPH -> {
+                    val parentNodeType = node.parent?.type
+                    if (parentNodeType != MarkdownElementTypes.EMPH && parentNodeType != MarkdownElementTypes.STRONG) {
+                        sb.append(node.text)
+                    }
+                }
+
                 else -> {
                     processChildren()
                 }

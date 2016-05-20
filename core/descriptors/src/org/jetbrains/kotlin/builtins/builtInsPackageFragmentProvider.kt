@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.types.FlexibleTypeFactory
 import java.io.InputStream
 
 fun createBuiltInPackageFragmentProvider(
@@ -50,7 +51,7 @@ fun createBuiltInPackageFragmentProvider(
             localClassResolver,
             ErrorReporter.DO_NOTHING,
             LookupTracker.DO_NOTHING,
-            FlexibleTypeCapabilitiesDeserializer.ThrowException,
+            FlexibleTypeFactory.ThrowException,
             classDescriptorFactory,
             notFoundClasses,
             additionalSupertypes = additionalSupertypes

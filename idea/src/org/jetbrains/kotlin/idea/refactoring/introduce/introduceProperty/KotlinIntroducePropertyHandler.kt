@@ -57,6 +57,7 @@ class KotlinIntroducePropertyHandler(
                 INTRODUCE_PROPERTY,
                 editor,
                 file,
+                "Select target code block",
                 { elements, parent ->
                     parent.getExtractionContainers(strict = true, includeAll = true).filter { it is KtClassBody || (it is KtFile && !it.isScript) }
                 },

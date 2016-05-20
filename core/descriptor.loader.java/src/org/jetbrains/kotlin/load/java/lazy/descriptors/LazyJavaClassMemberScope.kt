@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.impl.EnumEntrySyntheticClassDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.incremental.record
 import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithDifferentJvmName.isRemoveAtByIndex
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithDifferentJvmName.sameAsRenamedInJvmBuiltin
@@ -622,18 +623,18 @@ class LazyJavaClassMemberScope(
         if (jNestedClass == null) {
             val field = enumEntryIndex()[name]
             if (field != null) {
-                val createLazyValue: NotNullLazyValue<Collection<Name>> = c.storageManager.createLazyValue {
+                val enumMemberNames: NotNullLazyValue<Collection<Name>> = c.storageManager.createLazyValue {
                     memberIndex().getAllFieldNames() + memberIndex().getMethodNames({ true })
                 }
-                EnumEntrySyntheticClassDescriptor.create(c.storageManager, ownerDescriptor, name,
-                                                         createLazyValue, c.resolveAnnotations(field), c.components.sourceElementFactory.source(field))
+                EnumEntrySyntheticClassDescriptor.create(
+                        c.storageManager, ownerDescriptor, name, enumMemberNames, c.resolveAnnotations(field),
+                        c.components.sourceElementFactory.source(field)
+                )
             }
             else null
         }
         else {
-            LazyJavaClassDescriptor(
-                    c, ownerDescriptor, DescriptorUtils.getFqName(ownerDescriptor).child(name).toSafe(), jNestedClass
-            )
+            LazyJavaClassDescriptor(c, ownerDescriptor, jNestedClass)
         }
     }
 
@@ -643,6 +644,16 @@ class LazyJavaClassMemberScope(
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
         recordLookup(name, location)
         return nestedClasses(name)
+    }
+
+    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> {
+        recordLookup(name, location)
+        return super.getContributedFunctions(name, location)
+    }
+
+    override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
+        recordLookup(name, location)
+        return super.getContributedVariables(name, location)
     }
 
     override fun getClassNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name>
@@ -659,5 +670,9 @@ class LazyJavaClassMemberScope(
         }
     }
 
-    override fun toString() = "Lazy java member scope for " + jClass.fqName
+    private fun recordLookup(name: Name, from: LookupLocation) {
+        c.components.lookupTracker.record(from, ownerDescriptor, name)
+    }
+
+    override fun toString() = "Lazy Java member scope for " + jClass.fqName
 }

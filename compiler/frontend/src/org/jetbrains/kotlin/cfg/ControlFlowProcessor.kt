@@ -661,7 +661,7 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
                 }
                 var isFirst = true
                 for (catchClause in catchClauses) {
-                    builder.enterLexicalScope(catchClause)
+                    builder.enterBlockScope(catchClause)
                     if (!isFirst) {
                         builder.bindLabel(catchLabels.remove())
                     }
@@ -675,7 +675,7 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
                     }
                     generateInstructions(catchClause.catchBody)
                     builder.jump(afterCatches, expression)
-                    builder.exitLexicalScope(catchClause)
+                    builder.exitBlockScope(catchClause)
                 }
 
                 builder.bindLabel(afterCatches)
@@ -708,7 +708,7 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
         }
 
         override fun visitDoWhileExpression(expression: KtDoWhileExpression) {
-            builder.enterLexicalScope(expression)
+            builder.enterBlockScope(expression)
             mark(expression)
             val loopInfo = builder.enterLoop(expression)
 
@@ -728,11 +728,11 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             }
             builder.bindLabel(loopInfo.exitPoint)
             builder.loadUnit(expression)
-            builder.exitLexicalScope(expression)
+            builder.exitBlockScope(expression)
         }
 
         override fun visitForExpression(expression: KtForExpression) {
-            builder.enterLexicalScope(expression)
+            builder.enterBlockScope(expression)
 
             generateInstructions(expression.loopRange)
             declareLoopParameter(expression)
@@ -754,7 +754,7 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             builder.exitLoopBody(expression)
             builder.bindLabel(loopInfo.exitPoint)
             builder.loadUnit(expression)
-            builder.exitLexicalScope(expression)
+            builder.exitBlockScope(expression)
         }
 
         private fun declareLoopParameter(expression: KtForExpression) {
@@ -934,9 +934,9 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
         }
 
         override fun visitBlockExpression(expression: KtBlockExpression) {
-            val declareLexicalScope = !isBlockInDoWhile(expression)
-            if (declareLexicalScope) {
-                builder.enterLexicalScope(expression)
+            val declareBlockScope = !isBlockInDoWhile(expression)
+            if (declareBlockScope) {
+                builder.enterBlockScope(expression)
             }
             mark(expression)
             val statements = expression.statements
@@ -956,8 +956,8 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             else {
                 copyValue(statements.lastOrNull(), expression)
             }
-            if (declareLexicalScope) {
-                builder.exitLexicalScope(expression)
+            if (declareBlockScope) {
+                builder.exitBlockScope(expression)
             }
         }
 
@@ -1202,6 +1202,7 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             builder.bindLabel(doneLabel)
 
             mergeValues(branches, expression)
+            WhenChecker.checkDuplicatedLabels(expression, trace)
         }
 
         override fun visitObjectLiteralExpression(expression: KtObjectLiteralExpression) {

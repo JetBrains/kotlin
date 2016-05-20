@@ -41,25 +41,25 @@ sealed class AccessTarget {
 
 abstract class AccessValueInstruction protected constructor(
         element: KtElement,
-        lexicalScope: LexicalScope,
+        blockScope: BlockScope,
         val target: AccessTarget,
         override val receiverValues: Map<PseudoValue, ReceiverValue>
-) : InstructionWithNext(element, lexicalScope), InstructionWithReceivers
+) : InstructionWithNext(element, blockScope), InstructionWithReceivers
 
 class ReadValueInstruction private constructor(
         element: KtElement,
-        lexicalScope: LexicalScope,
+        blockScope: BlockScope,
         target: AccessTarget,
         receiverValues: Map<PseudoValue, ReceiverValue>,
         private var _outputValue: PseudoValue?
-) : AccessValueInstruction(element, lexicalScope, target, receiverValues), InstructionWithValue {
+) : AccessValueInstruction(element, blockScope, target, receiverValues), InstructionWithValue {
     constructor(
             element: KtElement,
-            lexicalScope: LexicalScope,
+            blockScope: BlockScope,
             target: AccessTarget,
             receiverValues: Map<PseudoValue, ReceiverValue>,
             factory: PseudoValueFactory
-    ): this(element, lexicalScope, target, receiverValues, null) {
+    ): this(element, blockScope, target, receiverValues, null) {
         _outputValue = factory.newValue(element, this)
     }
 
@@ -91,17 +91,17 @@ class ReadValueInstruction private constructor(
     }
 
     override fun createCopy(): InstructionImpl =
-            ReadValueInstruction(element, lexicalScope, target, receiverValues, outputValue)
+            ReadValueInstruction(element, blockScope, target, receiverValues, outputValue)
 }
 
 class WriteValueInstruction(
         assignment: KtElement,
-        lexicalScope: LexicalScope,
+        blockScope: BlockScope,
         target: AccessTarget,
         receiverValues: Map<PseudoValue, ReceiverValue>,
         val lValue: KtElement,
         val rValue: PseudoValue
-) : AccessValueInstruction(assignment, lexicalScope, target, receiverValues) {
+) : AccessValueInstruction(assignment, blockScope, target, receiverValues) {
     override val inputValues: List<PseudoValue>
         get() = (receiverValues.keys as Collection<PseudoValue>) + rValue
 
@@ -119,5 +119,5 @@ class WriteValueInstruction(
     }
 
     override fun createCopy(): InstructionImpl =
-            WriteValueInstruction(element, lexicalScope, target, receiverValues, lValue, rValue)
+            WriteValueInstruction(element, blockScope, target, receiverValues, lValue, rValue)
 }

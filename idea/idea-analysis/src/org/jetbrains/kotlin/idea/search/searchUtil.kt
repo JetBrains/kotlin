@@ -17,10 +17,13 @@
 package org.jetbrains.kotlin.idea.search
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.LocalSearchScope
+import com.intellij.psi.search.PsiSearchHelper
 import com.intellij.psi.search.SearchScope
+import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.psi.KtFile
 
@@ -50,4 +53,12 @@ fun SearchScope.restrictToKotlinSources(): SearchScope {
         }
         else -> this
     }
+}
+
+// Copied from SearchParameters.getEffectiveSearchScope()
+fun ReferencesSearch.SearchParameters.effectiveSearchScope(element: PsiElement): SearchScope {
+    if (element == elementToSearch) return effectiveSearchScope
+    if (isIgnoreAccessScope) return scopeDeterminedByUser
+    val accessScope = PsiSearchHelper.SERVICE.getInstance(element.project).getUseScope(element)
+    return scopeDeterminedByUser.intersectWith(accessScope)
 }

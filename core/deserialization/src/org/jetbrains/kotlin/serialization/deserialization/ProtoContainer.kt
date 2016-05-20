@@ -16,23 +16,24 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
-import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.PackagePartSource
 
 sealed class ProtoContainer(
         val nameResolver: NameResolver,
-        val typeTable: TypeTable
+        val typeTable: TypeTable,
+        val source: SourceElement?
 ) {
     class Class(
             val classProto: ProtoBuf.Class,
             nameResolver: NameResolver,
             typeTable: TypeTable,
-            val outerClassKind: ClassKind?
-    ) : ProtoContainer(nameResolver, typeTable) {
+            source: SourceElement?,
+            val outerClass: ProtoContainer.Class?
+    ) : ProtoContainer(nameResolver, typeTable, source) {
         val classId: ClassId = nameResolver.getClassId(classProto.fqName)
 
         val kind: ProtoBuf.Class.Kind = Flags.CLASS_KIND.get(classProto.flags) ?: ProtoBuf.Class.Kind.CLASS
@@ -45,10 +46,12 @@ sealed class ProtoContainer(
             val fqName: FqName,
             nameResolver: NameResolver,
             typeTable: TypeTable,
-            val packagePartSource: PackagePartSource?
-    ) : ProtoContainer(nameResolver, typeTable) {
+            source: SourceElement?
+    ) : ProtoContainer(nameResolver, typeTable, source) {
         override fun debugFqName(): FqName = fqName
     }
 
     abstract fun debugFqName(): FqName
+
+    override fun toString() = "${javaClass.simpleName}: ${debugFqName()}"
 }

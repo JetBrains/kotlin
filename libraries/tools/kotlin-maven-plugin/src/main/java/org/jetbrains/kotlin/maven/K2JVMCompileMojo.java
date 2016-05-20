@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.maven;
 
-import com.intellij.util.ArrayUtil;
-import com.sampullara.cli.Args;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.apache.maven.artifact.Artifact;
@@ -36,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.intellij.openapi.util.text.StringUtil.join;
+import static org.jetbrains.kotlin.maven.Util.filterClassPath;
 
 /**
  * Compiles kotlin sources
@@ -86,38 +85,22 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
             arguments.module = module;
         }
 
-        List<String> classpathList = filterClassPath(classpath);
+        List<String> classpathList = filterClassPath(project.getBasedir(), classpath);
 
         if (!classpathList.isEmpty()) {
             String classPathString = join(classpathList, File.pathSeparator);
-            getLog().info("Classpath: " + classPathString);
+            getLog().debug("Classpath: " + classPathString);
             arguments.classpath = classPathString;
         }
 
-        getLog().info("Classes directory is " + output);
+        getLog().debug("Classes directory is " + output);
         arguments.destination = output;
 
         arguments.moduleName = moduleName;
         getLog().info("Module name is " + moduleName);
 
-        try {
-            Args.parse(arguments, ArrayUtil.toStringArray(args));
-        }
-        catch (IllegalArgumentException e) {
-            throw new MojoExecutionException(e.getMessage());
-        }
-
         if (arguments.noOptimize) {
             getLog().info("Optimization is turned off");
         }
-    }
-
-    protected List<String> filterClassPath(List<String> classpath) {
-        return CollectionsKt.filter(classpath, new Function1<String, Boolean>() {
-            @Override
-            public Boolean invoke(String s) {
-                return new File(s).exists() || new File(project.getBasedir(), s).exists();
-            }
-        });
     }
 }

@@ -16,7 +16,10 @@
 
 package org.jetbrains.kotlin.idea.completion
 
-import com.intellij.codeInsight.completion.*
+import com.intellij.codeInsight.completion.CompletionProgressIndicator
+import com.intellij.codeInsight.completion.CompletionService
+import com.intellij.codeInsight.completion.InsertionContext
+import com.intellij.codeInsight.completion.PrefixMatcher
 import com.intellij.codeInsight.lookup.*
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.util.Key
@@ -29,6 +32,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.completion.handlers.CastReceiverInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
+import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.*
@@ -66,10 +70,10 @@ tailrec fun <T : Any> LookupElement.getUserDataDeep(key: Key<T>): T? {
 enum class ItemPriority {
     SUPER_METHOD_WITH_ARGUMENTS,
     FROM_UNRESOLVED_NAME_SUGGESTION,
+    GET_OPERATOR,
     DEFAULT,
     IMPLEMENT,
     OVERRIDE,
-    NAMED_PARAMETER,
     STATIC_MEMBER_FROM_IMPORTS,
     STATIC_MEMBER
 }
@@ -357,14 +361,14 @@ fun LookupElement.decorateAsStaticMember(
         memberDescriptor: DeclarationDescriptor,
         classNameAsLookupString: Boolean
 ): LookupElement? {
-    var container = memberDescriptor.containingDeclaration as? ClassDescriptor ?: return null
-    var classDescriptor = if (container.isCompanionObject)
+    val container = memberDescriptor.containingDeclaration as? ClassDescriptor ?: return null
+    val classDescriptor = if (container.isCompanionObject)
         container.containingDeclaration as? ClassDescriptor ?: return null
     else
         container
 
+    val containerFqName = container.importableFqName ?: return null
     val qualifierPresentation = classDescriptor.name.asString()
-    val qualifierText = IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(classDescriptor)
 
     return object: LookupElementDecorator<LookupElement>(this) {
         override fun getAllLookupStrings(): Set<String> {
@@ -393,31 +397,14 @@ fun LookupElement.decorateAsStaticMember(
             val psiDocumentManager = PsiDocumentManager.getInstance(context.project)
             val file = context.file as KtFile
 
-            val classImportableFqName = container.importableFqName
-            val useImport = classImportableFqName != null && file.importDirectives.any {
-                !it.isAllUnder && it.importPath?.fqnPart()?.parent() == classImportableFqName
-            }
+            val addMemberImport = file.importDirectives.any { !it.isAllUnder && it.importPath?.fqnPart()?.parent() == containerFqName }
 
-            var insertQualifier = true
-            if (useImport) {
+            if (addMemberImport) {
                 psiDocumentManager.commitAllDocuments()
-                if (ImportInsertHelper.getInstance(context.project).importDescriptor(file, memberDescriptor) != ImportDescriptorResult.FAIL) {
-                    insertQualifier = false
-                }
+                ImportInsertHelper.getInstance(context.project).importDescriptor(file, memberDescriptor)
+                psiDocumentManager.doPostponedOperationsAndUnblockDocument(context.document)
             }
 
-            if (insertQualifier) {
-                val prefix = qualifierText + "."
-
-                val offset = context.startOffset
-                context.document.insertString(offset, prefix)
-                context.offsetMap.addOffset(CompletionInitializationContext.START_OFFSET, offset + prefix.length)
-
-                shortenReferences(context, offset, offset + prefix.length)
-
-            }
-
-            psiDocumentManager.doPostponedOperationsAndUnblockDocument(context.document)
             super.handleInsert(context)
         }
     }

@@ -1,0 +1,10 @@
+a annotations.Ann 0
+p bar 0
+c 0 0/B
+m 0 0/B valB$annotations
+m 0 0/B funB
+a java.lang.annotation.Retention 1
+p annotations 1
+c 1 1/Ann
+d 0/B
+d 1/Ann

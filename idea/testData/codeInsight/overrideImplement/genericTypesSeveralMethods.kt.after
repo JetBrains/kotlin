@@ -2,6 +2,6 @@
 
 class MyClass<A: Comparable<A>> : Iterable<A> {
     override fun iterator(): Iterator<A> {
-        <selection><caret>throw UnsupportedOperationException()</selection>
+        <selection><caret>throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.</selection>
     }
 }

@@ -1,0 +1,4 @@
+class <caret>MyClass
+
+// ELEMENT: "class"
+// CHAR: '\t'

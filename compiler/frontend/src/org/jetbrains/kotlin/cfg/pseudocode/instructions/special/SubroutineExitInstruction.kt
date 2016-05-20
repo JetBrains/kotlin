@@ -22,9 +22,9 @@ import java.util.*
 
 class SubroutineExitInstruction(
         val subroutine: KtElement,
-        lexicalScope: LexicalScope,
+        blockScope: BlockScope,
         val isError: Boolean
-) : InstructionImpl(lexicalScope) {
+) : InstructionImpl(blockScope) {
     private var _sink: SubroutineSinkInstruction? = null
 
     var sink: SubroutineSinkInstruction
@@ -47,5 +47,5 @@ class SubroutineExitInstruction(
     override fun toString(): String = if (isError) "<ERROR>" else "<END>"
 
     override fun createCopy(): InstructionImpl =
-            SubroutineExitInstruction(subroutine, lexicalScope, isError)
+            SubroutineExitInstruction(subroutine, blockScope, isError)
 }

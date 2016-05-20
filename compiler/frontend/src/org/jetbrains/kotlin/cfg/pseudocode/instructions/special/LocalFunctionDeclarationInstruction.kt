@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.cfg.pseudocode.instructions.special
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import com.google.common.collect.Lists
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.LexicalScope
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.BlockScope
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionWithNext
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
@@ -29,8 +29,8 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionImpl
 class LocalFunctionDeclarationInstruction(
         element: KtElement,
         val body: Pseudocode,
-        lexicalScope: LexicalScope
-) : InstructionWithNext(element, lexicalScope) {
+        blockScope: BlockScope
+) : InstructionWithNext(element, blockScope) {
     var sink: SubroutineSinkInstruction? = null
         set(value: SubroutineSinkInstruction?) {
             field = outgoingEdgeTo(value) as SubroutineSinkInstruction?
@@ -57,5 +57,5 @@ class LocalFunctionDeclarationInstruction(
     override fun toString(): String = "d(${render(element)})"
 
     override fun createCopy(): InstructionImpl =
-            LocalFunctionDeclarationInstruction(element, body.copy(), lexicalScope)
+            LocalFunctionDeclarationInstruction(element, body.copy(), blockScope)
 }

@@ -1,2 +1,3 @@
-// "Add 'out' variance" "true"
+// "Add 'out' variance" "false"
+// ACTION: Implement interface
 interface Empty<<caret>T>

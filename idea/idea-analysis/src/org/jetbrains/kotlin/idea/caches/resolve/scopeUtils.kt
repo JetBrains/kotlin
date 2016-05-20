@@ -26,7 +26,8 @@ import org.jetbrains.kotlin.psi.KtFile
 // see com.intellij.psi.impl.file.impl.ResolveScopeManagerImpl.getInherentResolveScope
 fun getResolveScope(file: KtFile): GlobalSearchScope {
     if (file is KtCodeFragment) {
-        file.forcedResolveScope?.let { return KotlinSourceFilterScope.sourceAndClassFiles(it, file.project) }
+        // scope should be corrected when KT-6223 is implemented
+        file.getContextContainingFile()?.resolveScope?.let { return KotlinSourceFilterScope.sourceAndClassFiles(it, file.project) }
     }
 
     return when (file.getModuleInfo()) {

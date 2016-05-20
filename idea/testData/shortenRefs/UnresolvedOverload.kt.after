@@ -1,0 +1,5 @@
+import a.b.c.Foo
+
+fun foo() {
+    Foo(1.0)
+}

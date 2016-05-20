@@ -1,0 +1,1 @@
+enum class EnumTarget { RED, GREEN, BLUE }

@@ -46,6 +46,10 @@ public class PathManager {
         return getAndroidSdkRoot() + "/tools";
     }
 
+    public String getBuildToolsFolderInAndroidSdk() {
+        return getAndroidSdkRoot() + "/build-tools";
+    }
+
     public String getOutputForCompiledFiles() {
         return tmpFolder + "/libs/codegen-test-output";
     }
@@ -68,6 +72,10 @@ public class PathManager {
 
     public String getDependenciesRoot() {
         return rootFolder + "/android.tests.dependencies";
+    }
+
+    public String getGradleBinFolder() {
+        return getDependenciesRoot() + "/gradle-2.12/bin";
     }
 
     public String getRootForDownload() {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -459,13 +459,18 @@ public class DescriptorSerializer {
 
     @NotNull
     private ProtoBuf.Type.Builder type(@NotNull KotlinType type) {
-        assert !type.isError() : "Can't serialize error types: " + type; // TODO
+        ProtoBuf.Type.Builder builder = ProtoBuf.Type.newBuilder();
+
+        if (type.isError()) {
+            extension.serializeErrorType(type, builder);
+            return builder;
+        }
 
         if (FlexibleTypesKt.isFlexible(type)) {
             Flexibility flexibility = FlexibleTypesKt.flexibility(type);
 
             ProtoBuf.Type.Builder lowerBound = type(flexibility.getLowerBound());
-            lowerBound.setFlexibleTypeCapabilitiesId(getStringTable().getStringIndex(flexibility.getExtraCapabilities().getId()));
+            lowerBound.setFlexibleTypeCapabilitiesId(getStringTable().getStringIndex(flexibility.getFactory().getId()));
             if (useTypeTable()) {
                 lowerBound.setFlexibleUpperBoundId(typeId(flexibility.getUpperBound()));
             }
@@ -474,8 +479,6 @@ public class DescriptorSerializer {
             }
             return lowerBound;
         }
-
-        ProtoBuf.Type.Builder builder = ProtoBuf.Type.newBuilder();
 
         ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
         if (descriptor instanceof ClassDescriptor) {

@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve.scopes
 
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
@@ -54,5 +53,15 @@ class ChainedMemberScope(
 
         p.popIndent()
         p.println("}")
+    }
+
+    companion object {
+        fun create(debugName: String, scopes: List<MemberScope>): MemberScope {
+            return when (scopes.size) {
+                0 -> MemberScope.Empty
+                1 -> scopes.single()
+                else -> ChainedMemberScope(debugName, scopes)
+            }
+        }
     }
 }

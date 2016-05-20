@@ -41,6 +41,18 @@ public class SmartCompletionWeigherTestGenerated extends AbstractSmartCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("CallableReference_NothingLast.kt")
+    public void testCallableReference_NothingLast() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/smart/CallableReference_NothingLast.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("CallableReference_NothingLast2.kt")
+    public void testCallableReference_NothingLast2() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/smart/CallableReference_NothingLast2.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("FunctionExpected.kt")
     public void testFunctionExpected() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/smart/FunctionExpected.kt");

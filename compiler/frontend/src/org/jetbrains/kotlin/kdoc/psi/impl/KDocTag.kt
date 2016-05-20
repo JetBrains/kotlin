@@ -56,7 +56,7 @@ open class KDocTag(node: ASTNode) : KDocElementImpl(node) {
 
     val knownTag: KDocKnownTag?
         get() {
-            return if (name != null) KDocKnownTag.findByTagName(name) else null
+            return name?.let { KDocKnownTag.findByTagName(it) }
         }
 
     private fun hasSubject(contentChildren: List<ASTNode>): Boolean {
@@ -77,9 +77,23 @@ open class KDocTag(node: ASTNode) : KDocElementImpl(node) {
      */
     open fun getContent(): String {
         val builder = StringBuilder()
+        val codeBlockBuilder = StringBuilder()
+        var targetBuilder = builder
 
         var contentStarted = false
         var afterAsterisk = false
+
+        fun startCodeBlock() {
+            targetBuilder = codeBlockBuilder
+        }
+
+        fun flushCodeBlock() {
+            if (targetBuilder == codeBlockBuilder) {
+                builder.append(trimCommonIndent(codeBlockBuilder))
+                codeBlockBuilder.setLength(0)
+                targetBuilder = builder
+            }
+        }
 
         var children = childrenAfterTagName()
         if (hasSubject(children)) {
@@ -87,8 +101,18 @@ open class KDocTag(node: ASTNode) : KDocElementImpl(node) {
         }
         for (node in children) {
             val type = node.elementType
+            if (type == KDocTokens.CODE_BLOCK_TEXT) {
+                startCodeBlock()
+            }
+            else if (KDocTokens.CONTENT_TOKENS.contains(type)) {
+                flushCodeBlock()
+            }
+
             if (KDocTokens.CONTENT_TOKENS.contains(type)) {
-                builder.append(if (!contentStarted || afterAsterisk) node.text.trimStart() else node.text)
+                targetBuilder.append(if (!contentStarted || (afterAsterisk && targetBuilder == builder))
+                                         node.text.trimStart()
+                                     else
+                                         node.text)
                 contentStarted = true
                 afterAsterisk = false
             }
@@ -96,13 +120,23 @@ open class KDocTag(node: ASTNode) : KDocElementImpl(node) {
                 afterAsterisk = true
             }
             if (type == TokenType.WHITE_SPACE && contentStarted) {
-                builder.append("\n".repeat(StringUtil.countNewLines(node.text)))
+                targetBuilder.append("\n".repeat(StringUtil.countNewLines(node.text)))
             }
             if (type == KDocElementTypes.KDOC_TAG) {
                 break
             }
         }
 
+        flushCodeBlock()
+
         return builder.toString().trimEnd(' ', '\t')
     }
+
+    private fun trimCommonIndent(builder: StringBuilder): String {
+        val lines = builder.toString().split('\n')
+        val minIndent = lines.filter { it.trim().isNotEmpty() }.map { it.calcIndent() }.min() ?: 0
+        return lines.map { it.drop(minIndent) }.joinToString("\n")
+    }
+
+    fun String.calcIndent() = indexOfFirst { !it.isWhitespace() }
 }

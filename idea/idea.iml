@@ -33,7 +33,6 @@
     <orderEntry type="library" scope="PROVIDED" name="properties" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="java-i18n" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="gradle-and-groovy-plugin" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="maven" level="project" />
     <orderEntry type="module" module-name="eval4j" />
     <orderEntry type="module" module-name="idea-core" />
     <orderEntry type="module" module-name="idea-analysis" exported="" />
@@ -43,7 +42,7 @@
     <orderEntry type="module" module-name="android-extensions-compiler" scope="TEST" />
     <orderEntry type="module" module-name="android-extensions-idea" scope="TEST" />
     <orderEntry type="library" name="markdown" level="project" />
-    <orderEntry type="module" module-name="idea-completion" scope="TEST" />
+    <orderEntry type="module" module-name="idea-completion" />
     <orderEntry type="module" module-name="idea-test-framework" scope="TEST" />
     <orderEntry type="module" module-name="js.serializer" />
     <orderEntry type="module" module-name="daemon-client" />
@@ -52,5 +51,8 @@
     <orderEntry type="module" module-name="tests-common" scope="TEST" />
     <orderEntry type="library" scope="TEST" name="kotlin-test" level="project" />
     <orderEntry type="module" module-name="lint-idea" scope="PROVIDED" />
+    <orderEntry type="library" name="java-decompiler-plugin" level="project" />
+    <orderEntry type="module" module-name="formatter" />
+    <orderEntry type="module" module-name="idea-maven" />
   </component>
 </module>

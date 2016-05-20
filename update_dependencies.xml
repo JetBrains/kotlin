@@ -5,8 +5,8 @@
     <property name="idea.kotlin.branch" value="rc"/>
 
 
-    <property name="kotlin.bootstrap.branch" value=""/>
-    <property name="kotlin.bootstrap.branch.locator" value=""/>
+    <property name="kotlin.bootstrap.branch" value="1.0.3"/>
+    <property name="kotlin.bootstrap.branch.locator" value=",branch:1.0.3"/>
     <property name="kotlin.bootstrap.locator" value="buildType:bt345,tag:bootstrap,status:SUCCESS${kotlin.bootstrap.branch.locator}"/>
     <property name="kotlin.bootstrap.locator.force" value="false"/>
 
@@ -20,9 +20,9 @@
     <property name="sdk.version.prefix" value="IC" unless:set="use.ultimate.by.default"/>
 
     <!-- Uncomment to enable force version increment in branch. Set override.version.disabled to temporary disable feature without commits -->
-    <!--
-    <property name="override.version.url" value="https://teamcity.jetbrains.com/guestAuth/app/rest/builds/?locator=buildType:bt345,count:1${kotlin.bootstrap.branch.locator}"/>
-    -->
+
+    <property name="override.version.url" value="https://teamcity.jetbrains.com/guestAuth/app/rest/builds/?locator=buildType:bt345,count:1,branch:1.0.3"/>
+
     <!--<property name="override.version.disabled" value="true"/>-->
 
     <condition property="isWindows">
@@ -187,6 +187,8 @@
     </target>
 
     <target name="fetch-third-party" depends="make-dependency-dirs, make-native-platform-uberjar, fetch-idea-artifacts-for-compiler-tests">
+        <antcall target="override-version"/>
+
         <!-- ProGuard -->
         <get-maven-library prefix="net/sf/proguard" lib="proguard-base" version="5.1" target.jar.name.base="proguard" src="false"/>
         <get-maven-library prefix="net/sf/proguard" lib="proguard-anttask" version="5.1" target.jar.name.base="proguard-anttask" src="false"/>
@@ -247,7 +249,7 @@
         <ant antfile="download_android_sdk.xml" target="download_android_sdk"/>
 
         <!-- CLI Parser -->
-        <get-maven-library prefix="com/github/spullara/cli-parser" lib="cli-parser" version="1.1.1"/>
+        <get-maven-library prefix="com/github/spullara/cli-parser" lib="cli-parser" version="1.1.2"/>
 
         <!-- Rhino -->
         <get-maven-library prefix="org/mozilla" lib="rhino" version="1.7.6"/>
@@ -322,8 +324,6 @@
             <arg value="${dependencies}/bootstrap-compiler/Kotlin/kotlinc/bin"/>
             <arg line="-name 'kotlin*' ! -name '*.bat' -exec chmod a+x '{}' ;"/>
         </exec>
-
-        <antcall target="override-version"/>
 
         <download-or-build-markdown-parser/>
     </target>
@@ -681,7 +681,7 @@
                 <copy file="@{download.file.archive.jps-build-test}" tofile="@{jps-test}/jps-build-test.jar"/>
 
                 <mkdir dir="@{sources}"/>
-                <copy file="@{download.file.archive.sources}" tofile="@{sources}/sources.jar" overwrite="true"/>
+                <copy file="@{download.file.archive.sources}" tofile="@{sources}/sources.jar" overwrite="true" failonerror="false"/>
             </sequential>
 
             <build-protobuf-java-lite/>
@@ -701,7 +701,7 @@
             <property name="idea.id" value="idea${sdk.version.prefix}"/>
 
             <get src="@{base.repository.url}/ideaIC/@{idea.maven.version}/ideaIC-@{idea.maven.version}-sources.jar"
-                 dest="@{download.dir}/ideaIC-@{idea.maven.version}-sources.jar" usetimestamp="true"/>
+                 dest="@{download.dir}/ideaIC-@{idea.maven.version}-sources.jar" usetimestamp="true" ignoreerrors="true"/>
 
             <get src="@{base.repository.url}/${idea.id}/@{idea.maven.version}/${idea.id}-@{idea.maven.version}.zip"
                  dest="@{download.dir}/${idea.id}-@{idea.maven.version}.zip" usetimestamp="true"/>
@@ -948,6 +948,7 @@
                 <not>
                     <istrue value="${bootstrap.build.no.tests}"/>
                 </not>
+                <isset property="teamcity.version"/>
             </and>
         </condition>
 

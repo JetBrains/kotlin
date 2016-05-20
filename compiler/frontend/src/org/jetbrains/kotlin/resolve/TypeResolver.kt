@@ -50,7 +50,7 @@ class TypeResolver(
         private val annotationResolver: AnnotationResolver,
         private val qualifiedExpressionResolver: QualifiedExpressionResolver,
         private val moduleDescriptor: ModuleDescriptor,
-        private val flexibleTypeCapabilitiesProvider: FlexibleTypeCapabilitiesProvider,
+        private val typeTransformerForTests: TypeTransformerForTests,
         private val storageManager: StorageManager,
         private val lazinessToken: TypeLazinessToken,
         private val dynamicTypesSettings: DynamicTypesSettings,
@@ -58,10 +58,8 @@ class TypeResolver(
         private val identifierChecker: IdentifierChecker
 ) {
 
-    open class FlexibleTypeCapabilitiesProvider {
-        open fun getCapabilities(): FlexibleTypeCapabilities {
-            return FlexibleTypeCapabilities.NONE
-        }
+    open class TypeTransformerForTests {
+        open fun transformType(kotlinType: KotlinType): KotlinType? = null
     }
 
     fun resolveType(scope: LexicalScope, typeReference: KtTypeReference, trace: BindingTrace, checkBounds: Boolean): KotlinType {
@@ -369,18 +367,12 @@ class TypeResolver(
             " but ${collectedArgumentAsTypeProjections.size} instead of ${parameters.size} found in ${type.text}"
         }
 
-        if (Flexibility.FLEXIBLE_TYPE_CLASSIFIER.asSingleFqName().toUnsafe() == DescriptorUtils.getFqName(classDescriptor)
-            && parameters.size == 2) {
-            // We create flexible types by convention here
-            // This is not intended to be used in normal users' environments, only for tests and debugger etc
-            return type(DelegatingFlexibleType.create(
-                    arguments[0].type,
-                    arguments[1].type,
-                    flexibleTypeCapabilitiesProvider.getCapabilities())
-            )
-        }
-
         val resultingType = KotlinTypeImpl.create(annotations, classDescriptor, false, arguments)
+
+        // We create flexible types by convention here
+        // This is not intended to be used in normal users' environments, only for tests and debugger etc
+        typeTransformerForTests.transformType(resultingType)?.let { return type(it) }
+
         if (c.checkBounds) {
             val substitutor = TypeSubstitutor.create(resultingType)
             for (i in parameters.indices) {

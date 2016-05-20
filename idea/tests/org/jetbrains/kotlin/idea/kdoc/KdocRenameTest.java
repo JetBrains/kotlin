@@ -36,6 +36,10 @@ public class KdocRenameTest extends LightCodeInsightTestCase {
         doTest("bar");
     }
 
+    public void testTypeParamReference() throws Exception {
+        doTest("R");
+    }
+
     public void testCodeReference() throws Exception {
         doTest("xyzzy");
     }

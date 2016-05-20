@@ -156,7 +156,7 @@ fun Collection<FuzzyType>.matchExpectedInfo(expectedInfo: ExpectedInfo): Expecte
     return ExpectedInfoMatch.noMatch
 }
 
-fun FuzzyType.classifyExpectedInfo(expectedInfo: ExpectedInfo) = listOf(this).matchExpectedInfo(expectedInfo)
+fun FuzzyType.matchExpectedInfo(expectedInfo: ExpectedInfo) = listOf(this).matchExpectedInfo(expectedInfo)
 
 fun<TDescriptor: DeclarationDescriptor?> MutableCollection<LookupElement>.addLookupElements(
         descriptor: TDescriptor,
@@ -248,7 +248,9 @@ private fun MutableCollection<LookupElement>.addLookupElementsForNullable(factor
 
 fun CallableDescriptor.callableReferenceType(resolutionFacade: ResolutionFacade): FuzzyType? {
     if (!CallType.CALLABLE_REFERENCE.descriptorKindFilter.accepts(this)) return null // not supported by callable references
-    return getReflectionTypeForCandidateDescriptor(this, resolutionFacade.getFrontendService(ReflectionTypes::class.java))?.toFuzzyType(emptyList())
+    return getReflectionTypeForCandidateDescriptor(
+            this, resolutionFacade.getFrontendService(ReflectionTypes::class.java), false
+    )?.toFuzzyType(emptyList())
 }
 
 enum class SmartCompletionItemPriority {
@@ -266,7 +268,7 @@ enum class SmartCompletionItemPriority {
     ANONYMOUS_OBJECT,
     LAMBDA_NO_PARAMS,
     LAMBDA,
-    FUNCTION_REFERENCE,
+    CALLABLE_REFERENCE,
     NULL,
     INHERITOR_INSTANTIATION
 }
@@ -288,7 +290,7 @@ fun DeclarationDescriptor.fuzzyTypesForSmartCompletion(
     }
 
     if (this is CallableDescriptor) {
-        var returnType = fuzzyReturnType() ?: return emptyList()
+        val returnType = fuzzyReturnType() ?: return emptyList()
         // skip declarations of type Nothing or of generic parameter type which has no real bounds
         if (returnType.type.isNothing() || returnType.isAlmostEverything()) return emptyList()
 

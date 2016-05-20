@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ import com.intellij.util.PathUtil.getLocalPath
 import com.intellij.util.containers.MultiMap
 import com.intellij.util.indexing.FileBasedIndex
 import com.intellij.util.indexing.ScalarIndexExtension
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.configuration.KotlinJavaModuleConfigurator
 import org.jetbrains.kotlin.idea.configuration.KotlinJsModuleConfigurator
@@ -47,7 +48,9 @@ import org.jetbrains.kotlin.idea.configuration.getConfiguratorByName
 import org.jetbrains.kotlin.idea.framework.*
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.runWithAlternativeResolveEnabled
+import org.jetbrains.kotlin.idea.vfilefinder.JsVirtualFileFinderFactory
 import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 import org.jetbrains.kotlin.utils.JsBinaryVersion
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
@@ -163,7 +166,7 @@ private enum class LibraryJarDescriptor private constructor(val jarName: String,
     JS_STDLIB_SRC_JAR(PathUtil.JS_LIB_SRC_JAR_NAME, false)
 }
 
-private val PLUGIN_VERSIONS_SEPARATORS = arrayOf("Idea", "IJ", "release")
+private val PLUGIN_VERSIONS_SEPARATORS = arrayOf("Idea", "IJ", "release", "dev")
 @JvmOverloads fun bundledRuntimeVersion(pluginVersion: String = KotlinPluginUtil.getPluginVersion()): String {
     var placeToSplit = -1
 
@@ -256,11 +259,18 @@ fun showRuntimeJarNotFoundDialog(project: Project, jarName: String) {
                              "No Runtime Found")
 }
 
-fun getKotlinRuntimeMarkerClass(project: Project, scope: GlobalSearchScope): PsiClass? {
+fun getKotlinJvmRuntimeMarkerClass(project: Project, scope: GlobalSearchScope): PsiClass? {
     return runReadAction {
         project.runWithAlternativeResolveEnabled {
-            JavaPsiFacade.getInstance(project).findClass("kotlin.Unit", scope)
+            JavaPsiFacade.getInstance(project).findClass(KotlinBuiltIns.FQ_NAMES.unit.asString(), scope)
         }
     }
 }
 
+fun getKotlinJsRuntimeMarkerClass(project: Project, scope: GlobalSearchScope): VirtualFile? {
+    return runReadAction {
+        project.runWithAlternativeResolveEnabled {
+            JsVirtualFileFinderFactory.SERVICE.getInstance(project).create(scope).findVirtualFileWithHeader(ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.unit.toSafe()))
+        }
+    }
+}

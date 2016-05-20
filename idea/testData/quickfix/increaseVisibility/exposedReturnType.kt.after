@@ -1,0 +1,9 @@
+// "Make 'Data' internal" "true"
+// ACTION: Make 'bar' private
+// ACTION: Make 'Data' public
+
+internal data class Data(val x: Int)
+
+class First {
+    internal fun bar(x: Int) = Data(x)
+}

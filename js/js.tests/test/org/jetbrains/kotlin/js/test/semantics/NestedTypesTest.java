@@ -70,6 +70,34 @@ public class NestedTypesTest extends SingleFileTranslationTest {
         checkFooBoxIsOk();
     }
 
+    public void testInnerObjectRefFromConstructor() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testNestedObjectLazyInitialized() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testImplicitOuterThisFromLambda() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testImplicitOuterThisFromLocalClass() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testPrivateFieldNotOverridenInNestedSubclass() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testOuterClassReferenceFromSecondaryConstructor() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testReceivers() throws Exception {
+        checkFooBoxIsOk();
+    }
+
     @NotNull
     @Override
     protected List<String> additionalJsFiles(@NotNull EcmaVersion ecmaVersion) {

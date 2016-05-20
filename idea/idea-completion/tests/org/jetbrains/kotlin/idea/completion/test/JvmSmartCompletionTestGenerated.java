@@ -137,6 +137,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
 
+    @TestMetadata("EqOperatorPlatformType.kt")
+    public void testEqOperatorPlatformType() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/EqOperatorPlatformType.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ExtensionFunctionTypeVariables.kt")
     public void testExtensionFunctionTypeVariables() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/ExtensionFunctionTypeVariables.kt");
@@ -146,6 +152,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestMetadata("FilterTo.kt")
     public void testFilterTo() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/FilterTo.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("GetOperator.kt")
+    public void testGetOperator() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/GetOperator.kt");
         doTest(fileName);
     }
 

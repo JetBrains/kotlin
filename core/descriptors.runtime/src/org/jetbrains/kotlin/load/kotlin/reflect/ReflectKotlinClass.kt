@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.load.java.structure.reflect.isEnumClassOrSpecialized
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.load.kotlin.header.ReadKotlinClassHeaderAnnotationVisitor
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import java.lang.reflect.Constructor
 import java.lang.reflect.Field
@@ -41,7 +42,7 @@ private val TYPES_ELIGIBLE_FOR_SIMPLE_VISIT = setOf<Class<*>>(
 
 class ReflectKotlinClass private constructor(
         val klass: Class<*>,
-        private val classHeader: KotlinClassHeader
+        override val classHeader: KotlinClassHeader
 ) : KotlinJvmBinaryClass {
 
     companion object Factory {
@@ -53,11 +54,11 @@ class ReflectKotlinClass private constructor(
         }
     }
 
-    override fun getLocation() = klass.name.replace('.', '/') + ".class"
+    override val location: String
+        get() = klass.name.replace('.', '/') + ".class"
 
-    override fun getClassId() = klass.classId
-
-    override fun getClassHeader() = classHeader
+    override val classId: ClassId
+        get() = klass.classId
 
     override fun loadClassAnnotations(visitor: KotlinJvmBinaryClass.AnnotationVisitor) {
         ReflectClassStructure.loadClassAnnotations(klass, visitor)

@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.incremental.CacheVersion
 import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.testingUtils.*
+import org.jetbrains.kotlin.jps.disableJava6FileManager
 import org.jetbrains.kotlin.jps.incremental.JpsLookupStorageProvider
 import org.jetbrains.kotlin.jps.incremental.KotlinDataContainerTarget
 import org.jetbrains.kotlin.jps.incremental.getKotlinCache
@@ -57,7 +58,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
 import java.util.*
-import kotlin.properties.Delegates
+import kotlin.reflect.jvm.javaField
 
 abstract class AbstractIncrementalJpsTest(
         private val allowNoFilesWithSuffixInTestData: Boolean = false,
@@ -65,6 +66,10 @@ abstract class AbstractIncrementalJpsTest(
         private val allowNoBuildLogFileInTestData: Boolean = false
 ) : JpsBuildTestCase() {
     companion object {
+        init {
+            disableJava6FileManager()
+        }
+
         private val COMPILATION_FAILED = "COMPILATION FAILED"
 
         // change to "/tmp" or anything when default is too long (for easier debugging)
@@ -75,13 +80,10 @@ abstract class AbstractIncrementalJpsTest(
 
     protected open val enableExperimentalIncrementalCompilation = false
 
-    protected var testDataDir: File by Delegates.notNull()
-
-    protected var workDir: File by Delegates.notNull()
-
-    protected var projectDescriptor: ProjectDescriptor by Delegates.notNull()
-
-    protected var lookupsDuringTest: MutableSet<LookupSymbol> by Delegates.notNull()
+    protected lateinit var testDataDir: File
+    protected lateinit var workDir: File
+    protected lateinit var projectDescriptor: ProjectDescriptor
+    protected lateinit var lookupsDuringTest: MutableSet<LookupSymbol>
 
     protected var mapWorkingToOriginalFile: MutableMap<File, File> = hashMapOf()
 
@@ -100,7 +102,7 @@ abstract class AbstractIncrementalJpsTest(
         Logger.getRootLogger().addAppender(console)
     }
 
-    private val systemPropertiesBackup = run {
+    private var systemPropertiesBackup = run {
         val props = System.getProperties()
         val output = ByteArrayOutputStream()
         props.store(output, "System properties backup")
@@ -127,6 +129,10 @@ abstract class AbstractIncrementalJpsTest(
 
     override fun tearDown() {
         restoreSystemProperties()
+        (AbstractIncrementalJpsTest::myProject).javaField!![this] = null
+        (AbstractIncrementalJpsTest::projectDescriptor).javaField!![this] = null
+        (AbstractIncrementalJpsTest::systemPropertiesBackup).javaField!![this] = null
+        lookupsDuringTest.clear()
         super.tearDown()
     }
 

@@ -76,7 +76,7 @@ CODE_FENCE_END=("```" | "~~~")
                                             return KDocTokens.LEADING_ASTERISK; }
 
 <CONTENTS_BEGINNING> "@"{TAG_NAME} {
-    KDocKnownTag tag = KDocKnownTag.findByTagName(zzBuffer.subSequence(zzStartRead, zzMarkedPos));
+    KDocKnownTag tag = KDocKnownTag.Companion.findByTagName(zzBuffer.subSequence(zzStartRead, zzMarkedPos));
     yybegin(tag != null && tag.isReferenceRequired() ? TAG_BEGINNING : TAG_TEXT_BEGINNING);
     return KDocTokens.TAG_NAME;
 }
@@ -178,33 +178,20 @@ CODE_FENCE_END=("```" | "~~~")
         yybegin(CONTENTS);
         return KDocTokens.TEXT;
     }
-
-    {WHITE_SPACE_CHAR}+ {
-        if (yytextContainLineBreaks()) {
-            yybegin(CODE_BLOCK_LINE_BEGINNING);
-            return TokenType.WHITE_SPACE;
-        }
-        return KDocTokens.TEXT;
-    }
-
-    . {
-        yybegin(CODE_BLOCK);
-        return KDocTokens.TEXT;
-    }
 }
 
 <CODE_BLOCK_LINE_BEGINNING, CODE_BLOCK_CONTENTS_BEGINNING, CODE_BLOCK> {
-
     {WHITE_SPACE_CHAR}+ {
         if (yytextContainLineBreaks()) {
             yybegin(CODE_BLOCK_LINE_BEGINNING);
             return TokenType.WHITE_SPACE;
         }
-        return KDocTokens.TEXT;
+        return KDocTokens.CODE_BLOCK_TEXT;
     }
+
     . {
         yybegin(CODE_BLOCK);
-        return KDocTokens.TEXT;
+        return KDocTokens.CODE_BLOCK_TEXT;
     }
 }
 

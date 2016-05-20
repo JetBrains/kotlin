@@ -15,6 +15,7 @@ import java.util.Collections // TODO: it's temporary while we have java.util.Col
 
 /**
  * Returns a set containing all elements of the original set except the given [element].
+ * The returned set preserves the element iteration order of the original set.
  */
 public operator fun <T> Set<T>.minus(element: T): Set<T> {
     val result = LinkedHashSet<T>(mapCapacity(size))
@@ -24,6 +25,7 @@ public operator fun <T> Set<T>.minus(element: T): Set<T> {
 
 /**
  * Returns a set containing all elements of the original set except the elements contained in the given [elements] array.
+ * The returned set preserves the element iteration order of the original set.
  */
 public operator fun <T> Set<T>.minus(elements: Array<out T>): Set<T> {
     val result = LinkedHashSet<T>(this)
@@ -33,6 +35,7 @@ public operator fun <T> Set<T>.minus(elements: Array<out T>): Set<T> {
 
 /**
  * Returns a set containing all elements of the original set except the elements contained in the given [elements] collection.
+ * The returned set preserves the element iteration order of the original set.
  */
 public operator fun <T> Set<T>.minus(elements: Iterable<T>): Set<T> {
     val other = elements.convertToSetForSetOperationWith(this)
@@ -47,6 +50,7 @@ public operator fun <T> Set<T>.minus(elements: Iterable<T>): Set<T> {
 
 /**
  * Returns a set containing all elements of the original set except the elements contained in the given [elements] sequence.
+ * The returned set preserves the element iteration order of the original set.
  */
 public operator fun <T> Set<T>.minus(elements: Sequence<T>): Set<T> {
     val result = LinkedHashSet<T>(this)
@@ -56,6 +60,7 @@ public operator fun <T> Set<T>.minus(elements: Sequence<T>): Set<T> {
 
 /**
  * Returns a set containing all elements of the original set except the given [element].
+ * The returned set preserves the element iteration order of the original set.
  */
 @kotlin.internal.InlineOnly
 public inline fun <T> Set<T>.minusElement(element: T): Set<T> {
@@ -63,7 +68,8 @@ public inline fun <T> Set<T>.minusElement(element: T): Set<T> {
 }
 
 /**
- * Returns a set containing all elements of the original set and then the given [element].
+ * Returns a set containing all elements of the original set and then the given [element] if it isn't already in this set.
+ * The returned set preserves the element iteration order of the original set.
  */
 public operator fun <T> Set<T>.plus(element: T): Set<T> {
     val result = LinkedHashSet<T>(mapCapacity(size + 1))
@@ -73,7 +79,9 @@ public operator fun <T> Set<T>.plus(element: T): Set<T> {
 }
 
 /**
- * Returns a set containing all elements both of the original set and the given [elements] array.
+ * Returns a set containing all elements of the original set and the given [elements] array,
+ * which aren't already in this set.
+ * The returned set preserves the element iteration order of the original set.
  */
 public operator fun <T> Set<T>.plus(elements: Array<out T>): Set<T> {
     val result = LinkedHashSet<T>(mapCapacity(this.size + elements.size))
@@ -83,7 +91,9 @@ public operator fun <T> Set<T>.plus(elements: Array<out T>): Set<T> {
 }
 
 /**
- * Returns a set containing all elements both of the original set and the given [elements] collection.
+ * Returns a set containing all elements of the original set and the given [elements] collection,
+ * which aren't already in this set.
+ * The returned set preserves the element iteration order of the original set.
  */
 public operator fun <T> Set<T>.plus(elements: Iterable<T>): Set<T> {
     val result = LinkedHashSet<T>(mapCapacity(elements.collectionSizeOrNull()?.let { this.size + it } ?: this.size * 2))
@@ -93,7 +103,9 @@ public operator fun <T> Set<T>.plus(elements: Iterable<T>): Set<T> {
 }
 
 /**
- * Returns a set containing all elements both of the original set and the given [elements] sequence.
+ * Returns a set containing all elements of the original set and the given [elements] sequence,
+ * which aren't already in this set.
+ * The returned set preserves the element iteration order of the original set.
  */
 public operator fun <T> Set<T>.plus(elements: Sequence<T>): Set<T> {
     val result = LinkedHashSet<T>(mapCapacity(this.size * 2))
@@ -103,7 +115,8 @@ public operator fun <T> Set<T>.plus(elements: Sequence<T>): Set<T> {
 }
 
 /**
- * Returns a set containing all elements of the original set and then the given [element].
+ * Returns a set containing all elements of the original set and then the given [element] if it isn't already in this set.
+ * The returned set preserves the element iteration order of the original set.
  */
 @kotlin.internal.InlineOnly
 public inline fun <T> Set<T>.plusElement(element: T): Set<T> {

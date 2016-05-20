@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
@@ -86,14 +85,17 @@ public class CommonSupertypes {
         boolean hasFlexible = false;
         List<KotlinType> upper = new ArrayList<KotlinType>(types.size());
         List<KotlinType> lower = new ArrayList<KotlinType>(types.size());
-        Set<FlexibleTypeCapabilities> capabilities = new LinkedHashSet<FlexibleTypeCapabilities>();
+        Set<FlexibleTypeFactory> factories = new LinkedHashSet<FlexibleTypeFactory>();
         for (KotlinType type : types) {
             if (FlexibleTypesKt.isFlexible(type)) {
+                if (DynamicTypesKt.isDynamic(type)) {
+                    return type;
+                }
                 hasFlexible = true;
                 Flexibility flexibility = FlexibleTypesKt.flexibility(type);
                 upper.add(flexibility.getUpperBound());
                 lower.add(flexibility.getLowerBound());
-                capabilities.add(flexibility.getExtraCapabilities());
+                factories.add(flexibility.getFactory());
             }
             else {
                 upper.add(type);
@@ -102,10 +104,9 @@ public class CommonSupertypes {
         }
 
         if (!hasFlexible) return commonSuperTypeForInflexible(types, recursionDepth, maxDepth);
-        return DelegatingFlexibleType.create(
+        return CollectionsKt.single(factories).create( // mixing different factories is not supported
                 commonSuperTypeForInflexible(lower, recursionDepth, maxDepth),
-                commonSuperTypeForInflexible(upper, recursionDepth, maxDepth),
-                CollectionsKt.single(capabilities) // mixing different capabilities is not supported
+                commonSuperTypeForInflexible(upper, recursionDepth, maxDepth)
         );
     }
 

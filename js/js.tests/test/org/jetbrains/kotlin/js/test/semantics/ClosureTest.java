@@ -167,4 +167,24 @@ public final class ClosureTest extends SingleFileTranslationTest {
     public void testClosureThisAndClassObject() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testLocalConstructorAndMethod() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testDeepInnerClassInLocalClass() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testDeepInnerClassInLocalClassFromExtension() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testImplicitGenericReceiverInExtensionInLocalClass() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testClosureThisInLambdaInsideObject() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.utils.ErrorReportingUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 
 import static org.jetbrains.kotlin.js.translate.general.Translation.translateAsExpression;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
@@ -55,7 +57,11 @@ public final class QualifiedExpressionTranslator {
             @NotNull KtQualifiedExpression expression,
             @NotNull TranslationContext context
     ) {
-        JsExpression receiver = translateReceiver(expression, context);
+        ResolvedCall<?> call = CallUtilKt.getResolvedCall(expression, context.bindingContext());
+        JsExpression receiver = null;
+        if (call != null) {
+            receiver = translateReceiver(expression, context);
+        }
         KtExpression selector = getSelector(expression);
         return dispatchToCorrectTranslator(receiver, selector, context);
     }
@@ -75,7 +81,7 @@ public final class QualifiedExpressionTranslator {
         }
         //TODO: never get there
         if (selector instanceof KtSimpleNameExpression) {
-            return ReferenceTranslator.translateSimpleNameWithQualifier((KtSimpleNameExpression) selector, receiver, context);
+            return ReferenceTranslator.translateSimpleName((KtSimpleNameExpression) selector, context);
         }
         throw new AssertionError("Unexpected qualified expression: " + selector.getText());
     }

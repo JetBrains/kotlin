@@ -20,7 +20,11 @@ import org.jetbrains.kotlin.resolve.calls.inference.CallHandle
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.valueParameterPosition
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.Flexibility
+import org.jetbrains.kotlin.types.Flexibility.SpecificityRelation
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
 interface SpecificityComparisonCallbacks {
@@ -66,9 +70,12 @@ fun <T> isSignatureNotLessSpecific(
     return !constraintSystem.status.hasContradiction()
 }
 
+private fun KotlinType.getSpecificityRelationTo(otherType: KotlinType) =
+        this.getCapability(Flexibility::class.java)?.getSpecificityRelationTo(otherType) ?: Flexibility.SpecificityRelation.DONT_KNOW
+
 private fun isDefinitelyLessSpecificByTypeSpecificity(specific: KotlinType, general: KotlinType): Boolean {
     val sThanG = specific.getSpecificityRelationTo(general)
     val gThanS = general.getSpecificityRelationTo(specific)
-    return sThanG == Specificity.Relation.LESS_SPECIFIC &&
-           gThanS != Specificity.Relation.LESS_SPECIFIC
+    return sThanG == SpecificityRelation.LESS_SPECIFIC &&
+           gThanS != SpecificityRelation.LESS_SPECIFIC
 }

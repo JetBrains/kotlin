@@ -39,7 +39,4 @@ object RuntimeErrorReporter : ErrorReporter {
         throw IllegalStateException("Cannot infer visibility for $descriptor")
     }
 
-    override fun reportLoadingError(message: String, exception: Exception?) {
-        throw IllegalStateException(message, exception)
-    }
 }

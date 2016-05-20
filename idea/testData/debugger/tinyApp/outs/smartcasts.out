@@ -5,11 +5,9 @@ Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socke
 smartcasts.kt:19
 Compile bytecode for derived.prop
 smartcasts.kt:19
-Compile bytecode for derived.prop
 smartcasts.kt:29
 Compile bytecode for nullable.prop
 smartcasts.kt:29
-Compile bytecode for nullable.prop
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0

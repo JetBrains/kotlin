@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,11 +25,14 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyGetterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
+import org.jetbrains.kotlin.load.java.lazy.types.LazyJavaTypeResolver
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.KotlinTypeImpl
+import org.jetbrains.kotlin.types.StarProjectionImpl
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
 private class XmlSourceElement(override val psi: PsiElement) : PsiSourceElement
@@ -66,30 +69,28 @@ internal fun genPropertyForWidget(
                                   defaultType.constructor.parameters.map { StarProjectionImpl(it) })
     } ?: context.viewType
 
-    return genProperty(resolvedWidget.widget.id, receiverType, type, packageFragmentDescriptor, sourceEl, context, resolvedWidget.errorType)
+    return genProperty(resolvedWidget.widget.id, receiverType, type, packageFragmentDescriptor, sourceEl, resolvedWidget.errorType)
 }
 
 internal fun genPropertyForFragment(
-        packageFragmentDescriptor: PackageFragmentDescriptor,
+        packageFragmentDescriptor: AndroidSyntheticPackageFragmentDescriptor,
         receiverType: KotlinType,
         type: KotlinType,
-        fragment: AndroidResource.Fragment,
-        context: SyntheticElementResolveContext
+        fragment: AndroidResource.Fragment
 ): PropertyDescriptor {
     val sourceElement = fragment.sourceElement?.let { XmlSourceElement(it) } ?: SourceElement.NO_SOURCE
-    return genProperty(fragment.id, receiverType, type, packageFragmentDescriptor, sourceElement, context, null)
+    return genProperty(fragment.id, receiverType, type, packageFragmentDescriptor, sourceElement, null)
 }
 
 private fun genProperty(
-        id: String,
+        id: ResourceIdentifier,
         receiverType: KotlinType,
         type: KotlinType,
-        containingDeclaration: DeclarationDescriptor,
+        containingDeclaration: AndroidSyntheticPackageFragmentDescriptor,
         sourceElement: SourceElement,
-        context: SyntheticElementResolveContext,
         errorType: String?
 ): PropertyDescriptor {
-    val alwaysCastToView = type.constructor.declarationDescriptor?.fqNameUnsafe?.asString() == AndroidConst.VIEWSTUB_FQNAME
+    val cacheView = type.constructor.declarationDescriptor?.fqNameUnsafe?.asString() != AndroidConst.VIEWSTUB_FQNAME
 
     val property = object : AndroidSyntheticProperty, PropertyDescriptorImpl(
             containingDeclaration,
@@ -98,17 +99,17 @@ private fun genProperty(
             Modality.FINAL,
             Visibilities.PUBLIC,
             false,
-            Name.identifier(id),
+            Name.identifier(id.name),
             CallableMemberDescriptor.Kind.SYNTHESIZED,
             sourceElement,
             false,
             false) {
         override val errorType = errorType
-        override val alwaysCastToView = alwaysCastToView
+        override val cacheView = cacheView
+        override val resourceId = id
     }
 
-    val actualType = if (alwaysCastToView) context.viewType else type
-    val flexibleType = DelegatingFlexibleType.create(actualType, actualType.makeNullable(), FlexibleTypeCapabilities.NONE)
+    val flexibleType = LazyJavaTypeResolver.FlexibleJavaClassifierTypeFactory.create(type, type.makeNullable())
     property.setType(
             flexibleType,
             emptyList<TypeParameterDescriptor>(),
@@ -138,7 +139,8 @@ interface AndroidSyntheticFunction
 
 interface AndroidSyntheticProperty {
     val errorType: String?
-    val alwaysCastToView: Boolean
+    val cacheView: Boolean
+    val resourceId: ResourceIdentifier
 
     val isErrorType: Boolean
         get() = errorType != null

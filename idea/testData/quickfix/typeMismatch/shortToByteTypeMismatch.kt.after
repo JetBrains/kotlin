@@ -1,0 +1,5 @@
+// "Change 'x' type to 'Int'" "true"
+
+fun foo() {
+    val x: Int = 1000
+}

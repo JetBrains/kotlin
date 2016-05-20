@@ -1,0 +1,74 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.1.0'
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+apply plugin: 'com.android.application'
+
+repositories {
+    jcenter()
+}
+
+android {
+    compileSdkVersion 19
+    buildToolsVersion "23.0.3"
+
+    defaultConfig {
+        applicationId "org.jetbrains.kotlin.android.tests"
+        minSdkVersion 19
+        targetSdkVersion 19
+        versionCode 1
+        versionName "1.0"
+        testApplicationId "org.jetbrains.kotlin.android.tests.gradle"
+        testInstrumentationRunner "android.test.InstrumentationTestRunner"
+    }
+    buildTypes {
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java {
+                srcDirs = ['src']
+            }
+            res.srcDirs = ['res']
+        }
+        androidTest {
+            java {
+                srcDirs = ['src']
+            }
+        }
+    }
+    packagingOptions { exclude 'META-INF/build.txt' }
+
+    //TODO run under java 6, cause there is error on implicit 'stream' import in 'asWithMutable' test
+    lintOptions {
+        abortOnError false
+    }
+
+    compileOptions {
+        incremental = false
+    }
+
+    dexOptions {
+        dexInProcess false
+        javaMaxHeapSize "600m"
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile 'junit:junit:4.12'
+}

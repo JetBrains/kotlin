@@ -27,7 +27,6 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Analyzer
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.SourceInterpreter
 import org.jetbrains.org.objectweb.asm.tree.analysis.SourceValue
-import org.jetbrains.org.objectweb.asm.util.Printer
 
 class RedundantCoercionToUnitTransformer : MethodTransformer() {
     override fun transform(internalClassName: String, methodNode: MethodNode) {
@@ -35,19 +34,38 @@ class RedundantCoercionToUnitTransformer : MethodTransformer() {
     }
 
     private class Transformer(val methodNode: MethodNode) {
+        private interface Transformation {
+            fun apply(insn: AbstractInsnNode)
+        }
+
+        private inline fun Transformation(crossinline body: (AbstractInsnNode) -> Unit): Transformation =
+                object : Transformation {
+                    override fun apply(insn: AbstractInsnNode) {
+                        body(insn)
+                    }
+                }
+
+        private val REPLACE_WITH_NOP = Transformation { insnList.replaceNodeGetNext(it, createRemovableNopInsn()) }
+        private val REPLACE_WITH_POP1 = Transformation { insnList.replaceNodeGetNext(it, InsnNode(Opcodes.POP)) }
+        private val REPLACE_WITH_POP2 = Transformation { insnList.replaceNodeGetNext(it, InsnNode(Opcodes.POP2)) }
+        private val INSERT_POP1_AFTER = Transformation { insnList.insert(it, InsnNode(Opcodes.POP)) }
+        private val INSERT_POP2_AFTER = Transformation { insnList.insert(it, InsnNode(Opcodes.POP2)) }
+
         private val insnList = methodNode.instructions
 
         private val insns = insnList.toArray()
 
         private val dontTouchInsns = hashSetOf<AbstractInsnNode>()
-        private val transformations = hashMapOf<AbstractInsnNode, () -> Unit>()
+        private val transformations = hashMapOf<AbstractInsnNode, Transformation>()
         private val removableNops = hashSetOf<InsnNode>()
 
         private val frames: Array<out Frame<SourceValue>?> = analyzeMethodBody()
 
         fun transform() {
             computeTransformations()
-            transformations.values.forEach { it() }
+            for ((insn, transformation) in transformations.entries) {
+                transformation.apply(insn)
+            }
             postprocessNops()
         }
 
@@ -108,7 +126,7 @@ class RedundantCoercionToUnitTransformer : MethodTransformer() {
                     val inputTop = getInputTop(insn)
                     val sources = inputTop.insns
                     if (sources.all { !isDontTouch(it) } && sources.any { isTransformablePopOperand(it) }) {
-                        transformations[insn] = replaceWithNopTransformation(insn)
+                        transformations[insn] = replaceWithNopTransformation()
                         sources.forEach { propagatePopBackwards(it, inputTop.size) }
                     }
                 }
@@ -118,25 +136,25 @@ class RedundantCoercionToUnitTransformer : MethodTransformer() {
                     val sources = inputTop.insns
                     val resultType = (insn as TypeInsnNode).desc
                     if (sources.all { !isDontTouch(it) } && sources.any { isTransformableCheckcastOperand(it, resultType) }) {
-                        transformations[insn] = replaceWithNopTransformation(insn)
+                        transformations[insn] = replaceWithNopTransformation()
                         sources.forEach { propagatePopBackwards(it, inputTop.size) }
                     }
                     else {
-                        transformations[insn] = insertPopAfterTransformation(insn, poppedValueSize)
+                        transformations[insn] = insertPopAfterTransformation(poppedValueSize)
                     }
                 }
 
                 insn.isPrimitiveBoxing() -> {
                     val boxedValueSize = getInputTop(insn).size
-                    transformations[insn] = replaceWithPopTransformation(insn, boxedValueSize)
+                    transformations[insn] = replaceWithPopTransformation(boxedValueSize)
                 }
 
                 insn.isUnitOrNull() -> {
-                    transformations[insn] = replaceWithNopTransformation(insn)
+                    transformations[insn] = replaceWithNopTransformation()
                 }
 
                 else -> {
-                    transformations[insn] = insertPopAfterTransformation(insn, poppedValueSize)
+                    transformations[insn] = insertPopAfterTransformation(poppedValueSize)
                 }
             }
         }
@@ -175,21 +193,22 @@ class RedundantCoercionToUnitTransformer : MethodTransformer() {
             }
         }
 
-        private fun replaceWithPopTransformation(insn: AbstractInsnNode, size: Int): () -> Unit =
-                { insnList.replaceNodeGetNext(insn, createPopInsn(size)) }
-
-        private fun insertPopAfterTransformation(insn: AbstractInsnNode, size: Int) =
-                { insnList.insert(insn, createPopInsn(size)) }
-
-        private fun replaceWithNopTransformation(insn: AbstractInsnNode): () -> Unit =
-                { insnList.replaceNodeGetNext(insn, createRemovableNopInsn()) }
-
-        private fun createPopInsn(size: Int) =
+        private fun replaceWithPopTransformation(size: Int): Transformation =
                 when (size) {
-                    1 -> InsnNode(Opcodes.POP)
-                    2 -> InsnNode(Opcodes.POP2)
-                    else -> throw AssertionError("Unexpected popped value size: $size")
+                    1 -> REPLACE_WITH_POP1
+                    2 -> REPLACE_WITH_POP2
+                    else -> throw AssertionError("Unexpected pop value size: $size")
                 }
+
+        private fun insertPopAfterTransformation(size: Int): Transformation =
+                when (size) {
+                    1 -> INSERT_POP1_AFTER
+                    2 -> INSERT_POP2_AFTER
+                    else -> throw AssertionError("Unexpected pop value size: $size")
+                }
+
+        private fun replaceWithNopTransformation(): Transformation =
+                REPLACE_WITH_NOP
 
         private fun createRemovableNopInsn() =
                 InsnNode(Opcodes.NOP).apply { removableNops.add(this) }
@@ -208,15 +227,6 @@ class RedundantCoercionToUnitTransformer : MethodTransformer() {
 
         private fun isDontTouch(insn: AbstractInsnNode) =
                 insn in dontTouchInsns
-
-        private fun throwIllegalStackInsn(i: Int): Nothing =
-                throw AssertionError("#$i: illegal use of ${Printer.OPCODES[insns[i].opcode]}, input stack: ${formatInputStack(frames[i])}")
-
-        private fun formatInputStack(frame: Frame<SourceValue>?): String =
-                if (frame == null)
-                    "unknown (dead code)"
-                else
-                    (0..frame.stackSize - 1).map { frame.getStack(it).size }.joinToString(prefix =  "[", postfix = "]")
     }
 
 }

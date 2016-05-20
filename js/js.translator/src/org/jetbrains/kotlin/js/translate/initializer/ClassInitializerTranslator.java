@@ -19,21 +19,21 @@ package org.jetbrains.kotlin.js.translate.initializer;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
+import org.jetbrains.kotlin.js.translate.context.UsageTracker;
 import org.jetbrains.kotlin.js.translate.declaration.DelegationTranslator;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.reference.CallArgumentTranslator;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.AstUtilsKt;
 import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
+import org.jetbrains.kotlin.psi.KtClassOrObject;
+import org.jetbrains.kotlin.psi.KtEnumEntry;
+import org.jetbrains.kotlin.psi.KtParameter;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.types.KotlinType;
 
@@ -119,13 +119,9 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
     }
 
     private void addOuterClassReference(ClassDescriptor classDescriptor) {
-        DeclarationDescriptor container = classDescriptor.getContainingDeclaration();
-        if (!(container instanceof ClassDescriptor) || !classDescriptor.isInner()) {
-            return;
-        }
+        JsName outerName = context.getOuterClassReference(classDescriptor);
+        if (outerName == null) return;
 
-        // TODO: avoid name clashing
-        JsName outerName = initFunction.getScope().declareName(Namer.OUTER_FIELD_NAME);
         initFunction.getParameters().add(0, new JsParameter(outerName));
 
         JsExpression paramRef = fqnWithoutSideEffects(outerName, null);
@@ -135,7 +131,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
 
     @NotNull
     public JsExpression generateEnumEntryInstanceCreation(@NotNull KotlinType enumClassType) {
-        ResolvedCall<FunctionDescriptor> superCall = getSuperCall();
+        ResolvedCall<FunctionDescriptor> superCall = getSuperCall(bindingContext(), classDeclaration);
 
         if (superCall == null) {
             ClassDescriptor classDescriptor = getClassDescriptorForType(enumClassType);
@@ -149,25 +145,53 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
     private void mayBeAddCallToSuperMethod(JsFunction initializer, @NotNull ClassDescriptor descriptor) {
         if (classDeclaration.hasModifier(KtTokens.ENUM_KEYWORD)) {
             addCallToSuperMethod(Collections.<JsExpression>emptyList(), initializer);
-            return;
         }
-        if (hasAncestorClass(bindingContext(), classDeclaration)) {
-            ResolvedCall<FunctionDescriptor> superCall = getSuperCall();
-            if (superCall == null) return;
+        else if (hasAncestorClass(bindingContext(), classDeclaration)) {
+            ResolvedCall<FunctionDescriptor> superCall = getSuperCall(bindingContext(), classDeclaration);
+            if (superCall == null) {
+                if (DescriptorUtils.isEnumEntry(descriptor)) {
+                    addCallToSuperMethod(Collections.<JsExpression>emptyList(), initializer);
+                }
+                return;
+            }
 
             if (classDeclaration instanceof KtEnumEntry) {
                 JsExpression expression = CallTranslator.translate(context(), superCall, null);
-                JsExpression fixedInvocation = AstUtilsKt.toInvocationWith(expression, JsLiteral.THIS);
+                JsExpression fixedInvocation = AstUtilsKt.toInvocationWith(expression, Collections.<JsExpression>emptyList(),
+                                                                           JsLiteral.THIS);
                 initializerStatements.add(0, fixedInvocation.makeStmt());
             }
             else {
-                List<JsExpression> arguments = CallArgumentTranslator.translate(superCall, null, context()).getTranslateArguments();
-                ClassDescriptor superDescriptor = DescriptorUtils.getSuperClassDescriptor(descriptor);
-                assert superDescriptor != null : "This class is expected to have super class: "
-                                                 + PsiUtilsKt.getTextWithLocation(classDeclaration);
-                if (superDescriptor.isInner() && descriptor.isInner()) {
-                    arguments.add(0, fqnWithoutSideEffects(Namer.OUTER_FIELD_NAME, JsLiteral.THIS));
+                List<JsExpression> arguments = new ArrayList<JsExpression>();
+
+                ConstructorDescriptor superDescriptor = (ConstructorDescriptor) superCall.getResultingDescriptor();
+
+                List<DeclarationDescriptor> superclassClosure = context.getClassOrConstructorClosure(superDescriptor);
+                if (superclassClosure != null) {
+                    UsageTracker tracker = context.usageTracker();
+                    assert tracker != null : "Closure exists, therefore UsageTracker must exist too. Translating constructor of " +
+                                             descriptor;
+                    for (DeclarationDescriptor capturedValue : superclassClosure) {
+                        tracker.used(capturedValue);
+                        arguments.add(tracker.getCapturedDescriptorToJsName().get(capturedValue).makeRef());
+                    }
                 }
+
+                if (superDescriptor.getContainingDeclaration().isInner() && descriptor.isInner()) {
+                    arguments.add(fqnWithoutSideEffects(Namer.OUTER_FIELD_NAME, JsLiteral.THIS));
+                }
+
+                if (!DescriptorUtils.isAnonymousObject(descriptor)) {
+                    arguments.addAll(CallArgumentTranslator.translate(superCall, null, context()).getTranslateArguments());
+                }
+                else {
+                    for (ValueParameterDescriptor parameter : superDescriptor.getValueParameters()) {
+                        JsName parameterName = context.getNameForDescriptor(parameter);
+                        arguments.add(parameterName.makeRef());
+                        initializer.getParameters().add(new JsParameter(parameterName));
+                    }
+                }
+
                 addCallToSuperMethod(arguments, initializer);
             }
         }
@@ -182,20 +206,8 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
         initializerStatements.add(0, call.makeStmt());
     }
 
-    @Nullable
-    private ResolvedCall<FunctionDescriptor> getSuperCall() {
-        for (KtSuperTypeListEntry specifier : classDeclaration.getSuperTypeListEntries()) {
-            if (specifier instanceof KtSuperTypeCallEntry) {
-                KtSuperTypeCallEntry superCall = (KtSuperTypeCallEntry) specifier;
-                //noinspection unchecked
-                return (ResolvedCall<FunctionDescriptor>) CallUtilKt.getResolvedCallWithAssert(superCall, bindingContext());
-            }
-        }
-        return null;
-    }
-
     @NotNull
-    List<JsParameter> translatePrimaryConstructorParameters() {
+    private List<JsParameter> translatePrimaryConstructorParameters() {
         List<KtParameter> parameterList = getPrimaryConstructorParameters(classDeclaration);
         List<JsParameter> result = new ArrayList<JsParameter>();
         for (KtParameter jetParameter : parameterList) {

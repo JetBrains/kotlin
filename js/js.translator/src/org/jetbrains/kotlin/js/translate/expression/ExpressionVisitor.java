@@ -34,14 +34,14 @@ import org.jetbrains.kotlin.js.translate.general.TranslatorVisitor;
 import org.jetbrains.kotlin.js.translate.operation.BinaryOperationTranslator;
 import org.jetbrains.kotlin.js.translate.operation.UnaryOperationTranslator;
 import org.jetbrains.kotlin.js.translate.reference.*;
+import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
-import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
-import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.NullValue;
@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.kotlin.js.translate.context.Namer.getCapturedVarAccessor;
@@ -61,8 +62,10 @@ import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.convertToStatem
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.newVar;
 import static org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getReceiverParameterForDeclaration;
 import static org.jetbrains.kotlin.js.translate.utils.TranslationUtils.translateInitializerForProperty;
-import static org.jetbrains.kotlin.resolve.BindingContext.*;
+import static org.jetbrains.kotlin.resolve.BindingContext.DECLARATION_TO_DESCRIPTOR;
+import static org.jetbrains.kotlin.resolve.BindingContext.LABEL_TARGET;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.isVarCapturedInClosure;
+import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt.getResolvedCallWithAssert;
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionExpression;
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionLiteral;
 
@@ -279,7 +282,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsExpression visitSimpleNameExpression(@NotNull KtSimpleNameExpression expression,
             @NotNull TranslationContext context) {
-        return ReferenceTranslator.translateSimpleNameWithQualifier(expression, null, context).source(expression);
+        return ReferenceTranslator.translateSimpleName(expression, context).source(expression);
     }
 
     @Override
@@ -389,25 +392,20 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
 
     @Override
     @NotNull
-    public JsNode visitBinaryWithTypeRHSExpression(@NotNull KtBinaryExpressionWithTypeRHS expression,
-            @NotNull TranslationContext context) {
-        JsExpression jsExpression = Translation.translateAsExpression(expression.getLeft(), context);
+    public JsNode visitBinaryWithTypeRHSExpression(
+            @NotNull KtBinaryExpressionWithTypeRHS expression,
+            @NotNull TranslationContext context
+    ) {
+        JsExpression jsExpression;
 
-        if (expression.getOperationReference().getReferencedNameElementType() != KtTokens.AS_KEYWORD)
-            return jsExpression.source(expression);
-
-        KtTypeReference right = expression.getRight();
-        assert right != null;
-
-        KotlinType rightType = BindingContextUtils.getNotNull(context.bindingContext(), BindingContext.TYPE, right);
-        KotlinType leftType = BindingContextUtils.getTypeNotNull(context.bindingContext(), expression.getLeft());
-        if (TypeUtils.isNullableType(rightType) || !TypeUtils.isNullableType(leftType)) {
-            return jsExpression.source(expression);
+        if (PatternTranslator.isCastExpression(expression)) {
+            jsExpression = PatternTranslator.newInstance(context).translateCastExpression(expression);
+        }
+        else {
+            jsExpression = Translation.translateAsExpression(expression.getLeft(), context);
         }
 
-        // KT-2670
-        // we actually do not care for types in js
-        return TranslationUtils.sure(jsExpression, context).source(expression);
+        return jsExpression.source(expression);
     }
 
     private static String getReferencedName(KtSimpleNameExpression expression) {
@@ -485,9 +483,8 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @Override
     @NotNull
     public JsNode visitSuperExpression(@NotNull KtSuperExpression expression, @NotNull TranslationContext context) {
-        DeclarationDescriptor superTarget = getSuperTarget(context, expression);
-        ReceiverParameterDescriptor receiver = getReceiverParameterForDeclaration(superTarget);
-        return context.getDispatchReceiver(receiver);
+        ResolvedCall<? extends CallableDescriptor> resolvedCall = getResolvedCallWithAssert(expression, context.bindingContext());
+        return context.getDispatchReceiver((ReceiverParameterDescriptor) resolvedCall.getResultingDescriptor());
     }
 
     @Override
@@ -517,19 +514,45 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
 
     @Override
     @NotNull
-    public JsNode visitObjectLiteralExpression(@NotNull KtObjectLiteralExpression expression,
-            @NotNull TranslationContext context) {
-        return ClassTranslator.generateObjectLiteral(expression.getObjectDeclaration(), context);
-    }
+    public JsNode visitObjectLiteralExpression(@NotNull KtObjectLiteralExpression expression, @NotNull TranslationContext context) {
+        ClassDescriptor descriptor = BindingUtils.getClassDescriptor(context.bindingContext(), expression.getObjectDeclaration());
+        ClassTranslator.TranslationResult result = translateClassOrObject(expression.getObjectDeclaration(), descriptor, context);
+        List<JsPropertyInitializer> properties = result.getProperties();
+        context.getDefinitionPlace().getProperties().addAll(properties);
 
-    @Override
-    @NotNull
-    public JsNode visitObjectDeclaration(@NotNull KtObjectDeclaration expression,
-            @NotNull TranslationContext context) {
-        DeclarationDescriptor descriptor = getDescriptorForElement(context.bindingContext(), expression);
-        JsName name = context.getNameForDescriptor(descriptor);
-        JsExpression value = ClassTranslator.generateClassCreation(expression, context);
-        return newVar(name, value).source(expression);
+        JsExpression constructor = context.getQualifiedReference(descriptor);
+        List<DeclarationDescriptor> closure = context.getClassOrConstructorClosure(descriptor);
+        List<JsExpression> closureArgs = new ArrayList<JsExpression>();
+        if (closure != null) {
+            for (DeclarationDescriptor capturedValue : closure) {
+                closureArgs.add(context.getArgumentForClosureConstructor(capturedValue));
+            }
+        }
+
+        // In case of object expressions like this:
+        //   object : SuperClass(A, B, ...)
+        // we may capture local variables in expressions A, B, etc. We don't want to generate local fields for these variables.
+        // Our ClassTranslator is capable of such thing, but case of object expression is a little special.
+        // Consider the following:
+        //
+        //   class A(val x: Int) {
+        //      fun foo() { object : A(x) }
+        //
+        // By calling A(x) super constructor we capture `this` explicitly. However, we can't tell which `A::this` we are mentioning,
+        // either `this` of an object literal or `this` of enclosing `class A`.
+        // Frontend treats it as `this` of enclosing class declaration, therefore it expects backend to generate
+        // super call in scope of `fun foo()` rather than define inner scope for object's constructor.
+        // Thus we generate this call here rather than relying on ClassTranslator.
+        ResolvedCall<FunctionDescriptor> superCall = BindingUtils.getSuperCall(context.bindingContext(),
+                                                                               expression.getObjectDeclaration());
+        if (superCall != null) {
+            assert context.getDeclarationDescriptor() != null : "This expression should be inside declaration: " +
+                    PsiUtilsKt.getTextWithLocation(expression);
+            TranslationContext superCallContext = context.newDeclaration(context.getDeclarationDescriptor(), result.getDefinitionPlace());
+            closureArgs.addAll(CallArgumentTranslator.translate(superCall, null, superCallContext).getTranslateArguments());
+        }
+
+        return new JsNew(constructor, closureArgs);
     }
 
     @Override
@@ -554,15 +577,20 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         return super.visitAnnotatedExpression(expression, context);
     }
 
-    @NotNull
-    private static DeclarationDescriptor getSuperTarget(TranslationContext context, KtSuperExpression expression) {
-        BindingContext bindingContext = context.bindingContext();
-        PsiElement labelPsi = bindingContext.get(LABEL_TARGET, expression.getTargetLabel());
-        ClassDescriptor labelTarget = (ClassDescriptor) bindingContext.get(DECLARATION_TO_DESCRIPTOR, labelPsi);
-        if (labelTarget != null) return labelTarget;
+    @Override
+    public JsNode visitClass(@NotNull KtClass klass, TranslationContext context) {
+        ClassDescriptor descriptor = BindingUtils.getClassDescriptor(context.bindingContext(), klass);
+        context.getDefinitionPlace().getProperties().addAll(translateClassOrObject(klass, descriptor, context).getProperties());
+        return JsEmpty.INSTANCE;
+    }
 
-        DeclarationDescriptor descriptor = bindingContext.get(REFERENCE_TARGET, expression.getInstanceReference());
-        assert descriptor != null : "Missing declaration descriptor: " + PsiUtilsKt.getTextWithLocation(expression);
-        return descriptor;
+    private static ClassTranslator.TranslationResult translateClassOrObject(
+            @NotNull KtClassOrObject declaration,
+            @NotNull ClassDescriptor descriptor,
+            @NotNull TranslationContext context
+    ) {
+        JsScope scope = context.getScopeForDescriptor(descriptor);
+        TranslationContext classContext = context.innerWithUsageTracker(scope, descriptor);
+        return ClassTranslator.translate(declaration, classContext);
     }
 }

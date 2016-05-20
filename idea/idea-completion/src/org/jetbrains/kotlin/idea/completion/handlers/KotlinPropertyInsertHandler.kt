@@ -20,8 +20,9 @@ import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.psi.PsiDocumentManager
+import org.jetbrains.kotlin.idea.util.CallType
 
-object KotlinPropertyInsertHandler : KotlinCallableInsertHandler() {
+class KotlinPropertyInsertHandler(callType: CallType<*>) : KotlinCallableInsertHandler(callType) {
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
         super.handleInsert(context, item)
 

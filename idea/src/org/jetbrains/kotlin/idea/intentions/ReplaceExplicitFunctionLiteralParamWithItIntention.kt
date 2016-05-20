@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -43,6 +45,14 @@ class ReplaceExplicitFunctionLiteralParamWithItIntention() : PsiElementBaseInten
 
         val parameter = functionLiteral.valueParameters.singleOrNull() ?: return false
         if (parameter.typeReference != null) return false
+
+        if (functionLiteral.anyDescendantOfType<KtFunctionLiteral>() { literal ->
+            literal !== functionLiteral &&
+            !literal.hasParameterSpecification() &&
+            literal.anyDescendantOfType<KtSimpleNameExpression> { nameExpr ->
+                nameExpr.getReferencedName() == element.text
+            }
+        } ) return false
 
         text = "Replace explicit parameter '${parameter.name}' with 'it'"
         return true

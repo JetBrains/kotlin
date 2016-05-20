@@ -378,6 +378,12 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/imports/TypeParameter.kt");
             doTestCopy(fileName);
         }
+
+        @TestMetadata("UnresolvedOverload.kt")
+        public void testUnresolvedOverload() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/imports/UnresolvedOverload.kt");
+            doTestCopy(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/copyPaste/imports")
@@ -727,6 +733,12 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
         @TestMetadata("TypeParameter.kt")
         public void testTypeParameter() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/imports/TypeParameter.kt");
+            doTestCut(fileName);
+        }
+
+        @TestMetadata("UnresolvedOverload.kt")
+        public void testUnresolvedOverload() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/imports/UnresolvedOverload.kt");
             doTestCut(fileName);
         }
     }

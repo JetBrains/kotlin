@@ -379,6 +379,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             doStepOverTest(fileName);
         }
 
+        @TestMetadata("stepOverCatchClause.kt")
+        public void testStepOverCatchClause() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stepOverCatchClause.kt");
+            doStepOverTest(fileName);
+        }
+
         @TestMetadata("stepOverForWithInline.kt")
         public void testStepOverForWithInline() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stepOverForWithInline.kt");
@@ -406,6 +412,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
         @TestMetadata("stepOverInlinedLambdaStdlib.kt")
         public void testStepOverInlinedLambdaStdlib() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stepOverInlinedLambdaStdlib.kt");
+            doStepOverTest(fileName);
+        }
+
+        @TestMetadata("stepOverInsideInlineFun.kt")
+        public void testStepOverInsideInlineFun() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stepOverInsideInlineFun.kt");
             doStepOverTest(fileName);
         }
 
@@ -640,6 +652,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
         @TestMetadata("stepOutInlineFunctionStdlib.kt")
         public void testStepOutInlineFunctionStdlib() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/stepOutInlineFunctionStdlib.kt");
+            doCustomTest(fileName);
+        }
+
+        @TestMetadata("stepOverNonLocalReturnInLambda.kt")
+        public void testStepOverNonLocalReturnInLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/stepOverNonLocalReturnInLambda.kt");
             doCustomTest(fileName);
         }
 

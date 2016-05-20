@@ -51,7 +51,7 @@ class KotlinIntroduceParameterDialog private constructor(
         val descriptor: IntroduceParameterDescriptor,
         val lambdaExtractionDescriptor: ExtractableCodeDescriptor?,
         nameSuggestions: Array<String>,
-        val typeSuggestions: List<KotlinType>,
+        typeSuggestions: List<KotlinType>,
         val helper: KotlinIntroduceParameterHelper
 ): RefactoringDialog(project, true) {
     constructor(

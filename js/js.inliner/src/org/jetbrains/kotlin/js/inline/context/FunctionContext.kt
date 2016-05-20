@@ -19,29 +19,14 @@ package org.jetbrains.kotlin.js.inline.context
 import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.metadata.staticRef
 
-import org.jetbrains.kotlin.js.inline.util.aliasArgumentsIfNeeded
-import org.jetbrains.kotlin.js.inline.util.getInnerFunction
-import org.jetbrains.kotlin.js.inline.util.getSimpleName
-import org.jetbrains.kotlin.js.inline.util.isCallInvocation
-import org.jetbrains.kotlin.js.inline.util.isFunctionCreator
-
-import com.intellij.util.containers.ContainerUtil
-import java.util.IdentityHashMap
 import org.jetbrains.kotlin.js.inline.FunctionReader
 import com.google.dart.compiler.backend.js.ast.metadata.descriptor
+import org.jetbrains.kotlin.js.inline.util.*
 
 abstract class FunctionContext(
         private val function: JsFunction,
-        private val inliningContext: InliningContext,
         private val functionReader: FunctionReader
 ) {
-    /**
-     * Caches function with captured arguments applied.
-     *
-     * @see getFunctionWithClosure
-     */
-    private val functionsWithClosure = IdentityHashMap<JsInvocation, JsFunction?>()
-
     protected abstract fun lookUpStaticFunction(functionName: JsName?): JsFunction?
 
     fun getFunctionDefinition(call: JsInvocation): JsFunction {
@@ -54,27 +39,6 @@ abstract class FunctionContext(
 
     fun getScope(): JsScope {
         return function.scope
-    }
-
-    fun declareFunctionConstructorCalls(arguments: List<JsExpression>) {
-        val calls = ContainerUtil.findAll<JsExpression, JsInvocation>(arguments, JsInvocation::class.java)
-
-        for (call in calls) {
-            val callName = getSimpleName(call)
-            if (callName == null) continue
-
-            val staticRef = callName.staticRef
-            if (staticRef !is JsFunction) continue
-
-            val functionCalled = staticRef
-            if (isFunctionCreator(functionCalled)) {
-                declareFunctionConstructorCall(call)
-            }
-        }
-    }
-
-    fun declareFunctionConstructorCall(call: JsInvocation) {
-        functionsWithClosure.put(call, null)
     }
 
     /**
@@ -135,57 +99,9 @@ abstract class FunctionContext(
         /** process cases 2, 3 */
         val qualifier = callQualifier
         return when (qualifier) {
-            is JsInvocation -> getFunctionWithClosure(qualifier)
+            is JsInvocation -> lookUpStaticFunction(getSimpleName(qualifier)!!)
             is JsNameRef -> lookUpStaticFunction(qualifier.name)
             else -> null
         }
-    }
-
-    /**
-     * Gets function body with captured args applied,
-     * and stores in cache.
-     *
-     * Function literals and local functions with closure
-     * are translated as function, that returns function.
-     *
-     * For example,
-     *      val a = 1
-     *      val f = { a * 2 }
-     * `f` becomes
-     *      f: function (a) {
-     *          return function () { return a * 2 }
-     *      }
-     *
-     * @returns inner function with captured parameters,
-     *          replaced by outer arguments
-     *
-     *          For invocation `f(10)()` returns
-     *          `function () { return 10 * 2 }`
-     */
-    private fun getFunctionWithClosure(call: JsInvocation): JsFunction {
-        val constructed = functionsWithClosure.get(call)
-
-        if (constructed is JsFunction) return constructed
-
-        val name = getSimpleName(call)!!
-        val closureCreator = lookUpStaticFunction(name)!!
-        val innerFunction = closureCreator.getInnerFunction()!!
-
-        val withCapturedArgs = applyCapturedArgs(call, innerFunction, closureCreator)
-        functionsWithClosure.put(call, withCapturedArgs)
-
-        return withCapturedArgs
-    }
-
-    private fun applyCapturedArgs(call: JsInvocation, inner: JsFunction, outer: JsFunction): JsFunction {
-        val innerClone = inner.deepCopy()
-
-        val namingContext = inliningContext.newNamingContext()
-        val arguments = call.arguments
-        val parameters = outer.parameters
-        aliasArgumentsIfNeeded(namingContext, arguments, parameters)
-        namingContext.applyRenameTo(innerClone)
-
-        return innerClone
     }
 }

@@ -1,1 +1,1 @@
-class B : X<Any>
+class B : X<*>

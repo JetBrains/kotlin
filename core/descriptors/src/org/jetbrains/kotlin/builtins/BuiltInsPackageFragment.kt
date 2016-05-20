@@ -52,7 +52,7 @@ class BuiltInsPackageFragment(
 
     override fun computeMemberScope() =
             DeserializedPackageMemberScope(
-                    this, proto.`package`, nameResolver, packagePartSource = null, components = components,
+                    this, proto.`package`, nameResolver, containerSource = null, components = components,
                     classNames = { classDataFinder.allClassIds.filter { classId -> !classId.isNestedClass }.map { it.shortClassName } }
             )
 }

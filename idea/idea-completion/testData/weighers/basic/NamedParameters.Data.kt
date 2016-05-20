@@ -1,6 +1,6 @@
 package temp.test
 
-class Options(val listNew: Boolean, val listMatch: Boolean) {
+class Options(val listNew: Int, val listMatch: Boolean) {
 }
 
 fun listImportedFun() = 12

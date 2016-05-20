@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.spring.tests
 import com.intellij.facet.impl.FacetUtil
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.psi.PsiFile
 import com.intellij.spring.facet.SpringFacet
 import com.intellij.spring.facet.SpringFileSet
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
@@ -26,6 +27,7 @@ import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.TestFixtureExtension
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.tests.ULTIMATE_TEST_ROOT
 import java.util.*
 
@@ -36,7 +38,7 @@ class SpringTestFixtureExtension() : TestFixtureExtension {
     enum class SpringFramework(val version: String, vararg val artifactIds: String) {
         FRAMEWORK_4_2_0(
                 "4.2.0.RELEASE",
-                "core", "beans", "context", "tx"
+                "core", "beans", "context", "tx", "web"
         )
     }
 
@@ -89,4 +91,10 @@ fun SpringTestFixtureExtension.loadConfigByMainFilePath(testPath: String, fixtur
     val baseName = FileUtil.getNameWithoutExtension(mainFileName)
     val configFileName = if (baseName.endsWith("Xml")) "$baseName-config.xml" else mainFileName
     configureFileSet(fixture, listOf(PathUtil.toSystemIndependentName("${PathUtil.getParentPath(testPath)}/$configFileName")))
+}
+
+fun configureSpringFileSetByDirective(module: Module, directives: String, psiFiles: Collection<PsiFile>) {
+    if (!InTextDirectivesUtils.isDirectiveDefined(directives, "// CONFIGURE_SPRING_FILE_SET")) return
+    val fileSet = SpringFacet.getInstance(module)!!.addFileSet("default", "default")!!
+    psiFiles.forEach { fileSet.addFile(it.virtualFile) }
 }

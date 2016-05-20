@@ -59,6 +59,7 @@ import java.util.*;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.calculateInnerClassAccessFlags;
 import static org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive;
+import static org.jetbrains.kotlin.codegen.ClassBuilderModeUtilKt.shouldGenerateMetadata;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED;
 import static org.jetbrains.kotlin.resolve.BindingContext.VARIABLE;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
@@ -84,7 +85,8 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
     protected ExpressionCodegen clInit;
     private NameGenerator inlineNameGenerator;
 
-    private SourceMapper sourceMapper;
+    private DefaultSourceMapper sourceMapper;
+
     private final ConstantExpressionEvaluator constantExpressionEvaluator;
 
     public MemberCodegen(
@@ -118,7 +120,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
 
         generateSyntheticParts();
 
-        if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
+        if (shouldGenerateMetadata(state.getClassBuilderMode())) {
             generateKotlinMetadataAnnotation();
         }
 
@@ -232,7 +234,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
     }
 
     private static void badDescriptor(ClassDescriptor descriptor, ClassBuilderMode mode) {
-        if (mode != ClassBuilderMode.LIGHT_CLASSES) {
+        if (mode == ClassBuilderMode.FULL) {
             throw new IllegalStateException("Generating bad descriptor in ClassBuilderMode = " + mode + ": " + descriptor);
         }
     }
@@ -410,7 +412,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
         ConstantValue<?> initializerValue = computeInitializerValue(property, propertyDescriptor, initializer);
         // we must write constant values for fields in light classes,
         // because Java's completion for annotation arguments uses this information
-        if (initializerValue == null) return state.getClassBuilderMode() != ClassBuilderMode.LIGHT_CLASSES;
+        if (initializerValue == null) return state.getClassBuilderMode() == ClassBuilderMode.FULL;
 
         //TODO: OPTIMIZATION: don't initialize static final fields
         KotlinType jetType = getPropertyOrDelegateType(property, propertyDescriptor);
@@ -494,7 +496,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
         v.newField(NO_ORIGIN, ACC_PRIVATE | ACC_STATIC | ACC_FINAL | ACC_SYNTHETIC, JvmAbi.DELEGATED_PROPERTIES_ARRAY_NAME,
                    "[" + K_PROPERTY_TYPE, null, null);
 
-        if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES) return;
+        if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
 
         InstructionAdapter iv = createOrGetClInitCodegen().v;
         iv.iconst(delegatedProperties.size());
@@ -555,9 +557,9 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
     }
 
     @NotNull
-    public SourceMapper getOrCreateSourceMapper() {
+    public DefaultSourceMapper getOrCreateSourceMapper() {
         if (sourceMapper == null) {
-            sourceMapper = new DefaultSourceMapper(SourceInfo.Companion.createInfo(element, getClassName()), null);
+            sourceMapper = new DefaultSourceMapper(SourceInfo.Companion.createInfo(element, getClassName()));
         }
         return sourceMapper;
     }

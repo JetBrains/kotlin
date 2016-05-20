@@ -1,0 +1,6 @@
+// "Make 'x' internal" "true"
+class First(internal val x: Int)
+
+class Second(f: First) {
+    val y = f.x
+}

@@ -43,8 +43,8 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
         this.pseudocodeVariableDataCollector = PseudocodeVariableDataCollector(bindingContext, pseudocode)
     }
 
-    val lexicalScopeVariableInfo: LexicalScopeVariableInfo
-        get() = pseudocodeVariableDataCollector.lexicalScopeVariableInfo
+    val blockScopeVariableInfo: BlockScopeVariableInfo
+        get() = pseudocodeVariableDataCollector.blockScopeVariableInfo
 
     fun getDeclaredVariables(pseudocode: Pseudocode, includeInsideLocalDeclarations: Boolean): Set<VariableDescriptor> {
         if (!includeInsideLocalDeclarations) {
@@ -88,7 +88,7 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
 
     private fun computeVariableInitializers(): Map<Instruction, Edges<InitControlFlowInfo>> {
 
-        val lexicalScopeVariableInfo = pseudocodeVariableDataCollector.lexicalScopeVariableInfo
+        val blockScopeVariableInfo = pseudocodeVariableDataCollector.blockScopeVariableInfo
 
         return pseudocodeVariableDataCollector.collectData(
                 TraversalOrder.FORWARD, /*mergeDataWithLocalDeclarations=*/ true, InitControlFlowInfo()
@@ -97,7 +97,7 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
 
             val enterInstructionData = mergeIncomingEdgesDataForInitializers(incomingEdgesData)
             val exitInstructionData = addVariableInitStateFromCurrentInstructionIfAny(
-                    instruction, enterInstructionData, lexicalScopeVariableInfo)
+                    instruction, enterInstructionData, blockScopeVariableInfo)
             Edges(enterInstructionData, exitInstructionData)
         }
     }
@@ -105,7 +105,7 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
     private fun addVariableInitStateFromCurrentInstructionIfAny(
             instruction: Instruction,
             enterInstructionData: InitControlFlowInfo,
-            lexicalScopeVariableInfo: LexicalScopeVariableInfo): InitControlFlowInfo {
+            blockScopeVariableInfo: BlockScopeVariableInfo): InitControlFlowInfo {
         if (instruction is MagicInstruction) {
             if (instruction.kind === MagicKind.EXHAUSTIVE_WHEN_ELSE) {
                 val exitInstructionData = enterInstructionData.copy()
@@ -137,7 +137,7 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
             // instruction instanceof VariableDeclarationInstruction
             var enterInitState: VariableControlFlowState? = enterInstructionData[variable]
             if (enterInitState == null) {
-                enterInitState = getDefaultValueForInitializers(variable, instruction, lexicalScopeVariableInfo)
+                enterInitState = getDefaultValueForInitializers(variable, instruction, blockScopeVariableInfo)
             }
             if (!enterInitState.mayBeInitialized() || !enterInitState.isDeclared) {
                 val isInitialized = enterInitState.mayBeInitialized()
@@ -163,9 +163,7 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
             else {
                 enterResult = UseControlFlowInfo()
                 for (edgeData in incomingEdgesData) {
-                    for (entry in edgeData.entries) {
-                        val variableDescriptor = entry.key
-                        val variableUseState = entry.value
+                    for ((variableDescriptor, variableUseState) in edgeData) {
                         enterResult.put(variableDescriptor, variableUseState.merge(enterResult[variableDescriptor]))
                     }
                 }
@@ -201,13 +199,13 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
         fun getDefaultValueForInitializers(
                 variable: VariableDescriptor,
                 instruction: Instruction,
-                lexicalScopeVariableInfo: LexicalScopeVariableInfo
+                blockScopeVariableInfo: BlockScopeVariableInfo
         ): VariableControlFlowState {
             //todo: think of replacing it with "MapWithDefaultValue"
-            val declaredIn = lexicalScopeVariableInfo.declaredIn[variable]
+            val declaredIn = blockScopeVariableInfo.declaredIn[variable]
             val declaredOutsideThisDeclaration =
                     declaredIn == null //declared outside this pseudocode
-                    || declaredIn.lexicalScopeForContainingDeclaration != instruction.lexicalScope.lexicalScopeForContainingDeclaration
+                    || declaredIn.blockScopeForContainingDeclaration != instruction.blockScope.blockScopeForContainingDeclaration
             return VariableControlFlowState.create(/*initState=*/declaredOutsideThisDeclaration)
         }
 

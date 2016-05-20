@@ -182,7 +182,8 @@ object InlineTestUtil {
         val klass = FileBasedKotlinClass.create(file.asByteArray()) {
             className, classHeader, innerClasses ->
             object : FileBasedKotlinClass(className, classHeader, innerClasses) {
-                override fun getLocation(): String = throw UnsupportedOperationException()
+                override val location: String
+                    get() = throw UnsupportedOperationException()
                 override fun getFileContents(): ByteArray = throw UnsupportedOperationException()
                 override fun hashCode(): Int = throw UnsupportedOperationException()
                 override fun equals(other: Any?): Boolean = throw UnsupportedOperationException()

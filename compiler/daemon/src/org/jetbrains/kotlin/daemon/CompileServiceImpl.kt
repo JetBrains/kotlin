@@ -40,8 +40,7 @@ import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import java.util.logging.Level
 import java.util.logging.Logger
-import kotlin.comparisons.compareBy
-import kotlin.comparisons.reversed
+import kotlin.comparisons.compareByDescending
 import kotlin.concurrent.read
 import kotlin.concurrent.schedule
 import kotlin.concurrent.write
@@ -342,7 +341,7 @@ class CompileServiceImpl(
             val aliveWithOpts = walkDaemons(File(daemonOptions.runFilesPathOrDefault), compilerId, filter = { f, p -> p != port }, report = { lvl, msg -> log.info(msg) })
                     .map { Pair(it, it.getDaemonJVMOptions()) }
                     .filter { it.second.isGood }
-                    .sortedWith(compareBy(DaemonJVMOptionsMemoryComparator().reversed(), { it.second.get() }))
+                    .sortedWith(compareByDescending(DaemonJVMOptionsMemoryComparator(), { it.second.get() }))
             if (aliveWithOpts.any()) {
                 val fattestOpts = aliveWithOpts.first().second.get()
                 // second part of the condition means that we prefer other daemon if is "equal" to the current one

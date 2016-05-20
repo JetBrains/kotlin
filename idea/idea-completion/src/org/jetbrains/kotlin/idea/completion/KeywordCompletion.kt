@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.idea.completion
 
+import com.intellij.codeInsight.completion.InsertHandler
+import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.openapi.project.Project
@@ -30,9 +32,8 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.*
-import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
-import org.jetbrains.kotlin.idea.completion.handlers.KotlinKeywordInsertHandler
-import org.jetbrains.kotlin.idea.completion.handlers.UseSiteAnnotationTargetInsertHandler
+import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
+import org.jetbrains.kotlin.idea.completion.handlers.createKeywordConstructLookupElement
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -57,6 +58,32 @@ object KeywordCompletion {
             ENUM_KEYWORD to CLASS_KEYWORD,
             ANNOTATION_KEYWORD to CLASS_KEYWORD
     )
+
+    private val KEYWORD_CONSTRUCTS = mapOf<KtKeywordToken, String>(
+            IF_KEYWORD to "fun foo() { if (caret)",
+            WHILE_KEYWORD to "fun foo() { while(caret)",
+            FOR_KEYWORD to "fun foo() { for(caret)",
+            TRY_KEYWORD to "fun foo() { try {\ncaret\n}",
+            CATCH_KEYWORD to "fun foo() { try {} catch (caret)",
+            FINALLY_KEYWORD to "fun foo() { try {\n}\nfinally{\ncaret\n}",
+            DO_KEYWORD to "fun foo() { do {\ncaret\n}",
+            INIT_KEYWORD to "class C { init {\ncaret\n}",
+            CONSTRUCTOR_KEYWORD to "class C { constructor(caret)"
+    )
+
+    private val NO_SPACE_AFTER = listOf(THIS_KEYWORD,
+                                        SUPER_KEYWORD,
+                                        NULL_KEYWORD,
+                                        TRUE_KEYWORD,
+                                        FALSE_KEYWORD,
+                                        BREAK_KEYWORD,
+                                        CONTINUE_KEYWORD,
+                                        ELSE_KEYWORD,
+                                        WHEN_KEYWORD,
+                                        FILE_KEYWORD,
+                                        DYNAMIC_KEYWORD,
+                                        GET_KEYWORD,
+                                        SET_KEYWORD).map { it.value} + "companion object"
 
     fun complete(position: PsiElement, prefix: String, isJvmModule: Boolean, consumer: (LookupElement) -> Unit) {
         if (!GENERAL_FILTER.isAcceptable(position, position)) return
@@ -85,27 +112,46 @@ object KeywordCompletion {
 
             if (!parserFilter(keywordToken)) continue
 
-            var element = LookupElementBuilder.create(KeywordLookupObject(), keyword).bold()
-
-            val isUseSiteAnnotationTarget = position.prevLeaf()?.node?.elementType == KtTokens.AT
-
-            val insertHandler = if (isUseSiteAnnotationTarget)
-                UseSiteAnnotationTargetInsertHandler
-            else if (keywordToken !in FUNCTION_KEYWORDS)
-                KotlinKeywordInsertHandler
-            else
-                KotlinFunctionInsertHandler.Normal(inputTypeArguments = false, inputValueArguments = false)
-            element = element.withInsertHandler(insertHandler)
-
-            if (isUseSiteAnnotationTarget) {
-                element = element.withPresentableText(keyword + ":")
+            val constructText = KEYWORD_CONSTRUCTS[keywordToken]
+            if (constructText != null) {
+                val element = createKeywordConstructLookupElement(position.project, keyword, constructText)
+                consumer(element)
             }
+            else {
+                var element = LookupElementBuilder.create(KeywordLookupObject(), keyword).bold()
 
-            consumer(element)
+                val isUseSiteAnnotationTarget = position.prevLeaf()?.node?.elementType == KtTokens.AT
+
+                val insertHandler = when {
+                    isUseSiteAnnotationTarget -> UseSiteAnnotationTargetInsertHandler
+
+                    keyword in NO_SPACE_AFTER -> null
+
+                    else -> SpaceAfterInsertHandler
+                }
+
+                element = element.withInsertHandler(insertHandler)
+
+                if (isUseSiteAnnotationTarget) {
+                    element = element.withPresentableText(keyword + ":")
+                }
+
+                consumer(element)
+            }
         }
     }
 
-    private val FUNCTION_KEYWORDS = listOf(CONSTRUCTOR_KEYWORD)
+    private object UseSiteAnnotationTargetInsertHandler : InsertHandler<LookupElement> {
+        override fun handleInsert(context: InsertionContext, item: LookupElement) {
+            WithTailInsertHandler(":", spaceBefore = false, spaceAfter = false).postHandleInsert(context, item)
+        }
+    }
+
+    private object SpaceAfterInsertHandler : InsertHandler<LookupElement> {
+        override fun handleInsert(context: InsertionContext, item: LookupElement) {
+            WithTailInsertHandler.SPACE.postHandleInsert(context, item)
+        }
+    }
 
     private val GENERAL_FILTER = NotFilter(OrFilter(
             CommentFilter(),
@@ -140,8 +186,18 @@ object KeywordCompletion {
         while (parent != null) {
             when (parent) {
                 is KtBlockExpression -> {
-                    val prefixText = "fun foo() { "
+                    var prefixText = "fun foo() { "
                     if (prevParent is KtExpression) {
+                        // check that we are right after a try-expression without finally-block
+                        val prevLeaf = prevParent.prevLeaf { it !is PsiWhiteSpace && it !is PsiComment && it !is PsiErrorElement }
+                        if (prevLeaf?.node?.elementType == KtTokens.RBRACE) {
+                            val blockParent = (prevLeaf?.parent as? KtBlockExpression)?.parent
+                            when (blockParent) {
+                                is KtTryExpression -> prefixText += "try {}\n"
+                                is KtCatchClause -> prefixText += "try {} catch (e: E) {}\n"
+                            }
+                        }
+
                         return buildFilterWithContext(prefixText, prevParent, position)
                     }
                     else {

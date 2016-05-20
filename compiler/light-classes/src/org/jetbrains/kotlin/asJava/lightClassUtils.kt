@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.asJava
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.java.propertyNameByGetMethodName
+import org.jetbrains.kotlin.load.java.propertyNameBySetMethodName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -89,7 +91,9 @@ fun KtParameter.toPsiParameters(): Collection<PsiParameter> {
                 else -> null
             } ?: return emptyList()
 
-    return methods.map { it.parameterList.parameters[lightParamIndex] }
+    return methods.mapNotNull {
+        if (it.parameterList.parametersCount > lightParamIndex) it.parameterList.parameters[lightParamIndex] else null
+    }
 }
 
 fun KtTypeParameter.toPsiTypeParameters(): List<PsiTypeParameter> {
@@ -105,7 +109,12 @@ fun KtTypeParameter.toPsiTypeParameters(): List<PsiTypeParameter> {
 
 // Returns original declaration if given PsiElement is a Kotlin light element, and element itself otherwise
 val PsiElement.unwrapped: PsiElement?
-    get() = if (this is KtLightElement<*, *>) kotlinOrigin else this
+    get() = when {
+        this is KtLightElement<*, *> -> kotlinOrigin
+        this is KtLightIdentifier -> origin
+        this is KtLightAnnotation.LightExpressionValue -> originalExpression
+        else -> this
+    }
 
 val PsiElement.namedUnwrappedElement: PsiNamedElement?
     get() = unwrapped?.getNonStrictParentOfType<PsiNamedElement>()
@@ -128,8 +137,25 @@ private fun isNonAbstractMember(member: KtDeclaration?): Boolean {
 private val DEFAULT_IMPLS_CLASS_NAME = Name.identifier(JvmAbi.DEFAULT_IMPLS_CLASS_NAME)
 fun FqName.defaultImplsChild() = child(DEFAULT_IMPLS_CLASS_NAME)
 
+@Suppress("unused")
 fun KtAnnotationEntry.toLightAnnotation(): PsiAnnotation? {
     val ktDeclaration = getStrictParentOfType<KtModifierList>()?.parent as? KtDeclaration ?: return null
-    val lightElement = ktDeclaration.toLightElements().firstOrNull() as? PsiModifierListOwner ?: return null
-    return lightElement.modifierList?.annotations?.firstOrNull { it is KtLightAnnotation && it.kotlinOrigin == this }
+    for (lightElement in ktDeclaration.toLightElements()) {
+        if (lightElement !is PsiModifierListOwner) continue
+        lightElement.modifierList?.annotations?.firstOrNull { it is KtLightAnnotation && it.kotlinOrigin == this }?.let { return it }
+    }
+    return null
+}
+
+fun propertyNameByAccessor(name: String, accessor: KtLightMethod): String? {
+    val toRename = accessor.kotlinOrigin ?: return null
+    if (toRename !is KtProperty && toRename !is KtParameter) return null
+
+    val methodName = Name.guessByFirstCharacter(name)
+    val propertyName = toRename.name ?: ""
+    return when {
+        name.startsWith("get") -> propertyNameByGetMethodName(methodName)
+        name.startsWith("set") -> propertyNameBySetMethodName(methodName, propertyName.startsWith("is"))
+        else -> null
+    }?.asString()
 }

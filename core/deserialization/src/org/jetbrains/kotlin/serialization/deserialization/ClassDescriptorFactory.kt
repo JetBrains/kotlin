@@ -18,11 +18,17 @@ package org.jetbrains.kotlin.serialization.deserialization
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 interface ClassDescriptorFactory {
+    fun shouldCreateClass(packageFqName: FqName, name: Name): Boolean
+
     fun createClass(classId: ClassId): ClassDescriptor?
 
     object EMPTY : ClassDescriptorFactory {
+        override fun shouldCreateClass(packageFqName: FqName, name: Name): Boolean = false
+
         override fun createClass(classId: ClassId): ClassDescriptor? = null
     }
 }

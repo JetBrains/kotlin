@@ -562,11 +562,6 @@ public class AsmUtil {
         v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "areEqual", "(Ljava/lang/Object;Ljava/lang/Object;)Z", false);
     }
 
-    public static void genIncrement(Type expectedType, int myDelta, InstructionAdapter v) {
-        numConst(myDelta, expectedType, v);
-        v.add(expectedType);
-    }
-
     public static void numConst(int value, Type type, InstructionAdapter v) {
         if (type == Type.FLOAT_TYPE) {
             v.fconst(value);
@@ -585,9 +580,11 @@ public class AsmUtil {
         }
     }
 
-    public static void genIncrement(Type expectedType, Type baseType, int myDelta, InstructionAdapter v) {
-        genIncrement(baseType, myDelta, v);
-        StackValue.coerce(baseType, expectedType, v);
+    public static void genIncrement(Type baseType, int myDelta, InstructionAdapter v) {
+        Type operationType = numberFunctionOperandType(baseType);
+        numConst(myDelta, operationType, v);
+        v.add(operationType);
+        StackValue.coerce(operationType, baseType, v);
     }
 
     public static void swap(InstructionAdapter v, Type stackTop, Type afterTop) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,12 +35,12 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.asJava.DuplicateJvmSignatureUtilKt;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.diagnostics.*;
+import org.jetbrains.kotlin.load.java.InternalFlexibleTypeTransformer;
 import org.jetbrains.kotlin.psi.KtDeclaration;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.types.Flexibility;
 import org.junit.Assert;
 
 import java.io.File;
@@ -73,8 +73,8 @@ public abstract class BaseDiagnosticsTest
     public static final String CHECK_TYPE_IMPORT = "import " + CHECK_TYPE_PACKAGE + ".*";
 
     public static final String EXPLICIT_FLEXIBLE_TYPES_DIRECTIVE = "EXPLICIT_FLEXIBLE_TYPES";
-    public static final String EXPLICIT_FLEXIBLE_PACKAGE = Flexibility.Companion.getFLEXIBLE_TYPE_CLASSIFIER().getPackageFqName().asString();
-    public static final String EXPLICIT_FLEXIBLE_CLASS_NAME = Flexibility.Companion.getFLEXIBLE_TYPE_CLASSIFIER().getRelativeClassName().asString();
+    public static final String EXPLICIT_FLEXIBLE_PACKAGE = InternalFlexibleTypeTransformer.FLEXIBLE_TYPE_CLASSIFIER.getPackageFqName().asString();
+    public static final String EXPLICIT_FLEXIBLE_CLASS_NAME = InternalFlexibleTypeTransformer.FLEXIBLE_TYPE_CLASSIFIER.getRelativeClassName().asString();
     private static final String EXPLICIT_FLEXIBLE_TYPES_DECLARATIONS
             = "\npackage " + EXPLICIT_FLEXIBLE_PACKAGE +
               "\npublic class " + EXPLICIT_FLEXIBLE_CLASS_NAME + "<L, U>";

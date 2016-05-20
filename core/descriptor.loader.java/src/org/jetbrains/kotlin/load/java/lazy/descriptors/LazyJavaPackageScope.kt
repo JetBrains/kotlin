@@ -16,22 +16,23 @@
 
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptorKindExclude
-import org.jetbrains.kotlin.load.java.lazy.KotlinClassLookupResult
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
-import org.jetbrains.kotlin.load.java.lazy.resolveKotlinBinaryClass
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.storage.NullableLazyValue
-import org.jetbrains.kotlin.storage.getValue
 
 class LazyJavaPackageScope(
         c: LazyJavaResolverContext,
@@ -45,33 +46,6 @@ class LazyJavaPackageScope(
         c.components.finder.knownClassNamesInPackage(ownerDescriptor.fqName)
     }
 
-    private val partToFacade = c.storageManager.createLazyValue {
-        val result = hashMapOf<String, String>()
-        kotlinClasses@for (kotlinClass in ownerDescriptor.kotlinBinaryClasses) {
-            val header = kotlinClass.classHeader
-            when (header.kind) {
-                KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
-                    val partName = kotlinClass.classId.shortClassName.asString()
-                    val facadeName = header.multifileClassName ?: continue@kotlinClasses
-                    result[partName] = facadeName.substringAfterLast('/')
-                }
-                KotlinClassHeader.Kind.FILE_FACADE -> {
-                    val fileFacadeName = kotlinClass.classId.shortClassName.asString()
-                    result[fileFacadeName] = fileFacadeName
-                }
-                else -> {}
-            }
-        }
-        result
-    }
-
-    fun getFacadeSimpleNameForPartSimpleName(partName: String): String? =
-            partToFacade()[partName]
-
-    private val deserializedPackageScope by c.storageManager.createLazyValue {
-        c.components.deserializedDescriptorResolver.createKotlinPackageScope(ownerDescriptor, ownerDescriptor.kotlinBinaryClasses)
-    }
-
     private val classes = c.storageManager.createMemoizedFunctionWithNullableValues<FindClassRequest, ClassDescriptor> { request ->
         val classId = ClassId(ownerDescriptor.fqName, request.name)
 
@@ -82,44 +56,57 @@ class LazyJavaPackageScope(
                 else
                     c.components.kotlinClassFinder.findKotlinClass(classId)
 
-        val kotlinResult = c.resolveKotlinBinaryClass(kotlinBinaryClass)
+        val kotlinResult = resolveKotlinBinaryClass(kotlinBinaryClass)
 
         when (kotlinResult) {
             is KotlinClassLookupResult.Found -> kotlinResult.descriptor
             is KotlinClassLookupResult.SyntheticClass -> null
             is KotlinClassLookupResult.NotFound -> {
-
                 val javaClass = request.javaClass ?: c.components.finder.findClass(classId)
                 javaClass?.let { it ->
-                    LazyJavaClassDescriptor(c, ownerDescriptor, it.fqName!!, it)
+                    LazyJavaClassDescriptor(c, ownerDescriptor, it)
                 }
+            }
+        }
+    }
+
+    private sealed class KotlinClassLookupResult {
+        class Found(val descriptor: ClassDescriptor) : KotlinClassLookupResult()
+        object NotFound : KotlinClassLookupResult()
+        object SyntheticClass : KotlinClassLookupResult()
+    }
+
+    private fun resolveKotlinBinaryClass(kotlinClass: KotlinJvmBinaryClass?): KotlinClassLookupResult {
+        if (kotlinClass == null) return KotlinClassLookupResult.NotFound
+
+        val header = kotlinClass.classHeader
+        return when {
+            !header.metadataVersion.isCompatible() -> {
+                c.components.errorReporter.reportIncompatibleMetadataVersion(kotlinClass.classId, kotlinClass.location, header.metadataVersion)
+                KotlinClassLookupResult.NotFound
+            }
+            header.kind == KotlinClassHeader.Kind.CLASS -> {
+                val descriptor = c.components.deserializedDescriptorResolver.resolveClass(kotlinClass)
+                if (descriptor != null) KotlinClassLookupResult.Found(descriptor) else KotlinClassLookupResult.NotFound
+            }
+            else -> {
+                // This is a package or interface DefaultImpls or something like that
+                KotlinClassLookupResult.SyntheticClass
             }
         }
     }
 
     // javaClass here is only for sake of optimizations
     private class FindClassRequest(val name: Name, val javaClass: JavaClass?) {
-        override fun equals(other: Any?): Boolean{
-            if (this === other) return true
+        override fun equals(other: Any?) = other is FindClassRequest && name == other.name
 
-            other as FindClassRequest
-
-            if (name != other.name) return false
-
-            return true
-        }
-
-        override fun hashCode(): Int{
-            return name.hashCode()
-        }
+        override fun hashCode() = name.hashCode()
     }
 
-    override fun getContributedClassifier(name: Name, location: LookupLocation) = findClassifier(name, null, location)
+    override fun getContributedClassifier(name: Name, location: LookupLocation) = findClassifier(name, null)
 
-    private fun findClassifier(name: Name, javaClass: JavaClass?, location: LookupLocation): ClassDescriptor? {
+    private fun findClassifier(name: Name, javaClass: JavaClass?): ClassDescriptor? {
         if (!SpecialNames.isSafeIdentifier(name)) return null
-
-        recordLookup(name, location)
 
         val knownClassNamesInPackage = knownClassNamesInPackage()
         if (javaClass == null && knownClassNamesInPackage != null && name.asString() !in knownClassNamesInPackage) {
@@ -129,25 +116,9 @@ class LazyJavaPackageScope(
         return classes(FindClassRequest(name, javaClass))
     }
 
-    fun findClassifierByJavaClass(javaClass: JavaClass, location: LookupLocation) = findClassifier(javaClass.name, javaClass, location)
+    internal fun findClassifierByJavaClass(javaClass: JavaClass) = findClassifier(javaClass.name, javaClass)
 
-    override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
-        // We should track lookups here because this scope can be used for kotlin packages too (if it doesn't contain toplevel properties nor functions).
-        recordLookup(name, location)
-        return deserializedPackageScope.getContributedVariables(name, NoLookupLocation.FOR_ALREADY_TRACKED)
-    }
-
-    override fun getContributedFunctions(name: Name, location: LookupLocation): List<SimpleFunctionDescriptor> {
-        // We should track lookups here because this scope can be used for kotlin packages too (if it doesn't contain toplevel properties nor functions).
-        recordLookup(name, location)
-        return deserializedPackageScope.getContributedFunctions(name, NoLookupLocation.FOR_ALREADY_TRACKED) + super.getContributedFunctions(name, NoLookupLocation.FOR_ALREADY_TRACKED)
-    }
-
-    override fun addExtraDescriptors(result: MutableSet<DeclarationDescriptor>,
-                                     kindFilter: DescriptorKindFilter,
-                                     nameFilter: (Name) -> Boolean) {
-        result.addAll(deserializedPackageScope.getContributedDescriptors(kindFilter, nameFilter))
-    }
+    override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> = emptyList()
 
     override fun computeMemberIndex(): MemberIndex = object : MemberIndex by EMPTY_MEMBER_INDEX {
         // For SAM-constructors
@@ -170,21 +141,11 @@ class LazyJavaPackageScope(
         return super.getFunctionNames(kindFilter, nameFilter)
     }
 
-    private val subPackages = c.storageManager.createRecursionTolerantLazyValue(
-            {
-                jPackage.subPackages.map { sp -> sp.fqName }
-            },
-            // This breaks infinite recursion between loading Java descriptors and building light classes
-            onRecursiveCall = listOf()
-    )
-
     override fun computeNonDeclaredFunctions(result: MutableCollection<SimpleFunctionDescriptor>, name: Name) {
         c.components.samConversionResolver.resolveSamConstructor(ownerDescriptor) {
             getContributedClassifier(name, NoLookupLocation.FOR_ALREADY_TRACKED)
         }?.let { result.add(it) }
     }
-
-    override fun getSubPackages() = subPackages()
 
     override fun getPropertyNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean) = listOf<Name>()
 

@@ -148,6 +148,8 @@ object IfConditionAdditionalData : ExpectedInfo.AdditionalData
 
 object PropertyDelegateAdditionalData : ExpectedInfo.AdditionalData
 
+class ComparisonOperandAdditionalData(val suppressNullLiteral: Boolean) : ExpectedInfo.AdditionalData
+
 class ExpectedInfos(
         private val bindingContext: BindingContext,
         private val resolutionFacade: ResolutionFacade,
@@ -414,12 +416,14 @@ class ExpectedInfos(
                         return listOf(ExpectedInfo(NullableTypesFilter, expectedName, null))
                     }
 
-                    // if we complete argument of == or !=, make types in expected info's nullable to allow nullable items too
+                    var additionalData: ExpectedInfo.AdditionalData? = null
                     if (operationToken in COMPARISON_TOKENS) {
+                        // if we complete argument of == or !=, make types in expected info's nullable to allow items of nullable type too
+                        additionalData = ComparisonOperandAdditionalData(suppressNullLiteral = expectedType.nullability() == TypeNullability.NOT_NULL)
                         expectedType = expectedType.makeNullable()
                     }
 
-                    return listOf(ExpectedInfo(expectedType, expectedName, null))
+                    return listOf(ExpectedInfo(expectedType, expectedName, null, additionalData = additionalData))
                 }
             }
         }

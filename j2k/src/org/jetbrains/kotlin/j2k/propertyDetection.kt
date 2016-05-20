@@ -18,11 +18,14 @@ package org.jetbrains.kotlin.j2k
 
 import com.intellij.psi.*
 import com.intellij.psi.util.MethodSignatureUtil
+import com.intellij.psi.util.PsiUtil
 import org.jetbrains.kotlin.asJava.KtLightMethod
 import org.jetbrains.kotlin.j2k.ast.*
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.check
@@ -38,7 +41,8 @@ class PropertyInfo(
         val isGetMethodBodyFieldAccess: Boolean,
         val isSetMethodBodyFieldAccess: Boolean,
         val modifiers: Modifiers,
-        val specialSetterAccess: Modifier?
+        val specialSetterAccess: Modifier?,
+        val superInfo: SuperInfo?
 ) {
     init {
         assert(field != null || getMethod != null || setMethod != null)
@@ -73,7 +77,7 @@ class PropertyInfo(
         fun fromFieldWithNoAccessors(field: PsiField, converter: Converter): PropertyInfo {
             val isVar = field.isVar(converter.referenceSearcher)
             val modifiers = converter.convertModifiers(field, false)
-            return PropertyInfo(field.declarationIdentifier(), isVar, field.type, field, null, null, false, false, modifiers, null)
+            return PropertyInfo(field.declarationIdentifier(), isVar, field.type, field, null, null, false, false, modifiers, null, null)
         }
     }
 }
@@ -92,6 +96,21 @@ class PropertyDetectionCache(private val converter: Converter) {
     }
 }
 
+sealed class SuperInfo {
+    class Property(
+            val isVar: Boolean,
+            val name: String,
+            val hasAbstractModifier: Boolean
+            //TODO: add visibility
+    ) : SuperInfo()
+
+    object Function : SuperInfo()
+
+    fun isAbstract(): Boolean {
+        return if (this is Property) hasAbstractModifier else false
+    }
+}
+
 private class PropertyDetector(
         private val psiClass: PsiClass,
         private val converter: Converter
@@ -99,6 +118,29 @@ private class PropertyDetector(
     private val isOpenClass = converter.needOpenModifier(psiClass)
 
     fun detectProperties(): Map<PsiMember, PropertyInfo> {
+        val propertyInfos = detectPropertyCandidates()
+
+        val memberToPropertyInfo = buildMemberToPropertyInfoMap(propertyInfos)
+
+        dropPropertiesWithConflictingAccessors(memberToPropertyInfo)
+
+        dropPropertiesConflictingWithFields(memberToPropertyInfo)
+
+        val mappedFields = memberToPropertyInfo.values
+                .mapNotNull { it.field }
+                .toSet()
+
+        // map all other fields
+        for (field in psiClass.fields) {
+            if (field !in mappedFields) {
+                memberToPropertyInfo[field] = PropertyInfo.fromFieldWithNoAccessors(field, converter)
+            }
+        }
+
+        return memberToPropertyInfo
+    }
+
+    private fun detectPropertyCandidates(): List<PropertyInfo> {
         val methodsToCheck = ArrayList<Pair<PsiMethod, SuperInfo.Property?>>()
         for (method in psiClass.methods) {
             val name = method.name
@@ -110,20 +152,16 @@ private class PropertyDetector(
         }
 
         val propertyNamesWithConflict = HashSet<String>()
-        val prohibitedPropertyNames = psiClass.fields.map { it.name }.toMutableSet() //TODO: fields from base
 
-        val propertyNameToGetterInfo = detectGetters(methodsToCheck, prohibitedPropertyNames, propertyNamesWithConflict)
+        val propertyNameToGetterInfo = detectGetters(methodsToCheck, propertyNamesWithConflict)
 
-        val propertyNameToSetterInfo = detectSetters(methodsToCheck, prohibitedPropertyNames, propertyNameToGetterInfo.keys, propertyNamesWithConflict)
+        val propertyNameToSetterInfo = detectSetters(methodsToCheck, propertyNameToGetterInfo.keys, propertyNamesWithConflict)
 
         val propertyNames = propertyNameToGetterInfo.keys + propertyNameToSetterInfo.keys
 
-        val memberToPropertyInfo = HashMap<PsiMember, PropertyInfo>()
-        for (propertyName in propertyNames) {
-            // TODO: use "field" expression if the conflicting field is used only inside get/set-methods
-            if (propertyName in prohibitedPropertyNames) continue // cannot create such property - will conflict with existing field
-            //TODO: what about overrides in this case?
+        val propertyInfos = ArrayList<PropertyInfo>()
 
+        for (propertyName in propertyNames) {
             val getterInfo = propertyNameToGetterInfo[propertyName]
             var setterInfo = propertyNameToSetterInfo[propertyName]
 
@@ -136,8 +174,24 @@ private class PropertyDetector(
 
             var field = getterInfo?.field ?: setterInfo?.field
 
-            if (field != null && memberToPropertyInfo.containsKey(field)) { // already used in another property
-                field = null
+            if (field != null) {
+                fun PsiReferenceExpression.canBeReplacedWithFieldAccess(): Boolean {
+                    if (getterInfo?.method?.isAncestor(this) != true && setterInfo?.method?.isAncestor(this) != true) return false // not inside property
+                    return qualifier == null || qualifier is PsiThisExpression //TODO: check it's correct this
+                }
+
+                if (getterInfo != null && getterInfo.field == null) {
+                    if (!field.hasModifierProperty(PsiModifier.PRIVATE)
+                        || converter.referenceSearcher.findVariableUsages(field, psiClass).any { PsiUtil.isAccessedForReading(it) && !it.canBeReplacedWithFieldAccess() }) {
+                        field = null
+                    }
+                }
+                else if (setterInfo != null && setterInfo.field == null) {
+                    if (!field.hasModifierProperty(PsiModifier.PRIVATE)
+                        || converter.referenceSearcher.findVariableUsages(field, psiClass).any { PsiUtil.isAccessedForWriting(it) && !it.canBeReplacedWithFieldAccess() }) {
+                        field = null
+                    }
+                }
             }
 
             //TODO: no body for getter OR setter
@@ -151,7 +205,8 @@ private class PropertyDetector(
 
             val type = getterInfo?.method?.returnType ?: setterInfo!!.method.parameterList.parameters.single()?.type!!
 
-            val isOverride = getterInfo?.superProperty != null || setterInfo?.superProperty != null
+            val superProperty = getterInfo?.superProperty ?: setterInfo?.superProperty
+            val isOverride = superProperty != null
 
             val modifiers = convertModifiers(field, getterInfo?.method, setterInfo?.method, isOverride)
 
@@ -173,38 +228,34 @@ private class PropertyDetector(
                                             field != null && getterInfo?.field == field,
                                             field != null && setterInfo?.field == field,
                                             modifiers,
-                                            specialSetterAccess)
+                                            specialSetterAccess,
+                                            superProperty)
+            propertyInfos.add(propertyInfo)
+        }
+        return propertyInfos
+    }
 
+    private fun buildMemberToPropertyInfoMap(propertyInfos: List<PropertyInfo>): MutableMap<PsiMember, PropertyInfo> {
+        val memberToPropertyInfo = HashMap<PsiMember, PropertyInfo>()
+        for (propertyInfo in propertyInfos) {
+            val field = propertyInfo.field
             if (field != null) {
-                memberToPropertyInfo[field] = propertyInfo
+                if (memberToPropertyInfo.containsKey(field)) { // field already in use by other property
+                    continue
+                }
+                else {
+                    memberToPropertyInfo[field] = propertyInfo
+                }
             }
-            if (getterInfo != null) {
-                memberToPropertyInfo[getterInfo.method] = propertyInfo
-            }
-            if (setterInfo != null) {
-                memberToPropertyInfo[setterInfo.method] = propertyInfo
-            }
+
+            propertyInfo.getMethod?.let { memberToPropertyInfo[it] = propertyInfo }
+            propertyInfo.setMethod?.let { memberToPropertyInfo[it] = propertyInfo }
         }
-
-        dropPropertiesWithConflictingAccessors(memberToPropertyInfo)
-
-        val mappedFields = memberToPropertyInfo.values
-                .mapNotNull { it.field }
-                .toSet()
-
-        // map all other fields
-        for (field in psiClass.fields) {
-            if (field !in mappedFields) {
-                memberToPropertyInfo[field] = PropertyInfo.fromFieldWithNoAccessors(field, converter)
-            }
-        }
-
         return memberToPropertyInfo
     }
 
     private fun detectGetters(
             methodsToCheck: List<Pair<PsiMethod, SuperInfo.Property?>>,
-            prohibitedPropertyNames: MutableSet<String?>,
             propertyNamesWithConflict: MutableSet<String>
     ): Map<String, AccessorInfo> {
         val propertyNameToGetterInfo = LinkedHashMap<String, AccessorInfo>()
@@ -218,14 +269,12 @@ private class PropertyDetector(
             }
 
             propertyNameToGetterInfo[info.propertyName] = info
-            info.field?.let { prohibitedPropertyNames.remove(it.name) }
         }
         return propertyNameToGetterInfo
     }
 
     private fun detectSetters(
             methodsToCheck: List<Pair<PsiMethod, SuperInfo.Property?>>,
-            prohibitedPropertyNames: MutableSet<String?>,
             propertyNamesFromGetters: Set<String>,
             propertyNamesWithConflict: MutableSet<String>
     ): Map<String, AccessorInfo> {
@@ -240,7 +289,6 @@ private class PropertyDetector(
             }
 
             propertyNameToSetterInfo[info.propertyName] = info
-            info.field?.let { prohibitedPropertyNames.remove(it.name) }
         }
         return propertyNameToSetterInfo
     }
@@ -256,12 +304,6 @@ private class PropertyDetector(
                 .map { it.getSignature(PsiSubstitutor.EMPTY) }
                 .toSet()
 
-        fun dropProperty(propertyInfo: PropertyInfo) {
-            propertyInfo.field?.let { memberToPropertyInfo.remove(it) }
-            propertyInfo.getMethod?.let { memberToPropertyInfo.remove(it) }
-            propertyInfo.setMethod?.let { memberToPropertyInfo.remove(it) }
-        }
-
         for (propertyInfo in propertyInfos) {
             if (propertyInfo.modifiers.contains(Modifier.OVERRIDE)) continue // cannot drop override
 
@@ -269,7 +311,7 @@ private class PropertyDetector(
             val getterName = JvmAbi.getterName(propertyInfo.name)
             val getterSignature = MethodSignatureUtil.createMethodSignature(getterName, emptyArray(), emptyArray(), PsiSubstitutor.EMPTY)
             if (getterSignature in prohibitedSignatures) {
-                dropProperty(propertyInfo)
+                memberToPropertyInfo.dropProperty(propertyInfo)
                 continue
             }
 
@@ -277,11 +319,41 @@ private class PropertyDetector(
                 val setterName = JvmAbi.setterName(propertyInfo.name)
                 val setterSignature = MethodSignatureUtil.createMethodSignature(setterName, arrayOf(propertyInfo.psiType), emptyArray(), PsiSubstitutor.EMPTY)
                 if (setterSignature in prohibitedSignatures) {
-                    dropProperty(propertyInfo)
+                    memberToPropertyInfo.dropProperty(propertyInfo)
                     continue
                 }
             }
         }
+    }
+
+    private fun dropPropertiesConflictingWithFields(memberToPropertyInfo: MutableMap<PsiMember, PropertyInfo>) {
+        val fieldsByName = psiClass.fields.associateBy { it.name } //TODO: fields from base
+
+        fun isPropertyNameInUse(name: String): Boolean {
+            val field = fieldsByName[name] ?: return false
+            return !memberToPropertyInfo.containsKey(field)
+        }
+
+        var repeatLoop: Boolean
+        do {
+            repeatLoop = false
+            for (propertyInfo in memberToPropertyInfo.values.distinct()) {
+                if (isPropertyNameInUse(propertyInfo.name)) {
+                    //TODO: what about overrides in this case?
+                    memberToPropertyInfo.dropProperty(propertyInfo)
+
+                    if (propertyInfo.field != null) {
+                        repeatLoop = true // need to repeat loop because a new field appeared
+                    }
+                }
+            }
+        } while (repeatLoop)
+    }
+
+    private fun MutableMap<PsiMember, PropertyInfo>.dropProperty(propertyInfo: PropertyInfo) {
+        propertyInfo.field?.let { remove(it) }
+        propertyInfo.getMethod?.let { remove(it) }
+        propertyInfo.setMethod?.let { remove(it) }
     }
 
     private fun convertModifiers(field: PsiField?, getMethod: PsiMethod?, setMethod: PsiMethod?, isOverride: Boolean): Modifiers {
@@ -329,17 +401,6 @@ private class PropertyDetector(
             val superProperty: SuperInfo.Property?
     )
 
-    private sealed class SuperInfo {
-        class Property(
-                val isVar: Boolean,
-                val name: String
-                //TODO: add visibility
-        ) : SuperInfo()
-
-        object Function : SuperInfo()
-
-    }
-
     private fun getGetterInfo(method: PsiMethod, superProperty: SuperInfo.Property?): AccessorInfo? {
         val propertyName = propertyNameByGetMethod(method) ?: return null
         val field = fieldFromGetterBody(method)
@@ -364,11 +425,11 @@ private class PropertyDetector(
         val containingClass = superMethod.containingClass!!
         if (converter.inConversionScope(containingClass)) {
             val propertyInfo = converter.propertyDetectionCache[containingClass][superMethod]
-            return if (propertyInfo != null) SuperInfo.Property(propertyInfo.isVar, propertyInfo.name) else SuperInfo.Function
+            return if (propertyInfo != null) SuperInfo.Property(propertyInfo.isVar, propertyInfo.name, propertyInfo.modifiers.contains(Modifier.ABSTRACT)) else SuperInfo.Function
         }
         else if (superMethod is KtLightMethod) {
             val origin = superMethod.kotlinOrigin
-            return if (origin is KtProperty) SuperInfo.Property(origin.isVar, origin.name ?: "") else SuperInfo.Function
+            return if (origin is KtProperty) SuperInfo.Property(origin.isVar, origin.name ?: "", origin.hasModifier(KtTokens.ABSTRACT_KEYWORD)) else SuperInfo.Function
         }
         else {
             return SuperInfo.Function

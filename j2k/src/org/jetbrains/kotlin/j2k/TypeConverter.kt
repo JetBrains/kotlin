@@ -104,7 +104,7 @@ class TypeConverter(val converter: Converter) {
         }
     }
 
-    private abstract inner class TypeFlavor<T>(val default: T) {
+    private abstract inner class TypeFlavor<out T>(val default: T) {
         private val cache = HashMap<PsiElement, T>()
         private val typesBeingCalculated = HashSet<PsiElement>()
 
@@ -374,7 +374,7 @@ class TypeConverter(val converter: Converter) {
 
         override fun fromType(type: PsiType): Mutability {
             val target = (type as? PsiClassType)?.resolve() ?: return Mutability.NonMutable
-            if (target.qualifiedName !in TypeVisitor.toKotlinMutableTypesMap.keys) return Mutability.NonMutable
+            if (target.qualifiedName !in toKotlinMutableTypesMap.keys) return Mutability.NonMutable
             return Mutability.Default
         }
 
@@ -437,6 +437,6 @@ class TypeConverter(val converter: Converter) {
                 "add", "remove", "set", "addAll", "removeAll", "retainAll", "clear", "put", "putAll", "putIfAbsent", "replace", "replaceAll", "merge", "compute", "computeIfAbsent", "computeIfPresent"
         )
 
-        private val mutableKotlinClasses = TypeVisitor.toKotlinMutableTypesMap.values.toSet()
+        private val mutableKotlinClasses = toKotlinMutableTypesMap.values.toSet()
     }
 }

@@ -586,19 +586,34 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
             return null;
         }
 
-        PsiPackage psiPackage = JavaDirectoryService.getInstance().getPackage(psiDirectory);
-        if (psiPackage == null) {
-            setErrorText("Could not find package corresponding to " + targetDir.getPath());
-            return null;
+        Set<FqName> sourcePackageFqNames = CollectionsKt.mapTo(
+                sourceFiles,
+                new LinkedHashSet<FqName>(),
+                new Function1<KtFile, FqName>() {
+                    @Override
+                    public FqName invoke(KtFile file) {
+                        return file.getPackageFqName();
+                    }
+                }
+        );
+        FqName targetPackageFqName = CollectionsKt.singleOrNull(sourcePackageFqNames);
+        if (targetPackageFqName == null) {
+            PsiPackage psiPackage = JavaDirectoryService.getInstance().getPackage(psiDirectory);
+            if (psiPackage == null) {
+                setErrorText("Could not find package corresponding to " + targetDir.getPath());
+                return null;
+            }
+            targetPackageFqName = new FqName(psiPackage.getQualifiedName());
         }
 
+        final String finalTargetPackageFqName = targetPackageFqName.asString();
         return new KotlinMoveTargetForDeferredFile(
-                new FqName(psiPackage.getQualifiedName()),
+                targetPackageFqName,
                 psiDirectory,
                 new Function1<KtFile, KtFile>() {
                     @Override
                     public KtFile invoke(@NotNull KtFile originalFile) {
-                        return JetRefactoringUtilKt.getOrCreateKotlinFile(targetFile.getName(), psiDirectory);
+                        return JetRefactoringUtilKt.getOrCreateKotlinFile(targetFile.getName(), psiDirectory, finalTargetPackageFqName);
                     }
                 }
         );

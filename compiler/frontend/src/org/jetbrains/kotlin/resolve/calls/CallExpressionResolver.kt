@@ -20,10 +20,7 @@ import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
@@ -39,6 +36,7 @@ import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache
 import org.jetbrains.kotlin.resolve.calls.model.DataFlowInfoForArgumentsImpl
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults.Code.CANDIDATES_WITH_WRONG_RECEIVER
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults.Code.NAME_NOT_FOUND
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil
@@ -266,13 +264,7 @@ class CallExpressionResolver(
     private fun KtQualifiedExpression.elementChain(context: ExpressionTypingContext) =
             qualifiedExpressionResolver.resolveQualifierInExpressionAndUnroll(this, context) {
                 nameExpression ->
-                val temporaryForVariable = TemporaryTraceAndCache.create(
-                        context, "trace to resolve as local variable or property", nameExpression)
-                val call = CallMaker.makePropertyCall(null, null, nameExpression)
-                val contextForVariable = BasicCallResolutionContext.create(
-                        context.replaceTraceAndCache(temporaryForVariable),
-                        call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS)
-                val resolutionResult = callResolver.resolveSimpleProperty(contextForVariable)
+                val resolutionResult = resolveSimpleName(context, nameExpression)
 
                 if (resolutionResult.isSingleResult && resolutionResult.resultingDescriptor is FakeCallableDescriptorForObject) {
                     false
@@ -282,6 +274,17 @@ class CallExpressionResolver(
                     else -> true
                 }
             }
+
+    fun resolveSimpleName(
+            context: ExpressionTypingContext, expression: KtSimpleNameExpression
+    ): OverloadResolutionResults<VariableDescriptor> {
+        val temporaryForVariable = TemporaryTraceAndCache.create(context, "trace to resolve as local variable or property", expression)
+        val call = CallMaker.makePropertyCall(null, null, expression)
+        val contextForVariable = BasicCallResolutionContext.create(
+                context.replaceTraceAndCache(temporaryForVariable), call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS
+        )
+        return callResolver.resolveSimpleProperty(contextForVariable)
+    }
 
     private fun getUnsafeSelectorTypeInfo(
             receiver: Receiver,

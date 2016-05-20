@@ -8,6 +8,6 @@ abstract class C {
         int h = s2.hashCode();
     }
 
-    abstract void f(): String;
-    abstract void g(): String;
+    abstract String f();
+    abstract String g();
 }

@@ -16,42 +16,16 @@
 
 package org.jetbrains.kotlin.psi
 
-import com.intellij.injected.editor.EditorWindow
 import com.intellij.lang.html.HTMLLanguage
-import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference
-import com.intellij.psi.injection.Injectable
-import com.intellij.testFramework.LightProjectDescriptor
-import junit.framework.TestCase
 import org.intellij.lang.regexp.RegExpLanguage
 import org.intellij.plugins.intelliLang.Configuration
-import org.intellij.plugins.intelliLang.inject.InjectLanguageAction
-import org.intellij.plugins.intelliLang.inject.UnInjectLanguageAction
 import org.intellij.plugins.intelliLang.inject.config.BaseInjection
 import org.intellij.plugins.intelliLang.inject.config.InjectionPlace
-import org.intellij.plugins.intelliLang.references.FileReferenceInjector
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 
-class KotlinInjectionTest : KotlinLightCodeInsightFixtureTestCase() {
-    fun testInjectUnInjectOnSimpleString() {
-        myFixture.configureByText("test.kt",
-                                  """val test = "<caret>simple" """)
-        TestCase.assertTrue(InjectLanguageAction().isAvailable(project, myFixture.editor, myFixture.file))
-        TestCase.assertFalse(UnInjectLanguageAction().isAvailable(project, myFixture.editor, myFixture.file))
-
-        InjectLanguageAction.invokeImpl(project, myFixture.editor, myFixture.file, FileReferenceInjector())
-        TestCase.assertTrue(myFixture.getReferenceAtCaretPosition() is FileReference)
-
-        TestCase.assertFalse(InjectLanguageAction().isAvailable(project, myFixture.editor, myFixture.file))
-        TestCase.assertTrue(UnInjectLanguageAction().isAvailable(project, myFixture.editor, myFixture.file))
-
-        UnInjectLanguageAction.invokeImpl(project, myFixture.editor, myFixture.file)
-        TestCase.assertNull(myFixture.getReferenceAtCaretPosition())
-    }
-
-    fun testInjectionOnJavaPredefinedMethodWithAnnotation() = testInjectionPresent(
+class KotlinInjectionTest : AbstractInjectionTest() {
+    fun testInjectionOnJavaPredefinedMethodWithAnnotation() = doInjectionPresentTest(
             """
-            |val test1 = java.util.regex.Pattern.compile("<caret>pattern")
+            val test1 = java.util.regex.Pattern.compile("<caret>pattern")
             """,
             RegExpLanguage.INSTANCE.id,
             unInjectShouldBePresent = false
@@ -68,9 +42,9 @@ class KotlinInjectionTest : KotlinLightCodeInsightFixtureTestCase() {
         try {
             Configuration.getInstance().replaceInjections(listOf(customInjection), listOf(), true)
 
-            testInjectionPresent(
+            doInjectionPresentTest(
                     """
-                    |val stringBuilder = StringBuilder().replace(0, 0, "<caret><html></html>")
+                    val stringBuilder = StringBuilder().replace(0, 0, "<caret><html></html>")
                     """,
                     HTMLLanguage.INSTANCE.id,
                     unInjectShouldBePresent = false
@@ -81,114 +55,135 @@ class KotlinInjectionTest : KotlinLightCodeInsightFixtureTestCase() {
         }
     }
 
-    fun testInjectionWithCommentOnProperty() = testInjectionPresent(
+    fun testInjectionWithCommentOnProperty() = doInjectionPresentTest(
             """
-            |//language=file-reference
-            |val test = "<caret>simple"
+            //language=file-reference
+            val test = "<caret>simple"
             """)
 
-    fun testInjectionWithMultipleCommentsOnFun() = testInjectionPresent(
+    fun testInjectionWithUsageOnReceiverWithRuntime() = doInjectionPresentTest(
             """
-            |// Some comment
-            |// Other comment
-            |//language=file-reference
-            |fun test() = "<caret>simple"
+            val test = "<caret>some"
+            fun foo() = test.toRegex()
+            """,
+            languageId = RegExpLanguage.INSTANCE.id, unInjectShouldBePresent = false)
+
+    fun testInjectionWithUsageInParameterWithRuntime() = doInjectionPresentTest(
+            """
+            val test = "<caret>some"
+            fun foo() = Regex(test)
+            """,
+            languageId = RegExpLanguage.INSTANCE.id, unInjectShouldBePresent = false)
+
+    fun testNoInjectionThoughSeveralAssignmentsWithRuntime() = assertNoInjection(
+            """
+            val first = "<caret>some"
+            val test = first
+            fun foo() = Regex(test)
             """)
 
-    fun testInjectionWithAnnotationOnPropertyWithAnnotation() = testInjectionPresent(
+    fun testInjectionWithMultipleCommentsOnFun() = doInjectionPresentTest(
             """
-            |@org.intellij.lang.annotations.Language("file-reference")
-            |val test = "<caret>simple"
+            // Some comment
+            // Other comment
+            //language=file-reference
+            fun test() = "<caret>simple"
+            """)
+
+    fun testInjectionWithAnnotationOnPropertyWithAnnotation() = doInjectionPresentTest(
+            """
+            @org.intellij.lang.annotations.Language("file-reference")
+            val test = "<caret>simple"
             """)
 
     fun testInjectWithCommentOnProperty() = doFileReferenceInjectTest(
             """
-            |val test = "<caret>simple"
+            val test = "<caret>simple"
             """,
             """
-            |//language=file-reference
-            |val test = "simple"
+            //language=file-reference
+            val test = "simple"
             """
     )
 
     fun testInjectWithCommentOnCommentedProperty() = doFileReferenceInjectTest(
             """
-            |// Hello
-            |val test = "<caret>simple"
+            // Hello
+            val test = "<caret>simple"
             """,
             """
-            |// Hello
-            |//language=file-reference
-            |val test = "simple"
+            // Hello
+            //language=file-reference
+            val test = "simple"
             """
     )
 
     fun testInjectWithCommentOnPropertyWithKDoc() = doFileReferenceInjectTest(
             """
-            |/**
-            | * Hi
-            | */
-            |val test = "<caret>simple"
+            /**
+             * Hi
+             */
+            val test = "<caret>simple"
             """,
             """
-            |/**
-            | * Hi
-            | */
-            |//language=file-reference
-            |val test = "<caret>simple"
+            /**
+             * Hi
+             */
+            //language=file-reference
+            val test = "<caret>simple"
             """
     )
 
     fun testInjectWithCommentOnExpression() = doFileReferenceInjectTest(
             """
-            |fun test() {
-            |    "<caret>"
-            |}
+            fun test() {
+                "<caret>"
+            }
             """,
             """
-            |fun test() {
-            |    //language=file-reference
-            |    "<caret>"
-            |}
+            fun test() {
+                //language=file-reference
+                "<caret>"
+            }
             """
     )
 
     fun testInjectWithCommentOnDeepExpression() = doFileReferenceInjectTest(
             """
-            |fun test() {
-            |    "" + "<caret>"
-            |}
+            fun test() {
+                "" + "<caret>"
+            }
             """,
             """
-            |fun test() {
-            |    "" + "<caret>"
-            |}
+            fun test() {
+                "" + "<caret>"
+            }
             """
     )
 
     fun testInjectOnPropertyWithAnnotation() = doFileReferenceInjectTest(
             """
-            |val test = "<caret>simple"
+            val test = "<caret>simple"
             """,
             """
-            |import org.intellij.lang.annotations.Language
-            |
-            |@Language("file-reference")
-            |val test = "simple"
+            import org.intellij.lang.annotations.Language
+            
+            @Language("file-reference")
+            val test = "simple"
             """
     )
 
     fun testInjectWithOnExpressionWithAnnotation() = doFileReferenceInjectTest(
             """
-            |fun test() {
-            |    "<caret>"
-            |}
+            fun test() {
+                "<caret>"
+            }
             """,
             """
-            |fun test() {
-            |    //language=file-reference
-            |    "<caret>"
-            |}
+            fun test() {
+                //language=file-reference
+                "<caret>"
+            }
             """
     )
 
@@ -196,146 +191,202 @@ class KotlinInjectionTest : KotlinLightCodeInsightFixtureTestCase() {
 
     fun testRemoveInjectionWithAnnotation() = doRemoveInjectionTest(
             """
-            |import org.intellij.lang.annotations.Language
-            |
-            |@Language("file-reference")
-            |val test = "<caret>simple"
+            import org.intellij.lang.annotations.Language
+            
+            @Language("file-reference")
+            val test = "<caret>simple"
             """,
             """
-            |import org.intellij.lang.annotations.Language
-            |
-            |val test = "simple"
+            import org.intellij.lang.annotations.Language
+            
+            val test = "simple"
             """
     )
 
     // TODO: Doesn't work. UnInjectionLanguageAction is not enabled because of absent LanguageInjectionSupport.INJECTOR_SUPPORT user data.
 //    fun testRemoveInjectionFromOneLineFunWithAnnotation() = doRemoveInjectionTest(
 //            """
-//            |import org.intellij.lang.annotations.Language
-//            |
-//            |@Language("HTML") fun template(): String = "<caret><html></html>"
+//            import org.intellij.lang.annotations.Language
+//            
+//            @Language("HTML") fun template(): String = "<caret><html></html>"
 //            """,
 //            """
-//            |import org.intellij.lang.annotations.Language
-//            |
-//            |fun template(): String = "<caret><html></html>"
+//            import org.intellij.lang.annotations.Language
+//            
+//            fun template(): String = "<caret><html></html>"
 //            """
 //    )
 
 //    fun testRemoveInjectionOnQualifiedNameWithAnnotation() = doRemoveInjectionTest(
 //            """
-//            |import org.intellij.lang.annotations.Language
-//            |
-//            |@Language("RegExp")
-//            |val s = java.util.regex.Pattern.compile("Hi")
+//            import org.intellij.lang.annotations.Language
+//            
+//            @Language("RegExp")
+//            val s = java.util.regex.Pattern.compile("Hi")
 //            """,
 //            """
-//            |val test1 = java.util.regex.Pattern.compile("Hi")
+//            val test1 = java.util.regex.Pattern.compile("Hi")
 //            """
 //    )
 
     fun testRemoveInjectionWithComment() = doRemoveInjectionTest(
             """
-            |//language=file-reference
-            |val test = "<caret>simple"
+            //language=file-reference
+            val test = "<caret>simple"
             """,
             """
-            |val test = "simple"
+            val test = "simple"
             """
     )
 
     fun testRemoveInjectionWithCommentNotFirst() = doRemoveInjectionTest(
             """
-            |// Some comment. To do a language injection, add a line comment language=some instruction.
-            |//   language=file-reference
-            |val test = "<caret>simple"
+            // Some comment. To do a language injection, add a line comment language=some instruction.
+            //   language=file-reference
+            val test = "<caret>simple"
             """,
             """
-            |// Some comment. To do a language injection, add a line comment language=some instruction.
-            |val test = "simple"
+            // Some comment. To do a language injection, add a line comment language=some instruction.
+            val test = "simple"
             """
     )
 
     fun testRemoveInjectionWithCommentAfterKDoc() = doRemoveInjectionTest(
             """
-            |/**Property*/
-            |// language=file-reference
-            |val test = "<caret>simple"
+            /**Property*/
+            // language=file-reference
+            val test = "<caret>simple"
             """,
             """
-            |/**Property*/
-            |val test = "simple"
+            /**Property*/
+            val test = "simple"
             """
     )
 
     fun testRemoveInjectionWithCommentInExpression() = doRemoveInjectionTest(
             """
-            |fun test() {
-            |    // This is my favorite part
-            |    // language=RegExp
-            |    "<caret>something"
-            |}
+            fun test() {
+                // This is my favorite part
+                // language=RegExp
+                "<caret>something"
+            }
             """,
             """
-            |fun test() {
-            |    // This is my favorite part
-            |    "something"
-            |}
+            fun test() {
+                // This is my favorite part
+                "something"
+            }
             """
     )
 
-    override fun getProjectDescriptor(): LightProjectDescriptor {
-        if (getTestName(true).endsWith("WithAnnotation")) {
-            return KotlinLightProjectDescriptor.INSTANCE
-        }
+    fun testInjectionWithUsageInFunctionWithMarkedParameterWithAnnotation() = doInjectionPresentTest(
+            """
+            import org.intellij.lang.annotations.Language
 
-        return JAVA_LATEST
-    }
+            val v = "<caret>some"
 
-    private fun testInjectionPresent(text: String, languageId: String? = null, unInjectShouldBePresent: Boolean = true) {
-        myFixture.configureByText("${getTestName(true)}.kt", text.trimMargin())
+            fun foo(@Language("HTML") s: String) {}
 
-        TestCase.assertFalse("Injection action is available. There's probably no injection at caret place",
-                             InjectLanguageAction().isAvailable(project, myFixture.editor, myFixture.file))
+            fun other() { foo(v) }
+            """,
+            languageId = HTMLLanguage.INSTANCE.id, unInjectShouldBePresent = false)
+    
+    fun testInjectionOfCustomParameterWithAnnotation() = doInjectionPresentTest(
+            """
+            import org.intellij.lang.annotations.Language
 
-        if (languageId != null) {
-            val injectedFile = (editor as? EditorWindow)?.injectedFile
-            assertEquals("Wrong injection language", languageId, injectedFile?.language?.id)
-        }
+            fun foo(@Language("HTML") s: String) {}
 
-        if (unInjectShouldBePresent) {
-            TestCase.assertTrue("UnInjection action is not available. There's no injection at caret place or some other troubles.",
-                                UnInjectLanguageAction().isAvailable(project, myFixture.editor, myFixture.file))
-        }
-    }
+            fun other() { foo("<caret>some") }
+            """,
+            languageId = HTMLLanguage.INSTANCE.id, unInjectShouldBePresent = false)
 
-    private fun doRemoveInjectionTest(before: String, after: String) {
-        myFixture.setCaresAboutInjection(false)
+    fun testInjectionOfCustomParameterInConstructorWithAnnotation() = doInjectionPresentTest(
+            """
+            import org.intellij.lang.annotations.Language
 
-        myFixture.configureByText("${getTestName(true)}.kt", before.trimMargin())
+            class Test(@Language("HTML") val s: String)
 
-        TestCase.assertTrue(UnInjectLanguageAction().isAvailable(project, myFixture.editor, myFixture.file))
-        UnInjectLanguageAction.invokeImpl(project, myFixture.editor, myFixture.file)
+            fun other() { Test("<caret>some") }
+            """,
+            languageId = HTMLLanguage.INSTANCE.id, unInjectShouldBePresent = false)
 
-        myFixture.checkResult(after.trimMargin())
-    }
+    fun testInjectionOfCustomParameterDefaultCallWithAnnotation() = doInjectionPresentTest(
+            """
+            import org.intellij.lang.annotations.Language
 
-    private fun doFileReferenceInjectTest(before: String, after: String) {
-        doTest(FileReferenceInjector(), before, after)
-    }
+            fun foo(@Language("HTML") s: String) {}
 
-    private fun doTest(injectable: Injectable, before: String, after: String) {
-        val configuration = Configuration.getProjectInstance(project).advancedConfiguration
-        val allowed = configuration.isSourceModificationAllowed
+            fun other() { foo(s = "<caret>some") }
+            """,
+            languageId = HTMLLanguage.INSTANCE.id, unInjectShouldBePresent = false)
 
-        configuration.isSourceModificationAllowed = true
-        try {
-            myFixture.configureByText("${getTestName(true)}.kt", before.trimMargin())
-            InjectLanguageAction.invokeImpl(project, myFixture.editor, myFixture.file, injectable)
-            myFixture.checkResult(after.trimMargin())
-        }
-        finally {
-            configuration.isSourceModificationAllowed = allowed
-        }
-    }
+//    fun testInjectionOfCustomParameterJavaWithAnnotation() = dotInjectionPresentTest(
+//            """
+//            import some.Test
+//
+//            fun bar() { Test.foo("<caret>some") }
+//            """,
+//            javaCode =
+//            """
+//            package some;
+//
+//            import org.intellij.lang.annotations.Language;
+//
+//            public class Test {
+//              public static void foo(@Language("HTML") String str) {}
+//            }
+//            """,
+//            languageId = HTMLLanguage.INSTANCE.id, unInjectShouldBePresent = false
+//    )
+//
+//    fun testInjectionOfCustomParameterInJavaConstructorWithAnnotation() = dotInjectionPresentTest(
+//            """
+//            import some.Test
+//
+//            fun bar() { Test("<caret>some") }
+//            """,
+//            javaCode =
+//            """
+//            package some;
+//
+//            import org.intellij.lang.annotations.Language;
+//
+//            public class Test {
+//              public Test(@Language("HTML") String str) {}
+//            }
+//            """,
+//            languageId = HTMLLanguage.INSTANCE.id, unInjectShouldBePresent = false
+//    )
+
+
+    fun testInjectionOfCustomParameterInJavaConstructorWithAnnotationWithAnnotation() = doInjectionPresentTest(
+            """
+            fun bar() { Test("<caret>some") }
+            """,
+            javaText =
+            """
+            import org.intellij.lang.annotations.Language;
+
+            public class Test {
+                public Test(@Language("HTML") String str) {}
+            }
+            """,
+            languageId = HTMLLanguage.INSTANCE.id, unInjectShouldBePresent = false
+    )
+
+    fun testInjectionOfCustomParameterJavaWithAnnotation() = doInjectionPresentTest(
+            """
+            fun bar() { Test.foo("<caret>some") }
+            """,
+            javaText =
+            """
+            import org.intellij.lang.annotations.Language;
+
+            public class Test {
+                public static void foo(@Language("HTML") String str) {}
+            }
+            """,
+            languageId = HTMLLanguage.INSTANCE.id, unInjectShouldBePresent = false
+    )
 }

@@ -18,21 +18,22 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiComment
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiRecursiveElementVisitor
+import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.expressionComparedToNull
+import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.typeUtil.isNothing
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import java.util.*
 
 class IfNullToElvisInspection : IntentionBasedInspection<KtIfExpression>(IfNullToElvisIntention())
 
@@ -51,26 +52,29 @@ class IfNullToElvisIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfE
         val (initializer, declaration, ifNullExpr) = calcData(element)!!
         val factory = KtPsiFactory(element)
 
-        val explicitTypeToAdd = if (declaration.isVar && declaration.typeReference == null)
-            initializer.analyze().getType(initializer)
-        else
-            null
+        val explicitTypeToSet = when {
+            // for var with no explicit type, add it so that the actual change won't change
+            declaration.isVar && declaration.typeReference == null -> initializer.analyze(BodyResolveMode.PARTIAL).getType(initializer)
 
-        // do not loose any comments!
-        val comments = element.extractComments(ifNullExpr)
+            // for val with explicit type, change it to non-nullable
+            !declaration.isVar && declaration.typeReference != null -> initializer.analyze(BodyResolveMode.PARTIAL).getType(initializer)?.makeNotNullable()
 
-        for (comment in comments) {
-            declaration.add(factory.createWhiteSpace())
-            declaration.add(comment)
+            else -> null
         }
+
+        val childRangeBefore = PsiChildRange(declaration, element)
+        val commentSaver = CommentSaver(childRangeBefore)
+        val childRangeAfter = childRangeBefore.withoutLastStatement()
 
         val elvis = factory.createExpressionByPattern("$0 ?: $1", initializer, ifNullExpr) as KtBinaryExpression
         val newElvis = initializer.replaced(elvis)
         element.delete()
 
-        if (explicitTypeToAdd != null && !explicitTypeToAdd.isError) {
-            declaration.setType(explicitTypeToAdd)
+        if (explicitTypeToSet != null && !explicitTypeToSet.isError) {
+            declaration.setType(explicitTypeToSet)
         }
+
+        commentSaver.restore(childRangeAfter)
 
         editor?.caretModel?.moveToOffset(newElvis.right!!.textOffset)
     }
@@ -105,18 +109,8 @@ class IfNullToElvisIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfE
         }
     }
 
-    private fun PsiElement.extractComments(skipElement: PsiElement): List<PsiComment> {
-        val comments = ArrayList<PsiComment>()
-        accept(object : PsiRecursiveElementVisitor() {
-            override fun visitElement(element: PsiElement) {
-                if (element == skipElement) return
-                super.visitElement(element)
-            }
-
-            override fun visitComment(comment: PsiComment) {
-                comments.add(comment)
-            }
-        })
-        return comments
+    private fun PsiChildRange.withoutLastStatement(): PsiChildRange {
+        val newLast = last!!.siblings(forward = false, withItself = false).first { it !is PsiWhiteSpace }
+        return PsiChildRange(first, newLast)
     }
 }

@@ -46,9 +46,11 @@ import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
+import org.jetbrains.kotlin.idea.refactoring.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.executeCommand
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.approximateWithResolvableType
 import org.jetbrains.kotlin.idea.util.getResolutionScope
@@ -132,48 +134,46 @@ fun getParametersToRemove(
 }
 
 fun IntroduceParameterDescriptor.performRefactoring() {
-    runWriteAction {
-        val config = object : KotlinChangeSignatureConfiguration {
-            override fun configure(originalDescriptor: KotlinMethodDescriptor): KotlinMethodDescriptor {
-                return originalDescriptor.modify { methodDescriptor ->
-                    if (!withDefaultValue) {
-                        val parameters = callable.getValueParameters()
-                        val withReceiver = methodDescriptor.receiver != null
-                        parametersToRemove
-                                .map {
-                                    if (it is KtParameter) {
-                                        parameters.indexOf(it) + if (withReceiver) 1 else 0
-                                    } else 0
-                                }
-                                .sortedDescending()
-                                .forEach { methodDescriptor.removeParameter(it) }
-                    }
-
-                    val defaultValue = if (newArgumentValue is KtProperty) (newArgumentValue as KtProperty).initializer else newArgumentValue
-                    val parameterInfo = KotlinParameterInfo(callableDescriptor = callableDescriptor,
-                                                            name = newParameterName,
-                                                            defaultValueForCall = if (withDefaultValue) null else defaultValue,
-                                                            defaultValueForParameter = if (withDefaultValue) defaultValue else null,
-                                                            valOrVar = valVar)
-                    parameterInfo.currentTypeInfo = KotlinTypeInfo(false, null, newParameterTypeText)
-                    methodDescriptor.addParameter(parameterInfo)
+    val config = object : KotlinChangeSignatureConfiguration {
+        override fun configure(originalDescriptor: KotlinMethodDescriptor): KotlinMethodDescriptor {
+            return originalDescriptor.modify { methodDescriptor ->
+                if (!withDefaultValue) {
+                    val parameters = callable.getValueParameters()
+                    val withReceiver = methodDescriptor.receiver != null
+                    parametersToRemove
+                            .map {
+                                if (it is KtParameter) {
+                                    parameters.indexOf(it) + if (withReceiver) 1 else 0
+                                } else 0
+                            }
+                            .sortedDescending()
+                            .forEach { methodDescriptor.removeParameter(it) }
                 }
-            }
 
-            override fun performSilently(affectedFunctions: Collection<PsiElement>): Boolean = true
+                val defaultValue = if (newArgumentValue is KtProperty) (newArgumentValue as KtProperty).initializer else newArgumentValue
+                val parameterInfo = KotlinParameterInfo(callableDescriptor = callableDescriptor,
+                                                        name = newParameterName,
+                                                        defaultValueForCall = if (withDefaultValue) null else defaultValue,
+                                                        defaultValueForParameter = if (withDefaultValue) defaultValue else null,
+                                                        valOrVar = valVar)
+                parameterInfo.currentTypeInfo = KotlinTypeInfo(false, null, newParameterTypeText)
+                methodDescriptor.addParameter(parameterInfo)
+            }
         }
 
-        val project = callable.project;
-        val changeSignature = { runChangeSignature(project, callableDescriptor, config, callable, INTRODUCE_PARAMETER) }
-        changeSignature.runRefactoringWithPostprocessing(project, "refactoring.changeSignature") {
-            try {
-                occurrencesToReplace.forEach { occurrenceReplacer(it) }
-            }
-            finally {
-                project.messageBus
-                        .syncPublisher(RefactoringEventListener.REFACTORING_EVENT_TOPIC)
-                        .refactoringDone(INTRODUCE_PARAMETER_REFACTORING_ID, null)
-            }
+        override fun performSilently(affectedFunctions: Collection<PsiElement>): Boolean = true
+    }
+
+    val project = callable.project
+    val changeSignature = { runChangeSignature(project, callableDescriptor, config, callable, INTRODUCE_PARAMETER) }
+    changeSignature.runRefactoringWithPostprocessing(project, "refactoring.changeSignature") {
+        try {
+            occurrencesToReplace.forEach { occurrenceReplacer(it) }
+        }
+        finally {
+            project.messageBus
+                    .syncPublisher(RefactoringEventListener.REFACTORING_EVENT_TOPIC)
+                    .refactoringDone(INTRODUCE_PARAMETER_REFACTORING_ID, null)
         }
     }
 }
@@ -189,6 +189,7 @@ fun selectNewParameterContext(
             operationName = INTRODUCE_PARAMETER,
             editor = editor,
             file = file,
+            title = "Introduce parameter to declaration",
             getContainers = { elements, parent ->
                 val parents = parent.parents
                 val stopAt = (parent.parents.zip(parent.parents.drop(1)))
@@ -263,7 +264,7 @@ open class KotlinIntroduceParameterHandler(
             addAll(KotlinNameSuggester.suggestNamesByType(replacementType, nameValidator, "p"))
         }
 
-        val parametersUsages = findInternalUsagesOfParametersAndReceiver(targetParent, functionDescriptor)
+        val parametersUsages = findInternalUsagesOfParametersAndReceiver(targetParent, functionDescriptor) ?: return
 
         val forbiddenRanges =
                 if (targetParent is KtClass) {
@@ -405,16 +406,21 @@ private fun DeclarationDescriptor?.toFunctionDescriptor(targetParent: KtNamedDec
 private fun findInternalUsagesOfParametersAndReceiver(
         targetParent: KtNamedDeclaration,
         targetDescriptor: FunctionDescriptor
-): MultiMap<KtElement, KtElement> {
+): MultiMap<KtElement, KtElement>? {
     val usages = MultiMap<KtElement, KtElement>()
-    targetParent.getValueParameters()
-            .filter { !it.hasValOrVar() }
-            .forEach {
-                val paramUsages = ReferencesSearch.search(it).map { it.element as KtElement }
-                if (paramUsages.isNotEmpty()) {
-                    usages.put(it, paramUsages)
-                }
-            }
+    val searchComplete = targetParent.project.runSynchronouslyWithProgress("Searching usages of '${targetParent.name}' parameter", true) {
+        runReadAction {
+            targetParent.getValueParameters()
+                    .filter { !it.hasValOrVar() }
+                    .forEach {
+                        val paramUsages = ReferencesSearch.search(it).map { it.element as KtElement }
+                        if (paramUsages.isNotEmpty()) {
+                            usages.put(it, paramUsages)
+                        }
+                    }
+        }
+    } != null
+    if (!searchComplete) return null
     val receiverTypeRef = (targetParent as? KtFunction)?.receiverTypeReference
     if (receiverTypeRef != null) {
         targetParent.acceptChildren(
@@ -458,11 +464,12 @@ open class KotlinIntroduceLambdaParameterHandler(
                 project: Project,
                 editor: Editor,
                 lambdaExtractionDescriptor: ExtractableCodeDescriptor
-        ): KotlinIntroduceParameterDialog {
+        ): KotlinIntroduceParameterDialog? {
             val callable = lambdaExtractionDescriptor.extractionData.targetSibling as KtNamedDeclaration
             val descriptor = callable.resolveToDescriptor()
             val callableDescriptor = descriptor.toFunctionDescriptor(callable)
             val originalRange = lambdaExtractionDescriptor.extractionData.originalRange
+            val parametersUsages = findInternalUsagesOfParametersAndReceiver(callable, callableDescriptor) ?: return null
             val introduceParameterDescriptor = IntroduceParameterDescriptor(
                     originalRange = originalRange,
                     callable = callable,
@@ -471,7 +478,7 @@ open class KotlinIntroduceLambdaParameterHandler(
                     newParameterTypeText = "", // to be chosen in the dialog
                     argumentValue = KtPsiFactory(project).createExpression("{}"), // substituted later
                     withDefaultValue = false,
-                    parametersUsages = findInternalUsagesOfParametersAndReceiver(callable, callableDescriptor),
+                    parametersUsages = parametersUsages,
                     occurrencesToReplace = listOf(originalRange),
                     parametersToRemove = listOf()
             )
@@ -491,7 +498,7 @@ open class KotlinIntroduceLambdaParameterHandler(
                 return
             }
 
-            val dialog = createDialog(project, editor, lambdaExtractionDescriptor)
+            val dialog = createDialog(project, editor, lambdaExtractionDescriptor) ?: return
             if (ApplicationManager.getApplication()!!.isUnitTestMode) {
                 dialog.performRefactoring()
             }

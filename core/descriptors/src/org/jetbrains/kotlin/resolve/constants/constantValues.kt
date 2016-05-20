@@ -33,7 +33,7 @@ abstract class ConstantValue<out T>(open val value: T) {
     override fun toString() = value.toString()
 }
 
-abstract class IntegerValueConstant<T> protected constructor(value: T) : ConstantValue<T>(value)
+abstract class IntegerValueConstant<out T> protected constructor(value: T) : ConstantValue<T>(value)
 
 class AnnotationValue(value: AnnotationDescriptor) : ConstantValue<AnnotationDescriptor>(value) {
 

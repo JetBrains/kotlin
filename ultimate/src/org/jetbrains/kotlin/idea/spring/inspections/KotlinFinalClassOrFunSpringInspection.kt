@@ -54,13 +54,15 @@ class KotlinFinalClassOrFunSpringInspection : AbstractKotlinInspection() {
 
     private fun getMessage(declaration: KtNamedDeclaration): String? {
         when (declaration) {
-            is KtClass -> {
+            is KtClassOrObject -> {
                 val lightClass = declaration.toLightClass() ?: return null
-                when {
-                    SpringConfiguration.META.getJamElement(lightClass) != null -> return "@Configuration class should be declared open"
-                    SpringComponent.META.getJamElement(lightClass) != null -> return "@Component class should be declared open"
-                    SpringTransactionalComponent.META.getJamElement(lightClass) != null -> return "@Transactional class should be declared open"
+                val annotation = when {
+                    SpringConfiguration.META.getJamElement(lightClass) != null -> "@Configuration"
+                    SpringComponent.META.getJamElement(lightClass) != null -> "@Component"
+                    SpringTransactionalComponent.META.getJamElement(lightClass) != null -> "@Transactional"
+                    else -> return null
                 }
+                return if (declaration is KtClass) "$annotation class should be declared open" else "$annotation should not be applied to object declaration "
             }
 
             is KtNamedFunction -> {
@@ -79,17 +81,19 @@ class KotlinFinalClassOrFunSpringInspection : AbstractKotlinInspection() {
             override fun visitNamedDeclaration(declaration: KtNamedDeclaration) {
                 when (declaration) {
                     is KtClass -> if (declaration.isInheritable()) return
+                    is KtObjectDeclaration -> {}
                     is KtNamedFunction -> if (declaration.isOverridable()) return
                     else -> return
                 }
 
                 val message = getMessage(declaration) ?: return
 
+                val fixes = if (declaration !is KtObjectDeclaration) arrayOf(QuickFix(declaration)) else LocalQuickFix.EMPTY_ARRAY
                 holder.registerProblem(
                         declaration.nameIdentifier ?: declaration,
                         message,
                         ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                        QuickFix(declaration)
+                        *fixes
                 )
             }
         }

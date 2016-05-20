@@ -32,7 +32,6 @@ fun Project.initKapt(
         javaTask: AbstractCompile,
         kaptManager: AnnotationProcessingManager,
         variantName: String,
-        kotlinOutputDir: File,
         kotlinOptions: Any?,
         subpluginEnvironment: SubpluginEnvironment,
         taskFactory: (suffix: String) -> AbstractCompile
@@ -41,20 +40,27 @@ fun Project.initKapt(
     val kotlinAfterJavaTask: AbstractCompile?
 
     if (kaptExtension.generateStubs) {
-        kotlinAfterJavaTask = createKotlinAfterJavaTask(javaTask, kotlinTask,
-                kotlinOutputDir, kotlinOptions, taskFactory)
+        kotlinAfterJavaTask = createKotlinAfterJavaTask(javaTask, kotlinTask, kotlinOptions, taskFactory)
+        mapKotlinTaskProperties(this, kotlinAfterJavaTask)
 
         kotlinTask.logger.kotlinDebug("kapt: Using class file stubs")
 
         val stubsDir = File(buildDir, "tmp/kapt/$variantName/classFileStubs")
         kotlinTask.extensions.extraProperties.set("kaptStubsDir", stubsDir)
+        javaTask.appendClasspathDynamically(stubsDir)
+        kotlinTask.appendClasspathDynamically(stubsDir)
 
-        javaTask.doFirst {
-            javaTask.classpath += files(stubsDir)
-        }
-
-        kotlinTask.doFirst {
+        val javaDestinationDir = project.files(javaTask.destinationDir)
+        javaTask.doLast {
             kotlinAfterJavaTask.source(kotlinTask.source)
+            // we don't want kotlinAfterJavaTask to track modifications in generated class
+            kotlinAfterJavaTask.classpath -= javaDestinationDir
+        }
+        kotlinAfterJavaTask.doFirst {
+            kotlinAfterJavaTask.classpath += javaDestinationDir
+        }
+        kotlinAfterJavaTask.doLast {
+            kotlinAfterJavaTask.classpath -= javaDestinationDir
         }
 
         subpluginEnvironment.addSubpluginArguments(this, kotlinAfterJavaTask)
@@ -62,6 +68,9 @@ fun Project.initKapt(
         kotlinAfterJavaTask = null
         kotlinTask.logger.kotlinDebug("kapt: Class file stubs are not used")
     }
+
+    javaTask.appendClasspathDynamically(kaptManager.wrappersDirectory)
+    javaTask.source(kaptManager.hackAnnotationDir)
 
     if (kaptExtension.inheritedAnnotations) {
         kotlinTask.extensions.extraProperties.set("kaptInheritedAnnotations", true)
@@ -72,13 +81,16 @@ fun Project.initKapt(
         kotlinAfterJavaTask?.source(kaptManager.getGeneratedKotlinSourceDir())
     }
 
+    var originalJavaCompilerArgs: List<String>? = null
     javaTask.doFirst {
+        originalJavaCompilerArgs = (javaTask as JavaCompile).options.compilerArgs
         kaptManager.setupKapt()
         kaptManager.generateJavaHackFile()
         kotlinAfterJavaTask?.source(kaptManager.getGeneratedKotlinSourceDir())
     }
 
     javaTask.doLast {
+        (javaTask as JavaCompile).options.compilerArgs = originalJavaCompilerArgs
         kaptManager.afterJavaCompile()
     }
 
@@ -89,14 +101,13 @@ fun Project.initKapt(
 private fun Project.createKotlinAfterJavaTask(
         javaTask: AbstractCompile,
         kotlinTask: AbstractCompile,
-        kotlinOutputDir: File,
         kotlinOptions: Any?,
         taskFactory: (suffix: String) -> AbstractCompile
 ): AbstractCompile {
     val kotlinAfterJavaTask = with (taskFactory(KOTLIN_AFTER_JAVA_TASK_SUFFIX)) {
-        setProperty("kotlinDestinationDir", kotlinOutputDir)
-        destinationDir = javaTask.destinationDir
-        classpath = javaTask.classpath
+        kotlinDestinationDir = kotlinTask.kotlinDestinationDir
+        destinationDir = kotlinTask.destinationDir
+        classpath = kotlinTask.classpath - project.files(javaTask.destinationDir)
         this
     }
 
@@ -120,17 +131,18 @@ public class AnnotationProcessingManager(
         private val javaTask: JavaCompile,
         private val taskQualifier: String,
         private val aptFiles: Set<File>,
-        private val aptOutputDir: File,
+        val aptOutputDir: File,
         private val aptWorkingDir: File,
         private val coreClassLoader: ClassLoader,
         private val androidVariant: Any? = null) {
 
     private val project = task.project
     private val random = Random()
+    val wrappersDirectory = File(aptWorkingDir, "wrappers")
+    val hackAnnotationDir = File(aptWorkingDir, "java_src")
 
     private companion object {
         val JAVA_FQNAME_PATTERN = "^([\\p{L}_$][\\p{L}\\p{N}_$]*\\.)*[\\p{L}_$][\\p{L}\\p{N}_$]*$".toRegex()
-        val WRAPPERS_DIRECTORY = "wrappers"
         val GEN_ANNOTATION = "__gen/annotation"
 
         private val ANDROID_APT_PLUGIN_ID = "com.neenbedankt.android-apt"
@@ -138,7 +150,7 @@ public class AnnotationProcessingManager(
 
     fun getAnnotationFile(): File {
         if (!aptWorkingDir.exists()) aptWorkingDir.mkdirs()
-        return File(aptWorkingDir, "$WRAPPERS_DIRECTORY/annotations.$taskQualifier.txt")
+        return File(wrappersDirectory, "annotations.$taskQualifier.txt")
     }
 
     fun getGeneratedKotlinSourceDir(): File {
@@ -156,15 +168,15 @@ public class AnnotationProcessingManager(
 
         val annotationProcessorFqNames = lookupAnnotationProcessors(aptFiles)
 
-        val stubOutputDir = File(aptWorkingDir, WRAPPERS_DIRECTORY)
-        generateAnnotationProcessorStubs(javaTask, annotationProcessorFqNames, stubOutputDir)
+        generateAnnotationProcessorStubs(javaTask, annotationProcessorFqNames, wrappersDirectory)
 
-        val processorPath = setOf(stubOutputDir) + aptFiles
+        val processorPath = setOf(wrappersDirectory) + aptFiles
         setProcessorPath(javaTask, (processorPath + javaTask.classpath).joinToString(File.pathSeparator))
-        javaTask.appendClasspath(stubOutputDir)
 
+        if (aptOutputDir.exists()) {
+            aptOutputDir.deleteRecursively()
+        }
         addGeneratedSourcesOutputToCompilerArgs(javaTask, aptOutputDir)
-
 
         appendAnnotationsArguments()
         appendAdditionalComplerArgs()
@@ -180,8 +192,7 @@ public class AnnotationProcessingManager(
     }
 
     fun generateJavaHackFile() {
-        val javaAptSourceDir = File(aptWorkingDir, "java_src")
-        val javaHackPackageDir = File(javaAptSourceDir, GEN_ANNOTATION)
+        val javaHackPackageDir = File(hackAnnotationDir, GEN_ANNOTATION)
 
         if (!javaHackPackageDir.exists()) javaHackPackageDir.mkdirs()
 
@@ -196,10 +207,6 @@ public class AnnotationProcessingManager(
 
         project.logger.kotlinDebug("kapt: Java file stub generated: $javaHackClFile " +
                 "(previously existed: $previouslyExisted)")
-
-        if (!javaTask.source.contains(javaHackClFile)) {
-            javaTask.source(javaAptSourceDir)
-        }
     }
 
     private fun appendAnnotationsArguments() {
@@ -242,10 +249,6 @@ public class AnnotationProcessingManager(
                 .joinToString(",")
 
         addWrappersToCompilerArgs(javaTask, annotationProcessorWrapperFqNames)
-    }
-
-    private fun JavaCompile.appendClasspath(file: File) {
-        classpath += project.files(file)
     }
 
     private fun addWrappersToCompilerArgs(javaTask: JavaCompile, wrapperFqNames: String) {

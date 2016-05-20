@@ -20,16 +20,16 @@ import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 import org.jetbrains.kotlin.psi.KtThrowExpression
 import org.jetbrains.kotlin.cfg.Label
 import java.util.Collections
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.LexicalScope
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.BlockScope
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithResult
 
 class ThrowExceptionInstruction(
         expression: KtThrowExpression,
-        lexicalScope: LexicalScope,
+        blockScope: BlockScope,
         errorLabel: Label,
         val thrownValue: PseudoValue
-) : AbstractJumpInstruction(expression, errorLabel, lexicalScope) {
+) : AbstractJumpInstruction(expression, errorLabel, blockScope) {
     override val inputValues: List<PseudoValue> get() = Collections.singletonList(thrownValue)
 
     override fun accept(visitor: InstructionVisitor) {
@@ -44,7 +44,7 @@ class ThrowExceptionInstruction(
         return "throw (${element.text}|$thrownValue)"
     }
 
-    override fun createCopy(newLabel: Label, lexicalScope: LexicalScope): AbstractJumpInstruction {
-        return ThrowExceptionInstruction((element as KtThrowExpression), lexicalScope, newLabel, thrownValue)
+    override fun createCopy(newLabel: Label, blockScope: BlockScope): AbstractJumpInstruction {
+        return ThrowExceptionInstruction((element as KtThrowExpression), blockScope, newLabel, thrownValue)
     }
 }

@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.cfg.pseudocode.instructions.special
 
 import org.jetbrains.kotlin.psi.KtElement
 import java.util.Collections
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.LexicalScope
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.BlockScope
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionImpl
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithRe
 
 class SubroutineSinkInstruction(
         val subroutine: KtElement,
-        lexicalScope: LexicalScope,
-        private val debugLabel: String) : InstructionImpl(lexicalScope) {
+        blockScope: BlockScope,
+        private val debugLabel: String) : InstructionImpl(blockScope) {
     override val nextInstructions: Collection<Instruction>
         get() = Collections.emptyList()
 
@@ -42,5 +42,5 @@ class SubroutineSinkInstruction(
     override fun toString(): String = debugLabel
 
     override fun createCopy(): InstructionImpl =
-            SubroutineSinkInstruction(subroutine, lexicalScope, debugLabel)
+            SubroutineSinkInstruction(subroutine, blockScope, debugLabel)
 }

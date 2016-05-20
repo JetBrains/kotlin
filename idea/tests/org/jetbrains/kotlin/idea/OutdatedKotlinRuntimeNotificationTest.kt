@@ -54,6 +54,8 @@ class KotlinRuntimeLibraryUtilTest : TestCase() {
         test("1.0.0-alpha", "1.0.0-alpha")
         test("1.2.2123-alpha-023", "1.2.2123-alpha-023")
         test("1.0.0-release-IJ143-75", "1.0.0")
+        test("1.0.2-eap-10-IJ141-10", "1.0.2-eap-10")
+        test("1.0.2-dev-825", "1.0.2")
         test("1.0.1-rc-5-IJ143-7", "1.0.1-rc-5")
     }
 

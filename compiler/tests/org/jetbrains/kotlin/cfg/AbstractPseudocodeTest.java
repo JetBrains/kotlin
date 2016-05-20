@@ -147,8 +147,8 @@ public abstract class AbstractPseudocodeTest extends KotlinTestWithEnvironment {
     }
 
     private static String getDepthInstructionPrefix(@NotNull Instruction instruction, @Nullable Instruction previous) {
-        Integer prevDepth = previous != null ? previous.getLexicalScope().getDepth() : null;
-        int depth = instruction.getLexicalScope().getDepth();
+        Integer prevDepth = previous != null ? previous.getBlockScope().getDepth() : null;
+        int depth = instruction.getBlockScope().getDepth();
         if (prevDepth == null || depth != prevDepth) {
             return String.format("%2d ", depth);
         }

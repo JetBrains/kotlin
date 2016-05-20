@@ -29,12 +29,15 @@ import com.intellij.refactoring.listeners.RefactoringElementListener
 import com.intellij.refactoring.rename.RenameProcessor
 import com.intellij.refactoring.util.RefactoringUtil
 import com.intellij.usageView.UsageInfo
+import org.jetbrains.kotlin.asJava.KtLightMethod
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
+import org.jetbrains.kotlin.asJava.propertyNameByAccessor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.refactoring.dropOverrideKeywordIfNecessary
+import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -102,7 +105,19 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
         SETTER_USAGE
     }
 
-    override fun renameElement(element: PsiElement?, newName: String?, usages: Array<out UsageInfo>, listener: RefactoringElementListener?) {
+    override tailrec fun renameElement(element: PsiElement, newName: String, usages: Array<out UsageInfo>, listener: RefactoringElementListener?) {
+        if (element is KtLightMethod) {
+            val origin = element.kotlinOrigin
+            val newPropertyName = propertyNameByAccessor(newName, element)
+            // Kotlin references to Kotlin property should not use accessor name
+            if (newPropertyName != null && (origin is KtProperty || origin is KtParameter)) {
+                val (ktUsages, otherUsages) = usages.partition { it.reference is KtSimpleNameReference }
+                super.renameElement(element, newName, otherUsages.toTypedArray(), listener)
+                renameElement(origin, newPropertyName, ktUsages.toTypedArray(), listener)
+                return
+            }
+        }
+
         if (element !is KtProperty && element !is KtParameter) {
             super.renameElement(element, newName, usages, listener)
             return
@@ -126,7 +141,7 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
             }
         }
 
-        super.renameElement(element, JvmAbi.setterName(newName!!),
+        super.renameElement(element, JvmAbi.setterName(newName),
                             refKindUsages[UsageKind.SETTER_USAGE]?.toTypedArray() ?: arrayOf<UsageInfo>(),
                             null)
 

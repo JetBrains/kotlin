@@ -6,7 +6,7 @@
   <version>@snapshot@</version>
   <vendor url="http://www.jetbrains.com">JetBrains s.r.o.</vendor>
 
-  <idea-version since-build="145.257" until-build="146.9999"/>
+  <idea-version since-build="145.257" until-build="162.*"/>
 
   <depends optional="true" config-file="junit.xml">JUnit</depends>
   <depends optional="true" config-file="gradle.xml">org.jetbrains.plugins.gradle</depends>
@@ -18,6 +18,7 @@
   <depends optional="true" config-file="coverage.xml">Coverage</depends>
   <depends optional="true" config-file="i18n.xml">com.intellij.java-i18n</depends>
   <depends optional="true" config-file="injection.xml">org.intellij.intelliLang</depends>
+  <depends optional="true" config-file="decompiler.xml">org.jetbrains.java.decompiler</depends>
 
   <!-- ULTIMATE-PLUGIN-PLACEHOLDER -->
 
@@ -395,6 +396,10 @@
     <weigher key="completion" implementationClass="org.jetbrains.kotlin.idea.completion.KotlinLookupElementProximityWeigher" id="kotlin.proximity" order="after proximity"/>
 
     <psi.referenceContributor language="kotlin" implementation="org.jetbrains.kotlin.idea.references.KotlinReferenceContributor"/>
+    <psi.referenceContributor
+        id="kotlinFilePathReferenceContributor"
+        language="kotlin"
+        implementation="org.jetbrains.kotlin.idea.references.KotlinFilePathReferenceContributor"/>
 
     <renamePsiElementProcessor id="KotlinClass"
                                implementation="org.jetbrains.kotlin.idea.refactoring.rename.RenameKotlinClassProcessor"
@@ -411,9 +416,12 @@
     <renamePsiElementProcessor implementation="org.jetbrains.kotlin.idea.refactoring.rename.RenameKotlinFileProcessor"
                                id="KotlinFile"
                                order="first"/>
+    <renamePsiElementProcessor implementation="org.jetbrains.kotlin.idea.refactoring.rename.RenameJavaSyntheticPropertyHandler$Processor"
+                               id="JavaSyntheticPropertyFromKotlin"/>
     <renameHandler implementation="org.jetbrains.kotlin.idea.refactoring.rename.RenameKotlinImplicitLambdaParameter"/>
     <renameHandler implementation="org.jetbrains.kotlin.idea.refactoring.rename.RenameDynamicMemberHandler"/>
     <renameHandler implementation="org.jetbrains.kotlin.idea.refactoring.rename.RenameOnSecondaryConstructorHandler"/>
+    <renameHandler implementation="org.jetbrains.kotlin.idea.refactoring.rename.RenameJavaSyntheticPropertyHandler"/>
     <automaticRenamerFactory implementation="org.jetbrains.kotlin.idea.refactoring.rename.AutomaticVariableRenamerFactory"/>
     <automaticRenamerFactory implementation="org.jetbrains.kotlin.idea.refactoring.rename.AutomaticVariableRenamerFactoryForJavaClass"/>
     <automaticRenamerFactory implementation="org.jetbrains.kotlin.idea.refactoring.rename.AutomaticVariableInJavaRenamerFactory"/>
@@ -462,7 +470,8 @@
     <backspaceHandlerDelegate implementation="org.jetbrains.kotlin.idea.editor.KotlinBackspaceHandler"/>
     <backspaceHandlerDelegate implementation="org.jetbrains.kotlin.idea.editor.KotlinStringTemplateBackspaceHandler"/>
 
-    <copyPastePostProcessor implementation="org.jetbrains.kotlin.idea.conversion.copy.ConvertJavaCopyPastePostProcessor"/>
+    <copyPastePostProcessor implementation="org.jetbrains.kotlin.idea.conversion.copy.ConvertJavaCopyPasteProcessor"/>
+    <copyPastePostProcessor implementation="org.jetbrains.kotlin.idea.conversion.copy.ConvertTextJavaCopyPasteProcessor"/>
     <copyPastePostProcessor implementation="org.jetbrains.kotlin.idea.codeInsight.KotlinCopyPasteReferenceProcessor"/>
 
     <lang.documentationProvider language="JAVA" implementationClass="org.jetbrains.kotlin.idea.KotlinQuickDocumentationProvider" order="first"/>
@@ -614,6 +623,8 @@
     <statementUpDownMover id="jetDeclaration"
                           implementation="org.jetbrains.kotlin.idea.codeInsight.upDownMover.KotlinDeclarationMover"
                           order="before jetExpression" />
+
+    <moveLeftRightHandler language="kotlin" implementationClass="org.jetbrains.kotlin.idea.codeInsight.KotlinMoveLeftRightHandler"/>
 
     <joinLinesHandler implementation="org.jetbrains.kotlin.idea.joinLines.JoinDeclarationAndAssignmentHandler"/>
     <joinLinesHandler implementation="org.jetbrains.kotlin.idea.joinLines.JoinBlockIntoSingleStatementHandler"/>
@@ -1102,6 +1113,11 @@
     </intentionAction>
 
     <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.AddJvmOverloadsIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.RemoveArgumentNameIntention</className>
       <category>Kotlin</category>
     </intentionAction>
@@ -1196,11 +1212,17 @@
       <category>Kotlin</category>
     </intentionAction>
 
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.IntroduceVariableIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ObjectLiteralToLambdaInspection"
                      displayName="Object literal can be converted to lambda"
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="INFO"
+                     language="kotlin"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.SimplifyAssertNotNullInspection"
@@ -1208,6 +1230,7 @@
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="INFO"
+                     language="kotlin"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.DeprecatedCallableAddReplaceWithInspection"
@@ -1215,6 +1238,7 @@
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="INFO"
+                     language="kotlin"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ConvertToStringTemplateInspection"
@@ -1222,6 +1246,7 @@
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="INFO"
+                     language="kotlin"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.conventionNameCalls.ReplaceGetOrSetInspection"
@@ -1229,6 +1254,7 @@
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="INFO"
+                     language="kotlin"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToElvisInspection"
@@ -1236,6 +1262,7 @@
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="WEAK WARNING"
+                     language="kotlin"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToSafeAccessInspection"
@@ -1243,6 +1270,7 @@
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="WEAK WARNING"
+                     language="kotlin"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.IfNullToElvisInspection"
@@ -1250,6 +1278,7 @@
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="WEAK WARNING"
+                     language="kotlin"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgumentsInspection"
@@ -1257,6 +1286,7 @@
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="WEAK WARNING"
+                     language="kotlin"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.RemoveExplicitSuperQualifierInspection"
@@ -1264,6 +1294,7 @@
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="WEAK WARNING"
+                     language="kotlin"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.SimplifyNegatedBinaryExpressionInspection"
@@ -1271,6 +1302,7 @@
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="WEAK WARNING"
+                     language="kotlin"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ReplaceWithOperatorAssignmentInspection"
@@ -1278,6 +1310,7 @@
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="WEAK WARNING"
+                     language="kotlin"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IntroduceWhenSubjectInspection"
@@ -1285,6 +1318,7 @@
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="WEAK WARNING"
+                     language="kotlin"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.RemoveCurlyBracesFromTemplateInspection"
@@ -1292,6 +1326,7 @@
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="WEAK WARNING"
+                     language="kotlin"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.SimplifyBooleanWithConstantsInspection"
@@ -1299,6 +1334,7 @@
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="WEAK WARNING"
+                     language="kotlin"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.UsePropertyAccessSyntaxInspection"
@@ -1307,6 +1343,7 @@
                      cleanupTool="true"
                      enabledByDefault="true"
                      level="WEAK WARNING"
+                     language="kotlin"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.UnusedSymbolInspection"
@@ -1314,6 +1351,8 @@
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="WARNING"
+                     runForWholeFile="true"
+                     language="kotlin"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.UnusedReceiverParameterInspection"
@@ -1321,6 +1360,7 @@
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="WARNING"
+                     language="kotlin"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.KotlinUnusedImportInspection"
@@ -1328,6 +1368,8 @@
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="WARNING"
+                     runForWholeFile="true"
+                     language="kotlin"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantSamConstructorInspection"
@@ -1335,6 +1377,7 @@
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="WARNING"
+                     language="kotlin"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.OverridingDeprecatedMemberInspection"
@@ -1343,6 +1386,7 @@
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="WARNING"
+                     language="kotlin"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.kdoc.KDocUnresolvedReferenceInspection"
@@ -1350,6 +1394,7 @@
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="WARNING"
+                     language="kotlin"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.kdoc.KDocMissingDocumentationInspection"
@@ -1357,6 +1402,7 @@
                      groupName="Kotlin"
                      enabledByDefault="false"
                      level="WARNING"
+                     language="kotlin"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.refactoring.move.changePackage.PackageDirectoryMismatchInspection"
@@ -1364,6 +1410,7 @@
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="WARNING"
+                     language="kotlin"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.KotlinCleanupInspection"
@@ -1372,13 +1419,16 @@
                      groupName="Kotlin"
                      enabledByDefault="true"
                      cleanupTool="true"
-                     level="WARNING"/>
+                     level="WARNING"
+                     language="kotlin"
+    />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.RemoveForLoopIndicesInspection"
                      displayName="Unused loop index"
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="WARNING"
+                     language="kotlin"
     />
 
       <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ConflictingExtensionPropertyInspection"
@@ -1386,33 +1436,41 @@
                        groupName="Kotlin"
                        enabledByDefault="true"
                        level="WARNING"
+                       language="kotlin"
       />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.EqualsOrHashCodeInspection"
                      displayName="equals() and hashCode() not paired"
                      groupName="Kotlin"
                      enabledByDefault="true"
-                     level="WARNING"/>
+                     level="WARNING"
+                     language="kotlin"
+    />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantVisibilityModifierInspection"
                      displayName="Redundant visibility modifier"
                      groupName="Kotlin"
                      enabledByDefault="true"
                      cleanupTool="true"
-                     level="WARNING"/>
+                     level="WARNING"
+                     language="kotlin"
+    />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.SimplifyForInspection"
                      displayName="'for' that can be simplified using destructing declaration"
                      groupName="Kotlin"
                      enabledByDefault="true"
                      cleanupTool="false"
-                     level="WEAK WARNING"/>
+                     level="WEAK WARNING"
+                     language="kotlin"
+    />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.CanBeValInspection"
-                     displayName="Local 'var' can be declared as 'val'"
+                     displayName="Local 'var' is never modified and can be declared as 'val'"
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="WARNING"
+                     language="kotlin"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ArrayInDataClassInspection"
@@ -1420,6 +1478,7 @@
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="WEAK WARNING"
+                     language="kotlin"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ProtectedInFinalInspection"
@@ -1427,6 +1486,7 @@
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="WEAK WARNING"
+                     language="kotlin"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.AddVarianceModifierInspection"
@@ -1434,6 +1494,7 @@
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="WEAK WARNING"
+                     language="kotlin"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.CanBeParameterInspection"
@@ -1441,6 +1502,7 @@
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="WARNING"
+                     language="kotlin"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantModalityModifierInspection"
@@ -1449,6 +1511,16 @@
                      enabledByDefault="true"
                      cleanupTool="true"
                      level="WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantSemicolonInspection"
+                     displayName="Redundant semicolon"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     cleanupTool="true"
+                     level="WARNING"
+                     language="kotlin"
     />
 
     <referenceImporter implementation="org.jetbrains.kotlin.idea.quickfix.KotlinReferenceImporter"/>
@@ -1462,6 +1534,8 @@
     <filetype.decompiler filetype="kotlin_builtins" implementationClass="com.intellij.psi.impl.compiled.ClassFileDecompiler"/>
 
     <pathMacroExpandableProtocol protocol="kotlin-js-meta"/>
+
+    <deadCode implementation="org.jetbrains.kotlin.idea.inspections.KotlinJUnitStaticEntryPoint"/>
   </extensions>
 
   <xi:include href="extensions/ide.xml" xpointer="xpointer(/idea-plugin/*)"/>

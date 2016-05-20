@@ -114,7 +114,7 @@ class Converter private constructor(
         is PsiStatement -> createDefaultCodeConverter().convertStatement(element)
         is PsiExpression -> createDefaultCodeConverter().convertExpression(element)
         is PsiImportList -> convertImportList(element)
-        is PsiImportStatementBase -> convertImport(element, false)
+        is PsiImportStatementBase -> convertImport(element, dumpConversion = true).singleOrNull()
         is PsiAnnotation -> annotationConverter.convertAnnotation(element, newLineAfter = false)
         is PsiPackageStatement -> PackageStatement(quoteKeywords(element.packageName ?: "")).assignPrototype(element)
         is PsiJavaCodeReferenceElement -> {
@@ -155,7 +155,7 @@ class Converter private constructor(
     }
 
     private fun convertFile(javaFile: PsiJavaFile): File {
-        var convertedChildren = javaFile.children.mapNotNull { convertTopElement(it) }
+        val convertedChildren = javaFile.children.mapNotNull { convertTopElement(it) }
         return File(convertedChildren).assignPrototype(javaFile)
     }
 
@@ -336,7 +336,9 @@ class Converter private constructor(
 
             //TODO: usage processings for converting method's to property
             if (field != null) {
-                addUsageProcessing(FieldToPropertyProcessing(field, propertyInfo.name, propertyType.isNullable))
+                addUsageProcessing(FieldToPropertyProcessing(field, propertyInfo.name, propertyType.isNullable,
+                                                             replaceReadWithFieldReference = propertyInfo.getMethod != null && !propertyInfo.isGetMethodBodyFieldAccess,
+                                                             replaceWriteWithFieldReference = propertyInfo.setMethod != null && !propertyInfo.isSetMethodBodyFieldAccess))
             }
 
             //TODO: doc-comments
@@ -348,7 +350,7 @@ class Converter private constructor(
                     getter = PropertyAccessor(AccessorKind.GETTER, method.annotations, Modifiers.Empty, method.parameterList, method.body)
                     getter.assignPrototype(getMethod, CommentsAndSpacesInheritance.NO_SPACES)
                 }
-                else if (propertyInfo.modifiers.contains(Modifier.OVERRIDE)) {
+                else if (propertyInfo.modifiers.contains(Modifier.OVERRIDE) && !(propertyInfo.superInfo?.isAbstract() ?: false)) {
                     val superExpression = SuperExpression(Identifier.Empty).assignNoPrototype()
                     val superAccess = QualifiedExpression(superExpression, propertyInfo.identifier).assignNoPrototype()
                     val returnStatement = ReturnStatement(superAccess).assignNoPrototype()
@@ -357,13 +359,16 @@ class Converter private constructor(
                     getter = PropertyAccessor(AccessorKind.GETTER, Annotations.Empty, Modifiers.Empty, parameterList, deferredElement { body })
                     getter.assignNoPrototype()
                 }
-                //TODO: what else?
+                else {
+                    //TODO: what else?
+                    getter = PropertyAccessor(AccessorKind.GETTER, Annotations.Empty, Modifiers.Empty, null, null).assignNoPrototype()
+                }
             }
 
             var setter: PropertyAccessor? = null
             if (propertyInfo.needExplicitSetter) {
                 val accessorModifiers = Modifiers(propertyInfo.specialSetterAccess.singletonOrEmptyList()).assignNoPrototype()
-                if (setMethod != null) {
+                if (setMethod != null && !propertyInfo.isSetMethodBodyFieldAccess) {
                     val method = setMethod.let { convertMethod(it, null, null, null, classKind)!! }
                     val convertedParameter = method.parameterList!!.parameters.single() as FunctionParameter
                     val parameterAnnotations = convertedParameter.annotations
@@ -378,7 +383,7 @@ class Converter private constructor(
                     setter = PropertyAccessor(AccessorKind.SETTER, method.annotations, accessorModifiers, parameterList, method.body)
                     setter.assignPrototype(setMethod, CommentsAndSpacesInheritance.NO_SPACES)
                 }
-                else if (propertyInfo.modifiers.contains(Modifier.OVERRIDE)) {
+                else if (propertyInfo.modifiers.contains(Modifier.OVERRIDE) && !(propertyInfo.superInfo?.isAbstract() ?: false)) {
                     val superExpression = SuperExpression(Identifier.Empty).assignNoPrototype()
                     val superAccess = QualifiedExpression(superExpression, propertyInfo.identifier).assignNoPrototype()
                     val valueIdentifier = Identifier("value", false).assignNoPrototype()
@@ -446,6 +451,8 @@ class Converter private constructor(
     }
 
     fun shouldDeclareVariableType(variable: PsiVariable, type: Type, canChangeType: Boolean): Boolean {
+        assert(inConversionScope(variable))
+
         val initializer = variable.initializer
         if (initializer == null || initializer.isNullLiteral()) return true
         if (initializer.type is PsiPrimitiveType && type is PrimitiveType) {
@@ -532,10 +539,10 @@ class Converter private constructor(
                 }
             }
 
-            var params = convertParameterList(method, overloadReducer)
+            val params = convertParameterList(method, overloadReducer)
 
             val typeParameterList = convertTypeParameterList(method.typeParameterList)
-            var body = deferredElement { codeConverter: CodeConverter ->
+            val body = deferredElement { codeConverter: CodeConverter ->
                 val body = codeConverter.withMethodReturnType(method.returnType).convertBlock(method.body)
                 postProcessBody(body)
             }
@@ -612,6 +619,12 @@ class Converter private constructor(
     fun convertCodeReferenceElement(element: PsiJavaCodeReferenceElement, hasExternalQualifier: Boolean, typeArgsConverted: List<Element>? = null): ReferenceElement {
         val typeArgs = typeArgsConverted ?: typeConverter.convertTypes(element.typeParameters)
 
+        val targetClass = element.resolve() as? PsiClass
+        if (targetClass != null) {
+            convertToKotlinAnalogIdentifier(targetClass.qualifiedName, Mutability.Default)
+                    ?.let { return ReferenceElement(it, typeArgs).assignNoPrototype() }
+        }
+
         if (element.isQualified) {
             var result = Identifier.toKotlin(element.referenceName!!)
             var qualifier = element.qualifier
@@ -625,7 +638,6 @@ class Converter private constructor(
         else {
             if (!hasExternalQualifier) {
                 // references to nested classes may need correction
-                val targetClass = element.resolve() as? PsiClass
                 if (targetClass != null) {
                     val identifier = constructNestedClassReferenceIdentifier(targetClass, specialContext ?: element)
                     if (identifier != null) {

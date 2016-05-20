@@ -41,6 +41,12 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/weighers/basic"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
     }
 
+    @TestMetadata("CallableReference_NothingLast.kt")
+    public void testCallableReference_NothingLast() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/CallableReference_NothingLast.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("Callables.kt")
     public void testCallables() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/Callables.kt");
@@ -122,6 +128,18 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
     @TestMetadata("NamedParameters.kt")
     public void testNamedParameters() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/NamedParameters.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("NamedParameters2.kt")
+    public void testNamedParameters2() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/NamedParameters2.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("NamedParameters3.kt")
+    public void testNamedParameters3() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/NamedParameters3.kt");
         doTest(fileName);
     }
 

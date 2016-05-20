@@ -21,6 +21,10 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -94,11 +98,12 @@ fun KtCallExpression.moveFunctionLiteralOutsideParentheses() {
     val dummyCall = KtPsiFactory(this).createExpressionByPattern("foo()$0:'{}'", expression) as KtCallExpression
     val functionLiteralArgument = dummyCall.lambdaArguments.single()
     this.add(functionLiteralArgument)
-    if (argumentList.arguments.size > 1) {
-        argumentList.removeArgument(argument)
+    /* we should not remove empty parenthesis when callee is a call too - it won't parse */
+    if (argumentList.arguments.size == 1 && calleeExpression !is KtCallExpression) {
+        argumentList.delete()
     }
     else {
-        argumentList.delete()
+        argumentList.removeArgument(argument)
     }
 }
 
@@ -162,16 +167,32 @@ fun PsiElement.deleteSingle() {
 
 fun KtClass.getOrCreateCompanionObject() : KtObjectDeclaration {
     getCompanionObjects().firstOrNull()?.let { return it }
-    return addDeclaration(KtPsiFactory(this).createCompanionObject()) as KtObjectDeclaration
+    return addDeclaration(KtPsiFactory(this).createCompanionObject())
+}
+
+fun KtDeclaration.toDescriptor(): DeclarationDescriptor? {
+    val bindingContext = analyze()
+    // TODO: temporary code
+    if (this is KtPrimaryConstructor) {
+        return (this.getContainingClassOrObject().resolveToDescriptor() as ClassDescriptor).unsubstitutedPrimaryConstructor
+    }
+
+    val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, this]
+    if (descriptor is ValueParameterDescriptor) {
+        return bindingContext[BindingContext.VALUE_PARAMETER_AS_PROPERTY, descriptor]
+    }
+    return descriptor
 }
 
 //TODO: code style option whether to insert redundant 'public' keyword or not
-fun KtDeclaration.setVisibility(visibilityModifier: KtModifierKeywordToken) {
-    val defaultVisibilityKeyword = implicitVisibility()
+fun KtModifierListOwner.setVisibility(visibilityModifier: KtModifierKeywordToken) {
+    if (this is KtDeclaration) {
+        val defaultVisibilityKeyword = implicitVisibility()
 
-    if (visibilityModifier == defaultVisibilityKeyword) {
-        this.visibilityModifierType()?.let { removeModifier(it) }
-        return
+        if (visibilityModifier == defaultVisibilityKeyword) {
+            this.visibilityModifierType()?.let { removeModifier(it) }
+            return
+        }
     }
 
     addModifier(visibilityModifier)
@@ -188,6 +209,20 @@ fun KtDeclaration.implicitVisibility(): KtModifierKeywordToken? {
         KtTokens.DEFAULT_VISIBILITY_KEYWORD
     }
     return defaultVisibilityKeyword
+}
+
+fun KtModifierListOwner.canBePrivate(): Boolean {
+    if (modifierList?.hasModifier(KtTokens.ABSTRACT_KEYWORD) ?: false) return false
+    return true
+}
+
+fun KtModifierListOwner.canBeProtected(): Boolean {
+    val parent = this.parent
+    return when (parent) {
+        is KtClassBody -> parent.parent is KtClass
+        is KtParameterList -> parent.parent is KtPrimaryConstructor
+        else -> false
+    }
 }
 
 fun KtDeclaration.implicitModality(): KtModifierKeywordToken {

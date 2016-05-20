@@ -95,7 +95,7 @@ sealed class KtLightMethodImpl(
 
     override fun setName(name: String): PsiElement? {
         val toRename = kotlinOrigin as? PsiNamedElement ?: throwCanNotModify()
-        toRename.setName(name)
+        toRename.setName(propertyNameByAccessor(name, this) ?: name)
         return this
     }
 

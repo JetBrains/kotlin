@@ -19,11 +19,9 @@ package org.jetbrains.kotlin.maven;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Processor;
-import com.sampullara.cli.Args;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.jetbrains.annotations.NotNull;
@@ -31,8 +29,6 @@ import org.jetbrains.kotlin.cli.common.CLICompiler;
 import org.jetbrains.kotlin.cli.common.ExitCode;
 import org.jetbrains.kotlin.cli.common.KotlinVersion;
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation;
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.config.Services;
 
@@ -60,9 +56,26 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
     @Parameter
     private List<String> sourceDirs;
 
-    public List<String> getSources() {
+    protected List<String> getSourceFilePaths() {
         if (sourceDirs != null && !sourceDirs.isEmpty()) return sourceDirs;
         return defaultSourceDirs;
+    }
+
+    public List<File> getSourceDirs() {
+        List<String> sources = getSourceFilePaths();
+        List<File> result = new ArrayList<File>(sources.size());
+        File baseDir = project.getBasedir();
+
+        for (String source : sources) {
+            File f = new File(source);
+            if (f.isAbsolute()) {
+                result.add(f);
+            } else {
+                result.add(new File(baseDir, source));
+            }
+        }
+
+        return result;
     }
 
     /**
@@ -115,30 +128,12 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
         }
 
         A arguments = createCompilerArguments();
-        configureCompilerArguments(arguments);
-
         CLICompiler<A> compiler = createCompiler();
+
+        configureCompilerArguments(arguments, compiler);
         printCompilerArgumentsIfDebugEnabled(arguments, compiler);
 
-        MessageCollector messageCollector = new MessageCollector() {
-            @Override
-            public void report(@NotNull CompilerMessageSeverity severity, @NotNull String message, @NotNull CompilerMessageLocation location) {
-                String path = location.getPath();
-                String position = path == null ? "" : path + ": (" + (location.getLine() + ", " + location.getColumn()) + ") ";
-
-                String text = position + message;
-
-                if (CompilerMessageSeverity.VERBOSE.contains(severity)) {
-                    getLog().debug(text);
-                } else if (CompilerMessageSeverity.ERRORS.contains(severity)) {
-                    getLog().error(text);
-                } else if (severity == CompilerMessageSeverity.INFO) {
-                    getLog().info(text);
-                } else {
-                    getLog().warn(text);
-                }
-            }
-        };
+        MessageCollector messageCollector = new MavenPluginLogMessageCollector(getLog());
 
         ExitCode exitCode = executeCompiler(compiler, arguments, messageCollector);
 
@@ -152,11 +147,10 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
     }
 
     private boolean hasKotlinFilesInSources() throws MojoExecutionException {
-        List<String> sources = getSources();
+        List<File> sources = getSourceDirs();
         if (sources == null || sources.isEmpty()) return false;
 
-        for (String source : sources) {
-            File root = new File(source);
+        for (File root : sources) {
             if (root.exists()) {
                 boolean sourcesExists = !FileUtil.processFilesRecursively(root, new Processor<File>() {
                     @Override
@@ -224,15 +218,15 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
      */
     protected abstract void configureSpecificCompilerArguments(@NotNull A arguments) throws MojoExecutionException;
 
-    private void configureCompilerArguments(@NotNull A arguments) throws MojoExecutionException {
+    private void configureCompilerArguments(@NotNull A arguments, @NotNull CLICompiler<A> compiler) throws MojoExecutionException {
         if (getLog().isDebugEnabled()) {
             arguments.verbose = true;
         }
 
         List<String> sources = new ArrayList<String>();
-        for (String source : getSources()) {
-            if (new File(source).exists()) {
-                sources.add(source);
+        for (File source : getSourceDirs()) {
+            if (source.exists()) {
+                sources.add(source.getPath());
             }
             else {
                 getLog().warn("Source root doesn't exist: " + source);
@@ -245,17 +239,18 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
 
         arguments.suppressWarnings = nowarn;
 
-        arguments.freeArgs.addAll(sources);
         getLog().info("Compiling Kotlin sources from " + sources);
 
         configureSpecificCompilerArguments(arguments);
 
         try {
-            Args.parse(arguments, ArrayUtil.toStringArray(args));
+            compiler.parseArguments(ArrayUtil.toStringArray(args), arguments);
         }
         catch (IllegalArgumentException e) {
             throw new MojoExecutionException(e.getMessage());
         }
+
+        arguments.freeArgs.addAll(sources);
 
         if (arguments.noInline) {
             getLog().info("Method inlining is turned off");

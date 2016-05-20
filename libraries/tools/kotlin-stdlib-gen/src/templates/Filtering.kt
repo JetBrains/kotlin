@@ -1,3 +1,19 @@
+/*
+ * Copyright 2010-2016 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package templates
 
 import templates.Family.*
@@ -30,11 +46,17 @@ fun filtering(): List<GenericFunction> {
                 val resultSize = size - n
                 if (resultSize <= 0)
                     return emptyList()
+                if (resultSize == 1)
+                    return listOf(last())
 
                 list = ArrayList<T>(resultSize)
                 if (this is List<T>) {
-                    for (index in n..size - 1) {
-                        list.add(this[index])
+                    if (this is RandomAccess) {
+                        for (index in n..size - 1)
+                            list.add(this[index])
+                    } else {
+                        for (item in listIterator(n))
+                            list.add(item)
                     }
                     return list
                 }
@@ -46,7 +68,7 @@ fun filtering(): List<GenericFunction> {
             for (item in this) {
                 if (count++ >= n) list.add(item)
             }
-            return list
+            return list.optimizeReadOnlyList()
             """
         }
 
@@ -76,16 +98,7 @@ fun filtering(): List<GenericFunction> {
         body(ArraysOfObjects, ArraysOfPrimitives) {
             """
             require(n >= 0) { "Requested element count $n is less than zero." }
-            if (n == 0)
-                return toList()
-            if (n >= size)
-                return emptyList()
-
-            val list = ArrayList<T>(size - n)
-            for (index in n..size - 1) {
-                list.add(this[index])
-            }
-            return list
+            return takeLast((size - n).coerceAtLeast(0))
             """
         }
     }
@@ -98,7 +111,10 @@ fun filtering(): List<GenericFunction> {
             """
             require(n >= 0) { "Requested element count $n is less than zero." }
             if (n == 0) return emptyList()
-            if (this is Collection<T> && n >= size) return toList()
+            if (this is Collection<T>) {
+                if (n >= size) return toList()
+                if (n == 1) return listOf(first())
+            }
             var count = 0
             val list = ArrayList<T>(n)
             for (item in this) {
@@ -106,7 +122,7 @@ fun filtering(): List<GenericFunction> {
                     break
                 list.add(item)
             }
-            return list
+            return list.optimizeReadOnlyList()
             """
         }
 
@@ -138,6 +154,7 @@ fun filtering(): List<GenericFunction> {
             require(n >= 0) { "Requested element count $n is less than zero." }
             if (n == 0) return emptyList()
             if (n >= size) return toList()
+            if (n == 1) return listOf(this[0])
             var count = 0
             val list = ArrayList<T>(n)
             for (item in this) {
@@ -186,15 +203,36 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
-        body(Lists, ArraysOfObjects, ArraysOfPrimitives) {
+        body(ArraysOfObjects, ArraysOfPrimitives) {
             """
             require(n >= 0) { "Requested element count $n is less than zero." }
             if (n == 0) return emptyList()
             val size = size
             if (n >= size) return toList()
+            if (n == 1) return listOf(this[size - 1])
+
             val list = ArrayList<T>(n)
             for (index in size - n .. size - 1)
                 list.add(this[index])
+            return list
+            """
+        }
+        body(Lists) {
+            """
+            require(n >= 0) { "Requested element count $n is less than zero." }
+            if (n == 0) return emptyList()
+            val size = size
+            if (n >= size) return toList()
+            if (n == 1) return listOf(last())
+
+            val list = ArrayList<T>(n)
+            if (this is RandomAccess) {
+                for (index in size - n .. size - 1)
+                    list.add(this[index])
+            } else {
+                for (item in listIterator(n))
+                    list.add(item)
+            }
             return list
             """
         }
@@ -300,6 +338,19 @@ fun filtering(): List<GenericFunction> {
             return emptyList()
             """
         }
+        body(Lists) {
+            """
+            if (!isEmpty()) {
+                val iterator = listIterator(size)
+                while (iterator.hasPrevious()) {
+                    if (!predicate(iterator.previous())) {
+                        return take(iterator.nextIndex() + 1)
+                    }
+                }
+            }
+            return emptyList()
+            """
+        }
 
         doc(Strings) { "Returns a string containing all characters except last characters that satisfy the given [predicate]." }
         doc(CharSequences) { "Returns a subsequence of this char sequence containing all characters except last characters that satisfy the given [predicate]." }
@@ -330,6 +381,27 @@ fun filtering(): List<GenericFunction> {
             }
             return toList()
             """
+        }
+        body(Lists) {
+            """
+            if (isEmpty())
+                return emptyList()
+            val iterator = listIterator(size)
+            while (iterator.hasPrevious()) {
+                if (!predicate(iterator.previous())) {
+                    iterator.next()
+                    val expectedSize = size - iterator.nextIndex()
+                    if (expectedSize == 0) return emptyList()
+                    return ArrayList<T>(expectedSize).apply {
+                        while (iterator.hasNext())
+                            add(iterator.next())
+                    }
+                }
+            }
+            return toList()
+            """
+            // TODO: Use iterator.toList() internal method in 1.1
+//            return iterator.toList(size - iterator.nextIndex())
         }
 
         doc(Strings) { "Returns a string containing last characters that satisfy the given [predicate]." }
@@ -543,6 +615,48 @@ fun filtering(): List<GenericFunction> {
         }
     }
 
+    templates add f("filterIsInstanceTo(destination: C)") {
+        doc { "Appends all elements that are instances of specified type parameter R to the given [destination]." }
+        typeParam("reified R")
+        typeParam("C : MutableCollection<in R>")
+        inline(true)
+        receiverAsterisk(true)
+        returns("C")
+        exclude(ArraysOfPrimitives, Strings)
+        body {
+            """
+            for (element in this) if (element is R) destination.add(element)
+            return destination
+            """
+        }
+    }
+
+    templates add f("filterIsInstance()") {
+        doc { "Returns a list containing all elements that are instances of specified type parameter R." }
+        typeParam("reified R")
+        returns("List<@kotlin.internal.NoInfer R>")
+        inline(true)
+        receiverAsterisk(true)
+        body {
+            """
+            return filterIsInstanceTo(ArrayList<R>())
+            """
+        }
+        exclude(ArraysOfPrimitives, Strings)
+
+        doc(Sequences) { "Returns a sequence containing all elements that are instances of specified type parameter R." }
+        returns(Sequences) { "Sequence<@kotlin.internal.NoInfer R>" }
+        inline(true)
+        receiverAsterisk(true)
+        body(Sequences) {
+            """
+            @Suppress("UNCHECKED_CAST")
+            return filter { it is R } as Sequence<R>
+            """
+        }
+    }
+
+
     templates add f("slice(indices: Iterable<Int>)") {
         only(Strings, Lists, ArraysOfPrimitives, ArraysOfObjects)
         doc { "Returns a list containing elements at specified [indices]." }
@@ -550,7 +664,7 @@ fun filtering(): List<GenericFunction> {
         body {
             """
             val size = indices.collectionSizeOrDefault(10)
-            if (size == 0) return listOf()
+            if (size == 0) return emptyList()
             val list = ArrayList<T>(size)
             for (index in indices) {
                 list.add(get(index))

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.utils.HashSetUtil;
 
 import java.util.*;
 
+import static kotlin.collections.CollectionsKt.sortedBy;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.*;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveAbstractMembers;
@@ -146,21 +147,27 @@ public class OverrideResolver {
         return filterOverrides(candidateSet, transform, Filtering.RETAIN_OVERRIDING);
     }
 
-    @NotNull
-    private static <D> Set<D> filterOverrides(
-            @NotNull Set<D> candidateSet,
-            @NotNull final Function<? super D, ? extends CallableDescriptor> transform,
-            @NotNull Filtering filtering
-    ) {
-        if (candidateSet.size() <= 1) return candidateSet;
 
-        // In a multi-module project different "copies" of the same class may be present in different libraries,
-        // that's why we use structural equivalence for members (DescriptorEquivalenceForOverrides).
-        // Here we filter out structurally equivalent descriptors before processing overrides, because such descriptors
-        // "override" each other (overrides(f, g) = overrides(g, f) = true) and the code below removes them all from the
-        // candidates, unless we first compute noDuplicates
-        Set<D> noDuplicates = HashSetUtil.linkedHashSet(
-                candidateSet,
+    // In a multi-module project different "copies" of the same class may be present in different libraries,
+    // that's why we use structural equivalence for members (DescriptorEquivalenceForOverrides).
+    //
+    // Sometimes we should compare "copies" from sources and from binary files.
+    // But we cannot compare return types for such copies, because it may lead us to recursive problem (see KT-11995).
+    // Because of this we compare them without return type and choose descriptor from source if we found duplicate.
+    @NotNull
+    private static <D> Set<D> noDuplicates(
+            @NotNull Set<D> candidateSet,
+            @NotNull final Function<? super D, ? extends CallableDescriptor> transform
+    ) {
+        List<D> fromSourcesGoesFirst = sortedBy(candidateSet, new Function1<D, Integer>() {
+            @Override
+            public Integer invoke(D d) {
+                return DescriptorToSourceUtils.descriptorToDeclaration(transform.fun(d)) != null ? 0 : 1;
+            }
+        });
+
+        return HashSetUtil.linkedHashSet(
+                fromSourcesGoesFirst,
                 new EqualityPolicy<D>() {
                     @Override
                     public int getHashCode(D d) {
@@ -169,11 +176,29 @@ public class OverrideResolver {
 
                     @Override
                     public boolean isEqual(D d1, D d2) {
-                        CallableDescriptor f = transform.fun(d1);
-                        CallableDescriptor g = transform.fun(d2);
-                        return DescriptorEquivalenceForOverrides.INSTANCE.areEquivalent(f.getOriginal(), g.getOriginal());
+                        CallableDescriptor f = transform.fun(d1).getOriginal();
+                        CallableDescriptor g = transform.fun(d2).getOriginal();
+
+                        boolean ignoreReturnType = (DescriptorToSourceUtils.descriptorToDeclaration(f) == null) !=
+                                                   (DescriptorToSourceUtils.descriptorToDeclaration(g) == null);
+
+                        return DescriptorEquivalenceForOverrides.INSTANCE.areCallableDescriptorsEquivalent(f, g, ignoreReturnType);
                     }
                 });
+    }
+
+    @NotNull
+    private static <D> Set<D> filterOverrides(
+            @NotNull Set<D> candidateSet,
+            @NotNull Function<? super D, ? extends CallableDescriptor> transform,
+            @NotNull Filtering filtering
+    ) {
+        if (candidateSet.size() <= 1) return candidateSet;
+
+        // Here we filter out structurally equivalent descriptors before processing overrides, because such descriptors
+        // "override" each other (overrides(f, g) = overrides(g, f) = true) and the code below removes them all from the
+        // candidates, unless we first compute noDuplicates
+        Set<D> noDuplicates = noDuplicates(candidateSet, transform);
 
         Set<D> candidates = Sets.newLinkedHashSet();
         outerLoop:

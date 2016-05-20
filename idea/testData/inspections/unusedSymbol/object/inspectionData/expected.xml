@@ -36,24 +36,6 @@
   </problem>
 
   <problem>
-    <file>companionObjectUnused.kt</file>
-    <line>2</line>
-    <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="companionObjectUnused.kt" />
-    <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused Symbol</problem_class>
-    <description>Object 'Companion' is never used</description>
-  </problem>
-
-  <problem>
-    <file>companionObjectUnused.kt</file>
-    <line>7</line>
-    <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="companionObjectUnused.kt" />
-    <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused Symbol</problem_class>
-    <description>Object 'Named' is never used</description>
-  </problem>
-
-  <problem>
     <file>usedViaMemberImport.kt</file>
     <line>11</line>
     <module>light_idea_test_case</module>

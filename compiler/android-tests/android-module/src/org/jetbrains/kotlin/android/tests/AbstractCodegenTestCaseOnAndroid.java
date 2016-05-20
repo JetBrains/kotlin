@@ -22,21 +22,13 @@ import java.lang.reflect.Method;
 
 public class AbstractCodegenTestCaseOnAndroid extends TestCase {
 
-    protected void invokeBoxMethod(String filePath, String expectedResult) throws Exception {
+    protected void invokeBoxMethod(Class clazz, String filePath, String expectedResult) throws Exception {
         try {
-            Class clazz;
-            String packageName = filePath.replaceAll("\\\\|-|\\.|/", "_");
-            clazz = Class.forName(packageName + "." + getPackageClassName(packageName));
-            Method method;
-            method = clazz.getMethod("box");
+            Method method = clazz.getMethod("box");
             assertEquals(expectedResult, method.invoke(null));
         }
         catch (Throwable e) {
             throw new RuntimeException("File: " + filePath, e);
         }
-    }
-
-    public static String getPackageClassName(String packageName) {
-        return Character.toUpperCase(packageName.charAt(0)) + packageName.substring(1, packageName.length()) + "Package";
     }
 }

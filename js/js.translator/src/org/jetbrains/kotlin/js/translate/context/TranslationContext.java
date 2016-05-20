@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,8 +30,10 @@ import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.kotlin.js.translate.context.UsageTrackerKt.getNameForCapturedDescriptor;
@@ -57,8 +59,6 @@ public class TranslationContext {
     private final DeclarationDescriptor declarationDescriptor;
     @Nullable
     private final ClassDescriptor classDescriptor;
-    @Nullable
-    private final ClassDescriptor objectDescriptor;
 
     @NotNull
     public static TranslationContext rootContext(@NotNull StaticContext staticContext, JsFunction rootFunction) {
@@ -85,19 +85,11 @@ public class TranslationContext {
         this.usageTracker = usageTracker;
         this.definitionPlace = definitionPlace;
         this.declarationDescriptor = declarationDescriptor;
-        if (declarationDescriptor instanceof ClassDescriptor
-                && !DescriptorUtils.isAnonymousObject(declarationDescriptor)
-                && !DescriptorUtils.isObject(declarationDescriptor)) {
+        if (declarationDescriptor instanceof ClassDescriptor) {
             this.classDescriptor = (ClassDescriptor) declarationDescriptor;
         }
         else {
             this.classDescriptor = parent != null ? parent.classDescriptor : null;
-        }
-        if (declarationDescriptor instanceof ClassDescriptor && DescriptorUtils.isObject(declarationDescriptor)) {
-            this.objectDescriptor = (ClassDescriptor) declarationDescriptor;
-        }
-        else {
-            this.objectDescriptor = parent != null ? parent.objectDescriptor : null;
         }
     }
 
@@ -136,6 +128,13 @@ public class TranslationContext {
     }
 
     @NotNull
+    public TranslationContext innerWithUsageTracker(@NotNull JsScope scope, @NotNull MemberDescriptor descriptor) {
+        UsageTracker usageTracker = new UsageTracker(this.usageTracker, descriptor, scope);
+        return new TranslationContext(this, staticContext, dynamicContext, aliasingContext.inner(), usageTracker, definitionPlace,
+                                      descriptor);
+    }
+
+    @NotNull
     public TranslationContext innerBlock(@NotNull JsBlock block) {
         return new TranslationContext(this, staticContext, dynamicContext.innerBlock(block), aliasingContext, usageTracker, null,
                                       this.declarationDescriptor);
@@ -154,8 +153,7 @@ public class TranslationContext {
 
     @NotNull
     private TranslationContext innerWithAliasingContext(AliasingContext aliasingContext) {
-        return new TranslationContext(this, this.staticContext, this.dynamicContext, aliasingContext, this.usageTracker, null,
-                                      this.declarationDescriptor);
+        return new TranslationContext(this, staticContext, dynamicContext, aliasingContext, usageTracker, null, declarationDescriptor);
     }
 
     @NotNull
@@ -354,7 +352,23 @@ public class TranslationContext {
                 return getQualifiedReference(descriptor.getContainingDeclaration());
             }
         }
-        return getDispatchReceiverPath(getNearestClass(descriptor));
+
+        if (descriptor.getValue() instanceof ExtensionReceiver) return JsLiteral.THIS;
+
+        ClassifierDescriptor classifier = descriptor.getValue().getType().getConstructor().getDeclarationDescriptor();
+
+        // TODO: can't tell why this assertion is valid, revisit this code later
+        assert classifier instanceof ClassDescriptor;
+
+        ClassDescriptor cls = (ClassDescriptor) classifier;
+
+        assert classDescriptor != null : "Can't get ReceiverParameterDescriptor in top level";
+        JsExpression receiver = getAliasForDescriptor(classDescriptor.getThisAsReceiverParameter());
+        if (receiver == null) {
+            receiver = JsLiteral.THIS;
+        }
+
+        return getDispatchReceiverPath(cls, receiver);
     }
 
     private boolean isConstructorOrDirectScope(DeclarationDescriptor descriptor) {
@@ -367,25 +381,24 @@ public class TranslationContext {
     }
 
     @NotNull
-    private JsExpression getDispatchReceiverPath(@Nullable ClassDescriptor cls) {
+    private JsExpression getDispatchReceiverPath(@Nullable ClassDescriptor cls, JsExpression thisExpression) {
         if (cls != null) {
             JsExpression alias = getAliasForDescriptor(cls);
             if (alias != null) {
                 return alias;
             }
         }
-        if (classDescriptor == cls ||
-            (classDescriptor != null &&
-             cls != null && DescriptorUtils.isSubclass(classDescriptor, cls)) ||
-            parent == null) {
-            return JsLiteral.THIS;
+
+        if (classDescriptor == cls || parent == null) {
+            return thisExpression;
         }
+
         ClassDescriptor parentDescriptor = parent.classDescriptor;
         if (classDescriptor != parentDescriptor) {
-            return new JsNameRef(Namer.OUTER_FIELD_NAME, parent.getDispatchReceiverPath(cls));
+            return new JsNameRef(Namer.OUTER_FIELD_NAME, parent.getDispatchReceiverPath(cls, thisExpression));
         }
         else {
-            return parent.getDispatchReceiverPath(cls);
+            return parent.getDispatchReceiverPath(cls, thisExpression);
         }
     }
 
@@ -399,7 +412,7 @@ public class TranslationContext {
 
     @NotNull
     public JsNameRef define(DeclarationDescriptor descriptor, JsExpression expression) {
-        String suggestedName = TranslationUtils.getSuggestedNameForInnerDeclaration(this, descriptor);
+        String suggestedName = TranslationUtils.getSuggestedNameForInnerDeclaration(staticContext, descriptor);
         return getDefinitionPlace().define(suggestedName, expression);
     }
 
@@ -409,28 +422,88 @@ public class TranslationContext {
             usageTracker.used(descriptor);
 
             JsName name = getNameForCapturedDescriptor(usageTracker, descriptor);
-            if (name != null) return name.makeRef();
+            if (name != null) {
+                JsNameRef result = name.makeRef();
+                if (shouldCaptureViaThis()) {
+                    result.setQualifier(JsLiteral.THIS);
+                }
+                return result;
+            }
         }
 
         return null;
     }
 
-    @Nullable
-    private static ClassDescriptor getNearestClass(@NotNull DeclarationDescriptor declaration) {
-        DeclarationDescriptor decl = declaration;
-        while (decl != null) {
-            if (decl instanceof ClassDescriptor) {
-                if (!DescriptorUtils.isAnonymousObject(decl) && !DescriptorUtils.isObject(decl)) {
-                    return (ClassDescriptor) decl;
-                }
-            }
-            decl = decl.getContainingDeclaration();
-        }
-        return null;
+    private boolean shouldCaptureViaThis() {
+        if (declarationDescriptor == null) return false;
+
+        if (DescriptorUtils.isDescriptorWithLocalVisibility(declarationDescriptor)) return false;
+        if (declarationDescriptor instanceof ConstructorDescriptor &&
+            DescriptorUtils.isDescriptorWithLocalVisibility(declarationDescriptor.getContainingDeclaration())) return false;
+
+        return true;
     }
 
     @Nullable
     public DeclarationDescriptor getDeclarationDescriptor() {
         return declarationDescriptor;
+    }
+
+    public void putClassOrConstructorClosure(@NotNull MemberDescriptor descriptor, @NotNull List<DeclarationDescriptor> closure) {
+        staticContext.putClassOrConstructorClosure(descriptor, closure);
+    }
+
+    @Nullable
+    public List<DeclarationDescriptor> getClassOrConstructorClosure(@NotNull MemberDescriptor localClass) {
+        List<DeclarationDescriptor> result = staticContext.getClassOrConstructorClosure(localClass);
+        if (result == null && localClass instanceof ConstructorDescriptor && ((ConstructorDescriptor) localClass).isPrimary()) {
+            result = staticContext.getClassOrConstructorClosure((ClassDescriptor) localClass.getContainingDeclaration());
+        }
+        return result;
+    }
+
+    /**
+     * Gets an expression to pass to a constructor of a closure function. I.e. consider the case:
+     *
+     * ```
+     * fun a(x) {
+     *     fun b(y) = x + y
+     *     return b
+     * }
+     * ```
+     *
+     * Here, `x` is a free variable of `b`. Transform `a` into the following form:
+     *
+     * ```
+     * fun a(x) {
+     *     fun b0(x0) = { y -> x0 * y }
+     *     return b0(x)
+     * }
+     * ```
+     *
+     * This function generates arguments passed to newly generated `b0` closure, as well as for the similar case of local class and
+     * object expression.
+     *
+     * @param descriptor represents a free variable or, more generally, free declaration.
+     * @return expression to pass to a closure constructor.
+     */
+    @NotNull
+    public JsExpression getArgumentForClosureConstructor(@NotNull DeclarationDescriptor descriptor) {
+        JsExpression alias = getAliasForDescriptor(descriptor);
+        if (alias != null) return alias;
+        if (descriptor instanceof ReceiverParameterDescriptor) {
+            return getDispatchReceiver((ReceiverParameterDescriptor) descriptor);
+        }
+        return getNameForDescriptor(descriptor).makeRef();
+    }
+
+    @Nullable
+    public JsName getOuterClassReference(ClassDescriptor descriptor) {
+        DeclarationDescriptor container = descriptor.getContainingDeclaration();
+        if (!(container instanceof ClassDescriptor) || !descriptor.isInner()) {
+            return null;
+        }
+
+        return staticContext.getScopeForDescriptor(descriptor).declareName(Namer.OUTER_FIELD_NAME);
     }
 }

@@ -74,7 +74,7 @@ public abstract class AbstractList<E>() : AbstractCollection<E>(), MutableList<E
 
     override fun subList(fromIndex: Int, toIndex: Int): MutableList<E> = noImpl
 
-    override val size: Int get() = noImpl
+    abstract override val size: Int
 
     override fun equals(other: Any?): Boolean = noImpl
 

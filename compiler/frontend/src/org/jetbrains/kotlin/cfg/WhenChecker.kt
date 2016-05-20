@@ -37,6 +37,8 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumClass
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
+import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
+import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import java.util.*
 
 interface WhenMissingCase {
@@ -73,7 +75,7 @@ private object NullMissingCase : WhenMissingCase {
 
 // It's not a regular exhaustiveness checker, invoke it only inside other checkers
 private object WhenOnNullableExhaustivenessChecker /* : WhenExhaustivenessChecker*/ {
-    fun getMissingCases(expression: KtWhenExpression, context: BindingContext, subjectDescriptor: ClassDescriptor?, nullable: Boolean) =
+    fun getMissingCases(expression: KtWhenExpression, context: BindingContext, nullable: Boolean) =
             if (nullable) getNullCaseIfMissing(expression, context) else listOf()
 
     private fun getNullCaseIfMissing(expression: KtWhenExpression, context: BindingContext): List<WhenMissingCase> {
@@ -120,7 +122,7 @@ private object WhenOnBooleanExhaustivenessChecker : WhenExhaustivenessChecker {
         }
         return (if (!containsTrue) listOf(BooleanMissingCase(true)) else listOf()) +
                (if (!containsFalse) listOf(BooleanMissingCase(false)) else listOf()) +
-               WhenOnNullableExhaustivenessChecker.getMissingCases(expression, context, subjectDescriptor, nullable)
+               WhenOnNullableExhaustivenessChecker.getMissingCases(expression, context, nullable)
     }
 
     override fun isApplicable(subjectType: KotlinType): Boolean {
@@ -212,7 +214,7 @@ private object WhenOnEnumExhaustivenessChecker : WhenOnClassExhaustivenessChecke
                         .filterIsInstance<ClassDescriptor>()
                         .toSet()
         return getMissingClassCases(expression, entryDescriptors, context) +
-               WhenOnNullableExhaustivenessChecker.getMissingCases(expression, context, subjectDescriptor, nullable)
+               WhenOnNullableExhaustivenessChecker.getMissingCases(expression, context, nullable)
     }
 
     override fun isApplicable(subjectType: KotlinType): Boolean {
@@ -235,7 +237,7 @@ private object WhenOnSealedExhaustivenessChecker : WhenOnClassExhaustivenessChec
         collectNestedSubclasses(subjectDescriptor!!, subjectDescriptor, memberClassDescriptors)
         // When on a sealed class without derived members is considered non-exhaustive (see test WhenOnEmptySealed)
         return getMissingClassCases(expression, memberClassDescriptors, context) +
-               WhenOnNullableExhaustivenessChecker.getMissingCases(expression, context, subjectDescriptor, nullable)
+               WhenOnNullableExhaustivenessChecker.getMissingCases(expression, context, nullable)
     }
 
     override fun isApplicable(subjectType: KotlinType): Boolean {
@@ -331,7 +333,47 @@ object WhenChecker {
             }
 
     fun containsNullCase(expression: KtWhenExpression, context: BindingContext) =
-            WhenOnNullableExhaustivenessChecker.getMissingCases(expression, context, null, true).isEmpty()
+            WhenOnNullableExhaustivenessChecker.getMissingCases(expression, context, true).isEmpty()
+
+    fun checkDuplicatedLabels(expression: KtWhenExpression, trace: BindingTrace) {
+        if (expression.subjectExpression == null) return
+
+        val checkedTypes = HashSet<Pair<KotlinType, Boolean>>()
+        val checkedConstants = HashSet<CompileTimeConstant<*>>()
+        for (entry in expression.entries) {
+            if (entry.isElse) continue
+
+            conditions@ for (condition in entry.conditions) {
+                when (condition) {
+                    is KtWhenConditionWithExpression -> {
+                        val constantExpression = condition.expression ?: continue@conditions
+                        val constant = ConstantExpressionEvaluator.getConstant(
+                                constantExpression, trace.bindingContext) ?: continue@conditions
+                        if (checkedConstants.contains(constant)) {
+                            trace.report(Errors.DUPLICATE_LABEL_IN_WHEN.on(constantExpression))
+                        }
+                        else {
+                            checkedConstants.add(constant)
+                        }
+
+                    }
+                    is KtWhenConditionIsPattern -> {
+                        val typeReference = condition.typeReference ?: continue@conditions
+                        val type = trace.get(BindingContext.TYPE, typeReference) ?: continue@conditions
+                        val typeWithIsNegation = type to condition.isNegated
+                        if (checkedTypes.contains(typeWithIsNegation)) {
+                            trace.report(Errors.DUPLICATE_LABEL_IN_WHEN.on(typeReference))
+                        }
+                        else {
+                            checkedTypes.add(typeWithIsNegation)
+                        }
+                    }
+                    else -> {}
+                }
+            }
+        }
+
+    }
 
     fun checkDeprecatedWhenSyntax(trace: BindingTrace, expression: KtWhenExpression) {
         if (expression.subjectExpression != null) return

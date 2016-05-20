@@ -56,6 +56,21 @@ class TypedCompileTimeConstant<out T>(
     val type: KotlinType = constantValue.type
 
     override fun toConstantValue(expectedType: KotlinType): ConstantValue<T> = constantValue
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is TypedCompileTimeConstant<*>) return false
+        if (isError) return other.isError
+        if (other.isError) return false
+        return constantValue.value == other.constantValue.value && type == other.type
+    }
+
+    override fun hashCode(): Int {
+        if (isError) return 13
+        var result = constantValue.value?.hashCode() ?: 0
+        result = 31 * result + type.hashCode()
+        return result
+    }
 }
 
 class IntegerValueTypeConstant(
@@ -92,4 +107,8 @@ class IntegerValueTypeConstant(
     fun getType(expectedType: KotlinType): KotlinType = TypeUtils.getPrimitiveNumberType(typeConstructor, expectedType)
 
     override fun toString() = typeConstructor.toString()
+
+    override fun equals(other: Any?) = other is IntegerValueTypeConstant && value == other.value
+
+    override fun hashCode() = value.hashCode()
 }

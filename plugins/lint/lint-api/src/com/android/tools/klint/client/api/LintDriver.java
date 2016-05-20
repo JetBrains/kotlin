@@ -45,9 +45,9 @@ import org.jetbrains.uast.*;
 import org.jetbrains.uast.check.UastChecker;
 import org.jetbrains.uast.check.UastScanner;
 import org.jetbrains.uast.visitor.UastVisitor;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.*;
+import org.jetbrains.org.objectweb.asm.ClassReader;
+import org.jetbrains.org.objectweb.asm.Opcodes;
+import org.jetbrains.org.objectweb.asm.tree.*;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 
@@ -1503,7 +1503,8 @@ public class LintDriver {
             }
 
             String filename = file.getName();
-            if (!filename.endsWith(DOT_JAVA) && !UastConverterUtils.isFileSupported(plugins, filename)) {
+            // Ignore Java files for now (check only Kotlin files)
+            if (filename.endsWith(DOT_JAVA) || !UastConverterUtils.isFileSupported(plugins, filename)) {
                 continue;
             }
 
@@ -1927,7 +1928,7 @@ public class LintDriver {
 
         @Nullable
         @Override
-        public LocalSdk getSdk() {
+        public SdkWrapper getSdk() {
             return mDelegate.getSdk();
         }
 

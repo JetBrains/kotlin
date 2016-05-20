@@ -124,9 +124,11 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
         this.declarationProvider = c.getDeclarationProviderFactory().getClassMemberDeclarationProvider(classLikeInfo);
 
+        StorageManager storageManager = c.getStorageManager();
+
         this.unsubstitutedMemberScope = createMemberScope(c, this.declarationProvider);
         this.kind = classLikeInfo.getClassKind();
-        this.staticScope = kind == ClassKind.ENUM_CLASS ? new StaticScopeForKotlinEnum(this) : MemberScope.Empty.INSTANCE;
+        this.staticScope = kind == ClassKind.ENUM_CLASS ? new StaticScopeForKotlinEnum(storageManager, this) : MemberScope.Empty.INSTANCE;
 
         this.typeConstructor = new LazyClassTypeConstructor();
 
@@ -153,8 +155,6 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
         this.isInner = isInnerClass(modifierList) && !ModifiersChecker.isIllegalInner(this);
         this.isData = modifierList != null && modifierList.hasModifier(KtTokens.DATA_KEYWORD);
-
-        StorageManager storageManager = c.getStorageManager();
 
         // Annotation entries are taken from both own annotations (if any) and object literal annotations (if any)
         List<KtAnnotationEntry> annotationEntries = new ArrayList<KtAnnotationEntry>();

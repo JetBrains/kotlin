@@ -24,5 +24,6 @@
     <orderEntry type="library" scope="PROVIDED" name="properties" level="project" />
     <orderEntry type="module" module-name="idea" scope="RUNTIME" />
     <orderEntry type="library" scope="TEST" name="kotlin-test" level="project" />
+    <orderEntry type="module" module-name="formatter" />
   </component>
 </module>

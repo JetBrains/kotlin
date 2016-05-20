@@ -38,13 +38,10 @@ import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension;
 import org.jetbrains.kotlin.codegen.inline.*;
-import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicCallable;
-import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethod;
-import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
-import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicPropertyGetter;
+import org.jetbrains.kotlin.codegen.intrinsics.*;
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsnsKt;
-import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
+import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegen;
@@ -1983,8 +1980,14 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 VariableAsFunctionResolvedCall call = (VariableAsFunctionResolvedCall) resolvedCall;
                 resolvedCall = call.getVariableCall();
             }
-            receiver = StackValue.receiver(resolvedCall, receiver, this, null);
+
             descriptor = resolvedCall.getResultingDescriptor();
+
+            //Check early if KCallableNameProperty is applicable to prevent closure generation
+            StackValue intrinsicResult = applyIntrinsic(descriptor, KCallableNameProperty.class, resolvedCall, receiver);
+            if (intrinsicResult != null) return intrinsicResult;
+
+            receiver = StackValue.receiver(resolvedCall, receiver, this, null);
             if (descriptor instanceof FakeCallableDescriptorForObject) {
                 descriptor = ((FakeCallableDescriptorForObject) descriptor).getReferencedDescriptor();
             }
@@ -1997,17 +2000,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         if (isSyntheticField) {
             descriptor = ((SyntheticFieldDescriptor) descriptor).getPropertyDescriptor();
         }
-        if (descriptor instanceof CallableMemberDescriptor) {
-            CallableMemberDescriptor memberDescriptor = DescriptorUtils.unwrapFakeOverride((CallableMemberDescriptor) descriptor);
 
-            IntrinsicMethod intrinsic = state.getIntrinsics().getIntrinsic(memberDescriptor);
-            if (intrinsic instanceof IntrinsicPropertyGetter) {
-                //TODO: intrinsic properties (see intermediateValueForProperty)
-                Type returnType = typeMapper.mapType(memberDescriptor);
-                StackValue intrinsicResult = ((IntrinsicPropertyGetter) intrinsic).generate(resolvedCall, this, returnType, receiver);
-                if (intrinsicResult != null) return intrinsicResult;
-            }
-        }
+        StackValue intrinsicResult = applyIntrinsic(descriptor, IntrinsicPropertyGetter.class, resolvedCall, receiver);
+        if (intrinsicResult != null) return intrinsicResult;
 
         if (descriptor instanceof PropertyDescriptor) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
@@ -2054,6 +2049,25 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             return localOrCaptured;
         }
         throw new UnsupportedOperationException("don't know how to generate reference " + descriptor);
+    }
+
+    @Nullable
+    private StackValue applyIntrinsic(
+            DeclarationDescriptor descriptor,
+            Class<? extends IntrinsicPropertyGetter> intrinsicType,
+            ResolvedCall<?> resolvedCall,
+            @NotNull StackValue receiver
+    ) {
+        if (descriptor instanceof CallableMemberDescriptor) {
+            CallableMemberDescriptor memberDescriptor = DescriptorUtils.unwrapFakeOverride((CallableMemberDescriptor) descriptor);
+            IntrinsicMethod intrinsic = state.getIntrinsics().getIntrinsic(memberDescriptor);
+            if (intrinsicType.isInstance(intrinsic)) {
+                //TODO: intrinsic properties (see intermediateValueForProperty)
+                Type returnType = typeMapper.mapType(memberDescriptor);
+                return ((IntrinsicPropertyGetter) intrinsic).generate(resolvedCall, this, returnType, receiver);
+            }
+        }
+        return null;
     }
 
     @Nullable
@@ -3334,7 +3348,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
                 Type storeType;
                 if (isPrimitiveNumberClassDescriptor && AsmUtil.isPrimitive(asmBaseType)) {
-                    genIncrement(asmResultType, asmBaseType, increment, v);
+                    genIncrement(asmBaseType, increment, v);
                     storeType = asmBaseType;
                 }
                 else {
@@ -3667,6 +3681,11 @@ The "returned" value of try expression with no finally is either the last expres
                     Label clauseStart = new Label();
                     v.mark(clauseStart);
 
+                    KtExpression catchBody = clause.getCatchBody();
+                    if (catchBody != null) {
+                        markLineNumber(catchBody, false);
+                    }
+
                     VariableDescriptor descriptor = bindingContext.get(VALUE_PARAMETER, clause.getCatchParameter());
                     assert descriptor != null;
                     Type descriptorType = asmType(descriptor.getType());
@@ -3674,7 +3693,7 @@ The "returned" value of try expression with no finally is either the last expres
                     int index = lookupLocalIndex(descriptor);
                     v.store(index, descriptorType);
 
-                    gen(clause.getCatchBody(), expectedAsmType);
+                    gen(catchBody, expectedAsmType);
 
                     if (!isStatement) {
                         v.store(savedValue, expectedAsmType);
@@ -3953,12 +3972,9 @@ The "returned" value of try expression with no finally is either the last expres
     }
 
     private boolean isExhaustive(@NotNull KtWhenExpression whenExpression, boolean isStatement) {
-        if (isStatement) {
-            return Boolean.TRUE.equals(bindingContext.get(BindingContext.IMPLICIT_EXHAUSTIVE_WHEN, whenExpression));
-        }
-        else {
-            return Boolean.TRUE.equals(bindingContext.get(BindingContext.EXHAUSTIVE_WHEN, whenExpression));
-        }
+        boolean exhaustive = Boolean.TRUE.equals(bindingContext.get(BindingContext.EXHAUSTIVE_WHEN, whenExpression));
+        return isStatement ? exhaustive || Boolean.TRUE.equals(bindingContext.get(BindingContext.IMPLICIT_EXHAUSTIVE_WHEN, whenExpression))
+                           : exhaustive;
     }
 
     public void putUnitInstanceOntoStackForNonExhaustiveWhen(

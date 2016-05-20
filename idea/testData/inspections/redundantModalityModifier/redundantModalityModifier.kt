@@ -40,3 +40,15 @@ interface Derived : Interface {
     // Redundant
     final class Nested
 }
+// Derived abstract class
+abstract class AbstractDerived1(override final val gav: Int) : Interface {
+    // Redundant
+    override open fun foo() {}
+}
+// Derived abstract class
+abstract class AbstractDerived2 : Interface {
+    // Final
+    override final fun foo() {}
+    // Redundant
+    override open val gav = 13
+}

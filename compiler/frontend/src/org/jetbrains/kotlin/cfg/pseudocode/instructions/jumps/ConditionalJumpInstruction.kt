@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.cfg.Label
 import java.util.Arrays
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.LexicalScope
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.BlockScope
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithResult
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
@@ -29,9 +29,9 @@ import org.jetbrains.kotlin.utils.emptyOrSingletonList
 class ConditionalJumpInstruction(
         element: KtElement,
         val onTrue: Boolean,
-        lexicalScope: LexicalScope,
+        blockScope: BlockScope,
         targetLabel: Label,
-        val conditionValue: PseudoValue?) : AbstractJumpInstruction(element, targetLabel, lexicalScope) {
+        val conditionValue: PseudoValue?) : AbstractJumpInstruction(element, targetLabel, blockScope) {
     private var _nextOnTrue: Instruction? = null
     private var _nextOnFalse: Instruction? = null
 
@@ -67,6 +67,6 @@ class ConditionalJumpInstruction(
         return "$instr(${targetLabel.name}$inValue)"
     }
 
-    override fun createCopy(newLabel: Label, lexicalScope: LexicalScope): AbstractJumpInstruction =
-            ConditionalJumpInstruction(element, onTrue, lexicalScope, newLabel, conditionValue)
+    override fun createCopy(newLabel: Label, blockScope: BlockScope): AbstractJumpInstruction =
+            ConditionalJumpInstruction(element, onTrue, blockScope, newLabel, conditionValue)
 }

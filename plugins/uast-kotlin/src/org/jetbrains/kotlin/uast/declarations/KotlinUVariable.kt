@@ -22,7 +22,9 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.uast.kinds.KotlinVariableInitializerKinds
 import org.jetbrains.uast.*
+import org.jetbrains.uast.kinds.UastVariableInitialierKind
 import org.jetbrains.uast.psi.PsiElementBacked
 
 open class KotlinUVariable(
@@ -34,7 +36,19 @@ open class KotlinUVariable(
 
     override val nameElement by lz { KotlinDumbUElement(psi.nameIdentifier, this) }
 
-    override val initializer by lz { KotlinConverter.convertOrEmpty(psi.initializer, this) }
+    override val initializer by lz {
+        val expression = (psi as? KtProperty)?.delegateExpression ?: psi.initializer
+        KotlinConverter.convertOrEmpty(expression, this)
+    }
+
+    override val initializerKind by lz {
+        if ((psi as? KtProperty)?.delegateExpression != null)
+            KotlinVariableInitializerKinds.DELEGATION
+        else if (psi.initializer != null)
+            UastVariableInitialierKind.EXPRESSION
+        else
+            UastVariableInitialierKind.NO_INITIALIZER
+    }
 
     override val type by lz {
         val descriptor = psi.resolveToDescriptorIfAny() as? CallableDescriptor ?: return@lz UastErrorType
@@ -131,7 +145,15 @@ class KotlinDestructuringUVariable(
         override val parent: UElement
 ) : KotlinAbstractUElement(), UVariable, PsiElementBacked {
     override val name = "var" + psi.text.hashCode()
+
     override val initializer by lz { KotlinConverter.convertOrEmpty(psi.initializer, this) }
+
+    override val initializerKind: UastVariableInitialierKind
+        get() = if (initializer != null)
+            UastVariableInitialierKind.EXPRESSION
+        else
+            UastVariableInitialierKind.NO_INITIALIZER
+
     override val kind = UastVariableKind.LOCAL_VARIABLE
     override val type: UType
         get() = initializer.getExpressionType() ?: UastErrorType
@@ -154,6 +176,12 @@ class KotlinParameterUVariable(
     override val nameElement by lz { KotlinDumbUElement(psi.nameIdentifier, this) }
 
     override val initializer by lz { KotlinConverter.convert(psi.defaultValue, this) as? UExpression }
+
+    override val initializerKind: UastVariableInitialierKind
+        get() = if (initializer != null)
+            UastVariableInitialierKind.EXPRESSION
+        else
+            UastVariableInitialierKind.NO_INITIALIZER
 
     override val kind = UastVariableKind.VALUE_PARAMETER
 

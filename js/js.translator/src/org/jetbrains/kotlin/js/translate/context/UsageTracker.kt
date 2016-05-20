@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,18 +17,18 @@
 package org.jetbrains.kotlin.js.translate.context
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.resolve.DescriptorUtils.isAncestor
 import com.google.dart.compiler.backend.js.ast.JsName
 import org.jetbrains.kotlin.js.translate.utils.ManglingUtils.getSuggestedName
-import com.google.dart.compiler.backend.js.ast.JsFunctionScope
+import com.google.dart.compiler.backend.js.ast.JsScope
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils.*
 
 private val CAPTURED_RECEIVER_NAME_PREFIX : String = "this$"
 
 class UsageTracker(
         private val parent: UsageTracker?,
         val containingDescriptor: MemberDescriptor,
-        private val scope: JsFunctionScope
+        private val scope: JsScope
 ) {
 
     private val captured = linkedMapOf<DeclarationDescriptor, JsName>()
@@ -36,6 +36,9 @@ class UsageTracker(
     // For readonly access from external places.
     val capturedDescriptorToJsName: Map<DeclarationDescriptor, JsName>
         get() = captured
+
+    val capturedDescriptors: Set<DeclarationDescriptor>
+        get() = captured.keys
 
     fun used(descriptor: DeclarationDescriptor) {
         if (isCaptured(descriptor)) return
@@ -59,25 +62,109 @@ class UsageTracker(
     }
 
     private fun captureIfNeed(descriptor: DeclarationDescriptor?) {
-        if (descriptor == null || isCaptured(descriptor) || isAncestor(containingDescriptor, descriptor, /* strict = */ true)) return
+        if (descriptor == null || isCaptured(descriptor) || !isInLocalDeclaration() ||
+            isAncestor(containingDescriptor, descriptor, /* strict = */ true) ||
+            isReceiverAncestor(descriptor) || isSingletonReceiver(descriptor)
+        ) {
+            return
+        }
 
         parent?.captureIfNeed(descriptor)
 
         captured[descriptor] = descriptor.getJsNameForCapturedDescriptor()
     }
 
+    private fun isInLocalDeclaration(): Boolean {
+        val container = containingDescriptor
+        return isDescriptorWithLocalVisibility(if (container is ConstructorDescriptor) container.containingDeclaration else container)
+    }
+
+    /**
+     * We shouldn't capture current `this` or outer `this`. Assuming `C` is current translating class,
+     * we have `descriptor == A::this` in the following cases:
+     * * `A == C`
+     * * `C` in inner class of `A`
+     * * `A <: C`
+     * * among outer classes of `C` there is `T` such that `A <: T`
+     *
+     * If fact, the latter case is the generalization of all previous cases, assuming that `is inner class of` and `<:` relations
+     * are reflective. All this cases allow to refer to `this` directly or via sequence of `outer` fields.
+     *
+     * Note that the continuous sequence of inner classes may be interrupted by non-class descriptor. This means that
+     * the last class of the sequence if a local class. We stop there, since this means that the next class in the sequence
+     * is referred by closure variable rather than by dedicated `$outer` field.
+     *
+     * The nested classes are out of scope, since nested class can't refer to outer's class `this`, thus frontend will
+     * never generate ReceiverParameterDescriptor for this case.
+     */
+    private fun isReceiverAncestor(descriptor: DeclarationDescriptor): Boolean {
+        if (descriptor !is ReceiverParameterDescriptor) return false
+        if (containingDescriptor !is ClassDescriptor && containingDescriptor !is ConstructorDescriptor) return false
+
+        val containingClass = getParentOfType(containingDescriptor, ClassDescriptor::class.java, false) ?: return false
+        val currentClass = descriptor.containingDeclaration as? ClassDescriptor ?: return false
+
+        for (outerDeclaration in generateSequence(containingClass) { it.containingDeclaration as? ClassDescriptor }) {
+            if (DescriptorUtils.isSubclass(outerDeclaration, currentClass)) return true
+        }
+
+        return false
+    }
+
+    /**
+     * Test for the case like this:
+     *
+     * ```
+     * object A {
+     *     var x: Int
+     *
+     *     class B {
+     *         fun foo() {
+     *             { x }
+     *         }
+     *     }
+     * }
+     * ```
+     *
+     * We don't want to capture `A::this`, since we always can refer A by its FQN
+     */
+    private fun isSingletonReceiver(descriptor: DeclarationDescriptor): Boolean {
+        if (descriptor !is ReceiverParameterDescriptor) return false
+
+        val container = descriptor.containingDeclaration
+        if (!DescriptorUtils.isObject(container)) return false
+
+        // This code is necessary for one use case. If we don't treat `O::this` as a free variable of lambda, we'll get
+        // `this` in generated JS. `this` is generated since it's placed in aliasing context for `O::this`, so we will get
+        // it instead of generating FQN. However, we can't refer to `this` from lambda, since `this` points not to an instance of `C`,
+        // but to lambda function itself. We avoid it by treating `O::this` as a free variable.
+        // Example is:
+        //
+        // object A(val x: Int) {
+        //     fun foo() = { x }
+        // }
+        if (containingDescriptor !is ClassDescriptor) {
+            val containingClass = getParentOfType(containingDescriptor, ClassDescriptor::class.java, false);
+            if (containingClass == container) return false
+        }
+
+        return true
+    }
+
     private fun DeclarationDescriptor.getJsNameForCapturedDescriptor(): JsName {
         val suggestedName = when (this) {
-            is ReceiverParameterDescriptor -> this.getNameForCapturedReceiver()
+            is ReceiverParameterDescriptor -> getNameForCapturedReceiver()
             is TypeParameterDescriptor -> Namer.isInstanceSuggestedName(this)
-            else -> getSuggestedName(this)
+
+            // Append 'closure$' prefix to avoid name clash between closure and member fields in case of local classes
+            else -> "closure\$${getSuggestedName(this)}"
         }
 
         return scope.declareFreshName(suggestedName)
     }
 }
 
-fun UsageTracker.getNameForCapturedDescriptor(descriptor: DeclarationDescriptor): JsName? = capturedDescriptorToJsName.get(descriptor)
+fun UsageTracker.getNameForCapturedDescriptor(descriptor: DeclarationDescriptor): JsName? = capturedDescriptorToJsName[descriptor]
 
 fun UsageTracker.hasCapturedExceptContaining(): Boolean {
     val hasNotCaptured =

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.resolve.calls.inference.CapturedType;
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
@@ -126,9 +125,9 @@ public class TypeUtils {
 
     @NotNull
     public static KotlinType makeNullableAsSpecified(@NotNull KotlinType type, boolean nullable) {
-        NullAwareness nullAwareness = type.getCapability(NullAwareness.class);
-        if (nullAwareness != null) {
-            return nullAwareness.makeNullableAsSpecified(nullable);
+        Flexibility flexibility = type.getCapability(Flexibility.class);
+        if (flexibility != null) {
+            return flexibility.makeNullableAsSpecified(nullable);
         }
 
         // Wrapping serves two purposes here
@@ -497,14 +496,14 @@ public class TypeUtils {
         return getTypeParameterDescriptorOrNull(type) != null;
     }
 
-    public static boolean isNonReifiedTypeParemeter(@NotNull KotlinType type) {
-        TypeParameterDescriptor typeParameterDescriptor = getTypeParameterDescriptorOrNull(type);
-        return typeParameterDescriptor != null && !typeParameterDescriptor.isReified();
-    }
-
     public static boolean isReifiedTypeParameter(@NotNull KotlinType type) {
         TypeParameterDescriptor typeParameterDescriptor = getTypeParameterDescriptorOrNull(type);
         return typeParameterDescriptor != null && typeParameterDescriptor.isReified();
+    }
+
+    public static boolean isNonReifiedTypeParameter(@NotNull KotlinType type) {
+        TypeParameterDescriptor typeParameterDescriptor = getTypeParameterDescriptorOrNull(type);
+        return typeParameterDescriptor != null && !typeParameterDescriptor.isReified();
     }
 
     @Nullable

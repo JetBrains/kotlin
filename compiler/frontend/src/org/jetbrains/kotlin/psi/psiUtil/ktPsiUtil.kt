@@ -24,7 +24,6 @@ import com.intellij.psi.PsiParameterList
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.tree.TokenSet
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -38,7 +37,6 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import java.util.*
-import kotlin.text.Regex
 
 // NOTE: in this file we collect only Kotlin-specific methods working with PSI and not modifying it
 
@@ -148,7 +146,7 @@ fun KtExpression.getQualifiedExpressionForReceiverOrThis(): KtExpression {
 }
 
 fun KtExpression.isDotReceiver(): Boolean =
-        (parent as? KtDotQualifiedExpression)?.getReceiverExpression() == this
+        (parent as? KtDotQualifiedExpression)?.receiverExpression == this
 
 // ---------- Block expression -------------------------------------------------------------------------------------------------------------
 
@@ -209,7 +207,7 @@ fun StubBasedPsiElementBase<out KotlinClassOrObjectStub<out KtClassOrObject>>.ge
             if (directive != null) {
                 var reference = directive.getImportedReference()
                 while (reference is KtDotQualifiedExpression) {
-                    reference = reference.getSelectorExpression()
+                    reference = reference.selectorExpression
                 }
                 if (reference is KtSimpleNameExpression) {
                     result.add(reference.getReferencedName())
@@ -415,9 +413,19 @@ private val MODALITY_MODIFIERS = TokenSet.create(
 fun KtDeclaration.modalityModifier() = modifierFromTokenSet(MODALITY_MODIFIERS)
 
 fun KtStringTemplateExpression.isPlain() = entries.all { it is KtLiteralStringTemplateEntry }
+fun KtStringTemplateExpression.isPlainWithEscapes() = entries.all { it is KtLiteralStringTemplateEntry || it is KtEscapeStringTemplateEntry }
 
+// Correct for class members only (including constructors and nested classes)
+// Returns null e.g. for member function parameters, member function locals, property accessors
 val KtDeclaration.containingClassOrObject: KtClassOrObject?
-        get() = (parent as? KtClassBody)?.parent as? KtClassOrObject
+        get() = parent.let {
+            when (it) {
+                is KtClassBody -> it.parent as? KtClassOrObject
+                is KtClassOrObject -> it
+                is KtParameterList -> (it.parent as? KtPrimaryConstructor)?.getContainingClassOrObject()
+                else -> null
+            }
+        }
 
 fun KtExpression.getOutermostParenthesizerOrThis(): KtExpression {
     return (parentsWithSelf.zip(parents)).firstOrNull {
@@ -446,3 +454,8 @@ fun checkReservedPrefixWord(sink: DiagnosticSink, element: PsiElement, word: Str
     }
 }
 
+fun KtElement.nonStaticOuterClasses(): Sequence<KtClass> {
+    return generateSequence(containingClass()) { if (it.isInner()) it.containingClass() else null }
+}
+
+fun KtElement.containingClass(): KtClass? = getStrictParentOfType<KtClass>()

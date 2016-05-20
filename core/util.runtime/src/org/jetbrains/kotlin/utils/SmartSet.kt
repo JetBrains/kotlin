@@ -48,24 +48,24 @@ class SmartSet<T> private constructor() : AbstractSet<T>() {
             else -> (data as MutableSet<T>).iterator()
         }
 
-    override fun add(e: T): Boolean {
+    override fun add(element: T): Boolean {
         when {
             size == 0 -> {
-                data = e
+                data = element
             }
             size == 1 -> {
-                if (data == e) return false
-                data = arrayOf(data, e)
+                if (data == element) return false
+                data = arrayOf(data, element)
             }
             size < ARRAY_THRESHOLD -> {
                 val arr = data as Array<T>
-                if (e in arr) return false
-                data = if (size == ARRAY_THRESHOLD - 1) linkedSetOf(*arr).apply { add(e) }
-                else Arrays.copyOf(arr, size + 1).apply { set(size - 1, e) }
+                if (element in arr) return false
+                data = if (size == ARRAY_THRESHOLD - 1) linkedSetOf(*arr).apply { add(element) }
+                else Arrays.copyOf(arr, size + 1).apply { set(size - 1, element) }
             }
             else -> {
                 val set = data as MutableSet<T>
-                if (!set.add(e)) return false
+                if (!set.add(element)) return false
             }
         }
 
@@ -78,14 +78,14 @@ class SmartSet<T> private constructor() : AbstractSet<T>() {
         size = 0
     }
 
-    override fun contains(o: T): Boolean = when {
+    override fun contains(element: T): Boolean = when {
         size == 0 -> false
-        size == 1 -> data == o
-        size < ARRAY_THRESHOLD -> o in data as Array<T>
-        else -> o in data as Set<T>
+        size == 1 -> data == element
+        size < ARRAY_THRESHOLD -> element in data as Array<T>
+        else -> element in data as Set<T>
     }
 
-    private class SingletonIterator<T>(private val element: T) : MutableIterator<T> {
+    private class SingletonIterator<out T>(private val element: T) : MutableIterator<T> {
         private var hasNext = true
 
         override fun next(): T =
@@ -100,7 +100,7 @@ class SmartSet<T> private constructor() : AbstractSet<T>() {
         override fun remove() = throw UnsupportedOperationException()
     }
 
-    private class ArrayIterator<T>(array: Array<T>) : MutableIterator<T> {
+    private class ArrayIterator<out T>(array: Array<T>) : MutableIterator<T> {
         private val arrayIterator = array.iterator()
 
         override fun hasNext(): Boolean = arrayIterator.hasNext()

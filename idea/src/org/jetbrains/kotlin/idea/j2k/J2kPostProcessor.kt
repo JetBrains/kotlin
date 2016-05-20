@@ -21,6 +21,8 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiRecursiveElementVisitor
 import com.intellij.psi.codeStyle.CodeStyleManager
+import com.intellij.psi.impl.PsiModificationTrackerImpl
+import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
@@ -64,6 +66,8 @@ class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
             }
 
             if (modificationStamp == file.modificationStamp) break
+
+            (PsiModificationTracker.SERVICE.getInstance(file.project) as? PsiModificationTrackerImpl)?.incOutOfCodeBlockModificationCounter()
 
             elementToActions = collectAvailableActions(file, rangeMarker)
         }

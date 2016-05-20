@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.caches
 
 import com.intellij.openapi.vfs.VirtualFile
 
-data class CachedAttributeData<T>(val value: T, val timeStamp: Long)
+data class CachedAttributeData<out T>(val value: T, val timeStamp: Long)
 
 interface FileAttributeService {
     fun register(id: String, version: Int) {}

@@ -18,7 +18,7 @@
     <orderEntry type="module" module-name="backend" />
     <orderEntry type="module" module-name="frontend.java" />
     <orderEntry type="module" module-name="idea-test-framework" scope="TEST" />
-    <orderEntry type="module" module-name="compiler-tests" scope="TEST" />
+    <orderEntry type="module" module-name="tests-common" scope="TEST" />
     <orderEntry type="module" module-name="uast-android" />
     <orderEntry type="module" module-name="lint-api" scope="TEST" />
     <orderEntry type="module" module-name="lint-checks" scope="TEST" />

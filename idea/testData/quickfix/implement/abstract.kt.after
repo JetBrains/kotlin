@@ -14,6 +14,6 @@ private class BaseImpl : Base() {
         }
 
     override fun toInt(arg: String): Int {
-        throw UnsupportedOperationException()
+        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

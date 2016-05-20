@@ -30,15 +30,15 @@ abstract class B : I2, A(), I3 {
     }
 
     override fun i() {
-        throw UnsupportedOperationException()
+        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun i1() {
-        throw UnsupportedOperationException()
+        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun i2() {
-        throw UnsupportedOperationException()
+        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun toString(): String {

@@ -143,6 +143,18 @@ public class QuickDocProviderTestGenerated extends AbstractQuickDocProviderTest 
         doTest(fileName);
     }
 
+    @TestMetadata("OnMethodUsageWithReceiver.kt")
+    public void testOnMethodUsageWithReceiver() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/OnMethodUsageWithReceiver.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("OnMethodUsageWithReturnAndLink.kt")
+    public void testOnMethodUsageWithReturnAndLink() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/OnMethodUsageWithReturnAndLink.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("OnMethodUsageWithReturnAndThrows.kt")
     public void testOnMethodUsageWithReturnAndThrows() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/OnMethodUsageWithReturnAndThrows.kt");
@@ -152,6 +164,12 @@ public class QuickDocProviderTestGenerated extends AbstractQuickDocProviderTest 
     @TestMetadata("OnMethodUsageWithSee.kt")
     public void testOnMethodUsageWithSee() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/OnMethodUsageWithSee.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("OnMethodUsageWithTypeParameter.kt")
+    public void testOnMethodUsageWithTypeParameter() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/OnMethodUsageWithTypeParameter.kt");
         doTest(fileName);
     }
 

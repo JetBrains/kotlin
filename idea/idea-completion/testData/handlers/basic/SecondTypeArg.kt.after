@@ -5,5 +5,4 @@ fun foo() {
     val v = HashMap<String, HashSet<caret>
 }
 
-// INVOCATION_COUNT: 2
 // ELEMENT: HashSet

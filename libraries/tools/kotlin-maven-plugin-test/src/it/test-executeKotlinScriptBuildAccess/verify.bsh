@@ -1,0 +1,3 @@
+source(new File(basedir, "../../../verify-common.bsh").getAbsolutePath());
+
+assertBuildLogHasLine("[INFO] kotlin build script accessing build info of test-executeKotlinScriptBuildAccess project")

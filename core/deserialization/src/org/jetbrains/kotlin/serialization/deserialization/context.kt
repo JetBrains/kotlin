@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.PackagePartSource
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.types.FlexibleTypeFactory
 
 class DeserializationComponents(
         val storageManager: StorageManager,
@@ -35,7 +35,7 @@ class DeserializationComponents(
         val localClassResolver: LocalClassResolver,
         val errorReporter: ErrorReporter,
         val lookupTracker: LookupTracker,
-        val flexibleTypeCapabilitiesDeserializer: FlexibleTypeCapabilitiesDeserializer,
+        val flexibleTypeFactory: FlexibleTypeFactory,
         val fictitiousClassDescriptorFactory: ClassDescriptorFactory,
         val notFoundClasses: NotFoundClasses,
         val typeCapabilitiesLoader: TypeCapabilitiesLoader = TypeCapabilitiesLoader.NONE,
@@ -49,9 +49,9 @@ class DeserializationComponents(
             descriptor: PackageFragmentDescriptor,
             nameResolver: NameResolver,
             typeTable: TypeTable,
-            packagePartSource: PackagePartSource?
+            containerSource: SourceElement?
     ): DeserializationContext =
-            DeserializationContext(this, nameResolver, descriptor, typeTable, packagePartSource,
+            DeserializationContext(this, nameResolver, descriptor, typeTable, containerSource,
                                    parentTypeDeserializer = null, typeParameters = listOf())
 }
 
@@ -61,7 +61,7 @@ class DeserializationContext(
         val nameResolver: NameResolver,
         val containingDeclaration: DeclarationDescriptor,
         val typeTable: TypeTable,
-        val packagePartSource: PackagePartSource?,
+        val containerSource: SourceElement?,
         parentTypeDeserializer: TypeDeserializer?,
         typeParameters: List<ProtoBuf.TypeParameter>
 ) {
@@ -78,7 +78,7 @@ class DeserializationContext(
             nameResolver: NameResolver = this.nameResolver,
             typeTable: TypeTable = this.typeTable
     ) = DeserializationContext(
-            components, nameResolver, descriptor, typeTable, this.packagePartSource,
+            components, nameResolver, descriptor, typeTable, this.containerSource,
             parentTypeDeserializer = this.typeDeserializer, typeParameters = typeParameterProtos
     )
 }

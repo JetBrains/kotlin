@@ -30,6 +30,17 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
     <profiles>
         <!--
         moved the integration test into a profile so we can disable this
@@ -44,18 +55,22 @@
                 <plugins>
                     <plugin>
                         <artifactId>maven-invoker-plugin</artifactId>
-                        <version>1.5</version>
+                        <version>1.9</version>
                         <configuration>
                             <projectsDirectory>src/it</projectsDirectory>
                             <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
                             <pomIncludes>
                                 <pomInclude>*/pom.xml</pomInclude>
                             </pomIncludes>
+                            <properties>
+                                <kotlin.version>${project.version}</kotlin.version>
+                            </properties>
                             <!--This could speed up test by providing local repo as remote repo for test but might be tricky on different OS-->
                             <!--<settingsFile>src/it/settings.xml</settingsFile>-->
                             <localRepositoryPath>local-repo</localRepositoryPath>
-                            <postBuildHookScript>verify.bsh</postBuildHookScript>
-                            <streamLogs>true</streamLogs>
+                            <postBuildHookScript>verify</postBuildHookScript>
+                            <streamLogs>false</streamLogs>
+                            <invokerPropertiesFile>invoker.properties</invokerPropertiesFile>
                         </configuration>
                         <executions>
                             <execution>

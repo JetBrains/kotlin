@@ -54,4 +54,8 @@ public abstract class SerializerExtension {
 
     public void serializeTypeParameter(@NotNull TypeParameterDescriptor typeParameter, @NotNull ProtoBuf.TypeParameter.Builder proto) {
     }
+
+    public void serializeErrorType(@NotNull KotlinType type, @NotNull ProtoBuf.Type.Builder builder) {
+         throw new IllegalStateException("Cannot serialize error type: " + type);
+    }
 }

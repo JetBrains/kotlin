@@ -32,6 +32,7 @@ public fun <K, V> emptyMap(): Map<K, V> = @Suppress("CAST_NEVER_SUCCEEDS") (Empt
  * where the first value is the key and the second is the value. If multiple pairs have
  * the same key, the resulting map will contain the value from the last of those pairs.
  *
+ * Entries of the map are iterated in the order they were specified.
  * The returned map is serializable (JVM).
  */
 public fun <K, V> mapOf(vararg pairs: Pair<K, V>): Map<K, V> = if (pairs.size > 0) linkedMapOf(*pairs) else emptyMap()
@@ -49,8 +50,9 @@ public fun <K, V> mapOf(pair: Pair<K, V>): Map<K, V> = Collections.singletonMap(
 
 /**
  * Returns a new [MutableMap] with the specified contents, given as a list of pairs
- * where the first component is the key and the second is the value.
- * This map preserves insertion order so iterating through the map's entries will be in the same order.
+ * where the first component is the key and the second is the value. If multiple pairs have
+ * the same key, the resulting map will contain the value from the last of those pairs.
+ * Entries of the map are iterated in the order they were specified.
  */
 public fun <K, V> mutableMapOf(vararg pairs: Pair<K, V>): MutableMap<K, V>
         = LinkedHashMap<K, V>(mapCapacity(pairs.size)).apply { putAll(pairs) }
@@ -67,8 +69,9 @@ public fun <K, V> hashMapOf(vararg pairs: Pair<K, V>): HashMap<K, V>
 
 /**
  * Returns a new [LinkedHashMap] with the specified contents, given as a list of pairs
- * where the first component is the key and the second is the value.
- * This map preserves insertion order so iterating through the map's entries will be in the same order.
+ * where the first component is the key and the second is the value. If multiple pairs have
+ * the same key, the resulting map will contain the value from the last of those pairs.
+ * Entries of the map are iterated in the order they were specified.
  *
  * @sample test.collections.MapTest.createLinkedMap
  */
@@ -80,9 +83,6 @@ public fun <K, V> linkedMapOf(vararg pairs: Pair<K, V>): LinkedHashMap<K, V>
  * to the Collection constructor for HashSet, (c.size()/.75f) + 1, but provides further optimisations for very small or
  * very large sizes, allows support non-collection classes, and provides consistency for all map based class construction.
  */
-
-private val INT_MAX_POWER_OF_TWO: Int = Int.MAX_VALUE / 2 + 1
-
 @kotlin.internal.InlineExposed
 internal fun mapCapacity(expectedSize: Int): Int {
     if (expectedSize < 3) {
@@ -93,6 +93,8 @@ internal fun mapCapacity(expectedSize: Int): Int {
     }
     return Int.MAX_VALUE // any large value
 }
+
+private const val INT_MAX_POWER_OF_TWO: Int = Int.MAX_VALUE / 2 + 1
 
 /** Returns `true` if this map is not empty. */
 @kotlin.internal.InlineOnly
@@ -233,16 +235,19 @@ public inline operator fun <K, V> Map<K, V>.iterator(): Iterator<Map.Entry<K, V>
 public inline operator fun <K, V> MutableMap<K, V>.iterator(): MutableIterator<MutableMap.MutableEntry<K, V>> = entries.iterator()
 
 /**
- * Populates the given `destination` [Map] with entries having the keys of this map and the values obtained
- * by applying the `transform` function to each entry in this [Map].
+ * Populates the given [destination] map with entries having the keys of this map and the values obtained
+ * by applying the [transform] function to each entry in this [Map].
  */
 public inline fun <K, V, R, C : MutableMap<in K, in R>> Map<K, V>.mapValuesTo(destination: C, transform: (Map.Entry<K, V>) -> R): C {
     return entries.associateByTo(destination, { it.key }, transform)
 }
 
 /**
- * Populates the given `destination` [Map] with entries having the keys obtained
- * by applying the `transform` function to each entry in this [Map] and the values of this map.
+ * Populates the given [destination] map with entries having the keys obtained
+ * by applying the [transform] function to each entry in this [Map] and the values of this map.
+ *
+ * In case if any two entries are mapped to the equal keys, the value of the latter one will overwrite
+ * the value associated with the former one.
  */
 public inline fun <K, V, R, C : MutableMap<in R, in V>> Map<K, V>.mapKeysTo(destination: C, transform: (Map.Entry<K, V>) -> R): C {
     return entries.associateByTo(destination, transform, { it.value })
@@ -276,8 +281,10 @@ public fun <K, V> MutableMap<in K, in V>.putAll(pairs: Sequence<Pair<K,V>>): Uni
 }
 
 /**
- * Returns a new map with entries having the keys of this map and the values obtained by applying the `transform`
+ * Returns a new map with entries having the keys of this map and the values obtained by applying the [transform]
  * function to each entry in this [Map].
+ *
+ * The returned map preserves the entry iteration order of the original map.
  *
  * @sample test.collections.MapTest.mapValues
  */
@@ -287,8 +294,13 @@ public inline fun <K, V, R> Map<K, V>.mapValues(transform: (Map.Entry<K, V>) -> 
 }
 
 /**
- * Returns a new Map with entries having the keys obtained by applying the `transform` function to each entry in this
+ * Returns a new Map with entries having the keys obtained by applying the [transform] function to each entry in this
  * [Map] and the values of this map.
+ *
+ * In case if any two entries are mapped to the equal keys, the value of the latter one will overwrite
+ * the value associated with the former one.
+ *
+ * The returned map preserves the entry iteration order of the original map.
  *
  * @sample test.collections.MapTest.mapKeys
  */
@@ -299,6 +311,8 @@ public inline fun <K, V, R> Map<K, V>.mapKeys(transform: (Map.Entry<K, V>) -> R)
 
 /**
  * Returns a map containing all key-value pairs with keys matching the given [predicate].
+ *
+ * The returned map preserves the entry iteration order of the original map.
  */
 public inline fun <K, V> Map<K, V>.filterKeys(predicate: (K) -> Boolean): Map<K, V> {
     val result = LinkedHashMap<K, V>()
@@ -312,6 +326,8 @@ public inline fun <K, V> Map<K, V>.filterKeys(predicate: (K) -> Boolean): Map<K,
 
 /**
  * Returns a map containing all key-value pairs with values matching the given [predicate].
+ *
+ * The returned map preserves the entry iteration order of the original map.
  */
 public inline fun <K, V> Map<K, V>.filterValues(predicate: (V) -> Boolean): Map<K, V> {
     val result = LinkedHashMap<K, V>()
@@ -340,6 +356,8 @@ public inline fun <K, V, C : MutableMap<in K, in V>> Map<K, V>.filterTo(destinat
 
 /**
  * Returns a new map containing all key-value pairs matching the given [predicate].
+ *
+ * The returned map preserves the entry iteration order of the original map.
  */
 public inline fun <K, V> Map<K, V>.filter(predicate: (Map.Entry<K, V>) -> Boolean): Map<K, V> {
     return filterTo(LinkedHashMap<K, V>(), predicate)
@@ -361,6 +379,8 @@ public inline fun <K, V, C : MutableMap<in K, in V>> Map<K, V>.filterNotTo(desti
 
 /**
  * Returns a new map containing all key-value pairs not matching the given [predicate].
+ *
+ * The returned map preserves the entry iteration order of the original map.
  */
 public inline fun <K, V> Map<K, V>.filterNot(predicate: (Map.Entry<K, V>) -> Boolean): Map<K, V> {
     return filterNotTo(LinkedHashMap<K, V>(), predicate)
@@ -368,6 +388,8 @@ public inline fun <K, V> Map<K, V>.filterNot(predicate: (Map.Entry<K, V>) -> Boo
 
 /**
  * Returns a new map containing all key-value pairs from the given collection of pairs.
+ *
+ * The returned map preserves the entry iteration order of the original collection.
  */
 public fun <K, V> Iterable<Pair<K, V>>.toMap(): Map<K, V> {
     if (this is Collection) {
@@ -388,6 +410,8 @@ public fun <K, V, M : MutableMap<in K, in V>> Iterable<Pair<K, V>>.toMap(destina
 
 /**
  * Returns a new map containing all key-value pairs from the given array of pairs.
+ *
+ * The returned map preserves the entry iteration order of the original array.
  */
 public fun <K, V> Array<out Pair<K, V>>.toMap(): Map<K, V> = when(size) {
     0 -> emptyMap()
@@ -403,43 +427,58 @@ public fun <K, V, M : MutableMap<in K, in V>> Array<out Pair<K, V>>.toMap(destin
 
 /**
  * Returns a new map containing all key-value pairs from the given sequence of pairs.
+ *
+ * The returned map preserves the entry iteration order of the original sequence.
  */
-
 public fun <K, V> Sequence<Pair<K, V>>.toMap(): Map<K, V> = toMap(LinkedHashMap<K, V>()).optimizeReadOnlyMap()
 
 /**
  * Populates and returns the [destination] mutable map with key-value pairs from the given sequence of pairs.
  */
-
 public fun <K, V, M : MutableMap<in K, in V>> Sequence<Pair<K, V>>.toMap(destination: M): M
         = destination.apply { putAll(this@toMap) }
 
 /**
  * Creates a new read-only map by replacing or adding an entry to this map from a given key-value [pair].
+ *
+ * The returned map preserves the entry iteration order of the original map.
+ * The [pair] is iterated in the end if it has a unique key.
  */
 public operator fun <K, V> Map<out K, V>.plus(pair: Pair<K, V>): Map<K, V>
         = if (this.isEmpty()) mapOf(pair) else LinkedHashMap(this).apply { put(pair.first, pair.second) }
 
 /**
  * Creates a new read-only map by replacing or adding entries to this map from a given collection of key-value [pairs].
+ *
+ * The returned map preserves the entry iteration order of the original map.
+ * Those [pairs] with unique keys are iterated in the end in the order of [pairs] collection.
  */
 public operator fun <K, V> Map<out K, V>.plus(pairs: Iterable<Pair<K, V>>): Map<K, V>
         = if (this.isEmpty()) pairs.toMap() else LinkedHashMap(this).apply { putAll(pairs) }
 
 /**
  * Creates a new read-only map by replacing or adding entries to this map from a given array of key-value [pairs].
+ *
+ * The returned map preserves the entry iteration order of the original map.
+ * Those [pairs] with unique keys are iterated in the end in the order of [pairs] array.
  */
 public operator fun <K, V> Map<out K, V>.plus(pairs: Array<out Pair<K, V>>): Map<K, V>
         = if (this.isEmpty()) pairs.toMap() else LinkedHashMap(this).apply { putAll(pairs) }
 
 /**
  * Creates a new read-only map by replacing or adding entries to this map from a given sequence of key-value [pairs].
+ *
+ * The returned map preserves the entry iteration order of the original map.
+ * Those [pairs] with unique keys are iterated in the end in the order of [pairs] sequence.
  */
 public operator fun <K, V> Map<out K, V>.plus(pairs: Sequence<Pair<K, V>>): Map<K, V>
         = LinkedHashMap(this).apply { putAll(pairs) }.optimizeReadOnlyMap()
 
 /**
  * Creates a new read-only map by replacing or adding entries to this map from another [map].
+ *
+ * The returned map preserves the entry iteration order of the original map.
+ * Those entries of another [map] that are missing in this map are iterated in the end in the order of that [map].
  */
 public operator fun <K, V> Map<out K, V>.plus(map: Map<out K, V>): Map<K, V>
         = LinkedHashMap(this).apply { putAll(map) }

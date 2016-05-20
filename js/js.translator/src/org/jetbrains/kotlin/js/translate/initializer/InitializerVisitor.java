@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.js.translate.general.TranslatorVisitor;
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.psi.*;
 
 import java.util.List;
@@ -46,8 +47,11 @@ public final class InitializerVisitor extends TranslatorVisitor<Void> {
     public final Void visitProperty(@NotNull KtProperty property, @NotNull TranslationContext context) {
         KtExpression initializer = property.getInitializer();
         if (initializer != null) {
-            result.add(generateInitializerForProperty(context, getPropertyDescriptor(context.bindingContext(), property),
-                                                      Translation.translateAsExpression(initializer, context)));
+            JsStatement statement = generateInitializerForProperty(context, getPropertyDescriptor(context.bindingContext(), property),
+                                                                   Translation.translateAsExpression(initializer, context));
+            if (!JsAstUtils.isEmptyStatement(statement)) {
+                result.add(statement);
+            }
         }
 
         JsStatement delegate = generateInitializerForDelegate(context, property);
@@ -68,14 +72,6 @@ public final class InitializerVisitor extends TranslatorVisitor<Void> {
     @Override
     // Not interested in other types of declarations, they do not contain initializers.
     public Void visitDeclaration(@NotNull KtDeclaration expression, @NotNull TranslationContext context) {
-        return null;
-    }
-
-    @Override
-    public Void visitObjectDeclaration(@NotNull KtObjectDeclaration declaration, @NotNull TranslationContext context) {
-        if (!declaration.isCompanion()) {
-            InitializerUtils.generateObjectInitializer(declaration, result, context);
-        }
         return null;
     }
 

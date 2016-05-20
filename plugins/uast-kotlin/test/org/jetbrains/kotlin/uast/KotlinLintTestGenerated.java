@@ -53,6 +53,12 @@ public class KotlinLintTestGenerated extends AbstractKotlinLintTest {
         doTest(fileName);
     }
 
+    @TestMetadata("commitFragment.kt")
+    public void testCommitFragment() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/uast-kotlin/testData/lint/commitFragment.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("javaPerformance.kt")
     public void testJavaPerformance() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/uast-kotlin/testData/lint/javaPerformance.kt");

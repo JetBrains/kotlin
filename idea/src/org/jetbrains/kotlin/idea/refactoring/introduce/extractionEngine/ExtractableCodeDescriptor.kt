@@ -159,7 +159,7 @@ interface OutputValue {
             val elementsToReplace: List<KtExpression>,
             val elementToInsertAfterCall: KtElement?,
             val conditional: Boolean,
-            private val builtIns: KotlinBuiltIns
+            builtIns: KotlinBuiltIns
     ): OutputValue {
         override val originalExpressions: List<KtExpression> get() = elementsToReplace
         override val valueType: KotlinType = with(builtIns) { if (conditional) booleanType else unitType }
@@ -468,7 +468,6 @@ val propertyTargets: List<ExtractionTarget> = listOf(ExtractionTarget.PROPERTY_W
 data class ExtractionGeneratorOptions(
         val inTempFile: Boolean = false,
         val target: ExtractionTarget = ExtractionTarget.FUNCTION,
-        val flexibleTypesAllowed: Boolean = false,
         val dummyName: String? = null,
         val allowExpressionBody: Boolean = true,
         val delayInitialOccurrenceReplacement: Boolean = false

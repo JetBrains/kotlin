@@ -42,20 +42,28 @@ object DebuggerUtils {
 
     private val KOTLIN_EXTENSIONS = Sets.newHashSet("kt", "kts")
 
+    fun findSourceFileForClassIncludeLibrarySources(
+            project: Project,
+            scope: GlobalSearchScope,
+            className: JvmClassName,
+            fileName: String): KtFile? {
+        return findSourceFileForClass(
+                project,
+                listOf(scope, KotlinSourceFilterScope.librarySources(GlobalSearchScope.allScope(project), project)),
+                className,
+                fileName)
+    }
+
     fun findSourceFileForClass(
             project: Project,
-            searchScope: GlobalSearchScope,
+            scopes: List<GlobalSearchScope>,
             className: JvmClassName,
             fileName: String): KtFile? {
         val extension = FileUtilRt.getExtension(fileName)
         if (!KOTLIN_EXTENSIONS.contains(extension)) return null
         if (DumbService.getInstance(project).isDumb) return null
 
-        val filesWithExactName = findFilesByNameInPackage(className, fileName, project, searchScope).check { it.isNotEmpty() }
-                                 // Source files for libraries aren't included into ModuleWithDependencies scope
-                                 ?: findFilesByNameInPackage(
-                                            className, fileName, project,
-                                            KotlinSourceFilterScope.librarySources(GlobalSearchScope.allScope(project), project))
+        val filesWithExactName = scopes.findFirstNotEmpty { findFilesByNameInPackage(className, fileName, project, it) } ?: return null
 
         if (filesWithExactName.isEmpty()) return null
 
@@ -65,7 +73,7 @@ object DebuggerUtils {
 
         // Static facade or inner class of such facade?
         val partFqName = className.fqNameForClassNameWithoutDollars
-        val filesForPart = StaticFacadeIndexUtil.findFilesForFilePart(partFqName, searchScope, project)
+        val filesForPart = scopes.findFirstNotEmpty { StaticFacadeIndexUtil.findFilesForFilePart(partFqName, it, project) } ?: return null
         if (!filesForPart.isEmpty()) {
             for (file in filesForPart) {
                 if (file.name == fileName) {
@@ -77,6 +85,15 @@ object DebuggerUtils {
         }
 
         return filesWithExactName.first()
+    }
+
+    private fun <T, R> Collection<T>.findFirstNotEmpty(predicate: (T) -> Collection<R>): Collection<R>? {
+        var result: Collection<R> = emptyList()
+        for (e in this) {
+            result = predicate(e)
+            if (result.isNotEmpty()) break
+        }
+        return result
     }
 
     private fun findFilesByNameInPackage(className: JvmClassName, fileName: String, project: Project, searchScope: GlobalSearchScope)

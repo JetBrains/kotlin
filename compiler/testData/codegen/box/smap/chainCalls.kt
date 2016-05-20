@@ -1,6 +1,6 @@
 // WITH_RUNTIME
 // FULL_JDK
-
+package test
 fun testProperLineNumber(): String {
     var exceptionCount = 0;
     try {

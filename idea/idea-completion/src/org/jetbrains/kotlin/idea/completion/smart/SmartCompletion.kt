@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
-import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.isAlmostEverything
 import org.jetbrains.kotlin.idea.util.toFuzzyType
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -351,7 +350,7 @@ class SmartCompletion(
             }
 
             return lookupElement
-                    .assignSmartCompletionPriority(SmartCompletionItemPriority.FUNCTION_REFERENCE)
+                    .assignSmartCompletionPriority(SmartCompletionItemPriority.CALLABLE_REFERENCE)
                     .addTailAndNameSimilarity(matchedExpectedInfos)
         }
 

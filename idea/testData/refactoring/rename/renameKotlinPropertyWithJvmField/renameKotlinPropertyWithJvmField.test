@@ -1,0 +1,7 @@
+{
+  "type": "KOTLIN_PROPERTY",
+  "classId": "testing/rename/C",
+  "oldName": "first",
+  "newName": "second",
+  "withRuntime": "true"
+}

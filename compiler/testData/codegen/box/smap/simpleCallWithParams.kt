@@ -1,6 +1,6 @@
 // WITH_RUNTIME
 // FULL_JDK
-
+package test
 fun testProperLineNumberAfterInline(): String {
     var exceptionCount = 0;
     try {

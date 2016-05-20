@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations
 
+import com.intellij.codeInsight.actions.OptimizeImportsProcessor
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.codeInsight.navigation.NavigationUtil
 import com.intellij.openapi.application.ApplicationManager
@@ -25,9 +26,10 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.refactoring.move.MoveCallback
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
-import org.jetbrains.kotlin.idea.quickfix.moveCaret
+import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.refactoring.createKotlinFile
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.MoveKotlinTopLevelDeclarationsDialog
+import org.jetbrains.kotlin.idea.refactoring.runRefactoringWithPostprocessing
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -57,6 +59,8 @@ class MoveDeclarationToSeparateFileIntention :
 
         return TextRange(startOffset, endOffset)
     }
+
+    override fun startInWriteAction() = false
 
     override fun applyTo(element: KtClassOrObject, editor: Editor?) {
         if (editor == null) throw IllegalArgumentException("This intention requires an editor")
@@ -103,6 +107,10 @@ class MoveDeclarationToSeparateFileIntention :
                     FileEditorManager.getInstance(project).selectedTextEditor?.moveCaret(newDeclaration.startOffset + originalOffset)
                 }
         )
-        MoveKotlinDeclarationsProcessor(project, moveOptions).run()
+
+        val move = { MoveKotlinDeclarationsProcessor(project, moveOptions).run() }
+        val optimizeImports = { OptimizeImportsProcessor(project, file).run() }
+
+        move.runRefactoringWithPostprocessing(project, MoveKotlinDeclarationsProcessor.REFACTORING_ID, optimizeImports)
     }
 }

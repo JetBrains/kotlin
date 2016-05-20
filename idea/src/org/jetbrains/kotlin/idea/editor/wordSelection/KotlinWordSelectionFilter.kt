@@ -22,12 +22,17 @@ import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.psi.KtContainerNode
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.kdoc.parser.KDocElementTypes
+import org.jetbrains.kotlin.lexer.KtTokens
 
 class KotlinWordSelectionFilter : Condition<PsiElement>{
     override fun value(e: PsiElement): Boolean {
         if (e.language != KotlinLanguage.INSTANCE) return true
 
         if (KotlinListSelectioner.canSelect(e)) return false
+
+        val elementType = e.node.elementType
+        if (elementType == KtTokens.REGULAR_STRING_PART || elementType == KtTokens.ESCAPE_SEQUENCE) return true
+
         if (e is KtContainerNode) return false
         if (e.parent.firstChild.nextSibling == null && e.parent !is KtContainerNode) return false // skip nodes with the same range as their parent
 

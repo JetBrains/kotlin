@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.utils.Printer
 class PredefinedPackageFragmentDescriptor(
         fqName: String,
         module: ModuleDescriptor,
-        private val storageManager: StorageManager,
+        storageManager: StorageManager,
         val subpackages: List<PackageFragmentDescriptor> = emptyList(),
         private val functions: (PredefinedPackageFragmentDescriptor) -> Collection<SimpleFunctionDescriptor> = { emptyList() }
 ) : PackageFragmentDescriptorImpl(module, FqName(fqName)) {

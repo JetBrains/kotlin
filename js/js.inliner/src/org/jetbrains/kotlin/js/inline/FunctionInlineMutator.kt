@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.js.inline
 
 import com.google.dart.compiler.backend.js.ast.*
+import com.google.dart.compiler.backend.js.ast.metadata.staticRef
 import com.google.dart.compiler.backend.js.ast.metadata.synthetic
 import org.jetbrains.kotlin.js.inline.clean.removeDefaultInitializers
 import org.jetbrains.kotlin.js.inline.context.InliningContext
@@ -37,18 +38,16 @@ private constructor(
     private val currentStatement = inliningContext.statementContext.currentNode
 
     init {
-
-        val functionContext = inliningContext.functionContext
-        invokedFunction = functionContext.getFunctionDefinition(call)
-        body = invokedFunction.body.deepCopy()
         namingContext = inliningContext.newNamingContext()
+        val functionContext = inliningContext.functionContext
+        invokedFunction = uncoverClosure(functionContext.getFunctionDefinition(call).deepCopy())
+        body = invokedFunction.body
     }
 
     private fun process() {
         val arguments = getArguments()
         val parameters = getParameters()
 
-        replaceThis()
         removeDefaultInitializers(arguments, parameters, body)
         aliasArgumentsIfNeeded(namingContext, arguments, parameters)
         renameLocalNames(namingContext, invokedFunction)
@@ -60,8 +59,41 @@ private constructor(
         }
     }
 
-    private fun replaceThis() {
-        if (!hasThisReference(body)) return
+    private fun uncoverClosure(invokedFunction: JsFunction): JsFunction {
+        val innerFunction = invokedFunction.getInnerFunction()
+        val innerCall = getInnerCall(call.qualifier)
+        return if (innerCall != null && innerFunction != null) {
+            innerFunction.apply {
+                replaceThis(body)
+                applyCapturedArgs(innerCall, this, invokedFunction)
+            }
+        }
+        else {
+            invokedFunction.apply { replaceThis(body) }
+        }
+    }
+
+    private fun getInnerCall(qualifier: JsExpression): JsInvocation? {
+        return when (qualifier) {
+            is JsInvocation -> qualifier
+            is JsNameRef -> {
+                val callee = if (qualifier.ident == "call") qualifier.qualifier else (qualifier.name?.staticRef as? JsExpression)
+                callee?.let { getInnerCall(it) }
+            }
+            else -> null
+        }
+    }
+
+    private fun applyCapturedArgs(call: JsInvocation, inner: JsFunction, outer: JsFunction) {
+        val namingContext = inliningContext.newNamingContext()
+        val arguments = call.arguments
+        val parameters = outer.parameters
+        aliasArgumentsIfNeeded(namingContext, arguments, parameters)
+        namingContext.applyRenameTo(inner)
+    }
+
+    private fun replaceThis(block: JsBlock) {
+        if (!hasThisReference(block)) return
 
         var thisReplacement = getThisReplacement(call)
         if (thisReplacement == null || thisReplacement is JsLiteral.JsThisRef) return
@@ -72,7 +104,7 @@ private constructor(
             thisReplacement = thisName.makeRef()
         }
 
-        replaceThisReference(body, thisReplacement)
+        replaceThisReference(block, thisReplacement)
     }
 
     private fun processReturns() {

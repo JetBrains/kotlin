@@ -5,6 +5,8 @@ import temp.test.*
 val listThisFileVal = 12
 fun listThisFileFun() = 1
 
+fun listFunNotMatchingType() = ""
+
 class ListThisFileClass {}
 
 fun test(listParam: Int) {
@@ -20,3 +22,4 @@ fun test(listParam: Int) {
 // ORDER: listImportedFun
 // ORDER: listMatch
 // ORDER: listNew
+// ORDER: listFunNotMatchingType

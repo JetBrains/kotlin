@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="java-decompiler-plugin">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/java-decompiler/lib/java-decompiler.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.psi.*
 
 class ManualVariance(val descriptor: TypeParameterDescriptor, val variance: Variance)
 
-class VarianceChecker(private val trace: BindingTrace) {
+class VarianceChecker(trace: BindingTrace) {
     private val core = VarianceCheckerCore(trace.bindingContext, trace)
 
     fun check(c: TopDownAnalysisContext) {
@@ -71,9 +71,13 @@ class VarianceCheckerCore(
         if (klass is KtClass) {
             if (!checkClassHeader(klass)) return false
         }
-        for (member in klass.declarations) {
+        for (member in klass.declarations + klass.getPrimaryConstructorParameters()) {
             member as? KtCallableDeclaration ?: continue
-            val descriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, member) as? CallableMemberDescriptor ?: continue
+            val descriptor = when (member) {
+                is KtParameter -> context.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, member)
+                is KtCallableDeclaration -> context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, member)
+                else -> null
+            } as? CallableMemberDescriptor ?: continue
             if (!checkMember(member, descriptor)) return false
         }
         return true

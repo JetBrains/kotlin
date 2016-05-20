@@ -87,7 +87,6 @@ class CodeFragmentAnalyzer(
             resolveToElement: (KtElement) -> BindingContext
     ): Pair<LexicalScope, DataFlowInfo>? {
         val context = codeFragment.context
-        if (context !is KtExpression) return null
 
         val scopeForContextElement: LexicalScope?
         val dataFlowInfo: DataFlowInfo

@@ -163,6 +163,11 @@ tailrec fun PsiElement.getOutermostParentContainedIn(container: PsiElement): Psi
 
 fun PsiElement.isInsideOf(elements: Iterable<PsiElement>): Boolean = elements.any { it.isAncestor(this) }
 
+fun PsiChildRange.trimWhiteSpaces(): PsiChildRange {
+    if (first == null) return this
+    return PsiChildRange(first.siblings().firstOrNull { it !is PsiWhiteSpace }, last!!.siblings(forward = false).firstOrNull { it !is PsiWhiteSpace })
+}
+
 // -------------------- Recursive tree visiting --------------------------------------------------------------------------------------------
 
 inline fun <reified T : PsiElement> PsiElement.forEachDescendantOfType(noinline action: (T) -> Unit) {

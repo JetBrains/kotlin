@@ -679,6 +679,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("tailRecOverridden.kt")
+        public void testTailRecOverridden() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/tailRecOverridden.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("TraitOverrideObjectMethods.kt")
         public void testTraitOverrideObjectMethods() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/TraitOverrideObjectMethods.kt");
@@ -1645,6 +1651,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
         public static class CallableReference extends AbstractDiagnosticsTest {
             public void testAllFilesPresentInCallableReference() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/callableReference"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("ea81649_errorPropertyLHS.kt")
+            public void testEa81649_errorPropertyLHS() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/ea81649_errorPropertyLHS.kt");
+                doTest(fileName);
             }
 
             @TestMetadata("emptyLhs.kt")
@@ -3114,6 +3126,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("localClasses.kt")
             public void testLocalClasses() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/localClasses.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nestedTryFinally.kt")
+            public void testNestedTryFinally() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/nestedTryFinally.kt");
                 doTest(fileName);
             }
 
@@ -9411,6 +9429,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("overrideWithInline.kt")
+            public void testOverrideWithInline() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inline/overrideWithInline.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("parenthesized.kt")
             public void testParenthesized() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inline/parenthesized.kt");
@@ -11847,6 +11871,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("kt1028.kt")
             public void testKt1028() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/operatorsOverloading/kt1028.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt11300.kt")
+            public void testKt11300() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/operatorsOverloading/kt11300.kt");
                 doTest(fileName);
             }
 
@@ -16740,6 +16770,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("propertyAsCondition.kt")
+            public void testPropertyAsCondition() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/propertyAsCondition.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("propertyToNotNull.kt")
             public void testPropertyToNotNull() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/propertyToNotNull.kt");
@@ -19242,6 +19278,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("DuplicatedLabels.kt")
+            public void testDuplicatedLabels() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/DuplicatedLabels.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ElseOnNullableEnum.kt")
             public void testElseOnNullableEnum() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/ElseOnNullableEnum.kt");
@@ -19721,6 +19763,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 @TestMetadata("defaultArgs.kt")
                 public void testDefaultArgs() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/defaultArgs.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("defaultArgsOverridden.kt")
+                public void testDefaultArgsOverridden() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/defaultArgsOverridden.kt");
                     doTest(fileName);
                 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,7 +58,10 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
     private static final String VERSION_TEMPLATE = "$VERSION$";
 
     protected static final String CLASSPATH = "classpath \"org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version\"";
-    protected static final String SNAPSHOT_REPOSITORY = "maven {\nurl 'http://oss.sonatype.org/content/repositories/snapshots'\n}";
+
+    protected static final String SNAPSHOT_REPOSITORY = "maven {\nurl '" + ConfigureKotlinInProjectUtilsKt.SNAPSHOT_REPOSITORY.getUrl() + "'\n}";
+    protected static final String EAP_REPOSITORY = "maven {\nurl '" + ConfigureKotlinInProjectUtilsKt.EAP_REPOSITORY.getUrl() + "'\n}";
+
     private static final String MAVEN_CENTRAL = "mavenCentral()\n";
     private static final String JCENTER = "jcenter()\n";
     public static final String LIBRARY = "compile \"org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version\"";
@@ -67,7 +70,7 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
 
     @Override
     public boolean isConfigured(@NotNull Module module) {
-        if (ConfigureKotlinInProjectUtilsKt.hasKotlinRuntimeInScope(module)) {
+        if (ConfigureKotlinInProjectUtilsKt.hasKotlinJvmRuntimeInScope(module)) {
             return true;
         }
 
@@ -219,8 +222,11 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
         wasModified = addFirstExpressionInBlockIfNeeded(VERSION.replace(VERSION_TEMPLATE, version), buildScriptBlock);
 
         GrClosableBlock buildScriptRepositoriesBlock = getBuildScriptRepositoriesBlock(file);
-        if (isSnapshot(version)) {
+        if (ConfigureKotlinInProjectUtilsKt.isSnapshot(version)) {
             wasModified |= addLastExpressionInBlockIfNeeded(SNAPSHOT_REPOSITORY, buildScriptRepositoriesBlock);
+        }
+        else if (ConfigureKotlinInProjectUtilsKt.isEap(version)) {
+            wasModified |= addLastExpressionInBlockIfNeeded(EAP_REPOSITORY, buildScriptRepositoriesBlock);
         }
         else if (!isRepositoryConfigured(buildScriptRepositoriesBlock)) {
             wasModified |= addLastExpressionInBlockIfNeeded(MAVEN_CENTRAL, buildScriptRepositoriesBlock);
@@ -262,8 +268,11 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
         }
 
         GrClosableBlock repositoriesBlock = getRepositoriesBlock(file);
-        if (isSnapshot(version)) {
+        if (ConfigureKotlinInProjectUtilsKt.isSnapshot(version)) {
             wasModified |= addLastExpressionInBlockIfNeeded(SNAPSHOT_REPOSITORY, repositoriesBlock);
+        }
+        else if (ConfigureKotlinInProjectUtilsKt.isEap(version)) {
+            wasModified |= addLastExpressionInBlockIfNeeded(EAP_REPOSITORY, repositoriesBlock);
         }
         else if (!isRepositoryConfigured(repositoriesBlock)) {
             wasModified |= addLastExpressionInBlockIfNeeded(MAVEN_CENTRAL, repositoriesBlock);
@@ -330,10 +339,6 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
             }
         }
         return null;
-    }
-
-    private static boolean isSnapshot(@NotNull String version) {
-        return version.contains("SNAPSHOT");
     }
 
     protected boolean changeGradleFile(
@@ -469,8 +474,8 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
     private static void showErrorMessage(@NotNull Project project, @Nullable String message) {
         Messages.showErrorDialog(project,
                                  "<html>Couldn't configure kotlin-gradle plugin automatically.<br/>" +
-                                 (message != null ? message : "") +
-                                 "See manual installation instructions <a href=\"https://kotlinlang.org/docs/reference/using-gradle.html\">here</a></html>",
+                                 (message != null ? (message + "<br/>") : "") +
+                                 "<br/>See manual installation instructions <a href=\"https://kotlinlang.org/docs/reference/using-gradle.html\">here</a>.</html>",
                                  "Configure Kotlin-Gradle Plugin");
     }
 }

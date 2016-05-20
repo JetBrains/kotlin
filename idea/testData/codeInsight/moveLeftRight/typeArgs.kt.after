@@ -1,0 +1,3 @@
+// MOVE: right
+fun <T2, <caret>T1> foo() {
+}

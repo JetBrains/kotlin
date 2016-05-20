@@ -1,5 +1,7 @@
 package org.jetbrains.kotlin.gradle
 
+import org.jetbrains.kotlin.gradle.util.getFileByName
+import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
 import java.io.File
 
@@ -13,7 +15,6 @@ abstract class AbstractKotlinAndroidGradleTests(
 
     override fun defaultBuildOptions() =
             BuildOptions(withDaemon = true,
-                         assertThreadLeaks = false,
                          androidHome = File("../../../dependencies/android-sdk-for-tests"),
                          androidGradlePluginVersion = androidGradlePluginVersion)
 
@@ -88,6 +89,27 @@ fun getSomething() = 10
     }
 
     @Test
+    fun testIncrementalBuildWithNoChanges() {
+        val project = Project("AndroidIncrementalSingleModuleProject", gradleVersion)
+        val tasksToExecute = arrayOf(
+                ":app:prepareComAndroidSupportAppcompatV72311Library",
+                ":app:prepareComAndroidSupportSupportV42311Library",
+                ":app:compileDebugKotlin",
+                ":app:compileDebugJavaWithJavac"
+        )
+
+        project.build("assembleDebug") {
+            assertSuccessful()
+            assertContains(*tasksToExecute)
+        }
+
+        project.build("assembleDebug") {
+            assertSuccessful()
+            assertContains(*tasksToExecute.map { it + " UP-TO-DATE" }.toTypedArray())
+        }
+    }
+
+    @Test
     fun testModuleNameAndroid() {
         val project = Project("AndroidProject", gradleVersion)
 
@@ -101,6 +123,25 @@ fun getSomething() = 10
                     "args.moduleName = Android-compileFlavor2JnidebugKotlin",
                     "args.moduleName = Android-compileFlavor1ReleaseKotlin",
                     "args.moduleName = Android-compileFlavor2ReleaseKotlin")
+        }
+    }
+
+    @Test
+    fun testAndroidDaggerIC() {
+        val project = Project("AndroidDaggerProject", gradleVersion)
+        val options = defaultBuildOptions().copy(incremental = true)
+
+        project.build("assembleDebug", options = options) {
+            assertSuccessful()
+        }
+
+        val file = project.projectDir.getFileByName("AndroidModule.kt")
+        file.modify { it.replace("fun provideApplicationContext(): Context {",
+                                 "fun provideApplicationContext(): Context? {") }
+
+        project.build(":app:assembleDebug", options = options) {
+            assertSuccessful()
+            assertCompiledKotlinSources(project.relativizeToSubproject("app", file))
         }
     }
 }

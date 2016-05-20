@@ -1,0 +1,5 @@
+{
+  "type": "SYNTHETIC_PROPERTY",
+  "mainFile": "test.kt",
+  "newName": "prop2"
+}

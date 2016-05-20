@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
+import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Assert;
@@ -104,6 +105,11 @@ public final class InTextDirectivesUtils {
 
     @NotNull
     public static List<String> findLinesWithPrefixesRemoved(String fileText, String... prefixes) {
+        return findLinesWithPrefixesRemoved(fileText, true, prefixes);
+    }
+
+    @NotNull
+    public static List<String> findLinesWithPrefixesRemoved(String fileText, boolean trim, String... prefixes) {
         List<String> result = new ArrayList<String>();
         List<String> cleanedPrefixes = cleanDirectivesFromComments(Arrays.asList(prefixes));
 
@@ -115,7 +121,7 @@ public final class InTextDirectivesUtils {
                     if (noPrefixLine.isEmpty() ||
                             Character.isWhitespace(noPrefixLine.charAt(0)) ||
                             Character.isWhitespace(prefix.charAt(prefix.length() - 1))) {
-                        result.add(noPrefixLine.trim());
+                        result.add(trim ? noPrefixLine.trim() : StringUtil.trimTrailing(StringsKt.drop(noPrefixLine, 1)));
                         break;
                     } else {
                         throw new AssertionError(

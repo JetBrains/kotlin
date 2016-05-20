@@ -53,6 +53,7 @@ abstract class KtCodeFragment(
     private var thisType: PsiType? = null
     private var superType: PsiType? = null
     private var exceptionHandler: JavaCodeFragment.ExceptionHandler? = null
+    private var isPhysical = true
 
     abstract fun getContentElement(): KtElement?
 
@@ -62,7 +63,7 @@ abstract class KtCodeFragment(
 
     override fun getForcedResolveScope() = resolveScope
 
-    override fun isPhysical() = true
+    override fun isPhysical() = isPhysical
 
     override fun isValid() = true
 
@@ -72,9 +73,10 @@ abstract class KtCodeFragment(
 
     override fun clone(): KtCodeFragment {
         val clone = cloneImpl(calcTreeElement().clone() as FileElement) as KtCodeFragment
+        clone.isPhysical = false
         clone.originalFile = this
         clone.imports = imports
-        clone.viewProvider = SingleRootFileViewProvider(PsiManager.getInstance(_project), LightVirtualFile(name, KotlinFileType.INSTANCE, text), true)
+        clone.viewProvider = SingleRootFileViewProvider(PsiManager.getInstance(_project), LightVirtualFile(name, KotlinFileType.INSTANCE, text), false)
         clone.viewProvider.forceCachedPsi(clone)
         return clone
     }
@@ -99,11 +101,23 @@ abstract class KtCodeFragment(
 
     override fun addImportsFromString(imports: String?) {
         if (imports == null || imports.isEmpty()) return
-        this.imports.addAll(imports.split(IMPORT_SEPARATOR))
+
+        imports.split(IMPORT_SEPARATOR).forEach {
+            addImport(it)
+        }
 
         // we need this code to force re-highlighting, otherwise it does not work by some reason
         val tempElement = KtPsiFactory(project).createColon()
         add(tempElement).delete()
+    }
+
+    fun addImport(import: String) {
+        val contextFile = getContextContainingFile()
+        if (contextFile != null) {
+            if (contextFile.importDirectives.find { it.text == import } == null) {
+                imports.add(import)
+            }
+        }
     }
 
     fun importsAsImportList(): KtImportList? {
@@ -146,7 +160,11 @@ abstract class KtCodeFragment(
 
     private fun initImports(imports: String?) {
         if (imports != null && !imports.isEmpty()) {
-            this.imports.addAll(imports.split(IMPORT_SEPARATOR).map { it.check { it.startsWith("import ") } ?: "import $it" })
+
+            val importsWithPrefix = imports.split(IMPORT_SEPARATOR).map { it.check { it.startsWith("import ") } ?: "import ${it.trim()}" }
+            importsWithPrefix.forEach {
+                addImport(it)
+            }
         }
     }
 

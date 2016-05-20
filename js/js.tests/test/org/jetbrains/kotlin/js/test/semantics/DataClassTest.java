@@ -50,4 +50,8 @@ public class DataClassTest extends SingleFileTranslationTest {
     public void testKeyrole() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testPrivateFields() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

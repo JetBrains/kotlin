@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.cfg
 
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.LexicalScope
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.BlockScope
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.VariableDeclarationInstruction
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.Edges
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder
@@ -33,7 +33,7 @@ class PseudocodeVariableDataCollector(
         private val bindingContext: BindingContext,
         private val pseudocode: Pseudocode
 ) {
-    val lexicalScopeVariableInfo = computeLexicalScopeVariableInfo(pseudocode)
+    val blockScopeVariableInfo = computeBlockScopeVariableInfo(pseudocode)
 
     fun <I : ControlFlowInfo<*>> collectData(
             traversalOrder: TraversalOrder,
@@ -54,23 +54,23 @@ class PseudocodeVariableDataCollector(
             to: Instruction,
             info: I
     ): I {
-        // If an edge goes from deeper lexical scope to a less deep one, this means that it points outside of the deeper scope.
-        val toDepth = to.lexicalScope.depth
-        if (toDepth >= from.lexicalScope.depth) return info
+        // If an edge goes from deeper scope to a less deep one, this means that it points outside of the deeper scope.
+        val toDepth = to.blockScope.depth
+        if (toDepth >= from.blockScope.depth) return info
 
         // Variables declared in an inner (deeper) scope can't be accessed from an outer scope.
         // Thus they can be filtered out upon leaving the inner scope.
         @Suppress("UNCHECKED_CAST")
         return info.copy().retainAll { variable ->
-            val lexicalScope = lexicalScopeVariableInfo.declaredIn[variable]
+            val blockScope = blockScopeVariableInfo.declaredIn[variable]
             // '-1' for variables declared outside this pseudocode
-            val depth = lexicalScope?.depth ?: -1
+            val depth = blockScope?.depth ?: -1
             depth <= toDepth
         } as I
     }
 
-    fun computeLexicalScopeVariableInfo(pseudocode: Pseudocode): LexicalScopeVariableInfo {
-        val lexicalScopeVariableInfo = LexicalScopeVariableInfoImpl()
+    fun computeBlockScopeVariableInfo(pseudocode: Pseudocode): BlockScopeVariableInfo {
+        val blockScopeVariableInfo = BlockScopeVariableInfoImpl()
         pseudocode.traverse(TraversalOrder.FORWARD, { instruction ->
             if (instruction is VariableDeclarationInstruction) {
                 val variableDeclarationElement = instruction.variableDeclarationElement
@@ -83,28 +83,28 @@ class PseudocodeVariableDataCollector(
                         "Variable descriptor should correspond to the instruction for ${instruction.element.text}.\n" +
                         "Descriptor: $descriptor"
                     }
-                    lexicalScopeVariableInfo.registerVariableDeclaredInScope(
-                            descriptor as VariableDescriptor, instruction.lexicalScope
+                    blockScopeVariableInfo.registerVariableDeclaredInScope(
+                            descriptor as VariableDescriptor, instruction.blockScope
                     )
                 }
             }
         })
-        return lexicalScopeVariableInfo
+        return blockScopeVariableInfo
     }
 }
 
-interface LexicalScopeVariableInfo {
-    val declaredIn : Map<VariableDescriptor, LexicalScope>
-    val scopeVariables : Map<LexicalScope, Collection<VariableDescriptor>>
+interface BlockScopeVariableInfo {
+    val declaredIn : Map<VariableDescriptor, BlockScope>
+    val scopeVariables : Map<BlockScope, Collection<VariableDescriptor>>
 }
 
-class LexicalScopeVariableInfoImpl : LexicalScopeVariableInfo {
-    override val declaredIn = HashMap<VariableDescriptor, LexicalScope>()
-    override val scopeVariables = HashMap<LexicalScope, MutableCollection<VariableDescriptor>>()
+class BlockScopeVariableInfoImpl : BlockScopeVariableInfo {
+    override val declaredIn = HashMap<VariableDescriptor, BlockScope>()
+    override val scopeVariables = HashMap<BlockScope, MutableCollection<VariableDescriptor>>()
 
-    fun registerVariableDeclaredInScope(variable: VariableDescriptor, lexicalScope: LexicalScope) {
-        declaredIn[variable] = lexicalScope
-        val variablesInScope = scopeVariables.getOrPut(lexicalScope, { ArrayList<VariableDescriptor>() })
+    fun registerVariableDeclaredInScope(variable: VariableDescriptor, blockScope: BlockScope) {
+        declaredIn[variable] = blockScope
+        val variablesInScope = scopeVariables.getOrPut(blockScope, { ArrayList<VariableDescriptor>() })
         variablesInScope.add(variable)
     }
 }

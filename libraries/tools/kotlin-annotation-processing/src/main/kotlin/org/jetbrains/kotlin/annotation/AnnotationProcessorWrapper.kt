@@ -30,27 +30,6 @@ public class AnnotationProcessorStub : AbstractProcessor() {
     override fun process(annotations: Set<TypeElement>?, roundEnv: RoundEnvironment?) = true
 }
 
-abstract class AnnotatedElementDescriptor(public val classFqName: String)
-
-class AnnotatedClassDescriptor(classFqName: String) : AnnotatedElementDescriptor(classFqName) {
-    // use referential equality
-}
-
-class AnnotatedMethodDescriptor(classFqName: String, public val methodName: String) : AnnotatedElementDescriptor(classFqName) {
-    override fun equals(other: Any?) = other is AnnotatedMethodDescriptor && methodName == other.methodName && classFqName == other.classFqName
-
-    override fun hashCode() = 31 * classFqName.hashCode() + methodName.hashCode()
-}
-class AnnotatedConstructorDescriptor(classFqName: String) : AnnotatedElementDescriptor(classFqName) {
-    // use referential equality
-}
-
-class AnnotatedFieldDescriptor(classFqName: String, public val fieldName: String) : AnnotatedElementDescriptor(classFqName) {
-    override fun equals(other: Any?) = other is AnnotatedFieldDescriptor && fieldName == other.fieldName && classFqName == other.classFqName
-
-    override fun hashCode() = 31 * classFqName.hashCode() + fieldName.hashCode()
-}
-
 public abstract class AnnotationProcessorWrapper(
         private val processorFqName: String,
         private val taskQualifier: String
@@ -97,10 +76,10 @@ public abstract class AnnotationProcessorWrapper(
         val annotationsFilePath = processingEnv.options[KAPT_ANNOTATION_OPTION]
         val annotationsFile = if (annotationsFilePath != null) File(annotationsFilePath) else null
         kotlinAnnotationsProvider = if (annotationsFile != null && annotationsFile.exists()) {
-            FileKotlinAnnotationProvider(annotationsFile)
+            KotlinAnnotationProvider(annotationsFile)
         }
         else {
-            EmptyKotlinAnnotationsProvider()
+            KotlinAnnotationProvider()
         }
 
         processor.init(processingEnv)

@@ -303,7 +303,7 @@ public class ControlFlowInformationProvider {
         Map<Instruction, Edges<InitControlFlowInfo>> initializers =
                 pseudocodeVariablesData.getVariableInitializers();
         final Set<VariableDescriptor> declaredVariables = pseudocodeVariablesData.getDeclaredVariables(pseudocode, true);
-        final LexicalScopeVariableInfo lexicalScopeVariableInfo = pseudocodeVariablesData.getLexicalScopeVariableInfo();
+        final BlockScopeVariableInfo blockScopeVariableInfo = pseudocodeVariablesData.getBlockScopeVariableInfo();
 
         final Map<Instruction, DiagnosticFactory<?>> reportedDiagnosticMap = Maps.newHashMap();
 
@@ -318,7 +318,7 @@ public class ControlFlowInformationProvider {
                     ) {
                         assert in != null && out != null;
                         VariableInitContext ctxt =
-                                new VariableInitContext(instruction, reportedDiagnosticMap, in, out, lexicalScopeVariableInfo);
+                                new VariableInitContext(instruction, reportedDiagnosticMap, in, out, blockScopeVariableInfo);
                         if (ctxt.variableDescriptor == null) return;
                         if (instruction instanceof ReadValueInstruction) {
                             ReadValueInstruction readValueInstruction = (ReadValueInstruction) instruction;
@@ -957,6 +957,9 @@ public class ControlFlowInformationProvider {
                         // is this a recursive call?
                         CallableDescriptor functionDescriptor = resolvedCall.getResultingDescriptor();
                         if (!functionDescriptor.getOriginal().equals(subroutineDescriptor)) return;
+                        // Overridden functions using default arguments at tail call are not included: KT-4285
+                        if (resolvedCall.getCall().getValueArguments().size() != functionDescriptor.getValueParameters().size() &&
+                            !functionDescriptor.getOverriddenDescriptors().isEmpty()) return;
 
                         KtElement element = callInstruction.getElement();
                         //noinspection unchecked
@@ -1123,22 +1126,22 @@ public class ControlFlowInformationProvider {
                 @NotNull Map<Instruction, DiagnosticFactory<?>> map,
                 @NotNull Map<VariableDescriptor, VariableControlFlowState> in,
                 @NotNull Map<VariableDescriptor, VariableControlFlowState> out,
-                @NotNull LexicalScopeVariableInfo lexicalScopeVariableInfo
+                @NotNull BlockScopeVariableInfo blockScopeVariableInfo
         ) {
             super(instruction, map);
-            enterInitState = initialize(variableDescriptor, lexicalScopeVariableInfo, in);
-            exitInitState = initialize(variableDescriptor, lexicalScopeVariableInfo, out);
+            enterInitState = initialize(variableDescriptor, blockScopeVariableInfo, in);
+            exitInitState = initialize(variableDescriptor, blockScopeVariableInfo, out);
         }
 
         private VariableControlFlowState initialize(
                 VariableDescriptor variableDescriptor,
-                LexicalScopeVariableInfo lexicalScopeVariableInfo,
+                BlockScopeVariableInfo blockScopeVariableInfo,
                 Map<VariableDescriptor, VariableControlFlowState> map
         ) {
             if (variableDescriptor == null) return null;
             VariableControlFlowState state = map.get(variableDescriptor);
             if (state != null) return state;
-            return PseudocodeVariablesData.getDefaultValueForInitializers(variableDescriptor, instruction, lexicalScopeVariableInfo);
+            return PseudocodeVariablesData.getDefaultValueForInitializers(variableDescriptor, instruction, blockScopeVariableInfo);
         }
     }
 

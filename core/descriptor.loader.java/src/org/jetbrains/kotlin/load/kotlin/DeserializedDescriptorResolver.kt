@@ -20,7 +20,6 @@ import com.google.protobuf.InvalidProtocolBufferException
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
-import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.ClassDataWithSource
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
@@ -52,7 +51,7 @@ class DeserializedDescriptorResolver(private val errorReporter: ErrorReporter) {
         )
     }
 
-    private fun createKotlinPackagePartScope(descriptor: PackageFragmentDescriptor, kotlinClass: KotlinJvmBinaryClass): MemberScope? {
+    fun createKotlinPackagePartScope(descriptor: PackageFragmentDescriptor, kotlinClass: KotlinJvmBinaryClass): MemberScope? {
         val data = readData(kotlinClass, KOTLIN_FILE_FACADE_OR_MULTIFILE_CLASS_PART) ?: return null
         val strings = kotlinClass.classHeader.strings.sure { "String table not found in $kotlinClass" }
         val (nameResolver, packageProto) = parseProto(kotlinClass) {
@@ -63,19 +62,6 @@ class DeserializedDescriptorResolver(private val errorReporter: ErrorReporter) {
             // All classes are included into Java scope
             emptyList()
         }
-    }
-
-    fun createKotlinPackageScope(
-            descriptor: PackageFragmentDescriptor,
-            packageParts: List<KotlinJvmBinaryClass>
-    ): MemberScope {
-        val scopes = packageParts.mapNotNull { callable ->
-            createKotlinPackagePartScope(descriptor, callable)
-        }
-        if (scopes.isEmpty()) {
-            return MemberScope.Empty
-        }
-        return ChainedMemberScope("Member scope for union of package parts data", scopes)
     }
 
     internal fun readData(kotlinClass: KotlinJvmBinaryClass, expectedKinds: Set<KotlinClassHeader.Kind>): Array<String>? {

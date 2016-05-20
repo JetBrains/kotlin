@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.refactoring.safeDelete;
 import com.intellij.codeInsight.TargetElementUtilBase;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -56,6 +57,10 @@ public abstract class AbstractSafeDeleteTest extends KotlinLightCodeInsightFixtu
 
     public void doClassTestWithJava(@NotNull String path) throws Exception {
         doTest(path, KtClass.class, true);
+    }
+
+    public void doJavaClassTest(@NotNull String path) throws Exception {
+        doTest(path, PsiClass.class, true);
     }
 
     public void doObjectTest(@NotNull String path) throws Exception {

@@ -31,12 +31,4 @@
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Type parameter can have 'in' or 'out' variance</problem_class>
         <description>Type parameter can have 'in' variance</description>
     </problem>
-    <problem>
-        <file>test.kt</file>
-        <line>24</line>
-        <module>light_idea_test_case</module>
-        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
-        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Type parameter can have 'in' or 'out' variance</problem_class>
-        <description>Type parameter can have 'in' or 'out' variance</description>
-    </problem>
 </problems>

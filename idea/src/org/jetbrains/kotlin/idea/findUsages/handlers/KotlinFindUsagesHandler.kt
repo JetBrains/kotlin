@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.findUsages.handlers
 
 import com.intellij.find.findUsages.FindUsagesHandler
 import com.intellij.find.findUsages.FindUsagesOptions
+import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
@@ -80,9 +81,6 @@ abstract class KotlinFindUsagesHandler<T : PsiElement>(psiElement: T,
             override fun process(info: UsageInfo): Boolean {
                 val reference = info.reference
                 if (reference != null) {
-                    if (scopeContainingFile != null && reference.element.containingFile != scopeContainingFile) {
-                        LOG.error("findReferencesToHighight() found a reference from a different file: $reference")
-                    }
                     results.add(reference)
                 }
                 return true

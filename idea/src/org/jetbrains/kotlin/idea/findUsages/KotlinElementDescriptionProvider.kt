@@ -24,9 +24,12 @@ import com.intellij.psi.PsiNamedElement
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.refactoring.util.RefactoringDescriptionLocation
 import com.intellij.usageView.UsageViewLongNameLocation
+import com.intellij.usageView.UsageViewTypeLocation
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.idea.refactoring.rename.RenameJavaSyntheticPropertyHandler
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -44,6 +47,7 @@ class KotlinElementDescriptionProvider : ElementDescriptionProvider {
             is KtTypeParameter -> "type parameter"
             is KtParameter -> "parameter"
             is KtDestructuringDeclarationEntry -> "variable"
+            is RenameJavaSyntheticPropertyHandler.SyntheticPropertyWrapper -> "property"
             else -> null
         }
 
@@ -55,9 +59,9 @@ class KotlinElementDescriptionProvider : ElementDescriptionProvider {
             return descriptor
         }
 
-        if (targetElement !is PsiNamedElement || targetElement !is KtElement) return null
-
+        if (targetElement !is PsiNamedElement || targetElement.language != KotlinLanguage.INSTANCE) return null
         return when(location) {
+            is UsageViewTypeLocation -> elementKind()
             is UsageViewLongNameLocation -> targetElement.getName()
             is RefactoringDescriptionLocation -> {
                 val kind = elementKind() ?: return null

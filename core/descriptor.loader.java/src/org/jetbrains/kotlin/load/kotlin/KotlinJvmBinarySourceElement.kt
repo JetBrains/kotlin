@@ -20,6 +20,6 @@ import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.SourceFile
 
 class KotlinJvmBinarySourceElement(val binaryClass: KotlinJvmBinaryClass) : SourceElement {
-    override fun toString() = javaClass.name + ": " + binaryClass.toString()
+    override fun toString() = "${javaClass.simpleName}: $binaryClass"
     override fun getContainingFile(): SourceFile = SourceFile.NO_SOURCE_FILE
 }

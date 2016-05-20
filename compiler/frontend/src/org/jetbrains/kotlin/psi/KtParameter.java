@@ -173,10 +173,8 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
 
     @Nullable
     public KtFunction getOwnerFunction() {
-        PsiElement parent = getParent();
-        if (parent == null) return null;
-        PsiElement grandparent = parent.getParent();
-        if (!(grandparent instanceof KtFunction)) return null;
-        return (KtFunction) grandparent;
+        PsiElement parent = getParentByStub();
+        if (!(parent instanceof KtParameterList)) return null;
+        return ((KtParameterList) parent).getOwnerFunction();
     }
 }

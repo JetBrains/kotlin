@@ -35,6 +35,8 @@ import org.jetbrains.kotlin.load.java.structure.JavaType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isValidJavaFqName
 import org.jetbrains.kotlin.resolve.constants.StringValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.scopes.InnerClassesScopeWrapper
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.NotFoundClasses
@@ -44,14 +46,13 @@ import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.util.*
 
 class LazyJavaClassDescriptor(
-        private val outerC: LazyJavaResolverContext,
+        private val outerContext: LazyJavaResolverContext,
         containingDeclaration: DeclarationDescriptor,
-        internal val fqName: FqName,
         private val jClass: JavaClass
-) : ClassDescriptorBase(outerC.storageManager, containingDeclaration, fqName.shortName(),
-                        outerC.components.sourceElementFactory.source(jClass)), JavaClassDescriptor {
+) : ClassDescriptorBase(outerContext.storageManager, containingDeclaration, jClass.name,
+                        outerContext.components.sourceElementFactory.source(jClass)), JavaClassDescriptor {
 
-    private val c: LazyJavaResolverContext = outerC.child(this, jClass)
+    private val c: LazyJavaResolverContext = outerContext.child(this, jClass)
 
     init {
         c.components.javaResolverCache.recordClass(jClass, this)
@@ -125,7 +126,7 @@ class LazyJavaClassDescriptor(
 
     override fun isCompanionObject() = false
 
-    override fun toString() = "lazy java class $fqName"
+    override fun toString() = "Lazy Java class ${this.fqNameUnsafe}"
 
     private inner class LazyJavaClassTypeConstructor : AbstractClassTypeConstructor(c.storageManager) {
         private val parameters = c.storageManager.createLazyValue {
@@ -169,7 +170,7 @@ class LazyJavaClassDescriptor(
 
         private fun getPurelyImplementedSupertype(): KotlinType? {
             val purelyImplementedFqName = getPurelyImplementsFqNameFromAnnotation()
-                                          ?: FakePureImplementationsProvider.getPurelyImplementedInterface(fqName)
+                                          ?: FakePureImplementationsProvider.getPurelyImplementedInterface(fqNameSafe)
                                           ?: return null
 
             if (purelyImplementedFqName.isRoot || !purelyImplementedFqName.toUnsafe().startsWith(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME)) return null

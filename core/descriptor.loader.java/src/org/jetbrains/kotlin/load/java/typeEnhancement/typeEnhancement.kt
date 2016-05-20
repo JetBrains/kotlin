@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,7 +70,7 @@ private fun KotlinType.enhancePossiblyFlexible(qualifiers: (Int) -> JavaTypeQual
             val wereChanges = lowerResult.wereChanges || upperResult.wereChanges
             Result(
                 if (wereChanges)
-                    DelegatingFlexibleType.create(lowerResult.type, upperResult.type, extraCapabilities)
+                    factory.create(lowerResult.type, upperResult.type)
                 else
                     this@enhancePossiblyFlexible,
                 lowerResult.subtreeSize,
@@ -153,7 +153,7 @@ private fun List<Annotations>.compositeAnnotationsOrSingle() = when (size) {
 
 private fun TypeComponentPosition.shouldEnhance() = this != TypeComponentPosition.INFLEXIBLE
 
-private data class EnhancementResult<T>(val result: T, val enhancementAnnotations: Annotations?)
+private data class EnhancementResult<out T>(val result: T, val enhancementAnnotations: Annotations?)
 private fun <T> T.noChange() = EnhancementResult(this, null)
 private fun <T> T.enhancedNullability() = EnhancementResult(this, ENHANCED_NULLABILITY_ANNOTATIONS)
 private fun <T> T.enhancedMutability() = EnhancementResult(this, ENHANCED_MUTABILITY_ANNOTATIONS)
@@ -229,7 +229,7 @@ internal object NotNullTypeParameterTypeCapability : CustomTypeVariable {
 
         if (replacement.isFlexible()) {
             with(replacement.flexibility()) {
-                return DelegatingFlexibleType.create(lowerBound.prepareReplacement(), upperBound.prepareReplacement(), extraCapabilities)
+                return factory.create(lowerBound.prepareReplacement(), upperBound.prepareReplacement())
             }
         }
 

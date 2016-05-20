@@ -3,11 +3,14 @@
 
 package kotlin.text
 
-/** Line separator for current system. */
-private val LINE_SEPARATOR: String by lazy { System.getProperty("line.separator")!! }
+private object SystemProperties {
+    /** Line separator for current system. */
+    @JvmField
+    val LINE_SEPARATOR = System.getProperty("line.separator")!!
+}
 
 /** Appends a line separator to this Appendable. */
-public fun Appendable.appendln(): Appendable = append(LINE_SEPARATOR)
+public fun Appendable.appendln(): Appendable = append(SystemProperties.LINE_SEPARATOR)
 
 /** Appends value to the given Appendable and line separator after it. */
 @kotlin.internal.InlineOnly
@@ -18,7 +21,7 @@ public inline fun Appendable.appendln(value: CharSequence?): Appendable = append
 public inline fun Appendable.appendln(value: Char): Appendable = append(value).appendln()
 
 /** Appends a line separator to this StringBuilder. */
-public fun StringBuilder.appendln(): StringBuilder = append(LINE_SEPARATOR)
+public fun StringBuilder.appendln(): StringBuilder = append(SystemProperties.LINE_SEPARATOR)
 
 /** Appends [value] to this [StringBuilder], followed by a line separator. */
 @kotlin.internal.InlineOnly

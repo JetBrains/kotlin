@@ -27,7 +27,6 @@ import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.android.synthetic.AndroidConst
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.psi.KtProperty
 import java.util.*
 
 class AndroidVariantData(val variant: AndroidVariant, private val layouts: Map<String, List<PsiFile>>): Map<String, List<PsiFile>> by layouts
@@ -91,7 +90,7 @@ abstract class AndroidLayoutXmlFileManager(val project: Project) {
 
     protected abstract fun doExtractResources(files: List<PsiFile>, module: ModuleDescriptor): List<AndroidResource>
 
-    protected fun parseAndroidResource(id: String, tag: String, sourceElement: PsiElement?): AndroidResource {
+    protected fun parseAndroidResource(id: ResourceIdentifier, tag: String, sourceElement: PsiElement?): AndroidResource {
         return when (tag) {
             "fragment" -> AndroidResource.Fragment(id, sourceElement)
             "include" -> AndroidResource.Widget(id, AndroidConst.VIEW_FQNAME, sourceElement)
@@ -104,20 +103,20 @@ abstract class AndroidLayoutXmlFileManager(val project: Project) {
         val resourcesToExclude = hashSetOf<String>()
 
         for (res in resources) {
-            if (resourceMap.contains(res.id)) {
-                val existing = resourceMap[res.id]!!
+            if (resourceMap.contains(res.id.name)) {
+                val existing = resourceMap[res.id.name]!!
 
-                if (!res.sameClass(existing)) {
-                    resourcesToExclude.add(res.id)
+                if (!res.sameClass(existing) || res.id.packageName != existing.id.packageName) {
+                    resourcesToExclude.add(res.id.name)
                 }
                 else if (res is AndroidResource.Widget && existing is AndroidResource.Widget) {
                     // Widgets with the same id but different types exist.
                     if (res.xmlType != existing.xmlType && existing.xmlType != AndroidConst.VIEW_FQNAME) {
-                        resourceMap.put(res.id, AndroidResource.Widget(res.id, AndroidConst.VIEW_FQNAME, res.sourceElement))
+                        resourceMap.put(res.id.name, AndroidResource.Widget(res.id, AndroidConst.VIEW_FQNAME, res.sourceElement))
                     }
                 }
             }
-            else resourceMap.put(res.id, res)
+            else resourceMap.put(res.id.name, res)
         }
         resourcesToExclude.forEach { resourceMap.remove(it) }
         return resourceMap.values.toList()

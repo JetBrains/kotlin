@@ -12,5 +12,5 @@ class Y(val y: Int) {
 }
 
 private fun __dummyTestFun__(x1: X, y1: Y) {
-    x1.`x`plus y1.y
+    x1.`x` plus y1.y
 }

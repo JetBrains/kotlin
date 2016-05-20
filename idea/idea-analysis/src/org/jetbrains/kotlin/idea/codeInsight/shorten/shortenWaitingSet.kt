@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.SmartPointerManager
 import com.intellij.openapi.diagnostic.Logger
-import org.jetbrains.kotlin.idea.util.ShortenReferences.Options
-import org.jetbrains.kotlin.idea.util.ShortenReferences
+import org.jetbrains.kotlin.idea.core.ShortenReferences.Options
+import org.jetbrains.kotlin.idea.core.ShortenReferences
 import java.util.*
 
 class ShorteningRequest(val pointer: SmartPsiElementPointer<KtElement>, val options: Options)
@@ -75,7 +75,7 @@ fun performDelayedShortening(project: Project) {
         val elementToOptions = requests.mapNotNull { req -> req.pointer.element?.let { it to req.options } }.toMap()
         val elements = elementToOptions.keys
         //TODO: this is not correct because it should not shorten deep into the elements!
-        ShortenReferences({ elementToOptions[it] ?: ShortenReferences.Options.DEFAULT }).process(elements)
+        ShortenReferences({ elementToOptions[it] ?: Options.DEFAULT }).process(elements)
     }
 }
 

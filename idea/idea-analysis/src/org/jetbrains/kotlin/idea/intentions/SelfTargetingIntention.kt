@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.psi.psiUtil.containsInside
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import java.util.*
 
-abstract class SelfTargetingIntention<TElement : KtElement>(
+abstract class SelfTargetingIntention<TElement : PsiElement>(
         val elementType: Class<TElement>,
         private var text: String,
         private val familyName: String = text
@@ -111,7 +111,7 @@ abstract class SelfTargetingIntention<TElement : KtElement>(
     companion object {
         private val intentionBasedInspections = HashMap<Class<out SelfTargetingIntention<*>>, IntentionBasedInspection<*>?>()
 
-        fun <TElement : KtElement> findInspection(intentionClass: Class<out SelfTargetingIntention<TElement>>): IntentionBasedInspection<TElement>? {
+        fun <TElement : PsiElement> findInspection(intentionClass: Class<out SelfTargetingIntention<TElement>>): IntentionBasedInspection<TElement>? {
             if (intentionBasedInspections.containsKey(intentionClass)) {
                 @Suppress("UNCHECKED_CAST")
                 return intentionBasedInspections[intentionClass] as IntentionBasedInspection<TElement>?
@@ -131,7 +131,7 @@ abstract class SelfTargetingIntention<TElement : KtElement>(
     }
 }
 
-abstract class SelfTargetingRangeIntention<TElement : KtElement>(
+abstract class SelfTargetingRangeIntention<TElement : PsiElement>(
         elementType: Class<TElement>,
         text: String,
         familyName: String = text

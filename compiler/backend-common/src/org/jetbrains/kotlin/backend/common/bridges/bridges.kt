@@ -26,7 +26,7 @@ interface FunctionHandle {
     fun getOverridden(): Iterable<FunctionHandle>
 }
 
-data class Bridge<Signature>(
+data class Bridge<out Signature>(
         val from: Signature,
         val to: Signature
 ) {

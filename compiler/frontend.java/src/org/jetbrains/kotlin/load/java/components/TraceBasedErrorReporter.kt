@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.load.java.components
 
-import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.name.ClassId
@@ -28,10 +27,7 @@ import org.jetbrains.kotlin.util.slicedMap.Slices
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
 
 class TraceBasedErrorReporter(private val trace: BindingTrace) : ErrorReporter {
-
     companion object {
-        private val LOG = Logger.getInstance(TraceBasedErrorReporter::class.java)
-
         @JvmField
         val METADATA_VERSION_ERRORS: WritableSlice<String, IncompatibleVersionErrorData> = Slices.createCollectiveSlice()
 
@@ -49,9 +45,5 @@ class TraceBasedErrorReporter(private val trace: BindingTrace) : ErrorReporter {
 
     override fun reportCannotInferVisibility(descriptor: CallableMemberDescriptor) {
         OverrideResolver.createCannotInferVisibilityReporter(trace).invoke(descriptor)
-    }
-
-    override fun reportLoadingError(message: String, exception: Exception?) {
-        LOG.error(message, exception)
     }
 }

@@ -10,7 +10,12 @@ fun generators(): List<GenericFunction> {
 
         only(Iterables, Collections, Sets, Sequences)
         doc { "Returns a list containing all elements of the original collection and then the given [element]." }
-        doc(Sets) { "Returns a set containing all elements of the original set and then the given [element]." }
+        doc(Sets) {
+            """
+            Returns a set containing all elements of the original set and then the given [element] if it isn't already in this set.
+            The returned set preserves the element iteration order of the original set.
+            """
+        }
         doc(Sequences) { "Returns a sequence containing all elements of the original sequence and then the given [element]." }
 
         returns("List<T>")
@@ -45,7 +50,12 @@ fun generators(): List<GenericFunction> {
         // TODO: use build scope function when available
         // TODO: use immutable sets when available
         returns("SELF", Sets, Sequences)
-        doc(Sets) { "Returns a set containing all elements of the original set and then the given [element]." }
+        doc(Sets) {
+            """
+            Returns a set containing all elements of the original set and then the given [element] if it isn't already in this set.
+            The returned set preserves the element iteration order of the original set.
+            """
+        }
         body(Sets) {
             """
             val result = LinkedHashSet<T>(mapCapacity(size + 1))
@@ -95,7 +105,13 @@ fun generators(): List<GenericFunction> {
         }
 
         // TODO: use immutable set builder when available
-        doc(Sets) { "Returns a set containing all elements both of the original set and the given [elements] collection." }
+        doc(Sets) {
+            """
+            Returns a set containing all elements of the original set and the given [elements] collection,
+            which aren't already in this set.
+            The returned set preserves the element iteration order of the original set.
+            """
+        }
         body(Sets) {
             """
             val result = LinkedHashSet<T>(mapCapacity(elements.collectionSizeOrNull()?.let { this.size + it } ?: this.size * 2))
@@ -144,7 +160,13 @@ fun generators(): List<GenericFunction> {
             return result
             """
         }
-        doc(Sets) { "Returns a set containing all elements both of the original set and the given [elements] array." }
+        doc(Sets) {
+            """
+            Returns a set containing all elements of the original set and the given [elements] array,
+            which aren't already in this set.
+            The returned set preserves the element iteration order of the original set.
+            """
+        }
         body(Sets) {
             """
             val result = LinkedHashSet<T>(mapCapacity(this.size + elements.size))
@@ -194,7 +216,13 @@ fun generators(): List<GenericFunction> {
         }
 
         // TODO: use immutable set builder when available
-        doc(Sets) { "Returns a set containing all elements both of the original set and the given [elements] sequence." }
+        doc(Sets) {
+            """
+            Returns a set containing all elements of the original set and the given [elements] sequence,
+            which aren't already in this set.
+            The returned set preserves the element iteration order of the original set.
+            """
+        }
         body(Sets) {
             """
             val result = LinkedHashSet<T>(mapCapacity(this.size * 2))
@@ -224,7 +252,12 @@ fun generators(): List<GenericFunction> {
 
         only(Iterables, Sets, Sequences)
         doc { "Returns a list containing all elements of the original collection without the first occurrence of the given [element]." }
-        doc(Sets) { "Returns a set containing all elements of the original set except the given [element]." }
+        doc(Sets) {
+            """
+            Returns a set containing all elements of the original set except the given [element].
+            The returned set preserves the element iteration order of the original set.
+            """
+        }
         doc(Sequences) { "Returns a sequence containing all elements of the original sequence without the first occurrence of the given [element]." }
 
         returns("List<T>")
@@ -247,7 +280,12 @@ fun generators(): List<GenericFunction> {
         }
 
         returns("SELF", Sets, Sequences)
-        doc(Sets) { "Returns a set containing all elements of the original set except the given [element]." }
+        doc(Sets) {
+            """
+            Returns a set containing all elements of the original set except the given [element].
+            The returned set preserves the element iteration order of the original set.
+            """
+        }
         body(Sets) {
             """
             val result = LinkedHashSet<T>(mapCapacity(size))
@@ -288,7 +326,12 @@ fun generators(): List<GenericFunction> {
             """
         }
 
-        doc(Sets) { "Returns a set containing all elements of the original set except the elements contained in the given [elements] collection." }
+        doc(Sets) {
+            """
+            Returns a set containing all elements of the original set except the elements contained in the given [elements] collection.
+            The returned set preserves the element iteration order of the original set.
+            """
+        }
         body(Sets) {
             """
             val other = elements.convertToSetForSetOperationWith(this)
@@ -340,7 +383,12 @@ fun generators(): List<GenericFunction> {
             return this.filterNot { it in other }
             """
         }
-        doc(Sets) { "Returns a set containing all elements of the original set except the elements contained in the given [elements] array." }
+        doc(Sets) {
+            """
+            Returns a set containing all elements of the original set except the elements contained in the given [elements] array.
+            The returned set preserves the element iteration order of the original set.
+            """
+        }
         body(Sets) {
             """
             val result = LinkedHashSet<T>(this)
@@ -386,7 +434,12 @@ fun generators(): List<GenericFunction> {
             return this.filterNot { it in other }
             """
         }
-        doc(Sets) { "Returns a set containing all elements of the original set except the elements contained in the given [elements] sequence." }
+        doc(Sets) {
+            """
+            Returns a set containing all elements of the original set except the elements contained in the given [elements] sequence.
+            The returned set preserves the element iteration order of the original set.
+            """
+        }
         body(Sets) {
             """
             val result = LinkedHashSet<T>(this)
