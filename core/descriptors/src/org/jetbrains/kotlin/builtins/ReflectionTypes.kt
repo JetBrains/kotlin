@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,7 +65,7 @@ class ReflectionTypes(module: ModuleDescriptor) {
         }
 
         val arguments = listOf(TypeProjectionImpl(Variance.INVARIANT, type))
-        return KotlinTypeImpl.create(annotations, descriptor, false, arguments)
+        return KotlinTypeFactory.simpleNotNullType(annotations, descriptor, arguments)
     }
 
     fun getKFunctionType(
@@ -82,7 +82,7 @@ class ReflectionTypes(module: ModuleDescriptor) {
             return classDescriptor.defaultType
         }
 
-        return KotlinTypeImpl.create(annotations, classDescriptor, false, arguments)
+        return KotlinTypeFactory.simpleNotNullType(annotations, classDescriptor, arguments)
     }
 
     fun getKPropertyType(annotations: Annotations, receiverType: KotlinType?, returnType: KotlinType, mutable: Boolean): KotlinType {
@@ -107,7 +107,7 @@ class ReflectionTypes(module: ModuleDescriptor) {
             arguments.add(TypeProjectionImpl(receiverType))
         }
         arguments.add(TypeProjectionImpl(returnType))
-        return KotlinTypeImpl.create(annotations, classDescriptor, false, arguments)
+        return KotlinTypeFactory.simpleNotNullType(annotations, classDescriptor, arguments)
     }
 
     companion object {
@@ -130,10 +130,8 @@ class ReflectionTypes(module: ModuleDescriptor) {
 
         fun createKPropertyStarType(module: ModuleDescriptor): KotlinType? {
             val kPropertyClass = module.findClassAcrossModuleDependencies(KotlinBuiltIns.FQ_NAMES.kProperty) ?: return null
-            return KotlinTypeImpl.create(
-                    Annotations.EMPTY, kPropertyClass, false,
-                    listOf(StarProjectionImpl(kPropertyClass.typeConstructor.parameters.single()))
-            )
+            return KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, kPropertyClass,
+                                                       listOf(StarProjectionImpl(kPropertyClass.typeConstructor.parameters.single())))
         }
     }
 }

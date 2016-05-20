@@ -132,12 +132,7 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     @Override
     public SimpleType getDefaultType() {
         List<TypeProjection> typeProjections = TypeUtils.getDefaultTypeProjections(getTypeConstructor().getParameters());
-        return KotlinTypeImpl.create(
-                getAnnotations(),
-                this,
-                false,
-                typeProjections
-        );
+        return KotlinTypeFactory.simpleNotNullType(getAnnotations(), this, typeProjections);
     }
 
     @NotNull

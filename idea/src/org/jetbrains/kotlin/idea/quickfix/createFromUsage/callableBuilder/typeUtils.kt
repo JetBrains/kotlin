@@ -251,7 +251,7 @@ internal fun KotlinType.substitute(substitution: KotlinTypeSubstitution, varianc
             val (projection, typeParameter) = pair
             TypeProjectionImpl(Variance.INVARIANT, projection.type.substitute(substitution, typeParameter.variance))
         }
-        return KotlinTypeImpl.create(annotations, constructor, isMarkedNullable, newArguments, memberScope)
+        return KotlinTypeFactory.simpleType(annotations, constructor, newArguments, isMarkedNullable, memberScope)
     }
 }
 

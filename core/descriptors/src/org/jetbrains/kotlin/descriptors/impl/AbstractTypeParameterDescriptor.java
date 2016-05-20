@@ -68,9 +68,9 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
         this.defaultType = storageManager.createLazyValue(new Function0<SimpleType>() {
             @Override
             public SimpleType invoke() {
-                return KotlinTypeImpl.create(
+                return KotlinTypeFactory.simpleType(
                         Annotations.Companion.getEMPTY(),
-                        getTypeConstructor(), false, Collections.<TypeProjection>emptyList(),
+                        getTypeConstructor(),  Collections.<TypeProjection>emptyList(), false,
                         new LazyScopeAdapter(storageManager.createLazyValue(
                                 new Function0<MemberScope>() {
                                     @Override

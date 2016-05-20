@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
-import org.jetbrains.kotlin.types.KotlinTypeImpl
+import org.jetbrains.kotlin.types.KotlinTypeFactory
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 
 class JavaClassOnCompanionChecker : CallChecker {
@@ -41,10 +41,10 @@ class JavaClassOnCompanionChecker : CallChecker {
         if (companionObject.isCompanionObject) {
             val containingClass = companionObject.containingDeclaration as ClassDescriptor
             val javaLangClass = actualType.constructor.declarationDescriptor as? ClassDescriptor ?: return
-            val expectedType = KotlinTypeImpl.create(
-                    Annotations.EMPTY, javaLangClass, actualType.isMarkedNullable,
-                    listOf(TypeProjectionImpl(containingClass.defaultType))
-            )
+
+            val arguments = listOf(TypeProjectionImpl(containingClass.defaultType))
+            val expectedType = KotlinTypeFactory.simpleType(Annotations.EMPTY, javaLangClass.typeConstructor, arguments,
+                                                            actualType.isMarkedNullable, javaLangClass.getMemberScope(arguments))
             context.trace.report(ErrorsJvm.JAVA_CLASS_ON_COMPANION.on(resolvedCall.call.callElement, actualType, expectedType))
         }
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -99,9 +99,8 @@ class IntegerValueTypeConstant(
         }
     }
 
-    val unknownIntegerType = KotlinTypeImpl.create(
-            Annotations.EMPTY, typeConstructor, false, emptyList<TypeProjection>(),
-            ErrorUtils.createErrorScope("Scope for number value type (" + typeConstructor.toString() + ")", true)
+    val unknownIntegerType = KotlinTypeFactory.simpleType(Annotations.EMPTY, typeConstructor, emptyList<TypeProjection>(),
+                                                          false, ErrorUtils.createErrorScope("Scope for number value type (" + typeConstructor.toString() + ")", true)
     )
 
     fun getType(expectedType: KotlinType): KotlinType = TypeUtils.getPrimitiveNumberType(typeConstructor, expectedType)

@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.KotlinTypeImpl
+import org.jetbrains.kotlin.types.KotlinTypeFactory
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
@@ -217,9 +217,10 @@ class DoubleColonExpressionResolver(
                 c.trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(expression, descriptor.typeConstructor.parameters.size, descriptor))
             }
 
-            KotlinTypeImpl.create(
-                    Annotations.EMPTY, descriptor, possiblyBareType.isNullable || doubleColonExpression.hasQuestionMarks,
-                    descriptor.typeConstructor.parameters.map(TypeUtils::makeStarProjection)
+            val arguments = descriptor.typeConstructor.parameters.map(TypeUtils::makeStarProjection)
+            KotlinTypeFactory.simpleType(
+                    Annotations.EMPTY, descriptor.typeConstructor, arguments,
+                    possiblyBareType.isNullable || doubleColonExpression.hasQuestionMarks, descriptor.getMemberScope(arguments)
             )
         }
         else {

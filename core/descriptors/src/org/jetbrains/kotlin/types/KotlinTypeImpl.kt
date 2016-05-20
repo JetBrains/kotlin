@@ -30,6 +30,8 @@ private constructor(
 ) : AbstractKotlinType(), SimpleType {
 
     companion object {
+
+        @Deprecated("", ReplaceWith("KotlinTypeFactory.simpleType(annotations, constructor, arguments, nullable, memberScope)", "org.jetbrains.kotlin.types.KotlinTypeFactory"))
         @JvmStatic fun create(annotations: Annotations,
                               constructor: TypeConstructor,
                               nullable: Boolean,
@@ -51,6 +53,7 @@ private constructor(
             return KotlinTypeImpl(annotations, constructor, nullable, arguments, memberScope)
         }
 
+        @Deprecated("", ReplaceWith("KotlinTypeFactory.simpleType(annotations, descriptor, arguments, nullable)", "org.jetbrains.kotlin.types.KotlinTypeFactory"))
         @JvmStatic fun create(annotations: Annotations,
                               descriptor: ClassDescriptor,
                               nullable: Boolean,

@@ -241,7 +241,7 @@ public class CommonSupertypes {
         else {
             newScope = ErrorUtils.createErrorScope("A scope for common supertype which is not a normal classifier", true);
         }
-        return KotlinTypeImpl.create(Annotations.Companion.getEMPTY(), constructor, nullable, newProjections, newScope);
+        return KotlinTypeFactory.simpleType(Annotations.Companion.getEMPTY(), constructor, newProjections, nullable, newScope);
     }
 
     @NotNull

@@ -63,7 +63,7 @@ class CapturedType(
     private val delegateType = run {
         val scope = ErrorUtils.createErrorScope(
                 "No member resolution should be done on captured type, it used only during constraint system resolution", true)
-        KotlinTypeImpl.create(Annotations.EMPTY, CapturedTypeConstructor(typeProjection), false, listOf(), scope)
+        KotlinTypeFactory.simpleType(Annotations.EMPTY, CapturedTypeConstructor(typeProjection), listOf(), false, scope)
     }
 
     override fun getDelegate(): KotlinType = delegateType

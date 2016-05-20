@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,12 +58,11 @@ fun KotlinType.approximateFlexibleTypes(preferNotNull: Boolean = false): KotlinT
 
         return approximation
     }
-    return KotlinTypeImpl.create(
-            annotations,
-            constructor,
-            isMarkedNullable,
-            arguments.map { it.substitute { type -> type.approximateFlexibleTypes(preferNotNull = true) } },
-            ErrorUtils.createErrorScope("This type is not supposed to be used in member resolution", true)
+    return KotlinTypeFactory.simpleType(annotations,
+                                        constructor,
+                                        arguments.map { it.substitute { type -> type.approximateFlexibleTypes(preferNotNull = true) } },
+                                        isMarkedNullable,
+                                        ErrorUtils.createErrorScope("This type is not supposed to be used in member resolution", true)
     )
 }
 

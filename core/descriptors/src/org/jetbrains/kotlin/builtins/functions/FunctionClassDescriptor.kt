@@ -121,7 +121,7 @@ class FunctionClassDescriptor(
                     TypeProjectionImpl(it.defaultType)
                 }
 
-                result.add(KotlinTypeImpl.create(Annotations.EMPTY, descriptor, false, arguments))
+                result.add(KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, descriptor, arguments))
             }
 
             // Add unnumbered base class, e.g. Function for Function{n}, KFunction for KFunction{n}
