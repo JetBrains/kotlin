@@ -37,7 +37,8 @@ abstract class KotlinCallableInsertHandler(val callType: CallType<*>) : BaseDecl
     }
 
     private fun addImport(context : InsertionContext, item : LookupElement) {
-        PsiDocumentManager.getInstance(context.project).commitAllDocuments()
+        val psiDocumentManager = PsiDocumentManager.getInstance(context.project)
+        psiDocumentManager.commitAllDocuments()
 
         val file = context.file
         val o = item.`object`
@@ -50,10 +51,15 @@ abstract class KotlinCallableInsertHandler(val callType: CallType<*>) : BaseDecl
             }
             else if (callType == CallType.DEFAULT) {
                 val fqName = descriptor.importableFqName ?: return
-                context.document.replaceString(context.startOffset, context.tailOffset, fqName.render())
+                context.document.replaceString(context.startOffset, context.tailOffset, fqName.render() + " ") // insert space after for correct parsing
 
-                PsiDocumentManager.getInstance(context.project).commitAllDocuments()
-                ShortenReferences.DEFAULT.process(file, context.startOffset, context.tailOffset)
+                psiDocumentManager.commitAllDocuments()
+
+                ShortenReferences.DEFAULT.process(file, context.startOffset, context.tailOffset - 1)
+
+                psiDocumentManager.doPostponedOperationsAndUnblockDocument(context.document)
+
+                context.document.deleteString(context.tailOffset - 1, context.tailOffset) // delete space
             }
         }
     }
