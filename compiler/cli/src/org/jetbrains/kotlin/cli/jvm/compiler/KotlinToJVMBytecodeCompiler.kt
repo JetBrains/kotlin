@@ -47,7 +47,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.isSubpackageOf
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.util.PerformanceCounter
 import org.jetbrains.kotlin.utils.KotlinPaths
@@ -139,13 +138,11 @@ object KotlinToJVMBytecodeCompiler {
             val ktFiles = CompileEnvironmentUtil.getKtFiles(
                     environment.project, getAbsolutePaths(directory, module), configuration) { s -> throw IllegalStateException("Should have been checked before: " + s) }
             if (!checkKotlinPackageUsage(environment, ktFiles)) return false
-            val moduleOutputDirectory = File(module.getOutputDirectory())
 
             val onIndependentPartCompilationEnd =
                     createOutputFilesFlushingCallbackIfPossible(configuration, File(module.getOutputDirectory()), jarPath)
 
-            val generationState = generate(environment, result, ktFiles, module, moduleOutputDirectory,
-                                           module.getModuleName(),  onIndependentPartCompilationEnd)
+            val generationState = generate(environment, result, ktFiles, module, onIndependentPartCompilationEnd)
 
             outputFiles.put(module, generationState.factory)
             generationStates.add(generationState)
@@ -311,7 +308,7 @@ object KotlinToJVMBytecodeCompiler {
 
         result.throwIfError()
 
-        return generate(environment, result, environment.getSourceFiles(), null, null, null, onIndependentPartCompilationEnd)
+        return generate(environment, result, environment.getSourceFiles(), null, onIndependentPartCompilationEnd)
     }
 
     private fun analyze(environment: KotlinCoreEnvironment, targetDescription: String?): AnalysisResult? {
@@ -368,42 +365,19 @@ object KotlinToJVMBytecodeCompiler {
             result: AnalysisResult,
             sourceFiles: List<KtFile>,
             module: Module?,
-            outputDirectory: File?,
-            moduleName: String?,
             onIndependentPartCompilationEnd: GenerationStateEventCallback
     ): GenerationState {
-        val configuration = environment.configuration
-        val incrementalCompilationComponents = configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS)
-
-        val packagesWithObsoleteParts = hashSetOf<FqName>()
-        val obsoleteMultifileClasses = arrayListOf<FqName>()
-        var targetId: TargetId? = null
-
-        if (module != null && incrementalCompilationComponents != null) {
-            targetId = TargetId(module)
-            val incrementalCache = incrementalCompilationComponents.getIncrementalCache(targetId)
-
-            for (internalName in incrementalCache.getObsoletePackageParts()) {
-                packagesWithObsoleteParts.add(JvmClassName.byInternalName(internalName).packageFqName)
-            }
-
-            for (obsoleteFacadeInternalName in incrementalCache.getObsoleteMultifileClasses()) {
-                obsoleteMultifileClasses.add(JvmClassName.byInternalName(obsoleteFacadeInternalName).fqNameForClassNameWithoutDollars)
-            }
-        }
         val generationState = GenerationState(
                 environment.project,
                 ClassBuilderFactories.BINARIES,
                 result.moduleDescriptor,
                 result.bindingContext,
                 sourceFiles,
-                configuration,
+                environment.configuration,
                 GenerationState.GenerateClassFilter.GENERATE_ALL,
-                packagesWithObsoleteParts,
-                obsoleteMultifileClasses,
-                targetId,
-                moduleName,
-                outputDirectory,
+                module?.let(::TargetId),
+                module?.let { it.getModuleName() },
+                module?.let { File(it.getOutputDirectory()) },
                 onIndependentPartCompilationEnd
         )
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()

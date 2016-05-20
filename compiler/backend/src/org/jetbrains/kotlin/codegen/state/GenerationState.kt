@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.io.File
 
 class GenerationState @JvmOverloads constructor(
@@ -55,9 +56,7 @@ class GenerationState @JvmOverloads constructor(
         val files: List<KtFile>,
         val configuration: CompilerConfiguration,
         val generateDeclaredClassFilter: GenerateClassFilter = GenerationState.GenerateClassFilter.GENERATE_ALL,
-        val packagesWithObsoleteParts: Collection<FqName> = emptySet(),
-        val obsoleteMultifileClasses: Collection<FqName> = emptySet(),
-        // for PackageCodegen in incremental compilation mode
+        // For incremental compilation
         val targetId: TargetId? = null,
         moduleName: String? = configuration.get(JVMConfigurationKeys.MODULE_NAME),
         // 'outDirectory' is a hack to correctly determine if a compiled class is from the same module as the callee during
@@ -88,10 +87,28 @@ class GenerationState @JvmOverloads constructor(
     val fileClassesProvider: CodegenFileClassesProvider = CodegenFileClassesProvider()
     val inlineCache: InlineCache = InlineCache()
 
-    fun getIncrementalCacheForThisTarget(): IncrementalCache? =
-            configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS)?.let { components ->
-                targetId?.let { components.getIncrementalCache(it) }
+    val incrementalCacheForThisTarget: IncrementalCache?
+    val packagesWithObsoleteParts: Set<FqName>
+    val obsoleteMultifileClasses: List<FqName>
+
+    init {
+        val icComponents = configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS)
+        if (icComponents != null) {
+            incrementalCacheForThisTarget =
+                    icComponents.getIncrementalCache(targetId ?: error("Target ID should be specified for incremental compilation"))
+            packagesWithObsoleteParts = incrementalCacheForThisTarget.getObsoletePackageParts().map {
+                JvmClassName.byInternalName(it).packageFqName
+            }.toSet()
+            obsoleteMultifileClasses = incrementalCacheForThisTarget.getObsoleteMultifileClasses().map {
+                JvmClassName.byInternalName(it).fqNameForClassNameWithoutDollars
             }
+        }
+        else {
+            incrementalCacheForThisTarget = null
+            packagesWithObsoleteParts = emptySet()
+            obsoleteMultifileClasses = emptyList()
+        }
+    }
 
     val extraJvmDiagnosticsTrace: BindingTrace = DelegatingBindingTrace(bindingContext, false, "For extra diagnostics in ${this.javaClass}")
     private val interceptedBuilderFactory: ClassBuilderFactory
@@ -108,7 +125,7 @@ class GenerationState @JvmOverloads constructor(
     val bindingTrace: BindingTrace = DelegatingBindingTrace(bindingContext, "trace in GenerationState")
     val bindingContext: BindingContext = bindingTrace.bindingContext
     val typeMapper: KotlinTypeMapper = KotlinTypeMapper(
-            this.bindingContext, classBuilderMode, fileClassesProvider, getIncrementalCacheForThisTarget(),
+            this.bindingContext, classBuilderMode, fileClassesProvider, incrementalCacheForThisTarget,
             IncompatibleClassTrackerImpl(extraJvmDiagnosticsTrace), this.moduleName
     )
     val intrinsics: IntrinsicMethods = IntrinsicMethods()
@@ -143,9 +160,8 @@ class GenerationState @JvmOverloads constructor(
                 .wrapWith(
                     { OptimizationClassBuilderFactory(it, configuration.get(JVMConfigurationKeys.DISABLE_OPTIMIZATION, false)) },
                     { BuilderFactoryForDuplicateSignatureDiagnostics(
-                            it, this.bindingContext, diagnostics, fileClassesProvider,
-                            getIncrementalCacheForThisTarget(),
-                            this.moduleName).apply { duplicateSignatureFactory = this } },
+                            it, this.bindingContext, diagnostics, fileClassesProvider, incrementalCacheForThisTarget, this.moduleName
+                      ).apply { duplicateSignatureFactory = this } },
                     { BuilderFactoryForDuplicateClassNameDiagnostics(it, diagnostics) },
                     { configuration.get(JVMConfigurationKeys.DECLARATIONS_JSON_PATH)
                               ?.let { destination -> SignatureDumpingBuilderFactory(it, File(destination)) } ?: it }
