@@ -1,0 +1,8 @@
+{
+    springConfig: ["config.xml"],
+    file: "Bean.kt",
+    icon: "ShowAutowiredDependencies",
+    tooltip: "Navigate to the autowired dependencies",
+    naming: "bean",
+    targets: ["stringBean1", "stringBean2"]
+}

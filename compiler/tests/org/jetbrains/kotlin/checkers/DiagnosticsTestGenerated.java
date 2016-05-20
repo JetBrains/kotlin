@@ -13377,6 +13377,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("EnumName.kt")
+            public void testEnumName() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/redeclarations/EnumName.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("FunVsCtorInDifferentFiles.kt")
             public void testFunVsCtorInDifferentFiles() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/redeclarations/FunVsCtorInDifferentFiles.kt");

@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.tasks.*;
-import org.jetbrains.kotlin.resolve.calls.tower.NewResolveOldInference;
+import org.jetbrains.kotlin.resolve.calls.tower.NewResolutionOldInference;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
@@ -58,6 +58,7 @@ import java.util.*;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults.Code.INCOMPLETE_TYPE_INFERENCE;
+import static org.jetbrains.kotlin.resolve.calls.tower.NewResolutionOldInference.ResolutionKind.*;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 
 @SuppressWarnings("RedundantTypeArguments")
@@ -67,7 +68,7 @@ public class CallResolver {
     private ArgumentTypeResolver argumentTypeResolver;
     private GenericCandidateResolver genericCandidateResolver;
     private CallCompleter callCompleter;
-    private NewResolveOldInference newCallResolver;
+    private NewResolutionOldInference newCallResolver;
     private final KotlinBuiltIns builtIns;
 
     private static final PerformanceCounter callResolvePerfCounter = PerformanceCounter.Companion.create("Call resolve", ExpressionTypingVisitorDispatcher.typeInfoPerfCounter);
@@ -110,7 +111,7 @@ public class CallResolver {
 
     // component dependency cycle
     @Inject
-    public void setCallCompleter(@NotNull NewResolveOldInference newCallResolver) {
+    public void setCallCompleter(@NotNull NewResolutionOldInference newCallResolver) {
         this.newCallResolver = newCallResolver;
     }
 
@@ -122,7 +123,7 @@ public class CallResolver {
         Name referencedName = nameExpression.getReferencedNameAsName();
         return computeTasksAndResolveCall(
                 context, referencedName, nameExpression,
-                ResolveKind.VARIABLE);
+                Variable.INSTANCE);
     }
 
     @NotNull
@@ -132,7 +133,7 @@ public class CallResolver {
     ) {
         return computeTasksAndResolveCall(
                 context, nameExpression.getReferencedNameAsName(), nameExpression,
-                ResolveKind.CALLABLE_REFERENCE);
+                CallableReference.INSTANCE);
     }
 
     @NotNull
@@ -145,7 +146,7 @@ public class CallResolver {
         BasicCallResolutionContext callResolutionContext = BasicCallResolutionContext.create(context, call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS);
         return computeTasksAndResolveCall(
                 callResolutionContext, name, functionReference,
-                ResolveKind.FUNCTION);
+                Function.INSTANCE);
     }
 
     @NotNull
@@ -155,7 +156,7 @@ public class CallResolver {
     ) {
         return computeTasksAndResolveCall(
                 context, OperatorNameConventions.INVOKE, tracing,
-                ResolveKind.INVOKE);
+                Invoke.INSTANCE);
     }
 
     @NotNull
@@ -163,7 +164,7 @@ public class CallResolver {
             @NotNull BasicCallResolutionContext context,
             @NotNull Name name,
             @NotNull KtReferenceExpression referenceExpression,
-            @NotNull ResolveKind kind
+            @NotNull NewResolutionOldInference.ResolutionKind<D> kind
     ) {
         TracingStrategy tracing = TracingStrategyImpl.create(referenceExpression, context.call);
         return computeTasksAndResolveCall(context, name, tracing, kind);
@@ -174,7 +175,7 @@ public class CallResolver {
             @NotNull final BasicCallResolutionContext context,
             @NotNull final Name name,
             @NotNull final TracingStrategy tracing,
-            @NotNull final ResolveKind kind
+            @NotNull final NewResolutionOldInference.ResolutionKind<D> kind
     ) {
         return callResolvePerfCounter.time(new Function0<OverloadResolutionResults<D>>() {
             @Override
@@ -207,7 +208,7 @@ public class CallResolver {
             @Override
             public OverloadResolutionResults<D> invoke() {
                 ResolutionTask<D> resolutionTask = new ResolutionTask<D>(
-                        ResolveKind.GIVEN_CANDIDATES, null, candidates
+                        new NewResolutionOldInference.ResolutionKind.GivenCandidates<D>(), null, candidates
                 );
                 return doResolveCallOrGetCachedResults(context, resolutionTask, tracing);
             }
@@ -256,7 +257,7 @@ public class CallResolver {
             KtArrayAccessExpression arrayAccessExpression = (KtArrayAccessExpression) context.call.getCallElement();
             return computeTasksAndResolveCall(
                     context, name, arrayAccessExpression,
-                    ResolveKind.FUNCTION);
+                    Function.INSTANCE);
         }
 
         KtExpression calleeExpression = context.call.getCalleeExpression();
@@ -264,7 +265,7 @@ public class CallResolver {
             KtSimpleNameExpression expression = (KtSimpleNameExpression) calleeExpression;
             return computeTasksAndResolveCall(
                     context, expression.getReferencedNameAsName(), expression,
-                    ResolveKind.FUNCTION);
+                    Function.INSTANCE);
         }
         else if (calleeExpression instanceof KtConstructorCalleeExpression) {
             return (OverloadResolutionResults) resolveCallForConstructor(context, (KtConstructorCalleeExpression) calleeExpression);
@@ -488,7 +489,7 @@ public class CallResolver {
 
                 ResolutionTask<FunctionDescriptor> resolutionTask =
                         new ResolutionTask<FunctionDescriptor>(
-                                ResolveKind.GIVEN_CANDIDATES, null, candidates
+                                new NewResolutionOldInference.ResolutionKind.GivenCandidates<FunctionDescriptor>(), null, candidates
                         );
 
 
@@ -592,14 +593,13 @@ public class CallResolver {
             }
         }
 
-        if (resolutionTask.resolveKind != ResolveKind.GIVEN_CANDIDATES) {
+        if (!(resolutionTask.resolutionKind instanceof GivenCandidates)) {
             assert resolutionTask.name != null;
-            return (OverloadResolutionResultsImpl<D>)
-                    newCallResolver.runResolve(context, resolutionTask.name, resolutionTask.resolveKind, tracing);
+            return newCallResolver.runResolution(context, resolutionTask.name, resolutionTask.resolutionKind, tracing);
         }
         else {
             assert resolutionTask.givenCandidates != null;
-            return newCallResolver.runResolveForGivenCandidates(context, tracing, resolutionTask.givenCandidates);
+            return newCallResolver.runResolutionForGivenCandidates(context, tracing, resolutionTask.givenCandidates);
         }
     }
 
@@ -613,24 +613,17 @@ public class CallResolver {
         final Collection<ResolutionCandidate<D>> givenCandidates;
 
         @NotNull
-        final ResolveKind resolveKind;
+        final NewResolutionOldInference.ResolutionKind<D> resolutionKind;
 
         private ResolutionTask(
-                @NotNull ResolveKind kind,
+                @NotNull NewResolutionOldInference.ResolutionKind<D> kind,
                 @Nullable Name name,
                 @Nullable Collection<ResolutionCandidate<D>> candidates
         ) {
             this.name = name;
             givenCandidates = candidates;
-            resolveKind = kind;
+            resolutionKind = kind;
         }
     }
 
-    public enum ResolveKind {
-        FUNCTION,
-        INVOKE,
-        VARIABLE,
-        CALLABLE_REFERENCE,
-        GIVEN_CANDIDATES,
-    }
 }

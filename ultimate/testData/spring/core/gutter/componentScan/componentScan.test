@@ -1,0 +1,8 @@
+{
+    springConfig: ["ComponentScan.kt"],
+    file: "ComponentScan.kt",
+    icon: "SpringJavaBean",
+    tooltip: "Navigate to the spring bean declaration(s)",
+    naming: "bean",
+    targets: ["resourceGutter", "customControllerName"]
+}

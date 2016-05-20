@@ -4,5 +4,5 @@ public open class B() {
 }
 
 fun test() {
-    /*rename*/B()
+    B()
 }

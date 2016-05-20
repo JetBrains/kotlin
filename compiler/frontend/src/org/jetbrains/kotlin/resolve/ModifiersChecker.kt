@@ -132,7 +132,6 @@ object ModifierCheckerCore {
         result += incompatibilityRegister(DATA_KEYWORD, SEALED_KEYWORD)
         // open is redundant to abstract & override
         result += redundantRegister(ABSTRACT_KEYWORD, OPEN_KEYWORD)
-        result += redundantRegister(OVERRIDE_KEYWORD, OPEN_KEYWORD)
         // abstract is redundant to sealed
         result += redundantRegister(SEALED_KEYWORD, ABSTRACT_KEYWORD)
 
@@ -203,9 +202,9 @@ object ModifierCheckerCore {
                 trace.report(Errors.REPEATED_MODIFIER.on (secondNode.psi, first))
             }
             Compatibility.REDUNDANT ->
-                trace.report(Errors.REDUNDANT_MODIFIER.on(secondNode.psi, first, second))
+                trace.report(Errors.REDUNDANT_MODIFIER.on(secondNode.psi, second, first))
             Compatibility.REVERSE_REDUNDANT ->
-                trace.report(Errors.REDUNDANT_MODIFIER.on(firstNode.psi,  second, first))
+                trace.report(Errors.REDUNDANT_MODIFIER.on(firstNode.psi,  first, second))
             Compatibility.DEPRECATED -> {
                 trace.report(Errors.DEPRECATED_MODIFIER_PAIR.on(firstNode.psi, first, second))
                 trace.report(Errors.DEPRECATED_MODIFIER_PAIR.on(secondNode.psi, second, first))

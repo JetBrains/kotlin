@@ -1,0 +1,6 @@
+// "Remove 'val' from parameter" "true"
+open class Base(x: Int) {
+    val y = x
+}
+
+class Derived(y: Int) : Base(y)

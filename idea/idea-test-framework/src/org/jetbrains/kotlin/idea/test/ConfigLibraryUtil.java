@@ -179,19 +179,22 @@ public class ConfigLibraryUtil {
         );
     }
 
+    public static void addLibrary(@NotNull Module module, @NotNull String libraryName, @NotNull String rootPath, @NotNull String[] jarPaths) {
+        NewLibraryEditor editor = new NewLibraryEditor();
+        editor.setName(libraryName);
+        for (String jarPath : jarPaths) {
+            editor.addRoot(VfsUtil.getUrlForLibraryRoot(new File(rootPath, jarPath)), OrderRootType.CLASSES);
+        }
+
+        addLibrary(editor, module);
+    }
+
     public static void configureLibrariesByDirective(@NotNull Module module, String rootPath, String fileText) {
         for (String libraryInfo : InTextDirectivesUtils.findListWithPrefixes(fileText, "// CONFIGURE_LIBRARY: ")) {
             int i = libraryInfo.indexOf('@');
             String libraryName = libraryInfo.substring(0, i);
             String[] jarPaths = libraryInfo.substring(i + 1).split(";");
-
-            NewLibraryEditor editor = new NewLibraryEditor();
-            editor.setName(libraryName);
-            for (String jarPath : jarPaths) {
-                editor.addRoot(VfsUtil.getUrlForLibraryRoot(new File(rootPath, jarPath)), OrderRootType.CLASSES);
-            }
-
-            addLibrary(editor, module);
+            addLibrary(module, libraryName, rootPath, jarPaths);
         }
     }
 

@@ -1,0 +1,20 @@
+================ Step #1 =================
+
+Compiling files:
+  src/A.kt
+End of files
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Cleaning output files:
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/foo/FunAKt.class
+  out/production/module/other/OtherKt.class
+  out/production/module/use/UseAKt.class
+End of files
+Compiling files:
+  src/funA.kt
+  src/other.kt
+  src/useA.kt
+End of files
+Exit code: OK
+------------------------------------------

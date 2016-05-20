@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.idea.quickfix.utils.QuickfixTestUtilsKt;
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
 import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
+import org.jetbrains.kotlin.idea.test.TestFixtureExtension;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
@@ -57,6 +58,7 @@ import org.junit.Assert;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -132,8 +134,15 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
             public void run() {
                 String fileText = "";
                 String expectedErrorMessage = "";
+                List<String> fixtureClasses = Collections.emptyList();
                 try {
                     fileText = FileUtil.loadFile(testFile, CharsetToolkit.UTF8_CHARSET);
+
+                    fixtureClasses = InTextDirectivesUtils.findListWithPrefixes(fileText, "// FIXTURE_CLASS: ");
+                    for (String fixtureClass : fixtureClasses) {
+                        TestFixtureExtension.Companion.loadFixture(fixtureClass, getModule());
+                    }
+
                     expectedErrorMessage = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// SHOULD_FAIL_WITH: ");
                     String contents = StringUtil.convertLineSeparators(fileText);
                     quickFixTestCase.configureFromFileText(testFile.getName(), contents);
@@ -157,6 +166,9 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
                         fail(testName);
                     }
                 } finally {
+                    for (String fixtureClass : fixtureClasses) {
+                        TestFixtureExtension.Companion.unloadFixture(fixtureClass);
+                    }
                     ConfigLibraryUtil.unconfigureLibrariesByDirective(getModule(), fileText);
                 }
             }

@@ -65,12 +65,12 @@ abstract class AbstractIncrementalJpsTest(
         private val allowNoBuildLogFileInTestData: Boolean = false
 ) : JpsBuildTestCase() {
     companion object {
-        val COMPILATION_FAILED = "COMPILATION FAILED"
+        private val COMPILATION_FAILED = "COMPILATION FAILED"
 
         // change to "/tmp" or anything when default is too long (for easier debugging)
-        val TEMP_DIRECTORY_TO_USE = File(FileUtilRt.getTempDirectory())
+        private val TEMP_DIRECTORY_TO_USE = File(FileUtilRt.getTempDirectory())
 
-        val DEBUG_LOGGING_ENABLED = System.getProperty("debug.logging.enabled") == "true"
+        private val DEBUG_LOGGING_ENABLED = System.getProperty("debug.logging.enabled") == "true"
     }
 
     protected open val enableExperimentalIncrementalCompilation = false

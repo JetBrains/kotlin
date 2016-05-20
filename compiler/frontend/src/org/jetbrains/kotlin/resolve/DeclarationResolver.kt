@@ -78,9 +78,13 @@ class DeclarationResolver(
                             continue
                         }
 
-                        redeclarations.add(Pair(DescriptorToSourceUtils.getSourceFromDescriptor(descriptor)!!, descriptor.getName()))
+                        DescriptorToSourceUtils.getSourceFromDescriptor(descriptor)?.let {
+                            redeclarations.add(Pair(it, descriptor.getName()))
+                        }
                         if (descriptor2 is PropertyDescriptor) {
-                            redeclarations.add(Pair(DescriptorToSourceUtils.descriptorToDeclaration(descriptor2)!!, descriptor2.getName()))
+                            DescriptorToSourceUtils.descriptorToDeclaration(descriptor2)?.let {
+                                redeclarations.add(Pair(it, descriptor2.getName()))
+                            }
                         }
                     }
                 }

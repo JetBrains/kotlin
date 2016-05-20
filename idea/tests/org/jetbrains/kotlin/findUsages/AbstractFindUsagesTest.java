@@ -61,6 +61,7 @@ import org.jetbrains.kotlin.idea.findUsages.KotlinPropertyFindUsagesOptions;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
+import org.jetbrains.kotlin.idea.test.TestFixtureExtension;
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
@@ -293,6 +294,10 @@ public abstract class AbstractFindUsagesTest extends KotlinLightCodeInsightFixtu
         myFixture.setTestDataPath(PluginTestCaseBase.getTestDataPathBase() + "/findUsages");
     }
 
+    protected void extraConfig(@SuppressWarnings("UnusedParameters") @NotNull String path) {
+
+    }
+
     protected <T extends PsiElement> void doTest(@NotNull String path) throws Exception {
         File mainFile = new File(path);
         final String mainFileName = mainFile.getName();
@@ -315,59 +320,73 @@ public abstract class AbstractFindUsagesTest extends KotlinLightCodeInsightFixtu
                                             : Property.class);
         }
 
-        OptionsParser parser = OptionsParser.getParserByPsiElementClass(caretElementClass);
-
-        String rootPath = path.substring(0, path.lastIndexOf("/") + 1);
-
-        File rootDir = new File(rootPath);
-        File[] extraFiles = rootDir.listFiles(
-                new FilenameFilter() {
-                    @Override
-                    public boolean accept(@NotNull File dir, @NotNull String name) {
-                        if (!name.startsWith(prefix) || name.equals(mainFileName)) return false;
-
-                        String ext = FileUtilRt.getExtension(name);
-                        return ext.equals("kt")
-                               || ext.equals("java")
-                               || ext.equals("xml")
-                               || ext.equals("properties")
-                               || (ext.equals("txt") && !name.endsWith(".results.txt"));
-                    }
-                }
-        );
-
-        assert extraFiles != null;
-        for (File file : extraFiles) {
-            myFixture.configureByFile(rootPath + file.getName());
+        List<String> fixtureClasses = InTextDirectivesUtils.findListWithPrefixes(mainFileText, "// FIXTURE_CLASS: ");
+        for (String fixtureClass : fixtureClasses) {
+            TestFixtureExtension.Companion.loadFixture(fixtureClass, myFixture.getModule());
         }
-        myFixture.configureByFile(path);
 
-        PsiElement caretElement =
-                InTextDirectivesUtils.isDirectiveDefined(mainFileText, "// FIND_BY_REF")
-                ? TargetElementUtilBase.findTargetElement(myFixture.getEditor(),
-                                                          TargetElementUtilBase.REFERENCED_ELEMENT_ACCEPTED | 
-                                                          JavaTargetElementEvaluator.NEW_AS_CONSTRUCTOR)
-                : myFixture.getElementAtCaret();
-        assertNotNull(caretElement);
-        assertInstanceOf(caretElement, caretElementClass);
+        try {
+            extraConfig(path);
 
-        PsiFile containingFile = caretElement.getContainingFile();
-        boolean isLibraryElement = containingFile != null && ProjectRootsUtil.isLibraryFile(getProject(), containingFile.getVirtualFile());
+            OptionsParser parser = OptionsParser.getParserByPsiElementClass(caretElementClass);
 
-        FindUsagesOptions options = parser != null ? parser.parse(mainFileText, getProject()) : null;
+            String rootPath = path.substring(0, path.lastIndexOf("/") + 1);
 
-        // Ensure that search by sources (if present) and decompiled declarations gives the same results
-        if (isLibraryElement) {
-            PsiElement originalElement = caretElement.getOriginalElement();
-            findUsagesAndCheckResults(mainFileText, prefix, rootPath, originalElement, options);
+            File rootDir = new File(rootPath);
+            File[] extraFiles = rootDir.listFiles(
+                    new FilenameFilter() {
+                        @Override
+                        public boolean accept(@NotNull File dir, @NotNull String name) {
+                            if (!name.startsWith(prefix) || name.equals(mainFileName)) return false;
 
-            PsiElement navigationElement = caretElement.getNavigationElement();
-            if (navigationElement != originalElement) {
-                findUsagesAndCheckResults(mainFileText, prefix, rootPath, navigationElement, options);
+                            String ext = FileUtilRt.getExtension(name);
+                            return ext.equals("kt")
+                                   || ext.equals("java")
+                                   || ext.equals("xml")
+                                   || ext.equals("properties")
+                                   || (ext.equals("txt") && !name.endsWith(".results.txt"));
+                        }
+                    }
+            );
+
+            assert extraFiles != null;
+            for (File file : extraFiles) {
+                myFixture.configureByFile(rootPath + file.getName());
+            }
+            myFixture.configureByFile(path);
+
+            PsiElement caretElement =
+                    InTextDirectivesUtils.isDirectiveDefined(mainFileText, "// FIND_BY_REF")
+                    ? TargetElementUtilBase.findTargetElement(myFixture.getEditor(),
+                                                              TargetElementUtilBase.REFERENCED_ELEMENT_ACCEPTED |
+                                                              JavaTargetElementEvaluator.NEW_AS_CONSTRUCTOR)
+                    : myFixture.getElementAtCaret();
+            assertNotNull(caretElement);
+            assertInstanceOf(caretElement, caretElementClass);
+
+            PsiFile containingFile = caretElement.getContainingFile();
+            boolean isLibraryElement = containingFile != null && ProjectRootsUtil.isLibraryFile(getProject(), containingFile.getVirtualFile());
+
+            FindUsagesOptions options = parser != null ? parser.parse(mainFileText, getProject()) : null;
+
+            // Ensure that search by sources (if present) and decompiled declarations gives the same results
+            if (isLibraryElement) {
+                PsiElement originalElement = caretElement.getOriginalElement();
+                findUsagesAndCheckResults(mainFileText, prefix, rootPath, originalElement, options);
+
+                PsiElement navigationElement = caretElement.getNavigationElement();
+                if (navigationElement != originalElement) {
+                    findUsagesAndCheckResults(mainFileText, prefix, rootPath, navigationElement, options);
+                }
+            }
+            else {
+                findUsagesAndCheckResults(mainFileText, prefix, rootPath, caretElement, options);
             }
         }
-        else {
-            findUsagesAndCheckResults(mainFileText, prefix, rootPath, caretElement, options);
+        finally {
+            for (String fixtureClass : fixtureClasses) {
+                TestFixtureExtension.Companion.unloadFixture(fixtureClass);
+            }
         }
     }
 

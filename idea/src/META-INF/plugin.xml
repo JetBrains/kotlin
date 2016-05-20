@@ -19,6 +19,8 @@
   <depends optional="true" config-file="i18n.xml">com.intellij.java-i18n</depends>
   <depends optional="true" config-file="injection.xml">org.intellij.intelliLang</depends>
 
+  <!-- ULTIMATE-PLUGIN-PLACEHOLDER -->
+
   <project-components>
     <component>
       <implementation-class>org.jetbrains.kotlin.idea.compiler.KotlinCompilerManager</implementation-class>
@@ -634,6 +636,10 @@
 
     <testCreator language="kotlin" implementationClass="org.jetbrains.kotlin.idea.testIntegration.KotlinTestCreator"/>
     <testFinder implementation="org.jetbrains.kotlin.idea.testIntegration.KotlinTestFinder"/>
+
+    <constantExpressionEvaluator
+        language="kotlin"
+        implementationClass="org.jetbrains.kotlin.idea.KotlinLightConstantExpressionEvaluator"/>
 
     <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.IfNullToElvisIntention</className>
@@ -1428,6 +1434,21 @@
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="WEAK WARNING"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.CanBeParameterInspection"
+                     displayName="Constructor parameter is never used as a property"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     level="WARNING"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantModalityModifierInspection"
+                     displayName="Redundant modality modifier"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     cleanupTool="true"
+                     level="WARNING"
     />
 
     <referenceImporter implementation="org.jetbrains.kotlin.idea.quickfix.KotlinReferenceImporter"/>

@@ -26,9 +26,11 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getLambdaArgumentName
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorResolver
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentsInParentheses
 
@@ -186,6 +188,27 @@ fun KtDeclaration.implicitVisibility(): KtModifierKeywordToken? {
         KtTokens.DEFAULT_VISIBILITY_KEYWORD
     }
     return defaultVisibilityKeyword
+}
+
+fun KtDeclaration.implicitModality(): KtModifierKeywordToken {
+    if (this is KtClassOrObject) return KtTokens.FINAL_KEYWORD
+    val klass = containingClassOrObject ?: return KtTokens.FINAL_KEYWORD
+    if (hasModifier(KtTokens.OVERRIDE_KEYWORD)) {
+        if (klass.hasModifier(KtTokens.ABSTRACT_KEYWORD) ||
+            klass.hasModifier(KtTokens.OPEN_KEYWORD) ||
+            klass.hasModifier(KtTokens.SEALED_KEYWORD)) {
+            return KtTokens.OPEN_KEYWORD
+        }
+    }
+    if (klass is KtClass && klass.isInterface() && !hasModifier(KtTokens.PRIVATE_KEYWORD)) {
+        val hasBody = when (this) {
+            is KtProperty -> DescriptorResolver.hasBody(this)
+            is KtFunction -> hasBody()
+            else -> false
+        }
+        return if (hasBody) KtTokens.OPEN_KEYWORD else KtTokens.ABSTRACT_KEYWORD
+    }
+    return KtTokens.FINAL_KEYWORD
 }
 
 fun KtSecondaryConstructor.getOrCreateBody(): KtBlockExpression {

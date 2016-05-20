@@ -61,9 +61,27 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("classAdded")
+        public void testClassAdded() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/classAdded/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("classRemoved")
+        public void testClassRemoved() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/classRemoved/");
+            doTest(fileName);
+        }
+
         @TestMetadata("constantValueChanged")
         public void testConstantValueChanged() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/constantValueChanged/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("copyFileToAnotherModule")
+        public void testCopyFileToAnotherModule() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/copyFileToAnotherModule/");
             doTest(fileName);
         }
 
@@ -172,6 +190,18 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
         @TestMetadata("accessingPropertiesViaField")
         public void testAccessingPropertiesViaField() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/accessingPropertiesViaField/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("addClass")
+        public void testAddClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/addClass/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("addFileWithFunctionOverload")
+        public void testAddFileWithFunctionOverload() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/addFileWithFunctionOverload/");
             doTest(fileName);
         }
 
@@ -740,6 +770,48 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
         @TestMetadata("propertyRedeclaration")
         public void testPropertyRedeclaration() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/propertyRedeclaration/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("removeAndRestoreCompanion")
+        public void testRemoveAndRestoreCompanion() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/removeAndRestoreCompanion/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("removeAndRestoreCompanionWithImplicitUsages")
+        public void testRemoveAndRestoreCompanionWithImplicitUsages() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/removeAndRestoreCompanionWithImplicitUsages/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("removeClass")
+        public void testRemoveClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/removeClass/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("removeClassInDefaultPackage")
+        public void testRemoveClassInDefaultPackage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/removeClassInDefaultPackage/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("removeFileWithFunctionOverload")
+        public void testRemoveFileWithFunctionOverload() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/removeFileWithFunctionOverload/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("renameClass")
+        public void testRenameClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/renameClass/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("renameFileWithFunctionOverload")
+        public void testRenameFileWithFunctionOverload() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/renameFileWithFunctionOverload/");
             doTest(fileName);
         }
 

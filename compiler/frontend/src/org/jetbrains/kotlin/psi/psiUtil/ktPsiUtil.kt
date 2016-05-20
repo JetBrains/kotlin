@@ -367,6 +367,9 @@ fun KtStringTemplateExpression.getContentRange(): TextRange {
     return TextRange(start, if (lastChild.elementType == KtTokens.CLOSING_QUOTE) length - lastChild.textLength else length)
 }
 
+val KtStringTemplateExpression.plainContent: String
+    get() = getContentRange().substring(text)
+
 fun KtStringTemplateExpression.isSingleQuoted(): Boolean
         = node.firstChildNode.textLength == 1
 
@@ -391,16 +394,25 @@ fun KtLambdaArgument.getLambdaArgumentName(bindingContext: BindingContext): Name
 fun KtExpression.asAssignment(): KtBinaryExpression? =
         if (KtPsiUtil.isAssignment(this)) this as KtBinaryExpression else null
 
-fun KtDeclaration.visibilityModifier(): PsiElement? {
+private fun KtDeclaration.modifierFromTokenSet(set: TokenSet): PsiElement? {
     val modifierList = modifierList ?: return null
-    return KtTokens.VISIBILITY_MODIFIERS.types
-                   .asSequence()
-                   .map { modifierList.getModifier(it as KtModifierKeywordToken) }
-                   .firstOrNull { it != null }
+    return set.types
+            .asSequence()
+            .map { modifierList.getModifier(it as KtModifierKeywordToken) }
+            .firstOrNull { it != null }
+
 }
+
+fun KtDeclaration.visibilityModifier() = modifierFromTokenSet(KtTokens.VISIBILITY_MODIFIERS)
 
 fun KtDeclaration.visibilityModifierType(): KtModifierKeywordToken?
         = visibilityModifier()?.node?.elementType as KtModifierKeywordToken?
+
+private val MODALITY_MODIFIERS = TokenSet.create(
+        KtTokens.ABSTRACT_KEYWORD, KtTokens.FINAL_KEYWORD, KtTokens.SEALED_KEYWORD, KtTokens.OPEN_KEYWORD
+)
+
+fun KtDeclaration.modalityModifier() = modifierFromTokenSet(MODALITY_MODIFIERS)
 
 fun KtStringTemplateExpression.isPlain() = entries.all { it is KtLiteralStringTemplateEntry }
 

@@ -46,10 +46,13 @@
         <os family="windows"/>
     </condition>
 
+    <property name="dependencies" value="${basedir}/dependencies"/>
+    <property name="generators" value="${basedir}/generators"/>
+
     <property name="idea.dir" value="ideaSDK"/>
     <property name="idea.sdk.fetch.needed" value="true"/>
 
-    <property name="dependencies.info.file" value="dependencies/dependencies.properties"/>
+    <property name="dependencies.info.file" value="${dependencies}/dependencies.properties"/>
 
     <property name="gradle.libs.repo" value="http://repo.gradle.org/gradle/libs-releases-local"/>
 
@@ -103,8 +106,8 @@
         <attribute name="jar.name.base" default="@{lib}-@{version}"/>
         <attribute name="target.jar.name.base" default="@{jar.name.base}"/>
         <attribute name="path" default="@{prefix}/@{lib}/@{version}/@{jar.name.base}"/>
-        <attribute name="download" default="dependencies/download"/>
-        <attribute name="dependencies" default="dependencies"/>
+        <attribute name="download" default="${dependencies}/download"/>
+        <attribute name="dependencies" default="${dependencies}"/>
         <sequential>
             <sequential if:true="@{bin}">
                 <get src="@{server}/@{path}.jar" dest="@{download}/@{jar.name.base}.jar" usetimestamp="true"/>
@@ -125,19 +128,19 @@
         <sequential>
             <!-- todo: temporary hack for unavailable archive.apache.org -->
             <get src="https://bintray.com/artifact/download/kotlin/AntForKotlin/apache-ant-@{version}-bin.tar.gz"
-                 dest="dependencies/download/apache-ant-@{version}-bin.tar.gz" usetimestamp="true"/>
+                 dest="${dependencies}/download/apache-ant-@{version}-bin.tar.gz" usetimestamp="true"/>
 
             <get src="https://bintray.com/artifact/download/kotlin/AntForKotlin/apache-ant-@{version}-src.zip"
-                 dest="dependencies/apache-ant-@{version}-src.zip" usetimestamp="true"/>
+                 dest="${dependencies}/apache-ant-@{version}-src.zip" usetimestamp="true"/>
 
-            <delete dir="dependencies/@{folderName}" failonerror="false"/>
-            <untar src="dependencies/download/apache-ant-@{version}-bin.tar.gz" dest="dependencies" compression="gzip"/>
-            <move file="dependencies/apache-ant-@{version}" tofile="dependencies/@{folderName}"/>
+            <delete dir="${dependencies}/@{folderName}" failonerror="false"/>
+            <untar src="${dependencies}/download/apache-ant-@{version}-bin.tar.gz" dest="${dependencies}" compression="gzip"/>
+            <move file="${dependencies}/apache-ant-@{version}" tofile="${dependencies}/@{folderName}"/>
         </sequential>
     </macrodef>
 
     <target name="make-native-platform-uberjar">
-        <property name="dependencies" value="dependencies"/>
+        <property name="dependencies" value="${dependencies}"/>
         <property name="download" value="${dependencies}/download"/>
         <property name="server" value="${gradle.libs.repo}"/>
         <property name="version" value="${native-platform-lib-version}"/>
@@ -178,17 +181,19 @@
 
     </target>
 
-    <target name="fetch-third-party" depends="make-native-platform-uberjar,fetch-idea-artifacts-for-compiler-tests">
-        <mkdir dir="dependencies"/>
-        <mkdir dir="dependencies/download"/>
+    <target name="make-dependency-dirs">
+        <mkdir dir="${dependencies}"/>
+        <mkdir dir="${dependencies}/download"/>
+    </target>
 
+    <target name="fetch-third-party" depends="make-dependency-dirs, make-native-platform-uberjar, fetch-idea-artifacts-for-compiler-tests">
         <!-- ProGuard -->
         <get-maven-library prefix="net/sf/proguard" lib="proguard-base" version="5.1" target.jar.name.base="proguard" src="false"/>
         <get-maven-library prefix="net/sf/proguard" lib="proguard-anttask" version="5.1" target.jar.name.base="proguard-anttask" src="false"/>
 
         <!-- JarJar -->
-        <get src="http://jarjar.googlecode.com/files/jarjar-1.4.jar" dest="dependencies/download/jarjar-1.4.jar" usetimestamp="true"/>
-        <copy file="dependencies/download/jarjar-1.4.jar" tofile="dependencies/jarjar.jar" overwrite="true"/>
+        <get src="http://jarjar.googlecode.com/files/jarjar-1.4.jar" dest="${dependencies}/download/jarjar-1.4.jar" usetimestamp="true"/>
+        <copy file="${dependencies}/download/jarjar-1.4.jar" tofile="${dependencies}/jarjar.jar" overwrite="true"/>
 
         <!-- ant 1.8.2 -->
         <get-ant-library version="1.8.2" folderName="ant-1.8"/>
@@ -197,25 +202,25 @@
         <property name="android-build-tools.zip" value="build-tools_r21.1.1-linux.zip"/>
         <get
             src="https://dl-ssl.google.com/android/repository/${android-build-tools.zip}"
-            dest="dependencies/download/${android-build-tools.zip}"
+            dest="${dependencies}/download/${android-build-tools.zip}"
             usetimestamp="true"/>
-        <unzip src="dependencies/download/${android-build-tools.zip}" dest="dependencies"/>
+        <unzip src="${dependencies}/download/${android-build-tools.zip}" dest="${dependencies}"/>
 
         <property name="android-sources.tgz" value="dx.tar.gz"/>
         <get
             src="https://android.googlesource.com/platform/dalvik/+archive/android-5.0.0_r2/${android-sources.tgz}"
-            dest="dependencies/download/${android-sources.tgz}"
+            dest="${dependencies}/download/${android-sources.tgz}"
             usetimestamp="true"/>
-        <delete dir="dependencies/dx-src" failonerror="false"/>
-        <untar src="dependencies/download/${android-sources.tgz}" dest="dependencies/dx-src" compression="gzip"/>
+        <delete dir="${dependencies}/dx-src" failonerror="false"/>
+        <untar src="${dependencies}/download/${android-sources.tgz}" dest="${dependencies}/dx-src" compression="gzip"/>
 
         <!-- jflex 1.4 -->
-        <mkdir dir="dependencies/jflex"/>
+        <mkdir dir="${dependencies}/jflex"/>
         <get-maven-library prefix="de/jflex" lib="jflex" version="1.4.3" src="false"
                            target.jar.name.base="JFlex"
                            dependencies="${dependencies}/jflex"/>
         <get src="https://raw.github.com/JetBrains/intellij-community/master/tools/lexer/idea-flex.skeleton"
-             dest="dependencies/jflex/idea-flex.skeleton" usetimestamp="true"/>
+             dest="${dependencies}/jflex/idea-flex.skeleton" usetimestamp="true"/>
 
         <!-- jline -->
         <get-maven-library prefix="jline" lib="jline" version="2.12.1" target.jar.name.base="jline"/>
@@ -228,7 +233,7 @@
 
         <!-- ASM -->
         <get src="https://raw.github.com/JetBrains/intellij-community/master/lib/src/asm5-src.zip"
-             dest="dependencies/asm5-src.zip"/>
+             dest="${dependencies}/asm5-src.zip"/>
         <!-- <get-asm-sources-and-rename-packages asm.version="5.0.1"/> -->
 
         <!-- Junit Sources -->
@@ -250,20 +255,20 @@
         <!-- Closure Compiler -->
         <!-- A download url taken from http://code.google.com/p/closure-compiler/wiki/BinaryDownloads -->
         <get src="http://dl.google.com/closure-compiler/compiler-20131014.zip"
-             dest="dependencies/download/closure-compiler.zip" usetimestamp="true"/>
+             dest="${dependencies}/download/closure-compiler.zip" usetimestamp="true"/>
 
-        <delete file="dependencies/closure-compiler.jar" failonerror="false"/>
-        <unzip src="dependencies/download/closure-compiler.zip" dest="dependencies">
+        <delete file="${dependencies}/closure-compiler.jar" failonerror="false"/>
+        <unzip src="${dependencies}/download/closure-compiler.zip" dest="${dependencies}">
             <patternset>
                 <include name="compiler.jar"/>
             </patternset>
             <mapper type="merge" to="closure-compiler.jar"/>
         </unzip>
 
-        <delete file="dependencies/android.jar" failonerror="false"/>
+        <delete file="${dependencies}/android.jar" failonerror="false"/>
         <get src="http://dl-ssl.google.com/android/repository/android-19_r02.zip"
-             dest="dependencies/download/android-sdk.zip" usetimestamp="true"/>
-        <unzip src="dependencies/download/android-sdk.zip" dest="dependencies">
+             dest="${dependencies}/download/android-sdk.zip" usetimestamp="true"/>
+        <unzip src="${dependencies}/download/android-sdk.zip" dest="${dependencies}">
             <patternset>
                 <include name="**/android.jar"/>
             </patternset>
@@ -289,18 +294,18 @@
                 teamcity.server.url="https://teamcity.jetbrains.com"
                 build.locator.request="${kotlin.bootstrap.locator}"
                 artifact.path="kotlin-plugin-{build.number}.zip"
-                dest="dependencies/download/bootstrap-compiler.zip"
+                dest="${dependencies}/download/bootstrap-compiler.zip"
                 build.number.pattern="[\w-+\.]+"
                 usetimestamp="true"/>
 
-            <delete dir="dependencies/bootstrap-compiler" failonerror="false"/>
-            <unzip src="dependencies/download/bootstrap-compiler.zip" dest="dependencies/bootstrap-compiler"/>
+            <delete dir="${dependencies}/bootstrap-compiler" failonerror="false"/>
+            <unzip src="${dependencies}/download/bootstrap-compiler.zip" dest="${dependencies}/bootstrap-compiler"/>
         </sequential>
 
         <sequential unless:set="download.bootstrap.compiler">
-            <available file="dependencies/bootstrap-compiler/Kotlin" property="have.bootstrap.compiler"/>
-            <fail message="Bootstrap compiler is expected to be downloaded to 'dependencies/bootstrap-compiler' by TeamCity" unless:set="have.bootstrap.compiler"/>
-            <echo message="Bootstrap compiler found in 'dependencies/bootstrap-compiler'" if:set="have.bootstrap.compiler"/>
+            <available file="${dependencies}/bootstrap-compiler/Kotlin" property="have.bootstrap.compiler"/>
+            <fail message="Bootstrap compiler is expected to be downloaded to '${dependencies}/bootstrap-compiler' by TeamCity" unless:set="have.bootstrap.compiler"/>
+            <echo message="Bootstrap compiler found in '${dependencies}/bootstrap-compiler'" if:set="have.bootstrap.compiler"/>
 
         </sequential>
 
@@ -314,7 +319,7 @@
 
         <!-- Java can't manipulate permissions -->
         <exec executable="find" if:set="bootstrap.need.chmod">
-            <arg value="dependencies/bootstrap-compiler/Kotlin/kotlinc/bin"/>
+            <arg value="${dependencies}/bootstrap-compiler/Kotlin/kotlinc/bin"/>
             <arg line="-name 'kotlin*' ! -name '*.bat' -exec chmod a+x '{}' ;"/>
         </exec>
 
@@ -325,11 +330,11 @@
 
     <macrodef name="build-protobuf-java-lite">
         <sequential>
-            <exec executable="dependencies/bootstrap-compiler/Kotlin/kotlinc/bin/${kotlinc.executable.path}" failonerror="true">
+            <exec executable="${dependencies}/bootstrap-compiler/Kotlin/kotlinc/bin/${kotlinc.executable.path}" failonerror="true">
                 <arg value="-script"/>
-                <arg value="generators/infrastructure/build-protobuf-lite.kts"/>
+                <arg value="${generators}/infrastructure/build-protobuf-lite.kts"/>
                 <arg value="${basedir}/ideaSDK/lib/protobuf-2.5.0.jar"/>
-                <arg value="${basedir}/dependencies/protobuf-2.5.0-lite.jar"/>
+                <arg value="${dependencies}/protobuf-2.5.0-lite.jar"/>
             </exec>
         </sequential>
     </macrodef>
@@ -340,21 +345,21 @@
                 teamcity.server.url="https://teamcity.jetbrains.com"
                 build.locator.request="${markdown.locator}"
                 artifact.path="markdown_jar/markdown.jar"
-                dest="dependencies/markdown.jar"
+                dest="${dependencies}/markdown.jar"
                 usetimestamp="true"
                 build.number.pattern="\d+\s-\sKotlin\s[\w-+\.]+"
-                />
+            />
 
             <!-- When ABI version changes, the second build should compile markdown-parser manually instead of using the old version -->
 
-            <exec executable="dependencies/bootstrap-compiler/Kotlin/kotlinc/bin/${kotlinc.executable.path}" failonerror="false"
+            <exec executable="${dependencies}/bootstrap-compiler/Kotlin/kotlinc/bin/${kotlinc.executable.path}" failonerror="false"
                   resultproperty="markdown.abi.incompatible">
                 <arg value="-cp"/>
-                <arg value="dependencies/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-compiler.jar"/>
+                <arg value="${dependencies}/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-compiler.jar"/>
                 <arg value="-script"/>
-                <arg value="generators/infrastructure/check-library-abi-version.kts"/>
-                <arg value="${basedir}/dependencies/markdown.jar"/>
-                <arg value="${basedir}/dependencies/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-runtime.jar"/>
+                <arg value="${generators}/infrastructure/check-library-abi-version.kts"/>
+                <arg value="${dependencies}/markdown.jar"/>
+                <arg value="${dependencies}/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-runtime.jar"/>
             </exec>
 
             <local name="markdown.need.recompile" />
@@ -366,17 +371,17 @@
 
             <sequential if:set="markdown.need.recompile">
                 <echo message="Recompiling intellij-markdown manually"/>
-                <length file="dependencies/markdown.jar" property="old.markdown.size"/>
+                <length file="${dependencies}/markdown.jar" property="old.markdown.size"/>
                 <echo message="Size of the incompatible jar: ${old.markdown.size} bytes"/>
                 <local name="markdown.dir" />
-                <property name="markdown.dir" value="dependencies/intellij-markdown-forKotlin/" />
+                <property name="markdown.dir" value="${dependencies}/intellij-markdown-forKotlin/" />
 
                 <get src="https://github.com/valich/intellij-markdown/archive/forKotlin.zip"
-                     dest="dependencies/download/markdown-sources.zip" usetimestamp="true"/>
+                     dest="${dependencies}/download/markdown-sources.zip" usetimestamp="true"/>
 
                 <delete dir="${markdown.dir}" failonerror="false"/>
-                <unzip src="dependencies/download/markdown-sources.zip" dest="dependencies"/>
-                <exec executable="dependencies/bootstrap-compiler/Kotlin/kotlinc/bin/${kotlinc.executable.path}" failonerror="true">
+                <unzip src="${dependencies}/download/markdown-sources.zip" dest="${dependencies}"/>
+                <exec executable="${dependencies}/bootstrap-compiler/Kotlin/kotlinc/bin/${kotlinc.executable.path}" failonerror="true">
                     <arg value="${markdown.dir}/src"/>
                     <arg value="-d"/>
                     <arg value="${markdown.dir}/out"/>
@@ -385,17 +390,17 @@
                 <javac srcdir="${markdown.dir}/src"
                        destdir="${markdown.dir}/out" includeantruntime="false">
                     <classpath>
-                        <path location="dependencies/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-runtime.jar"/>
+                        <path location="${dependencies}/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-runtime.jar"/>
                     </classpath>
                 </javac>
 
-                <delete file="dependencies/markdown.jar" failonerror="false"/>
-                <jar jarfile="dependencies/markdown.jar">
+                <delete file="${dependencies}/markdown.jar" failonerror="false"/>
+                <jar jarfile="${dependencies}/markdown.jar">
                     <fileset dir="${markdown.dir}/out" includes="**"/>
                 </jar>
 
                 <echo message="Compilation of intellij-markdown finished"/>
-                <length file="dependencies/markdown.jar" property="new.markdown.size"/>
+                <length file="${dependencies}/markdown.jar" property="new.markdown.size"/>
                 <echo message="Size of the new jar: ${new.markdown.size} bytes"/>
             </sequential>
         </sequential>
@@ -408,23 +413,23 @@
             <get-maven-library prefix="org/ow2/asm" lib="asm-debug-all" version="@{asm.version}" bin="false"/>
 
             <!-- Rename packages in the sources -->
-            <delete dir="dependencies/download/asm-src" failonerror="false"/>
-            <unzip src="dependencies/download/asm-debug-all-@{asm.version}-sources.jar" dest="dependencies/download/asm-src">
+            <delete dir="${dependencies}/download/asm-src" failonerror="false"/>
+            <unzip src="${dependencies}/download/asm-debug-all-@{asm.version}-sources.jar" dest="${dependencies}/download/asm-src">
                 <patternset>
                     <include name="**/*"/>
                 </patternset>
             </unzip>
 
             <replaceregexp match="org\.objectweb\.asm" replace="org.jetbrains.org.objectweb.asm" flags="g">
-                <fileset dir="dependencies/download/asm-src/">
+                <fileset dir="${dependencies}/download/asm-src/">
                     <include name="**/*.java"/>
                 </fileset>
             </replaceregexp>
 
-            <move file="dependencies/download/asm-src/org/objectweb/asm"
-                  tofile="dependencies/download/asm-src/org/jetbrains/org/objectweb/asm"/>
+            <move file="${dependencies}/download/asm-src/org/objectweb/asm"
+                  tofile="${dependencies}/download/asm-src/org/jetbrains/org/objectweb/asm"/>
 
-            <zip destfile="dependencies/jetbrains-asm-all-@{asm.version}-src.zip" basedir="dependencies/download/asm-src"/>
+            <zip destfile="${dependencies}/jetbrains-asm-all-@{asm.version}-src.zip" basedir="${dependencies}/download/asm-src"/>
         </sequential>
     </macrodef>
 
@@ -433,8 +438,8 @@
         <attribute name="idea.maven.version"/>
 
         <sequential>
-            <get src="@{base.url}/BUILD/@{idea.maven.version}/BUILD-@{idea.maven.version}.txt" dest="dependencies/version.txt"/>
-            <loadfile property="execute.build.id" srcFile="dependencies/version.txt"/>
+            <get src="@{base.url}/BUILD/@{idea.maven.version}/BUILD-@{idea.maven.version}.txt" dest="${dependencies}/version.txt"/>
+            <loadfile property="execute.build.id" srcFile="${dependencies}/version.txt"/>
 
             <condition property="idea.sdk.exists">
                 <available file="${idea.dir}/build.txt"/>
@@ -687,7 +692,7 @@
         <attribute name="idea.maven.version"/>
         <attribute name="base.repository.url"/>
 
-        <attribute name="download.dir" default="dependencies/idea"/>
+        <attribute name="download.dir" default="${dependencies}/idea"/>
 
         <sequential>
             <delete dir="@{download.dir}"/>
@@ -747,7 +752,7 @@
             <echo message="IDEA archive file: ${idea.archive.name}"/>
 
             <property name="content.base.url" value="@{base.url}/artifacts/content"/>
-            <property name="idea.download.dir" value="dependencies/idea" />
+            <property name="idea.download.dir" value="${dependencies}/idea" />
             <property name="jps.extracted.dir" value="${idea.download.dir}/standalone-jps"/>
             <property name="core.dir" value="${idea.download.dir}/core"/>
 
@@ -891,16 +896,16 @@
                   value="http://dl.google.com/dl/android/studio/ide-zips/${android.version}/${android.file.name}"/>
         <property name="android.destination.dir" value="android-studio/sdk"/>
 
-        <mkdir dir="dependencies/download"/>
+        <mkdir dir="${dependencies}/download"/>
 
-        <get src="${android.studio.url}" dest="dependencies/download" usetimestamp="true"/>
+        <get src="${android.studio.url}" dest="${dependencies}/download" usetimestamp="true"/>
 
         <delete dir="${android.destination.dir}" failonerror="false" includeemptydirs="true">
             <exclude name="config/**"/>
             <exclude name="system/**"/>
         </delete>
 
-        <unzip src="dependencies/download/${android.file.name}" dest="${android.destination.dir}">
+        <unzip src="${dependencies}/download/${android.file.name}" dest="${android.destination.dir}">
             <cutdirsmapper dirs="1"/>
         </unzip>
 
@@ -960,16 +965,16 @@
 
             <echo message="URL: ${override.version.url} Version: ${override.version.build.number}"/>
 
-            <exec executable="dependencies/bootstrap-compiler/Kotlin/kotlinc/bin/${kotlinc.executable.path}" failonerror="false">
+            <exec executable="${dependencies}/bootstrap-compiler/Kotlin/kotlinc/bin/${kotlinc.executable.path}" failonerror="false">
                 <arg value="-cp"/>
-                <arg value="dependencies/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-compiler.jar"/>
+                <arg value="${dependencies}/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-compiler.jar"/>
                 <arg value="-script"/>
-                <arg value="generators/infrastructure/increment-version.kts"/>
+                <arg value="${generators}/infrastructure/increment-version.kts"/>
                 <arg value="${override.version.build.number}"/>
-                <arg value="${basedir}/dependencies/updated-version.txt"/>
+                <arg value="${dependencies}/updated-version.txt"/>
             </exec>
 
-            <loadfile property="updated.version.number" srcFile="${basedir}/dependencies/updated-version.txt"/>
+            <loadfile property="updated.version.number" srcFile="${dependencies}/updated-version.txt"/>
 
             <echo message="##teamcity[buildNumber '${updated.version.number}']"/>
         </sequential>

@@ -122,7 +122,7 @@ class IllegalModifiers7() {
 class IllegalModifiers8 {
     <!WRONG_MODIFIER_TARGET!>abstract<!>
     <!WRONG_MODIFIER_TARGET!>enum<!>
-    <!REDUNDANT_MODIFIER, WRONG_MODIFIER_TARGET, REDUNDANT_MODIFIER!>open<!>
+    <!REDUNDANT_MODIFIER, WRONG_MODIFIER_TARGET!>open<!>
     <!WRONG_MODIFIER_TARGET!>inner<!>
     <!WRONG_MODIFIER_TARGET!>annotation<!>
     <!WRONG_MODIFIER_TARGET!>override<!>
@@ -147,7 +147,7 @@ class IllegalModifiers9 {
 class IllegalModifiers10
 <!WRONG_MODIFIER_TARGET!>abstract<!>
 <!WRONG_MODIFIER_TARGET!>enum<!>
-<!REDUNDANT_MODIFIER, WRONG_MODIFIER_TARGET, REDUNDANT_MODIFIER!>open<!>
+<!REDUNDANT_MODIFIER, WRONG_MODIFIER_TARGET!>open<!>
 <!WRONG_MODIFIER_TARGET!>inner<!>
 <!WRONG_MODIFIER_TARGET!>annotation<!>
 <!WRONG_MODIFIER_TARGET!>override<!>

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.asJava;
 
 import com.intellij.lang.Language;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.SearchScope;
@@ -152,10 +153,31 @@ public class KtLightParameter extends LightParameter implements KtLightDeclarati
     }
 
     @Override
+    public TextRange getTextRange() {
+        KtParameter origin = getKotlinOrigin();
+        return origin != null ? origin.getTextRange() : TextRange.EMPTY_RANGE;
+    }
+
+    @Override
     public PsiIdentifier getNameIdentifier() {
         if (lightIdentifier == null) {
             lightIdentifier = new KtLightIdentifier(this, getKotlinOrigin());
         }
         return lightIdentifier;
+    }
+
+    @Override
+    public PsiElement getParent() {
+        return getMethod().getParameterList();
+    }
+
+    @Override
+    public boolean isEquivalentTo(PsiElement another) {
+        KtParameter kotlinOrigin = getKotlinOrigin();
+        if (another instanceof KtLightParameter && kotlinOrigin != null) {
+            KtLightParameter anotherParam = (KtLightParameter) another;
+            return kotlinOrigin.equals(anotherParam.getKotlinOrigin()) && getClsDelegate().equals(anotherParam.getClsDelegate());
+        }
+        return super.isEquivalentTo(another);
     }
 }

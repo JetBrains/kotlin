@@ -99,7 +99,7 @@ public abstract class AbstractClassTypeConstructor extends AbstractTypeConstruct
     @Override
     protected Collection<KotlinType> getAdditionalNeighboursInSupertypeGraph() {
         // We suppose that there is an edge from C to A in graph when disconnecting loops in supertypes,
-        // because such cyclic declarations should be prohibited (see §10.2.1 of Kotlin spec)
+        // because such cyclic declarations should be prohibited (see p.10.2.1 of Kotlin spec)
         // class A : B {
         //   static class C {}
         // }

@@ -1102,7 +1102,7 @@ fun main(args: Array<String>) {
     }
 }
 
-internal class TestGroup(val testsRoot: String, val testDataRoot: String) {
+class TestGroup(val testsRoot: String, val testDataRoot: String) {
     inline fun <reified T: TestCase> testClass(
             suiteTestClass: String = getDefaultSuiteTestClass(T::class.java),
             noinline init: TestClass.() -> Unit
@@ -1166,11 +1166,11 @@ internal class TestGroup(val testsRoot: String, val testDataRoot: String) {
 
 }
 
-private fun testGroup(testsRoot: String, testDataRoot: String, init: TestGroup.() -> Unit) {
+fun testGroup(testsRoot: String, testDataRoot: String, init: TestGroup.() -> Unit) {
     TestGroup(testsRoot, testDataRoot).init()
 }
 
-private fun getDefaultSuiteTestClass(baseTestClass:Class<*>): String {
+fun getDefaultSuiteTestClass(baseTestClass:Class<*>): String {
     val baseName = baseTestClass.simpleName
     if (!baseName.startsWith("Abstract")) {
         throw IllegalArgumentException("Doesn't start with \"Abstract\": $baseName")

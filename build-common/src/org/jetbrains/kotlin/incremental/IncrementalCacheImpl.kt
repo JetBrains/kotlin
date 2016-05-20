@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,8 @@ import com.intellij.util.io.EnumeratorStringDescriptor
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.config.IncrementalCompilation
+import org.jetbrains.kotlin.incremental.ChangeInfo.MembersChanged
+import org.jetbrains.kotlin.incremental.ChangeInfo.Removed
 import org.jetbrains.kotlin.incremental.storage.*
 import org.jetbrains.kotlin.inline.inlineFunctionsJvmNames
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
@@ -32,12 +34,14 @@ import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 import org.jetbrains.kotlin.serialization.deserialization.supertypes
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
+import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import org.jetbrains.org.objectweb.asm.*
 import java.io.File
 import java.security.MessageDigest
@@ -207,32 +211,34 @@ open class IncrementalCacheImpl<Target>(
         debugLog("$className is changed: $this")
     }
 
-    fun clearCacheForRemovedClasses(): CompilationResult {
-
+    private fun computeChanges(className: JvmClassName, createChangeInfo: (FqName, Collection<String>) -> ChangeInfo): List<ChangeInfo> {
         fun <T> T.getNonPrivateNames(nameResolver: NameResolver, vararg members: T.() -> List<MessageLite>): Set<String> =
                 members.flatMap { this.it().filterNot { it.isPrivate }.names(nameResolver) }.toSet()
 
-        fun createChangeInfo(className: JvmClassName): ChangeInfo? {
-            if (className.internalName == MODULE_MAPPING_FILE_NAME) return null
+        if (className.internalName == MODULE_MAPPING_FILE_NAME) return emptyList()
 
-            val mapValue = protoMap.get(className) ?: return null
+        val mapValue = protoMap[className] ?: return emptyList()
 
-            return when {
-                mapValue.isPackageFacade -> {
-                    val packageData = JvmProtoBufUtil.readPackageDataFrom(mapValue.bytes, mapValue.strings)
+        return when {
+            mapValue.isPackageFacade -> {
+                val packageData = JvmProtoBufUtil.readPackageDataFrom(mapValue.bytes, mapValue.strings)
 
-                    val memberNames =
-                            packageData.packageProto.getNonPrivateNames(
-                                    packageData.nameResolver,
-                                    ProtoBuf.Package::getFunctionList,
-                                    ProtoBuf.Package::getPropertyList
-                            )
+                val memberNames =
+                        packageData.packageProto.getNonPrivateNames(
+                                packageData.nameResolver,
+                                ProtoBuf.Package::getFunctionList,
+                                ProtoBuf.Package::getPropertyList
+                        )
 
-                    ChangeInfo.Removed(className.packageFqName, memberNames)
-                }
-                else -> {
-                    val classData = JvmProtoBufUtil.readClassDataFrom(mapValue.bytes, mapValue.strings)
+                listOf(createChangeInfo(className.packageFqName, memberNames))
+            }
+            else -> {
+                val classData = JvmProtoBufUtil.readClassDataFrom(mapValue.bytes, mapValue.strings)
 
+                val classFqName = className.fqNameForClassNameWithoutDollars
+                val kind = Flags.CLASS_KIND.get(classData.classProto.flags)
+
+                if (kind == ProtoBuf.Class.Kind.COMPANION_OBJECT) {
                     val memberNames =
                             classData.classProto.getNonPrivateNames(
                                     classData.nameResolver,
@@ -241,11 +247,19 @@ open class IncrementalCacheImpl<Target>(
                                     ProtoBuf.Class::getPropertyList
                             ) + classData.classProto.enumEntryList.map { classData.nameResolver.getString(it.name) }
 
-                    ChangeInfo.Removed(className.fqNameForClassNameWithoutDollars, memberNames)
+                    val companionObjectChanged = createChangeInfo(classFqName.parent(), classFqName.shortName().asString().singletonOrEmptyList())
+                    val companionObjectMembersChanged = createChangeInfo(classFqName, memberNames)
+
+                    listOf(companionObjectMembersChanged, companionObjectChanged)
+                }
+                else {
+                    listOf(ChangeInfo.SignatureChanged(classFqName, areSubclassesAffected = true))
                 }
             }
         }
+    }
 
+    fun clearCacheForRemovedClasses(): CompilationResult {
         val dirtyClasses = dirtyOutputClassesMap
                                 .getDirtyOutputClasses()
                                 .map(JvmClassName::byInternalName)
@@ -253,7 +267,7 @@ open class IncrementalCacheImpl<Target>(
 
         val changes =
                 if (IncrementalCompilation.isExperimental())
-                    dirtyClasses.mapNotNull { createChangeInfo(it) }.asSequence()
+                    dirtyClasses.flatMap { computeChanges(it, ::Removed) }.asSequence()
                 else
                     emptySequence<ChangeInfo>()
 
@@ -346,9 +360,6 @@ open class IncrementalCacheImpl<Target>(
         experimentalMaps.forEach { it.clean() }
     }
 
-    fun classesBySources(sources: Iterable<File>): Iterable<JvmClassName> =
-            sources.flatMap { sourceToClassesMap[it] }
-
     private inner class ProtoMap(storageFile: File) : BasicStringMap<ProtoMapValue>(storageFile, ProtoMapValueExternalizer) {
 
         fun process(kotlinClass: LocalFileKotlinClass, isPackage: Boolean): CompilationResult {
@@ -376,7 +387,17 @@ open class IncrementalCacheImpl<Target>(
                 storage[key] = data
             }
 
-            if (oldData == null || !checkChangesIsOpenPart) return CompilationResult(protoChanged = true)
+            if (!checkChangesIsOpenPart) return CompilationResult(protoChanged = true)
+
+            if (oldData == null) {
+                val changes =
+                        if (IncrementalCompilation.isExperimental())
+                            computeChanges(className, ::MembersChanged).asSequence()
+                        else
+                            emptySequence<ChangeInfo>()
+
+                return CompilationResult(protoChanged = true, changes = changes)
+            }
 
             val difference = difference(oldData, data)
             val fqName = if (isPackage) className.packageFqName else className.fqNameForClassNameWithoutDollars

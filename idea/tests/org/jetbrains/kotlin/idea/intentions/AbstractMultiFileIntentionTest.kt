@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.idea.jsonUtils.getString
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinMultiFileTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.extractMarkerOffset
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Assert
@@ -53,7 +54,7 @@ abstract class AbstractMultiFileIntentionTest : KotlinMultiFileTestCase() {
                    val conflictFile = rootDir.findFileByRelativePath("$mainFilePath.conflicts")
                    val document = FileDocumentManager.getInstance().getDocument(mainFile)!!
                    val editor = EditorFactory.getInstance()!!.createEditor(document, project!!)!!
-                   editor.caretModel.moveToOffset(extractCaretOffset(document))
+                   editor.caretModel.moveToOffset(document.extractMarkerOffset(project))
                    val mainPsiFile = PsiManager.getInstance(project!!).findFile(mainFile)!!
 
                    try {

@@ -1,0 +1,8 @@
+{
+    springConfig: ["resourceGutter.xml"],
+    file: "beans/ResourceGutter.kt",
+    icon: "ShowAutowiredDependencies",
+    tooltip: "Navigate to the autowired dependencies",
+    naming: "bean",
+    targets: ["bean1"]
+}

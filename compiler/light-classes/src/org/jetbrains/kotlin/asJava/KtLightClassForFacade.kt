@@ -88,9 +88,10 @@ class KtLightClassForFacade private constructor(
             LightEmptyImplementsList(manager)
 
     private val packageClsFile = FakeFileForLightClass(
-            packageFqName, files.first().virtualFile!!, myManager,
+            files.first(),
             lightClass = { this },
-            stub = { lightClassDataCache.value.javaFileStub }
+            stub = { lightClassDataCache.value.javaFileStub },
+            packageFqName = packageFqName
     )
 
     override val kotlinOrigin: KtClassOrObject? get() = null

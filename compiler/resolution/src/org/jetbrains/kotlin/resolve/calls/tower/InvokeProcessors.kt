@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.calls.tower
 
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.createSynthesizedInvokes
 import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver
@@ -25,29 +26,29 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.util.*
 
-abstract class AbstractInvokeTowerProcessor<C>(
-        protected val functionContext: TowerContext<C>,
-        private val variableProcessor: ScopeTowerProcessor<C>
-) : ScopeTowerProcessor<C> {
+abstract class AbstractInvokeTowerProcessor<F : Candidate<FunctionDescriptor>, V : Candidate<VariableDescriptor>>(
+        protected val invokeContext: InvokeTowerContext<F, V>,
+        private val variableProcessor: ScopeTowerProcessor<V>
+) : ScopeTowerProcessor<F> {
     // todo optimize it
     private val previousData = ArrayList<TowerData>()
     private val invokeProcessors: MutableList<Collection<VariableInvokeProcessor>> = ArrayList()
 
-    private inner class VariableInvokeProcessor(val variableCandidate: C): ScopeTowerProcessor<C> {
-        val invokeProcessor: ScopeTowerProcessor<C> = createInvokeProcessor(variableCandidate)
+    private inner class VariableInvokeProcessor(val variableCandidate: V): ScopeTowerProcessor<F> {
+        val invokeProcessor: ScopeTowerProcessor<F> = createInvokeProcessor(variableCandidate)
 
         override fun process(data: TowerData)
                 = invokeProcessor.process(data).map { candidateGroup ->
-                    candidateGroup.map { functionContext.transformCandidate(variableCandidate, it) }
+                    candidateGroup.map { invokeContext.transformCandidate(variableCandidate, it) }
                 }
     }
 
-    protected abstract fun createInvokeProcessor(variableCandidate: C): ScopeTowerProcessor<C>
+    protected abstract fun createInvokeProcessor(variableCandidate: V): ScopeTowerProcessor<F>
 
-    override fun process(data: TowerData): List<Collection<C>> {
+    override fun process(data: TowerData): List<Collection<F>> {
         previousData.add(data)
 
-        val candidateGroups = ArrayList<Collection<C>>(0)
+        val candidateGroups = ArrayList<Collection<F>>(0)
 
         for (processorsGroup in invokeProcessors) {
             candidateGroups.addAll(processorsGroup.processVariableGroup(data))
@@ -55,7 +56,7 @@ abstract class AbstractInvokeTowerProcessor<C>(
 
         for (variableCandidates in variableProcessor.process(data)) {
             val successfulVariables = variableCandidates.filter {
-                functionContext.getStatus(it).resultingApplicability.isSuccess
+                it.isSuccessful
             }
 
             if (successfulVariables.isNotEmpty()) {
@@ -71,7 +72,7 @@ abstract class AbstractInvokeTowerProcessor<C>(
         return candidateGroups
     }
 
-    private fun Collection<VariableInvokeProcessor>.processVariableGroup(data: TowerData): List<Collection<C>> {
+    private fun Collection<VariableInvokeProcessor>.processVariableGroup(data: TowerData): List<Collection<F>> {
         return when (size) {
             0 -> emptyList()
             1 -> single().process(data)
@@ -84,44 +85,44 @@ abstract class AbstractInvokeTowerProcessor<C>(
 }
 
 // todo KT-9522 Allow invoke convention for synthetic property
-class InvokeTowerProcessor<C>(
-        functionContext: TowerContext<C>,
+class InvokeTowerProcessor<F : Candidate<FunctionDescriptor>, V : Candidate<VariableDescriptor>>(
+        invokeContext: InvokeTowerContext<F, V>,
         private val explicitReceiver: Receiver?
-) : AbstractInvokeTowerProcessor<C>(
-        functionContext,
-        createVariableProcessor(functionContext.contextForVariable(stripExplicitReceiver = false), explicitReceiver)
+) : AbstractInvokeTowerProcessor<F, V>(
+        invokeContext,
+        createVariableProcessor(invokeContext.contextForVariable(stripExplicitReceiver = false), explicitReceiver)
 ) {
 
     // todo filter by operator
-    override fun createInvokeProcessor(variableCandidate: C): ScopeTowerProcessor<C> {
-        val (variableReceiver, invokeContext) = functionContext.contextForInvoke(variableCandidate, useExplicitReceiver = false)
+    override fun createInvokeProcessor(variableCandidate: V): ScopeTowerProcessor<F> {
+        val (variableReceiver, invokeContext) = invokeContext.contextForInvoke(variableCandidate, useExplicitReceiver = false)
                                                 ?: return KnownResultProcessor(emptyList())
         return ExplicitReceiverScopeTowerProcessor(invokeContext, variableReceiver, ScopeTowerLevel::getFunctions)
     }
 }
 
-class InvokeExtensionTowerProcessor<C>(
-        functionContext: TowerContext<C>,
+class InvokeExtensionTowerProcessor<F : Candidate<FunctionDescriptor>, V : Candidate<VariableDescriptor>>(
+        invokeContext: InvokeTowerContext<F, V>,
         private val explicitReceiver: ReceiverValue?
-) : AbstractInvokeTowerProcessor<C>(
-        functionContext,
-        createVariableProcessor(functionContext.contextForVariable(stripExplicitReceiver = true), explicitReceiver = null)
+) : AbstractInvokeTowerProcessor<F, V>(
+        invokeContext,
+        createVariableProcessor(invokeContext.contextForVariable(stripExplicitReceiver = true), explicitReceiver = null)
 ) {
 
-    override fun createInvokeProcessor(variableCandidate: C): ScopeTowerProcessor<C> {
-        val (variableReceiver, invokeContext) = functionContext.contextForInvoke(variableCandidate, useExplicitReceiver = true)
+    override fun createInvokeProcessor(variableCandidate: V): ScopeTowerProcessor<F> {
+        val (variableReceiver, invokeContext) = invokeContext.contextForInvoke(variableCandidate, useExplicitReceiver = true)
                                                 ?: return KnownResultProcessor(emptyList())
-        val invokeDescriptor = functionContext.scopeTower.getExtensionInvokeCandidateDescriptor(variableReceiver)
+        val invokeDescriptor = invokeContext.scopeTower.getExtensionInvokeCandidateDescriptor(variableReceiver)
                                ?: return KnownResultProcessor(emptyList())
         return InvokeExtensionScopeTowerProcessor(invokeContext, invokeDescriptor, explicitReceiver)
     }
 }
 
-private class InvokeExtensionScopeTowerProcessor<C>(
-        context: TowerContext<C>,
+private class InvokeExtensionScopeTowerProcessor<C : Candidate<FunctionDescriptor>>(
+        context: TowerContext<FunctionDescriptor, C>,
         private val invokeCandidateDescriptor: CandidateWithBoundDispatchReceiver<FunctionDescriptor>,
         private val explicitReceiver: ReceiverValue?
-) : AbstractSimpleScopeTowerProcessor<C>(context) {
+) : AbstractSimpleScopeTowerProcessor<FunctionDescriptor, C>(context) {
 
     override fun simpleProcess(data: TowerData): Collection<C> {
         if (explicitReceiver != null && data == TowerData.Empty) {
@@ -150,23 +151,23 @@ private fun ScopeTower.getExtensionInvokeCandidateDescriptor(
 }
 
 // case 1.(foo())() or (foo())()
-fun <C> createCallTowerProcessorForExplicitInvoke(
-        contextForInvoke: TowerContext<C>,
+fun <F : Candidate<FunctionDescriptor>, V : Candidate<VariableDescriptor>> createCallTowerProcessorForExplicitInvoke(
+        invokeContext: InvokeTowerContext<F, V>,
         expressionForInvoke: ReceiverValue,
         explicitReceiver: ReceiverValue?
-): ScopeTowerProcessor<C> {
-    val invokeExtensionDescriptor = contextForInvoke.scopeTower.getExtensionInvokeCandidateDescriptor(expressionForInvoke)
+): ScopeTowerProcessor<F> {
+    val invokeExtensionDescriptor = invokeContext.scopeTower.getExtensionInvokeCandidateDescriptor(expressionForInvoke)
     if (explicitReceiver != null) {
         if (invokeExtensionDescriptor == null) {
             // case 1.(foo())(), where foo() isn't extension function
             return KnownResultProcessor(emptyList())
         }
         else {
-            return InvokeExtensionScopeTowerProcessor(contextForInvoke, invokeExtensionDescriptor, explicitReceiver = explicitReceiver)
+            return InvokeExtensionScopeTowerProcessor(invokeContext, invokeExtensionDescriptor, explicitReceiver = explicitReceiver)
         }
     }
     else {
-        val usualInvoke = ExplicitReceiverScopeTowerProcessor(contextForInvoke, expressionForInvoke, ScopeTowerLevel::getFunctions) // todo operator
+        val usualInvoke = ExplicitReceiverScopeTowerProcessor(invokeContext, expressionForInvoke, ScopeTowerLevel::getFunctions) // todo operator
 
         if (invokeExtensionDescriptor == null) {
             return usualInvoke
@@ -174,7 +175,7 @@ fun <C> createCallTowerProcessorForExplicitInvoke(
         else {
             return CompositeScopeTowerProcessor(
                     usualInvoke,
-                    InvokeExtensionScopeTowerProcessor(contextForInvoke, invokeExtensionDescriptor, explicitReceiver = null)
+                    InvokeExtensionScopeTowerProcessor(invokeContext, invokeExtensionDescriptor, explicitReceiver = null)
             )
         }
     }
