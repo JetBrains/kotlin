@@ -272,7 +272,7 @@ object KeywordCompletion {
     private fun buildFilterByText(prefixText: String, project: Project): (KtKeywordToken) -> Boolean {
         val psiFactory = KtPsiFactory(project)
         return fun (keywordTokenType): Boolean {
-            val postfix = if (prefixText.endsWith("@")) ":X" else " X"
+            val postfix = if (prefixText.endsWith("@")) ":X Y.Z" else " X"
             val file = psiFactory.createFile(prefixText + keywordTokenType.value + postfix)
             val elementAt = file.findElementAt(prefixText.length)!!
 
