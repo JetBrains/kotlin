@@ -33,9 +33,7 @@ fun List<PackageParts>.addCompiledPartsAndSort(state: GenerationState): List<Pac
         addCompiledParts(state).sortedBy { it.packageFqName }
 
 private fun List<PackageParts>.addCompiledParts(state: GenerationState): List<PackageParts> {
-    if (state.incrementalCompilationComponents == null || state.targetId == null) return this
-
-    val incrementalCache = state.incrementalCompilationComponents.getIncrementalCache(state.targetId)
+    val incrementalCache = state.getIncrementalCacheForThisTarget() ?: return this
     val moduleMappingData = incrementalCache.getModuleMappingData() ?: return this
 
     val mapping = ModuleMapping.create(moduleMappingData)

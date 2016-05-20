@@ -404,9 +404,7 @@ object KotlinToJVMBytecodeCompiler {
                 targetId,
                 moduleName,
                 outputDirectory,
-                incrementalCompilationComponents,
-                onIndependentPartCompilationEnd = onIndependentPartCompilationEnd,
-                dumpBinarySignatureMappingTo = configuration.get(JVMConfigurationKeys.DECLARATIONS_JSON_PATH)?.let { File(it) }
+                onIndependentPartCompilationEnd
         )
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
