@@ -45,8 +45,7 @@ import java.io.File
 import java.lang.management.ManagementFactory
 import java.util.concurrent.TimeUnit
 
-open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
-
+class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
     override fun doExecute(arguments: K2JVMCompilerArguments, services: Services, messageCollector: MessageCollector, rootDisposable: Disposable): ExitCode {
         val messageSeverityCollector = MessageSeverityCollector(messageCollector)
         val paths = if (arguments.kotlinHome != null)
@@ -141,8 +140,6 @@ open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
         messageSeverityCollector.report(CompilerMessageSeverity.LOGGING, "Configuring the compilation environment", CompilerMessageLocation.NO_LOCATION)
         try {
-            configureEnvironment(configuration, arguments)
-
             val destination = arguments.destination
 
             if (arguments.module != null) {
