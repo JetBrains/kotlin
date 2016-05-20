@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.asJava.FilteredJvmDiagnostics
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.CompilerPluginContext
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAll
@@ -320,15 +319,7 @@ object KotlinToJVMBytecodeCompiler {
 
         K2JVMCompiler.reportPerf(environment.configuration, message)
 
-        val result = analyzerWithCompilerReport.analysisResult
-
-        val context = CompilerPluginContext(environment.project, result.bindingContext,
-                                            environment.getSourceFiles())
-        for (plugin in environment.configuration.getList(CLIConfigurationKeys.COMPILER_PLUGINS)) {
-            plugin.processFiles(context)
-        }
-
-        return if (analyzerWithCompilerReport.hasErrors()) null else result
+        return if (analyzerWithCompilerReport.hasErrors()) null else analyzerWithCompilerReport.analysisResult
     }
 
     private fun generate(

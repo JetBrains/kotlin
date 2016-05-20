@@ -20,13 +20,9 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.jvm.compiler.CompilerJarLocator;
 import org.jetbrains.kotlin.config.CompilerConfigurationKey;
 
-import java.util.List;
-
 public class CLIConfigurationKeys {
     public static final CompilerConfigurationKey<MessageCollector> MESSAGE_COLLECTOR_KEY =
             CompilerConfigurationKey.create("message collector");
-    public static final CompilerConfigurationKey<List<CompilerPlugin>> COMPILER_PLUGINS =
-            CompilerConfigurationKey.create("compiler plugins");
     public static final CompilerConfigurationKey<Boolean> ALLOW_KOTLIN_PACKAGE =
             CompilerConfigurationKey.create("allow kotlin package");
     public static final CompilerConfigurationKey<Boolean> REPORT_PERF =

@@ -135,7 +135,7 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
 
         MessageCollector messageCollector = new MavenPluginLogMessageCollector(getLog());
 
-        ExitCode exitCode = executeCompiler(compiler, arguments, messageCollector);
+        ExitCode exitCode = compiler.exec(messageCollector, Services.EMPTY, arguments);
 
         switch (exitCode) {
             case COMPILATION_ERROR:
@@ -197,25 +197,9 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
     @NotNull
     protected abstract CLICompiler<A> createCompiler();
 
-    /**
-     * Derived classes can create custom compiler argument implementations
-     * such as for KDoc
-     */
     @NotNull
     protected abstract A createCompilerArguments();
 
-    @NotNull
-    protected ExitCode executeCompiler(
-            @NotNull CLICompiler<A> compiler,
-            @NotNull A arguments,
-            @NotNull MessageCollector messageCollector
-    ) {
-        return compiler.exec(messageCollector, Services.EMPTY, arguments);
-    }
-
-    /**
-     * Derived classes can register custom plugins or configurations
-     */
     protected abstract void configureSpecificCompilerArguments(@NotNull A arguments) throws MojoExecutionException;
 
     private void configureCompilerArguments(@NotNull A arguments, @NotNull CLICompiler<A> compiler) throws MojoExecutionException {

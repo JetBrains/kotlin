@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.cli.common;
 
 import com.google.common.base.Predicates;
-import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.SystemInfo;
@@ -32,7 +31,6 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.kotlin.cli.common.messages.*;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentException;
-import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.Services;
 import org.jetbrains.kotlin.progress.CompilationCanceledException;
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus;
@@ -55,18 +53,6 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
                 properties.setProperty("idea.io.use.fallback", Boolean.TRUE.toString());
             }
         }
-    }
-
-    @NotNull
-    private List<CompilerPlugin> compilerPlugins = Lists.newArrayList();
-
-    @NotNull
-    public List<CompilerPlugin> getCompilerPlugins() {
-        return compilerPlugins;
-    }
-
-    public void setCompilerPlugins(@NotNull List<CompilerPlugin> compilerPlugins) {
-        this.compilerPlugins = compilerPlugins;
     }
 
     @NotNull
@@ -95,7 +81,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
         }
         catch (IllegalArgumentException e) {
             errStream.println(e.getMessage());
-            usage(errStream, false);
+            Usage.print(errStream, createArguments(), false);
         }
         catch (Throwable t) {
             errStream.println(messageRenderer.render(
@@ -127,21 +113,6 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
         }
     }
 
-    /**
-     * Allow derived classes to add additional command line arguments
-     */
-    protected void usage(@NotNull PrintStream target, boolean extraHelp) {
-        Usage.print(target, createArguments(), extraHelp);
-    }
-
-    /**
-     * Strategy method to configure the environment, allowing compiler
-     * based tools to customise their own plugins
-     */
-    protected void configureEnvironment(@NotNull CompilerConfiguration configuration, @NotNull A arguments) {
-        configuration.addAll(CLIConfigurationKeys.COMPILER_PLUGINS, compilerPlugins);
-    }
-
     @NotNull
     protected abstract A createArguments();
 
@@ -160,7 +131,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
         }
 
         if (arguments.help || arguments.extraHelp) {
-            usage(errStream, arguments.extraHelp);
+            Usage.print(errStream, createArguments(), arguments.extraHelp);
             return OK;
         }
 
