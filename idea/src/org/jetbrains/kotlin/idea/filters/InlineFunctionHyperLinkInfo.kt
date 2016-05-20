@@ -70,14 +70,14 @@ class InlineFunctionHyperLinkInfo(
         class InlineFunctionBodyInfo(file: VirtualFile, line: Int): InlineInfo("inline function body", file, line)
     }
 
-    private class InlineInfoCellRenderer : SimpleColoredComponent(), ListCellRenderer<InlineInfo> {
+    private class InlineInfoCellRenderer : SimpleColoredComponent(), ListCellRenderer {
         init {
             isOpaque = true
         }
 
         override fun getListCellRendererComponent(
-                list: JList<out InlineInfo>?,
-                value: InlineInfo?,
+                list: JList?,
+                value: Any?,
                 index: Int,
                 isSelected: Boolean,
                 cellHasFocus: Boolean
@@ -86,7 +86,7 @@ class InlineFunctionHyperLinkInfo(
             clear()
 
             if (value != null) {
-                append(value.prefix)
+                append((value as InlineInfo).prefix)
             }
 
             if (isSelected) {
