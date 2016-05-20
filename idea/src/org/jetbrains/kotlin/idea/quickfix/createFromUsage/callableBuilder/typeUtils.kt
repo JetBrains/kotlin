@@ -67,7 +67,7 @@ private fun KotlinType.render(typeParameterNameMap: Map<TypeParameterDescriptor,
 
                 val wrappingType = object : DelegatingType()  {
                     override fun getDelegate(): KotlinType? = typeParameter.defaultType
-                    override val constructor = wrappingTypeConstructor
+                    override val constructor: TypeConstructor get() = wrappingTypeConstructor
                 }
 
                 TypeProjectionImpl(wrappingType)
