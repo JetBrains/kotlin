@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.jvm.compiler;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.util.Function;
-import com.intellij.util.containers.ContainerUtil;
+import kotlin.collections.CollectionsKt;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.codegen.GenerationUtils;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
@@ -39,6 +40,7 @@ import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,10 +49,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.kotlin.test.KotlinTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations;
-
-public final class LoadDescriptorUtil {
-
+public class LoadDescriptorUtil {
     @NotNull
     public static final FqName TEST_PACKAGE_FQNAME = FqName.topLevel(Name.identifier("test"));
 
@@ -58,21 +57,12 @@ public final class LoadDescriptorUtil {
     }
 
     @NotNull
-    public static AnalysisResult compileKotlinToDirAndGetAnalysisResult(
-            @NotNull List<File> kotlinFiles,
-            @NotNull File outDir,
-            @NotNull Disposable disposable,
-            @NotNull ConfigurationKind configurationKind,
-            boolean useTypeTableInSerializer
+    public static ModuleDescriptor compileKotlinToDirAndGetModule(
+            @NotNull List<File> kotlinFiles, @NotNull File outDir, @NotNull KotlinCoreEnvironment environment
     ) {
-        KtFilesAndAnalysisResult filesAndResult =
-                KtFilesAndAnalysisResult.createJetFilesAndAnalyze(kotlinFiles, disposable, configurationKind);
-        AnalysisResult result = filesAndResult.getAnalysisResult();
-        GenerationState state = GenerationUtils.compileFiles(
-                result, filesAndResult.getKtFiles(), useTypeTableInSerializer, CompilerConfiguration.EMPTY
-        );
+        GenerationState state = GenerationUtils.compileFiles(createKtFiles(kotlinFiles, environment), environment);
         OutputUtilsKt.writeAllTo(state.getFactory(), outDir);
-        return result;
+        return state.getModule();
     }
 
     @NotNull
@@ -119,47 +109,18 @@ public final class LoadDescriptorUtil {
         ));
     }
 
-    private static class KtFilesAndAnalysisResult {
-        @NotNull
-        public static KtFilesAndAnalysisResult createJetFilesAndAnalyze(
-                @NotNull List<File> kotlinFiles,
-                @NotNull Disposable disposable,
-                @NotNull ConfigurationKind configurationKind
-        ) {
-            final KotlinCoreEnvironment environment = createEnvironmentWithMockJdkAndIdeaAnnotations(disposable, configurationKind);
-            List<KtFile> ktFiles = ContainerUtil.map(kotlinFiles, new Function<File, KtFile>() {
-                @Override
-                public KtFile fun(File kotlinFile) {
-                    try {
-                        return KotlinTestUtils.createFile(
-                                kotlinFile.getName(), FileUtil.loadFile(kotlinFile, true), environment.getProject()
-                        );
-                    }
-                    catch (IOException e) {
-                        throw new AssertionError(e);
-                    }
+    @NotNull
+    private static List<KtFile> createKtFiles(@NotNull List<File> kotlinFiles, @NotNull final KotlinCoreEnvironment environment) {
+        return CollectionsKt.map(kotlinFiles, new Function1<File, KtFile>() {
+            @Override
+            public KtFile invoke(File kotlinFile) {
+                try {
+                    return KotlinTestUtils.createFile(kotlinFile.getName(), FileUtil.loadFile(kotlinFile, true), environment.getProject());
                 }
-            });
-            AnalysisResult result = JvmResolveUtil.analyzeAndCheckForErrors(ktFiles, environment);
-            return new KtFilesAndAnalysisResult(ktFiles, result);
-        }
-
-        private final List<KtFile> ktFiles;
-        private final AnalysisResult result;
-
-        private KtFilesAndAnalysisResult(@NotNull List<KtFile> ktFiles, @NotNull AnalysisResult result) {
-            this.ktFiles = ktFiles;
-            this.result = result;
-        }
-
-        @NotNull
-        public List<KtFile> getKtFiles() {
-            return ktFiles;
-        }
-
-        @NotNull
-        public AnalysisResult getAnalysisResult() {
-            return result;
-        }
+                catch (IOException e) {
+                    throw ExceptionUtilsKt.rethrow(e);
+                }
+            }
+        });
     }
 }
