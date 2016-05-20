@@ -15,7 +15,7 @@
     <orderEntry type="module" module-name="idea-core" scope="PROVIDED" />
     <orderEntry type="module" module-name="light-classes" />
     <orderEntry type="module" module-name="util" />
-    <orderEntry type="module" module-name="compiler-tests" scope="TEST" />
+    <orderEntry type="module" module-name="tests-common" scope="TEST" />
     <orderEntry type="module" module-name="cli" scope="TEST" />
     <orderEntry type="module" module-name="idea-completion" scope="TEST" />
     <orderEntry type="module" module-name="idea-test-framework" scope="TEST" />

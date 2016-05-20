@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.resolve;
 
 import com.intellij.openapi.project.Project;
-import org.jetbrains.kotlin.checkers.CheckerTestUtilTest;
+import org.jetbrains.kotlin.checkers.TestCheckerUtil;
 import org.jetbrains.kotlin.psi.KtFile;
 
 public abstract class AbstractResolveTest extends ExtensibleResolveTestCase {
@@ -31,7 +31,7 @@ public abstract class AbstractResolveTest extends ExtensibleResolveTestCase {
         ) {
             @Override
             protected KtFile createKtFile(String fileName, String text) {
-                return CheckerTestUtilTest.createCheckAndReturnPsiFile(fileName, text, project);
+                return TestCheckerUtil.createCheckAndReturnPsiFile(fileName, text, project);
             }
         };
     }

@@ -7,6 +7,7 @@
     </content>
     <orderEntry type="jdk" jdkName="1.6" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="tests-common" />
     <orderEntry type="module" module-name="descriptors" />
     <orderEntry type="module" module-name="backend" />
     <orderEntry type="module" module-name="frontend" />
@@ -41,15 +42,6 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../dependencies/idea/idea-for-compiler-test/idea_rt.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
           <root url="jar://$MODULE_DIR$/../../ideaSDK/lib/idea_rt.jar!/" />
         </CLASSES>
         <JAVADOC />
@@ -60,6 +52,15 @@
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../../ideaSDK/lib/openapi.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../ideaSDK/core/asm-all.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
