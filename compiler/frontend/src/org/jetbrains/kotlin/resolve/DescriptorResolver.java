@@ -701,7 +701,7 @@ public class DescriptorResolver {
             }
             else {
                 LexicalWritableScope writableScope = new LexicalWritableScope(
-                        scope, containingDeclaration, false, null, new TraceBasedLocalRedeclarationChecker(trace),
+                        scope, containingDeclaration, false, null, new TraceBasedLocalRedeclarationChecker(trace, overloadChecker),
                         LexicalScopeKind.TYPE_ALIAS_HEADER);
                 typeParameterDescriptors = resolveTypeParametersForDescriptor(
                         typeAliasDescriptor, writableScope, scope, typeParameters, trace);

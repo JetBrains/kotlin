@@ -89,8 +89,8 @@ abstract class AbstractTypeAliasDescriptor(
         override fun getBuiltIns(): KotlinBuiltIns =
                 declarationDescriptor.builtIns
 
-        override fun getAnnotations(): Annotations =
-                declarationDescriptor.annotations
+        override val annotations: Annotations
+            get() = declarationDescriptor.annotations
     }
 
 }
