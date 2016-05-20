@@ -106,9 +106,8 @@ internal object RawSubstitution : TypeSubstitution() {
             val arguments = listOf(
                     TypeProjectionImpl(componentTypeProjection.projectionKind, eraseType(componentTypeProjection.type))
             )
-            return KotlinTypeImpl.create(
-                    type.annotations, type.constructor, type.isMarkedNullable, arguments,
-                    (type.constructor.declarationDescriptor as ClassDescriptor).getMemberScope(arguments)
+            return KotlinTypeFactory.simpleType(type.annotations, type.constructor, arguments,
+                                                type.isMarkedNullable, (type.constructor.declarationDescriptor as ClassDescriptor).getMemberScope(arguments)
             )
         }
 

@@ -48,11 +48,11 @@ class TypeAliasExpander(
         }
 
         return if (withAbbreviatedType) {
-            val abbreviatedType = KotlinTypeImpl.create(annotations,
-                                                        typeAliasExpansion.descriptor.typeConstructor,
-                                                        originalProjection.type.isMarkedNullable,
-                                                        typeAliasExpansion.arguments,
-                                                        MemberScope.Empty)
+            val abbreviatedType = KotlinTypeFactory.simpleType(annotations,
+                                                               typeAliasExpansion.descriptor.typeConstructor,
+                                                               typeAliasExpansion.arguments,
+                                                               originalProjection.type.isMarkedNullable,
+                                                               MemberScope.Empty)
 
             expandedType.withAbbreviatedType(abbreviatedType)
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.KotlinTypeImpl
+import org.jetbrains.kotlin.types.KotlinTypeFactory
 import java.util.regex.Pattern
 
 class ConstraintSystemTestData(
@@ -64,9 +64,8 @@ class ConstraintSystemTestData(
         val matcher = INTEGER_VALUE_TYPE_PATTERN.matcher(name)
         if (matcher.find()) {
             val number = matcher.group(1)!!
-            return KotlinTypeImpl.create(
-                    Annotations.EMPTY, IntegerValueTypeConstructor(number.toLong(), functionFoo.builtIns), false, listOf(),
-                    MemberScope.Empty
+            return KotlinTypeFactory.simpleType(Annotations.EMPTY, IntegerValueTypeConstructor(number.toLong(), functionFoo.builtIns),
+                                                listOf(), false, MemberScope.Empty
             )
         }
         return typeResolver.resolveType(

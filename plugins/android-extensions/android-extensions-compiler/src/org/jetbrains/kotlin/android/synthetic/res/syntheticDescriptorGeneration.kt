@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.KotlinTypeImpl
+import org.jetbrains.kotlin.types.KotlinTypeFactory
 import org.jetbrains.kotlin.types.StarProjectionImpl
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
@@ -65,8 +65,8 @@ internal fun genPropertyForWidget(
         if (defaultType.constructor.parameters.isEmpty())
             defaultType
         else
-            KotlinTypeImpl.create(Annotations.EMPTY, classDescriptor, false,
-                                  defaultType.constructor.parameters.map { StarProjectionImpl(it) })
+            KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, classDescriptor,
+                                                defaultType.constructor.parameters.map { StarProjectionImpl(it) })
     } ?: context.viewType
 
     return genProperty(resolvedWidget.widget.id, receiverType, type, packageFragmentDescriptor, sourceEl, resolvedWidget.errorType)

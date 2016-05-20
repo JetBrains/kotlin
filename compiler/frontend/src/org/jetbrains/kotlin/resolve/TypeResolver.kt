@@ -317,12 +317,11 @@ class TypeResolver(
         return if (scopeForTypeParameter is ErrorUtils.ErrorScope)
             ErrorUtils.createErrorType("?")
         else
-            KotlinTypeImpl.create(
-                    annotations,
-                    typeParameter.typeConstructor,
-                    false,
-                    listOf(),
-                    scopeForTypeParameter)
+            KotlinTypeFactory.simpleType(annotations,
+                                         typeParameter.typeConstructor,
+                                         listOf(),
+                                         false,
+                                         scopeForTypeParameter)
     }
 
     private fun getScopeForTypeParameter(c: TypeResolutionContext, typeParameterDescriptor: TypeParameterDescriptor): MemberScope {
@@ -394,7 +393,7 @@ class TypeResolver(
             " but ${collectedArgumentAsTypeProjections.size} instead of ${parameters.size} found in ${element.text}"
         }
 
-        val resultingType = KotlinTypeImpl.create(annotations, classDescriptor, false, arguments)
+        val resultingType = KotlinTypeFactory.simpleNotNullType(annotations, classDescriptor, arguments)
 
         // We create flexible types by convention here
         // This is not intended to be used in normal users' environments, only for tests and debugger etc
@@ -466,7 +465,7 @@ class TypeResolver(
         }
 
         return if (c.abbreviated) {
-            val abbreviatedType = KotlinTypeImpl.create(annotations, descriptor.typeConstructor, false, arguments, MemberScope.Empty)
+            val abbreviatedType = KotlinTypeFactory.simpleType(annotations, descriptor.typeConstructor, arguments, false, MemberScope.Empty)
             type(abbreviatedType)
         }
         else {
