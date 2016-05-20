@@ -193,12 +193,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
-        @TestMetadata("redundantAbstract.kt")
-        public void testRedundantAbstract() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/abstract/redundantAbstract.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("replaceOpen.kt")
         public void testReplaceOpen() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/abstract/replaceOpen.kt");
@@ -6404,6 +6398,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     public static class RedundantModalityModifier extends AbstractQuickFixTest {
         public void testAllFilesPresentInRedundantModalityModifier() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/redundantModalityModifier"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("redundantAbstract.kt")
+        public void testRedundantAbstract() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/redundantModalityModifier/redundantAbstract.kt");
+            doTest(fileName);
         }
 
         @TestMetadata("simple.kt")

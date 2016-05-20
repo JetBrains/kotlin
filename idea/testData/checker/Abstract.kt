@@ -67,29 +67,29 @@ interface MyTrait {
 
     val a: Int
     val a1: Int = <error>1</error>
-    <warning>abstract</warning> val a2: Int
-    <warning>abstract</warning> val a3: Int = <error>1</error>
+    abstract val a2: Int
+    abstract val a3: Int = <error>1</error>
 
     var b: Int                                                  <error>private</error> set
     var b1: Int = <error>0</error>;                             <error>private</error> set
-    <warning>abstract</warning> var b2: Int                     <error>private</error> set
-    <warning>abstract</warning> var b3: Int = <error>0</error>; <error>private</error> set
+    abstract var b2: Int                     <error>private</error> set
+    abstract var b3: Int = <error>0</error>; <error>private</error> set
 
     <error>var c: Int</error>                                   set(v: Int) { field = v }
     <error>var c1: Int</error> = <error>0</error>;              set(v: Int) { field = v }
-    <warning>abstract</warning> var c2: Int                     <error>set(v: Int) { field = v }</error>
-    <warning>abstract</warning> var c3: Int = <error>0</error>; <error>set(v: Int) { field = v }</error>
+    abstract var c2: Int                     <error>set(v: Int) { field = v }</error>
+    abstract var c3: Int = <error>0</error>; <error>set(v: Int) { field = v }</error>
 
     val e: Int                                                  get() = a
     val e1: Int = <error>0</error>;                             get() = a
-    <warning>abstract</warning> val e2: Int                     <error>get() = a</error>
-    <warning>abstract</warning> val e3: Int = <error>0</error>; <error>get() = a</error>
+    abstract val e2: Int                     <error>get() = a</error>
+    abstract val e3: Int = <error>0</error>; <error>get() = a</error>
 
     //methods
 
     fun f()
     fun g() {}
-    <warning>abstract</warning> fun h()
+    abstract fun h()
     <error>abstract</error> fun j() {}
 }
 
