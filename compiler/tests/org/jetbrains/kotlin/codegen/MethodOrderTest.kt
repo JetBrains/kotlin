@@ -17,10 +17,10 @@
 package org.jetbrains.kotlin.codegen
 
 import junit.framework.TestCase
-import org.jetbrains.asm4.ClassReader
-import org.jetbrains.asm4.ClassVisitor
-import org.jetbrains.asm4.MethodVisitor
-import org.jetbrains.asm4.Opcodes
+import org.jetbrains.org.objectweb.asm.ClassReader
+import org.jetbrains.org.objectweb.asm.ClassVisitor
+import org.jetbrains.org.objectweb.asm.MethodVisitor
+import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.kotlin.test.ConfigurationKind
 import java.util.*
 
