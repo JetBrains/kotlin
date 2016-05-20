@@ -129,6 +129,14 @@ open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             JvmMetadataVersion.skipCheck = true
         }
 
+        if (arguments.includeRuntime) {
+            configuration.put(JVMConfigurationKeys.INCLUDE_RUNTIME, true)
+        }
+        val friendPaths = arguments.friendPaths?.toList()
+        if (friendPaths != null) {
+            configuration.put(JVMConfigurationKeys.FRIEND_PATHS, friendPaths)
+        }
+
         putAdvancedOptions(configuration, arguments)
 
         messageSeverityCollector.report(CompilerMessageSeverity.LOGGING, "Configuring the compilation environment", CompilerMessageLocation.NO_LOCATION)
@@ -137,51 +145,47 @@ open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
             val destination = arguments.destination
 
-            val jar: File?
-            val outputDir: File?
-            if (destination != null) {
-                val isJar = destination.endsWith(".jar")
-                jar = if (isJar) File(destination) else null
-                outputDir = if (isJar) null else File(destination)
-            }
-            else {
-                jar = null
-                outputDir = null
-            }
-            val environment: KotlinCoreEnvironment
-
-            val friendPaths = arguments.friendPaths?.toList() ?: emptyList<String>()
-
             if (arguments.module != null) {
                 val sanitizedCollector = FilteringMessageCollector(messageSeverityCollector, `in`(CompilerMessageSeverity.VERBOSE))
                 val moduleScript = CompileEnvironmentUtil.loadModuleDescriptions(arguments.module, sanitizedCollector)
 
-                if (outputDir != null) {
-                    messageSeverityCollector.report(CompilerMessageSeverity.WARNING, "The '-d' option with a directory destination is ignored because '-module' is specified", CompilerMessageLocation.NO_LOCATION)
+                if (destination != null) {
+                    messageSeverityCollector.report(
+                            CompilerMessageSeverity.WARNING,
+                            "The '-d' option with a directory destination is ignored because '-module' is specified",
+                            CompilerMessageLocation.NO_LOCATION
+                    )
                 }
 
-                val directory = File(arguments.module).absoluteFile.parentFile
+                val moduleFile = File(arguments.module)
+                val directory = moduleFile.absoluteFile.parentFile
 
-                val compilerConfiguration = KotlinToJVMBytecodeCompiler.createCompilerConfiguration(configuration, moduleScript.modules, directory)
-                compilerConfiguration.put(JVMConfigurationKeys.MODULE_XML_FILE_PATH, arguments.module)
+                KotlinToJVMBytecodeCompiler.configureSourceRoots(configuration, moduleScript.modules, directory)
+                configuration.put(JVMConfigurationKeys.MODULE_XML_FILE, moduleFile)
 
-                environment = createCoreEnvironment(rootDisposable, compilerConfiguration)
-
+                val environment = createCoreEnvironment(rootDisposable, configuration)
                 if (messageSeverityCollector.anyReported(CompilerMessageSeverity.ERROR)) return COMPILATION_ERROR
 
-                KotlinToJVMBytecodeCompiler.compileModules(environment, configuration, moduleScript.modules, directory, jar, friendPaths, arguments.includeRuntime)
+                KotlinToJVMBytecodeCompiler.compileModules(environment, directory)
             }
             else if (arguments.script) {
                 val scriptArgs = arguments.freeArgs.subList(1, arguments.freeArgs.size)
-                environment = createCoreEnvironment(rootDisposable, configuration)
-
+                val environment = createCoreEnvironment(rootDisposable, configuration)
                 if (messageSeverityCollector.anyReported(CompilerMessageSeverity.ERROR)) return COMPILATION_ERROR
 
-                return KotlinToJVMBytecodeCompiler.compileAndExecuteScript(configuration, paths, environment, scriptArgs)
+                return KotlinToJVMBytecodeCompiler.compileAndExecuteScript(environment, paths, scriptArgs)
             }
             else {
-                environment = createCoreEnvironment(rootDisposable, configuration)
+                if (destination != null) {
+                    if (destination.endsWith(".jar")) {
+                        configuration.put(JVMConfigurationKeys.OUTPUT_JAR, File(destination))
+                    }
+                    else {
+                        configuration.put(JVMConfigurationKeys.OUTPUT_DIRECTORY, File(destination))
+                    }
+                }
 
+                val environment = createCoreEnvironment(rootDisposable, configuration)
                 if (messageSeverityCollector.anyReported(CompilerMessageSeverity.ERROR)) return COMPILATION_ERROR
 
                 if (environment.getSourceFiles().isEmpty()) {
@@ -192,13 +196,13 @@ open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                     return COMPILATION_ERROR
                 }
 
-                KotlinToJVMBytecodeCompiler.compileBunchOfSources(environment, jar, outputDir, friendPaths, arguments.includeRuntime)
+                KotlinToJVMBytecodeCompiler.compileBunchOfSources(environment)
             }
 
             if (arguments.reportPerf) {
-                reportGCTime(environment.configuration)
-                reportCompilationTime(environment.configuration)
-                PerformanceCounter.report { s -> reportPerf(environment.configuration, s) }
+                reportGCTime(configuration)
+                reportCompilationTime(configuration)
+                PerformanceCounter.report { s -> reportPerf(configuration, s) }
             }
             return OK
         }
@@ -206,7 +210,6 @@ open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             messageSeverityCollector.report(CompilerMessageSeverity.EXCEPTION, OutputMessageUtil.renderException(e), MessageUtil.psiElementToMessageLocation(e.element))
             return INTERNAL_ERROR
         }
-
     }
 
     private fun createCoreEnvironment(rootDisposable: Disposable, configuration: CompilerConfiguration): KotlinCoreEnvironment {

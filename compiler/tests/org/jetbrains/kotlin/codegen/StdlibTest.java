@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootsKt;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.codegen.state.GenerationStateEventCallback;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.ContentRootsKt;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
@@ -64,8 +63,7 @@ public class StdlibTest extends KotlinTestWithEnvironment {
     }
 
     public void testStdlib() throws ClassNotFoundException {
-        GenerationState state = KotlinToJVMBytecodeCompiler.INSTANCE.analyzeAndGenerate(
-                getEnvironment(), GenerationStateEventCallback.Companion.getDO_NOTHING());
+        GenerationState state = KotlinToJVMBytecodeCompiler.INSTANCE.analyzeAndGenerate(getEnvironment());
         if (state == null) {
             fail("There were compilation errors");
         }
