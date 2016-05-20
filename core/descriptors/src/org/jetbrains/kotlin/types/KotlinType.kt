@@ -39,4 +39,10 @@ interface KotlinType : Annotated {
     fun <T : TypeCapability> getCapability(capabilityClass: Class<T>): T?
 
     val capabilities: TypeCapabilities
+
 }
+
+@Deprecated("Temporary marker method for refactoring")
+fun KotlinType.asSimpleType(): SimpleType = this as SimpleType
+
+interface SimpleType : KotlinType

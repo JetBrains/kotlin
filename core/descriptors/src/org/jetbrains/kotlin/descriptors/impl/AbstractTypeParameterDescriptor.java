@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
     private final int index;
 
     private final NotNullLazyValue<TypeConstructor> typeConstructor;
-    private final NotNullLazyValue<KotlinType> defaultType;
+    private final NotNullLazyValue<SimpleType> defaultType;
 
     protected AbstractTypeParameterDescriptor(
             @NotNull final StorageManager storageManager,
@@ -65,9 +65,9 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
                 return new TypeParameterTypeConstructor(storageManager, supertypeLoopChecker);
             }
         });
-        this.defaultType = storageManager.createLazyValue(new Function0<KotlinType>() {
+        this.defaultType = storageManager.createLazyValue(new Function0<SimpleType>() {
             @Override
-            public KotlinType invoke() {
+            public SimpleType invoke() {
                 return KotlinTypeImpl.create(
                         Annotations.Companion.getEMPTY(),
                         getTypeConstructor(), false, Collections.<TypeProjection>emptyList(),
@@ -124,7 +124,7 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
 
     @NotNull
     @Override
-    public KotlinType getDefaultType() {
+    public SimpleType getDefaultType() {
         return defaultType.invoke();
     }
 

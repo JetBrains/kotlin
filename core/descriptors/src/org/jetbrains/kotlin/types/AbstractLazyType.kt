@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 
-abstract class AbstractLazyType(storageManager: StorageManager) : AbstractKotlinType(), LazyType {
+abstract class AbstractLazyType(storageManager: StorageManager) : AbstractKotlinType(), SimpleType, LazyType {
 
     private val typeConstructor = storageManager.createLazyValue { computeTypeConstructor() }
     override val constructor by typeConstructor

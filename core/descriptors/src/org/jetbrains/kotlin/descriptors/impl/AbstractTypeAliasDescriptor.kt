@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.TypeConstructor
-import org.jetbrains.kotlin.types.TypeSubstitutor
 
 abstract class AbstractTypeAliasDescriptor(
         containingDeclaration: DeclarationDescriptor,
@@ -57,7 +57,7 @@ abstract class AbstractTypeAliasDescriptor(
 
     override fun getVisibility() = visibilityImpl
 
-    override fun getDefaultType(): KotlinType =
+    override fun getDefaultType(): SimpleType =
             TODO("typealias getDefaultType")
 
     override fun getTypeConstructor(): TypeConstructor =

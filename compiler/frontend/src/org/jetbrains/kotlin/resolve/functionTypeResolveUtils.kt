@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.KotlinTypeImpl
+import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.TypeProjection
 
 internal fun createValueParametersForInvokeInFunctionType(
@@ -54,7 +55,7 @@ fun createFunctionType(
         receiverType: KotlinType?,
         parameterTypes: List<KotlinType>,
         returnType: KotlinType
-): KotlinType {
+): SimpleType {
     val arguments = getFunctionTypeArgumentProjections(receiverType, parameterTypes, returnType)
     val size = parameterTypes.size
     val classDescriptor = builtIns.getFunction(if (receiverType == null) size else size + 1)

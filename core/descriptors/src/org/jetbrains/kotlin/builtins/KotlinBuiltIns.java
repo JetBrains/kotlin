@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -606,22 +606,22 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
-    public KotlinType getNothingType() {
+    public SimpleType getNothingType() {
         return getNothing().getDefaultType();
     }
 
     @NotNull
-    public KotlinType getNullableNothingType() {
+    public SimpleType getNullableNothingType() {
         return TypeUtils.makeNullable(getNothingType());
     }
 
     @NotNull
-    public KotlinType getAnyType() {
+    public SimpleType getAnyType() {
         return getAny().getDefaultType();
     }
 
     @NotNull
-    public KotlinType getNullableAnyType() {
+    public SimpleType getNullableAnyType() {
         return TypeUtils.makeNullable(getAnyType());
     }
 
@@ -631,7 +631,7 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
-    public KotlinType getPrimitiveKotlinType(@NotNull PrimitiveType type) {
+    public SimpleType getPrimitiveKotlinType(@NotNull PrimitiveType type) {
         return getPrimitiveClassDescriptor(type).getDefaultType();
     }
 
@@ -676,7 +676,7 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
-    public KotlinType getUnitType() {
+    public SimpleType getUnitType() {
         return getUnit().getDefaultType();
     }
 
@@ -728,7 +728,7 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
-    public KotlinType getArrayType(@NotNull Variance projectionType, @NotNull KotlinType argument) {
+    public SimpleType getArrayType(@NotNull Variance projectionType, @NotNull KotlinType argument) {
         List<TypeProjectionImpl> types = Collections.singletonList(new TypeProjectionImpl(projectionType, argument));
         return KotlinTypeImpl.create(
                 Annotations.Companion.getEMPTY(),
@@ -739,7 +739,7 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
-    public KotlinType getEnumType(@NotNull KotlinType argument) {
+    public SimpleType getEnumType(@NotNull SimpleType argument) {
         Variance projectionType = Variance.INVARIANT;
         List<TypeProjectionImpl> types = Collections.singletonList(new TypeProjectionImpl(projectionType, argument));
         return KotlinTypeImpl.create(
@@ -751,7 +751,7 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
-    public KotlinType getAnnotationType() {
+    public SimpleType getAnnotationType() {
         return getAnnotation().getDefaultType();
     }
 

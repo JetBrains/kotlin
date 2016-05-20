@@ -27,7 +27,7 @@ private constructor(
         override val isMarkedNullable: Boolean,
         override val arguments: List<TypeProjection>,
         final override val memberScope: MemberScope
-) : AbstractKotlinType() {
+) : AbstractKotlinType(), SimpleType {
 
     companion object {
         @JvmStatic fun create(annotations: Annotations,

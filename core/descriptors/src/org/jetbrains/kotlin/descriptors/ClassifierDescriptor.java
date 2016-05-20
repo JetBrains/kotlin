@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.descriptors;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.SimpleType;
 import org.jetbrains.kotlin.types.TypeConstructor;
 
 public interface ClassifierDescriptor extends DeclarationDescriptorNonRoot {
@@ -25,5 +25,5 @@ public interface ClassifierDescriptor extends DeclarationDescriptorNonRoot {
     TypeConstructor getTypeConstructor();
 
     @NotNull
-    KotlinType getDefaultType();
+    SimpleType getDefaultType();
 }
