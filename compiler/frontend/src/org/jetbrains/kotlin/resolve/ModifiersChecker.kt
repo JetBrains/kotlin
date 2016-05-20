@@ -93,9 +93,7 @@ object ModifierCheckerCore {
 
     // NOTE: redundant targets must be possible!
     private val redundantTargetMap = mapOf<KtModifierKeywordToken, Set<KotlinTarget>>(
-            ABSTRACT_KEYWORD  to EnumSet.of(INTERFACE),
-            OPEN_KEYWORD      to EnumSet.of(INTERFACE),
-            FINAL_KEYWORD     to EnumSet.of(ENUM_CLASS, OBJECT)
+            OPEN_KEYWORD  to EnumSet.of(INTERFACE)
     )
 
     val possibleParentTargetMap = mapOf<KtModifierKeywordToken, Set<KotlinTarget>>(

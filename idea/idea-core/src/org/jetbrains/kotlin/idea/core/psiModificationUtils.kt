@@ -229,7 +229,10 @@ fun KtModifierListOwner.canBeProtected(): Boolean {
 }
 
 fun KtDeclaration.implicitModality(): KtModifierKeywordToken {
-    if (this is KtClassOrObject) return KtTokens.FINAL_KEYWORD
+    if (this is KtClassOrObject) {
+        if (this is KtClass && this.isInterface()) return KtTokens.ABSTRACT_KEYWORD
+        return KtTokens.FINAL_KEYWORD
+    }
     val klass = containingClassOrObject ?: return KtTokens.FINAL_KEYWORD
     if (hasModifier(KtTokens.OVERRIDE_KEYWORD)) {
         if (klass.hasModifier(KtTokens.ABSTRACT_KEYWORD) ||
