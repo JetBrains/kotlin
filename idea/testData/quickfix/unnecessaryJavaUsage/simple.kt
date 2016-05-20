@@ -1,5 +1,5 @@
 // "Unnecessary java usage" "true"
 // ERROR: Unresolved reference: println
-fun bar() {
-    <caret>System.out.println("Hello")
+fun foo() {
+    <caret>System.out.println("A")
 }
