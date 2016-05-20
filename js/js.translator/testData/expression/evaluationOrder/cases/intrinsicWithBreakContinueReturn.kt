@@ -16,6 +16,11 @@ fun barLt(): String {
     10 < (return "lt") as Int
 }
 
+fun setGlobal(i: Int): Int {
+    global = "setGlobal"
+    return i
+}
+
 fun box(): String {
     var b: Boolean
 
@@ -65,6 +70,15 @@ fun box(): String {
     }
     assertEquals(2, i, "break 6")
     assertEquals("A", global, "break 6")
+
+    i = 0
+    while(i++<5) {
+        if (i==2) {
+            bVarArray[setGlobal(0)] = 10 < (break as Int)
+        }
+    }
+    assertEquals(2, i, "break 6a")
+    assertEquals("setGlobal", global, "break 6a")
 
     i = 0
     global = ""

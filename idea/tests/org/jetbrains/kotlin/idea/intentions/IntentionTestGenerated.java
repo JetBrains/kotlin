@@ -2528,9 +2528,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("constructorParameter.kt")
+            public void testConstructorParameter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/protected/constructorParameter.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("noModifier.kt")
             public void testNoModifier() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/protected/noModifier.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("notForNonValParameter.kt")
+            public void testNotForNonValParameter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/protected/notForNonValParameter.kt");
                 doTest(fileName);
             }
 
@@ -5352,6 +5364,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("ifStatementPriority.kt")
+        public void testIfStatementPriority() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/ifNullToElvis/ifStatementPriority.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("MultiStatementBlock.kt")
         public void testMultiStatementBlock() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/ifNullToElvis/MultiStatementBlock.kt");
@@ -6102,6 +6120,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("branchingIfStatements.kt")
         public void testBranchingIfStatements() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/invertIfCondition/branchingIfStatements.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("endOfLineCommentBug.kt")
+        public void testEndOfLineCommentBug() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/invertIfCondition/endOfLineCommentBug.kt");
             doTest(fileName);
         }
 
@@ -8137,6 +8161,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/replaceWithOperatorAssignment"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
+        @TestMetadata("flexibleTypeBug.kt")
+        public void testFlexibleTypeBug() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceWithOperatorAssignment/flexibleTypeBug.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("illegalMultipleOperators.kt")
         public void testIllegalMultipleOperators() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceWithOperatorAssignment/illegalMultipleOperators.kt");
@@ -8176,6 +8206,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("nonRepeatingAssignment.kt")
         public void testNonRepeatingAssignment() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceWithOperatorAssignment/nonRepeatingAssignment.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("plusAssignConflict.kt")
+        public void testPlusAssignConflict() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceWithOperatorAssignment/plusAssignConflict.kt");
             doTest(fileName);
         }
 

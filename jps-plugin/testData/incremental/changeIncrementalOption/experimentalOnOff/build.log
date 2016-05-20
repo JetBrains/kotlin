@@ -1,5 +1,7 @@
 ================ Step #1 =================
 
+Building module1
+Actions after cache changed: [REBUILD_ALL_KOTLIN, REBUILD_CHUNK, DO_NOTHING]
 Cleaning output files:
   out/production/module1/foo/Z.class
 End of files
@@ -15,6 +17,8 @@ Marked as dirty by Kotlin:
   module4/src/e.kt
 Exit code: OK
 ------------------------------------------
+Building module2
+Actions after cache changed: [REBUILD_CHUNK, DO_NOTHING]
 Cleaning output files:
   out/production/module2/META-INF/module2.kotlin_module
   out/production/module2/foo/A.class
@@ -31,6 +35,8 @@ Compiling files:
 End of files
 Exit code: OK
 ------------------------------------------
+Building module3
+Actions after cache changed: [REBUILD_CHUNK, DO_NOTHING]
 Cleaning output files:
   out/production/module3/foo/D.class
 End of files
@@ -39,6 +45,8 @@ Compiling files:
 End of files
 Exit code: OK
 ------------------------------------------
+Building module4
+Actions after cache changed: [REBUILD_CHUNK, DO_NOTHING]
 Cleaning output files:
   out/production/module4/foo/E.class
 End of files
@@ -50,8 +58,11 @@ Exit code: OK
 
 ================ Step #2 =================
 
+Building module1
+Actions after cache changed: [CLEAN_EXPERIMENTAL_CACHES, CLEAN_DATA_CONTAINER, DO_NOTHING]
 Exit code: NOTHING_DONE
 ------------------------------------------
+Building module2
 Cleaning output files:
   out/production/module2/META-INF/module2.kotlin_module
   out/production/module2/foo/A.class
@@ -62,15 +73,19 @@ Compiling files:
 End of files
 Exit code: OK
 ------------------------------------------
+Building module3
 Exit code: NOTHING_DONE
 ------------------------------------------
+Building module4
 Exit code: NOTHING_DONE
 ------------------------------------------
 
 ================ Step #3 =================
 
+Building module1
 Exit code: NOTHING_DONE
 ------------------------------------------
+Building module2
 Cleaning output files:
   out/production/module2/META-INF/module2.kotlin_module
   out/production/module2/foo/A.class
@@ -94,7 +109,9 @@ Compiling files:
 End of files
 Exit code: OK
 ------------------------------------------
+Building module3
 Exit code: NOTHING_DONE
 ------------------------------------------
+Building module4
 Exit code: NOTHING_DONE
 ------------------------------------------

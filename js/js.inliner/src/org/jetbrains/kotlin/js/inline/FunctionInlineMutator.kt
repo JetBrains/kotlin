@@ -52,7 +52,6 @@ private constructor(
         removeDefaultInitializers(arguments, parameters, body)
         aliasArgumentsIfNeeded(namingContext, arguments, parameters)
         renameLocalNames(namingContext, invokedFunction)
-        removeStatementsAfterTopReturn()
         processReturns()
 
         namingContext.applyRenameTo(body)
@@ -76,15 +75,6 @@ private constructor(
         replaceThisReference(body, thisReplacement)
     }
 
-    private fun removeStatementsAfterTopReturn() {
-        val statements = body.statements
-
-        val returnIndex = statements.indexOfFirst { it is JsReturn }
-        if (returnIndex >= 0) {
-            statements.subList(returnIndex + 1, statements.size).clear()
-        }
-    }
-
     private fun processReturns() {
         val resultReference = getResultReference()
         if (resultReference != null) {
@@ -93,11 +83,9 @@ private constructor(
         assert(resultExpr == null || resultExpr is JsNameRef)
 
         val breakName = namingContext.getFreshName(getBreakLabel())
-        val breakLabel = JsLabel(breakName)
-        breakLabel.synthetic = true
-        this.breakLabel = breakLabel
+        this.breakLabel = JsLabel(breakName).apply { synthetic = true }
 
-        val visitor = ReturnReplacingVisitor(resultExpr as? JsNameRef, breakName.makeRef())
+        val visitor = ReturnReplacingVisitor(resultExpr as? JsNameRef, breakName.makeRef(), invokedFunction)
         visitor.accept(body)
     }
 

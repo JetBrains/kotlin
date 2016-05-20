@@ -19,5 +19,5 @@ Compiling files:
 End of files
 COMPILATION FAILED
 cannot find symbol
-symbol  : method getProp()
-location: class test.PropKt
+  symbol:   method getProp()
+  location: class test.PropKt

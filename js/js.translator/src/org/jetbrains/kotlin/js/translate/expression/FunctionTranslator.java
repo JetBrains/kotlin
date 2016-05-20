@@ -69,6 +69,7 @@ public final class FunctionTranslator extends AbstractTranslator {
                 : message(descriptor, "Function " + functionDeclaration.getText() + " processed for the second time.");
         //NOTE: it's important we compute the context before we start the computation
         this.functionBodyContext = getFunctionBodyContext();
+        MetadataProperties.setFunctionDescriptor(functionObject, descriptor);
     }
 
     @NotNull
@@ -84,7 +85,7 @@ public final class FunctionTranslator extends AbstractTranslator {
         else {
             aliasingContext = null;
         }
-        return context().newFunctionBody(functionObject, aliasingContext);
+        return context().newFunctionBody(functionObject, aliasingContext, descriptor);
     }
 
     @NotNull
@@ -116,7 +117,8 @@ public final class FunctionTranslator extends AbstractTranslator {
             assert descriptor instanceof ConstructorDescriptor || descriptor.getModality().equals(Modality.ABSTRACT);
             return;
         }
-        functionObject.getBody().getStatements().addAll(translateFunctionBody(descriptor, functionDeclaration, functionBodyContext).getStatements());
+        JsBlock body = translateFunctionBody(descriptor, functionDeclaration, functionBodyContext);
+        functionObject.getBody().getStatements().addAll(body.getStatements());
     }
 
     @NotNull

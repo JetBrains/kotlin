@@ -1,5 +1,6 @@
 ================ Step #1 =================
 
+Building module1
 Cleaning output files:
   out/production/module1/META-INF/module1.kotlin_module
   out/production/module1/a/A.class
@@ -10,5 +11,6 @@ Compiling files:
 End of files
 Exit code: OK
 ------------------------------------------
+Building module2
 Exit code: NOTHING_DONE
 ------------------------------------------

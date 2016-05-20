@@ -1,7 +1,10 @@
 ================ Step #1 =================
 
+Building module1
+Actions after cache changed: [CLEAN_NORMAL_CACHES, DO_NOTHING]
 Exit code: NOTHING_DONE
 ------------------------------------------
+Building module2
 Cleaning output files:
   out/production/module2/META-INF/module2.kotlin_module
   out/production/module2/foo/AKt.class
@@ -13,15 +16,19 @@ Compiling files:
 End of files
 Exit code: OK
 ------------------------------------------
+Building module3
 Exit code: NOTHING_DONE
 ------------------------------------------
+Building module4
 Exit code: NOTHING_DONE
 ------------------------------------------
 
 ================ Step #2 =================
 
+Building module1
 Exit code: NOTHING_DONE
 ------------------------------------------
+Building module2
 Cleaning output files:
   out/production/module2/META-INF/module2.kotlin_module
   out/production/module2/foo/AKt.class
@@ -33,7 +40,9 @@ Compiling files:
 End of files
 Exit code: OK
 ------------------------------------------
+Building module3
 Exit code: NOTHING_DONE
 ------------------------------------------
+Building module4
 Exit code: NOTHING_DONE
 ------------------------------------------

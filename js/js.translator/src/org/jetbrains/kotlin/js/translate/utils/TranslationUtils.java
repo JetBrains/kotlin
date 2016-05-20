@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
+import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TemporaryConstVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.Translation;
@@ -186,12 +187,6 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    public static JsExpression translateLeftExpression(@NotNull TranslationContext context,
-            @NotNull KtBinaryExpression expression) {
-        return translateLeftExpression(context, expression, context.dynamicContext().jsBlock());
-    }
-
-    @NotNull
     public static JsExpression translateLeftExpression(
             @NotNull TranslationContext context,
             @NotNull KtBinaryExpression expression,
@@ -252,7 +247,7 @@ public final class TranslationUtils {
 
     @NotNull
     public static JsConditional sure(@NotNull JsExpression expression, @NotNull TranslationContext context) {
-        JsInvocation throwNPE = new JsInvocation(context.namer().throwNPEFunctionRef());
+        JsInvocation throwNPE = new JsInvocation(Namer.throwNPEFunctionRef());
         JsConditional ensureNotNull = notNullConditional(expression, throwNPE, context);
 
         JsExpression thenExpression = ensureNotNull.getThenExpression();

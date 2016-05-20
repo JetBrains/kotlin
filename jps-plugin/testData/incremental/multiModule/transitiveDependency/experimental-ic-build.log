@@ -1,5 +1,6 @@
 ================ Step #1 =================
 
+Building module1
 Cleaning output files:
   out/production/module1/META-INF/module1.kotlin_module
   out/production/module1/a/A.class
@@ -14,6 +15,7 @@ Exit code: ADDITIONAL_PASS_REQUIRED
 ------------------------------------------
 Exit code: NOTHING_DONE
 ------------------------------------------
+Building module2
 Cleaning output files:
   out/production/module2/META-INF/module2.kotlin_module
   out/production/module2/b/BKt.class
@@ -23,5 +25,6 @@ Compiling files:
 End of files
 Exit code: OK
 ------------------------------------------
+Building module3
 Exit code: NOTHING_DONE
 ------------------------------------------

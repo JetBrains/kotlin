@@ -16,29 +16,46 @@
 
 package org.jetbrains.kotlin.js.inline.util.rewriters
 
-import com.google.dart.compiler.backend.js.ast.JsVisitorWithContextImpl
-import com.google.dart.compiler.backend.js.ast.JsFunctionScope
-import org.jetbrains.kotlin.js.inline.context.NamingContext
-import com.google.dart.compiler.backend.js.ast.JsFunction
-import com.google.dart.compiler.backend.js.ast.JsContext
-import com.google.dart.compiler.backend.js.ast.JsLabel
+import com.google.dart.compiler.backend.js.ast.*
+import java.util.*
 
-class LabelNameRefreshingVisitor(val context: NamingContext, val functionScope: JsFunctionScope) : JsVisitorWithContextImpl() {
-    override fun visit(x: JsFunction, ctx: JsContext<*>): Boolean = false
+class LabelNameRefreshingVisitor(val functionScope: JsFunctionScope) : JsVisitorWithContextImpl() {
+    private val substitutions: MutableMap<JsName, ArrayDeque<JsName>> = mutableMapOf()
 
-    override fun visit(x: JsLabel, ctx: JsContext<*>): Boolean {
+    override fun visit(x: JsFunction, ctx: JsContext<JsNode>): Boolean = false
+
+    override fun endVisit(x: JsBreak, ctx: JsContext<JsNode>) {
+        val label = x.label?.name
+        if (label != null) {
+            ctx.replaceMe(JsBreak(getSubstitution(label).makeRef()))
+        }
+        super.endVisit(x, ctx)
+    }
+
+    override fun endVisit(x: JsContinue, ctx: JsContext<JsNode>) {
+        val label = x.label?.name
+        if (label != null) {
+            ctx.replaceMe(JsContinue(getSubstitution(label).makeRef()))
+        }
+        super.endVisit(x, ctx)
+    }
+
+    override fun visit(x: JsLabel, ctx: JsContext<JsNode>): Boolean {
         val labelName = x.name
         val freshName = functionScope.enterLabel(labelName.ident)
-
-        if (freshName.ident != labelName.ident) {
-            context.replaceName(labelName, freshName.makeRef())
-        }
+        substitutions.getOrPut(labelName) { ArrayDeque() }.push(freshName)
 
         return super.visit(x, ctx)
     }
 
-    override fun endVisit(x: JsLabel, ctx: JsContext<*>) {
-        super.endVisit(x, ctx)
+    override fun endVisit(x: JsLabel, ctx: JsContext<JsNode>) {
+        val labelName = x.name
+        val stack = substitutions[labelName]!!
+        val replacementLabel = JsLabel(stack.pop(), x.statement).apply { copyMetadataFrom(x) }
+        ctx.replaceMe(replacementLabel)
         functionScope.exitLabel()
+        super.endVisit(x, ctx)
     }
+
+    private fun getSubstitution(name: JsName) = substitutions[name]?.let { it.peek() } ?: name
 }

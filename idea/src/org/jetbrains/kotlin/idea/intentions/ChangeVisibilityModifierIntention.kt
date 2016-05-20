@@ -103,7 +103,7 @@ open class ChangeVisibilityModifierIntention protected constructor(
             is KtNamedFunction -> declaration.funKeyword?.textRange
             is KtProperty -> declaration.valOrVarKeyword.textRange
             is KtClass -> declaration.getClassOrInterfaceKeyword()?.textRange
-            is KtObjectDeclaration -> declaration.getObjectKeyword().textRange
+            is KtObjectDeclaration -> declaration.getObjectKeyword()?.textRange
             is KtPrimaryConstructor -> declaration.valueParameterList?.let { TextRange.from(it.startOffset, 0) } //TODO: use constructor keyword if exist
             is KtSecondaryConstructor -> declaration.getConstructorKeyword().textRange
             is KtParameter -> declaration.valOrVarKeyword?.textRange
@@ -130,11 +130,12 @@ open class ChangeVisibilityModifierIntention protected constructor(
         }
 
         private fun canBeProtected(declaration: KtDeclaration): Boolean {
-            var parent = declaration.parent
-            if (parent is KtClassBody) {
-                parent = parent.parent
+            val parent = declaration.parent
+            return when (parent) {
+                is KtClassBody -> parent.parent is KtClass
+                is KtParameterList -> parent.parent is KtPrimaryConstructor
+                else -> false
             }
-            return parent is KtClass
         }
     }
 

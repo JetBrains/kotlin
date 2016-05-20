@@ -1,5 +1,6 @@
 ================ Step #1 =================
 
+Building module1, module2
 Cleaning output files:
   out/production/module2/b/B.class
   out/production/module2/b/BB.class

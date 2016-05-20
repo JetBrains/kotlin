@@ -19,5 +19,5 @@ Compiling files:
 End of files
 COMPILATION FAILED
 cannot find symbol
-symbol  : method f(java.lang.String)
-location: class test.FunKt
+  symbol:   method f(java.lang.String)
+  location: class test.FunKt

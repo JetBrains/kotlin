@@ -297,7 +297,7 @@ public final class JsAstUtils {
     }
 
     @NotNull
-    public static JsExpression assignment(@NotNull JsExpression left, @NotNull JsExpression right) {
+    public static JsBinaryOperation assignment(@NotNull JsExpression left, @NotNull JsExpression right) {
         return new JsBinaryOperation(JsBinaryOperator.ASG, left, right);
     }
 

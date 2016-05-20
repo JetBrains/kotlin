@@ -627,7 +627,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         // for (e : E in c) {...}
         protected final KtForExpression forExpression;
-        private final Label bodyStart = new Label();
+        private final Label loopParameterStartLabel = new Label();
         private final Label bodyEnd = new Label();
         private final List<Runnable> leaveVariableTasks = Lists.newArrayList();
 
@@ -667,7 +667,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                         myFrameMap.leave(parameterDescriptor);
                         v.visitLocalVariable(parameterDescriptor.getName().asString(),
                                              loopParameterType.getDescriptor(), null,
-                                             bodyStart, bodyEnd,
+                                             loopParameterStartLabel, bodyEnd,
                                              loopParameterVar);
                     }
                 });
@@ -687,9 +687,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         public abstract void checkPreCondition(@NotNull Label loopExit);
 
         public void beforeBody() {
-            v.mark(bodyStart);
-
             assignToLoopParameter();
+            v.mark(loopParameterStartLabel);
 
             if (forExpression.getLoopParameter() == null) {
                 KtDestructuringDeclaration multiParameter = forExpression.getDestructuringParameter();

@@ -475,7 +475,7 @@ public class KtPsiUtil {
 
             while (!(current instanceof KtBlockExpression || current instanceof KtDeclaration || current instanceof KtStatementExpression)) {
                 if (current.getTextRange().getEndOffset() != currentInner.getTextRange().getEndOffset()) {
-                    return current.getText().charAt(current.getTextLength() - 1) != ')'; // if current expression is "guarded" by parenthesis, no extra parenthesis is necessary
+                    return !(current instanceof KtParenthesizedExpression) && !(current instanceof KtValueArgumentList); // if current expression is "guarded" by parenthesis, no extra parenthesis is necessary
                 }
 
                 current = current.getParent();

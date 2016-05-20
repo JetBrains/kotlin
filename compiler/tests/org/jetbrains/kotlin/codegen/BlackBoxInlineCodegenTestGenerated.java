@@ -1997,6 +1997,81 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/boxInline/stackOnReturn")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class StackOnReturn extends AbstractBlackBoxInlineCodegenTest {
+        public void testAllFilesPresentInStackOnReturn() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/stackOnReturn"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("elvis.kt")
+        public void testElvis() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/stackOnReturn/elvis.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ifThenElse.kt")
+        public void testIfThenElse() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/stackOnReturn/ifThenElse.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt11499.kt")
+        public void testKt11499() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/stackOnReturn/kt11499.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("mixedTypesOnStack1.kt")
+        public void testMixedTypesOnStack1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/stackOnReturn/mixedTypesOnStack1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("mixedTypesOnStack2.kt")
+        public void testMixedTypesOnStack2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/stackOnReturn/mixedTypesOnStack2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("mixedTypesOnStack3.kt")
+        public void testMixedTypesOnStack3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/stackOnReturn/mixedTypesOnStack3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nonLocalReturn1.kt")
+        public void testNonLocalReturn1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/stackOnReturn/nonLocalReturn1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nonLocalReturn2.kt")
+        public void testNonLocalReturn2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/stackOnReturn/nonLocalReturn2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nonLocalReturn3.kt")
+        public void testNonLocalReturn3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/stackOnReturn/nonLocalReturn3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("returnLong.kt")
+        public void testReturnLong() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/stackOnReturn/returnLong.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("tryFinally.kt")
+        public void testTryFinally() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/stackOnReturn/tryFinally.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/boxInline/syntheticAccessors")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

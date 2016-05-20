@@ -81,7 +81,7 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
     protected void setUp() throws Exception {
         // sdk path workaround, set real android sdk path and platform for android plugin to work
         System.setProperty(KotlinAndroidTestCaseBase.SDK_PATH_PROPERTY, PathManager.getHomePath() + "/../dependencies/androidSDK");
-        System.setProperty(KotlinAndroidTestCaseBase.PLATFORM_DIR_PROPERTY, "android-21");
+        System.setProperty(KotlinAndroidTestCaseBase.PLATFORM_DIR_PROPERTY, "android-23");
 
         VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory());
 

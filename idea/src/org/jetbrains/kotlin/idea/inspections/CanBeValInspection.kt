@@ -108,7 +108,7 @@ class CanBeValInspection : AbstractKotlinInspection() {
                     if (next in visited) continue
                     if (next in targets) return true
                     visited.add(next)
-                    if (canReach(next, targets)) return true
+                    if (canReach(next, targets, visited)) return true
                 }
                 return false
             }

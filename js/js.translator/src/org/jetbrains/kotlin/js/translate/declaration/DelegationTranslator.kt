@@ -144,7 +144,8 @@ class DelegationTranslator(
             val delegateRefName = context().getScopeForDescriptor(setterDescriptor).declareName(delegateName)
             val delegateRef = JsNameRef(delegateRefName, JsLiteral.THIS)
 
-            val setExpression = if (DescriptorUtils.isExtension(descriptor)) {
+            // TODO: remove explicit type annotation when Kotlin compiler works this out
+            val setExpression: JsExpression = if (DescriptorUtils.isExtension(descriptor)) {
                 val setterName = context().getNameForDescriptor(setterDescriptor)
                 val setterNameRef = JsNameRef(setterName, delegateRef)
                 val extensionFunctionReceiverName = jsFunction.scope.declareName(Namer.getReceiverParameterName())

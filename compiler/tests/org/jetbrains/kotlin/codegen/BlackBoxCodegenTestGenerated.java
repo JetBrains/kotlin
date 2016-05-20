@@ -5326,6 +5326,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("nullNullOk.kt")
+        public void testNullNullOk() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/elvis/nullNullOk.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("primitive.kt")
         public void testPrimitive() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/elvis/primitive.kt");

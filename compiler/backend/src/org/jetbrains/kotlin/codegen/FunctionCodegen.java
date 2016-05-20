@@ -528,7 +528,7 @@ public class FunctionCodegen {
         catch (Throwable t) {
             String bytecode = renderByteCodeIfAvailable(mv);
             throw new CompilationException(
-                    "wrong code generated" +
+                    "wrong code generated\n" +
                     (description != null ? " for " + description : "") +
                     t.getClass().getName() +
                     " " +
