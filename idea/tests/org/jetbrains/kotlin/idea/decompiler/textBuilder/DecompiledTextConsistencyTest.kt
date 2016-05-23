@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
+import org.jetbrains.kotlin.test.KotlinTestUtils
 
 class DecompiledTextConsistencyTest : TextConsistencyBaseTest() {
 
@@ -50,7 +51,7 @@ class DecompiledTextConsistencyTest : TextConsistencyBaseTest() {
 
     override fun getModuleDescriptor(): ModuleDescriptor =
             TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-                    TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project, JvmResolveUtil.TEST_MODULE_NAME),
+                    TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project, KotlinTestUtils.TEST_MODULE_NAME),
                     listOf(), BindingTraceContext(), CompilerConfiguration.EMPTY,
                     IDEPackagePartProvider(GlobalSearchScope.allScope(project))
             ).moduleDescriptor
