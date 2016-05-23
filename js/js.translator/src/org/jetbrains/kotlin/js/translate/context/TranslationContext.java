@@ -18,8 +18,6 @@ package org.jetbrains.kotlin.js.translate.context;
 
 import com.google.dart.compiler.backend.js.ast.*;
 import com.intellij.psi.PsiElement;
-import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.ReflectionTypes;
@@ -520,7 +518,6 @@ public class TranslationContext {
     @NotNull
     public List<DeferredCallSite> endDeclaration() {
         List<DeferredCallSite> result = null;
-        ClassDescriptor classDescriptor = this.classDescriptor;
         if (classDescriptor != null) {
             result = staticContext.getDeferredCallSites().remove(classDescriptor);
         }
