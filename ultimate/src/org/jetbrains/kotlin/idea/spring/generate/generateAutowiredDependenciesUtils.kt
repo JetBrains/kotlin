@@ -110,7 +110,7 @@ private fun createAutowiredDependency(
 
 fun generateAutowiredDependenciesFor(klass: KtLightClass): List<BatchTemplateRunner> {
     val model = SpringModelUtils.getInstance().getPsiClassSpringModel(klass)
-    val candidates = GenerateSpringBeanDependenciesUtil.getAutowiredBeanCandidates(model) { it.containingFile != klass.containingFile }
+    val candidates = GenerateSpringBeanDependenciesUtil.getAutowiredBeanCandidates(model) { true }
     val dependencies = if (ApplicationManager.getApplication().isUnitTestMode) {
         candidates.map { it.springBean }.filter(klass.project.beanFilter).sortedBy { it.name }
     } else {
