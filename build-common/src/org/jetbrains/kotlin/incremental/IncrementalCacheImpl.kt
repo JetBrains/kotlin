@@ -646,11 +646,11 @@ open class IncrementalCacheImpl<Target>(
     }
 
     private inner class InlineFunctionsMap(storageFile: File) : BasicStringMap<Map<String, Long>>(storageFile, StringToLongMapExternalizer) {
-        private fun getInlineFunctionsMap(bytes: ByteArray): Map<String, Long> {
-            val result = HashMap<String, Long>()
-
-            val inlineFunctions = inlineFunctionsJvmNames(bytes)
+        private fun getInlineFunctionsMap(header: KotlinClassHeader, bytes: ByteArray): Map<String, Long> {
+            val inlineFunctions = inlineFunctionsJvmNames(header)
             if (inlineFunctions.isEmpty()) return emptyMap()
+
+            val result = HashMap<String, Long>()
 
             ClassReader(bytes).accept(object : ClassVisitor(Opcodes.ASM5) {
                 override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
@@ -674,7 +674,7 @@ open class IncrementalCacheImpl<Target>(
         }
 
         fun process(kotlinClass: LocalFileKotlinClass, isPackage: Boolean): CompilationResult {
-            return put(kotlinClass.className, getInlineFunctionsMap(kotlinClass.fileContents), isPackage)
+            return put(kotlinClass.className, getInlineFunctionsMap(kotlinClass.classHeader, kotlinClass.fileContents), isPackage)
         }
 
         private fun put(className: JvmClassName, newMap: Map<String, Long>, isPackage: Boolean): CompilationResult {
