@@ -35,6 +35,12 @@ public class SpringRenameTestGenerated extends AbstractSpringRenameTest {
         KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("ultimate/testData/spring/core/rename"), Pattern.compile("^(.+)\\.test$"));
     }
 
+    @TestMetadata("annotationArgBySpELRefInXMLConf/annotationArgBySpELRefInXMLConf.test")
+    public void testAnnotationArgBySpELRefInXMLConf_AnnotationArgBySpELRefInXMLConf() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("ultimate/testData/spring/core/rename/annotationArgBySpELRefInXMLConf/annotationArgBySpELRefInXMLConf.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("classWithXmlRefs/classWithXmlRef.test")
     public void testClassWithXmlRefs_ClassWithXmlRef() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("ultimate/testData/spring/core/rename/classWithXmlRefs/classWithXmlRef.test");

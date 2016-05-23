@@ -1,0 +1,11 @@
+{
+  "fixtureClasses": ["org.jetbrains.kotlin.idea.spring.tests.SpringTestFixtureExtension"],
+  "type": "MARKED_ELEMENT",
+  "mainFile": "bean/spring-config.xml",
+  "springFileSet": ["bean/spring-config.xml", "bean/KotlinConfig.kt"],
+  "newName": "nameK2",
+  "byRef": "true",
+  "withRuntime": "true",
+  "searchInComments": "false",
+  "searchInTextOccurrences": "false"
+}
