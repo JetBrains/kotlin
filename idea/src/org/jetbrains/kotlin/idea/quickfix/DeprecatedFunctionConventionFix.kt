@@ -42,6 +42,8 @@ class DeprecatedFunctionConventionFix(
         FilteredRenameProcessor(project, element, newName, false, false).run()
     }
 
+    override fun startInWriteAction(): Boolean = false
+
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val (functionDescriptor, newName) = when (diagnostic) {
