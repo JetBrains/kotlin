@@ -192,7 +192,9 @@ abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
 
             val substitution = RenamePsiElementProcessor.forElement(toRename).substituteElementToRename(toRename, null)
 
-            runRenameProcessor(context, newName, substitution, true, true)
+            val searchInComments = renameParamsObject["searchInComments"]?.asBoolean ?: true
+            val searchInTextOccurrences = renameParamsObject["searchInTextOccurrences"]?.asBoolean ?: true
+            runRenameProcessor(context, newName, substitution, searchInComments, searchInTextOccurrences)
         }
     }
 
