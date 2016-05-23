@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.idea.spring.lineMarking
 
+/*
+
 import com.intellij.codeHighlighting.Pass
 import com.intellij.codeInsight.daemon.GutterIconNavigationHandler
 import com.intellij.codeInsight.daemon.LineMarkerInfo
@@ -37,6 +39,7 @@ import org.jetbrains.kotlin.idea.spring.diagram.OpenKotlinSpringModelDependencie
 import org.jetbrains.kotlin.idea.spring.diagram.OpenKotlinSpringModelDependenciesModuleDiagramAction
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
+
 
 class KotlinSpringModelDependenciesLineMarkerProvider : ModelDependenciesLineMarkerProviderJava() {
     override fun getId() = javaClass.name
@@ -81,3 +84,4 @@ class KotlinSpringModelDependenciesLineMarkerProvider : ModelDependenciesLineMar
         }
     }
 }
+*/
