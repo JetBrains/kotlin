@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.js.translate.expression;
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.js.translate.context.TemporaryVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.general.Translation;
@@ -34,7 +33,6 @@ import org.jetbrains.kotlin.types.KotlinType;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.asSyntheticStatement;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.negated;
 
 public final class WhenTranslator extends AbstractTranslator {
@@ -56,11 +54,7 @@ public final class WhenTranslator extends AbstractTranslator {
 
         KtExpression subject = expression.getSubjectExpression();
         if (subject != null) {
-            JsExpression subjectExpression = Translation.translateAsExpression(subject, context);
-            TemporaryVariable subjectVar = context.declareTemporary(null);
-            context.addStatementToCurrentBlock(asSyntheticStatement(JsAstUtils.assignment(subjectVar.reference(), subjectExpression)));
-            subjectExpression = subjectVar.reference();
-            expressionToMatch = subjectExpression;
+            expressionToMatch = context.defineTemporary(Translation.translateAsExpression(subject, context));
         }
         else {
             expressionToMatch = null;

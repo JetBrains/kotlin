@@ -25,8 +25,6 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.reference.CallArgumentTranslator
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.asSyntheticStatement
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getReceiverParameterForReceiver
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
@@ -78,17 +76,14 @@ fun TranslationContext.getCallInfo(resolvedCall: ResolvedCall<out FunctionDescri
         if (!argsBlock.isEmpty && explicitReceivers.extensionOrDispatchReceiver != null) {
             val receiverOrThisRef =
                 if (TranslationUtils.isCacheNeeded(explicitReceivers.extensionOrDispatchReceiver)) {
-                    val receiverOrThisRefVar = this.declareTemporary(explicitReceivers.extensionOrDispatchReceiver)
-                    this.addStatementToCurrentBlock(receiverOrThisRefVar.assignmentExpression().makeStmt())
-                    receiverOrThisRefVar.reference()
+                    defineTemporary(explicitReceivers.extensionOrDispatchReceiver)
                 }
                 else {
                     explicitReceivers.extensionOrDispatchReceiver
                 }
             var receiverRef = explicitReceivers.extensionReceiver
             if (receiverRef != null) {
-                receiverRef = this.declareTemporary(null).reference()
-                addStatementToCurrentBlock(asSyntheticStatement(JsAstUtils.assignment(receiverRef, explicitReceivers.extensionReceiver!!)))
+                receiverRef = defineTemporary(explicitReceivers.extensionReceiver!!)
             }
             ExplicitReceivers(receiverOrThisRef, receiverRef)
         }

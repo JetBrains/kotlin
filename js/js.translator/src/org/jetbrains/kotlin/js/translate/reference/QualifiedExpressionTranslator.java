@@ -22,17 +22,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
-import org.jetbrains.kotlin.js.translate.context.TemporaryVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.utils.ErrorReportingUtils;
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 
 import static org.jetbrains.kotlin.js.translate.general.Translation.translateAsExpression;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
-import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.asSyntheticStatement;
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.getNotNullSimpleNameSelector;
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.getSelector;
 
@@ -46,9 +43,7 @@ public final class QualifiedExpressionTranslator {
                                                        @NotNull TranslationContext context, boolean forceOrderOfEvaluation) {
         JsExpression receiver = translateReceiver(expression, context);
         if (forceOrderOfEvaluation && receiver != null) {
-            TemporaryVariable temporaryVariable = context.declareTemporary(null);
-            context.addStatementToCurrentBlock(asSyntheticStatement(JsAstUtils.assignment(temporaryVariable.reference(), receiver)));
-            receiver = temporaryVariable.reference();
+            receiver = context.defineTemporary(receiver);
         }
         return VariableAccessTranslator.newInstance(context, getNotNullSimpleNameSelector(expression), receiver);
     }

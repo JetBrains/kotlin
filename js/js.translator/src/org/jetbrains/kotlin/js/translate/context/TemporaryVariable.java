@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.js.translate.context;
 
-import com.google.dart.compiler.backend.js.ast.JsBinaryOperation;
-import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsName;
-import com.google.dart.compiler.backend.js.ast.JsNameRef;
+import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.backend.js.ast.metadata.MetadataProperties;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -60,5 +57,10 @@ public class TemporaryVariable {
     public JsExpression assignmentExpression() {
         assert assignmentExpression != null;
         return assignmentExpression;
+    }
+
+    @NotNull
+    public JsStatement assignmentStatement() {
+        return JsAstUtils.asSyntheticStatement(assignmentExpression());
     }
 }
