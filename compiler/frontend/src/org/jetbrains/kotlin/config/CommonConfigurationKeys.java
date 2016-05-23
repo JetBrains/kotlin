@@ -25,7 +25,12 @@ public class CommonConfigurationKeys {
     }
 
     // roots, including dependencies and own source
-    public static final CompilerConfigurationKey<List<ContentRoot>> CONTENT_ROOTS = CompilerConfigurationKey.create("content roots");
+    public static final CompilerConfigurationKey<List<ContentRoot>> CONTENT_ROOTS =
+            CompilerConfigurationKey.create("content roots");
 
-    public static final CompilerConfigurationKey<List<KotlinScriptDefinition>> SCRIPT_DEFINITIONS_KEY = CompilerConfigurationKey.create("script definitions");
+    public static final CompilerConfigurationKey<List<KotlinScriptDefinition>> SCRIPT_DEFINITIONS_KEY =
+            CompilerConfigurationKey.create("script definitions");
+
+    public static final CompilerConfigurationKey<Boolean> DISABLE_INLINE =
+            CompilerConfigurationKey.create("disable inline");
 }

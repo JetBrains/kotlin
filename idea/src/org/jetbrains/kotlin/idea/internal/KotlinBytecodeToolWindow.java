@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.codegen.ClassBuilderFactories;
 import org.jetbrains.kotlin.codegen.CompilationErrorHandler;
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
+import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
@@ -116,7 +117,7 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
 
             CompilerConfiguration configuration = new CompilerConfiguration();
             if (!enableInline.isSelected()) {
-                configuration.put(JVMConfigurationKeys.DISABLE_INLINE, true);
+                configuration.put(CommonConfigurationKeys.DISABLE_INLINE, true);
             }
             if (!enableAssertions.isSelected()) {
                 configuration.put(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS, true);
@@ -275,7 +276,7 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
         BindingContext bindingContextForFile = resolutionFacade.analyzeFullyAndGetResult(Collections.singletonList(ktFile)).getBindingContext();
 
         kotlin.Pair<BindingContext, List<KtFile>> result = DebuggerUtils.INSTANCE.analyzeInlinedFunctions(
-                resolutionFacade, bindingContextForFile, ktFile, configuration.getBoolean(JVMConfigurationKeys.DISABLE_INLINE)
+                resolutionFacade, bindingContextForFile, ktFile, configuration.getBoolean(CommonConfigurationKeys.DISABLE_INLINE)
         );
 
         BindingContext bindingContext = result.getFirst();

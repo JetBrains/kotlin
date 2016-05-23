@@ -255,7 +255,6 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         }
         EcmaVersion ecmaVersion = EcmaVersion.defaultVersion();
         String moduleId = FileUtil.getNameWithoutExtension(new File(arguments.outputFile));
-        boolean inlineEnabled = !arguments.noInline;
 
         List<String> libraryFiles = new SmartList<String>();
         if (!arguments.noStdlib) {
@@ -269,7 +268,6 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         return new LibrarySourcesConfig.Builder(project, configuration, moduleId, libraryFiles)
                 .ecmaVersion(ecmaVersion)
                 .sourceMap(arguments.sourceMap)
-                .inlineEnabled(inlineEnabled)
                 .metaInfo(arguments.metaInfo)
                 .kjsm(arguments.kjsm)
                 .build();

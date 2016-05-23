@@ -20,6 +20,7 @@ import com.google.dart.compiler.backend.js.ast.*;
 import com.google.gwt.dev.js.ThrowExceptionOnErrorReporter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.js.parser.ParserUtilsKt;
 import org.jetbrains.kotlin.js.resolve.diagnostics.JsCallChecker;
@@ -35,8 +36,8 @@ import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import java.util.List;
 
 import static org.jetbrains.kotlin.js.resolve.diagnostics.JsCallChecker.isJsCall;
-import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.getFunctionDescriptor;
 import static org.jetbrains.kotlin.js.translate.utils.InlineUtils.setInlineCallMetadata;
+import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.getFunctionDescriptor;
 import static org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator.getConstant;
 
 public final class CallExpressionTranslator extends AbstractCallExpressionTranslator {
@@ -63,7 +64,7 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
     }
 
     public static boolean shouldBeInlined(@NotNull KtCallExpression expression, @NotNull TranslationContext context) {
-        if (!context.getConfig().isInlineEnabled()) return false;
+        if (context.getConfig().getConfiguration().getBoolean(CommonConfigurationKeys.DISABLE_INLINE)) return false;
 
         CallableDescriptor descriptor = getFunctionDescriptor(expression, context);
         return shouldBeInlined(descriptor);
