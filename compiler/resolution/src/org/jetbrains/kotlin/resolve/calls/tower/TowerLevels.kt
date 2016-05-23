@@ -256,7 +256,10 @@ private fun getFakeDescriptorForObject(classifier: ClassifierDescriptor?): FakeC
 }
 
 private fun getClassWithConstructors(classifier: ClassifierDescriptor?): ClassDescriptor? {
-    if (classifier !is ClassDescriptor || ErrorUtils.isError(classifier)
+    if (classifier is TypeAliasDescriptor) {
+        return getClassWithConstructors(classifier.classDescriptor)
+    }
+    else if (classifier !is ClassDescriptor || ErrorUtils.isError(classifier)
         // Constructors of singletons shouldn't be callable from the code
         || classifier.kind.isSingleton) {
         return null
