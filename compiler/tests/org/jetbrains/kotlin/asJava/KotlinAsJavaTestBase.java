@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.ContentRootsKt;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
 
 import java.io.File;
@@ -31,7 +32,7 @@ public abstract class KotlinAsJavaTestBase extends KotlinTestWithEnvironment {
 
     @Override
     protected KotlinCoreEnvironment createEnvironment() {
-        CompilerConfiguration configuration = new CompilerConfiguration();
+        CompilerConfiguration configuration = KotlinTestUtils.newConfiguration();
 
         for (File root : getKotlinSourceRoots()) {
             ContentRootsKt.addKotlinSourceRoot(configuration, root.getPath());

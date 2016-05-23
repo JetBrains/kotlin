@@ -20,7 +20,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.config.getModuleName
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.frontend.java.di.createContainerForTopDownAnalyzerForJvm
@@ -53,12 +52,9 @@ abstract class AbstractLocalClassProtoTest : TestCaseWithTmpdir() {
         val clazz = classLoader.loadClass(classFile.toRelativeString(tmpdir).substringBeforeLast(".class").replace('/', '.').replace('\\', '.'))
         assertHasAnnotationData(clazz)
 
-        val environment = KotlinCoreEnvironment.createForTests(
-                testRootDisposable,
-                KotlinTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, tmpdir),
-                EnvironmentConfigFiles.JVM_CONFIG_FILES
-        )
-        val moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(environment.project, environment.getModuleName())
+        val configuration = KotlinTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, tmpdir)
+        val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+        val moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(environment.project, configuration)
         val providerFactory = FileBasedDeclarationProviderFactory(moduleContext.storageManager, emptyList())
 
         val container = createContainerForTopDownAnalyzerForJvm(

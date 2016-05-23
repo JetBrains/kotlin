@@ -20,7 +20,6 @@ import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.config.getModuleName
 import org.jetbrains.kotlin.cli.jvm.repl.di.createContainerForReplWithJava
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
@@ -38,7 +37,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.*
 import org.jetbrains.kotlin.resolve.repl.ReplState
 import org.jetbrains.kotlin.script.ScriptPriorities
 
-class CliReplAnalyzerEngine(private val environment: KotlinCoreEnvironment) {
+class CliReplAnalyzerEngine(environment: KotlinCoreEnvironment) {
     private val topDownAnalysisContext: TopDownAnalysisContext
     private val topDownAnalyzer: LazyTopDownAnalyzerForTopLevel
     private val resolveSession: ResolveSession
@@ -48,7 +47,7 @@ class CliReplAnalyzerEngine(private val environment: KotlinCoreEnvironment) {
     val trace: BindingTraceContext = CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace()
 
     init {
-        val moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(environment.project, environment.getModuleName())
+        val moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(environment.project, environment.configuration)
         this.module = moduleContext.module
 
         scriptDeclarationFactory = ScriptMutableDeclarationProviderFactory()
