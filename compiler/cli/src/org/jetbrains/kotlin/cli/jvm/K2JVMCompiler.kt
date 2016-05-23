@@ -24,7 +24,10 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.ExitCode.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.*
-import org.jetbrains.kotlin.cli.jvm.compiler.*
+import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentUtil
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
 import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.repl.ReplFromTerminal
@@ -46,7 +49,9 @@ import java.lang.management.ManagementFactory
 import java.util.concurrent.TimeUnit
 
 class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
-    override fun doExecute(arguments: K2JVMCompilerArguments, services: Services, messageCollector: MessageCollector, rootDisposable: Disposable): ExitCode {
+    override fun doExecute(arguments: K2JVMCompilerArguments, configuration: CompilerConfiguration, rootDisposable: Disposable): ExitCode {
+        val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+
         val paths = if (arguments.kotlinHome != null)
             KotlinPathsFromHomeDir(File(arguments.kotlinHome))
         else
@@ -54,17 +59,6 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
         messageCollector.report(CompilerMessageSeverity.LOGGING, "Using Kotlin home directory " + paths.homePath, CompilerMessageLocation.NO_LOCATION)
         PerformanceCounter.setTimeCounterEnabled(arguments.reportPerf)
-
-        val configuration = CompilerConfiguration()
-        configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
-
-        if (IncrementalCompilation.isEnabled()) {
-            val incrementalCompilationComponents = services.get(IncrementalCompilationComponents::class.java)
-            configuration.put(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS, incrementalCompilationComponents)
-        }
-
-        val locator = services.get(CompilerJarLocator::class.java)
-        configuration.put(CLIConfigurationKeys.COMPILER_JAR_LOCATOR, locator)
 
         try {
             if (!arguments.noJdk) {
@@ -221,6 +215,17 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             initStartNanos = 0L
         }
         return result
+    }
+
+    override fun setupPlatformSpecificArgumentsAndServices(
+            configuration: CompilerConfiguration, arguments: K2JVMCompilerArguments, services: Services
+    ) {
+        if (IncrementalCompilation.isEnabled()) {
+            configuration.put(
+                    JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS,
+                    services.get(IncrementalCompilationComponents::class.java)
+            )
+        }
     }
 
     /**

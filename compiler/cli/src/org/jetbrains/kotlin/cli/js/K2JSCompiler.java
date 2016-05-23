@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
-import org.jetbrains.kotlin.cli.jvm.compiler.CompilerJarLocator;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
@@ -80,25 +79,16 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
     @NotNull
     @Override
     protected ExitCode doExecute(
-            @NotNull K2JSCompilerArguments arguments,
-            @NotNull Services services,
-            @NotNull final MessageCollector messageCollector,
-            @NotNull Disposable rootDisposable
+            @NotNull K2JSCompilerArguments arguments, @NotNull CompilerConfiguration configuration, @NotNull Disposable rootDisposable
     ) {
+        final MessageCollector messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
+
         if (arguments.freeArgs.isEmpty()) {
             if (arguments.version) {
                 return OK;
             }
             messageCollector.report(CompilerMessageSeverity.ERROR, "Specify at least one source file or directory", NO_LOCATION);
             return COMPILATION_ERROR;
-        }
-
-        CompilerConfiguration configuration = new CompilerConfiguration();
-        configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector);
-
-        CompilerJarLocator locator = services.get(CompilerJarLocator.class);
-        if (locator != null) {
-            configuration.put(CLIConfigurationKeys.COMPILER_JAR_LOCATOR, locator);
         }
 
         ContentRootsKt.addKotlinSourceRoots(configuration, arguments.freeArgs);
@@ -242,6 +232,13 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             }
         });
         return analyzerWithCompilerReport;
+    }
+
+    @Override
+    protected void setupPlatformSpecificArgumentsAndServices(
+            @NotNull CompilerConfiguration configuration, @NotNull K2JSCompilerArguments arguments, @NotNull Services services
+    ) {
+        // No platform-specific arguments yet
     }
 
     @NotNull

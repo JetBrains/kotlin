@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.kotlin.cli.common.messages.*;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentException;
+import org.jetbrains.kotlin.cli.jvm.compiler.CompilerJarLocator;
+import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.Services;
 import org.jetbrains.kotlin.progress.CompilationCanceledException;
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus;
@@ -166,6 +168,13 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
         reportUnknownExtraFlags(messageCollector, arguments);
 
         GroupingMessageCollector groupingCollector = new GroupingMessageCollector(messageCollector);
+
+        CompilerConfiguration configuration = new CompilerConfiguration();
+        configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, groupingCollector);
+
+        setupCommonArgumentsAndServices(configuration, arguments, services);
+        setupPlatformSpecificArgumentsAndServices(configuration, arguments, services);
+
         try {
             ExitCode exitCode = OK;
 
@@ -187,7 +196,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
                 }
                 Disposable rootDisposable = Disposer.newDisposable();
                 try {
-                    ExitCode code = doExecute(arguments, services, groupingCollector, rootDisposable);
+                    ExitCode code = doExecute(arguments, configuration, rootDisposable);
                     exitCode = groupingCollector.hasErrors() ? COMPILATION_ERROR : code;
                 }
                 catch (CompilationCanceledException e) {
@@ -221,6 +230,19 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
         }
     }
 
+    private static void setupCommonArgumentsAndServices(
+            @NotNull CompilerConfiguration configuration, @NotNull CommonCompilerArguments arguments, @NotNull Services services
+    ) {
+        CompilerJarLocator locator = services.get(CompilerJarLocator.class);
+        if (locator != null) {
+            configuration.put(CLIConfigurationKeys.COMPILER_JAR_LOCATOR, locator);
+        }
+    }
+
+    protected abstract void setupPlatformSpecificArgumentsAndServices(
+            @NotNull CompilerConfiguration configuration, @NotNull A arguments, @NotNull Services services
+    );
+
     private void reportUnknownExtraFlags(@NotNull MessageCollector collector, @NotNull A arguments) {
         for (String flag : arguments.unknownExtraFlags) {
             collector.report(
@@ -234,8 +256,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
     @NotNull
     protected abstract ExitCode doExecute(
             @NotNull A arguments,
-            @NotNull Services services,
-            @NotNull MessageCollector messageCollector,
+            @NotNull CompilerConfiguration configuration,
             @NotNull Disposable rootDisposable
     );
 
