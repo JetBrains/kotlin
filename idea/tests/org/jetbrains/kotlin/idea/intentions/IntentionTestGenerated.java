@@ -4225,6 +4225,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("ifWhenUnit.kt")
+        public void testIfWhenUnit() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToBlockBody/ifWhenUnit.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("implicitlyNonUnitFun.kt")
         public void testImplicitlyNonUnitFun() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToBlockBody/implicitlyNonUnitFun.kt");
@@ -4282,6 +4288,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("valueIsAnonymousObject4.kt")
         public void testValueIsAnonymousObject4() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToBlockBody/valueIsAnonymousObject4.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("whenUnit.kt")
+        public void testWhenUnit() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToBlockBody/whenUnit.kt");
             doTest(fileName);
         }
     }
