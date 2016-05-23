@@ -1,0 +1,13 @@
+import java.util.*
+
+fun A() {
+    System.out.println("A")
+}
+
+fun B() {
+    Collections.sort(mutableListOf(1, 2, 3))
+}
+
+fun C() {
+    HashMap<String, String>.put("A", "B")
+}

@@ -1,0 +1,26 @@
+<problems>
+    <problem>
+        <file>unnecessaryJavaUsage.kt</file>
+        <line>4</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="unnecessaryJavaUsage.kt" />
+        <problem_class severity="WEAK_WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unnecessary java usage</problem_class>
+        <description>Unnecessary java usage</description>
+    </problem>
+    <problem>
+        <file>unnecessaryJavaUsage.kt</file>
+        <line>8</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="unnecessaryJavaUsage.kt" />
+        <problem_class severity="WEAK_WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unnecessary java usage</problem_class>
+        <description>Unnecessary java usage</description>
+    </problem>
+    <problem>
+        <file>unnecessaryJavaUsage.kt</file>
+        <line>12</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="unnecessaryJavaUsage.kt" />
+        <problem_class severity="WEAK_WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unnecessary java usage</problem_class>
+        <description>Unnecessary java usage</description>
+    </problem>
+</problems>
