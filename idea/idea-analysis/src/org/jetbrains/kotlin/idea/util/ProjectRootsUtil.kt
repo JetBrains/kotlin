@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.util
 
+import com.intellij.ide.highlighter.ArchiveFileType
 import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectFileIndex
@@ -39,9 +40,10 @@ object ProjectRootsUtil {
         }
 
         // NOTE: the following is a workaround for cases when class files are under library source roots and source files are under class roots
+        val canContainClassFiles = file.fileType == ArchiveFileType.INSTANCE || file.isDirectory
         val isClassFile = file.fileType in classFileLike
 
-        if ((includeLibraryClasses && isClassFile && fileIndex.isInLibraryClasses(file)) ||
+        if ((includeLibraryClasses && (isClassFile || canContainClassFiles) && fileIndex.isInLibraryClasses(file)) ||
             (includeLibrarySource && !isClassFile && fileIndex.isInLibrarySource(file))) {
 
             return true
