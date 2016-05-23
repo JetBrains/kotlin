@@ -26,7 +26,7 @@
 		"visibility": "private",
 		"class": "PrivateClass",
 		"members": [
-			{"visibility": "internal",	"declaration": "final fun accessUsage(): kotlin.Unit", "name": "accessUsage$java_integration_test", "desc": "()V"},
+			{"visibility": "internal",	"declaration": "final fun accessUsage(): kotlin.Unit", "name": "accessUsage$test_module", "desc": "()V"},
 			{"visibility": "public",	"declaration": "constructor PrivateClass()", "name": "<init>", "desc": "()V"}
 		]
 	},

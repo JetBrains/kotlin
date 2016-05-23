@@ -27,13 +27,12 @@ import org.jetbrains.kotlin.descriptors.PackagePartProvider;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.AnalyzingUtils;
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.util.Collection;
 import java.util.Collections;
 
 public class JvmResolveUtil {
-    public static String TEST_MODULE_NAME = "java-integration-test";
-
     @NotNull
     public static AnalysisResult analyzeAndCheckForErrors(@NotNull KtFile file, @NotNull KotlinCoreEnvironment environment) {
         return analyzeAndCheckForErrors(Collections.singleton(file), environment);
@@ -90,7 +89,7 @@ public class JvmResolveUtil {
             @NotNull PackagePartProvider packagePartProvider
     ) {
         return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-                TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project, TEST_MODULE_NAME),
+                TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project, KotlinTestUtils.TEST_MODULE_NAME),
                 files, new CliLightClassGenerationSupport.CliBindingTrace(), configuration, packagePartProvider
         );
     }
