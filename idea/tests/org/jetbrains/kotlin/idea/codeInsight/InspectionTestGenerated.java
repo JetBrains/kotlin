@@ -202,6 +202,12 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("redundantIf/inspectionData/inspections.test")
+        public void testRedundantIf_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/redundantIf/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
         @TestMetadata("redundantModalityModifier/inspectionData/inspections.test")
         public void testRedundantModalityModifier_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/redundantModalityModifier/inspectionData/inspections.test");
