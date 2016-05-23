@@ -1,0 +1,18 @@
+<problems>
+    <problem>
+        <file>test.kt</file>
+        <line>14</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">@ComponentScan setup (Kotlin)</problem_class>
+        <description>Cannot resolve package bar</description>
+    </problem>
+    <problem>
+        <file>test.kt</file>
+        <line>18</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">@ComponentScan setup (Kotlin)</problem_class>
+        <description>Cannot resolve package bar</description>
+    </problem>
+</problems>
