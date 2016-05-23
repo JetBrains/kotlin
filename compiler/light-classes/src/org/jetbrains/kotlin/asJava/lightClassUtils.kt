@@ -112,7 +112,7 @@ val PsiElement.unwrapped: PsiElement?
     get() = when {
         this is KtLightElement<*, *> -> kotlinOrigin
         this is KtLightIdentifier -> origin
-        this is KtLightAnnotation.LightExpressionValue -> originalExpression
+        this is KtLightAnnotation.LightExpressionValue<*> -> originalExpression
         else -> this
     }
 
