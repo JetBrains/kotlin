@@ -7788,6 +7788,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class LocalClasses extends AbstractBlackBoxCodegenTest {
+        @TestMetadata("closureWithSelfInstantiation.kt")
+        public void ignoredClosureWithSelfInstantiation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/localClasses/closureWithSelfInstantiation.kt");
+            doTest(fileName);
+        }
+
         public void testAllFilesPresentInLocalClasses() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/localClasses"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -7897,6 +7903,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("localClassInParameterInitializer.kt")
         public void testLocalClassInParameterInitializer() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/localClasses/localClassInParameterInitializer.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("localDataClass.kt")
+        public void testLocalDataClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/localClasses/localDataClass.kt");
             doTest(fileName);
         }
 
@@ -12931,18 +12943,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("localClasses.kt")
         public void testLocalClasses() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/localClasses.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("localClassesWithSelfInstantiation.kt")
-        public void testLocalClassesWithSelfInstantiation() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/localClassesWithSelfInstantiation.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("localDataClass.kt")
-        public void testLocalDataClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/localDataClass.kt");
             doTest(fileName);
         }
 

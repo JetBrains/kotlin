@@ -276,15 +276,19 @@ class ClassTranslator private constructor(
             val capturedVars = (nonConstructorCapturedVars + constructorCapturedVars).distinct()
 
             val descriptor = constructor.descriptor
+            val classDescriptor = DescriptorUtils.getParentOfType(descriptor, ClassDescriptor::class.java, false)!!
             nonConstructorContext.putClassOrConstructorClosure(descriptor, capturedVars)
 
             val constructorCallSites = callSiteMap[constructor.descriptor].orEmpty()
+
             for (callSite in constructorCallSites) {
+                val closureQualifier = callSite.context.getArgumentForClosureConstructor(classDescriptor.thisAsReceiverParameter)
                 capturedVars.forEach { nonConstructorUsageTracker.used(it) }
-                val closureArgs = capturedVars
-                        .map { nonConstructorUsageTracker.capturedDescriptorToJsName[it]!! }
-                        .map { JsAstUtils.fqnWithoutSideEffects(it, JsLiteral.THIS) }
-                callSite.invocationArgs.addAll(0, closureArgs)
+                val closureArgs = capturedVars.map {
+                    val name = nonConstructorUsageTracker.getNameForCapturedDescriptor(it)!!
+                    JsAstUtils.fqnWithoutSideEffects(name, closureQualifier)
+                }
+                callSite.invocationArgs.addAll(0, closureArgs.toList())
             }
         }
     }
