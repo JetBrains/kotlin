@@ -29,6 +29,7 @@ import kotlin.jvm.functions.Function1;
 import kotlin.jvm.functions.Function2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.js.JavaScript;
 import org.jetbrains.kotlin.psi.KtFile;
@@ -64,6 +65,7 @@ public class LibrarySourcesConfig extends JsConfig {
 
     private LibrarySourcesConfig(
             @NotNull Project project,
+            @NotNull CompilerConfiguration configuration,
             @NotNull String moduleId,
             @NotNull List<String> files,
             @NotNull EcmaVersion ecmaVersion,
@@ -73,7 +75,7 @@ public class LibrarySourcesConfig extends JsConfig {
             boolean metaInfo,
             boolean kjsm
     ) {
-        super(project, moduleId, ecmaVersion, sourceMap, inlineEnabled, metaInfo, kjsm);
+        super(project, configuration, moduleId, ecmaVersion, sourceMap, inlineEnabled, metaInfo, kjsm);
         this.files = files;
         this.isUnitTestConfig = isUnitTestConfig;
     }
@@ -189,19 +191,25 @@ public class LibrarySourcesConfig extends JsConfig {
     }
 
     public static class Builder {
-        Project project;
-        String moduleId;
-        List<String> files;
-        @NotNull
-        EcmaVersion ecmaVersion = EcmaVersion.defaultVersion();
+        private final Project project;
+        private final CompilerConfiguration configuration;
+        private final String moduleId;
+        private final List<String> files;
+        private EcmaVersion ecmaVersion = EcmaVersion.defaultVersion();
         boolean sourceMap = false;
         boolean inlineEnabled = true;
         boolean isUnitTestConfig = false;
         boolean metaInfo = false;
         boolean kjsm = false;
 
-        public Builder(@NotNull Project project, @NotNull String moduleId, @NotNull List<String> files) {
+        public Builder(
+                @NotNull Project project,
+                @NotNull CompilerConfiguration configuration,
+                @NotNull String moduleId,
+                @NotNull List<String> files
+        ) {
             this.project = project;
+            this.configuration = configuration;
             this.moduleId = moduleId;
             this.files = files;
         }
@@ -237,7 +245,9 @@ public class LibrarySourcesConfig extends JsConfig {
         }
 
         public JsConfig build() {
-            return new LibrarySourcesConfig(project, moduleId, files, ecmaVersion, sourceMap, inlineEnabled, isUnitTestConfig, metaInfo, kjsm);
+            return new LibrarySourcesConfig(
+                    project, configuration, moduleId, files, ecmaVersion, sourceMap, inlineEnabled, isUnitTestConfig, metaInfo, kjsm
+            );
         }
     }
 

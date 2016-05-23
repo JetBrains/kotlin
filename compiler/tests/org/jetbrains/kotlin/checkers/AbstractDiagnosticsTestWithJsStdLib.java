@@ -40,7 +40,9 @@ public abstract class AbstractDiagnosticsTestWithJsStdLib extends AbstractDiagno
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        config = new LibrarySourcesConfig.Builder(getProject(), "module", LibrarySourcesConfig.JS_STDLIB).build();
+        config = new LibrarySourcesConfig.Builder(
+                getProject(), getEnvironment().getConfiguration(), "module", LibrarySourcesConfig.JS_STDLIB
+        ).build();
     }
 
     @Override

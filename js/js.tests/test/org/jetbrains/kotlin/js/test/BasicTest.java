@@ -342,7 +342,7 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
             librariesWithStdlib.addAll(libraries);
         }
 
-        return new LibrarySourcesConfig.Builder(project, moduleId, librariesWithStdlib)
+        return new LibrarySourcesConfig.Builder(project, getEnvironment().getConfiguration(), moduleId, librariesWithStdlib)
                 .ecmaVersion(ecmaVersion)
                 .sourceMap(shouldGenerateSourceMap())
                 .inlineEnabled(isInlineEnabled)
