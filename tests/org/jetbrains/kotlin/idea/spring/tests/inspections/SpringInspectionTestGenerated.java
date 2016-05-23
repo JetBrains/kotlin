@@ -47,6 +47,12 @@ public class SpringInspectionTestGenerated extends AbstractSpringInspectionTest 
         doTest(fileName);
     }
 
+    @TestMetadata("componentScan/inspectionData/inspections.test")
+    public void testComponentScan_inspectionData_Inspections_test() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("ultimate/testData/inspections/spring/componentScan/inspectionData/inspections.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("finalSpringAnnotatedDeclaration/inspectionData/inspections.test")
     public void testFinalSpringAnnotatedDeclaration_inspectionData_Inspections_test() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("ultimate/testData/inspections/spring/finalSpringAnnotatedDeclaration/inspectionData/inspections.test");
