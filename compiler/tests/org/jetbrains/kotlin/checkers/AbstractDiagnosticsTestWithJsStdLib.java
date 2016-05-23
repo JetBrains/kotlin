@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
-import org.jetbrains.kotlin.js.config.Config;
+import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.config.LibrarySourcesConfig;
 import org.jetbrains.kotlin.js.resolve.JsPlatform;
 import org.jetbrains.kotlin.name.Name;
@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractDiagnosticsTestWithJsStdLib extends AbstractDiagnosticsTest {
-    private Config config;
+    private JsConfig config;
 
     @Override
     protected void setUp() throws Exception {
@@ -94,7 +94,7 @@ public abstract class AbstractDiagnosticsTestWithJsStdLib extends AbstractDiagno
         return module;
     }
 
-    protected Config getConfig() {
+    protected JsConfig getConfig() {
         return config;
     }
 }

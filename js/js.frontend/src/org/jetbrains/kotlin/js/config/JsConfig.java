@@ -41,7 +41,7 @@ import java.util.List;
 /**
  * Base class representing a configuration of translator.
  */
-public abstract class Config {
+public abstract class JsConfig {
     private final boolean inlineEnabled;
     @NotNull
     private final Project project;
@@ -67,7 +67,7 @@ public abstract class Config {
 
     private boolean initialized = false;
 
-    protected Config(
+    protected JsConfig(
             @NotNull Project project,
             @NotNull String moduleId,
             @NotNull EcmaVersion ecmaVersion,
@@ -176,7 +176,7 @@ public abstract class Config {
     }
 
     @NotNull
-    public static Collection<KtFile> withJsLibAdded(@NotNull Collection<KtFile> files, @NotNull Config config) {
+    public static Collection<KtFile> withJsLibAdded(@NotNull Collection<KtFile> files, @NotNull JsConfig config) {
         Collection<KtFile> allFiles = Lists.newArrayList();
         allFiles.addAll(files);
         allFiles.addAll(config.getSourceFilesFromLibraries());
