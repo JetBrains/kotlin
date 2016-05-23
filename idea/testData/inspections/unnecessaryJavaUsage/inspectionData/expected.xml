@@ -1,7 +1,7 @@
 <problems>
     <problem>
         <file>unnecessaryJavaUsage.kt</file>
-        <line>2</line>
+        <line>4</line>
         <module>light_idea_test_case</module>
         <entry_point TYPE="file" FQNAME="unnecessaryJavaUsage.kt" />
         <problem_class severity="WEAK_WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unnecessary java usage</problem_class>
@@ -9,7 +9,7 @@
     </problem>
     <problem>
         <file>unnecessaryJavaUsage.kt</file>
-        <line>6</line>
+        <line>8</line>
         <module>light_idea_test_case</module>
         <entry_point TYPE="file" FQNAME="unnecessaryJavaUsage.kt" />
         <problem_class severity="WEAK_WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unnecessary java usage</problem_class>
