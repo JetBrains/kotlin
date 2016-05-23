@@ -39,7 +39,7 @@ object CallableReferenceTranslator {
             is FunctionDescriptor ->
                 translateForFunction(descriptor, context, expression)
             else ->
-                throw IllegalArgumentException("Expected property or function: ${descriptor}, expression=${expression.text}")
+                throw IllegalArgumentException("Expected property or function: $descriptor, expression=${expression.text}")
         }
     }
 
@@ -78,13 +78,13 @@ object CallableReferenceTranslator {
         }
     }
 
-    private fun isConstructor(descriptor: CallableDescriptor): Boolean = descriptor is ConstructorDescriptor
+    private fun isConstructor(descriptor: CallableDescriptor) = descriptor is ConstructorDescriptor
 
-    private fun isExtension(descriptor: CallableDescriptor): Boolean = DescriptorUtils.isExtension(descriptor)
+    private fun isExtension(descriptor: CallableDescriptor) = DescriptorUtils.isExtension(descriptor)
 
-    private fun isMember(descriptor: CallableDescriptor): Boolean = JsDescriptorUtils.getContainingDeclaration(descriptor) is ClassDescriptor
+    private fun isMember(descriptor: CallableDescriptor) = JsDescriptorUtils.getContainingDeclaration(descriptor) is ClassDescriptor
 
-    private fun isVar(descriptor: PropertyDescriptor): JsExpression = if (descriptor.isVar) JsLiteral.TRUE else JsLiteral.FALSE
+    private fun isVar(descriptor: PropertyDescriptor) = if (descriptor.isVar) JsLiteral.TRUE else JsLiteral.FALSE
 
     private fun translateForTopLevelProperty(descriptor: PropertyDescriptor, context: TranslationContext): JsExpression {
         val packageDescriptor = JsDescriptorUtils.getContainingDeclaration(descriptor)
@@ -94,7 +94,8 @@ object CallableReferenceTranslator {
         val jsPropertyName = context.getNameForDescriptor(descriptor)
         val jsPropertyNameAsString = context.program().getStringLiteral(jsPropertyName.toString())
 
-        return JsInvocation(context.namer().callableRefForTopLevelPropertyReference(), jsPackageNameRef, jsPropertyNameAsString, isVar(descriptor))
+        return JsInvocation(context.namer().callableRefForTopLevelPropertyReference(), jsPackageNameRef, jsPropertyNameAsString,
+                            isVar(descriptor))
     }
 
     private fun translateForMemberProperty(descriptor: PropertyDescriptor, context: TranslationContext): JsExpression {
@@ -145,11 +146,16 @@ object CallableReferenceTranslator {
     }
 
     private fun translateForMemberFunction(descriptor: FunctionDescriptor, context: TranslationContext): JsExpression {
-        val classDescriptor = JsDescriptorUtils.getContainingDeclaration(descriptor) as? ClassDescriptor ?: throw IllegalArgumentException("Expected ClassDescriptor: ${descriptor}")
+        val classDescriptor = JsDescriptorUtils.getContainingDeclaration(descriptor) as? ClassDescriptor ?:
+                              throw IllegalArgumentException("Expected ClassDescriptor: $descriptor")
         return translateAsMemberFunctionReference(descriptor, classDescriptor, context)
     }
 
-    private fun translateAsMemberFunctionReference(descriptor: CallableDescriptor, classDescriptor: ClassDescriptor, context: TranslationContext): JsExpression {
+    private fun translateAsMemberFunctionReference(
+            descriptor: CallableDescriptor,
+            classDescriptor: ClassDescriptor,
+            context: TranslationContext
+    ): JsExpression {
         val jsClassNameRef = context.getQualifiedReference(classDescriptor)
         val funName = context.getNameForDescriptor(descriptor)
         val funNameAsString = context.program().getStringLiteral(funName.toString())

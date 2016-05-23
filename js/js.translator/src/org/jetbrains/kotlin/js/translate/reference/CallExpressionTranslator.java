@@ -48,7 +48,8 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
             @Nullable JsExpression receiver,
             @NotNull TranslationContext context
     ) {
-        ResolvedCall<? extends FunctionDescriptor> resolvedCall = CallUtilKt.getFunctionResolvedCallWithAssert(expression, context.bindingContext());
+        ResolvedCall<? extends FunctionDescriptor> resolvedCall =
+                CallUtilKt.getFunctionResolvedCallWithAssert(expression, context.bindingContext());
 
         if (isJsCall(resolvedCall)) {
             return (new CallExpressionTranslator(expression, receiver, context)).translateJsCode();

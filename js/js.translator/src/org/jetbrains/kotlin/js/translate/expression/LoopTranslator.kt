@@ -58,7 +58,8 @@ fun createWhile(doWhile: Boolean, expression: KtWhileExpressionBase, context: Tr
         jsCondition = JsLiteral.TRUE
 
         if (doWhile) {
-            // translate to: tmpSecondRun = false; do { if(tmpSecondRun) { <expr> if(!tmpExprVar) break; } else tmpSecondRun=true; <body> } while(true)
+            // translate to: tmpSecondRun = false;
+            // do { if(tmpSecondRun) { <expr> if(!tmpExprVar) break; } else tmpSecondRun=true; <body> } while(true)
             val secondRun = context.defineTemporary(JsLiteral.FALSE)
             conditionBlock.statements.add(breakIfConditionIsFalseStatement)
             val ifStatement = JsIf(secondRun, conditionBlock, assignment(secondRun, JsLiteral.TRUE).makeStmt())
@@ -100,16 +101,14 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
 
     val destructuringParameter: KtDestructuringDeclaration? = expression.destructuringParameter
 
-    fun declareParameter(): Pair<JsName, Boolean> {
-        val loopParameter = getLoopParameter(expression)
-        if (loopParameter != null) {
-            return Pair(context.getNameForElement(loopParameter), false)
-        }
-        assert(destructuringParameter != null) { "If loopParameter is null, multi parameter must be not null ${expression.text}" }
-        return Pair(context.scope().declareTemporary(), true)
+    val loopParameter = getLoopParameter(expression)
+    val (parameterName, parameterIsTemporary) = if (loopParameter != null) {
+        Pair(context.getNameForElement(loopParameter), false)
     }
-
-    val (parameterName, parameterIsTemporary) = declareParameter()
+    else {
+        assert(destructuringParameter != null) { "If loopParameter is null, multi parameter must be not null ${expression.text}" }
+        Pair(context.scope().declareTemporary(), true)
+    }
 
     fun translateBody(itemValue: JsExpression?): JsStatement? {
         val realBody = expression.body?.let { Translation.translateAsStatementAndMergeInBlockIfNeeded(it, context) }
