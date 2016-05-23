@@ -18,11 +18,12 @@ package org.jetbrains.kotlin.asJava
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
-import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
@@ -35,7 +36,7 @@ class KtLightAnnotation(
         override val kotlinOrigin: KtAnnotationEntry,
         private val owner: PsiAnnotationOwner
 ) : PsiAnnotation by clsDelegate, KtLightElement<KtAnnotationEntry, PsiAnnotation> {
-    inner class LightExpressionValue(private val delegate: PsiExpression) : PsiAnnotationMemberValue, PsiExpression by delegate {
+    open inner class LightExpressionValue<out D : PsiExpression>(val delegate: D) : PsiAnnotationMemberValue, PsiExpression by delegate {
         val originalExpression: PsiElement? by lazy(LazyThreadSafetyMode.PUBLICATION) {
             val nameAndValue = getStrictParentOfType<PsiNameValuePair>() ?: return@lazy null
             val annotationEntry = this@KtLightAnnotation.kotlinOrigin
@@ -57,18 +58,22 @@ class KtLightAnnotation(
                 }
 
                 is ExpressionValueArgument -> {
-                    resolvedArgument.valueArgument?.getArgumentExpression()
+                    val argExpression = resolvedArgument.valueArgument?.getArgumentExpression()
+                    // arrayOf()
+                    if (argExpression is KtCallExpression) unwrapArray(argExpression.valueArguments) else argExpression
                 }
 
-                is VarargValueArgument -> {
-                    val arrayInitializer = parent as? PsiArrayInitializerMemberValue ?: return@lazy null
-                    val exprIndex = arrayInitializer.initializers.indexOf(delegate as PsiAnnotationMemberValue)
-                    if (exprIndex < 0) return@lazy null
-                    resolvedArgument.arguments[exprIndex].getArgumentExpression()
-                }
+                is VarargValueArgument -> unwrapArray(resolvedArgument.arguments)
 
                 else -> null
             }
+        }
+
+        private fun unwrapArray(arguments: List<ValueArgument>): PsiElement? {
+            val arrayInitializer = parent as? LightArrayInitializerValue ?: return null
+            val exprIndex = arrayInitializer.initializers.indexOf(this)
+            if (exprIndex < 0) return null
+            return arguments[exprIndex].getArgumentExpression()
         }
 
         override fun getReference() = references.singleOrNull()
@@ -76,6 +81,10 @@ class KtLightAnnotation(
         override fun getLanguage() = KotlinLanguage.INSTANCE
         override fun getNavigationElement() = originalExpression
         override fun getTextRange() = originalExpression?.textRange ?: TextRange.EMPTY_RANGE
+    }
+
+    inner class LightStringLiteral(delegate: PsiLiteralExpression): LightExpressionValue<PsiLiteralExpression>(delegate), PsiLiteralExpression {
+        override fun getValue() = delegate.value
     }
 
     inner class LightArrayInitializerValue(private val delegate: PsiArrayInitializerMemberValue) : PsiArrayInitializerMemberValue by delegate {
@@ -86,9 +95,10 @@ class KtLightAnnotation(
     }
 
     private fun wrapAnnotationValue(value: PsiAnnotationMemberValue): PsiAnnotationMemberValue {
-        return when (value) {
-            is PsiExpression -> LightExpressionValue(value)
-            is PsiArrayInitializerMemberValue -> LightArrayInitializerValue(value)
+        return when {
+            value is PsiLiteralExpression && value.value is String -> LightStringLiteral(value)
+            value is PsiExpression -> LightExpressionValue(value)
+            value is PsiArrayInitializerMemberValue -> LightArrayInitializerValue(value)
             else -> value
         }
     }

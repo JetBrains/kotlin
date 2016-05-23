@@ -4,6 +4,10 @@
           language="kotlin"
           implementation="org.jetbrains.kotlin.idea.spring.references.KotlinSpringReferenceContributor"
           order="before kotlinFilePathReferenceContributor" />
+      <psi.referenceContributor
+          language="kotlin"
+          implementation="org.jetbrains.kotlin.idea.jam.KotlinJamReferenceContributor"
+          order="before kotlinFilePathReferenceContributor" />
 
       <multiHostInjector implementation="org.jetbrains.kotlin.idea.spring.el.KotlinSpringELInjector"/>
 
