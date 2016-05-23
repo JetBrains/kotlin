@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.FunctionTypesKt;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.config.LanguageFeatureSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
 import org.jetbrains.kotlin.diagnostics.Errors;
@@ -55,8 +56,6 @@ import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 
 public class BodyResolver {
-    private static final boolean ALLOW_TOP_LEVEL_SEALED_INHERITANCE = true;
-
     @NotNull private final AnnotationChecker annotationChecker;
     @NotNull private final ExpressionTypingServices expressionTypingServices;
     @NotNull private final CallResolver callResolver;
@@ -70,6 +69,7 @@ public class BodyResolver {
     @NotNull private final BodyResolveCache bodyResolveCache;
     @NotNull private final KotlinBuiltIns builtIns;
     @NotNull private final OverloadChecker overloadChecker;
+    @NotNull private final LanguageFeatureSettings languageFeatureSettings;
 
     public BodyResolver(
             @NotNull AnnotationResolver annotationResolver,
@@ -84,7 +84,8 @@ public class BodyResolver {
             @NotNull ValueParameterResolver valueParameterResolver,
             @NotNull AnnotationChecker annotationChecker,
             @NotNull KotlinBuiltIns builtIns,
-            @NotNull OverloadChecker overloadChecker
+            @NotNull OverloadChecker overloadChecker,
+            @NotNull LanguageFeatureSettings languageFeatureSettings
     ) {
         this.annotationResolver = annotationResolver;
         this.bodyResolveCache = bodyResolveCache;
@@ -99,6 +100,7 @@ public class BodyResolver {
         this.trace = new ObservableBindingTrace(trace);
         this.valueParameterResolver = valueParameterResolver;
         this.builtIns = builtIns;
+        this.languageFeatureSettings = languageFeatureSettings;
     }
 
     private void resolveBehaviorDeclarationBodies(@NotNull BodiesResolveContext c) {
@@ -387,7 +389,7 @@ public class BodyResolver {
 
     // Returns a set of enum or sealed types of which supertypeOwner is an entry or a member
     @NotNull
-    private static Set<TypeConstructor> getAllowedFinalSupertypes(
+    private Set<TypeConstructor> getAllowedFinalSupertypes(
             @NotNull ClassDescriptor descriptor,
             @NotNull Map<KtTypeReference, KotlinType> supertypes,
             @NotNull KtClassOrObject ktClassOrObject
@@ -396,9 +398,10 @@ public class BodyResolver {
         if (ktClassOrObject instanceof KtEnumEntry) {
             parentEnumOrSealed = Collections.singleton(((ClassDescriptor) descriptor.getContainingDeclaration()).getTypeConstructor());
         }
-        else if (ALLOW_TOP_LEVEL_SEALED_INHERITANCE && DescriptorUtils.isTopLevelDeclaration(descriptor)) {
-            for (KotlinType superType : supertypes.values()) {
-                ClassifierDescriptor classifierDescriptor = superType.getConstructor().getDeclarationDescriptor();
+        else if (languageFeatureSettings.getTopLevelSealedInheritance() && DescriptorUtils.isTopLevelDeclaration(descriptor)) {
+            // TODO: improve diagnostic when top level sealed inheritance is disabled
+            for (KotlinType supertype : supertypes.values()) {
+                ClassifierDescriptor classifierDescriptor = supertype.getConstructor().getDeclarationDescriptor();
                 if (DescriptorUtils.isSealedClass(classifierDescriptor) && DescriptorUtils.isTopLevelDeclaration(classifierDescriptor)) {
                     parentEnumOrSealed = Collections.singleton(classifierDescriptor.getTypeConstructor());
                 }
