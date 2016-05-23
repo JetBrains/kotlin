@@ -1,6 +1,3 @@
-// Enable for JVM backend when KT-8120 gets fixed
-// TARGET_BACKEND: JS
-
 fun box(): String {
     val capturedInConstructor = 1
 
