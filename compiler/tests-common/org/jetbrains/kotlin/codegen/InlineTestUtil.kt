@@ -56,10 +56,8 @@ object InlineTestUtil {
         val binaryClasses = hashMapOf<String, KotlinJvmBinaryClass>()
 
         for (file in files) {
-            val bytes = file.asByteArray()
-            val cr = ClassReader(bytes)
-
-            val inlineFunctions = inlineFunctionsJvmNames(bytes)
+            val binaryClass = loadBinaryClass(file)
+            val inlineFunctions = inlineFunctionsJvmNames(binaryClass.classHeader)
 
             val classVisitor = object : ClassVisitorWithName() {
                 override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<String>?): MethodVisitor {
@@ -73,8 +71,8 @@ object InlineTestUtil {
                 }
             }
 
-            cr.accept(classVisitor, 0)
-            binaryClasses.put(classVisitor.className, loadBinaryClass(file))
+            ClassReader(file.asByteArray()).accept(classVisitor, 0)
+            binaryClasses.put(classVisitor.className, binaryClass)
         }
 
         return InlineInfo(inlineMethods, binaryClasses)
