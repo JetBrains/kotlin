@@ -155,7 +155,7 @@ public class InlineCodegenUtil {
     public static void initDefaultSourceMappingIfNeeded(
             @NotNull CodegenContext context, @NotNull MemberCodegen codegen, @NotNull GenerationState state
     ) {
-        if (!state.isInlineEnabled()) return;
+        if (state.isInlineDisabled()) return;
 
         CodegenContext<?> parentContext = context.getParentContext();
         while (parentContext != null) {

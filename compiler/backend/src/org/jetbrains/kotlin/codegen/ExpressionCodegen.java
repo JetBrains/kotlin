@@ -1879,7 +1879,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 CallableMemberDescriptor descriptor = getContext().getContextDescriptor();
                 NonLocalReturnInfo nonLocalReturn = getNonLocalReturnInfo(descriptor, expression);
                 boolean isNonLocalReturn = nonLocalReturn != null;
-                if (isNonLocalReturn && !state.isInlineEnabled()) {
+                if (isNonLocalReturn && state.isInlineDisabled()) {
                     state.getDiagnostics().report(Errors.NON_LOCAL_RETURN_IN_DISABLED_INLINE.on(expression));
                     genThrow(v, "java/lang/UnsupportedOperationException",
                              "Non-local returns are not allowed with inlining disabled");
@@ -2520,7 +2520,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         // We should inline callable containing reified type parameters even if inline is disabled
         // because they may contain something to reify and straight call will probably fail at runtime
-        boolean isInline = (state.isInlineEnabled() || InlineUtil.containsReifiedTypeParameters(descriptor)) &&
+        boolean isInline = (!state.isInlineDisabled() || InlineUtil.containsReifiedTypeParameters(descriptor)) &&
                            (InlineUtil.isInline(descriptor) || InlineUtil.isArrayConstructorWithLambda(descriptor));
 
         if (!isInline) return defaultCallGenerator;

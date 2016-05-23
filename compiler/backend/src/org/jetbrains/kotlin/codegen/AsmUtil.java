@@ -614,7 +614,7 @@ public class AsmUtil {
             @NotNull FunctionDescriptor descriptor,
             @NotNull FrameMap frameMap
     ) {
-        if (!state.isParamAssertionsEnabled()) return;
+        if (state.isParamAssertionsDisabled()) return;
 
         // Private method is not accessible from other classes, no assertions needed
         if (getVisibilityAccessFlag(descriptor) == ACC_PRIVATE) return;
@@ -655,7 +655,7 @@ public class AsmUtil {
             @NotNull final StackValue stackValue,
             @Nullable final RuntimeAssertionInfo runtimeAssertionInfo
     ) {
-        if (!state.isCallAssertionsEnabled()) return stackValue;
+        if (state.isCallAssertionsDisabled()) return stackValue;
         if (runtimeAssertionInfo == null || !runtimeAssertionInfo.getNeedNotNullAssertion()) return stackValue;
 
         return new StackValue(stackValue.type) {

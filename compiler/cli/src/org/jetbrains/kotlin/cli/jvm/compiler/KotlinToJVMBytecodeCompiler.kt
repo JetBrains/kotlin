@@ -417,7 +417,7 @@ object KotlinToJVMBytecodeCompiler {
     }
 
     private fun checkKotlinPackageUsage(environment: KotlinCoreEnvironment, files: Collection<KtFile>): Boolean {
-        if (environment.configuration.get(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE) == true) {
+        if (environment.configuration.getBoolean(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE)) {
             return true
         }
         val messageCollector = environment.configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
@@ -434,8 +434,7 @@ object KotlinToJVMBytecodeCompiler {
     }
 
     private val KotlinCoreEnvironment.messageCollector: MessageCollector
-        get() = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-                ?: error("Message collector not specified in compiler configuration")
+        get() = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
     private fun reportRuntimeConflicts(messageCollector: MessageCollector, jvmClasspathRoots: List<File>) {
         fun String.removeIdeaVersionSuffix(): String {
