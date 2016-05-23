@@ -1,0 +1,21 @@
+<html>
+<body>
+Reports <b>if</b> statements which can be simplified to single <b>return</b> statements.
+<p>
+  For example:
+  <code><pre>
+    <b>if</b> (foo()) {
+       <b>return true</b>
+    } <b>else</b> {
+       <b>return false</b>
+    }
+</pre></code>
+  can be simplified to
+  <code><pre>
+    <b>return</b> foo()
+</pre></code>
+  <!-- tooltip end -->
+<p>
+
+</body>
+</html>
