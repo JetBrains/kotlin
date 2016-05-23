@@ -49,8 +49,8 @@ import org.jetbrains.kotlin.config.ContentRootsKt;
 import org.jetbrains.kotlin.config.Services;
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult;
-import org.jetbrains.kotlin.js.config.Config;
 import org.jetbrains.kotlin.js.config.EcmaVersion;
+import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.config.LibrarySourcesConfig;
 import org.jetbrains.kotlin.js.facade.K2JSTranslator;
 import org.jetbrains.kotlin.js.facade.MainCallParameters;
@@ -130,7 +130,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
         File outputFile = new File(arguments.outputFile);
 
-        Config config = getConfig(arguments, project);
+        JsConfig config = getConfig(arguments, project);
         if (config.checkLibFilesAndReportErrors(new Function1<String, Unit>() {
             @Override
             public Unit invoke(String message) {
@@ -230,8 +230,9 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
                                 CompilerMessageLocation.NO_LOCATION);
     }
 
-    private static AnalyzerWithCompilerReport analyzeAndReportErrors(@NotNull MessageCollector messageCollector,
-            @NotNull final List<KtFile> sources, @NotNull final Config config) {
+    private static AnalyzerWithCompilerReport analyzeAndReportErrors(
+            @NotNull MessageCollector messageCollector, @NotNull final List<KtFile> sources, @NotNull final JsConfig config
+    ) {
         AnalyzerWithCompilerReport analyzerWithCompilerReport = new AnalyzerWithCompilerReport(messageCollector);
         analyzerWithCompilerReport.analyzeAndReport(sources, new AnalyzerWithCompilerReport.Analyzer() {
             @NotNull
@@ -248,7 +249,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
     }
 
     @NotNull
-    private static Config getConfig(@NotNull K2JSCompilerArguments arguments, @NotNull Project project) {
+    private static JsConfig getConfig(@NotNull K2JSCompilerArguments arguments, @NotNull Project project) {
         if (arguments.target != null) {
             assert arguments.target == "v5" : "Unsupported ECMA version: " + arguments.target;
         }
