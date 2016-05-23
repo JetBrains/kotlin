@@ -248,11 +248,9 @@ open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         }
 
         fun reportPerf(configuration: CompilerConfiguration, message: String) {
-            if (!configuration.get(CLIConfigurationKeys.REPORT_PERF, false)) {
-                return
-            }
+            if (!configuration.getBoolean(CLIConfigurationKeys.REPORT_PERF)) return
 
-            val collector = configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY]!!
+            val collector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
             collector.report(CompilerMessageSeverity.INFO, "PERF: " + message, CompilerMessageLocation.NO_LOCATION)
         }
 

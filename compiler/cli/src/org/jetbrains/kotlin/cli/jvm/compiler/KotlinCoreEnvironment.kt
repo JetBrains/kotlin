@@ -244,8 +244,7 @@ class KotlinCoreEnvironment private constructor(
     fun getSourceFiles(): List<KtFile> = sourceFiles
 
     private fun report(severity: CompilerMessageSeverity, message: String) {
-        val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-                               ?: throw CompileEnvironmentException(message)
+        val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         messageCollector.report(severity, message, CompilerMessageLocation.NO_LOCATION)
     }
 

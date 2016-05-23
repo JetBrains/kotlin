@@ -147,11 +147,11 @@ class GenerationState @JvmOverloads constructor(
         var hasResult: Boolean = false
     }
 
-    val isCallAssertionsEnabled: Boolean = !configuration.get(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS, false)
-    val isParamAssertionsEnabled: Boolean = !configuration.get(JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS, false)
-    val isInlineEnabled: Boolean = !configuration.get(JVMConfigurationKeys.DISABLE_INLINE, false)
-    val useTypeTableInSerializer: Boolean = configuration.get(JVMConfigurationKeys.USE_TYPE_TABLE, false)
-    val inheritMultifileParts: Boolean = configuration.get(JVMConfigurationKeys.INHERIT_MULTIFILE_PARTS, false)
+    val isCallAssertionsDisabled: Boolean = configuration.getBoolean(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS)
+    val isParamAssertionsDisabled: Boolean = configuration.getBoolean(JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS)
+    val isInlineDisabled: Boolean = configuration.getBoolean(JVMConfigurationKeys.DISABLE_INLINE)
+    val useTypeTableInSerializer: Boolean = configuration.getBoolean(JVMConfigurationKeys.USE_TYPE_TABLE)
+    val inheritMultifileParts: Boolean = configuration.getBoolean(JVMConfigurationKeys.INHERIT_MULTIFILE_PARTS)
 
     val rootContext: CodegenContext<*> = RootContext(this)
 
