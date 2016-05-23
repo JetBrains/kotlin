@@ -47,6 +47,8 @@ class ChangeParameterTypeFix(element: KtParameter, type: KotlinType) : KotlinQui
         this.isPrimaryConstructorParameter = declaration is KtPrimaryConstructor
     }
 
+    override fun startInWriteAction(): Boolean = false
+
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
         return super.isAvailable(project, editor, file) && containingDeclarationName != null
     }
