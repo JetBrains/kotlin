@@ -208,6 +208,8 @@ private class DifferenceCalculatorForClass(oldData: ProtoMapValue, newData: Prot
                     names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Class::getFunctionList))
                 ProtoBufClassKind.PROPERTY_LIST ->
                     names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Class::getPropertyList))
+                ProtoBufClassKind.TYPE_ALIAS_LIST ->
+                    names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Class::getTypeAliasList))
                 ProtoBufClassKind.ENUM_ENTRY_LIST -> {
                     isClassAffected = true
                 }
