@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.idea.MainFunctionDetector;
-import org.jetbrains.kotlin.js.config.Config;
+import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.facade.MainCallParameters;
 import org.jetbrains.kotlin.js.facade.exceptions.TranslationException;
 import org.jetbrains.kotlin.js.facade.exceptions.TranslationRuntimeException;
@@ -172,7 +172,7 @@ public final class Translation {
             @NotNull Collection<KtFile> files,
             @NotNull MainCallParameters mainCallParameters,
             @NotNull ModuleDescriptor moduleDescriptor,
-            @NotNull Config config
+            @NotNull JsConfig config
     ) throws TranslationException {
         try {
             return doGenerateAst(bindingTrace, files, mainCallParameters, moduleDescriptor, config);
@@ -186,10 +186,12 @@ public final class Translation {
     }
 
     @NotNull
-    private static TranslationContext doGenerateAst(@NotNull BindingTrace bindingTrace, @NotNull Collection<KtFile> files,
+    private static TranslationContext doGenerateAst(
+            @NotNull BindingTrace bindingTrace,
+            @NotNull Collection<KtFile> files,
             @NotNull MainCallParameters mainCallParameters,
             @NotNull ModuleDescriptor moduleDescriptor,
-            @NotNull Config config
+            @NotNull JsConfig config
     ) {
         StaticContext staticContext = StaticContext.generateStaticContext(bindingTrace, config, moduleDescriptor);
         JsProgram program = staticContext.getProgram();
@@ -222,8 +224,9 @@ public final class Translation {
         }
     }
 
-    private static void mayBeGenerateTests(@NotNull Collection<KtFile> files, @NotNull Config config,
-            @NotNull JsBlock rootBlock, @NotNull TranslationContext context) {
+    private static void mayBeGenerateTests(
+            @NotNull Collection<KtFile> files, @NotNull JsConfig config, @NotNull JsBlock rootBlock, @NotNull TranslationContext context
+    ) {
         JSTester tester = config.isTestConfig() ? new JSRhinoUnitTester() : new QUnitTester();
         tester.initialize(context, rootBlock);
         JSTestGenerator.generateTestCalls(context, files, tester);

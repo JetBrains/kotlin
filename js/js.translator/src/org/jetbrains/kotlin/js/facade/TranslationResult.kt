@@ -23,7 +23,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import org.jetbrains.kotlin.backend.common.output.*
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.js.config.Config
+import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.sourceMap.JsSourceGenerationVisitor
 import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
 import org.jetbrains.kotlin.js.sourceMap.SourceMapBuilder
@@ -32,14 +32,14 @@ import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import java.io.File
-import java.util.ArrayList
+import java.util.*
 
 abstract class TranslationResult protected constructor(val diagnostics: Diagnostics) {
 
     class Fail(diagnostics: Diagnostics) : TranslationResult(diagnostics)
 
     class Success(
-            private val config: Config,
+            private val config: JsConfig,
             private val files: List<KtFile>,
             val program: JsProgram,
             diagnostics: Diagnostics,
