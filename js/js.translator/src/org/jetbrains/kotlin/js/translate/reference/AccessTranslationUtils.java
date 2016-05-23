@@ -19,16 +19,12 @@ package org.jetbrains.kotlin.js.translate.reference;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.js.translate.context.TemporaryVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.Translation;
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.asSyntheticStatement;
 
 public final class AccessTranslationUtils {
     private AccessTranslationUtils() {
@@ -67,10 +63,7 @@ public final class AccessTranslationUtils {
             for(KtExpression indexExpression : expression.getIndexExpressions()) {
                 JsExpression jsIndexExpression = Translation.translateAsExpression(indexExpression, context);
                 if (TranslationUtils.isCacheNeeded(jsIndexExpression)) {
-                    TemporaryVariable temporaryVariable = context.declareTemporary(null);
-                    context.addStatementToCurrentBlock(
-                            asSyntheticStatement(JsAstUtils.assignment(temporaryVariable.reference(), jsIndexExpression)));
-                    jsIndexExpression = temporaryVariable.reference();
+                    jsIndexExpression = context.defineTemporary(jsIndexExpression);
                 }
                 indexesMap.put(indexExpression, jsIndexExpression);
             }

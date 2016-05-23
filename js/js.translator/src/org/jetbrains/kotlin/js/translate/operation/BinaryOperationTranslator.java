@@ -22,7 +22,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
-import org.jetbrains.kotlin.js.translate.context.TemporaryVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.general.Translation;
@@ -46,7 +45,6 @@ import java.util.Collections;
 import static org.jetbrains.kotlin.js.translate.operation.AssignmentTranslator.isAssignmentOperator;
 import static org.jetbrains.kotlin.js.translate.operation.CompareToTranslator.isCompareToCall;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getCallableDescriptorForOperationExpression;
-import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.asSyntheticStatement;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.not;
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.*;
 
@@ -137,9 +135,7 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
         JsIf ifStatement;
         if (BindingContextUtilsKt.isUsedAsExpression(expression, context().bindingContext())) {
             if (TranslationUtils.isCacheNeeded(leftExpression)) {
-                TemporaryVariable resultVar = context().declareTemporary(leftExpression);
-                result = resultVar.reference();
-                context().addStatementToCurrentBlock(asSyntheticStatement(resultVar.assignmentExpression()));
+                result = context().defineTemporary(leftExpression);
             }
             else {
                 result = leftExpression;
@@ -174,9 +170,7 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
         }
 
         if (TranslationUtils.isCacheNeeded(leftExpression)) {
-            TemporaryVariable temporaryVariable = context().declareTemporary(null);
-            context().addStatementToCurrentBlock(asSyntheticStatement(JsAstUtils.assignment(temporaryVariable.reference(), leftExpression)));
-            leftExpression = temporaryVariable.reference();
+            leftExpression = context().defineTemporary(leftExpression);
         }
         context().addStatementsToCurrentBlockFrom(rightBlock);
 
@@ -215,9 +209,7 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
             if (rightExpression instanceof JsNameRef) {
                 result = rightExpression; // Reuse tmp variable
             } else {
-                TemporaryVariable resultVar = context().declareTemporary(rightExpression);
-                result = resultVar.reference();
-                rightBlock.getStatements().add(resultVar.assignmentExpression().makeStmt());
+                result = context().defineTemporary(rightExpression);
             }
             JsStatement assignmentStatement = JsAstUtils.assignment(result, literalResult).makeStmt();
             ifStatement = JsAstUtils.newJsIf(leftExpression, rightBlock, assignmentStatement);
