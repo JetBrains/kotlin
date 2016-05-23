@@ -48,7 +48,7 @@ class KotlinLightConstantExpressionEvaluator : ConstantExpressionEvaluator {
             throwExceptionOnOverflow: Boolean,
             auxEvaluator: PsiConstantEvaluationHelper.AuxEvaluator?
     ): Any? {
-        if (expression !is KtLightAnnotation.LightExpressionValue) return null
+        if (expression !is KtLightAnnotation.LightExpressionValue<*>) return null
         val expressionToCompute = expression.originalExpression ?: return null
         return when (expressionToCompute) {
             is KtExpression -> {
