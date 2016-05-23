@@ -1079,6 +1079,12 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findTypeParameterUsages/kotlinFunctionTypeParameterUsages.0.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("propertyWithTypeParameter.0.kt")
+            public void testPropertyWithTypeParameter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findTypeParameterUsages/propertyWithTypeParameter.0.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("idea/testData/findUsages/kotlin/findWithFilteringImports")
