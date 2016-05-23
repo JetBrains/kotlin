@@ -23,7 +23,6 @@ import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
@@ -43,65 +42,23 @@ import java.util.List;
  * Base class representing a configuration of translator.
  */
 public abstract class JsConfig {
-    @NotNull
     private final Project project;
-    @NotNull
     private final CompilerConfiguration configuration;
-    @NotNull
     private final LockBasedStorageManager storageManager = new LockBasedStorageManager();
-    @NotNull
     private final List<KtFile> sourceFilesFromLibraries = new SmartList<KtFile>();
-    @NotNull
-    private final EcmaVersion target;
-
-    @NotNull
-    private final String moduleId;
-
-    private final boolean sourcemap;
-    private final boolean metaInfo;
-    private final boolean kjsm;
-
-    @NotNull
     protected final List<KotlinJavascriptMetadata> metadata = new SmartList<KotlinJavascriptMetadata>();
-
-    @Nullable
     private List<ModuleDescriptorImpl> moduleDescriptors = null;
 
     private boolean initialized = false;
 
-    protected JsConfig(
-            @NotNull Project project,
-            @NotNull CompilerConfiguration configuration,
-            @NotNull String moduleId,
-            @NotNull EcmaVersion ecmaVersion,
-            boolean sourcemap,
-            boolean metaInfo,
-            boolean kjsm
-    ) {
+    protected JsConfig(@NotNull Project project, @NotNull CompilerConfiguration configuration) {
         this.project = project;
         this.configuration = configuration;
-        this.target = ecmaVersion;
-        this.moduleId = moduleId;
-        this.sourcemap = sourcemap;
-        this.metaInfo = metaInfo;
-        this.kjsm = kjsm;
     }
 
     @NotNull
     public CompilerConfiguration getConfiguration() {
         return configuration;
-    }
-
-    public boolean isSourcemap() {
-        return sourcemap;
-    }
-
-    public boolean isMetaInfo() {
-        return metaInfo;
-    }
-
-    public boolean isKjsm() {
-        return kjsm;
     }
 
     @NotNull
@@ -110,13 +67,8 @@ public abstract class JsConfig {
     }
 
     @NotNull
-    public EcmaVersion getTarget() {
-        return target;
-    }
-
-    @NotNull
     public String getModuleId() {
-        return moduleId;
+        return configuration.getNotNull(JSConfigurationKeys.MODULE_ID);
     }
 
     public abstract boolean checkLibFilesAndReportErrors(@NotNull Function1<String, Unit> report);
@@ -140,14 +92,9 @@ public abstract class JsConfig {
     }
 
     @NotNull
-    public List<KtFile> getSourceFilesFromLibraries() {
+    private List<KtFile> getSourceFilesFromLibraries() {
         init();
         return sourceFilesFromLibraries;
-    }
-
-
-    public boolean isTestConfig() {
-        return false;
     }
 
     private void init() {

@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.js.JavaScript;
 import org.jetbrains.kotlin.js.config.EcmaVersion;
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys;
 import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.config.LibrarySourcesConfig;
 import org.jetbrains.kotlin.js.facade.K2JSTranslator;
@@ -329,26 +330,33 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
     ) {
         CompilerConfiguration configuration = getEnvironment().getConfiguration().copy();
 
-        for (KtFile file : files) {
-            String text = file.getText();
-
-            if (isDirectiveDefined(text, NO_INLINE_DIRECTIVE)) {
-                configuration.put(CommonConfigurationKeys.DISABLE_INLINE, true);
-                break;
-            }
-        }
+        configuration.put(CommonConfigurationKeys.DISABLE_INLINE, hasNoInline(files));
 
         List<String> librariesWithStdlib = new ArrayList<String>(LibrarySourcesConfig.JS_STDLIB);
         if (libraries != null) {
             librariesWithStdlib.addAll(libraries);
         }
+        configuration.put(JSConfigurationKeys.LIBRARY_FILES, librariesWithStdlib);
 
-        return new LibrarySourcesConfig.Builder(project, configuration, moduleId, librariesWithStdlib)
-                .ecmaVersion(ecmaVersion)
-                .sourceMap(shouldGenerateSourceMap())
-                .isUnitTestConfig(shouldBeTranslateAsUnitTestClass())
-                .metaInfo(shouldGenerateMetaInfo())
-                .build();
+        configuration.put(JSConfigurationKeys.MODULE_ID, moduleId);
+        configuration.put(JSConfigurationKeys.TARGET, ecmaVersion);
+
+        configuration.put(JSConfigurationKeys.SOURCE_MAP, shouldGenerateSourceMap());
+        configuration.put(JSConfigurationKeys.META_INFO, shouldGenerateMetaInfo());
+
+        configuration.put(JSConfigurationKeys.UNIT_TEST_CONFIG, shouldBeTranslateAsUnitTestClass());
+
+        return new LibrarySourcesConfig(project, configuration);
+    }
+
+    private static boolean hasNoInline(@NotNull List<KtFile> files) {
+        for (KtFile file : files) {
+            if (isDirectiveDefined(file.getText(), NO_INLINE_DIRECTIVE)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @NotNull

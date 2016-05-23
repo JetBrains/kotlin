@@ -18,9 +18,11 @@ package org.jetbrains.kotlin.checkers;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
+import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys;
 import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.config.LibrarySourcesConfig;
 import org.jetbrains.kotlin.js.resolve.JsPlatform;
@@ -40,9 +42,10 @@ public abstract class AbstractDiagnosticsTestWithJsStdLib extends AbstractDiagno
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        config = new LibrarySourcesConfig.Builder(
-                getProject(), getEnvironment().getConfiguration(), "module", LibrarySourcesConfig.JS_STDLIB
-        ).build();
+        CompilerConfiguration configuration = getEnvironment().getConfiguration().copy();
+        configuration.put(JSConfigurationKeys.MODULE_ID, "module");
+        configuration.put(JSConfigurationKeys.LIBRARY_FILES, LibrarySourcesConfig.JS_STDLIB);
+        config = new LibrarySourcesConfig(getProject(), configuration);
     }
 
     @Override

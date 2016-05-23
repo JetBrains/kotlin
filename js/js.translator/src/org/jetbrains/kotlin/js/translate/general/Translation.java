@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.idea.MainFunctionDetector;
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys;
 import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.facade.MainCallParameters;
 import org.jetbrains.kotlin.js.facade.exceptions.TranslationException;
@@ -227,7 +228,8 @@ public final class Translation {
     private static void mayBeGenerateTests(
             @NotNull Collection<KtFile> files, @NotNull JsConfig config, @NotNull JsBlock rootBlock, @NotNull TranslationContext context
     ) {
-        JSTester tester = config.isTestConfig() ? new JSRhinoUnitTester() : new QUnitTester();
+        JSTester tester =
+                config.getConfiguration().getBoolean(JSConfigurationKeys.UNIT_TEST_CONFIG) ? new JSRhinoUnitTester() : new QUnitTester();
         tester.initialize(context, rootBlock);
         JSTestGenerator.generateTestCalls(context, files, tester);
         tester.deinitialize();
