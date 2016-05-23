@@ -35,4 +35,8 @@ package org.jetbrains.kotlin.js.translate.context
 import com.google.dart.compiler.backend.js.ast.JsExpression
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 
-class DeferredCallSite(val constructor: ConstructorDescriptor, val invocationArgs: MutableList<JsExpression>)
+class DeferredCallSite(
+        val constructor: ConstructorDescriptor,
+        val invocationArgs: MutableList<JsExpression>,
+        val context: TranslationContext
+)

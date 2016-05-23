@@ -537,6 +537,6 @@ public class TranslationContext {
         List<DeferredCallSite> callSites = staticContext.getDeferredCallSites().get(classDescriptor);
         if (callSites == null) throw new IllegalStateException("This method should be call only when `shouldBeDeferred` method " +
                                                                "reports true for given constructor: " + constructor);
-        callSites.add(new DeferredCallSite(constructor, invocationArgs));
+        callSites.add(new DeferredCallSite(constructor, invocationArgs, this));
     }
 }

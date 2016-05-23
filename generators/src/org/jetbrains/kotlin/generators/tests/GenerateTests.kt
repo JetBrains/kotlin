@@ -202,7 +202,7 @@ fun main(args: Array<String>) {
         GenerateRangesCodegenTestData.main(arrayOf<String>())
 
         testClass<AbstractBlackBoxCodegenTest>() {
-            model("codegen/box")
+            model("codegen/box", targetBackend = TargetBackend.JVM)
         }
 
         testClass<AbstractBlackBoxInlineCodegenTest>("BlackBoxInlineCodegenTestGenerated") {
