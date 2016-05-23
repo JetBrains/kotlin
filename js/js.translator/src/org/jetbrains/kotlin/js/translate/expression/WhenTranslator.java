@@ -53,12 +53,7 @@ public final class WhenTranslator extends AbstractTranslator {
         whenExpression = expression;
 
         KtExpression subject = expression.getSubjectExpression();
-        if (subject != null) {
-            expressionToMatch = context.defineTemporary(Translation.translateAsExpression(subject, context));
-        }
-        else {
-            expressionToMatch = null;
-        }
+        expressionToMatch = subject != null ? context.defineTemporary(Translation.translateAsExpression(subject, context)) : null;
     }
 
     private JsNode translate() {
@@ -122,7 +117,11 @@ public final class WhenTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private JsExpression translateOrCondition(@NotNull JsExpression leftExpression, @NotNull KtWhenCondition condition, @NotNull TranslationContext context) {
+    private JsExpression translateOrCondition(
+            @NotNull JsExpression leftExpression,
+            @NotNull KtWhenCondition condition,
+            @NotNull TranslationContext context
+    ) {
         TranslationContext rightContext = context.innerBlock();
         JsExpression rightExpression = translateCondition(condition, rightContext);
         context.moveVarsFrom(rightContext);
@@ -148,7 +147,10 @@ public final class WhenTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private JsExpression translateWhenConditionToBooleanExpression(@NotNull KtWhenCondition condition, @NotNull TranslationContext context) {
+    private JsExpression translateWhenConditionToBooleanExpression(
+            @NotNull KtWhenCondition condition,
+            @NotNull TranslationContext context
+    ) {
         if (condition instanceof KtWhenConditionIsPattern) {
             return translateIsCondition((KtWhenConditionIsPattern) condition, context);
         }

@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static com.google.dart.compiler.backend.js.ast.JsBinaryOperator.*;
@@ -75,7 +74,8 @@ public final class TranslationUtils {
 
     @NotNull
     public static JsExpression translateExclForBinaryEqualLikeExpr(@NotNull JsBinaryOperation baseBinaryExpression) {
-        return new JsBinaryOperation(notOperator(baseBinaryExpression.getOperator()), baseBinaryExpression.getArg1(), baseBinaryExpression.getArg2());
+        return new JsBinaryOperation(notOperator(baseBinaryExpression.getOperator()), baseBinaryExpression.getArg1(),
+                                     baseBinaryExpression.getArg2());
     }
 
     public static boolean isEqualLikeOperator(@NotNull JsBinaryOperator operator) {
@@ -166,7 +166,7 @@ public final class TranslationUtils {
             @NotNull PropertyDescriptor descriptor,
             @NotNull JsExpression assignTo) {
         JsNameRef backingFieldReference = backingFieldReference(context, descriptor);
-        return !JsAstUtils.isEmptyExpression(assignTo) ? assignment(backingFieldReference, assignTo) : assignTo;
+        return assignment(backingFieldReference, assignTo);
     }
 
     @Nullable

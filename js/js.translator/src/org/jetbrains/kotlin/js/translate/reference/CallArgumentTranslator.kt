@@ -204,15 +204,14 @@ class CallArgumentTranslator private constructor(
                 return
             }
 
-            val list: MutableList<JsExpression>
-            if (shouldWrapVarargInArray) {
-                list = if (arguments.size == 1) SmartList<JsExpression>() else ArrayList<JsExpression>(arguments.size)
+            val list: MutableList<JsExpression> = if (shouldWrapVarargInArray) {
+                if (arguments.size == 1) SmartList<JsExpression>() else ArrayList<JsExpression>(arguments.size)
             }
             else {
-                list = result
+                result
             }
 
-            val resultKind = translateValueArguments(arguments, list, context)
+            translateValueArguments(arguments, list, context)
 
             if (shouldWrapVarargInArray) {
                 val concatArguments = prepareConcatArguments(arguments, list)
@@ -222,8 +221,6 @@ class CallArgumentTranslator private constructor(
             else if (result.size == 1) {
                 result[0] = JsAstUtils.invokeMethod(result[0], "slice")
             }
-
-            return resultKind
         }
 
         private fun translateValueArguments(arguments: List<ValueArgument>, list: MutableList<JsExpression>,

@@ -53,7 +53,10 @@ abstract class AbstractCallInfo : CallInfo {
 // if value == null, it is get access
 class VariableAccessInfo(callInfo: CallInfo, val value: JsExpression? = null) : AbstractCallInfo(), CallInfo by callInfo
 
-class FunctionCallInfo(callInfo: CallInfo, val argumentsInfo: CallArgumentTranslator.ArgumentsInfo) : AbstractCallInfo(), CallInfo by callInfo
+class FunctionCallInfo(
+        callInfo: CallInfo,
+        val argumentsInfo: CallArgumentTranslator.ArgumentsInfo
+) : AbstractCallInfo(), CallInfo by callInfo
 
 
 /**
@@ -64,12 +67,18 @@ class FunctionCallInfo(callInfo: CallInfo, val argumentsInfo: CallArgumentTransl
  */
 class ExplicitReceivers(val extensionOrDispatchReceiver: JsExpression?, val extensionReceiver: JsExpression? = null)
 
-fun TranslationContext.getCallInfo(resolvedCall: ResolvedCall<out CallableDescriptor>, extensionOrDispatchReceiver: JsExpression?): CallInfo {
+fun TranslationContext.getCallInfo(
+        resolvedCall: ResolvedCall<out CallableDescriptor>,
+        extensionOrDispatchReceiver: JsExpression?
+): CallInfo {
     return createCallInfo(resolvedCall, ExplicitReceivers(extensionOrDispatchReceiver))
 }
 
 // two receiver need only for FunctionCall in VariableAsFunctionResolvedCall
-fun TranslationContext.getCallInfo(resolvedCall: ResolvedCall<out FunctionDescriptor>, explicitReceivers: ExplicitReceivers): FunctionCallInfo {
+fun TranslationContext.getCallInfo(
+        resolvedCall: ResolvedCall<out FunctionDescriptor>,
+        explicitReceivers: ExplicitReceivers
+): FunctionCallInfo {
     val argsBlock = JsBlock()
     val argumentsInfo = CallArgumentTranslator.translate(resolvedCall, explicitReceivers.extensionOrDispatchReceiver, this, argsBlock)
     val explicitReceiversCorrected =
@@ -99,7 +108,10 @@ private fun TranslationContext.getDispatchReceiver(receiverValue: ReceiverValue)
     return getDispatchReceiver(getReceiverParameterForReceiver(receiverValue))
 }
 
-private fun TranslationContext.createCallInfo(resolvedCall: ResolvedCall<out CallableDescriptor>, explicitReceivers: ExplicitReceivers): CallInfo {
+private fun TranslationContext.createCallInfo(
+        resolvedCall: ResolvedCall<out CallableDescriptor>,
+        explicitReceivers: ExplicitReceivers
+): CallInfo {
     val receiverKind = resolvedCall.explicitReceiverKind
 
     // I'm not sure if it's a proper code, and why it should work. Just copied similar logic from ExpressionCodegen.generateConstructorCall.
