@@ -396,13 +396,13 @@ object KotlinToJVMBytecodeCompiler {
                 result.moduleDescriptor,
                 result.bindingContext,
                 sourceFiles,
-                configuration.get(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS, false),
-                configuration.get(JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS, false),
+                configuration.getBoolean(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS),
+                configuration.getBoolean(JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS),
                 GenerationState.GenerateClassFilter.GENERATE_ALL,
-                configuration.get(JVMConfigurationKeys.DISABLE_INLINE, false),
-                configuration.get(JVMConfigurationKeys.DISABLE_OPTIMIZATION, false),
+                configuration.getBoolean(JVMConfigurationKeys.DISABLE_INLINE),
+                configuration.getBoolean(JVMConfigurationKeys.DISABLE_OPTIMIZATION),
                 /* useTypeTableInSerializer = */ false,
-                configuration.get(JVMConfigurationKeys.INHERIT_MULTIFILE_PARTS, false),
+                configuration.getBoolean(JVMConfigurationKeys.INHERIT_MULTIFILE_PARTS),
                 packagesWithObsoleteParts,
                 obsoleteMultifileClasses,
                 targetId,
@@ -446,7 +446,7 @@ object KotlinToJVMBytecodeCompiler {
     }
 
     private fun checkKotlinPackageUsage(environment: KotlinCoreEnvironment, files: Collection<KtFile>): Boolean {
-        if (environment.configuration.get(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE) == true) {
+        if (environment.configuration.getBoolean(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE)) {
             return true
         }
         val messageCollector = environment.configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
@@ -463,8 +463,7 @@ object KotlinToJVMBytecodeCompiler {
     }
 
     private val KotlinCoreEnvironment.messageCollector: MessageCollector
-        get() = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-                ?: error("Message collector not specified in compiler configuration")
+        get() = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
     private fun reportRuntimeConflicts(messageCollector: MessageCollector, jvmClasspathRoots: List<File>) {
         fun String.removeIdeaVersionSuffix(): String {

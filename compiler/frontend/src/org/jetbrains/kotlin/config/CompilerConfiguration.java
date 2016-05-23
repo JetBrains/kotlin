@@ -35,19 +35,25 @@ public class CompilerConfiguration {
 
     @NotNull
     public <T> T get(@NotNull CompilerConfigurationKey<T> key, @NotNull T defaultValue) {
-        T data = (T) map.get(key.ideaKey);
-        return data == null ? defaultValue : unmodifiable(data);
+        T data = get(key);
+        return data == null ? defaultValue : data;
+    }
+
+    @NotNull
+    public <T> T getNotNull(@NotNull CompilerConfigurationKey<T> key) {
+        T data = get(key);
+        assert data != null : "No value for configuration key: " + key;
+        return data;
+    }
+
+    public boolean getBoolean(@NotNull CompilerConfigurationKey<Boolean> key) {
+        return get(key, false);
     }
 
     @NotNull
     public <T> List<T> getList(@NotNull CompilerConfigurationKey<List<T>> key) {
-        List<T> data = (List<T>) map.get(key.ideaKey);
-        if (data == null) {
-            return Collections.emptyList();
-        }
-        else {
-            return Collections.unmodifiableList(data);
-        }
+        List<T> data = get(key);
+        return data == null ? Collections.<T>emptyList() : data;
     }
 
     public <T> void put(@NotNull CompilerConfigurationKey<T> key, @Nullable T value) {

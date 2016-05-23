@@ -30,4 +30,9 @@ public class CompilerConfigurationKey<T> {
     public static <T> CompilerConfigurationKey<T> create(@NotNull @NonNls String name) {
         return new CompilerConfigurationKey<T>(name);
     }
+
+    @Override
+    public String toString() {
+        return ideaKey.toString();
+    }
 }
