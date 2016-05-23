@@ -27,11 +27,11 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class UnnecessaryJavaUsageInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
 
-    val patterns = mapOf(
-            "java.io.PrintStream.println" to Pair("println($0)", false),
-            "java.io.PrintStream.print" to Pair("print($0)", false),
-            "java.util.Collections.sort" to Pair("$0.sort()", false),
-            "java.util.HashMap.put" to Pair("$0[$1] = $2", true)
+    private val patterns = mapOf(
+            "java.io.PrintStream.println" to Pair("println($0)", ConversionType.METHOD),
+            "java.io.PrintStream.print" to Pair("print($0)", ConversionType.METHOD),
+            "java.util.Collections.sort" to Pair("$0.sort()", ConversionType.METHOD),
+            "java.util.HashMap.put" to Pair("$0[$1] = $2", ConversionType.ASSIGNMENT)
     )
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
@@ -41,20 +41,22 @@ class UnnecessaryJavaUsageInspection : AbstractKotlinInspection(), CleanupLocalI
 
                 val selectorExpression = expression.selectorExpression
                 if(selectorExpression !is KtCallExpression) return
-                val arguments = selectorExpression.valueArguments
-                if(arguments.isEmpty()) return
+                val args = selectorExpression.valueArguments
+                if(args.isEmpty()) return
 
-                val calleeExpression = selectorExpression.calleeExpression as KtSimpleNameExpression
+                val calleeExpression = selectorExpression.calleeExpression as? KtSimpleNameExpression ?: return
                 val bindingContext = calleeExpression.analyze(BodyResolveMode.PARTIAL)
                 val target = calleeExpression.mainReference.resolveToDescriptors(bindingContext).singleOrNull() ?: return
                 val pattern = patterns[target.fqNameSafe.asString()] ?: return
-                val javaUsageFix = UnnecessaryJavaUsageFix(pattern, expression.receiverExpression, arguments.map{it.text})
-                holder.registerProblem(expression, "Unnecessary java usage", ProblemHighlightType.WEAK_WARNING, javaUsageFix)
+                val javaUsageFix = UnnecessaryJavaUsageFix(pattern.first, pattern.second, expression.receiverExpression, args.map{it.text})
+                holder.registerProblem(expression, "Use of Java API that has a Kotlin equivalent",
+                                       ProblemHighlightType.WEAK_WARNING, javaUsageFix)
             }
         }
     }
 
-    private class UnnecessaryJavaUsageFix(val pattern: Pair<String, Boolean>,
+    private class UnnecessaryJavaUsageFix(val pattern: String,
+                                          val type: ConversionType,
                                           val receiver : KtExpression,
                                           val arguments: List<String>) : LocalQuickFix {
         override fun getName() = "Unnecessary java usage"
@@ -64,12 +66,17 @@ class UnnecessaryJavaUsageInspection : AbstractKotlinInspection(), CleanupLocalI
             val element = descriptor.psiElement
             val factory = KtPsiFactory(element)
 
-            if(pattern.second) {
-                element.replace(factory.createExpressionByPattern(pattern.first, receiver.text, *arguments.toTypedArray()))
-            } else {
-                element.replace(factory.createExpressionByPattern(pattern.first, *arguments.toTypedArray()))
+            val newExpression = when(type) {
+                ConversionType.ASSIGNMENT -> factory.createExpressionByPattern(pattern, receiver.text, *arguments.toTypedArray())
+                ConversionType.METHOD -> factory.createExpressionByPattern(pattern, *arguments.toTypedArray())
             }
+
+            element.replace(newExpression)
         }
+    }
+
+    private enum class ConversionType {
+        METHOD, ASSIGNMENT
     }
 
 }
