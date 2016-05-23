@@ -243,14 +243,10 @@ class ClassTranslator private constructor(
         // Build map that maps constructor to all constructors called via this()
         val constructorMap = allConstructors.map { it.descriptor to it }.toMap()
 
-        fun mapConstructor(constructor: ConstructorDescriptor) =
-                if (constructor.isPrimary) constructor.containingDeclaration else constructor
-
-        val callSiteMap = callSites
-                .map { mapConstructor(it.constructor) }.distinct()
-                .map { Pair(it, mutableListOf<DeferredCallSite>()) }
-                .toMap()
-        callSites.forEach { callSiteMap[mapConstructor(it.constructor)]!! += it }
+        val callSiteMap = callSites.groupBy {
+            val constructor =  it.constructor
+            if (constructor.isPrimary) constructor.containingDeclaration else constructor
+        }
 
         val thisCalls = secondaryConstructors.map {
             val set = mutableSetOf<ConstructorInfo>()
