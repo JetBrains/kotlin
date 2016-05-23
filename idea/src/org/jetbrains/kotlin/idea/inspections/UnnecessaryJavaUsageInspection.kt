@@ -28,9 +28,10 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 class UnnecessaryJavaUsageInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
 
     val patterns = mapOf(
-            "java.io.PrintStream.println" to "println($0)",
-            "java.io.PrintStream.print" to "print($0)",
-            "java.util.Collections.sort" to "$0.sort()"
+            "java.io.PrintStream.println" to Pair("println($0)", false),
+            "java.io.PrintStream.print" to Pair("print($0)", false),
+            "java.util.Collections.sort" to Pair("$0.sort()", false),
+            "java.util.HashMap.put" to Pair("$0[$1] = $2", true)
     )
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
@@ -38,31 +39,36 @@ class UnnecessaryJavaUsageInspection : AbstractKotlinInspection(), CleanupLocalI
             override fun visitQualifiedExpression(expression: KtQualifiedExpression) {
                 super.visitQualifiedExpression(expression)
 
-                val selectorExpression = expression.selectorExpression ?: return
-                if (selectorExpression !is KtCallExpression) return
-                val value = selectorExpression.valueArguments.singleOrNull() ?: return
+                val selectorExpression = expression.selectorExpression
+                if(selectorExpression !is KtCallExpression) return
+                val arguments = selectorExpression.valueArguments
+                if(arguments.isEmpty()) return
 
                 val calleeExpression = selectorExpression.calleeExpression as KtSimpleNameExpression
                 val bindingContext = calleeExpression.analyze(BodyResolveMode.PARTIAL)
                 val target = calleeExpression.mainReference.resolveToDescriptors(bindingContext).singleOrNull() ?: return
-                val pattern = target.fqNameSafe.asString()
-                if (!patterns.containsKey(pattern)) return
-
-                holder.registerProblem(expression,
-                                       "Unnecessary java usage",
-                                       ProblemHighlightType.WEAK_WARNING,
-                                       UnnecessaryJavaUsageFix(patterns[pattern]!!, value.text))
+                val pattern = patterns[target.fqNameSafe.asString()] ?: return
+                val javaUsageFix = UnnecessaryJavaUsageFix(pattern, expression.receiverExpression, arguments.map{it.text})
+                holder.registerProblem(expression, "Unnecessary java usage", ProblemHighlightType.WEAK_WARNING, javaUsageFix)
             }
         }
     }
 
-    private class UnnecessaryJavaUsageFix(val pattern: String, val value: String) : LocalQuickFix {
+    private class UnnecessaryJavaUsageFix(val pattern: Pair<String, Boolean>,
+                                          val receiver : KtExpression,
+                                          val arguments: List<String>) : LocalQuickFix {
         override fun getName() = "Unnecessary java usage"
         override fun getFamilyName() = name
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val element = descriptor.psiElement
-            element.replace(KtPsiFactory(element).createExpressionByPattern(pattern, value));
+            val factory = KtPsiFactory(element)
+
+            if(pattern.second) {
+                element.replace(factory.createExpressionByPattern(pattern.first, receiver.text, *arguments.toTypedArray()));
+            } else {
+                element.replace(factory.createExpressionByPattern(pattern.first, *arguments.toTypedArray()));
+            }
         }
     }
 

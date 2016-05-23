@@ -7,3 +7,7 @@ fun A() {
 fun B() {
     Collections.sort(mutableListOf(1, 2, 3))
 }
+
+fun C() {
+    HashMap<String, String>.put("A", "B")
+}
