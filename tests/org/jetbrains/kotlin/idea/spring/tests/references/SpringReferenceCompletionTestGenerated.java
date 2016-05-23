@@ -47,6 +47,12 @@ public class SpringReferenceCompletionTestGenerated extends AbstractSpringRefere
         doTest(fileName);
     }
 
+    @TestMetadata("packageReference.kt")
+    public void testPackageReference() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("ultimate/testData/spring/core/references/completion/variants/packageReference.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("qualifierReference1Xml.kt")
     public void testQualifierReference1Xml() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("ultimate/testData/spring/core/references/completion/variants/qualifierReference1Xml.kt");

@@ -47,6 +47,12 @@ public class SpringReferenceNavigationTestGenerated extends AbstractSpringRefere
         doTest(fileName);
     }
 
+    @TestMetadata("packageReferenceInComponentScan.kt")
+    public void testPackageReferenceInComponentScan() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("ultimate/testData/spring/core/references/navigation/packageReferenceInComponentScan.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("qualifierReference.kt")
     public void testQualifierReference() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("ultimate/testData/spring/core/references/navigation/qualifierReference.kt");
