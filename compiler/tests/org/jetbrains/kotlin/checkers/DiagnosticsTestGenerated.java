@@ -19131,6 +19131,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/typealias"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("genericTypeAliasObject.kt")
+            public void testGenericTypeAliasObject() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/genericTypeAliasObject.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("inSupertypesList.kt")
             public void testInSupertypesList() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/inSupertypesList.kt");
@@ -19164,6 +19170,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("substitutionVariance.kt")
             public void testSubstitutionVariance() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/substitutionVariance.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("typeAliasObject.kt")
+            public void testTypeAliasObject() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/typeAliasObject.kt");
                 doTest(fileName);
             }
         }
