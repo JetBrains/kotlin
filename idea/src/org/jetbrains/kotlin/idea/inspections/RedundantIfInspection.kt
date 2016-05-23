@@ -54,8 +54,6 @@ class RedundantIfInspection : AbstractKotlinInspection(), CleanupLocalInspection
     }
 
     private fun getReturnedExpression(expression: KtExpression?) : KtExpression? {
-        if (expression == null) return null
-
         when(expression) {
             is KtReturnExpression -> return expression.returnedExpression
             is KtBlockExpression -> {
