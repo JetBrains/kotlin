@@ -30,6 +30,8 @@ class RemoveUnusedFunctionParameterFix(parameter: KtParameter) : KotlinQuickFixA
 
     override fun getText() = "Remove parameter '${element.name}'"
 
+    override fun startInWriteAction(): Boolean = false
+
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val parameterDescriptor = element.resolveToDescriptor() as ValueParameterDescriptor
         ChangeFunctionSignatureFix.runRemoveParameter(parameterDescriptor, element)
