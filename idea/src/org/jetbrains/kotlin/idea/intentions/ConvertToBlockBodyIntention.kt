@@ -52,16 +52,25 @@ class ConvertToBlockBodyIntention : SelfTargetingIntention<KtDeclarationWithBody
     }
 
     companion object {
+        private fun KtExpression.whenAsResult(): Boolean = when (this) {
+            is KtWhenExpression -> true
+            is KtIfExpression -> (then?.whenAsResult() ?: false) || (`else`?.whenAsResult() ?: false)
+            is KtBlockExpression -> statements.lastOrNull()?.whenAsResult() ?: false
+            else -> false
+        }
+
         fun convert(declaration: KtDeclarationWithBody): KtDeclarationWithBody {
             val body = declaration.bodyExpression!!
 
+
             fun generateBody(returnsValue: Boolean): KtExpression {
                 val bodyType = body.analyze().getType(body)
+                val unitWhenAsResult = (bodyType == null || KotlinBuiltIns.isUnit(bodyType)) && body.whenAsResult()
                 val needReturn = returnsValue &&
                                  (bodyType == null || (!KotlinBuiltIns.isUnit(bodyType) && !KotlinBuiltIns.isNothing(bodyType)))
 
                 val factory = KtPsiFactory(declaration)
-                val statement = if (needReturn) factory.createExpressionByPattern("return $0", body) else body
+                val statement = if (needReturn || unitWhenAsResult) factory.createExpressionByPattern("return $0", body) else body
                 return factory.createSingleStatementBlock(statement)
             }
 
