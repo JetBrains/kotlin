@@ -47,7 +47,6 @@ public abstract class JsConfig {
     private final Project project;
     @NotNull
     private final CompilerConfiguration configuration;
-    private final boolean inlineEnabled;
     @NotNull
     private final LockBasedStorageManager storageManager = new LockBasedStorageManager();
     @NotNull
@@ -76,7 +75,6 @@ public abstract class JsConfig {
             @NotNull String moduleId,
             @NotNull EcmaVersion ecmaVersion,
             boolean sourcemap,
-            boolean inlineEnabled,
             boolean metaInfo,
             boolean kjsm
     ) {
@@ -85,9 +83,13 @@ public abstract class JsConfig {
         this.target = ecmaVersion;
         this.moduleId = moduleId;
         this.sourcemap = sourcemap;
-        this.inlineEnabled = inlineEnabled;
         this.metaInfo = metaInfo;
         this.kjsm = kjsm;
+    }
+
+    @NotNull
+    public CompilerConfiguration getConfiguration() {
+        return configuration;
     }
 
     public boolean isSourcemap() {
@@ -100,10 +102,6 @@ public abstract class JsConfig {
 
     public boolean isKjsm() {
         return kjsm;
-    }
-
-    public boolean isInlineEnabled() {
-        return inlineEnabled;
     }
 
     @NotNull

@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.inline.InlineCache
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.OptimizationClassBuilderFactory
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -149,7 +150,7 @@ class GenerationState @JvmOverloads constructor(
 
     val isCallAssertionsDisabled: Boolean = configuration.getBoolean(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS)
     val isParamAssertionsDisabled: Boolean = configuration.getBoolean(JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS)
-    val isInlineDisabled: Boolean = configuration.getBoolean(JVMConfigurationKeys.DISABLE_INLINE)
+    val isInlineDisabled: Boolean = configuration.getBoolean(CommonConfigurationKeys.DISABLE_INLINE)
     val useTypeTableInSerializer: Boolean = configuration.getBoolean(JVMConfigurationKeys.USE_TYPE_TABLE)
     val inheritMultifileParts: Boolean = configuration.getBoolean(JVMConfigurationKeys.INHERIT_MULTIFILE_PARTS)
 

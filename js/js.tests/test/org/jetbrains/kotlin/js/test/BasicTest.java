@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector;
 import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
+import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.js.JavaScript;
@@ -83,8 +84,7 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
     public static final String TEST_MODULE = "JS_TESTS";
     public static final String TEST_PACKAGE = "foo";
     public static final String TEST_FUNCTION = "box";
-    public static final String NO_INLINE_DIRECTIVE = "// NO_INLINE";
-    public boolean isInlineEnabled = true;
+    private static final String NO_INLINE_DIRECTIVE = "// NO_INLINE";
 
     @NotNull
     private String relativePathToTestDir = "";
@@ -114,7 +114,6 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
         File outDir = new File(getOutputPath());
 
         KotlinTestUtils.mkdirs(outDir);
-        isInlineEnabled = true;
     }
 
     @Override
@@ -326,13 +325,15 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
             @NotNull String moduleId,
             @NotNull EcmaVersion ecmaVersion,
             @Nullable List<String> libraries,
-            List<KtFile> jetFiles
+            @NotNull List<KtFile> files
     ) {
-        for (KtFile file : jetFiles) {
+        CompilerConfiguration configuration = getEnvironment().getConfiguration().copy();
+
+        for (KtFile file : files) {
             String text = file.getText();
 
             if (isDirectiveDefined(text, NO_INLINE_DIRECTIVE)) {
-                isInlineEnabled = false;
+                configuration.put(CommonConfigurationKeys.DISABLE_INLINE, true);
                 break;
             }
         }
@@ -342,10 +343,9 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
             librariesWithStdlib.addAll(libraries);
         }
 
-        return new LibrarySourcesConfig.Builder(project, getEnvironment().getConfiguration(), moduleId, librariesWithStdlib)
+        return new LibrarySourcesConfig.Builder(project, configuration, moduleId, librariesWithStdlib)
                 .ecmaVersion(ecmaVersion)
                 .sourceMap(shouldGenerateSourceMap())
-                .inlineEnabled(isInlineEnabled)
                 .isUnitTestConfig(shouldBeTranslateAsUnitTestClass())
                 .metaInfo(shouldGenerateMetaInfo())
                 .build();

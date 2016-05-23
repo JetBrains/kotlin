@@ -37,8 +37,6 @@ public class JVMConfigurationKeys {
             CompilerConfigurationKey.create("disable not-null call assertions");
     public static final CompilerConfigurationKey<Boolean> DISABLE_PARAM_ASSERTIONS =
             CompilerConfigurationKey.create("disable not-null parameter assertions");
-    public static final CompilerConfigurationKey<Boolean> DISABLE_INLINE =
-            CompilerConfigurationKey.create("disable inline");
     public static final CompilerConfigurationKey<Boolean> DISABLE_OPTIMIZATION =
             CompilerConfigurationKey.create("disable optimization");
     public static final CompilerConfigurationKey<Boolean> INHERIT_MULTIFILE_PARTS =
