@@ -25,9 +25,9 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
 class FunctionInvokeDescriptor private constructor(
-        private val container: DeclarationDescriptor,
-        private val original: FunctionInvokeDescriptor?,
-        private val callableKind: CallableMemberDescriptor.Kind
+        container: DeclarationDescriptor,
+        original: FunctionInvokeDescriptor?,
+        callableKind: CallableMemberDescriptor.Kind
 ) : SimpleFunctionDescriptorImpl(
         container,
         original,

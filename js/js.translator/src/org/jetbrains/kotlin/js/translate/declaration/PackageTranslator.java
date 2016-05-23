@@ -45,7 +45,7 @@ final class PackageTranslator extends AbstractTranslator {
         DefinitionPlace definitionPlace = new DefinitionPlace((JsObjectScope) scope, reference, properties);
 
         TranslationContext newContext = context.newDeclaration(descriptor, definitionPlace);
-        FileDeclarationVisitor visitor = new FileDeclarationVisitor(newContext, definitionPlace.getProperties());
+        FileDeclarationVisitor visitor = new FileDeclarationVisitor(newContext, scope, definitionPlace.getProperties());
         return new PackageTranslator(descriptor, newContext, visitor);
     }
 

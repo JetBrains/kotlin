@@ -17,6 +17,7 @@ package org.jetbrains.kotlin.js.translate.declaration
 
 import com.google.dart.compiler.backend.js.ast.JsFunction
 import com.google.dart.compiler.backend.js.ast.JsPropertyInitializer
+import com.google.dart.compiler.backend.js.ast.JsScope
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
@@ -30,8 +31,9 @@ import org.jetbrains.kotlin.psi.*
 
 class FileDeclarationVisitor(
         val context: TranslationContext,
+        scope: JsScope,
         initializers: List<JsPropertyInitializer> = SmartList()
-) : DeclarationBodyVisitor(initializers, SmartList()) {
+) : DeclarationBodyVisitor(initializers, SmartList(), scope) {
 
     private val initializer = JsAstUtils.createFunctionWithEmptyBody(context.scope())
     private val initializerContext = context.contextWithScope(initializer)

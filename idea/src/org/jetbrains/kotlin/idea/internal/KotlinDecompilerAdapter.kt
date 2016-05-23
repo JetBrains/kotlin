@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.internal
 
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
+import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -29,6 +30,10 @@ import org.jetbrains.kotlin.psi.KtFile
 fun showDecompiledCode(sourceFile: KtFile) {
     val decompilerService = KotlinDecompilerService.getInstance() ?: return
     val decompiledCode = decompilerService.decompile(sourceFile)
+    if (decompiledCode == null) {
+        Messages.showErrorDialog("Cannot decompile ${sourceFile.name}", "Decompiler error")
+        return
+    }
 
     runWriteAction {
         val root = getOrCreateDummyRoot()

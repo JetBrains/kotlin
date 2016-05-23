@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -860,8 +861,7 @@ internal class DescriptorRendererImpl(
 
     /* OTHER */
     private fun renderPackageView(packageView: PackageViewDescriptor, builder: StringBuilder) {
-        builder.append(renderKeyword("package")).append(" ")
-        builder.append(renderFqName(packageView.fqName.toUnsafe()))
+        renderPackageHeader(packageView.fqName, "package", builder)
         if (debugMode) {
             builder.append(" in context of ")
             renderName(packageView.module, builder)
@@ -869,11 +869,19 @@ internal class DescriptorRendererImpl(
     }
 
     private fun renderPackageFragment(fragment: PackageFragmentDescriptor, builder: StringBuilder) {
-        builder.append(renderKeyword("package-fragment")).append(" ")
-        builder.append(renderFqName(fragment.fqName.toUnsafe()))
+        renderPackageHeader(fragment.fqName, "package-fragment", builder)
         if (debugMode) {
             builder.append(" in ")
             renderName(fragment.containingDeclaration, builder)
+        }
+    }
+
+    private fun renderPackageHeader(fqName: FqName, fragmentOrView: String, builder: StringBuilder) {
+        builder.append(renderKeyword(fragmentOrView))
+        val fqNameString = renderFqName(fqName.toUnsafe())
+        if (fqNameString.isNotEmpty()) {
+            builder.append(" ")
+            builder.append(fqNameString)
         }
     }
 

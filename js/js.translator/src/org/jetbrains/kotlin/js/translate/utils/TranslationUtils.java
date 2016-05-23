@@ -230,10 +230,6 @@ public final class TranslationUtils {
 
     @NotNull
     public static List<JsExpression> generateInvocationArguments(@NotNull JsExpression receiver, @NotNull List<JsExpression> arguments) {
-        if (arguments.isEmpty()) {
-            return Collections.singletonList(receiver);
-        }
-
         List<JsExpression> argumentList = new ArrayList<JsExpression>(1 + arguments.size());
         argumentList.add(receiver);
         argumentList.addAll(arguments);

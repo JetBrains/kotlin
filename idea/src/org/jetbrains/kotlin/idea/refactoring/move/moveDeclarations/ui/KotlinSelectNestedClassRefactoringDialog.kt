@@ -29,7 +29,7 @@ import java.awt.BorderLayout
 import javax.swing.*
 
 internal class KotlinSelectNestedClassRefactoringDialog private constructor (
-        private val project: Project,
+        project: Project,
         private val nestedClass: KtClassOrObject,
         private val targetContainer: PsiElement?
 ) : DialogWrapper(project, true) {

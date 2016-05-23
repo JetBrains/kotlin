@@ -19,10 +19,8 @@ package org.jetbrains.kotlin.js.translate.declaration;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
-import org.jetbrains.kotlin.descriptors.Modality;
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.js.translate.general.TranslatorVisitor;
@@ -32,6 +30,7 @@ import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.types.KotlinType;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getClassDescriptor;
@@ -43,9 +42,19 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
     private final List<JsPropertyInitializer> staticResult;
     private final List<JsPropertyInitializer> enumEntryList = new SmartList<JsPropertyInitializer>();
 
-    public DeclarationBodyVisitor(@NotNull List<JsPropertyInitializer> result, @NotNull List<JsPropertyInitializer> staticResult) {
+    @NotNull
+    private final JsScope scope;
+
+    @Nullable
+    private List<JsStatement> initializerStatements;
+
+    public DeclarationBodyVisitor(
+            @NotNull List<JsPropertyInitializer> result, @NotNull List<JsPropertyInitializer> staticResult,
+            @NotNull JsScope scope
+    ) {
         this.result = result;
         this.staticResult = staticResult;
+        this.scope = scope;
     }
 
     @NotNull
@@ -65,6 +74,15 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
     @Override
     public Void visitClassOrObject(@NotNull KtClassOrObject declaration, TranslationContext context) {
         staticResult.addAll(ClassTranslator.translate(declaration, context).getProperties());
+
+        if (declaration instanceof KtObjectDeclaration) {
+            KtObjectDeclaration objectDeclaration = (KtObjectDeclaration) declaration;
+            if (objectDeclaration.isCompanion()) {
+                DeclarationDescriptor descriptor = BindingUtils.getDescriptorForElement(context.bindingContext(), declaration);
+                addInitializerStatement(context.getQualifiedReference(descriptor).makeStmt());
+            }
+        }
+
         return null;
     }
 
@@ -114,5 +132,14 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
     @Override
     public Void visitSecondaryConstructor(@NotNull KtSecondaryConstructor constructor, TranslationContext data) {
         return null;
+    }
+
+    private void addInitializerStatement(@NotNull JsStatement statement) {
+        if (initializerStatements == null) {
+            initializerStatements = new ArrayList<JsStatement>();
+            JsFunction initializerFunction = new JsFunction(scope, new JsBlock(initializerStatements), "class initializer");
+            staticResult.add(new JsPropertyInitializer(new JsNameRef("object_initializer$"), initializerFunction));
+        }
+        initializerStatements.add(statement);
     }
 }

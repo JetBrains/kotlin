@@ -46,7 +46,7 @@ class MultifileClassPartCodegen(
         private val packageFragment: PackageFragmentDescriptor,
         private val superClassInternalName: String,
         private val shouldGeneratePartHierarchy: Boolean,
-        private val partContext: MultifileClassPartContext,
+        partContext: MultifileClassPartContext,
         state: GenerationState
 ) : MemberCodegen<KtFile>(state, null, partContext, file, v) {
     private val partType = partContext.filePartType

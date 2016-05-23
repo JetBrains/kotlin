@@ -58,7 +58,7 @@ class SignatureDumpingBuilderFactory(
     private var firstClassWritten: Boolean = false
 
     override fun close() {
-        outputStream.append("\n]")
+        outputStream.append("\n]\n")
         outputStream.close()
         super.close()
     }
@@ -99,7 +99,7 @@ class SignatureDumpingBuilderFactory(
                     outputStream.append("\t\t").appendNameValue("visibility", it.displayName).append(",\n")
                 }
             }
-            outputStream.append("\t\t").appendNameValue("class", javaClassName).append(", \n")
+            outputStream.append("\t\t").appendNameValue("class", javaClassName).append(",\n")
 
             outputStream.append("\t\t").appendQuoted("members").append(": [\n")
             signatures.joinTo(outputStream, ",\n") { buildString {
