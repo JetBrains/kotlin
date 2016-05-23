@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
 class RenameUnderscoreFix(declaration: KtDeclaration) : KotlinQuickFixAction<KtDeclaration>(declaration) {
+    override fun startInWriteAction(): Boolean = false
+
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         if (editor == null) return
         val dataContext = DataManager.getInstance().getDataContext(editor.component)
