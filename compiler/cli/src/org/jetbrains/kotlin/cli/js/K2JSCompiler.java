@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.js.facade.MainCallParameters;
 import org.jetbrains.kotlin.js.facade.TranslationResult;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.kotlin.utils.PathUtil;
 
 import java.io.File;
@@ -180,8 +181,9 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         try {
             //noinspection unchecked
             translationResult = translator.translate(sourcesFiles, mainCallParameters, jsAnalysisResult);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        }
+        catch (Exception e) {
+            throw ExceptionUtilsKt.rethrow(e);
         }
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
