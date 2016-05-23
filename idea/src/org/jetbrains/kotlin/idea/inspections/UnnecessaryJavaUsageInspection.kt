@@ -65,9 +65,9 @@ class UnnecessaryJavaUsageInspection : AbstractKotlinInspection(), CleanupLocalI
             val factory = KtPsiFactory(element)
 
             if(pattern.second) {
-                element.replace(factory.createExpressionByPattern(pattern.first, receiver.text, *arguments.toTypedArray()));
+                element.replace(factory.createExpressionByPattern(pattern.first, receiver.text, *arguments.toTypedArray()))
             } else {
-                element.replace(factory.createExpressionByPattern(pattern.first, *arguments.toTypedArray()));
+                element.replace(factory.createExpressionByPattern(pattern.first, *arguments.toTypedArray()))
             }
         }
     }
