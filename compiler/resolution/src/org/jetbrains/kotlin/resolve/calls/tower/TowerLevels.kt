@@ -243,9 +243,16 @@ private fun ResolutionScope.getContributedVariablesAndObjects(name: Name, locati
 
 
 private fun getFakeDescriptorForObject(classifier: ClassifierDescriptor?): FakeCallableDescriptorForObject? {
-    if (classifier !is ClassDescriptor || !classifier.hasClassValueDescriptor) return null // todo
-
-    return FakeCallableDescriptorForObject(classifier)
+    return when (classifier) {
+        is TypeAliasDescriptor ->
+            getFakeDescriptorForObject(classifier.classDescriptor)
+        is ClassDescriptor ->
+            if (classifier.hasClassValueDescriptor)
+                FakeCallableDescriptorForObject(classifier)
+            else
+                null
+        else -> null
+    }
 }
 
 private fun getClassWithConstructors(classifier: ClassifierDescriptor?): ClassDescriptor? {
