@@ -39,8 +39,8 @@ import org.jetbrains.kotlin.utils.sure
 import java.io.File
 
 class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
-    private final val MODULE_NAME = "module"
-    private final val BASE_DIR = "compiler/testData/serialization"
+    private val MODULE_NAME = "module"
+    private val BASE_DIR = "compiler/testData/serialization"
 
     private fun doTest(fileName: String, metaFileDir: File = tmpdir) {
         val source = "$BASE_DIR/$fileName"
@@ -68,7 +68,9 @@ class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
         try {
             val environment = KotlinCoreEnvironment.createForTests(rootDisposable, configuration, EnvironmentConfigFiles.JS_CONFIG_FILES)
             val files = environment.getSourceFiles()
-            val config = LibrarySourcesConfig.Builder(environment.project, MODULE_NAME, LibrarySourcesConfig.JS_STDLIB).build()
+            val config = LibrarySourcesConfig.Builder(
+                    environment.project, environment.configuration, MODULE_NAME, LibrarySourcesConfig.JS_STDLIB
+            ).build()
             val analysisResult = TopDownAnalyzerFacadeForJS.analyzeFiles(files, config)
             FileUtil.writeToFile(metaFile, KotlinJavascriptSerializationUtil.metadataAsString(MODULE_NAME, analysisResult.moduleDescriptor))
         }

@@ -60,7 +60,8 @@ public abstract class AbstractDiagnosticMessageJsTest extends AbstractDiagnostic
 
     @NotNull
     private JsConfig getConfig() {
-        return new LibrarySourcesConfig.Builder(getProject(), "testModule", LibrarySourcesConfig.JS_STDLIB)
+        CompilerConfiguration configuration = getEnvironment().getConfiguration();
+        return new LibrarySourcesConfig.Builder(getProject(), configuration, "testModule", LibrarySourcesConfig.JS_STDLIB)
                 .inlineEnabled(false)
                 .isUnitTestConfig(true)
                 .build();

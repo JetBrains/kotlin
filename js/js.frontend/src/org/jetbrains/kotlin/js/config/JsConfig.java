@@ -24,6 +24,7 @@ import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.js.resolve.JsPlatform;
@@ -42,9 +43,11 @@ import java.util.List;
  * Base class representing a configuration of translator.
  */
 public abstract class JsConfig {
-    private final boolean inlineEnabled;
     @NotNull
     private final Project project;
+    @NotNull
+    private final CompilerConfiguration configuration;
+    private final boolean inlineEnabled;
     @NotNull
     private final LockBasedStorageManager storageManager = new LockBasedStorageManager();
     @NotNull
@@ -69,6 +72,7 @@ public abstract class JsConfig {
 
     protected JsConfig(
             @NotNull Project project,
+            @NotNull CompilerConfiguration configuration,
             @NotNull String moduleId,
             @NotNull EcmaVersion ecmaVersion,
             boolean sourcemap,
@@ -77,6 +81,7 @@ public abstract class JsConfig {
             boolean kjsm
     ) {
         this.project = project;
+        this.configuration = configuration;
         this.target = ecmaVersion;
         this.moduleId = moduleId;
         this.sourcemap = sourcemap;

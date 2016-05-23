@@ -119,7 +119,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
         File outputFile = new File(arguments.outputFile);
 
-        JsConfig config = getConfig(arguments, project);
+        JsConfig config = getConfig(project, configuration, arguments);
         if (config.checkLibFilesAndReportErrors(new Function1<String, Unit>() {
             @Override
             public Unit invoke(String message) {
@@ -245,7 +245,11 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
     }
 
     @NotNull
-    private static JsConfig getConfig(@NotNull K2JSCompilerArguments arguments, @NotNull Project project) {
+    private static JsConfig getConfig(
+            @NotNull Project project,
+            @NotNull CompilerConfiguration configuration,
+            @NotNull K2JSCompilerArguments arguments
+    ) {
         if (arguments.target != null) {
             assert arguments.target == "v5" : "Unsupported ECMA version: " + arguments.target;
         }
@@ -262,7 +266,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             ContainerUtil.addAllNotNull(libraryFiles, arguments.libraryFiles);
         }
 
-        return new LibrarySourcesConfig.Builder(project, moduleId, libraryFiles)
+        return new LibrarySourcesConfig.Builder(project, configuration, moduleId, libraryFiles)
                 .ecmaVersion(ecmaVersion)
                 .sourceMap(arguments.sourceMap)
                 .inlineEnabled(inlineEnabled)
