@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.descriptors.PackagePartProvider;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.io.File;
 import java.util.Collections;
@@ -54,7 +55,7 @@ public class GenerationUtils {
         PackagePartProvider packagePartProvider =
                 environment == null ? PackagePartProvider.Companion.getEMPTY() : new JvmPackagePartProvider(environment);
         CompilerConfiguration configuration =
-                environment == null ? CompilerConfiguration.EMPTY : environment.getConfiguration();
+                environment == null ? KotlinTestUtils.newConfiguration() : environment.getConfiguration();
 
         AnalysisResult analysisResult =
                 JvmResolveUtil.analyzeAndCheckForErrors(CollectionsKt.first(files).getProject(), files, configuration, packagePartProvider);

@@ -21,7 +21,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
-import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.ImportPath;
@@ -110,7 +109,9 @@ public class KtPsiUtilTest extends KotlinTestWithEnvironment {
 
     @Override
     protected KotlinCoreEnvironment createEnvironment() {
-        return KotlinCoreEnvironment.createForTests(getTestRootDisposable(), new CompilerConfiguration(), EnvironmentConfigFiles.JVM_CONFIG_FILES);
+        return KotlinCoreEnvironment.createForTests(
+                getTestRootDisposable(), KotlinTestUtils.newConfiguration(), EnvironmentConfigFiles.JVM_CONFIG_FILES
+        );
     }
 
     private ImportPath getImportPathFromParsed(String text) {

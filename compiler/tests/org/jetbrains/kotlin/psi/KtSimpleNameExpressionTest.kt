@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.psi
 
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
 import org.junit.Assert
 
@@ -38,6 +38,8 @@ class KtSimpleNameExpressionTest : KotlinTestWithEnvironment() {
     }
 
     override fun createEnvironment(): KotlinCoreEnvironment {
-        return KotlinCoreEnvironment.createForTests(testRootDisposable!!, CompilerConfiguration(), EnvironmentConfigFiles.JVM_CONFIG_FILES)
+        return KotlinCoreEnvironment.createForTests(
+                testRootDisposable, KotlinTestUtils.newConfiguration(), EnvironmentConfigFiles.JVM_CONFIG_FILES
+        )
     }
 }

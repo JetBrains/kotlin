@@ -53,10 +53,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootsKt;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
-import org.jetbrains.kotlin.config.CommonConfigurationKeys;
-import org.jetbrains.kotlin.config.CompilerConfiguration;
-import org.jetbrains.kotlin.config.ContentRoot;
-import org.jetbrains.kotlin.config.KotlinSourceRoot;
+import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.Errors;
@@ -94,8 +91,6 @@ import java.nio.charset.Charset;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static org.jetbrains.kotlin.config.JVMConfigurationKeys.MODULE_NAME;
 
 public class KotlinTestUtils {
     public static String TEST_MODULE_NAME = "test-module";
@@ -424,6 +419,13 @@ public class KotlinTestUtils {
     }
 
     @NotNull
+    public static CompilerConfiguration newConfiguration() {
+        CompilerConfiguration configuration = new CompilerConfiguration();
+        configuration.put(JVMConfigurationKeys.MODULE_NAME, TEST_MODULE_NAME);
+        return configuration;
+    }
+
+    @NotNull
     public static CompilerConfiguration compilerConfigurationForTests(
             @NotNull ConfigurationKind configurationKind,
             @NotNull TestJdkKind jdkKind,
@@ -439,7 +441,7 @@ public class KotlinTestUtils {
             @NotNull List<File> classpath,
             @NotNull List<File> javaSource
     ) {
-        CompilerConfiguration configuration = new CompilerConfiguration();
+        CompilerConfiguration configuration = newConfiguration();
         JvmContentRootsKt.addJavaSourceRoots(configuration, javaSource);
         if (jdkKind == TestJdkKind.MOCK_JDK) {
             JvmContentRootsKt.addJvmClasspathRoot(configuration, findMockJdkRtJar());
@@ -466,8 +468,6 @@ public class KotlinTestUtils {
         }
 
         JvmContentRootsKt.addJvmClasspathRoots(configuration, classpath);
-
-        configuration.put(MODULE_NAME, TEST_MODULE_NAME);
 
         return configuration;
     }

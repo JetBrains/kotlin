@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.decompiler.textBuilder
 
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
@@ -31,7 +30,6 @@ import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
-import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.kotlin.test.KotlinTestUtils
 
@@ -49,12 +47,13 @@ class DecompiledTextConsistencyTest : TextConsistencyBaseTest() {
     override fun getDecompiledText(packageFile: VirtualFile, resolver: ResolverForDecompiler?): String =
             (resolver?.let { buildDecompiledTextForClassFile(packageFile, it) } ?: buildDecompiledTextForClassFile(packageFile)).text
 
-    override fun getModuleDescriptor(): ModuleDescriptor =
-            TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-                    TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project, KotlinTestUtils.TEST_MODULE_NAME),
-                    listOf(), BindingTraceContext(), CompilerConfiguration.EMPTY,
-                    IDEPackagePartProvider(GlobalSearchScope.allScope(project))
-            ).moduleDescriptor
+    override fun getModuleDescriptor(): ModuleDescriptor {
+        val configuration = KotlinTestUtils.newConfiguration()
+        return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
+                TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project, configuration), listOf(), BindingTraceContext(),
+                configuration, IDEPackagePartProvider(GlobalSearchScope.allScope(project))
+        ).moduleDescriptor
+    }
 
     override fun getProjectDescriptor() =
             object : KotlinWithJdkAndRuntimeLightProjectDescriptor() {
