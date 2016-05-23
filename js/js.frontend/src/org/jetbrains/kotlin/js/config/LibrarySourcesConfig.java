@@ -48,9 +48,7 @@ public class LibrarySourcesConfig extends JsConfig {
     public static final List<String> JS_STDLIB =
             Collections.singletonList(getKotlinPathsForDistDirectory().getJsStdLibJarPath().getAbsolutePath());
 
-    @NotNull
     public static final Key<String> EXTERNAL_MODULE_NAME = Key.create("externalModule");
-    @NotNull
     public static final String UNKNOWN_EXTERNAL_MODULE_NAME = "<unknown>";
 
     public static final String STDLIB_JS_MODULE_NAME = "stdlib";
@@ -58,40 +56,18 @@ public class LibrarySourcesConfig extends JsConfig {
     public static final String BUILTINS_JS_FILE_NAME = BUILTINS_JS_MODULE_NAME + JavaScript.DOT_EXTENSION;
     public static final String STDLIB_JS_FILE_NAME = STDLIB_JS_MODULE_NAME + JavaScript.DOT_EXTENSION;
 
-    private final boolean isUnitTestConfig;
-
-    @NotNull
-    private final List<String> files;
-
-    private LibrarySourcesConfig(
-            @NotNull Project project,
-            @NotNull CompilerConfiguration configuration,
-            @NotNull String moduleId,
-            @NotNull List<String> files,
-            @NotNull EcmaVersion ecmaVersion,
-            boolean sourceMap,
-            boolean isUnitTestConfig,
-            boolean metaInfo,
-            boolean kjsm
-    ) {
-        super(project, configuration, moduleId, ecmaVersion, sourceMap, metaInfo, kjsm);
-        this.files = files;
-        this.isUnitTestConfig = isUnitTestConfig;
-    }
-
-    @Override
-    public boolean isTestConfig() {
-        return isUnitTestConfig;
+    public LibrarySourcesConfig(@NotNull Project project, @NotNull CompilerConfiguration configuration) {
+        super(project, configuration);
     }
 
     @NotNull
     public List<String> getLibraries() {
-        return files;
+        return getConfiguration().getList(JSConfigurationKeys.LIBRARY_FILES);
     }
 
     @Override
     protected void init(@NotNull final List<KtFile> sourceFilesInLibraries, @NotNull final List<KotlinJavascriptMetadata> metadata) {
-        if (files.isEmpty()) return;
+        if (getLibraries().isEmpty()) return;
 
         final PsiManager psiManager = PsiManager.getInstance(getProject());
 
@@ -129,14 +105,15 @@ public class LibrarySourcesConfig extends JsConfig {
     }
 
     private boolean checkLibFilesAndReportErrors(@NotNull Function1<String, Unit> report, @Nullable Function2<String, VirtualFile, Unit> action) {
-        if (files.isEmpty()) {
+        List<String> libraries = getLibraries();
+        if (libraries.isEmpty()) {
             return false;
         }
 
         VirtualFileSystem fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL);
         VirtualFileSystem jarFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.JAR_PROTOCOL);
 
-        for (String path : files) {
+        for (String path : libraries) {
             VirtualFile file;
 
             File filePath = new File(path);
@@ -189,62 +166,7 @@ public class LibrarySourcesConfig extends JsConfig {
         return false;
     }
 
-    public static class Builder {
-        private final Project project;
-        private final CompilerConfiguration configuration;
-        private final String moduleId;
-        private final List<String> files;
-        private EcmaVersion ecmaVersion = EcmaVersion.defaultVersion();
-        boolean sourceMap = false;
-        boolean isUnitTestConfig = false;
-        boolean metaInfo = false;
-        boolean kjsm = false;
-
-        public Builder(
-                @NotNull Project project,
-                @NotNull CompilerConfiguration configuration,
-                @NotNull String moduleId,
-                @NotNull List<String> files
-        ) {
-            this.project = project;
-            this.configuration = configuration;
-            this.moduleId = moduleId;
-            this.files = files;
-        }
-
-        public Builder ecmaVersion(@NotNull EcmaVersion ecmaVersion) {
-            this.ecmaVersion = ecmaVersion;
-            return this;
-        }
-
-        public Builder sourceMap(boolean sourceMap) {
-            this.sourceMap = sourceMap;
-            return this;
-        }
-
-        public Builder isUnitTestConfig(boolean isUnitTestConfig) {
-            this.isUnitTestConfig = isUnitTestConfig;
-            return this;
-        }
-
-        public Builder metaInfo(boolean metaInfo) {
-            this.metaInfo = metaInfo;
-            return this;
-        }
-
-        public Builder kjsm(boolean kjsm) {
-            this.kjsm = kjsm;
-            return this;
-        }
-
-        public JsConfig build() {
-            return new LibrarySourcesConfig(
-                    project, configuration, moduleId, files, ecmaVersion, sourceMap, isUnitTestConfig, metaInfo, kjsm
-            );
-        }
-    }
-
-    protected static KtFile getJetFileByVirtualFile(VirtualFile file, String moduleName, PsiManager psiManager) {
+    private static KtFile getJetFileByVirtualFile(VirtualFile file, String moduleName, PsiManager psiManager) {
         PsiFile psiFile = psiManager.findFile(file);
         assert psiFile != null;
 
@@ -252,7 +174,7 @@ public class LibrarySourcesConfig extends JsConfig {
         return (KtFile) psiFile;
     }
 
-    protected static void setupPsiFile(PsiFile psiFile, String moduleName) {
+    private static void setupPsiFile(PsiFile psiFile, String moduleName) {
         psiFile.putUserData(EXTERNAL_MODULE_NAME, moduleName);
     }
 

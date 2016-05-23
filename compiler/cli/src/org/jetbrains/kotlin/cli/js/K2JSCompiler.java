@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.config.Services;
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult;
 import org.jetbrains.kotlin.js.config.EcmaVersion;
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys;
 import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.config.LibrarySourcesConfig;
 import org.jetbrains.kotlin.js.facade.K2JSTranslator;
@@ -119,7 +120,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
         File outputFile = new File(arguments.outputFile);
 
-        JsConfig config = getConfig(project, configuration, arguments);
+        JsConfig config = new LibrarySourcesConfig(project, configuration);
         if (config.checkLibFilesAndReportErrors(new Function1<String, Unit>() {
             @Override
             public Unit invoke(String message) {
@@ -241,20 +242,23 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
     protected void setupPlatformSpecificArgumentsAndServices(
             @NotNull CompilerConfiguration configuration, @NotNull K2JSCompilerArguments arguments, @NotNull Services services
     ) {
-        // No platform-specific arguments yet
-    }
-
-    @NotNull
-    private static JsConfig getConfig(
-            @NotNull Project project,
-            @NotNull CompilerConfiguration configuration,
-            @NotNull K2JSCompilerArguments arguments
-    ) {
         if (arguments.target != null) {
             assert arguments.target == "v5" : "Unsupported ECMA version: " + arguments.target;
         }
-        EcmaVersion ecmaVersion = EcmaVersion.defaultVersion();
+        configuration.put(JSConfigurationKeys.TARGET, EcmaVersion.defaultVersion());
+
         String moduleId = FileUtil.getNameWithoutExtension(new File(arguments.outputFile));
+        configuration.put(JSConfigurationKeys.MODULE_ID, moduleId);
+
+        if (arguments.sourceMap) {
+            configuration.put(JSConfigurationKeys.SOURCE_MAP, true);
+        }
+        if (arguments.metaInfo) {
+            configuration.put(JSConfigurationKeys.META_INFO, true);
+        }
+        if (arguments.kjsm) {
+            configuration.put(JSConfigurationKeys.KJSM, true);
+        }
 
         List<String> libraryFiles = new SmartList<String>();
         if (!arguments.noStdlib) {
@@ -265,15 +269,10 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             ContainerUtil.addAllNotNull(libraryFiles, arguments.libraryFiles);
         }
 
-        return new LibrarySourcesConfig.Builder(project, configuration, moduleId, libraryFiles)
-                .ecmaVersion(ecmaVersion)
-                .sourceMap(arguments.sourceMap)
-                .metaInfo(arguments.metaInfo)
-                .kjsm(arguments.kjsm)
-                .build();
+        configuration.put(JSConfigurationKeys.LIBRARY_FILES, libraryFiles);
     }
 
-    public static MainCallParameters createMainCallParameters(String main) {
+    private static MainCallParameters createMainCallParameters(String main) {
         if (K2JsArgumentConstants.NO_CALL.equals(main)) {
             return MainCallParameters.noCall();
         }

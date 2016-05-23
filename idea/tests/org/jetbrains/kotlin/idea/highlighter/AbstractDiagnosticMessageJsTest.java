@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys;
 import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.config.LibrarySourcesConfig;
 import org.jetbrains.kotlin.js.resolve.diagnostics.ErrorsJs;
@@ -62,9 +63,10 @@ public abstract class AbstractDiagnosticMessageJsTest extends AbstractDiagnostic
     @NotNull
     private JsConfig getConfig() {
         CompilerConfiguration configuration = getEnvironment().getConfiguration().copy();
+        configuration.put(JSConfigurationKeys.MODULE_ID, "testModule");
+        configuration.put(JSConfigurationKeys.LIBRARY_FILES, LibrarySourcesConfig.JS_STDLIB);
         configuration.put(CommonConfigurationKeys.DISABLE_INLINE, true);
-        return new LibrarySourcesConfig.Builder(getProject(), configuration, "testModule", LibrarySourcesConfig.JS_STDLIB)
-                .isUnitTestConfig(true)
-                .build();
+        configuration.put(JSConfigurationKeys.UNIT_TEST_CONFIG, true);
+        return new LibrarySourcesConfig(getProject(), configuration);
     }
 }
