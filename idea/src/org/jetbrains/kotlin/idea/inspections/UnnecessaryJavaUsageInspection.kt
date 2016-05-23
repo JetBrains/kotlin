@@ -57,7 +57,7 @@ class UnnecessaryJavaUsageInspection : AbstractKotlinInspection(), CleanupLocalI
 
     private class UnnecessaryJavaUsageFix(val pattern: String,
                                           val type: ConversionType,
-                                          val receiver : KtExpression,
+                                          val receiver: KtExpression,
                                           val arguments: List<String>) : LocalQuickFix {
         override fun getName() = "Unnecessary java usage"
         override fun getFamilyName() = name
