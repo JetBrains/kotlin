@@ -19190,6 +19190,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/typeAliasObject.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("typeAliasObjectWithInvoke.kt")
+            public void testTypeAliasObjectWithInvoke() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/typeAliasObjectWithInvoke.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/diagnostics/tests/unit")
