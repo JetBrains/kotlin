@@ -99,6 +99,8 @@ import static org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil.compileKotlin
 import static org.jetbrains.kotlin.test.ConfigurationKind.ALL;
 
 public class KotlinTestUtils {
+    public static String TEST_MODULE_NAME = "test-module";
+
     public static final String TEST_GENERATOR_NAME = "org.jetbrains.kotlin.generators.tests.TestsPackage";
     public static final String PLEASE_REGENERATE_TESTS = "Please regenerate tests (GenerateTests.kt)";
 
@@ -457,7 +459,7 @@ public class KotlinTestUtils {
 
         JvmContentRootsKt.addJvmClasspathRoots(configuration, classpath);
 
-        configuration.put(MODULE_NAME, "compilerConfigurationForTests");
+        configuration.put(MODULE_NAME, TEST_MODULE_NAME);
 
         return configuration;
     }

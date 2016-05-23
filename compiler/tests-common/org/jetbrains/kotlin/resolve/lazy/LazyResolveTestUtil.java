@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.TopDownAnalysisMode;
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -56,7 +57,7 @@ public class LazyResolveTestUtil {
             @NotNull List<KtFile> sourceFiles,
             @NotNull KotlinCoreEnvironment environment
     ) {
-        ModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project, JvmResolveUtil.TEST_MODULE_NAME);
+        ModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project, KotlinTestUtils.TEST_MODULE_NAME);
 
         TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationNoIncremental(
                 moduleContext, sourceFiles, trace, TopDownAnalysisMode.TopLevelDeclarations,
@@ -67,7 +68,7 @@ public class LazyResolveTestUtil {
     }
 
     @NotNull
-    public static KotlinCodeAnalyzer resolveLazilyWithSession(
+    private static KotlinCodeAnalyzer resolveLazilyWithSession(
             @NotNull List<KtFile> files,
             @NotNull KotlinCoreEnvironment environment,
             boolean addBuiltIns

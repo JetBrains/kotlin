@@ -26,15 +26,13 @@ import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.descriptors.PackagePartProvider;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.AnalyzingUtils;
-import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.util.Collection;
 import java.util.Collections;
 
 public class JvmResolveUtil {
-
-    public static String TEST_MODULE_NAME = "java-integration-test";
     @NotNull
     public static AnalysisResult analyzeOneFileWithJavaIntegrationAndCheckForErrors(@NotNull KtFile file) {
         return analyzeOneFileWithJavaIntegrationAndCheckForErrors(file, PackagePartProvider.Companion.getEMPTY());
@@ -57,7 +55,7 @@ public class JvmResolveUtil {
     }
 
     @NotNull
-    public static AnalysisResult analyzeOneFileWithJavaIntegration(@NotNull KtFile file,  @NotNull PackagePartProvider provider) {
+    private static AnalysisResult analyzeOneFileWithJavaIntegration(@NotNull KtFile file, @NotNull PackagePartProvider provider) {
         return analyzeFilesWithJavaIntegration(file.getProject(), Collections.singleton(file), provider);
     }
 
@@ -101,17 +99,14 @@ public class JvmResolveUtil {
     }
 
     @NotNull
-    public static AnalysisResult analyzeFilesWithJavaIntegration(
+    private static AnalysisResult analyzeFilesWithJavaIntegration(
             @NotNull Project project,
             @NotNull Collection<KtFile> files,
             @NotNull PackagePartProvider packagePartProvider
     ) {
-
-        ModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project, TEST_MODULE_NAME);
-
-        BindingTrace trace = new CliLightClassGenerationSupport.CliBindingTrace();
-
-        return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(moduleContext, files, trace, null, null,
-                                                                                            packagePartProvider);
+        ModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project, KotlinTestUtils.TEST_MODULE_NAME);
+        return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
+                moduleContext, files, new CliLightClassGenerationSupport.CliBindingTrace(), null, null, packagePartProvider
+        );
     }
 }
