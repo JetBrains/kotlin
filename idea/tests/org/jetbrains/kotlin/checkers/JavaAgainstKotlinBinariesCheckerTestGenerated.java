@@ -107,6 +107,12 @@ public class JavaAgainstKotlinBinariesCheckerTestGenerated extends AbstractJavaA
         doTest(fileName);
     }
 
+    @TestMetadata("UseKotlinConstInSwitch.kt")
+    public void testUseKotlinConstInSwitch() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/UseKotlinConstInSwitch.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("UseKotlinSubclassesOfMappedTypes.kt")
     public void testUseKotlinSubclassesOfMappedTypes() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/UseKotlinSubclassesOfMappedTypes.kt");
