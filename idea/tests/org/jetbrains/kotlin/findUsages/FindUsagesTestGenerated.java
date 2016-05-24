@@ -876,6 +876,12 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/findUsages/kotlin/findPropertyUsages"), Pattern.compile("^(.+)\\.0\\.kt$"), true);
             }
 
+            @TestMetadata("extensionPropertyUsages.0.kt")
+            public void testExtensionPropertyUsages() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findPropertyUsages/extensionPropertyUsages.0.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("javaAndKotlinOverrides.0.kt")
             public void testJavaAndKotlinOverrides() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findPropertyUsages/javaAndKotlinOverrides.0.kt");
