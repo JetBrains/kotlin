@@ -36,7 +36,7 @@ class KtLightAnnotation(
         private val owner: PsiAnnotationOwner
 ) : PsiAnnotation by clsDelegate, KtLightElement<KtAnnotationEntry, PsiAnnotation> {
     inner class LightExpressionValue(private val delegate: PsiExpression) : PsiAnnotationMemberValue, PsiExpression by delegate {
-        val originalExpression: PsiElement? by lazy {
+        val originalExpression: PsiElement? by lazy(LazyThreadSafetyMode.PUBLICATION) {
             val nameAndValue = getStrictParentOfType<PsiNameValuePair>() ?: return@lazy null
             val annotationEntry = this@KtLightAnnotation.kotlinOrigin
             val context = LightClassGenerationSupport.getInstance(project).analyze(annotationEntry)
@@ -79,7 +79,7 @@ class KtLightAnnotation(
     }
 
     inner class LightArrayInitializerValue(private val delegate: PsiArrayInitializerMemberValue) : PsiArrayInitializerMemberValue by delegate {
-        private val _initializers by lazy { delegate.initializers.map { wrapAnnotationValue(it) }.toTypedArray() }
+        private val _initializers by lazy(LazyThreadSafetyMode.PUBLICATION) { delegate.initializers.map { wrapAnnotationValue(it) }.toTypedArray() }
 
         override fun getInitializers() = _initializers
         override fun getLanguage() = KotlinLanguage.INSTANCE

@@ -129,7 +129,7 @@ open class KtLightClassForExplicitDeclaration(
         return null
     }
 
-    private val _parent: PsiElement? by lazy {
+    private val _parent: PsiElement? by lazy(LazyThreadSafetyMode.PUBLICATION) {
         if (classOrObject.isLocal())
             getLocalClassParent()
         else if (classOrObject.isTopLevel())
@@ -177,7 +177,7 @@ open class KtLightClassForExplicitDeclaration(
         return lightClassData as OutermostKotlinClassLightClassData
     }
 
-    private val _containingFile: PsiFile by lazy {
+    private val _containingFile: PsiFile by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val virtualFile = classOrObject.containingFile.virtualFile
         assert(virtualFile != null) { "No virtual file for " + classOrObject.text }
 
@@ -245,7 +245,7 @@ open class KtLightClassForExplicitDeclaration(
 
     override fun getParent(): PsiElement? = _parent
 
-    private val _typeParameterList: PsiTypeParameterList by lazy {
+    private val _typeParameterList: PsiTypeParameterList by lazy(LazyThreadSafetyMode.PUBLICATION) {
         LightClassUtil.buildLightTypeParameterList(this, classOrObject)
     }
 
@@ -257,7 +257,7 @@ open class KtLightClassForExplicitDeclaration(
 
     override fun getQualifiedName(): String = classFqName.asString()
 
-    private val _modifierList : PsiModifierList by lazy {
+    private val _modifierList : PsiModifierList by lazy(LazyThreadSafetyMode.PUBLICATION) {
         object : KtLightModifierListWithExplicitModifiers(this@KtLightClassForExplicitDeclaration, computeModifiers()) {
             override val delegate: PsiAnnotationOwner
                 get() = this@KtLightClassForExplicitDeclaration.getDelegate().modifierList!!
