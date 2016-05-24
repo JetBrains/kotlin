@@ -75,6 +75,7 @@ import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.idea.util.string.collapseSpaces
 import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.j2k.JavaToKotlinConverter
@@ -684,8 +685,6 @@ fun invokeOnceOnCommandFinish(action: () -> Unit) {
     }
     commandProcessor.addCommandListener(listener)
 }
-
-fun String.quoteIfNeeded(): String = if (KotlinNameSuggester.isIdentifier(this)) this else "`$this`"
 
 fun FqName.quoteSegmentsIfNeeded(): String {
     return pathSegments().map { it.asString().quoteIfNeeded() }.joinToString(".")

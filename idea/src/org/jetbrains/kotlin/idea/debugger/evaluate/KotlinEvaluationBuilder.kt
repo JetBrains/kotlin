@@ -59,7 +59,7 @@ import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.Compiled
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.ParametersDescriptor
 import org.jetbrains.kotlin.idea.debugger.evaluate.compilingEvaluator.loadClasses
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.ExtractionResult
-import org.jetbrains.kotlin.idea.refactoring.quoteIfNeeded
+import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.idea.refactoring.quoteSegmentsIfNeeded
 import org.jetbrains.kotlin.idea.util.DebuggerUtils
 import org.jetbrains.kotlin.idea.util.application.runReadAction
