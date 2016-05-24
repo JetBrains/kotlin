@@ -215,6 +215,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("renameJavaMethodToKtKeyword/renameJavaMethodToKtKeyword.test")
+    public void testRenameJavaMethodToKtKeyword_RenameJavaMethodToKtKeyword() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameJavaMethodToKtKeyword/renameJavaMethodToKtKeyword.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("renameJavaSyntheticIsPropertyByGetterRef/renameJavaSyntheticIsPropertyByGetterRef.test")
     public void testRenameJavaSyntheticIsPropertyByGetterRef_RenameJavaSyntheticIsPropertyByGetterRef() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameJavaSyntheticIsPropertyByGetterRef/renameJavaSyntheticIsPropertyByGetterRef.test");

@@ -169,6 +169,11 @@
 - [`KT-11574`](https://youtrack.jetbrains.com/issue/KT-11574) Support predefined Java positions for language injection
 - [`KT-11472`](https://youtrack.jetbrains.com/issue/KT-11472) Add comment or @Language annotation after "Inject language or reference" intention automatically
 
+#### Refactorings
+
+###### Issues fixed
+- [`KT-9156`](https://youtrack.jetbrains.com/issue/KT-9156) Quote non-identifier names in Kotlin references
+
 #### Java to Kotlin converter
 
 ###### New features
