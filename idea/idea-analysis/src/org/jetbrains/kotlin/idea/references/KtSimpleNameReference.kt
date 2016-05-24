@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
@@ -114,7 +115,7 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
         val element = Extensions.getArea(expression.project).getExtensionPoint(SimpleNameReferenceExtension.EP_NAME).extensions
                         .asSequence()
                         .map { it.handleElementRename(this, psiFactory, newElementName) }
-                        .firstOrNull { it != null } ?: psiFactory.createNameIdentifier(newElementName)
+                        .firstOrNull { it != null } ?: psiFactory.createNameIdentifier(newElementName.quoteIfNeeded())
 
         val nameElement = expression.getReferencedNameElement()
 
