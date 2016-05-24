@@ -21,6 +21,8 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
+import com.intellij.psi.PsiVariable
+import com.intellij.psi.codeStyle.JavaCodeStyleManager
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.JavaRefactoringSettings
 import com.intellij.refactoring.RefactoringBundle
@@ -28,6 +30,7 @@ import com.intellij.refactoring.rename.naming.AutomaticRenamer
 import com.intellij.refactoring.rename.naming.AutomaticRenamerFactory
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.asJava.toLightElements
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
@@ -39,6 +42,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.lazy.NoDescriptorForDeclarationException
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
 
 class AutomaticVariableRenamer(
@@ -85,19 +89,37 @@ class AutomaticVariableRenamer(
     override fun entityName() = RefactoringBundle.message("entity.name.variable")
 
     override fun nameToCanonicalName(name: String, element: PsiNamedElement): String? {
+        if (element !is KtNamedDeclaration) return name
+
+        val psiVariable = element.toLightElements().firstIsInstanceOrNull<PsiVariable>()
+        val propertyName = if (psiVariable != null) {
+            val codeStyleManager = JavaCodeStyleManager.getInstance(psiVariable.project)
+            codeStyleManager.variableNameToPropertyName(name, codeStyleManager.getVariableKind(psiVariable))
+        }
+        else name
+
         if (element in toUnpluralize) {
-            val singular = StringUtil.unpluralize(name)
+            val singular = StringUtil.unpluralize(propertyName)
             if (singular != null) return singular
             toUnpluralize.remove(element)
         }
-        return name
+        return propertyName
     }
 
     override fun canonicalNameToName(canonicalName: String, element: PsiNamedElement): String? {
+        if (element !is KtNamedDeclaration) return canonicalName
+
+        val psiVariable = element.toLightElements().firstIsInstanceOrNull<PsiVariable>()
+        val varName = if (psiVariable != null) {
+            val codeStyleManager = JavaCodeStyleManager.getInstance(psiVariable.project)
+            codeStyleManager.propertyNameToVariableName(canonicalName, codeStyleManager.getVariableKind(psiVariable))
+        }
+        else canonicalName
+
         return if (element in toUnpluralize)
-            StringUtil.pluralize(canonicalName)
+            StringUtil.pluralize(varName)
         else
-            canonicalName
+            varName
     }
 
     companion object {

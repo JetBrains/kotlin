@@ -2,5 +2,5 @@ class BarImpl : Bar()
 
 object BarObj : Bar()
 
-val bar: Bar = Bar()
-val bars: Array<Bar> = throw Error()
+val BAR: Bar = Bar()
+val BARs: Array<Bar> = throw Error()
