@@ -16,9 +16,10 @@
 
 package org.jetbrains.kotlin.checkers
 
+import org.jetbrains.kotlin.config.LanguageFeatureSettings
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.hasError
-import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
+import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
 import org.jetbrains.kotlin.js.facade.K2JSTranslator
 import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.psi.KtFile
@@ -27,15 +28,18 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 abstract class AbstractDiagnosticsTestWithJsStdLibAndBackendCompilation : AbstractDiagnosticsTestWithJsStdLib() {
     override fun analyzeModuleContents(
             moduleContext: ModuleContext,
-            jetFiles: MutableList<KtFile>,
-            moduleTrace: BindingTrace
-    ) {
-        val analysisResult = TopDownAnalyzerFacadeForJS.analyzeFilesWithGivenTrace(jetFiles, moduleTrace, moduleContext, config)
+            ktFiles: MutableList<KtFile>,
+            moduleTrace: BindingTrace,
+            languageFeatureSettings: LanguageFeatureSettings?
+    ): JsAnalysisResult {
+        val analysisResult = super.analyzeModuleContents(moduleContext, ktFiles, moduleTrace, languageFeatureSettings)
         val diagnostics = analysisResult.bindingTrace.bindingContext.diagnostics
 
         if (!hasError(diagnostics)) {
             val translator = K2JSTranslator(config)
-            translator.translate(jetFiles, MainCallParameters.noCall(), analysisResult)
+            translator.translate(ktFiles, MainCallParameters.noCall(), analysisResult)
         }
+
+        return analysisResult
     }
 }

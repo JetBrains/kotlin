@@ -12,12 +12,11 @@ Must be
 
   where
 
-* `'+'` means 'include';
-* `'-'` means 'exclude';
-* `'!'` means 'exclude everything but this'.
+* `+` means 'include';
+* `-` means 'exclude';
+* `!` means 'exclude everything but this'.
 
-  Directives are applied in the order of appearance,
-  i.e. `!FOO +BAR` means include only `FOO` and `BAR`.
+  Directives are applied in the order of appearance, i.e. `!FOO +BAR` means include only `FOO` and `BAR`.
 
 #### Examples:
 
@@ -48,11 +47,24 @@ With that, an exact type of an expression can be checked in the following way:
 
 ### 3. FILE
 
-The directive let you compose a test consisting of several files in one actual file.
+The directive lets you compose a test consisting of several files in one actual file.
 
 #### Usage:
-// FILE: A.java
-/* Java code */
 
-// FILE: B.kt
-/* kotlin code */
+    // FILE: A.java
+    /* Java code */
+
+    // FILE: B.kt
+    /* Kotlin code */
+
+### 4. LANGUAGE
+
+This directive lets you enable or disable certain language features. Language features are named as
+parameters of the primary constructor of the class LanguageFeatureSettings. Each feature can be
+enabled with `+` or disabled with `-`.
+
+#### Usage:
+
+    // !LANGUAGE: -topLevelSealedInheritance
+
+    // !LANGUAGE: +typeAliases -localDelegatedProperties
