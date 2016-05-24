@@ -1,0 +1,6 @@
+fun foo(x: Boolean) {
+    if (x) {
+        <caret>
+    } else {
+    }
+}

@@ -26,10 +26,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.codeInsight.surroundWith.expression.KotlinNotSurrounder;
-import org.jetbrains.kotlin.idea.codeInsight.surroundWith.expression.KotlinParenthesesSurrounder;
-import org.jetbrains.kotlin.idea.codeInsight.surroundWith.expression.KotlinStringTemplateSurrounder;
-import org.jetbrains.kotlin.idea.codeInsight.surroundWith.expression.KotlinWhenSurrounder;
+import org.jetbrains.kotlin.idea.codeInsight.surroundWith.expression.*;
 import org.jetbrains.kotlin.idea.codeInsight.surroundWith.statement.*;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 
@@ -76,6 +73,14 @@ public abstract class AbstractSurroundWithTest extends LightCodeInsightTestCase 
 
     public void doTestWithFunctionLiteralSurrounder(String path) throws Exception {
         doTest(path, new KotlinFunctionLiteralSurrounder());
+    }
+
+    public void doTestWithSurroundWithIfExpression(String path) throws Exception {
+        doTest(path, new KotlinWithIfExpressionSurrounder(false));
+    }
+
+    public void doTestWithSurroundWithIfElseExpression(String path) throws Exception {
+        doTest(path, new KotlinWithIfExpressionSurrounder(true));
     }
 
     private void doTest(String path, Surrounder surrounder) throws Exception {

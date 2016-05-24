@@ -613,4 +613,46 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
             doTestWithFunctionLiteralSurrounder(fileName);
         }
     }
+
+    @TestMetadata("idea/testData/codeInsight/surroundWith/withIfExpression")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class WithIfExpression extends AbstractSurroundWithTest {
+        public void testAllFilesPresentInWithIfExpression() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/withIfExpression"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("complexBoolean.kt")
+        public void testComplexBoolean() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/surroundWith/withIfExpression/complexBoolean.kt");
+            doTestWithSurroundWithIfExpression(fileName);
+        }
+
+        @TestMetadata("variable.kt")
+        public void testVariable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/surroundWith/withIfExpression/variable.kt");
+            doTestWithSurroundWithIfExpression(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/codeInsight/surroundWith/withIfElseExpression")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class WithIfElseExpression extends AbstractSurroundWithTest {
+        public void testAllFilesPresentInWithIfElseExpression() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/withIfElseExpression"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("complexBoolean.kt")
+        public void testComplexBoolean() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/surroundWith/withIfElseExpression/complexBoolean.kt");
+            doTestWithSurroundWithIfElseExpression(fileName);
+        }
+
+        @TestMetadata("variable.kt")
+        public void testVariable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/surroundWith/withIfElseExpression/variable.kt");
+            doTestWithSurroundWithIfElseExpression(fileName);
+        }
+    }
 }

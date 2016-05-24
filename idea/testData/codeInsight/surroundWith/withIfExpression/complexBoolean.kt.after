@@ -1,0 +1,5 @@
+fun foo(x: Boolean, y: Boolean) {
+    if (x || y && x) {
+        <caret>
+    }
+}
