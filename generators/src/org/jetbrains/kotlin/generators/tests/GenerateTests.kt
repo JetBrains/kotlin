@@ -509,6 +509,8 @@ fun main(args: Array<String>) {
             model("codeInsight/surroundWith/tryCatchFinally", testMethod = "doTestWithTryCatchFinallySurrounder")
             model("codeInsight/surroundWith/tryFinally", testMethod = "doTestWithTryFinallySurrounder")
             model("codeInsight/surroundWith/functionLiteral", testMethod = "doTestWithFunctionLiteralSurrounder")
+            model("codeInsight/surroundWith/withIfExpression", testMethod = "doTestWithSurroundWithIfExpression")
+            model("codeInsight/surroundWith/withIfElseExpression", testMethod = "doTestWithSurroundWithIfElseExpression")
         }
 
         testClass<AbstractJoinLinesTest>() {
