@@ -125,6 +125,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("renameClassByRefInConstructorDelegationCall/renameClassByRefInConstructorDelegationCall.test")
+    public void testRenameClassByRefInConstructorDelegationCall_RenameClassByRefInConstructorDelegationCall() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameClassByRefInConstructorDelegationCall/renameClassByRefInConstructorDelegationCall.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("renameClassWithAutoVarConventions/renameClassWithAutoVarConventions.test")
     public void testRenameClassWithAutoVarConventions_RenameClassWithAutoVarConventions() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameClassWithAutoVarConventions/renameClassWithAutoVarConventions.test");
