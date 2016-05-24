@@ -39,11 +39,11 @@ sealed class KtLightMethodImpl(
 ) : LightMethod(clsDelegate.manager, clsDelegate, containingClass), KtLightMethod {
     override val kotlinOrigin: KtDeclaration? get() = lightMethodOrigin?.originalElement as? KtDeclaration
 
-    private val lightIdentifier by lazy { KtLightIdentifier(this, kotlinOrigin as? KtNamedDeclaration) }
+    private val lightIdentifier by lazy(LazyThreadSafetyMode.PUBLICATION) { KtLightIdentifier(this, kotlinOrigin as? KtNamedDeclaration) }
 
     override fun getContainingClass(): KtLightClass = super.getContainingClass() as KtLightClass
 
-    private val paramsList: CachedValue<PsiParameterList> by lazy {
+    private val paramsList: CachedValue<PsiParameterList> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val cacheManager = CachedValuesManager.getManager(clsDelegate.project)
         cacheManager.createCachedValue<PsiParameterList>({
             val parameterBuilder = LightParameterListBuilder(manager, KotlinLanguage.INSTANCE, this)
@@ -56,7 +56,7 @@ sealed class KtLightMethodImpl(
         }, false)
     }
 
-    private val typeParamsList: CachedValue<PsiTypeParameterList> by lazy {
+    private val typeParamsList: CachedValue<PsiTypeParameterList> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val cacheManager = CachedValuesManager.getManager(clsDelegate.project)
         cacheManager.createCachedValue<PsiTypeParameterList>({
              val origin = (lightMethodOrigin as? LightMemberOriginForDeclaration)?.originalElement
@@ -111,7 +111,7 @@ sealed class KtLightMethodImpl(
         throw IncorrectOperationException(JavaCoreBundle.message("psi.error.attempt.to.edit.class.file"))
     }
 
-    private val _modifierList by lazy {
+    private val _modifierList by lazy(LazyThreadSafetyMode.PUBLICATION) {
         if (lightMethodOrigin is LightMemberOriginForDeclaration)
             KtLightModifierList(clsDelegate.modifierList, this)
         else clsDelegate.modifierList

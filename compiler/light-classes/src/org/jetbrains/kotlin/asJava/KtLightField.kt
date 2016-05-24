@@ -35,7 +35,7 @@ sealed class KtLightFieldImpl(
         override val clsDelegate: PsiField,
         private val containingClass: KtLightClass
 ) : LightElement(clsDelegate.manager, KotlinLanguage.INSTANCE), KtLightField {
-    private val lightIdentifier by lazy { KtLightIdentifier(this, kotlinOrigin as? KtNamedDeclaration) }
+    private val lightIdentifier by lazy(LazyThreadSafetyMode.PUBLICATION) { KtLightIdentifier(this, kotlinOrigin as? KtNamedDeclaration) }
 
     @Throws(IncorrectOperationException::class)
     override fun setInitializer(initializer: PsiExpression?) = throw IncorrectOperationException("Not supported")
@@ -72,7 +72,7 @@ sealed class KtLightFieldImpl(
         return this
     }
 
-    private val _modifierList by lazy {
+    private val _modifierList by lazy(LazyThreadSafetyMode.PUBLICATION) {
         if (lightMemberOrigin is LightMemberOriginForDeclaration)
             clsDelegate.modifierList?.let { KtLightModifierList(it, this) }
         else clsDelegate.modifierList
