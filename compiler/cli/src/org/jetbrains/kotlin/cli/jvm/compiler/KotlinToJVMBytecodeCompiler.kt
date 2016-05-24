@@ -77,7 +77,8 @@ object KotlinToJVMBytecodeCompiler {
             outputDir: File?,
             jarPath: File?,
             jarRuntime: Boolean,
-            mainClass: FqName?) {
+            mainClass: FqName?
+    ) {
         if (jarPath != null) {
             CompileEnvironmentUtil.writeToJar(jarPath, jarRuntime, mainClass, outputFiles)
         }
@@ -108,7 +109,8 @@ object KotlinToJVMBytecodeCompiler {
             directory: File,
             jarPath: File?,
             friendPaths: List<String>,
-            jarRuntime: Boolean): Boolean {
+            jarRuntime: Boolean
+    ): Boolean {
         val outputFiles = hashMapOf<Module, ClassFileFactory>()
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
@@ -136,7 +138,8 @@ object KotlinToJVMBytecodeCompiler {
         for (module in chunk) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
             val ktFiles = CompileEnvironmentUtil.getKtFiles(
-                    environment.project, getAbsolutePaths(directory, module), configuration) { s -> throw IllegalStateException("Should have been checked before: " + s) }
+                    environment.project, getAbsolutePaths(directory, module), configuration
+            ) { path -> throw IllegalStateException("Should have been checked before: $path") }
             if (!checkKotlinPackageUsage(environment, ktFiles)) return false
 
             val onIndependentPartCompilationEnd =
@@ -165,7 +168,8 @@ object KotlinToJVMBytecodeCompiler {
     fun createCompilerConfiguration(
             base: CompilerConfiguration,
             chunk: List<Module>,
-            directory: File): CompilerConfiguration {
+            directory: File
+    ): CompilerConfiguration {
         val configuration = base.copy()
 
         for (module in chunk) {
@@ -206,8 +210,8 @@ object KotlinToJVMBytecodeCompiler {
             jar: File?,
             outputDir: File?,
             friendPaths: List<String>,
-            includeRuntime: Boolean): Boolean {
-
+            includeRuntime: Boolean
+    ): Boolean {
         val moduleVisibilityManager = ModuleVisibilityManager.SERVICE.getInstance(environment.project)
 
         for (path in friendPaths) {
@@ -234,7 +238,8 @@ object KotlinToJVMBytecodeCompiler {
             configuration: CompilerConfiguration,
             paths: KotlinPaths,
             environment: KotlinCoreEnvironment,
-            scriptArgs: List<String>): ExitCode {
+            scriptArgs: List<String>
+    ): ExitCode {
         val scriptClass = compileScript(configuration, paths, environment) ?: return ExitCode.COMPILATION_ERROR
         val scriptConstructor = getScriptConstructor(scriptClass)
 
@@ -278,7 +283,8 @@ object KotlinToJVMBytecodeCompiler {
     fun compileScript(
             configuration: CompilerConfiguration,
             paths: KotlinPaths,
-            environment: KotlinCoreEnvironment): Class<*>? {
+            environment: KotlinCoreEnvironment
+    ): Class<*>? {
         val state = analyzeAndGenerate(environment, GenerationStateEventCallback.DO_NOTHING) ?: return null
 
         val classLoader: GeneratedClassLoader
@@ -287,15 +293,12 @@ object KotlinToJVMBytecodeCompiler {
             configuration.jvmClasspathRoots.mapTo(classPaths) { it.toURI().toURL() }
             classLoader = GeneratedClassLoader(state.factory, URLClassLoader(classPaths.toTypedArray(), null))
 
-            val script = environment.getSourceFiles()[0].script
-            assert(script != null) { "Script must be parsed" }
-            val nameForScript = script!!.fqName
-            return classLoader.loadClass(nameForScript.asString())
+            val script = environment.getSourceFiles()[0].script ?: error("Script must be parsed")
+            return classLoader.loadClass(script.fqName.asString())
         }
         catch (e: Exception) {
             throw RuntimeException("Failed to evaluate script: " + e, e)
         }
-
     }
 
     fun analyzeAndGenerate(
@@ -312,7 +315,7 @@ object KotlinToJVMBytecodeCompiler {
     }
 
     private fun analyze(environment: KotlinCoreEnvironment, targetDescription: String?): AnalysisResult? {
-        val collector = environment.messageCollector()
+        val collector = environment.messageCollector
 
         val analysisStart = PerformanceCounter.currentTime()
         val analyzerWithCompilerReport = AnalyzerWithCompilerReport(collector)
@@ -402,11 +405,11 @@ object KotlinToJVMBytecodeCompiler {
                         generationState.collectedExtraJvmDiagnostics,
                         result.bindingContext.diagnostics
                 ),
-                environment.messageCollector()
+                environment.messageCollector
         )
 
         AnalyzerWithCompilerReport.reportBytecodeVersionErrors(
-                generationState.extraJvmDiagnosticsTrace.bindingContext, environment.messageCollector()
+                generationState.extraJvmDiagnosticsTrace.bindingContext, environment.messageCollector
         )
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
@@ -430,11 +433,9 @@ object KotlinToJVMBytecodeCompiler {
         return true
     }
 
-    fun KotlinCoreEnvironment.messageCollector(): MessageCollector {
-        val result = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-        assert(result != null) { "Message collector not specified in compiler configuration" }
-        return result!!
-    }
+    private val KotlinCoreEnvironment.messageCollector: MessageCollector
+        get() = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+                ?: error("Message collector not specified in compiler configuration")
 
     private fun reportRuntimeConflicts(messageCollector: MessageCollector, jvmClasspathRoots: List<File>) {
         fun String.removeIdeaVersionSuffix(): String {
@@ -455,4 +456,3 @@ object KotlinToJVMBytecodeCompiler {
         }
     }
 }
-
