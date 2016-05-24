@@ -1,5 +1,5 @@
 // WITH_RUNTIME
-// PARAM_DESCRIPTOR: private final fun NamedEx.foo(): [@org.jetbrains.annotations.NotNull] String defined in Test
+// PARAM_DESCRIPTOR: private final fun NamedEx.foo(): kotlin.String defined in Test
 // PARAM_TYPES: NamedEx
 // SIBLING:
 public class Test {

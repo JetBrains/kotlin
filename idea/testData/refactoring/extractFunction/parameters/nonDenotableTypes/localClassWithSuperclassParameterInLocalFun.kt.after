@@ -1,5 +1,5 @@
-// PARAM_DESCRIPTOR: val a: foo.A defined in foo.bar
-// PARAM_TYPES: foo.A, T
+// PARAM_DESCRIPTOR: val a: A defined in foo.bar
+// PARAM_TYPES: A, T
 interface T
 
 fun foo(): T {

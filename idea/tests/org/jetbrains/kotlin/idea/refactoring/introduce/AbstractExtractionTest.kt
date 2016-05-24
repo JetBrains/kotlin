@@ -255,7 +255,7 @@ abstract class AbstractExtractionTest() : KotlinLightCodeInsightFixtureTestCase(
                 } else ExtractionOptions.DEFAULT
             }
 
-            val renderer = DescriptorRenderer.DEBUG_TEXT
+            val renderer = DescriptorRenderer.FQ_NAMES_IN_TYPES
 
             val editor = fixture.editor
             val handler = ExtractKotlinFunctionHandler(
