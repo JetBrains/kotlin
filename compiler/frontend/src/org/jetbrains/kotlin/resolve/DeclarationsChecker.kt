@@ -409,7 +409,7 @@ class DeclarationsChecker(
     private fun checkProperty(property: KtProperty, propertyDescriptor: PropertyDescriptor) {
         val containingDeclaration = propertyDescriptor.containingDeclaration
         if (containingDeclaration is ClassDescriptor) {
-            checkPropertyAbstractness(property, propertyDescriptor, containingDeclaration)
+            checkMemberProperty(property, propertyDescriptor, containingDeclaration)
         }
         checkPropertyLateInit(property, propertyDescriptor)
         checkPropertyInitializer(property, propertyDescriptor)
@@ -506,17 +506,24 @@ class DeclarationsChecker(
         }
     }
 
-    private fun checkPropertyAbstractness(
+    private fun checkMemberProperty(
             property: KtProperty,
             propertyDescriptor: PropertyDescriptor,
             classDescriptor: ClassDescriptor) {
         val modifierList = property.modifierList
 
-        if (modifierList != null && modifierList.hasModifier(KtTokens.ABSTRACT_KEYWORD)) {
-            //has abstract modifier
-            if (!classCanHaveAbstractMembers(classDescriptor)) {
-                trace.report(ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS.on(property, property.name ?: "", classDescriptor))
-                return
+        if (modifierList != null) {
+            if (modifierList.hasModifier(KtTokens.ABSTRACT_KEYWORD)) {
+                //has abstract modifier
+                if (!classCanHaveAbstractMembers(classDescriptor)) {
+                    trace.report(ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS.on(property, property.name ?: "", classDescriptor))
+                    return
+                }
+            }
+            else if (classDescriptor.kind == ClassKind.INTERFACE &&
+                modifierList.hasModifier(KtTokens.OPEN_KEYWORD) &&
+                propertyDescriptor.modality == Modality.ABSTRACT) {
+                trace.report(REDUNDANT_OPEN_IN_INTERFACE.on(property))
             }
         }
 
@@ -607,7 +614,7 @@ class DeclarationsChecker(
         val hasExternalModifier = function.hasModifier(KtTokens.EXTERNAL_KEYWORD)
 
         if (containingDescriptor is ClassDescriptor) {
-            val inTrait = containingDescriptor.kind == ClassKind.INTERFACE
+            val inInterface = containingDescriptor.kind == ClassKind.INTERFACE
             if (hasAbstractModifier && !classCanHaveAbstractMembers(containingDescriptor)) {
                 trace.report(ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS.on(function, functionDescriptor.name.asString(), containingDescriptor))
             }
@@ -615,12 +622,15 @@ class DeclarationsChecker(
             if (hasBody && hasAbstractModifier) {
                 trace.report(ABSTRACT_FUNCTION_WITH_BODY.on(function, functionDescriptor))
             }
-            if (!hasBody && inTrait) {
+            if (!hasBody && inInterface) {
                 if (function.hasModifier(KtTokens.PRIVATE_KEYWORD)) {
                     trace.report(PRIVATE_FUNCTION_WITH_NO_BODY.on(function, functionDescriptor))
                 }
+                if (!hasAbstractModifier && function.hasModifier(KtTokens.OPEN_KEYWORD)) {
+                    trace.report(REDUNDANT_OPEN_IN_INTERFACE.on(function))
+                }
             }
-            if (!hasBody && !hasAbstractModifier && !hasExternalModifier && !inTrait) {
+            if (!hasBody && !hasAbstractModifier && !hasExternalModifier && !inInterface) {
                 trace.report(NON_ABSTRACT_FUNCTION_WITH_NO_BODY.on(function, functionDescriptor))
             }
         }
