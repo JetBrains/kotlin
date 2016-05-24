@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.descriptors
 
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeSubstitutor
 
 interface ValueParameterDescriptor : VariableDescriptor, ParameterDescriptor {
     override fun getContainingDeclaration(): CallableDescriptor
@@ -38,6 +39,8 @@ interface ValueParameterDescriptor : VariableDescriptor, ParameterDescriptor {
     val varargElementType: KotlinType?
 
     override fun getOriginal(): ValueParameterDescriptor
+
+    override fun substitute(substitutor: TypeSubstitutor): ValueParameterDescriptor
 
     fun copy(newOwner: CallableDescriptor, newName: Name): ValueParameterDescriptor
 

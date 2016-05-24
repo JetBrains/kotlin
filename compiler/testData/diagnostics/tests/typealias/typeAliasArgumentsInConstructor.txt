@@ -1,0 +1,13 @@
+package
+
+public typealias P2</*0*/ T>  = Pair<T, T>
+public val test1: Pair<kotlin.String, kotlin.String>
+
+public final class Pair</*0*/ T1, /*1*/ T2> {
+    public constructor Pair</*0*/ T1, /*1*/ T2>(/*0*/ x1: T1, /*1*/ x2: T2)
+    public final val x1: T1
+    public final val x2: T2
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

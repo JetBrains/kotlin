@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.tower
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.smartcasts.getReceiverValueWithSmartCast
@@ -33,9 +34,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.utils.collectFunctions
 import org.jetbrains.kotlin.resolve.scopes.utils.collectVariables
 import org.jetbrains.kotlin.resolve.selectMostSpecificInEachOverridableGroup
-import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.isDynamic
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.getImmediateSuperclassNotAny
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -230,9 +229,10 @@ private fun KotlinType?.getInnerConstructors(name: Name, location: LookupLocatio
 }
 
 private fun ResolutionScope.getContributedFunctionsAndConstructors(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
-    val classWithConstructors = getClassWithConstructors(getContributedClassifier(name, location))
+    val classifier = getContributedClassifier(name, location)
     return getContributedFunctions(name, location) +
-           (classWithConstructors?.constructors?.filter { it.dispatchReceiverParameter == null } ?: emptyList())
+           (getClassWithConstructors(classifier)?.constructors?.filter { it.dispatchReceiverParameter == null } ?: emptyList()) +
+           (classifier?.getTypeAliasConstructors(false) ?: emptyList())
 }
 
 private fun ResolutionScope.getContributedVariablesAndObjects(name: Name, location: LookupLocation): Collection<VariableDescriptor> {
@@ -255,16 +255,34 @@ private fun getFakeDescriptorForObject(classifier: ClassifierDescriptor?): FakeC
     }
 }
 
-private fun getClassWithConstructors(classifier: ClassifierDescriptor?): ClassDescriptor? {
-    if (classifier is TypeAliasDescriptor) {
-        return getClassWithConstructors(classifier.classDescriptor)
+private fun getClassWithConstructors(classifier: ClassifierDescriptor?): ClassDescriptor? =
+        if (classifier !is ClassDescriptor || !classifier.canHaveCallableConstructors())
+            null
+        else
+            classifier
+
+private fun ClassDescriptor.canHaveCallableConstructors() =
+        !ErrorUtils.isError(this) && !kind.isSingleton
+
+private fun ClassifierDescriptor.getTypeAliasConstructors(inner: Boolean): Collection<ConstructorDescriptor> {
+    if (this !is TypeAliasDescriptor) return emptyList()
+
+    val classDescriptor = this.classDescriptor ?: return emptyList()
+    if (!classDescriptor.canHaveCallableConstructors()) return emptyList()
+
+    val substitutor = this.getTypeSubstitutorForUnderlyingClass() ?: throw AssertionError("classDescriptor should be non-null for $this")
+
+    return classDescriptor.constructors.filter {
+        if (inner) it.dispatchReceiverParameter != null else it.dispatchReceiverParameter == null
+    }.mapNotNull {
+        TypeAliasConstructorDescriptorImpl.create(this, it, substitutor)
     }
-    else if (classifier !is ClassDescriptor || ErrorUtils.isError(classifier)
-        // Constructors of singletons shouldn't be callable from the code
-        || classifier.kind.isSingleton) {
-        return null
-    }
-    else {
-        return classifier
-    }
+}
+
+private fun TypeAliasDescriptor.getTypeSubstitutorForUnderlyingClass(): TypeSubstitutor? {
+    if (classDescriptor == null) return null
+
+    val expandedTypeParameters = expandedType.constructor.parameters
+    val expandedTypeArguments = expandedType.arguments
+    return TypeSubstitutor.create(IndexedParametersSubstitution(expandedTypeParameters, expandedTypeArguments))
 }

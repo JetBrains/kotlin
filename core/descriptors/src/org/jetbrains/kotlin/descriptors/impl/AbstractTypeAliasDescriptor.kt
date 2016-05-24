@@ -51,7 +51,7 @@ abstract class AbstractTypeAliasDescriptor(
 
     override val classDescriptor: ClassDescriptor?
         get() = expandedType.let { expandedType ->
-            if (expandedType.isError) null else expandedType.constructor.declarationDescriptor as ClassDescriptor
+            if (expandedType.isError) null else expandedType.constructor.declarationDescriptor as? ClassDescriptor
         }
 
     override fun getModality() = Modality.FINAL
