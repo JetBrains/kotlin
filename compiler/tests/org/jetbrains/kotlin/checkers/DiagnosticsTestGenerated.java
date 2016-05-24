@@ -2970,6 +2970,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("inspection.kt")
+            public void testInspection() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/constructorConsistency/inspection.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("lambdaInObject.kt")
             public void testLambdaInObject() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/constructorConsistency/lambdaInObject.kt");
