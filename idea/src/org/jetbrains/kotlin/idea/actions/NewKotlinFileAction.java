@@ -58,7 +58,7 @@ public class NewKotlinFileAction extends CreateFileFromTemplateAction implements
                 .setTitle("New Kotlin File/Class")
                 .addKind("File", KotlinFileType.INSTANCE.getIcon(), "Kotlin File")
                 .addKind("Class", KotlinIcons.CLASS, "Kotlin Class")
-                .addKind("Interface", KotlinIcons.TRAIT, "Kotlin Interface")
+                .addKind("Interface", KotlinIcons.INTERFACE, "Kotlin Interface")
                 .addKind("Enum class", KotlinIcons.ENUM, "Kotlin Enum")
                 .addKind("Object", KotlinIcons.OBJECT, "Kotlin Object");
     }
