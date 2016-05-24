@@ -1,10 +1,10 @@
 open class Bar : Throwable()
 
-val bar: Bar = Bar()
-val bar1: Bar = Bar()
+val BAR: Bar = Bar()
+val BAR_1: Bar = Bar()
 
-val bars: List<Bar> = listOf()
-val foos1: Array<Bar> = array()
+val BARs: List<Bar> = listOf()
+val FOOS_1: Array<Bar> = array()
 
 fun main(args: Array<String>) {
     val bar: Bar = Bar()
