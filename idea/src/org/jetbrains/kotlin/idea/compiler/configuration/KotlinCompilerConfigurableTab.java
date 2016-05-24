@@ -164,7 +164,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     @Nullable
     @Override
     public String getHelpTopic() {
-        return null;
+        return "reference.compiler.kotlin";
     }
 
     private static void setupFileChooser(
