@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
@@ -43,6 +45,93 @@ interface KotlinType : Annotated {
 }
 
 @Deprecated("Temporary marker method for refactoring")
-fun KotlinType.asSimpleType(): SimpleType = this as SimpleType
+fun KotlinType.asSimpleType(): SimpleType {
+    return unwrap() as SimpleType
+}
+
+fun KotlinType.unwrap(): KotlinType {
+    if (this is WrappedType) return unwrap().unwrap()
+    return this
+}
 
 interface SimpleType : KotlinType
+
+abstract class WrappedType() : KotlinType, LazyType {
+    override val annotations: Annotations get() = delegate.annotations
+    override val constructor: TypeConstructor get() = delegate.constructor
+    override val arguments: List<TypeProjection> get() = delegate.arguments
+    override val isMarkedNullable: Boolean get() = delegate.isMarkedNullable
+    override val memberScope: MemberScope get() = delegate.memberScope
+
+
+    open fun isComputed(): Boolean = true
+    open val delegate: KotlinType
+        get() = unwrap()
+
+    abstract fun unwrap(): KotlinType
+
+    override fun toString(): String {
+        if (isComputed()) {
+            return delegate.toString()
+        }
+        else {
+            return "<Not computed yet>"
+        }
+    }
+
+    // todo: remove this later
+    override val isError: Boolean get() = delegate.isError
+    override val capabilities: TypeCapabilities get() = delegate.capabilities
+    override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>): T? = delegate.getCapability(capabilityClass)
+    override fun equals(other: Any?): Boolean = unwrap().equals(other)
+    override fun hashCode(): Int = unwrap().hashCode()
+}
+
+fun SimpleType.lazyReplaceNullability(newNullable: Boolean): SimpleType {
+    if (this is WrappedSimpleType) {
+        return WrappedSimpleType(delegate, newAnnotations, newNullable)
+    }
+    else {
+        return WrappedSimpleType(this, newNullable = newNullable)
+    }
+}
+
+fun SimpleType.lazyReplaceAnnotations(newAnnotations: Annotations): SimpleType {
+    if (this is WrappedSimpleType) {
+        return WrappedSimpleType(delegate, newAnnotations, newNullable)
+    }
+    else {
+        return WrappedSimpleType(this, newAnnotations)
+    }
+}
+
+private class WrappedSimpleType(
+        override val delegate: SimpleType,
+        val newAnnotations: Annotations? = null,
+        val newNullable: Boolean? = null
+): WrappedType(), SimpleType {
+    override val annotations: Annotations
+        get() = newAnnotations ?: delegate.annotations
+
+    override val isMarkedNullable: Boolean
+        get() = newNullable ?: delegate.isMarkedNullable
+
+    override fun unwrap(): KotlinType {
+        if (delegate.isError) return delegate // todo
+        return KotlinTypeImpl.create(annotations, constructor, isMarkedNullable, arguments, memberScope, capabilities)
+    }
+
+    override fun toString(): String {
+        if (isError) return delegate.toString()
+
+        return buildString {
+            for (annotation in annotations.getAllAnnotations()) {
+                append("[", DescriptorRenderer.DEBUG_TEXT.renderAnnotation(annotation.annotation, annotation.target), "] ")
+            }
+
+            append(constructor)
+            if (!arguments.isEmpty()) arguments.joinTo(this, separator = ", ", prefix = "<", postfix = ">")
+            if (isMarkedNullable) append("?")
+        }
+    }
+}

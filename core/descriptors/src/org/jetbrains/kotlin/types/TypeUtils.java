@@ -139,22 +139,13 @@ public class TypeUtils {
         if (flexibility != null) {
             return flexibility.makeNullableAsSpecified(nullable);
         }
+        else {
+            SimpleType simpleType = KotlinTypeKt.asSimpleType(type);
 
-        // Wrapping serves two purposes here
-        // 1. It's requires less memory than copying with a changed nullability flag: a copy has many fields, while a wrapper has only one
-        // 2. It preserves laziness of types
+            if (!(simpleType instanceof LazyType) && simpleType.isMarkedNullable() == nullable) return simpleType;
 
-        // Unwrap to avoid long delegation call chains
-        if (type instanceof AbstractTypeWithKnownNullability) {
-            return makeNullableAsSpecified(((AbstractTypeWithKnownNullability) type).delegate, nullable);
+            return KotlinTypeKt.lazyReplaceNullability(simpleType, nullable);
         }
-
-        // checking to preserve laziness
-        if (!(type instanceof LazyType) && type.isMarkedNullable() == nullable) {
-            return type;
-        }
-
-        return nullable ? new NullableType(type) : new NotNullType(type);
     }
 
     @NotNull
@@ -528,81 +519,4 @@ public class TypeUtils {
         }
         return null;
     }
-
-    private static abstract class AbstractTypeWithKnownNullability extends AbstractKotlinType {
-        private final KotlinType delegate;
-
-        private AbstractTypeWithKnownNullability(@NotNull KotlinType delegate) {
-            this.delegate = delegate;
-        }
-
-        @Override
-        @NotNull
-        public TypeConstructor getConstructor() {
-            return delegate.getConstructor();
-        }
-
-        @Override
-        @NotNull
-        public List<TypeProjection> getArguments() {
-            return delegate.getArguments();
-        }
-
-        @Override
-        public abstract boolean isMarkedNullable();
-
-        @Override
-        @NotNull
-        public MemberScope getMemberScope() {
-            return delegate.getMemberScope();
-        }
-
-        @Override
-        public boolean isError() {
-            return delegate.isError();
-        }
-
-        @Override
-        @NotNull
-        public Annotations getAnnotations() {
-            return delegate.getAnnotations();
-        }
-
-        @Nullable
-        @Override
-        public <T extends TypeCapability> T getCapability(@NotNull Class<T> capabilityClass) {
-            return delegate.getCapability(capabilityClass);
-        }
-
-        @NotNull
-        @Override
-        public TypeCapabilities getCapabilities() {
-            return delegate.getCapabilities();
-        }
-    }
-
-    private static class NullableType extends AbstractTypeWithKnownNullability {
-
-        private NullableType(@NotNull KotlinType delegate) {
-            super(delegate);
-        }
-
-        @Override
-        public boolean isMarkedNullable() {
-            return true;
-        }
-    }
-
-    private static class NotNullType extends AbstractTypeWithKnownNullability {
-
-        private NotNullType(@NotNull KotlinType delegate) {
-            super(delegate);
-        }
-
-        @Override
-        public boolean isMarkedNullable() {
-            return false;
-        }
-    }
-
 }

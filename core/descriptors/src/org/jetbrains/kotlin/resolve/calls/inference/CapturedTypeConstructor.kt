@@ -119,8 +119,8 @@ private fun TypeProjection.createCapturedIfNeeded(typeParameterDescriptor: TypeP
     if (typeParameterDescriptor.variance == projectionKind) {
         // TODO: Make star projection type lazy
         return if (isStarProjection)
-            TypeProjectionImpl(object : DelegatingType() {
-                override fun getDelegate() = this@createCapturedIfNeeded.type
+            TypeProjectionImpl(object : WrappedType() {
+                override fun unwrap(): KotlinType = this@createCapturedIfNeeded.type
             })
         else
             TypeProjectionImpl(this@createCapturedIfNeeded.type)

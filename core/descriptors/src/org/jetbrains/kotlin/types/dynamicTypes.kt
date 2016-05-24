@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
@@ -32,9 +33,9 @@ class DynamicTypesAllowed: DynamicTypesSettings() {
 
 fun KotlinType.isDynamic(): Boolean = this.getCapability(Flexibility::class.java)?.factory == DynamicTypeFactory
 
-fun createDynamicType(builtIns: KotlinBuiltIns) = DynamicType(builtIns)
+fun createDynamicType(builtIns: KotlinBuiltIns) = DynamicType(builtIns, Annotations.EMPTY)
 
-class DynamicType(builtIns: KotlinBuiltIns) : DelegatingFlexibleType(builtIns.nothingType, builtIns.nullableAnyType, DynamicTypeFactory) {
+class DynamicType(builtIns: KotlinBuiltIns, override val annotations: Annotations) : DelegatingFlexibleType(builtIns.nothingType, builtIns.nullableAnyType, DynamicTypeFactory) {
     override val delegateType: KotlinType get() = upperBound
 
     override fun makeNullableAsSpecified(nullable: Boolean): KotlinType {
@@ -43,6 +44,8 @@ class DynamicType(builtIns: KotlinBuiltIns) : DelegatingFlexibleType(builtIns.no
     }
 
     override val isMarkedNullable: Boolean get() = false
+
+    override fun replaceAnnotations(newAnnotations: Annotations): KotlinType = DynamicType(delegateType.builtIns, annotations)
 }
 
 object DynamicTypeFactory : FlexibleTypeFactory {
