@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.config
 
+// Note: names of these parameters are also used in diagnostic tests
 class LanguageFeatureSettings(
         val typeAliases: Boolean = true,
         val localDelegatedProperties: Boolean = true,
