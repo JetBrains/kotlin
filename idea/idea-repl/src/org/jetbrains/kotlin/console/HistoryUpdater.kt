@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.console
 
 import com.intellij.execution.console.LanguageConsoleImpl
 import com.intellij.openapi.editor.ex.EditorEx
-import com.intellij.openapi.editor.ex.util.EditorUtil
 import com.intellij.openapi.editor.markup.HighlighterLayer
 import com.intellij.openapi.editor.markup.HighlighterTargetArea
 import com.intellij.openapi.util.TextRange
@@ -35,7 +34,6 @@ class HistoryUpdater(private val runner: KotlinConsoleRunner) {
         val endOffset = startOffset + trimmedCommandText.length
 
         addCommandTextToHistoryEditor(trimmedCommandText)
-        EditorUtil.scrollToTheEnd(historyEditor)
         addFoldingRegion(historyEditor, startOffset, endOffset, trimmedCommandText)
 
         historyEditor.markupModel.addRangeHighlighter(
@@ -44,6 +42,9 @@ class HistoryUpdater(private val runner: KotlinConsoleRunner) {
             val historyMarker = if (runner.isReadLineMode) ReplIcons.READLINE_MARKER else ReplIcons.COMMAND_MARKER
             gutterIconRenderer = ConsoleIndicatorRenderer(historyMarker)
         }
+
+        historyEditor.scrollingModel.scrollVertically(endOffset)
+
         return TextRange(startOffset, endOffset)
     }
 
