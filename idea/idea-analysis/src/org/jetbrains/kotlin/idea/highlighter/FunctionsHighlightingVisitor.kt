@@ -14,88 +14,80 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.highlighter;
+package org.jetbrains.kotlin.idea.highlighter
 
-import com.intellij.lang.annotation.AnnotationHolder;
-import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.builtins.FunctionTypesKt;
-import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
-import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallsKt;
+import com.intellij.lang.annotation.AnnotationHolder
+import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
+import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 
-public class FunctionsHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
-    public FunctionsHighlightingVisitor(AnnotationHolder holder, BindingContext bindingContext) {
-        super(holder, bindingContext);
-    }
+class FunctionsHighlightingVisitor(holder: AnnotationHolder, bindingContext: BindingContext) :
+        AfterAnalysisHighlightingVisitor(holder, bindingContext) {
 
-    @Override
-    public void visitNamedFunction(@NotNull KtNamedFunction function) {
-        PsiElement nameIdentifier = function.getNameIdentifier();
+    override fun visitNamedFunction(function: KtNamedFunction) {
+        val nameIdentifier = function.nameIdentifier
         if (nameIdentifier != null) {
-            NameHighlighter.highlightName(holder, nameIdentifier, KotlinHighlightingColors.FUNCTION_DECLARATION);
+            NameHighlighter.highlightName(holder, nameIdentifier, KotlinHighlightingColors.FUNCTION_DECLARATION)
         }
 
-        super.visitNamedFunction(function);
+        super.visitNamedFunction(function)
     }
 
-    @Override
-    public void visitSuperTypeCallEntry(@NotNull KtSuperTypeCallEntry call) {
-        KtConstructorCalleeExpression calleeExpression = call.getCalleeExpression();
-        KtTypeReference typeRef = calleeExpression.getTypeReference();
+    override fun visitSuperTypeCallEntry(call: KtSuperTypeCallEntry) {
+        val calleeExpression = call.calleeExpression
+        val typeRef = calleeExpression.typeReference
         if (typeRef != null) {
-            KtTypeElement typeElement = typeRef.getTypeElement();
-            if (typeElement instanceof KtUserType) {
-                KtSimpleNameExpression nameExpression = ((KtUserType)typeElement).getReferenceExpression();
+            val typeElement = typeRef.typeElement
+            if (typeElement is KtUserType) {
+                val nameExpression = typeElement.referenceExpression
                 if (nameExpression != null) {
-                    NameHighlighter.highlightName(holder, nameExpression, KotlinHighlightingColors.CONSTRUCTOR_CALL);
+                    NameHighlighter.highlightName(holder, nameExpression, KotlinHighlightingColors.CONSTRUCTOR_CALL)
                 }
             }
         }
-        super.visitSuperTypeCallEntry(call);
+        super.visitSuperTypeCallEntry(call)
     }
 
-    @Override
-    public void visitCallExpression(@NotNull KtCallExpression expression) {
-        KtExpression callee = expression.getCalleeExpression();
-        ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(expression, bindingContext);
-        if (callee instanceof KtReferenceExpression && resolvedCall != null) {
-            CallableDescriptor calleeDescriptor = resolvedCall.getResultingDescriptor();
+    override fun visitCallExpression(expression: KtCallExpression) {
+        val callee = expression.calleeExpression
+        val resolvedCall = expression.getResolvedCall(bindingContext)
+        if (callee is KtReferenceExpression && resolvedCall != null) {
+            val calleeDescriptor = resolvedCall.resultingDescriptor
 
-            if (DynamicCallsKt.isDynamic(calleeDescriptor)) {
-                NameHighlighter.highlightName(holder, callee, KotlinHighlightingColors.DYNAMIC_FUNCTION_CALL);
+            if (calleeDescriptor.isDynamic()) {
+                NameHighlighter.highlightName(holder, callee, KotlinHighlightingColors.DYNAMIC_FUNCTION_CALL)
             }
-            else if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
-                DeclarationDescriptor container = calleeDescriptor.getContainingDeclaration();
-                boolean containedInFunctionClassOrSubclass =
-                        container instanceof ClassDescriptor &&
-                        FunctionTypesKt.isFunctionTypeOrSubtype(((ClassDescriptor) container).getDefaultType());
-                NameHighlighter.highlightName(holder, callee, containedInFunctionClassOrSubclass
-                                                              ? KotlinHighlightingColors.VARIABLE_AS_FUNCTION_CALL
-                                                              : KotlinHighlightingColors.VARIABLE_AS_FUNCTION_LIKE_CALL);
+            else if (resolvedCall is VariableAsFunctionResolvedCall) {
+                val container = calleeDescriptor.containingDeclaration
+                val containedInFunctionClassOrSubclass = container is ClassDescriptor && container.defaultType.isFunctionTypeOrSubtype
+                NameHighlighter.highlightName(holder, callee, if (containedInFunctionClassOrSubclass)
+                    KotlinHighlightingColors.VARIABLE_AS_FUNCTION_CALL
+                else
+                    KotlinHighlightingColors.VARIABLE_AS_FUNCTION_LIKE_CALL)
             }
             else {
-                if (calleeDescriptor instanceof ConstructorDescriptor) {
-                    NameHighlighter.highlightName(holder, callee, KotlinHighlightingColors.CONSTRUCTOR_CALL);
+                if (calleeDescriptor is ConstructorDescriptor) {
+                    NameHighlighter.highlightName(holder, callee, KotlinHighlightingColors.CONSTRUCTOR_CALL)
                 }
-                else if (calleeDescriptor instanceof FunctionDescriptor) {
-                    FunctionDescriptor fun = (FunctionDescriptor) calleeDescriptor;
-                    NameHighlighter.highlightName(holder, callee, KotlinHighlightingColors.FUNCTION_CALL);
-                    if (DescriptorUtils.isTopLevelDeclaration(fun)) {
-                        NameHighlighter.highlightName(holder, callee, KotlinHighlightingColors.PACKAGE_FUNCTION_CALL);
+                else if (calleeDescriptor is FunctionDescriptor) {
+                    NameHighlighter.highlightName(holder, callee, KotlinHighlightingColors.FUNCTION_CALL)
+                    if (DescriptorUtils.isTopLevelDeclaration(calleeDescriptor)) {
+                        NameHighlighter.highlightName(holder, callee, KotlinHighlightingColors.PACKAGE_FUNCTION_CALL)
                     }
-                    if (fun.getExtensionReceiverParameter() != null) {
-                        NameHighlighter.highlightName(holder, callee, KotlinHighlightingColors.EXTENSION_FUNCTION_CALL);
+                    if (calleeDescriptor.extensionReceiverParameter != null) {
+                        NameHighlighter.highlightName(holder, callee, KotlinHighlightingColors.EXTENSION_FUNCTION_CALL)
                     }
                 }
             }
         }
 
-        super.visitCallExpression(expression);
+        super.visitCallExpression(expression)
     }
 }
