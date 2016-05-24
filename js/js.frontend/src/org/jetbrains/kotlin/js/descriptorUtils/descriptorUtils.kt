@@ -18,12 +18,15 @@ package org.jetbrains.kotlin.js.descriptorUtils
 
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.utils.addToStdlib.check
 
 val KotlinType.nameIfStandardType: Name?
@@ -56,3 +59,11 @@ fun KotlinType.getJetTypeFqName(printTypeArguments: Boolean): String {
 }
 
 fun ClassDescriptor.hasPrimaryConstructor(): Boolean = unsubstitutedPrimaryConstructor != null
+
+fun FunctionDescriptor.isEnumValueOfMethod(): Boolean {
+    val methodTypeParameters = valueParameters
+    val nullableString = TypeUtils.makeNullable(builtIns.stringType)
+    return DescriptorUtils.ENUM_VALUE_OF == name
+           && methodTypeParameters.size == 1
+           && KotlinTypeChecker.DEFAULT.isSubtypeOf(methodTypeParameters[0].type, nullableString)
+}
