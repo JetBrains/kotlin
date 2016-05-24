@@ -70,6 +70,8 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
         override fun getText() = "Move to constructor parameters"
         override fun getFamilyName() = text
 
+        override fun startInWriteAction(): Boolean = false
+
         private fun configureChangeSignature(propertyDescriptor: PropertyDescriptor): KotlinChangeSignatureConfiguration {
             return object : KotlinChangeSignatureConfiguration {
                 override fun configure(originalDescriptor: KotlinMethodDescriptor): KotlinMethodDescriptor {
@@ -123,6 +125,8 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
     class InitializeWithConstructorParameter(property: KtProperty) : KotlinQuickFixAction<KtProperty>(property) {
         override fun getText() = "Initialize with constructor parameter"
         override fun getFamilyName() = text
+
+        override fun startInWriteAction(): Boolean = false
 
         private fun configureChangeSignature(propertyDescriptor: PropertyDescriptor): KotlinChangeSignatureConfiguration {
             return object : KotlinChangeSignatureConfiguration {
