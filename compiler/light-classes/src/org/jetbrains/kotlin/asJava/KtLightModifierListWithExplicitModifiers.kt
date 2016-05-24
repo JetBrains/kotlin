@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ abstract class KtLightModifierListWithExplicitModifiers(
 ) : LightModifierList(owner.manager, KotlinLanguage.INSTANCE, *modifiers) {
     abstract val delegate: PsiAnnotationOwner
 
-    private val _annotations by lazy { computeAnnotations(this, delegate) }
+    private val _annotations by lazy(LazyThreadSafetyMode.PUBLICATION) { computeAnnotations(this, delegate) }
 
     override fun getParent() = owner
 
@@ -57,7 +57,7 @@ class KtLightModifierList(
         private val delegate: PsiModifierList,
         private val owner: PsiModifierListOwner
 ) : PsiModifierList by delegate {
-    private val _annotations by lazy { computeAnnotations(this, delegate) }
+    private val _annotations by lazy(LazyThreadSafetyMode.PUBLICATION) { computeAnnotations(this, delegate) }
 
     override fun getAnnotations(): Array<out PsiAnnotation> = _annotations.value
 
