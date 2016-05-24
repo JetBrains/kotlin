@@ -1,7 +1,7 @@
 // KT-880 Overload resolution ambiguity
 
 public interface I {
-    open fun test() : Unit
+    <!REDUNDANT_OPEN_IN_INTERFACE!>open<!> fun test() : Unit
 }
 
 abstract public class A() {
