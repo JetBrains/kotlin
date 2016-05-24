@@ -95,6 +95,24 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/compileKotlinAgainstKotlin/jvm8against6/delegation/delegationToDefaultMethodInInterface2.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("diamond.kt")
+            public void testDiamond() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/compileKotlinAgainstKotlin/jvm8against6/delegation/diamond.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("diamond2.kt")
+            public void testDiamond2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/compileKotlinAgainstKotlin/jvm8against6/delegation/diamond2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("diamond3.kt")
+            public void testDiamond3() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/compileKotlinAgainstKotlin/jvm8against6/delegation/diamond3.kt");
+                doTest(fileName);
+            }
         }
     }
 }

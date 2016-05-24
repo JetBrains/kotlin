@@ -14,18 +14,27 @@ interface Test2 : Test {
 
 }
 
-interface Test3 : Test2 {
+interface Test3 : Test {
 
 }
-class TestClass : Test3
+
+
+interface Test4 : Test2, Test3 {
+
+}
+
+class TestClass : Test4 {
+
+}
+
 
 fun box(): String {
     checkPresent(Test2::class.java, "test")
-//    checkNoMethod(Test3::class.java, "test")
+    checkPresent(Test3::class.java, "test")
+    //checkNoMethod(Test4::class.java, "test")
 
     return TestClass().test()
 }
-
 
 
 fun checkNoMethod(clazz: Class<*>, name: String) {

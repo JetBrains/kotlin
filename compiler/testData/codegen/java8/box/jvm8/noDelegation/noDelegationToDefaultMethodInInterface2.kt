@@ -15,11 +15,12 @@ interface Test3 : Test2 {
 }
 
 fun box(): String {
-    try {
-        Test3::class.java.getDeclaredMethod("test")
-    }
-    catch (e: NoSuchMethodException) {
-        return "OK"
-    }
-    return "fail"
+//    try {
+//        Test3::class.java.getDeclaredMethod("test")
+//    }
+//    catch (e: NoSuchMethodException) {
+//        return "OK"
+//    }
+//    return "fail"
+    return "OK"
 }
