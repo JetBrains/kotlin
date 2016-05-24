@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.highlighter;
 import com.intellij.lang.annotation.AnnotationHolder;
 import org.jetbrains.kotlin.resolve.BindingContext;
 
-public abstract class AfterAnalysisHighlightingVisitor extends HighlightingVisitor {
+abstract class AfterAnalysisHighlightingVisitor extends HighlightingVisitor {
     protected BindingContext bindingContext;
 
     protected AfterAnalysisHighlightingVisitor(AnnotationHolder holder, BindingContext bindingContext) {

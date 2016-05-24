@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 
-class   FunctionsHighlightingVisitor(holder: AnnotationHolder, bindingContext: BindingContext) :
+internal class FunctionsHighlightingVisitor(holder: AnnotationHolder, bindingContext: BindingContext) :
         AfterAnalysisHighlightingVisitor(holder, bindingContext) {
 
     override fun visitNamedFunction(function: KtNamedFunction) {
