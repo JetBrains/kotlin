@@ -22,6 +22,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.updateSettings.impl.UpdateSettings
 import org.jetbrains.kotlin.idea.KotlinPluginUpdater
+import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.PluginUpdateStatus
 import javax.swing.JComponent
 
@@ -50,7 +51,7 @@ class ConfigurePluginUpdatesDialog(project: Project) : DialogWrapper(project, fa
                 form.updateCheckProgressIcon.suspend()
                 when (pluginUpdateStatus) {
                     PluginUpdateStatus.LatestVersionInstalled ->
-                        form.updateStatusLabel.text = "You have the latest version of the plugin installed."
+                        form.updateStatusLabel.text = "You have the latest version of the plugin (${KotlinPluginUtil.getPluginVersion()}) installed."
 
                     is PluginUpdateStatus.Update -> {
                         update = pluginUpdateStatus
