@@ -1326,7 +1326,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         for (Map.Entry<FunctionDescriptor, FunctionDescriptor> entry : CodegenUtil.getNonPrivateTraitMethods(descriptor).entrySet()) {
             FunctionDescriptor traitFun = entry.getKey();
             //skip java 8 default methods
-            if (!(traitFun instanceof JavaCallableMemberDescriptor || isJvm8InterfaceMember(traitFun, state))) {
+            if (!(traitFun instanceof JavaCallableMemberDescriptor)) {
                 generateDelegationToTraitImpl(traitFun, entry.getValue());
             }
         }

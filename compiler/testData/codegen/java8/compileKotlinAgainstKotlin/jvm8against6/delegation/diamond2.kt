@@ -10,23 +10,26 @@ interface Test {
 
 // FILE: 2.kt
 // KOTLIN_CONFIGURATION_FLAGS: +JVM.JVM_8_TARGET
+open class TestClass : Test {
+
+}
+
 interface Test2 : Test {
 
 }
 
-interface Test3 : Test2 {
+
+class TestClass2 : TestClass(), Test2 {
 
 }
-class TestClass : Test3
 
 fun box(): String {
+    checkPresent(TestClass::class.java, "test")
     checkPresent(Test2::class.java, "test")
-//    checkNoMethod(Test3::class.java, "test")
+    checkNoMethod(TestClass2::class.java, "test")
 
     return TestClass().test()
 }
-
-
 
 fun checkNoMethod(clazz: Class<*>, name: String) {
     try {

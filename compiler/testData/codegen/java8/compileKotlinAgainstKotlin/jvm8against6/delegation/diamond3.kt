@@ -4,29 +4,34 @@
 // FILE: 1.kt
 interface Test {
     fun test(): String {
-        return "OK"
+        return "fail"
     }
 }
 
 // FILE: 2.kt
 // KOTLIN_CONFIGURATION_FLAGS: +JVM.JVM_8_TARGET
+open class TestClass : Test {
+
+}
+
 interface Test2 : Test {
-
+    override fun test(): String {
+        return "OK"
+    }
 }
 
-interface Test3 : Test2 {
+
+class TestClass2 : TestClass(), Test2 {
 
 }
-class TestClass : Test3
 
 fun box(): String {
+    checkPresent(TestClass::class.java, "test")
     checkPresent(Test2::class.java, "test")
-//    checkNoMethod(Test3::class.java, "test")
+    checkPresent(TestClass2::class.java, "test")
 
-    return TestClass().test()
+    return TestClass2().test()
 }
-
-
 
 fun checkNoMethod(clazz: Class<*>, name: String) {
     try {
