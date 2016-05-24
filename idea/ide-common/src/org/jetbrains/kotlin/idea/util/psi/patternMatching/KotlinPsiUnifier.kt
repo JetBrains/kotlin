@@ -350,7 +350,7 @@ class KotlinPsiUnifier(
         }
 
         private fun matchTypes(types1: Collection<KotlinType>, types2: Collection<KotlinType>): Boolean {
-            fun sortTypes(types: Collection<KotlinType>) = types.sortedBy { DescriptorRenderer.DEBUG_TEXT.renderType(it) }
+            fun sortTypes(types: Collection<KotlinType>) = types.sortedBy { DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(it) }
 
             if (types1.size != types2.size) return false
             return (sortTypes(types1).zip(sortTypes(types2))).all { matchTypes(it.first, it.second) == MATCHED }

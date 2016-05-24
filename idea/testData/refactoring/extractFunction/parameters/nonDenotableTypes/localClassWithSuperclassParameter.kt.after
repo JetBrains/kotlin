@@ -1,4 +1,4 @@
-// PARAM_DESCRIPTOR: val a: foo.A defined in foo.bar
+// PARAM_DESCRIPTOR: val a: A defined in foo.bar
 // PARAM_TYPES: T
 interface T
 

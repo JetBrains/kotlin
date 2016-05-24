@@ -1,5 +1,5 @@
 // WITH_RUNTIME
-// PARAM_TYPES: kotlin.Int, Comparable<Int>
+// PARAM_TYPES: kotlin.Int, kotlin.Comparable<kotlin.Int>
 // PARAM_DESCRIPTOR: value-parameter i: kotlin.Int defined in example
 fun example(i: Int) {
     when (i) {

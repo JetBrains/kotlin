@@ -1,7 +1,7 @@
 // OPTIONS: true, false, false, false, true, false
-// PARAM_DESCRIPTOR: local final fun baz(m: kotlin.Int): Int defined in foo.bar
+// PARAM_DESCRIPTOR: local final fun baz(m: kotlin.Int): kotlin.Int defined in foo.bar
 // PARAM_DESCRIPTOR: value-parameter n: kotlin.Int defined in foo
-// PARAM_TYPES: (kotlin.Int) -> Int
+// PARAM_TYPES: (kotlin.Int) -> kotlin.Int
 // PARAM_TYPES: kotlin.Int
 
 // SIBLING:
