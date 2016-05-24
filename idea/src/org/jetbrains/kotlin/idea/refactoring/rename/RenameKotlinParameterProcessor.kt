@@ -20,10 +20,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.search.SearchScope
-import com.intellij.refactoring.listeners.RefactoringElementListener
-import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.refactoring.getAffectedCallables
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -40,6 +39,7 @@ class RenameKotlinParameterProcessor : RenameKotlinPsiProcessor() {
         val originalDescriptor = function.resolveToDescriptor() as FunctionDescriptor
         val affectedCallables = getAffectedCallables(element.project, OverrideResolver.getDeepestSuperDeclarations(originalDescriptor))
         for (callable in affectedCallables) {
+            if (!callable.canRefactor()) continue
             val parameter: PsiNamedElement? = when (callable) {
                 is KtCallableDeclaration -> callable.valueParameters.firstOrNull { it.name == element.name }
                 is PsiMethod -> callable.parameterList.parameters.firstOrNull { it.name == element.name }
