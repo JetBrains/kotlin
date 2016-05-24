@@ -28,11 +28,18 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.HashMap;
 import kotlin.collections.CollectionsKt;
+import kotlin.jvm.JvmClassMappingKt;
 import kotlin.jvm.functions.Function1;
+import kotlin.reflect.KClass;
+import kotlin.reflect.KClasses;
+import kotlin.reflect.KFunction;
+import kotlin.reflect.KParameter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.asJava.DuplicateJvmSignatureUtilKt;
+import org.jetbrains.kotlin.config.LanguageFeatureSettings;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.diagnostics.*;
 import org.jetbrains.kotlin.load.java.InternalFlexibleTypeTransformer;
@@ -41,6 +48,7 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.utils.StringsKt;
 import org.junit.Assert;
 
 import java.io.File;
@@ -63,6 +71,9 @@ public abstract class BaseDiagnosticsTest
                     CheckerTestUtil.DebugInfoDiagnosticFactory.UNRESOLVED_WITH_TARGET
             );
 
+    public static final String LANGUAGE_DIRECTIVE = "LANGUAGE";
+    private static final Pattern LANGUAGE_PATTERN = Pattern.compile("([\\+\\-])(\\w+)\\s*");
+
     public static final String CHECK_TYPE_DIRECTIVE = "CHECK_TYPE";
     public static final String CHECK_TYPE_PACKAGE = "tests._checkType";
     private static final String CHECK_TYPE_DECLARATIONS = "\npackage " + CHECK_TYPE_PACKAGE +
@@ -83,6 +94,26 @@ public abstract class BaseDiagnosticsTest
     public static final boolean CHECK_LAZY_LOG_DEFAULT = "true".equals(System.getProperty("check.lazy.logs", "false"));
 
     public static final String MARK_DYNAMIC_CALLS_DIRECTIVE = "MARK_DYNAMIC_CALLS";
+
+    private static final KFunction<LanguageFeatureSettings> LANGUAGE_FEATURE_SETTINGS_CONSTRUCTOR;
+    private static final Map<String, KParameter> LANGUAGE_FEATURE_SETTINGS_PARAMETERS;
+
+    static {
+        KClass<LanguageFeatureSettings> kotlinClass = JvmClassMappingKt.getKotlinClass(LanguageFeatureSettings.class);
+        LANGUAGE_FEATURE_SETTINGS_CONSTRUCTOR = KClasses.getPrimaryConstructor(kotlinClass);
+        assert LANGUAGE_FEATURE_SETTINGS_CONSTRUCTOR != null
+                : "LanguageFeatureSettings should have a primary constructor: " + kotlinClass.getConstructors();
+
+        LANGUAGE_FEATURE_SETTINGS_PARAMETERS = CollectionsKt.associateBy(
+                LANGUAGE_FEATURE_SETTINGS_CONSTRUCTOR.getParameters(),
+                new Function1<KParameter, String>() {
+                    @Override
+                    public String invoke(KParameter parameter) {
+                        return parameter.getName();
+                    }
+                }
+        );
+    }
 
     @Override
     protected TestModule createTestModule(@NotNull String name) {
@@ -144,6 +175,42 @@ public abstract class BaseDiagnosticsTest
         }
 
         return jetFiles;
+    }
+
+    @Nullable
+    private static LanguageFeatureSettings parseLanguageFeatureSettingsDirective(Map<String, String> directiveMap) {
+        String directives = directiveMap.get(LANGUAGE_DIRECTIVE);
+        if (directives == null) return null;
+
+        Matcher matcher = LANGUAGE_PATTERN.matcher(directives);
+        if (!matcher.find()) {
+            Assert.fail(
+                    "Wrong syntax in the '// !LANGUAGE: ...' directive:\n" +
+                    "found: '" + directives + "'\n" +
+                    "Must be '([+-]languageFeatureName)+'\n" +
+                    "where '+' means 'enable' and '-' means 'disable'\n" +
+                    "and language feature names are names of parameters of the class LanguageFeatureSettings"
+            );
+        }
+
+        Map<KParameter, Boolean> values = new HashMap<KParameter, Boolean>();
+        do {
+            boolean enable = matcher.group(1).equals("+");
+            String name = matcher.group(2);
+            KParameter parameter = LANGUAGE_FEATURE_SETTINGS_PARAMETERS.get(name);
+            if (parameter == null) {
+                Assert.fail(
+                        "Language feature not found, please check spelling: " + name + "\n" +
+                        "Known features:\n    " + StringsKt.join(LANGUAGE_FEATURE_SETTINGS_PARAMETERS.keySet(), "\n    ")
+                );
+            }
+            if (values.put(parameter, enable) != null) {
+                Assert.fail("Duplicate entry for the language feature: " + name);
+            }
+        }
+        while (matcher.find());
+
+        return LANGUAGE_FEATURE_SETTINGS_CONSTRUCTOR.callBy(values);
     }
 
     public static Condition<Diagnostic> parseDiagnosticFilterDirective(Map<String, String> directiveMap) {
@@ -243,6 +310,7 @@ public abstract class BaseDiagnosticsTest
         private final String clearText;
         private final KtFile jetFile;
         private final Condition<Diagnostic> whatDiagnosticsToConsider;
+        public final LanguageFeatureSettings customLanguageFeatureSettings;
         private final boolean declareCheckType;
         private final boolean declareFlexibleType;
         public final boolean checkLazyLog;
@@ -257,6 +325,7 @@ public abstract class BaseDiagnosticsTest
         ) {
             this.module = module;
             this.whatDiagnosticsToConsider = parseDiagnosticFilterDirective(directives);
+            this.customLanguageFeatureSettings = parseLanguageFeatureSettingsDirective(directives);
             this.checkLazyLog = directives.containsKey(CHECK_LAZY_LOG_DIRECTIVE) || CHECK_LAZY_LOG_DEFAULT;
             this.declareCheckType = directives.containsKey(CHECK_TYPE_DIRECTIVE);
             this.declareFlexibleType = directives.containsKey(EXPLICIT_FLEXIBLE_TYPES_DIRECTIVE);

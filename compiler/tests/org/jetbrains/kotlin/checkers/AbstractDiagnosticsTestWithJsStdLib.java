@@ -17,10 +17,13 @@
 package org.jetbrains.kotlin.checkers;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
+import org.jetbrains.kotlin.config.LanguageFeatureSettings;
 import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
+import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult;
 import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.config.LibrarySourcesConfig;
 import org.jetbrains.kotlin.js.resolve.JsPlatform;
@@ -57,12 +60,17 @@ public abstract class AbstractDiagnosticsTestWithJsStdLib extends AbstractDiagno
     }
 
     @Override
-    protected void analyzeModuleContents(
+    @NotNull
+    protected JsAnalysisResult analyzeModuleContents(
             @NotNull ModuleContext moduleContext,
-            @NotNull List<KtFile> jetFiles,
-            @NotNull BindingTrace moduleTrace
+            @NotNull List<KtFile> ktFiles,
+            @NotNull BindingTrace moduleTrace,
+            @Nullable LanguageFeatureSettings languageFeatureSettings
     ) {
-        TopDownAnalyzerFacadeForJS.analyzeFilesWithGivenTrace(jetFiles, moduleTrace, moduleContext, config);
+        // TODO: support LANGUAGE directive in JS diagnostic tests
+        assert languageFeatureSettings == null
+                : BaseDiagnosticsTest.LANGUAGE_DIRECTIVE + " directive is not supported in JS diagnostic tests";
+        return TopDownAnalyzerFacadeForJS.analyzeFilesWithGivenTrace(ktFiles, moduleTrace, moduleContext, config);
     }
 
     @Override
