@@ -3,5 +3,5 @@ fun <info textAttributesKey="KOTLIN_FUNCTION_DECLARATION">foo</info>(<info textA
 }
 
 fun <info textAttributesKey="KOTLIN_FUNCTION_DECLARATION">bar</info>() {
-    <info textAttributesKey="KOTLIN_PACKAGE_FUNCTION_CALL"><info textAttributesKey="KOTLIN_FUNCTION_CALL">foo</info></info>(1, <info textAttributesKey="KOTLIN_NAMED_ARGUMENT">p2 =</info> "")
+    <info textAttributesKey="KOTLIN_PACKAGE_FUNCTION_CALL">foo</info>(1, <info textAttributesKey="KOTLIN_NAMED_ARGUMENT">p2 =</info> "")
 }

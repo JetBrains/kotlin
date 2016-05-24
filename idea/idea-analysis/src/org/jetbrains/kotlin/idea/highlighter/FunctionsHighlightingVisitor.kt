@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingColors.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -28,29 +29,20 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 
-class FunctionsHighlightingVisitor(holder: AnnotationHolder, bindingContext: BindingContext) :
+class   FunctionsHighlightingVisitor(holder: AnnotationHolder, bindingContext: BindingContext) :
         AfterAnalysisHighlightingVisitor(holder, bindingContext) {
 
     override fun visitNamedFunction(function: KtNamedFunction) {
-        val nameIdentifier = function.nameIdentifier
-        if (nameIdentifier != null) {
-            NameHighlighter.highlightName(holder, nameIdentifier, KotlinHighlightingColors.FUNCTION_DECLARATION)
-        }
+        function.nameIdentifier?.let { holder.highlightName(it, FUNCTION_DECLARATION) }
 
         super.visitNamedFunction(function)
     }
 
     override fun visitSuperTypeCallEntry(call: KtSuperTypeCallEntry) {
         val calleeExpression = call.calleeExpression
-        val typeRef = calleeExpression.typeReference
-        if (typeRef != null) {
-            val typeElement = typeRef.typeElement
-            if (typeElement is KtUserType) {
-                val nameExpression = typeElement.referenceExpression
-                if (nameExpression != null) {
-                    NameHighlighter.highlightName(holder, nameExpression, KotlinHighlightingColors.CONSTRUCTOR_CALL)
-                }
-            }
+        val typeElement = calleeExpression.typeReference?.typeElement
+        if (typeElement is KtUserType) {
+            typeElement.referenceExpression?.let { holder.highlightName(it, CONSTRUCTOR_CALL) }
         }
         super.visitSuperTypeCallEntry(call)
     }
@@ -62,28 +54,33 @@ class FunctionsHighlightingVisitor(holder: AnnotationHolder, bindingContext: Bin
             val calleeDescriptor = resolvedCall.resultingDescriptor
 
             if (calleeDescriptor.isDynamic()) {
-                NameHighlighter.highlightName(holder, callee, KotlinHighlightingColors.DYNAMIC_FUNCTION_CALL)
+                holder.highlightName(callee, DYNAMIC_FUNCTION_CALL)
             }
             else if (resolvedCall is VariableAsFunctionResolvedCall) {
                 val container = calleeDescriptor.containingDeclaration
                 val containedInFunctionClassOrSubclass = container is ClassDescriptor && container.defaultType.isFunctionTypeOrSubtype
-                NameHighlighter.highlightName(holder, callee, if (containedInFunctionClassOrSubclass)
-                    KotlinHighlightingColors.VARIABLE_AS_FUNCTION_CALL
+                holder.highlightName(callee, if (containedInFunctionClassOrSubclass)
+                    VARIABLE_AS_FUNCTION_CALL
                 else
-                    KotlinHighlightingColors.VARIABLE_AS_FUNCTION_LIKE_CALL)
+                    VARIABLE_AS_FUNCTION_LIKE_CALL)
             }
             else {
                 if (calleeDescriptor is ConstructorDescriptor) {
-                    NameHighlighter.highlightName(holder, callee, KotlinHighlightingColors.CONSTRUCTOR_CALL)
+                    holder.highlightName(callee, CONSTRUCTOR_CALL)
                 }
                 else if (calleeDescriptor is FunctionDescriptor) {
-                    NameHighlighter.highlightName(holder, callee, KotlinHighlightingColors.FUNCTION_CALL)
-                    if (DescriptorUtils.isTopLevelDeclaration(calleeDescriptor)) {
-                        NameHighlighter.highlightName(holder, callee, KotlinHighlightingColors.PACKAGE_FUNCTION_CALL)
+                    val color = when {
+                        calleeDescriptor.extensionReceiverParameter != null ->
+                            EXTENSION_FUNCTION_CALL
+
+                        DescriptorUtils.isTopLevelDeclaration(calleeDescriptor) ->
+                            PACKAGE_FUNCTION_CALL
+
+                        else ->
+                            FUNCTION_CALL
                     }
-                    if (calleeDescriptor.extensionReceiverParameter != null) {
-                        NameHighlighter.highlightName(holder, callee, KotlinHighlightingColors.EXTENSION_FUNCTION_CALL)
-                    }
+
+                    holder.highlightName(callee, color)
                 }
             }
         }

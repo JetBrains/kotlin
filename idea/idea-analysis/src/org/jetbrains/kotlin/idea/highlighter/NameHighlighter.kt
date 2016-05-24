@@ -40,3 +40,7 @@ object NameHighlighter {
         }
     }
 }
+
+fun AnnotationHolder.highlightName(element: PsiElement, attributesKey: TextAttributesKey) {
+    NameHighlighter.highlightName(this, element, attributesKey)
+}
