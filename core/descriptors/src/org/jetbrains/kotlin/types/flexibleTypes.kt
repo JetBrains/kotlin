@@ -17,7 +17,9 @@
 package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 
 interface FlexibleTypeFactory {
     val id: String
@@ -50,6 +52,7 @@ interface Flexibility : TypeCapability, SubtypingRepresentatives {
 
     fun makeNullableAsSpecified(nullable: Boolean): KotlinType
 
+    fun replaceAnnotations(newAnnotations: Annotations): KotlinType
 }
 
 fun KotlinType.isFlexible(): Boolean = this.getCapability(Flexibility::class.java) != null
@@ -173,6 +176,9 @@ class FlexibleTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) :
             return KotlinTypeFactory.flexibleType(simpleType, TypeUtils.makeNullable(simpleType))
         }
     }
+
+    override fun replaceAnnotations(newAnnotations: Annotations): KotlinType
+            = KotlinTypeFactory.flexibleType(lowerBound.replaceAnnotations(newAnnotations).asSimpleType(), upperBound)
 }
 
 // TODO: move Factory to descriptor.loader.java
