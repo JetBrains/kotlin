@@ -25,10 +25,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.rename.RenameHandler
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
-import org.jetbrains.kotlin.psi.KtBlockExpression
-import org.jetbrains.kotlin.psi.KtParameterList
-import org.jetbrains.kotlin.psi.KtSecondaryConstructor
-import org.jetbrains.kotlin.psi.KtValueArgumentList
+import org.jetbrains.kotlin.psi.*
 
 
 class RenameOnSecondaryConstructorHandler : RenameHandler {
@@ -40,7 +37,7 @@ class RenameOnSecondaryConstructorHandler : RenameHandler {
 
         val element = PsiTreeUtil.findElementOfClassAtOffsetWithStopSet(
                 file, editor.caretModel.offset, KtSecondaryConstructor::class.java, false,
-                KtBlockExpression::class.java, KtValueArgumentList::class.java, KtParameterList::class.java
+                KtBlockExpression::class.java, KtValueArgumentList::class.java, KtParameterList::class.java, KtConstructorDelegationCall::class.java
         )
         return element != null
     }
