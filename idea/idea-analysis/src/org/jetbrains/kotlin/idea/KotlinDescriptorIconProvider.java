@@ -102,7 +102,7 @@ public final class KotlinDescriptorIconProvider {
         if (descriptor instanceof ClassDescriptor) {
             switch (((ClassDescriptor) descriptor).getKind()) {
                 case INTERFACE:
-                    return KotlinIcons.TRAIT;
+                    return KotlinIcons.INTERFACE;
                 case ENUM_CLASS:
                     return KotlinIcons.ENUM;
                 case ENUM_ENTRY:
