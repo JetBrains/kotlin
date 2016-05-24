@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.debugger.KotlinEditorTextProvider
 import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
 import org.jetbrains.kotlin.idea.refactoring.j2kText
-import org.jetbrains.kotlin.idea.refactoring.quoteIfNeeded
+import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.j2k.AfterConversionPass

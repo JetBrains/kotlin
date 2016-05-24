@@ -158,3 +158,5 @@ fun KtCallableDeclaration.canOmitDeclaredType(initializerOrBodyExpression: KtExp
     if (KotlinTypeChecker.DEFAULT.equalTypes(expressionType, declaredType)) return true
     return canChangeTypeToSubtype && expressionType.isSubtypeOf(declaredType)
 }
+
+fun String.quoteIfNeeded(): String = if (KotlinNameSuggester.isIdentifier(this)) this else "`$this`"
