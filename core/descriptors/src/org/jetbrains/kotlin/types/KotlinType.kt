@@ -56,6 +56,12 @@ fun KotlinType.unwrap(): KotlinType {
 
 interface SimpleType : KotlinType
 
+interface TypeWithCustomReplacement : KotlinType {
+    fun makeNullableAsSpecified(nullable: Boolean): KotlinType
+
+    fun replaceAnnotations(newAnnotations: Annotations): KotlinType
+}
+
 abstract class WrappedType() : KotlinType, LazyType {
     override val annotations: Annotations get() = delegate.annotations
     override val constructor: TypeConstructor get() = delegate.constructor

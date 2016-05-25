@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 
-interface FlexibleType : SubtypingRepresentatives {
+interface FlexibleType : SubtypingRepresentatives, TypeWithCustomReplacement {
     // lowerBound is a subtype of upperBound
     val lowerBound: SimpleType
     val upperBound: SimpleType
@@ -33,10 +33,6 @@ interface FlexibleType : SubtypingRepresentatives {
         get() = upperBound
 
     override fun sameTypeConstructor(type: KotlinType) = false
-
-    fun makeNullableAsSpecified(nullable: Boolean): KotlinType
-
-    fun replaceAnnotations(newAnnotations: Annotations): KotlinType
 }
 
 fun KotlinType.isFlexible(): Boolean = unwrap() is FlexibleType
@@ -114,14 +110,6 @@ abstract class DelegatingFlexibleType protected constructor(
     }
 
     protected abstract val delegateType: KotlinType
-
-    override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>): T? {
-        @Suppress("UNCHECKED_CAST")
-        return when(capabilityClass) {
-            SubtypingRepresentatives::class.java -> this as T
-            else -> super.getCapability(capabilityClass)
-        }
-    }
 
     override fun makeNullableAsSpecified(nullable: Boolean): KotlinType {
         return KotlinTypeFactory.flexibleType(TypeUtils.makeNullableAsSpecified(lowerBound, nullable), TypeUtils.makeNullableAsSpecified(upperBound, nullable))
