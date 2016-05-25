@@ -1,0 +1,7 @@
+{
+  "type": "MARKED_ELEMENT",
+  "mainFile": "test/JavaClient.java",
+  "newName": "first",
+  "withRuntime": "true",
+  "byRef": "true"
+}

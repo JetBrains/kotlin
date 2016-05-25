@@ -19,24 +19,20 @@ package org.jetbrains.kotlin.idea.refactoring.rename
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.ui.Messages
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiNamedElement
-import com.intellij.psi.SyntheticElement
+import com.intellij.psi.*
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.OverridingMethodsSearch
 import com.intellij.refactoring.listeners.RefactoringElementListener
 import com.intellij.refactoring.rename.RenameProcessor
 import com.intellij.refactoring.util.RefactoringUtil
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.kotlin.asJava.KtLightMethod
-import org.jetbrains.kotlin.asJava.LightClassUtil
-import org.jetbrains.kotlin.asJava.namedUnwrappedElement
-import org.jetbrains.kotlin.asJava.propertyNameByAccessor
+import org.jetbrains.kotlin.asJava.*
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.refactoring.dropOverrideKeywordIfNecessary
+import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -45,6 +41,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.OverrideResolver
 
 class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
@@ -56,12 +53,32 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
     /* Can't properly update getters and setters in Java */
     override fun isInplaceRenameSupported() = false
 
-    override fun substituteElementToRename(element: PsiElement?, editor: Editor?): PsiElement? {
-        val namedUnwrappedElement = element?.namedUnwrappedElement
+    private fun getJvmNames(element: PsiElement): Pair<String?, String?> {
+        val descriptor = (element.unwrapped as? KtDeclaration)?.resolveToDescriptor() as? PropertyDescriptor ?: return null to null
+        val getterName = descriptor.getter?.let { DescriptorUtils.getJvmName(it) }
+        val setterName = descriptor.setter?.let { DescriptorUtils.getJvmName(it) }
+        return getterName to setterName
+    }
 
-        val callableDeclaration = namedUnwrappedElement as? KtCallableDeclaration
-                                  ?: throw IllegalStateException("Can't be for element $element there because of canProcessElement()")
+    override fun findReferences(element: PsiElement): Collection<PsiReference> {
+        val allReferences = super.findReferences(element)
+        val (getterJvmName, setterJvmName) = getJvmNames(element)
+        return when {
+            getterJvmName == null && setterJvmName == null -> allReferences
+            element is KtElement -> allReferences.filter {
+                it is KtReference
+                || (getterJvmName == null && (it.resolve() as? PsiNamedElement)?.name != setterJvmName)
+                || (setterJvmName == null && (it.resolve() as? PsiNamedElement)?.name != getterJvmName)
+            }
+            element is KtLightElement<*, *> -> {
+                val name = element.name
+                if (name == getterJvmName || name == setterJvmName) allReferences.filterNot { it is KtReference } else allReferences
+            }
+            else -> emptyList()
+        }
+    }
 
+    private fun chooseCallableToRename(callableDeclaration: KtCallableDeclaration): KtCallableDeclaration? {
         val deepestSuperDeclaration = findDeepestOverriddenDeclaration(callableDeclaration)
         if (deepestSuperDeclaration == null || deepestSuperDeclaration == callableDeclaration) {
             return callableDeclaration
@@ -86,6 +103,24 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
         }
     }
 
+    override fun substituteElementToRename(element: PsiElement?, editor: Editor?): PsiElement? {
+        val namedUnwrappedElement = element?.namedUnwrappedElement ?: return null
+
+        val callableDeclaration = namedUnwrappedElement as? KtCallableDeclaration
+                                  ?: throw IllegalStateException("Can't be for element $element there because of canProcessElement()")
+
+        val declarationToRename = chooseCallableToRename(callableDeclaration) ?: return null
+
+        val (getterJvmName, setterJvmName) = getJvmNames(namedUnwrappedElement)
+        if (element is KtLightMethod) {
+            val name = element.name
+            if (element.name != getterJvmName && element.name != setterJvmName) return declarationToRename
+            return declarationToRename.toLightMethods().firstOrNull { it.name == name }
+        }
+
+        return declarationToRename
+    }
+
     override fun prepareRenaming(element: PsiElement?, newName: String?, allRenames: MutableMap<PsiElement, String>, scope: SearchScope) {
         val namedUnwrappedElement = element?.namedUnwrappedElement
         val propertyMethods = when(namedUnwrappedElement) {
@@ -107,6 +142,10 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
 
     override tailrec fun renameElement(element: PsiElement, newName: String, usages: Array<out UsageInfo>, listener: RefactoringElementListener?) {
         if (element is KtLightMethod) {
+            if (element.modifierList.findAnnotation(DescriptorUtils.JVM_NAME.asString()) != null) {
+                return super.renameElement(element, newName, usages, listener)
+            }
+
             val origin = element.kotlinOrigin
             val newPropertyName = propertyNameByAccessor(newName, element)
             // Kotlin references to Kotlin property should not use accessor name
@@ -159,7 +198,8 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
     }
 
     private fun addRenameElements(psiMethod: PsiMethod?,
-                                  oldName: String?, newName: String?,
+                                  oldName: String?,
+                                  newName: String?,
                                   allRenames: MutableMap<PsiElement, String>,
                                   scope: SearchScope) {
         if (psiMethod == null) return
