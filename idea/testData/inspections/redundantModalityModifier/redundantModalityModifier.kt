@@ -52,3 +52,9 @@ abstract class AbstractDerived2 : Interface {
     // Redundant
     override open val gav = 13
 }
+// Redundant abstract interface
+abstract interface AbstractInterface
+// Redundant final object
+final object FinalObject
+// Open interface
+open interface OpenInterface

@@ -150,6 +150,7 @@ public interface Errors {
 
     DiagnosticFactory0<KtSuperTypeList> SUPERTYPES_FOR_ANNOTATION_CLASS = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtParameter> MISSING_VAL_ON_ANNOTATION_PARAMETER = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtParameter> VAR_ANNOTATION_PARAMETER = DiagnosticFactory0.create(ERROR, VAL_OR_VAR_NODE);
     DiagnosticFactory0<KtCallExpression> ANNOTATION_CLASS_CONSTRUCTOR_CALL = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<KtAnnotationEntry, DeclarationDescriptor> NOT_AN_ANNOTATION_CLASS = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<PsiElement> ANNOTATION_CLASS_WITH_BODY = DiagnosticFactory0.create(ERROR);
@@ -209,6 +210,9 @@ public interface Errors {
 
     DiagnosticFactory0<KtElement> MISSING_CONSTRUCTOR_KEYWORD = DiagnosticFactory0.create(ERROR);
 
+    DiagnosticFactory0<PsiElement> NON_PRIVATE_CONSTRUCTOR_IN_ENUM = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> NON_PRIVATE_CONSTRUCTOR_IN_SEALED = DiagnosticFactory0.create(ERROR);
+
     // Secondary constructors
 
     DiagnosticFactory0<KtConstructorDelegationReferenceExpression> CYCLIC_CONSTRUCTOR_DELEGATION_CALL = DiagnosticFactory0.create(ERROR);
@@ -230,8 +234,7 @@ public interface Errors {
 
     // Interface-specific
 
-    DiagnosticFactory0<KtModifierListOwner> ABSTRACT_MODIFIER_IN_INTERFACE = DiagnosticFactory0
-            .create(WARNING, ABSTRACT_MODIFIER);
+    DiagnosticFactory0<KtModifierListOwner> REDUNDANT_OPEN_IN_INTERFACE = DiagnosticFactory0.create(WARNING, OPEN_MODIFIER);
 
     DiagnosticFactory0<KtDeclaration> CONSTRUCTOR_IN_INTERFACE = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
     DiagnosticFactory0<KtDeclaration> METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE = DiagnosticFactory0.create(ERROR);

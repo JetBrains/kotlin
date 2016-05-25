@@ -104,7 +104,7 @@ fun KtTypeParameter.toPsiTypeParameters(): List<PsiTypeParameter> {
     val jetDeclaration = paramList.getNonStrictParentOfType<KtDeclaration>() ?: return listOf()
     val lightOwners = jetDeclaration.toLightElements()
 
-    return lightOwners.map { lightOwner -> (lightOwner as PsiTypeParameterListOwner).typeParameters[paramIndex] }
+    return lightOwners.mapNotNull { lightOwner -> (lightOwner as? PsiTypeParameterListOwner)?.typeParameters?.get(paramIndex) }
 }
 
 // Returns original declaration if given PsiElement is a Kotlin light element, and element itself otherwise

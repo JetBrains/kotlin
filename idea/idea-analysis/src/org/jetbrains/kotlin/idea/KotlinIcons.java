@@ -32,7 +32,8 @@ public interface KotlinIcons {
     Icon FILE = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/kotlin_file.png");
     Icon ACTIVITY = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/kotlin_activity.png");
     Icon OBJECT = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/objectKotlin.png");
-    Icon TRAIT = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/interfaceKotlin.png");
+    Icon INTERFACE = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/interfaceKotlin.png");
+    Icon ANNOTATION = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/annotationKotlin.png");
     Icon FUNCTION = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/function.png");
     Icon EXTENSION_FUNCTION = PlatformIcons.FUNCTION_ICON;
     Icon LAMBDA = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/lambda.png");

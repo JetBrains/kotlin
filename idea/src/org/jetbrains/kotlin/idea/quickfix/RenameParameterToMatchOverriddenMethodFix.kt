@@ -35,6 +35,8 @@ class RenameParameterToMatchOverriddenMethodFix(
 
     override fun getText() = "Rename parameter to match overridden method"
 
+    override fun startInWriteAction(): Boolean = false
+
     public override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         RenameProcessor(project, parameter, newName, false, false).run()
     }

@@ -19,12 +19,13 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.typeUtil.isNothing
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 class ConvertToBlockBodyIntention : SelfTargetingIntention<KtDeclarationWithBody>(
         KtDeclarationWithBody::class.java, "Convert to block body"
@@ -52,26 +53,34 @@ class ConvertToBlockBodyIntention : SelfTargetingIntention<KtDeclarationWithBody
     }
 
     companion object {
+        private fun KtExpression.whenAsResult(): Boolean = when (this) {
+            is KtWhenExpression -> true
+            is KtIfExpression -> (then?.whenAsResult() ?: false) || (`else`?.whenAsResult() ?: false)
+            is KtBlockExpression -> statements.lastOrNull()?.whenAsResult() ?: false
+            else -> false
+        }
+
         fun convert(declaration: KtDeclarationWithBody): KtDeclarationWithBody {
             val body = declaration.bodyExpression!!
 
             fun generateBody(returnsValue: Boolean): KtExpression {
                 val bodyType = body.analyze().getType(body)
+                val unitWhenAsResult = (bodyType == null || bodyType.isUnit()) && body.whenAsResult()
                 val needReturn = returnsValue &&
-                                 (bodyType == null || (!KotlinBuiltIns.isUnit(bodyType) && !KotlinBuiltIns.isNothing(bodyType)))
+                                 (bodyType == null || (!bodyType.isUnit() && !bodyType.isNothing()))
 
                 val factory = KtPsiFactory(declaration)
-                val statement = if (needReturn) factory.createExpressionByPattern("return $0", body) else body
+                val statement = if (needReturn || unitWhenAsResult) factory.createExpressionByPattern("return $0", body) else body
                 return factory.createSingleStatementBlock(statement)
             }
 
             val newBody = when (declaration) {
                 is KtNamedFunction -> {
                     val returnType = declaration.returnType()!!
-                    if (!declaration.hasDeclaredReturnType() && !KotlinBuiltIns.isUnit(returnType)) {
+                    if (!declaration.hasDeclaredReturnType() && !returnType.isUnit()) {
                         declaration.setType(returnType)
                     }
-                    generateBody(!KotlinBuiltIns.isUnit(returnType) && !KotlinBuiltIns.isNothing(returnType))
+                    generateBody(!returnType.isUnit() && !returnType.isNothing())
                 }
 
                 is KtPropertyAccessor -> generateBody(declaration.isGetter)

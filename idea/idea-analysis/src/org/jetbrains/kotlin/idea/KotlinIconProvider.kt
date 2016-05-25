@@ -99,8 +99,9 @@ class KotlinIconProvider : IconProvider(), DumbAware {
             }
             is KtFunctionLiteral -> KotlinIcons.LAMBDA
             is KtClass -> when {
-                isInterface() -> KotlinIcons.TRAIT
+                isInterface() -> KotlinIcons.INTERFACE
                 isEnum() -> KotlinIcons.ENUM
+                isAnnotation() -> KotlinIcons.ANNOTATION
                 this is KtEnumEntry && getPrimaryConstructorParameterList() == null -> KotlinIcons.ENUM
                 else -> KotlinIcons.CLASS
             }

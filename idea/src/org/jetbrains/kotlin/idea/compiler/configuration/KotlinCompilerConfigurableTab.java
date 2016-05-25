@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.compiler.configuration;
 
 import com.intellij.compiler.options.ComparingUtils;
+import com.intellij.compiler.server.BuildManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.options.Configurable;
@@ -45,6 +46,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     private final K2JSCompilerArguments k2jsCompilerArguments;
     private final CompilerSettings compilerSettings;
     private final KotlinCompilerWorkspaceSettings compilerWorkspaceSettings;
+    private final Project project;
     private JPanel contentPane;
     private JCheckBox generateNoWarningsCheckBox;
     private RawCommandLineEditor additionalArgsOptionsField;
@@ -65,6 +67,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         this.k2jsCompilerArguments = Kotlin2JsCompilerArgumentsHolder.getInstance(project).getSettings();
         this.compilerSettings = KotlinCompilerSettings.getInstance(project).getSettings();
         this.compilerWorkspaceSettings = ServiceManager.getService(project, KotlinCompilerWorkspaceSettings.class);
+        this.project = project;
 
         additionalArgsOptionsField.attachLabel(additionalArgsLabel);
 
@@ -134,6 +137,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         k2jsCompilerArguments.sourceMap = generateSourceMapsCheckBox.isSelected();
         k2jsCompilerArguments.outputPrefix = StringUtil.nullize(outputPrefixFile.getText(), true);
         k2jsCompilerArguments.outputPostfix = StringUtil.nullize(outputPostfixFile.getText(), true);
+
+        BuildManager.getInstance().clearState(project);
     }
 
     @Override
@@ -164,7 +169,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     @Nullable
     @Override
     public String getHelpTopic() {
-        return null;
+        return "reference.compiler.kotlin";
     }
 
     private static void setupFileChooser(

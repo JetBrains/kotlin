@@ -16,7 +16,7 @@
         </context>
     </template>
     <template resource-bundle="messages.CodeInsightBundle" key="livetemplate.description.serr"
-              name="serr" toReformat="true" toShortenFQNames="true" value="System.err?.println($END$)">
+              name="serr" toReformat="true" toShortenFQNames="true" value="System.err.println($END$)">
         <context>
             <option name="KOTLIN_STATEMENT" value="true" />
         </context>

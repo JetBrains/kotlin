@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.idea.util
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
@@ -59,6 +56,10 @@ fun LexicalScope.getImplicitReceiversWithInstanceToExpression(): Map<ReceiverPar
     val result = LinkedHashMap<ReceiverParameterDescriptor, ReceiverExpressionFactory?>()
     for ((index, receiver) in receivers.withIndex()) {
         val owner = receiver.containingDeclaration
+        if (owner is ScriptDescriptor) {
+            result.put(receiver, null)
+            continue
+        }
         val (expressionText, isImmediateThis) = if (owner in outerDeclarationsWithInstance) {
             val thisWithLabel = thisQualifierName(receiver)?.let { "this@${it.render()}" }
             if (index == 0)

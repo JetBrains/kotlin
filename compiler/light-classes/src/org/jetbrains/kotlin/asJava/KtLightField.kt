@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.asJava
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
+import com.intellij.psi.impl.PsiVariableEx
 import com.intellij.psi.impl.light.LightElement
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.annotations.NonNls
@@ -27,7 +28,7 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 
-interface KtLightField : PsiField, KtLightDeclaration<KtDeclaration, PsiField>
+interface KtLightField : PsiField, KtLightDeclaration<KtDeclaration, PsiField>, PsiVariableEx
 
 // Copied from com.intellij.psi.impl.light.LightField
 sealed class KtLightFieldImpl(
@@ -35,7 +36,7 @@ sealed class KtLightFieldImpl(
         override val clsDelegate: PsiField,
         private val containingClass: KtLightClass
 ) : LightElement(clsDelegate.manager, KotlinLanguage.INSTANCE), KtLightField {
-    private val lightIdentifier by lazy { KtLightIdentifier(this, kotlinOrigin as? KtNamedDeclaration) }
+    private val lightIdentifier by lazy(LazyThreadSafetyMode.PUBLICATION) { KtLightIdentifier(this, kotlinOrigin as? KtNamedDeclaration) }
 
     @Throws(IncorrectOperationException::class)
     override fun setInitializer(initializer: PsiExpression?) = throw IncorrectOperationException("Not supported")
@@ -72,7 +73,7 @@ sealed class KtLightFieldImpl(
         return this
     }
 
-    private val _modifierList by lazy {
+    private val _modifierList by lazy(LazyThreadSafetyMode.PUBLICATION) {
         if (lightMemberOrigin is LightMemberOriginForDeclaration)
             clsDelegate.modifierList?.let { KtLightModifierList(it, this) }
         else clsDelegate.modifierList
@@ -93,6 +94,10 @@ sealed class KtLightFieldImpl(
     override val kotlinOrigin: KtDeclaration? get() = lightMemberOrigin?.originalElement
 
     override fun getNavigationElement() = kotlinOrigin ?: super.getNavigationElement()
+
+    override fun computeConstantValue(visitedVars: MutableSet<PsiVariable>?): Any? {
+        return (clsDelegate as PsiVariableEx).computeConstantValue(visitedVars)
+    }
 
     override fun isEquivalentTo(another: PsiElement?): Boolean {
         if (another is KtLightField && kotlinOrigin == another.kotlinOrigin && clsDelegate == another.clsDelegate) {

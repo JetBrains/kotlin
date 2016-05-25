@@ -195,6 +195,8 @@ object PositioningStrategies {
 
     @JvmField val ABSTRACT_MODIFIER: PositioningStrategy<KtModifierListOwner> = modifierSetPosition(KtTokens.ABSTRACT_KEYWORD)
 
+    @JvmField val OPEN_MODIFIER: PositioningStrategy<KtModifierListOwner> = modifierSetPosition(KtTokens.OPEN_KEYWORD)
+
     @JvmField val OVERRIDE_MODIFIER: PositioningStrategy<KtModifierListOwner> = modifierSetPosition(KtTokens.OVERRIDE_KEYWORD)
 
     @JvmField val PRIVATE_MODIFIER: PositioningStrategy<KtModifierListOwner> = modifierSetPosition(KtTokens.PRIVATE_KEYWORD)

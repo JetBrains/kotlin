@@ -58,6 +58,8 @@ class ReplaceExplicitFunctionLiteralParamWithItIntention() : PsiElementBaseInten
         return true
     }
 
+    override fun startInWriteAction(): Boolean = false
+
     override fun invoke(project: Project, editor: Editor, element: PsiElement) {
         val caretOffset = editor.caretModel.offset
         val functionLiteral = targetFunctionLiteral(element, editor.caretModel.offset)!!

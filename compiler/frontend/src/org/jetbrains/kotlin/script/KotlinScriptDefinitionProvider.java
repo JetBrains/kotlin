@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.TestOnly;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,9 +49,12 @@ public class KotlinScriptDefinitionProvider {
         return findScriptDefinition(psiFile) != null;
     }
 
-    @TestOnly
     public void addScriptDefinition(@NotNull KotlinScriptDefinition scriptDefinition) {
         definitions.add(0, scriptDefinition);
+    }
+
+    public void removeScriptDefinition(@NotNull KotlinScriptDefinition scriptDefinition) {
+        definitions.remove(scriptDefinition);
     }
 
     public void setScriptDefinitions(@NotNull List<KotlinScriptDefinition> definitions) {

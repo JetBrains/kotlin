@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,6 @@ import com.intellij.execution.console.LanguageConsoleBuilder
 import com.intellij.execution.console.LanguageConsoleView
 import com.intellij.execution.console.ProcessBackedConsoleExecuteActionHandler
 import com.intellij.execution.process.OSProcessHandler
-import com.intellij.execution.process.ProcessAdapter
-import com.intellij.execution.process.ProcessEvent
 import com.intellij.execution.runners.AbstractConsoleRunnerWithHistory
 import com.intellij.execution.ui.RunContentDescriptor
 import com.intellij.openapi.actionSystem.ActionManager
@@ -32,6 +30,7 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.CommonShortcuts
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.colors.EditorColors
 import com.intellij.openapi.editor.ex.EditorEx
@@ -43,7 +42,12 @@ import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.vfs.CharsetToolkit
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiManager
+import com.intellij.psi.impl.PsiFileFactoryImpl
+import com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.console.actions.BuildAndRestartConsoleAction
 import org.jetbrains.kotlin.console.actions.KtExecuteCommandAction
@@ -51,9 +55,21 @@ import org.jetbrains.kotlin.console.gutter.ConsoleGutterContentProvider
 import org.jetbrains.kotlin.console.gutter.ConsoleIndicatorRenderer
 import org.jetbrains.kotlin.console.gutter.IconWithTooltip
 import org.jetbrains.kotlin.console.gutter.ReplIcons
+import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.idea.completion.doNotComplete
+import org.jetbrains.kotlin.idea.caches.resolve.ModuleTestSourceInfo
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtScript
+import org.jetbrains.kotlin.psi.moduleInfo
+import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
+import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor
+import org.jetbrains.kotlin.resolve.repl.ReplState
+import org.jetbrains.kotlin.script.KotlinScriptDefinition
+import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
+import org.jetbrains.kotlin.script.ScriptParameter
 import java.awt.Color
 import java.awt.Font
 import kotlin.properties.Delegates
@@ -68,7 +84,13 @@ class KotlinConsoleRunner(
         title: String,
         path: String?
 ) : AbstractConsoleRunnerWithHistory<LanguageConsoleView>(myProject, title, path) {
+
+    private val replState = ReplState()
+
     override fun finishConsole() {
+        KotlinConsoleKeeper.getInstance(project).removeConsole(consoleView.virtualFile)
+        KotlinScriptDefinitionProvider.getInstance(project).removeScriptDefinition(consoleScriptDefinition)
+
         if (ApplicationManager.getApplication().isUnitTestMode) {
             // Ignore super with myConsoleView.setEditable(false)
             return
@@ -99,16 +121,21 @@ class KotlinConsoleRunner(
     val executor = CommandExecutor(this)
     var compilerHelper: ConsoleCompilerHelper by Delegates.notNull()
 
+    private val consoleScriptDefinition = object : KotlinScriptDefinition {
+        override fun isScript(file: PsiFile) = file.originalFile.virtualFile == consoleView.virtualFile
+        override fun getScriptParameters(scriptDescriptor: ScriptDescriptor) = emptyList<ScriptParameter>()
+        override fun getScriptName(script: KtScript) = Name.identifier("REPL")
+    }
+
     override fun createProcess() = cmdLine.createProcess()
 
     override fun createConsoleView(): LanguageConsoleView? {
-        val consoleView = LanguageConsoleBuilder()
-                .gutterContentProvider(ConsoleGutterContentProvider())
-                .build(project, KotlinLanguage.INSTANCE)
+        val builder = LanguageConsoleBuilder()
+
+        val consoleView = builder.gutterContentProvider(ConsoleGutterContentProvider()).build(project, KotlinLanguage.INSTANCE)
+
 
         consoleView.prompt = null
-
-        disableCompletion(consoleView)
 
         val consoleEditor = consoleView.consoleEditor
 
@@ -120,7 +147,15 @@ class KotlinConsoleRunner(
         val executeAction = KtExecuteCommandAction(consoleView.virtualFile)
         executeAction.registerCustomShortcutSet(CommonShortcuts.CTRL_ENTER, consoleView.consoleEditor.component)
 
+        KotlinScriptDefinitionProvider.getInstance(project).addScriptDefinition(consoleScriptDefinition)
+        enableCompletion(consoleView)
+
         return consoleView
+    }
+
+    private fun enableCompletion(consoleView: LanguageConsoleView) {
+        val consoleKtFile = PsiManager.getInstance(project).findFile(consoleView.virtualFile) as? KtFile ?: return
+        consoleKtFile.moduleInfo = ModuleTestSourceInfo(module)
     }
 
     override fun createProcessHandler(process: Process): OSProcessHandler {
@@ -133,11 +168,6 @@ class KotlinConsoleRunner(
         val keeper = KotlinConsoleKeeper.getInstance(project)
 
         keeper.putVirtualFileToConsole(consoleFile, this)
-        processHandler.addProcessListener(object : ProcessAdapter() {
-            override fun processTerminated(event: ProcessEvent) {
-                keeper.removeConsole(consoleFile)
-            }
-        })
 
         return processHandler
     }
@@ -180,12 +210,6 @@ class KotlinConsoleRunner(
         editor.setPlaceholderAttributes(placeholderAttrs)
     }
 
-    private fun disableCompletion(consoleView: LanguageConsoleView) {
-        val consoleFile = consoleView.virtualFile
-        val jetFile = PsiManager.getInstance(project).findFile(consoleFile) as? KtFile ?: return
-        jetFile.doNotComplete = true
-    }
-
     fun setupGutters() {
         fun configureEditorGutter(editor: EditorEx, color: Color, iconWithTooltip: IconWithTooltip): RangeHighlighter {
             editor.settings.isLineMarkerAreaShown = true // hack to show gutter
@@ -225,4 +249,30 @@ class KotlinConsoleRunner(
         processHandler.destroyProcess()
         Disposer.dispose(disposableDescriptor)
     }
+
+    fun successfulLine(text: String) {
+        runReadAction {
+            val lineNumber = replState.successfulLinesCount + 1
+            val virtualFile =
+                    LightVirtualFile("line$lineNumber${KotlinParserDefinition.STD_SCRIPT_EXT}", KotlinLanguage.INSTANCE, text).apply {
+                        charset = CharsetToolkit.UTF8_CHARSET
+                    }
+            val psiFile = (PsiFileFactory.getInstance(project) as PsiFileFactoryImpl).trySetupPsiForFile(virtualFile, KotlinLanguage.INSTANCE, true, false) as KtFile?
+                          ?: error("Failed to setup PSI for file:\n$text")
+
+            replState.submitLine(psiFile)
+            psiFile.moduleInfo = ModuleTestSourceInfo(module)
+            val scriptDescriptor = psiFile.script!!.resolveToDescriptor() as? LazyScriptDescriptor ?: error("Failed to analyze line:\n$text")
+            ForceResolveUtil.forceResolveAllContents(scriptDescriptor)
+            replState.lineSuccess(psiFile, scriptDescriptor)
+
+            replState.submitLine(consoleFile) // reset file scope customizer
+        }
+    }
+
+    val consoleFile: KtFile
+        get() {
+            val consoleFile = consoleView.virtualFile
+            return PsiManager.getInstance(project).findFile(consoleFile) as KtFile
+        }
 }

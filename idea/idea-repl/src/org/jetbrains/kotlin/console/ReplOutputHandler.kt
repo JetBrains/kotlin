@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -89,7 +89,7 @@ class ReplOutputHandler(
             "COMPILE_ERROR"   -> outputProcessor.highlightCompilerErrors(createCompilerMessages(content))
             "RUNTIME_ERROR"   -> outputProcessor.printRuntimeError("${content.trim()}\n")
             "INTERNAL_ERROR"  -> outputProcessor.printInternalErrorMessage(content)
-            "SUCCESS"         -> Unit
+            "SUCCESS"         -> runner.commandHistory.lastUnprocessedEntry()?.entryText?.let { runner.successfulLine(it) }
             else -> logError(ReplOutputHandler::class.java, "Unexpected output type:\n$outputType")
         }
 

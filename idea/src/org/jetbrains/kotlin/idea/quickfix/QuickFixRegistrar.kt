@@ -101,7 +101,7 @@ class QuickFixRegistrar : QuickFixContributor {
 
         val removeRedundantModifierFactory = RemoveModifierFix.createRemoveModifierFactory(true)
         REDUNDANT_MODIFIER.registerFactory(removeRedundantModifierFactory)
-        ABSTRACT_MODIFIER_IN_INTERFACE.registerFactory(RemoveModifierFix.createRemoveModifierFromListOwnerFactory(ABSTRACT_KEYWORD, true))
+        REDUNDANT_OPEN_IN_INTERFACE.registerFactory(removeRedundantModifierFactory)
 
         REDUNDANT_PROJECTION.registerFactory(RemoveModifierFix.createRemoveProjectionFactory(true))
         INCOMPATIBLE_MODIFIERS.registerFactory(RemoveModifierFix.createRemoveModifierFactory(false))
@@ -124,6 +124,8 @@ class QuickFixRegistrar : QuickFixContributor {
         REDUNDANT_MODIFIER_FOR_TARGET.registerFactory(removeModifierFactory)
         WRONG_MODIFIER_CONTAINING_DECLARATION.registerFactory(removeModifierFactory)
         REPEATED_MODIFIER.registerFactory(removeModifierFactory)
+        NON_PRIVATE_CONSTRUCTOR_IN_ENUM.registerFactory(removeModifierFactory)
+        NON_PRIVATE_CONSTRUCTOR_IN_SEALED.registerFactory(removeModifierFactory)
 
         UNRESOLVED_REFERENCE.registerFactory(AutoImportFix)
         UNRESOLVED_REFERENCE.registerFactory(AddTestLibQuickFix)
@@ -171,6 +173,7 @@ class QuickFixRegistrar : QuickFixContributor {
         VAL_REASSIGNMENT.registerFactory(ChangeVariableMutabilityFix.VAL_REASSIGNMENT_FACTORY)
         CAPTURED_VAL_INITIALIZATION.registerFactory(ChangeVariableMutabilityFix.CAPTURED_VAL_INITIALIZATION_FACTORY)
         VAR_OVERRIDDEN_BY_VAL.registerFactory(ChangeVariableMutabilityFix.VAR_OVERRIDDEN_BY_VAL_FACTORY)
+        VAR_ANNOTATION_PARAMETER.registerFactory(ChangeVariableMutabilityFix.VAR_ANNOTATION_PARAMETER_FACTORY)
 
         VAL_OR_VAR_ON_FUN_PARAMETER.registerFactory(RemoveValVarFromParameterFix)
         VAL_OR_VAR_ON_LOOP_PARAMETER.registerFactory(RemoveValVarFromParameterFix)

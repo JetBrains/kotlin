@@ -16,16 +16,17 @@
 
 package org.jetbrains.kotlin.idea.actions
 
-import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.updateSettings.impl.UpdateSettings
 import org.jetbrains.kotlin.idea.KotlinPluginUpdater
+import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.PluginUpdateStatus
 import javax.swing.JComponent
 
-class ConfigurePluginUpdatesAction : AnAction() {
+class ConfigurePluginUpdatesAction : DumbAwareAction() {
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
         ConfigurePluginUpdatesDialog(project).show()
@@ -50,7 +51,7 @@ class ConfigurePluginUpdatesDialog(project: Project) : DialogWrapper(project, fa
                 form.updateCheckProgressIcon.suspend()
                 when (pluginUpdateStatus) {
                     PluginUpdateStatus.LatestVersionInstalled ->
-                        form.updateStatusLabel.text = "You have the latest version of the plugin installed."
+                        form.updateStatusLabel.text = "You have the latest version of the plugin (${KotlinPluginUtil.getPluginVersion()}) installed."
 
                     is PluginUpdateStatus.Update -> {
                         update = pluginUpdateStatus
