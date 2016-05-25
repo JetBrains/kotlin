@@ -1,1 +1,2 @@
-Function call 8 bar()
+Function call (8: 5) bar()
+
