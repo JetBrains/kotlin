@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
+import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.ContentRootsKt;
 import org.jetbrains.kotlin.config.Services;
@@ -119,6 +120,8 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         }
 
         File outputFile = new File(arguments.outputFile);
+
+        configuration.put(CommonConfigurationKeys.MODULE_NAME, FileUtil.getNameWithoutExtension(outputFile));
 
         JsConfig config = new LibrarySourcesConfig(project, configuration);
         if (config.checkLibFilesAndReportErrors(new Function1<String, Unit>() {
@@ -246,9 +249,6 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             assert arguments.target == "v5" : "Unsupported ECMA version: " + arguments.target;
         }
         configuration.put(JSConfigurationKeys.TARGET, EcmaVersion.defaultVersion());
-
-        String moduleId = FileUtil.getNameWithoutExtension(new File(arguments.outputFile));
-        configuration.put(JSConfigurationKeys.MODULE_ID, moduleId);
 
         if (arguments.sourceMap) {
             configuration.put(JSConfigurationKeys.SOURCE_MAP, true);
