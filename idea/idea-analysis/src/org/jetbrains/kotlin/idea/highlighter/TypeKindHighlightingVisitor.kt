@@ -74,7 +74,7 @@ internal class TypeKindHighlightingVisitor(holder: AnnotationHolder, bindingCont
             }
         }
 
-        NameHighlighter.highlightName(holder, range, ANNOTATION)
+        holder.highlightName(range, ANNOTATION)
     }
 
     override fun visitTypeParameter(parameter: KtTypeParameter) {

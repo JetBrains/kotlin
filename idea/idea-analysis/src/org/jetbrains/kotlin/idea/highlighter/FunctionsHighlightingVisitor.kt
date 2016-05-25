@@ -89,7 +89,7 @@ internal class FunctionsHighlightingVisitor(holder: AnnotationHolder, bindingCon
                 holder.highlightName(callee, CONSTRUCTOR_CALL)
             }
             else if (calleeDescriptor is FunctionDescriptor) {
-                val color = when {
+                val attributesKey = when {
                     calleeDescriptor.extensionReceiverParameter != null ->
                         EXTENSION_FUNCTION_CALL
 
@@ -100,7 +100,7 @@ internal class FunctionsHighlightingVisitor(holder: AnnotationHolder, bindingCon
                         FUNCTION_CALL
                 }
 
-                holder.highlightName(callee, color)
+                holder.highlightName(callee, attributesKey)
             }
         }
     }
