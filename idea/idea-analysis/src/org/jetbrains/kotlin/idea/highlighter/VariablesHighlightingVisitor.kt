@@ -14,142 +14,120 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.highlighter;
+package org.jetbrains.kotlin.idea.highlighter
 
-import com.intellij.lang.annotation.AnnotationHolder;
-import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
-import org.jetbrains.kotlin.descriptors.VariableDescriptor;
-import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.renderer.DescriptorRenderer;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallsKt;
-import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.expressions.CaptureKind;
+import com.intellij.lang.annotation.AnnotationHolder
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext.*
+import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
+import org.jetbrains.kotlin.types.expressions.CaptureKind
 
-import static org.jetbrains.kotlin.resolve.BindingContext.*;
+internal class VariablesHighlightingVisitor(holder: AnnotationHolder, bindingContext: BindingContext)
+    : AfterAnalysisHighlightingVisitor(holder, bindingContext) {
 
-class VariablesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
-    VariablesHighlightingVisitor(AnnotationHolder holder, BindingContext bindingContext) {
-        super(holder, bindingContext);
-    }
-
-    @Override
-    public void visitSimpleNameExpression(@NotNull KtSimpleNameExpression expression) {
-        DeclarationDescriptor target = bindingContext.get(REFERENCE_TARGET, expression);
-        if (target == null) {
-            return;
-        }
-        if (target instanceof ValueParameterDescriptor) {
-            ValueParameterDescriptor parameterDescriptor = (ValueParameterDescriptor) target;
-            if (Boolean.TRUE.equals(bindingContext.get(AUTO_CREATED_IT, parameterDescriptor))) {
-                holder.createInfoAnnotation(expression, "Automatically declared based on the expected type").setTextAttributes(
-                        KotlinHighlightingColors.FUNCTION_LITERAL_DEFAULT_PARAMETER);
+    override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
+        val target = bindingContext.get(REFERENCE_TARGET, expression) ?: return
+        if (target is ValueParameterDescriptor) {
+            if (java.lang.Boolean.TRUE == bindingContext.get(AUTO_CREATED_IT, target)) {
+                holder.createInfoAnnotation(expression, "Automatically declared based on the expected type").textAttributes = KotlinHighlightingColors.FUNCTION_LITERAL_DEFAULT_PARAMETER
             }
         }
 
-        if (!(expression.getParent() instanceof KtValueArgumentName)) { // highlighted separately
-            highlightVariable(expression, target);
+        if (expression.parent !is KtValueArgumentName) { // highlighted separately
+            highlightVariable(expression, target)
         }
 
-        super.visitSimpleNameExpression(expression);
+        super.visitSimpleNameExpression(expression)
     }
 
-    @Override
-    public void visitProperty(@NotNull KtProperty property) {
-        visitVariableDeclaration(property);
-        super.visitProperty(property);
+    override fun visitProperty(property: KtProperty) {
+        visitVariableDeclaration(property)
+        super.visitProperty(property)
     }
 
-    @Override
-    public void visitParameter(@NotNull KtParameter parameter) {
-        visitVariableDeclaration(parameter);
-        super.visitParameter(parameter);
+    override fun visitParameter(parameter: KtParameter) {
+        visitVariableDeclaration(parameter)
+        super.visitParameter(parameter)
     }
 
-    @NotNull
-    private static PsiElement getSmartCastTarget(@NotNull KtExpression expression) {
-        PsiElement target = expression;
-        if (target instanceof KtParenthesizedExpression) {
-            target = KtPsiUtil.deparenthesize((KtParenthesizedExpression) target);
-            if (target == null) {
-                target = expression;
-            }
+    private fun getSmartCastTarget(expression: KtExpression): PsiElement {
+        var target: PsiElement = expression
+        if (target is KtParenthesizedExpression) {
+            target = KtPsiUtil.deparenthesize(target as KtParenthesizedExpression?) ?: expression
         }
-        if (target instanceof KtIfExpression) {
-            target = ((KtIfExpression) target).getIfKeyword();
+        if (target is KtIfExpression) {
+            target = target.ifKeyword
         }
-        else if (target instanceof KtWhenExpression) {
-            target = ((KtWhenExpression) target).getWhenKeyword();
+        else if (target is KtWhenExpression) {
+            target = target.whenKeyword
         }
-        else if (target instanceof KtBinaryExpression) {
-            target = ((KtBinaryExpression) target).getOperationReference();
+        else if (target is KtBinaryExpression) {
+            target = target.operationReference
         }
-        return target;
+        return target
     }
 
-    @Override
-    public void visitExpression(@NotNull KtExpression expression) {
-        KotlinType implicitSmartCast = bindingContext.get(IMPLICIT_RECEIVER_SMARTCAST, expression);
+    override fun visitExpression(expression: KtExpression) {
+        val implicitSmartCast = bindingContext.get(IMPLICIT_RECEIVER_SMARTCAST, expression)
         if (implicitSmartCast != null) {
-            holder.createInfoAnnotation(expression, "Implicit receiver smart cast to " +
-                                                    DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(implicitSmartCast))
-                  .setTextAttributes(KotlinHighlightingColors.SMART_CAST_RECEIVER);
+            holder.createInfoAnnotation(expression, "Implicit receiver smart cast to " + DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(implicitSmartCast)).textAttributes = KotlinHighlightingColors.SMART_CAST_RECEIVER
         }
 
-        boolean nullSmartCast = bindingContext.get(SMARTCAST_NULL, expression) == Boolean.TRUE;
+        val nullSmartCast = bindingContext.get(SMARTCAST_NULL, expression) === java.lang.Boolean.TRUE
         if (nullSmartCast) {
-            holder.createInfoAnnotation(expression, "Always null")
-                  .setTextAttributes(KotlinHighlightingColors.SMART_CONSTANT);
+            holder.createInfoAnnotation(expression, "Always null").textAttributes = KotlinHighlightingColors.SMART_CONSTANT
         }
 
-        KotlinType smartCast = bindingContext.get(SMARTCAST, expression);
+        val smartCast = bindingContext.get(SMARTCAST, expression)
         if (smartCast != null) {
             holder.createInfoAnnotation(getSmartCastTarget(expression),
-                                        "Smart cast to " + DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(smartCast))
-                  .setTextAttributes(KotlinHighlightingColors.SMART_CAST_VALUE);
+                                        "Smart cast to " + DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(smartCast)).textAttributes = KotlinHighlightingColors.SMART_CAST_VALUE
         }
 
-        super.visitExpression(expression);
+        super.visitExpression(expression)
     }
 
-    private void visitVariableDeclaration(KtNamedDeclaration declaration) {
-        DeclarationDescriptor declarationDescriptor = bindingContext.get(DECLARATION_TO_DESCRIPTOR, declaration);
-        PsiElement nameIdentifier = declaration.getNameIdentifier();
+    private fun visitVariableDeclaration(declaration: KtNamedDeclaration) {
+        val declarationDescriptor = bindingContext.get(DECLARATION_TO_DESCRIPTOR, declaration)
+        val nameIdentifier = declaration.nameIdentifier
         if (nameIdentifier != null && declarationDescriptor != null) {
-            highlightVariable(nameIdentifier, declarationDescriptor);
+            highlightVariable(nameIdentifier, declarationDescriptor)
         }
     }
 
-    private void highlightVariable(@NotNull PsiElement elementToHighlight, @NotNull DeclarationDescriptor descriptor) {
-        if (descriptor instanceof VariableDescriptor) {
-            VariableDescriptor variableDescriptor = (VariableDescriptor) descriptor;
+    private fun highlightVariable(elementToHighlight: PsiElement, descriptor: DeclarationDescriptor) {
+        if (descriptor is VariableDescriptor) {
 
-            if (DynamicCallsKt.isDynamic(variableDescriptor)) {
-                NameHighlighter.highlightName(holder, elementToHighlight, KotlinHighlightingColors.DYNAMIC_PROPERTY_CALL);
-                return;
+            if (descriptor.isDynamic()) {
+                NameHighlighter.highlightName(holder, elementToHighlight, KotlinHighlightingColors.DYNAMIC_PROPERTY_CALL)
+                return
             }
 
-            if (variableDescriptor.isVar()) {
-                NameHighlighter.highlightName(holder, elementToHighlight, KotlinHighlightingColors.MUTABLE_VARIABLE);
+            if (descriptor.isVar) {
+                NameHighlighter.highlightName(holder, elementToHighlight, KotlinHighlightingColors.MUTABLE_VARIABLE)
             }
 
-            if (bindingContext.get(CAPTURED_IN_CLOSURE, variableDescriptor) == CaptureKind.NOT_INLINE) {
-                String msg = ((VariableDescriptor) descriptor).isVar()
-                             ? "Wrapped into a reference object to be modified when captured in a closure"
-                             : "Value captured in a closure";
-                holder.createInfoAnnotation(elementToHighlight, msg).setTextAttributes(KotlinHighlightingColors.WRAPPED_INTO_REF);
+            if (bindingContext.get(CAPTURED_IN_CLOSURE, descriptor) == CaptureKind.NOT_INLINE) {
+                val msg = if (descriptor.isVar)
+                    "Wrapped into a reference object to be modified when captured in a closure"
+                else
+                    "Value captured in a closure"
+                holder.createInfoAnnotation(elementToHighlight, msg).textAttributes = KotlinHighlightingColors.WRAPPED_INTO_REF
             }
 
-            if (descriptor instanceof LocalVariableDescriptor) {
-                NameHighlighter.highlightName(holder, elementToHighlight, KotlinHighlightingColors.LOCAL_VARIABLE);
+            if (descriptor is LocalVariableDescriptor) {
+                NameHighlighter.highlightName(holder, elementToHighlight, KotlinHighlightingColors.LOCAL_VARIABLE)
             }
 
-            if (descriptor instanceof ValueParameterDescriptor) {
-                NameHighlighter.highlightName(holder, elementToHighlight, KotlinHighlightingColors.PARAMETER);
+            if (descriptor is ValueParameterDescriptor) {
+                NameHighlighter.highlightName(holder, elementToHighlight, KotlinHighlightingColors.PARAMETER)
             }
         }
     }
