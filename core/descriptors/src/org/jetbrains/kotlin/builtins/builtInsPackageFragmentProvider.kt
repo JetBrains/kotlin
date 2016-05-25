@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.types.FlexibleTypeFactory
 import java.io.InputStream
 
 fun createBuiltInPackageFragmentProvider(
@@ -52,7 +51,7 @@ fun createBuiltInPackageFragmentProvider(
             localClassResolver,
             ErrorReporter.DO_NOTHING,
             LookupTracker.DO_NOTHING,
-            FlexibleTypeFactory.ThrowException,
+            FlexibleTypeDeserializer.ThrowException,
             classDescriptorFactory,
             notFoundClasses,
             additionalClassPartsProvider = additionalClassPartsProvider,

@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaPackageFragmentProvider
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.types.FlexibleJavaClassifierTypeFactory
 
 // This class is needed only for easier injection: exact types of needed components are specified in the constructor here.
 // Otherwise injector generator is not smart enough to deduce, for example, which package fragment provider DeserializationComponents needs
@@ -42,7 +41,7 @@ class DeserializationComponentsForJava(
         val settings = JvmBuiltInsSettings(moduleDescriptor, storageManager, { moduleDescriptor })
         components = DeserializationComponents(
                 storageManager, moduleDescriptor, classDataFinder, annotationAndConstantLoader, packageFragmentProvider, localClassResolver,
-                errorReporter, lookupTracker, FlexibleJavaClassifierTypeFactory, ClassDescriptorFactory.EMPTY,
+                errorReporter, lookupTracker, JavaFlexibleTypeDeserializer, ClassDescriptorFactory.EMPTY,
                 notFoundClasses, JavaTypeCapabilitiesLoader,
                 additionalClassPartsProvider = settings,
                 platformDependentDeclarationFilter = settings

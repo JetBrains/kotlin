@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.load.java.JvmAbi;
+import org.jetbrains.kotlin.load.kotlin.JavaFlexibleTypeDeserializer;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.serialization.AnnotationSerializer;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.serialization.SerializerExtension;
 import org.jetbrains.kotlin.serialization.StringTable;
 import org.jetbrains.kotlin.serialization.jvm.ClassMapperLite;
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf;
+import org.jetbrains.kotlin.types.DelegatingFlexibleType;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.RawTypeCapability;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -78,6 +80,15 @@ public class JvmSerializerExtension extends SerializerExtension {
         if (!moduleName.equals(JvmAbi.DEFAULT_MODULE_NAME)) {
             proto.setExtension(JvmProtoBuf.packageModuleName, stringTable.getStringIndex(moduleName));
         }
+    }
+
+    @Override
+    public void serializeFlexibleType(
+            @NotNull DelegatingFlexibleType flexibleType,
+            @NotNull ProtoBuf.Type.Builder lowerProto,
+            @NotNull ProtoBuf.Type.Builder upperProto
+    ) {
+        lowerProto.setFlexibleTypeCapabilitiesId(getStringTable().getStringIndex(JavaFlexibleTypeDeserializer.INSTANCE.getId()));
     }
 
     @Override

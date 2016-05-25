@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
-import org.jetbrains.kotlin.types.FlexibleTypeFactory
 
 class KotlinBuiltInDeserializerForDecompiler(
         packageDirectory: VirtualFile,
@@ -52,7 +51,7 @@ class KotlinBuiltInDeserializerForDecompiler(
                 storageManager, moduleDescriptor, BuiltInsClassDataFinder(proto, nameResolver),
                 AnnotationAndConstantLoaderImpl(moduleDescriptor, notFoundClasses, BuiltInSerializerProtocol), packageFragmentProvider,
                 ResolveEverythingToKotlinAnyLocalClassifierResolver(builtIns), LoggingErrorReporter(LOG),
-                LookupTracker.DO_NOTHING, FlexibleTypeFactory.ThrowException, ClassDescriptorFactory.EMPTY,
+                LookupTracker.DO_NOTHING, FlexibleTypeDeserializer.ThrowException, ClassDescriptorFactory.EMPTY,
                 notFoundClasses
         )
     }

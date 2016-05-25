@@ -31,11 +31,11 @@ class DynamicTypesAllowed: DynamicTypesSettings() {
         get() = true
 }
 
-fun KotlinType.isDynamic(): Boolean = this.getCapability(Flexibility::class.java)?.factory == DynamicTypeFactory
+fun KotlinType.isDynamic(): Boolean = unwrap() is DynamicType
 
 fun createDynamicType(builtIns: KotlinBuiltIns) = DynamicType(builtIns, Annotations.EMPTY)
 
-class DynamicType(builtIns: KotlinBuiltIns, override val annotations: Annotations) : DelegatingFlexibleType(builtIns.nothingType, builtIns.nullableAnyType, DynamicTypeFactory) {
+class DynamicType(builtIns: KotlinBuiltIns, override val annotations: Annotations) : DelegatingFlexibleType(builtIns.nothingType, builtIns.nullableAnyType) {
     override val delegateType: KotlinType get() = upperBound
 
     override fun makeNullableAsSpecified(nullable: Boolean): KotlinType {
@@ -46,19 +46,4 @@ class DynamicType(builtIns: KotlinBuiltIns, override val annotations: Annotation
     override val isMarkedNullable: Boolean get() = false
 
     override fun replaceAnnotations(newAnnotations: Annotations): KotlinType = DynamicType(delegateType.builtIns, annotations)
-}
-
-object DynamicTypeFactory : FlexibleTypeFactory {
-    override fun create(lowerBound: SimpleType, upperBound: SimpleType): KotlinType {
-        if (KotlinTypeChecker.FLEXIBLE_UNEQUAL_TO_INFLEXIBLE.equalTypes(lowerBound, lowerBound.builtIns.nothingType) &&
-            KotlinTypeChecker.FLEXIBLE_UNEQUAL_TO_INFLEXIBLE.equalTypes(upperBound, upperBound.builtIns.nullableAnyType)) {
-            return createDynamicType(lowerBound.builtIns)
-        }
-        else {
-            throw IllegalStateException("Illegal type range for dynamic type: $lowerBound..$upperBound")
-        }
-    }
-
-
-    override val id: String get() = "kotlin.DynamicType"
 }

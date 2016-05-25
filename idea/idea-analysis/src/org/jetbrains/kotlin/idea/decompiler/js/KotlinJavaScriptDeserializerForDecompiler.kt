@@ -31,10 +31,10 @@ import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
+import org.jetbrains.kotlin.serialization.js.DynamicTypeDeserializer
 import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptClassDataFinder
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializedResourcePaths
-import org.jetbrains.kotlin.types.DynamicTypeFactory
 import java.io.ByteArrayInputStream
 
 class KotlinJavaScriptDeserializerForDecompiler(
@@ -65,7 +65,7 @@ class KotlinJavaScriptDeserializerForDecompiler(
         deserializationComponents = DeserializationComponents(
                 storageManager, moduleDescriptor, classDataFinder, annotationAndConstantLoader, packageFragmentProvider,
                 ResolveEverythingToKotlinAnyLocalClassifierResolver(builtIns), LoggingErrorReporter(LOG),
-                LookupTracker.DO_NOTHING, DynamicTypeFactory, ClassDescriptorFactory.EMPTY,
+                LookupTracker.DO_NOTHING, DynamicTypeDeserializer, ClassDescriptorFactory.EMPTY,
                 notFoundClasses
         )
     }

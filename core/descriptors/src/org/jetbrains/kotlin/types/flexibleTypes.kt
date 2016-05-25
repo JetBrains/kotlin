@@ -21,26 +21,10 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 
-interface FlexibleTypeFactory {
-    val id: String
-
-    fun create(lowerBound: SimpleType, upperBound: SimpleType): KotlinType
-
-    object ThrowException : FlexibleTypeFactory {
-        private fun error(): Nothing = throw IllegalArgumentException("This factory should not be used.")
-        override val id: String
-            get() = error()
-
-        override fun create(lowerBound: SimpleType, upperBound: SimpleType): KotlinType = error()
-    }
-}
-
 interface Flexibility : TypeCapability, SubtypingRepresentatives {
     // lowerBound is a subtype of upperBound
     val lowerBound: SimpleType
     val upperBound: SimpleType
-
-    val factory: FlexibleTypeFactory
 
     override val subTypeRepresentative: KotlinType
         get() = lowerBound
@@ -102,8 +86,7 @@ fun KotlinType.upperIfFlexible(): SimpleType = (if (this.isFlexible()) this.flex
 
 abstract class DelegatingFlexibleType protected constructor(
         override val lowerBound: SimpleType,
-        override val upperBound: SimpleType,
-        override val factory: FlexibleTypeFactory
+        override val upperBound: SimpleType
 ) : DelegatingType(), Flexibility {
     companion object {
         @JvmField
@@ -152,8 +135,7 @@ abstract class DelegatingFlexibleType protected constructor(
     override fun toString() = "('$lowerBound'..'$upperBound')"
 }
 
-class FlexibleTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) :
-        DelegatingFlexibleType(lowerBound, upperBound, FlexibleJavaClassifierTypeFactory), CustomTypeVariable {
+class FlexibleTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : DelegatingFlexibleType(lowerBound, upperBound), CustomTypeVariable {
 
     override val delegateType: KotlinType get() = lowerBound
 
@@ -179,12 +161,4 @@ class FlexibleTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) :
 
     override fun replaceAnnotations(newAnnotations: Annotations): KotlinType
             = KotlinTypeFactory.flexibleType(lowerBound.replaceAnnotations(newAnnotations).asSimpleType(), upperBound)
-}
-
-// TODO: move Factory to descriptor.loader.java
-object FlexibleJavaClassifierTypeFactory : FlexibleTypeFactory {
-    override fun create(lowerBound: SimpleType, upperBound: SimpleType): KotlinType
-            = KotlinTypeFactory.flexibleType(lowerBound, upperBound)
-
-    override val id: String get() = "kotlin.jvm.PlatformType"
 }

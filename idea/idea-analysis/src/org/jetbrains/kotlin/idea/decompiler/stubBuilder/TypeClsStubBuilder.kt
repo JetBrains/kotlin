@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.serialization.ProtoBuf.Type
 import org.jetbrains.kotlin.serialization.ProtoBuf.Type.Argument.Projection
 import org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter.Variance
 import org.jetbrains.kotlin.serialization.deserialization.*
-import org.jetbrains.kotlin.types.DynamicTypeFactory
+import org.jetbrains.kotlin.serialization.js.DynamicTypeDeserializer
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
 
@@ -71,7 +71,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         if (type.hasFlexibleTypeCapabilitiesId()) {
             val id = c.nameResolver.getString(type.flexibleTypeCapabilitiesId)
 
-            if (id == DynamicTypeFactory.id) {
+            if (id == DynamicTypeDeserializer.id) {
                 KotlinPlaceHolderStubImpl<KtDynamicType>(parent, KtStubElementTypes.DYNAMIC_TYPE)
                 return
             }

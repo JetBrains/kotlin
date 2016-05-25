@@ -506,15 +506,16 @@ public class DescriptorSerializer {
         }
 
         if (FlexibleTypesKt.isFlexible(type)) {
-            Flexibility flexibility = FlexibleTypesKt.flexibility(type);
+            DelegatingFlexibleType flexibleType = (DelegatingFlexibleType) FlexibleTypesKt.flexibility(type);
 
-            ProtoBuf.Type.Builder lowerBound = type(flexibility.getLowerBound());
-            lowerBound.setFlexibleTypeCapabilitiesId(getStringTable().getStringIndex(flexibility.getFactory().getId()));
+            ProtoBuf.Type.Builder lowerBound = type(flexibleType.getLowerBound());
+            ProtoBuf.Type.Builder upperBound = type(flexibleType.getUpperBound());
+            extension.serializeFlexibleType(flexibleType, lowerBound, upperBound);
             if (useTypeTable()) {
-                lowerBound.setFlexibleUpperBoundId(typeId(flexibility.getUpperBound()));
+                lowerBound.setFlexibleUpperBoundId(typeTable.get(upperBound));
             }
             else {
-                lowerBound.setFlexibleUpperBound(type(flexibility.getUpperBound()));
+                lowerBound.setFlexibleUpperBound(upperBound);
             }
             return lowerBound;
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,15 @@ package org.jetbrains.kotlin.serialization.js
 
 import com.google.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.serialization.KotlinSerializerExtensionBase
+import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
+import org.jetbrains.kotlin.types.DelegatingFlexibleType
 
-class KotlinJavascriptSerializerExtension : KotlinSerializerExtensionBase(JsSerializerProtocol)
+class KotlinJavascriptSerializerExtension : KotlinSerializerExtensionBase(JsSerializerProtocol) {
+    override fun serializeFlexibleType(flexibleType: DelegatingFlexibleType, lowerProto: ProtoBuf.Type.Builder, upperProto: ProtoBuf.Type.Builder) {
+        lowerProto.flexibleTypeCapabilitiesId = stringTable.getStringIndex(DynamicTypeDeserializer.id)
+    }
+}
 
 object JsSerializerProtocol : SerializerExtensionProtocol(
         ExtensionRegistryLite.newInstance().apply { JsProtoBuf.registerAllExtensions(this) },

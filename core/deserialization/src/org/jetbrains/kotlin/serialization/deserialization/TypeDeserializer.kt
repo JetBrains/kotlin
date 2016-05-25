@@ -58,13 +58,7 @@ class TypeDeserializer(
     fun type(proto: ProtoBuf.Type, additionalAnnotations: Annotations = Annotations.EMPTY): KotlinType {
         if (proto.hasFlexibleTypeCapabilitiesId()) {
             val id = c.nameResolver.getString(proto.flexibleTypeCapabilitiesId)
-            val flexibleTypeFactory = c.components.flexibleTypeFactory
-            if (flexibleTypeFactory.id != id) {
-                return ErrorUtils.createErrorType("${DeserializedType(c, proto)}: " +
-                                                  "Unexpected flexible type factory. Expected: ${flexibleTypeFactory.id} Actual: $id")
-            }
-
-            return flexibleTypeFactory.create(DeserializedType(c, proto), DeserializedType(c, proto.flexibleUpperBound(c.typeTable)!!))
+            return c.components.flexibleTypeDeserializer.create(id, DeserializedType(c, proto), DeserializedType(c, proto.flexibleUpperBound(c.typeTable)!!))
         }
 
         return DeserializedType(c, proto, additionalAnnotations)
