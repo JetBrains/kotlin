@@ -26,9 +26,9 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
 import org.jetbrains.kotlin.codegen.CompilationException;
-import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.ContentRootsKt;
+import org.jetbrains.kotlin.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.script.KotlinScriptDefinition;
@@ -79,7 +79,7 @@ public class ScriptTest {
             CompilerConfiguration configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.JDK_ONLY, TestJdkKind.FULL_JDK);
             configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector);
             ContentRootsKt.addKotlinSourceRoot(configuration, "compiler/testData/script/" + scriptPath);
-            configuration.add(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY, scriptDefinition);
+            configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, scriptDefinition);
 
             KotlinCoreEnvironment environment =
                     KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);

@@ -16,16 +16,7 @@
 
 package org.jetbrains.kotlin.config;
 
-import org.jetbrains.kotlin.script.KotlinScriptDefinition;
-
-import java.util.List;
-
 public class CommonConfigurationKeys {
     private CommonConfigurationKeys() {
     }
-
-    // roots, including dependencies and own source
-    public static final CompilerConfigurationKey<List<ContentRoot>> CONTENT_ROOTS = CompilerConfigurationKey.create("content roots");
-
-    public static final CompilerConfigurationKey<List<KotlinScriptDefinition>> SCRIPT_DEFINITIONS_KEY = CompilerConfigurationKey.create("script definitions");
 }

@@ -70,8 +70,8 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmContentRoot
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.kotlinSourceRoots
 import org.jetbrains.kotlin.extensions.ExternalDeclarationsProvider
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
@@ -137,7 +137,9 @@ class KotlinCoreEnvironment private constructor(
             }
         })
 
-        KotlinScriptDefinitionProvider.getInstance(project).setScriptDefinitions(configuration.getList(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY))
+        KotlinScriptDefinitionProvider.getInstance(project).setScriptDefinitions(
+                configuration.getList(JVMConfigurationKeys.SCRIPT_DEFINITIONS)
+        )
 
         project.registerService(JvmVirtualFileFinderFactory::class.java, JvmCliVirtualFileFinderFactory(index))
 
@@ -171,7 +173,7 @@ class KotlinCoreEnvironment private constructor(
             }
 
     private fun fillClasspath(configuration: CompilerConfiguration) {
-        for (root in configuration.getList(CommonConfigurationKeys.CONTENT_ROOTS)) {
+        for (root in configuration.getList(JVMConfigurationKeys.CONTENT_ROOTS)) {
             val javaRoot = root as? JvmContentRoot ?: continue
             val virtualFile = contentRootToVirtualFile(javaRoot) ?: continue
 

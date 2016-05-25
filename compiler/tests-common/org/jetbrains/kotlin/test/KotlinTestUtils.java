@@ -51,9 +51,9 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootsKt;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
-import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.ContentRoot;
+import org.jetbrains.kotlin.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.config.KotlinSourceRoot;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
@@ -464,7 +464,7 @@ public class KotlinTestUtils {
     }
 
     public static void resolveAllKotlinFiles(KotlinCoreEnvironment environment) throws IOException {
-        List<ContentRoot> paths = environment.getConfiguration().get(CommonConfigurationKeys.CONTENT_ROOTS);
+        List<ContentRoot> paths = environment.getConfiguration().get(JVMConfigurationKeys.CONTENT_ROOTS);
         if (paths == null) return;
         List<KtFile> jetFiles = Lists.newArrayList();
         for (ContentRoot root : paths) {

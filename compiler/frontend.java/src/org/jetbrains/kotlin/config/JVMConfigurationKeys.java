@@ -18,12 +18,20 @@ package org.jetbrains.kotlin.config;
 
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents;
 import org.jetbrains.kotlin.modules.Module;
+import org.jetbrains.kotlin.script.KotlinScriptDefinition;
 
 import java.util.List;
 
 public class JVMConfigurationKeys {
     private JVMConfigurationKeys() {
     }
+
+    // roots, including dependencies and own source
+    public static final CompilerConfigurationKey<List<ContentRoot>> CONTENT_ROOTS =
+            CompilerConfigurationKey.create("content roots");
+
+    public static final CompilerConfigurationKey<List<KotlinScriptDefinition>> SCRIPT_DEFINITIONS =
+            CompilerConfigurationKey.create("script definitions");
 
     public static final CompilerConfigurationKey<Boolean> DISABLE_CALL_ASSERTIONS =
             CompilerConfigurationKey.create("disable not-null call assertions");
