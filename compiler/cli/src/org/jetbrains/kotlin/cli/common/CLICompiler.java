@@ -49,7 +49,7 @@ import java.util.Properties;
 import static org.jetbrains.kotlin.cli.common.ExitCode.*;
 
 public abstract class CLICompiler<A extends CommonCompilerArguments> {
-    static {
+    static private void setIdeaIoUseFallback() {
         if (SystemInfo.isWindows) {
             Properties properties = System.getProperties();
 
@@ -202,6 +202,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
                 }
                 Disposable rootDisposable = Disposer.newDisposable();
                 try {
+                    setIdeaIoUseFallback();
                     ExitCode code = doExecute(arguments, configuration, rootDisposable);
                     exitCode = groupingCollector.hasErrors() ? COMPILATION_ERROR : code;
                 }
