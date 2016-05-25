@@ -83,16 +83,7 @@ class NewKotlinActivityAction: AnAction(KotlinIcons.FILE) {
 
         private fun subscribe(project: Project, listener: GradleSyncListener) {
             try {
-                val subscribeFun = GradleSyncState::class.functions.find { it.name == "subscribe" && it.parameters.count() == 2 }
-                if (subscribeFun != null) {
-                    // AS 2.0
-                    subscribeFun.call(project, listener)
-                }
-                else {
-                    // AS 1.5
-                    val connection = project.messageBus.connect(project)
-                    connection.subscribe(GradleSyncState.GRADLE_SYNC_TOPIC, gradleSyncListener)
-                }
+                GradleSyncState.subscribe(project, listener)
             }
             catch(e: Throwable) {
                 LOG.error(e)

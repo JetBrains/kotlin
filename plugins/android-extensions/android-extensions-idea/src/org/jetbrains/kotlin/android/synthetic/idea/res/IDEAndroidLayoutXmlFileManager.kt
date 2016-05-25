@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.android.synthetic.idea.res
 
 import com.android.builder.model.SourceProvider
+import com.android.tools.idea.gradle.AndroidGradleModel
 import com.intellij.openapi.module.Module
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -31,6 +32,8 @@ import org.jetbrains.kotlin.android.synthetic.res.*
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
+import kotlin.reflect.KClass
+import kotlin.reflect.declaredFunctions
 
 class IDEAndroidLayoutXmlFileManager(val module: Module) : AndroidLayoutXmlFileManager(module.project) {
     override val androidModule: AndroidModule?
@@ -108,30 +111,23 @@ class IDEAndroidLayoutXmlFileManager(val module: Module) : AndroidLayoutXmlFileM
     private fun SourceProvider.toVariant() = AndroidVariant(name, resDirectories.map { it.absolutePath })
 
     private fun AndroidFacet.toAndroidModuleInfo(): AndroidModule? {
-        val applicationPackage = manifest?.`package`?.toString()
+        val applicationPackage = manifest?.`package`?.toString() ?: return null
 
-        if (applicationPackage != null) {
-            // This code is needed for compatibility with AS 2.0 and IDEA 15.0, because of difference in android plugins
-            val modelClass = try {
-                Class.forName("com.android.tools.idea.gradle.AndroidGradleModel")
-            }
-            catch(e: ClassNotFoundException) {
-                null
-            }
-            val mainVariant = mainSourceProvider.toVariant()
-            if (modelClass == null) {
-                val flavorVariants = flavorSourceProviders?.map { it.toVariant() } ?: listOf()
-                return AndroidModule(applicationPackage, listOf(mainVariant) + flavorVariants)
-            }
-            else {
-                val model = modelClass.getDeclaredMethod("get", Module::class.java).invoke(null, module)
-                if (model != null) {
-                    val sourceProviders = modelClass.getDeclaredMethod("getFlavorSourceProviders").invoke(model) as List<SourceProvider>
-                    return AndroidModule(applicationPackage, listOf(mainVariant) + sourceProviders.map { it.toVariant() })
-                }
-            }
+        fun <T> tryIt(f: () -> T?): T? = try { f() } catch (e: Throwable) { null }
+
+        val mainVariant = mainSourceProvider.toVariant()
+
+        return tryIt { // Android Studio 2.0+
+            val model = AndroidGradleModel.get(this) ?: return@tryIt null
+            val flavorVariants = model.flavorSourceProviders.map { it.toVariant() }
+            AndroidModule(applicationPackage, listOf(mainVariant) + flavorVariants)
+        } ?: tryIt { // Android Studio 1.5
+            val facetClass = this.javaClass
+            @Suppress("UNCHECKED_CAST")
+            val sourceProviders = facetClass.getDeclaredMethod("getFlavorSourceProviders").invoke(this) as List<SourceProvider>
+            val flavorVariants = sourceProviders.map { it.toVariant() }
+            AndroidModule(applicationPackage, listOf(mainVariant) + flavorVariants)
         }
-        return null
     }
 
 }

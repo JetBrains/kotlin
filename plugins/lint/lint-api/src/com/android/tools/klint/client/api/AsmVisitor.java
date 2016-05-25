@@ -21,7 +21,7 @@ import com.android.tools.klint.detector.api.ClassContext;
 import com.android.tools.klint.detector.api.Detector;
 import com.android.tools.klint.detector.api.Detector.ClassScanner;
 import com.google.common.annotations.Beta;
-import org.objectweb.asm.tree.*;
+import org.jetbrains.org.objectweb.asm.tree.*;
 
 import java.util.*;
 

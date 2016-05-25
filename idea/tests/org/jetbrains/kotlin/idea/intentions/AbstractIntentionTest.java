@@ -182,6 +182,9 @@ public abstract class AbstractIntentionTest extends KotlinCodeInsightTestCase {
                             catch (ComparisonFailure e) {
                                 KotlinTestUtils.assertEqualsToFile(new File(canonicalPathToExpectedFile), getEditor().getDocument().getText());
                             }
+                            catch (Throwable t) {
+                                int a = 5;
+                            }
                         }
                         else {
                             KotlinTestUtils.assertEqualsToFile(new File(canonicalPathToExpectedFile), entry.getValue().getText());

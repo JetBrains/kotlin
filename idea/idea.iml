@@ -52,5 +52,6 @@
     <orderEntry type="module" module-name="idea-live-templates" exported="" scope="RUNTIME" />
     <orderEntry type="library" scope="TEST" name="kotlin-test" level="project" />
     <orderEntry type="module" module-name="formatter" />
+    <orderEntry type="module" module-name="lint-idea" scope="TEST" />
   </component>
 </module>

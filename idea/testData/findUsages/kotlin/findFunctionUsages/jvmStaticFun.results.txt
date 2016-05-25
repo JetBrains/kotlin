@@ -1,1 +1,1 @@
-Unclassified usage (3: 13) Foo.foo();
+Unclassified usage 3 Foo.foo();
