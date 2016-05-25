@@ -29,12 +29,17 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.SLRUCache
 import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils.fileHasTopLevelCallables
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.KtStringTemplateExpression
+import org.jetbrains.kotlin.psi.psiUtil.siblings
 import javax.swing.Icon
 
 class KtLightClassForFacade private constructor(
@@ -140,7 +145,44 @@ class KtLightClassForFacade private constructor(
 
     override fun getName() = facadeClassFqName.shortName().asString()
 
-    override fun setName(name: String): PsiElement? = this
+    override fun setName(name: String): PsiElement? {
+        for (file in files) {
+            val jvmNameEntry = JvmFileClassUtil.findAnnotationEntryOnFileNoResolve(file, JvmFileClassUtil.JVM_NAME_SHORT)
+
+            if (PackagePartClassUtils.getFilePartShortName(file.name) == name) {
+                jvmNameEntry?.delete()
+                continue
+            }
+
+            if (jvmNameEntry == null) {
+                val newFileName = PackagePartClassUtils.getFileNameByFacadeName(name)
+                val facadeDir = file.parent
+                if (newFileName != null && facadeDir != null && facadeDir.findFile(newFileName) == null) {
+                    file.name = newFileName
+                    continue
+                }
+
+                val psiFactory = KtPsiFactory(this)
+                val annotationText = "${JvmFileClassUtil.JVM_NAME_SHORT}(\"$name\")"
+                val newFileAnnotationList = psiFactory.createFileAnnotationListWithAnnotation(annotationText)
+                val annotationList = file.fileAnnotationList
+                if (annotationList != null) {
+                    annotationList.add(newFileAnnotationList.annotationEntries.first())
+                }
+                else {
+                    val anchor = file.firstChild.siblings().firstOrNull { it !is PsiWhiteSpace && it !is PsiComment }
+                    file.addBefore(newFileAnnotationList, anchor)
+                }
+                continue
+            }
+
+            val jvmNameExpression = jvmNameEntry.valueArguments.firstOrNull()?.getArgumentExpression() as? KtStringTemplateExpression
+                                    ?: continue
+            ElementManipulators.handleContentChange(jvmNameExpression, name)
+        }
+
+        return this
+    }
 
     override fun getQualifiedName() = facadeClassFqName.asString()
 

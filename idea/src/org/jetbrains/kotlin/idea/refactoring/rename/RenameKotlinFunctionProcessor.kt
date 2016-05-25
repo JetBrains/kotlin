@@ -19,25 +19,43 @@ package org.jetbrains.kotlin.idea.refactoring.rename
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiReference
 import com.intellij.psi.search.SearchScope
 import com.intellij.refactoring.listeners.RefactoringElementListener
 import com.intellij.refactoring.rename.RenameJavaMethodProcessor
 import com.intellij.usageView.UsageInfo
+import org.jetbrains.kotlin.asJava.KtLightElement
 import org.jetbrains.kotlin.asJava.KtLightMethod
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.unwrapped
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.refactoring.dropOverrideKeywordIfNecessary
+import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.util.application.runReadAction
-import org.jetbrains.kotlin.psi.KtFunction
-import org.jetbrains.kotlin.psi.KtNamedDeclaration
-import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.KtSecondaryConstructor
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
     private val javaMethodProcessorInstance = RenameJavaMethodProcessor()
 
     override fun canProcessElement(element: PsiElement): Boolean {
         return element is KtNamedFunction || (element is KtLightMethod && element.kotlinOrigin is KtNamedFunction)
+    }
+
+    private fun getJvmName(element: PsiElement): String? {
+        val descriptor = (element.unwrapped as? KtFunction)?.resolveToDescriptor() as? FunctionDescriptor ?: return null
+        return DescriptorUtils.getJvmName(descriptor)
+    }
+
+    override fun findReferences(element: PsiElement): Collection<PsiReference> {
+        val allReferences = super.findReferences(element)
+        return when {
+            getJvmName(element) == null -> allReferences
+            element is KtElement -> allReferences.filter { it is KtReference }
+            element is KtLightElement<*, *> -> allReferences.filterNot { it is KtReference }
+            else -> emptyList()
+        }
     }
 
     override fun findCollisions(
@@ -55,10 +73,11 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
         // Use java dialog to ask we should rename function with the base element
         val substitutedJavaElement = javaMethodProcessorInstance.substituteElementToRename(wrappedMethod, editor)
 
-        return when (substitutedJavaElement) {
-            is KtLightMethod -> substitutedJavaElement.kotlinOrigin as? KtNamedFunction
-            else -> substitutedJavaElement
+        if (substitutedJavaElement is KtLightMethod && element is KtDeclaration) {
+            return substitutedJavaElement.kotlinOrigin as? KtNamedFunction
         }
+
+        return substitutedJavaElement
     }
 
     override fun prepareRenaming(element: PsiElement?, newName: String?, allRenames: MutableMap<PsiElement, String>, scope: SearchScope) {
