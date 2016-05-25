@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,8 @@ import com.intellij.codeInspection.nullable.NullableStuffInspection;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.pom.java.LanguageLevel;
+import com.intellij.testFramework.IdeaTestUtil;
 import com.intellij.util.ArrayUtil;
 import com.siyeh.ig.bugs.StaticCallOnSubclassInspection;
 import com.siyeh.ig.bugs.StaticFieldReferenceOnSubclassInspection;
@@ -93,8 +95,23 @@ public abstract class AbstractJavaAgainstKotlinCheckerTest extends KotlinDaemonA
         Module module = super.createMainModule();
 
         String configFileText = getConfigFileText();
-        if (configFileText != null && InTextDirectivesUtils.isDirectiveDefined(configFileText, "// WITH_RUNTIME")) {
+        if (configFileText == null) {
+            return module;
+        }
+
+        if (InTextDirectivesUtils.isDirectiveDefined(configFileText, "// WITH_RUNTIME")) {
             ConfigLibraryUtil.configureKotlinRuntime(module);
+        }
+
+        List<String> languageLevelLines = InTextDirectivesUtils.findLinesWithPrefixesRemoved(configFileText, "// LANGUAGE_LEVEL");
+        if (languageLevelLines.size() > 1) {
+            throw new AssertionError("Language level specified multiple times: " + languageLevelLines);
+        }
+        if (languageLevelLines.size() == 1) {
+            LanguageLevel level = LanguageLevel.parse(languageLevelLines.iterator().next());
+            if (level != null) {
+                IdeaTestUtil.setModuleLanguageLevel(module, level);
+            }
         }
 
         return module;
