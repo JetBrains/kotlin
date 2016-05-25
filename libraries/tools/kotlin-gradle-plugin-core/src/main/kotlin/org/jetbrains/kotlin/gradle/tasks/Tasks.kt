@@ -1,13 +1,13 @@
 package org.jetbrains.kotlin.gradle.tasks
 
-import com.intellij.ide.highlighter.JavaFileType
-import com.intellij.lang.Language
-import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiFileFactory
-import com.intellij.psi.PsiJavaFile
-import com.intellij.psi.impl.PsiFileFactoryImpl
+import org.jetbrains.kotlin.com.intellij.ide.highlighter.JavaFileType
+import org.jetbrains.kotlin.com.intellij.lang.Language
+import org.jetbrains.kotlin.com.intellij.openapi.util.Disposer
+import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.com.intellij.psi.PsiClass
+import org.jetbrains.kotlin.com.intellij.psi.PsiFileFactory
+import org.jetbrains.kotlin.com.intellij.psi.PsiJavaFile
+import org.jetbrains.kotlin.com.intellij.psi.impl.PsiFileFactoryImpl
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.FilenameUtils
 import org.apache.commons.lang.StringUtils
