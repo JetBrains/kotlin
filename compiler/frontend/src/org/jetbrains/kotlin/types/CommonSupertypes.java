@@ -91,9 +91,9 @@ public class CommonSupertypes {
                     return type;
                 }
                 hasFlexible = true;
-                Flexibility flexibility = FlexibleTypesKt.flexibility(type);
-                upper.add(flexibility.getUpperBound());
-                lower.add(flexibility.getLowerBound());
+                FlexibleType flexibleType = FlexibleTypesKt.asFlexibleType(type);
+                upper.add(flexibleType.getUpperBound());
+                lower.add(flexibleType.getLowerBound());
             }
             else {
                 upper.add(KotlinTypeKt.asSimpleType(type));

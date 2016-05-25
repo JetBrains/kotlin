@@ -135,12 +135,12 @@ public class TypeUtils {
 
     @NotNull
     public static KotlinType makeNullableAsSpecified(@NotNull KotlinType type, boolean nullable) {
-        Flexibility flexibility = type.getCapability(Flexibility.class);
-        if (flexibility != null) {
-            return flexibility.makeNullableAsSpecified(nullable);
+        KotlinType unwrappedType = KotlinTypeKt.unwrap(type);
+        if (unwrappedType instanceof FlexibleType) {
+            return ((FlexibleType) unwrappedType).makeNullableAsSpecified(nullable);
         }
         else {
-            SimpleType simpleType = KotlinTypeKt.asSimpleType(type);
+            SimpleType simpleType = (SimpleType) unwrappedType;
 
             if (!(simpleType instanceof LazyType) && simpleType.isMarkedNullable() == nullable) return simpleType;
 
@@ -318,7 +318,7 @@ public class TypeUtils {
         if (type.isMarkedNullable()) {
             return true;
         }
-        if (FlexibleTypesKt.isFlexible(type) && isNullableType(FlexibleTypesKt.flexibility(type).getUpperBound())) {
+        if (FlexibleTypesKt.isFlexible(type) && isNullableType(FlexibleTypesKt.asFlexibleType(type).getUpperBound())) {
             return true;
         }
         if (isTypeParameter(type)) {
@@ -336,7 +336,7 @@ public class TypeUtils {
         if (type.isMarkedNullable()) {
             return true;
         }
-        if (FlexibleTypesKt.isFlexible(type) && acceptsNullable(FlexibleTypesKt.flexibility(type).getUpperBound())) {
+        if (FlexibleTypesKt.isFlexible(type) && acceptsNullable(FlexibleTypesKt.asFlexibleType(type).getUpperBound())) {
             return true;
         }
         return false;
@@ -436,9 +436,11 @@ public class TypeUtils {
     ) {
         if (type == null) return false;
         if (isSpecialType.invoke(type)) return true;
-        Flexibility flexibility = type.getCapability(Flexibility.class);
-        if (flexibility != null
-                && (contains(flexibility.getLowerBound(), isSpecialType) || contains(flexibility.getUpperBound(), isSpecialType))) {
+
+        KotlinType unwrappedType = KotlinTypeKt.unwrap(type);
+        FlexibleType flexibleType = unwrappedType instanceof FlexibleType ? (FlexibleType) unwrappedType : null;
+        if (flexibleType != null
+            && (contains(flexibleType.getLowerBound(), isSpecialType) || contains(flexibleType.getUpperBound(), isSpecialType))) {
             return true;
         }
         for (TypeProjection projection : type.getArguments()) {

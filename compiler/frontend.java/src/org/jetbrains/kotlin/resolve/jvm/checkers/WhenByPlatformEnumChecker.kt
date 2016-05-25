@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.flexibility
+import org.jetbrains.kotlin.types.asFlexibleType
 import org.jetbrains.kotlin.types.isFlexible
 
 class WhenByPlatformEnumChecker : AdditionalTypeChecker {
@@ -34,7 +34,7 @@ class WhenByPlatformEnumChecker : AdditionalTypeChecker {
         if (expression is KtWhenExpression && expression.elseExpression == null) {
             // Check for conditionally-exhaustive when on platform enums, see KT-6399
             val type = expression.subjectExpression?.let { c.trace.getType(it) } ?: return
-            if (type.isFlexible() && TypeUtils.isNullableType(type.flexibility().upperBound) && !type.annotations.isMarkedNotNull()) {
+            if (type.isFlexible() && TypeUtils.isNullableType(type.asFlexibleType().upperBound) && !type.annotations.isMarkedNotNull()) {
                 val enumClassDescriptor = WhenChecker.getClassDescriptorOfTypeIfEnum(type) ?: return
                 val context = c.trace.bindingContext
                 if (WhenChecker.getEnumMissingCases(expression, context, enumClassDescriptor).isEmpty()

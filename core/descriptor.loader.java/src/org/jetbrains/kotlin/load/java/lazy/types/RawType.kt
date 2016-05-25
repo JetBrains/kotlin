@@ -49,12 +49,12 @@ object RawTypeCapabilities : TypeCapabilities {
             }
         }
 
-        override fun renderBounds(flexibility: Flexibility, renderer: DescriptorRenderer): Pair<String, String>? {
-            val lowerArgs = renderer.renderArguments(flexibility.lowerBound)
-            val upperArgs = renderer.renderArguments(flexibility.upperBound)
+        override fun renderBounds(flexibleType: FlexibleType, renderer: DescriptorRenderer): Pair<String, String>? {
+            val lowerArgs = renderer.renderArguments(flexibleType.lowerBound)
+            val upperArgs = renderer.renderArguments(flexibleType.upperBound)
 
-            val lowerRendered = renderer.renderType(flexibility.lowerBound)
-            val upperRendered = renderer.renderType(flexibility.upperBound)
+            val lowerRendered = renderer.renderType(flexibleType.lowerBound)
+            val upperRendered = renderer.renderType(flexibleType.upperBound)
 
             if (!upperArgs.isNotEmpty()) return null
 

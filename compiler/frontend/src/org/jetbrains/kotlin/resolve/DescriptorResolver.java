@@ -1151,9 +1151,9 @@ public class DescriptorResolver {
                     : "Flexible type cannot be denoted in Kotlin otherwise than as ft<T1, T2>, but was: "
                       + PsiUtilsKt.getElementTextWithContext(typeReference);
             // it's really ft<Foo, Bar>
-            Flexibility flexibility = FlexibleTypesKt.flexibility(type);
-            checkBounds(jetTypeArguments.get(0), flexibility.getLowerBound(), trace);
-            checkBounds(jetTypeArguments.get(1), flexibility.getUpperBound(), trace);
+            FlexibleType flexibleType = FlexibleTypesKt.asFlexibleType(type);
+            checkBounds(jetTypeArguments.get(0), flexibleType.getLowerBound(), trace);
+            checkBounds(jetTypeArguments.get(1), flexibleType.getUpperBound(), trace);
             return;
         }
 

@@ -150,7 +150,7 @@ internal class DescriptorRendererImpl(
         }
         if (type.isFlexible()) {
             if (debugMode) {
-                return renderFlexibleTypeWithBothBounds(type.flexibility().lowerBound, type.flexibility().upperBound)
+                return renderFlexibleTypeWithBothBounds(type.asFlexibleType().lowerBound, type.asFlexibleType().upperBound)
             }
             else {
                 return renderFlexibleType(type)
@@ -194,10 +194,10 @@ internal class DescriptorRendererImpl(
     }
 
     private fun renderFlexibleType(type: KotlinType): String {
-        val lower = type.flexibility().lowerBound
-        val upper = type.flexibility().upperBound
+        val lower = type.asFlexibleType().lowerBound
+        val upper = type.asFlexibleType().upperBound
 
-        val (lowerRendered, upperRendered) = type.getCapability<RawTypeCapability>()?.renderBounds(type.flexibility(), this)
+        val (lowerRendered, upperRendered) = type.getCapability<RawTypeCapability>()?.renderBounds(type.asFlexibleType(), this)
                                              ?: Pair(renderInflexibleType(lower), renderInflexibleType(upper))
 
         if (differsOnlyInNullability(lowerRendered, upperRendered)) {

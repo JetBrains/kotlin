@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.flexibility
+import org.jetbrains.kotlin.types.asFlexibleType
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 class CastExpressionFix(element: KtExpression, type: KotlinType) : KotlinQuickFixAction<KtExpression>(element) {
@@ -65,7 +65,7 @@ class CastExpressionFix(element: KtExpression, type: KotlinType) : KotlinQuickFi
 
     object GenericVarianceConversion : Factory() {
         override fun extractFixData(element: KtExpression, diagnostic: Diagnostic): KotlinType? {
-            return ErrorsJvm.JAVA_TYPE_MISMATCH.cast(diagnostic).b.flexibility().upperBound
+            return ErrorsJvm.JAVA_TYPE_MISMATCH.cast(diagnostic).b.asFlexibleType().upperBound
         }
     }
 }

@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.idea.decompiler.textBuilder.defaultDecompilerRendere
 import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.types.flexibility
+import org.jetbrains.kotlin.types.asFlexibleType
 import org.jetbrains.kotlin.types.isFlexible
 
 class KotlinClassFileDecompiler : ClassFileDecompilers.Full() {
@@ -63,7 +63,7 @@ class KtClsFile(provider: KotlinDecompiledFileViewProvider) : KtDecompiledFile(p
 
 private val decompilerRendererForClassFiles = DescriptorRenderer.withOptions {
     defaultDecompilerRendererOptions()
-    typeNormalizer = { type -> if (type.isFlexible()) type.flexibility().lowerBound else type }
+    typeNormalizer = { type -> if (type.isFlexible()) type.asFlexibleType().lowerBound else type }
 }
 
 fun buildDecompiledTextForClassFile(

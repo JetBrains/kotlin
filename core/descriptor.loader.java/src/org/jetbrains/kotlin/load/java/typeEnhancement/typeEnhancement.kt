@@ -58,7 +58,7 @@ private data class Result(val type: KotlinType, val subtreeSize: Int, val wereCh
 private fun KotlinType.enhancePossiblyFlexible(qualifiers: (Int) -> JavaTypeQualifiers, index: Int): Result {
     if (this.isError) return Result(this, 1, false)
     return if (this.isFlexible()) {
-        with(this.flexibility()) {
+        with(this.asFlexibleType()) {
             val lowerResult = lowerBound.enhanceInflexible(qualifiers, index, TypeComponentPosition.FLEXIBLE_LOWER)
             val upperResult = upperBound.enhanceInflexible(qualifiers, index, TypeComponentPosition.FLEXIBLE_UPPER)
             assert(lowerResult.subtreeSize == upperResult.subtreeSize) {
@@ -227,7 +227,7 @@ internal object NotNullTypeParameterTypeCapability : CustomTypeVariable {
         if (!TypeUtils.isNullableType(replacement) && !replacement.isTypeParameter()) return replacement
 
         if (replacement.isFlexible()) {
-            with(replacement.flexibility()) {
+            with(replacement.asFlexibleType()) {
                 return KotlinTypeFactory.flexibleType(lowerBound.prepareReplacement().asSimpleType(), upperBound.prepareReplacement().asSimpleType())
             }
         }

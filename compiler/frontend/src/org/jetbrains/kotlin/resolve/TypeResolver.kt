@@ -156,8 +156,8 @@ class TypeResolver(
     private fun forceResolveTypeContents(type: KotlinType) {
         type.annotations // force read type annotations
         if (type.isFlexible()) {
-            forceResolveTypeContents(type.flexibility().lowerBound)
-            forceResolveTypeContents(type.flexibility().upperBound)
+            forceResolveTypeContents(type.asFlexibleType().lowerBound)
+            forceResolveTypeContents(type.asFlexibleType().upperBound)
         }
         else {
             type.constructor // force read type constructor

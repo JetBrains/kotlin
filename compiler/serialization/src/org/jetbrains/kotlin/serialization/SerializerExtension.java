@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.serialization;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.types.DelegatingFlexibleType;
-import org.jetbrains.kotlin.types.Flexibility;
 import org.jetbrains.kotlin.types.KotlinType;
 
 public abstract class SerializerExtension {
