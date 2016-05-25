@@ -72,26 +72,22 @@ object DefaultFunctionCallCase : FunctionCallCase() {
     fun buildDefaultCallWithoutReceiver(context: TranslationContext,
                                         argumentsInfo: CallArgumentTranslator.ArgumentsInfo,
                                         callableDescriptor: CallableDescriptor,
-                                        functionName: JsName,
                                         isNative: Boolean,
                                         hasSpreadOperator: Boolean): JsExpression {
         if (isNative && hasSpreadOperator) {
-            val functionCallRef = Namer.getFunctionApplyRef(JsNameRef(functionName))
+            val functionCallRef = Namer.getFunctionApplyRef(JsNameRef(context.getNameForDescriptor(callableDescriptor)))
             return JsInvocation(functionCallRef, argumentsInfo.translateArguments)
         }
         if (isNative) {
-            return JsInvocation(JsNameRef(functionName), argumentsInfo.translateArguments)
+            return JsInvocation(JsNameRef(context.getNameForDescriptor(callableDescriptor)), argumentsInfo.translateArguments)
         }
 
-        val functionRef = context.aliasOrValue(callableDescriptor) {
-            val qualifierForFunction = context.getQualifierForDescriptor(it)
-            pureFqn(functionName, qualifierForFunction)
-        }
+        val functionRef = context.aliasOrValue(callableDescriptor) { context.getQualifiedReference(it) }
         return JsInvocation(functionRef, argumentsInfo.translateArguments)
     }
 
     override fun FunctionCallInfo.noReceivers(): JsExpression {
-        return buildDefaultCallWithoutReceiver(context, argumentsInfo, callableDescriptor, functionName, isNative(), hasSpreadOperator())
+        return buildDefaultCallWithoutReceiver(context, argumentsInfo, callableDescriptor, isNative(), hasSpreadOperator())
     }
 
     override fun FunctionCallInfo.dispatchReceiver(): JsExpression {
@@ -106,10 +102,7 @@ object DefaultFunctionCallCase : FunctionCallCase() {
             return JsInvocation(JsNameRef(functionName, extensionReceiver), argumentsInfo.translateArguments)
         }
 
-        val functionRef = context.aliasOrValue(callableDescriptor) {
-            val qualifierForFunction = context.getQualifierForDescriptor(it)
-            pureFqn(functionName, qualifierForFunction) // TODO: remake to call
-        }
+        val functionRef = context.aliasOrValue(callableDescriptor) { context.getQualifiedReference(it) }
 
         val referenceToCall =
                 if (callableDescriptor.visibility == Visibilities.LOCAL) {

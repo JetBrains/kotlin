@@ -1,7 +1,7 @@
 package foo
 
-// CHECK_CONTAINS_NO_CALLS: testImplicitThis
-// CHECK_CONTAINS_NO_CALLS: testExplicitThis
+// CHECK_CONTAINS_NO_CALLS: testImplicitThis_0
+// CHECK_CONTAINS_NO_CALLS: testExplicitThis_0
 
 internal class A(var value: Int)
 

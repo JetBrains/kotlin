@@ -1,9 +1,9 @@
 package foo
 
-// CHECK_CONTAINS_NO_CALLS: test1
-// CHECK_CONTAINS_NO_CALLS: test2
-// CHECK_VARS_COUNT: function=test1 count=0
-// CHECK_VARS_COUNT: function=test2 count=1
+// CHECK_CONTAINS_NO_CALLS: test1_0
+// CHECK_CONTAINS_NO_CALLS: test2_0
+// CHECK_VARS_COUNT: function=test1_0 count=0
+// CHECK_VARS_COUNT: function=test2_0 count=1
 
 var log = ""
 

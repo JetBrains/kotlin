@@ -229,11 +229,6 @@ public class TranslationContext {
         return staticContext.getQualifiedReference(packageFqName);
     }
 
-    @Nullable
-    public JsExpression getQualifierForDescriptor(@NotNull DeclarationDescriptor descriptor) {
-        return staticContext.getQualifierForDescriptor(descriptor);
-    }
-
     @NotNull
     public TemporaryVariable declareTemporary(@Nullable JsExpression initExpression) {
         return dynamicContext.declareTemporary(initExpression);

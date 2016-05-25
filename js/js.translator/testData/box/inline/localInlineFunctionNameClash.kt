@@ -1,6 +1,6 @@
 package foo
 
-// CHECK_CONTAINS_NO_CALLS: add
+// CHECK_CONTAINS_NO_CALLS: add_0
 
 internal inline fun run(action: () -> Int): Int {
     return action()

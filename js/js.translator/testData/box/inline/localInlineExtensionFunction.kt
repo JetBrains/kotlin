@@ -1,7 +1,7 @@
 package foo
 
-// CHECK_CONTAINS_NO_CALLS: capturedInLambda
-// CHECK_CONTAINS_NO_CALLS: declaredInLambda
+// CHECK_CONTAINS_NO_CALLS: capturedInLambda_0
+// CHECK_CONTAINS_NO_CALLS: declaredInLambda_0
 
 internal data class State(var count: Int = 0)
 

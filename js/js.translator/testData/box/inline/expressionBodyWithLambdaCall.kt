@@ -1,6 +1,6 @@
 package foo
 
-// CHECK_CONTAINS_NO_CALLS: test
+// CHECK_CONTAINS_NO_CALLS: test_0
 
 // A copy of stdlib run function.
 // Copied to not to depend on run implementation.

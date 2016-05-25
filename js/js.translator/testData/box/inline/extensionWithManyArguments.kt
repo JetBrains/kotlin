@@ -1,6 +1,6 @@
 package foo
 
-// CHECK_NOT_CALLED_IN_SCOPE: scope=multiply function=multiply$f
+// CHECK_NOT_CALLED_IN_SCOPE: scope=multiply_0 function=multiply_0$f
 
 internal class A(val a: Int)
 

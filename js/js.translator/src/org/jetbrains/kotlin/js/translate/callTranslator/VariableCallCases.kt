@@ -70,9 +70,7 @@ object DefaultVariableAccessCase : VariableAccessCase() {
     }
 
     override fun VariableAccessInfo.extensionReceiver(): JsExpression {
-        val functionRef = context.aliasOrValue(callableDescriptor) {
-            JsNameRef(getAccessFunctionName(), context.getQualifierForDescriptor(variableDescriptor))
-        }
+        val functionRef = context.aliasOrValue(callableDescriptor) { context.getQualifiedReference(getAccessDescriptor()) }
         return if (isGetAccess()) {
             JsInvocation(functionRef, extensionReceiver!!)
         } else {
@@ -81,7 +79,7 @@ object DefaultVariableAccessCase : VariableAccessCase() {
     }
 
     override fun VariableAccessInfo.bothReceivers(): JsExpression {
-        val funRef = JsNameRef(getAccessFunctionName(), dispatchReceiver!!)
+        val funRef = JsNameRef(context.getNameForDescriptor(getAccessDescriptor()), dispatchReceiver!!)
         return if (isGetAccess()) {
             JsInvocation(funRef, extensionReceiver!!)
         } else {

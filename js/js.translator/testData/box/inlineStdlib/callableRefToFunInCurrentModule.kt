@@ -1,7 +1,7 @@
 package foo
 
-// CHECK_NOT_CALLED_IN_SCOPE: scope=test function=even
-// CHECK_NOT_CALLED_IN_SCOPE: scope=test function=filter_azvtw4$
+// CHECK_NOT_CALLED_IN_SCOPE: scope=test_0 function=even_0
+// CHECK_NOT_CALLED_IN_SCOPE: scope=test_0 function=filter_azvtw4$
 
 internal fun even(x: Int) = x % 2 == 0
 

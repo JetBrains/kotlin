@@ -72,7 +72,7 @@ object CallTranslator {
         if (dispatchReceiver != null) {
             return DefaultFunctionCallCase.buildDefaultCallWithDispatchReceiver(argumentsInfo, dispatchReceiver, functionName, isNative, hasSpreadOperator)
         } else {
-            return DefaultFunctionCallCase.buildDefaultCallWithoutReceiver(context, argumentsInfo, functionDescriptor, functionName, isNative, hasSpreadOperator)
+            return DefaultFunctionCallCase.buildDefaultCallWithoutReceiver(context, argumentsInfo, functionDescriptor, isNative, hasSpreadOperator)
         }
     }
 }

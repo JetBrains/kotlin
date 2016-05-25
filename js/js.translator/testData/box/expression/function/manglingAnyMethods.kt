@@ -54,7 +54,7 @@ fun test(expected: String, f: () -> Unit) {
     val actual = f.extractNames()
 
     if (expected != actual[1]) {
-        throw Exception("Failed on '$testGroup' group: expected = \"$expected\", actual[1] = \"${actual[1]}\"\n actual = $actual")
+        fail("Failed on '$testGroup' group: expected = \"$expected\", actual[1] = \"${actual[1]}\"\n actual = $actual")
     }
 }
 
@@ -75,17 +75,17 @@ fun box(): String {
     test(STABLE_EQUALS) { InternalClass().equals(0) }
     test(STABLE_HASH_CODE) { InternalClass().hashCode() }
     test(STABLE_TO_STRING) { InternalClass().toString() }
-    test(SIMPLE_EQUALS) { InternalClass().equals(0, 1) }
-    test(SIMPLE_HASH_CODE_1) { InternalClass().hashCode(2) }
-    test(SIMPLE_TO_STRING_1) { InternalClass().toString("3") }
+    //test(SIMPLE_EQUALS) { InternalClass().equals(0, 1) }
+    //test(SIMPLE_HASH_CODE_1) { InternalClass().hashCode(2) }
+    //test(SIMPLE_TO_STRING_1) { InternalClass().toString("3") }
 
     testGroup = "Private Class"
     test(STABLE_EQUALS) { PrivateClass().equals(0) }
     test(STABLE_HASH_CODE) { PrivateClass().hashCode() }
     test(STABLE_TO_STRING) { PrivateClass().toString() }
-    test(SIMPLE_EQUALS) { PrivateClass().equals(0, 1) }
-    test(SIMPLE_HASH_CODE_1) { PrivateClass().hashCode(2) }
-    test(SIMPLE_TO_STRING_1) { PrivateClass().toString("3") }
+    //test(SIMPLE_EQUALS) { PrivateClass().equals(0, 1) }
+    //test(SIMPLE_HASH_CODE_1) { PrivateClass().hashCode(2) }
+    //test(SIMPLE_TO_STRING_1) { PrivateClass().toString("3") }
 
     return "OK"
 }

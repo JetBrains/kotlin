@@ -14,7 +14,7 @@ fun box(): String {
 
     val b: dynamic = object {val bar = ""}
     assertEquals(b.foo, undefined)
-    assertNotEquals(b.bar, undefined)
+    assertNotEquals(b.bar_0, undefined)
 
     return "OK"
 }
