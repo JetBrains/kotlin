@@ -19,10 +19,11 @@ package org.jetbrains.kotlin.idea.highlighter
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingColors.*
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.resolve.BindingContext
 
 internal class TypeKindHighlightingVisitor(holder: AnnotationHolder, bindingContext: BindingContext)
@@ -36,22 +37,25 @@ internal class TypeKindHighlightingVisitor(holder: AnnotationHolder, bindingCont
         }
 
         if (NameHighlighter.namesHighlightingEnabled) {
-            var referenceTarget: DeclarationDescriptor? = bindingContext.get(BindingContext.REFERENCE_TARGET, expression)
+            var referenceTarget = bindingContext.get(BindingContext.REFERENCE_TARGET, expression)
             if (referenceTarget is ConstructorDescriptor) {
-                referenceTarget = referenceTarget.containingDeclaration
+                val callElement = expression.getParentOfTypeAndBranch<KtCallExpression>(true) { calleeExpression }
+                    ?: expression.getParentOfTypeAndBranch<KtSuperTypeCallEntry>(true) { calleeExpression }
+                if (callElement == null) {
+                    referenceTarget = referenceTarget.containingDeclaration
+                }
             }
 
             if (referenceTarget is ClassDescriptor) {
-                val textAttributesKey = textAttributesKeyForClass(referenceTarget)
-                if (textAttributesKey === KotlinHighlightingColors.ANNOTATION) {
+                if (referenceTarget.kind == ClassKind.ANNOTATION_CLASS) {
                     highlightAnnotation(expression)
                 }
                 else {
-                    highlightName(expression, textAttributesKey)
+                    holder.highlightName(expression, textAttributesKeyForClass(referenceTarget))
                 }
             }
             else if (referenceTarget is TypeParameterDescriptor) {
-                highlightName(expression, KotlinHighlightingColors.TYPE_PARAMETER)
+                holder.highlightName(expression, TYPE_PARAMETER)
             }
         }
     }
@@ -70,14 +74,11 @@ internal class TypeKindHighlightingVisitor(holder: AnnotationHolder, bindingCont
             }
         }
 
-        NameHighlighter.highlightName(holder, range, KotlinHighlightingColors.ANNOTATION)
+        NameHighlighter.highlightName(holder, range, ANNOTATION)
     }
 
     override fun visitTypeParameter(parameter: KtTypeParameter) {
-        val identifier = parameter.nameIdentifier
-        if (identifier != null) {
-            highlightName(identifier, KotlinHighlightingColors.TYPE_PARAMETER)
-        }
+        parameter.nameIdentifier?.let { holder.highlightName(it, TYPE_PARAMETER) }
         super.visitTypeParameter(parameter)
     }
 
@@ -85,7 +86,7 @@ internal class TypeKindHighlightingVisitor(holder: AnnotationHolder, bindingCont
         val identifier = classOrObject.nameIdentifier
         val classDescriptor = bindingContext.get(BindingContext.CLASS, classOrObject)
         if (identifier != null && classDescriptor != null) {
-            highlightName(identifier, textAttributesKeyForClass(classDescriptor))
+            holder.highlightName(identifier, textAttributesKeyForClass(classDescriptor))
         }
         super.visitClassOrObject(classOrObject)
     }
@@ -94,20 +95,16 @@ internal class TypeKindHighlightingVisitor(holder: AnnotationHolder, bindingCont
         // Do nothing: 'dynamic' is highlighted as a keyword
     }
 
-    private fun highlightName(whatToHighlight: PsiElement, textAttributesKey: TextAttributesKey) {
-        NameHighlighter.highlightName(holder, whatToHighlight, textAttributesKey)
-    }
-
     private fun textAttributesKeyForClass(descriptor: ClassDescriptor): TextAttributesKey {
         when (descriptor.kind) {
-            ClassKind.INTERFACE -> return KotlinHighlightingColors.TRAIT
-            ClassKind.ANNOTATION_CLASS -> return KotlinHighlightingColors.ANNOTATION
-            ClassKind.OBJECT -> return KotlinHighlightingColors.OBJECT
-            ClassKind.ENUM_ENTRY -> return KotlinHighlightingColors.ENUM_ENTRY
+            ClassKind.INTERFACE -> return TRAIT
+            ClassKind.ANNOTATION_CLASS -> return ANNOTATION
+            ClassKind.OBJECT -> return OBJECT
+            ClassKind.ENUM_ENTRY -> return ENUM_ENTRY
             else -> return if (descriptor.modality === Modality.ABSTRACT)
-                KotlinHighlightingColors.ABSTRACT_CLASS
+                ABSTRACT_CLASS
             else
-                KotlinHighlightingColors.CLASS
+                CLASS
         }
     }
 }
