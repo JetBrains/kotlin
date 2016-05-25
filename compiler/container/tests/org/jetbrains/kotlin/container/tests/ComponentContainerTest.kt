@@ -188,6 +188,7 @@ class ComponentContainerTest {
         }
     }
 
+/*
     @Ignore("Need generic type substitution")
     @Test
     fun should_resolve_generic_adhoc() {
@@ -200,6 +201,7 @@ class ComponentContainerTest {
             assertTrue(genericClient.component is TestImplicitGeneric)
         }
     }
+*/
 
     @Test
     fun should_fail_with_invalid_cardinality() {
