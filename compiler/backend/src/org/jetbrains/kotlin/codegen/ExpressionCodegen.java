@@ -2714,14 +2714,16 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     private StackValue generateExtensionReceiver(@NotNull CallableDescriptor descriptor) {
         KotlinType coroutineControllerType = CoroutineUtilKt.getControllerTypeIfCoroutine(descriptor);
         if (coroutineControllerType != null) {
-            ClassDescriptor thisDescriptor = context.getThisDescriptor();
+            ClassDescriptor classDescriptor = bindingContext.get(CodegenBinding.CLASS_FOR_CALLABLE, descriptor);
+            assert classDescriptor != null : "class descriptor for coroutine " + descriptor + " should not be null";
 
+            StackValue coroutineReceiver = StackValue.thisOrOuter(this, classDescriptor, /* isSuper =*/ false, /* castReceiver */ false);
             return StackValue.field(
-                        FieldInfo.createForHiddenField(
-                                typeMapper.mapClass(thisDescriptor),
+                    FieldInfo.createForHiddenField(
+                                typeMapper.mapClass(classDescriptor),
                                 typeMapper.mapType(coroutineControllerType),
                                 CoroutineCodegenUtilKt.COROUTINE_CONTROLLER_FIELD_NAME),
-                        StackValue.thisOrOuter(this, thisDescriptor, /* isSuper =*/ false, /* castReceiver */ false));
+                    coroutineReceiver);
         }
 
         return context.generateReceiver(descriptor, state, false);

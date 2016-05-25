@@ -4147,6 +4147,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("suspendFromInlineLambda.kt")
+        public void testSuspendFromInlineLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/suspendFromInlineLambda.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("suspendInCycle.kt")
         public void testSuspendInCycle() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/suspendInCycle.kt");
