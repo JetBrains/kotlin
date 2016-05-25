@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
+import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingColors.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -124,12 +125,12 @@ internal class VariablesHighlightingVisitor(holder: AnnotationHolder, bindingCon
                 holder.createInfoAnnotation(elementToHighlight, msg).textAttributes = WRAPPED_INTO_REF
             }
 
-            if (descriptor is LocalVariableDescriptor) {
-                NameHighlighter.highlightName(holder, elementToHighlight, LOCAL_VARIABLE)
+            if (descriptor is LocalVariableDescriptor && descriptor !is SyntheticFieldDescriptor) {
+                holder.highlightName(elementToHighlight, LOCAL_VARIABLE)
             }
 
             if (descriptor is ValueParameterDescriptor) {
-                NameHighlighter.highlightName(holder, elementToHighlight, PARAMETER)
+                holder.highlightName(elementToHighlight, PARAMETER)
             }
         }
     }
