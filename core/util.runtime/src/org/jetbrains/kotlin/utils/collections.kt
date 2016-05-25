@@ -62,17 +62,20 @@ fun <T: Any> MutableCollection<T>.addIfNotNull(t: T?) {
     if (t != null) add(t)
 }
 
-fun <K, V> newHashMapWithExpectedSize(expectedSize: Int): HashMap<K, V> {
-    return HashMap(if (expectedSize < 3) 3 else expectedSize + expectedSize / 3 + 1)
-}
+fun <K, V> newHashMapWithExpectedSize(expectedSize: Int): HashMap<K, V> =
+        HashMap(capacity(expectedSize))
 
-fun <E> newHashSetWithExpectedSize(expectedSize: Int): HashSet<E> {
-    return HashSet(if (expectedSize < 3) 3 else expectedSize + expectedSize / 3 + 1)
-}
+fun <E> newHashSetWithExpectedSize(expectedSize: Int): HashSet<E> =
+        HashSet(capacity(expectedSize))
 
-fun <E> newLinkedHashSetWithExpectedSize(expectedSize: Int): LinkedHashSet<E> {
-    return LinkedHashSet(if (expectedSize < 3) 3 else expectedSize + expectedSize / 3 + 1)
-}
+fun <K, V> newLinkedHashMapWithExpectedSize(expectedSize: Int): LinkedHashMap<K, V> =
+        LinkedHashMap(capacity(expectedSize))
+
+fun <E> newLinkedHashSetWithExpectedSize(expectedSize: Int): LinkedHashSet<E> =
+        LinkedHashSet(capacity(expectedSize))
+
+private fun capacity(expectedSize: Int): Int =
+        if (expectedSize < 3) 3 else expectedSize + expectedSize / 3 + 1
 
 fun <T> Collection<T>.toReadOnlyList(): List<T> =
         when (size) {

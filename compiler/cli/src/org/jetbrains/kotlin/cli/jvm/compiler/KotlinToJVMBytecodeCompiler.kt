@@ -29,7 +29,10 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
-import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.ClassBuilderFactories
+import org.jetbrains.kotlin.codegen.CompilationErrorHandler
+import org.jetbrains.kotlin.codegen.GeneratedClassLoader
+import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.GenerationStateEventCallback
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -49,11 +52,11 @@ import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.util.PerformanceCounter
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
+import org.jetbrains.kotlin.utils.newLinkedHashMapWithExpectedSize
 import java.io.File
 import java.lang.reflect.Constructor
 import java.lang.reflect.InvocationTargetException
 import java.net.URLClassLoader
-import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.jar.Attributes
 
@@ -98,8 +101,6 @@ object KotlinToJVMBytecodeCompiler {
     }
 
     fun compileModules(environment: KotlinCoreEnvironment, directory: File): Boolean {
-        val outputFiles = hashMapOf<Module, ClassFileFactory>()
-
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
         val moduleVisibilityManager = ModuleVisibilityManager.SERVICE.getInstance(environment.project)
@@ -123,8 +124,7 @@ object KotlinToJVMBytecodeCompiler {
 
         result.throwIfError()
 
-        val moduleConfigurations = ArrayList<CompilerConfiguration>(chunk.size)
-        val generationStates = ArrayList<GenerationState>(chunk.size)
+        val outputs = newLinkedHashMapWithExpectedSize<Module, GenerationState>(chunk.size)
 
         for (module in chunk) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
@@ -137,24 +137,18 @@ object KotlinToJVMBytecodeCompiler {
                 put(JVMConfigurationKeys.OUTPUT_DIRECTORY, File(module.getOutputDirectory()))
             }
 
-            val generationState = generate(environment, moduleConfiguration, result, ktFiles, module)
-
-            outputFiles.put(module, generationState.factory)
-            moduleConfigurations.add(moduleConfiguration)
-            generationStates.add(generationState)
+            outputs[module] = generate(environment, moduleConfiguration, result, ktFiles, module)
         }
 
         try {
-            for ((module, configuration) in chunk.zip(moduleConfigurations)) {
+            for ((module, state) in outputs) {
                 ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-                writeOutput(configuration, outputFiles[module]!!, null)
+                writeOutput(state.configuration, state.factory, null)
             }
             return true
         }
         finally {
-            for (generationState in generationStates) {
-                generationState.destroy()
-            }
+            outputs.values.forEach(GenerationState::destroy)
         }
     }
 
