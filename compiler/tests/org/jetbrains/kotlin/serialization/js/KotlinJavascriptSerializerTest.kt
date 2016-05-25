@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.utils.sure
 import java.io.File
 
 class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
-    private val MODULE_NAME = "module"
     private val BASE_DIR = "compiler/testData/serialization"
 
     private fun doTest(fileName: String, metaFileDir: File = tmpdir) {
@@ -49,9 +48,8 @@ class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
 
         val srcDirs = listOf(File(source))
 
-        val configuration = CompilerConfiguration()
+        val configuration = KotlinTestUtils.newConfiguration()
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
-        configuration.put(JSConfigurationKeys.MODULE_ID, MODULE_NAME)
         configuration.put(JSConfigurationKeys.LIBRARY_FILES, LibrarySourcesConfig.JS_STDLIB)
 
         configuration.addKotlinSourceRoots(srcDirs.map { it.path })
@@ -73,7 +71,9 @@ class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
             val files = environment.getSourceFiles()
             val config = LibrarySourcesConfig(environment.project, environment.configuration)
             val analysisResult = TopDownAnalyzerFacadeForJS.analyzeFiles(files, config)
-            FileUtil.writeToFile(metaFile, KotlinJavascriptSerializationUtil.metadataAsString(MODULE_NAME, analysisResult.moduleDescriptor))
+            FileUtil.writeToFile(metaFile, KotlinJavascriptSerializationUtil.metadataAsString(
+                    KotlinTestUtils.TEST_MODULE_NAME, analysisResult.moduleDescriptor
+            ))
         }
         finally {
             Disposer.dispose(rootDisposable)
@@ -81,7 +81,7 @@ class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
     }
 
     private fun deserialize(metaFile: File): ModuleDescriptorImpl {
-        val module = KotlinTestUtils.createEmptyModule("<$MODULE_NAME>", JsPlatform, JsPlatform.builtIns)
+        val module = KotlinTestUtils.createEmptyModule("<${KotlinTestUtils.TEST_MODULE_NAME}>", JsPlatform, JsPlatform.builtIns)
         val metadata = KotlinJavascriptMetadataUtils.loadMetadata(metaFile)
         assert(metadata.size == 1)
 

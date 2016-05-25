@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.config.LibrarySourcesConfig;
 import org.jetbrains.kotlin.js.resolve.diagnostics.ErrorsJs;
 import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.lang.reflect.Field;
 
@@ -63,7 +64,7 @@ public abstract class AbstractDiagnosticMessageJsTest extends AbstractDiagnostic
     @NotNull
     private JsConfig getConfig() {
         CompilerConfiguration configuration = getEnvironment().getConfiguration().copy();
-        configuration.put(JSConfigurationKeys.MODULE_ID, "testModule");
+        configuration.put(CommonConfigurationKeys.MODULE_NAME, KotlinTestUtils.TEST_MODULE_NAME);
         configuration.put(JSConfigurationKeys.LIBRARY_FILES, LibrarySourcesConfig.JS_STDLIB);
         configuration.put(CommonConfigurationKeys.DISABLE_INLINE, true);
         configuration.put(JSConfigurationKeys.UNIT_TEST_CONFIG, true);

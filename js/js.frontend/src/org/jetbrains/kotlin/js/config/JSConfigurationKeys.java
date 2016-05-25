@@ -36,7 +36,4 @@ public class JSConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> UNIT_TEST_CONFIG =
             CompilerConfigurationKey.create("unit test config");
-
-    public static final CompilerConfigurationKey<String> MODULE_ID =
-            CompilerConfigurationKey.create("module id");
 }

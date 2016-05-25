@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.checkers;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
+import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.TargetPlatformKt;
 import org.jetbrains.kotlin.storage.StorageManager;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +45,7 @@ public abstract class AbstractDiagnosticsTestWithJsStdLib extends AbstractDiagno
     protected void setUp() throws Exception {
         super.setUp();
         CompilerConfiguration configuration = getEnvironment().getConfiguration().copy();
-        configuration.put(JSConfigurationKeys.MODULE_ID, "module");
+        configuration.put(CommonConfigurationKeys.MODULE_NAME, KotlinTestUtils.TEST_MODULE_NAME);
         configuration.put(JSConfigurationKeys.LIBRARY_FILES, LibrarySourcesConfig.JS_STDLIB);
         config = new LibrarySourcesConfig(getProject(), configuration);
     }

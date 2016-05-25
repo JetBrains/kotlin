@@ -323,7 +323,7 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
     @NotNull
     private JsConfig createConfig(
             @NotNull Project project,
-            @NotNull String moduleId,
+            @NotNull String moduleName,
             @NotNull EcmaVersion ecmaVersion,
             @Nullable List<String> libraries,
             @NotNull List<KtFile> files
@@ -338,7 +338,7 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
         }
         configuration.put(JSConfigurationKeys.LIBRARY_FILES, librariesWithStdlib);
 
-        configuration.put(JSConfigurationKeys.MODULE_ID, moduleId);
+        configuration.put(CommonConfigurationKeys.MODULE_NAME, moduleName);
         configuration.put(JSConfigurationKeys.TARGET, ecmaVersion);
 
         configuration.put(JSConfigurationKeys.SOURCE_MAP, shouldGenerateSourceMap());

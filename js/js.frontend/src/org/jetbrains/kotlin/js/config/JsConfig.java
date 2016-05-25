@@ -23,6 +23,7 @@ import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
@@ -68,7 +69,7 @@ public abstract class JsConfig {
 
     @NotNull
     public String getModuleId() {
-        return configuration.getNotNull(JSConfigurationKeys.MODULE_ID);
+        return configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME);
     }
 
     public abstract boolean checkLibFilesAndReportErrors(@NotNull Function1<String, Unit> report);
