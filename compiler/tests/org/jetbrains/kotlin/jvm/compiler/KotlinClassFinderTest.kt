@@ -66,10 +66,11 @@ class KotlinClassFinderTest : KotlinTestWithEnvironmentManagement() {
     }
 
     private fun createEnvironment(tmpdir: File?): KotlinCoreEnvironment {
-        val environment = KotlinCoreEnvironment.createForTests(testRootDisposable!!,
-                                                               KotlinTestUtils.compilerConfigurationForTests(
-                                                                       ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, tmpdir),
-                                                               EnvironmentConfigFiles.JVM_CONFIG_FILES)
+        val environment = KotlinCoreEnvironment.createForTests(
+                testRootDisposable,
+                KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, tmpdir),
+                EnvironmentConfigFiles.JVM_CONFIG_FILES
+        )
 
         // Activate Kotlin light class finder
         LazyResolveTestUtil.resolveProject(environment.project, environment)

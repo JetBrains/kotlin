@@ -174,15 +174,12 @@ class KotlinCliJavaFileManagerTest : KotlinTestWithEnvironment() {
         TestCase.assertNull("Should not find class in empty scope", manager.findClass("foo.Test", GlobalSearchScope.EMPTY_SCOPE))
     }
 
-    @Throws(Exception::class)
     override fun createEnvironment(): KotlinCoreEnvironment {
         javaFilesDir = KotlinTestUtils.tmpDir("java-file-manager-test")
 
-        val configuration = KotlinTestUtils.compilerConfigurationForTests(
-                ConfigurationKind.MOCK_RUNTIME,
-                TestJdkKind.MOCK_JDK,
-                emptyList(),
-                listOf<File>(javaFilesDir!!))
+        val configuration = KotlinTestUtils.newConfiguration(
+                ConfigurationKind.MOCK_RUNTIME, TestJdkKind.MOCK_JDK, emptyList(), listOf(javaFilesDir!!)
+        )
 
         return KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     }

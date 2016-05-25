@@ -32,11 +32,11 @@ import java.util.regex.Pattern
 abstract class AbstractAndroidBoxTest : AbstractBlackBoxCodegenTest() {
 
     private fun createAndroidAPIEnvironment(path: String) {
-        return createEnvironmentForConfiguration(KotlinTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.ANDROID_API), path)
+        return createEnvironmentForConfiguration(KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.ANDROID_API), path)
     }
 
     private fun createFakeAndroidEnvironment(path: String) {
-        return createEnvironmentForConfiguration(KotlinTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK), path)
+        return createEnvironmentForConfiguration(KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK), path)
     }
 
     private fun createEnvironmentForConfiguration(configuration: CompilerConfiguration, path: String) {

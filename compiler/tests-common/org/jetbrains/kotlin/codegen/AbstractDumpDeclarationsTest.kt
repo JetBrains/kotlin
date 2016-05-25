@@ -38,11 +38,11 @@ abstract class AbstractDumpDeclarationsTest : CodegenTestCase() {
     private fun compileAndCompareDump(files: List<TestFile>, expectedResult: File) {
         configurationKind = ConfigurationKind.NO_KOTLIN_REFLECT
 
-        val configuration = KotlinTestUtils.compilerConfigurationForTests(
-                configurationKind, TestJdkKind.MOCK_JDK, listOf(KotlinTestUtils.getAnnotationsJar()), emptyList())
+        val configuration = KotlinTestUtils.newConfiguration(
+                configurationKind, TestJdkKind.MOCK_JDK, listOf(KotlinTestUtils.getAnnotationsJar()), emptyList()
+        )
 
-        myEnvironment = KotlinCoreEnvironment.createForTests(
-                testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+        myEnvironment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
         loadMultiFiles(files)
 

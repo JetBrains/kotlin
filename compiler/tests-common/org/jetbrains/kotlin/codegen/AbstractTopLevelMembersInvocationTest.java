@@ -68,8 +68,10 @@ public abstract class AbstractTopLevelMembersInvocationTest extends AbstractByte
 
         myEnvironment = KotlinCoreEnvironment.createForTests(
                 getTestRootDisposable(),
-                KotlinTestUtils.compilerConfigurationForTests(ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK,
-                                                              CollectionsKt.plus(classPath, KotlinTestUtils.getAnnotationsJar()), classPath),
+                KotlinTestUtils.newConfiguration(
+                        ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK,
+                        CollectionsKt.plus(classPath, KotlinTestUtils.getAnnotationsJar()), classPath
+                ),
                 EnvironmentConfigFiles.JVM_CONFIG_FILES);
 
         loadFiles(ArrayUtil.toStringArray(sourceFiles));

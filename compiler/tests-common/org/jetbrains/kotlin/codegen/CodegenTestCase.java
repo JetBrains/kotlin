@@ -72,7 +72,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.jetbrains.kotlin.codegen.CodegenTestUtil.*;
-import static org.jetbrains.kotlin.test.KotlinTestUtils.compilerConfigurationForTests;
 import static org.jetbrains.kotlin.test.KotlinTestUtils.getAnnotationsJar;
 
 public abstract class CodegenTestCase extends KtUsefulTestCase {
@@ -110,7 +109,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
             throw new IllegalStateException("must not set up myEnvironment twice");
         }
 
-        CompilerConfiguration configuration = createCompilerConfigurationForTests(
+        CompilerConfiguration configuration = createConfiguration(
                 configurationKind,
                 TestJdkKind.MOCK_JDK,
                 Collections.singletonList(getAnnotationsJar()),
@@ -124,14 +123,14 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
     }
 
     @NotNull
-    protected static CompilerConfiguration createCompilerConfigurationForTests(
+    protected static CompilerConfiguration createConfiguration(
             @NotNull ConfigurationKind kind,
             @NotNull TestJdkKind jdkKind,
             @NotNull List<File> classpath,
             @NotNull List<File> javaSource,
             @NotNull List<TestFile> testFilesWithConfigurationDirectives
     ) {
-        CompilerConfiguration configuration = compilerConfigurationForTests(kind, jdkKind, classpath, javaSource);
+        CompilerConfiguration configuration = KotlinTestUtils.newConfiguration(kind, jdkKind, classpath, javaSource);
 
         updateConfigurationByDirectivesInTestFiles(testFilesWithConfigurationDirectives, configuration);
 
@@ -495,7 +494,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
     protected void doTest(String filePath) throws Exception {
         File file = new File(filePath);
         String expectedText = KotlinTestUtils.doLoadFile(file);
-        final Ref<File> javaFilesDir = Ref.create();
+        Ref<File> javaFilesDir = Ref.create();
 
         List<TestFile> testFiles = createTestFiles(file, expectedText, javaFilesDir);
 
@@ -503,7 +502,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
     }
 
     @NotNull
-    public static List<TestFile> createTestFiles(File file, String expectedText, final Ref<File> javaFilesDir) {
+    private static List<TestFile> createTestFiles(File file, String expectedText, final Ref<File> javaFilesDir) {
         return KotlinTestUtils.createTestFiles(file.getName(), expectedText, new KotlinTestUtils.TestFileFactoryNoModules<TestFile>() {
             @NotNull
             @Override

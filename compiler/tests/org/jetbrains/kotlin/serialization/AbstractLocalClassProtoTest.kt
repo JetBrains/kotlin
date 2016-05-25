@@ -52,7 +52,7 @@ abstract class AbstractLocalClassProtoTest : TestCaseWithTmpdir() {
 
         val environment = KotlinCoreEnvironment.createForTests(
                 testRootDisposable,
-                KotlinTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, tmpdir),
+                KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, tmpdir),
                 EnvironmentConfigFiles.JVM_CONFIG_FILES
         )
         val moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(environment.project, environment.getModuleName())

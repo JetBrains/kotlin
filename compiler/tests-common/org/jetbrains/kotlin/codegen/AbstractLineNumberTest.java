@@ -60,9 +60,11 @@ public abstract class AbstractLineNumberTest extends TestCaseWithTmpdir {
     private KotlinCoreEnvironment createEnvironment() {
         return KotlinCoreEnvironment.createForTests(
                 myTestRootDisposable,
-                KotlinTestUtils.compilerConfigurationForTests(ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK,
-                                                              KotlinTestUtils.getAnnotationsJar(), tmpdir),
-                EnvironmentConfigFiles.JVM_CONFIG_FILES);
+                KotlinTestUtils.newConfiguration(
+                        ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, KotlinTestUtils.getAnnotationsJar(), tmpdir
+                ),
+                EnvironmentConfigFiles.JVM_CONFIG_FILES
+        );
     }
 
     @Override
