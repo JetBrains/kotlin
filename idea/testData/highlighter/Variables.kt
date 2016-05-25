@@ -26,4 +26,4 @@ class <info textAttributesKey="KOTLIN_CLASS">Foo</info>(val <info textAttributes
   }
 }
 
-// NO_CHECK_WARNINGS1
+// NO_CHECK_WARNINGS
