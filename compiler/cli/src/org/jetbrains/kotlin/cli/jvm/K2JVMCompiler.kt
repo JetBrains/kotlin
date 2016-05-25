@@ -108,14 +108,14 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
         configuration.addJvmClasspathRoots(getClasspath(paths, arguments))
 
-        configuration.put(JVMConfigurationKeys.MODULE_NAME, arguments.moduleName ?: JvmAbi.DEFAULT_MODULE_NAME)
+        configuration.put(CommonConfigurationKeys.MODULE_NAME, arguments.moduleName ?: JvmAbi.DEFAULT_MODULE_NAME)
 
         if (arguments.module == null && arguments.freeArgs.isEmpty() && !arguments.version) {
             ReplFromTerminal.run(rootDisposable, configuration)
             return ExitCode.OK
         }
 
-        configuration.add(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY, StandardScriptDefinition)
+        configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, StandardScriptDefinition)
 
         if (arguments.skipMetadataVersionCheck) {
             JvmMetadataVersion.skipCheck = true

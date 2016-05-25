@@ -59,7 +59,7 @@ class GenerationState @JvmOverloads constructor(
         val generateDeclaredClassFilter: GenerateClassFilter = GenerationState.GenerateClassFilter.GENERATE_ALL,
         // For incremental compilation
         val targetId: TargetId? = null,
-        moduleName: String? = configuration.get(JVMConfigurationKeys.MODULE_NAME),
+        moduleName: String? = configuration.get(CommonConfigurationKeys.MODULE_NAME),
         // 'outDirectory' is a hack to correctly determine if a compiled class is from the same module as the callee during
         // partial compilation. Module chunks are treated as a single module.
         // TODO: get rid of it with the proper module infrastructure

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.config;
 
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents;
 import org.jetbrains.kotlin.modules.Module;
+import org.jetbrains.kotlin.script.KotlinScriptDefinition;
 
 import java.io.File;
 import java.util.List;
@@ -26,12 +27,19 @@ public class JVMConfigurationKeys {
     private JVMConfigurationKeys() {
     }
 
+    // roots, including dependencies and own source
+    public static final CompilerConfigurationKey<List<ContentRoot>> CONTENT_ROOTS =
+            CompilerConfigurationKey.create("content roots");
+
     public static final CompilerConfigurationKey<File> OUTPUT_DIRECTORY =
             CompilerConfigurationKey.create("output directory");
     public static final CompilerConfigurationKey<File> OUTPUT_JAR =
             CompilerConfigurationKey.create("output .jar");
     public static final CompilerConfigurationKey<Boolean> INCLUDE_RUNTIME =
             CompilerConfigurationKey.create("include runtime to the resulting .jar");
+
+    public static final CompilerConfigurationKey<List<KotlinScriptDefinition>> SCRIPT_DEFINITIONS =
+            CompilerConfigurationKey.create("script definitions");
 
     public static final CompilerConfigurationKey<Boolean> DISABLE_CALL_ASSERTIONS =
             CompilerConfigurationKey.create("disable not-null call assertions");
@@ -58,7 +66,4 @@ public class JVMConfigurationKeys {
 
     public static final CompilerConfigurationKey<List<String>> FRIEND_PATHS =
             CompilerConfigurationKey.create("friend module paths");
-
-    public static final CompilerConfigurationKey<String> MODULE_NAME =
-            CompilerConfigurationKey.create("module name");
 }
