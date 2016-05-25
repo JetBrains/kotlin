@@ -69,8 +69,8 @@ class GradleKotlinJavaFrameworkSupportProvider() : GradleFrameworkSupportProvide
                 .addBuildscriptRepositoriesDefinition("mavenCentral()")
                 .addRepositoriesDefinition("mavenCentral()")
 
-                .addBuildscriptPropertyDefinition("ext.kotlin_version = '$kotlinVersion'")
-                .addDependencyNotation(KotlinWithGradleConfigurator.LIBRARY)
-                .addBuildscriptDependencyNotation(KotlinWithGradleConfigurator.CLASSPATH)
+                // TODO: once IDEA-148110 is fixed, define kotlin_version property in buildscript
+                .addDependencyNotation(KotlinWithGradleConfigurator.LIBRARY.replace("\$kotlin_version", kotlinVersion))
+                .addBuildscriptDependencyNotation(KotlinWithGradleConfigurator.CLASSPATH.replace("\$kotlin_version", kotlinVersion))
     }
 }
