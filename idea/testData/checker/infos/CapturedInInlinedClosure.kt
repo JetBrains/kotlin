@@ -80,7 +80,7 @@ fun objectExpression() {
 
     val <info descr="Value captured in a closure">u2</info> = 1
     object : Any() {
-        val <info>prop</info> = run {
+        val prop = run {
             <info descr="Value captured in a closure">u2</info>
         }
     }
