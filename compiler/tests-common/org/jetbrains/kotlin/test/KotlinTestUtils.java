@@ -420,7 +420,7 @@ public class KotlinTestUtils {
     @NotNull
     public static CompilerConfiguration newConfiguration() {
         CompilerConfiguration configuration = new CompilerConfiguration();
-        configuration.put(JVMConfigurationKeys.MODULE_NAME, TEST_MODULE_NAME);
+        configuration.put(CommonConfigurationKeys.MODULE_NAME, TEST_MODULE_NAME);
         return configuration;
     }
 
@@ -472,7 +472,7 @@ public class KotlinTestUtils {
     }
 
     public static void resolveAllKotlinFiles(KotlinCoreEnvironment environment) throws IOException {
-        List<ContentRoot> paths = environment.getConfiguration().get(CommonConfigurationKeys.CONTENT_ROOTS);
+        List<ContentRoot> paths = environment.getConfiguration().get(JVMConfigurationKeys.CONTENT_ROOTS);
         if (paths == null) return;
         List<KtFile> ktFiles = new ArrayList<KtFile>();
         for (ContentRoot root : paths) {

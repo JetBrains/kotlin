@@ -20,6 +20,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
+import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.context.ContextKt;
@@ -144,7 +145,7 @@ public enum TopDownAnalyzerFacadeForJVM {
         ProjectContext projectContext = ContextKt.ProjectContext(project);
         JvmBuiltIns builtIns = new JvmBuiltIns(projectContext.getStorageManager());
         MutableModuleContext context = ContextKt.ContextForNewModule(
-                projectContext, Name.special("<" + configuration.getNotNull(JVMConfigurationKeys.MODULE_NAME) + ">"),
+                projectContext, Name.special("<" + configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME) + ">"),
                 JvmPlatform.INSTANCE, builtIns
         );
         builtIns.setOwnerModuleDescriptor(context.getModule());

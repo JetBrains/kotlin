@@ -16,19 +16,16 @@
 
 package org.jetbrains.kotlin.config
 
-import java.io.File
-
 interface ContentRoot
 
 data class KotlinSourceRoot(val path: String): ContentRoot
 
 fun CompilerConfiguration.addKotlinSourceRoot(source: String) {
-    add(CommonConfigurationKeys.CONTENT_ROOTS, KotlinSourceRoot(source))
+    add(JVMConfigurationKeys.CONTENT_ROOTS, KotlinSourceRoot(source))
 }
 
-fun CompilerConfiguration.addKotlinSourceRoots(sources: List<String>): Unit = sources.forEach { addKotlinSourceRoot(it) }
+fun CompilerConfiguration.addKotlinSourceRoots(sources: List<String>): Unit =
+        sources.forEach { addKotlinSourceRoot(it) }
 
 val CompilerConfiguration.kotlinSourceRoots: List<String>
-    get() {
-        return get(CommonConfigurationKeys.CONTENT_ROOTS)?.filterIsInstance<KotlinSourceRoot>()?.map { it.path } ?: emptyList()
-    }
+    get() = get(JVMConfigurationKeys.CONTENT_ROOTS)?.filterIsInstance<KotlinSourceRoot>()?.map { it.path }.orEmpty()

@@ -19,18 +19,18 @@ package org.jetbrains.kotlin.cli.jvm.compiler
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
 import java.io.EOFException
 
 class JvmPackagePartProvider(val env: KotlinCoreEnvironment) : PackagePartProvider {
     private val notLoadedRoots by lazy(LazyThreadSafetyMode.NONE) {
-        env.configuration.getList(CommonConfigurationKeys.CONTENT_ROOTS).
-                filterIsInstance<JvmClasspathRoot>().
-                mapNotNull {
-                    env.contentRootToVirtualFile(it)
-                }.filter { it.findChild("META-INF") != null }.toMutableList()
+        env.configuration.getList(JVMConfigurationKeys.CONTENT_ROOTS)
+                .filterIsInstance<JvmClasspathRoot>()
+                .mapNotNull { env.contentRootToVirtualFile(it) }
+                .filter { it.findChild("META-INF") != null }
+                .toMutableList()
     }
 
     private val loadedModules: MutableList<ModuleMapping> = SmartList()
@@ -52,7 +52,7 @@ class JvmPackagePartProvider(val env: KotlinCoreEnvironment) : PackagePartProvid
             pathParts.fold(it) {
                 parent, part ->
                 if (part.isEmpty()) parent
-                else  parent.findChild(part) ?: return@filter false
+                else parent.findChild(part) ?: return@filter false
             }
             true
         }
@@ -65,7 +65,8 @@ class JvmPackagePartProvider(val env: KotlinCoreEnvironment) : PackagePartProvid
         }.map {
             try {
                 ModuleMapping.create(it.contentsToByteArray())
-            } catch (e: EOFException) {
+            }
+            catch (e: EOFException) {
                 throw RuntimeException("Error on reading package parts for '$packageFqName' package in '$it', roots: $notLoadedRoots", e)
             }
         })

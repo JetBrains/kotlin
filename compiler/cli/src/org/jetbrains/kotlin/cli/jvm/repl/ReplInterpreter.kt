@@ -37,8 +37,8 @@ import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.CompilationErrorHandler
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.name.Name
@@ -68,7 +68,7 @@ class ReplInterpreter(
     }
 
     private val environment = run {
-        configuration.add(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY, REPL_LINE_AS_SCRIPT_DEFINITION)
+        configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, REPL_LINE_AS_SCRIPT_DEFINITION)
         KotlinCoreEnvironment.createForProduction(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     }
 

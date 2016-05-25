@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.CodegenTestFiles;
 import org.jetbrains.kotlin.codegen.GenerationUtils;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
+import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.idea.KotlinFileType;
@@ -158,7 +159,7 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
             TestJdkKind testJdkKind = isFullJdkAndRuntime ? TestJdkKind.FULL_JDK : TestJdkKind.MOCK_JDK;
             CompilerConfiguration configuration =
                     KotlinTestUtils.newConfiguration(configurationKind, testJdkKind, KotlinTestUtils.getAnnotationsJar());
-            configuration.put(JVMConfigurationKeys.MODULE_NAME, "android-module-" + MODULE_INDEX++);
+            configuration.put(CommonConfigurationKeys.MODULE_NAME, "android-module-" + MODULE_INDEX++);
             if (inheritMultifileParts) {
                 configuration.put(JVMConfigurationKeys.INHERIT_MULTIFILE_PARTS, true);
             }
