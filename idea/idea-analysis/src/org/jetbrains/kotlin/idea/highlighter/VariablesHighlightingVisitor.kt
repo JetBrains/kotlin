@@ -56,7 +56,10 @@ internal class VariablesHighlightingVisitor(holder: AnnotationHolder, bindingCon
     }
 
     override fun visitParameter(parameter: KtParameter) {
-        visitVariableDeclaration(parameter)
+        val propertyDescriptor = bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter)
+        if (propertyDescriptor == null) {
+            visitVariableDeclaration(parameter)
+        }
         super.visitParameter(parameter)
     }
 
