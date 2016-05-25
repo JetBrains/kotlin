@@ -74,7 +74,7 @@ fun KotlinType.getCustomTypeVariable(): CustomTypeVariable? =
             if (it.isTypeVariable) it else null
         }
 
-interface SubtypingRepresentatives : TypeCapability {
+interface SubtypingRepresentatives {
     val subTypeRepresentative: KotlinType
     val superTypeRepresentative: KotlinType
 
@@ -82,15 +82,14 @@ interface SubtypingRepresentatives : TypeCapability {
 }
 
 fun KotlinType.getSubtypeRepresentative(): KotlinType =
-        this.getCapability(SubtypingRepresentatives::class.java)?.subTypeRepresentative ?: this
+        (unwrap() as? SubtypingRepresentatives)?.subTypeRepresentative ?: this
 
 fun KotlinType.getSupertypeRepresentative(): KotlinType =
-        this.getCapability(SubtypingRepresentatives::class.java)?.superTypeRepresentative ?: this
+        (unwrap() as? SubtypingRepresentatives)?.superTypeRepresentative ?: this
 
 fun sameTypeConstructors(first: KotlinType, second: KotlinType): Boolean {
-    val typeRangeCapability = SubtypingRepresentatives::class.java
-    return first.getCapability(typeRangeCapability)?.sameTypeConstructor(second) ?: false
-           || second.getCapability(typeRangeCapability)?.sameTypeConstructor(first) ?: false
+    return (first.unwrap() as? SubtypingRepresentatives)?.sameTypeConstructor(second) ?: false
+           || (second.unwrap() as? SubtypingRepresentatives)?.sameTypeConstructor(first) ?: false
 }
 
 interface AbbreviatedType : TypeCapability {

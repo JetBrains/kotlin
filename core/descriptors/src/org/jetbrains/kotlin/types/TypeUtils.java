@@ -136,8 +136,8 @@ public class TypeUtils {
     @NotNull
     public static KotlinType makeNullableAsSpecified(@NotNull KotlinType type, boolean nullable) {
         KotlinType unwrappedType = KotlinTypeKt.unwrap(type);
-        if (unwrappedType instanceof FlexibleType) {
-            return ((FlexibleType) unwrappedType).makeNullableAsSpecified(nullable);
+        if (unwrappedType instanceof TypeWithCustomReplacement) {
+            return ((TypeWithCustomReplacement) unwrappedType).makeNullableAsSpecified(nullable);
         }
         else {
             SimpleType simpleType = (SimpleType) unwrappedType;

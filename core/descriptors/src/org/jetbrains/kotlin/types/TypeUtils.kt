@@ -85,7 +85,8 @@ fun TypeProjection.substitute(doSubstitute: (KotlinType) -> KotlinType): TypePro
 
 fun KotlinType.replaceAnnotations(newAnnotations: Annotations): KotlinType {
     if (annotations.isEmpty() && newAnnotations.isEmpty()) return this
-    if (isFlexible()) return asFlexibleType().replaceAnnotations(newAnnotations)
+    val unwrappedType = unwrap()
+    if (unwrappedType is TypeWithCustomReplacement) return unwrappedType.replaceAnnotations(newAnnotations)
 
     return asSimpleType().lazyReplaceAnnotations(newAnnotations)
 }
