@@ -72,7 +72,7 @@ internal class PropertiesHighlightingVisitor(holder: AnnotationHolder, bindingCo
             elementToHighlight: PsiElement,
             descriptor: PropertyDescriptor) {
 
-        val color = when {
+        val attributesKey = when {
             descriptor.isDynamic() ->
                 DYNAMIC_PROPERTY_CALL
 
@@ -85,6 +85,6 @@ internal class PropertiesHighlightingVisitor(holder: AnnotationHolder, bindingCo
             else ->
                 INSTANCE_PROPERTY
         }
-        holder.highlightName(elementToHighlight, color)
+        holder.highlightName(elementToHighlight, attributesKey)
     }
 }

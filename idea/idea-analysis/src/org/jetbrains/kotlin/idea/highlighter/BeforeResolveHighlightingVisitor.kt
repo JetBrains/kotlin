@@ -75,7 +75,7 @@ internal class BeforeResolveHighlightingVisitor(private val holder: AnnotationHo
     override fun visitExpressionWithLabel(expression: KtExpressionWithLabel) {
         val targetLabel = expression.getTargetLabel()
         if (targetLabel != null) {
-            NameHighlighter.highlightName(holder, targetLabel, KotlinHighlightingColors.LABEL)
+            holder.highlightName(targetLabel, KotlinHighlightingColors.LABEL)
         }
     }
 }

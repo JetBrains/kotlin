@@ -25,22 +25,16 @@ import org.jetbrains.annotations.TestOnly
 object NameHighlighter {
     var namesHighlightingEnabled = true
         @TestOnly set
-
-    @JvmStatic
-    fun highlightName(holder: AnnotationHolder, psiElement: PsiElement, attributesKey: TextAttributesKey) {
-        if (namesHighlightingEnabled) {
-            holder.createInfoAnnotation(psiElement, null).textAttributes = attributesKey
-        }
-    }
-
-    @JvmStatic
-    fun highlightName(holder: AnnotationHolder, textRange: TextRange, attributesKey: TextAttributesKey) {
-        if (namesHighlightingEnabled) {
-            holder.createInfoAnnotation(textRange, null).textAttributes = attributesKey
-        }
-    }
 }
 
 fun AnnotationHolder.highlightName(element: PsiElement, attributesKey: TextAttributesKey) {
-    NameHighlighter.highlightName(this, element, attributesKey)
+    if (NameHighlighter.namesHighlightingEnabled) {
+        createInfoAnnotation(element, null).textAttributes = attributesKey
+    }
+}
+
+fun AnnotationHolder.highlightName(textRange: TextRange, attributesKey: TextAttributesKey) {
+    if (NameHighlighter.namesHighlightingEnabled) {
+        createInfoAnnotation(textRange, null).textAttributes = attributesKey
+    }
 }
