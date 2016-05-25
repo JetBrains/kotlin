@@ -85,7 +85,7 @@ fun TypeProjection.substitute(doSubstitute: (KotlinType) -> KotlinType): TypePro
 
 fun KotlinType.replaceAnnotations(newAnnotations: Annotations): KotlinType {
     if (annotations.isEmpty() && newAnnotations.isEmpty()) return this
-    if (isFlexible()) return flexibility().replaceAnnotations(newAnnotations)
+    if (isFlexible()) return asFlexibleType().replaceAnnotations(newAnnotations)
 
     return asSimpleType().lazyReplaceAnnotations(newAnnotations)
 }
@@ -135,7 +135,7 @@ private fun constituentTypes(result: MutableSet<KotlinType>, types: Collection<K
     result.addAll(types)
     for (type in types) {
         if (type.isFlexible()) {
-            with (type.flexibility()) { constituentTypes(result, setOf(lowerBound, upperBound)) }
+            with (type.asFlexibleType()) { constituentTypes(result, setOf(lowerBound, upperBound)) }
         }
         else {
             constituentTypes(result, type.arguments.filterNot { it.isStarProjection }.map { it.type })

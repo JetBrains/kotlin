@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 
-interface Flexibility : TypeCapability, SubtypingRepresentatives {
+interface FlexibleType : SubtypingRepresentatives {
     // lowerBound is a subtype of upperBound
     val lowerBound: SimpleType
     val upperBound: SimpleType
@@ -39,11 +39,11 @@ interface Flexibility : TypeCapability, SubtypingRepresentatives {
     fun replaceAnnotations(newAnnotations: Annotations): KotlinType
 }
 
-fun KotlinType.isFlexible(): Boolean = this.getCapability(Flexibility::class.java) != null
-fun KotlinType.flexibility(): Flexibility = this.getCapability(Flexibility::class.java)!!
+fun KotlinType.isFlexible(): Boolean = unwrap() is FlexibleType
+fun KotlinType.asFlexibleType(): FlexibleType = unwrap() as FlexibleType
 
 fun KotlinType.isNullabilityFlexible(): Boolean {
-    val flexibility = this.getCapability(Flexibility::class.java) ?: return false
+    val flexibility = unwrap() as? FlexibleType ?: return false
     return TypeUtils.isNullableType(flexibility.lowerBound) != TypeUtils.isNullableType(flexibility.upperBound)
 }
 
@@ -81,13 +81,13 @@ fun Collection<TypeProjection>.singleBestRepresentative(): TypeProjection? {
     return TypeProjectionImpl(projectionKinds.single(), bestType)
 }
 
-fun KotlinType.lowerIfFlexible(): SimpleType = (if (this.isFlexible()) this.flexibility().lowerBound else this).asSimpleType()
-fun KotlinType.upperIfFlexible(): SimpleType = (if (this.isFlexible()) this.flexibility().upperBound else this).asSimpleType()
+fun KotlinType.lowerIfFlexible(): SimpleType = (if (this.isFlexible()) this.asFlexibleType().lowerBound else this).asSimpleType()
+fun KotlinType.upperIfFlexible(): SimpleType = (if (this.isFlexible()) this.asFlexibleType().upperBound else this).asSimpleType()
 
 abstract class DelegatingFlexibleType protected constructor(
         override val lowerBound: SimpleType,
         override val upperBound: SimpleType
-) : DelegatingType(), Flexibility {
+) : DelegatingType(), FlexibleType {
     companion object {
         @JvmField
         var RUN_SLOW_ASSERTIONS = false
@@ -118,7 +118,7 @@ abstract class DelegatingFlexibleType protected constructor(
     override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>): T? {
         @Suppress("UNCHECKED_CAST")
         return when(capabilityClass) {
-            Flexibility::class.java, SubtypingRepresentatives::class.java -> this as T
+            SubtypingRepresentatives::class.java -> this as T
             else -> super.getCapability(capabilityClass)
         }
     }

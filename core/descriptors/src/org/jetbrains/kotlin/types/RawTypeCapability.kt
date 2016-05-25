@@ -24,6 +24,6 @@ interface RawTypeCapability : TypeCapability {
     val substitutionToComposeWith: TypeSubstitution?
 
     fun renderInflexible(type: KotlinType, renderer: DescriptorRenderer): String?
-    fun renderBounds(flexibility: Flexibility, renderer: DescriptorRenderer): Pair<String, String>?
+    fun renderBounds(flexibleType: FlexibleType, renderer: DescriptorRenderer): Pair<String, String>?
 
 }

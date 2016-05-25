@@ -506,7 +506,7 @@ public class DescriptorSerializer {
         }
 
         if (FlexibleTypesKt.isFlexible(type)) {
-            DelegatingFlexibleType flexibleType = (DelegatingFlexibleType) FlexibleTypesKt.flexibility(type);
+            DelegatingFlexibleType flexibleType = (DelegatingFlexibleType) FlexibleTypesKt.asFlexibleType(type);
 
             ProtoBuf.Type.Builder lowerBound = type(flexibleType.getLowerBound());
             ProtoBuf.Type.Builder upperBound = type(flexibleType.getUpperBound());

@@ -39,7 +39,7 @@ fun KotlinType.approximateFlexibleTypes(preferNotNull: Boolean = false): KotlinT
 
 private fun KotlinType.approximateNonDynamicFlexibleTypes(preferNotNull: Boolean = false): SimpleType {
     if (isFlexible()) {
-        val flexible = flexibility()
+        val flexible = asFlexibleType()
         val lowerClass = flexible.lowerBound.constructor.declarationDescriptor as? ClassDescriptor?
         val isCollection = lowerClass != null && JavaToKotlinClassMap.INSTANCE.isMutable(lowerClass)
         // (Mutable)Collection<T>! -> MutableCollection<T>?

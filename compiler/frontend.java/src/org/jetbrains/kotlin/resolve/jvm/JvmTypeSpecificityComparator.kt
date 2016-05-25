@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.resolve.jvm
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.flexibility
+import org.jetbrains.kotlin.types.asFlexibleType
 import org.jetbrains.kotlin.types.isFlexible
 
 object JvmTypeSpecificityComparator : TypeSpecificityComparator {
@@ -28,7 +28,7 @@ object JvmTypeSpecificityComparator : TypeSpecificityComparator {
         if (!specific.isFlexible() || general.isFlexible()) return false
 
         // general is inflexible
-        val flexibility = specific.flexibility()
+        val flexibility = specific.asFlexibleType()
 
         // For primitive types we have to take care of the case when there are two overloaded methods like
         //    foo(int) and foo(Integer)

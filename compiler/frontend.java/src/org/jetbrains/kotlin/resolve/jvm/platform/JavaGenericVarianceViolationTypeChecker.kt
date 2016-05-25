@@ -45,8 +45,8 @@ object JavaGenericVarianceViolationTypeChecker : AdditionalTypeChecker {
         // optimization: if no arguments or flexibility, everything is OK
         if (expectedType.arguments.isEmpty() || !expectedType.isFlexible()) return
 
-        val lowerBound = expectedType.flexibility().lowerBound
-        val upperBound = expectedType.flexibility().upperBound
+        val lowerBound = expectedType.asFlexibleType().lowerBound
+        val upperBound = expectedType.asFlexibleType().upperBound
 
         // Use site variance projection is always the same for flexible types
         if (lowerBound.constructor == upperBound.constructor) return

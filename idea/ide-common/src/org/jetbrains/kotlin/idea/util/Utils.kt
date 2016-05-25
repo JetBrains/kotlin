@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,9 +23,10 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.types.Flexibility
+import org.jetbrains.kotlin.types.FlexibleType
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.unwrap
 
 fun KtFunctionLiteral.findLabelAndCall(): Pair<Name?, KtCallExpression?> {
     val literalParent = (this.parent as KtLambdaExpression).parent
@@ -77,11 +78,11 @@ private fun chooseMoreSpecific(type1: KotlinType, type2: KotlinType): KotlinType
         !type1IsSubtype && !type2IsSubtype -> return null
 
         else -> { // type1IsSubtype && type2IsSubtype
-            val flexibility1 = type1.getCapability(Flexibility::class.java)
-            val flexibility2 = type2.getCapability(Flexibility::class.java)
+            val flexible1 = type1.unwrap() as? FlexibleType
+            val flexible2 = type2.unwrap() as? FlexibleType
             when {
-                flexibility1 != null && flexibility2 == null -> return type2
-                flexibility2 != null && flexibility1 == null -> return type1
+                flexible1 != null && flexible2 == null -> return type2
+                flexible2 != null && flexible1 == null -> return type1
                 else -> return null //TODO?
             }
         }
