@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.config.Services;
 import org.jetbrains.kotlin.progress.CompilationCanceledException;
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
+import org.jetbrains.kotlin.utils.StringsKt;
 
 import java.io.PrintStream;
 import java.util.List;
@@ -234,10 +235,18 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
         }
 
         if (arguments.languageVersion != null) {
-            configuration.put(
-                    CommonConfigurationKeys.LANGUAGE_FEATURE_SETTINGS,
-                    LanguageFeatureSettings.fromLanguageVersion(arguments.languageVersion)
-            );
+            LanguageFeatureSettings languageFeatureSettings = LanguageFeatureSettings.fromLanguageVersion(arguments.languageVersion);
+            if (languageFeatureSettings != null) {
+                configuration.put(CommonConfigurationKeys.LANGUAGE_FEATURE_SETTINGS, languageFeatureSettings);
+            }
+            else {
+                String message =
+                        "Unknown language version: " + arguments.languageVersion + "\n" +
+                        "Supported language versions: " + StringsKt.join(LanguageFeatureSettings.getAllLanguageVersions(), ", ");
+                configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(
+                        CompilerMessageSeverity.ERROR, message, CompilerMessageLocation.NO_LOCATION
+                );
+            }
         }
     }
 

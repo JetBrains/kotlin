@@ -62,8 +62,11 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
 
         if (IncrementalCompilation.isEnabled()) {
-            val incrementalCompilationComponents = services.get(IncrementalCompilationComponents::class.java)
-            configuration.put(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS, incrementalCompilationComponents)
+            val components = services.get(IncrementalCompilationComponents::class.java)
+            @Suppress("SENSELESS_COMPARISON")
+            if (components != null) {
+                configuration.put(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS, components)
+            }
         }
 
         setupCommonArgumentsAndServices(configuration, arguments, services)
@@ -278,10 +281,11 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             configuration.put(JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS, arguments.noParamAssertions)
             configuration.put(JVMConfigurationKeys.DISABLE_INLINE, arguments.noInline)
             configuration.put(JVMConfigurationKeys.DISABLE_OPTIMIZATION, arguments.noOptimize)
-            configuration.put(JVMConfigurationKeys.DECLARATIONS_JSON_PATH, arguments.declarationsOutputPath)
-            configuration.put(JVMConfigurationKeys.INHERIT_MULTIFILE_PARTS, arguments.inheritMultifileParts);
-            configuration.put(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE, arguments.allowKotlinPackage);
-            configuration.put(CLIConfigurationKeys.REPORT_PERF, arguments.reportPerf);
+            configuration.put(JVMConfigurationKeys.INHERIT_MULTIFILE_PARTS, arguments.inheritMultifileParts)
+            configuration.put(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE, arguments.allowKotlinPackage)
+            configuration.put(CLIConfigurationKeys.REPORT_PERF, arguments.reportPerf)
+
+            arguments.declarationsOutputPath?.let { configuration.put(JVMConfigurationKeys.DECLARATIONS_JSON_PATH, it) }
         }
 
         private fun getClasspath(paths: KotlinPaths, arguments: K2JVMCompilerArguments): List<File> {
