@@ -19,12 +19,9 @@ package org.jetbrains.kotlin.idea.refactoring.rename
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
-import com.intellij.refactoring.RefactoringBundle
-import com.intellij.refactoring.util.CommonRefactoringUtil
 import org.jetbrains.kotlin.asJava.KtLightClass
 import org.jetbrains.kotlin.asJava.KtLightClassForExplicitDeclaration
 import org.jetbrains.kotlin.asJava.KtLightClassForFacade
-import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -38,12 +35,10 @@ class RenameKotlinClassProcessor : RenameKotlinPsiProcessor() {
         return element is KtClassOrObject || element is KtLightClass || element is KtConstructor<*>
     }
 
-    override fun substituteElementToRename(element: PsiElement, editor: Editor?): PsiElement? {
-        return getKtClassOrObject(element, true, editor)
-    }
+    override fun substituteElementToRename(element: PsiElement, editor: Editor?) = getClassOrObject(element)
 
     override fun prepareRenaming(element: PsiElement, newName: String, allRenames: MutableMap<PsiElement, String>) {
-        val classOrObject = getKtClassOrObject(element, false, null) ?: return
+        val classOrObject = getClassOrObject(element) as? KtClassOrObject ?: return
 
         val file = classOrObject.getContainingKtFile()
 
@@ -71,26 +66,12 @@ class RenameKotlinClassProcessor : RenameKotlinPsiProcessor() {
         return bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, element] != null
     }
 
-    private fun getKtClassOrObject(element: PsiElement?, showErrors: Boolean, editor: Editor?): KtClassOrObject? = when (element) {
+    private fun getClassOrObject(element: PsiElement?): PsiElement? = when (element) {
         is KtLightClass ->
-            if (element is KtLightClassForExplicitDeclaration) {
-                element.kotlinOrigin
-            }
-            else if (element is KtLightClassForFacade) {
-                if (showErrors) {
-                    CommonRefactoringUtil.showErrorHint(
-                            element.project, editor,
-                            KotlinBundle.message("rename.kotlin.package.class.error"),
-                            RefactoringBundle.message("rename.title"),
-                            null)
-                }
-
-                // Cancel rename
-                null
-            }
-            else {
-                assert(false) { "Should not be suggested to rename element of type " + element.javaClass + " " + element }
-                null
+            when (element) {
+                is KtLightClassForExplicitDeclaration -> element.kotlinOrigin
+                is KtLightClassForFacade -> element
+                else -> throw AssertionError("Should not be suggested to rename element of type " + element.javaClass + " " + element)
             }
 
         is KtConstructor<*> ->
