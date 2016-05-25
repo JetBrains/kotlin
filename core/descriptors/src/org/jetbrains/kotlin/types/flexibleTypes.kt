@@ -16,26 +16,27 @@
 
 package org.jetbrains.kotlin.types
 
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
 interface FlexibleTypeFactory {
     val id: String
 
-    fun create(lowerBound: KotlinType, upperBound: KotlinType): KotlinType
+    fun create(lowerBound: SimpleType, upperBound: SimpleType): KotlinType
 
     object ThrowException : FlexibleTypeFactory {
         private fun error(): Nothing = throw IllegalArgumentException("This factory should not be used.")
         override val id: String
             get() = error()
 
-        override fun create(lowerBound: KotlinType, upperBound: KotlinType): KotlinType = error()
+        override fun create(lowerBound: SimpleType, upperBound: SimpleType): KotlinType = error()
     }
 }
 
 interface Flexibility : TypeCapability, SubtypingRepresentatives {
     // lowerBound is a subtype of upperBound
-    val lowerBound: KotlinType
-    val upperBound: KotlinType
+    val lowerBound: SimpleType
+    val upperBound: SimpleType
 
     val factory: FlexibleTypeFactory
 
@@ -93,12 +94,12 @@ fun Collection<TypeProjection>.singleBestRepresentative(): TypeProjection? {
     return TypeProjectionImpl(projectionKinds.single(), bestType)
 }
 
-fun KotlinType.lowerIfFlexible(): KotlinType = if (this.isFlexible()) this.flexibility().lowerBound else this
-fun KotlinType.upperIfFlexible(): KotlinType = if (this.isFlexible()) this.flexibility().upperBound else this
+fun KotlinType.lowerIfFlexible(): SimpleType = (if (this.isFlexible()) this.flexibility().lowerBound else this).asSimpleType()
+fun KotlinType.upperIfFlexible(): SimpleType = (if (this.isFlexible()) this.flexibility().upperBound else this).asSimpleType()
 
 abstract class DelegatingFlexibleType protected constructor(
-        override val lowerBound: KotlinType,
-        override val upperBound: KotlinType,
+        override val lowerBound: SimpleType,
+        override val upperBound: SimpleType,
         override val factory: FlexibleTypeFactory
 ) : DelegatingType(), Flexibility {
     companion object {
@@ -137,8 +138,7 @@ abstract class DelegatingFlexibleType protected constructor(
     }
 
     override fun makeNullableAsSpecified(nullable: Boolean): KotlinType {
-        return factory.create(TypeUtils.makeNullableAsSpecified(lowerBound, nullable),
-                              TypeUtils.makeNullableAsSpecified(upperBound, nullable))
+        return KotlinTypeFactory.flexibleType(TypeUtils.makeNullableAsSpecified(lowerBound, nullable), TypeUtils.makeNullableAsSpecified(upperBound, nullable))
     }
 
     final override fun getDelegate(): KotlinType {
@@ -147,4 +147,38 @@ abstract class DelegatingFlexibleType protected constructor(
     }
 
     override fun toString() = "('$lowerBound'..'$upperBound')"
+}
+
+class FlexibleTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) :
+        DelegatingFlexibleType(lowerBound, upperBound, FlexibleJavaClassifierTypeFactory), CustomTypeVariable {
+
+    override val delegateType: KotlinType get() = lowerBound
+
+    override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>): T? {
+        @Suppress("UNCHECKED_CAST")
+        if (capabilityClass == CustomTypeVariable::class.java) return this as T
+
+        return super.getCapability(capabilityClass)
+    }
+
+    override val isTypeVariable: Boolean get() = lowerBound.constructor.declarationDescriptor is TypeParameterDescriptor
+                                                 && lowerBound.constructor == upperBound.constructor
+
+    override fun substitutionResult(replacement: KotlinType): KotlinType {
+        if (replacement.isFlexible()) {
+            return replacement
+        }
+        else {
+            val simpleType = replacement.asSimpleType()
+            return KotlinTypeFactory.flexibleType(simpleType, TypeUtils.makeNullable(simpleType))
+        }
+    }
+}
+
+// TODO: move Factory to descriptor.loader.java
+object FlexibleJavaClassifierTypeFactory : FlexibleTypeFactory {
+    override fun create(lowerBound: SimpleType, upperBound: SimpleType): KotlinType
+            = KotlinTypeFactory.flexibleType(lowerBound, upperBound)
+
+    override val id: String get() = "kotlin.jvm.PlatformType"
 }

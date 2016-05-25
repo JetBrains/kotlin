@@ -22,10 +22,10 @@ import org.jetbrains.kotlin.descriptors.impl.AbstractLazyTypeParameterDescriptor
 import org.jetbrains.kotlin.load.java.components.TypeUsage
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaAnnotations
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
-import org.jetbrains.kotlin.load.java.lazy.types.LazyJavaTypeResolver
 import org.jetbrains.kotlin.load.java.lazy.types.toAttributes
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.KotlinTypeFactory
 import org.jetbrains.kotlin.types.Variance
 
 class LazyJavaTypeParameterDescriptor(
@@ -47,7 +47,7 @@ class LazyJavaTypeParameterDescriptor(
     override fun resolveUpperBounds(): List<KotlinType> {
         val bounds = javaTypeParameter.upperBounds
         if (bounds.isEmpty()) {
-            return listOf(LazyJavaTypeResolver.FlexibleJavaClassifierTypeFactory.create(
+            return listOf(KotlinTypeFactory.flexibleType(
                     c.module.builtIns.anyType,
                     c.module.builtIns.nullableAnyType
             ))

@@ -133,6 +133,10 @@ public class TypeSubstitutor {
 
         // The type is within the substitution range, i.e. T or T?
         KotlinType type = originalProjection.getType();
+        if (DynamicTypesKt.isDynamic(type)) {
+            return originalProjection; // todo investigate
+        }
+
         TypeProjection replacement = substitution.get(type);
         Variance originalProjectionKind = originalProjection.getProjectionKind();
         if (replacement == null && FlexibleTypesKt.isFlexible(type) && !TypeCapabilitiesKt.isCustomTypeVariable(type)) {
@@ -147,8 +151,8 @@ public class TypeSubstitutor {
                    originalProjectionKind == Variance.INVARIANT || originalProjectionKind == substitutedProjectionKind :
                     "Unexpected substituted projection kind: " + substitutedProjectionKind + "; original: " + originalProjectionKind;
 
-            KotlinType substitutedFlexibleType = flexibility.getFactory().create(
-                    substitutedLower.getType(), substitutedUpper.getType());
+            KotlinType substitutedFlexibleType = KotlinTypeFactory.flexibleType(
+                    KotlinTypeKt.asSimpleType(substitutedLower.getType()), KotlinTypeKt.asSimpleType(substitutedUpper.getType()));
             return new TypeProjectionImpl(substitutedProjectionKind, substitutedFlexibleType);
         }
 

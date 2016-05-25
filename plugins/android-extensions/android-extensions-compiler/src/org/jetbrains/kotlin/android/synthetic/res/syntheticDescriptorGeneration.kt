@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.KotlinTypeFactory
 import org.jetbrains.kotlin.types.StarProjectionImpl
+import org.jetbrains.kotlin.types.asSimpleType
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
 private class XmlSourceElement(override val psi: PsiElement) : PsiSourceElement
@@ -109,7 +110,7 @@ private fun genProperty(
         override val resourceId = id
     }
 
-    val flexibleType = LazyJavaTypeResolver.FlexibleJavaClassifierTypeFactory.create(type, type.makeNullable())
+    val flexibleType = KotlinTypeFactory.flexibleType(type.asSimpleType(), type.makeNullable().asSimpleType())
     property.setType(
             flexibleType,
             emptyList<TypeParameterDescriptor>(),

@@ -70,7 +70,7 @@ private fun KotlinType.enhancePossiblyFlexible(qualifiers: (Int) -> JavaTypeQual
             val wereChanges = lowerResult.wereChanges || upperResult.wereChanges
             Result(
                 if (wereChanges)
-                    factory.create(lowerResult.type, upperResult.type)
+                    KotlinTypeFactory.flexibleType(lowerResult.type.asSimpleType(), upperResult.type.asSimpleType())
                 else
                     this@enhancePossiblyFlexible,
                 lowerResult.subtreeSize,
@@ -228,7 +228,7 @@ internal object NotNullTypeParameterTypeCapability : CustomTypeVariable {
 
         if (replacement.isFlexible()) {
             with(replacement.flexibility()) {
-                return factory.create(lowerBound.prepareReplacement(), upperBound.prepareReplacement())
+                return KotlinTypeFactory.flexibleType(lowerBound.prepareReplacement().asSimpleType(), upperBound.prepareReplacement().asSimpleType())
             }
         }
 

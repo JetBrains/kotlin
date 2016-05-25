@@ -158,6 +158,11 @@ public class TypeUtils {
     }
 
     @NotNull
+    public static SimpleType makeNullableIfNeeded(@NotNull SimpleType type, boolean nullable) {
+        return KotlinTypeKt.asSimpleType(makeNullableIfNeeded((KotlinType) type, nullable));
+    }
+
+    @NotNull
     public static KotlinType makeNullableIfNeeded(@NotNull KotlinType type, boolean nullable) {
         if (nullable) {
             return makeNullable(type);

@@ -91,7 +91,7 @@ internal object RawSubstitution : TypeSubstitution() {
             is ClassDescriptor -> {
                 val lower = type.lowerIfFlexible()
                 val upper = type.upperIfFlexible()
-                LazyJavaTypeResolver.FlexibleJavaClassifierTypeFactory.create(
+                KotlinTypeFactory.flexibleType(
                         eraseInflexibleBasedOnClassDescriptor(lower, declaration, lowerTypeAttr),
                         eraseInflexibleBasedOnClassDescriptor(upper, declaration, upperTypeAttr)
                 )
@@ -100,7 +100,7 @@ internal object RawSubstitution : TypeSubstitution() {
         }
     }
 
-    private fun eraseInflexibleBasedOnClassDescriptor(type: KotlinType, declaration: ClassDescriptor, attr: JavaTypeAttributes): KotlinType {
+    private fun eraseInflexibleBasedOnClassDescriptor(type: KotlinType, declaration: ClassDescriptor, attr: JavaTypeAttributes): SimpleType {
         if (KotlinBuiltIns.isArray(type)) {
             val componentTypeProjection = type.arguments[0]
             val arguments = listOf(

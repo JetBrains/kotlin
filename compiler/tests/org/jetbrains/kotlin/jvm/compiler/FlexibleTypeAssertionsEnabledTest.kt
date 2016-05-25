@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.jvm.compiler
 
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
-import org.jetbrains.kotlin.load.java.lazy.types.LazyJavaTypeResolver
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironmentManagement
+import org.jetbrains.kotlin.types.KotlinTypeFactory
 
 class FlexibleTypeAssertionsEnabledTest : KotlinTestWithEnvironmentManagement() {
 
@@ -26,8 +26,7 @@ class FlexibleTypeAssertionsEnabledTest : KotlinTestWithEnvironmentManagement() 
         val builtIns = DefaultBuiltIns.Instance
 
         try {
-            LazyJavaTypeResolver.FlexibleJavaClassifierTypeFactory.create(
-                    builtIns.intType, builtIns.stringType).arguments
+            KotlinTypeFactory.flexibleType(builtIns.intType, builtIns.stringType).arguments
         } catch (e: AssertionError) {
             assertEquals("Lower bound Int of a flexible type must be a subtype of the upper bound String", e.message)
             return

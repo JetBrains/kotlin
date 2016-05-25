@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value
 import org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value.Type
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
@@ -143,7 +144,7 @@ class AnnotationDeserializer(private val module: ModuleDescriptor, private val n
         return factory.createErrorValue("Unresolved enum entry: $enumClassId.$enumEntryName")
     }
 
-    private fun resolveArrayElementType(value: Value, nameResolver: NameResolver): KotlinType =
+    private fun resolveArrayElementType(value: Value, nameResolver: NameResolver): SimpleType =
             with(builtIns) {
                 when (value.type) {
                     Type.BYTE -> getByteType()
