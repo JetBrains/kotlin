@@ -1,1 +1,1 @@
-Usage in import 2 import Imported as Alias
+Usage in import (2: 8) import Imported as Alias
