@@ -3879,6 +3879,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("tryCatchLambda.kt")
+            public void testTryCatchLambda() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/tryCatchLambda.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("wrongHandleResult.kt")
             public void testWrongHandleResult() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/wrongHandleResult.kt");

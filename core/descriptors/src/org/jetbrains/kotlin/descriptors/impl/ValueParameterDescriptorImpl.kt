@@ -58,10 +58,9 @@ class ValueParameterDescriptorImpl(
     override fun isVar() = false
 
     override fun getCompileTimeInitializer() = null
-
-    override fun copy(newOwner: CallableDescriptor, newName: Name): ValueParameterDescriptor {
+    override fun copy(newOwner: CallableDescriptor, newName: Name, newIndex: Int): ValueParameterDescriptor {
         return ValueParameterDescriptorImpl(
-                newOwner, null, index, annotations, newName, type, declaresDefaultValue(),
+                newOwner, null, newIndex, annotations, newName, type, declaresDefaultValue(),
                 isCrossinline, isNoinline, isCoroutine, varargElementType, SourceElement.NO_SOURCE
         )
     }

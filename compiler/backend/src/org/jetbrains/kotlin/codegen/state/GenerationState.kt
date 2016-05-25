@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.codegen.`when`.MappingsClassesForWhenByEnum
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.context.CodegenContext
 import org.jetbrains.kotlin.codegen.context.RootContext
+import org.jetbrains.kotlin.codegen.coroutines.CoroutineTransformerClassBuilderFactory
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.inline.InlineCache
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
@@ -134,7 +135,7 @@ class GenerationState @JvmOverloads constructor(
     val inlineCycleReporter: InlineCycleReporter = InlineCycleReporter(diagnostics)
     val mappingsClassesForWhenByEnum: MappingsClassesForWhenByEnum = MappingsClassesForWhenByEnum(this)
     val reflectionTypes: ReflectionTypes = ReflectionTypes(module)
-    val jvmRuntimeTypes: JvmRuntimeTypes = JvmRuntimeTypes()
+    val jvmRuntimeTypes: JvmRuntimeTypes = JvmRuntimeTypes(module)
     val factory: ClassFileFactory
     private lateinit var duplicateSignatureFactory: BuilderFactoryForDuplicateSignatureDiagnostics
 
@@ -160,6 +161,7 @@ class GenerationState @JvmOverloads constructor(
         this.interceptedBuilderFactory = builderFactory
                 .wrapWith(
                     { OptimizationClassBuilderFactory(it, configuration.get(JVMConfigurationKeys.DISABLE_OPTIMIZATION, false)) },
+                    ::CoroutineTransformerClassBuilderFactory,
                     { BuilderFactoryForDuplicateSignatureDiagnostics(
                             it, this.bindingContext, diagnostics, fileClassesProvider, incrementalCacheForThisTarget, this.moduleName
                       ).apply { duplicateSignatureFactory = this } },

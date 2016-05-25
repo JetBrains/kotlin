@@ -36,7 +36,7 @@ public abstract class MethodTransformer {
     }
 
     @NotNull
-    protected static <V extends Value> Frame<V>[] analyze(
+    public static <V extends Value> Frame<V>[] analyze(
             @NotNull String internalClassName,
             @NotNull MethodNode node,
             @NotNull Interpreter<V> interpreter

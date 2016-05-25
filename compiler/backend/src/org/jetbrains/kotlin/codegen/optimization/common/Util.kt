@@ -42,6 +42,8 @@ class InsnSequence(val from: AbstractInsnNode, val to: AbstractInsnNode?) : Sequ
     }
 }
 
+fun InsnList.asSequence() = InsnSequence(this)
+
 fun MethodNode.prepareForEmitting() {
     tryCatchBlocks = tryCatchBlocks.filter { tcb ->
         InsnSequence(tcb.start, tcb.end).any { insn ->

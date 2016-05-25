@@ -17,20 +17,21 @@
 package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.builtins.DefaultBuiltIns;
+import org.jetbrains.kotlin.coroutines.CoroutineUtilKt;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor;
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.FunctionTypeResolveUtilsKt;
-import org.jetbrains.kotlin.resolve.TargetPlatformKt;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
-import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.TypeConstructorSubstitution;
+import org.jetbrains.kotlin.types.TypeProjectionImpl;
+import org.jetbrains.kotlin.types.Variance;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
 
 import java.util.*;
@@ -42,13 +43,9 @@ public class JvmRuntimeTypes {
     private final List<ClassDescriptor> mutablePropertyReferences;
     private final ClassDescriptor localVariableReference;
     private final ClassDescriptor mutableLocalVariableReference;
+    private final KotlinType defaultContinuationSupertype;
 
-    public JvmRuntimeTypes() {
-        ModuleDescriptorImpl module = TargetPlatformKt.createModule(
-                JvmPlatform.INSTANCE,
-                Name.special("<jvm functions impl>"),
-                LockBasedStorageManager.NO_LOCKS,
-                DefaultBuiltIns.getInstance());
+    public JvmRuntimeTypes(@NotNull ModuleDescriptor module) {
         PackageFragmentDescriptor kotlinJvmInternal = new MutablePackageFragmentDescriptor(module, new FqName("kotlin.jvm.internal"));
 
         this.lambda = createClass(kotlinJvmInternal, "Lambda");
@@ -62,6 +59,27 @@ public class JvmRuntimeTypes {
             propertyReferences.add(createClass(kotlinJvmInternal, "PropertyReference" + i));
             mutablePropertyReferences.add(createClass(kotlinJvmInternal, "MutablePropertyReference" + i));
         }
+
+        defaultContinuationSupertype = createNullableAnyContinuation(module);
+    }
+
+    /**
+     * @param module
+     * @return Continuation<Any?> type
+     */
+    @NotNull
+    private static KotlinType createNullableAnyContinuation(@NotNull ModuleDescriptor module) {
+        ClassDescriptor classDescriptor =
+                DescriptorUtilsKt.resolveTopLevelClass(
+                        module, DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME, NoLookupLocation.FROM_BACKEND);
+
+        assert classDescriptor != null : DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME + " was not found in built-ins";
+
+        //noinspection ConstantConditions
+        return TypeConstructorSubstitution
+                .createByParametersMap(Collections.singletonMap(classDescriptor.getDeclaredTypeParameters().get(0),
+                                                                new TypeProjectionImpl(module.getBuiltIns().getNullableAnyType())))
+                .buildSubstitutor().substitute(classDescriptor.getDefaultType(), Variance.INVARIANT);
     }
 
     @NotNull
@@ -90,6 +108,13 @@ public class JvmRuntimeTypes {
                 ExpressionTypingUtils.getValueParametersTypes(descriptor.getValueParameters()),
                 descriptor.getReturnType()
         );
+
+        KotlinType coroutineControllerType = CoroutineUtilKt.getControllerTypeIfCoroutine(descriptor);
+
+        if (coroutineControllerType != null) {
+            return Arrays.asList(
+                    lambda.getDefaultType(), functionType, /*coroutineType,*/ defaultContinuationSupertype);
+        }
 
         return Arrays.asList(lambda.getDefaultType(), functionType);
     }

@@ -20,11 +20,16 @@ import org.jetbrains.kotlin.codegen.optimization.fixStack.FixStackMethodTransfor
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
+val SKIP_MANDATORY_TRANSFORMATIONS_ANNOTATION_DESC = "Lkotlin/SkipMandatoryTransformations;"
+
 class MandatoryMethodTransformer : MethodTransformer() {
     private val labelNormalization = LabelNormalizationMethodTransformer()
     private val fixStack = FixStackMethodTransformer()
 
     override fun transform(internalClassName: String, methodNode: MethodNode) {
+        // Mandatory transformations have already been applied
+        if (methodNode.visibleAnnotations?.removeAll { it.desc == SKIP_MANDATORY_TRANSFORMATIONS_ANNOTATION_DESC } == true) return
+
         labelNormalization.transform(internalClassName, methodNode)
         fixStack.transform(internalClassName, methodNode)
     }

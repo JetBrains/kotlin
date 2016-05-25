@@ -42,7 +42,7 @@ interface ValueParameterDescriptor : VariableDescriptor, ParameterDescriptor {
 
     override fun substitute(substitutor: TypeSubstitutor): ValueParameterDescriptor
 
-    fun copy(newOwner: CallableDescriptor, newName: Name): ValueParameterDescriptor
+    fun copy(newOwner: CallableDescriptor, newName: Name, newIndex: Int): ValueParameterDescriptor
 
     /**
      * Parameter p1 overrides p2 iff
