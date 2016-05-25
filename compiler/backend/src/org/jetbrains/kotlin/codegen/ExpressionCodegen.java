@@ -1665,10 +1665,20 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 tempVariables.put(argumentExpression, valueToReturn);
             }
 
+            // Currently only handleResult members are supported
+            ReceiverValue dispatchReceiver = resolvedCall.getDispatchReceiver();
+            assert dispatchReceiver != null : "Dispatch receiver is null for handleResult to " + resolvedCall.getResultingDescriptor();
+            assert dispatchReceiver instanceof ExtensionReceiver
+                    : "Argument for handleResult call to " + resolvedCall.getResultingDescriptor() +
+                      " should be a coroutine receiver parameter, but " + dispatchReceiver + " found";
+            ClassDescriptor coroutineClassDescriptor =
+                    bindingContext.get(CodegenBinding.CLASS_FOR_CALLABLE, ((ExtensionReceiver) dispatchReceiver).getDeclarationDescriptor());
+            assert coroutineClassDescriptor != null : "Coroutine class descriptor should not be null";
+
             // second argument for handleResult is always Continuation<T> ('this'-object in current implementation)
             tempVariables.put(
                     resolvedCall.getValueArgumentsByIndex().get(1).getArguments().get(0).getArgumentExpression(),
-                    StackValue.thisOrOuter(this, context.getThisDescriptor(), false, false));
+                    StackValue.thisOrOuter(this, coroutineClassDescriptor, false, false));
 
             return invokeFunction(resolvedCall, StackValue.none());
         }
@@ -1955,6 +1965,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
                 if (handleResultValue != null) {
                     handleResultValue.put(Type.VOID_TYPE, v);
+                    returnType = Type.VOID_TYPE;
                 }
                 else if (returnedExpression != null && valueToReturn != null) {
                     putStackValue(returnedExpression, returnType, valueToReturn);

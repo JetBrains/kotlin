@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicArrayConstructorsKt;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
+import org.jetbrains.kotlin.coroutines.CoroutineUtilKt;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
 import org.jetbrains.kotlin.name.ClassId;
@@ -385,7 +386,7 @@ public class InlineCodegen extends CallGenerator {
         InlineResult result = inliner.doInline(adapter, remapper, true, LabelOwner.SKIP_ALL);
         result.getReifiedTypeParametersUsages().mergeAll(reificationResult);
 
-        CallableMemberDescriptor descriptor = codegen.getContext().getContextDescriptor();
+        CallableMemberDescriptor descriptor = getLabelOwnerDescriptor(codegen.getContext());
         final Set<String> labels = getDeclarationLabels(DescriptorToSourceUtils.descriptorToDeclaration(descriptor), descriptor);
         LabelOwner labelOwner = new LabelOwner() {
             @Override
@@ -408,6 +409,17 @@ public class InlineCodegen extends CallGenerator {
         defaultSourceMapper.setCallSiteMarker(null);
 
         return result;
+    }
+
+    @NotNull
+    private static CallableMemberDescriptor getLabelOwnerDescriptor(@NotNull MethodContext context) {
+        if (context.getParentContext() instanceof ClosureContext &&
+            ((ClosureContext) context.getParentContext()).getCoroutineDescriptor() != null) {
+            //noinspection ConstantConditions
+            return ((ClosureContext) context.getParentContext()).getCoroutineDescriptor();
+        }
+
+        return context.getContextDescriptor();
     }
 
     private static void removeStaticInitializationTrigger(@NotNull MethodNode methodNode) {

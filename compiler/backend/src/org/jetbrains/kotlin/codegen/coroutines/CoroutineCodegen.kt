@@ -180,7 +180,8 @@ class CoroutineCodegen(
             return CoroutineCodegen(
                     state,
                     declaration,
-                    expressionCodegen.context.intoClosure(descriptorWithContinuationReturnType, expressionCodegen, state.typeMapper),
+                    expressionCodegen.context.intoCoroutineClosure(
+                            descriptorWithContinuationReturnType, originalCoroutineLambdaDescriptor, expressionCodegen, state.typeMapper),
                     FunctionGenerationStrategy.FunctionDefault(state, declaration), expressionCodegen.parentCodegen, classBuilder,
                     continuationSupertype,
                     originalCoroutineLambdaDescriptor.controllerTypeIfCoroutine!!)
