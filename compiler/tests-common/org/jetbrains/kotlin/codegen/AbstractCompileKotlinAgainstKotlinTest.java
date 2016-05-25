@@ -108,12 +108,14 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
 
     @NotNull
     private ClassFileFactory compileB(@NotNull String fileName, @NotNull String content, List<TestFile> files) throws IOException {
-        CompilerConfiguration configurationWithADirInClasspath = KotlinTestUtils
-                .compilerConfigurationForTests(ConfigurationKind.ALL, getJdkKind(files), KotlinTestUtils.getAnnotationsJar(), aDir);
+        CompilerConfiguration configurationWithADirInClasspath = KotlinTestUtils.newConfiguration(
+                ConfigurationKind.ALL, getJdkKind(files), KotlinTestUtils.getAnnotationsJar(), aDir
+        );
 
         Disposable compileDisposable = createDisposable("compileB");
         KotlinCoreEnvironment environment = KotlinCoreEnvironment.createForTests(
-                compileDisposable, configurationWithADirInClasspath, EnvironmentConfigFiles.JVM_CONFIG_FILES);
+                compileDisposable, configurationWithADirInClasspath, EnvironmentConfigFiles.JVM_CONFIG_FILES
+        );
 
         return compileKotlin(fileName, content, bDir, environment, compileDisposable);
     }

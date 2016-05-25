@@ -77,7 +77,9 @@ abstract class AbstractAnnotationProcessorBoxTest : KotlinTestWithEnvironment() 
     }
 
     override fun createEnvironment(): KotlinCoreEnvironment {
-        val configuration = KotlinTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, listOf(KotlinTestUtils.getAnnotationsJar()), listOf(javaSourceRoot))
+        val configuration = KotlinTestUtils.newConfiguration(
+                ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, listOf(KotlinTestUtils.getAnnotationsJar()), listOf(javaSourceRoot)
+        )
         return KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     }
 

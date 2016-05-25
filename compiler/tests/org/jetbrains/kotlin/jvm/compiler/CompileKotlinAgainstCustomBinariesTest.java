@@ -123,8 +123,8 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         extras.addAll(extraClassPath);
         extras.add(KotlinTestUtils.getAnnotationsJar());
 
-        CompilerConfiguration configuration = KotlinTestUtils.compilerConfigurationForTests(
-                ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, extras.toArray(new File[extras.size()]));
+        CompilerConfiguration configuration =
+                KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, extras.toArray(new File[extras.size()]));
         return KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
     }
 

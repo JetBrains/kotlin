@@ -80,8 +80,8 @@ abstract class AbstractReplInterpreterTest : KtUsefulTestCase() {
     }
 
     protected fun doTest(path: String) {
-        val configuration = KotlinTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK)
-        val repl = ReplInterpreter(testRootDisposable!!, configuration, false, null)
+        val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK)
+        val repl = ReplInterpreter(testRootDisposable, configuration, false, null)
 
         for ((code, expected) in loadLines(File(path))) {
             val lineResult = repl.eval(code)
