@@ -157,7 +157,7 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
             ConfigurationKind configurationKind = isFullJdkAndRuntime ? ConfigurationKind.ALL : ConfigurationKind.JDK_ONLY;
             TestJdkKind testJdkKind = isFullJdkAndRuntime ? TestJdkKind.FULL_JDK : TestJdkKind.MOCK_JDK;
             CompilerConfiguration configuration =
-                    KotlinTestUtils.compilerConfigurationForTests(configurationKind, testJdkKind, KotlinTestUtils.getAnnotationsJar());
+                    KotlinTestUtils.newConfiguration(configurationKind, testJdkKind, KotlinTestUtils.getAnnotationsJar());
             configuration.put(JVMConfigurationKeys.MODULE_NAME, "android-module-" + MODULE_INDEX++);
             if (inheritMultifileParts) {
                 configuration.put(JVMConfigurationKeys.INHERIT_MULTIFILE_PARTS, true);

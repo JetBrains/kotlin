@@ -50,7 +50,7 @@ public class StdlibTest extends KotlinTestWithEnvironment {
 
     @Override
     protected KotlinCoreEnvironment createEnvironment() {
-        CompilerConfiguration configuration = KotlinTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.FULL_JDK);
+        CompilerConfiguration configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.FULL_JDK);
 
         File junitJar = new File("libraries/lib/junit-4.11.jar");
         assertTrue(junitJar.exists());

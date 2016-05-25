@@ -52,7 +52,7 @@ abstract class AbstractLocalClassProtoTest : TestCaseWithTmpdir() {
         val clazz = classLoader.loadClass(classFile.toRelativeString(tmpdir).substringBeforeLast(".class").replace('/', '.').replace('\\', '.'))
         assertHasAnnotationData(clazz)
 
-        val configuration = KotlinTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, tmpdir)
+        val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, tmpdir)
         val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
         val moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(environment.project, configuration)
         val providerFactory = FileBasedDeclarationProviderFactory(moduleContext.storageManager, emptyList())

@@ -40,7 +40,7 @@ abstract class AbstractDumpDeclarationsTest : CodegenTestCase() {
         val dumpToFile = KotlinTestUtils.tmpDirForTest(this).resolve(this.name + ".json")
 
         val configuration =
-                KotlinTestUtils.compilerConfigurationForTests(configurationKind, TestJdkKind.MOCK_JDK, KotlinTestUtils.getAnnotationsJar())
+                KotlinTestUtils.newConfiguration(configurationKind, TestJdkKind.MOCK_JDK, KotlinTestUtils.getAnnotationsJar())
         configuration.put(JVMConfigurationKeys.DECLARATIONS_JSON_PATH, dumpToFile.path)
 
         myEnvironment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)

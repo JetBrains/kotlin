@@ -305,9 +305,8 @@ public class KotlinTestUtils {
             @NotNull TestJdkKind jdkKind
     ) {
         return KotlinCoreEnvironment.createForTests(
-                disposable,
-                compilerConfigurationForTests(configurationKind, jdkKind, getAnnotationsJar()),
-                EnvironmentConfigFiles.JVM_CONFIG_FILES);
+                disposable, newConfiguration(configurationKind, jdkKind, getAnnotationsJar()), EnvironmentConfigFiles.JVM_CONFIG_FILES
+        );
     }
 
     @NotNull
@@ -426,16 +425,16 @@ public class KotlinTestUtils {
     }
 
     @NotNull
-    public static CompilerConfiguration compilerConfigurationForTests(
+    public static CompilerConfiguration newConfiguration(
             @NotNull ConfigurationKind configurationKind,
             @NotNull TestJdkKind jdkKind,
             @NotNull File... extraClasspath
     ) {
-        return compilerConfigurationForTests(configurationKind, jdkKind, Arrays.asList(extraClasspath), Collections.<File>emptyList());
+        return newConfiguration(configurationKind, jdkKind, Arrays.asList(extraClasspath), Collections.<File>emptyList());
     }
 
     @NotNull
-    public static CompilerConfiguration compilerConfigurationForTests(
+    public static CompilerConfiguration newConfiguration(
             @NotNull ConfigurationKind configurationKind,
             @NotNull TestJdkKind jdkKind,
             @NotNull List<File> classpath,

@@ -83,7 +83,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
             @NotNull TestJdkKind jdkKind,
             @NotNull List<String> javacOptions
     ) {
-        CompilerConfiguration configuration = createCompilerConfigurationForTests(
+        CompilerConfiguration configuration = createConfiguration(
                 configurationKind, jdkKind,
                 Collections.singletonList(getAnnotationsJar()),
                 ArraysKt.filterNotNull(new File[] {javaSourceDir}),

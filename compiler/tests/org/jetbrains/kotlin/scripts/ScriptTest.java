@@ -76,8 +76,7 @@ public class ScriptTest {
 
         Disposable rootDisposable = Disposer.newDisposable();
         try {
-            CompilerConfiguration configuration =
-                    KotlinTestUtils.compilerConfigurationForTests(ConfigurationKind.JDK_ONLY, TestJdkKind.FULL_JDK);
+            CompilerConfiguration configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.JDK_ONLY, TestJdkKind.FULL_JDK);
             configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector);
             ContentRootsKt.addKotlinSourceRoot(configuration, "compiler/testData/script/" + scriptPath);
             configuration.add(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY, scriptDefinition);

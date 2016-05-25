@@ -84,12 +84,8 @@ public class LoadDescriptorUtil {
         else {
             javaSourceRoots.add(javaRoot);
         }
-        CompilerConfiguration configuration = KotlinTestUtils.compilerConfigurationForTests(
-                configurationKind,
-                testJdkKind,
-                javaBinaryRoots,
-                javaSourceRoots
-        );
+        CompilerConfiguration configuration =
+                KotlinTestUtils.newConfiguration(configurationKind, testJdkKind, javaBinaryRoots, javaSourceRoots);
         KotlinCoreEnvironment environment =
                 KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
 
