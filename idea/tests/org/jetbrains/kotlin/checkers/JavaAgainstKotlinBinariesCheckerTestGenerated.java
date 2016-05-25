@@ -77,6 +77,18 @@ public class JavaAgainstKotlinBinariesCheckerTestGenerated extends AbstractJavaA
         doTest(fileName);
     }
 
+    @TestMetadata("InferenceReturnType_1_6.kt")
+    public void testInferenceReturnType_1_6() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/InferenceReturnType_1_6.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("InferenceReturnType_1_8.kt")
+    public void testInferenceReturnType_1_8() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/InferenceReturnType_1_8.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("InterfaceDefaultImpls.kt")
     public void testInterfaceDefaultImpls() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/InterfaceDefaultImpls.kt");
