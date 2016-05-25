@@ -241,34 +241,32 @@ private fun ResolutionScope.getContributedVariablesAndObjects(name: Name, locati
     return getContributedVariables(name, location) + listOfNotNull(objectDescriptor)
 }
 
-
-private fun getFakeDescriptorForObject(classifier: ClassifierDescriptor?): FakeCallableDescriptorForObject? {
-    return when (classifier) {
-        is TypeAliasDescriptor ->
-            getFakeDescriptorForObject(classifier.classDescriptor)
-        is ClassDescriptor ->
-            if (classifier.hasClassValueDescriptor)
-                FakeCallableDescriptorForObject(classifier)
-            else
-                null
-        else -> null
-    }
-}
+private fun getFakeDescriptorForObject(classifier: ClassifierDescriptor?): FakeCallableDescriptorForObject? =
+        when (classifier) {
+            is TypeAliasDescriptor ->
+                getFakeDescriptorForObject(classifier.classDescriptor)
+            is ClassDescriptor ->
+                if (classifier.hasClassValueDescriptor)
+                    FakeCallableDescriptorForObject(classifier)
+                else
+                    null
+            else -> null
+        }
 
 private fun getClassWithConstructors(classifier: ClassifierDescriptor?): ClassDescriptor? =
-        if (classifier !is ClassDescriptor || !classifier.canHaveCallableConstructors())
+        if (classifier !is ClassDescriptor || !classifier.canHaveCallableConstructors)
             null
         else
             classifier
 
-private fun ClassDescriptor.canHaveCallableConstructors() =
-        !ErrorUtils.isError(this) && !kind.isSingleton
+private val ClassDescriptor.canHaveCallableConstructors: Boolean
+    get() = !ErrorUtils.isError(this) && !kind.isSingleton
 
 private fun ClassifierDescriptor.getTypeAliasConstructors(inner: Boolean): Collection<ConstructorDescriptor> {
     if (this !is TypeAliasDescriptor) return emptyList()
 
     val classDescriptor = this.classDescriptor ?: return emptyList()
-    if (!classDescriptor.canHaveCallableConstructors()) return emptyList()
+    if (!classDescriptor.canHaveCallableConstructors) return emptyList()
 
     val substitutor = this.getTypeSubstitutorForUnderlyingClass() ?: throw AssertionError("classDescriptor should be non-null for $this")
 
