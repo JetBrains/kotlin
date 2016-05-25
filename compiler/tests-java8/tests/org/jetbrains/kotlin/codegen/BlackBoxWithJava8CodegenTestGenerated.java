@@ -35,6 +35,18 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/java8/box"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
+    @TestMetadata("async.kt")
+    public void testAsync() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/async.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("asyncException.kt")
+    public void testAsyncException() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/asyncException.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("defaultMethodCallFromInterface.kt")
     public void testDefaultMethodCallFromInterface() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/defaultMethodCallFromInterface.kt");

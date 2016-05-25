@@ -43,5 +43,5 @@ open class AbstractAccessorForFunctionDescriptor(
     }
 
     protected fun copyValueParameters(descriptor: FunctionDescriptor): List<ValueParameterDescriptor> =
-            descriptor.valueParameters.map { it.copy(this, it.name) }
+            descriptor.valueParameters.map { it.copy(this, it.name, it.index) }
 }

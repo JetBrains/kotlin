@@ -68,13 +68,13 @@ import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class ClosureCodegen extends MemberCodegen<KtElement> {
-    private final FunctionDescriptor funDescriptor;
+    protected final FunctionDescriptor funDescriptor;
     private final ClassDescriptor classDescriptor;
     private final SamType samType;
     private final KotlinType superClassType;
     private final List<KotlinType> superInterfaceTypes;
     private final FunctionDescriptor functionReferenceTarget;
-    private final FunctionGenerationStrategy strategy;
+    protected final FunctionGenerationStrategy strategy;
     private final CalculatedClosure closure;
     private final Type asmType;
     private final int visibilityFlag;
@@ -170,6 +170,32 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
 
     @Override
     protected void generateBody() {
+        generateBridges();
+        generateClosureBody();
+
+        this.constructor = generateConstructor();
+
+        if (isConst(closure)) {
+            generateConstInstance(asmType, asmType);
+        }
+
+        genClosureFields(closure, v, typeMapper);
+    }
+
+    protected void generateClosureBody() {
+        functionCodegen.generateMethod(JvmDeclarationOriginKt.OtherOrigin(element, funDescriptor), funDescriptor, strategy);
+
+
+        if (functionReferenceTarget != null) {
+            generateFunctionReferenceMethods(functionReferenceTarget);
+        }
+
+        functionCodegen.generateDefaultIfNeeded(
+                context.intoFunction(funDescriptor), funDescriptor, context.getContextKind(), DefaultParameterValueLoader.DEFAULT, null
+        );
+    }
+
+    private void generateBridges() {
         FunctionDescriptor erasedInterfaceFunction;
         if (samType == null) {
             erasedInterfaceFunction = getErasedInvokeFunction(funDescriptor);
@@ -182,8 +208,6 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
                 typeMapper.mapAsmMethod(erasedInterfaceFunction),
                 typeMapper.mapAsmMethod(funDescriptor)
         );
-
-        functionCodegen.generateMethod(JvmDeclarationOriginKt.OtherOrigin(element, funDescriptor), funDescriptor, strategy);
 
         //TODO: rewrite cause ugly hack
         if (samType != null) {
@@ -200,22 +224,6 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
             DescriptorUtilsKt.setSingleOverridden(descriptorForBridges, erasedInterfaceFunction);
             functionCodegen.generateBridges(descriptorForBridges);
         }
-
-        if (functionReferenceTarget != null) {
-            generateFunctionReferenceMethods(functionReferenceTarget);
-        }
-
-        functionCodegen.generateDefaultIfNeeded(
-                context.intoFunction(funDescriptor), funDescriptor, context.getContextKind(), DefaultParameterValueLoader.DEFAULT, null
-        );
-
-        this.constructor = generateConstructor();
-
-        if (isConst(closure)) {
-            generateConstInstance(asmType, asmType);
-        }
-
-        genClosureFields(closure, v, typeMapper);
     }
 
     @Override
