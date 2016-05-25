@@ -19,69 +19,74 @@ package org.jetbrains.kotlin.js.naming
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
 import org.jetbrains.kotlin.js.descriptorUtils.isEnumValueOfMethod
-import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
-import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isLibraryObject
-import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isNativeObject
+import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject
+import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
+import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 
-class FQNGenerator(private val participants: List<FQNPartipcipant> = listOf()) {
-    private val cache = mutableMapOf<DeclarationDescriptor, List<FQNPart>>()
+class FQNGenerator {
+    private val cache = mutableMapOf<DeclarationDescriptor, FQNPart>()
 
-    fun generate(descriptor: DeclarationDescriptor) = cache.getOrPut(descriptor) { generateCacheMiss(descriptor) }
+    fun generate(descriptor: DeclarationDescriptor) = cache.getOrPut(descriptor) { generateCacheMiss(descriptor.original) }
 
-    private fun generateCacheMiss(descriptor: DeclarationDescriptor): List<FQNPart> {
-        for (participant in participants) {
-            val result = participant.participate(descriptor, this)
-            if (result != null) {
-                return result
-            }
+    private fun generateCacheMiss(descriptor: DeclarationDescriptor): FQNPart {
+        if (isNativeObject(descriptor) && isCompanionObject(descriptor)) {
+            return generate(descriptor.containingDeclaration!!)
         }
 
         when (descriptor) {
-            is ModuleDescriptor -> return listOf(FQNPart(descriptor.name.asString(), FQNPartType.MODULE, descriptor))
+            is ModuleDescriptor -> return FQNPart(listOf(descriptor.name.asString()), true, descriptor, descriptor)
             is PackageFragmentDescriptor -> {
-                val result = generate(descriptor.containingDeclaration).toMutableList()
-                if (!descriptor.name.isSpecial) {
-                    result += descriptor.fqName.pathSegments().map { FQNPart(it.asString(), FQNPartType.PUBLIC, descriptor) }
+                return if (!descriptor.name.isSpecial) {
+                    FQNPart(descriptor.fqName.pathSegments().map { it.asString() }, true, descriptor,
+                            descriptor.containingDeclaration)
                 }
-                return result
+                else {
+                    generate(descriptor.containingDeclaration)
+                }
             }
-            is ConstructorDescriptor -> if (descriptor.isPrimary) return generate(descriptor.containingDeclaration)
-            is CallableMemberDescriptor ->
+            is FakeCallableDescriptorForObject -> return generate(descriptor.getReferencedDescriptor())
+            is ConstructorDescriptor -> {
+                if (descriptor.isPrimary || isNativeObject(descriptor)) {
+                    return generate(descriptor.containingDeclaration)
+                }
+            }
+            is CallableDescriptor ->
                 if (DescriptorUtils.isDescriptorWithLocalVisibility(descriptor)) {
                     val name = getMangledName(getSuggestedName(descriptor), descriptor)
-                    return listOf(FQNPart(name, FQNPartType.PRIVATE, descriptor))
+                    return FQNPart(listOf(name.first), false, descriptor, descriptor.containingDeclaration)
                 }
         }
 
         val (localName, shared, parent) = getLocalName(descriptor)
-        val localPart = FQNPart(localName, if (shared) FQNPartType.PUBLIC else FQNPartType.PRIVATE, descriptor)
-
-        val qualifier = if (parent != null) generate(parent) else listOf()
-        return qualifier + localPart
+        return FQNPart(listOf(localName), shared, descriptor, parent)
     }
 
     private fun getLocalName(descriptor: DeclarationDescriptor): LocalName {
+        if (descriptor.isDynamic()) {
+            return LocalName(descriptor.name.asString(), true, descriptor.containingDeclaration!!)
+        }
+
         val parts = mutableListOf<String>()
-        var current: DeclarationDescriptor? = descriptor
+        var current: DeclarationDescriptor = descriptor
         do {
-            current!!
             parts += getSuggestedName(current)
             var last = current
-            current = current.containingDeclaration
+            current = current.containingDeclaration!!
             if (last is ConstructorDescriptor && !last.isPrimary) {
                 last = current
-                parts[parts.lastIndex] = getSuggestedName(current!!) + "_init"
-                current = current.containingDeclaration
+                parts[parts.lastIndex] = getSuggestedName(current) + "_init"
+                current = current.containingDeclaration!!
             }
-        } while (current != null && DescriptorUtils.isDescriptorWithLocalVisibility(last) && current !is ClassDescriptor)
+        } while (DescriptorUtils.isDescriptorWithLocalVisibility(last) && current !is ClassDescriptor)
 
         parts.reverse()
-        return LocalName(getMangledName(parts.joinToString("$"), descriptor), needsStableMangling(descriptor), current)
+        val (id, shared) = getMangledName(parts.joinToString("$"), descriptor)
+        return LocalName(id, shared, current)
     }
 
-    private data class LocalName(val id: String, val shared: Boolean, val parent: DeclarationDescriptor?)
+    private data class LocalName(val id: String, val shared: Boolean, val parent: DeclarationDescriptor)
 
     private fun getSuggestedName(descriptor: DeclarationDescriptor): String {
         val name = descriptor.name
@@ -97,17 +102,49 @@ class FQNGenerator(private val participants: List<FQNPartipcipant> = listOf()) {
         }
     }
 
-    private fun getMangledName(baseName: String, descriptor: DeclarationDescriptor): String {
-        if (needsStableMangling(descriptor)) {
-            return if (descriptor is CallableMemberDescriptor) {
-                getStableMangledName(baseName, getArgumentTypesAsString(descriptor))
+    private fun getMangledName(baseName: String, descriptor: DeclarationDescriptor): Pair<String, Boolean> {
+        if (descriptor !is CallableDescriptor) {
+            if (isNativeObject(descriptor) || isLibraryObject(descriptor)) {
+                return Pair(getNameForAnnotatedObjectWithOverrides(descriptor) ?: descriptor.name.asString(), true)
             }
-            else {
-                baseName
+            return Pair(baseName, needsStableMangling(descriptor))
+        }
+
+        var resolvedDescriptor: CallableDescriptor = descriptor
+        var overriddenDescriptor: CallableDescriptor? = descriptor
+        while (overriddenDescriptor != null) {
+            resolvedDescriptor = overriddenDescriptor
+            if (isNativeObject(resolvedDescriptor) || isLibraryObject(resolvedDescriptor)) {
+                val explicitName = getNameForAnnotatedObjectWithOverrides(resolvedDescriptor)
+                if (explicitName != null) {
+                    return Pair(explicitName, true)
+                }
+            }
+            overriddenDescriptor = getOverriddenDescriptor(overriddenDescriptor)?.original
+        }
+
+        when {
+            isNativeObject(resolvedDescriptor) || isLibraryObject(resolvedDescriptor) -> {
+                return Pair(getNameForAnnotatedObjectWithOverrides(resolvedDescriptor) ?: resolvedDescriptor.name.asString(), true)
             }
         }
 
-        return baseName
+        return if (needsStableMangling(resolvedDescriptor)) {
+            Pair(getStableMangledName(baseName, getArgumentTypesAsString(resolvedDescriptor)), true)
+        }
+        else {
+            Pair(baseName, false)
+        }
+    }
+
+    private fun getOverriddenDescriptor(functionDescriptor: CallableDescriptor): CallableDescriptor? {
+        val overriddenDescriptors = functionDescriptor.overriddenDescriptors
+        if (overriddenDescriptors.isEmpty()) {
+            return null
+        }
+
+        //TODO: for now translator can't deal with multiple inheritance good enough
+        return overriddenDescriptors.iterator().next()
     }
 
     private fun getArgumentTypesAsString(descriptor: CallableDescriptor): String {
@@ -130,6 +167,7 @@ class FQNGenerator(private val participants: List<FQNPartipcipant> = listOf()) {
     }
 
     private fun needsStableMangling(descriptor: DeclarationDescriptor): Boolean {
+        if (DescriptorUtils.isDescriptorWithLocalVisibility(descriptor)) return false
         if (descriptor is ClassOrPackageFragmentDescriptor) return true
         if (descriptor !is CallableMemberDescriptor) return false
 
@@ -138,12 +176,12 @@ class FQNGenerator(private val participants: List<FQNPartipcipant> = listOf()) {
         if (DescriptorUtils.isOverride(descriptor)) return true
 
         val containingDeclaration = descriptor.containingDeclaration
+        if (isNativeObject(containingDeclaration) || isLibraryObject(containingDeclaration)) return true
 
         return when (containingDeclaration) {
             is PackageFragmentDescriptor -> descriptor.visibility.isPublicAPI
             is ClassDescriptor -> {
-                // Use stable mangling when it's inside an overridable declaration to avoid clashing names on inheritance.
-                if (!containingDeclaration.isFinalOrEnum) return true
+                if (descriptor.modality == Modality.OPEN || descriptor.modality == Modality.ABSTRACT) return true
 
                 // valueOf() is created in the library with a mangled name for every enum class
                 if (descriptor is FunctionDescriptor && descriptor.isEnumValueOfMethod()) return true
@@ -163,36 +201,6 @@ class FQNGenerator(private val participants: List<FQNPartipcipant> = listOf()) {
                     "descriptor: " + descriptor + ", containingDeclaration: " + containingDeclaration
                 }
                 false
-            }
-        }
-    }
-
-    object NativeParticipant : FQNPartipcipant {
-        override fun participate(descriptor: DeclarationDescriptor, generator: FQNGenerator): List<FQNPart>? {
-            return when {
-                isNativeObject(descriptor) && isCompanionObject(descriptor) -> {
-                    generator.generate(descriptor.containingDeclaration!!)
-                }
-                descriptor is PropertyAccessorDescriptor && isNativeObject(descriptor.correspondingProperty) -> {
-                    generator.generate(descriptor.correspondingProperty)
-                }
-                isNativeObject(descriptor) || isLibraryObject(descriptor) -> {
-                    if (descriptor is ConstructorDescriptor) {
-                        generator.generate(descriptor.containingDeclaration)
-                    }
-                    else {
-                        val name = AnnotationsUtils.getNameForAnnotatedObjectWithOverrides(descriptor)
-                        val qualifier = when {
-                            descriptor is CallableDescriptor && DescriptorUtils.isDescriptorWithLocalVisibility(descriptor) -> listOf()
-                            descriptor is ClassDescriptor && descriptor.containingDeclaration is PackageFragmentDescriptor -> listOf()
-                            descriptor is ClassDescriptor && isNativeObject(descriptor) &&
-                                    !isNativeObject(descriptor.containingDeclaration) -> listOf()
-                            else -> generator.generate(descriptor.containingDeclaration!!)
-                        }
-                        qualifier + listOf(FQNPart(name ?: descriptor.name.asString(), FQNPartType.PUBLIC, descriptor))
-                    }
-                }
-                else -> null
             }
         }
     }

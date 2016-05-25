@@ -1,9 +1,9 @@
 package foo
 
 
-// CHECK_CONTAINS_NO_CALLS: test1
-// CHECK_CONTAINS_NO_CALLS: test2
-// CHECK_CONTAINS_NO_CALLS: test3 except=slice
+// CHECK_CONTAINS_NO_CALLS: test1_0
+// CHECK_CONTAINS_NO_CALLS: test2_0
+// CHECK_CONTAINS_NO_CALLS: test3_0 except=slice
 
 internal inline fun concat(vararg strings: String): String {
     var result = ""

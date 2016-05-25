@@ -18,4 +18,4 @@ package org.jetbrains.kotlin.js.naming
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 
-data class FQNPart(val name: String, val type: FQNPartType, val descriptor: DeclarationDescriptor)
+class FQNPart(val names: List<String>, val shared: Boolean, val descriptor: DeclarationDescriptor, val scope: DeclarationDescriptor)

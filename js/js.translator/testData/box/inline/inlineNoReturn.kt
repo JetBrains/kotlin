@@ -1,6 +1,6 @@
 package foo
 
-// CHECK_CONTAINS_NO_CALLS: factAbsNoInline1
+// CHECK_CONTAINS_NO_CALLS: factAbsNoInline1_0
 
 internal class State(value: Int) {
     public var value: Int = value

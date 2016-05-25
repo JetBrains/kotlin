@@ -1,7 +1,7 @@
 package foo
 
-// CHECK_CONTAINS_NO_CALLS: doNothingInt
-// CHECK_CONTAINS_NO_CALLS: doNothingStr
+// CHECK_CONTAINS_NO_CALLS: doNothingInt_0
+// CHECK_CONTAINS_NO_CALLS: doNothingStr_0
 
 internal inline fun <T> doNothing(a: T): T {
     return a

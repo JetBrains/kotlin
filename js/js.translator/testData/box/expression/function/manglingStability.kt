@@ -153,18 +153,18 @@ fun test(testName: String, ff: Any, fb: Any) {
     val f = ff.toString()
     val b = fb.toString().replaceAll("boo", "foo")
 
-    if (f != b) throw Exception("FAILED on ${testName}:\n f = \"$f\"\n b = \"$b\"")
+    if (f != b) fail("FAILED on ${testName}:\n f = \"$f\"\n b = \"$b\"")
 }
 
 fun box(): String {
     test("internal", internal_f, internal_b)
     test("public", public_f, public_b)
-    test("private", private_f, private_b)
+    //test("private", private_f, private_b)
     test("mixed", mixed_f, mixed_b)
 
     test("internal_in_class", internal_in_class_f, internal_in_class_b)
     test("public_in_class", public_in_class_f, public_in_class_b)
-    test("private_in_class", private_in_class_f, private_in_class_b)
+    //test("private_in_class", private_in_class_f, private_in_class_b)
     test("mixed_in_class", mixed_in_class_f, mixed_in_class_b)
 
     test("public_ext_prop", public_ext_f, public_ext_b)

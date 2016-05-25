@@ -1,8 +1,8 @@
 package foo
 
-// CHECK_CALLED_IN_SCOPE: scope=multiplyBy2 function=multiplyBy2$f
-// CHECK_NOT_CALLED_IN_SCOPE: scope=multiplyBy2 function=multiplyBy2$f_0
-// CHECK_NOT_CALLED_IN_SCOPE: scope=multiplyBy2 function=run
+// CHECK_CALLED_IN_SCOPE: scope=multiplyBy2_0 function=multiplyBy2_0$f
+// CHECK_NOT_CALLED_IN_SCOPE: scope=multiplyBy2_0 function=multiplyBy2_0$f_0
+// CHECK_NOT_CALLED_IN_SCOPE: scope=multiplyBy2_0 function=run
 
 internal inline fun <T> runLambdaInLambda(noinline inner: (T) -> T, outer: ((T) -> T, T) -> T, arg: T): T {
     return outer(inner, arg)

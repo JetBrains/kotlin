@@ -1,7 +1,7 @@
 package foo
 
-// CHECK_CONTAINS_NO_CALLS: localWithCapture
-// CHECK_CONTAINS_NO_CALLS: localWithoutCapture
+// CHECK_CONTAINS_NO_CALLS: localWithCapture_0
+// CHECK_CONTAINS_NO_CALLS: localWithoutCapture_0
 
 internal inline fun repeatAction(times: Int, action: () -> Unit) {
     for (i in 1..times) {
