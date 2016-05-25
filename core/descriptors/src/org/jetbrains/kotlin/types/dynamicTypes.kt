@@ -32,31 +32,30 @@ class DynamicTypesAllowed: DynamicTypesSettings() {
 
 fun KotlinType.isDynamic(): Boolean = this.getCapability(Flexibility::class.java)?.factory == DynamicTypeFactory
 
-fun createDynamicType(builtIns: KotlinBuiltIns) = DynamicTypeFactory.create(builtIns.nothingType, builtIns.nullableAnyType)
+fun createDynamicType(builtIns: KotlinBuiltIns) = DynamicType(builtIns)
+
+class DynamicType(builtIns: KotlinBuiltIns) : DelegatingFlexibleType(builtIns.nothingType, builtIns.nullableAnyType, DynamicTypeFactory) {
+    override val delegateType: KotlinType get() = upperBound
+
+    override fun makeNullableAsSpecified(nullable: Boolean): KotlinType {
+        // Nullability has no effect on dynamics
+        return createDynamicType(delegateType.builtIns)
+    }
+
+    override val isMarkedNullable: Boolean get() = false
+}
 
 object DynamicTypeFactory : FlexibleTypeFactory {
-    override val id: String get() = "kotlin.DynamicType"
-
-    override fun create(lowerBound: KotlinType, upperBound: KotlinType): KotlinType {
+    override fun create(lowerBound: SimpleType, upperBound: SimpleType): KotlinType {
         if (KotlinTypeChecker.FLEXIBLE_UNEQUAL_TO_INFLEXIBLE.equalTypes(lowerBound, lowerBound.builtIns.nothingType) &&
             KotlinTypeChecker.FLEXIBLE_UNEQUAL_TO_INFLEXIBLE.equalTypes(upperBound, upperBound.builtIns.nullableAnyType)) {
-            return Impl(lowerBound, upperBound)
+            return createDynamicType(lowerBound.builtIns)
         }
         else {
             throw IllegalStateException("Illegal type range for dynamic type: $lowerBound..$upperBound")
         }
     }
 
-    private class Impl(lowerBound: KotlinType, upperBound: KotlinType) :
-            DelegatingFlexibleType(lowerBound, upperBound, DynamicTypeFactory) {
 
-        override val delegateType: KotlinType get() = upperBound
-
-        override fun makeNullableAsSpecified(nullable: Boolean): KotlinType {
-            // Nullability has no effect on dynamics
-            return createDynamicType(delegateType.builtIns)
-        }
-
-        override val isMarkedNullable: Boolean get() = false
-    }
+    override val id: String get() = "kotlin.DynamicType"
 }

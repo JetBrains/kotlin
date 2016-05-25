@@ -47,4 +47,10 @@ object KotlinTypeFactory {
             nullable: Boolean = baseType.isMarkedNullable,
             memberScope: MemberScope = baseType.memberScope
     ): SimpleType = simpleType(annotations, constructor, arguments, nullable, memberScope)
+
+    @JvmStatic
+    fun flexibleType(lowerBound: SimpleType, upperBound: SimpleType): KotlinType {
+        if (lowerBound == upperBound) return lowerBound
+        return FlexibleTypeImpl(lowerBound, upperBound)
+    }
 }

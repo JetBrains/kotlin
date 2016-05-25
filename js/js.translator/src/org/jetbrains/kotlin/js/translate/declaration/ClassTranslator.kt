@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.*
 import org.jetbrains.kotlin.types.CommonSupertypes.topologicallySortSuperclassesAndRecordAllInstances
-import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.identity
@@ -341,7 +341,7 @@ class ClassTranslator private constructor(
         }
         val sortedAllSuperTypes = topologicallySortSuperclassesAndRecordAllInstances(
             descriptor.defaultType,
-            mutableMapOf<TypeConstructor, Set<KotlinType>>(),
+            mutableMapOf<TypeConstructor, Set<SimpleType>>(),
             mutableSetOf<TypeConstructor>()
         )
         val supertypesRefs = mutableListOf<JsExpression>()

@@ -45,9 +45,9 @@ internal class UnsafeVarianceTypeSubstitution(kotlinBuiltIns: KotlinBuiltIns) : 
         if (unsafeVariancePaths.isEmpty()) return this
 
         if (isFlexible()) {
-            return flexibility().factory.create(
-                    lowerIfFlexible().annotatePartsWithUnsafeVariance(subPathsWithIndex(unsafeVariancePaths, 0)),
-                    upperIfFlexible().annotatePartsWithUnsafeVariance(subPathsWithIndex(unsafeVariancePaths, 1))
+            return KotlinTypeFactory.flexibleType(
+                    lowerIfFlexible().annotatePartsWithUnsafeVariance(subPathsWithIndex(unsafeVariancePaths, 0)).asSimpleType(),
+                    upperIfFlexible().annotatePartsWithUnsafeVariance(subPathsWithIndex(unsafeVariancePaths, 1)).asSimpleType()
             )
         }
 

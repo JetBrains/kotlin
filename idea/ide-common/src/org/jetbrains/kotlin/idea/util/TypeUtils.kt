@@ -34,6 +34,10 @@ import org.jetbrains.kotlin.types.typeUtil.*
 
 fun KotlinType.approximateFlexibleTypes(preferNotNull: Boolean = false): KotlinType {
     if (isDynamic()) return this
+    return approximateNonDynamicFlexibleTypes(preferNotNull)
+}
+
+private fun KotlinType.approximateNonDynamicFlexibleTypes(preferNotNull: Boolean = false): SimpleType {
     if (isFlexible()) {
         val flexible = flexibility()
         val lowerClass = flexible.lowerBound.constructor.declarationDescriptor as? ClassDescriptor?
@@ -48,12 +52,12 @@ fun KotlinType.approximateFlexibleTypes(preferNotNull: Boolean = false): KotlinT
                 else
                     if (preferNotNull) flexible.lowerBound else flexible.upperBound
 
-        approximation = approximation.approximateFlexibleTypes()
+        approximation = approximation.approximateNonDynamicFlexibleTypes()
 
-        approximation = if (isAnnotatedNotNull()) approximation.makeNotNullable() else approximation
+        approximation = if (isAnnotatedNotNull()) TypeUtils.makeNotNullable(approximation) else approximation
 
         if (approximation.isMarkedNullable && !flexible.lowerBound.isMarkedNullable && TypeUtils.isTypeParameter(approximation) && TypeUtils.hasNullableSuperType(approximation)) {
-            approximation = approximation.makeNotNullable()
+            approximation = TypeUtils.makeNotNullable(approximation)
         }
 
         return approximation

@@ -72,7 +72,8 @@ public class SingleAbstractMethodUtils {
                                       "' should not end with conflict";
 
                 if (FlexibleTypesKt.isNullabilityFlexible(samType)) {
-                    return LazyJavaTypeResolver.FlexibleJavaClassifierTypeFactory.INSTANCE.create(type, TypeUtils.makeNullable(type));
+                    SimpleType simpleType = KotlinTypeKt.asSimpleType(type);
+                    return KotlinTypeFactory.flexibleType(simpleType, TypeUtils.makeNullable(simpleType));
                 }
 
                 return TypeUtils.makeNullableAsSpecified(type, samType.isMarkedNullable());

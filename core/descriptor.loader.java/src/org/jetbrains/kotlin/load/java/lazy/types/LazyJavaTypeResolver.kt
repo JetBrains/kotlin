@@ -56,7 +56,7 @@ class LazyJavaTypeResolver(
             }
             is JavaClassifierType ->
                 if (attr.allowFlexible && attr.howThisTypeIsUsed != SUPERTYPE)
-                    FlexibleJavaClassifierTypeFactory.create(
+                    KotlinTypeFactory.flexibleType(
                             LazyJavaClassifierType(javaType, attr.toFlexible(FLEXIBLE_LOWER_BOUND)),
                             LazyJavaClassifierType(javaType, attr.toFlexible(FLEXIBLE_UPPER_BOUND))
                     )
@@ -75,7 +75,7 @@ class LazyJavaTypeResolver(
             if (primitiveType != null) {
                 val jetType = c.module.builtIns.getPrimitiveArrayKotlinType(primitiveType)
                 return@run if (attr.allowFlexible)
-                    FlexibleJavaClassifierTypeFactory.create(jetType, TypeUtils.makeNullable(jetType))
+                    KotlinTypeFactory.flexibleType(jetType, TypeUtils.makeNullable(jetType))
                 else TypeUtils.makeNullableAsSpecified(jetType, !attr.isMarkedNotNull)
             }
 
@@ -83,7 +83,7 @@ class LazyJavaTypeResolver(
                                                   TYPE_ARGUMENT.toAttributes(attr.allowFlexible, attr.isForAnnotationParameter))
 
             if (attr.allowFlexible) {
-                return@run FlexibleJavaClassifierTypeFactory.create(
+                return@run KotlinTypeFactory.flexibleType(
                         c.module.builtIns.getArrayType(INVARIANT, componentType),
                         TypeUtils.makeNullable(c.module.builtIns.getArrayType(OUT_VARIANCE, componentType)))
             }
@@ -278,38 +278,6 @@ class LazyJavaTypeResolver(
         }
 
         override val isMarkedNullable: Boolean get() = nullable()
-    }
-
-    object FlexibleJavaClassifierTypeFactory : FlexibleTypeFactory {
-        override val id: String get() = "kotlin.jvm.PlatformType"
-
-        override fun create(lowerBound: KotlinType, upperBound: KotlinType): KotlinType {
-            if (lowerBound == upperBound) return lowerBound
-
-            return Impl(lowerBound, upperBound)
-        }
-
-        private class Impl(lowerBound: KotlinType, upperBound: KotlinType) :
-                DelegatingFlexibleType(lowerBound, upperBound, FlexibleJavaClassifierTypeFactory), CustomTypeVariable {
-
-            override val delegateType: KotlinType get() = lowerBound
-
-            override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>): T? {
-                @Suppress("UNCHECKED_CAST")
-                if (capabilityClass == CustomTypeVariable::class.java) return this as T
-
-                return super.getCapability(capabilityClass)
-            }
-
-            override val isTypeVariable: Boolean get() = lowerBound.constructor.declarationDescriptor is TypeParameterDescriptor
-                                                         && lowerBound.constructor == upperBound.constructor
-
-            override fun substitutionResult(replacement: KotlinType): KotlinType {
-                return if (replacement.isFlexible()) replacement
-                       else create(replacement, TypeUtils.makeNullable(replacement))
-            }
-
-        }
     }
 
 }
