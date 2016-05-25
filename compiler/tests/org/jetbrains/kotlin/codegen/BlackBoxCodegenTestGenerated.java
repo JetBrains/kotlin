@@ -4123,6 +4123,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("nonLocalReturnFromInlineLambda.kt")
+        public void testNonLocalReturnFromInlineLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/nonLocalReturnFromInlineLambda.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nonLocalReturnFromInlineLambdaDeep.kt")
+        public void testNonLocalReturnFromInlineLambdaDeep() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/nonLocalReturnFromInlineLambdaDeep.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("returnByLabel.kt")
         public void testReturnByLabel() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/returnByLabel.kt");
