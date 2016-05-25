@@ -151,6 +151,18 @@ public class CliTestGenerated extends AbstractCliTest {
             doJvmTest(fileName);
         }
 
+        @TestMetadata("languageVersion.args")
+        public void testLanguageVersion() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/languageVersion.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("languageVersionInvalid.args")
+        public void testLanguageVersionInvalid() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/languageVersionInvalid.args");
+            doJvmTest(fileName);
+        }
+
         @TestMetadata("multipleTextRangesInDiagnosticsOrder.args")
         public void testMultipleTextRangesInDiagnosticsOrder() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/multipleTextRangesInDiagnosticsOrder.args");
@@ -337,6 +349,12 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("jsHelp.args")
         public void testJsHelp() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js/jsHelp.args");
+            doJsTest(fileName);
+        }
+
+        @TestMetadata("languageVersion.args")
+        public void testLanguageVersion() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js/languageVersion.args");
             doJsTest(fileName);
         }
 

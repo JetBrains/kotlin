@@ -1,0 +1,5 @@
+$TESTDATA_DIR$/languageVersion.kt
+-output
+$TEMP_DIR$/out.js
+-language-version
+1.0

@@ -221,10 +221,11 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             configuration: CompilerConfiguration, arguments: K2JVMCompilerArguments, services: Services
     ) {
         if (IncrementalCompilation.isEnabled()) {
-            configuration.put(
-                    JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS,
-                    services.get(IncrementalCompilationComponents::class.java)
-            )
+            val components = services.get(IncrementalCompilationComponents::class.java)
+            @Suppress("SENSELESS_COMPARISON")
+            if (components != null) {
+                configuration.put(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS, components)
+            }
         }
     }
 
@@ -283,10 +284,11 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             configuration.put(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS, arguments.noCallAssertions)
             configuration.put(JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS, arguments.noParamAssertions)
             configuration.put(JVMConfigurationKeys.DISABLE_OPTIMIZATION, arguments.noOptimize)
-            configuration.put(JVMConfigurationKeys.DECLARATIONS_JSON_PATH, arguments.declarationsOutputPath)
             configuration.put(JVMConfigurationKeys.INHERIT_MULTIFILE_PARTS, arguments.inheritMultifileParts)
             configuration.put(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE, arguments.allowKotlinPackage)
             configuration.put(CLIConfigurationKeys.REPORT_PERF, arguments.reportPerf)
+
+            arguments.declarationsOutputPath?.let { configuration.put(JVMConfigurationKeys.DECLARATIONS_JSON_PATH, it) }
         }
 
         private fun getClasspath(paths: KotlinPaths, arguments: K2JVMCompilerArguments): List<File> {

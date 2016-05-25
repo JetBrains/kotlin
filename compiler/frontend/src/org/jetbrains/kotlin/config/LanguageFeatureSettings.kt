@@ -39,5 +39,8 @@ class LanguageFeatureSettings(
 
         @JvmStatic
         fun fromLanguageVersion(source: String): LanguageFeatureSettings? = SETTINGS[source]
+
+        @JvmStatic
+        fun getAllLanguageVersions(): List<String> = SETTINGS.keys.toList()
     }
 }

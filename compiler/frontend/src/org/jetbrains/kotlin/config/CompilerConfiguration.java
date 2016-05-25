@@ -62,7 +62,7 @@ public class CompilerConfiguration {
         return data == null ? Collections.<T>emptyList() : data;
     }
 
-    public <T> void put(@NotNull CompilerConfigurationKey<T> key, @Nullable T value) {
+    public <T> void put(@NotNull CompilerConfigurationKey<T> key, @NotNull T value) {
         checkReadOnly();
         map.put(key.ideaKey, value);
     }
