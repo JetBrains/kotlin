@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
+import org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingColors.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -35,8 +36,9 @@ internal class VariablesHighlightingVisitor(holder: AnnotationHolder, bindingCon
     override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
         val target = bindingContext.get(REFERENCE_TARGET, expression) ?: return
         if (target is ValueParameterDescriptor) {
-            if (java.lang.Boolean.TRUE == bindingContext.get(AUTO_CREATED_IT, target)) {
-                holder.createInfoAnnotation(expression, "Automatically declared based on the expected type").textAttributes = KotlinHighlightingColors.FUNCTION_LITERAL_DEFAULT_PARAMETER
+            if (bindingContext.get(AUTO_CREATED_IT, target) == true) {
+                holder.createInfoAnnotation(expression, "Automatically declared based on the expected type")
+                        .textAttributes = FUNCTION_LITERAL_DEFAULT_PARAMETER
             }
         }
 
@@ -60,35 +62,35 @@ internal class VariablesHighlightingVisitor(holder: AnnotationHolder, bindingCon
     private fun getSmartCastTarget(expression: KtExpression): PsiElement {
         var target: PsiElement = expression
         if (target is KtParenthesizedExpression) {
-            target = KtPsiUtil.deparenthesize(target as KtParenthesizedExpression?) ?: expression
+            target = KtPsiUtil.deparenthesize(target) ?: expression
         }
-        if (target is KtIfExpression) {
-            target = target.ifKeyword
+        return when (target) {
+            is KtIfExpression -> target.ifKeyword
+            is KtWhenExpression -> target.whenKeyword
+            is KtBinaryExpression -> target.operationReference
+            else -> target
         }
-        else if (target is KtWhenExpression) {
-            target = target.whenKeyword
-        }
-        else if (target is KtBinaryExpression) {
-            target = target.operationReference
-        }
-        return target
     }
 
     override fun visitExpression(expression: KtExpression) {
         val implicitSmartCast = bindingContext.get(IMPLICIT_RECEIVER_SMARTCAST, expression)
         if (implicitSmartCast != null) {
-            holder.createInfoAnnotation(expression, "Implicit receiver smart cast to " + DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(implicitSmartCast)).textAttributes = KotlinHighlightingColors.SMART_CAST_RECEIVER
+            holder.createInfoAnnotation(expression,
+                                        "Implicit receiver smart cast to " + DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(implicitSmartCast))
+                    .textAttributes = SMART_CAST_RECEIVER
         }
 
-        val nullSmartCast = bindingContext.get(SMARTCAST_NULL, expression) === java.lang.Boolean.TRUE
+        val nullSmartCast = bindingContext.get(SMARTCAST_NULL, expression) == true
         if (nullSmartCast) {
-            holder.createInfoAnnotation(expression, "Always null").textAttributes = KotlinHighlightingColors.SMART_CONSTANT
+            holder.createInfoAnnotation(expression, "Always null")
+                    .textAttributes = SMART_CONSTANT
         }
 
         val smartCast = bindingContext.get(SMARTCAST, expression)
         if (smartCast != null) {
             holder.createInfoAnnotation(getSmartCastTarget(expression),
-                                        "Smart cast to " + DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(smartCast)).textAttributes = KotlinHighlightingColors.SMART_CAST_VALUE
+                                        "Smart cast to " + DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(smartCast))
+                    .textAttributes = SMART_CAST_VALUE
         }
 
         super.visitExpression(expression)
@@ -106,12 +108,12 @@ internal class VariablesHighlightingVisitor(holder: AnnotationHolder, bindingCon
         if (descriptor is VariableDescriptor) {
 
             if (descriptor.isDynamic()) {
-                NameHighlighter.highlightName(holder, elementToHighlight, KotlinHighlightingColors.DYNAMIC_PROPERTY_CALL)
+                holder.highlightName(elementToHighlight, DYNAMIC_PROPERTY_CALL)
                 return
             }
 
             if (descriptor.isVar) {
-                NameHighlighter.highlightName(holder, elementToHighlight, KotlinHighlightingColors.MUTABLE_VARIABLE)
+                holder.highlightName(elementToHighlight, MUTABLE_VARIABLE)
             }
 
             if (bindingContext.get(CAPTURED_IN_CLOSURE, descriptor) == CaptureKind.NOT_INLINE) {
@@ -119,15 +121,15 @@ internal class VariablesHighlightingVisitor(holder: AnnotationHolder, bindingCon
                     "Wrapped into a reference object to be modified when captured in a closure"
                 else
                     "Value captured in a closure"
-                holder.createInfoAnnotation(elementToHighlight, msg).textAttributes = KotlinHighlightingColors.WRAPPED_INTO_REF
+                holder.createInfoAnnotation(elementToHighlight, msg).textAttributes = WRAPPED_INTO_REF
             }
 
             if (descriptor is LocalVariableDescriptor) {
-                NameHighlighter.highlightName(holder, elementToHighlight, KotlinHighlightingColors.LOCAL_VARIABLE)
+                NameHighlighter.highlightName(holder, elementToHighlight, LOCAL_VARIABLE)
             }
 
             if (descriptor is ValueParameterDescriptor) {
-                NameHighlighter.highlightName(holder, elementToHighlight, KotlinHighlightingColors.PARAMETER)
+                NameHighlighter.highlightName(holder, elementToHighlight, PARAMETER)
             }
         }
     }
