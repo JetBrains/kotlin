@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.serialization.deserialization.DeserializationCompone
 import org.jetbrains.kotlin.serialization.deserialization.NotFoundClasses
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
-import org.jetbrains.kotlin.types.FlexibleJavaClassifierTypeFactory
 
 fun DeserializerForClassfileDecompiler(classFile: VirtualFile): DeserializerForClassfileDecompiler {
     val kotlinClassHeaderInfo = IDEKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(classFile)
@@ -68,7 +67,7 @@ class DeserializerForClassfileDecompiler(
         deserializationComponents = DeserializationComponents(
                 storageManager, moduleDescriptor, classDataFinder, annotationAndConstantLoader, packageFragmentProvider,
                 ResolveEverythingToKotlinAnyLocalClassifierResolver(builtIns), LoggingErrorReporter(LOG),
-                LookupTracker.DO_NOTHING, FlexibleJavaClassifierTypeFactory, ClassDescriptorFactory.EMPTY, notFoundClasses
+                LookupTracker.DO_NOTHING, JavaFlexibleTypeDeserializer, ClassDescriptorFactory.EMPTY, notFoundClasses
         )
     }
 

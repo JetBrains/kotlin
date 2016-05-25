@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.serialization;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.types.DelegatingFlexibleType;
+import org.jetbrains.kotlin.types.Flexibility;
 import org.jetbrains.kotlin.types.KotlinType;
 
 public abstract class SerializerExtension {
@@ -47,6 +49,9 @@ public abstract class SerializerExtension {
     }
 
     public void serializeValueParameter(@NotNull ValueParameterDescriptor descriptor, @NotNull ProtoBuf.ValueParameter.Builder proto) {
+    }
+
+    public void serializeFlexibleType(@NotNull DelegatingFlexibleType flexibleType, @NotNull ProtoBuf.Type.Builder lowerProto, @NotNull ProtoBuf.Type.Builder upperProto) {
     }
 
     public void serializeType(@NotNull KotlinType type, @NotNull ProtoBuf.Type.Builder proto) {
