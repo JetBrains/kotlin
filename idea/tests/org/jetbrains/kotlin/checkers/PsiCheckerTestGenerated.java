@@ -874,6 +874,12 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             doTestWithInfos(fileName);
         }
 
+        @TestMetadata("coroutineApplicability.kt")
+        public void testCoroutineApplicability() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/infos/coroutineApplicability.kt");
+            doTestWithInfos(fileName);
+        }
+
         @TestMetadata("PropertiesWithBackingFields.kt")
         public void testPropertiesWithBackingFields() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/infos/PropertiesWithBackingFields.kt");
@@ -907,6 +913,12 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
         @TestMetadata("SmartCastsWithSafeAccess.kt")
         public void testSmartCastsWithSafeAccess() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/infos/SmartCastsWithSafeAccess.kt");
+            doTestWithInfos(fileName);
+        }
+
+        @TestMetadata("suspendApplicability.kt")
+        public void testSuspendApplicability() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/infos/suspendApplicability.kt");
             doTestWithInfos(fileName);
         }
 

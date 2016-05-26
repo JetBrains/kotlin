@@ -1,0 +1,15 @@
+package
+
+public suspend fun notMember(/*0*/ x: kotlin.coroutines.Continuation<kotlin.Int>): kotlin.Unit
+
+public final class Controller {
+    public constructor Controller()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final inline suspend fun inlineFun(/*0*/ x: kotlin.coroutines.Continuation<kotlin.Int>): kotlin.Unit
+    public final suspend fun noParams(): kotlin.Unit
+    public final suspend fun starProjection(/*0*/ vararg x: kotlin.coroutines.Continuation<kotlin.Any> /*kotlin.Array<out kotlin.coroutines.Continuation<kotlin.Any>>*/): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public final suspend fun valid(/*0*/ x: kotlin.coroutines.Continuation<kotlin.Int>): kotlin.Unit
+    public final suspend fun wrongParam(/*0*/ x: kotlin.collections.Collection<kotlin.Int>): kotlin.Unit
+}
