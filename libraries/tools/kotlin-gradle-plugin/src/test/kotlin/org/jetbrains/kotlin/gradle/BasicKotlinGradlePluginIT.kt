@@ -93,6 +93,14 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
     }
 
     @Test
+    fun testLanguageVersion() {
+        Project("languageVersion", "1.6").build("build") {
+            assertFailed()
+            assertContains("This type is sealed")
+        }
+    }
+
+    @Test
     fun testGradleSubplugin() {
         val project = Project("kotlinGradleSubplugin", "1.6")
 
