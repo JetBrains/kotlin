@@ -1,0 +1,17 @@
+OUT:
+Buildfile: [TestData]/build.xml
+
+build:
+  [kotlinc] Compiling [[TestData]/main.kt] => [[Temp]/hello.jar]
+  [kotlinc] [TestData]/main.kt:3:17: error: this type is sealed, so it can be inherited by only its own nested classes or objects
+  [kotlinc] class Derived : Base()
+  [kotlinc]                 ^
+
+ERR:
+
+BUILD FAILED
+[TestData]/build.xml:5: Compile failed; see the compiler error output for details.
+
+Total time: [time]
+
+Return code: 1

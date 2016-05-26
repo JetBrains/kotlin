@@ -207,6 +207,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
         args.noCallAssertions = kotlinOptions.noCallAssertions
         args.noParamAssertions = kotlinOptions.noParamAssertions
         args.moduleName = kotlinOptions.moduleName ?: extraProperties.getOrNull<String>("defaultModuleName")
+        args.languageVersion = kotlinOptions.languageVersion
 
         fun  addFriendPathForTestTask(taskName: String) {
             logger.kotlinDebug("try to determine the output directory of corresponding $taskName task")

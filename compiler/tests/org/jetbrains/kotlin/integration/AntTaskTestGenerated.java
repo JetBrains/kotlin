@@ -77,6 +77,12 @@ public class AntTaskTestGenerated extends AbstractAntTaskTest {
         doTest(fileName);
     }
 
+    @TestMetadata("languageVersion")
+    public void testLanguageVersion() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/languageVersion/");
+        doTest(fileName);
+    }
+
     @TestMetadata("mainInFiles")
     public void testMainInFiles() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/mainInFiles/");
