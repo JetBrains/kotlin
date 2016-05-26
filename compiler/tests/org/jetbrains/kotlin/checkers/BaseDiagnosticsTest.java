@@ -22,7 +22,6 @@ import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -175,7 +174,7 @@ public abstract class BaseDiagnosticsTest
         do {
             boolean enable = matcher.group(1).equals("+");
             String name = matcher.group(2);
-            LanguageFeature feature = LanguageFeature.fromString(StringUtil.capitalize(name));
+            LanguageFeature feature = LanguageFeature.fromString(name);
             if (feature == null) {
                 Assert.fail(
                         "Language feature not found, please check spelling: " + name + "\n" +

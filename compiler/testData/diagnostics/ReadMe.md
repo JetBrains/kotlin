@@ -60,11 +60,10 @@ The directive lets you compose a test consisting of several files in one actual 
 ### 4. LANGUAGE
 
 This directive lets you enable or disable certain language features. Language features are named as
-parameters of the primary constructor of the class LanguageFeatureSettings. Each feature can be
-enabled with `+` or disabled with `-`.
+enum entries of the class LanguageFeature. Each feature can be enabled with `+` or disabled with `-`.
 
 #### Usage:
 
-    // !LANGUAGE: -topLevelSealedInheritance
+    // !LANGUAGE: -TopLevelSealedInheritance
 
-    // !LANGUAGE: +typeAliases -localDelegatedProperties
+    // !LANGUAGE: +TypeAliases -LocalDelegatedProperties
