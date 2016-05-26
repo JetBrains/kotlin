@@ -108,8 +108,6 @@ import org.jetbrains.kotlin.idea.intentions.declarations.AbstractJoinLinesTest
 import org.jetbrains.kotlin.idea.internal.AbstractBytecodeToolWindowTest
 import org.jetbrains.kotlin.idea.kdoc.AbstractKDocHighlightingTest
 import org.jetbrains.kotlin.idea.kdoc.AbstractKDocTypingTest
-import org.jetbrains.kotlin.idea.maven.AbstractKotlinMavenInspectionTest
-import org.jetbrains.kotlin.idea.maven.configuration.AbstractMavenConfigureProjectByChangingFileTest
 import org.jetbrains.kotlin.idea.navigation.*
 import org.jetbrains.kotlin.idea.parameterInfo.AbstractParameterInfoTest
 import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixMultiFileTest
@@ -144,10 +142,14 @@ import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterForWebDemoTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterMultiFileTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterSingleFileTest
-import org.jetbrains.kotlin.jps.build.*
-import org.jetbrains.kotlin.jps.build.android.AbstractAndroidJpsTestCase
-import org.jetbrains.kotlin.jps.incremental.AbstractJsProtoComparisonTest
-import org.jetbrains.kotlin.jps.incremental.AbstractJvmProtoComparisonTest
+import org.jetbrains.kotlin.js.test.AbstractDceTest
+import org.jetbrains.kotlin.js.test.AbstractJsLineNumberTest
+import org.jetbrains.kotlin.js.test.semantics.*
+import org.jetbrains.kotlin.jvm.compiler.*
+import org.jetbrains.kotlin.jvm.compiler.javac.AbstractLoadJava8UsingJavacTest
+import org.jetbrains.kotlin.jvm.compiler.javac.AbstractLoadJavaUsingJavacTest
+import org.jetbrains.kotlin.jvm.runtime.AbstractJvm8RuntimeDescriptorLoaderTest
+import org.jetbrains.kotlin.jvm.runtime.AbstractJvmRuntimeDescriptorLoaderTest
 import org.jetbrains.kotlin.kapt3.test.AbstractClassFileToSourceStubConverterTest
 import org.jetbrains.kotlin.kapt3.test.AbstractKotlinKaptContextTest
 import org.jetbrains.kotlin.noarg.AbstractBlackBoxCodegenTestForNoArg
@@ -745,6 +747,9 @@ fun main(args: Array<String>) {
         }
     }
 
+    /*
+    // Maven and Gradle are not relevent for AS branch
+
     testGroup("idea/idea-maven/test", "idea/idea-maven/testData") {
         testClass<AbstractMavenConfigureProjectByChangingFileTest> {
             model("configurator/jvm", extension = null, recursive = false, testMethod = "doTestWithMaven")
@@ -762,6 +767,8 @@ fun main(args: Array<String>) {
             model("configuration/gsk", extension = null, recursive = false, testMethod = "doTestGradle")
         }
     }
+
+    */
 
     testGroup("idea/tests", "compiler/testData") {
         testClass<AbstractResolveByStubTest> {
@@ -887,7 +894,7 @@ fun main(args: Array<String>) {
             model("fileOrElement", extension = "java")
         }
     }
-
+/*  There is no jps in AS
     testGroup("jps-plugin/jps-tests/test", "jps-plugin/testData") {
         testClass<AbstractIncrementalJpsTest> {
             model("incremental/multiModule", extension = null, excludeParentDirs = true)
@@ -937,7 +944,7 @@ fun main(args: Array<String>) {
             model("comparison/jsOnly", extension = null, excludeParentDirs = true)
         }
     }
-
+*/
     testGroup("compiler/incremental-compilation-impl/test", "jps-plugin/testData") {
         testClass<AbstractIncrementalJvmCompilerRunnerTest> {
             model("incremental/pureKotlin", extension = null, recursive = false)
@@ -1097,10 +1104,11 @@ fun main(args: Array<String>) {
             model("android/gutterIcon")
         }
     }
-
+/*
     testGroup("plugins/android-extensions/android-extensions-jps/test", "plugins/android-extensions/android-extensions-jps/testData") {
         testClass<AbstractAndroidJpsTestCase> {
             model("android", recursive = false, extension = null)
         }
     }
+*/
 }
