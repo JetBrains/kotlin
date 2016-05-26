@@ -36,6 +36,7 @@ fun SimpleFunctionDescriptor.createCoroutineSuspensionFunctionView(): SimpleFunc
         setReturnType(returnType)
         setOriginal(newOriginal)
         setValueParameters(valueParameters.subList(0, valueParameters.size - 1))
+        setSignatureChange()
     }.build()!!
 }
 

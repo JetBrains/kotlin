@@ -198,9 +198,7 @@ class CoroutineTransformerMethodVisitor(
     private fun transformCallAndReturnContinuationLabel(suspension: SuspensionPoint, methodNode: MethodNode): LabelNode {
         val call = suspension.suspensionCall
         val method = Method(call.name, call.desc)
-        val newParameters = method.argumentTypes + CONTINUATION_INTERFACE_ASM_TYPE
-
-        call.desc = Method(method.name, Type.VOID_TYPE, newParameters).descriptor
+        call.desc = Method(method.name, Type.VOID_TYPE, method.argumentTypes).descriptor
 
         val continuationLabel = LabelNode()
 
@@ -212,9 +210,6 @@ class CoroutineTransformerMethodVisitor(
                                  *withInstructionAdapter { iconst(suspension.id) }.toArray(),
                                  FieldInsnNode(
                                          Opcodes.PUTFIELD, classBuilder.thisName, COROUTINE_LABEL_FIELD_NAME, Type.INT_TYPE.descriptor)))
-
-            // Pass continuation
-            insertBefore(call, VarInsnNode(Opcodes.ALOAD, 0))
 
             val nextInsnAfterCall = call.next
 

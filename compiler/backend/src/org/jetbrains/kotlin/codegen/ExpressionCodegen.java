@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegen;
 import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt;
+import org.jetbrains.kotlin.codegen.coroutines.ResolvedCallWithRealDescriptor;
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension;
 import org.jetbrains.kotlin.codegen.inline.*;
 import org.jetbrains.kotlin.codegen.intrinsics.*;
@@ -1665,24 +1666,29 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 tempVariables.put(argumentExpression, valueToReturn);
             }
 
-            // Currently only handleResult members are supported
-            ReceiverValue dispatchReceiver = resolvedCall.getDispatchReceiver();
-            assert dispatchReceiver != null : "Dispatch receiver is null for handleResult to " + resolvedCall.getResultingDescriptor();
-            assert dispatchReceiver instanceof ExtensionReceiver
-                    : "Argument for handleResult call to " + resolvedCall.getResultingDescriptor() +
-                      " should be a coroutine receiver parameter, but " + dispatchReceiver + " found";
-            ClassDescriptor coroutineClassDescriptor =
-                    bindingContext.get(CodegenBinding.CLASS_FOR_CALLABLE, ((ExtensionReceiver) dispatchReceiver).getDeclarationDescriptor());
-            assert coroutineClassDescriptor != null : "Coroutine class descriptor should not be null";
-
-            // second argument for handleResult is always Continuation<T> ('this'-object in current implementation)
             tempVariables.put(
                     resolvedCall.getValueArgumentsByIndex().get(1).getArguments().get(0).getArgumentExpression(),
-                    StackValue.thisOrOuter(this, coroutineClassDescriptor, false, false));
+                    genCoroutineInstanceValueFromResolvedCall(resolvedCall));
 
             return invokeFunction(resolvedCall, StackValue.none());
         }
         return null;
+    }
+
+    @NotNull
+    private StackValue genCoroutineInstanceValueFromResolvedCall(ResolvedCall<?> resolvedCall) {
+        // Currently only handleResult/suspend members are supported
+        ReceiverValue dispatchReceiver = resolvedCall.getDispatchReceiver();
+        assert dispatchReceiver != null : "Dispatch receiver is null for handleResult/suspend to " + resolvedCall.getResultingDescriptor();
+        assert dispatchReceiver instanceof ExtensionReceiver
+                : "Argument for handleResult call to " + resolvedCall.getResultingDescriptor() +
+                  " should be a coroutine receiver parameter, but " + dispatchReceiver + " found";
+        ClassDescriptor coroutineClassDescriptor =
+                bindingContext.get(CodegenBinding.CLASS_FOR_CALLABLE, ((ExtensionReceiver) dispatchReceiver).getDeclarationDescriptor());
+        assert coroutineClassDescriptor != null : "Coroutine class descriptor should not be null";
+
+        // second argument for handleResult is always Continuation<T> ('this'-object in current implementation)
+        return StackValue.thisOrOuter(this, coroutineClassDescriptor, false, false);
     }
 
     @NotNull
@@ -2477,6 +2483,12 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     @NotNull
     public StackValue invokeFunction(@NotNull Call call, @NotNull ResolvedCall<?> resolvedCall, @NotNull StackValue receiver) {
+        ResolvedCallWithRealDescriptor callWithRealDescriptor =
+                CoroutineCodegenUtilKt.replaceSuspensionFunctionViewWithRealDescriptor(resolvedCall, state.getProject());
+        if (callWithRealDescriptor != null) {
+            tempVariables.put(callWithRealDescriptor.getFakeThisExpression(), genCoroutineInstanceValueFromResolvedCall(resolvedCall));
+            return invokeFunction(callWithRealDescriptor.getResolvedCall(), receiver);
+        }
         FunctionDescriptor fd = accessibleFunctionDescriptor(resolvedCall);
         ClassDescriptor superCallTarget = getSuperCallTarget(call);
 

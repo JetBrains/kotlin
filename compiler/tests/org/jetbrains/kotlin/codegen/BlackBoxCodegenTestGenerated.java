@@ -4111,6 +4111,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("defaultParametersInSuspend.kt")
+        public void testDefaultParametersInSuspend() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/defaultParametersInSuspend.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("generate.kt")
         public void testGenerate() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/generate.kt");
