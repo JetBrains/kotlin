@@ -21,7 +21,6 @@ import com.android.sdklib.AndroidTargetHash;
 import com.android.sdklib.AndroidVersion;
 import com.android.tools.idea.gradle.util.GradleUtil;
 import com.android.tools.idea.model.AndroidModuleInfo;
-import com.android.tools.idea.model.ManifestInfo;
 import com.android.tools.klint.client.api.LintClient;
 import com.android.tools.klint.detector.api.Project;
 import com.google.common.collect.Lists;
@@ -626,8 +625,8 @@ class IntellijLintProject extends Project {
               if (facet == null) {
                 continue;
               }
-              ManifestInfo manifestInfo = ManifestInfo.get(module, false);
-              if ("android.support.v7.appcompat".equals(manifestInfo.getPackage())) {
+              AndroidModuleInfo manifestInfo = AndroidModuleInfo.get(module);
+              if (manifestInfo != null && "android.support.v7.appcompat".equals(manifestInfo.getPackage())) {
                 mAppCompat = true;
                 break;
               }
