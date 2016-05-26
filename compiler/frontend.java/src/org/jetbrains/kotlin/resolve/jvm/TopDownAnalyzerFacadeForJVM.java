@@ -21,7 +21,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
-import org.jetbrains.kotlin.config.LanguageFeatureSettings;
+import org.jetbrains.kotlin.config.LanguageVersion;
 import org.jetbrains.kotlin.context.ContextKt;
 import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.context.MutableModuleContext;
@@ -122,7 +122,7 @@ public enum TopDownAnalyzerFacadeForJVM {
                 GlobalSearchScope.allScope(project),
                 lookupTracker,
                 packagePartProvider,
-                LanguageFeatureSettings.LATEST
+                LanguageVersion.LATEST
         );
 
         List<PackageFragmentProvider> additionalProviders = new ArrayList<PackageFragmentProvider>();

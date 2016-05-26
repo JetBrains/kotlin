@@ -16,21 +16,30 @@
 
 package org.jetbrains.kotlin.config
 
-class LanguageFeatureSettings {
+enum class LanguageFeature(val sinceVersion: LanguageVersion) {
+    ;
     companion object {
-        private val SETTINGS = mapOf(
-                "1.0" to LanguageFeatureSettings()
-        )
+        @JvmStatic
+        fun fromString(str: String) = values().find { it.name == str }
+    }
+}
 
-        private val LATEST_VERSION = "1.0"
+enum class LanguageVersion(val versionString: String): LanguageFeatureSettings {
+    KOTLIN_1_0("1.0");
+
+    override fun supportsFeature(feature: LanguageFeature): Boolean {
+        return this.ordinal >= feature.sinceVersion.ordinal
+    }
+
+    companion object {
+        @JvmStatic
+        fun fromVersionString(str: String) = values().find { it.versionString == str }
 
         @JvmField
-        val LATEST: LanguageFeatureSettings = fromLanguageVersion(LATEST_VERSION)!!
-
-        @JvmStatic
-        fun fromLanguageVersion(source: String): LanguageFeatureSettings? = SETTINGS[source]
-
-        @JvmStatic
-        fun getAllLanguageVersions(): List<String> = SETTINGS.keys.toList()
+        val LATEST = values().last()
     }
+}
+
+interface LanguageFeatureSettings {
+    fun supportsFeature(feature: LanguageFeature): Boolean
 }
