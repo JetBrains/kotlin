@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.android;
 
 import com.android.SdkConstants;
-import com.android.ide.common.rendering.RenderSecurityManager;
-import com.android.tools.idea.rendering.PsiProjectListener;
+import com.android.tools.idea.rendering.RenderSecurityManager;
+import com.android.tools.idea.res.PsiProjectListener;
 import com.intellij.facet.FacetManager;
 import com.intellij.facet.ModifiableFacetModel;
 import com.intellij.ide.startup.impl.StartupManagerImpl;
