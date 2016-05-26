@@ -396,6 +396,9 @@ class TypeResolver(
             for (i in parameters.indices) {
                 val parameter = parameters[i]
                 val argument = arguments[i].type
+
+                if (argument.dependsOnTypeAliasParameters()) continue
+
                 val typeReference = collectedArgumentAsTypeProjections.getOrNull(i)?.typeReference
 
                 if (typeReference != null) {
@@ -410,6 +413,12 @@ class TypeResolver(
 
         return type(resultingType)
     }
+
+    private fun KotlinType.dependsOnTypeAliasParameters(): Boolean =
+            TypeUtils.contains(this) { type ->
+                val constructorDeclaration = type.constructor.declarationDescriptor
+                constructorDeclaration is TypeParameterDescriptor && constructorDeclaration.containingDeclaration is TypeAliasDescriptor
+            }
 
     private fun resolveTypeForTypeAlias(
             c: TypeResolutionContext,
@@ -487,8 +496,16 @@ class TypeResolver(
             trace.report(RECURSIVE_TYPEALIAS_EXPANSION.on(type, typeAlias))
         }
 
-        override fun boundsViolationInSubstitution(bound: KotlinType, argument: KotlinType, typeParameter: TypeParameterDescriptor) {
-            TODO("boundsViolationInSubstitution")
+        override fun boundsViolationInSubstitution(bound: KotlinType, unsubstitutedArgument: KotlinType, argument: KotlinType, typeParameter: TypeParameterDescriptor) {
+            val descriptorForUnsubstitutedArgument = unsubstitutedArgument.constructor.declarationDescriptor
+            val argumentElement = mappedArguments[descriptorForUnsubstitutedArgument]
+            val argumentTypeReferenceElement = argumentElement?.typeReference
+            if (argumentTypeReferenceElement != null) {
+                trace.report(UPPER_BOUND_VIOLATED.on(argumentTypeReferenceElement, bound, argument))
+            }
+            else {
+                trace.report(UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION.on(type, bound, argument, typeParameter))
+            }
         }
     }
 
@@ -631,9 +648,9 @@ class TypeResolver(
                     expandTypeProjectionForTypeAlias(c, originalArgument, typeAliasExpansion, typeConstructor.parameters[i], reportStrategy, recursionDepth + 1)
                 }
 
-                checkTypeArgumentsSubstitutionInTypeAliasExpansion(type, substitutedArguments, reportStrategy)
-
                 val substitutedType = type.replace(newArguments = substitutedArguments)
+
+                checkTypeArgumentsSubstitutionInTypeAliasExpansion(type, substitutedType, reportStrategy)
 
                 return TypeProjectionImpl(originalProjection.projectionKind, substitutedType)
             }
@@ -641,15 +658,18 @@ class TypeResolver(
     }
 
     private fun checkTypeArgumentsSubstitutionInTypeAliasExpansion(
-            type: KotlinType,
-            substitutedArguments: List<TypeProjection>,
+            unsubstitutedType: KotlinType,
+            substitutedType: KotlinType,
             reportStrategy: TypeAliasExpansionReportStrategy
     ) {
-        val typeSubstitutor = TypeSubstitutor.create(type)
+        val typeSubstitutor = TypeSubstitutor.create(substitutedType)
 
-        substitutedArguments.forEachIndexed { i, substitutedArgument ->
-            val typeParameter = type.constructor.parameters[i]
-            DescriptorResolver.checkBoundsInTypeAlias(reportStrategy, substitutedArgument.type, typeParameter, typeSubstitutor)
+        substitutedType.arguments.forEachIndexed { i, substitutedArgument ->
+            if (!substitutedArgument.type.dependsOnTypeAliasParameters()) {
+                val unsubstitutedArgument = unsubstitutedType.arguments[i]
+                val typeParameter = unsubstitutedType.constructor.parameters[i]
+                DescriptorResolver.checkBoundsInTypeAlias(reportStrategy, unsubstitutedArgument.type, substitutedArgument.type, typeParameter, typeSubstitutor)
+            }
         }
     }
 

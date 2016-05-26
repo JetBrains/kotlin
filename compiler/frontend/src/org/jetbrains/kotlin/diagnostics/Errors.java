@@ -116,9 +116,9 @@ public interface Errors {
     DiagnosticFactory0<KtTypeParameterList> GENERIC_THROWABLE_SUBCLASS = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory1<KtUserType, ClassifierDescriptor> RECURSIVE_TYPEALIAS_EXPANSION = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory3<KtUserType, KotlinType, KotlinType, ClassifierDescriptor> UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION =
+    DiagnosticFactory3<KtElement, KotlinType, KotlinType, ClassifierDescriptor> UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION =
             DiagnosticFactory3.create(ERROR);
-    DiagnosticFactory1<KtUserType, KotlinType> CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<KtElement, KotlinType> CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION = DiagnosticFactory1.create(ERROR);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

@@ -21,8 +21,9 @@ import com.google.common.collect.Sets
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.diagnostics.Errors.SUPER_CANT_BE_EXTENSION_RECEIVER
+import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.*
@@ -114,7 +115,7 @@ class CandidateResolver(
         if (candidateCall.knownTypeParametersSubstitutor != null) {
             candidateCall.setResultingSubstitutor(candidateCall.knownTypeParametersSubstitutor!!)
         }
-        else if (!ktTypeArguments.isEmpty()) {
+        else if (ktTypeArguments.isNotEmpty() || candidateDescriptor is TypeAliasConstructorDescriptor) {
             // Explicit type arguments passed
 
             val typeArguments = ArrayList<KotlinType>()
@@ -565,13 +566,18 @@ class CandidateResolver(
 
     inner class ValueArgumentsCheckingResult(val status: ResolutionStatus, val argumentTypes: List<KotlinType>)
 
-    private fun checkGenericBoundsInAFunctionCall(
+    private fun CallCandidateResolutionContext<*>.checkGenericBoundsInAFunctionCall(
             ktTypeArguments: List<KtTypeProjection>,
             typeArguments: List<KotlinType>,
             functionDescriptor: CallableDescriptor,
             substitutor: TypeSubstitutor,
             trace: BindingTrace
     ) {
+        if (functionDescriptor is TypeAliasConstructorDescriptor) {
+            checkGenericBoundsInTypeAliasConstructorCall(ktTypeArguments, functionDescriptor, substitutor, trace)
+            return
+        }
+
         val typeParameters = functionDescriptor.typeParameters
         for (i in 0..Math.min(typeParameters.size, ktTypeArguments.size) - 1) {
             val typeParameterDescriptor = typeParameters[i]
@@ -580,6 +586,85 @@ class CandidateResolver(
             if (typeReference != null) {
                 DescriptorResolver.checkBounds(typeReference, typeArgument, typeParameterDescriptor, substitutor, trace)
             }
+        }
+    }
+
+    private class TypeAliasSingleStepExpansionReportStrategy(
+            private val callElement: KtElement,
+            typeAlias: TypeAliasDescriptor,
+            ktTypeArguments: List<KtTypeProjection>,
+            private val trace: BindingTrace
+    ) : TypeAliasExpansionReportStrategy {
+        private val argumentsMapping = typeAlias.declaredTypeParameters.zip(ktTypeArguments).toMap()
+
+        override fun wrongNumberOfTypeArguments(typeAlias: TypeAliasDescriptor, numberOfParameters: Int) {
+        }
+
+        override fun conflictingProjection(typeAlias: TypeAliasDescriptor, typeParameter: TypeParameterDescriptor?, expandingType: KotlinType) {
+            // No projections in type alias constructor arguments - can't happen
+        }
+
+        override fun recursiveTypeAlias(typeAlias: TypeAliasDescriptor) {}
+
+        override fun boundsViolationInSubstitution(bound: KotlinType, unsubstitutedArgument: KotlinType, argument: KotlinType, typeParameter: TypeParameterDescriptor) {
+            val descriptorForUnsubstitutedArgument = unsubstitutedArgument.constructor.declarationDescriptor
+            val argumentElement = argumentsMapping[descriptorForUnsubstitutedArgument]
+            val argumentTypeReferenceElement = argumentElement?.typeReference
+            if (argumentTypeReferenceElement != null) {
+                trace.report(UPPER_BOUND_VIOLATED.on(argumentTypeReferenceElement, bound, argument))
+            }
+            else {
+                trace.report(UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION.on(callElement, bound, argument, typeParameter))
+            }
+        }
+    }
+
+    private fun CallCandidateResolutionContext<*>.checkGenericBoundsInTypeAliasConstructorCall(
+            ktTypeArguments: List<KtTypeProjection>,
+            typeAliasConstructorDescriptor: TypeAliasConstructorDescriptor,
+            typeAliasParametersSubstitutor: TypeSubstitutor,
+            trace: BindingTrace
+    ) {
+        val substitutedType = typeAliasParametersSubstitutor.substitute(typeAliasConstructorDescriptor.returnType, Variance.INVARIANT)!!
+        val boundsSubstitutor = TypeSubstitutor.create(substitutedType)
+
+        val typeAliasDescriptor = typeAliasConstructorDescriptor.typeAliasDescriptor
+
+        val unsubstitutedType = typeAliasDescriptor.expandedType
+        if (unsubstitutedType.isError) return
+
+        val reportStrategy = TypeAliasSingleStepExpansionReportStrategy(call.callElement, typeAliasDescriptor, ktTypeArguments, trace)
+
+        // TODO refactor TypeResolver
+        //  - perform full type alias expansion
+        //  - provide type alias expansion stack in diagnostics
+
+        checkTypeInTypeAliasSubstitutionRec(reportStrategy, unsubstitutedType, typeAliasParametersSubstitutor, boundsSubstitutor)
+    }
+
+
+    private fun checkTypeInTypeAliasSubstitutionRec(
+            reportStrategy: TypeAliasExpansionReportStrategy,
+            unsubstitutedType: KotlinType,
+            typeAliasParametersSubstitutor: TypeSubstitutor,
+            boundsSubstitutor: TypeSubstitutor
+    ) {
+        // TODO refactor TypeResolver
+        val typeParameters = unsubstitutedType.constructor.parameters
+
+        // TODO do not perform substitution for type arguments multiple times
+        val substitutedTypeArguments = typeAliasParametersSubstitutor.safeSubstitute(unsubstitutedType, Variance.INVARIANT).arguments
+
+        for (i in 0 ..Math.min(typeParameters.size, substitutedTypeArguments.size) - 1) {
+            val substitutedTypeProjection = substitutedTypeArguments[i]
+            if (substitutedTypeProjection.isStarProjection) continue
+
+            val typeParameter = typeParameters[i]
+            val substitutedTypeArgument = substitutedTypeProjection.type
+            val unsubstitutedTypeArgument = unsubstitutedType.arguments[i].type
+            DescriptorResolver.checkBoundsInTypeAlias(reportStrategy, unsubstitutedTypeArgument, substitutedTypeArgument, typeParameter, boundsSubstitutor)
+
+            checkTypeInTypeAliasSubstitutionRec(reportStrategy, unsubstitutedTypeArgument, typeAliasParametersSubstitutor, boundsSubstitutor)
         }
     }
 
