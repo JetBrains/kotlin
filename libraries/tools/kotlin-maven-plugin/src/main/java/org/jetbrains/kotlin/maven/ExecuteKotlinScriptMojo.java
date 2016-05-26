@@ -167,16 +167,16 @@ public class ExecuteKotlinScriptMojo extends AbstractMojo {
 
             for (File item: deps) {
                 if (item.exists()) {
-                    configuration.add(CommonConfigurationKeys.CONTENT_ROOTS, new JvmClasspathRoot(item));
+                    configuration.add(JVMConfigurationKeys.CONTENT_ROOTS, new JvmClasspathRoot(item));
                     getLog().debug("Adding to classpath: " + item.getAbsolutePath());
                 } else {
                     getLog().debug("Skipping non-existing dependency: " + item.getAbsolutePath());
                 }
             }
 
-            configuration.add(CommonConfigurationKeys.CONTENT_ROOTS, new KotlinSourceRoot(scriptFile.getAbsolutePath()));
-            configuration.put(JVMConfigurationKeys.MODULE_NAME, JvmAbi.DEFAULT_MODULE_NAME);
-            configuration.add(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY, StandardScriptDefinition.INSTANCE);
+            configuration.add(JVMConfigurationKeys.CONTENT_ROOTS, new KotlinSourceRoot(scriptFile.getAbsolutePath()));
+            configuration.put(CommonConfigurationKeys.MODULE_NAME, JvmAbi.DEFAULT_MODULE_NAME);
+            configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, StandardScriptDefinition.INSTANCE);
 
             KotlinCoreEnvironment environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
 
