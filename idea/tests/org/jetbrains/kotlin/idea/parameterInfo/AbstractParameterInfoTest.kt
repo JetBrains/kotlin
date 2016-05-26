@@ -68,7 +68,7 @@ abstract class AbstractParameterInfoTest : LightCodeInsightFixtureTestCase() {
                 else -> error("Unexpected last file child")
             }
 
-            val context = ShowParameterInfoContext(editor, project, file, editor.caretModel.offset, -1)
+            val context = ShowParameterInfoContext(editor, project, file, editor.caretModel.offset, -1, true)
 
             val handlers = ShowParameterInfoHandler.getHandlers(project, KotlinLanguage.INSTANCE)!!
             val handler = handlers.firstOrNull { it.findElementForParameterInfo(context) != null }
