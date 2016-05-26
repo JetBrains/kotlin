@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+/*
 package org.jetbrains.kotlin.android.tests;
 
 import org.jetbrains.kotlin.jps.build.BaseKotlinJpsBuildTestCase;
@@ -60,3 +60,4 @@ public class AndroidJpsBuildTestCase extends BaseKotlinJpsBuildTestCase {
         loadProject(workDir.getAbsolutePath() + File.separator + PROJECT_NAME + ".ipr");
     }
 }
+*/
