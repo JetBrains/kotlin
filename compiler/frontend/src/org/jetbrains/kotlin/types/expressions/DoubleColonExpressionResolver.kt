@@ -166,6 +166,10 @@ class DoubleColonExpressionResolver(
             val descriptor = possiblyBareType.bareTypeConstructor.declarationDescriptor as? ClassDescriptor
                              ?: error("Only classes can produce bare types: $possiblyBareType")
 
+            if (doubleColonExpression is KtCallableReferenceExpression) {
+                c.trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(expression, descriptor.typeConstructor.parameters.size, descriptor))
+            }
+
             KotlinTypeImpl.create(
                     Annotations.EMPTY, descriptor, possiblyBareType.isNullable || doubleColonExpression.hasQuestionMarks,
                     descriptor.typeConstructor.parameters.map(TypeUtils::makeStarProjection)
