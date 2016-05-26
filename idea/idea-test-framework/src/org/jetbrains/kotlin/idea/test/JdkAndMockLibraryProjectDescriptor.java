@@ -1,6 +1,5 @@
 /*
-/*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,7 +50,10 @@ public class JdkAndMockLibraryProjectDescriptor extends KotlinLightProjectDescri
 
     @Override
     public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model) {
-        File libraryJar = MockLibraryUtil.compileLibraryToJar(sourcesPath, LIBRARY_NAME, withSources, isJsLibrary, allowKotlinPackage);
+        String libraryHash = sourcesPath + withSources + isJsLibrary + allowKotlinPackage;
+        String libraryFileName = LIBRARY_NAME + "_" + Integer.toHexString(libraryHash.hashCode());
+        
+        File libraryJar = MockLibraryUtil.compileLibraryToJar(sourcesPath, libraryFileName, withSources, isJsLibrary, allowKotlinPackage);
         String jarUrl = getJarUrl(libraryJar);
 
         Library.ModifiableModel libraryModel = model.getModuleLibraryTable().getModifiableModel().createLibrary(LIBRARY_NAME).getModifiableModel();
