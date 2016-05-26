@@ -8,7 +8,6 @@
       <module fileurl="file://$PROJECT_DIR$/plugins/lint/android-annotations/android-annotations.iml" filepath="$PROJECT_DIR$/plugins/lint/android-annotations/android-annotations.iml" />
       <module fileurl="file://$PROJECT_DIR$/plugins/android-extensions/android-extensions-compiler/android-extensions-compiler.iml" filepath="$PROJECT_DIR$/plugins/android-extensions/android-extensions-compiler/android-extensions-compiler.iml" group="plugins/android-extensions" />
       <module fileurl="file://$PROJECT_DIR$/plugins/android-extensions/android-extensions-idea/android-extensions-idea.iml" filepath="$PROJECT_DIR$/plugins/android-extensions/android-extensions-idea/android-extensions-idea.iml" group="plugins/android-extensions" />
-      <module fileurl="file://$PROJECT_DIR$/plugins/android-extensions/android-extensions-jps/android-extensions-jps.iml" filepath="$PROJECT_DIR$/plugins/android-extensions/android-extensions-jps/android-extensions-jps.iml" group="plugins/android-extensions" />
       <module fileurl="file://$PROJECT_DIR$/android-studio/android-studio.iml" filepath="$PROJECT_DIR$/android-studio/android-studio.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/compiler/android-tests/android-tests.iml" filepath="$PROJECT_DIR$/compiler/android-tests/android-tests.iml" group="compiler" />
       <module fileurl="file://$PROJECT_DIR$/plugins/annotation-based-compiler-plugins-ide-support/annotation-based-compiler-plugins-ide-support.iml" filepath="$PROJECT_DIR$/plugins/annotation-based-compiler-plugins-ide-support/annotation-based-compiler-plugins-ide-support.iml" group="plugins" />
@@ -52,7 +51,6 @@
       <module fileurl="file://$PROJECT_DIR$/idea/idea-core/idea-core.iml" filepath="$PROJECT_DIR$/idea/idea-core/idea-core.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/idea/idea-jps-common/idea-jps-common.iml" filepath="$PROJECT_DIR$/idea/idea-jps-common/idea-jps-common.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/idea/idea-live-templates/idea-live-templates.iml" filepath="$PROJECT_DIR$/idea/idea-live-templates/idea-live-templates.iml" group="ide" />
-      <module fileurl="file://$PROJECT_DIR$/idea/idea-maven/idea-maven.iml" filepath="$PROJECT_DIR$/idea/idea-maven/idea-maven.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/idea/idea-repl/idea-repl.iml" filepath="$PROJECT_DIR$/idea/idea-repl/idea-repl.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/idea-runner/idea-runner.iml" filepath="$PROJECT_DIR$/idea-runner/idea-runner.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/idea/idea-test-framework/idea-test-framework.iml" filepath="$PROJECT_DIR$/idea/idea-test-framework/idea-test-framework.iml" group="ide" />
@@ -63,8 +61,6 @@
       <module fileurl="file://$PROJECT_DIR$/compiler/ir/ir.tree/ir.tree.iml" filepath="$PROJECT_DIR$/compiler/ir/ir.tree/ir.tree.iml" group="compiler/ir" />
       <module fileurl="file://$PROJECT_DIR$/j2k/j2k.iml" filepath="$PROJECT_DIR$/j2k/j2k.iml" group="j2k" />
       <module fileurl="file://$PROJECT_DIR$/plugins/java-model-wrappers/java-model-wrappers.iml" filepath="$PROJECT_DIR$/plugins/java-model-wrappers/java-model-wrappers.iml" group="plugins" />
-      <module fileurl="file://$PROJECT_DIR$/jps-plugin/jps-plugin.iml" filepath="$PROJECT_DIR$/jps-plugin/jps-plugin.iml" group="ide/jps" />
-      <module fileurl="file://$PROJECT_DIR$/jps-plugin/jps-tests/jps-tests.iml" filepath="$PROJECT_DIR$/jps-plugin/jps-tests/jps-tests.iml" group="ide/jps" />
       <module fileurl="file://$PROJECT_DIR$/js/js.ast/js.ast.iml" filepath="$PROJECT_DIR$/js/js.ast/js.ast.iml" group="compiler/js" />
       <module fileurl="file://$PROJECT_DIR$/js/js.frontend/js.frontend.iml" filepath="$PROJECT_DIR$/js/js.frontend/js.frontend.iml" group="compiler/js" />
       <module fileurl="file://$PROJECT_DIR$/js/js.inliner/js.inliner.iml" filepath="$PROJECT_DIR$/js/js.inliner/js.inliner.iml" group="compiler/js" />
@@ -72,7 +68,6 @@
       <module fileurl="file://$PROJECT_DIR$/js/js.serializer/js.serializer.iml" filepath="$PROJECT_DIR$/js/js.serializer/js.serializer.iml" group="compiler/js" />
       <module fileurl="file://$PROJECT_DIR$/js/js.tests/js.tests.iml" filepath="$PROJECT_DIR$/js/js.tests/js.tests.iml" group="compiler/js" />
       <module fileurl="file://$PROJECT_DIR$/js/js.translator/js.translator.iml" filepath="$PROJECT_DIR$/js/js.translator/js.translator.iml" group="compiler/js" />
-      <module fileurl="file://$PROJECT_DIR$/jps-plugin/kannotator-jps-plugin-test/kannotator-jps-plugin-test.iml" filepath="$PROJECT_DIR$/jps-plugin/kannotator-jps-plugin-test/kannotator-jps-plugin-test.iml" group="ide/jps" />
       <module fileurl="file://$PROJECT_DIR$/plugins/kapt3/kapt3.iml" filepath="$PROJECT_DIR$/plugins/kapt3/kapt3.iml" />
       <module fileurl="file://$PROJECT_DIR$/idea/kotlin-gradle-tooling/kotlin-gradle-tooling.iml" filepath="$PROJECT_DIR$/idea/kotlin-gradle-tooling/kotlin-gradle-tooling.iml" />
       <module fileurl="file://$PROJECT_DIR$/compiler/light-classes/light-classes.iml" filepath="$PROJECT_DIR$/compiler/light-classes/light-classes.iml" group="compiler/java" />
