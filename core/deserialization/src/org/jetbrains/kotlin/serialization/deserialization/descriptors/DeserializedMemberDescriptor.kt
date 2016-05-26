@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.Variance
 
 interface DeserializedMemberDescriptor : MemberDescriptor {
     val proto: MessageLite
@@ -146,11 +148,9 @@ class DeserializedTypeAliasDescriptor(
 ) : AbstractTypeAliasDescriptor(containingDeclaration, annotations, name, SourceElement.NO_SOURCE, visibility),
         DeserializedMemberDescriptor {
 
-    private lateinit var underlyingTypeImpl: KotlinType
-    private lateinit var expandedTypeImpl: KotlinType
-
-    override val underlyingType: KotlinType get() = underlyingTypeImpl
-    override val expandedType: KotlinType get() = expandedTypeImpl
+    override lateinit var underlyingType: KotlinType private set
+    override lateinit var expandedType: KotlinType private set
+    private lateinit var typeConstructorParameters: List<TypeParameterDescriptor>
 
     fun initialize(
             declaredTypeParameters: List<TypeParameterDescriptor>,
@@ -158,7 +158,22 @@ class DeserializedTypeAliasDescriptor(
             expandedType: KotlinType
     ) {
         initialize(declaredTypeParameters)
-        underlyingTypeImpl = underlyingType
-        expandedTypeImpl = expandedType
+        this.underlyingType = underlyingType
+        this.expandedType = expandedType
+        typeConstructorParameters = computeConstructorTypeParameters()
     }
+
+    override fun substitute(substitutor: TypeSubstitutor): TypeAliasDescriptor {
+        if (substitutor.isEmpty) return this
+        val substituted = DeserializedTypeAliasDescriptor(containingDeclaration, annotations, name, visibility, proto, nameResolver, typeTable, containerSource)
+        substituted.initialize(declaredTypeParameters,
+                               substitutor.safeSubstitute(underlyingType, Variance.INVARIANT),
+                               substitutor.safeSubstitute(expandedType, Variance.INVARIANT))
+
+        return substituted
+    }
+
+    override fun getTypeConstructorTypeParameters(): List<TypeParameterDescriptor> =
+            typeConstructorParameters
+
 }

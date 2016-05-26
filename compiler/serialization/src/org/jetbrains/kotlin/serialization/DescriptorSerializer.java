@@ -172,12 +172,17 @@ public class DescriptorSerializer {
         }
 
         for (DeclarationDescriptor descriptor : sort(DescriptorUtils.getAllDescriptors(classDescriptor.getUnsubstitutedInnerClassesScope()))) {
-            int name = getSimpleNameIndex(descriptor.getName());
-            if (isEnumEntry(descriptor)) {
-                builder.addEnumEntry(enumEntryProto((ClassDescriptor) descriptor));
+            if (descriptor instanceof TypeAliasDescriptor) {
+                builder.addTypeAlias(typeAliasProto((TypeAliasDescriptor) descriptor));
             }
             else {
-                builder.addNestedClassName(name);
+                int name = getSimpleNameIndex(descriptor.getName());
+                if (isEnumEntry(descriptor)) {
+                    builder.addEnumEntry(enumEntryProto((ClassDescriptor) descriptor));
+                }
+                else {
+                    builder.addNestedClassName(name);
+                }
             }
         }
 
@@ -520,9 +525,8 @@ public class DescriptorSerializer {
             assert possiblyInnerType != null : "possiblyInnerType should not be null in case of class";
 
             fillFromPossiblyInnerType(builder, possiblyInnerType);
-
         }
-        if (descriptor instanceof TypeParameterDescriptor) {
+        else if (descriptor instanceof TypeParameterDescriptor) {
             TypeParameterDescriptor typeParameter = (TypeParameterDescriptor) descriptor;
             if (typeParameter.getContainingDeclaration() == containingDeclaration) {
                 builder.setTypeParameterName(getSimpleNameIndex(typeParameter.getName()));
@@ -533,7 +537,7 @@ public class DescriptorSerializer {
 
             assert type.getArguments().isEmpty() : "Found arguments for type constructor build on type parameter: " + descriptor;
         }
-        if (descriptor instanceof TypeAliasDescriptor) {
+        else if (descriptor instanceof TypeAliasDescriptor) {
             PossiblyInnerType possiblyInnerType = TypeParameterUtilsKt.buildPossiblyInnerType(type);
             assert possiblyInnerType != null : "possiblyInnerType should not be null in case of type alias";
             fillFromPossiblyInnerType(builder, possiblyInnerType);

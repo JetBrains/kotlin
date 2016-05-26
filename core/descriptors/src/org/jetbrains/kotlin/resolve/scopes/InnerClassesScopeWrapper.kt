@@ -17,16 +17,22 @@
 package org.jetbrains.kotlin.resolve.scopes
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
+import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.Printer
 
 class InnerClassesScopeWrapper(val workerScope: MemberScope) : MemberScopeImpl() {
-    override fun getContributedClassifier(name: Name, location: LookupLocation) = workerScope.getContributedClassifier(name, location) as? ClassDescriptor
+    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? =
+            workerScope.getContributedClassifier(name, location)?.let {
+                it as? ClassDescriptor ?: it as? TypeAliasDescriptor
+            }
 
-    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): List<ClassDescriptor> {
+    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): List<ClassifierDescriptor> {
         val restrictedFilter = kindFilter.restrictedToKindsOrNull(DescriptorKindFilter.CLASSIFIERS_MASK) ?: return listOf()
-        return workerScope.getContributedDescriptors(restrictedFilter, nameFilter).filterIsInstance<ClassDescriptor>()
+        return workerScope.getContributedDescriptors(restrictedFilter, nameFilter).filterIsInstance<ClassifierDescriptorWithTypeParameters>()
     }
 
     override fun printScopeStructure(p: Printer) {

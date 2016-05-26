@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjection
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
-fun ClassDescriptor.computeConstructorTypeParameters(): List<TypeParameterDescriptor> {
+fun ClassifierDescriptorWithTypeParameters.computeConstructorTypeParameters(): List<TypeParameterDescriptor> {
     val declaredParameters = declaredTypeParameters
 
     if (!isInner && containingDeclaration !is CallableDescriptor) return declaredParameters

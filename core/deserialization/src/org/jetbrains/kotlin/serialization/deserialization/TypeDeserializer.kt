@@ -82,7 +82,7 @@ class TypeDeserializer(
                 proto.hasTypeParameterName() -> {
                     val container = c.containingDeclaration
                     val typeParameters = when (container) {
-                        is ClassDescriptor -> container.typeConstructor.parameters
+                        is ClassifierDescriptorWithTypeParameters -> container.typeConstructor.parameters
                         is CallableDescriptor -> container.typeParameters
                         else -> emptyList<TypeParameterDescriptor>()
                     }
