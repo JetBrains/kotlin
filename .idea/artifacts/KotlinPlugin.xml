@@ -51,9 +51,7 @@
           <element id="module-output" name="idea-live-templates" />
           <element id="module-output" name="resolution" />
           <element id="module-output" name="plugin-api" />
-          <element id="module-output" name="idea-ultimate" />
           <element id="module-output" name="formatter" />
-          <element id="module-output" name="idea-maven" />
           <element id="extracted-dir" path="$PROJECT_DIR$/dependencies/protobuf-2.6.1.jar" path-in-jar="/" />
           <element id="module-output" name="backend.common" />
           <element id="module-output" name="ir.tree" />
@@ -63,9 +61,6 @@
           <element id="module-output" name="frontend.script" />
         </element>
         <element id="library" level="project" name="javax.inject" />
-        <element id="directory" name="jps">
-          <element id="artifact" artifact-name="KotlinJpsPlugin" />
-        </element>
         <element id="library" level="project" name="markdown" />
         <element id="archive" name="android-extensions-ide.jar">
           <element id="module-output" name="android-extensions-idea" />
