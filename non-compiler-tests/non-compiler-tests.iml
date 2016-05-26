@@ -15,15 +15,12 @@
     <orderEntry type="module" module-name="descriptor.loader.java" scope="TEST" />
     <orderEntry type="module" module-name="descriptors.runtime" scope="TEST" />
     <orderEntry type="module" module-name="js.tests" scope="TEST" />
-    <orderEntry type="module" module-name="jps-tests" scope="TEST" />
     <orderEntry type="module" module-name="j2k" scope="TEST" />
-    <orderEntry type="library" scope="TEST" name="jps-test" level="project" />
     <orderEntry type="module" module-name="js.dart-ast" scope="TEST" />
     <orderEntry type="module" module-name="js.frontend" scope="TEST" />
     <orderEntry type="module" module-name="util" scope="TEST" />
     <orderEntry type="module" module-name="android-extensions-compiler" scope="TEST" />
     <orderEntry type="module" module-name="android-extensions-idea" scope="TEST" />
-    <orderEntry type="module" module-name="android-extensions-jps" scope="TEST" />
     <orderEntry type="module" module-name="idea-test-framework" scope="TEST" />
     <orderEntry type="module" module-name="idea-completion" scope="TEST" />
     <orderEntry type="module" module-name="annotation-collector" scope="TEST" />
