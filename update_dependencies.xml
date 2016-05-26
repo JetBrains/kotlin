@@ -972,6 +972,15 @@
             <cutdirsmapper dirs="${strip.dirs.count}"/>
         </unzip>
 
+        <!-- Workaround start: ProductivityFeaturesRegistry.xml is inside both idea.jar and resources.jar -->
+            <unzip src="${android.destination.dir}/lib/idea.jar" dest="${android.destination.dir}/lib/temp-idea-jar" />
+            <delete file="${android.destination.dir}/lib/idea.jar"/>
+            <jar destfile="${android.destination.dir}/lib/idea.jar"
+                 basedir="${android.destination.dir}/lib/temp-idea-jar" 
+                 includes="**/*" excludes="ProductivityFeaturesRegistry.xml" />
+            <delete dir="${android.destination.dir}/lib/temp-idea-jar" />
+        <!-- Workaround end -->
+
         <local name="android.studio.mac"/>
         <condition property="android.studio.mac">
             <matches pattern=".+mac\.zip" string="${android.file.name}"/>
