@@ -8,7 +8,6 @@
     <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="android-extensions-compiler" />
-    <orderEntry type="module" module-name="android-extensions-jps" />
     <orderEntry type="module" module-name="annotation-collector" scope="TEST" />
     <orderEntry type="module" module-name="tests-common" scope="TEST" />
     <orderEntry type="module" module-name="cli" scope="TEST" />
