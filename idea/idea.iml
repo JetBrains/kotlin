@@ -53,6 +53,5 @@
     <orderEntry type="module" module-name="lint-idea" scope="PROVIDED" />
     <orderEntry type="library" name="java-decompiler-plugin" level="project" />
     <orderEntry type="module" module-name="formatter" />
-    <orderEntry type="module" module-name="idea-maven" />
   </component>
 </module>
