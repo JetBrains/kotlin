@@ -1,0 +1,15 @@
+package
+
+public typealias TCErr = TColl<kotlin.String, kotlin.Any>
+public typealias TCErr2 = TCErr
+public val testCtor1: TColl<kotlin.String, kotlin.Any>
+public val testCtor2: TColl<kotlin.String, kotlin.Any>
+public fun testType1(/*0*/ x: TCErr [= TColl<kotlin.String, kotlin.Any>]): kotlin.Unit
+public fun testType2(/*0*/ x: TCErr2 [= TColl<kotlin.String, kotlin.Any>]): kotlin.Unit
+
+public final class TColl</*0*/ T, /*1*/ C : kotlin.collections.Collection<T>> {
+    public constructor TColl</*0*/ T, /*1*/ C : kotlin.collections.Collection<T>>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
