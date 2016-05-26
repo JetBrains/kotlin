@@ -4,9 +4,7 @@
       <root url="file://$PROJECT_DIR$/annotations" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.jar!/" />
     </ANNOTATIONS>
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/ideaSDK/core-analysis/intellij-core-analysis.jar!/" />
-    </CLASSES>
+    <CLASSES />
     <JAVADOC />
     <SOURCES>
       <root url="jar://$PROJECT_DIR$/dependencies/asm5-src.zip!/" />
