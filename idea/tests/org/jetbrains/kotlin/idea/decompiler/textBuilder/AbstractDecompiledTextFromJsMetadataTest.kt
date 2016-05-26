@@ -20,7 +20,6 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.decompiler.KtDecompiledFile
-import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.ModuleKind
 import org.jetbrains.kotlin.idea.test.configureAs
 import kotlin.test.assertTrue
@@ -48,6 +47,6 @@ fun getKjsmFile(
 ): VirtualFile {
     val root = findTestLibraryRoot(module)!!
     root.refresh(false, true)
-    val packageDir = root.findFileByRelativePath(JdkAndMockLibraryProjectDescriptor.LIBRARY_NAME + "/" + packageName.replace(".", "/"))!!
+    val packageDir = root.findFileByRelativePath(root.nameWithoutExtension + "/" + packageName.replace(".", "/"))!!
     return packageDir.findChild(className + ".kjsm")!!
 }
