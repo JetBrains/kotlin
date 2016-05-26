@@ -97,8 +97,6 @@ import org.jetbrains.kotlin.idea.intentions.declarations.AbstractJoinLinesTest
 import org.jetbrains.kotlin.idea.internal.AbstractBytecodeToolWindowTest
 import org.jetbrains.kotlin.idea.kdoc.AbstractKDocHighlightingTest
 import org.jetbrains.kotlin.idea.kdoc.AbstractKDocTypingTest
-import org.jetbrains.kotlin.idea.maven.AbstractKotlinMavenInspectionTest
-import org.jetbrains.kotlin.idea.maven.configuration.AbstractMavenConfigureProjectByChangingFileTest
 import org.jetbrains.kotlin.idea.navigation.AbstractGotoSuperTest
 import org.jetbrains.kotlin.idea.navigation.AbstractGotoTypeDeclarationTest
 import org.jetbrains.kotlin.idea.navigation.AbstractKotlinGotoImplementationTest
@@ -123,8 +121,6 @@ import org.jetbrains.kotlin.integration.AbstractAntTaskTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterForWebDemoTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterMultiFileTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterSingleFileTest
-import org.jetbrains.kotlin.jps.build.*
-import org.jetbrains.kotlin.jps.incremental.AbstractProtoComparisonTest
 import org.jetbrains.kotlin.js.test.semantics.AbstractBoxJsTest
 import org.jetbrains.kotlin.js.test.semantics.AbstractJsCodegenBoxTest
 import org.jetbrains.kotlin.js.test.semantics.AbstractNonLocalReturnsTest
@@ -868,17 +864,6 @@ fun main(args: Array<String>) {
         }
     }
 
-    testGroup("idea/idea-maven/test", "idea/idea-maven/testData") {
-        testClass<AbstractMavenConfigureProjectByChangingFileTest>() {
-            model("configurator/jvm", extension = null, recursive = false, testMethod = "doTestWithMaven")
-            model("configurator/js", extension = null, recursive = false, testMethod = "doTestWithJSMaven")
-        }
-
-        testClass<AbstractKotlinMavenInspectionTest> {
-            model("maven-inspections", pattern = "^([\\w\\-]+).xml$", singleClass = true)
-        }
-    }
-
     testGroup("idea/tests", "compiler/testData") {
         testClass<AbstractResolveByStubTest>() {
             model("loadJava/compiledKotlin")
@@ -987,62 +972,6 @@ fun main(args: Array<String>) {
     testGroup("j2k/tests", "j2k/testData") {
         testClass<AbstractJavaToKotlinConverterForWebDemoTest>() {
             model("fileOrElement", extension = "java")
-        }
-    }
-
-    testGroup("jps-plugin/jps-tests/test", "jps-plugin/testData") {
-        testClass<AbstractIncrementalJpsTest>() {
-            model("incremental/multiModule", extension = null, excludeParentDirs = true)
-            model("incremental/pureKotlin", extension = null, recursive = false)
-            model("incremental/withJava", extension = null, excludeParentDirs = true)
-            model("incremental/inlineFunCallSite", extension = null, excludeParentDirs = true)
-        }
-        testClass<AbstractLookupTrackerTest>() {
-            model("incremental/lookupTracker", extension = null, recursive = false)
-        }
-
-        testClass(AbstractIncrementalLazyCachesTest::class.java) {
-            model("incremental/lazyKotlinCaches", extension = null, excludeParentDirs = true)
-        }
-
-        testClass(AbstractIncrementalCacheVersionChangedTest::class.java) {
-            model("incremental/cacheVersionChanged", extension = null, excludeParentDirs = true)
-        }
-    }
-
-    testGroup("jps-plugin/jps-tests/test", "jps-plugin/testData") {
-        testClass<AbstractExperimentalIncrementalJpsTest>() {
-            model("incremental/multiModule", extension = null, excludeParentDirs = true)
-            model("incremental/pureKotlin", extension = null, recursive = false)
-            model("incremental/withJava", extension = null, excludeParentDirs = true)
-            model("incremental/inlineFunCallSite", extension = null, excludeParentDirs = true)
-            model("incremental/classHierarchyAffected", extension = null, excludeParentDirs = true)
-        }
-
-        testClass<AbstractExperimentalIncrementalLazyCachesTest>() {
-            model("incremental/lazyKotlinCaches", extension = null, excludeParentDirs = true)
-        }
-
-        testClass<AbstractExperimentalIncrementalCacheVersionChangedTest>() {
-            model("incremental/cacheVersionChanged", extension = null, excludeParentDirs = true)
-        }
-
-        testClass<AbstractDataContainerVersionChangedTest>() {
-            model("incremental/cacheVersionChanged", extension = null, excludeParentDirs = true)
-        }
-
-        testClass<AbstractExperimentalChangeIncrementalOptionTest>() {
-            model("incremental/changeIncrementalOption", extension = null, excludeParentDirs = true)
-        }
-    }
-
-    testGroup("jps-plugin/jps-tests/test", "jps-plugin/testData") {
-        testClass<AbstractProtoComparisonTest>() {
-            model("comparison/classSignatureChange", extension = null, excludeParentDirs = true)
-            model("comparison/classPrivateOnlyChange", extension = null, excludeParentDirs = true)
-            model("comparison/classMembersOnlyChanged", extension = null, excludeParentDirs = true)
-            model("comparison/packageMembers", extension = null, excludeParentDirs = true)
-            model("comparison/unchanged", extension = null, excludeParentDirs = true)
         }
     }
 
