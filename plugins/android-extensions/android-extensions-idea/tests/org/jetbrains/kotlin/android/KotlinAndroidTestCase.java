@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.android;
 
 import com.android.SdkConstants;
-import com.android.ide.common.rendering.RenderSecurityManager;
-import com.android.tools.idea.rendering.PsiProjectListener;
+import com.android.tools.idea.rendering.RenderSecurityManager;
+import com.android.tools.idea.res.PsiProjectListener;
 import com.intellij.facet.FacetManager;
 import com.intellij.facet.ModifiableFacetModel;
 import com.intellij.ide.startup.impl.StartupManagerImpl;
