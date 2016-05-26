@@ -3867,9 +3867,21 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/coroutines"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("irrelevantSuspendDeclarations.kt")
+            public void testIrrelevantSuspendDeclarations() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/irrelevantSuspendDeclarations.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("lambdaExpectedType.kt")
             public void testLambdaExpectedType() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/lambdaExpectedType.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nonLocalSuspension.kt")
+            public void testNonLocalSuspension() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/nonLocalSuspension.kt");
                 doTest(fileName);
             }
 
