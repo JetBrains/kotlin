@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.serialization.builtins
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.LanguageFeatureSettings
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.descriptors.resolveClassByFqName
@@ -56,7 +56,7 @@ class AdditionalBuiltInsMembersSignatureListsTest : KotlinTestWithEnvironment() 
         val container = createContainerForTopDownAnalyzerForJvm(
                 moduleContext, CliLightClassGenerationSupport.CliBindingTrace(), providerFactory,
                 GlobalSearchScope.allScope(environment.project), LookupTracker.DO_NOTHING, PackagePartProvider.EMPTY,
-                LanguageFeatureSettings.LATEST
+                LanguageVersion.LATEST
         )
 
         emptyModule.initialize(container.javaDescriptorResolver.packageFragmentProvider)

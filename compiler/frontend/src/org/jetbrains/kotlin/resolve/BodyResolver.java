@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 
 import java.util.*;
 
+import static org.jetbrains.kotlin.config.LanguageFeature.TopLevelSealedInheritance;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
@@ -398,7 +399,7 @@ public class BodyResolver {
         if (ktClassOrObject instanceof KtEnumEntry) {
             parentEnumOrSealed = Collections.singleton(((ClassDescriptor) descriptor.getContainingDeclaration()).getTypeConstructor());
         }
-        else if (languageFeatureSettings.getTopLevelSealedInheritance() && DescriptorUtils.isTopLevelDeclaration(descriptor)) {
+        else if (languageFeatureSettings.supportsFeature(TopLevelSealedInheritance) && DescriptorUtils.isTopLevelDeclaration(descriptor)) {
             // TODO: improve diagnostic when top level sealed inheritance is disabled
             for (KotlinType supertype : supertypes.values()) {
                 ClassifierDescriptor classifierDescriptor = supertype.getConstructor().getDeclarationDescriptor();

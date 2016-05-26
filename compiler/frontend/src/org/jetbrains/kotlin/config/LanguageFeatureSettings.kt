@@ -16,31 +16,38 @@
 
 package org.jetbrains.kotlin.config
 
-// Note: names of these parameters are also used in diagnostic tests
-class LanguageFeatureSettings(
-        val typeAliases: Boolean = true,
-        val localDelegatedProperties: Boolean = true,
-        val topLevelSealedInheritance: Boolean = true
-) {
-    companion object {
-        private val SETTINGS = mapOf(
-                "1.0" to LanguageFeatureSettings(
-                        typeAliases = false,
-                        localDelegatedProperties = false,
-                        topLevelSealedInheritance = false
-                ),
-                "1.1" to LanguageFeatureSettings()
-        )
+import org.jetbrains.kotlin.config.LanguageVersion.KOTLIN_1_1
 
-        private val LATEST_VERSION = "1.1"
+
+enum class LanguageFeature(val sinceVersion: LanguageVersion) {
+    // Note: names of these entries are also used in diagnostic tests
+    TypeAliases(KOTLIN_1_1),
+    LocalDelegatedProperties(KOTLIN_1_1),
+    TopLevelSealedInheritance(KOTLIN_1_1);
+
+    companion object {
+        @JvmStatic
+        fun fromString(str: String) = values().find { it.name == str }
+    }
+}
+
+enum class LanguageVersion(val versionString: String): LanguageFeatureSettings {
+    KOTLIN_1_0("1.0"),
+    KOTLIN_1_1("1.1");
+
+    override fun supportsFeature(feature: LanguageFeature): Boolean {
+        return this.ordinal >= feature.sinceVersion.ordinal
+    }
+
+    companion object {
+        @JvmStatic
+        fun fromVersionString(str: String) = values().find { it.versionString == str }
 
         @JvmField
-        val LATEST: LanguageFeatureSettings = fromLanguageVersion(LATEST_VERSION)!!
-
-        @JvmStatic
-        fun fromLanguageVersion(source: String): LanguageFeatureSettings? = SETTINGS[source]
-
-        @JvmStatic
-        fun getAllLanguageVersions(): List<String> = SETTINGS.keys.toList()
+        val LATEST = values().last()
     }
+}
+
+interface LanguageFeatureSettings {
+    fun supportsFeature(feature: LanguageFeature): Boolean
 }
