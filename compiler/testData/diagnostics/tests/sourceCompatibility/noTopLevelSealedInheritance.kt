@@ -1,4 +1,4 @@
-// !LANGUAGE: -topLevelSealedInheritance
+// !LANGUAGE: -TopLevelSealedInheritance
 
 sealed class Base
 
