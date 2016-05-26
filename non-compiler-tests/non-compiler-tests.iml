@@ -5,9 +5,9 @@
     <content url="file://$MODULE_DIR$" />
     <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" scope="TEST" name="idea-full" level="project" />
     <orderEntry type="module" module-name="idea" scope="TEST" />
     <orderEntry type="module" module-name="tests-common" scope="TEST" />
-    <orderEntry type="library" scope="TEST" name="idea-full" level="project" />
     <orderEntry type="module" module-name="backend" scope="TEST" />
     <orderEntry type="module" module-name="frontend" scope="TEST" />
     <orderEntry type="module" module-name="frontend.java" scope="TEST" />
