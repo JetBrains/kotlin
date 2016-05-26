@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+/*
 package org.jetbrains.kotlin.jps.build.android
 
 import com.intellij.openapi.util.io.FileUtil
@@ -48,3 +48,4 @@ abstract class AbstractAndroidJpsTestCase : BaseKotlinJpsBuildTestCase() {
         return library.properties
     }
 }
+*/
