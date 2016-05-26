@@ -4,7 +4,7 @@ public fun builder(/*0*/ coroutine c: IntController.() -> kotlin.coroutines.Cont
 public fun emptyBuilder(/*0*/ coroutine c: EmptyController.() -> kotlin.coroutines.Continuation<kotlin.Unit>): kotlin.Int
 public fun foo(): kotlin.Unit
 public fun </*0*/ T> genericBuilder(/*0*/ coroutine c: GenericController<T>.() -> kotlin.coroutines.Continuation<kotlin.Unit>): T
-public fun </*0*/ T> manyArgumentsBuilder(/*0*/ coroutine c1: UnitController.() -> kotlin.coroutines.Continuation<kotlin.Unit>, /*1*/ coroutine c2: GenericController<T>.() -> kotlin.coroutines.Continuation<kotlin.Unit>, /*2*/ coroutine c3: IntController.() -> kotlin.coroutines.Continuation<kotlin.Int>): T
+public fun </*0*/ T> manyArgumentsBuilder(/*0*/ coroutine c1: UnitController.() -> kotlin.coroutines.Continuation<kotlin.Unit>, /*1*/ coroutine c2: GenericController<T>.() -> kotlin.coroutines.Continuation<kotlin.Unit>, /*2*/ coroutine c3: IntController.() -> kotlin.coroutines.Continuation<kotlin.Unit>): T
 public fun severalParamsInLambda(/*0*/ coroutine c: UnitController.(kotlin.String, kotlin.Int) -> kotlin.coroutines.Continuation<kotlin.Unit>): kotlin.Unit
 public fun unitBuilder(/*0*/ coroutine c: UnitController.() -> kotlin.coroutines.Continuation<kotlin.Unit>): kotlin.Int
 

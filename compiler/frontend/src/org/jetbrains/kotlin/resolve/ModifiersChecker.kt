@@ -81,7 +81,7 @@ object ModifierCheckerCore {
             NOINLINE_KEYWORD  to EnumSet.of(VALUE_PARAMETER),
             COROUTINE_KEYWORD to EnumSet.of(VALUE_PARAMETER),
             TAILREC_KEYWORD   to EnumSet.of(FUNCTION),
-            SUSPEND_KEYWORD   to EnumSet.of(FUNCTION),
+            SUSPEND_KEYWORD   to EnumSet.of(MEMBER_FUNCTION),
             EXTERNAL_KEYWORD  to EnumSet.of(FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER),
             ANNOTATION_KEYWORD to EnumSet.of(ANNOTATION_CLASS),
             CROSSINLINE_KEYWORD to EnumSet.of(VALUE_PARAMETER),

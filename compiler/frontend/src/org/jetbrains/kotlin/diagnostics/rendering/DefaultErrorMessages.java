@@ -383,6 +383,8 @@ public class DefaultErrorMessages {
         MAP.put(OPERATOR_MODIFIER_REQUIRED, "''operator'' modifier is required on ''{0}'' in ''{1}''", NAME, STRING);
         MAP.put(INFIX_MODIFIER_REQUIRED, "''infix'' modifier is required on ''{0}'' in ''{1}''", NAME, STRING);
 
+        MAP.put(INAPPLICABLE_MODIFIER, "''{0}'' modifier is inapplicable. The reason is that {1}", TO_STRING, STRING);
+
         MAP.put(RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY,
                 "Returns are not allowed for functions with expression body. Use block body in '{...}'");
         MAP.put(NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY, "A 'return' expression required in a function with a block body ('{...}')");

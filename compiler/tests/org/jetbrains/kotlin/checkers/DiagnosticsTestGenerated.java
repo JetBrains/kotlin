@@ -3867,6 +3867,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/coroutines"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("coroutineApplicability.kt")
+            public void testCoroutineApplicability() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/coroutineApplicability.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("irrelevantSuspendDeclarations.kt")
             public void testIrrelevantSuspendDeclarations() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/irrelevantSuspendDeclarations.kt");
@@ -3879,9 +3885,21 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("manyHandleResults.kt")
+            public void testManyHandleResults() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/manyHandleResults.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("nonLocalSuspension.kt")
             public void testNonLocalSuspension() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/nonLocalSuspension.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("suspendApplicability.kt")
+            public void testSuspendApplicability() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/suspendApplicability.kt");
                 doTest(fileName);
             }
 

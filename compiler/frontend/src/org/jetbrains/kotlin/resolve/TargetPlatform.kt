@@ -63,7 +63,9 @@ private val DEFAULT_DECLARATION_CHECKERS = listOf(
         UnderscoreChecker,
         InlineParameterChecker,
         OperatorModifierChecker(),
-        InfixModifierChecker())
+        InfixModifierChecker(),
+        SuspendModifierChecker,
+        CoroutineModifierChecker)
 
 private val DEFAULT_CALL_CHECKERS = listOf(CapturingInClosureChecker(), InlineCheckerWrapper(), ReifiedTypeParameterSubstitutionChecker(),
                                            SafeCallChecker(), InvokeConventionChecker(), CallReturnsArrayOfNothingChecker(),

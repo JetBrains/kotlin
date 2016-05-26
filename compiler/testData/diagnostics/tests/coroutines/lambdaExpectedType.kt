@@ -22,7 +22,7 @@ fun emptyBuilder(coroutine c: EmptyController.() -> Continuation<Unit>) = 1
 fun <T> manyArgumentsBuilder(
         coroutine c1: UnitController.() -> Continuation<Unit>,
         coroutine c2: GenericController<T>.() -> Continuation<Unit>,
-        coroutine c3: IntController.() -> Continuation<Int>
+        coroutine c3: IntController.() -> Continuation<Unit>
 ):T = null!!
 
 fun severalParamsInLambda(coroutine c: UnitController.(String, Int) -> Continuation<Unit>) {}
