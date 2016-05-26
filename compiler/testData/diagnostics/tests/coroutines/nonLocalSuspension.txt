@@ -1,0 +1,16 @@
+package
+
+public fun </*0*/ T> builder(/*0*/ coroutine c: Controller<T>.() -> kotlin.coroutines.Continuation<kotlin.Unit>): kotlin.Unit
+public fun foo(): kotlin.Unit
+public fun noinline(/*0*/ x: () -> kotlin.Unit): kotlin.Unit
+public inline fun run(/*0*/ x: () -> kotlin.Unit): kotlin.Unit
+public inline fun runCross(/*0*/ crossinline x: () -> kotlin.Unit): kotlin.Unit
+
+public final class Controller</*0*/ T> {
+    public constructor Controller</*0*/ T>()
+    public final suspend fun another(/*0*/ a: T, /*1*/ x: kotlin.coroutines.Continuation<kotlin.Int>): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final suspend fun suspendHere(/*0*/ x: kotlin.coroutines.Continuation<kotlin.Int>): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
