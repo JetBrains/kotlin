@@ -124,7 +124,7 @@ protected constructor(
     }
 
     private fun doGetTypeAliases(name: Name): Collection<TypeAliasDescriptor> =
-            declarationProvider.getTypeAliasDeclarations(name).map { ktTypeAlias ->
+            declarationProvider.getTypeAliasDeclarations(name).mapNotNull { ktTypeAlias ->
                 c.descriptorResolver.resolveTypeAliasDescriptor(
                         thisDescriptor,
                         getScopeForMemberDeclarationResolution(ktTypeAlias),

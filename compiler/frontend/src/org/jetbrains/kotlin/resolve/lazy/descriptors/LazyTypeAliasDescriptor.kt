@@ -20,10 +20,16 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AbstractTypeAliasDescriptor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.storage.NotNullLazyValue
+import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.types.DeferredType
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.Variance
 
 class LazyTypeAliasDescriptor(
+        private val storageManager: StorageManager,
+        private val trace: BindingTrace,
         containingDeclaration: DeclarationDescriptor,
         annotations: Annotations,
         name: Name,
@@ -32,30 +38,50 @@ class LazyTypeAliasDescriptor(
 ) : AbstractTypeAliasDescriptor(containingDeclaration, annotations, name, sourceElement, visibility),
         TypeAliasDescriptor {
 
-    private lateinit var underlyingTypeImpl: NotNullLazyValue<KotlinType>
-    private lateinit var expandedTypeImpl: NotNullLazyValue<KotlinType>
+    override lateinit var underlyingType: KotlinType private set
+    override lateinit var expandedType: KotlinType private set
 
-    override val underlyingType: KotlinType get() = underlyingTypeImpl()
-    override val expandedType: KotlinType get() = expandedTypeImpl()
+    private val lazyTypeConstructorParameters =
+            storageManager.createLazyValue { this.computeConstructorTypeParameters() }
 
     fun initialize(
             declaredTypeParameters: List<TypeParameterDescriptor>,
-            lazyUnderlyingType: NotNullLazyValue<KotlinType>,
-            lazyExpandedType: NotNullLazyValue<KotlinType>
+            underlyingType: KotlinType,
+            expandedType: KotlinType
     ) {
         super.initialize(declaredTypeParameters)
-        this.underlyingTypeImpl = lazyUnderlyingType
-        this.expandedTypeImpl = lazyExpandedType
+        this.underlyingType = underlyingType
+        this.expandedType = expandedType
     }
+
+    override fun substitute(substitutor: TypeSubstitutor): TypeAliasDescriptor {
+        if (substitutor.isEmpty) return this
+        val substituted = LazyTypeAliasDescriptor(storageManager, trace,
+                                                  containingDeclaration, annotations, name, source, visibility)
+        substituted.initialize(declaredTypeParameters,
+                               DeferredType.create(storageManager, trace) {
+                                   substitutor.substitute(underlyingType, Variance.INVARIANT)
+                               },
+                               DeferredType.create(storageManager, trace) {
+                                   substitutor.substitute(expandedType, Variance.INVARIANT)
+                               })
+        return substituted
+    }
+
+    override fun getTypeConstructorTypeParameters(): List<TypeParameterDescriptor> =
+            lazyTypeConstructorParameters()
 
     companion object {
         @JvmStatic fun create(
+                storageManager: StorageManager,
+                trace: BindingTrace,
                 containingDeclaration: DeclarationDescriptor,
                 annotations: Annotations,
                 name: Name,
                 sourceElement: SourceElement,
                 visibility: Visibility
         ): LazyTypeAliasDescriptor =
-                LazyTypeAliasDescriptor(containingDeclaration, annotations, name, sourceElement, visibility)
+                LazyTypeAliasDescriptor(storageManager, trace,
+                                        containingDeclaration, annotations, name, sourceElement, visibility)
     }
 }

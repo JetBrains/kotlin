@@ -369,8 +369,8 @@ class TypeResolver(
         }
 
         val collectedArgumentAsTypeProjections =
-                collectArgumentsForClassTypeConstructor(c, classDescriptor, qualifierResolutionResult.qualifierParts)
-                ?: return createErrorTypeAndResolveArguments(c, projectionFromAllQualifierParts, typeConstructor.toString())
+                collectArgumentsForClassifierTypeConstructor(c, classDescriptor, qualifierResolutionResult.qualifierParts)
+                ?: return createErrorTypeForTypeConstructor(c, projectionFromAllQualifierParts, typeConstructor)
 
         assert(collectedArgumentAsTypeProjections.size <= parameters.size) {
             "Collected arguments count should be not greater then parameters count," +
@@ -423,63 +423,70 @@ class TypeResolver(
     private fun resolveTypeForTypeAlias(
             c: TypeResolutionContext,
             annotations: Annotations,
-            typeAliasDescriptor: TypeAliasDescriptor,
+            descriptor: TypeAliasDescriptor,
             type: KtUserType,
             qualifierResolutionResult: QualifiedExpressionResolver.TypeQualifierResolutionResult
     ): PossiblyBareType {
-        val typeAliasConstructor = typeAliasDescriptor.typeConstructor
+        val typeConstructor = descriptor.typeConstructor
         val projectionFromAllQualifierParts = qualifierResolutionResult.allProjections
 
-        if (ErrorUtils.isError(typeAliasDescriptor)) {
-            return createErrorTypeForTypeConstructor(c, projectionFromAllQualifierParts, typeAliasConstructor)
+        if (ErrorUtils.isError(descriptor)) {
+            return createErrorTypeForTypeConstructor(c, projectionFromAllQualifierParts, typeConstructor)
         }
 
-        // TODO type arguments substitution for type parameters of outer classes
-        // TODO should we support type aliases as qualifiers? what about generics?
+        val parameters = typeConstructor.parameters
 
-        val typeAliasParameters = typeAliasDescriptor.declaredTypeParameters
+        val typeAliasQualifierPart =
+                qualifierResolutionResult.qualifierParts.lastOrNull()
+                ?: return createErrorTypeForTypeConstructor(c, projectionFromAllQualifierParts, typeConstructor)
 
-        val typeAliasQualifierPart = qualifierResolutionResult.qualifierParts.lastOrNull()
-                                     ?: return createErrorTypeForTypeConstructor(c, projectionFromAllQualifierParts, typeAliasConstructor)
+        val argumentElementsFromUserType =
+                collectArgumentsForClassifierTypeConstructor(c, descriptor, qualifierResolutionResult.qualifierParts)
+                ?: return createErrorTypeForTypeConstructor(c, projectionFromAllQualifierParts, typeConstructor)
 
-        // TODO appendDefaultArgumentsForInnerScope
-        val typeAliasArguments = typeAliasQualifierPart.typeArguments?.arguments.orEmpty()
+        val argumentsFromUserType = resolveTypeProjections(c, typeConstructor, argumentElementsFromUserType)
+
+        val arguments = argumentsFromUserType + appendDefaultArgumentsForInnerScope(argumentsFromUserType.size, parameters)
 
         val reportStrategy = TracingTypeAliasExpansionReportStrategy(
                 c.trace,
                 type, typeAliasQualifierPart.typeArguments ?: typeAliasQualifierPart.expression,
-                typeAliasDescriptor, typeAliasDescriptor.declaredTypeParameters, typeAliasArguments)
+                descriptor, descriptor.declaredTypeParameters,
+                argumentElementsFromUserType // TODO arguments from inner scope
+        )
 
-        if (typeAliasParameters.size != typeAliasArguments.size) {
-            reportStrategy.wrongNumberOfTypeArguments(typeAliasDescriptor, typeAliasParameters.size)
-            return createErrorTypeForTypeConstructor(c, projectionFromAllQualifierParts, typeAliasConstructor)
+        if (parameters.size != arguments.size) {
+            reportStrategy.wrongNumberOfTypeArguments(descriptor, parameters.size)
+            return createErrorTypeForTypeConstructor(c, projectionFromAllQualifierParts, typeConstructor)
         }
 
         return if (c.abbreviated) {
-            val arguments = resolveTypeProjections(c, typeAliasDescriptor.typeConstructor, typeAliasArguments)
-            val abbreviatedType = KotlinTypeImpl.create(annotations, typeAliasDescriptor.typeConstructor, false, arguments, MemberScope.Empty)
+            val abbreviatedType = KotlinTypeImpl.create(annotations, descriptor.typeConstructor, false, arguments, MemberScope.Empty)
             type(abbreviatedType)
         }
         else {
-            val arguments = resolveTypeProjections(c, typeAliasDescriptor.typeConstructor, typeAliasArguments)
-            val typeAliasExpansion = createTypeAliasExpansion(null, typeAliasDescriptor, arguments)
-            val expandedType = expandTypeAlias(c, typeAliasExpansion, reportStrategy, annotations, 0)
+            val typeAliasExpansion = createTypeAliasExpansion(null, descriptor, arguments)
+            val expandedType = expandTypeAlias(typeAliasExpansion, reportStrategy, annotations, 0)
             type(expandedType)
         }
     }
 
     private class TracingTypeAliasExpansionReportStrategy(
             val trace: BindingTrace,
-            val type: KtUserType,
-            val typeArgumentsOrTypeName: KtElement,
+            val type: KtUserType?,
+            val typeArgumentsOrTypeName: KtElement?,
             val typeAliasDescriptor: TypeAliasDescriptor,
-            val typeParameters: List<TypeParameterDescriptor>,
-            val typeArguments: List<KtTypeProjection>
+            typeParameters: List<TypeParameterDescriptor>,
+            typeArguments: List<KtTypeProjection>
     ) : TypeAliasExpansionReportStrategy {
+        constructor (trace: BindingTrace, typeAliasDescriptor: TypeAliasDescriptor) : this(trace, null, null, typeAliasDescriptor, emptyList(), emptyList())
+
         private val mappedArguments = typeParameters.zip(typeArguments).toMap()
 
         override fun wrongNumberOfTypeArguments(typeAlias: TypeAliasDescriptor, numberOfParameters: Int) {
-            trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(typeArgumentsOrTypeName, numberOfParameters, typeAliasDescriptor))
+            if (typeArgumentsOrTypeName != null) {
+                trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(typeArgumentsOrTypeName, numberOfParameters, typeAliasDescriptor))
+            }
         }
 
         override fun conflictingProjection(typeAlias: TypeAliasDescriptor, typeParameter: TypeParameterDescriptor?, expandingType: KotlinType) {
@@ -487,13 +494,15 @@ class TypeResolver(
             if (argumentElement != null && typeParameter != null) {
                 trace.report(CONFLICTING_PROJECTION.on(argumentElement, typeParameter))
             }
-            else {
+            else if (type != null) {
                 trace.report(CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION.on(type, typeAliasDescriptor.underlyingType))
             }
         }
 
         override fun recursiveTypeAlias(typeAlias: TypeAliasDescriptor) {
-            trace.report(RECURSIVE_TYPEALIAS_EXPANSION.on(type, typeAlias))
+            if (type != null) {
+                trace.report(RECURSIVE_TYPEALIAS_EXPANSION.on(type, typeAlias))
+            }
         }
 
         override fun boundsViolationInSubstitution(bound: KotlinType, unsubstitutedArgument: KotlinType, argument: KotlinType, typeParameter: TypeParameterDescriptor) {
@@ -503,7 +512,7 @@ class TypeResolver(
             if (argumentTypeReferenceElement != null) {
                 trace.report(UPPER_BOUND_VIOLATED.on(argumentTypeReferenceElement, bound, argument))
             }
-            else {
+            else if (type != null) {
                 trace.report(UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION.on(type, bound, argument, typeParameter))
             }
         }
@@ -532,20 +541,19 @@ class TypeResolver(
             typeAliasDescriptor: TypeAliasDescriptor,
             arguments: List<TypeProjection>
     ): TypeAliasExpansion {
-        val typeParameters = typeAliasDescriptor.declaredTypeParameters // TODO inner type aliases
+        val typeParameters = typeAliasDescriptor.typeConstructor.parameters.map { it.original as TypeParameterDescriptor }
         val mappedArguments = typeParameters.zip(arguments).toMap()
         return TypeAliasExpansion(parent, typeAliasDescriptor, arguments, mappedArguments)
     }
 
     private fun expandTypeAlias(
-            c: TypeResolutionContext,
             typeAliasExpansion: TypeAliasExpansion,
             reportStrategy: TypeAliasExpansionReportStrategy,
             annotations: Annotations,
             recursionDepth: Int
     ): KotlinType {
         val originalProjection = TypeProjectionImpl(Variance.INVARIANT, typeAliasExpansion.descriptor.underlyingType)
-        val expandedProjection = expandTypeProjectionForTypeAlias(c, originalProjection, typeAliasExpansion, null, reportStrategy, recursionDepth)
+        val expandedProjection = expandTypeProjectionForTypeAlias(originalProjection, typeAliasExpansion, null, reportStrategy, recursionDepth)
         val expandedType = expandedProjection.type
 
         if (expandedType.isError) return expandedType
@@ -564,7 +572,6 @@ class TypeResolver(
     }
 
     private fun expandTypeProjectionForTypeAlias(
-            c: TypeResolutionContext,
             originalProjection: TypeProjection,
             typeAliasExpansion: TypeAliasExpansion,
             typeParameterDescriptor: TypeParameterDescriptor?,
@@ -580,7 +587,7 @@ class TypeResolver(
         val typeAliasArgument = typeAliasExpansion.getReplacement(originalType.constructor)
 
         if (typeAliasArgument == null) {
-            return substituteNonArgumentTypeForTypeAlias(c, originalProjection, typeAliasExpansion, reportStrategy, recursionDepth)
+            return substituteNonArgumentTypeForTypeAlias(originalProjection, typeAliasExpansion, reportStrategy, recursionDepth)
         }
 
         val originalVariance =
@@ -613,7 +620,6 @@ class TypeResolver(
     }
 
     private fun substituteNonArgumentTypeForTypeAlias(
-            c: TypeResolutionContext,
             originalProjection: TypeProjection,
             typeAliasExpansion: TypeAliasExpansion,
             reportStrategy: TypeAliasExpansionReportStrategy,
@@ -634,18 +640,18 @@ class TypeResolver(
                 }
 
                 val expandedArguments = type.arguments.mapIndexed { i, typeAliasArgument ->
-                    expandTypeProjectionForTypeAlias(c, typeAliasArgument, typeAliasExpansion, typeConstructor.parameters[i], reportStrategy, recursionDepth + 1)
+                    expandTypeProjectionForTypeAlias(typeAliasArgument, typeAliasExpansion, typeConstructor.parameters[i], reportStrategy, recursionDepth + 1)
                 }
 
                 val nestedExpansion = createTypeAliasExpansion(typeAliasExpansion, typeDescriptor, expandedArguments)
 
-                val expandedType = expandTypeAlias(c, nestedExpansion, reportStrategy, type.annotations, recursionDepth + 1)
+                val expandedType = expandTypeAlias(nestedExpansion, reportStrategy, type.annotations, recursionDepth + 1)
 
                 return TypeProjectionImpl(originalProjection.projectionKind, expandedType.withAbbreviatedType(type))
             }
             else -> {
                 val substitutedArguments = type.arguments.mapIndexed { i, originalArgument ->
-                    expandTypeProjectionForTypeAlias(c, originalArgument, typeAliasExpansion, typeConstructor.parameters[i], reportStrategy, recursionDepth + 1)
+                    expandTypeProjectionForTypeAlias(originalArgument, typeAliasExpansion, typeConstructor.parameters[i], reportStrategy, recursionDepth + 1)
                 }
 
                 val substitutedType = type.replace(newArguments = substitutedArguments)
@@ -677,8 +683,11 @@ class TypeResolver(
             c: TypeResolutionContext,
             arguments: List<KtTypeProjection>,
             typeConstructor: TypeConstructor
-    ) =
-            createErrorTypeAndResolveArguments(c, arguments, "[Error type: $typeConstructor]")
+    ): PossiblyBareType =
+            type(ErrorUtils.createErrorTypeWithArguments(
+                    "$typeConstructor",
+                    resolveTypeProjectionsWithErrorConstructor(c, arguments)
+            ))
 
     // Returns true in case when at least one argument for this class could be specified
     // It could be always equal to 'typeConstructor.parameters.isNotEmpty()' unless local classes could captured type parameters
@@ -691,30 +700,30 @@ class TypeResolver(
     // }
     //
     // It's needed to determine whether this particular type could be bare
-    private fun isPossibleToSpecifyTypeArgumentsFor(classDescriptor: ClassDescriptor): Boolean {
+    private fun isPossibleToSpecifyTypeArgumentsFor(classifierDescriptor: ClassifierDescriptorWithTypeParameters): Boolean {
         // First parameter relates to the innermost declaration
         // If it's declared in function there
-        val firstTypeParameter = classDescriptor.typeConstructor.parameters.firstOrNull() ?: return false
+        val firstTypeParameter = classifierDescriptor.typeConstructor.parameters.firstOrNull() ?: return false
         return firstTypeParameter.original.containingDeclaration is ClassDescriptor
     }
 
-    private fun collectArgumentsForClassTypeConstructor(
+    private fun collectArgumentsForClassifierTypeConstructor(
             c: TypeResolutionContext,
-            classDescriptor: ClassDescriptor,
+            classifierDescriptor: ClassifierDescriptorWithTypeParameters,
             qualifierParts: List<QualifiedExpressionResolver.QualifierPart>
     ): List<KtTypeProjection>? {
-        val classDescriptorChain = classDescriptor.classDescriptorChain()
+        val classifierDescriptorChain = classifierDescriptor.classifierDescriptorsFromInnerToOuter()
         val reversedQualifierParts = qualifierParts.asReversed()
 
         var wasStatic = false
-        var result = SmartList<KtTypeProjection>()
+        val result = SmartList<KtTypeProjection>()
 
-        val classChainLastIndex = Math.min(classDescriptorChain.size, reversedQualifierParts.size) - 1
+        val classifierChainLastIndex = Math.min(classifierDescriptorChain.size, reversedQualifierParts.size) - 1
 
-        for (index in 0..classChainLastIndex) {
+        for (index in 0..classifierChainLastIndex) {
             val qualifierPart = reversedQualifierParts[index]
             val currentArguments = qualifierPart.typeArguments?.arguments.orEmpty()
-            val declaredTypeParameters = classDescriptorChain[index].declaredTypeParameters
+            val declaredTypeParameters = classifierDescriptorChain[index].declaredTypeParameters
             val currentParameters = if (wasStatic) emptyList() else declaredTypeParameters
 
             if (wasStatic && currentArguments.isNotEmpty() && declaredTypeParameters.isNotEmpty()) {
@@ -725,7 +734,8 @@ class TypeResolver(
             if (currentArguments.size != currentParameters.size) {
                 c.trace.report(
                         WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(
-                                qualifierPart.typeArguments ?: qualifierPart.expression, currentParameters.size, classDescriptorChain[index]
+                                qualifierPart.typeArguments ?: qualifierPart.expression,
+                                currentParameters.size, classifierDescriptorChain[index]
                         )
                 )
                 return null
@@ -733,12 +743,12 @@ class TypeResolver(
 
             result.addAll(currentArguments)
 
-            wasStatic = wasStatic || !classDescriptorChain[index].isInner
+            wasStatic = wasStatic || !classifierDescriptorChain[index].isInner
         }
 
         val nonClassQualifierParts =
                 reversedQualifierParts.subList(
-                        Math.min(classChainLastIndex + 1, reversedQualifierParts.size),
+                        Math.min(classifierChainLastIndex + 1, reversedQualifierParts.size),
                         reversedQualifierParts.size)
 
         for (qualifierPart in nonClassQualifierParts) {
@@ -748,12 +758,12 @@ class TypeResolver(
             }
         }
 
-        val parameters = classDescriptor.typeConstructor.parameters
+        val parameters = classifierDescriptor.typeConstructor.parameters
         if (result.size < parameters.size) {
             val typeParametersToSpecify =
                     parameters.subList(result.size, parameters.size).takeWhile { it.original.containingDeclaration is ClassDescriptor }
             if (typeParametersToSpecify.any { parameter -> !parameter.isDeclaredInScope(c) }) {
-                c.trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(qualifierParts.last().expression, parameters.size, classDescriptor))
+                c.trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(qualifierParts.last().expression, parameters.size, classifierDescriptor))
                 return null
             }
         }
@@ -761,11 +771,16 @@ class TypeResolver(
         return result
     }
 
-    private fun ClassifierDescriptor?.classDescriptorChain(): List<ClassDescriptor>
-            = generateSequence({ this as? ClassDescriptor }, { it.containingDeclaration as? ClassDescriptor }).toList()
+    private fun ClassifierDescriptor?.classifierDescriptorsFromInnerToOuter(): List<ClassifierDescriptorWithTypeParameters> =
+            generateSequence(
+                    { this as? ClassifierDescriptorWithTypeParameters },
+                    { it.containingDeclaration as? ClassifierDescriptorWithTypeParameters }
+            ).toList()
 
     private fun TypeParameterDescriptor.isDeclaredInScope(c: TypeResolutionContext): Boolean {
-        assert(containingDeclaration is ClassDescriptor) { "This function is implemented for classes only, but $containingDeclaration was given" }
+        assert(containingDeclaration is ClassifierDescriptorWithTypeParameters) {
+            "This function is implemented for ClassifierDescriptorWithTypeParameters only, but $containingDeclaration was given"
+        }
 
         // This function checks whether this@TypeParameterDescriptor ()is reachable from current scope by it's name
         // The only way it can be is that we are within class that contains it
@@ -776,11 +791,11 @@ class TypeResolver(
         val contributedClassifier = c.scope.findClassifier(name, NoLookupLocation.WHEN_RESOLVING_DEFAULT_TYPE_ARGUMENTS) ?: return false
         if (contributedClassifier.typeConstructor == typeConstructor) return true
 
-        return c.scope.ownerDescriptor.isInsideOfClass(original.containingDeclaration as ClassDescriptor)
+        return c.scope.ownerDescriptor.isInsideOfClass(original.containingDeclaration as ClassifierDescriptorWithTypeParameters)
     }
 
-    private fun DeclarationDescriptor.isInsideOfClass(classDescriptor: ClassDescriptor)
-            = generateSequence(this, { it.containingDeclaration }).any { it.original == classDescriptor }
+    private fun DeclarationDescriptor.isInsideOfClass(classifierDescriptor: ClassifierDescriptorWithTypeParameters)
+            = generateSequence(this, { it.containingDeclaration }).any { it.original == classifierDescriptor }
 
 
     private fun resolveTypeProjectionsWithErrorConstructor(
@@ -788,13 +803,6 @@ class TypeResolver(
             argumentElements: List<KtTypeProjection>,
             message: String = "Error type for resolving type projections"
     ) = resolveTypeProjections(c, ErrorUtils.createErrorTypeConstructor(message), argumentElements)
-
-    private fun createErrorTypeAndResolveArguments(
-            c: TypeResolutionContext,
-            argumentElements: List<KtTypeProjection>,
-            message: String = ""
-    ): PossiblyBareType
-        = type(ErrorUtils.createErrorTypeWithArguments(message, resolveTypeProjectionsWithErrorConstructor(c, argumentElements)))
 
     // In cases like
     // class Outer<F> {

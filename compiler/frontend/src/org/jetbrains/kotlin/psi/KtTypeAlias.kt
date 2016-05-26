@@ -17,7 +17,9 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.stubs.KotlinTypeAliasStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
@@ -30,6 +32,10 @@ class KtTypeAlias : KtTypeParameterListOwnerStub<KotlinTypeAliasStub>, KtNamedDe
 
     fun isTopLevel(): Boolean =
             stub?.isTopLevel() ?: parent is KtFile
+
+    @IfNotParsed
+    fun getTypeAliasKeyword(): PsiElement? =
+            findChildByType(KtTokens.TYPE_ALIAS_KEYWORD)
 
     @IfNotParsed
     fun getTypeReference(): KtTypeReference? =

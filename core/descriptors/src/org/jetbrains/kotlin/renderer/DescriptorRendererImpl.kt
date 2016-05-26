@@ -810,8 +810,22 @@ internal class DescriptorRendererImpl(
         renderVisibility(typeAlias.visibility, builder)
         builder.append(renderKeyword("typealias")).append(" ")
         renderName(typeAlias, builder)
+
         renderTypeParameters(typeAlias.declaredTypeParameters, builder, true)
+        renderCapturedTypeParametersIfRequired(typeAlias, builder)
+
         builder.append(" = ").append(renderType(typeAlias.underlyingType))
+    }
+
+    private fun renderCapturedTypeParametersIfRequired(classifier: ClassifierDescriptorWithTypeParameters, builder: StringBuilder) {
+        val typeParameters = classifier.declaredTypeParameters
+        val typeConstructorParameters = classifier.typeConstructor.parameters
+
+        if (verbose && classifier.isInner && typeConstructorParameters.size > typeParameters.size) {
+            builder.append(" /*captured type parameters: ")
+            renderTypeParameterList(builder, typeConstructorParameters.subList(typeParameters.size, typeConstructorParameters.size))
+            builder.append("*/")
+        }
     }
 
     /* CLASSES */
@@ -844,14 +858,7 @@ internal class DescriptorRendererImpl(
 
         val typeParameters = klass.declaredTypeParameters
         renderTypeParameters(typeParameters, builder, false)
-
-        if (verbose && klass.isInner && klass.typeConstructor.parameters.size > typeParameters.size) {
-            builder.append(" /*captured type parameters: ")
-            val constructorTypeParameters = klass.typeConstructor.parameters
-            renderTypeParameterList(
-                    builder, constructorTypeParameters.subList(typeParameters.size, constructorTypeParameters.size))
-            builder.append("*/")
-        }
+        renderCapturedTypeParametersIfRequired(klass, builder)
 
         if (!klass.kind.isSingleton && classWithPrimaryConstructor) {
             val primaryConstructor = klass.unsubstitutedPrimaryConstructor

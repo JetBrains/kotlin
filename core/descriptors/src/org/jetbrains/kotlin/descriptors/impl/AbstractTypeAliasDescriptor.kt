@@ -44,23 +44,18 @@ abstract class AbstractTypeAliasDescriptor(
     override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R =
             visitor.visitTypeAliasDescriptor(this, data)
 
-    override fun isInner(): Boolean = false // TODO treat all nested type aliases as inner?
+    override fun isInner(): Boolean =
+            containingDeclaration !is PackageFragmentDescriptor
 
     override fun getDeclaredTypeParameters(): List<TypeParameterDescriptor> =
             declaredTypeParametersImpl
 
     override val classDescriptor: ClassDescriptor?
-        get() = expandedType.let { expandedType ->
-            if (expandedType.isError) null else expandedType.constructor.declarationDescriptor as? ClassDescriptor
-        }
+        get() = if (expandedType.isError) null else expandedType.constructor.declarationDescriptor as? ClassDescriptor
 
     override fun getModality() = Modality.FINAL
 
     override fun getVisibility() = visibilityImpl
-
-    override fun substitute(substitutor: TypeSubstitutor): TypeAliasDescriptor =
-            if (substitutor.isEmpty) this
-            else TODO("typealias doSubstitute")
 
     override fun getDefaultType(): KotlinType =
             TODO("typealias getDefaultType")
@@ -70,12 +65,14 @@ abstract class AbstractTypeAliasDescriptor(
 
     override fun toString(): String = "typealias ${name.asString()}"
 
+    protected abstract fun getTypeConstructorTypeParameters(): List<TypeParameterDescriptor>
+
     private val typeConstructor = object : TypeConstructor {
         override fun getDeclarationDescriptor(): TypeAliasDescriptor =
                 this@AbstractTypeAliasDescriptor
 
         override fun getParameters(): List<TypeParameterDescriptor> =
-                declarationDescriptor.declaredTypeParameters // TODO type parameters of outer class
+                getTypeConstructorTypeParameters()
 
         override fun getSupertypes(): Collection<KotlinType> =
                 declarationDescriptor.underlyingType.constructor.supertypes

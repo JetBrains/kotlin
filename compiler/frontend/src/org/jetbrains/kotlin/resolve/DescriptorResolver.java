@@ -29,6 +29,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.FunctionTypesKt;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.config.LanguageFeature;
+import org.jetbrains.kotlin.config.LanguageFeatureSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationSplitter;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget;
@@ -61,9 +63,7 @@ import java.util.*;
 import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
-import static org.jetbrains.kotlin.resolve.BindingContext.CONSTRUCTOR;
-import static org.jetbrains.kotlin.resolve.BindingContext.PACKAGE_TO_FILES;
-import static org.jetbrains.kotlin.resolve.BindingContext.TYPE_ALIAS;
+import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.ModifiersChecker.resolveModalityFromModifiers;
 import static org.jetbrains.kotlin.resolve.ModifiersChecker.resolveVisibilityFromModifiers;
@@ -79,6 +79,7 @@ public class DescriptorResolver {
     @NotNull private final VariableTypeResolver variableTypeResolver;
     @NotNull private final ExpressionTypingServices expressionTypingServices;
     @NotNull private final OverloadChecker overloadChecker;
+    @NotNull private final LanguageFeatureSettings languageFeatureSettings;
 
     public DescriptorResolver(
             @NotNull AnnotationResolver annotationResolver,
@@ -88,7 +89,8 @@ public class DescriptorResolver {
             @NotNull SupertypeLoopChecker supertypeLoopsResolver,
             @NotNull VariableTypeResolver variableTypeResolver,
             @NotNull ExpressionTypingServices expressionTypingServices,
-            @NotNull OverloadChecker overloadChecker
+            @NotNull OverloadChecker overloadChecker,
+            @NotNull LanguageFeatureSettings languageFeatureSettings
     ) {
         this.annotationResolver = annotationResolver;
         this.builtIns = builtIns;
@@ -98,6 +100,7 @@ public class DescriptorResolver {
         this.variableTypeResolver = variableTypeResolver;
         this.expressionTypingServices = expressionTypingServices;
         this.overloadChecker = overloadChecker;
+        this.languageFeatureSettings = languageFeatureSettings;
     }
 
     public List<KotlinType> resolveSupertypes(
@@ -675,21 +678,24 @@ public class DescriptorResolver {
         return variableDescriptor;
     }
 
-    @NotNull
+    @Nullable
     public TypeAliasDescriptor resolveTypeAliasDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull LexicalScope scope,
             @NotNull KtTypeAlias typeAlias,
             @NotNull final BindingTrace trace
     ) {
+        final KtTypeReference typeReference = typeAlias.getTypeReference();
+        if (typeReference == null) return null;
+
         KtModifierList modifierList = typeAlias.getModifierList();
         Visibility visibility = resolveVisibilityFromModifiers(typeAlias, getDefaultVisibility(typeAlias, containingDeclaration));
 
         Annotations allAnnotations = annotationResolver.resolveAnnotationsWithArguments(scope, modifierList, trace);
         Name name = KtPsiUtil.safeName(typeAlias.getName());
         SourceElement sourceElement = KotlinSourceElementKt.toSourceElement(typeAlias);
-        LazyTypeAliasDescriptor typeAliasDescriptor = LazyTypeAliasDescriptor.create(
-                containingDeclaration, allAnnotations, name, sourceElement, visibility);
+        final LazyTypeAliasDescriptor typeAliasDescriptor = LazyTypeAliasDescriptor.create(
+                storageManager, trace, containingDeclaration, allAnnotations, name, sourceElement, visibility);
 
         List<TypeParameterDescriptorImpl> typeParameterDescriptors;
         final LexicalScope scopeWithTypeParameters;
@@ -712,20 +718,25 @@ public class DescriptorResolver {
             }
         }
 
-        final KtTypeReference typeReference = typeAlias.getTypeReference();
+        if (!languageFeatureSettings.supportsFeature(LanguageFeature.TypeAliases)) {
+            typeResolver.resolveType(scopeWithTypeParameters, typeReference, trace, true);
+            trace.report(UNSUPPORTED_TYPEALIAS.on(typeAlias.getTypeAliasKeyword()));
+            return null;
+        }
 
         typeAliasDescriptor.initialize(
                 typeParameterDescriptors,
-                storageManager.createLazyValue(new Function0<KotlinType>() {
+                DeferredType.create(storageManager, trace, new Function0<KotlinType>() {
                     @Override
                     public KotlinType invoke() {
                         return typeResolver.resolveAbbreviatedType(scopeWithTypeParameters, typeReference, trace, true);
                     }
                 }),
-                storageManager.createLazyValue(new Function0<KotlinType>() {
+                DeferredType.create(storageManager, trace, new Function0<KotlinType>() {
                     @Override
                     public KotlinType invoke() {
-                        // TODO do not reparse
+                        // TODO do not reparse type alias RHS, just expand it instead
+                        // NB this messes up with diagnostics
                         return typeResolver.resolveType(scopeWithTypeParameters, typeReference, trace, true);
                     }
                 }));

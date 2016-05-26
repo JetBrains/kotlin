@@ -3048,6 +3048,12 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/typealias/Generic.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("Nested.kt")
+        public void testNested() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/typealias/Nested.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/loadJava/compiledKotlin/visibility")

@@ -417,6 +417,7 @@ public class DefaultErrorMessages {
         MAP.put(USELESS_ELVIS_ON_LAMBDA_EXPRESSION, "Left operand of elvis operator (?:) is a lambda expression");
         MAP.put(CONFLICTING_UPPER_BOUNDS, "Upper bounds of {0} have empty intersection", NAME);
 
+        MAP.put(UNSUPPORTED_TYPEALIAS, "Type aliases are unsupported (min Kotlin language level: 1.1)");
         MAP.put(RECURSIVE_TYPEALIAS_EXPANSION, "Recursive type alias in expansion: {0}", NAME);
         MAP.put(UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION,
                 "Type argument resulting from type alias expansion is not within required bounds for ''{2}'': " +
