@@ -69,6 +69,11 @@
             idea.maven.version="${ideaVersion}"/>
     </target>
 
+    <target name="update_android_studio" depends="fetch-third-party,fetch-annotations,get_android_studio"
+            description="Update dependencies and Android Studio">
+        <build-protobuf-java-lite/>
+    </target>
+
     <!--<target name="update_teamcity" depends="fetch-third-party,fetch-annotations">-->
         <!--<execute_update_with_idea_teamcity_artifacts-->
             <!--teamcity.server.url="https://teamcity.jetbrains.com"-->
