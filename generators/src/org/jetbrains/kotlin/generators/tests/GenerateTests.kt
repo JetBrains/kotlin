@@ -115,8 +115,6 @@ import org.jetbrains.kotlin.idea.intentions.declarations.AbstractJoinLinesTest
 import org.jetbrains.kotlin.idea.internal.AbstractBytecodeToolWindowTest
 import org.jetbrains.kotlin.idea.kdoc.AbstractKDocHighlightingTest
 import org.jetbrains.kotlin.idea.kdoc.AbstractKDocTypingTest
-import org.jetbrains.kotlin.idea.maven.AbstractKotlinMavenInspectionTest
-import org.jetbrains.kotlin.idea.maven.configuration.AbstractMavenConfigureProjectByChangingFileTest
 import org.jetbrains.kotlin.idea.navigation.*
 import org.jetbrains.kotlin.idea.parameterInfo.AbstractParameterInfoTest
 import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixMultiFileTest
@@ -152,10 +150,6 @@ import org.jetbrains.kotlin.ir.AbstractIrTextTestCase
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterForWebDemoTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterMultiFileTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterSingleFileTest
-import org.jetbrains.kotlin.jps.build.*
-import org.jetbrains.kotlin.jps.build.android.AbstractAndroidJpsTestCase
-import org.jetbrains.kotlin.jps.incremental.AbstractJsProtoComparisonTest
-import org.jetbrains.kotlin.jps.incremental.AbstractJvmProtoComparisonTest
 import org.jetbrains.kotlin.js.test.AbstractDceTest
 import org.jetbrains.kotlin.js.test.AbstractJsLineNumberTest
 import org.jetbrains.kotlin.js.test.semantics.*
@@ -1123,23 +1117,26 @@ fun main(args: Array<String>) {
         }
     }
 
+    /*
+    // Maven and Gradle are not relevent for AS branch
+
     testGroup("idea/idea-maven/test", "idea/idea-maven/testData") {
         testClass<AbstractMavenConfigureProjectByChangingFileTest> {
             model("configurator/jvm", extension = null, recursive = false, testMethod = "doTestWithMaven")
             model("configurator/js", extension = null, recursive = false, testMethod = "doTestWithJSMaven")
         }
-
         testClass<AbstractKotlinMavenInspectionTest> {
             model("maven-inspections", pattern = "^([\\w\\-]+).xml$", singleClass = true)
         }
     }
-
     testGroup("idea/idea-gradle/tests", "idea/testData") {
         testClass<AbstractGradleConfigureProjectByChangingFileTest> {
-            model("configuration/gradle", extension = null, recursive = false, testMethod = "doTestGradle")
-            model("configuration/gsk", extension = null, recursive = false, testMethod = "doTestGradle")
+            model("configuration/gradle", pattern = """(\w+)_before\.gradle$""", testMethod = "doTestGradle")
+            model("configuration/gsk", pattern = """(\w+)_before\.gradle.kts$""", testMethod = "doTestGradle")
         }
     }
+    
+    */
 
     testGroup("idea/tests", "compiler/testData") {
         testClass<AbstractResolveByStubTest> {
@@ -1263,70 +1260,6 @@ fun main(args: Array<String>) {
     testGroup("j2k/tests", "j2k/testData") {
         testClass<AbstractJavaToKotlinConverterForWebDemoTest> {
             model("fileOrElement", extension = "java")
-        }
-    }
-
-    testGroup("jps-plugin/jps-tests/test", "jps-plugin/testData") {
-        testClass<AbstractIncrementalJpsTest> {
-            model("incremental/multiModule", extension = null, excludeParentDirs = true)
-            model("incremental/pureKotlin", extension = null, recursive = false)
-            model("incremental/withJava", extension = null, excludeParentDirs = true)
-            model("incremental/inlineFunCallSite", extension = null, excludeParentDirs = true)
-            model("incremental/classHierarchyAffected", extension = null, excludeParentDirs = true)
-        }
-
-        testClass<AbstractJvmLookupTrackerTest> {
-            model("incremental/lookupTracker/jvm", extension = null, recursive = false)
-        }
-        testClass<AbstractJsLookupTrackerTest> {
-            model("incremental/lookupTracker/js", extension = null, recursive = false)
-        }
-
-        testClass(AbstractIncrementalLazyCachesTest::class.java) {
-            model("incremental/lazyKotlinCaches", extension = null, excludeParentDirs = true)
-            model("incremental/changeIncrementalOption", extension = null, excludeParentDirs = true)
-        }
-
-        testClass(AbstractIncrementalCacheVersionChangedTest::class.java) {
-            model("incremental/cacheVersionChanged", extension = null, excludeParentDirs = true)
-        }
-
-        testClass<AbstractDataContainerVersionChangedTest> {
-            model("incremental/cacheVersionChanged", extension = null, excludeParentDirs = true)
-        }
-    }
-
-    testGroup("jps-plugin/jps-tests/test", "jps-plugin/testData") {
-        fun TestGroup.TestClass.commonProtoComparisonTests() {
-            model("comparison/classSignatureChange", extension = null, excludeParentDirs = true)
-            model("comparison/classPrivateOnlyChange", extension = null, excludeParentDirs = true)
-            model("comparison/classMembersOnlyChanged", extension = null, excludeParentDirs = true)
-            model("comparison/packageMembers", extension = null, excludeParentDirs = true)
-            model("comparison/unchanged", extension = null, excludeParentDirs = true)
-        }
-
-        testClass<AbstractJvmProtoComparisonTest> {
-            commonProtoComparisonTests()
-            model("comparison/jvmOnly", extension = null, excludeParentDirs = true)
-        }
-
-        testClass<AbstractJsProtoComparisonTest> {
-            commonProtoComparisonTests()
-            model("comparison/jsOnly", extension = null, excludeParentDirs = true)
-        }
-    }
-
-    testGroup("compiler/incremental-compilation-impl/test", "jps-plugin/testData") {
-        testClass<AbstractIncrementalJvmCompilerRunnerTest> {
-            model("incremental/pureKotlin", extension = null, recursive = false)
-            model("incremental/classHierarchyAffected", extension = null, recursive = false)
-            model("incremental/inlineFunCallSite", extension = null, excludeParentDirs = true)
-            model("incremental/withJava", extension = null, excludeParentDirs = true)
-        }
-
-        testClass<AbstractIncrementalJsCompilerRunnerTest> {
-            model("incremental/pureKotlin", extension = null, recursive = false)
-            model("incremental/classHierarchyAffected", extension = null, recursive = false)
         }
     }
 
@@ -1463,14 +1396,7 @@ fun main(args: Array<String>) {
         }
     }
 
-    testGroup("plugins/plugins-tests/tests", "plugins/android-extensions/android-extensions-jps/testData") {
-        testClass<AbstractAndroidJpsTestCase> {
-            model("android", recursive = false, extension = null)
-        }
-    }
-
-    // TODO: repair these tests
-    //generateTestDataForReservedWords()
+    generateTestDataForReservedWords()
 
     testGroup("js/js.tests/test", "js/js.translator/testData") {
         testClass<AbstractBoxJsTest> {
