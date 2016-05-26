@@ -40,7 +40,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns;
 import org.jetbrains.kotlin.codegen.binding.PsiCodegenPredictor;
-import org.jetbrains.kotlin.config.LanguageFeatureSettings;
+import org.jetbrains.kotlin.config.LanguageVersion;
 import org.jetbrains.kotlin.context.ContextKt;
 import org.jetbrains.kotlin.context.MutableModuleContext;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
@@ -262,7 +262,7 @@ public class SourceNavigationHelper {
                 providerFactory,
                 new BindingTraceContext(),
                 platform,
-                LanguageFeatureSettings.LATEST // TODO: see KT-12410
+                LanguageVersion.LATEST // TODO: see KT-12410
         );
 
         newModuleContext.initializeModuleContents(resolveSession.getPackageFragmentProvider());

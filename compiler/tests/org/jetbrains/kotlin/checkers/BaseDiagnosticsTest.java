@@ -22,6 +22,7 @@ import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -30,16 +31,13 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.HashMap;
 import kotlin.collections.CollectionsKt;
-import kotlin.jvm.JvmClassMappingKt;
 import kotlin.jvm.functions.Function1;
-import kotlin.reflect.KClass;
-import kotlin.reflect.KClasses;
-import kotlin.reflect.KFunction;
-import kotlin.reflect.KParameter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.asJava.DuplicateJvmSignatureUtilKt;
+import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.config.LanguageFeatureSettings;
+import org.jetbrains.kotlin.config.LanguageVersion;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.diagnostics.*;
 import org.jetbrains.kotlin.load.java.InternalFlexibleTypeTransformer;
@@ -94,26 +92,6 @@ public abstract class BaseDiagnosticsTest
     public static final boolean CHECK_LAZY_LOG_DEFAULT = "true".equals(System.getProperty("check.lazy.logs", "false"));
 
     public static final String MARK_DYNAMIC_CALLS_DIRECTIVE = "MARK_DYNAMIC_CALLS";
-
-    private static final KFunction<LanguageFeatureSettings> LANGUAGE_FEATURE_SETTINGS_CONSTRUCTOR;
-    private static final Map<String, KParameter> LANGUAGE_FEATURE_SETTINGS_PARAMETERS;
-
-    static {
-        KClass<LanguageFeatureSettings> kotlinClass = JvmClassMappingKt.getKotlinClass(LanguageFeatureSettings.class);
-        LANGUAGE_FEATURE_SETTINGS_CONSTRUCTOR = KClasses.getPrimaryConstructor(kotlinClass);
-        assert LANGUAGE_FEATURE_SETTINGS_CONSTRUCTOR != null
-                : "LanguageFeatureSettings should have a primary constructor: " + kotlinClass.getConstructors();
-
-        LANGUAGE_FEATURE_SETTINGS_PARAMETERS = CollectionsKt.associateBy(
-                LANGUAGE_FEATURE_SETTINGS_CONSTRUCTOR.getParameters(),
-                new Function1<KParameter, String>() {
-                    @Override
-                    public String invoke(KParameter parameter) {
-                        return parameter.getName();
-                    }
-                }
-        );
-    }
 
     @Override
     protected TestModule createTestModule(@NotNull String name) {
@@ -187,30 +165,39 @@ public abstract class BaseDiagnosticsTest
             Assert.fail(
                     "Wrong syntax in the '// !LANGUAGE: ...' directive:\n" +
                     "found: '" + directives + "'\n" +
-                    "Must be '([+-]languageFeatureName)+'\n" +
+                    "Must be '([+-]LanguageFeatureName)+'\n" +
                     "where '+' means 'enable' and '-' means 'disable'\n" +
-                    "and language feature names are names of parameters of the class LanguageFeatureSettings"
+                    "and language feature names are names of enum entries in LanguageFeature enum class"
             );
         }
 
-        Map<KParameter, Boolean> values = new HashMap<KParameter, Boolean>();
+        final Map<LanguageFeature, Boolean> values = new HashMap<LanguageFeature, Boolean>();
         do {
             boolean enable = matcher.group(1).equals("+");
             String name = matcher.group(2);
-            KParameter parameter = LANGUAGE_FEATURE_SETTINGS_PARAMETERS.get(name);
-            if (parameter == null) {
+            LanguageFeature feature = LanguageFeature.fromString(StringUtil.capitalize(name));
+            if (feature == null) {
                 Assert.fail(
                         "Language feature not found, please check spelling: " + name + "\n" +
-                        "Known features:\n    " + StringsKt.join(LANGUAGE_FEATURE_SETTINGS_PARAMETERS.keySet(), "\n    ")
+                        "Known features:\n    " + StringsKt.join(Arrays.asList(LanguageFeature.values()), "\n    ")
                 );
             }
-            if (values.put(parameter, enable) != null) {
+            if (values.put(feature, enable) != null) {
                 Assert.fail("Duplicate entry for the language feature: " + name);
             }
         }
         while (matcher.find());
 
-        return LANGUAGE_FEATURE_SETTINGS_CONSTRUCTOR.callBy(values);
+        return new LanguageFeatureSettings() {
+            @Override
+            public boolean supportsFeature(@NotNull LanguageFeature feature) {
+                Boolean enabled = values.get(feature);
+                if (enabled != null) {
+                    return enabled;
+                }
+                return LanguageVersion.LATEST.supportsFeature(feature);
+            }
+        };
     }
 
     public static Condition<Diagnostic> parseDiagnosticFilterDirective(Map<String, String> directiveMap) {
