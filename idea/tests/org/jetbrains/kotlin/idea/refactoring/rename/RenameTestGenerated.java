@@ -893,6 +893,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("renamePropertyInEnumCompanionWithEntryConflict/renameKotlinPropertyInEnumCompanionWithEntryConflict.test")
+    public void testRenamePropertyInEnumCompanionWithEntryConflict_RenameKotlinPropertyInEnumCompanionWithEntryConflict() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/renamePropertyInEnumCompanionWithEntryConflict/renameKotlinPropertyInEnumCompanionWithEntryConflict.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("renameSet/set.test")
     public void testRenameSet_Set() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameSet/set.test");

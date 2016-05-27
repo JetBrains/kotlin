@@ -26,6 +26,7 @@ import com.intellij.psi.search.searches.OverridingMethodsSearch
 import com.intellij.refactoring.JavaRefactoringSettings
 import com.intellij.refactoring.listeners.RefactoringElementListener
 import com.intellij.refactoring.rename.RenameProcessor
+import com.intellij.refactoring.util.MoveRenameUsageInfo
 import com.intellij.refactoring.util.RefactoringUtil
 import com.intellij.usageView.UsageInfo
 import com.intellij.usageView.UsageViewUtil
@@ -36,9 +37,11 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.core.isEnumCompanionPropertyWithEntryConflict
 import org.jetbrains.kotlin.idea.refactoring.dropOverrideKeywordIfNecessary
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -283,7 +286,7 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
         SETTER_USAGE
     }
 
-    override tailrec fun renameElement(element: PsiElement, newName: String, usages: Array<out UsageInfo>, listener: RefactoringElementListener?) {
+    override tailrec fun renameElement(element: PsiElement, newName: String, usages: Array<UsageInfo>, listener: RefactoringElementListener?) {
         if (element is KtLightMethod) {
             if (element.modifierList.findAnnotation(DescriptorUtils.JVM_NAME.asString()) != null) {
                 return super.renameElement(element, newName, usages, listener)
@@ -308,6 +311,18 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
         val name = (element as KtNamedDeclaration).name!!
         val oldGetterName = JvmAbi.getterName(name)
         val oldSetterName = JvmAbi.setterName(name)
+
+        if (isEnumCompanionPropertyWithEntryConflict(element, newName)) {
+            for ((i, usage) in usages.withIndex()) {
+                if (usage !is MoveRenameUsageInfo) continue
+                val ref = usage.reference ?: continue
+                // TODO: Enum value can't be accessed from Java in case of conflict with companion member
+                if (ref is KtReference) {
+                    val newRef = (ref.bindToElement(element) as? KtSimpleNameExpression)?.mainReference ?: continue
+                    usages[i] = MoveRenameUsageInfo(newRef, usage.referencedElement)
+                }
+            }
+        }
 
         val adjustedUsages = if (element is KtParameter) usages.filterNot {
             val refTarget = it.reference?.resolve()
