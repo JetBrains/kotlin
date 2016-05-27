@@ -80,7 +80,8 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
         return substitutedJavaElement
     }
 
-    override fun prepareRenaming(element: PsiElement?, newName: String?, allRenames: MutableMap<PsiElement, String>, scope: SearchScope) {
+    override fun prepareRenaming(element: PsiElement, newName: String?, allRenames: MutableMap<PsiElement, String>, scope: SearchScope) {
+        super.prepareRenaming(element, newName, allRenames, scope)
         val psiMethod = wrapPsiMethod(element)
         if (psiMethod?.containingClass != null) {
             javaMethodProcessorInstance.prepareRenaming(psiMethod, newName, allRenames, scope)

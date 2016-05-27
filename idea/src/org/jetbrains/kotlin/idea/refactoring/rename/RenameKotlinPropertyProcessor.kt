@@ -121,8 +121,10 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
         return declarationToRename
     }
 
-    override fun prepareRenaming(element: PsiElement?, newName: String?, allRenames: MutableMap<PsiElement, String>, scope: SearchScope) {
-        val namedUnwrappedElement = element?.namedUnwrappedElement
+    override fun prepareRenaming(element: PsiElement, newName: String?, allRenames: MutableMap<PsiElement, String>, scope: SearchScope) {
+        super.prepareRenaming(element, newName, allRenames, scope)
+
+        val namedUnwrappedElement = element.namedUnwrappedElement
         val propertyMethods = when(namedUnwrappedElement) {
             is KtProperty -> runReadAction { LightClassUtil.getLightClassPropertyMethods(namedUnwrappedElement) }
             is KtParameter -> runReadAction { LightClassUtil.getLightClassPropertyMethods(namedUnwrappedElement) }
