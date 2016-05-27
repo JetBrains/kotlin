@@ -1,0 +1,6 @@
+package
+
+package foo {
+    public val bar: kotlin.Int = 32
+    public fun bar(): kotlin.Int
+}

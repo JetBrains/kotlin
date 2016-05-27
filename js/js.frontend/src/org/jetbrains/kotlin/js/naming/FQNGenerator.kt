@@ -24,9 +24,10 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
+import java.util.*
 
 class FQNGenerator {
-    private val cache = mutableMapOf<DeclarationDescriptor, FQNPart>()
+    private val cache: MutableMap<DeclarationDescriptor, FQNPart> = WeakHashMap()
 
     fun generate(descriptor: DeclarationDescriptor) = cache.getOrPut(descriptor) { generateCacheMiss(descriptor.original) }
 
