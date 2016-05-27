@@ -6555,6 +6555,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("DataClassNameConflict.kt")
+        public void testDataClassNameConflict() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/DataClassNameConflict.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("DataClassNoVariablesInside.kt")
         public void testDataClassNoVariablesInside() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/DataClassNoVariablesInside.kt");
