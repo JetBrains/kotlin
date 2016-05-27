@@ -25,6 +25,8 @@ import com.intellij.util.Query
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
+import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
+import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -34,7 +36,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import java.util.*
 import kotlin.collections.forEach
 
 class SimplifyForInspection : IntentionBasedInspection<KtForExpression>(SimplifyForIntention())
@@ -51,13 +53,18 @@ class SimplifyForIntention : SelfTargetingRangeIntention<KtForExpression>(
         val loopParameter = element.loopParameter ?: return
 
         val factory = KtPsiFactory(element)
-        loopParameter.replace(factory.createDestructuringDeclarationInFor("(${usagesToRemove.joinToString { it.name!! }})"))
+        val validator = NewDeclarationNameValidator(element.parent, element, NewDeclarationNameValidator.Target.VARIABLES,
+                                                    usagesToRemove.map { it.properties }.flatten())
+        val names = ArrayList<String>()
         usagesToRemove.forEach { p ->
+            val name = KotlinNameSuggester.suggestNameByName(p.name!!, validator)
             p.properties.firstOrNull()?.delete()
             p.usersToReplace.forEach {
-                it.replace(factory.createExpression(p.name!!))
+                it.replace(factory.createExpression(name))
             }
+            names.add(name)
         }
+        loopParameter.replace(factory.createDestructuringDeclarationInFor("(${names.joinToString()})"))
 
         if (removeSelectorInLoopRange && loopRange is KtDotQualifiedExpression) {
             loopRange.replace(loopRange.receiverExpression)
