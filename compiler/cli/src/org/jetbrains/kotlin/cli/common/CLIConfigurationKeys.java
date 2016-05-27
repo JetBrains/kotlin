@@ -27,6 +27,8 @@ public class CLIConfigurationKeys {
             CompilerConfigurationKey.create("allow kotlin package");
     public static final CompilerConfigurationKey<Boolean> REPORT_PERF =
             CompilerConfigurationKey.create("report performance information");
+
+    // Used in Eclipse plugin (see KotlinCLICompiler)
     public static final CompilerConfigurationKey<CompilerJarLocator> COMPILER_JAR_LOCATOR =
             CompilerConfigurationKey.create("compiler jar locator");
 
