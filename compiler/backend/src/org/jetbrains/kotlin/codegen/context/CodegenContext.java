@@ -47,7 +47,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     private final OwnerKind contextKind;
     private final CodegenContext parentContext;
     private final ClassDescriptor thisDescriptor;
-    public final MutableClosure closure;
+    @Nullable public final MutableClosure closure;
     private final LocalLookup enclosingLocalLookup;
     private final NullableLazyValue<StackValue.Field> outerExpression;
 
