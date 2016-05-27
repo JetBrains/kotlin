@@ -2,7 +2,6 @@
   <library name="intellij-core">
     <ANNOTATIONS>
       <root url="file://$PROJECT_DIR$/annotations" />
-      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.jar!/" />
     </ANNOTATIONS>
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/ideaSDK/core/snappy-in-java-0.3.1.jar!/" />
@@ -19,12 +18,13 @@
       <root url="jar://$PROJECT_DIR$/ideaSDK/core/trove4j.jar!/" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/core/jna.jar!/" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/lib/idea.jar!/" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/lib/openapi.jar!/" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/lib/extensions.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
       <root url="jar://$PROJECT_DIR$/dependencies/guava-17.0-sources.jar!/" />
       <root url="jar://$PROJECT_DIR$/dependencies/asm5-src.zip!/" />
-      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.jar!/" />
     </SOURCES>
   </library>
 </component>
