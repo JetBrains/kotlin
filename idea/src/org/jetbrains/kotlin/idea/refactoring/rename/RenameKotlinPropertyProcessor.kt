@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.OverrideResolver
+import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 
 class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
     override fun canProcessElement(element: PsiElement): Boolean {
@@ -168,7 +169,12 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
         val oldGetterName = JvmAbi.getterName(name)
         val oldSetterName = JvmAbi.setterName(name)
 
-        val refKindUsages = usages.toList().groupBy { usage: UsageInfo ->
+        val adjustedUsages = if (element is KtParameter) usages.filterNot {
+            val refTarget = it.reference?.resolve()
+            refTarget is KtLightMethod && isComponentLike(Name.guessByFirstCharacter(refTarget.name))
+        } else usages.toList()
+
+        val refKindUsages = adjustedUsages.groupBy { usage: UsageInfo ->
             val refElement = usage.reference?.resolve()
             if (refElement is PsiMethod) {
                 when (refElement.name) {
