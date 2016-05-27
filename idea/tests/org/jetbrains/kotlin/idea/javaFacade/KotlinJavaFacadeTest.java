@@ -45,7 +45,7 @@ public class KotlinJavaFacadeTest extends KotlinLightCodeInsightFixtureTestCase 
     }
 
     public void testDoNotWrapFunFromLocalClass() {
-        doTestWrapMethod(false);
+        doTestWrapMethod(true);
     }
 
     public void testObjectSubclassing() {
@@ -53,7 +53,7 @@ public class KotlinJavaFacadeTest extends KotlinLightCodeInsightFixtureTestCase 
     }
 
     public void testDoNotWrapFunInAnonymousObject() {
-        doTestWrapMethod(false);
+        doTestWrapMethod(true);
     }
 
     public void testWrapFunInClassWithoutBody() {
@@ -145,7 +145,7 @@ public class KotlinJavaFacadeTest extends KotlinLightCodeInsightFixtureTestCase 
     }
 
     public void testWrapVarPropertyInLocalClass() {
-        doTestWrapProperty(false, false);
+        doTestWrapProperty(true, true);
     }
 
     public void testWrapVarTopLevelAccessor() {
