@@ -1,0 +1,6 @@
+package
+
+package foo {
+    public fun bar(/*0*/ x: kotlin.Int): kotlin.Int
+    public fun `bar_za3lpa$`(): kotlin.Int
+}

@@ -61,7 +61,12 @@ class FQNGenerator {
         }
 
         val (localName, shared, parent) = getLocalName(descriptor)
-        return FQNPart(listOf(localName), shared, descriptor, parent)
+        return FQNPart(listOf(localName), shared, descriptor, fixParent(parent))
+    }
+
+    private fun fixParent(parent: DeclarationDescriptor) = when (parent) {
+        is PropertyDescriptor -> parent.containingDeclaration
+        else -> parent
     }
 
     private fun getLocalName(descriptor: DeclarationDescriptor): LocalName {

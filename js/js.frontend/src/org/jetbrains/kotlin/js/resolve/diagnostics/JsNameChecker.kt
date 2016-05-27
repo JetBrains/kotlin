@@ -22,9 +22,11 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.js.naming.FQNGenerator
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DeclarationChecker
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.source.getPsi
 
@@ -39,7 +41,9 @@ class JsNameChecker : DeclarationChecker {
             diagnosticHolder: DiagnosticSink,
             bindingContext: BindingContext
     ) {
-        checkDescriptor(descriptor, declaration, diagnosticHolder)
+        if (declaration !is KtProperty || !descriptor.isExtension) {
+            checkDescriptor(descriptor, declaration, diagnosticHolder)
+        }
     }
 
     private fun checkDescriptor(descriptor: DeclarationDescriptor, declaration: KtDeclaration, diagnosticHolder: DiagnosticSink) {
@@ -87,17 +91,19 @@ class JsNameChecker : DeclarationChecker {
 
     private fun collect(scope: MemberScope, target: MutableMap<String, DeclarationDescriptor>) {
         for (descriptor in scope.getContributedDescriptors()) {
-            val fqn = fqnGenerator.generate(descriptor)
-            if (fqn.shared && isOpaque(fqn.descriptor)) {
-                target[fqn.names.last()] = fqn.descriptor
-            }
+            collect(descriptor, target)
         }
     }
 
     private fun collect(descriptor: DeclarationDescriptor, target: MutableMap<String, DeclarationDescriptor>) {
-        val fqn = fqnGenerator.generate(descriptor)
-        if (fqn.shared && isOpaque(fqn.descriptor)) {
-            target[fqn.names.last()] = fqn.descriptor
+        if (descriptor is PropertyDescriptor && descriptor.isExtension) {
+            descriptor.accessors.forEach { collect(it, target) }
+        }
+        else {
+            val fqn = fqnGenerator.generate(descriptor)
+            if (fqn.shared && isOpaque(fqn.descriptor)) {
+                target[fqn.names.last()] = fqn.descriptor
+            }
         }
     }
 
