@@ -1,0 +1,11 @@
+// "Add else branch" "true"
+enum class Color { R, G, B }
+fun use(c: Color) {
+    when (c) {
+        Color.R -> red()
+        else -> {
+        }
+    }
+}
+
+fun red() {}
