@@ -16,20 +16,20 @@
 
 package org.jetbrains.kotlin.config
 
-import java.util.HashMap
+import java.util.*
 
 class Services private constructor(private val map: Map<Class<*>, Any>) {
     companion object {
-        @JvmField val EMPTY: Services = Builder().build()
+        @JvmField
+        val EMPTY: Services = Builder().build()
     }
 
-    fun <T> get(interfaceClass: Class<T>): T {
+    fun <T> get(interfaceClass: Class<T>): T? {
         @Suppress("UNCHECKED_CAST")
-        return map.get(interfaceClass) as T
+        return map[interfaceClass] as T?
     }
 
     class Builder {
-
         private val map = HashMap<Class<*>, Any>()
 
         fun <T : Any> register(interfaceClass: Class<T>, implementation: T): Builder {
