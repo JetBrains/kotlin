@@ -162,12 +162,6 @@ object LightClassUtil {
             return declaration.getContainingClassOrObject().toLightClass()
         }
 
-        if (!canGenerateLightClass(declaration)) {
-            // Can't get wrappers for internal declarations. Their classes are not generated during calcStub
-            // with ClassBuilderMode.LIGHT_CLASSES mode, and this produces "Class not found exception" in getDelegate()
-            return null
-        }
-
         val parent = declaration.parent
 
         if (parent is KtFile) {
