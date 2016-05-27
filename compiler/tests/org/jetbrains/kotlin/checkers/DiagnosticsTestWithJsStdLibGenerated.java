@@ -281,6 +281,75 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         }
     }
 
+    @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Name extends AbstractDiagnosticsTestWithJsStdLib {
+        public void testAllFilesPresentInName() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/name"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("classLevelMethodAndProperty.kt")
+        public void testClassLevelMethodAndProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/classLevelMethodAndProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("extensionPropertiesWithDifferentReceiversDoNotClash.kt")
+        public void testExtensionPropertiesWithDifferentReceiversDoNotClash() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/extensionPropertiesWithDifferentReceiversDoNotClash.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("methodAndPrivatePropertyDoNotClash.kt")
+        public void testMethodAndPrivatePropertyDoNotClash() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/methodAndPrivatePropertyDoNotClash.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("packageAndMangledMethodDoNotClash.kt")
+        public void testPackageAndMangledMethodDoNotClash() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/packageAndMangledMethodDoNotClash.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("packageAndMethod.kt")
+        public void testPackageAndMethod() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/packageAndMethod.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("packageAndPrivateDeclarationsDoNotClash.kt")
+        public void testPackageAndPrivateDeclarationsDoNotClash() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/packageAndPrivateDeclarationsDoNotClash.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("packageAndProperty.kt")
+        public void testPackageAndProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/packageAndProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyAndMethodInSubclass.kt")
+        public void testPropertyAndMethodInSubclass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/propertyAndMethodInSubclass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyAndNativeMethodDoNotClash.kt")
+        public void testPropertyAndNativeMethodDoNotClash() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/propertyAndNativeMethodDoNotClash.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("topLevelMethodAndProperty.kt")
+        public void testTopLevelMethodAndProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/topLevelMethodAndProperty.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
