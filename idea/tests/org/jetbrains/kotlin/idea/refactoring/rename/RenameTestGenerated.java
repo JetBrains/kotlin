@@ -317,6 +317,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("renameKotlinDataClassParameter/renameKotlinDataClassParameter.test")
+    public void testRenameKotlinDataClassParameter_RenameKotlinDataClassParameter() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameKotlinDataClassParameter/renameKotlinDataClassParameter.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("renameKotlinEnum/renameKotlinEnum.test")
     public void testRenameKotlinEnum_RenameKotlinEnum() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameKotlinEnum/renameKotlinEnum.test");
