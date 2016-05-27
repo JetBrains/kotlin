@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.core
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.analysis.computeTypeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.util.getImplicitReceiversWithInstanceToExpression
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -160,3 +162,15 @@ fun KtCallableDeclaration.canOmitDeclaredType(initializerOrBodyExpression: KtExp
 }
 
 fun String.quoteIfNeeded(): String = if (KotlinNameSuggester.isIdentifier(this)) this else "`$this`"
+
+fun isEnumCompanionPropertyWithEntryConflict(element: PsiElement, expectedName: String): Boolean {
+    if (element !is KtProperty) return false
+
+    val propertyClass = element.containingClassOrObject as? KtObjectDeclaration ?: return false
+    if (!propertyClass.isCompanion()) return false
+
+    val outerClass = propertyClass.containingClassOrObject as? KtClass ?: return false
+    if (!outerClass.isEnum()) return false
+
+    return outerClass.declarations.any { it is KtEnumEntry && it.name == expectedName }
+}
