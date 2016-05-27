@@ -215,8 +215,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                 }
             }
 
-            val additionalFiles = if (outputFiles.size < 2) emptyList()
-                                  else outputFiles.subList(1, outputFiles.size).map { getClassName(it.relativePath) to it.asByteArray() }
+            val additionalFiles = outputFiles.drop(1).map { getClassName(it.relativePath) to it.asByteArray() }
 
             return CompiledDataDescriptor(
                     outputFiles.first().asByteArray(),
