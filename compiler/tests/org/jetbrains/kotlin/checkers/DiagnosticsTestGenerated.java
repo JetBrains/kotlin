@@ -1701,6 +1701,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("sam.kt")
+            public void testSam() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/sam.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("unused.kt")
             public void testUnused() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/unused.kt");
@@ -1724,6 +1730,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 @TestMetadata("companionObject.kt")
                 public void testCompanionObject() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/bound/companionObject.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("functionCallWithoutArguments.kt")
+                public void testFunctionCallWithoutArguments() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/bound/functionCallWithoutArguments.kt");
                     doTest(fileName);
                 }
 
@@ -1763,6 +1775,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 @TestMetadata("callableRefrenceOnNestedObject.kt")
                 public void testCallableRefrenceOnNestedObject() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/callableRefrenceOnNestedObject.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("classMemberVsConstructorLikeFunction.kt")
+                public void testClassMemberVsConstructorLikeFunction() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/classMemberVsConstructorLikeFunction.kt");
                     doTest(fileName);
                 }
 

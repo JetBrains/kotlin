@@ -1,0 +1,3 @@
+package
+
+public fun test(): kotlin.reflect.KFunction0<kotlin.Int>
