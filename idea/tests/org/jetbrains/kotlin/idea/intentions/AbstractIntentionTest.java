@@ -142,6 +142,11 @@ public abstract class AbstractIntentionTest extends KotlinCodeInsightTestCase {
         }
     }
 
+    @Override
+    protected boolean isRunInWriteAction() {
+        return false;
+    }
+
     private void doTestFor(String mainFilePath, Map<String, PsiFile> pathToFiles, final IntentionAction intentionAction, String fileText) throws Exception {
         String isApplicableString = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// IS_APPLICABLE: ");
         boolean isApplicableExpected = isApplicableString == null || isApplicableString.equals("true");
