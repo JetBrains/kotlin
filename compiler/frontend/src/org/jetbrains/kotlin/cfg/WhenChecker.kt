@@ -315,7 +315,7 @@ object WhenChecker {
         return true
     }
 
-    private fun getMissingCases(expression: KtWhenExpression, context: BindingContext): List<WhenMissingCase> {
+    fun getMissingCases(expression: KtWhenExpression, context: BindingContext): List<WhenMissingCase> {
         val type = whenSubjectType(expression, context) ?: return listOf(UnknownMissingCase)
         val nullable = !type.isFlexible() && isNullableTypeWithoutPossibleSmartCast(expression.subjectExpression, type, context)
         val checkers = exhaustivenessCheckers.filter { it.isApplicable(type) }

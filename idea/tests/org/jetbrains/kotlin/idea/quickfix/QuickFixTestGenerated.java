@@ -8511,6 +8511,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class When extends AbstractQuickFixTest {
+        @TestMetadata("addElseBranchEnumStatement.kt")
+        public void testAddElseBranchEnumStatement() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/when/addElseBranchEnumStatement.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("addRemainingBranchesBoolean.kt")
         public void testAddRemainingBranchesBoolean() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/when/addRemainingBranchesBoolean.kt");
@@ -8520,6 +8526,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("addRemainingBranchesEnum.kt")
         public void testAddRemainingBranchesEnum() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/when/addRemainingBranchesEnum.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("addRemainingBranchesEnumStatement.kt")
+        public void testAddRemainingBranchesEnumStatement() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/when/addRemainingBranchesEnumStatement.kt");
             doTest(fileName);
         }
 
