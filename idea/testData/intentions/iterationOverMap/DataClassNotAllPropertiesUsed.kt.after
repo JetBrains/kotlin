@@ -2,9 +2,7 @@
 
 fun main(args: Array<String>) {
     val list = listOf(MyClass(1, 2, 3, 4))
-    for (<caret>klass in list) {
-        val a = klass.a
-        val c = klass.c
+    for ((a, b, c) in list) {
         println("$a$c")
     }
 }
