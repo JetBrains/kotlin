@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -85,7 +86,15 @@ open class AddModifierFix(
                 public override fun createAction(diagnostic: Diagnostic): IntentionAction? {
                     val modifierListOwner = QuickFixUtil.getParentElementOfType(diagnostic, modifierOwnerClass) ?: return null
 
-                    if (modifier == KtTokens.ABSTRACT_KEYWORD && modifierListOwner is KtObjectDeclaration) return null
+                    if (modifier == KtTokens.ABSTRACT_KEYWORD) {
+                        if (modifierListOwner is KtObjectDeclaration) return null
+                        if (modifierListOwner is KtEnumEntry) return null
+                        if (modifierListOwner is KtDeclaration && modifierListOwner !is KtClass) {
+                            val parentClassOrObject = modifierListOwner.containingClassOrObject ?: return null
+                            if (parentClassOrObject is KtObjectDeclaration) return null
+                            if (parentClassOrObject is KtEnumEntry) return null
+                        }
+                    }
 
                     return AddModifierFix(modifierListOwner, modifier)
                 }
