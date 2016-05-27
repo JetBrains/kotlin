@@ -65,9 +65,21 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("automaticRenamerOverloadsExtensionAndMember/automaticRenamerOverloadsExtensionAndMember.test")
+    public void testAutomaticRenamerOverloadsExtensionAndMember_AutomaticRenamerOverloadsExtensionAndMember() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/automaticRenamerOverloadsExtensionAndMember/automaticRenamerOverloadsExtensionAndMember.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("automaticRenamerOverloadsJavaClass/overloads.test")
     public void testAutomaticRenamerOverloadsJavaClass_Overloads() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/automaticRenamerOverloadsJavaClass/overloads.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("automaticRenamerOverloadsMemberAndExtension/automaticRenamerOverloadsMemberAndExtension.test")
+    public void testAutomaticRenamerOverloadsMemberAndExtension_AutomaticRenamerOverloadsMemberAndExtension() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/automaticRenamerOverloadsMemberAndExtension/automaticRenamerOverloadsMemberAndExtension.test");
         doTest(fileName);
     }
 
