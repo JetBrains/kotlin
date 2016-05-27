@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.google.common.collect.Sets
 import com.intellij.codeInsight.ContainerProvider
+import com.intellij.codeInsight.ExternalAnnotationsManager
+import com.intellij.codeInsight.InferredAnnotationsManager
 import com.intellij.codeInsight.runner.JavaMainMethodProvider
 import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.core.CoreJavaFileManager
@@ -456,6 +458,9 @@ class KotlinCoreEnvironment private constructor(
                 registerService(LightClassGenerationSupport::class.java, cliLightClassGenerationSupport)
                 registerService(CliLightClassGenerationSupport::class.java, cliLightClassGenerationSupport)
                 registerService(CodeAnalyzerInitializer::class.java, cliLightClassGenerationSupport)
+
+                registerService(ExternalAnnotationsManager::class.java, MockExternalAnnotationsManager())
+                registerService(InferredAnnotationsManager::class.java, MockInferredAnnotationsManager())
 
                 val area = Extensions.getArea(this)
 
