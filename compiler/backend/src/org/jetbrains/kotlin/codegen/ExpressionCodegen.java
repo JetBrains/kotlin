@@ -63,6 +63,7 @@ import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
+import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilKt;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.*;
@@ -3972,9 +3973,12 @@ The "returned" value of try expression with no finally is either the last expres
     }
 
     private boolean isExhaustive(@NotNull KtWhenExpression whenExpression, boolean isStatement) {
-        boolean exhaustive = Boolean.TRUE.equals(bindingContext.get(BindingContext.EXHAUSTIVE_WHEN, whenExpression));
-        return isStatement ? exhaustive || Boolean.TRUE.equals(bindingContext.get(BindingContext.IMPLICIT_EXHAUSTIVE_WHEN, whenExpression))
-                           : exhaustive;
+        if (isStatement && !BindingContextUtilsKt.isUsedAsExpression(whenExpression, bindingContext)) {
+            return Boolean.TRUE.equals(bindingContext.get(BindingContext.IMPLICIT_EXHAUSTIVE_WHEN, whenExpression));
+        }
+        else {
+            return Boolean.TRUE.equals(bindingContext.get(BindingContext.EXHAUSTIVE_WHEN, whenExpression));
+        }
     }
 
     public void putUnitInstanceOntoStackForNonExhaustiveWhen(
