@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.types.KotlinType;
 
 import java.io.File;
 
+import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.LOCAL_VARIABLE_DELEGATE;
 import static org.jetbrains.kotlin.descriptors.Modality.ABSTRACT;
 import static org.jetbrains.kotlin.descriptors.Modality.FINAL;
 import static org.jetbrains.kotlin.resolve.jvm.annotations.AnnotationUtilKt.hasJvmFieldAnnotation;
@@ -146,8 +147,14 @@ public class JvmCodegenUtil {
             return false;
         }
 
-        // Only properties of the same class can be directly accessed, except when we are evaluating expressions in the debugger
-        if (!isCallInsideSameClassAsDeclared(property, context) && !isDebuggerContext(context)) return false;
+        if (!isDebuggerContext(context)) {
+            // Unless we are evaluating expression in debugger context, only properties of the same class can be directly accessed
+            if (!isCallInsideSameClassAsDeclared(property, context)) return false;
+        }
+        else {
+            // In debugger we want to access through accessors if they are present. If property overrides something accessors must be present.
+            if (!property.getOverriddenDescriptors().isEmpty()) return false;
+        }
 
         // Delegated and extension properties have no backing fields
         if (isDelegated || property.getExtensionReceiverParameter() != null) return false;

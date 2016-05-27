@@ -39,6 +39,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             doSingleBreakpointTest(fileName);
         }
 
+        @TestMetadata("accessToOverridenPropertyWithBackingField.kt")
+        public void testAccessToOverridenPropertyWithBackingField() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/accessToOverridenPropertyWithBackingField.kt");
+            doSingleBreakpointTest(fileName);
+        }
+
         public void testAllFilesPresentInSingleBreakpoint() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -202,6 +208,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
         @TestMetadata("insertInBlock.kt")
         public void testInsertInBlock() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/insertInBlock.kt");
+            doSingleBreakpointTest(fileName);
+        }
+
+        @TestMetadata("kt12206BasePropertyWithoutBackingField.kt")
+        public void testKt12206BasePropertyWithoutBackingField() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/kt12206BasePropertyWithoutBackingField.kt");
             doSingleBreakpointTest(fileName);
         }
 
