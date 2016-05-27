@@ -18,9 +18,12 @@ package org.jetbrains.kotlin.idea.refactoring.rename
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
+import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.refactoring.rename.RenamePsiElementProcessor
 import org.jetbrains.kotlin.asJava.toLightMethods
+import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
+import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtParameter
@@ -38,5 +41,11 @@ abstract class RenameKotlinPsiProcessor : RenamePsiElementProcessor() {
             element.toLightMethods().flatMapTo(references) { MethodReferencesSearch.search(it) }
         }
         return references
+    }
+
+    override fun prepareRenaming(element: PsiElement, newName: String?, allRenames: MutableMap<PsiElement, String>, scope: SearchScope) {
+        if (newName != null && !KotlinNameSuggester.isIdentifier(newName)) {
+            allRenames[element] = newName.quoteIfNeeded()
+        }
     }
 }
