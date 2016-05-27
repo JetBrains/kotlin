@@ -1,0 +1,4 @@
+package
+
+public val </*0*/ T : kotlin.Any> kotlin.reflect.KClass<T>.java: java.lang.Class<T>
+public val </*0*/ T : kotlin.Any> kotlin.reflect.KClass<T>.javaObjectType: java.lang.Class<T>

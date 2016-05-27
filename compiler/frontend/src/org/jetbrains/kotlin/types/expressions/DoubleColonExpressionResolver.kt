@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.types.expressions
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.ReflectionTypes
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageFeatureSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
@@ -40,9 +42,6 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
 import javax.inject.Inject
 
-// TODO: use a language level option
-val BOUND_REFERENCES_ENABLED by lazy { System.getProperty("kotlin.lang.enable.bound.references") == "true" }
-
 sealed class DoubleColonLHS(val type: KotlinType) {
     class Expression(val typeInfo: KotlinTypeInfo) : DoubleColonLHS(typeInfo.type!!)
 
@@ -58,7 +57,8 @@ class DoubleColonExpressionResolver(
         val qualifiedExpressionResolver: QualifiedExpressionResolver,
         val dataFlowAnalyzer: DataFlowAnalyzer,
         val reflectionTypes: ReflectionTypes,
-        val typeResolver: TypeResolver
+        val typeResolver: TypeResolver,
+        val languageFeatureSettings: LanguageFeatureSettings
 ) {
     private lateinit var expressionTypingServices: ExpressionTypingServices
 
@@ -120,13 +120,20 @@ class DoubleColonExpressionResolver(
         }
     }
 
+    private fun shouldTryResolveLHSAsExpression(expression: KtDoubleColonExpression): Boolean {
+        // TODO: improve diagnostic when bound callable references are disabled
+        if (!languageFeatureSettings.supportsFeature(LanguageFeature.BoundCallableReferences)) return false
+
+        val lhs = expression.receiverExpression ?: return false
+        return lhs.canBeConsideredProperExpression() && !expression.hasQuestionMarks /* TODO: test this */
+    }
+
     private fun resolveDoubleColonLHS(
             expression: KtExpression, doubleColonExpression: KtDoubleColonExpression, c: ExpressionTypingContext
     ): DoubleColonLHS? {
         // First, try resolving the LHS as expression, if possible
 
-        if (BOUND_REFERENCES_ENABLED && expression.canBeConsideredProperExpression() &&
-            !doubleColonExpression.hasQuestionMarks /* TODO: test this */) {
+        if (shouldTryResolveLHSAsExpression(doubleColonExpression)) {
             val traceForExpr = TemporaryTraceAndCache.create(c, "resolve '::' LHS as expression", expression)
             val contextForExpr = c.replaceTraceAndCache(traceForExpr)
             val typeInfo = expressionTypingServices.getTypeInfo(expression, contextForExpr)

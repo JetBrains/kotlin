@@ -18383,6 +18383,27 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sourceCompatibility/noTopLevelSealedInheritance.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/sourceCompatibility/noBoundCallableReferences")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class NoBoundCallableReferences extends AbstractDiagnosticsTest {
+                public void testAllFilesPresentInNoBoundCallableReferences() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/sourceCompatibility/noBoundCallableReferences"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("qualifiedJavaClassLiteralInKClassExtension.kt")
+                public void testQualifiedJavaClassLiteralInKClassExtension() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sourceCompatibility/noBoundCallableReferences/qualifiedJavaClassLiteralInKClassExtension.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("qualifiedJavaClassReferenceInKClassExtension.kt")
+                public void testQualifiedJavaClassReferenceInKClassExtension() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sourceCompatibility/noBoundCallableReferences/qualifiedJavaClassReferenceInKClassExtension.kt");
+                    doTest(fileName);
+                }
+            }
         }
 
         @TestMetadata("compiler/testData/diagnostics/tests/substitutions")
