@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,237 +14,235 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cli.jvm.repl;
+package org.jetbrains.kotlin.cli.jvm.repl
 
-import com.intellij.openapi.Disposable;
-import com.intellij.openapi.util.io.FileUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.cli.common.KotlinVersion;
-import org.jetbrains.kotlin.cli.jvm.repl.messages.*;
-import org.jetbrains.kotlin.cli.jvm.repl.reader.ConsoleReplCommandReader;
-import org.jetbrains.kotlin.cli.jvm.repl.reader.IdeReplCommandReader;
-import org.jetbrains.kotlin.cli.jvm.repl.reader.ReplCommandReader;
-import org.jetbrains.kotlin.config.CompilerConfiguration;
-import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.cli.common.KotlinVersion
+import org.jetbrains.kotlin.cli.jvm.repl.messages.*
+import org.jetbrains.kotlin.cli.jvm.repl.reader.ConsoleReplCommandReader
+import org.jetbrains.kotlin.cli.jvm.repl.reader.IdeReplCommandReader
+import org.jetbrains.kotlin.cli.jvm.repl.reader.ReplCommandReader
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.utils.*
 
-import java.io.File;
-import java.io.PrintWriter;
-import java.util.Arrays;
-import java.util.List;
+import java.io.File
+import java.io.PrintWriter
+import java.util.Arrays
 
-public class ReplFromTerminal {
+class ReplFromTerminal(
+        disposable: Disposable,
+        compilerConfiguration: CompilerConfiguration
+) {
 
-    private ReplInterpreter replInterpreter;
-    private Throwable replInitializationFailed;
-    private final Object waitRepl = new Object();
+    private var replInterpreter: ReplInterpreter? = null
+    private var replInitializationFailed: Throwable? = null
+    private val waitRepl = Object()
 
-    private final boolean ideMode;
-    private ReplSystemInWrapper replReader;
-    private final ReplWriter replWriter;
-    private final ReplErrorLogger replErrorLogger;
+    private val ideMode: Boolean
+    private var replReader: ReplSystemInWrapper? = null
+    private val replWriter: ReplWriter
+    private val replErrorLogger: ReplErrorLogger
 
-    private ReplCommandReader commandReader;
+    private var commandReader: ReplCommandReader? = null
 
-    public ReplFromTerminal(
-            @NotNull final Disposable disposable,
-            @NotNull final CompilerConfiguration compilerConfiguration
-    ) {
-        String replIdeMode = System.getProperty("kotlin.repl.ideMode");
-        ideMode = replIdeMode != null && replIdeMode.equals("true");
+    init {
+        val replIdeMode = System.getProperty("kotlin.repl.ideMode")
+        ideMode = replIdeMode != null && replIdeMode == "true"
 
         // wrapper for `out` is required to escape every input in [ideMode];
         // if [ideMode == false] then just redirects all input to [System.out]
         // if user calls [System.setOut(...)] then undefined behaviour
         if (ideMode) {
-            ReplSystemOutWrapperForIde soutWrapper = new ReplSystemOutWrapperForIde(System.out);
-            replWriter = soutWrapper;
-            System.setOut(soutWrapper);
+            val soutWrapper = ReplSystemOutWrapperForIde(System.out)
+            replWriter = soutWrapper
+            System.setOut(soutWrapper)
         }
         else {
-            replWriter = new ReplConsoleWriter();
+            replWriter = ReplConsoleWriter()
         }
 
         // wrapper for `in` is required to give user possibility of calling
         // [readLine] from ide-console repl
         if (ideMode) {
-            replReader = new ReplSystemInWrapper(System.in, replWriter);
-            System.setIn(replReader);
+            replReader = ReplSystemInWrapper(System.`in`, replWriter)
+            System.setIn(replReader!!)
         }
 
-        replErrorLogger = new ReplErrorLogger(ideMode, replWriter);
+        replErrorLogger = ReplErrorLogger(ideMode, replWriter)
 
-        new Thread("initialize-repl") {
-            @Override
-            public void run() {
+        object : Thread("initialize-repl") {
+            override fun run() {
                 try {
-                    replInterpreter = new ReplInterpreter(disposable, compilerConfiguration, ideMode, replReader);
+                    replInterpreter = ReplInterpreter(disposable, compilerConfiguration, ideMode, replReader)
                 }
-                catch (Throwable e) {
-                    replInitializationFailed = e;
+                catch (e: Throwable) {
+                    replInitializationFailed = e
                 }
+
                 synchronized (waitRepl) {
-                    waitRepl.notifyAll();
+                    waitRepl.notifyAll()
                 }
             }
-        }.start();
+        }.start()
 
         try {
-            commandReader = createCommandReader();
+            commandReader = createCommandReader()
         }
-        catch (Exception e) {
-            replErrorLogger.logException(e);
+        catch (e: Exception) {
+            replErrorLogger.logException(e)
         }
+
     }
 
-    @NotNull
-    private ReplCommandReader createCommandReader() {
-        return ideMode ? new IdeReplCommandReader()
-                       : new ConsoleReplCommandReader();
+    private fun createCommandReader(): ReplCommandReader {
+        return if (ideMode)
+            IdeReplCommandReader()
+        else
+            ConsoleReplCommandReader()
     }
 
-    private ReplInterpreter getReplInterpreter() {
+    private fun getReplInterpreter(): ReplInterpreter {
         if (replInterpreter != null) {
-            return replInterpreter;
+            return replInterpreter!!
         }
         synchronized (waitRepl) {
             while (replInterpreter == null && replInitializationFailed == null) {
                 try {
-                    waitRepl.wait();
+                    waitRepl.wait()
                 }
-                catch (Throwable e) {
-                    throw ExceptionUtilsKt.rethrow(e);
+                catch (e: Throwable) {
+                    throw rethrow(e)
                 }
+
             }
             if (replInterpreter != null) {
-                return replInterpreter;
+                return replInterpreter!!
             }
-            throw ExceptionUtilsKt.rethrow(replInitializationFailed);
+            throw rethrow(replInitializationFailed!!)
         }
     }
 
-    private void doRun() {
+    private fun doRun() {
         try {
-            replWriter.printlnWelcomeMessage("Welcome to Kotlin version " + KotlinVersion.VERSION +
-                                             " (JRE " + System.getProperty("java.runtime.version") + ")");
-            replWriter.printlnWelcomeMessage("Type :help for help, :quit for quit");
-            WhatNextAfterOneLine next = WhatNextAfterOneLine.READ_LINE;
+            replWriter.printlnWelcomeMessage("Welcome to Kotlin version ${KotlinVersion.VERSION} " +
+                                             "(JRE ${System.getProperty("java.runtime.version")})")
+            replWriter.printlnWelcomeMessage("Type :help for help, :quit for quit")
+            var next = WhatNextAfterOneLine.READ_LINE
             while (true) {
-                next = one(next);
+                next = one(next)
                 if (next == WhatNextAfterOneLine.QUIT) {
-                    break;
+                    break
                 }
             }
         }
-        catch (Exception e) {
-            replErrorLogger.logException(e);
+        catch (e: Exception) {
+            replErrorLogger.logException(e)
         }
         finally {
             try {
-                commandReader.flushHistory();
+                commandReader!!.flushHistory()
             }
-            catch (Exception e) {
-                replErrorLogger.logException(e);
+            catch (e: Exception) {
+                replErrorLogger.logException(e)
             }
+
         }
     }
 
-    public enum WhatNextAfterOneLine {
+    enum class WhatNextAfterOneLine {
         READ_LINE,
         INCOMPLETE,
-        QUIT,
+        QUIT
     }
 
-    @NotNull
-    private WhatNextAfterOneLine one(@NotNull WhatNextAfterOneLine next) {
+    private fun one(next: WhatNextAfterOneLine): WhatNextAfterOneLine {
         try {
-            String line = commandReader.readLine(next);
+            var line = commandReader!!.readLine(next) ?: return WhatNextAfterOneLine.QUIT
 
-            if (line == null) {
-                return WhatNextAfterOneLine.QUIT;
+            line = unescapeLineBreaks(line)
+
+            if (line.startsWith(":") && (line.length == 1 || line.get(1) != ':')) {
+                val notQuit = oneCommand(line.substring(1))
+                return if (notQuit) WhatNextAfterOneLine.READ_LINE else WhatNextAfterOneLine.QUIT
             }
 
-            line = UnescapeUtilsKt.unescapeLineBreaks(line);
-
-            if (line.startsWith(":") && (line.length() == 1 || line.charAt(1) != ':')) {
-                boolean notQuit = oneCommand(line.substring(1));
-                return notQuit ? WhatNextAfterOneLine.READ_LINE : WhatNextAfterOneLine.QUIT;
-            }
-
-            ReplInterpreter.LineResultType lineResultType = eval(line);
-            if (lineResultType == ReplInterpreter.LineResultType.INCOMPLETE) {
-                return WhatNextAfterOneLine.INCOMPLETE;
+            val lineResultType = eval(line)
+            if (lineResultType === ReplInterpreter.LineResultType.INCOMPLETE) {
+                return WhatNextAfterOneLine.INCOMPLETE
             }
             else {
-                return WhatNextAfterOneLine.READ_LINE;
+                return WhatNextAfterOneLine.READ_LINE
             }
         }
-        catch (Exception e) {
-            throw ExceptionUtilsKt.rethrow(e);
+        catch (e: Exception) {
+            throw rethrow(e)
         }
+
     }
 
-    @NotNull
-    private ReplInterpreter.LineResultType eval(@NotNull String line) {
-        ReplInterpreter.LineResult lineResult = getReplInterpreter().eval(line);
-        if (lineResult.getType() == ReplInterpreter.LineResultType.SUCCESS) {
-            replWriter.notifyCommandSuccess();
-            if (!lineResult.isUnit()) {
-                replWriter.outputCommandResult(lineResult.getValue());
+    private fun eval(line: String): ReplInterpreter.LineResultType {
+        val lineResult = getReplInterpreter().eval(line)
+        if (lineResult.type === ReplInterpreter.LineResultType.SUCCESS) {
+            replWriter.notifyCommandSuccess()
+            if (!lineResult.isUnit) {
+                replWriter.outputCommandResult(lineResult.value)
             }
         }
-        else if (lineResult.getType() == ReplInterpreter.LineResultType.INCOMPLETE) {
-            replWriter.notifyIncomplete();
+        else if (lineResult.type === ReplInterpreter.LineResultType.INCOMPLETE) {
+            replWriter.notifyIncomplete()
         }
-        else if (lineResult.getType() == ReplInterpreter.LineResultType.COMPILE_ERROR) {
-            replWriter.outputCompileError(lineResult.getErrorText());
+        else if (lineResult.type === ReplInterpreter.LineResultType.COMPILE_ERROR) {
+            replWriter.outputCompileError(lineResult.errorText!!)
         }
-        else if (lineResult.getType() == ReplInterpreter.LineResultType.RUNTIME_ERROR) {
-            replWriter.outputRuntimeError(lineResult.getErrorText());
+        else if (lineResult.type === ReplInterpreter.LineResultType.RUNTIME_ERROR) {
+            replWriter.outputRuntimeError(lineResult.errorText!!)
         }
         else {
-            throw new IllegalStateException("unknown line result type: " + lineResult);
+            throw IllegalStateException("unknown line result type: " + lineResult)
         }
-        return lineResult.getType();
+        return lineResult.type
     }
 
-    private boolean oneCommand(@NotNull String command) throws Exception {
-        List<String> split = splitCommand(command);
-        if (split.size() >= 1 && command.equals("help")) {
+    @Throws(Exception::class)
+    private fun oneCommand(command: String): Boolean {
+        val split = splitCommand(command)
+        if (split.size >= 1 && command == "help") {
             replWriter.printlnHelpMessage("Available commands:\n" +
                                           ":help                   show this help\n" +
                                           ":quit                   exit the interpreter\n" +
                                           ":dump bytecode          dump classes to terminal\n" +
-                                          ":load <file>            load script from specified file"
-            );
-            return true;
+                                          ":load <file>            load script from specified file")
+            return true
         }
-        else if (split.size() >= 2 && split.get(0).equals("dump") && split.get(1).equals("bytecode")) {
-            getReplInterpreter().dumpClasses(new PrintWriter(System.out));
-            return true;
+        else if (split.size >= 2 && split[0] == "dump" && split[1] == "bytecode") {
+            getReplInterpreter().dumpClasses(PrintWriter(System.out))
+            return true
         }
-        else if (split.size() >= 1 && split.get(0).equals("quit")) {
-            return false;
+        else if (split.size >= 1 && split[0] == "quit") {
+            return false
         }
-        else if (split.size() >= 2 && split.get(0).equals("load")) {
-            String fileName = split.get(1);
-            String scriptText = FileUtil.loadFile(new File(fileName));
-            eval(scriptText);
-            return true;
+        else if (split.size >= 2 && split[0] == "load") {
+            val fileName = split[1]
+            val scriptText = FileUtil.loadFile(File(fileName))
+            eval(scriptText)
+            return true
         }
         else {
-            replWriter.printlnHelpMessage("Unknown command\n" +
-                                          "Type :help for help"
-            );
-            return true;
+            replWriter.printlnHelpMessage("Unknown command\n" + "Type :help for help")
+            return true
         }
     }
 
-    private static List<String> splitCommand(@NotNull String command) {
-        return Arrays.asList(command.split(" "));
-    }
+    companion object {
 
-    public static void run(@NotNull Disposable disposable, @NotNull CompilerConfiguration configuration) {
-        new ReplFromTerminal(disposable, configuration).doRun();
+        private fun splitCommand(command: String): List<String> {
+            return Arrays.asList(*command.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
+        }
+
+        fun run(disposable: Disposable, configuration: CompilerConfiguration) {
+            ReplFromTerminal(disposable, configuration).doRun()
+        }
     }
 
 }
