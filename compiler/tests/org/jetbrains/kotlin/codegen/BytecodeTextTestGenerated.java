@@ -31,6 +31,12 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
+    @TestMetadata("accessorForOverridenVal.kt")
+    public void testAccessorForOverridenVal() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/accessorForOverridenVal.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("accessorForProtected.kt")
     public void testAccessorForProtected() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/accessorForProtected.kt");
