@@ -26,8 +26,10 @@ import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider;
+import org.jetbrains.kotlin.config.LanguageFeatureSettings;
 import org.jetbrains.kotlin.context.ContextKt;
 import org.jetbrains.kotlin.context.GlobalContext;
 import org.jetbrains.kotlin.context.ModuleContext;
@@ -57,6 +59,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.util.DescriptorValidator;
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
+import org.junit.Assert;
 
 import java.io.File;
 import java.util.*;
@@ -126,9 +129,9 @@ public abstract class AbstractDiagnosticsTest extends BaseDiagnosticsTest {
 
             moduleBindings.put(testModule, moduleTrace.getBindingContext());
 
-
+            LanguageFeatureSettings languageFeatureSettings = loadCustomLanguageFeatureSettings(testFilesInModule);
             ModuleContext moduleContext = ContextKt.withModule(ContextKt.withProject(context, getProject()), module);
-            analyzeModuleContents(moduleContext, jetFiles, moduleTrace);
+            analyzeModuleContents(moduleContext, jetFiles, moduleTrace, languageFeatureSettings);
 
             checkAllResolvedCallsAreCompleted(jetFiles, moduleTrace.getBindingContext());
         }
@@ -187,6 +190,24 @@ public abstract class AbstractDiagnosticsTest extends BaseDiagnosticsTest {
         }
     }
 
+    @Nullable
+    private LanguageFeatureSettings loadCustomLanguageFeatureSettings(List<? extends TestFile> module) {
+        LanguageFeatureSettings result = null;
+        for (TestFile file : module) {
+            if (file.customLanguageFeatureSettings != null) {
+                if (result != null) {
+                    Assert.fail(
+                            "More than one file in the module has " + BaseDiagnosticsTest.LANGUAGE_DIRECTIVE + " directive specified. " +
+                            "This is not supported. Please move all directives into one file"
+                    );
+                }
+                result = file.customLanguageFeatureSettings;
+            }
+        }
+
+        return result;
+    }
+
     private void checkDynamicCallDescriptors(File expectedFile, List<TestFile> testFiles) {
         RecursiveDescriptorComparator serializer = new RecursiveDescriptorComparator(RECURSIVE_ALL);
 
@@ -232,16 +253,20 @@ public abstract class AbstractDiagnosticsTest extends BaseDiagnosticsTest {
         return new File(FileUtil.getNameWithoutExtension(testDataFile.getAbsolutePath()) + ".lazy.log");
     }
 
-    protected void analyzeModuleContents(
+    @NotNull
+    protected AnalysisResult analyzeModuleContents(
             @NotNull ModuleContext moduleContext,
-            @NotNull List<KtFile> jetFiles,
-            @NotNull BindingTrace moduleTrace
+            @NotNull List<KtFile> files,
+            @NotNull BindingTrace moduleTrace,
+            @Nullable LanguageFeatureSettings languageFeatureSettings
     ) {
+        assert languageFeatureSettings == null : "Language feature settings are not supported in tests in 1.0.3";
+
         // New JavaDescriptorResolver is created for each module, which is good because it emulates different Java libraries for each module,
         // albeit with same class names
-        TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
+        return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
                 moduleContext,
-                jetFiles,
+                files,
                 moduleTrace,
                 null,
                 null,

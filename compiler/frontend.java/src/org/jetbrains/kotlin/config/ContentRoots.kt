@@ -14,12 +14,18 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.js.facade.exceptions;
+package org.jetbrains.kotlin.config
 
-import org.jetbrains.annotations.NotNull;
+interface ContentRoot
 
-public class MainFunctionNotFoundException extends TranslationException {
-    public MainFunctionNotFoundException(@NotNull String message) {
-        super(message);
-    }
+data class KotlinSourceRoot(val path: String): ContentRoot
+
+fun CompilerConfiguration.addKotlinSourceRoot(source: String) {
+    add(JVMConfigurationKeys.CONTENT_ROOTS, KotlinSourceRoot(source))
 }
+
+fun CompilerConfiguration.addKotlinSourceRoots(sources: List<String>): Unit =
+        sources.forEach { addKotlinSourceRoot(it) }
+
+val CompilerConfiguration.kotlinSourceRoots: List<String>
+    get() = get(JVMConfigurationKeys.CONTENT_ROOTS)?.filterIsInstance<KotlinSourceRoot>()?.map { it.path }.orEmpty()

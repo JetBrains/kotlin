@@ -22,9 +22,11 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.idea.MainFunctionDetector;
-import org.jetbrains.kotlin.js.config.Config;
+import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.facade.MainCallParameters;
-import org.jetbrains.kotlin.js.facade.exceptions.*;
+import org.jetbrains.kotlin.js.facade.exceptions.TranslationException;
+import org.jetbrains.kotlin.js.facade.exceptions.TranslationRuntimeException;
+import org.jetbrains.kotlin.js.facade.exceptions.UnsupportedFeatureException;
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.StaticContext;
@@ -46,6 +48,7 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtNamedFunction;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -164,11 +167,13 @@ public final class Translation {
     }
 
     @NotNull
-    public static TranslationContext generateAst(@NotNull BindingTrace bindingTrace,
-            @NotNull Collection<KtFile> files, @NotNull MainCallParameters mainCallParameters,
+    public static TranslationContext generateAst(
+            @NotNull BindingTrace bindingTrace,
+            @NotNull Collection<KtFile> files,
+            @NotNull MainCallParameters mainCallParameters,
             @NotNull ModuleDescriptor moduleDescriptor,
-            @NotNull Config config)
-            throws TranslationException {
+            @NotNull JsConfig config
+    ) throws TranslationException {
         try {
             return doGenerateAst(bindingTrace, files, mainCallParameters, moduleDescriptor, config);
         }
@@ -176,15 +181,18 @@ public final class Translation {
             throw new UnsupportedFeatureException("Unsupported feature used.", e);
         }
         catch (Throwable e) {
-            throw new TranslationInternalException(e);
+            throw ExceptionUtilsKt.rethrow(e);
         }
     }
 
     @NotNull
-    private static TranslationContext doGenerateAst(@NotNull BindingTrace bindingTrace, @NotNull Collection<KtFile> files,
+    private static TranslationContext doGenerateAst(
+            @NotNull BindingTrace bindingTrace,
+            @NotNull Collection<KtFile> files,
             @NotNull MainCallParameters mainCallParameters,
             @NotNull ModuleDescriptor moduleDescriptor,
-            @NotNull Config config) throws MainFunctionNotFoundException {
+            @NotNull JsConfig config
+    ) {
         StaticContext staticContext = StaticContext.generateStaticContext(bindingTrace, config, moduleDescriptor);
         JsProgram program = staticContext.getProgram();
         JsBlock block = program.getGlobalBlock();
@@ -216,8 +224,9 @@ public final class Translation {
         }
     }
 
-    private static void mayBeGenerateTests(@NotNull Collection<KtFile> files, @NotNull Config config,
-            @NotNull JsBlock rootBlock, @NotNull TranslationContext context) {
+    private static void mayBeGenerateTests(
+            @NotNull Collection<KtFile> files, @NotNull JsConfig config, @NotNull JsBlock rootBlock, @NotNull TranslationContext context
+    ) {
         JSTester tester = config.isTestConfig() ? new JSRhinoUnitTester() : new QUnitTester();
         tester.initialize(context, rootBlock);
         JSTestGenerator.generateTestCalls(context, files, tester);
@@ -226,8 +235,9 @@ public final class Translation {
 
     //TODO: determine whether should throw exception
     @Nullable
-    private static JsStatement generateCallToMain(@NotNull TranslationContext context, @NotNull Collection<KtFile> files,
-            @NotNull List<String> arguments) throws MainFunctionNotFoundException {
+    private static JsStatement generateCallToMain(
+            @NotNull TranslationContext context, @NotNull Collection<KtFile> files, @NotNull List<String> arguments
+    ) {
         MainFunctionDetector mainFunctionDetector = new MainFunctionDetector(context.bindingContext());
         KtNamedFunction mainFunction = mainFunctionDetector.getMainFunction(files);
         if (mainFunction == null) {

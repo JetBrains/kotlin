@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.js.analyze;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.config.LanguageVersion;
 import org.jetbrains.kotlin.context.ContextKt;
 import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.context.MutableModuleContext;
@@ -24,7 +25,7 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.frontend.js.di.InjectionKt;
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult;
-import org.jetbrains.kotlin.js.config.Config;
+import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.resolve.JsPlatform;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtFile;
@@ -41,10 +42,7 @@ public final class TopDownAnalyzerFacadeForJS {
     }
 
     @NotNull
-    public static JsAnalysisResult analyzeFiles(
-            @NotNull Collection<KtFile> files,
-            @NotNull Config config
-    ) {
+    public static JsAnalysisResult analyzeFiles(@NotNull Collection<KtFile> files, @NotNull JsConfig config) {
         BindingTrace trace = new BindingTraceContext();
 
         MutableModuleContext newModuleContext = ContextKt.ContextForNewModule(
@@ -55,7 +53,7 @@ public final class TopDownAnalyzerFacadeForJS {
     }
 
     @NotNull
-    private static List<ModuleDescriptorImpl> computeDependencies(ModuleDescriptorImpl module, @NotNull Config config) {
+    private static List<ModuleDescriptorImpl> computeDependencies(ModuleDescriptorImpl module, @NotNull JsConfig config) {
         List<ModuleDescriptorImpl> allDependencies = new ArrayList<ModuleDescriptorImpl>();
         allDependencies.add(module);
         allDependencies.addAll(config.getModuleDescriptors());
@@ -68,13 +66,14 @@ public final class TopDownAnalyzerFacadeForJS {
             @NotNull Collection<KtFile> files,
             @NotNull BindingTrace trace,
             @NotNull ModuleContext moduleContext,
-            @NotNull Config config
+            @NotNull JsConfig config
     ) {
-        Collection<KtFile> allFiles = Config.withJsLibAdded(files, config);
+        Collection<KtFile> allFiles = JsConfig.withJsLibAdded(files, config);
 
         LazyTopDownAnalyzerForTopLevel analyzerForJs = InjectionKt.createTopDownAnalyzerForJs(
                 moduleContext, trace,
-                new FileBasedDeclarationProviderFactory(moduleContext.getStorageManager(), allFiles)
+                new FileBasedDeclarationProviderFactory(moduleContext.getStorageManager(), allFiles),
+                LanguageVersion.LATEST
         );
         analyzerForJs.analyzeFiles(TopDownAnalysisMode.TopLevelDeclarations, files, Collections.<PackageFragmentProvider>emptyList());
         return JsAnalysisResult.success(trace, moduleContext.getModule());

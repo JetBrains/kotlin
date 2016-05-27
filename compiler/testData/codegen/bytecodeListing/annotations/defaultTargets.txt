@@ -13,43 +13,43 @@ public final class A {
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
 @kotlin.Metadata
-public abstract class AnnField
+public annotation class AnnField
 
 @kotlin.annotation.Target
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
 @kotlin.Metadata
-public abstract class AnnFieldProperty
+public annotation class AnnFieldProperty
 
 @kotlin.annotation.Target
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
 @kotlin.Metadata
-public abstract class AnnParameterField
+public annotation class AnnParameterField
 
 @kotlin.annotation.Target
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
 @kotlin.Metadata
-public abstract class AnnParameterProperty
+public annotation class AnnParameterProperty
 
 @kotlin.annotation.Target
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
 @kotlin.Metadata
-public abstract class AnnProperty
+public annotation class AnnProperty
 
 @kotlin.annotation.Target
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
 @kotlin.Metadata
-public abstract class AnnTypeField
+public annotation class AnnTypeField
 
 @kotlin.annotation.Target
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
 @kotlin.Metadata
-public abstract class Anno
+public annotation class Anno
 
 @kotlin.Metadata
 public final class DefaultTargetsKt {

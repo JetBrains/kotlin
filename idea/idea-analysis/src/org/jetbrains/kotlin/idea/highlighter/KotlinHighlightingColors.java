@@ -49,10 +49,10 @@ public class KotlinHighlightingColors {
 
     // class kinds
     public static final TextAttributesKey CLASS = createTextAttributesKey("KOTLIN_CLASS", DefaultLanguageHighlighterColors.CLASS_NAME);
-    public static final TextAttributesKey TYPE_PARAMETER = createTextAttributesKey("KOTLIN_TYPE_PARAMETER", DefaultLanguageHighlighterColors.PARAMETER);
+    public static final TextAttributesKey TYPE_PARAMETER = createTextAttributesKey("KOTLIN_TYPE_PARAMETER", JavaHighlightingColors.TYPE_PARAMETER_NAME_ATTRIBUTES);
     public static final TextAttributesKey ABSTRACT_CLASS = createTextAttributesKey("KOTLIN_ABSTRACT_CLASS", DefaultLanguageHighlighterColors.CLASS_NAME);
     public static final TextAttributesKey TRAIT = createTextAttributesKey("KOTLIN_TRAIT", DefaultLanguageHighlighterColors.INTERFACE_NAME);
-    public static final TextAttributesKey ANNOTATION = createTextAttributesKey("KOTLIN_ANNOTATION");
+    public static final TextAttributesKey ANNOTATION = createTextAttributesKey("KOTLIN_ANNOTATION", JavaHighlightingColors.ANNOTATION_NAME_ATTRIBUTES);
     public static final TextAttributesKey OBJECT = createTextAttributesKey("KOTLIN_OBJECT", CLASS);
     public static final TextAttributesKey ENUM_ENTRY = createTextAttributesKey("KOTLIN_ENUM_ENTRY", DefaultLanguageHighlighterColors.INSTANCE_FIELD);
 
@@ -63,7 +63,6 @@ public class KotlinHighlightingColors {
     public static final TextAttributesKey WRAPPED_INTO_REF = createTextAttributesKey("KOTLIN_WRAPPED_INTO_REF", DefaultLanguageHighlighterColors.CLASS_NAME);
     public static final TextAttributesKey INSTANCE_PROPERTY = createTextAttributesKey("KOTLIN_INSTANCE_PROPERTY", DefaultLanguageHighlighterColors.INSTANCE_FIELD);
     public static final TextAttributesKey PACKAGE_PROPERTY = createTextAttributesKey("KOTLIN_PACKAGE_PROPERTY", DefaultLanguageHighlighterColors.STATIC_FIELD);
-    public static final TextAttributesKey PROPERTY_WITH_BACKING_FIELD = createTextAttributesKey("KOTLIN_PROPERTY_WITH_BACKING_FIELD");
     public static final TextAttributesKey BACKING_FIELD_VARIABLE = createTextAttributesKey("KOTLIN_BACKING_FIELD_VARIABLE");
     public static final TextAttributesKey EXTENSION_PROPERTY = createTextAttributesKey("KOTLIN_EXTENSION_PROPERTY");
     public static final TextAttributesKey DYNAMIC_PROPERTY_CALL = createTextAttributesKey("KOTLIN_DYNAMIC_PROPERTY_CALL");
@@ -84,7 +83,7 @@ public class KotlinHighlightingColors {
     public static final TextAttributesKey SMART_CAST_VALUE = createTextAttributesKey("KOTLIN_SMART_CAST_VALUE");
     public static final TextAttributesKey SMART_CONSTANT = createTextAttributesKey("KOTLIN_SMART_CONSTANT");
     public static final TextAttributesKey SMART_CAST_RECEIVER = createTextAttributesKey("KOTLIN_SMART_CAST_RECEIVER");
-    public static final TextAttributesKey LABEL = createTextAttributesKey("KOTLIN_LABEL");
+    public static final TextAttributesKey LABEL = createTextAttributesKey("KOTLIN_LABEL", DefaultLanguageHighlighterColors.LABEL);
     public static final TextAttributesKey DEBUG_INFO = createTextAttributesKey("KOTLIN_DEBUG_INFO");
     public static final TextAttributesKey RESOLVED_TO_ERROR = createTextAttributesKey("KOTLIN_RESOLVED_TO_ERROR");
     public static final TextAttributesKey NAMED_ARGUMENT = createTextAttributesKey("KOTLIN_NAMED_ARGUMENT");

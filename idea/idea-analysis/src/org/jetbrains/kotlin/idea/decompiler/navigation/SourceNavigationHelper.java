@@ -41,6 +41,7 @@ import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.asJava.LightClassUtilsKt;
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns;
 import org.jetbrains.kotlin.codegen.binding.PsiCodegenPredictor;
+import org.jetbrains.kotlin.config.LanguageVersion;
 import org.jetbrains.kotlin.context.ContextKt;
 import org.jetbrains.kotlin.context.MutableModuleContext;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
@@ -261,7 +262,8 @@ public class SourceNavigationHelper {
                 newModuleContext,
                 providerFactory,
                 new BindingTraceContext(),
-                platform
+                platform,
+                LanguageVersion.LATEST // TODO: see KT-12410
         );
 
         newModuleContext.initializeModuleContents(resolveSession.getPackageFragmentProvider());

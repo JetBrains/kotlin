@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,5 +17,6 @@
 package org.jetbrains.kotlin.cli.jvm.config
 
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 
 fun KotlinCoreEnvironment.getModuleName(): String = configuration.get(JVMConfigurationKeys.MODULE_NAME)!!

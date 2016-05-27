@@ -19,15 +19,6 @@ package org.jetbrains.kotlin.js.facade.exceptions;
 import org.jetbrains.annotations.NotNull;
 
 public class TranslationException extends Exception {
-
-    public TranslationException(@NotNull String message) {
-        super(message);
-    }
-
-    public TranslationException(@NotNull Throwable cause) {
-        super(cause);
-    }
-
     public TranslationException(@NotNull String message, @NotNull Exception cause) {
         super(message, cause);
     }

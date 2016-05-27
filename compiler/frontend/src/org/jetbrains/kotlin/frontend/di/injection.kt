@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.frontend.di
 
+import org.jetbrains.kotlin.config.LanguageFeatureSettings
 import org.jetbrains.kotlin.container.*
 import org.jetbrains.kotlin.context.LazyResolveToken
 import org.jetbrains.kotlin.context.ModuleContext
@@ -61,8 +62,11 @@ fun StorageComponentContainer.configureModule(
 }
 
 fun createContainerForBodyResolve(
-        moduleContext: ModuleContext, bindingTrace: BindingTrace,
-        platform: TargetPlatform, statementFilter: StatementFilter
+        moduleContext: ModuleContext,
+        bindingTrace: BindingTrace,
+        platform: TargetPlatform,
+        statementFilter: StatementFilter,
+        languageFeatureSettings: LanguageFeatureSettings
 ): StorageComponentContainer = createContainer("BodyResolve") {
     configureModule(moduleContext, platform, bindingTrace)
 
@@ -70,21 +74,26 @@ fun createContainerForBodyResolve(
 
     useInstance(LookupTracker.DO_NOTHING)
     useInstance(BodyResolveCache.ThrowException)
+    useInstance(languageFeatureSettings)
 
     useImpl<BodyResolver>()
 }
 
 fun createContainerForLazyBodyResolve(
-        moduleContext: ModuleContext, kotlinCodeAnalyzer: KotlinCodeAnalyzer,
-        bindingTrace: BindingTrace, platform: TargetPlatform,
-        bodyResolveCache: BodyResolveCache
+        moduleContext: ModuleContext,
+        kotlinCodeAnalyzer: KotlinCodeAnalyzer,
+        bindingTrace: BindingTrace,
+        platform: TargetPlatform,
+        bodyResolveCache: BodyResolveCache,
+        languageFeatureSettings: LanguageFeatureSettings
 ): StorageComponentContainer = createContainer("LazyBodyResolve") {
     configureModule(moduleContext, platform, bindingTrace)
 
     useInstance(LookupTracker.DO_NOTHING)
     useInstance(kotlinCodeAnalyzer)
-    useInstance(kotlinCodeAnalyzer.getFileScopeProvider())
+    useInstance(kotlinCodeAnalyzer.fileScopeProvider)
     useInstance(bodyResolveCache)
+    useInstance(languageFeatureSettings)
     useImpl<LazyTopDownAnalyzerForTopLevel>()
     useImpl<BasicAbsentDescriptorHandler>()
 }
@@ -94,6 +103,7 @@ fun createContainerForLazyLocalClassifierAnalyzer(
         bindingTrace: BindingTrace,
         platform: TargetPlatform,
         lookupTracker: LookupTracker,
+        languageFeatureSettings: LanguageFeatureSettings,
         localClassDescriptorHolder: LocalClassDescriptorHolder
 ): StorageComponentContainer = createContainer("LocalClassifierAnalyzer") {
     configureModule(moduleContext, platform, bindingTrace)
@@ -111,6 +121,8 @@ fun createContainerForLazyLocalClassifierAnalyzer(
 
     useImpl<DeclarationScopeProviderForLocalClassifierAnalyzer>()
     useImpl<LocalLazyDeclarationResolver>()
+
+    useInstance(languageFeatureSettings)
 }
 
 fun createContainerForLazyResolve(
@@ -118,12 +130,14 @@ fun createContainerForLazyResolve(
         declarationProviderFactory: DeclarationProviderFactory,
         bindingTrace: BindingTrace,
         platform: TargetPlatform,
-        targetEnvironment: TargetEnvironment
+        targetEnvironment: TargetEnvironment,
+        languageFeatureSettings: LanguageFeatureSettings
 ): StorageComponentContainer = createContainer("LazyResolve") {
     configureModule(moduleContext, platform, bindingTrace)
 
     useInstance(declarationProviderFactory)
     useInstance(LookupTracker.DO_NOTHING)
+    useInstance(languageFeatureSettings)
 
     useImpl<FileScopeProviderImpl>()
     targetEnvironment.configure(this)
@@ -132,10 +146,14 @@ fun createContainerForLazyResolve(
     useImpl<ResolveSession>()
 }
 
-@JvmOverloads fun createLazyResolveSession(
+@JvmOverloads
+fun createLazyResolveSession(
         moduleContext: ModuleContext,
         declarationProviderFactory: DeclarationProviderFactory,
         bindingTrace: BindingTrace,
         platform: TargetPlatform,
+        languageFeatureSettings: LanguageFeatureSettings,
         targetEnvironment: TargetEnvironment = CompilerEnvironment
-): ResolveSession = createContainerForLazyResolve(moduleContext, declarationProviderFactory, bindingTrace, platform, targetEnvironment).get<ResolveSession>()
+): ResolveSession = createContainerForLazyResolve(
+        moduleContext, declarationProviderFactory, bindingTrace, platform, targetEnvironment, languageFeatureSettings
+).get<ResolveSession>()

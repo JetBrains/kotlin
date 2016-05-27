@@ -17,12 +17,12 @@
 package org.jetbrains.kotlin.cli.common;
 
 import com.google.common.base.Predicates;
-import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.SystemInfo;
 import com.sampullara.cli.Args;
 import kotlin.Pair;
+import kotlin.collections.ArraysKt;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.fusesource.jansi.AnsiConsole;
@@ -32,11 +32,15 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.kotlin.cli.common.messages.*;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentException;
+import org.jetbrains.kotlin.cli.jvm.compiler.CompilerJarLocator;
+import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
+import org.jetbrains.kotlin.config.LanguageVersion;
 import org.jetbrains.kotlin.config.Services;
 import org.jetbrains.kotlin.progress.CompilationCanceledException;
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
+import org.jetbrains.kotlin.utils.StringsKt;
 
 import java.io.PrintStream;
 import java.util.List;
@@ -55,18 +59,6 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
                 properties.setProperty("idea.io.use.fallback", Boolean.TRUE.toString());
             }
         }
-    }
-
-    @NotNull
-    private List<CompilerPlugin> compilerPlugins = Lists.newArrayList();
-
-    @NotNull
-    public List<CompilerPlugin> getCompilerPlugins() {
-        return compilerPlugins;
-    }
-
-    public void setCompilerPlugins(@NotNull List<CompilerPlugin> compilerPlugins) {
-        this.compilerPlugins = compilerPlugins;
     }
 
     @NotNull
@@ -95,7 +87,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
         }
         catch (IllegalArgumentException e) {
             errStream.println(e.getMessage());
-            usage(errStream, false);
+            Usage.print(errStream, createArguments(), false);
         }
         catch (Throwable t) {
             errStream.println(messageRenderer.render(
@@ -127,21 +119,6 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
         }
     }
 
-    /**
-     * Allow derived classes to add additional command line arguments
-     */
-    protected void usage(@NotNull PrintStream target, boolean extraHelp) {
-        Usage.print(target, createArguments(), extraHelp);
-    }
-
-    /**
-     * Strategy method to configure the environment, allowing compiler
-     * based tools to customise their own plugins
-     */
-    protected void configureEnvironment(@NotNull CompilerConfiguration configuration, @NotNull A arguments) {
-        configuration.addAll(CLIConfigurationKeys.COMPILER_PLUGINS, compilerPlugins);
-    }
-
     @NotNull
     protected abstract A createArguments();
 
@@ -160,7 +137,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
         }
 
         if (arguments.help || arguments.extraHelp) {
-            usage(errStream, arguments.extraHelp);
+            Usage.print(errStream, createArguments(), arguments.extraHelp);
             return OK;
         }
 
@@ -216,9 +193,8 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
                 }
                 Disposable rootDisposable = Disposer.newDisposable();
                 try {
-                    MessageSeverityCollector severityCollector = new MessageSeverityCollector(groupingCollector);
-                    ExitCode code = doExecute(arguments, services, severityCollector, rootDisposable);
-                    exitCode = severityCollector.anyReported(CompilerMessageSeverity.ERROR) ? COMPILATION_ERROR : code;
+                    ExitCode code = doExecute(arguments, services, groupingCollector, rootDisposable);
+                    exitCode = groupingCollector.hasErrors() ? COMPILATION_ERROR : code;
                 }
                 catch (CompilationCanceledException e) {
                     messageCollector.report(CompilerMessageSeverity.INFO, "Compilation was canceled", CompilerMessageLocation.NO_LOCATION);
@@ -248,6 +224,35 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
         }
         finally {
             groupingCollector.flush();
+        }
+    }
+
+    protected static void setupCommonArgumentsAndServices(
+            @NotNull CompilerConfiguration configuration, @NotNull CommonCompilerArguments arguments, @NotNull Services services
+    ) {
+        CompilerJarLocator locator = services.get(CompilerJarLocator.class);
+        if (locator != null) {
+            configuration.put(CLIConfigurationKeys.COMPILER_JAR_LOCATOR, locator);
+        }
+
+        if (arguments.languageVersion != null) {
+            LanguageVersion languageFeatureSettings = LanguageVersion.fromVersionString(arguments.languageVersion);
+            if (languageFeatureSettings != null) {
+                configuration.put(CommonConfigurationKeys.LANGUAGE_FEATURE_SETTINGS, languageFeatureSettings);
+            }
+            else {
+                List<String> versionStrings = ArraysKt.map(LanguageVersion.values(), new Function1<LanguageVersion, String>() {
+                    @Override
+                    public String invoke(LanguageVersion version) {
+                        return version.getVersionString();
+                    }
+                });
+                String message = "Unknown language version: " + arguments.languageVersion + "\n" +
+                                 "Supported language versions: " + StringsKt.join(versionStrings, ", ");
+                configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(
+                        CompilerMessageSeverity.ERROR, message, CompilerMessageLocation.NO_LOCATION
+                );
+            }
         }
     }
 

@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.js.translate.declaration
 
 import com.google.dart.compiler.backend.js.ast.*
 import org.jetbrains.kotlin.backend.common.CodegenUtil
-import org.jetbrains.kotlin.backend.common.CodegenUtilKt
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
@@ -32,8 +31,8 @@ import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.simpleReturnFunc
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.translateFunctionAsEcma5PropertyDescriptor
 import org.jetbrains.kotlin.js.translate.utils.generateDelegateCall
 import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtSuperTypeListEntry
 import org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry
+import org.jetbrains.kotlin.psi.KtSuperTypeListEntry
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 class DelegationTranslator(
@@ -90,7 +89,7 @@ class DelegationTranslator(
         CodegenUtil.getSuperClassBySuperTypeListEntry(specifier, bindingContext())
 
     private fun generateDelegates(toClass: ClassDescriptor, field: Field, properties: MutableList<JsPropertyInitializer>) {
-        for ((descriptor, overriddenDescriptor) in CodegenUtilKt.getDelegates(classDescriptor, toClass)) {
+        for ((descriptor, overriddenDescriptor) in CodegenUtil.getDelegates(classDescriptor, toClass)) {
             when (descriptor) {
                 is PropertyDescriptor ->
                     generateDelegateCallForPropertyMember(descriptor, field.name, properties)

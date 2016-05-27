@@ -25,6 +25,10 @@ import java.util.List;
 public abstract class CommonCompilerArguments {
     public static final String PLUGIN_OPTION_FORMAT = "plugin:<pluginId>:<optionName>=<value>";
 
+    @Argument(value = "language-version", description = "Provide source compatibility with specified language version")
+    @ValueDescription("<version>")
+    public String languageVersion;
+
     @Argument(value = "nowarn", description = "Generate no warnings")
     public boolean suppressWarnings;
 
@@ -52,7 +56,7 @@ public abstract class CommonCompilerArguments {
     @ValueDescription("<path>")
     public String[] pluginClasspaths;
 
-    @Argument(value = "P", description = "\n                             Pass an option to a plugin")
+    @Argument(value = "P", description = "Pass an option to a plugin")
     @ValueDescription(PLUGIN_OPTION_FORMAT)
     public String[] pluginOptions;
 

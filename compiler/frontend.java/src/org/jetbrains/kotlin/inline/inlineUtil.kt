@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.inline
 
-import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
@@ -25,24 +24,21 @@ import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 
-fun inlineFunctionsJvmNames(bytes: ByteArray): Set<String> {
-    val header = readKotlinHeader(bytes)
-    val annotationData = header.data
-    val strings = header.strings
-
-    if (annotationData == null || strings == null) return emptySet()
+fun inlineFunctionsJvmNames(header: KotlinClassHeader): Set<String> {
+    val annotationData = header.data ?: return emptySet()
+    val strings = header.strings ?: return emptySet()
 
     return when (header.kind) {
         KotlinClassHeader.Kind.CLASS -> {
-            val classData = JvmProtoBufUtil.readClassDataFrom(BitEncoding.decodeBytes(annotationData), strings)
-            inlineFunctionsJvmNames(classData.classProto.functionList, classData.nameResolver, classData.classProto.typeTable)
+            val (nameResolver, classProto) = JvmProtoBufUtil.readClassDataFrom(BitEncoding.decodeBytes(annotationData), strings)
+            inlineFunctionsJvmNames(classProto.functionList, nameResolver, classProto.typeTable)
         }
         KotlinClassHeader.Kind.FILE_FACADE,
         KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
-            val packageData = JvmProtoBufUtil.readPackageDataFrom(BitEncoding.decodeBytes(annotationData), strings)
-            inlineFunctionsJvmNames(packageData.packageProto.functionList, packageData.nameResolver, packageData.packageProto.typeTable)
+            val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(BitEncoding.decodeBytes(annotationData), strings)
+            inlineFunctionsJvmNames(packageProto.functionList, nameResolver, packageProto.typeTable)
         }
-        else -> emptySet<String>()
+        else -> emptySet()
     }
 }
 
@@ -53,17 +49,4 @@ private fun inlineFunctionsJvmNames(functions: List<ProtoBuf.Function>, nameReso
         JvmProtoBufUtil.getJvmMethodSignature(it, nameResolver, typeTable)
     }
     return jvmNames.toSet()
-}
-
-private fun readKotlinHeader(bytes: ByteArray): KotlinClassHeader {
-    var header: KotlinClassHeader? = null
-
-    FileBasedKotlinClass.create(bytes) { className, classHeader, innerClasses ->
-        header = classHeader
-        null
-    }
-
-    if (header == null) throw AssertionError("Could not read kotlin header from byte array")
-
-    return header!!
 }

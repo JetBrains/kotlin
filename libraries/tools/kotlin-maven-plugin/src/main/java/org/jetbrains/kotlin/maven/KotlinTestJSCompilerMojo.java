@@ -16,9 +16,6 @@
 
 package org.jetbrains.kotlin.maven;
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.model.Plugin;
-import org.apache.maven.model.PluginExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -27,12 +24,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments;
-import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
-import org.jetbrains.kotlin.cli.js.K2JSCompiler;
-import org.jetbrains.kotlin.utils.LibraryUtils;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 /**

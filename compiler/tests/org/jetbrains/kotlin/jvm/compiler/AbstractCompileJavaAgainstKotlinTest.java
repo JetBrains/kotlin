@@ -77,7 +77,7 @@ public abstract class AbstractCompileJavaAgainstKotlinTest extends TestCaseWithT
 
         KotlinCoreEnvironment environment = KotlinCoreEnvironment.createForTests(
                 getTestRootDisposable(),
-                compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, getAnnotationsJar(), out),
+                newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, getAnnotationsJar(), out),
                 EnvironmentConfigFiles.JVM_CONFIG_FILES
         );
 

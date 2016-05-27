@@ -225,7 +225,7 @@ fun f(): String {
     return ""
 }
 
-class Mutable(var <info descr="This property has a backing field">x</info>: String?) {
+class Mutable(var x: String?) {
 
     val xx: String?
         <info descr="null">get</info>() = x

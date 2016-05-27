@@ -207,6 +207,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
         args.noCallAssertions = kotlinOptions.noCallAssertions
         args.noParamAssertions = kotlinOptions.noParamAssertions
         args.moduleName = kotlinOptions.moduleName ?: extraProperties.getOrNull<String>("defaultModuleName")
+        args.languageVersion = kotlinOptions.languageVersion
 
         fun  addFriendPathForTestTask(taskName: String) {
             logger.kotlinDebug("try to determine the output directory of corresponding $taskName task")
@@ -687,11 +688,18 @@ private fun <T: Any> ExtraPropertiesExtension.getOrNull(id: String): T? {
 }
 
 class GradleMessageCollector(val logger: Logger, val outputCollector: OutputItemsCollector? = null) : MessageCollector {
+    private var hasErrors = false
+
+    override fun hasErrors() = hasErrors
+
     override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation) {
         val text = with(StringBuilder()) {
             append(when (severity) {
                 in CompilerMessageSeverity.VERBOSE -> "v"
-                in CompilerMessageSeverity.ERRORS -> "e"
+                in CompilerMessageSeverity.ERRORS -> {
+                    hasErrors = true
+                    "e"
+                }
                 CompilerMessageSeverity.INFO -> "i"
                 CompilerMessageSeverity.WARNING -> "w"
                 else -> throw IllegalArgumentException("Unknown CompilerMessageSeverity: $severity")

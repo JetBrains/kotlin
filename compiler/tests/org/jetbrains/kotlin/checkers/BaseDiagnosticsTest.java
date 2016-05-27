@@ -22,17 +22,22 @@ import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.HashMap;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.asJava.DuplicateJvmSignatureUtilKt;
+import org.jetbrains.kotlin.config.LanguageFeature;
+import org.jetbrains.kotlin.config.LanguageFeatureSettings;
+import org.jetbrains.kotlin.config.LanguageVersion;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.diagnostics.*;
 import org.jetbrains.kotlin.load.java.InternalFlexibleTypeTransformer;
@@ -41,6 +46,7 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.utils.StringsKt;
 import org.junit.Assert;
 
 import java.io.File;
@@ -62,6 +68,9 @@ public abstract class BaseDiagnosticsTest
                     CheckerTestUtil.DebugInfoDiagnosticFactory.MISSING_UNRESOLVED,
                     CheckerTestUtil.DebugInfoDiagnosticFactory.UNRESOLVED_WITH_TARGET
             );
+
+    public static final String LANGUAGE_DIRECTIVE = "LANGUAGE";
+    private static final Pattern LANGUAGE_PATTERN = Pattern.compile("([\\+\\-])(\\w+)\\s*");
 
     public static final String CHECK_TYPE_DIRECTIVE = "CHECK_TYPE";
     public static final String CHECK_TYPE_PACKAGE = "tests._checkType";
@@ -144,6 +153,51 @@ public abstract class BaseDiagnosticsTest
         }
 
         return jetFiles;
+    }
+
+    @Nullable
+    private static LanguageFeatureSettings parseLanguageFeatureSettingsDirective(Map<String, String> directiveMap) {
+        String directives = directiveMap.get(LANGUAGE_DIRECTIVE);
+        if (directives == null) return null;
+
+        Matcher matcher = LANGUAGE_PATTERN.matcher(directives);
+        if (!matcher.find()) {
+            Assert.fail(
+                    "Wrong syntax in the '// !LANGUAGE: ...' directive:\n" +
+                    "found: '" + directives + "'\n" +
+                    "Must be '([+-]LanguageFeatureName)+'\n" +
+                    "where '+' means 'enable' and '-' means 'disable'\n" +
+                    "and language feature names are names of enum entries in LanguageFeature enum class"
+            );
+        }
+
+        final Map<LanguageFeature, Boolean> values = new HashMap<LanguageFeature, Boolean>();
+        do {
+            boolean enable = matcher.group(1).equals("+");
+            String name = matcher.group(2);
+            LanguageFeature feature = LanguageFeature.fromString(StringUtil.capitalize(name));
+            if (feature == null) {
+                Assert.fail(
+                        "Language feature not found, please check spelling: " + name + "\n" +
+                        "Known features:\n    " + StringsKt.join(Arrays.asList(LanguageFeature.values()), "\n    ")
+                );
+            }
+            if (values.put(feature, enable) != null) {
+                Assert.fail("Duplicate entry for the language feature: " + name);
+            }
+        }
+        while (matcher.find());
+
+        return new LanguageFeatureSettings() {
+            @Override
+            public boolean supportsFeature(@NotNull LanguageFeature feature) {
+                Boolean enabled = values.get(feature);
+                if (enabled != null) {
+                    return enabled;
+                }
+                return LanguageVersion.LATEST.supportsFeature(feature);
+            }
+        };
     }
 
     public static Condition<Diagnostic> parseDiagnosticFilterDirective(Map<String, String> directiveMap) {
@@ -243,6 +297,7 @@ public abstract class BaseDiagnosticsTest
         private final String clearText;
         private final KtFile jetFile;
         private final Condition<Diagnostic> whatDiagnosticsToConsider;
+        public final LanguageFeatureSettings customLanguageFeatureSettings;
         private final boolean declareCheckType;
         private final boolean declareFlexibleType;
         public final boolean checkLazyLog;
@@ -257,6 +312,7 @@ public abstract class BaseDiagnosticsTest
         ) {
             this.module = module;
             this.whatDiagnosticsToConsider = parseDiagnosticFilterDirective(directives);
+            this.customLanguageFeatureSettings = parseLanguageFeatureSettingsDirective(directives);
             this.checkLazyLog = directives.containsKey(CHECK_LAZY_LOG_DIRECTIVE) || CHECK_LAZY_LOG_DEFAULT;
             this.declareCheckType = directives.containsKey(CHECK_TYPE_DIRECTIVE);
             this.declareFlexibleType = directives.containsKey(EXPLICIT_FLEXIBLE_TYPES_DIRECTIVE);

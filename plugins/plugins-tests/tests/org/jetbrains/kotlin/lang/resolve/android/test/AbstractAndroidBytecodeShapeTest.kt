@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.test.TestJdkKind
 abstract class AbstractAndroidBytecodeShapeTest : AbstractBytecodeTextTest() {
 
     private fun createAndroidAPIEnvironment(path: String) {
-        return createEnvironmentForConfiguration(KotlinTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.ANDROID_API), path)
+        return createEnvironmentForConfiguration(KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.ANDROID_API), path)
     }
 
     private fun createEnvironmentForConfiguration(configuration: CompilerConfiguration, path: String) {

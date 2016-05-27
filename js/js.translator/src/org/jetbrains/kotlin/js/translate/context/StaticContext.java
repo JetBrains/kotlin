@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.ReflectionTypes;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.js.config.Config;
+import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.config.LibrarySourcesConfig;
 import org.jetbrains.kotlin.js.translate.context.generator.Generator;
 import org.jetbrains.kotlin.js.translate.context.generator.Rule;
@@ -47,9 +47,7 @@ import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.fqnWithoutSideE
 import static org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.*;
 import static org.jetbrains.kotlin.js.translate.utils.ManglingUtils.getMangledName;
 import static org.jetbrains.kotlin.js.translate.utils.ManglingUtils.getSuggestedName;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.getParentOfType;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isExtension;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallsKt.isDynamic;
 
 /**
@@ -57,7 +55,7 @@ import static org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallsKt.isDynamic;
  */
 public final class StaticContext {
 
-    public static StaticContext generateStaticContext(@NotNull BindingTrace bindingTrace, @NotNull Config config, @NotNull ModuleDescriptor moduleDescriptor) {
+    public static StaticContext generateStaticContext(@NotNull BindingTrace bindingTrace, @NotNull JsConfig config, @NotNull ModuleDescriptor moduleDescriptor) {
         JsProgram program = new JsProgram("main");
         Namer namer = Namer.newInstance(program.getRootScope());
         Intrinsics intrinsics = new Intrinsics();
@@ -103,12 +101,19 @@ public final class StaticContext {
     private final Map<MemberDescriptor, List<DeclarationDescriptor>> localClassesClosure = Maps.newHashMap();
 
     @NotNull
-    private final Config config;
+    private final JsConfig config;
 
     //TODO: too many parameters in constructor
-    private StaticContext(@NotNull JsProgram program, @NotNull BindingTrace bindingTrace,
-            @NotNull Namer namer, @NotNull Intrinsics intrinsics,
-            @NotNull StandardClasses standardClasses, @NotNull JsScope rootScope, @NotNull Config config, @NotNull ModuleDescriptor moduleDescriptor) {
+    private StaticContext(
+            @NotNull JsProgram program,
+            @NotNull BindingTrace bindingTrace,
+            @NotNull Namer namer,
+            @NotNull Intrinsics intrinsics,
+            @NotNull StandardClasses standardClasses,
+            @NotNull JsScope rootScope,
+            @NotNull JsConfig config,
+            @NotNull ModuleDescriptor moduleDescriptor
+    ) {
         this.program = program;
         this.bindingTrace = bindingTrace;
         this.namer = namer;
@@ -234,7 +239,7 @@ public final class StaticContext {
     }
 
     @NotNull
-    public Config getConfig() {
+    public JsConfig getConfig() {
         return config;
     }
 

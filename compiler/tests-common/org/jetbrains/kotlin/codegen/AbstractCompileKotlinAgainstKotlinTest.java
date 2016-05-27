@@ -85,7 +85,7 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
         return new Pair<ClassFileFactory, ClassFileFactory>(factoryA, factoryB);
     }
 
-    protected void invokeBox(@NotNull String className) throws Exception {
+    private void invokeBox(@NotNull String className) throws Exception {
         Method box = createGeneratedClassLoader().loadClass(className).getMethod("box");
         String result = (String) box.invoke(null);
         assertEquals("OK", result);
@@ -100,7 +100,7 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
     }
 
     @NotNull
-    protected ClassFileFactory compileA(@NotNull String fileName, @NotNull String content, List<TestFile> files) throws IOException {
+    private ClassFileFactory compileA(@NotNull String fileName, @NotNull String content, List<TestFile> files) throws IOException {
         Disposable compileDisposable = createDisposable("compileA");
         KotlinCoreEnvironment environment =
                 KotlinTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(compileDisposable, ConfigurationKind.ALL, getJdkKind(files));
@@ -108,13 +108,14 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
     }
 
     @NotNull
-    protected ClassFileFactory compileB(@NotNull String fileName, @NotNull String content, List<TestFile> files) throws IOException {
-        CompilerConfiguration configurationWithADirInClasspath = KotlinTestUtils
-                .compilerConfigurationForTests(ConfigurationKind.ALL, getJdkKind(files), KotlinTestUtils.getAnnotationsJar(), aDir);
+    private ClassFileFactory compileB(@NotNull String fileName, @NotNull String content, List<TestFile> files) throws IOException {
+        CompilerConfiguration configurationWithADirInClasspath =
+                KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, getJdkKind(files), KotlinTestUtils.getAnnotationsJar(), aDir);
 
         Disposable compileDisposable = createDisposable("compileB");
         KotlinCoreEnvironment environment = KotlinCoreEnvironment.createForTests(
-                compileDisposable, configurationWithADirInClasspath, EnvironmentConfigFiles.JVM_CONFIG_FILES);
+                compileDisposable, configurationWithADirInClasspath, EnvironmentConfigFiles.JVM_CONFIG_FILES
+        );
 
         return compileKotlin(fileName, content, bDir, environment, compileDisposable);
     }

@@ -72,7 +72,7 @@ fun Int?.bar() {
     }
 }
 
-var <PACKAGE_PROPERTY><MUTABLE_VARIABLE><PROPERTY_WITH_BACKING_FIELD>globalCounter</PROPERTY_WITH_BACKING_FIELD></MUTABLE_VARIABLE></PACKAGE_PROPERTY> : Int = <NUMBER>5</NUMBER>
+var <PACKAGE_PROPERTY><MUTABLE_VARIABLE>globalCounter</MUTABLE_VARIABLE></PACKAGE_PROPERTY> : Int = <NUMBER>5</NUMBER>
     <KEYWORD>get</KEYWORD> = <LOCAL_VARIABLE><MUTABLE_VARIABLE><BACKING_FIELD_VARIABLE>field</BACKING_FIELD_VARIABLE></MUTABLE_VARIABLE></LOCAL_VARIABLE>
 
 <KEYWORD>abstract</KEYWORD> class <ABSTRACT_CLASS>Abstract</ABSTRACT_CLASS> {
@@ -141,7 +141,6 @@ var <PACKAGE_PROPERTY><MUTABLE_VARIABLE><PROPERTY_WITH_BACKING_FIELD>globalCount
                        KotlinBundle.message("options.kotlin.attribute.descriptor.captured.variable") to KotlinHighlightingColors.WRAPPED_INTO_REF,
                        KotlinBundle.message("options.kotlin.attribute.descriptor.instance.property") to KotlinHighlightingColors.INSTANCE_PROPERTY,
                        KotlinBundle.message("options.kotlin.attribute.descriptor.package.property") to KotlinHighlightingColors.PACKAGE_PROPERTY,
-                       KotlinBundle.message("options.kotlin.attribute.descriptor.property.with.backing") to KotlinHighlightingColors.PROPERTY_WITH_BACKING_FIELD,
                        KotlinBundle.message("options.kotlin.attribute.descriptor.field") to KotlinHighlightingColors.BACKING_FIELD_VARIABLE,
                        KotlinBundle.message("options.kotlin.attribute.descriptor.extension.property") to KotlinHighlightingColors.EXTENSION_PROPERTY,
                        KotlinBundle.message("options.kotlin.attribute.descriptor.dynamic.property") to KotlinHighlightingColors.DYNAMIC_PROPERTY_CALL,

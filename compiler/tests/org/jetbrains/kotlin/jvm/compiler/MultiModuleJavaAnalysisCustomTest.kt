@@ -76,10 +76,10 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
     }
 
     private fun createEnvironment(moduleDirs: Array<File>): KotlinCoreEnvironment {
-        val configuration = KotlinTestUtils.compilerConfigurationForTests(
+        val configuration = KotlinTestUtils.newConfiguration(
                 ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, emptyList(), moduleDirs.toList()
         )
-        return KotlinCoreEnvironment.createForTests(testRootDisposable!!, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+        return KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     }
 
     private fun setupModules(environment: KotlinCoreEnvironment, moduleDirs: Array<File>): List<TestModule> {

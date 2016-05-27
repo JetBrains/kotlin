@@ -43,7 +43,7 @@ import java.util.List;
 import static org.jetbrains.kotlin.utils.LibraryUtils.isOldKotlinJavascriptLibrary;
 import static org.jetbrains.kotlin.utils.PathUtil.getKotlinPathsForDistDirectory;
 
-public class LibrarySourcesConfig extends Config {
+public class LibrarySourcesConfig extends JsConfig {
     public static final List<String> JS_STDLIB =
             Collections.singletonList(getKotlinPathsForDistDirectory().getJsStdLibJarPath().getAbsolutePath());
 
@@ -236,7 +236,7 @@ public class LibrarySourcesConfig extends Config {
             return this;
         }
 
-        public Config build() {
+        public JsConfig build() {
             return new LibrarySourcesConfig(project, moduleId, files, ecmaVersion, sourceMap, inlineEnabled, isUnitTestConfig, metaInfo, kjsm);
         }
     }

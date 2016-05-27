@@ -1,4 +1,4 @@
-class <info textAttributesKey="KOTLIN_CLASS">My</info>(val <info textAttributesKey="KOTLIN_INSTANCE_PROPERTY"><info textAttributesKey="KOTLIN_PARAMETER"><info textAttributesKey="KOTLIN_PROPERTY_WITH_BACKING_FIELD">x</info></info></info>: <info textAttributesKey="KOTLIN_CLASS">Int</info>?)
+class <info textAttributesKey="KOTLIN_CLASS">My</info>(val <info textAttributesKey="KOTLIN_INSTANCE_PROPERTY">x</info>: <info textAttributesKey="KOTLIN_CLASS">Int</info>?)
 
 fun <info textAttributesKey="KOTLIN_CLASS">My</info>?.<info textAttributesKey="KOTLIN_FUNCTION_DECLARATION">foo</info>(): <info textAttributesKey="KOTLIN_CLASS">Int</info> {
     if (this == null) return 42

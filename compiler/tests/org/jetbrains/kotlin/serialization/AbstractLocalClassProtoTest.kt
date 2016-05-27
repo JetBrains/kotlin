@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.getModuleName
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.frontend.java.di.createContainerForTopDownAnalyzerForJvm
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -52,7 +53,7 @@ abstract class AbstractLocalClassProtoTest : TestCaseWithTmpdir() {
 
         val environment = KotlinCoreEnvironment.createForTests(
                 testRootDisposable,
-                KotlinTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, tmpdir),
+                KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, tmpdir),
                 EnvironmentConfigFiles.JVM_CONFIG_FILES
         )
         val moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(environment.project, environment.getModuleName())
@@ -60,7 +61,8 @@ abstract class AbstractLocalClassProtoTest : TestCaseWithTmpdir() {
 
         val container = createContainerForTopDownAnalyzerForJvm(
                 moduleContext, CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(),
-                providerFactory, GlobalSearchScope.allScope(environment.project), LookupTracker.DO_NOTHING, PackagePartProvider.EMPTY
+                providerFactory, GlobalSearchScope.allScope(environment.project), LookupTracker.DO_NOTHING, PackagePartProvider.EMPTY,
+                LanguageVersion.LATEST
         )
         moduleContext.initializeModuleContents(container.javaDescriptorResolver.packageFragmentProvider)
 

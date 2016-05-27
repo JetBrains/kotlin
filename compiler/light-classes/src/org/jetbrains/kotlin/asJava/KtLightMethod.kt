@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.asJava
 import com.intellij.core.JavaCoreBundle
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
+import com.intellij.psi.impl.compiled.ClsTypeElementImpl
 import com.intellij.psi.impl.light.LightMethod
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.util.*
@@ -40,6 +41,10 @@ sealed class KtLightMethodImpl(
     override val kotlinOrigin: KtDeclaration? get() = lightMethodOrigin?.originalElement as? KtDeclaration
 
     private val lightIdentifier by lazy(LazyThreadSafetyMode.PUBLICATION) { KtLightIdentifier(this, kotlinOrigin as? KtNamedDeclaration) }
+    private val returnTypeElem by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        val delegateTypeElement = clsDelegate.returnTypeElement as? ClsTypeElementImpl
+        delegateTypeElement?.let { ClsTypeElementImpl(this, it.canonicalText, /*ClsTypeElementImpl.VARIANCE_NONE */ 0.toChar()) }
+    }
 
     override fun getContainingClass(): KtLightClass = super.getContainingClass() as KtLightClass
 
@@ -177,6 +182,12 @@ sealed class KtLightMethodImpl(
     ) : KtLightMethodImpl(clsDelegate, origin, containingClass), PsiAnnotationMethod {
         override fun getDefaultValue() = clsDelegate.defaultValue
     }
+
+    // override getReturnType() so return type resolves to type parameters of this method not delegate's
+    // which is relied upon by java type inference
+    override fun getReturnTypeElement(): PsiTypeElement? = returnTypeElem
+
+    override fun getReturnType() = returnTypeElement?.type
 
     companion object Factory {
         fun create(

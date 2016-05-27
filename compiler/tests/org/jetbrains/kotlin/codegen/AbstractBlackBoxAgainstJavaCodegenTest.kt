@@ -34,7 +34,7 @@ abstract class AbstractBlackBoxAgainstJavaCodegenTest : AbstractBlackBoxCodegenT
             CodegenTestUtil.compileJava(findJavaSourcesInDirectory(directory), emptyList(), javacOptions)
         }
 
-        val configuration = createCompilerConfigurationForTests(
+        val configuration = createConfiguration(
                 ConfigurationKind.ALL, jdkKind,
                 /* classpath = */ listOf(KotlinTestUtils.getAnnotationsJar(), javaOutputDir),
                 /* javaSource = */ emptyList(),

@@ -16,9 +16,7 @@
 
 package org.jetbrains.kotlin.js.test.semantics;
 
-import org.jetbrains.kotlin.js.facade.exceptions.TranslationInternalException;
 import org.jetbrains.kotlin.js.test.SingleFileTranslationTest;
-import org.junit.Assert;
 
 public final class NumberTest extends SingleFileTranslationTest {
     public NumberTest() {
@@ -56,14 +54,7 @@ public final class NumberTest extends SingleFileTranslationTest {
     }
 
     public void testHexadecimalConstant() throws Exception {
-        try {
-            fooBoxTest();
-        }
-        catch (TranslationInternalException e) {
-            Throwable cause = e.getCause();
-            Assert.assertTrue(cause instanceof IllegalStateException);
-            Assert.assertTrue(cause.getMessage().startsWith("Unsupported long constant "));
-        }
+        fooBoxTest();
     }
 
     public void testNumberCompareTo() throws Exception {

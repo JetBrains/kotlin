@@ -20,6 +20,7 @@ import com.intellij.openapi.roots.OrderRootType
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.analyzer.*
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
@@ -54,7 +55,10 @@ object JsAnalyzerFacade : AnalyzerFacade<PlatformAnalysisParameters>() {
                 project, moduleContext.storageManager, syntheticFiles, if (moduleInfo.isLibrary) GlobalSearchScope.EMPTY_SCOPE else moduleContentScope
         )
 
-        val container = createContainerForLazyResolve(moduleContext, declarationProviderFactory, BindingTraceContext(), JsPlatform, targetEnvironment)
+        val container = createContainerForLazyResolve(
+                moduleContext, declarationProviderFactory, BindingTraceContext(), JsPlatform, targetEnvironment,
+                LanguageVersion.LATEST // TODO: see KT-12410
+        )
         var packageFragmentProvider = container.get<ResolveSession>().packageFragmentProvider
 
         if (moduleInfo is LibraryInfo && KotlinJavaScriptLibraryDetectionUtil.isKotlinJavaScriptLibrary(moduleInfo.library)) {

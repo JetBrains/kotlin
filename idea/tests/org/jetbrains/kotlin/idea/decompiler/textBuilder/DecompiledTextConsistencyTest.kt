@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.idea.caches.resolve.IDEPackagePartProvider
-import org.jetbrains.kotlin.idea.decompiler.classFile.DeserializerForClassfileDecompiler
 import org.jetbrains.kotlin.idea.decompiler.classFile.buildDecompiledTextForClassFile
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
@@ -31,8 +30,8 @@ import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
-import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
+import org.jetbrains.kotlin.test.KotlinTestUtils
 
 class DecompiledTextConsistencyTest : TextConsistencyBaseTest() {
 
@@ -50,7 +49,7 @@ class DecompiledTextConsistencyTest : TextConsistencyBaseTest() {
 
     override fun getModuleDescriptor(): ModuleDescriptor =
             TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
-                    TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project, JvmResolveUtil.TEST_MODULE_NAME),
+                    TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project, KotlinTestUtils.TEST_MODULE_NAME),
                     listOf(), BindingTraceContext(), null, null,
                     IDEPackagePartProvider(GlobalSearchScope.allScope(project))
             ).moduleDescriptor

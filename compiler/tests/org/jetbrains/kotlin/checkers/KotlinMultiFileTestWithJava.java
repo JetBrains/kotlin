@@ -24,9 +24,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
-import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.ContentRootsKt;
+import org.jetbrains.kotlin.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.script.StandardScriptDefinition;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
@@ -57,13 +57,13 @@ public abstract class KotlinMultiFileTestWithJava<M, F> extends KotlinTestWithEn
     protected KotlinCoreEnvironment createEnvironment() throws Exception {
         // TODO: do not create temporary directory for tests without Java sources
         javaFilesDir = KotlinTestUtils.tmpDir("java-files");
-        CompilerConfiguration configuration = KotlinTestUtils.compilerConfigurationForTests(
+        CompilerConfiguration configuration = KotlinTestUtils.newConfiguration(
                 getConfigurationKind(),
                 getTestJdkKind(),
                 CollectionsKt.plus(Collections.singletonList(KotlinTestUtils.getAnnotationsJar()), getExtraClasspath()),
                 Collections.singletonList(javaFilesDir)
         );
-        configuration.add(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY, StandardScriptDefinition.INSTANCE);
+        configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, StandardScriptDefinition.INSTANCE);
         if (isKotlinSourceRootNeeded()) {
             kotlinSourceRoot = KotlinTestUtils.tmpDir("kotlin-src");
             ContentRootsKt.addKotlinSourceRoot(configuration, kotlinSourceRoot.getPath());

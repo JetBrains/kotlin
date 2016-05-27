@@ -23,6 +23,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.GlobalContext
@@ -170,7 +171,8 @@ private object KotlinResolveDataProvider {
                     resolveSession,
                     trace,
                     targetPlatform,
-                    componentProvider.get<BodyResolveCache>()
+                    componentProvider.get<BodyResolveCache>(),
+                    LanguageVersion.LATEST // TODO: see KT-12410
             ).get<LazyTopDownAnalyzerForTopLevel>()
 
             lazyTopDownAnalyzer.analyzeDeclarations(

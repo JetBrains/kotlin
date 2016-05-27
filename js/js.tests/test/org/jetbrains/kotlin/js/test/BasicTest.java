@@ -38,8 +38,8 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.js.JavaScript;
-import org.jetbrains.kotlin.js.config.Config;
 import org.jetbrains.kotlin.js.config.EcmaVersion;
+import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.config.LibrarySourcesConfig;
 import org.jetbrains.kotlin.js.facade.K2JSTranslator;
 import org.jetbrains.kotlin.js.facade.MainCallParameters;
@@ -182,7 +182,7 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
         List<String> allFiles = withAdditionalKotlinFiles(files);
         List<KtFile> jetFiles = createJetFileList(project, allFiles, null);
 
-        Config config = createConfig(getProject(), moduleName, version, libraries, jetFiles);
+        JsConfig config = createConfig(getProject(), moduleName, version, libraries, jetFiles);
         File outputFile = new File(getOutputFilePath(testName, version));
 
         translateFiles(jetFiles, outputFile, mainCallParameters, config);
@@ -196,7 +196,7 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
             @NotNull List<KtFile> jetFiles,
             @NotNull File outputFile,
             @NotNull MainCallParameters mainCallParameters,
-            @NotNull Config config
+            @NotNull JsConfig config
     ) throws Exception {
         K2JSTranslator translator = new K2JSTranslator(config);
         TranslationResult translationResult = translator.translate(jetFiles, mainCallParameters);
@@ -321,7 +321,7 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
     }
 
     @NotNull
-    private Config createConfig(
+    private JsConfig createConfig(
             @NotNull Project project,
             @NotNull String moduleId,
             @NotNull EcmaVersion ecmaVersion,

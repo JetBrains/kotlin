@@ -33,7 +33,7 @@ import java.io.IOException;
 
 public abstract class AbstractModuleXmlParserTest extends TestCase {
 
-    protected void doTest(String xmlPath) throws IOException {
+    protected static void doTest(String xmlPath) throws IOException {
         File txtFile = new File(FileUtil.getNameWithoutExtension(xmlPath) + ".txt");
 
         ModuleScriptData result = ModuleXmlParser.parseModuleScript(xmlPath, new MessageCollector() {
@@ -42,6 +42,11 @@ public abstract class AbstractModuleXmlParserTest extends TestCase {
                     @NotNull CompilerMessageSeverity severity, @NotNull String message, @NotNull CompilerMessageLocation location
             ) {
                 throw new AssertionError(MessageRenderer.PLAIN_FULL_PATHS.render(severity, message, location));
+            }
+
+            @Override
+            public boolean hasErrors() {
+                throw new UnsupportedOperationException();
             }
         });
 
