@@ -6549,6 +6549,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("DataClassLast.kt")
+        public void testDataClassLast() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/DataClassLast.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("DataClassNoVariablesInside.kt")
         public void testDataClassNoVariablesInside() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/DataClassNoVariablesInside.kt");
@@ -6639,6 +6645,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("KeyOnly.kt")
+        public void testKeyOnly() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/KeyOnly.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("MapNoProperties.kt")
         public void testMapNoProperties() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/MapNoProperties.kt");
@@ -6678,6 +6690,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("SomeQualifiedExpressionInRange.kt")
         public void testSomeQualifiedExpressionInRange() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/SomeQualifiedExpressionInRange.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ValueOnly.kt")
+        public void testValueOnly() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/ValueOnly.kt");
             doTest(fileName);
         }
 
