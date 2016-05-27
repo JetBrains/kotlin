@@ -417,6 +417,7 @@ open class KtLightClassForExplicitDeclaration(
 
         private fun predictFqName(classOrObject: KtClassOrObject): FqName? {
             if (classOrObject.isLocal()) {
+                if (classOrObject.containingFile.virtualFile == null) return null
                 val data = getLightClassDataExactly(classOrObject)
                 return data?.jvmQualifiedName
             }
