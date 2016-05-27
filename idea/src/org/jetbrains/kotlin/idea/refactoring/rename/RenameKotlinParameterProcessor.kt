@@ -32,8 +32,10 @@ import org.jetbrains.kotlin.resolve.OverrideResolver
 class RenameKotlinParameterProcessor : RenameKotlinPsiProcessor() {
     override fun canProcessElement(element: PsiElement) = element is KtParameter && element.ownerFunction is KtNamedFunction
 
-    override fun prepareRenaming(element: PsiElement, newName: String, allRenames: MutableMap<PsiElement, String>, scope: SearchScope) {
-        if (element !is KtParameter) return
+    override fun prepareRenaming(element: PsiElement, newName: String?, allRenames: MutableMap<PsiElement, String>, scope: SearchScope) {
+        super.prepareRenaming(element, newName, allRenames, scope)
+
+        if (element !is KtParameter || newName == null) return
 
         val function = element.ownerFunction ?: return
         val originalDescriptor = function.resolveToDescriptor() as FunctionDescriptor
