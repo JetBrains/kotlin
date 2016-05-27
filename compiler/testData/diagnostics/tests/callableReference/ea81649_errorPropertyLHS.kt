@@ -15,6 +15,6 @@ data class User(val surname: String)
 
 fun foo() {
     bar<String> {
-        <!UNUSED_EXPRESSION!>User::surname<!>
+        <!UNUSED_EXPRESSION!><!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>User<!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>surname<!><!>
     }
 }

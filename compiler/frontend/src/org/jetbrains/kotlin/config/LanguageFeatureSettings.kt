@@ -18,12 +18,13 @@ package org.jetbrains.kotlin.config
 
 import org.jetbrains.kotlin.config.LanguageVersion.KOTLIN_1_1
 
-
 enum class LanguageFeature(val sinceVersion: LanguageVersion) {
     // Note: names of these entries are also used in diagnostic tests
     TypeAliases(KOTLIN_1_1),
+    BoundCallableReferences(KOTLIN_1_1),
     LocalDelegatedProperties(KOTLIN_1_1),
-    TopLevelSealedInheritance(KOTLIN_1_1);
+    TopLevelSealedInheritance(KOTLIN_1_1),
+    ;
 
     companion object {
         @JvmStatic
