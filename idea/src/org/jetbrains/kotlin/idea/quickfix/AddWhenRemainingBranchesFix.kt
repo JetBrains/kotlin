@@ -37,25 +37,24 @@ class AddWhenRemainingBranchesFix(expression: KtWhenExpression) : KotlinQuickFix
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean =
             super.isAvailable(project, editor, file) && element.closeBrace != null &&
-            with(WhenChecker.getNecessaryCases(element, element.analyze())) {
+            with(WhenChecker.getMissingCases(element, element.analyze())) {
                 isNotEmpty() && !hasUnknown
             }
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
-        val necessaryCases = WhenChecker.getNecessaryCases(element, element.analyze())
+        val missingCases = WhenChecker.getMissingCases(element, element.analyze())
 
-        val whenCloseBrace = element.closeBrace
-        assert(whenCloseBrace != null) { "isAvailable should check if close brace exist" }
+        val whenCloseBrace = element.closeBrace ?: throw AssertionError("isAvailable should check if close brace exist")
         val psiFactory = KtPsiFactory(file)
 
-        for (case in necessaryCases) {
+        for (case in missingCases) {
             val entry = psiFactory.createWhenEntry("${case.branchConditionText} -> TODO()")
             element.addBefore(entry, whenCloseBrace)
         }
     }
 
     companion object : KotlinSingleIntentionActionFactory() {
-        override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<out PsiElement>? {
+        override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<PsiElement>? {
             val whenExpression = diagnostic.psiElement.getNonStrictParentOfType<KtWhenExpression>() ?: return null
             return AddWhenRemainingBranchesFix(whenExpression)
         }
