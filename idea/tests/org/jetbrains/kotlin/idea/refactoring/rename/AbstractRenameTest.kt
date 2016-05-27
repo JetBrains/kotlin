@@ -41,6 +41,7 @@ import com.intellij.refactoring.rename.RenameProcessor
 import com.intellij.refactoring.rename.RenamePsiElementProcessor
 import com.intellij.refactoring.rename.naming.AutomaticRenamerFactory
 import com.intellij.refactoring.util.CommonRefactoringUtil.RefactoringErrorHintException
+import com.intellij.testFramework.PlatformTestUtil
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -99,6 +100,9 @@ abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
             ConfigLibraryUtil.configureKotlinRuntimeAndSdk(myModule, PluginTestCaseBase.mockJdk())
         }
 
+        val libraryInfos = renameObject.getAsJsonArray("libraries")?.map { it.asString!! } ?: emptyList()
+        ConfigLibraryUtil.configureLibraries(myModule, PlatformTestUtil.getCommunityPath(), libraryInfos)
+
         val fixtureClasses = renameObject.getAsJsonArray("fixtureClasses")?.map { it.asString } ?: emptyList()
 
         try {
@@ -150,6 +154,7 @@ abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
         }
         finally {
             fixtureClasses.forEach { TestFixtureExtension.unloadFixture(it) }
+            ConfigLibraryUtil.unconfigureLibrariesByInfo(myModule, libraryInfos)
         }
     }
 
