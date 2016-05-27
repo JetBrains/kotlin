@@ -58,7 +58,7 @@ import java.util.*;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults.Code.INCOMPLETE_TYPE_INFERENCE;
-import static org.jetbrains.kotlin.resolve.calls.tower.NewResolutionOldInference.ResolutionKind.*;
+//import static org.jetbrains.kotlin.resolve.calls.tower.NewResolutionOldInference.ResolutionKind.*;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 
 @SuppressWarnings("RedundantTypeArguments")
@@ -123,7 +123,7 @@ public class CallResolver {
         Name referencedName = nameExpression.getReferencedNameAsName();
         return computeTasksAndResolveCall(
                 context, referencedName, nameExpression,
-                Variable.INSTANCE);
+                NewResolutionOldInference.ResolutionKind.Variable.INSTANCE);
     }
 
     @NotNull
@@ -133,7 +133,7 @@ public class CallResolver {
     ) {
         return computeTasksAndResolveCall(
                 context, nameExpression.getReferencedNameAsName(), nameExpression,
-                CallableReference.INSTANCE);
+                NewResolutionOldInference.ResolutionKind.CallableReference.INSTANCE);
     }
 
     @NotNull
@@ -146,7 +146,7 @@ public class CallResolver {
         BasicCallResolutionContext callResolutionContext = BasicCallResolutionContext.create(context, call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS);
         return computeTasksAndResolveCall(
                 callResolutionContext, name, functionReference,
-                Function.INSTANCE);
+                NewResolutionOldInference.ResolutionKind.Function.INSTANCE);
     }
 
     @NotNull
@@ -156,7 +156,7 @@ public class CallResolver {
     ) {
         return computeTasksAndResolveCall(
                 context, OperatorNameConventions.INVOKE, tracing,
-                Invoke.INSTANCE);
+                NewResolutionOldInference.ResolutionKind.Invoke.INSTANCE);
     }
 
     @NotNull
@@ -257,7 +257,7 @@ public class CallResolver {
             KtArrayAccessExpression arrayAccessExpression = (KtArrayAccessExpression) context.call.getCallElement();
             return computeTasksAndResolveCall(
                     context, name, arrayAccessExpression,
-                    Function.INSTANCE);
+                    NewResolutionOldInference.ResolutionKind.Function.INSTANCE);
         }
 
         KtExpression calleeExpression = context.call.getCalleeExpression();
@@ -265,7 +265,7 @@ public class CallResolver {
             KtSimpleNameExpression expression = (KtSimpleNameExpression) calleeExpression;
             return computeTasksAndResolveCall(
                     context, expression.getReferencedNameAsName(), expression,
-                    Function.INSTANCE);
+                    NewResolutionOldInference.ResolutionKind.Function.INSTANCE);
         }
         else if (calleeExpression instanceof KtConstructorCalleeExpression) {
             return (OverloadResolutionResults) resolveCallForConstructor(context, (KtConstructorCalleeExpression) calleeExpression);
@@ -594,7 +594,7 @@ public class CallResolver {
             }
         }
 
-        if (!(resolutionTask.resolutionKind instanceof GivenCandidates)) {
+        if (!(resolutionTask.resolutionKind instanceof NewResolutionOldInference.ResolutionKind.GivenCandidates)) {
             assert resolutionTask.name != null;
             return newCallResolver.runResolution(context, resolutionTask.name, resolutionTask.resolutionKind, tracing);
         }
