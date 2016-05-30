@@ -66,13 +66,15 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
         return exec(errStream, Services.EMPTY, MessageRenderer.PLAIN_RELATIVE_PATHS, args);
     }
 
-    @SuppressWarnings("UnusedDeclaration") // Used via reflection in CompilerRunnerUtil#invokeExecMethod
+    // Used via reflection in CompilerRunnerUtil#invokeExecMethod and in Eclipse plugin (see KotlinCLICompiler)
+    @SuppressWarnings("UnusedDeclaration")
     @NotNull
     public ExitCode execAndOutputXml(@NotNull PrintStream errStream, @NotNull Services services, @NotNull String... args) {
         return exec(errStream, services, MessageRenderer.XML, args);
     }
 
-    @SuppressWarnings("UnusedDeclaration") // Used via reflection in KotlinCompilerBaseTask
+    // Used via reflection in KotlinCompilerBaseTask
+    @SuppressWarnings("UnusedDeclaration")
     @NotNull
     public ExitCode execFullPathsInMessages(@NotNull PrintStream errStream, @NotNull String[] args) {
         return exec(errStream, Services.EMPTY, MessageRenderer.PLAIN_FULL_PATHS, args);

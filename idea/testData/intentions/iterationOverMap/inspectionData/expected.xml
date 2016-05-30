@@ -135,4 +135,44 @@
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">'for' that can be simplified using destructing declaration</problem_class>
         <description>Simplify 'for' using destructing declaration</description>
     </problem>
+    <problem>
+        <file>ValueOnly.kt</file>
+        <line>5</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/ValueOnly.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">'for' that can be simplified using destructing declaration</problem_class>
+        <description>Simplify 'for' using destructing declaration</description>
+    </problem>
+    <problem>
+        <file>KeyOnly.kt</file>
+        <line>5</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/KeyOnly.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">'for' that can be simplified using destructing declaration</problem_class>
+        <description>Simplify 'for' using destructing declaration</description>
+    </problem>
+    <problem>
+        <file>DataClassNotAllPropertiesUsed.kt</file>
+        <line>5</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/DataClassNotAllPropertiesUsed.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">'for' that can be simplified using destructing declaration</problem_class>
+        <description>Simplify 'for' using destructing declaration</description>
+    </problem>
+    <problem>
+        <file>DataClassLast.kt</file>
+        <line>6</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/DataClassLast.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">'for' that can be simplified using destructing declaration</problem_class>
+        <description>Simplify 'for' using destructing declaration</description>
+    </problem>
+    <problem>
+        <file>DataClassNameConflict.kt</file>
+        <line>7</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/DataClassNameConflict.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">'for' that can be simplified using destructing declaration</problem_class>
+        <description>Simplify 'for' using destructing declaration</description>
+    </problem>
 </problems>

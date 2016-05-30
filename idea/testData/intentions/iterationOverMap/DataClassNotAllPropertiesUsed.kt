@@ -1,4 +1,3 @@
-// IS_APPLICABLE: false
 // WITH_RUNTIME
 
 fun main(args: Array<String>) {
@@ -6,6 +5,7 @@ fun main(args: Array<String>) {
     for (<caret>klass in list) {
         val a = klass.a
         val c = klass.c
+        println("$a$c")
     }
 }
 

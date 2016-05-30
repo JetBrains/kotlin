@@ -63,7 +63,6 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
         if (IncrementalCompilation.isEnabled()) {
             val components = services.get(IncrementalCompilationComponents::class.java)
-            @Suppress("SENSELESS_COMPARISON")
             if (components != null) {
                 configuration.put(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS, components)
             }

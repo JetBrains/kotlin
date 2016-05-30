@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.asJava
 
 import com.intellij.pom.java.LanguageLevel
 import com.intellij.psi.ClassFileViewProvider
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.impl.compiled.ClsFileImpl
 import com.intellij.psi.stubs.PsiClassHolderFileStub
@@ -45,4 +46,25 @@ open class FakeFileForLightClass(
 
     // this should be equal to current compiler target language level
     override fun getLanguageLevel() = LanguageLevel.JDK_1_6
+
+    override fun hashCode(): Int {
+        val thisClass = lightClass()
+        if (thisClass is KtLightClassForExplicitDeclaration) return ktFile.hashCode()
+        return thisClass.hashCode()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is FakeFileForLightClass) return false
+        val thisClass = lightClass()
+        val anotherClass = other.lightClass()
+
+        if (thisClass is KtLightClassForExplicitDeclaration) {
+            return anotherClass is KtLightClassForExplicitDeclaration && ktFile == other.ktFile
+        }
+
+        return thisClass == anotherClass
+    }
+
+    override fun isEquivalentTo(another: PsiElement?) = this == another
 }

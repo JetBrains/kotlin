@@ -21,6 +21,14 @@ package kotlin.jvm
 import kotlin.jvm.internal.ClassBasedDeclarationContainer
 import kotlin.jvm.internal.Reflection
 import kotlin.reflect.KClass
+import java.lang.Boolean as JavaLangBoolean
+import java.lang.Byte as JavaLangByte
+import java.lang.Character as JavaLangCharacter
+import java.lang.Double as JavaLangDouble
+import java.lang.Float as JavaLangFloat
+import java.lang.Integer as JavaLangInteger
+import java.lang.Long as JavaLangLong
+import java.lang.Short as JavaLangShort
 
 /**
  * Returns a Java [Class] instance corresponding to the given [KClass] instance.
@@ -60,14 +68,14 @@ val <T : Any> KClass<T>.javaObjectType: Class<T>
         if (!thisJClass.isPrimitive) return thisJClass as Class<T>
 
         return when (thisJClass.canonicalName) {
-            "boolean" -> java.lang.Boolean::class.java
-            "char"    -> java.lang.Character::class.java
-            "byte"    -> java.lang.Byte::class.java
-            "short"   -> java.lang.Short::class.java
-            "int"     -> java.lang.Integer::class.java
-            "float"   -> java.lang.Float::class.java
-            "long"    -> java.lang.Long::class.java
-            "double"  -> java.lang.Double::class.java
+            "boolean" -> JavaLangBoolean::class.java
+            "char"    -> JavaLangCharacter::class.java
+            "byte"    -> JavaLangByte::class.java
+            "short"   -> JavaLangShort::class.java
+            "int"     -> JavaLangInteger::class.java
+            "float"   -> JavaLangFloat::class.java
+            "long"    -> JavaLangLong::class.java
+            "double"  -> JavaLangDouble::class.java
             else -> thisJClass
         } as Class<T>
     }

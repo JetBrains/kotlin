@@ -20,18 +20,24 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiReference
 import com.intellij.psi.search.searches.ReferencesSearch
+import com.intellij.util.Processor
 import com.intellij.util.Query
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
+import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
+import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.platform.JvmBuiltIns
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import kotlin.collections.forEach as forEachStdLib
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import java.util.*
+import kotlin.collections.forEach
 
 class SimplifyForInspection : IntentionBasedInspection<KtForExpression>(SimplifyForIntention())
 
@@ -47,13 +53,18 @@ class SimplifyForIntention : SelfTargetingRangeIntention<KtForExpression>(
         val loopParameter = element.loopParameter ?: return
 
         val factory = KtPsiFactory(element)
-        loopParameter.replace(factory.createDestructuringDeclarationInFor("(${usagesToRemove.joinToString { it.name!! }})"))
-        usagesToRemove.forEachStdLib { p ->
+        val validator = NewDeclarationNameValidator(element.parent, element, NewDeclarationNameValidator.Target.VARIABLES,
+                                                    usagesToRemove.map { it.properties }.flatten())
+        val names = ArrayList<String>()
+        usagesToRemove.forEach { p ->
+            val name = KotlinNameSuggester.suggestNameByName(p.name!!, validator)
             p.properties.firstOrNull()?.delete()
-            p.usersToReplace.forEachStdLib {
-                it.replace(factory.createExpression(p.name!!))
+            p.usersToReplace.forEach {
+                it.replace(factory.createExpression(name))
             }
+            names.add(name)
         }
+        loopParameter.replace(factory.createDestructuringDeclarationInFor("(${names.joinToString()})"))
 
         if (removeSelectorInLoopRange && loopRange is KtDotQualifiedExpression) {
             loopRange.replace(loopRange.receiverExpression)
@@ -82,42 +93,46 @@ class SimplifyForIntention : SelfTargetingRangeIntention<KtForExpression>(
         val classDescriptor = loopParameterType.constructor.declarationDescriptor as? ClassDescriptor ?: return null
 
         var otherUsages = false
-        val usagesToRemove : Array<UsageData?>
+        val usagesToRemove : Array<UsageData>
 
-        if (DescriptorUtils.isSubclass(classDescriptor, JvmBuiltIns.Instance.mapEntry)) {
+        val mapEntry = classDescriptor.builtIns.mapEntry
+        val removeSelectorInLoopRange: Boolean
+        if (DescriptorUtils.isSubclass(classDescriptor, mapEntry)) {
             val loopRangeDescriptorName = element.loopRange.getResolvedCall(context)?.resultingDescriptor?.name
-            val removeSelectorInLoopRange = loopRangeDescriptorName?.asString().let { it == "entries" || it == "entrySet" }
+            removeSelectorInLoopRange = loopRangeDescriptorName?.asString().let { it == "entries" || it == "entrySet" }
 
-            usagesToRemove = arrayOfNulls(2)
+            usagesToRemove = Array(2, {
+                UsageData(mapEntry.unsubstitutedMemberScope.getContributedVariables(Name.identifier(if (it == 0) "key" else "value"),
+                                                                                    NoLookupLocation.FROM_BUILTINS).first())
+            })
 
             ReferencesSearch.search(loopParameter).iterateOverMapEntryPropertiesUsages(
                     context,
-                    { index, usageData -> usagesToRemove[index] += usageData.named(if (index == 0) "key" else "value") },
+                    { index, usageData -> usagesToRemove[index] += usageData },
                     { otherUsages = true }
             )
-
-            if (!otherUsages && usagesToRemove.all { it != null && it.name != null && it.properties.size <= 1 }) {
-                return usagesToRemove.mapNotNull { it } to removeSelectorInLoopRange
-            }
         }
         else if (classDescriptor.isData) {
+            removeSelectorInLoopRange = false
+
             val valueParameters = classDescriptor.unsubstitutedPrimaryConstructor?.valueParameters ?: return null
-            usagesToRemove = arrayOfNulls(valueParameters.size)
+            usagesToRemove = Array(valueParameters.size, { UsageData(valueParameters[it] )})
 
             ReferencesSearch.search(loopParameter).iterateOverDataClassPropertiesUsagesWithIndex(
                     context,
                     classDescriptor,
-                    { index, usageData -> usagesToRemove[index] += usageData.named(valueParameters[index].name.asString()) },
+                    { index, usageData -> usagesToRemove[index] += usageData },
                     { otherUsages = true }
             )
+        }
+        else {
+            return null
+        }
+        if (otherUsages) return null
 
-            if (otherUsages) return null
-
-            val notNullUsages = usagesToRemove.filterNotNull().filter { it.name != null }
-            val droppedLastUnused = usagesToRemove.dropLastWhile { it == null }
-            if (droppedLastUnused.size == notNullUsages.size && droppedLastUnused.all { it != null && it.properties.size <= 1 } ) {
-                return notNullUsages to false
-            }
+        val droppedLastUnused = usagesToRemove.dropLastWhile { it.usersToReplace.isEmpty() && it.properties.isEmpty() }
+        if (droppedLastUnused.all { it.properties.size <= 1 } ) {
+            return droppedLastUnused to removeSelectorInLoopRange
         }
 
         return null
@@ -128,7 +143,8 @@ class SimplifyForIntention : SelfTargetingRangeIntention<KtForExpression>(
             process: (Int, UsageData) -> Unit,
             cancel: () -> Unit
     ) {
-        forEach {
+        // TODO: Remove SAM-constructor when KT-11265 will be fixed
+        forEach(Processor forEach@{
             val applicableUsage = getDataIfUsageIsApplicable(it, context)
             if (applicableUsage != null) {
                 val descriptorName = applicableUsage.descriptor.name.asString()
@@ -144,7 +160,7 @@ class SimplifyForIntention : SelfTargetingRangeIntention<KtForExpression>(
 
             cancel()
             return@forEach false
-        }
+        })
     }
 
     private fun Query<PsiReference>.iterateOverDataClassPropertiesUsagesWithIndex(
@@ -155,7 +171,7 @@ class SimplifyForIntention : SelfTargetingRangeIntention<KtForExpression>(
     ) {
         val valueParameters = dataClass.unsubstitutedPrimaryConstructor?.valueParameters ?: return
 
-        forEach {
+        forEach(Processor forEach@{
             val applicableUsage = getDataIfUsageIsApplicable(it, context)
             if (applicableUsage != null) {
                 for (valueParameter in valueParameters) {
@@ -168,7 +184,7 @@ class SimplifyForIntention : SelfTargetingRangeIntention<KtForExpression>(
 
             cancel()
             return@forEach false
-        }
+        })
     }
 
     private fun getDataIfUsageIsApplicable(usage: PsiReference, context: BindingContext): UsageData? {
@@ -195,17 +211,18 @@ class SimplifyForIntention : SelfTargetingRangeIntention<KtForExpression>(
                                  val descriptor: CallableDescriptor,
                                  val name: String? = properties.firstOrNull()?.name
     ) {
+        constructor(descriptor: CallableDescriptor):
+                this(emptyList(), emptyList(), descriptor, descriptor.name.asString())
+
         constructor(property: KtProperty?, user: KtExpression, descriptor: CallableDescriptor):
                 this(listOfNotNull(property), if (property != null) emptyList() else listOf(user), descriptor)
-
-        fun named(suggested: String) = if (name != null) this else copy(name = suggested)
     }
 
     private operator fun UsageData?.plus(newData: UsageData): UsageData {
         if (this == null) return newData
         val allUsersToReplace = usersToReplace + newData.usersToReplace
         val allProperties = properties + newData.properties
-        if (properties.isNotEmpty()) return copy(properties = allProperties, usersToReplace = allUsersToReplace)
-        else return newData.copy(properties = allProperties, usersToReplace = allUsersToReplace)
+        val name = if (properties.isNotEmpty()) name else newData.name ?: name
+        return UsageData(allProperties, allUsersToReplace, descriptor, name)
     }
 }
