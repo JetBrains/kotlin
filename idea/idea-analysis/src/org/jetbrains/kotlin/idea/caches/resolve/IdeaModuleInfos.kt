@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
+import org.jetbrains.kotlin.script.KotlinScriptExtraImport
 import org.jetbrains.kotlin.utils.alwaysNull
 import org.jetbrains.kotlin.utils.emptyOrSingletonList
 import java.io.File
@@ -289,7 +290,8 @@ internal object NotUnderContentRootModuleInfo : IdeaModuleInfo {
 }
 
 internal data class CustomizedScriptModuleInfo(val project: Project, val module: Module?, val virtualFile: VirtualFile,
-                                               val scriptDefinition: KotlinScriptDefinition) : IdeaModuleInfo {
+                                               val scriptDefinition: KotlinScriptDefinition,
+                                               val scriptExtraImports: List<KotlinScriptExtraImport>) : IdeaModuleInfo {
     override val moduleOrigin: ModuleOrigin
         get() = ModuleOrigin.OTHER
 
@@ -301,7 +303,7 @@ internal data class CustomizedScriptModuleInfo(val project: Project, val module:
         // TODO: find out whether it should be cashed (some changes listener should be implemented for the cached roots)
         val virtualFileManager = VirtualFileManager.getInstance()
         val jarfs = StandardFileSystems.jar()
-        return (scriptDefinition.getScriptDependenciesClasspath())
+        return (scriptDefinition.getScriptDependenciesClasspath() + scriptExtraImports.flatMap { it.classpath })
                 .map { File(it).canonicalFile }
                 .distinct()
                 .map {

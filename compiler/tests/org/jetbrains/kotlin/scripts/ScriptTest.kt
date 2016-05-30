@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.ScriptParameter
+import org.jetbrains.kotlin.script.StandardScriptDefinition
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
@@ -38,14 +39,33 @@ import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.Assert
 import org.junit.Test
 import java.io.File
+import kotlin.reflect.defaultType
 
 class ScriptTest {
     @Test
     @Throws(Exception::class)
-    fun testScript() {
+    fun testScriptWithParam() {
         val aClass = compileScript("fib.kts", SimpleParamsTestScriptDefinition(".kts", numIntParam()))
         Assert.assertNotNull(aClass)
         aClass!!.getConstructor(Integer.TYPE).newInstance(4)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testStandardScript() {
+        val aClass = compileScript("fib_std.kts", StandardScriptDefinition)
+        Assert.assertNotNull(aClass)
+        val anObj = KotlinToJVMBytecodeCompiler.tryConstructClassPub(aClass!!.kotlin, listOf("4", "comment"))
+        Assert.assertNotNull(anObj)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testScriptWithParamConversion() {
+        val aClass = compileScript("fib.kts", SimpleParamsTestScriptDefinition(".kts", numIntParam()))
+        Assert.assertNotNull(aClass)
+        val anObj = KotlinToJVMBytecodeCompiler.tryConstructClassPub(aClass!!.kotlin, listOf("4"))
+        Assert.assertNotNull(anObj)
     }
 
     @Test

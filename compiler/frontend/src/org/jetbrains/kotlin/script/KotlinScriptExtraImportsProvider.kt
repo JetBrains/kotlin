@@ -31,12 +31,14 @@ class KotlinScriptExtraImportsProvider(val project: Project) {
     fun isExtraImportsConfig(file: VirtualFile): Boolean = file.name.endsWith(IMPORTSFILEEXTENSION)
 
     fun getExtraImports(file: VirtualFile): List<KotlinScriptExtraImport> = lock.read {
-        cache.getOrPut(file) {
-            file.parent.findFileByRelativePath(file.name + IMPORTSFILEEXTENSION)?.let {
-                loadScriptExtraImportConfigs(it.inputStream).map { KotlinScriptExtraImportFromConfig(it, envVars) }
+        if (file.isInLocalFileSystem)
+            cache.getOrPut(file) {
+                file.parent.findFileByRelativePath(file.name + IMPORTSFILEEXTENSION)?.let {
+                    loadScriptExtraImportConfigs(it.inputStream).map { KotlinScriptExtraImportFromConfig(it, envVars) }
+                }
+                ?: emptyList()
             }
-            ?: listOf()
-        }
+        else emptyList()
     }
 
     fun invalidateExtraImports(importsFile: VirtualFile) {
@@ -49,7 +51,7 @@ class KotlinScriptExtraImportsProvider(val project: Project) {
 
     companion object {
         @JvmStatic
-        fun getInstance(project: Project): KotlinScriptExtraImportsProvider =
+        fun getInstance(project: Project): KotlinScriptExtraImportsProvider? =
                 ServiceManager.getService(project, KotlinScriptExtraImportsProvider::class.java)
 
         val IMPORTSFILEEXTENSION = ".ktsimports.xml"

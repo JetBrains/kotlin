@@ -89,6 +89,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.CliDeclarationProviderFact
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
 import org.jetbrains.kotlin.script.*
 import org.jetbrains.kotlin.utils.PathUtil
+import org.jetbrains.kotlin.utils.ifEmpty
 import java.io.File
 import java.util.*
 
@@ -136,22 +137,14 @@ class KotlinCoreEnvironment private constructor(
 
         KotlinScriptDefinitionProvider.getInstance(project).let { scriptDefinitionProvider ->
             scriptDefinitionProvider.scriptDefinitions =
-                    configuration.getList(JVMConfigurationKeys.SCRIPT_DEFINITIONS).let {
-                        if (it.isNotEmpty()) it
-                        else {
-                            val kotlinEnvVars = generateKotlinScriptClasspathEnvVarsForCompiler(project)
-                            loadScriptConfigsFromProjectRoot(File(project.basePath ?: ".")).map {
-                                KotlinConfigurableScriptDefinition(it, kotlinEnvVars)
-                            } + StandardScriptDefinition
-                        }
-                    }
-            KotlinScriptExtraImportsProvider.getInstance(project).let { scriptExtraImportsProvider ->
-                configuration.addJvmClasspathRoots(
-                        sourceFiles
-                                .filter { it.originalFile.virtualFile != null && scriptDefinitionProvider.isScript(it.originalFile.virtualFile) }
-                                .flatMap { scriptExtraImportsProvider.getExtraImports(it.originalFile.virtualFile).flatMap { it.classpath.map { File(it).canonicalFile } } }
-                                .distinct())
-            }
+                    configuration.getList(JVMConfigurationKeys.SCRIPT_DEFINITIONS)
+                            .ifEmpty { listOf(StandardScriptDefinition) }
+
+            configuration.addJvmClasspathRoots(
+                    sourceFiles
+                            .mapNotNull { src -> src.virtualFile?.let { scriptDefinitionProvider.findScriptDefinition(it) } }
+                            .flatMap { it.getScriptDependenciesClasspath().map { File(it).canonicalFile } }
+                            .distinct())
         }
 
         fillClasspath(configuration)

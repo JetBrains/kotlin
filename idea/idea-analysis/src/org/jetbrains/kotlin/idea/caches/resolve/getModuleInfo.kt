@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
 import org.jetbrains.kotlin.script.getScriptDefinition
+import org.jetbrains.kotlin.script.getScriptExtraImports
 import org.jetbrains.kotlin.utils.sure
 
 fun PsiElement.getModuleInfo(): IdeaModuleInfo = this.getModuleInfo { reason ->
@@ -125,7 +126,7 @@ private fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFil
 
     val scriptDefinition = getScriptDefinition(virtualFile, project)
     if (scriptDefinition != null)
-        return CustomizedScriptModuleInfo(project, module, virtualFile, scriptDefinition)
+        return CustomizedScriptModuleInfo(project, module, virtualFile, scriptDefinition, getScriptExtraImports(virtualFile, project))
 
     return NotUnderContentRootModuleInfo
 }

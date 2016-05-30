@@ -21,19 +21,15 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 
 fun getScriptDefinition(file: VirtualFile, project: Project): KotlinScriptDefinition? =
-    KotlinScriptDefinitionProvider.getInstance(project).findScriptDefinition(file)?.let { kindDef ->
-        val extraImports = KotlinScriptExtraImportsProvider.getInstance(project).getExtraImports(file)
-        if (extraImports.isEmpty()) kindDef
-        else KotlinDelegatingScriptDefinitionWithExtraImports(kindDef, extraImports)
-    }
+    KotlinScriptDefinitionProvider.getInstance(project).findScriptDefinition(file)
 
 fun getScriptDefinition(psiFile: PsiFile): KotlinScriptDefinition? =
-    KotlinScriptDefinitionProvider.getInstance(psiFile.project).findScriptDefinition(psiFile.originalFile.virtualFile)?.let { kindDef ->
-        (psiFile.originalFile.virtualFile ?: psiFile.virtualFile)?.let { file ->
-            val extraImports = KotlinScriptExtraImportsProvider.getInstance(psiFile.project).getExtraImports(file)
-            if (extraImports.isEmpty()) kindDef
-            else KotlinDelegatingScriptDefinitionWithExtraImports(kindDef, extraImports)
-        }
-        ?: kindDef
-    }
+    KotlinScriptDefinitionProvider.getInstance(psiFile.project).findScriptDefinition(psiFile.originalFile.virtualFile)
 
+fun getScriptExtraImports(file: VirtualFile, project: Project): List<KotlinScriptExtraImport>  =
+        KotlinScriptExtraImportsProvider.getInstance(project)?.getExtraImports(file) ?: emptyList()
+
+fun getScriptExtraImports(psiFile: PsiFile): List<KotlinScriptExtraImport>  =
+        psiFile.virtualFile?.let { file ->
+            KotlinScriptExtraImportsProvider.getInstance(psiFile.project)?.getExtraImports(file)
+        } ?: emptyList()
