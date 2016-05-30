@@ -1,0 +1,10 @@
+// "Make 'My' final" "true"
+
+class My {
+
+    init {
+        init()
+    }
+
+    open fun init() {}
+}
