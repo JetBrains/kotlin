@@ -152,7 +152,7 @@ fun createStubForTypeName(
 
     fun recCreateStubForType(current: StubElement<out PsiElement>, level: Int): KotlinUserTypeStub {
         val lastSegment = segments[level]
-        val userTypeStub = KotlinUserTypeStubImpl(current, isAbsoluteInRootPackage = false)
+        val userTypeStub = KotlinUserTypeStubImpl(current)
         if (level + 1 < segments.size) {
             recCreateStubForType(userTypeStub, level + 1)
         }

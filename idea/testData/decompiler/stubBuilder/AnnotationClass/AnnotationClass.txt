@@ -11,35 +11,35 @@ PsiJetFileStubImpl[package=test.a]
       VALUE_PARAMETER_LIST:
         VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=i]
           TYPE_REFERENCE:
-            USER_TYPE:[isAbsoluteInRootPackage=false]
-              USER_TYPE:[isAbsoluteInRootPackage=false]
+            USER_TYPE:
+              USER_TYPE:
                 REFERENCE_EXPRESSION:[referencedName=kotlin]
               REFERENCE_EXPRESSION:[referencedName=Int]
         VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=j]
           TYPE_REFERENCE:
-            USER_TYPE:[isAbsoluteInRootPackage=false]
-              USER_TYPE:[isAbsoluteInRootPackage=false]
+            USER_TYPE:
+              USER_TYPE:
                 REFERENCE_EXPRESSION:[referencedName=kotlin]
               REFERENCE_EXPRESSION:[referencedName=String]
     SUPER_TYPE_LIST:
       SUPER_TYPE_ENTRY:
         TYPE_REFERENCE:
-          USER_TYPE:[isAbsoluteInRootPackage=false]
-            USER_TYPE:[isAbsoluteInRootPackage=false]
+          USER_TYPE:
+            USER_TYPE:
               REFERENCE_EXPRESSION:[referencedName=kotlin]
             REFERENCE_EXPRESSION:[referencedName=Annotation]
     CLASS_BODY:
       PROPERTY:[fqName=test.a.AnnotationClass.i, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=i]
         MODIFIER_LIST:[public final]
         TYPE_REFERENCE:
-          USER_TYPE:[isAbsoluteInRootPackage=false]
-            USER_TYPE:[isAbsoluteInRootPackage=false]
+          USER_TYPE:
+            USER_TYPE:
               REFERENCE_EXPRESSION:[referencedName=kotlin]
             REFERENCE_EXPRESSION:[referencedName=Int]
       PROPERTY:[fqName=test.a.AnnotationClass.j, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=j]
         MODIFIER_LIST:[public final]
         TYPE_REFERENCE:
-          USER_TYPE:[isAbsoluteInRootPackage=false]
-            USER_TYPE:[isAbsoluteInRootPackage=false]
+          USER_TYPE:
+            USER_TYPE:
               REFERENCE_EXPRESSION:[referencedName=kotlin]
             REFERENCE_EXPRESSION:[referencedName=String]

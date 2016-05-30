@@ -10,9 +10,9 @@ PsiJetFileStubImpl[package=]
         SUPER_TYPE_CALL_ENTRY:
           CONSTRUCTOR_CALLEE:
             TYPE_REFERENCE:
-              USER_TYPE:[isAbsoluteInRootPackage=false]
+              USER_TYPE:
                 REFERENCE_EXPRESSION:[referencedName=A]
         SUPER_TYPE_ENTRY:
           TYPE_REFERENCE:
-            USER_TYPE:[isAbsoluteInRootPackage=false]
+            USER_TYPE:
               REFERENCE_EXPRESSION:[referencedName=T]

@@ -6,6 +6,6 @@ PsiJetFileStubImpl[package=]
       ANNOTATION_ENTRY:[hasValueArguments=false, shortName=Deprecated]
         CONSTRUCTOR_CALLEE:
           TYPE_REFERENCE:
-            USER_TYPE:[isAbsoluteInRootPackage=false]
+            USER_TYPE:
               REFERENCE_EXPRESSION:[referencedName=Deprecated]
     CLASS_BODY:

@@ -9,7 +9,7 @@ PsiJetFileStubImpl[package=]
       VALUE_PARAMETER_LIST:
         VALUE_PARAMETER:[fqName=b.e, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=e]
           TYPE_REFERENCE:
-            USER_TYPE:[isAbsoluteInRootPackage=false]
+            USER_TYPE:
               REFERENCE_EXPRESSION:[referencedName=E]
   CLASS:[fqName=E, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=E, superNames=[]]
     MODIFIER_LIST:[enum]
@@ -24,28 +24,28 @@ PsiJetFileStubImpl[package=]
             ANNOTATION_ENTRY:[hasValueArguments=false, shortName=a]
               CONSTRUCTOR_CALLEE:
                 TYPE_REFERENCE:
-                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                  USER_TYPE:
                     REFERENCE_EXPRESSION:[referencedName=a]
           ANNOTATION:
             ANNOTATION_ENTRY:[hasValueArguments=true, shortName=b]
               CONSTRUCTOR_CALLEE:
                 TYPE_REFERENCE:
-                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                  USER_TYPE:
                     REFERENCE_EXPRESSION:[referencedName=b]
-          USER_TYPE:[isAbsoluteInRootPackage=false]
+          USER_TYPE:
             REFERENCE_EXPRESSION:[referencedName=DoubleRange]
     TYPE_REFERENCE:
       ANNOTATION:
         ANNOTATION_ENTRY:[hasValueArguments=false, shortName=a]
           CONSTRUCTOR_CALLEE:
             TYPE_REFERENCE:
-              USER_TYPE:[isAbsoluteInRootPackage=false]
+              USER_TYPE:
                 REFERENCE_EXPRESSION:[referencedName=a]
       ANNOTATION:
         ANNOTATION_ENTRY:[hasValueArguments=true, shortName=b]
           CONSTRUCTOR_CALLEE:
             TYPE_REFERENCE:
-              USER_TYPE:[isAbsoluteInRootPackage=false]
+              USER_TYPE:
                 REFERENCE_EXPRESSION:[referencedName=b]
-      USER_TYPE:[isAbsoluteInRootPackage=false]
+      USER_TYPE:
         REFERENCE_EXPRESSION:[referencedName=Unit]

@@ -6,5 +6,5 @@ PsiJetFileStubImpl[package=]
       PROPERTY:[fqName=More.test, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=test]
         MODIFIER_LIST:[private]
         TYPE_REFERENCE:
-          USER_TYPE:[isAbsoluteInRootPackage=false]
+          USER_TYPE:
             REFERENCE_EXPRESSION:[referencedName=Int]

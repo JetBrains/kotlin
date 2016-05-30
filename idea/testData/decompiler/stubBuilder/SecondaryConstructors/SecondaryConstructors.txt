@@ -9,8 +9,8 @@ PsiJetFileStubImpl[package=test]
       VALUE_PARAMETER_LIST:
         VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
           TYPE_REFERENCE:
-            USER_TYPE:[isAbsoluteInRootPackage=false]
-              USER_TYPE:[isAbsoluteInRootPackage=false]
+            USER_TYPE:
+              USER_TYPE:
                 REFERENCE_EXPRESSION:[referencedName=kotlin]
               REFERENCE_EXPRESSION:[referencedName=Boolean]
     CLASS_BODY:
@@ -19,15 +19,15 @@ PsiJetFileStubImpl[package=test]
           ANNOTATION_ENTRY:[hasValueArguments=false, shortName=anno]
             CONSTRUCTOR_CALLEE:
               TYPE_REFERENCE:
-                USER_TYPE:[isAbsoluteInRootPackage=false]
-                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                USER_TYPE:
+                  USER_TYPE:
                     REFERENCE_EXPRESSION:[referencedName=test]
                   REFERENCE_EXPRESSION:[referencedName=anno]
         VALUE_PARAMETER_LIST:
           VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
             TYPE_REFERENCE:
-              USER_TYPE:[isAbsoluteInRootPackage=false]
-                USER_TYPE:[isAbsoluteInRootPackage=false]
+              USER_TYPE:
+                USER_TYPE:
                   REFERENCE_EXPRESSION:[referencedName=kotlin]
                 REFERENCE_EXPRESSION:[referencedName=String]
       SECONDARY_CONSTRUCTOR:
@@ -35,8 +35,8 @@ PsiJetFileStubImpl[package=test]
         VALUE_PARAMETER_LIST:
           VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
             TYPE_REFERENCE:
-              USER_TYPE:[isAbsoluteInRootPackage=false]
-                USER_TYPE:[isAbsoluteInRootPackage=false]
+              USER_TYPE:
+                USER_TYPE:
                   REFERENCE_EXPRESSION:[referencedName=kotlin]
                 REFERENCE_EXPRESSION:[referencedName=Int]
       CLASS:[fqName=test.SecondaryConstructors.Inner, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner, superNames=[]]
@@ -44,23 +44,23 @@ PsiJetFileStubImpl[package=test]
         TYPE_PARAMETER_LIST:
           TYPE_PARAMETER:[fqName=null, isInVariance=false, isOutVariance=false, name=T]
             TYPE_REFERENCE:
-              USER_TYPE:[isAbsoluteInRootPackage=false]
-                USER_TYPE:[isAbsoluteInRootPackage=false]
+              USER_TYPE:
+                USER_TYPE:
                   REFERENCE_EXPRESSION:[referencedName=kotlin]
                 REFERENCE_EXPRESSION:[referencedName=String]
           TYPE_PARAMETER:[fqName=null, isInVariance=false, isOutVariance=false, name=G]
             TYPE_REFERENCE:
-              USER_TYPE:[isAbsoluteInRootPackage=false]
-                USER_TYPE:[isAbsoluteInRootPackage=false]
+              USER_TYPE:
+                USER_TYPE:
                   REFERENCE_EXPRESSION:[referencedName=kotlin]
                 REFERENCE_EXPRESSION:[referencedName=Int]
         TYPE_CONSTRAINT_LIST:
           TYPE_CONSTRAINT:
             REFERENCE_EXPRESSION:[referencedName=G]
             TYPE_REFERENCE:
-              USER_TYPE:[isAbsoluteInRootPackage=false]
-                USER_TYPE:[isAbsoluteInRootPackage=false]
-                  USER_TYPE:[isAbsoluteInRootPackage=false]
+              USER_TYPE:
+                USER_TYPE:
+                  USER_TYPE:
                     REFERENCE_EXPRESSION:[referencedName=java]
                   REFERENCE_EXPRESSION:[referencedName=io]
                 REFERENCE_EXPRESSION:[referencedName=Serializable]
@@ -70,11 +70,11 @@ PsiJetFileStubImpl[package=test]
             VALUE_PARAMETER_LIST:
               VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
                 TYPE_REFERENCE:
-                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                  USER_TYPE:
                     REFERENCE_EXPRESSION:[referencedName=T]
               VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=g]
                 TYPE_REFERENCE:
-                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                  USER_TYPE:
                     REFERENCE_EXPRESSION:[referencedName=G]
       CLASS:[fqName=test.SecondaryConstructors.Nested, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested, superNames=[]]
         MODIFIER_LIST:[public final]
@@ -84,15 +84,15 @@ PsiJetFileStubImpl[package=test]
               ANNOTATION_ENTRY:[hasValueArguments=false, shortName=anno]
                 CONSTRUCTOR_CALLEE:
                   TYPE_REFERENCE:
-                    USER_TYPE:[isAbsoluteInRootPackage=false]
-                      USER_TYPE:[isAbsoluteInRootPackage=false]
+                    USER_TYPE:
+                      USER_TYPE:
                         REFERENCE_EXPRESSION:[referencedName=test]
                       REFERENCE_EXPRESSION:[referencedName=anno]
             VALUE_PARAMETER_LIST:
               VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=z]
                 TYPE_REFERENCE:
-                  USER_TYPE:[isAbsoluteInRootPackage=false]
-                    USER_TYPE:[isAbsoluteInRootPackage=false]
+                  USER_TYPE:
+                    USER_TYPE:
                       REFERENCE_EXPRESSION:[referencedName=kotlin]
                     REFERENCE_EXPRESSION:[referencedName=Int]
           SECONDARY_CONSTRUCTOR:

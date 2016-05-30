@@ -13,10 +13,10 @@ PsiJetFileStubImpl[package=a.b.c.topLevelMembersAnnotated]
       ANNOTATION_ENTRY:[hasValueArguments=false, shortName=a]
         CONSTRUCTOR_CALLEE:
           TYPE_REFERENCE:
-            USER_TYPE:[isAbsoluteInRootPackage=false]
-              USER_TYPE:[isAbsoluteInRootPackage=false]
-                USER_TYPE:[isAbsoluteInRootPackage=false]
-                  USER_TYPE:[isAbsoluteInRootPackage=false]
+            USER_TYPE:
+              USER_TYPE:
+                USER_TYPE:
+                  USER_TYPE:
                     REFERENCE_EXPRESSION:[referencedName=d]
                   REFERENCE_EXPRESSION:[referencedName=e]
                 REFERENCE_EXPRESSION:[referencedName=f]
@@ -24,17 +24,17 @@ PsiJetFileStubImpl[package=a.b.c.topLevelMembersAnnotated]
       ANNOTATION_ENTRY:[hasValueArguments=false, shortName=b]
         CONSTRUCTOR_CALLEE:
           TYPE_REFERENCE:
-            USER_TYPE:[isAbsoluteInRootPackage=false]
-              USER_TYPE:[isAbsoluteInRootPackage=false]
-                USER_TYPE:[isAbsoluteInRootPackage=false]
-                  USER_TYPE:[isAbsoluteInRootPackage=false]
+            USER_TYPE:
+              USER_TYPE:
+                USER_TYPE:
+                  USER_TYPE:
                     REFERENCE_EXPRESSION:[referencedName=d]
                   REFERENCE_EXPRESSION:[referencedName=e]
                 REFERENCE_EXPRESSION:[referencedName=f]
               REFERENCE_EXPRESSION:[referencedName=b]
     TYPE_REFERENCE:
-      USER_TYPE:[isAbsoluteInRootPackage=false]
-        USER_TYPE:[isAbsoluteInRootPackage=false]
+      USER_TYPE:
+        USER_TYPE:
           REFERENCE_EXPRESSION:[referencedName=kotlin]
         REFERENCE_EXPRESSION:[referencedName=Int]
   FUN:[fqName=a.b.c.topLevelMembersAnnotated.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, name=f]
@@ -42,10 +42,10 @@ PsiJetFileStubImpl[package=a.b.c.topLevelMembersAnnotated]
       ANNOTATION_ENTRY:[hasValueArguments=false, shortName=a]
         CONSTRUCTOR_CALLEE:
           TYPE_REFERENCE:
-            USER_TYPE:[isAbsoluteInRootPackage=false]
-              USER_TYPE:[isAbsoluteInRootPackage=false]
-                USER_TYPE:[isAbsoluteInRootPackage=false]
-                  USER_TYPE:[isAbsoluteInRootPackage=false]
+            USER_TYPE:
+              USER_TYPE:
+                USER_TYPE:
+                  USER_TYPE:
                     REFERENCE_EXPRESSION:[referencedName=d]
                   REFERENCE_EXPRESSION:[referencedName=e]
                 REFERENCE_EXPRESSION:[referencedName=f]
@@ -53,10 +53,10 @@ PsiJetFileStubImpl[package=a.b.c.topLevelMembersAnnotated]
       ANNOTATION_ENTRY:[hasValueArguments=false, shortName=b]
         CONSTRUCTOR_CALLEE:
           TYPE_REFERENCE:
-            USER_TYPE:[isAbsoluteInRootPackage=false]
-              USER_TYPE:[isAbsoluteInRootPackage=false]
-                USER_TYPE:[isAbsoluteInRootPackage=false]
-                  USER_TYPE:[isAbsoluteInRootPackage=false]
+            USER_TYPE:
+              USER_TYPE:
+                USER_TYPE:
+                  USER_TYPE:
                     REFERENCE_EXPRESSION:[referencedName=d]
                   REFERENCE_EXPRESSION:[referencedName=e]
                 REFERENCE_EXPRESSION:[referencedName=f]
@@ -67,10 +67,10 @@ PsiJetFileStubImpl[package=a.b.c.topLevelMembersAnnotated]
           ANNOTATION_ENTRY:[hasValueArguments=false, shortName=a]
             CONSTRUCTOR_CALLEE:
               TYPE_REFERENCE:
-                USER_TYPE:[isAbsoluteInRootPackage=false]
-                  USER_TYPE:[isAbsoluteInRootPackage=false]
-                    USER_TYPE:[isAbsoluteInRootPackage=false]
-                      USER_TYPE:[isAbsoluteInRootPackage=false]
+                USER_TYPE:
+                  USER_TYPE:
+                    USER_TYPE:
+                      USER_TYPE:
                         REFERENCE_EXPRESSION:[referencedName=d]
                       REFERENCE_EXPRESSION:[referencedName=e]
                     REFERENCE_EXPRESSION:[referencedName=f]
@@ -78,27 +78,27 @@ PsiJetFileStubImpl[package=a.b.c.topLevelMembersAnnotated]
           ANNOTATION_ENTRY:[hasValueArguments=false, shortName=b]
             CONSTRUCTOR_CALLEE:
               TYPE_REFERENCE:
-                USER_TYPE:[isAbsoluteInRootPackage=false]
-                  USER_TYPE:[isAbsoluteInRootPackage=false]
-                    USER_TYPE:[isAbsoluteInRootPackage=false]
-                      USER_TYPE:[isAbsoluteInRootPackage=false]
+                USER_TYPE:
+                  USER_TYPE:
+                    USER_TYPE:
+                      USER_TYPE:
                         REFERENCE_EXPRESSION:[referencedName=d]
                       REFERENCE_EXPRESSION:[referencedName=e]
                     REFERENCE_EXPRESSION:[referencedName=f]
                   REFERENCE_EXPRESSION:[referencedName=b]
         TYPE_REFERENCE:
-          USER_TYPE:[isAbsoluteInRootPackage=false]
-            USER_TYPE:[isAbsoluteInRootPackage=false]
-              USER_TYPE:[isAbsoluteInRootPackage=false]
-                USER_TYPE:[isAbsoluteInRootPackage=false]
-                  USER_TYPE:[isAbsoluteInRootPackage=false]
+          USER_TYPE:
+            USER_TYPE:
+              USER_TYPE:
+                USER_TYPE:
+                  USER_TYPE:
                     REFERENCE_EXPRESSION:[referencedName=a]
                   REFERENCE_EXPRESSION:[referencedName=b]
                 REFERENCE_EXPRESSION:[referencedName=c]
               REFERENCE_EXPRESSION:[referencedName=topLevelMembersAnnotated]
             REFERENCE_EXPRESSION:[referencedName=C]
     TYPE_REFERENCE:
-      USER_TYPE:[isAbsoluteInRootPackage=false]
-        USER_TYPE:[isAbsoluteInRootPackage=false]
+      USER_TYPE:
+        USER_TYPE:
           REFERENCE_EXPRESSION:[referencedName=kotlin]
         REFERENCE_EXPRESSION:[referencedName=Int]
