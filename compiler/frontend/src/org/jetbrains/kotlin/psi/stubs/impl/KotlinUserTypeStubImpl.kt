@@ -16,15 +16,12 @@
 
 package org.jetbrains.kotlin.psi.stubs.impl
 
+import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.psi.KtUserType
 import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
-import com.intellij.psi.PsiElement
 
 class KotlinUserTypeStubImpl(
-        parent: StubElement<out PsiElement>?,
-        private val isAbsoluteInRootPackage: Boolean
-) : KotlinStubBaseImpl<KtUserType>(parent, KtStubElementTypes.USER_TYPE), KotlinUserTypeStub {
-    override fun isAbsoluteInRootPackage() = isAbsoluteInRootPackage
-}
+        parent: StubElement<out PsiElement>?
+) : KotlinStubBaseImpl<KtUserType>(parent, KtStubElementTypes.USER_TYPE), KotlinUserTypeStub

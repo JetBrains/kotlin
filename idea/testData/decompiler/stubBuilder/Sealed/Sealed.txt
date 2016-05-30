@@ -16,8 +16,8 @@ PsiJetFileStubImpl[package=test]
         SUPER_TYPE_LIST:
           SUPER_TYPE_ENTRY:
             TYPE_REFERENCE:
-              USER_TYPE:[isAbsoluteInRootPackage=false]
-                USER_TYPE:[isAbsoluteInRootPackage=false]
+              USER_TYPE:
+                USER_TYPE:
                   REFERENCE_EXPRESSION:[referencedName=test]
                 REFERENCE_EXPRESSION:[referencedName=Sealed]
         CLASS_BODY:
@@ -26,8 +26,8 @@ PsiJetFileStubImpl[package=test]
         SUPER_TYPE_LIST:
           SUPER_TYPE_ENTRY:
             TYPE_REFERENCE:
-              USER_TYPE:[isAbsoluteInRootPackage=false]
-                USER_TYPE:[isAbsoluteInRootPackage=false]
+              USER_TYPE:
+                USER_TYPE:
                   REFERENCE_EXPRESSION:[referencedName=test]
                 REFERENCE_EXPRESSION:[referencedName=Sealed]
         CLASS_BODY:
