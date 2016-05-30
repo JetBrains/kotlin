@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.codegen.optimization.MandatoryMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.SKIP_MANDATORY_TRANSFORMATIONS_ANNOTATION_DESC
 import org.jetbrains.kotlin.codegen.optimization.common.OptimizationBasicInterpreter
 import org.jetbrains.kotlin.codegen.optimization.common.asSequence
+import org.jetbrains.kotlin.codegen.optimization.common.insnListOf
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
@@ -64,7 +65,11 @@ class CoroutineTransformerMethodVisitor(
         if (methodNode.visibleAnnotations?.none { it.desc == CONTINUATION_METHOD_ANNOTATION_DESC } != false) return
         methodNode.visibleAnnotations.removeAll { it.desc == CONTINUATION_METHOD_ANNOTATION_DESC }
 
+        // Spill stack to variables before suspension points
         MandatoryMethodTransformer().transform("fake", methodNode)
+
+        processUninitializedStores(methodNode)
+
         methodNode.visibleAnnotations.add(AnnotationNode(SKIP_MANDATORY_TRANSFORMATIONS_ANNOTATION_DESC))
 
         val suspensionPoints = collectSuspensionPoints(methodNode)
@@ -259,5 +264,3 @@ private fun Type.normalize() =
     }
 
 private class SuspensionPoint(val id: Int, val suspensionCall: MethodInsnNode)
-
-private fun insnListOf(vararg insns: AbstractInsnNode) = InsnList().apply { insns.forEach { add(it) } }

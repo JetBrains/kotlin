@@ -119,3 +119,5 @@ val AbstractInsnNode.intConstant: Int? get() =
         LDC -> (this as LdcInsnNode).cst as? Int
         else -> null
     }
+
+fun insnListOf(vararg insns: AbstractInsnNode) = InsnList().apply { insns.forEach { add(it) } }
