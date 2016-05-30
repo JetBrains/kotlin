@@ -135,7 +135,7 @@ class FQNGenerator {
             }
         }
 
-        val explicitName = getJsName(descriptor)
+        val explicitName = getJsName(resolvedDescriptor)
         return when {
             explicitName != null -> Pair(explicitName, true)
             needsStableMangling(resolvedDescriptor) ->

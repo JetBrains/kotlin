@@ -8,7 +8,7 @@ package foo
 
 import test.*
 
-// CHECK_CONTAINS_NO_CALLS: testClassObject
+// CHECK_CONTAINS_NO_CALLS: testClassObject_0
 
 internal fun testFinalInline(): String {
     return Z().finalInline({"final"})

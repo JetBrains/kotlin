@@ -4721,6 +4721,51 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
     }
 
+    @TestMetadata("js/js.translator/testData/box/jsName")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class JsName extends AbstractBoxJsTest {
+        public void testAllFilesPresentInJsName() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/jsName"), Pattern.compile("^([^_](.+))\\.kt$"), true);
+        }
+
+        @TestMetadata("avoidNameClash.kt")
+        public void testAvoidNameClash() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/jsName/avoidNameClash.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("overriddenMethod.kt")
+        public void testOverriddenMethod() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/jsName/overriddenMethod.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("overridenFromInterface.kt")
+        public void testOverridenFromInterface() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/jsName/overridenFromInterface.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("privateMethod.kt")
+        public void testPrivateMethod() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/jsName/privateMethod.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("secondaryConstructor.kt")
+        public void testSecondaryConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/jsName/secondaryConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleJsName.kt")
+        public void testSimpleJsName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/jsName/simpleJsName.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("js/js.translator/testData/box/labels")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

@@ -26,11 +26,12 @@ import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DeclarationChecker
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.SimpleDeclarationChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.source.getPsi
 
-class JsNameChecker : DeclarationChecker {
+class JsNameChecker : SimpleDeclarationChecker {
     private val fqnGenerator = FQNGenerator()
     private val scopes = mutableMapOf<DeclarationDescriptor, MutableMap<String, DeclarationDescriptor>>()
     private val clashedDescriptors = mutableSetOf<DeclarationDescriptor>()

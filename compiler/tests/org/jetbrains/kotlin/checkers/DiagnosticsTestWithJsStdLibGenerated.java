@@ -313,6 +313,30 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
             doTest(fileName);
         }
 
+        @TestMetadata("jsNameAndOverridden.kt")
+        public void testJsNameAndOverridden() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/jsNameAndOverridden.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("jsNameAndPrivateDontClash.kt")
+        public void testJsNameAndPrivateDontClash() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/jsNameAndPrivateDontClash.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("jsNameClash.kt")
+        public void testJsNameClash() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/jsNameClash.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("jsNameClashWithDefault.kt")
+        public void testJsNameClashWithDefault() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/jsNameClashWithDefault.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("methodAndMethod.kt")
         public void testMethodAndMethod() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/methodAndMethod.kt");
@@ -349,6 +373,12 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
             doTest(fileName);
         }
 
+        @TestMetadata("privateJsNameClash.kt")
+        public void testPrivateJsNameClash() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/privateJsNameClash.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("propertyAndMethodInSubclass.kt")
         public void testPropertyAndMethodInSubclass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/propertyAndMethodInSubclass.kt");
@@ -358,6 +388,12 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         @TestMetadata("propertyAndNativeMethodDoNotClash.kt")
         public void testPropertyAndNativeMethodDoNotClash() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/propertyAndNativeMethodDoNotClash.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("topLevelMethodAndJsNameConstructor.kt")
+        public void testTopLevelMethodAndJsNameConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/topLevelMethodAndJsNameConstructor.kt");
             doTest(fileName);
         }
 
