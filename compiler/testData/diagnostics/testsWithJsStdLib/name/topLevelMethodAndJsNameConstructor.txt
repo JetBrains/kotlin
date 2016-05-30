@@ -1,0 +1,14 @@
+package
+
+package foo {
+    public fun aa(): kotlin.Unit
+
+    public final class A {
+        @kotlin.js.JsName(name = "aa") public constructor A(/*0*/ x: kotlin.Int)
+        public constructor A(/*0*/ x: kotlin.String)
+        public final val x: kotlin.String
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

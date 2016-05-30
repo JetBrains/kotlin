@@ -27,7 +27,6 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.hash.LinkedHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.ReflectionTypes;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.naming.FQNGenerator;
@@ -81,9 +80,6 @@ public final class StaticContext {
 
     @NotNull
     private final StandardClasses standardClasses;
-
-    @NotNull
-    private final ReflectionTypes reflectionTypes;
 
     @NotNull
     private final JsScope rootScope;
@@ -142,7 +138,6 @@ public final class StaticContext {
         this.rootScope = rootScope;
         this.standardClasses = standardClasses;
         this.config = config;
-        this.reflectionTypes = new ReflectionTypes(moduleDescriptor);
         currentModule = moduleDescriptor;
     }
 
@@ -169,11 +164,6 @@ public final class StaticContext {
     @NotNull
     public Namer getNamer() {
         return namer;
-    }
-
-    @NotNull
-    public ReflectionTypes getReflectionTypes() {
-        return reflectionTypes;
     }
 
     @NotNull
