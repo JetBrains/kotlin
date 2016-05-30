@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,12 +23,20 @@ import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.ScriptNameUtil
 import org.jetbrains.kotlin.script.ScriptParameter
+import org.jetbrains.kotlin.script.makeReflectedClassScriptParameter
+import org.jetbrains.kotlin.types.KotlinType
+import kotlin.reflect.KClass
 
-class TestScriptDefinition(
-        val extension: String,
-        val parameters: List<ScriptParameter>
-) : KotlinScriptDefinition {
-    override fun getScriptParameters(scriptDescriptor: ScriptDescriptor) = parameters
+abstract class BaseScriptDefinition (val extension: String) : KotlinScriptDefinition {
     override fun isScript(file: PsiFile): Boolean = file.name.endsWith(extension)
     override fun getScriptName(script: KtScript): Name = ScriptNameUtil.fileNameWithExtensionStripped(script, extension)
+}
+
+class SimpleParamsTestScriptDefinition(extension: String, val parameters: List<ScriptParameter>) : BaseScriptDefinition(extension) {
+    override fun getScriptParameters(scriptDescriptor: ScriptDescriptor) = parameters
+}
+
+class ReflectedParamClassTestScriptDefinition(extension: String, val name: String, val parameter: KClass<out Any>) : BaseScriptDefinition(extension) {
+    override fun getScriptParameters(scriptDescriptor: ScriptDescriptor) =
+            listOf(makeReflectedClassScriptParameter(scriptDescriptor, Name.identifier(name), parameter))
 }

@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.script.KotlinScriptDefinition;
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider;
 import org.jetbrains.kotlin.script.ScriptParameter;
-import org.jetbrains.kotlin.scripts.TestScriptDefinition;
+import org.jetbrains.kotlin.scripts.SimpleParamsTestScriptDefinition;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 
@@ -35,12 +35,12 @@ import static java.util.Collections.singletonList;
 
 public class ScriptGenTest extends CodegenTestCase {
     private static final KotlinScriptDefinition FIB_SCRIPT_DEFINITION =
-            new TestScriptDefinition(
+            new SimpleParamsTestScriptDefinition(
                     ".lang.kt",
                     singletonList(new ScriptParameter(Name.identifier("num"), DefaultBuiltIns.getInstance().getIntType()))
             );
     private static final KotlinScriptDefinition NO_PARAM_SCRIPT_DEFINITION =
-            new TestScriptDefinition(
+            new SimpleParamsTestScriptDefinition(
                     ".kts",
                     Collections.<ScriptParameter>emptyList()
             );

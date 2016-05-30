@@ -207,7 +207,11 @@ object KotlinToJVMBytecodeCompiler {
         }
     }
 
-    fun compileAndExecuteScript(environment: KotlinCoreEnvironment, paths: KotlinPaths, scriptArgs: List<String>): ExitCode {
+    fun compileAndExecuteScript(
+            environment: KotlinCoreEnvironment,
+            paths: KotlinPaths,
+            scriptArgs: List<String>): ExitCode
+    {
         val scriptClass = compileScript(environment, paths) ?: return ExitCode.COMPILATION_ERROR
         val scriptConstructor = getScriptConstructor(scriptClass)
 
@@ -248,13 +252,24 @@ object KotlinToJVMBytecodeCompiler {
     private fun getScriptConstructor(scriptClass: Class<*>): Constructor<*> =
             scriptClass.getConstructor(Array<String>::class.java)
 
-    fun compileScript(environment: KotlinCoreEnvironment, paths: KotlinPaths): Class<*>? {
+    fun compileScript(environment: KotlinCoreEnvironment, paths: KotlinPaths): Class<*>? =
+            compileScript(environment,
+                          {
+                              val classPaths = arrayListOf(paths.runtimePath.toURI().toURL())
+                              environment.configuration.jvmClasspathRoots.mapTo(classPaths) { it.toURI().toURL() }
+                              URLClassLoader(classPaths.toTypedArray())
+                          })
+
+    fun compileScript(environment: KotlinCoreEnvironment, parentClassLoader: ClassLoader): Class<*>? = compileScript(environment, { parentClassLoader })
+
+    private inline fun compileScript(
+            environment: KotlinCoreEnvironment,
+            makeParentClassLoader: () -> ClassLoader): Class<*>? {
         val state = analyzeAndGenerate(environment) ?: return null
 
+        val classLoader: GeneratedClassLoader
         try {
-            val classPaths = arrayListOf(paths.runtimePath.toURI().toURL())
-            environment.configuration.jvmClasspathRoots.mapTo(classPaths) { it.toURI().toURL() }
-            val classLoader = GeneratedClassLoader(state.factory, URLClassLoader(classPaths.toTypedArray(), null))
+            classLoader = GeneratedClassLoader(state.factory, makeParentClassLoader(), null)
 
             val script = environment.getSourceFiles()[0].script ?: error("Script must be parsed")
             return classLoader.loadClass(script.fqName.asString())
