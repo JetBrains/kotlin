@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.asJava.KtLightElement
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
 import org.jetbrains.kotlin.utils.sure
 
 fun PsiElement.getModuleInfo(): IdeaModuleInfo = this.getModuleInfo { reason ->
@@ -120,6 +121,11 @@ private fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFil
             }
         }
     }
+
+    val scriptDefinition = KotlinScriptDefinitionProvider.getInstance(project).findScriptDefinition(virtualFile)
+    if (scriptDefinition != null)
+        return CustomizedScriptModuleInfo(project, virtualFile, scriptDefinition)
+
     return NotUnderContentRootModuleInfo
 }
 
