@@ -22,7 +22,8 @@ JetFile: IncompleteTypeRefWithPackageKeyword.kt
         PsiWhiteSpace(' ')
         TYPE_REFERENCE
           USER_TYPE
-            PsiElement(package)('package')
+            PsiErrorElement:Expecting an element
+              PsiElement(package)('package')
             PsiErrorElement:Expecting '.'
               <empty list>
       PsiWhiteSpace('\n')

@@ -39,7 +39,7 @@ public class KtImportDirectiveElementType extends KtStubElementType<KotlinImport
         FqName importedFqName = psi.getImportedFqName();
         StringRef fqName = StringRef.fromString(importedFqName == null ? null : importedFqName.asString());
         StringRef aliasName = StringRef.fromString(psi.getAliasName());
-        return new KotlinImportDirectiveStubImpl(parentStub, psi.isAbsoluteInRootPackage(), psi.isAllUnder(),
+        return new KotlinImportDirectiveStubImpl(parentStub, false /* TODO: drop */, psi.isAllUnder(),
                                                  fqName, aliasName, psi.isValidImport());
     }
 

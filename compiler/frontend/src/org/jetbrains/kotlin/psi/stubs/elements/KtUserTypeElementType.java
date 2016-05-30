@@ -34,7 +34,7 @@ public class KtUserTypeElementType extends KtStubElementType<KotlinUserTypeStub,
 
     @Override
     public KotlinUserTypeStub createStub(@NotNull KtUserType psi, StubElement parentStub) {
-        return new KotlinUserTypeStubImpl(parentStub, psi.isAbsoluteInRootPackage());
+        return new KotlinUserTypeStubImpl(parentStub, false /* TODO: drop */);
     }
 
     @Override

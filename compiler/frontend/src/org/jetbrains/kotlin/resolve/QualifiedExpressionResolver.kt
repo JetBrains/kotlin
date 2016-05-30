@@ -70,7 +70,7 @@ class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageValidator
             isDebuggerContext: Boolean
     ): TypeQualifierResolutionResult {
         val ownerDescriptor = if (!isDebuggerContext) scope.ownerDescriptor else null
-        if (userType.qualifier == null && !userType.startWithPackage) {
+        if (userType.qualifier == null) {
             val descriptor = userType.referenceExpression?.let {
                 val classifier = scope.findClassifier(it.getReferencedNameAsName(), KotlinLookupLocation(it))
                 storeResult(trace, it, classifier, ownerDescriptor, position = QualifierPosition.TYPE, isQualifier = false)
@@ -80,32 +80,29 @@ class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageValidator
             return TypeQualifierResolutionResult(userType.asQualifierPartList().first, descriptor)
         }
 
-        val module = scope.ownerDescriptor.module
         val (qualifierPartList, hasError) = userType.asQualifierPartList()
         if (hasError) {
             val descriptor = resolveToPackageOrClass(
-                    qualifierPartList, module, trace, ownerDescriptor, scope, position = QualifierPosition.TYPE
+                    qualifierPartList, scope.ownerDescriptor.module, trace, ownerDescriptor, scope, position = QualifierPosition.TYPE
             ) as? ClassifierDescriptor
             return TypeQualifierResolutionResult(qualifierPartList, descriptor)
         }
 
-        return resolveQualifierPartListForType(
-                qualifierPartList, ownerDescriptor, module, scope.check { !userType.startWithPackage }, trace, isQualifier = false
-        )
+        return resolveQualifierPartListForType(qualifierPartList, ownerDescriptor, scope, trace, isQualifier = false)
     }
 
     private fun resolveQualifierPartListForType(
             qualifierPartList: List<QualifierPart>,
             ownerDescriptor: DeclarationDescriptor?,
-            module: ModuleDescriptor,
-            scope: LexicalScope?,
+            scope: LexicalScope,
             trace: BindingTrace,
             isQualifier: Boolean
     ): TypeQualifierResolutionResult {
         assert(qualifierPartList.isNotEmpty()) { "Qualifier list should not be empty" }
 
         val qualifier = resolveToPackageOrClass(
-                qualifierPartList.subList(0, qualifierPartList.size - 1), module, trace, ownerDescriptor, scope,
+                qualifierPartList.subList(0, qualifierPartList.size - 1),
+                scope.ownerDescriptor.module, trace, ownerDescriptor, scope,
                 position = QualifierPosition.TYPE
         ) ?: return TypeQualifierResolutionResult(qualifierPartList, null)
 
@@ -140,20 +137,8 @@ class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageValidator
             return TypeQualifierResolutionResult(qualifierPartList, descriptor)
         }
 
-        return resolveQualifierPartListForType(
-                qualifierPartList, ownerDescriptor, scope.ownerDescriptor.module, scope, trace, isQualifier = true
-        )
+        return resolveQualifierPartListForType(qualifierPartList, ownerDescriptor, scope, trace, isQualifier = true)
     }
-
-    private val KtUserType.startWithPackage: Boolean
-        get() {
-            var firstPart = this
-            while (firstPart.qualifier != null) {
-                firstPart = firstPart.qualifier!!
-            }
-            return firstPart.isAbsoluteInRootPackage
-        }
-
 
     private fun KtUserType.asQualifierPartList(): Pair<List<QualifierPart>, Boolean> {
         var hasError = false
