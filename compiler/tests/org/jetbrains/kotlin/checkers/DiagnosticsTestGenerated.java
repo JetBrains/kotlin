@@ -18219,6 +18219,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/sourceCompatibility"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("noLocalDelegatedProperty.kt")
+            public void testNoLocalDelegatedProperty() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sourceCompatibility/noLocalDelegatedProperty.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noLocalDelegatedPropertyInScript.kt")
+            public void testNoLocalDelegatedPropertyInScript() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sourceCompatibility/noLocalDelegatedPropertyInScript.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("noTopLevelSealedInheritance.kt")
             public void testNoTopLevelSealedInheritance() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sourceCompatibility/noTopLevelSealedInheritance.kt");

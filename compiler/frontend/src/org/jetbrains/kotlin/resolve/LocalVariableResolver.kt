@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageFeatureSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
@@ -40,7 +42,8 @@ class LocalVariableResolver(
         private val dataFlowAnalyzer: DataFlowAnalyzer,
         private val annotationResolver: AnnotationResolver,
         private val variableTypeResolver: VariableTypeResolver,
-        private val delegatedPropertyResolver: DelegatedPropertyResolver
+        private val delegatedPropertyResolver: DelegatedPropertyResolver,
+        private val languageFeatureSettings: LanguageFeatureSettings
 ) {
 
     fun process(
@@ -68,13 +71,19 @@ class LocalVariableResolver(
         val propertyDescriptor = resolveLocalVariableDescriptor(scope, property, context.dataFlowInfo, context.trace)
 
         val delegateExpression = property.delegateExpression
-        if (delegateExpression != null && propertyDescriptor is VariableDescriptorWithAccessors) {
-            delegatedPropertyResolver.resolvePropertyDelegate(typingContext.dataFlowInfo,
-                                                              property,
-                                                              propertyDescriptor,
-                                                              delegateExpression,
-                                                              typingContext.scope,
-                                                              typingContext.trace);
+        if (delegateExpression != null) {
+            if (!languageFeatureSettings.supportsFeature(LanguageFeature.LocalDelegatedProperties)) {
+                context.trace.report(LOCAL_VARIABLE_WITH_DELEGATE.on(property.delegate!!))
+            }
+
+            if (propertyDescriptor is VariableDescriptorWithAccessors) {
+                delegatedPropertyResolver.resolvePropertyDelegate(typingContext.dataFlowInfo,
+                                                                  property,
+                                                                  propertyDescriptor,
+                                                                  delegateExpression,
+                                                                  typingContext.scope,
+                                                                  typingContext.trace);
+            }
         }
 
         val initializer = property.initializer
