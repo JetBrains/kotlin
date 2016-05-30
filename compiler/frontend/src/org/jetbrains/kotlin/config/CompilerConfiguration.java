@@ -62,7 +62,18 @@ public class CompilerConfiguration {
         return data == null ? Collections.<T>emptyList() : data;
     }
 
-    public <T> void put(@NotNull CompilerConfigurationKey<T> key, @NotNull T value) {
+    @NotNull
+    public <K,V> Map<K,V> getMap(@NotNull CompilerConfigurationKey<Map<K,V>> key) {
+        Map<K,V> data = (Map<K,V>) map.get(key.ideaKey);
+        if (data == null) {
+            return Collections.emptyMap();
+        }
+        else {
+            return Collections.unmodifiableMap(data);
+        }
+    }
+
+    public <T> void put(@NotNull CompilerConfigurationKey<T> key, @Nullable T value) {
         checkReadOnly();
         map.put(key.ideaKey, value);
     }
@@ -75,6 +86,16 @@ public class CompilerConfiguration {
         }
         List<T> list = (List<T>) map.get(ideaKey);
         list.add(value);
+    }
+
+    public <K, V> void put(@NotNull CompilerConfigurationKey<Map<K,V>> key, @NotNull K vkey, @NotNull V value) {
+        checkReadOnly();
+        Key<Map<K,V>> ideaKey = key.ideaKey;
+        if (map.get(ideaKey) == null) {
+            map.put(ideaKey, new HashMap<K,V>());
+        }
+        Map<K,V> data = (Map<K,V>) map.get(ideaKey);
+        data.put(vkey, value);
     }
 
     public <T> void addAll(@NotNull CompilerConfigurationKey<List<T>> key, @NotNull Collection<T> values) {

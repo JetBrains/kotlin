@@ -75,6 +75,11 @@ class StandardWithClasspathScriptDefinition(extension: String, classpath: List<S
             StandardScriptDefinition.getScriptParameters(scriptDescriptor)
 }
 
+class SimpleScriptExtraImport(
+        override val classpath: List<String>,
+        override val names: List<String> = emptyList()
+) : KotlinScriptExtraImport
+
 fun classpathFromProperty(): List<String> =
     System.getProperty("java.class.path")?.let {
         it.split(String.format("\\%s", File.pathSeparatorChar).toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
