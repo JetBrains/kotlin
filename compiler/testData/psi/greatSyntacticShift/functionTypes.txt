@@ -74,7 +74,8 @@ JetFile: functionTypes.kt
         PsiWhiteSpace(' ')
         TYPE_REFERENCE
           USER_TYPE
-            PsiElement(package)('package')
+            PsiErrorElement:Expecting an element
+              PsiElement(package)('package')
             PsiElement(DOT)('.')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Int')

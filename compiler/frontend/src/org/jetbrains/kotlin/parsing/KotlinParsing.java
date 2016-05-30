@@ -23,7 +23,6 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtNodeType;
 import org.jetbrains.kotlin.lexer.KtKeywordToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 
@@ -1939,7 +1938,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
     /*
      * userType
-     *   : ("package" ".")? simpleUserType{"."}
+     *   : simpleUserType{"."}
      *   ;
      *
      *   recovers on platform types:
@@ -1951,7 +1950,9 @@ public class KotlinParsing extends AbstractKotlinParsing {
         PsiBuilder.Marker userType = mark();
 
         if (at(PACKAGE_KEYWORD)) {
+            PsiBuilder.Marker keyword = mark();
             advance(); // PACKAGE_KEYWORD
+            keyword.error("Expecting an element");
             expect(DOT, "Expecting '.'", TokenSet.create(IDENTIFIER, LBRACE, RBRACE));
         }
 

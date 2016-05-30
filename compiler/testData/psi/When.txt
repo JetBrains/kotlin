@@ -359,7 +359,8 @@ JetFile: When.kt
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
-                  PsiElement(package)('package')
+                  PsiErrorElement:Expecting an element
+                    PsiElement(package)('package')
                   PsiElement(DOT)('.')
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('a')

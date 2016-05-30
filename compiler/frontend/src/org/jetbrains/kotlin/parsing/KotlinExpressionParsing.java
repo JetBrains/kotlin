@@ -106,7 +106,6 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
 
             IDENTIFIER, // SimpleName
 
-            PACKAGE_KEYWORD, // for absolute qualified names
             AT // Just for better recovery and maybe for annotations
     );
 

@@ -37,14 +37,6 @@ public class KtUserType extends KtElementImplStub<KotlinUserTypeStub> implements
         super(stub, KtStubElementTypes.USER_TYPE);
     }
 
-    public boolean isAbsoluteInRootPackage() {
-        KotlinUserTypeStub stub = getStub();
-        if (stub != null) {
-            return stub.isAbsoluteInRootPackage();
-        }
-        return findChildByType(KtTokens.PACKAGE_KEYWORD) != null;
-    }
-
     @Override
     public <R, D> R accept(@NotNull KtVisitor<R, D> visitor, D data) {
         return visitor.visitUserType(this, data);
@@ -81,15 +73,6 @@ public class KtUserType extends KtElementImplStub<KotlinUserTypeStub> implements
     @Nullable
     public KtUserType getQualifier() {
         return getStubOrPsiChild(KtStubElementTypes.USER_TYPE);
-    }
-
-    public boolean hasTypesWithTypeArgsInside() {
-        for (KtUserType type : getStubOrPsiChildrenAsList(KtStubElementTypes.USER_TYPE)) {
-            if (!type.getTypeArguments().isEmpty() || type.hasTypesWithTypeArgsInside()) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public void deleteQualifier() {
