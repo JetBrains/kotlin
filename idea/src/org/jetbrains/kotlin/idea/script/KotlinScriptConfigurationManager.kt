@@ -27,7 +27,7 @@ import java.io.File
 @Suppress("unused") // project component
 class KotlinScriptConfigurationManager(project: Project,
                                        private val scriptDefinitionProvider: KotlinScriptDefinitionProvider,
-                                       private val scriptExtraImportsProvider: KotlinScriptExtraImportsProvider
+                                       scriptExtraImportsProvider: KotlinScriptExtraImportsProvider?
 ) : AbstractProjectComponent(project) {
 
     private val kotlinEnvVars: Map<String, List<String>> by lazy { generateKotlinScriptClasspathEnvVarsForIdea(myProject) }
@@ -43,8 +43,10 @@ class KotlinScriptConfigurationManager(project: Project,
                         if (!anyScriptDefinitionChanged && isScriptDefinitionConfigFile(it)) {
                             anyScriptDefinitionChanged = true
                         }
-                        if (scriptExtraImportsProvider.isExtraImportsConfig(it)) {
-                            scriptExtraImportsProvider.invalidateExtraImports(it)
+                        scriptExtraImportsProvider?.run {
+                            if (isExtraImportsConfig(it)) {
+                                invalidateExtraImports(it)
+                            }
                         }
                     }
                 }

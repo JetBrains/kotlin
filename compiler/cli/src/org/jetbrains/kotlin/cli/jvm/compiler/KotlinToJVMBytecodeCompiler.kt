@@ -17,10 +17,12 @@
 package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.intellij.openapi.util.io.JarUtil
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.asJava.FilteredJvmDiagnostics
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.*
@@ -49,6 +51,7 @@ import org.jetbrains.kotlin.name.isSubpackageOf
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
+import org.jetbrains.kotlin.script.getScriptDefinition
 import org.jetbrains.kotlin.util.PerformanceCounter
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
@@ -59,6 +62,12 @@ import java.lang.reflect.InvocationTargetException
 import java.net.URLClassLoader
 import java.util.concurrent.TimeUnit
 import java.util.jar.Attributes
+import kotlin.reflect.KClass
+import kotlin.reflect.KParameter
+import kotlin.reflect.KType
+import kotlin.reflect.defaultType
+import kotlin.reflect.jvm.javaMethod
+import kotlin.reflect.jvm.javaType
 
 object KotlinToJVMBytecodeCompiler {
 
@@ -213,11 +222,11 @@ object KotlinToJVMBytecodeCompiler {
             scriptArgs: List<String>): ExitCode
     {
         val scriptClass = compileScript(environment, paths) ?: return ExitCode.COMPILATION_ERROR
-        val scriptConstructor = getScriptConstructor(scriptClass)
 
         try {
             try {
-                scriptConstructor.newInstance(*arrayOf<Any>(scriptArgs.toTypedArray()))
+                tryConstructClass(scriptClass.kotlin, scriptArgs)
+                    ?: throw RuntimeException("unable to find appropriate constructor for class ${scriptClass.name} accepting arguments $scriptArgs")
             }
             finally {
                 // NB: these lines are required (see KT-9546) but aren't covered by tests
@@ -249,8 +258,63 @@ object KotlinToJVMBytecodeCompiler {
         }
     }
 
-    private fun getScriptConstructor(scriptClass: Class<*>): Constructor<*> =
-            scriptClass.getConstructor(Array<String>::class.java)
+    @TestOnly
+    fun tryConstructClassPub(scriptClass: KClass<out Any>, scriptArgs: List<String>): Any? = tryConstructClass(scriptClass, scriptArgs)
+
+    private fun tryConstructClass(scriptClass: KClass<out Any>, scriptArgs: List<String>): Any? {
+
+        fun convertPrimitive(type: KType?, arg: String): Any? =
+                when (type) {
+                    String::class.defaultType -> arg
+                    Int::class.defaultType -> arg.toInt()
+                    Long::class.defaultType -> arg.toLong()
+                    Short::class.defaultType -> arg.toShort()
+                    Byte::class.defaultType -> arg.toByte()
+                    Char::class.defaultType -> arg[0]
+                    Float::class.defaultType -> arg.toFloat()
+                    Double::class.defaultType -> arg.toDouble()
+                    Boolean::class.defaultType -> arg.toBoolean()
+                    else -> null
+                }
+
+        fun convertArray(type: KType?, args: List<String>): Any? =
+                when (type) {
+                    String::class.defaultType -> args.toTypedArray()
+                    Int::class.defaultType -> args.map { it.toInt() }.toTypedArray()
+                    Long::class.defaultType -> args.map { it.toLong() }.toTypedArray()
+                    Short::class.defaultType -> args.map { it.toShort() }.toTypedArray()
+                    Byte::class.defaultType -> args.map { it.toByte() }.toTypedArray()
+                    Char::class.defaultType -> args.map { it[0] }.toTypedArray()
+                    Float::class.defaultType -> args.map { it.toFloat() }.toTypedArray()
+                    Double::class.defaultType -> args.map { it.toDouble() }.toTypedArray()
+                    Boolean::class.defaultType -> args.map { it.toBoolean() }.toTypedArray()
+                    else -> null
+                }
+
+        fun foldingFunc(state: Pair<List<Any>, List<String>>, par: KParameter): Pair<List<Any>, List<String>> {
+            if (state.second.isNotEmpty()) {
+                try {
+                    val primArgCandidate = convertPrimitive(par.type, state.second.first())
+                    if (primArgCandidate != null)
+                        return Pair(state.first + primArgCandidate, state.second.drop(1))
+
+                    val arrayArgCandidate = convertArray((par.type.javaType as? Class<*>)?.componentType?.kotlin?.defaultType, state.second)
+                    if (arrayArgCandidate != null)
+                        return Pair(state.first + arrayArgCandidate, emptyList<String>())
+                }
+                catch (e: NumberFormatException) {
+                } // just skips to return below
+            }
+            return state
+        }
+
+        for (ctor in scriptClass.constructors) {
+            val (ctorArgs, scriptArgsLeft) = ctor.parameters.fold(Pair(emptyList<Any>(), scriptArgs), ::foldingFunc)
+            if (ctorArgs.size == ctor.parameters.size && scriptArgsLeft.isEmpty())
+                return ctor.call(*ctorArgs.toTypedArray())
+        }
+        return null
+    }
 
     fun compileScript(environment: KotlinCoreEnvironment, paths: KotlinPaths): Class<*>? =
             compileScript(environment,

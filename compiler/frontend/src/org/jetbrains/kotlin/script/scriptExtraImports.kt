@@ -56,7 +56,7 @@ fun loadScriptExtraImportConfigs(configStream: InputStream): List<KotlinScriptEx
         }
 
 class KotlinScriptExtraImportFromConfig(val config : KotlinScriptExtraImportConfig, val envVars: Map<String, List<String>>) : KotlinScriptExtraImport {
-    override val classpath: List<String> by lazy { config.classpath.evalDistinctWith(envVars) }
+    override val classpath: List<String> by lazy { config.classpath.evalWithVars(envVars).distinct() }
     override val names: List<String>
         get() = config.names
 }
