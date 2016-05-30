@@ -55,7 +55,7 @@ class DeserializedSimpleFunctionDescriptor(
 ) : DeserializedCallableMemberDescriptor,
     SimpleFunctionDescriptorImpl(
                 containingDeclaration, original, annotations, name, kind,
-                source ?: org.jetbrains.kotlin.descriptors.SourceElement.NO_SOURCE) {
+                source ?: SourceElement.NO_SOURCE) {
 
     override fun createSubstitutedCopy(
             newOwner: DeclarationDescriptor,
@@ -114,9 +114,10 @@ class DeserializedConstructorDescriptor(
         override val proto: ProtoBuf.Constructor,
         override val nameResolver: NameResolver,
         override val typeTable: TypeTable,
-        override val containerSource: SourceElement?
+        override val containerSource: SourceElement?,
+        source: SourceElement? = null
 ) : DeserializedCallableMemberDescriptor,
-        ConstructorDescriptorImpl(containingDeclaration, original, annotations, isPrimary, kind, SourceElement.NO_SOURCE) {
+        ConstructorDescriptorImpl(containingDeclaration, original, annotations, isPrimary, kind, source ?: SourceElement.NO_SOURCE) {
 
     override fun createSubstitutedCopy(
             newOwner: DeclarationDescriptor,
@@ -128,7 +129,7 @@ class DeserializedConstructorDescriptor(
     ): DeserializedConstructorDescriptor {
         return DeserializedConstructorDescriptor(
                 newOwner as ClassDescriptor, original as ConstructorDescriptor?, annotations, isPrimary, kind,
-                proto, nameResolver, typeTable, source
+                proto, nameResolver, typeTable, containerSource, source
         )
     }
 
