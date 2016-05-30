@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
+import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import java.util.*
 
@@ -1349,7 +1350,16 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
 
         override fun visitDoubleColonExpression(expression: KtDoubleColonExpression) {
             mark(expression)
-            createNonSyntheticValue(expression, MagicKind.CALLABLE_REFERENCE)
+            val receiverExpression = expression.receiverExpression
+            if (receiverExpression != null &&
+                trace.bindingContext.get(BindingContext.DOUBLE_COLON_LHS, receiverExpression) is DoubleColonLHS.Expression) {
+                // TODO: UNUSED_EXPRESSION is not reported on the whole expression, see KT-12551
+                generateInstructions(receiverExpression)
+                createSyntheticValue(expression, MagicKind.BOUND_CALLABLE_REFERENCE, receiverExpression)
+            }
+            else {
+                createNonSyntheticValue(expression, MagicKind.UNBOUND_CALLABLE_REFERENCE)
+            }
         }
 
         override fun visitKtElement(element: KtElement) {
