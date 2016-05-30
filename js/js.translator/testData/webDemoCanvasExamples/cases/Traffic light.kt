@@ -174,7 +174,7 @@ class TrafficLight(override var pos: Vector, val direction: String, val startCol
     var timer = Timer(Vector(pos.x + 6, pos.y + 12))
     var currentColor = startColor;
     var isForceColorChange = false
-    var changeColorForward = (startColor == "red")
+    private var changeColorForward = (startColor == "red")
 
     init {
         list.add(TrafficLightItem(v(pos.x, pos.y), PATH_TO_IMAGES + "red_color.png"))
