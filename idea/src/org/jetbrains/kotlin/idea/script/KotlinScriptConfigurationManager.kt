@@ -36,7 +36,7 @@ class KotlinScriptConfigurationManager(project: Project, scriptDefinitionProvide
     init {
         loadScriptDefinitionsFromDirectoryWithConfigs(File(project.basePath ?: "."), kotlinEnvVars).let {
             if (it.isNotEmpty()) {
-                scriptDefinitionProvider.setScriptDefinitions(it + StandardScriptDefinition)
+                scriptDefinitionProvider.scriptDefinitions = it + StandardScriptDefinition
             }
         }
     }
