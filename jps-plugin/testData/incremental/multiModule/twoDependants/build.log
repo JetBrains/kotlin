@@ -11,7 +11,7 @@ Compiling files:
 End of files
 Exit code: OK
 ------------------------------------------
-Building module2
+Building module3
 Cleaning output files:
   out/production/module3/META-INF/module3.kotlin_module
   out/production/module3/c/CKt.class
@@ -21,7 +21,7 @@ Compiling files:
 End of files
 Exit code: OK
 ------------------------------------------
-Building module3
+Building module2
 Cleaning output files:
   out/production/module2/META-INF/module2.kotlin_module
   out/production/module2/b/BKt.class
