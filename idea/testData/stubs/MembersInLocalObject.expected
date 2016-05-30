@@ -9,5 +9,5 @@ PsiJetFileStubImpl[package=]
           VALUE_PARAMETER_LIST:
         PROPERTY:[fqName=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=foo]
           TYPE_REFERENCE:
-            USER_TYPE:[isAbsoluteInRootPackage=false]
+            USER_TYPE:
               REFERENCE_EXPRESSION:[referencedName=Int]

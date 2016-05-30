@@ -14,16 +14,16 @@ PsiJetFileStubImpl[package=test]
           PROPERTY:[fqName=test.NamedCompanionObject.Named.j, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=j]
             MODIFIER_LIST:[public final]
             TYPE_REFERENCE:
-              USER_TYPE:[isAbsoluteInRootPackage=false]
-                USER_TYPE:[isAbsoluteInRootPackage=false]
+              USER_TYPE:
+                USER_TYPE:
                   REFERENCE_EXPRESSION:[referencedName=kotlin]
                 REFERENCE_EXPRESSION:[referencedName=Int]
           FUN:[fqName=test.NamedCompanionObject.Named.z, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=z]
             MODIFIER_LIST:[public final]
             VALUE_PARAMETER_LIST:
             TYPE_REFERENCE:
-              USER_TYPE:[isAbsoluteInRootPackage=false]
-                USER_TYPE:[isAbsoluteInRootPackage=false]
+              USER_TYPE:
+                USER_TYPE:
                   REFERENCE_EXPRESSION:[referencedName=kotlin]
                 REFERENCE_EXPRESSION:[referencedName=Int]
           CLASS:[fqName=test.NamedCompanionObject.Named.A, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[]]
@@ -41,31 +41,31 @@ PsiJetFileStubImpl[package=test]
                   PROPERTY:[fqName=test.NamedCompanionObject.Named.A.B.i, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=i]
                     MODIFIER_LIST:[public final]
                     TYPE_REFERENCE:
-                      USER_TYPE:[isAbsoluteInRootPackage=false]
-                        USER_TYPE:[isAbsoluteInRootPackage=false]
+                      USER_TYPE:
+                        USER_TYPE:
                           REFERENCE_EXPRESSION:[referencedName=kotlin]
                         REFERENCE_EXPRESSION:[referencedName=Int]
                   FUN:[fqName=test.NamedCompanionObject.Named.A.B.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=f]
                     MODIFIER_LIST:[public final]
                     VALUE_PARAMETER_LIST:
                     TYPE_REFERENCE:
-                      USER_TYPE:[isAbsoluteInRootPackage=false]
-                        USER_TYPE:[isAbsoluteInRootPackage=false]
+                      USER_TYPE:
+                        USER_TYPE:
                           REFERENCE_EXPRESSION:[referencedName=kotlin]
                         REFERENCE_EXPRESSION:[referencedName=Int]
       PROPERTY:[fqName=test.NamedCompanionObject.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
         MODIFIER_LIST:[public final]
         TYPE_REFERENCE:
-          USER_TYPE:[isAbsoluteInRootPackage=false]
-            USER_TYPE:[isAbsoluteInRootPackage=false]
+          USER_TYPE:
+            USER_TYPE:
               REFERENCE_EXPRESSION:[referencedName=kotlin]
             REFERENCE_EXPRESSION:[referencedName=Int]
       FUN:[fqName=test.NamedCompanionObject.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=f]
         MODIFIER_LIST:[public final]
         VALUE_PARAMETER_LIST:
         TYPE_REFERENCE:
-          USER_TYPE:[isAbsoluteInRootPackage=false]
-            USER_TYPE:[isAbsoluteInRootPackage=false]
+          USER_TYPE:
+            USER_TYPE:
               REFERENCE_EXPRESSION:[referencedName=kotlin]
             REFERENCE_EXPRESSION:[referencedName=Unit]
       CLASS:[fqName=test.NamedCompanionObject.B, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[]]
@@ -98,16 +98,16 @@ PsiJetFileStubImpl[package=test]
                               PROPERTY:[fqName=test.NamedCompanionObject.B.NamedInB.C.NamedInC.D.Companion.i, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=i]
                                 MODIFIER_LIST:[public final]
                                 TYPE_REFERENCE:
-                                  USER_TYPE:[isAbsoluteInRootPackage=false]
-                                    USER_TYPE:[isAbsoluteInRootPackage=false]
+                                  USER_TYPE:
+                                    USER_TYPE:
                                       REFERENCE_EXPRESSION:[referencedName=kotlin]
                                     REFERENCE_EXPRESSION:[referencedName=Int]
                               FUN:[fqName=test.NamedCompanionObject.B.NamedInB.C.NamedInC.D.Companion.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=f]
                                 MODIFIER_LIST:[public final]
                                 VALUE_PARAMETER_LIST:
                                 TYPE_REFERENCE:
-                                  USER_TYPE:[isAbsoluteInRootPackage=false]
-                                    USER_TYPE:[isAbsoluteInRootPackage=false]
+                                  USER_TYPE:
+                                    USER_TYPE:
                                       REFERENCE_EXPRESSION:[referencedName=kotlin]
                                     REFERENCE_EXPRESSION:[referencedName=Unit]
                               CLASS:[fqName=test.NamedCompanionObject.B.NamedInB.C.NamedInC.D.Companion.Anno, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Anno, superNames=[Annotation]]
@@ -118,8 +118,8 @@ PsiJetFileStubImpl[package=test]
                                 SUPER_TYPE_LIST:
                                   SUPER_TYPE_ENTRY:
                                     TYPE_REFERENCE:
-                                      USER_TYPE:[isAbsoluteInRootPackage=false]
-                                        USER_TYPE:[isAbsoluteInRootPackage=false]
+                                      USER_TYPE:
+                                        USER_TYPE:
                                           REFERENCE_EXPRESSION:[referencedName=kotlin]
                                         REFERENCE_EXPRESSION:[referencedName=Annotation]
                                 CLASS_BODY:
@@ -131,22 +131,22 @@ PsiJetFileStubImpl[package=test]
                                 SUPER_TYPE_LIST:
                                   SUPER_TYPE_ENTRY:
                                     TYPE_REFERENCE:
-                                      USER_TYPE:[isAbsoluteInRootPackage=false]
-                                        USER_TYPE:[isAbsoluteInRootPackage=false]
+                                      USER_TYPE:
+                                        USER_TYPE:
                                           REFERENCE_EXPRESSION:[referencedName=kotlin]
                                         REFERENCE_EXPRESSION:[referencedName=Enum]
                                         TYPE_ARGUMENT_LIST:
                                           TYPE_PROJECTION:[projectionKind=NONE]
                                             TYPE_REFERENCE:
-                                              USER_TYPE:[isAbsoluteInRootPackage=false]
-                                                USER_TYPE:[isAbsoluteInRootPackage=false]
-                                                  USER_TYPE:[isAbsoluteInRootPackage=false]
-                                                    USER_TYPE:[isAbsoluteInRootPackage=false]
-                                                      USER_TYPE:[isAbsoluteInRootPackage=false]
-                                                        USER_TYPE:[isAbsoluteInRootPackage=false]
-                                                          USER_TYPE:[isAbsoluteInRootPackage=false]
-                                                            USER_TYPE:[isAbsoluteInRootPackage=false]
-                                                              USER_TYPE:[isAbsoluteInRootPackage=false]
+                                              USER_TYPE:
+                                                USER_TYPE:
+                                                  USER_TYPE:
+                                                    USER_TYPE:
+                                                      USER_TYPE:
+                                                        USER_TYPE:
+                                                          USER_TYPE:
+                                                            USER_TYPE:
+                                                              USER_TYPE:
                                                                 REFERENCE_EXPRESSION:[referencedName=test]
                                                               REFERENCE_EXPRESSION:[referencedName=NamedCompanionObject]
                                                             REFERENCE_EXPRESSION:[referencedName=B]

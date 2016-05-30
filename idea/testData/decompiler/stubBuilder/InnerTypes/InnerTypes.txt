@@ -16,45 +16,45 @@ PsiJetFileStubImpl[package=test]
         VALUE_PARAMETER_LIST:
           VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
             TYPE_REFERENCE:
-              USER_TYPE:[isAbsoluteInRootPackage=false]
-                USER_TYPE:[isAbsoluteInRootPackage=false]
-                  USER_TYPE:[isAbsoluteInRootPackage=false]
+              USER_TYPE:
+                USER_TYPE:
+                  USER_TYPE:
                     REFERENCE_EXPRESSION:[referencedName=test]
                   REFERENCE_EXPRESSION:[referencedName=InnerTypes]
                   TYPE_ARGUMENT_LIST:
                     TYPE_PROJECTION:[projectionKind=NONE]
                       TYPE_REFERENCE:
-                        USER_TYPE:[isAbsoluteInRootPackage=false]
-                          USER_TYPE:[isAbsoluteInRootPackage=false]
+                        USER_TYPE:
+                          USER_TYPE:
                             REFERENCE_EXPRESSION:[referencedName=kotlin]
                           REFERENCE_EXPRESSION:[referencedName=String]
                     TYPE_PROJECTION:[projectionKind=NONE]
                       TYPE_REFERENCE:
-                        USER_TYPE:[isAbsoluteInRootPackage=false]
-                          USER_TYPE:[isAbsoluteInRootPackage=false]
+                        USER_TYPE:
+                          USER_TYPE:
                             REFERENCE_EXPRESSION:[referencedName=kotlin]
                           REFERENCE_EXPRESSION:[referencedName=Double]
                 REFERENCE_EXPRESSION:[referencedName=Inner2]
           VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=y]
             TYPE_REFERENCE:
-              USER_TYPE:[isAbsoluteInRootPackage=false]
-                USER_TYPE:[isAbsoluteInRootPackage=false]
-                  USER_TYPE:[isAbsoluteInRootPackage=false]
+              USER_TYPE:
+                USER_TYPE:
+                  USER_TYPE:
                     REFERENCE_EXPRESSION:[referencedName=test]
                   REFERENCE_EXPRESSION:[referencedName=InnerTypes]
                   TYPE_ARGUMENT_LIST:
                     TYPE_PROJECTION:[projectionKind=NONE]
                       TYPE_REFERENCE:
-                        USER_TYPE:[isAbsoluteInRootPackage=false]
+                        USER_TYPE:
                           REFERENCE_EXPRESSION:[referencedName=E]
                     TYPE_PROJECTION:[projectionKind=NONE]
                       TYPE_REFERENCE:
-                        USER_TYPE:[isAbsoluteInRootPackage=false]
+                        USER_TYPE:
                           REFERENCE_EXPRESSION:[referencedName=F]
                 REFERENCE_EXPRESSION:[referencedName=Inner2]
         TYPE_REFERENCE:
-          USER_TYPE:[isAbsoluteInRootPackage=false]
-            USER_TYPE:[isAbsoluteInRootPackage=false]
+          USER_TYPE:
+            USER_TYPE:
               REFERENCE_EXPRESSION:[referencedName=kotlin]
             REFERENCE_EXPRESSION:[referencedName=Unit]
       CLASS:[fqName=test.InnerTypes.Inner, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner, superNames=[]]
@@ -79,134 +79,134 @@ PsiJetFileStubImpl[package=test]
                 VALUE_PARAMETER_LIST:
                   VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
                     TYPE_REFERENCE:
-                      USER_TYPE:[isAbsoluteInRootPackage=false]
-                        USER_TYPE:[isAbsoluteInRootPackage=false]
-                          USER_TYPE:[isAbsoluteInRootPackage=false]
+                      USER_TYPE:
+                        USER_TYPE:
+                          USER_TYPE:
                             REFERENCE_EXPRESSION:[referencedName=test]
                           REFERENCE_EXPRESSION:[referencedName=InnerTypes]
                           TYPE_ARGUMENT_LIST:
                             TYPE_PROJECTION:[projectionKind=NONE]
                               TYPE_REFERENCE:
-                                USER_TYPE:[isAbsoluteInRootPackage=false]
-                                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                                USER_TYPE:
+                                  USER_TYPE:
                                     REFERENCE_EXPRESSION:[referencedName=kotlin]
                                   REFERENCE_EXPRESSION:[referencedName=String]
                             TYPE_PROJECTION:[projectionKind=NONE]
                               TYPE_REFERENCE:
-                                USER_TYPE:[isAbsoluteInRootPackage=false]
+                                USER_TYPE:
                                   REFERENCE_EXPRESSION:[referencedName=F]
                         REFERENCE_EXPRESSION:[referencedName=Inner]
                         TYPE_ARGUMENT_LIST:
                           TYPE_PROJECTION:[projectionKind=NONE]
                             TYPE_REFERENCE:
-                              USER_TYPE:[isAbsoluteInRootPackage=false]
+                              USER_TYPE:
                                 REFERENCE_EXPRESSION:[referencedName=G]
                           TYPE_PROJECTION:[projectionKind=NONE]
                             TYPE_REFERENCE:
-                              USER_TYPE:[isAbsoluteInRootPackage=false]
-                                USER_TYPE:[isAbsoluteInRootPackage=false]
+                              USER_TYPE:
+                                USER_TYPE:
                                   REFERENCE_EXPRESSION:[referencedName=kotlin]
                                 REFERENCE_EXPRESSION:[referencedName=Int]
                   VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=y]
                     TYPE_REFERENCE:
-                      USER_TYPE:[isAbsoluteInRootPackage=false]
-                        USER_TYPE:[isAbsoluteInRootPackage=false]
-                          USER_TYPE:[isAbsoluteInRootPackage=false]
+                      USER_TYPE:
+                        USER_TYPE:
+                          USER_TYPE:
                             REFERENCE_EXPRESSION:[referencedName=test]
                           REFERENCE_EXPRESSION:[referencedName=InnerTypes]
                           TYPE_ARGUMENT_LIST:
                             TYPE_PROJECTION:[projectionKind=NONE]
                               TYPE_REFERENCE:
-                                USER_TYPE:[isAbsoluteInRootPackage=false]
+                                USER_TYPE:
                                   REFERENCE_EXPRESSION:[referencedName=E]
                             TYPE_PROJECTION:[projectionKind=NONE]
                               TYPE_REFERENCE:
-                                USER_TYPE:[isAbsoluteInRootPackage=false]
+                                USER_TYPE:
                                   REFERENCE_EXPRESSION:[referencedName=F]
                         REFERENCE_EXPRESSION:[referencedName=Inner]
                         TYPE_ARGUMENT_LIST:
                           TYPE_PROJECTION:[projectionKind=NONE]
                             TYPE_REFERENCE:
-                              USER_TYPE:[isAbsoluteInRootPackage=false]
+                              USER_TYPE:
                                 REFERENCE_EXPRESSION:[referencedName=E]
                           TYPE_PROJECTION:[projectionKind=NONE]
                             TYPE_REFERENCE:
-                              USER_TYPE:[isAbsoluteInRootPackage=false]
-                                USER_TYPE:[isAbsoluteInRootPackage=false]
+                              USER_TYPE:
+                                USER_TYPE:
                                   REFERENCE_EXPRESSION:[referencedName=kotlin]
                                 REFERENCE_EXPRESSION:[referencedName=Double]
                   VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=z]
                     TYPE_REFERENCE:
-                      USER_TYPE:[isAbsoluteInRootPackage=false]
-                        USER_TYPE:[isAbsoluteInRootPackage=false]
-                          USER_TYPE:[isAbsoluteInRootPackage=false]
-                            USER_TYPE:[isAbsoluteInRootPackage=false]
+                      USER_TYPE:
+                        USER_TYPE:
+                          USER_TYPE:
+                            USER_TYPE:
                               REFERENCE_EXPRESSION:[referencedName=test]
                             REFERENCE_EXPRESSION:[referencedName=InnerTypes]
                             TYPE_ARGUMENT_LIST:
                               TYPE_PROJECTION:[projectionKind=NONE]
                                 TYPE_REFERENCE:
-                                  USER_TYPE:[isAbsoluteInRootPackage=false]
-                                    USER_TYPE:[isAbsoluteInRootPackage=false]
+                                  USER_TYPE:
+                                    USER_TYPE:
                                       REFERENCE_EXPRESSION:[referencedName=kotlin]
                                     REFERENCE_EXPRESSION:[referencedName=String]
                               TYPE_PROJECTION:[projectionKind=NONE]
                                 TYPE_REFERENCE:
-                                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                                  USER_TYPE:
                                     REFERENCE_EXPRESSION:[referencedName=F]
                           REFERENCE_EXPRESSION:[referencedName=Inner]
                           TYPE_ARGUMENT_LIST:
                             TYPE_PROJECTION:[projectionKind=NONE]
                               TYPE_REFERENCE:
-                                USER_TYPE:[isAbsoluteInRootPackage=false]
+                                USER_TYPE:
                                   REFERENCE_EXPRESSION:[referencedName=G]
                             TYPE_PROJECTION:[projectionKind=NONE]
                               TYPE_REFERENCE:
-                                USER_TYPE:[isAbsoluteInRootPackage=false]
-                                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                                USER_TYPE:
+                                  USER_TYPE:
                                     REFERENCE_EXPRESSION:[referencedName=kotlin]
                                   REFERENCE_EXPRESSION:[referencedName=Int]
                         REFERENCE_EXPRESSION:[referencedName=Inner3]
                         TYPE_ARGUMENT_LIST:
                           TYPE_PROJECTION:[projectionKind=NONE]
                             TYPE_REFERENCE:
-                              USER_TYPE:[isAbsoluteInRootPackage=false]
-                                USER_TYPE:[isAbsoluteInRootPackage=false]
+                              USER_TYPE:
+                                USER_TYPE:
                                   REFERENCE_EXPRESSION:[referencedName=kotlin]
                                 REFERENCE_EXPRESSION:[referencedName=Double]
                   VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=w]
                     TYPE_REFERENCE:
-                      USER_TYPE:[isAbsoluteInRootPackage=false]
-                        USER_TYPE:[isAbsoluteInRootPackage=false]
-                          USER_TYPE:[isAbsoluteInRootPackage=false]
-                            USER_TYPE:[isAbsoluteInRootPackage=false]
+                      USER_TYPE:
+                        USER_TYPE:
+                          USER_TYPE:
+                            USER_TYPE:
                               REFERENCE_EXPRESSION:[referencedName=test]
                             REFERENCE_EXPRESSION:[referencedName=InnerTypes]
                             TYPE_ARGUMENT_LIST:
                               TYPE_PROJECTION:[projectionKind=NONE]
                                 TYPE_REFERENCE:
-                                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                                  USER_TYPE:
                                     REFERENCE_EXPRESSION:[referencedName=E]
                               TYPE_PROJECTION:[projectionKind=NONE]
                                 TYPE_REFERENCE:
-                                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                                  USER_TYPE:
                                     REFERENCE_EXPRESSION:[referencedName=F]
                           REFERENCE_EXPRESSION:[referencedName=Inner]
                           TYPE_ARGUMENT_LIST:
                             TYPE_PROJECTION:[projectionKind=NONE]
                               TYPE_REFERENCE:
-                                USER_TYPE:[isAbsoluteInRootPackage=false]
+                                USER_TYPE:
                                   REFERENCE_EXPRESSION:[referencedName=G]
                             TYPE_PROJECTION:[projectionKind=NONE]
                               TYPE_REFERENCE:
-                                USER_TYPE:[isAbsoluteInRootPackage=false]
+                                USER_TYPE:
                                   REFERENCE_EXPRESSION:[referencedName=H]
                         REFERENCE_EXPRESSION:[referencedName=Inner3]
                         TYPE_ARGUMENT_LIST:
                           TYPE_PROJECTION:[projectionKind=STAR]
                 TYPE_REFERENCE:
-                  USER_TYPE:[isAbsoluteInRootPackage=false]
-                    USER_TYPE:[isAbsoluteInRootPackage=false]
+                  USER_TYPE:
+                    USER_TYPE:
                       REFERENCE_EXPRESSION:[referencedName=kotlin]
                     REFERENCE_EXPRESSION:[referencedName=Unit]
       CLASS:[fqName=test.InnerTypes.Inner2, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner2, superNames=[]]
