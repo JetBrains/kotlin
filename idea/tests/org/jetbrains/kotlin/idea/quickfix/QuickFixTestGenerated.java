@@ -5101,6 +5101,63 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/leakingThis")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class LeakingThis extends AbstractQuickFixTest {
+        @TestMetadata("accessOpenProperty.kt")
+        public void testAccessOpenProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/leakingThis/accessOpenProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("accessOpenPropertyClass.kt")
+        public void testAccessOpenPropertyClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/leakingThis/accessOpenPropertyClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("accessOverriddenProperty.kt")
+        public void testAccessOverriddenProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/leakingThis/accessOverriddenProperty.kt");
+            doTest(fileName);
+        }
+
+        public void testAllFilesPresentInLeakingThis() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/leakingThis"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("callOpenMethod.kt")
+        public void testCallOpenMethod() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/leakingThis/callOpenMethod.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("callOpenMethodClass.kt")
+        public void testCallOpenMethodClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/leakingThis/callOpenMethodClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inAbstract.kt")
+        public void testInAbstract() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/leakingThis/inAbstract.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inNonFinal.kt")
+        public void testInNonFinal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/leakingThis/inNonFinal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inOverridden.kt")
+        public void testInOverridden() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/leakingThis/inOverridden.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/libraries")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
