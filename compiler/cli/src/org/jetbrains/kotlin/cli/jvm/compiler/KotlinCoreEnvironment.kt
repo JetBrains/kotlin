@@ -91,6 +91,7 @@ import org.jetbrains.kotlin.script.*
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.ifEmpty
 import java.io.File
+import java.io.FileNotFoundException
 import java.util.*
 
 class KotlinCoreEnvironment private constructor(
@@ -149,6 +150,12 @@ class KotlinCoreEnvironment private constructor(
                             })
 
             KotlinScriptExtraImportsProvider.getInstance(project)?.run {
+                configuration.getMap(JVMConfigurationKeys.SCRIPTS_EXTRA_IMPORTS).entries.forEach {
+                    val localFile = applicationEnvironment.localFileSystem.findFileByPath(it.key)
+                                    ?: throw FileNotFoundException("Unable to find target for extra imports: ${it.key}")
+                    preconfigureExtraImports(localFile, kotlin.collections.listOf(it.value))
+                }
+
                 configuration.addJvmClasspathRoots(
                         getCombinedClasspathFor(sourceFiles.mapNotNull { src -> src.virtualFile })
                                 .map { File(it).canonicalFile }

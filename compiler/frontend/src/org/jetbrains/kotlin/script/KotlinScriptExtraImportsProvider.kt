@@ -25,11 +25,14 @@ import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
 
+// TODO: replace VirtualFile usage with File for performance/unnecessary dependencies reasons
+
 class KotlinScriptExtraImportsProvider(val project: Project, private val scriptDefinitionProvider: KotlinScriptDefinitionProvider) {
     private val cacheLock = ReentrantReadWriteLock()
-    private val cache = hashMapOf<VirtualFile, List<KotlinScriptExtraImport>>()
+    private val preconfigured = hashMapOf<String, List<KotlinScriptExtraImport>>()
+    private val cache = hashMapOf<String, List<KotlinScriptExtraImport>>()
     private val envVars: Map<String, List<String>> by lazy { generateKotlinScriptClasspathEnvVars(project) }
-    private val notificationHandlers = ArrayList<(Iterable<VirtualFile>) -> Unit>()
+    private val notificationHandlers = ArrayList<(Iterable<String>) -> Unit>()
     private val handlersLock = java.util.concurrent.locks.ReentrantReadWriteLock()
 
     init {
@@ -42,19 +45,20 @@ class KotlinScriptExtraImportsProvider(val project: Project, private val scriptD
     fun getExtraImports(vararg files: VirtualFile): List<KotlinScriptExtraImport> = getExtraImports(files.asIterable())
 
     fun getExtraImports(files: Iterable<VirtualFile>): List<KotlinScriptExtraImport> {
-        val newCashedFiles = ArrayList<VirtualFile>()
+        val newCashedFiles = ArrayList<String>()
         val res = cacheLock.read {
             files.flatMap { file ->
                 if (file.isValid && !file.isDirectory) {
-                    cache[file]
+                    preconfigured[file.path]
+                    ?: cache[file.path]
                     ?: scriptDefinitionProvider.findScriptDefinition(file)?.let { def ->
                         (listOf(KotlinScriptExtraImportFromDefinition(def)) +
                          (file.parent.findFileByRelativePath(file.name + IMPORTS_FILE_EXTENSION)?.let {
                              loadScriptExtraImportConfigs(it.inputStream).map { KotlinScriptExtraImportFromConfig(it, envVars) }
                          } ?: emptyList()))
                                 .apply {
-                                    cacheLock.write { cache.put(file, this) }
-                                    newCashedFiles.add(file)
+                                    cacheLock.write { cache.put(file.path, this) }
+                                    newCashedFiles.add(file.path)
                                 }
                     }
                     ?: emptyList()
@@ -66,10 +70,21 @@ class KotlinScriptExtraImportsProvider(val project: Project, private val scriptD
         return res
     }
 
+    fun preconfigureExtraImports(file: VirtualFile, extraImports: List<KotlinScriptExtraImport>?) {
+        cacheLock.write {
+            if (extraImports != null && extraImports.isNotEmpty()) {
+                preconfigured[file.path] = extraImports
+            }
+            else {
+                preconfigured.remove(file.path)
+            }
+        }
+    }
+
     fun invalidateExtraImportsByImportsFiles(importsFiles: Iterable<VirtualFile>) {
-        importsFiles.mapNotNull { it.parent.findFileByRelativePath(it.name.removeSuffix(IMPORTS_FILE_EXTENSION))?.let { file ->
+        importsFiles.mapNotNull { it.parent.findFileByRelativePath(it.name.removeSuffix(IMPORTS_FILE_EXTENSION))?.path?.let { file ->
             cacheLock.write {
-                 cache.remove(it)?.let { file }
+                 cache.remove(it.path)?.let { file }
             }
         } }.let {
             notifyIfAny(it)
@@ -86,7 +101,7 @@ class KotlinScriptExtraImportsProvider(val project: Project, private val scriptD
         }
     }
 
-    private fun notifyIfAny(files: Iterable<VirtualFile>) {
+    private fun notifyIfAny(files: Iterable<String>) {
         if (files.any()) {
             handlersLock.read {
                 notificationHandlers.forEach { it(files) }
@@ -103,7 +118,7 @@ class KotlinScriptExtraImportsProvider(val project: Project, private val scriptD
                 .flatMap { it.classpath }
                 .distinct()
 
-    fun subscribeOnExtraImportsChanged(handler: (Iterable<VirtualFile>) -> Unit): Unit {
+    fun subscribeOnExtraImportsChanged(handler: (Iterable<String>) -> Unit): Unit {
         handlersLock.write { notificationHandlers.add(handler) }
     }
 

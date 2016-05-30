@@ -19,9 +19,11 @@ package org.jetbrains.kotlin.config;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents;
 import org.jetbrains.kotlin.modules.Module;
 import org.jetbrains.kotlin.script.KotlinScriptDefinition;
+import org.jetbrains.kotlin.script.KotlinScriptExtraImport;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 public class JVMConfigurationKeys {
     private JVMConfigurationKeys() {
@@ -40,6 +42,9 @@ public class JVMConfigurationKeys {
 
     public static final CompilerConfigurationKey<List<KotlinScriptDefinition>> SCRIPT_DEFINITIONS =
             CompilerConfigurationKey.create("script definitions");
+
+    public static final CompilerConfigurationKey<Map<String, KotlinScriptExtraImport>> SCRIPTS_EXTRA_IMPORTS =
+            CompilerConfigurationKey.create("scripts extra imports");
 
     public static final CompilerConfigurationKey<Boolean> DISABLE_CALL_ASSERTIONS =
             CompilerConfigurationKey.create("disable not-null call assertions");
