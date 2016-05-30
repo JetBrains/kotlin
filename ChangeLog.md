@@ -40,6 +40,10 @@
 
 - Reduced number of IO operation when loading kotlin compiled classes
 
+#### Command line compiler
+
+- Support `-language-version` command line option for source compatibility with older releases
+
 ### Stdlib
 
 - Improve documentation (including [`KT-11632`](https://youtrack.jetbrains.com/issue/KT-11632))
