@@ -187,4 +187,8 @@ public final class ClosureTest extends SingleFileTranslationTest {
     public void testClosureThisInLambdaInsideObject() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testLambdaInLocalFun() throws Exception {
+        checkFooBoxIsOk();
+    }
 }
