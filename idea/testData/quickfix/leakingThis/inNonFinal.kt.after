@@ -1,0 +1,9 @@
+// "Make 'My' final" "true"
+
+class My {
+    init {
+        register(this)
+    }
+}
+
+fun register(my: My) {}
