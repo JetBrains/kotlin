@@ -4,9 +4,9 @@
     <property name="ideaVersion" value="2016.1"/>
     <property name="idea.kotlin.branch" value="rc"/>
 
-    <property name="android.studio.version" value="2.2.0.0"/>
-    <property name="android.studio.build.number" value="145.2878421"/>
-    <property name="android.studio.intellij-core.build.number" value="145.972.3"/>
+    <property name="android.studio.version" value="2.2.0.1"/>
+    <property name="android.studio.build.number" value="145.2915834"/>
+    <property name="android.studio.intellij-core.build.number" value="145.597.3"/>
 
     <property name="kotlin.bootstrap.branch" value="1.0.3"/>
     <property name="kotlin.bootstrap.branch.locator" value=",branch:1.0.3"/>
