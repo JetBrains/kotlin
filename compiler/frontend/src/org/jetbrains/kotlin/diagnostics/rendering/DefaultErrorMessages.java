@@ -40,7 +40,7 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.diagnostics.rendering.Renderers.*;
-import static org.jetbrains.kotlin.diagnostics.rendering.RenderingContext.*;
+import static org.jetbrains.kotlin.diagnostics.rendering.RenderingContext.of;
 
 public class DefaultErrorMessages {
 
@@ -733,7 +733,6 @@ public class DefaultErrorMessages {
         MAP.put(CALLABLE_REFERENCE_TO_MEMBER_OR_EXTENSION_WITH_EMPTY_LHS,
                 "Left-hand side of a callable reference with a receiver parameter cannot be empty. " +
                 "Please specify the type of the receiver before '::' explicitly");
-        MAP.put(CALLABLE_REFERENCE_TO_OBJECT_MEMBER, "Callable references to object members are not supported");
         MAP.put(CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR, "Annotation class cannot be instantiated");
 
         MAP.put(CLASS_LITERAL_LHS_NOT_A_CLASS, "Only classes are allowed on the left hand side of a class literal");

@@ -10,10 +10,8 @@ public final class A {
 
     public companion object Companion {
         private constructor Companion()
-        public final val bar: kotlin.Int = 2
         public final val kotlin.String.ext2: kotlin.String
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public final fun foo(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
@@ -21,10 +19,8 @@ public final class A {
 
 public object Obj {
     private constructor Obj()
-    public final val bar: kotlin.Int = 2
     public final val kotlin.String.ext: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public final fun foo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

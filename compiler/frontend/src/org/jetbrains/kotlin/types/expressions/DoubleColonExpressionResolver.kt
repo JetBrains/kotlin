@@ -27,14 +27,17 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.callableReferences.createReflectionTypeForResolvedCallableReference
 import org.jetbrains.kotlin.resolve.callableReferences.resolvePossiblyAmbiguousCallableReference
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil
+import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.KotlinTypeImpl
@@ -138,11 +141,22 @@ class DoubleColonExpressionResolver(
             val contextForExpr = c.replaceTraceAndCache(traceForExpr)
             val typeInfo = expressionTypingServices.getTypeInfo(expression, contextForExpr)
             val type = typeInfo.type
-            // TODO (!!!): it's wrong to only check type, should check that there's a companion qualifier
-            if (type != null && !DescriptorUtils.isCompanionObject(type.constructor.declarationDescriptor)) {
-                traceForExpr.commit()
-                return DoubleColonLHS.Expression(typeInfo).apply {
-                    c.trace.record(BindingContext.DOUBLE_COLON_LHS, expression, this)
+
+            if (type != null) {
+                val call = traceForExpr.trace.bindingContext[BindingContext.CALL, expression.getQualifiedElementSelector()]
+                val resolvedCall = call.getResolvedCall(traceForExpr.trace.bindingContext)
+                val implicitReferenceToCompanion =
+                        resolvedCall != null &&
+                        resolvedCall.resultingDescriptor.let { result ->
+                            result is FakeCallableDescriptorForObject &&
+                            result.classDescriptor.companionObjectDescriptor != null
+                        }
+
+                if (!implicitReferenceToCompanion) {
+                    traceForExpr.commit()
+                    return DoubleColonLHS.Expression(typeInfo).apply {
+                        c.trace.record(BindingContext.DOUBLE_COLON_LHS, expression, this)
+                    }
                 }
             }
         }
@@ -248,11 +262,7 @@ class DoubleColonExpressionResolver(
             context.trace.report(CALLABLE_REFERENCE_TO_MEMBER_OR_EXTENSION_WITH_EMPTY_LHS.on(reference))
         }
 
-        val containingDeclaration = descriptor.containingDeclaration
-        if (DescriptorUtils.isObject(containingDeclaration)) {
-            context.trace.report(CALLABLE_REFERENCE_TO_OBJECT_MEMBER.on(reference))
-        }
-        if (descriptor is ConstructorDescriptor && DescriptorUtils.isAnnotationClass(containingDeclaration)) {
+        if (descriptor is ConstructorDescriptor && DescriptorUtils.isAnnotationClass(descriptor.containingDeclaration)) {
             context.trace.report(CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR.on(reference))
         }
 
