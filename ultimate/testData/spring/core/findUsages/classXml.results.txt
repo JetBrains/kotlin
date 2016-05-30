@@ -1,1 +1,1 @@
-Usage in XML descriptor 5 <bean class="a.KotlinSpringBean" name="xmlKotlinBean"/>
+Usage in XML descriptor (5: 20) <bean class="a.KotlinSpringBean" name="xmlKotlinBean"/>
