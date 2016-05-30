@@ -135,11 +135,12 @@ class FQNGenerator {
             }
         }
 
-        return if (needsStableMangling(resolvedDescriptor)) {
-            Pair(getStableMangledName(baseName, getArgumentTypesAsString(resolvedDescriptor)), true)
-        }
-        else {
-            Pair(baseName, false)
+        val explicitName = getJsName(descriptor)
+        return when {
+            explicitName != null -> Pair(explicitName, true)
+            needsStableMangling(resolvedDescriptor) ->
+                Pair(getStableMangledName(baseName, getArgumentTypesAsString(resolvedDescriptor)), true)
+            else -> Pair(baseName, false)
         }
     }
 
@@ -167,8 +168,7 @@ class FQNGenerator {
     }
 
     private fun getStableMangledName(suggestedName: String, forCalculateId: String): String {
-        val absHashCode = Math.abs(forCalculateId.hashCode())
-        val suffix = if (absHashCode == 0) "" else "_" + Integer.toString(absHashCode, Character.MAX_RADIX) + "$"
+        val suffix = if (forCalculateId.isEmpty()) "" else "_${mangledId(forCalculateId)}\$"
         return suggestedName + suffix
     }
 
@@ -187,7 +187,9 @@ class FQNGenerator {
         return when (containingDeclaration) {
             is PackageFragmentDescriptor -> descriptor.visibility.isPublicAPI
             is ClassDescriptor -> {
-                if (descriptor.modality == Modality.OPEN || descriptor.modality == Modality.ABSTRACT) return true
+                if (descriptor.modality == Modality.OPEN || descriptor.modality == Modality.ABSTRACT) {
+                    return descriptor.visibility.isPublicAPI
+                }
 
                 // valueOf() is created in the library with a mangled name for every enum class
                 if (descriptor is FunctionDescriptor && descriptor.isEnumValueOfMethod()) return true
@@ -208,6 +210,13 @@ class FQNGenerator {
                 }
                 false
             }
+        }
+    }
+
+    companion object {
+        @JvmStatic fun mangledId(forCalculateId: String): String {
+            val absHashCode = Math.abs(forCalculateId.hashCode())
+            return if (absHashCode != 0) Integer.toString(absHashCode, Character.MAX_RADIX) else ""
         }
     }
 }

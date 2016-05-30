@@ -47,3 +47,7 @@ public annotation class enumerable()
 @Target(CLASS)
 @Deprecated("Do not use this annotation: it is for internal use only")
 public annotation class marker
+
+@Retention(AnnotationRetention.BINARY)
+@Target(CLASS, FUNCTION, PROPERTY, CONSTRUCTOR)
+annotation class JsName(val name: String)

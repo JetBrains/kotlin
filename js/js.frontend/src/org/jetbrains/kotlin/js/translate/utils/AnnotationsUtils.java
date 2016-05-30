@@ -126,6 +126,19 @@ public final class AnnotationsUtils {
         return hasAnnotationOrInsideAnnotatedClass(descriptor, PredefinedAnnotation.LIBRARY);
     }
 
+    @Nullable
+    public static String getJsName(@NotNull DeclarationDescriptor descriptor) {
+        AnnotationDescriptor annotation = getAnnotationByName(descriptor, PredefinedAnnotation.JS_NAME.getFqName());
+        if (annotation == null) return null;
+
+        ConstantValue<?> value = annotation.getAllValueArguments().values().iterator().next();
+        assert value != null : "JsName annotation should always declare string parameter";
+
+        Object result = value.getValue();
+        assert result instanceof String : "Parameter of JsName annotation should be string";
+        return (String) result;
+    }
+
     public static boolean isPredefinedObject(@NotNull DeclarationDescriptor descriptor) {
         for (PredefinedAnnotation annotation : PredefinedAnnotation.values()) {
             if (hasAnnotationOrInsideAnnotatedClass(descriptor, annotation)) {
