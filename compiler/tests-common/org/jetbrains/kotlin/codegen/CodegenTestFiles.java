@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.AnalyzingUtils;
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider;
 import org.jetbrains.kotlin.script.ScriptParameter;
-import org.jetbrains.kotlin.scripts.TestScriptDefinition;
+import org.jetbrains.kotlin.scripts.SimpleParamsTestScriptDefinition;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.Variance;
@@ -163,7 +163,7 @@ public class CodegenTestFiles {
 
             KotlinScriptDefinitionProvider definitionProvider = KotlinScriptDefinitionProvider.getInstance(project);
             definitionProvider.addScriptDefinition(
-                    new TestScriptDefinition(
+                    new SimpleParamsTestScriptDefinition(
                             ".kts",
                             scriptParameterTypes
                     )
