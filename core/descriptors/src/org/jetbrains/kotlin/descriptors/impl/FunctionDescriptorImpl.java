@@ -340,6 +340,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         private List<TypeParameterDescriptor> newTypeParameters = null;
         private Annotations additionalAnnotations = null;
         private boolean isHiddenForResolutionEverywhereBesideSupercalls;
+        private SourceElement sourceElement;
 
         public CopyConfiguration(
                 @NotNull TypeSubstitution substitution,
@@ -464,6 +465,13 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             return this;
         }
 
+        @NotNull
+        @Override
+        public CopyBuilder<FunctionDescriptor> setSource(@NotNull SourceElement source) {
+            this.sourceElement = source;
+            return this;
+        }
+
         @Override
         @NotNull
         public CopyConfiguration setDropOriginalInContainingParts() {
@@ -539,7 +547,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
 
         FunctionDescriptorImpl substitutedDescriptor = createSubstitutedCopy(
                 configuration.newOwner, configuration.original, configuration.kind, configuration.name, resultAnnotations,
-                configuration.preserveSourceElement);
+                getSourceToUseForCopy(configuration.preserveSourceElement, configuration.original, configuration.sourceElement));
 
         List<TypeParameterDescriptor> substitutedTypeParameters;
         final TypeSubstitutor substitutor;
@@ -655,11 +663,16 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             @NotNull Kind kind,
             @Nullable Name newName,
             @NotNull Annotations annotations,
-            boolean preserveSource
+            @NotNull SourceElement source
     );
 
     @NotNull
-    protected SourceElement getSourceToUseForCopy(boolean preserveSource, @Nullable FunctionDescriptor original) {
+    private SourceElement getSourceToUseForCopy(
+            boolean preserveSource,
+            @Nullable FunctionDescriptor original,
+            @Nullable SourceElement sourceElement
+    ) {
+        if (sourceElement != null) return sourceElement;
         return preserveSource
                ? (original != null ? original.getSource() : getOriginal().getSource())
                : SourceElement.NO_SOURCE;

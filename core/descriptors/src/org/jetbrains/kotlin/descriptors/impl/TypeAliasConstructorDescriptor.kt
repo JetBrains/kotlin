@@ -63,7 +63,7 @@ class TypeAliasConstructorDescriptorImpl private constructor(
             kind: Kind,
             newName: Name?,
             annotations: Annotations,
-            preserveSource: Boolean
+            source: SourceElement
     ): TypeAliasConstructorDescriptorImpl {
         assert(kind == Kind.DECLARATION || kind == Kind.SYNTHESIZED) {
             "Creating a type alias constructor that is not a declaration: \ncopy from: ${this}\nnewOwner: $newOwner\nkind: $kind"
@@ -73,7 +73,7 @@ class TypeAliasConstructorDescriptorImpl private constructor(
                 typeAliasDescriptor,
                 newOwner as ClassDescriptor,
                 this, annotations, isPrimary, Kind.DECLARATION,
-                getSourceToUseForCopy(preserveSource, original))
+                source)
     }
 
     companion object {

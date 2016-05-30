@@ -129,6 +129,9 @@ public interface FunctionDescriptor extends CallableMemberDescriptor {
         CopyBuilder<D> setPreserveSourceElement();
 
         @NotNull
+        CopyBuilder<D> setSource(@NotNull SourceElement source);
+
+        @NotNull
         CopyBuilder<D> setDropOriginalInContainingParts();
 
         @NotNull

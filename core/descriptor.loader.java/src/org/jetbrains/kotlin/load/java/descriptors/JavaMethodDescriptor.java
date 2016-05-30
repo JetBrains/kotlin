@@ -115,7 +115,7 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
             @NotNull Kind kind,
             @Nullable Name newName,
             @NotNull Annotations annotations,
-            boolean preserveSource
+            @NotNull SourceElement source
     ) {
         JavaMethodDescriptor result = new JavaMethodDescriptor(
                 newOwner,
@@ -123,7 +123,7 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
                 annotations,
                 newName != null ? newName : getName(),
                 kind,
-                getSourceToUseForCopy(preserveSource, original)
+                source
         );
         result.setParameterNamesStatus(hasStableParameterNames(), hasSynthesizedParameterNames());
         return result;
