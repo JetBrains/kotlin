@@ -19,9 +19,18 @@ package org.jetbrains.kotlin.script
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import java.util.*
 
 class KotlinScriptDefinitionProvider {
+
     private val definitions: MutableList<KotlinScriptDefinition> = arrayListOf(StandardScriptDefinition)
+
+    var scriptDefinitions: List<KotlinScriptDefinition>
+        get() = definitions
+        set(definitions: List<KotlinScriptDefinition>) {
+            this.definitions.clear()
+            this.definitions.addAll(definitions)
+        }
 
     fun findScriptDefinition(file: VirtualFile?): KotlinScriptDefinition? = file?.let { file -> definitions.firstOrNull { it.isScript(file) } }
 
@@ -29,11 +38,6 @@ class KotlinScriptDefinitionProvider {
 
     fun addScriptDefinition(scriptDefinition: KotlinScriptDefinition) {
         definitions.add(0, scriptDefinition)
-    }
-
-    fun setScriptDefinitions(definitions: List<KotlinScriptDefinition>) {
-        this.definitions.clear()
-        this.definitions.addAll(definitions)
     }
 
     fun removeScriptDefinition(scriptDefinition: KotlinScriptDefinition) {
