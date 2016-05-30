@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import java.util.*
 
 class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
     private val javaMethodProcessorInstance = RenameJavaMethodProcessor()
@@ -59,12 +60,12 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
     }
 
     override fun findCollisions(
-            element: PsiElement?,
+            element: PsiElement,
             newName: String?,
-            allRenames: Map<out PsiElement?, String>,
+            allRenames: Map<out PsiElement, String>,
             result: MutableList<UsageInfo>
     ) {
-        checkConflictsAndReplaceUsageInfos(result)
+        checkConflictsAndReplaceUsageInfos(element, allRenames, result)
     }
 
     override fun substituteElementToRename(element: PsiElement?, editor: Editor?): PsiElement?  {
@@ -88,10 +89,20 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
         }
     }
 
-    override fun renameElement(element: PsiElement?, newName: String?, usages: Array<out UsageInfo>?, listener: RefactoringElementListener?) {
+    override fun renameElement(element: PsiElement, newName: String?, usages: Array<UsageInfo>, listener: RefactoringElementListener?) {
+        val simpleUsages = ArrayList<UsageInfo>(usages.size)
+        for (usage in usages) {
+            if (usage is LostDefaultValuesInOverridingFunctionUsageInfo) {
+                usage.apply()
+                continue
+            }
+
+            simpleUsages += usage
+        }
+
         super.renameElement(element, newName, usages, listener)
 
-        (element?.unwrapped as? KtNamedDeclaration)?.let { dropOverrideKeywordIfNecessary(it) }
+        (element.unwrapped as? KtNamedDeclaration)?.let { dropOverrideKeywordIfNecessary(it) }
     }
 
     private fun wrapPsiMethod(element: PsiElement?): PsiMethod? = when (element) {
