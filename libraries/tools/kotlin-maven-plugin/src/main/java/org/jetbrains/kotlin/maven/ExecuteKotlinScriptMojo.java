@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot;
 import org.jetbrains.kotlin.codegen.GeneratedClassLoader;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.GenerationStateEventCallback;
-import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.config.KotlinSourceRoot;
@@ -175,7 +174,7 @@ public class ExecuteKotlinScriptMojo extends AbstractMojo {
             }
 
             configuration.add(JVMConfigurationKeys.CONTENT_ROOTS, new KotlinSourceRoot(scriptFile.getAbsolutePath()));
-            configuration.put(CommonConfigurationKeys.MODULE_NAME, JvmAbi.DEFAULT_MODULE_NAME);
+            configuration.put(JVMConfigurationKeys.MODULE_NAME, JvmAbi.DEFAULT_MODULE_NAME);
             configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, StandardScriptDefinition.INSTANCE);
 
             KotlinCoreEnvironment environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
