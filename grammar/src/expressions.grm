@@ -122,7 +122,6 @@ atomicExpression
   : loop
   : SimpleName
   : FieldName
-  : "package" // for the root package
   ;
 
 labelReference

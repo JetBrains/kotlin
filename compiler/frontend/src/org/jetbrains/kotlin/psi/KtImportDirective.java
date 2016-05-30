@@ -43,15 +43,8 @@ public class KtImportDirective extends KtElementImplStub<KotlinImportDirectiveSt
         return visitor.visitImportDirective(this, data);
     }
 
-    public boolean isAbsoluteInRootPackage() {
-        KotlinImportDirectiveStub stub = getStub();
-        if (stub != null) {
-            return stub.isAbsoluteInRootPackage();
-        }
-        return findChildByType(KtTokens.PACKAGE_KEYWORD) != null;
-    }
-
-    @Nullable @IfNotParsed
+    @Nullable
+    @IfNotParsed
     public KtExpression getImportedReference() {
         KtExpression[] references = getStubOrPsiChildren(KtStubElementTypes.INSIDE_DIRECTIVE_EXPRESSIONS, KtExpression.ARRAY_FACTORY);
         if (references.length > 0) {

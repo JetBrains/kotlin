@@ -1943,7 +1943,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
     /*
      * userType
-     *   : ("package" ".")? simpleUserType{"."}
+     *   : simpleUserType{"."}
      *   ;
      *
      *   recovers on platform types:
@@ -1955,7 +1955,9 @@ public class KotlinParsing extends AbstractKotlinParsing {
         PsiBuilder.Marker userType = mark();
 
         if (at(PACKAGE_KEYWORD)) {
+            PsiBuilder.Marker keyword = mark();
             advance(); // PACKAGE_KEYWORD
+            keyword.error("Expecting an element");
             expect(DOT, "Expecting '.'", TokenSet.create(IDENTIFIER, LBRACE, RBRACE));
         }
 
