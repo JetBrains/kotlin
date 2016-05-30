@@ -135,7 +135,7 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
             @NotNull Kind kind,
             @Nullable Name newName,
             @NotNull Annotations annotations,
-            boolean preserveSource
+            @NotNull SourceElement source
     ) {
         if (kind != Kind.DECLARATION && kind != Kind.SYNTHESIZED) {
             throw new IllegalStateException("Attempt at creating a constructor that is not a declaration: \n" +
@@ -150,7 +150,7 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
                 annotations,
                 isPrimary,
                 Kind.DECLARATION,
-                getSourceToUseForCopy(preserveSource, original)
+                source
         );
     }
 

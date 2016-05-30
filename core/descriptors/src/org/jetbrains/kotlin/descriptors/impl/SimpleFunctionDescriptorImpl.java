@@ -78,7 +78,7 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
             @NotNull Kind kind,
             @Nullable Name newName,
             @NotNull Annotations annotations,
-            boolean preserveSource
+            @NotNull SourceElement source
     ) {
         return new SimpleFunctionDescriptorImpl(
                 newOwner,
@@ -86,7 +86,7 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
                 annotations,
                 newName != null ? newName : getName(),
                 kind,
-                getSourceToUseForCopy(preserveSource, original)
+                source
         );
     }
 

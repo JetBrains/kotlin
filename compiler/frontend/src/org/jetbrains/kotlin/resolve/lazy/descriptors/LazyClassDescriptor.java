@@ -283,7 +283,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                     @NotNull Kind kind,
                     @Nullable Name newName,
                     @NotNull Annotations annotations,
-                    boolean preserveSource
+                    @NotNull SourceElement source
             ) {
                 throw new UnsupportedOperationException();
             }
