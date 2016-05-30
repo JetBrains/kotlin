@@ -161,6 +161,12 @@ public class DiagnosticMessageTestGenerated extends AbstractDiagnosticMessageTes
         doTest(fileName);
     }
 
+    @TestMetadata("noneApplicableCallableReference.kt")
+    public void testNoneApplicableCallableReference() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/noneApplicableCallableReference.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("noneApplicableConstructor.kt")
     public void testNoneApplicableConstructor() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/noneApplicableConstructor.kt");

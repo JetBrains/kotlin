@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
-import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode
@@ -51,7 +50,6 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.utils.Printer
-import org.jetbrains.kotlin.utils.ThrowingList
 
 private fun <D : CallableDescriptor> ResolveArgumentsMode.acceptResolution(results: OverloadResolutionResults<D>, trace: TemporaryTraceAndCache) {
     when (this) {
@@ -69,7 +67,7 @@ private fun resolvePossiblyAmbiguousCallableReference(
         resolutionMode: ResolveArgumentsMode,
         callResolver: CallResolver
 ): OverloadResolutionResults<CallableDescriptor> {
-    val call = CallMaker.makeCall(reference, receiver, null, reference, ThrowingList.instance<ValueArgument>())
+    val call = CallMaker.makeCall(reference, receiver, null, reference, emptyList())
     val temporaryTrace = TemporaryTraceAndCache.create(context, "trace to resolve ::${reference.getReferencedName()} as function", reference)
     val newContext = if (resolutionMode == ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS)
         context.replaceTraceAndCache(temporaryTrace).replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE)
