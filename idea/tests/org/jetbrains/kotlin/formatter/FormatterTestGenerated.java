@@ -349,6 +349,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("Is.after.kt")
+        public void testIs() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/Is.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("KDoc.after.kt")
         public void testKDoc() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/KDoc.after.kt");
