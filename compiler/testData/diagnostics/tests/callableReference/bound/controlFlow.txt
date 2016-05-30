@@ -1,0 +1,6 @@
+package
+
+public fun noUnusedParameter(/*0*/ s: kotlin.String): kotlin.Int
+public fun unreachableCode(): kotlin.Int
+public fun unreachableCodeInLoop(): kotlin.Int
+public fun unusedExpression(/*0*/ s: kotlin.String): kotlin.Unit

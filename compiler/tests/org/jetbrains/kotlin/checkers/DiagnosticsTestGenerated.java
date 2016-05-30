@@ -1733,6 +1733,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("controlFlow.kt")
+                public void testControlFlow() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/bound/controlFlow.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("functionCallWithoutArguments.kt")
                 public void testFunctionCallWithoutArguments() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/bound/functionCallWithoutArguments.kt");

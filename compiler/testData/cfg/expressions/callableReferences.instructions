@@ -18,12 +18,12 @@ fun foo(): Any = ::bar
 L0:
   1 <START>
     mark(::bar)
-    magic[CALLABLE_REFERENCE](::bar) -> <v0>
+    magic[UNBOUND_CALLABLE_REFERENCE](::bar) -> <v0>
     ret(*|<v0>) L1
 L1:
-    <END>                                       NEXT:[<SINK>]
+    <END>                                               NEXT:[<SINK>]
 error:
-    <ERROR>                                     PREV:[]
+    <ERROR>                                             PREV:[]
 sink:
-    <SINK>                                      PREV:[<ERROR>, <END>]
+    <SINK>                                              PREV:[<ERROR>, <END>]
 =====================
