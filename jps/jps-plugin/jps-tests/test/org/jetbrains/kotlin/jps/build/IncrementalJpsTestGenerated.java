@@ -1124,6 +1124,12 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("coroutine")
+        public void testCoroutine() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/inlineFunCallSite/coroutine/");
+            doTest(fileName);
+        }
+
         @TestMetadata("function")
         public void testFunction() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/inlineFunCallSite/function/");
