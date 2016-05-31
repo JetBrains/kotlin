@@ -60,7 +60,7 @@ class JavaResolverComponents(
             moduleClassResolver, packageMapper, supertypeLoopChecker, lookupTracker, module, reflectionTypes)
 }
 
-open class LazyJavaResolverContext(
+class LazyJavaResolverContext(
         val components: JavaResolverComponents,
         val typeParameterResolver: TypeParameterResolver
 ) {

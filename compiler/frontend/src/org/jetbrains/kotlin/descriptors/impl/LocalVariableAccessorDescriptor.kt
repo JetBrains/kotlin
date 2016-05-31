@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
 sealed class LocalVariableAccessorDescriptor(
-        override val correspondingVariable: LocalVariableDescriptor,
+        final override val correspondingVariable: LocalVariableDescriptor,
         isGetter: Boolean
 ) : SimpleFunctionDescriptorImpl(
         correspondingVariable.containingDeclaration,
