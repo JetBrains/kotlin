@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,38 +61,37 @@ public class JavaClassFinderImpl implements JavaClassFinder {
         // Only activate post create
     }
 
-    public class DelegatingGlobalSearchScopeWithBaseAccess extends DelegatingGlobalSearchScope {
-
-        public DelegatingGlobalSearchScopeWithBaseAccess(@NotNull GlobalSearchScope baseScope) {
+    public class FilterOutKotlinSourceFilesScope extends DelegatingGlobalSearchScope {
+        public FilterOutKotlinSourceFilesScope(@NotNull GlobalSearchScope baseScope) {
             super(baseScope);
         }
 
+        @Override
+        public boolean contains(@NotNull VirtualFile file) {
+            return myBaseScope.contains(file) && (file.isDirectory() || file.getFileType() != KotlinFileType.INSTANCE);
+        }
+
+        @NotNull
         public GlobalSearchScope getBase() {
             return myBaseScope;
+        }
+
+        //NOTE: expected by class finder to be not null
+        @NotNull
+        @Override
+        public Project getProject() {
+            return project;
+        }
+
+        @Override
+        public String toString() {
+            return "JCFI: " + myBaseScope;
         }
     }
 
     @PostConstruct
     public void initialize() {
-        javaSearchScope = new DelegatingGlobalSearchScopeWithBaseAccess(baseScope) {
-            @Override
-            public boolean contains(@NotNull VirtualFile file) {
-                return myBaseScope.contains(file) && (file.isDirectory() || file.getFileType() != KotlinFileType.INSTANCE);
-            }
-
-            //NOTE: expected by class finder to be not null
-            @NotNull
-            @Override
-            public Project getProject() {
-                return project;
-            }
-
-            @Override
-            public String toString() {
-                return "JCFI: " + baseScope;
-            }
-        };
-
+        javaSearchScope = new FilterOutKotlinSourceFilesScope(baseScope);
         javaFacade = KotlinJavaPsiFacade.getInstance(project);
     }
 
