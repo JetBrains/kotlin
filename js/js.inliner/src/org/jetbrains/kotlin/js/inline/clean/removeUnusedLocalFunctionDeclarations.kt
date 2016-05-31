@@ -78,7 +78,7 @@ private class UnusedInstanceCollector : JsVisitorWithContextImpl() {
         // For the case like this: `b = a; c = b;`, where `a` is a function. In this case we should remove both declaration,
         // although second one contains 'usage' of `b`.
         // see `inlineEvaluationOrder/cases/lambdaWithClosure.kt`.
-        if (expr is JsNameRef && (expr.name?.let { tracker.isKnown(it) } ?: false)) return true
+        if (expr is JsNameRef && (expr.name?.let { tracker.isReferenceToRemovableCandidate(it) } ?: false)) return true
 
         val staticRef = name?.staticRef
         return staticRef != null && staticRef == expr && isFunctionReference(expr)

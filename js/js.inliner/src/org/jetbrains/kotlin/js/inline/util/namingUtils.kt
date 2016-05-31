@@ -32,15 +32,10 @@ fun aliasArgumentsIfNeeded(
     for ((arg, param) in arguments.zip(parameters)) {
         val paramName = param.name
 
-        val replacement: JsExpression = if (arg is JsFunction && isFunctionCreator(arg)) {
-            arg
-        }
-        else {
-            val freshName = context.getFreshName(paramName).apply { staticRef = arg }
-            context.newVar(freshName, arg)
-            val freshNameRef = freshName.makeRef()
-            freshNameRef
-        }
+        val replacement = context.getFreshName(paramName).apply {
+            staticRef = arg
+            context.newVar(this, arg)
+        }.makeRef()
 
         context.replaceName(paramName, replacement)
     }

@@ -55,12 +55,10 @@ class ReturnReplacingVisitor(
 
     private fun getReturnReplacement(returnExpression: JsExpression?): JsExpression? {
         return if (returnExpression != null) {
-            if (resultRef != null) {
+            val assignment = resultRef?.let {
                 JsAstUtils.assignment(resultRef, returnExpression).apply { synthetic = true }
             }
-            else {
-                returnExpression
-            }
+            assignment ?: returnExpression
         }
         else {
             null

@@ -339,7 +339,6 @@ internal class ExpressionDecomposer private constructor(
 
         fun assign(value: JsExpression): JsStatement {
             val statement = JsExpressionStatement(assignment(nameRef, value)).apply { synthetic = true }
-            name.staticRef = value
             return statement
         }
     }
