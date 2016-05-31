@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,17 +21,18 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptorVisitor
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.data.KtScriptInfo
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
-import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
 import org.jetbrains.kotlin.script.ScriptPriorities
 import org.jetbrains.kotlin.script.getScriptDefinition
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.utils.ifEmpty
 
 class LazyScriptDescriptor(
         resolveSession: ResolveSession,
@@ -56,11 +57,10 @@ class LazyScriptDescriptor(
 
     override fun getPriority() = priority
 
-    private val scriptDefinition: KotlinScriptDefinition
+    val scriptDefinition: KotlinScriptDefinition
             by lazy {
                 val file = scriptInfo.script.getContainingKtFile()
-                getScriptDefinition(file) ?:
-                    throw RuntimeException("file ${file.name} is not a script")
+                getScriptDefinition(file) ?: throw RuntimeException("file ${file.name} is not a script")
             }
 
     override fun substitute(substitutor: TypeSubstitutor) = this
@@ -79,8 +79,7 @@ class LazyScriptDescriptor(
 
     override fun getUnsubstitutedPrimaryConstructor() = super.getUnsubstitutedPrimaryConstructor()!!
 
-    override fun getInjectedSupertypes(): List<KotlinType>? =
-            scriptDefinition.getScriptSupertypes(this).let { if (it.isEmpty()) null else it }
+    override fun computeSupertypes() = scriptDefinition.getScriptSupertypes(this).ifEmpty { listOf(builtIns.anyType) }
 
     override fun getScriptParametersToPassToSuperclass(): List<Pair<Name, KotlinType>> {
         val scriptParams = scriptDefinition.getScriptParameters(this)
