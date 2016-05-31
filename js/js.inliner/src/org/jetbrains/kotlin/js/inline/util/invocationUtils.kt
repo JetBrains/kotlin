@@ -132,8 +132,7 @@ val JsExpression.transitiveStaticRef: JsExpression
     get() {
         var qualifier = this
         while (qualifier is JsNameRef) {
-            val staticRef = qualifier.name?.staticRef as? JsExpression ?: break
-            qualifier = staticRef
+            qualifier = qualifier.name?.staticRef as? JsExpression ?: break
         }
         return qualifier
     }

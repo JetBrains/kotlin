@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.js.inline;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.backend.js.ast.metadata.MetadataProperties;
 import com.intellij.psi.PsiElement;
-import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -194,18 +193,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
             return;
         }
 
-        resultExpression = accept(resultExpression);
-        JsStatement currentStatement = statementContext.getCurrentNode();
-
-        if (currentStatement instanceof JsExpressionStatement &&
-            ((JsExpressionStatement) currentStatement).getExpression() == call &&
-            resultExpression == null
-        ) {
-            statementContext.removeMe();
-        }
-        else {
-            context.replaceMe(resultExpression);
-        }
+        context.replaceMe(accept(resultExpression));
     }
 
     @NotNull
@@ -267,13 +255,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
         @Override
         public NamingContext newNamingContext() {
             JsScope scope = getFunctionContext().getScope();
-            return new NamingContext(scope, new Function1<List<? extends JsStatement>, Unit>() {
-                @Override
-                public Unit invoke(List<? extends JsStatement> statements) {
-                    getStatementContext().addPrevious(statements);
-                    return null;
-                }
-            });
+            return new NamingContext(scope, getStatementContext());
         }
 
         @NotNull

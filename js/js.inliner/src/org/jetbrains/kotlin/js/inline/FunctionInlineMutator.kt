@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.js.inline.util.rewriters.ReturnReplacingVisitor
 class FunctionInlineMutator
 private constructor(
         private val call: JsInvocation,
-        inliningContext: InliningContext
+        private val inliningContext: InliningContext
 ) {
     private val invokedFunction: JsFunction
     private val namingContext: NamingContext
@@ -85,9 +85,7 @@ private constructor(
     }
 
     private fun applyCapturedArgs(call: JsInvocation, inner: JsFunction, outer: JsFunction) {
-        // We want statements that introduce temporary variables to be added immediately after applying renamings,
-        // so that further processing that involves detection of inlineable function had a chance to recognize them.
-        val namingContext = NamingContext(inner.scope) { inner.body.statements.addAll(0, it) }
+        val namingContext = inliningContext.newNamingContext()
         val arguments = call.arguments
         val parameters = outer.parameters
         aliasArgumentsIfNeeded(namingContext, arguments, parameters)
@@ -108,11 +106,7 @@ private constructor(
     }
 
     private fun processReturns() {
-        val resultReference = getResultReference()
-        if (resultReference != null) {
-            resultExpr = resultReference
-        }
-        assert(resultExpr == null || resultExpr is JsNameRef)
+        resultExpr = getResultReference()
 
         val breakName = namingContext.getFreshName(getBreakLabel())
         this.breakLabel = JsLabel(breakName).apply { synthetic = true }

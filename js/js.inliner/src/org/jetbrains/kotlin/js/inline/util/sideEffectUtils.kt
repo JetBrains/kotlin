@@ -28,8 +28,7 @@ fun JsExpression.canHaveOwnSideEffect(vars: Set<JsName>) = when (this) {
     is JsConditional,
     is JsLiteral -> false
     is JsBinaryOperation -> operator.isAssignment
-    is JsNameRef -> !(qualifier == null && name in vars) && sideEffects
-    is JsInvocation -> !isFunctionCreatorInvocation(this) && sideEffects
+    is JsNameRef -> name !in vars && sideEffects
     is HasMetadata -> sideEffects
     else -> true
 }
