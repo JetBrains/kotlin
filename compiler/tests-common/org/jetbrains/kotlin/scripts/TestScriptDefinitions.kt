@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import kotlin.reflect.KClass
 
 abstract class BaseScriptDefinition (val extension: String) : KotlinScriptDefinition {
+    override val name = "Test Kotlin Script"
     override fun isScript(file: PsiFile): Boolean = file.name.endsWith(extension)
     override fun getScriptName(script: KtScript): Name = ScriptNameUtil.fileNameWithExtensionStripped(script, extension)
 }
@@ -33,9 +34,9 @@ open class SimpleParamsTestScriptDefinition(extension: String, val parameters: L
     override fun getScriptParameters(scriptDescriptor: ScriptDescriptor) = parameters
 }
 
-class ReflectedParamClassTestScriptDefinition(extension: String, val name: String, val parameter: KClass<out Any>) : BaseScriptDefinition(extension) {
+class ReflectedParamClassTestScriptDefinition(extension: String, val paramName: String, val parameter: KClass<out Any>) : BaseScriptDefinition(extension) {
     override fun getScriptParameters(scriptDescriptor: ScriptDescriptor) =
-            listOf(makeReflectedClassScriptParameter(scriptDescriptor, Name.identifier(name), parameter))
+            listOf(makeReflectedClassScriptParameter(scriptDescriptor, Name.identifier(paramName), parameter))
 }
 
 open class ReflectedSuperclassTestScriptDefinition(extension: String, parameters: List<ScriptParameter>, val superclass: KClass<out Any>) : SimpleParamsTestScriptDefinition(extension, parameters) {
