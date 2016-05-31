@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Set;
 
 public final class AnnotationsUtils {
+    private static final String JS_NAME = "kotlin.js.JsName";
 
     private AnnotationsUtils() {
     }
@@ -128,7 +129,7 @@ public final class AnnotationsUtils {
 
     @Nullable
     public static String getJsName(@NotNull DeclarationDescriptor descriptor) {
-        AnnotationDescriptor annotation = getAnnotationByName(descriptor, PredefinedAnnotation.JS_NAME.getFqName());
+        AnnotationDescriptor annotation = getAnnotationByName(descriptor, new FqName(JS_NAME));
         if (annotation == null) return null;
 
         ConstantValue<?> value = annotation.getAllValueArguments().values().iterator().next();
