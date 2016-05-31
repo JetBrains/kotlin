@@ -33,17 +33,21 @@ import org.jetbrains.kotlin.types.Variance
 import kotlin.reflect.KClass
 
 interface KotlinScriptDefinition {
+    val name: String
     fun getScriptParameters(scriptDescriptor: ScriptDescriptor): List<ScriptParameter>
     fun getScriptSupertypes(scriptDescriptor: ScriptDescriptor): List<KotlinType> = emptyList()
     fun getScriptParametersToPassToSuperclass(scriptDescriptor: ScriptDescriptor): List<Name> = emptyList()
     fun isScript(file: PsiFile): Boolean
     fun getScriptName(script: KtScript): Name
+    fun getScriptDependenciesClasspath(): List<String> = emptyList()
 }
 
 class ScriptParameter(val name: Name, val type: KotlinType)
 
 object StandardScriptDefinition : KotlinScriptDefinition {
     private val ARGS_NAME = Name.identifier("args")
+
+    override val name = "Kotlin Script"
 
     override fun getScriptName(script: KtScript): Name {
         return ScriptNameUtil.fileNameWithExtensionStripped(script, KotlinParserDefinition.STD_SCRIPT_EXT)
@@ -70,10 +74,10 @@ fun makeStringListScriptParameters(scriptDescriptor: ScriptDescriptor, propertyN
 fun makeReflectedClassScriptParameter(scriptDescriptor: ScriptDescriptor, propertyName: Name, kClass: KClass<out Any>): ScriptParameter =
         ScriptParameter(propertyName, getKotlinType(scriptDescriptor, kClass))
 
-fun getKotlinType(scriptDescriptor: ScriptDescriptor, kClass: KClass<out Any>): KotlinType {
-    val module = scriptDescriptor.module
-    val qualifiedName = kClass.qualifiedName ?: throw RuntimeException("Cannot get FQN from $kClass")
-    return module.findClassAcrossModuleDependencies(ClassId.topLevel(FqName(qualifiedName)))?.defaultType ?:
-           throw RuntimeException("Cannot find class $qualifiedName in the dependencies, may be it is missing in the classpath")
-}
+fun getKotlinType(scriptDescriptor: ScriptDescriptor, kClass: KClass<out Any>): KotlinType =
+        getKotlinTypeByFqName(scriptDescriptor,
+                              kClass.qualifiedName ?: throw RuntimeException("Cannot get FQN from $kClass"))
 
+fun getKotlinTypeByFqName(scriptDescriptor: ScriptDescriptor, fqName: String): KotlinType =
+        scriptDescriptor.module.findClassAcrossModuleDependencies(ClassId.topLevel(FqName(fqName)))?.defaultType ?:
+            throw RuntimeException("Cannot find class $fqName in the dependencies, may be it is missing in the classpath")
