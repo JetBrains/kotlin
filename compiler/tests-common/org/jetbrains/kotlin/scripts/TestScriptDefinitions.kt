@@ -20,10 +20,7 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtScript
-import org.jetbrains.kotlin.script.KotlinScriptDefinition
-import org.jetbrains.kotlin.script.ScriptNameUtil
-import org.jetbrains.kotlin.script.ScriptParameter
-import org.jetbrains.kotlin.script.makeReflectedClassScriptParameter
+import org.jetbrains.kotlin.script.*
 import org.jetbrains.kotlin.types.KotlinType
 import kotlin.reflect.KClass
 
@@ -32,11 +29,16 @@ abstract class BaseScriptDefinition (val extension: String) : KotlinScriptDefini
     override fun getScriptName(script: KtScript): Name = ScriptNameUtil.fileNameWithExtensionStripped(script, extension)
 }
 
-class SimpleParamsTestScriptDefinition(extension: String, val parameters: List<ScriptParameter>) : BaseScriptDefinition(extension) {
+open class SimpleParamsTestScriptDefinition(extension: String, val parameters: List<ScriptParameter>) : BaseScriptDefinition(extension) {
     override fun getScriptParameters(scriptDescriptor: ScriptDescriptor) = parameters
 }
 
 class ReflectedParamClassTestScriptDefinition(extension: String, val name: String, val parameter: KClass<out Any>) : BaseScriptDefinition(extension) {
     override fun getScriptParameters(scriptDescriptor: ScriptDescriptor) =
             listOf(makeReflectedClassScriptParameter(scriptDescriptor, Name.identifier(name), parameter))
+}
+
+class ReflectedSuperclassTestScriptDefinition(extension: String, parameters: List<ScriptParameter>, val superclass: KClass<out Any>) : SimpleParamsTestScriptDefinition(extension, parameters) {
+    override fun getScriptSuperclasses(scriptDescriptor: ScriptDescriptor): List<KotlinType> =
+            listOf(getKotlinType(scriptDescriptor, superclass))
 }

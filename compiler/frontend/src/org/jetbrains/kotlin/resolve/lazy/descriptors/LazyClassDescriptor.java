@@ -567,6 +567,9 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         return parameters.invoke();
     }
 
+    @Nullable
+    public List<? extends KotlinType> getInjectedSupertypes() { return null; }
+
     private class LazyClassTypeConstructor extends AbstractClassTypeConstructor implements LazyEntity {
         private final NotNullLazyValue<List<TypeParameterDescriptor>> parameters = c.getStorageManager().createLazyValue(new Function0<List<TypeParameterDescriptor>>() {
             @Override
@@ -593,6 +596,11 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         protected Collection<KotlinType> computeSupertypes() {
             if (KotlinBuiltIns.isSpecialClassWithNoSupertypes(LazyClassDescriptor.this)) {
                 return Collections.emptyList();
+            }
+
+            List<? extends KotlinType> injectedSupertypes = getInjectedSupertypes();
+            if (injectedSupertypes != null) {
+                return Lists.newArrayList(Collections2.filter(injectedSupertypes, VALID_SUPERTYPE));
             }
 
             KtClassOrObject classOrObject = declarationProvider.getOwnerInfo().getCorrespondingClassOrObject();

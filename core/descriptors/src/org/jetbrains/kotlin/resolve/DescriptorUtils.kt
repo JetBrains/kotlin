@@ -121,6 +121,15 @@ fun ClassDescriptor.getSuperClassNotAny(): ClassDescriptor? {
 
 fun ClassDescriptor.getSuperClassOrAny(): ClassDescriptor = getSuperClassNotAny() ?: builtIns.any
 
+fun ClassDescriptor.getSuperInterfaces(): List<ClassDescriptor> =
+        defaultType.constructor.supertypes
+                .filterNot { KotlinBuiltIns.isAnyOrNullableAny(it) }
+                .mapNotNull {
+                    val superClassifier = it.constructor.declarationDescriptor
+                    if (DescriptorUtils.isInterface(superClassifier)) superClassifier as ClassDescriptor
+                    else null
+                }
+
 val ClassDescriptor.secondaryConstructors: List<ConstructorDescriptor>
     get() = constructors.filterNot { it.isPrimary }
 

@@ -23,10 +23,13 @@ import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.context.MethodContext;
 import org.jetbrains.kotlin.codegen.context.ScriptContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor;
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
@@ -91,8 +94,8 @@ public class ScriptCodegen extends MemberCodegen<KtScript> {
                       ACC_PUBLIC | ACC_SUPER,
                       classAsmType.getInternalName(),
                       null,
-                      "java/lang/Object",
-                      ArrayUtil.EMPTY_STRING_ARRAY);
+                      typeMapper.mapSupertype(DescriptorUtilsKt.getSuperClassOrAny(scriptDescriptor).getDefaultType(), null).getInternalName(),
+                      CodegenUtilKt.mapSupertypesNames(typeMapper, DescriptorUtilsKt.getSuperInterfaces(scriptDescriptor), null));
     }
 
     @Override
@@ -145,7 +148,11 @@ public class ScriptCodegen extends MemberCodegen<KtScript> {
             Type classType = typeMapper.mapType(scriptDescriptor);
 
             iv.load(0, classType);
-            iv.invokespecial("java/lang/Object", "<init>", "()V", false);
+            ClassDescriptor superclass = DescriptorUtilsKt.getSuperClassOrAny(scriptDescriptor);
+            assert hasDefaultConstructor(superclass);
+            iv.invokespecial(
+                    typeMapper.mapSupertype(superclass.getDefaultType(), null).getInternalName(),
+                    "<init>", "()V", false);
 
             iv.load(0, classType);
 
@@ -197,6 +204,15 @@ public class ScriptCodegen extends MemberCodegen<KtScript> {
 
         mv.visitMaxs(-1, -1);
         mv.visitEnd();
+    }
+
+    private boolean hasDefaultConstructor(ClassDescriptor superclass) {
+        for (ConstructorDescriptor ctor : superclass.getConstructors()) {
+            if (ctor.getValueParameters().isEmpty()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void genFieldsForParameters(@NotNull ScriptDescriptor script, @NotNull ClassBuilder classBuilder) {
