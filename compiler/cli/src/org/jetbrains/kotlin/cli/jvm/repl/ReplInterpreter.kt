@@ -29,10 +29,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.repl.CliReplAnalyzerEngine.ReplLineAnalysisResult.Successful
 import org.jetbrains.kotlin.cli.jvm.repl.CliReplAnalyzerEngine.ReplLineAnalysisResult.WithErrors
-import org.jetbrains.kotlin.cli.jvm.repl.messages.DiagnosticMessageHolder
-import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplIdeDiagnosticMessageHolder
-import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplSystemInWrapper
-import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplTerminalDiagnosticMessageHolder
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.CompilationErrorHandler
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
@@ -54,10 +50,9 @@ import java.net.URLClassLoader
 
 class ReplInterpreter(
         disposable: Disposable,
-        configuration: CompilerConfiguration,
-        private val ideMode: Boolean,
-        private val replReader: ReplSystemInWrapper?
-) {
+        private val configuration: CompilerConfiguration,
+        private val replConfiguration: ReplConfiguration
+): ReplConfiguration by replConfiguration {
     private var lineNumber = 0
 
     private val earlierLines = arrayListOf<EarlierLine>()
@@ -135,12 +130,6 @@ class ReplInterpreter(
         }
     }
 
-    private fun createDiagnosticHolder(): DiagnosticMessageHolder =
-            if (ideMode)
-                ReplIdeDiagnosticMessageHolder()
-            else
-                ReplTerminalDiagnosticMessageHolder()
-
     fun eval(line: String): LineResult {
         ++lineNumber
 
@@ -158,12 +147,12 @@ class ReplInterpreter(
         val syntaxErrorReport = AnalyzerWithCompilerReport.reportSyntaxErrors(psiFile, errorHolder)
 
         if (syntaxErrorReport.isHasErrors && syntaxErrorReport.isAllErrorsAtEof) {
-            return if (ideMode) {
-                LineResult.compileError(errorHolder.renderedDiagnostics)
-            }
-            else {
+            return if (allowIncompleteLines) {
                 previousIncompleteLines.add(line)
                 LineResult.incomplete()
+            }
+            else {
+                LineResult.compileError(errorHolder.renderedDiagnostics)
             }
         }
 
@@ -200,14 +189,14 @@ class ReplInterpreter(
 
             val scriptInstanceConstructor = scriptClass.getConstructor(*constructorParams)
             val scriptInstance = try {
-                replReader?.isReplScriptExecuting = true
+                onUserCodeExecuting(true)
                 scriptInstanceConstructor.newInstance(*constructorArgs)
             }
             catch (e: Throwable) {
                 return LineResult.runtimeError(renderStackTrace(e.cause!!))
             }
             finally {
-                replReader?.isReplScriptExecuting = false
+                onUserCodeExecuting(false)
             }
 
             val rvField = scriptClass.getDeclaredField(SCRIPT_RESULT_FIELD_NAME).apply { isAccessible = true }
