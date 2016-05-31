@@ -38,6 +38,8 @@ import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.Assert
 import org.junit.Test
 import java.io.File
+import java.net.URLClassLoader
+import java.util.*
 
 class ScriptTest {
     @Test
@@ -66,10 +68,23 @@ class ScriptTest {
 
     @Test
     fun testScriptWithClassParameter() {
-        val cl = TestParamClass::class
-        val aClass = compileScript("fib_cp.kts", ReflectedParamClassTestScriptDefinition(".kts", "param", cl), runIsolated = false)
+        val aClass = compileScript("fib_cp.kts", ReflectedParamClassTestScriptDefinition(".kts", "param", TestParamClass::class), runIsolated = false)
         Assert.assertNotNull(aClass)
-        aClass!!.getConstructor(cl.java).newInstance(TestParamClass(4))
+        aClass!!.getConstructor(TestParamClass::class.java).newInstance(TestParamClass(4))
+    }
+
+    @Test
+    fun testScriptWithBaseClass() {
+        val aClass = compileScript("fib_dsl.kts", ReflectedSuperclassTestScriptDefinition(".kts", numIntParam(), TestDSLClass::class), runIsolated = false)
+        Assert.assertNotNull(aClass)
+        aClass!!.getConstructor(Integer.TYPE).newInstance(4)
+    }
+
+    @Test
+    fun testScriptWithInterface() {
+        val aClass = compileScript("fib_dsl.kts", ReflectedSuperclassTestScriptDefinition(".kts", numIntParam(), TestDSLInterface::class), runIsolated = false)
+        Assert.assertNotNull(aClass)
+        aClass!!.getConstructor(Integer.TYPE).newInstance(4)
     }
 
     private fun compileScript(
@@ -102,7 +117,7 @@ class ScriptTest {
             }
             catch (t: Throwable) {
                 MessageCollectorUtil.reportException(messageCollector, t)
-                return null
+                throw t
             }
 
         }
@@ -112,10 +127,16 @@ class ScriptTest {
     }
 
     private fun CompilerConfiguration.addCurrentClasspathAsRoots() {
-        System.getProperty("java.class.path")?.let {
+
+        val cp: MutableSet<File> = System.getProperty("java.class.path")?.let {
             it.split(String.format("\\%s", File.pathSeparatorChar).toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-                    .forEach { addJvmClasspathRoot(File(it)) }
-        }
+                    .map { File(it).canonicalFile }.toMutableSet()
+        } ?: LinkedHashSet<File>()
+        (this.javaClass.classLoader as? URLClassLoader)?.urLs
+                ?.map { File(it.toURI()).canonicalFile }
+                ?.filter { it.exists() }
+                ?.forEach { cp.add(it) }
+        cp.forEach { addJvmClasspathRoot(it) }
     }
 
     private fun numIntParam(): List<ScriptParameter> {

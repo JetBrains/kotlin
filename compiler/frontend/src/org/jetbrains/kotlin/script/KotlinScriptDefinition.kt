@@ -34,6 +34,7 @@ import kotlin.reflect.KClass
 
 interface KotlinScriptDefinition {
     fun getScriptParameters(scriptDescriptor: ScriptDescriptor): List<ScriptParameter>
+    fun getScriptSuperclasses(scriptDescriptor: ScriptDescriptor): List<KotlinType> = emptyList()
     fun isScript(file: PsiFile): Boolean
     fun getScriptName(script: KtScript): Name
 }
