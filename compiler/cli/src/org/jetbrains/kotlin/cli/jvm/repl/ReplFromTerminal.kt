@@ -100,7 +100,7 @@ class ReplFromTerminal(
             is ValueResult, UnitResult -> {
                 writer.notifyCommandSuccess()
                 if (lineResult is ValueResult) {
-                    writer.outputCommandResult(lineResult.value)
+                    writer.outputCommandResult(lineResult.valueAsString)
                 }
             }
             Incomplete -> writer.notifyIncomplete()

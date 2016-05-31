@@ -93,7 +93,7 @@ abstract class AbstractReplInterpreterTest : KtUsefulTestCase() {
             }
 
             val actual = when (lineResult) {
-                is LineResult.ValueResult -> "${lineResult.value}"
+                is LineResult.ValueResult -> lineResult.valueAsString
                 is LineResult.Error -> lineResult.errorText
                 LineResult.Incomplete -> INCOMPLETE_LINE_MESSAGE
                 LineResult.UnitResult -> ""
