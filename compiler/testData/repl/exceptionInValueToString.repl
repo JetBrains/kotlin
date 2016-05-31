@@ -1,0 +1,9 @@
+>>> class B { override fun toString(): String { return foo() } ; fun foo(): String { return error("message") } }
+>>> B().toString()
+java.lang.IllegalStateException: message
+	at Line1$B.foo(line1.kts:1)
+	at Line1$B.toString(line1.kts:1)
+>>> B()
+java.lang.IllegalStateException: message
+	at Line1$B.foo(line1.kts:1)
+	at Line1$B.toString(line1.kts:1)

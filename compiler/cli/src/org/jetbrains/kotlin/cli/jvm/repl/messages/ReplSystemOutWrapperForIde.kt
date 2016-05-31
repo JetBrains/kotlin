@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,7 +60,7 @@ class ReplSystemOutWrapperForIde(standardOut: PrintStream) : PrintStream(standar
 
     override fun printlnWelcomeMessage(x: String) = printlnWithEscaping(x, EscapeType.INITIAL_PROMPT)
     override fun printlnHelpMessage(x: String) = printlnWithEscaping(x, EscapeType.HELP_PROMPT)
-    override fun outputCommandResult(x: Any?) = printlnWithEscaping(x.toString(), EscapeType.REPL_RESULT)
+    override fun outputCommandResult(x: String) = printlnWithEscaping(x, EscapeType.REPL_RESULT)
     override fun notifyReadLineStart() = printlnWithEscaping("", EscapeType.READLINE_START)
     override fun notifyReadLineEnd() = printlnWithEscaping("", EscapeType.READLINE_END)
     override fun notifyCommandSuccess() = printlnWithEscaping("", EscapeType.SUCCESS)
