@@ -4,9 +4,9 @@ public open class ClassObjectInParamRaw {
     public constructor ClassObjectInParamRaw()
 
     public final annotation class Anno : kotlin.Annotation {
-        public constructor Anno(/*0*/ value: kotlin.reflect.KClass<*>, /*1*/ arg: kotlin.Array<kotlin.reflect.KClass<*>>)
-        public final val arg: kotlin.Array<kotlin.reflect.KClass<*>>
-        public final val value: kotlin.reflect.KClass<*>
+        public constructor Anno(/*0*/ value: kotlin.reflect.KClass<(raw) kotlin.Any>, /*1*/ arg: kotlin.Array<kotlin.reflect.KClass<(raw) kotlin.Any>>)
+        public final val arg: kotlin.Array<kotlin.reflect.KClass<(raw) kotlin.Any>>
+        public final val value: kotlin.reflect.KClass<(raw) kotlin.Any>
     }
 
     @test.ClassObjectInParamRaw.Anno(arg = {}, value = test.ClassObjectInParamRaw::class) public open class Nested {

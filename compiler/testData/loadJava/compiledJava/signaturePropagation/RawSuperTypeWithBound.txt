@@ -6,7 +6,7 @@ public open class RawSuperTypeWithBound {
     public interface Bound {
     }
 
-    public open inner class Derived : test.RawSuperTypeWithBound.Super<test.RawSuperTypeWithBound.Bound!> {
+    public open inner class Derived : test.RawSuperTypeWithBound.Super<(raw) test.RawSuperTypeWithBound.Bound!> {
         public constructor Derived()
         public open override /*1*/ fun dummy(): kotlin.Unit
         public open fun foo(/*0*/ p0: kotlin.Any!): kotlin.Unit

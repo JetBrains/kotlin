@@ -18,7 +18,8 @@ package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.DescriptorRendererOptions
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
 open class DynamicTypesSettings {
@@ -46,4 +47,6 @@ class DynamicType(builtIns: KotlinBuiltIns, override val annotations: Annotation
     override val isMarkedNullable: Boolean get() = false
 
     override fun replaceAnnotations(newAnnotations: Annotations): KotlinType = DynamicType(delegateType.builtIns, annotations)
+
+    override fun render(renderer: DescriptorRenderer, options: DescriptorRendererOptions): String = "dynamic"
 }

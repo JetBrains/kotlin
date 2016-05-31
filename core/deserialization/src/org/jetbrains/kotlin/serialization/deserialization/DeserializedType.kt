@@ -56,15 +56,9 @@ class DeserializedType(
     override val capabilities: TypeCapabilities get() = typeCapabilities()
 
     private val typeCapabilities = c.storageManager.createLazyValue {
-        val deserializedCapabilities = c.components.typeCapabilitiesLoader.loadCapabilities(typeProto)
+        val abbreviatedTypeProto = typeProto.abbreviatedType(c.typeTable) ?: return@createLazyValue TypeCapabilities.NONE
 
-        val abbreviatedTypeProto = typeProto.abbreviatedType(c.typeTable)
-        if (abbreviatedTypeProto == null) {
-            deserializedCapabilities
-        }
-        else {
-            val abbreviatedType = c.typeDeserializer.type(abbreviatedTypeProto, additionalAnnotations)
-            deserializedCapabilities.withAbbreviatedType(abbreviatedType)
-        }
+        val abbreviatedType = c.typeDeserializer.type(abbreviatedTypeProto, additionalAnnotations)
+        TypeCapabilities.NONE.withAbbreviatedType(abbreviatedType)
     }
 }

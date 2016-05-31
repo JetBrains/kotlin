@@ -37,15 +37,11 @@ abstract class AbstractLazyType(storageManager: StorageManager) : AbstractKotlin
 
     override val memberScope by storageManager.createLazyValue { computeMemberScope() }
 
-    protected open fun computeMemberScope(): MemberScope {
+    fun computeMemberScope(): MemberScope {
         val descriptor = constructor.declarationDescriptor
         return when (descriptor) {
             is TypeParameterDescriptor -> descriptor.getDefaultType().memberScope
-            is ClassDescriptor -> {
-                val substitution = getCapability<RawTypeCapability>()?.substitution
-                                   ?: TypeConstructorSubstitution.create(constructor, arguments)
-                descriptor.getMemberScope(substitution)
-            }
+            is ClassDescriptor ->  descriptor.getMemberScope(TypeConstructorSubstitution.create(constructor, arguments))
             else -> throw IllegalStateException("Unsupported classifier: $descriptor")
         }
     }

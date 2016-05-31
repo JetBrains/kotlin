@@ -37,7 +37,6 @@ class DeserializationComponents(
         val flexibleTypeDeserializer: FlexibleTypeDeserializer,
         val fictitiousClassDescriptorFactory: ClassDescriptorFactory,
         val notFoundClasses: NotFoundClasses,
-        val typeCapabilitiesLoader: TypeCapabilitiesLoader = TypeCapabilitiesLoader.NONE,
         val additionalClassPartsProvider: AdditionalClassPartsProvider = AdditionalClassPartsProvider.None,
         val platformDependentDeclarationFilter: PlatformDependentDeclarationFilter = PlatformDependentDeclarationFilter.All
 ) {

@@ -58,7 +58,9 @@ class TypeDeserializer(
     fun type(proto: ProtoBuf.Type, additionalAnnotations: Annotations = Annotations.EMPTY): KotlinType {
         if (proto.hasFlexibleTypeCapabilitiesId()) {
             val id = c.nameResolver.getString(proto.flexibleTypeCapabilitiesId)
-            return c.components.flexibleTypeDeserializer.create(id, DeserializedType(c, proto), DeserializedType(c, proto.flexibleUpperBound(c.typeTable)!!))
+            val lowerBound = DeserializedType(c, proto, additionalAnnotations)
+            val upperBound = DeserializedType(c, proto.flexibleUpperBound(c.typeTable)!!, additionalAnnotations)
+            return c.components.flexibleTypeDeserializer.create(proto, id, lowerBound, upperBound)
         }
 
         return DeserializedType(c, proto, additionalAnnotations)

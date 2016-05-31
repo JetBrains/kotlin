@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.CompositeAnnotations
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.load.java.lazy.types.RawTypeImpl
 import org.jetbrains.kotlin.load.java.typeEnhancement.MutabilityQualifier.MUTABLE
 import org.jetbrains.kotlin.load.java.typeEnhancement.MutabilityQualifier.READ_ONLY
 import org.jetbrains.kotlin.load.java.typeEnhancement.NullabilityQualifier.NOT_NULL
@@ -56,7 +57,7 @@ private data class Result(val type: KotlinType, val subtreeSize: Int, val wereCh
 }
 
 private fun KotlinType.enhancePossiblyFlexible(qualifiers: (Int) -> JavaTypeQualifiers, index: Int): Result {
-    if (this.isError) return Result(this, 1, false)
+    if (this.isError || unwrap() is RawTypeImpl) return Result(this, 1, false) // todo: Raw
     return if (this.isFlexible()) {
         with(this.asFlexibleType()) {
             val lowerResult = lowerBound.enhanceInflexible(qualifiers, index, TypeComponentPosition.FLEXIBLE_LOWER)
@@ -121,9 +122,7 @@ private fun KotlinType.enhanceInflexible(qualifiers: (Int) -> JavaTypeQualifiers
             enhancedNullabilityAnnotations
     ).filterNotNull().compositeAnnotationsOrSingle()
 
-    val newSubstitution = computeNewSubstitution(
-        typeConstructor, enhancedArguments
-    )
+    val newSubstitution = TypeConstructorSubstitution.create(typeConstructor, enhancedArguments)
 
     val newCapabilities =
             if (effectiveQualifiers.isNotNullTypeParameter)
