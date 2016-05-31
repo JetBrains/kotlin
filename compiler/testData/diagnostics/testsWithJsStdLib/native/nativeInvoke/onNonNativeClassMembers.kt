@@ -14,7 +14,7 @@ class A {
     fun Int.invoke(a: String, b: Int)<!> = "OK"
 
     <!WRONG_ANNOTATION_TARGET!>@nativeInvoke<!>
-    val foo = 0
+    val baz = 0
 
     <!WRONG_ANNOTATION_TARGET!>@nativeInvoke<!>
     object Obj {}
