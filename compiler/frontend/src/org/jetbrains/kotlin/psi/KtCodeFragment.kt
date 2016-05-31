@@ -81,7 +81,7 @@ abstract class KtCodeFragment(
         return clone
     }
 
-    override fun getViewProvider() = viewProvider
+    final override fun getViewProvider() = viewProvider
 
     override fun getThisType() = thisType
 

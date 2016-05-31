@@ -50,7 +50,7 @@ class JavaResolverComponents(
         val lookupTracker: LookupTracker
 )
 
-open class LazyJavaResolverContext(
+class LazyJavaResolverContext(
         val components: JavaResolverComponents,
         val packageFragmentProvider: LazyJavaPackageFragmentProvider,
         val javaClassResolver: LazyJavaClassResolver,
