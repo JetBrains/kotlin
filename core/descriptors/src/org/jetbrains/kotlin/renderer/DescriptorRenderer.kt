@@ -38,6 +38,8 @@ abstract class DescriptorRenderer {
 
     abstract fun renderType(type: KotlinType): String
 
+    abstract fun renderFlexibleType(lowerRendered: String, upperRendered: String): String
+
     abstract fun renderTypeArguments(typeArguments: List<TypeProjection>): String
 
     abstract fun renderTypeProjection(typeProjection: TypeProjection): String
@@ -219,8 +221,14 @@ object ExcludedTypeAnnotations {
 }
 
 enum class RenderingFormat {
-    PLAIN,
-    HTML
+    PLAIN {
+        override fun escape(string: String) = string;
+    },
+    HTML {
+        override fun escape(string: String) = string.replace("<", "&lt;").replace(">", "&gt;")
+    };
+
+    abstract fun escape(string: String): String
 }
 
 enum class OverrideRenderingPolicy {

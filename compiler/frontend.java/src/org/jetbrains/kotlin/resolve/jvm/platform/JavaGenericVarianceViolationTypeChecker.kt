@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm.platform
 
+import org.jetbrains.kotlin.load.java.lazy.types.RawTypeImpl
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
@@ -51,7 +52,7 @@ object JavaGenericVarianceViolationTypeChecker : AdditionalTypeChecker {
         // Use site variance projection is always the same for flexible types
         if (lowerBound.constructor == upperBound.constructor) return
         // Anything is acceptable for raw types
-        if (expectedType.getCapability<RawTypeCapability>() != null) return
+        if (expectedType.unwrap() is RawTypeImpl) return
 
         val correspondingSubType = TypeCheckingProcedure.findCorrespondingSupertype(expressionTypeWithSmartCast, lowerBound) ?: return
 

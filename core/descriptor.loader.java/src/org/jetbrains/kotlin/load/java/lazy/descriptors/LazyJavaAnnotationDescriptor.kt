@@ -138,9 +138,8 @@ class LazyJavaAnnotationDescriptor(
         val arguments = listOf(TypeProjectionImpl(type))
 
         val javaClassObjectType = object : AbstractLazyType(c.storageManager) {
-            override fun computeTypeConstructor() = jlClass.getTypeConstructor()
+            override fun computeTypeConstructor() = jlClass.typeConstructor
             override fun computeArguments() = arguments
-            override fun computeMemberScope() = jlClass.getMemberScope(arguments)
         }
 
         return factory.createKClassValue(javaClassObjectType)

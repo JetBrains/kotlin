@@ -9,11 +9,11 @@ public interface A</*0*/ T : kotlin.Any!> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public interface B : A<kotlin.Any!> {
-    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any(raw)?): kotlin.Boolean(raw)
+public interface B : A<(raw) kotlin.Any!> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     @java.lang.Override() public abstract override /*1*/ fun foo(/*0*/ x: kotlin.Any!, /*1*/ y: kotlin.collections.(Mutable)List<(raw) kotlin.Any?>!): kotlin.String!
-    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int(raw)
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String(raw)
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public abstract class C {
@@ -43,11 +43,11 @@ public final class E : D, B {
 
 public final class E2 : B {
     public constructor E2()
-    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any(raw)?): kotlin.Boolean(raw)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open fun foo(/*0*/ x: kotlin.Any, /*1*/ y: kotlin.collections.List<kotlin.String?>): kotlin.String
     @java.lang.Override() public abstract override /*1*/ /*fake_override*/ fun foo(/*0*/ x: kotlin.Any!, /*1*/ y: kotlin.collections.(Mutable)List<(raw) kotlin.Any?>!): kotlin.String!
-    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int(raw)
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String(raw)
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public final class F : D {

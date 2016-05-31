@@ -7,7 +7,7 @@ public open class RawOverrides {
         public abstract fun </*0*/ E : kotlin.CharSequence!> foo(/*0*/ p0: T!, /*1*/ p1: (kotlin.collections.MutableList<out T!>..kotlin.collections.List<T!>?)): E!
     }
 
-    public open inner class B : test.RawOverrides.A<kotlin.Any!> {
+    public open inner class B : test.RawOverrides.A<(raw) kotlin.Any!> {
         public constructor B()
         public open override /*1*/ fun foo(/*0*/ p0: kotlin.Any!, /*1*/ p1: kotlin.collections.(Mutable)List<(raw) kotlin.Any?>!): kotlin.String!
     }

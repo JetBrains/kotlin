@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.DescriptorRendererOptions
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 
@@ -33,6 +35,8 @@ interface FlexibleType : SubtypingRepresentatives, TypeWithCustomReplacement {
         get() = upperBound
 
     override fun sameTypeConstructor(type: KotlinType) = false
+
+    fun render(renderer: DescriptorRenderer, options: DescriptorRendererOptions): String
 }
 
 fun KotlinType.isFlexible(): Boolean = unwrap() is FlexibleType
@@ -115,7 +119,7 @@ abstract class DelegatingFlexibleType protected constructor(
         return KotlinTypeFactory.flexibleType(TypeUtils.makeNullableAsSpecified(lowerBound, nullable), TypeUtils.makeNullableAsSpecified(upperBound, nullable))
     }
 
-    final override fun getDelegate(): KotlinType {
+    override fun getDelegate(): KotlinType {
         runAssertions()
         return delegateType
     }
@@ -149,4 +153,11 @@ class FlexibleTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : Delegat
 
     override fun replaceAnnotations(newAnnotations: Annotations): KotlinType
             = KotlinTypeFactory.flexibleType(lowerBound.replaceAnnotations(newAnnotations).asSimpleType(), upperBound)
+
+    override fun render(renderer: DescriptorRenderer, options: DescriptorRendererOptions): String {
+        if (options.debugMode) {
+            return "(${renderer.renderType(lowerBound)}..${renderer.renderType(upperBound)})"
+        }
+        return renderer.renderFlexibleType(renderer.renderType(lowerBound), renderer.renderType(upperBound))
+    }
 }

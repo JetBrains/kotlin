@@ -16,14 +16,4 @@
 
 package org.jetbrains.kotlin.types
 
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
-
-interface RawTypeCapability : TypeCapability {
-
-    val substitution: TypeSubstitution?
-    val substitutionToComposeWith: TypeSubstitution?
-
-    fun renderInflexible(type: KotlinType, renderer: DescriptorRenderer): String?
-    fun renderBounds(flexibleType: FlexibleType, renderer: DescriptorRenderer): Pair<String, String>?
-
-}
+interface RawType

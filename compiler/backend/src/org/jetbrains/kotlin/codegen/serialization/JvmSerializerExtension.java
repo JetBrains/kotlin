@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.load.java.JvmAbi;
+import org.jetbrains.kotlin.load.java.lazy.types.RawTypeImpl;
 import org.jetbrains.kotlin.load.kotlin.JavaFlexibleTypeDeserializer;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.serialization.AnnotationSerializer;
@@ -34,7 +35,6 @@ import org.jetbrains.kotlin.serialization.jvm.ClassMapperLite;
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf;
 import org.jetbrains.kotlin.types.DelegatingFlexibleType;
 import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.RawTypeCapability;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 
@@ -89,6 +89,11 @@ public class JvmSerializerExtension extends SerializerExtension {
             @NotNull ProtoBuf.Type.Builder upperProto
     ) {
         lowerProto.setFlexibleTypeCapabilitiesId(getStringTable().getStringIndex(JavaFlexibleTypeDeserializer.INSTANCE.getId()));
+
+        if (flexibleType instanceof RawTypeImpl) {
+            lowerProto.setExtension(JvmProtoBuf.isRaw, true);
+            upperProto.setExtension(JvmProtoBuf.isRaw, true);
+        }
     }
 
     @Override
@@ -96,10 +101,6 @@ public class JvmSerializerExtension extends SerializerExtension {
         // TODO: don't store type annotations in our binary metadata on Java 8, use *TypeAnnotations attributes instead
         for (AnnotationDescriptor annotation : type.getAnnotations()) {
             proto.addExtension(JvmProtoBuf.typeAnnotation, annotationSerializer.serializeAnnotation(annotation));
-        }
-
-        if (type.getCapability(RawTypeCapability.class) != null) {
-            proto.setExtension(JvmProtoBuf.isRaw, true);
         }
     }
 

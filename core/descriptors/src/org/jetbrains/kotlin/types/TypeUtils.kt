@@ -157,26 +157,22 @@ fun KotlinType.asTypeProjection(): TypeProjection = TypeProjectionImpl(this)
 fun KotlinType.contains(predicate: (KotlinType) -> Boolean) = TypeUtils.contains(this, predicate)
 
 fun KotlinType.replaceArgumentsWithStarProjections(): KotlinType {
-    if (constructor.parameters.isEmpty() || constructor.declarationDescriptor == null) return this
-
-    // We could just create JetTypeImpl with current type constructor and star projections,
-    // but we want to preserve flexibility of type, and that it what TypeSubstitutor does
-    return TypeSubstitutor.create(ConstantStarSubstitution).substitute(this, Variance.INVARIANT)!!
-}
-
-private object ConstantStarSubstitution : TypeSubstitution() {
-    override fun get(key: KotlinType): TypeProjection? {
-        // Let substitutor deal with flexibility
-        if (key.isFlexible()) return null
-
-        val newProjections = key.constructor.parameters.map(::StarProjectionImpl)
-
-        val substitution = TypeConstructorSubstitution.create(key.constructor, newProjections)
-
-        return TypeProjectionImpl(
-                TypeSubstitutor.create(substitution).substitute(key.constructor.declarationDescriptor!!.defaultType, Variance.INVARIANT)!!
+    val unwrapped = unwrap()
+    if (unwrapped is FlexibleType) {
+        return KotlinTypeFactory.flexibleType(
+                unwrapped.lowerBound.replaceArgumentsWithStarProjections(),
+                unwrapped.upperBound.replaceArgumentsWithStarProjections()
         )
     }
+    else {
+        return asSimpleType().replaceArgumentsWithStarProjections()
+    }
+}
 
-    override fun isEmpty() = false
+private fun SimpleType.replaceArgumentsWithStarProjections(): SimpleType {
+    if (constructor.parameters.isEmpty() || constructor.declarationDescriptor == null) return this
+
+    val newArguments = constructor.parameters.map(::StarProjectionImpl)
+
+    return replace(newArguments).asSimpleType()
 }

@@ -42,7 +42,7 @@ class DeserializationComponentsForJava(
         components = DeserializationComponents(
                 storageManager, moduleDescriptor, classDataFinder, annotationAndConstantLoader, packageFragmentProvider, localClassResolver,
                 errorReporter, lookupTracker, JavaFlexibleTypeDeserializer, ClassDescriptorFactory.EMPTY,
-                notFoundClasses, JavaTypeCapabilitiesLoader,
+                notFoundClasses,
                 additionalClassPartsProvider = settings,
                 platformDependentDeclarationFilter = settings
         )

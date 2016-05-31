@@ -29,7 +29,6 @@ val strList: List<String> = null!!
 
 fun main() {
     val rawB = Test.rawAField.b;
-    // Raw(A).b is erased too although it have no type parameters
-    // so it's `bar` allows lists of any types
-    var rawInner = rawB.bar(strList)
+    // Raw(A).b is not erased because it have no type parameters
+    var rawInner = rawB.bar(<!TYPE_MISMATCH(\(Mutable\)List<Double!>!; List<String>)!>strList<!>)
 }

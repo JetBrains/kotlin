@@ -16,15 +16,16 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
+import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.SimpleType
 
 interface FlexibleTypeDeserializer {
-    fun create(flexibleId: String, lowerBound: SimpleType, upperBound: SimpleType): KotlinType
+    fun create(proto: ProtoBuf.Type, flexibleId: String, lowerBound: SimpleType, upperBound: SimpleType): KotlinType
 
     object ThrowException : FlexibleTypeDeserializer {
         private fun error(): Nothing = throw IllegalArgumentException("This factory should not be used.")
 
-        override fun create(flexibleId: String, lowerBound: SimpleType, upperBound: SimpleType): KotlinType = error()
+        override fun create(proto: ProtoBuf.Type, flexibleId: String, lowerBound: SimpleType, upperBound: SimpleType): KotlinType = error()
     }
 }

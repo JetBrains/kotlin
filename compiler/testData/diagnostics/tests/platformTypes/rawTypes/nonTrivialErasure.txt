@@ -19,14 +19,14 @@ public/*package*/ open class Test {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    public/*package*/ open class DerivedRawA : A<out A<*, *, *>!, out A<*, *, *>!, out kotlin.collections.(Mutable)List<*>!> {
+    public/*package*/ open class DerivedRawA : A<(raw) A<*, *, *>!, (raw) A<*, *, *>!, (raw) kotlin.collections.(Mutable)List<*>!> {
         public/*package*/ constructor DerivedRawA()
         public/*package*/ final override /*1*/ /*fake_override*/ var first: A<(raw) A<*, *, *>!, (raw) A<*, *, *>!, (raw) kotlin.collections.(Mutable)List<*>!>!
         public/*package*/ final override /*1*/ /*fake_override*/ var listOfDoubles: kotlin.collections.(Mutable)List<(raw) kotlin.Any?>!
         public/*package*/ final override /*1*/ /*fake_override*/ var second: A<(raw) A<*, *, *>!, (raw) A<*, *, *>!, (raw) kotlin.collections.(Mutable)List<*>!>!
-        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any(raw)?): kotlin.Boolean(raw)
-        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int(raw)
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String(raw)
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
     // Static members
