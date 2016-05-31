@@ -81,6 +81,13 @@ class ScriptTest {
     }
 
     @Test
+    fun testScriptWithBaseClassWithParam() {
+        val aClass = compileScript("fib_dsl.kts", ReflectedSuperclassWithParamsTestScriptDefinition(".kts", numIntParam() + numIntParam("passthrough"), TestDSLClassWithParam::class, numIntParam("passthrough")), runIsolated = false)
+        Assert.assertNotNull(aClass)
+        aClass!!.getConstructor(Integer.TYPE, Integer.TYPE).newInstance(4, 1)
+    }
+
+    @Test
     fun testScriptWithInterface() {
         val aClass = compileScript("fib_dsl.kts", ReflectedSuperclassTestScriptDefinition(".kts", numIntParam(), TestDSLInterface::class), runIsolated = false)
         Assert.assertNotNull(aClass)
@@ -139,8 +146,8 @@ class ScriptTest {
         cp.forEach { addJvmClasspathRoot(it) }
     }
 
-    private fun numIntParam(): List<ScriptParameter> {
-        return listOf(ScriptParameter(Name.identifier("num"), DefaultBuiltIns.Instance.intType))
+    private fun numIntParam(name: String = "num"): List<ScriptParameter> {
+        return listOf(ScriptParameter(Name.identifier(name), DefaultBuiltIns.Instance.intType))
     }
 }
 

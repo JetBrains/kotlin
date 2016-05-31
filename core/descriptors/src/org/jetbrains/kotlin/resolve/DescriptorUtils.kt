@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.types.KotlinType
@@ -246,3 +247,16 @@ fun CallableDescriptor.overriddenTreeUniqueAsSequence(useOriginal: Boolean): Seq
 
     return doBuildOverriddenTreeAsSequence()
 }
+
+fun ClassDescriptor.getConstructorByParams(params: List<KotlinType>): ConstructorDescriptor? =
+    getConstructors().firstOrNull {
+        when {
+            it.valueParameters.isEmpty() && params.isEmpty() -> true
+            it.valueParameters.size != params.size -> false
+            else -> it.valueParameters.zip(params) { ctorP, p -> ctorP.type == p }.all { it }
+        }
+    }
+
+// TODO: inline and remove as soon as all usage sies are converted to kotlin
+fun getConstructorByParamsMap(classDescriptor: ClassDescriptor, params: List<Pair<Name, KotlinType>>): ConstructorDescriptor? =
+        classDescriptor.getConstructorByParams(params.map { it.second })

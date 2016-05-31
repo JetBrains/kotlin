@@ -38,7 +38,14 @@ class ReflectedParamClassTestScriptDefinition(extension: String, val name: Strin
             listOf(makeReflectedClassScriptParameter(scriptDescriptor, Name.identifier(name), parameter))
 }
 
-class ReflectedSuperclassTestScriptDefinition(extension: String, parameters: List<ScriptParameter>, val superclass: KClass<out Any>) : SimpleParamsTestScriptDefinition(extension, parameters) {
-    override fun getScriptSuperclasses(scriptDescriptor: ScriptDescriptor): List<KotlinType> =
+open class ReflectedSuperclassTestScriptDefinition(extension: String, parameters: List<ScriptParameter>, val superclass: KClass<out Any>) : SimpleParamsTestScriptDefinition(extension, parameters) {
+    override fun getScriptSupertypes(scriptDescriptor: ScriptDescriptor): List<KotlinType> =
             listOf(getKotlinType(scriptDescriptor, superclass))
+}
+
+class ReflectedSuperclassWithParamsTestScriptDefinition(extension: String, parameters: List<ScriptParameter>, superclass: KClass<out Any>, val superclassParameters: List<ScriptParameter>)
+    : ReflectedSuperclassTestScriptDefinition(extension, parameters, superclass)
+{
+    override fun getScriptParametersToPassToSuperclass(scriptDescriptor: ScriptDescriptor): List<Name> =
+            superclassParameters.map { it.name }
 }

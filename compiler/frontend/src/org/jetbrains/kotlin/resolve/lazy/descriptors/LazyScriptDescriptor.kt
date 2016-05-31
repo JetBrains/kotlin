@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.resolve.lazy.data.KtScriptInfo
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
+import org.jetbrains.kotlin.script.ScriptParameter
 import org.jetbrains.kotlin.script.ScriptPriorities
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
@@ -77,7 +78,18 @@ class LazyScriptDescriptor(
     override fun getInjectedSupertypes(): List<KotlinType>? {
         val file = scriptInfo.script.getContainingKtFile()
         val scriptDefinition = KotlinScriptDefinitionProvider.getInstance(file.project).findScriptDefinition(file)
-        val superclasses = scriptDefinition.getScriptSuperclasses(this)
+        val superclasses = scriptDefinition.getScriptSupertypes(this)
         return if (superclasses.isEmpty()) null else superclasses
+    }
+
+    override fun getScriptParametersToPassToSuperclass(): List<Pair<Name, KotlinType>> {
+        val file = scriptInfo.script.getContainingKtFile()
+        val scriptDefinition = KotlinScriptDefinitionProvider.getInstance(file.project).findScriptDefinition(file)
+        val scriptParams = scriptDefinition.getScriptParameters(this)
+        return scriptDefinition.getScriptParametersToPassToSuperclass(this).map { name ->
+            Pair(name,
+                 scriptParams.find { it.name == name }?.type
+                    ?: throw RuntimeException("Unknown script parameter '$name' is specified as a script base class parameter"))
+        }
     }
 }
