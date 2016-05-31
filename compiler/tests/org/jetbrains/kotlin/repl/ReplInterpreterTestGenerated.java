@@ -59,6 +59,12 @@ public class ReplInterpreterTestGenerated extends AbstractReplInterpreterTest {
         doTest(fileName);
     }
 
+    @TestMetadata("exceptionInValueToString.repl")
+    public void testExceptionInValueToString() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/exceptionInValueToString.repl");
+        doTest(fileName);
+    }
+
     @TestMetadata("function.repl")
     public void testFunction() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/function.repl");

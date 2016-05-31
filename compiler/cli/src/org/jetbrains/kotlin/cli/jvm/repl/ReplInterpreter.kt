@@ -129,31 +129,44 @@ class ReplInterpreter(
 
             val scriptInstanceConstructor = scriptClass.getConstructor(*constructorParams)
             val scriptInstance = try {
-                onUserCodeExecuting(true)
-                scriptInstanceConstructor.newInstance(*constructorArgs)
+                executeUserCode { scriptInstanceConstructor.newInstance(*constructorArgs) }
             }
             catch (e: Throwable) {
-                return LineResult.Error.Runtime(renderStackTrace(e.cause!!))
-            }
-            finally {
-                onUserCodeExecuting(false)
+                // ignore everything in the stack trace until this constructor call
+                return LineResult.Error.Runtime(renderStackTrace(e.cause!!, startFromMethodName = "${scriptClass.name}.<init>"))
             }
 
             val rvField = scriptClass.getDeclaredField(SCRIPT_RESULT_FIELD_NAME).apply { isAccessible = true }
-            val rv = rvField.get(scriptInstance)
+            val rv: Any? = rvField.get(scriptInstance)
 
             earlierLines.add(EarlierLine(line, scriptDescriptor, scriptClass, scriptInstance))
 
             if (!state.replSpecific.hasResult) {
                 return LineResult.UnitResult
             }
-            return LineResult.ValueResult(rv)
+            val valueAsString: String = try {
+                executeUserCode { rv.toString() }
+            }
+            catch (e: Throwable) {
+                return LineResult.Error.Runtime(renderStackTrace(e, startFromMethodName = "java.lang.String.valueOf"))
+            }
+            return LineResult.ValueResult(valueAsString)
         }
         catch (e: Throwable) {
             val writer = PrintWriter(System.err)
             classLoader.dumpClasses(writer)
             writer.flush()
             throw e
+        }
+    }
+
+    private fun <T> executeUserCode(body: () -> T): T {
+        try {
+            onUserCodeExecuting(true)
+            return body()
+        }
+        finally {
+            onUserCodeExecuting(false)
         }
     }
 
@@ -171,13 +184,11 @@ class ReplInterpreter(
             override fun getScriptName(script: KtScript): Name = StandardScriptDefinition.getScriptName(script)
         }
 
-        private fun renderStackTrace(cause: Throwable): String {
+        private fun renderStackTrace(cause: Throwable, startFromMethodName: String): String {
             val newTrace = arrayListOf<StackTraceElement>()
             var skip = true
             for ((i, element) in cause.stackTrace.withIndex().reversed()) {
-                // All our code happens in the script constructor, and no reflection/native code happens in constructors.
-                // So we ignore everything in the stack trace until the first constructor
-                if (element.methodName == "<init>") {
+                if ("${element.className}.${element.methodName}" == startFromMethodName) {
                     skip = false
                 }
                 if (!skip) {
@@ -185,7 +196,6 @@ class ReplInterpreter(
                 }
             }
 
-            // throw away last element which contains Line1.kts<init>(Unknown source)
             val resultingTrace = newTrace.reversed().dropLast(1)
 
             @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN", "UsePropertyAccessSyntax")
@@ -215,7 +225,7 @@ class ReplInterpreter(
 }
 
 sealed class LineResult {
-    class ValueResult(val value: Any?): LineResult()
+    class ValueResult(val valueAsString: String): LineResult()
 
     object UnitResult: LineResult()
     object Incomplete : LineResult()
