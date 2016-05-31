@@ -100,6 +100,9 @@ public final class AnnotationsUtils {
                     continue;
                 }
                 String name = getNameForAnnotatedObject(descriptor, annotation);
+                if (name == null) {
+                    name = getJsName(descriptor);
+                }
                 return name != null ? name : descriptor.getName().asString();
             }
         }
