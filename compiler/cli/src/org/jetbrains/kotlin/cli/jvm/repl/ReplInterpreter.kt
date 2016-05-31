@@ -70,66 +70,6 @@ class ReplInterpreter(
     private val psiFileFactory: PsiFileFactoryImpl = PsiFileFactory.getInstance(environment.project) as PsiFileFactoryImpl
     private val analyzerEngine = CliReplAnalyzerEngine(environment)
 
-    enum class LineResultType {
-        SUCCESS,
-        COMPILE_ERROR,
-        RUNTIME_ERROR,
-        INCOMPLETE
-    }
-
-    class LineResult private constructor(
-            private val resultingValue: Any?,
-            private val unit: Boolean,
-            val errorText: String?,
-            val type: LineResultType
-    ) {
-        val value: Any?
-            get() {
-                checkSuccessful()
-                return resultingValue
-            }
-
-        val isUnit: Boolean
-            get() {
-                checkSuccessful()
-                return unit
-            }
-
-        private fun checkSuccessful() {
-            if (type != LineResultType.SUCCESS) {
-                error("it is error")
-            }
-        }
-
-        companion object {
-            private fun error(errorText: String, errorType: LineResultType): LineResult {
-                val resultingErrorText = when {
-                    errorText.isEmpty() -> "<unknown error>"
-                    !errorText.endsWith("\n") -> errorText + "\n"
-                    else -> errorText
-                }
-
-                return LineResult(null, false, resultingErrorText, errorType)
-            }
-
-            fun successful(value: Any?, unit: Boolean): LineResult {
-                return LineResult(value, unit, null, LineResultType.SUCCESS)
-            }
-
-            fun compileError(errorText: String): LineResult {
-                return error(errorText, LineResultType.COMPILE_ERROR)
-            }
-
-            fun runtimeError(errorText: String): LineResult {
-                return error(errorText, LineResultType.RUNTIME_ERROR)
-            }
-
-            fun incomplete(): LineResult {
-                return LineResult(null, false, null, LineResultType.INCOMPLETE)
-            }
-        }
-    }
-
     fun eval(line: String): LineResult {
         ++lineNumber
 
@@ -149,23 +89,23 @@ class ReplInterpreter(
         if (syntaxErrorReport.isHasErrors && syntaxErrorReport.isAllErrorsAtEof) {
             return if (allowIncompleteLines) {
                 previousIncompleteLines.add(line)
-                LineResult.incomplete()
+                LineResult.Incomplete
             }
             else {
-                LineResult.compileError(errorHolder.renderedDiagnostics)
+                LineResult.Error.CompileTime(errorHolder.renderedDiagnostics)
             }
         }
 
         previousIncompleteLines.clear()
 
         if (syntaxErrorReport.isHasErrors) {
-            return LineResult.compileError(errorHolder.renderedDiagnostics)
+            return LineResult.Error.CompileTime(errorHolder.renderedDiagnostics)
         }
 
         val analysisResult = analyzerEngine.analyzeReplLine(psiFile, lineNumber)
         AnalyzerWithCompilerReport.reportDiagnostics(analysisResult.diagnostics, errorHolder, false)
         val scriptDescriptor = when (analysisResult) {
-            is WithErrors -> return LineResult.compileError(errorHolder.renderedDiagnostics)
+            is WithErrors -> return LineResult.Error.CompileTime(errorHolder.renderedDiagnostics)
             is Successful -> analysisResult.scriptDescriptor
             else -> error("Unexpected result ${analysisResult.javaClass}")
         }
@@ -193,7 +133,7 @@ class ReplInterpreter(
                 scriptInstanceConstructor.newInstance(*constructorArgs)
             }
             catch (e: Throwable) {
-                return LineResult.runtimeError(renderStackTrace(e.cause!!))
+                return LineResult.Error.Runtime(renderStackTrace(e.cause!!))
             }
             finally {
                 onUserCodeExecuting(false)
@@ -204,7 +144,10 @@ class ReplInterpreter(
 
             earlierLines.add(EarlierLine(line, scriptDescriptor, scriptClass, scriptInstance))
 
-            return LineResult.successful(rv, !state.replSpecific.hasResult)
+            if (!state.replSpecific.hasResult) {
+                return LineResult.UnitResult
+            }
+            return LineResult.ValueResult(rv)
         }
         catch (e: Throwable) {
             val writer = PrintWriter(System.err)
@@ -268,5 +211,17 @@ class ReplInterpreter(
                     errorHandler
             )
         }
+    }
+}
+
+sealed class LineResult {
+    class ValueResult(val value: Any?): LineResult()
+
+    object UnitResult: LineResult()
+    object Incomplete : LineResult()
+
+    sealed class Error(val errorText: String): LineResult() {
+        class Runtime(errorText: String): Error(errorText)
+        class CompileTime(errorText: String): Error(errorText)
     }
 }

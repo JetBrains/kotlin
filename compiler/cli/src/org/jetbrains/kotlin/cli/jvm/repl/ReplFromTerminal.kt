@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.cli.jvm.repl
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.cli.common.KotlinVersion
+import org.jetbrains.kotlin.cli.jvm.repl.LineResult.*
 import org.jetbrains.kotlin.cli.jvm.repl.messages.unescapeLineBreaks
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import java.io.File
@@ -84,8 +85,8 @@ class ReplFromTerminal(
             return if (notQuit) WhatNextAfterOneLine.READ_LINE else WhatNextAfterOneLine.QUIT
         }
 
-        val lineResultType = eval(line)
-        if (lineResultType === ReplInterpreter.LineResultType.INCOMPLETE) {
+        val lineResult = eval(line)
+        if (lineResult is LineResult.Incomplete) {
             return WhatNextAfterOneLine.INCOMPLETE
         }
         else {
@@ -93,27 +94,20 @@ class ReplFromTerminal(
         }
     }
 
-    private fun eval(line: String): ReplInterpreter.LineResultType {
+    private fun eval(line: String): LineResult {
         val lineResult = replInterpreter.eval(line)
-        if (lineResult.type === ReplInterpreter.LineResultType.SUCCESS) {
-            writer.notifyCommandSuccess()
-            if (!lineResult.isUnit) {
-                writer.outputCommandResult(lineResult.value)
+        when (lineResult) {
+            is ValueResult, UnitResult -> {
+                writer.notifyCommandSuccess()
+                if (lineResult is ValueResult) {
+                    writer.outputCommandResult(lineResult.value)
+                }
             }
+            Incomplete -> writer.notifyIncomplete()
+            is Error.CompileTime -> writer.outputCompileError(lineResult.errorText)
+            is Error.Runtime -> writer.outputRuntimeError(lineResult.errorText)
         }
-        else if (lineResult.type === ReplInterpreter.LineResultType.INCOMPLETE) {
-            writer.notifyIncomplete()
-        }
-        else if (lineResult.type === ReplInterpreter.LineResultType.COMPILE_ERROR) {
-            writer.outputCompileError(lineResult.errorText!!)
-        }
-        else if (lineResult.type === ReplInterpreter.LineResultType.RUNTIME_ERROR) {
-            writer.outputRuntimeError(lineResult.errorText!!)
-        }
-        else {
-            throw IllegalStateException("unknown line result type: " + lineResult)
-        }
-        return lineResult.type
+        return lineResult
     }
 
     @Throws(Exception::class)
