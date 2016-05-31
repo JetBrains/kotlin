@@ -23,10 +23,10 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 open class KotlinTypeImpl
 private constructor(
         override val annotations: Annotations,
-        override val constructor: TypeConstructor,
+        final override val constructor: TypeConstructor,
         override val isMarkedNullable: Boolean,
         override val arguments: List<TypeProjection>,
-        override val memberScope: MemberScope
+        final override val memberScope: MemberScope
 ) : AbstractKotlinType() {
 
     companion object {
