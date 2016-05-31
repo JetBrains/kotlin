@@ -295,33 +295,15 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
             doTest(fileName);
         }
 
-        @TestMetadata("extensionPropertiesWithDifferentReceiversDoNotClash.kt")
-        public void testExtensionPropertiesWithDifferentReceiversDoNotClash() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/extensionPropertiesWithDifferentReceiversDoNotClash.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("extensionPropertyAndMethod.kt")
         public void testExtensionPropertyAndMethod() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/extensionPropertyAndMethod.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("extensionPropertyAndMethodDoNotClash.kt")
-        public void testExtensionPropertyAndMethodDoNotClash() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/extensionPropertyAndMethodDoNotClash.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("jsNameAndOverridden.kt")
         public void testJsNameAndOverridden() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/jsNameAndOverridden.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("jsNameAndPrivateDontClash.kt")
-        public void testJsNameAndPrivateDontClash() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/jsNameAndPrivateDontClash.kt");
             doTest(fileName);
         }
 
@@ -343,27 +325,9 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
             doTest(fileName);
         }
 
-        @TestMetadata("methodAndPrivatePropertyDoNotClash.kt")
-        public void testMethodAndPrivatePropertyDoNotClash() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/methodAndPrivatePropertyDoNotClash.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("packageAndMangledMethodDoNotClash.kt")
-        public void testPackageAndMangledMethodDoNotClash() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/packageAndMangledMethodDoNotClash.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("packageAndMethod.kt")
         public void testPackageAndMethod() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/packageAndMethod.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("packageAndPrivateDeclarationsDoNotClash.kt")
-        public void testPackageAndPrivateDeclarationsDoNotClash() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/packageAndPrivateDeclarationsDoNotClash.kt");
             doTest(fileName);
         }
 
@@ -382,12 +346,6 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         @TestMetadata("propertyAndMethodInSubclass.kt")
         public void testPropertyAndMethodInSubclass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/propertyAndMethodInSubclass.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("propertyAndNativeMethodDoNotClash.kt")
-        public void testPropertyAndNativeMethodDoNotClash() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/propertyAndNativeMethodDoNotClash.kt");
             doTest(fileName);
         }
 

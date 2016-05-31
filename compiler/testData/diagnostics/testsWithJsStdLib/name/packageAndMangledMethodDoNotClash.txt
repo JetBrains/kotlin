@@ -1,9 +1,0 @@
-package
-
-package foo {
-    public fun bar(/*0*/ x: kotlin.Int): kotlin.Int
-
-    package foo.bar {
-        public val x: kotlin.Int = 42
-    }
-}

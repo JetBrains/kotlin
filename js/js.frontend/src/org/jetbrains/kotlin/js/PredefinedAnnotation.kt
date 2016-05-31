@@ -23,8 +23,7 @@ enum class PredefinedAnnotation(fqName: String) {
     NATIVE("kotlin.js.native"),
     NATIVE_INVOKE("kotlin.js.nativeInvoke"),
     NATIVE_GETTER("kotlin.js.nativeGetter"),
-    NATIVE_SETTER("kotlin.js.nativeSetter"),
-    JS_NAME("kotlin.js.JsName");
+    NATIVE_SETTER("kotlin.js.nativeSetter");
 
     val fqName: FqName = FqName(fqName)
 
