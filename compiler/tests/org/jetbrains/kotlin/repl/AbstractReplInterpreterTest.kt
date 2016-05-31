@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.repl
 
 import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.cli.jvm.repl.ConsoleReplConfiguration
+import org.jetbrains.kotlin.cli.jvm.repl.LineResult
 import org.jetbrains.kotlin.cli.jvm.repl.ReplInterpreter
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -81,7 +83,7 @@ abstract class AbstractReplInterpreterTest : KtUsefulTestCase() {
 
     protected fun doTest(path: String) {
         val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK)
-        val repl = ReplInterpreter(testRootDisposable, configuration, false, null)
+        val repl = ReplInterpreter(testRootDisposable, configuration, ConsoleReplConfiguration())
 
         for ((code, expected) in loadLines(File(path))) {
             val lineResult = repl.eval(code)
@@ -90,11 +92,11 @@ abstract class AbstractReplInterpreterTest : KtUsefulTestCase() {
                 repl.dumpClasses(PrintWriter(System.out))
             }
 
-            val actual = when (lineResult.type) {
-                ReplInterpreter.LineResultType.SUCCESS -> if (!lineResult.isUnit) "${lineResult.value}" else ""
-                ReplInterpreter.LineResultType.RUNTIME_ERROR,
-                ReplInterpreter.LineResultType.COMPILE_ERROR -> lineResult.errorText!!
-                ReplInterpreter.LineResultType.INCOMPLETE -> INCOMPLETE_LINE_MESSAGE
+            val actual = when (lineResult) {
+                is LineResult.ValueResult -> "${lineResult.value}"
+                is LineResult.Error -> lineResult.errorText
+                LineResult.Incomplete -> INCOMPLETE_LINE_MESSAGE
+                LineResult.UnitResult -> ""
             }
 
             Assert.assertEquals(
