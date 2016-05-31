@@ -2,7 +2,7 @@ package
 
 public final class A {
     public constructor A()
-    @kotlin.js.nativeInvoke() public final val foo: kotlin.Int = 0
+    @kotlin.js.nativeInvoke() public final val baz: kotlin.Int = 0
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     @kotlin.js.nativeInvoke() public final fun foo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
