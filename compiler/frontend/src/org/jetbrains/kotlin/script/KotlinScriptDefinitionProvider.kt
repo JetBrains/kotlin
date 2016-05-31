@@ -14,51 +14,35 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.script;
+package org.jetbrains.kotlin.script
 
-import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiFile;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiFile
 
-import java.util.ArrayList;
-import java.util.List;
+class KotlinScriptDefinitionProvider {
+    private val definitions: MutableList<KotlinScriptDefinition> = arrayListOf(StandardScriptDefinition)
 
-public class KotlinScriptDefinitionProvider {
-    private final List<KotlinScriptDefinition> definitions = new ArrayList<KotlinScriptDefinition>();
+    fun findScriptDefinition(psiFile: PsiFile): KotlinScriptDefinition? = definitions.firstOrNull { it.isScript(psiFile) }
 
-    public static KotlinScriptDefinitionProvider getInstance(Project project) {
-        return ServiceManager.getService(project, KotlinScriptDefinitionProvider.class);
+    fun isScript(psiFile: PsiFile): Boolean = findScriptDefinition(psiFile) != null
+
+    fun addScriptDefinition(scriptDefinition: KotlinScriptDefinition) {
+        definitions.add(0, scriptDefinition)
     }
 
-    public KotlinScriptDefinitionProvider() {
-        definitions.add(StandardScriptDefinition.INSTANCE);
+    fun setScriptDefinitions(definitions: List<KotlinScriptDefinition>) {
+        this.definitions.clear()
+        this.definitions.addAll(definitions)
     }
 
-    public KotlinScriptDefinition findScriptDefinition(PsiFile psiFile) {
-        for (KotlinScriptDefinition definition : definitions) {
-            if (definition.isScript(psiFile)) {
-                return definition;
-            }
-        }
-
-        return null;
+    fun removeScriptDefinition(scriptDefinition: KotlinScriptDefinition) {
+        definitions.remove(scriptDefinition)
     }
 
-    public boolean isScript(PsiFile psiFile) {
-        return findScriptDefinition(psiFile) != null;
-    }
-
-    public void addScriptDefinition(@NotNull KotlinScriptDefinition scriptDefinition) {
-        definitions.add(0, scriptDefinition);
-    }
-
-    public void removeScriptDefinition(@NotNull KotlinScriptDefinition scriptDefinition) {
-        definitions.remove(scriptDefinition);
-    }
-
-    public void setScriptDefinitions(@NotNull List<KotlinScriptDefinition> definitions) {
-        this.definitions.clear();
-        this.definitions.addAll(definitions);
+    companion object {
+        @JvmStatic
+        fun getInstance(project: Project): KotlinScriptDefinitionProvider =
+                ServiceManager.getService(project, KotlinScriptDefinitionProvider::class.java)
     }
 }

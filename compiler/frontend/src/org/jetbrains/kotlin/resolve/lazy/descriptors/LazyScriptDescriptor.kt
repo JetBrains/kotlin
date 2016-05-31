@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.data.KtScriptInfo
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
 import org.jetbrains.kotlin.resolve.source.toSourceElement
+import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
-import org.jetbrains.kotlin.script.ScriptParameter
 import org.jetbrains.kotlin.script.ScriptPriorities
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
@@ -55,36 +55,33 @@ class LazyScriptDescriptor(
 
     override fun getPriority() = priority
 
+    private val scriptDefinition: KotlinScriptDefinition
+            by lazy {
+                val file = scriptInfo.script.getContainingKtFile()
+                KotlinScriptDefinitionProvider.getInstance(file.project).findScriptDefinition(file) ?:
+                    throw RuntimeException("file ${file.name} is not a script")
+            }
+
     override fun substitute(substitutor: TypeSubstitutor) = this
 
-    override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R {
-        return visitor.visitScriptDescriptor(this, data)
-    }
+    override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R =
+            visitor.visitScriptDescriptor(this, data)
 
-    override fun createMemberScope(
-            c: LazyClassContext,
-            declarationProvider: ClassMemberDeclarationProvider): LazyScriptClassMemberScope {
-        return LazyScriptClassMemberScope(
+    override fun createMemberScope( c: LazyClassContext, declarationProvider: ClassMemberDeclarationProvider): LazyScriptClassMemberScope =
+        LazyScriptClassMemberScope(
                 // Must be a ResolveSession for scripts
                 c as ResolveSession,
                 declarationProvider,
                 this,
                 c.trace
         )
-    }
 
     override fun getUnsubstitutedPrimaryConstructor() = super.getUnsubstitutedPrimaryConstructor()!!
 
-    override fun getInjectedSupertypes(): List<KotlinType>? {
-        val file = scriptInfo.script.getContainingKtFile()
-        val scriptDefinition = KotlinScriptDefinitionProvider.getInstance(file.project).findScriptDefinition(file)
-        val superclasses = scriptDefinition.getScriptSupertypes(this)
-        return if (superclasses.isEmpty()) null else superclasses
-    }
+    override fun getInjectedSupertypes(): List<KotlinType>? =
+            scriptDefinition.getScriptSupertypes(this).let { if (it.isEmpty()) null else it }
 
     override fun getScriptParametersToPassToSuperclass(): List<Pair<Name, KotlinType>> {
-        val file = scriptInfo.script.getContainingKtFile()
-        val scriptDefinition = KotlinScriptDefinitionProvider.getInstance(file.project).findScriptDefinition(file)
         val scriptParams = scriptDefinition.getScriptParameters(this)
         return scriptDefinition.getScriptParametersToPassToSuperclass(this).map { name ->
             Pair(name,
