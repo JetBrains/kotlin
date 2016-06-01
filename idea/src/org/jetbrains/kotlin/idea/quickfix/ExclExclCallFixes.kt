@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.isValidOperator
 
@@ -103,6 +105,25 @@ class AddExclExclCallFix(val psiElement: PsiElement) : ExclExclCallFix() {
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction
                 = AddExclExclCallFix(diagnostic.psiElement)
+    }
+}
+
+object SmartCastImpossibleExclExclFixFactory: KotlinSingleIntentionActionFactory() {
+    override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+        if (diagnostic.factory !== Errors.SMARTCAST_IMPOSSIBLE) return null
+        val element = diagnostic.psiElement as? KtExpression ?: return null
+
+        val analyze = element.analyze(BodyResolveMode.PARTIAL)
+        val type = analyze.getType(element)
+        if (type == null || !TypeUtils.isNullableType(type)) return null
+
+        val diagnosticWithParameters = Errors.SMARTCAST_IMPOSSIBLE.cast(diagnostic)
+        val expectedType = diagnosticWithParameters.a
+        if (TypeUtils.isNullableType(expectedType)) return null
+        val nullableExpectedType = TypeUtils.makeNullable(expectedType)
+        if (!type.isSubtypeOf(nullableExpectedType)) return null
+
+        return AddExclExclCallFix(element)
     }
 }
 

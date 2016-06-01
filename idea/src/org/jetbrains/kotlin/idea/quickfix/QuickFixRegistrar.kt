@@ -300,6 +300,7 @@ class QuickFixRegistrar : QuickFixContributor {
         NULL_FOR_NONNULL_TYPE.registerFactory(factoryForTypeMismatchError)
         CONSTANT_EXPECTED_TYPE_MISMATCH.registerFactory(factoryForTypeMismatchError)
 
+        SMARTCAST_IMPOSSIBLE.registerFactory(SmartCastImpossibleExclExclFixFactory)
         SMARTCAST_IMPOSSIBLE.registerFactory(CastExpressionFix.SmartCastImpossibleFactory)
 
         PLATFORM_CLASS_MAPPED_TO_KOTLIN.registerFactory(MapPlatformClassToKotlinFix)
