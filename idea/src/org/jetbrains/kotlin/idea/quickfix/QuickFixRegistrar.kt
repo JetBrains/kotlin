@@ -190,6 +190,10 @@ class QuickFixRegistrar : QuickFixContributor {
         UNNECESSARY_SAFE_CALL.registerFactory(ReplaceWithDotCallFix)
         UNSAFE_CALL.registerFactory(ReplaceWithSafeCallFix)
 
+        UNSAFE_CALL.registerFactory(SurroundWithNullCheckFix)
+        UNSAFE_IMPLICIT_INVOKE_CALL.registerFactory(SurroundWithNullCheckFix)
+        UNSAFE_INFIX_CALL.registerFactory(SurroundWithNullCheckFix)
+
         UNSAFE_CALL.registerFactory(AddExclExclCallFix)
         UNNECESSARY_NOT_NULL_ASSERTION.registerFactory(RemoveExclExclCallFix)
         UNSAFE_INFIX_CALL.registerFactory(ReplaceInfixCallFix)
