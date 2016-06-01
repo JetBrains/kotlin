@@ -57,35 +57,6 @@ public class OptimizationBasicInterpreter extends BasicInterpreter {
         }
     }
 
-    @Override
-    public BasicValue newOperation(@NotNull AbstractInsnNode insn) throws AnalyzerException {
-        if (insn.getOpcode() == Opcodes.LDC) {
-            Object cst = ((LdcInsnNode) insn).cst;
-
-            if (cst instanceof Long) {
-                return BasicValue.LONG_VALUE;
-            }
-
-            if (cst instanceof Boolean ||
-                cst instanceof Integer ||
-                cst instanceof Short ||
-                cst instanceof Byte ||
-                cst instanceof Character) {
-                return BasicValue.INT_VALUE;
-            }
-
-            if (cst instanceof Float) {
-                return BasicValue.FLOAT_VALUE;
-            }
-
-            if (cst instanceof Double) {
-                return BasicValue.DOUBLE_VALUE;
-            }
-        }
-
-        return super.newOperation(insn);
-    }
-
     @NotNull
     @Override
     public BasicValue merge(

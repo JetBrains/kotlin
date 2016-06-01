@@ -770,12 +770,13 @@ public abstract class StackValue {
         }
     }
 
-    public static class Constant extends StackValue {
+    private static class Constant extends StackValue {
         @Nullable
         private final Object value;
 
         public Constant(@Nullable Object value, Type type) {
             super(type, false);
+            assert !Type.BOOLEAN_TYPE.equals(type) : "Boolean constants should be created via 'StackValue.constant'";
             this.value = value;
         }
 
@@ -783,6 +784,9 @@ public abstract class StackValue {
         public void putSelector(@NotNull Type type, @NotNull InstructionAdapter v) {
             if (value instanceof Integer || value instanceof Byte || value instanceof Short) {
                 v.iconst(((Number) value).intValue());
+            }
+            else if (value instanceof Character) {
+                v.iconst(((Character) value).charValue());
             }
             else if (value instanceof Long) {
                 v.lconst((Long) value);
@@ -1212,7 +1216,7 @@ public abstract class StackValue {
                 value = ((Double) value).floatValue();
             }
 
-            new Constant(value, this.type).putSelector(type, v);
+            StackValue.constant(value, this.type).putSelector(type, v);
 
             return true;
         }

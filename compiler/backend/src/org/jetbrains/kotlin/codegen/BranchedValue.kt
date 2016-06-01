@@ -32,8 +32,6 @@ open class BranchedValue(
         val opcode: Int
 ) : StackValue(Type.BOOLEAN_TYPE) {
 
-    constructor(or: BranchedValue, opcode: Int) : this(or.arg1, or.arg2, or.operandType, opcode)
-
     override fun putSelector(type: Type, v: InstructionAdapter) {
         val branchJumpLabel = Label()
         condJump(branchJumpLabel, v, true)
@@ -63,7 +61,7 @@ open class BranchedValue(
     companion object {
         val negatedOperations = hashMapOf<Int, Int>()
 
-        val TRUE: BranchedValue = object : BranchedValue(StackValue.Constant(true, Type.BOOLEAN_TYPE), null, Type.BOOLEAN_TYPE, IFEQ) {
+        val TRUE: BranchedValue = object : BranchedValue(StackValue.none()/*not used*/, null, Type.BOOLEAN_TYPE, IFEQ) {
             override fun condJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
                 if (!jumpIfFalse) {
                     v.goTo(jumpLabel)
@@ -85,7 +83,7 @@ open class BranchedValue(
             }
         }
 
-        val FALSE: BranchedValue = object : BranchedValue(StackValue.Constant(false, Type.BOOLEAN_TYPE), null, Type.BOOLEAN_TYPE, IFEQ) {
+        val FALSE: BranchedValue = object : BranchedValue(StackValue.none()/*not used*/, null, Type.BOOLEAN_TYPE, IFEQ) {
             override fun condJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
                 if (jumpIfFalse) {
                     v.goTo(jumpLabel)
