@@ -108,8 +108,11 @@ class ConvertToExpressionBodyIntention : SelfTargetingOffsetIndependentIntention
                 val expressionType = context.getType(statement) ?: return null
                 val isUnit = KotlinBuiltIns.isUnit(expressionType)
                 if (!isUnit && !KotlinBuiltIns.isNothing(expressionType)) return null
-                if (isUnit && statement is KtWhenExpression) {
-                    if (statement.elseExpression == null && context.get(BindingContext.EXHAUSTIVE_WHEN, statement) != true) return null
+                if (isUnit) {
+                    val resultingWhens = statement.resultingWhens()
+                    if (resultingWhens.any { it.elseExpression == null && context.get(BindingContext.EXHAUSTIVE_WHEN, it) != true}) {
+                        return null
+                    }
                 }
                 return statement
             }

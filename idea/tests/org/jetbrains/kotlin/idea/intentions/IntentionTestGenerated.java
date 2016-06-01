@@ -4489,6 +4489,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("elvisWhenUnitNonExhaustive.kt")
+        public void testElvisWhenUnitNonExhaustive() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToExpressionBody/elvisWhenUnitNonExhaustive.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("emptyList.kt")
         public void testEmptyList() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToExpressionBody/emptyList.kt");
@@ -4558,6 +4564,24 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("getWithReturn.kt")
         public void testGetWithReturn() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToExpressionBody/getWithReturn.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ifWhenUnitExhaustive.kt")
+        public void testIfWhenUnitExhaustive() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToExpressionBody/ifWhenUnitExhaustive.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ifWhenUnitNonExhaustive.kt")
+        public void testIfWhenUnitNonExhaustive() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToExpressionBody/ifWhenUnitNonExhaustive.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lambdaWhenUnitNonExhaustive.kt")
+        public void testLambdaWhenUnitNonExhaustive() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToExpressionBody/lambdaWhenUnitNonExhaustive.kt");
             doTest(fileName);
         }
 
