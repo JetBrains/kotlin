@@ -10,13 +10,16 @@ function se2(value) {
 }
 
 function test1() {
-    se(); se(); se(); se(); se();
-    se(); se(); se(); se(); se();
-    se(); se(); se(); se(); se();
-    se(); se(); se(); se(); se();
-    se(); se(); se(); se(); se();
-    se(); se(); se(); se(); se();
-    se(); se(); se();
+    se("a1"); se("a2"); se("a3"); se("a4");
+    se("b1"); se("b2"); se("b3");
+    se("c1"); se("c2");
+    se("d1"); se("d2");
+    se("e1"); se("e2");
+    se("f1"); se("f2"); se("f3"); se("f4");
+    se("g1_1"); se("g1_2"); se("g2_1"); se("g2_2");
+    se("g3_1"); se("g3_2"); se("g4_1"); se("g4_2");
+    se("h1_1"); se("h1_2"); se("h2_1"); se("h2_2");
+    se("h3_1"); se("h3_2"); se("h4_1"); se("h4_2");
 }
 
 function test2() {

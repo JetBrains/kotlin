@@ -26,4 +26,6 @@ class IneffectiveStatementEliminationTest() : BasicOptimizerTest("ineffective-st
     @Test fun conditional() = box()
 
     @Test fun literal() = box()
+
+    @Test fun parameters() = box()
 }
