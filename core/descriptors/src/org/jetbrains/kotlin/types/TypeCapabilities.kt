@@ -53,16 +53,16 @@ inline fun <reified T : TypeCapability> KotlinType.getCapability(): T? = getCapa
 // To facilitate laziness, any KotlinType implementation may inherit from this trait,
 // even if it turns out that the type an instance represents is not actually a type variable
 // (i.e. it is not derived from a type parameter), see isTypeVariable
-interface CustomTypeVariable : TypeCapability {
+interface CustomTypeVariable {
     val isTypeVariable: Boolean
 
     // Throws an exception when isTypeVariable == false
     fun substitutionResult(replacement: KotlinType): KotlinType
 }
 
-fun KotlinType.isCustomTypeVariable(): Boolean = this.getCapability(CustomTypeVariable::class.java)?.isTypeVariable ?: false
+fun KotlinType.isCustomTypeVariable(): Boolean = (unwrap() as? CustomTypeVariable)?.isTypeVariable ?: false
 fun KotlinType.getCustomTypeVariable(): CustomTypeVariable? =
-        this.getCapability(CustomTypeVariable::class.java)?.let {
+        (unwrap() as? CustomTypeVariable)?.let {
             if (it.isTypeVariable) it else null
         }
 

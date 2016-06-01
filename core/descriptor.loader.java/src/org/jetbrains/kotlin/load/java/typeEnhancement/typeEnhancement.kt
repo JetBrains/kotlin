@@ -124,12 +124,6 @@ private fun KotlinType.enhanceInflexible(qualifiers: (Int) -> JavaTypeQualifiers
 
     val newSubstitution = TypeConstructorSubstitution.create(typeConstructor, enhancedArguments)
 
-    val newCapabilities =
-            if (effectiveQualifiers.isNotNullTypeParameter)
-                capabilities.addCapability(CustomTypeVariable::class.java, NotNullTypeParameterTypeCapability)
-            else
-                capabilities
-
     val enhancedType = KotlinTypeImpl.create(
             newAnnotations,
             typeConstructor,
@@ -137,10 +131,11 @@ private fun KotlinType.enhanceInflexible(qualifiers: (Int) -> JavaTypeQualifiers
             enhancedArguments,
             if (enhancedClassifier is ClassDescriptor)
                 enhancedClassifier.getMemberScope(newSubstitution)
-            else enhancedClassifier.getDefaultType().memberScope,
-            newCapabilities
+            else enhancedClassifier.getDefaultType().memberScope
     )
-    return Result(enhancedType, subtreeSize, wereChanges = true)
+
+    val result = if (effectiveQualifiers.isNotNullTypeParameter) NotNullTypeParameter(enhancedType) else enhancedType
+    return Result(result, subtreeSize, wereChanges = true)
 }
 
 private fun List<Annotations>.compositeAnnotationsOrSingle() = when (size) {
@@ -218,28 +213,31 @@ private object EnhancedTypeAnnotationDescriptor : AnnotationDescriptor {
     override fun toString() = "[EnhancedType]"
 }
 
-internal object NotNullTypeParameterTypeCapability : CustomTypeVariable {
+internal class NotNullTypeParameter(private val delegate: SimpleType) : CustomTypeVariable, DelegatingType(), SimpleType {
+    override fun getDelegate(): KotlinType? = delegate
+
     override val isTypeVariable: Boolean
         get() = true
 
     override fun substitutionResult(replacement: KotlinType): KotlinType {
-        if (!TypeUtils.isNullableType(replacement) && !replacement.isTypeParameter()) return replacement
+        val unwrappedType = replacement.unwrap()
+        if (!TypeUtils.isNullableType(unwrappedType) && !unwrappedType.isTypeParameter()) return unwrappedType
 
-        if (replacement.isFlexible()) {
-            with(replacement.asFlexibleType()) {
-                return KotlinTypeFactory.flexibleType(lowerBound.prepareReplacement().asSimpleType(), upperBound.prepareReplacement().asSimpleType())
-            }
+        return when (unwrappedType) {
+            is SimpleType -> unwrappedType.prepareReplacement()
+            is FlexibleType -> KotlinTypeFactory.flexibleType(unwrappedType.lowerBound.prepareReplacement(),
+                                                                    unwrappedType.upperBound.prepareReplacement())
+            else -> error("Incorrect type: $unwrappedType")
         }
-
-        return replacement.prepareReplacement()
     }
 
-    private fun KotlinType.prepareReplacement(): KotlinType {
-        val result = makeNotNullable()
+    override val isMarkedNullable: Boolean
+        get() = false
+
+    private fun SimpleType.prepareReplacement(): SimpleType {
+        val result = TypeUtils.makeNullableAsSpecified(this, false)
         if (!this.isTypeParameter()) return result
 
-        return result.replace(
-                newCapabilities = capabilities.addCapability(
-                        CustomTypeVariable::class.java, NotNullTypeParameterTypeCapability))
+        return NotNullTypeParameter(result)
     }
 }
