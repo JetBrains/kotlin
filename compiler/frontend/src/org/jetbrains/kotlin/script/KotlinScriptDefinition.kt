@@ -43,7 +43,7 @@ interface KotlinScriptDefinition {
     fun getScriptDependenciesClasspath(): List<String> = emptyList()
 }
 
-class ScriptParameter(val name: Name, val type: KotlinType)
+data class ScriptParameter(val name: Name, val type: KotlinType)
 
 object StandardScriptDefinition : KotlinScriptDefinition {
     private val ARGS_NAME = Name.identifier("args")

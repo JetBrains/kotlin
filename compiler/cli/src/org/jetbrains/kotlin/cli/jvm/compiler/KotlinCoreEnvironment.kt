@@ -136,7 +136,7 @@ class KotlinCoreEnvironment private constructor(
         })
 
         KotlinScriptDefinitionProvider.getInstance(project).let { scriptDefinitionProvider ->
-            scriptDefinitionProvider.scriptDefinitions =
+            scriptDefinitionProvider.setScriptDefinitions(
                     configuration.getList(JVMConfigurationKeys.SCRIPT_DEFINITIONS)
                             .ifEmpty {
                                 if (configuration.get(JVMConfigurationKeys.LOAD_SCRIPT_CONFIGS) ?: false)
@@ -146,14 +146,14 @@ class KotlinCoreEnvironment private constructor(
                                     }
                                 else null
                                 ?: listOf(StandardScriptDefinition)
-                            }
+                            })
 
-            configuration.addJvmClasspathRoots(
-                    sourceFiles
-                            .mapNotNull { src -> src.virtualFile }
-                            .flatMap { getScriptCombinedClasspath(it, project) }
-                            .map { File(it).canonicalFile }
-                            .distinct())
+            KotlinScriptExtraImportsProvider.getInstance(project)?.run {
+                configuration.addJvmClasspathRoots(
+                        getCombinedClasspathFor(sourceFiles.mapNotNull { src -> src.virtualFile })
+                                .map { File(it).canonicalFile }
+                                .distinct())
+            }
         }
 
         fillClasspath(configuration)
@@ -409,8 +409,9 @@ class KotlinCoreEnvironment private constructor(
         // made public for Upsource
         @JvmStatic fun registerProjectServices(projectEnvironment: JavaCoreProjectEnvironment) {
             with (projectEnvironment.project) {
-                registerService(KotlinScriptDefinitionProvider::class.java, KotlinScriptDefinitionProvider())
-                registerService(KotlinScriptExtraImportsProvider::class.java, KotlinScriptExtraImportsProvider(projectEnvironment.project))
+                val kotlinScriptDefinitionProvider = KotlinScriptDefinitionProvider()
+                registerService(KotlinScriptDefinitionProvider::class.java, kotlinScriptDefinitionProvider)
+                registerService(KotlinScriptExtraImportsProvider::class.java, KotlinScriptExtraImportsProvider(projectEnvironment.project, kotlinScriptDefinitionProvider))
                 registerService(KotlinJavaPsiFacade::class.java, KotlinJavaPsiFacade(this))
                 registerService(KtLightClassForFacade.FacadeStubCache::class.java, KtLightClassForFacade.FacadeStubCache(this))
             }

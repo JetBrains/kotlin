@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 
 
-class KotlinConfigurableScriptDefinition(val config: KotlinScriptConfig, val environmentVars: Map<String, List<String>>?) : KotlinScriptDefinition {
+data class KotlinConfigurableScriptDefinition(val config: KotlinScriptConfig, val environmentVars: Map<String, List<String>>?) : KotlinScriptDefinition {
     override val name = config.name
     override fun getScriptParameters(scriptDescriptor: ScriptDescriptor): List<ScriptParameter> =
         config.parameters.map { ScriptParameter(Name.identifier(it.name), getKotlinTypeByFqName(scriptDescriptor, it.type)) }

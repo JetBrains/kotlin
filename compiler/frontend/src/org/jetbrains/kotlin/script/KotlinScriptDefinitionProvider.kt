@@ -19,29 +19,44 @@ package org.jetbrains.kotlin.script
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import java.util.*
 import kotlin.concurrent.read
 import kotlin.concurrent.write
 
 class KotlinScriptDefinitionProvider {
 
     private val definitions: MutableList<KotlinScriptDefinition> = arrayListOf(StandardScriptDefinition)
-
     private val definitionsLock = java.util.concurrent.locks.ReentrantReadWriteLock()
+    private val notificationHandlers = ArrayList<() -> Unit>()
+    private val handlersLock = java.util.concurrent.locks.ReentrantReadWriteLock()
 
-    var scriptDefinitions: List<KotlinScriptDefinition>
-        get() = definitionsLock.read { definitions } // TODO: remove as unsafe with locking, replace with particular data extractors
-        set(definitions: List<KotlinScriptDefinition>) {
-            definitionsLock.write {
-                this.definitions.clear()
-                this.definitions.addAll(definitions)
+    fun setScriptDefinitions(newDefinitions: List<KotlinScriptDefinition>): Unit {
+        var changed = false
+        definitionsLock.read {
+            if (newDefinitions != definitions) {
+                definitionsLock.write {
+                    definitions.clear()
+                    definitions.addAll(newDefinitions)
+                }
+                changed = true
             }
         }
+        if (changed) {
+            handlersLock.read {
+                notificationHandlers.forEach { it() }
+            }
+        }
+    }
 
     fun findScriptDefinition(file: VirtualFile?): KotlinScriptDefinition? = definitionsLock.read {
         file?.let { file -> definitions.firstOrNull { it.isScript(file) } }
     }
 
     fun isScript(file: VirtualFile?): Boolean = findScriptDefinition(file) != null
+
+    fun subscribeOnDefinitionsChanged(handler: () -> Unit): Unit {
+        handlersLock.write { notificationHandlers.add(handler) }
+    }
 
     fun addScriptDefinition(scriptDefinition: KotlinScriptDefinition) {
         definitionsLock.write {

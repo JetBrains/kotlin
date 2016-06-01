@@ -61,3 +61,7 @@ class KotlinScriptExtraImportFromConfig(val config : KotlinScriptExtraImportConf
         get() = config.names
 }
 
+class KotlinScriptExtraImportFromDefinition(val scriptDefinition: KotlinScriptDefinition) : KotlinScriptExtraImport {
+    override val classpath: List<String> get() = scriptDefinition.getScriptDependenciesClasspath()
+    override val names: List<String> = emptyList()
+}
