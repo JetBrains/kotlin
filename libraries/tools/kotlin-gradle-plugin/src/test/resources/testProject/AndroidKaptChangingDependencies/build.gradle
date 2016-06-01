@@ -3,11 +3,11 @@ buildscript {
     ext.dagger_version = '1.2.5'
 
     repositories {
-        maven { url 'file://' + pathToKotlinPlugin }
+        mavenLocal()
         jcenter()
     }
     dependencies {
-        classpath "com.android.tools.build:gradle:$androidToolsVersion"
+        classpath "com.android.tools.build:gradle:$android_tools_version"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "com.jakewharton.sdkmanager:gradle-plugin:0.12.+"
     }
@@ -15,7 +15,7 @@ buildscript {
 
 allprojects {
     repositories {
-        maven { url 'file://' + pathToKotlinPlugin }
+        mavenLocal()
         jcenter()
     }
 }

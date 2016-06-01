@@ -1,25 +1,18 @@
 buildscript {
-  repositories {
-    mavenCentral()
-    maven {
-        url 'file://' + pathToKotlinPlugin
+    repositories {
+        mavenLocal()
     }
-  }
-  dependencies {
-    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-  }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
 }
-
-
 
 apply plugin: "kotlin"
 apply plugin: 'java'
 
 repositories {
-  maven {
-     url 'file://' + pathToKotlinPlugin
-  }
-  mavenCentral()
+    mavenLocal()
+    mavenCentral()
 }
 
 sourceSets {
@@ -32,18 +25,10 @@ sourceSets {
 
 dependencies {
     compile 'com.google.guava:guava:12.0'
-    testCompile  'org.testng:testng:6.8'
-    compile  "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    testCompile 'org.testng:testng:6.8'
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
 
 test {
     useTestNG()
-}
-
-task show << {
-   buildscript.configurations.classpath.each { println it }
-}
-
-task wrapper(type: Wrapper) {
-  gradleVersion="1.4"
 }

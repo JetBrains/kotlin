@@ -2,9 +2,7 @@ buildscript {
     ext.realm_version = '1.1.1'
 
     repositories {
-        maven {
-            url 'file://' + pathToKotlinPlugin
-        }
+        mavenLocal()
         jcenter()
     }
     dependencies {
@@ -47,9 +45,7 @@ android {
 }
 
 repositories {
-    maven {
-        url 'file://' + pathToKotlinPlugin
-    }
+    mavenLocal()
     maven {
         url 'http://oss.jfrog.org/artifactory/oss-snapshot-local'
     }

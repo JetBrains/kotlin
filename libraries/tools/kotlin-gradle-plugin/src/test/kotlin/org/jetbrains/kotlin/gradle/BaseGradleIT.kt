@@ -266,9 +266,8 @@ abstract class BaseGradleIT {
                 }
 
                 add("-Pkotlin_version=" + KOTLIN_VERSION)
-                add("-PpathToKotlinPlugin=" + File("local-repo").absolutePath)
                 options.incremental?.let { add("-Pkotlin.incremental=$it") }
-                options.androidGradlePluginVersion?.let { add("-PandroidToolsVersion=$it")}
+                options.androidGradlePluginVersion?.let { add("-Pandroid_tools_version=$it")}
             }
 
     private fun Project.createEnvironmentVariablesMap(options: BuildOptions): Map<String, String> =
