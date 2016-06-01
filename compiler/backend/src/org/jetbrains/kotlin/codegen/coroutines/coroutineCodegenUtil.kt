@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallImpl
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
+import org.jetbrains.kotlin.resolve.coroutine.SUSPENSION_POINT_KEY
 import org.jetbrains.kotlin.types.TypeConstructorSubstitution
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 
@@ -52,13 +53,14 @@ fun ResolvedCall<*>.replaceSuspensionFunctionViewWithRealDescriptor(
         project: Project
 ): ResolvedCallWithRealDescriptor? {
     val function = candidateDescriptor as? FunctionDescriptor ?: return null
-    if (!function.isSuspend) return null
+    if (!isSuspensionPoint()) return null
 
     val initialSignatureDescriptor = function.initialSignatureDescriptor ?: return null
     val newCandidateDescriptor =
             initialSignatureDescriptor.createCustomCopy {
                 // Here we know that last parameter should be Continuation<T> where T is return type
                 setReturnType(it.valueParameters.last().type.arguments.single().type)
+                putUserData(SUSPENSION_POINT_KEY, true)
             }
 
     val newCall = ResolvedCallImpl(
@@ -84,6 +86,10 @@ fun ResolvedCall<*>.replaceSuspensionFunctionViewWithRealDescriptor(
 
     return ResolvedCallWithRealDescriptor(newCall, thisExpression)
 }
+
+fun ResolvedCall<*>.isSuspensionPoint() =
+        (candidateDescriptor as? FunctionDescriptor)?.let { it.isSuspend && it.getUserData(SUSPENSION_POINT_KEY) ?: false }
+        ?: false
 
 private fun FunctionDescriptor.createCustomCopy(
         copySettings: FunctionDescriptor.CopyBuilder<out FunctionDescriptor>.(FunctionDescriptor) -> FunctionDescriptor.CopyBuilder<out FunctionDescriptor>
