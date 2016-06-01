@@ -19,25 +19,34 @@ package org.jetbrains.kotlin.script
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import java.util.*
+import kotlin.concurrent.read
+import kotlin.concurrent.write
 
 class KotlinScriptDefinitionProvider {
 
     private val definitions: MutableList<KotlinScriptDefinition> = arrayListOf(StandardScriptDefinition)
 
+    private val definitionsLock = java.util.concurrent.locks.ReentrantReadWriteLock()
+
     var scriptDefinitions: List<KotlinScriptDefinition>
-        get() = definitions
+        get() = definitionsLock.read { definitions } // TODO: remove as unsafe with locking, replace with particular data extractors
         set(definitions: List<KotlinScriptDefinition>) {
-            this.definitions.clear()
-            this.definitions.addAll(definitions)
+            definitionsLock.write {
+                this.definitions.clear()
+                this.definitions.addAll(definitions)
+            }
         }
 
-    fun findScriptDefinition(file: VirtualFile?): KotlinScriptDefinition? = file?.let { file -> definitions.firstOrNull { it.isScript(file) } }
+    fun findScriptDefinition(file: VirtualFile?): KotlinScriptDefinition? = definitionsLock.read {
+        file?.let { file -> definitions.firstOrNull { it.isScript(file) } }
+    }
 
     fun isScript(file: VirtualFile?): Boolean = findScriptDefinition(file) != null
 
     fun addScriptDefinition(scriptDefinition: KotlinScriptDefinition) {
-        definitions.add(0, scriptDefinition)
+        definitionsLock.write {
+            definitions.add(0, scriptDefinition)
+        }
     }
 
     fun removeScriptDefinition(scriptDefinition: KotlinScriptDefinition) {

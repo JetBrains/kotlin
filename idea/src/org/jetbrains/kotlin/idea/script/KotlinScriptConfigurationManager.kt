@@ -18,15 +18,17 @@ package org.jetbrains.kotlin.idea.script
 
 import com.intellij.openapi.components.AbstractProjectComponent
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
-import org.jetbrains.kotlin.script.StandardScriptDefinition
-import org.jetbrains.kotlin.script.loadScriptDefinitionsFromDirectoryWithConfigs
+import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.openapi.vfs.newvfs.BulkFileListener
+import com.intellij.openapi.vfs.newvfs.events.VFileEvent
+import org.jetbrains.kotlin.script.*
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 
-class KotlinScriptConfigurationManager(project: Project, scriptDefinitionProvider: KotlinScriptDefinitionProvider) : AbstractProjectComponent(project) {
+@Suppress("unused") // project component
+class KotlinScriptConfigurationManager(private val project: Project, private val scriptDefinitionProvider: KotlinScriptDefinitionProvider) : AbstractProjectComponent(project) {
 
-    val kotlinEnvVars: Map<String, List<String>> by lazy {
+    private val kotlinEnvVars: Map<String, List<String>> by lazy {
         val paths = PathUtil.getKotlinPathsForIdeaPlugin()
         mapOf("kotlin-runtime" to listOf(paths.runtimePath.canonicalPath),
               "project-root" to listOf(project.basePath ?: "."),
@@ -34,9 +36,22 @@ class KotlinScriptConfigurationManager(project: Project, scriptDefinitionProvide
     }
 
     init {
-        loadScriptDefinitionsFromDirectoryWithConfigs(File(project.basePath ?: "."), kotlinEnvVars).let {
+        reloadScriptDefinitions()
+        val conn = project.messageBus.connect()
+        conn.subscribe(VirtualFileManager.VFS_CHANGES, object : BulkFileListener.Adapter() {
+            override fun after(events: List<VFileEvent>) {
+                events.firstOrNull { it is VFileEvent && isScriptDefinitionConfigFile(File(it.path)) }?.let {
+                    reloadScriptDefinitions()
+                }
+            }
+        })
+    }
+
+    private fun reloadScriptDefinitions() {
+        loadScriptConfigsFromProjectRoot(File(project.basePath ?: ".")).let {
             if (it.isNotEmpty()) {
-                scriptDefinitionProvider.scriptDefinitions = it + StandardScriptDefinition
+                scriptDefinitionProvider.scriptDefinitions =
+                        it.map { KotlinConfigurableScriptDefinition(it, kotlinEnvVars) } + StandardScriptDefinition
             }
         }
     }
