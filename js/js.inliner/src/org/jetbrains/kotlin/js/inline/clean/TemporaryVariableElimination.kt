@@ -22,6 +22,7 @@ import com.google.dart.compiler.backend.js.ast.metadata.synthetic
 import org.jetbrains.kotlin.js.inline.util.collectFreeVariables
 import org.jetbrains.kotlin.js.inline.util.collectLocalVariables
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
+import org.jetbrains.kotlin.js.translate.utils.splitToRanges
 
 internal class TemporaryVariableElimination(function: JsFunction) {
     private val root = function.body
@@ -440,38 +441,28 @@ internal class TemporaryVariableElimination(function: JsFunction) {
     private fun cleanUp() {
         object : JsVisitorWithContextImpl() {
             override fun visit(x: JsVars, ctx: JsContext<JsNode>): Boolean {
-                x.vars.removeAll(statementsToRemove)
+                if (x.vars.removeAll(statementsToRemove)) {
+                    hasChanges = true
+                }
 
-                var lastDroppedIndex = 0
-                for ((index, v) in x.vars.toList().withIndex()) {
-                    val name = v.name
-                    if (name in variablesToRemove) {
-                        hasChanges = true
-                        if (index > lastDroppedIndex) {
-                            val droppedVars = JsVars(*x.vars.subList(lastDroppedIndex, index).toTypedArray())
-                            droppedVars.synthetic = x.synthetic
-                            ctx.addPrevious(droppedVars)
+                val ranges = x.vars.splitToRanges { it.name in variablesToRemove }
+                if (ranges.size == 1 && !ranges[0].second) return super.visit(x, ctx)
+
+                hasChanges = true
+                for ((subList, isRemoved) in ranges) {
+                    val initializers = subList.mapNotNull { it.initExpression }
+                    initializers.forEach { accept(it) }
+                    if (isRemoved) {
+                        for (initializer in initializers) {
+                            ctx.addPrevious(JsExpressionStatement(initializer).apply { synthetic = x.synthetic })
                         }
-                        val initExpression = v.initExpression
-                        if (initExpression != null) {
-                            ctx.addPrevious(JsExpressionStatement(initExpression).run {
-                                synthetic = true
-                                accept(this)
-                            })
-                        }
-                        lastDroppedIndex = index + 1
+                    }
+                    else {
+                        ctx.addPrevious(JsVars(*subList.toTypedArray()).apply { synthetic = x.synthetic })
                     }
                 }
-                if (lastDroppedIndex > 0) {
-                    x.vars.subList(0, lastDroppedIndex).clear()
-                }
-
-                if (x.vars.isEmpty()) {
-                    ctx.removeMe()
-                    hasChanges = true
-                    return false
-                }
-                return super.visit(x, ctx)
+                ctx.removeMe()
+                return false
             }
 
             override fun visit(x: JsExpressionStatement, ctx: JsContext<JsNode>): Boolean {
