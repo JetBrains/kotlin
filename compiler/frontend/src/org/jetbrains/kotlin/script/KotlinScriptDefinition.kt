@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.script
 
 import com.intellij.psi.PsiFile
 import com.intellij.util.PathUtil
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
