@@ -67,6 +67,13 @@ class ReflectedSuperclassWithParamsTestScriptDefinition(extension: String,
             superclassParameters.map { it.name }
 }
 
+class StandardWithClasspathScriptDefinition(extension: String, classpath: List<String>? = null)
+    : BaseScriptDefinition(extension, classpath)
+{
+    override fun getScriptParameters(scriptDescriptor: ScriptDescriptor) =
+            StandardScriptDefinition.getScriptParameters(scriptDescriptor)
+}
+
 fun classpathFromProperty(): List<String> =
     System.getProperty("java.class.path")?.let {
         it.split(String.format("\\%s", File.pathSeparatorChar).toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()

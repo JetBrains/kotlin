@@ -226,7 +226,8 @@ object KotlinToJVMBytecodeCompiler {
         try {
             try {
                 tryConstructClass(scriptClass.kotlin, scriptArgs)
-                    ?: throw RuntimeException("unable to find appropriate constructor for class ${scriptClass.name} accepting arguments $scriptArgs")
+                    ?: throw RuntimeException("unable to find appropriate constructor for class ${scriptClass.name} accepting arguments $scriptArgs\n" +
+                                "\tconstructors: \n\t\t${scriptClass.kotlin.constructors.joinToString("\n\t\t", "(") { it.parameters.joinToString { it.type.toString() } }}")
             }
             finally {
                 // NB: these lines are required (see KT-9546) but aren't covered by tests
@@ -291,16 +292,19 @@ object KotlinToJVMBytecodeCompiler {
                     else -> null
                 }
 
-        fun foldingFunc(state: Pair<List<Any>, List<String>>, par: KParameter): Pair<List<Any>, List<String>> {
-            if (state.second.isNotEmpty()) {
+        fun foldingFunc(state: Pair<List<Any>, List<String>?>, par: KParameter): Pair<List<Any>, List<String>?> {
+            state.second?.let { scriptArgsLeft ->
                 try {
-                    val primArgCandidate = convertPrimitive(par.type, state.second.first())
-                    if (primArgCandidate != null)
-                        return Pair(state.first + primArgCandidate, state.second.drop(1))
+                    if (scriptArgsLeft.isNotEmpty()) {
+                        val primArgCandidate = convertPrimitive(par.type, scriptArgsLeft.first())
+                        if (primArgCandidate != null)
+                            return@foldingFunc Pair(state.first + primArgCandidate, scriptArgsLeft.drop(1))
+                    }
 
-                    val arrayArgCandidate = convertArray((par.type.javaType as? Class<*>)?.componentType?.kotlin?.defaultType, state.second)
+                    val arrCompType = (par.type.javaType as? Class<*>)?.componentType?.kotlin?.defaultType
+                    val arrayArgCandidate = convertArray(arrCompType, scriptArgsLeft)
                     if (arrayArgCandidate != null)
-                        return Pair(state.first + arrayArgCandidate, emptyList<String>())
+                        return@foldingFunc Pair(state.first + arrayArgCandidate, null)
                 }
                 catch (e: NumberFormatException) {
                 } // just skips to return below
@@ -310,7 +314,7 @@ object KotlinToJVMBytecodeCompiler {
 
         for (ctor in scriptClass.constructors) {
             val (ctorArgs, scriptArgsLeft) = ctor.parameters.fold(Pair(emptyList<Any>(), scriptArgs), ::foldingFunc)
-            if (ctorArgs.size == ctor.parameters.size && scriptArgsLeft.isEmpty())
+            if (ctorArgs.size == ctor.parameters.size && (scriptArgsLeft == null || scriptArgsLeft.isEmpty()))
                 return ctor.call(*ctorArgs.toTypedArray())
         }
         return null
