@@ -1,5 +1,4 @@
 buildscript {
-    ext.kotlin_version = '0.1-SNAPSHOT'
     ext.support_lib_version = '23.1.1'
     ext.dagger_version = '1.2.5'
 

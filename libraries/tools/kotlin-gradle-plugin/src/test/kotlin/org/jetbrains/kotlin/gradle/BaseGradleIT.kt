@@ -265,6 +265,7 @@ abstract class BaseGradleIT {
                     add(if (options.withDaemon) "--daemon" else "--no-daemon")
                 }
 
+                add("-Pkotlin_version=" + KOTLIN_VERSION)
                 add("-PpathToKotlinPlugin=" + File("local-repo").absolutePath)
                 options.incremental?.let { add("-Pkotlin.incremental=$it") }
                 options.androidGradlePluginVersion?.let { add("-PandroidToolsVersion=$it")}

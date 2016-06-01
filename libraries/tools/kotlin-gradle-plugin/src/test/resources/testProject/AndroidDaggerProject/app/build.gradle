@@ -1,6 +1,4 @@
 buildscript {
-    ext.kotlin_version = '0.1-SNAPSHOT'
-
     repositories {
         maven { url 'file://' + pathToKotlinPlugin }
         mavenLocal()

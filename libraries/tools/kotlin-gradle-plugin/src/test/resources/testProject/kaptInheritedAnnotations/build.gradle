@@ -6,7 +6,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:0.1-SNAPSHOT"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
@@ -21,9 +21,9 @@ repositories {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:0.1-SNAPSHOT"
-    compile "org.jetbrains.kotlin:annotation-processor-example:0.1-SNAPSHOT"
-    kapt "org.jetbrains.kotlin:annotation-processor-example:0.1-SNAPSHOT"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "org.jetbrains.kotlin:annotation-processor-example:$kotlin_version"
+    kapt "org.jetbrains.kotlin:annotation-processor-example:$kotlin_version"
 }
 
 task show << {

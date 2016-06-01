@@ -4,7 +4,7 @@ apply plugin: 'kotlin-android'
 
 dependencies {
     compile project(':Lib')
-    compile "org.jetbrains.kotlin:kotlin-stdlib:0.1-SNAPSHOT"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     testCompile 'junit:junit:4.12'
 }
 

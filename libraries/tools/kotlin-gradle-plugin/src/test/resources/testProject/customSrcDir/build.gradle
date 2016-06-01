@@ -6,7 +6,7 @@ buildscript {
     }
   }
   dependencies {
-    classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:0.1-SNAPSHOT'
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
   }
 }
 
@@ -32,7 +32,7 @@ repositories {
 dependencies {
     compile 'com.google.guava:guava:12.0'
     testCompile  'org.testng:testng:6.8'
-    compile  'org.jetbrains.kotlin:kotlin-stdlib:0.1-SNAPSHOT'
+    compile  "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
 
 test {
