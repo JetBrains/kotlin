@@ -1,3 +1,4 @@
+// FILE: foo.kt
 package foo
 
 private fun bar() = 23
@@ -11,3 +12,8 @@ fun box(): Boolean {
 
     return true
 }
+
+// FILE: foobar.kt
+package foo.bar
+
+val x = 32

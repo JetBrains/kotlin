@@ -49,5 +49,5 @@ public annotation class enumerable()
 public annotation class marker
 
 @Retention(AnnotationRetention.BINARY)
-@Target(CLASS, FUNCTION, PROPERTY, CONSTRUCTOR)
+@Target(CLASS, FUNCTION, PROPERTY, CONSTRUCTOR, PROPERTY_GETTER, PROPERTY_SETTER)
 annotation class JsName(val name: String)

@@ -16,98 +16,39 @@
 
 package org.jetbrains.kotlin.js.resolve.diagnostics
 
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
-import org.jetbrains.kotlin.js.naming.FQNGenerator
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DeclarationChecker
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.SimpleDeclarationChecker
-import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.resolve.source.getPsi
 
-class JsNameChecker : SimpleDeclarationChecker {
-    private val fqnGenerator = FQNGenerator()
-    private val scopes = mutableMapOf<DeclarationDescriptor, MutableMap<String, DeclarationDescriptor>>()
-    private val clashedDescriptors = mutableSetOf<DeclarationDescriptor>()
-
-    override fun check(
-            declaration: KtDeclaration,
-            descriptor: DeclarationDescriptor,
-            diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext
-    ) {
-        if (declaration !is KtProperty || !descriptor.isExtension) {
-            checkDescriptor(descriptor, declaration, diagnosticHolder)
+object JsNameChecker : SimpleDeclarationChecker {
+    override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink,
+                       bindingContext: BindingContext) {
+        if (descriptor is PropertyDescriptor) {
+            val namedAccessorCount = descriptor.accessors.count { AnnotationsUtils.getJsName(it) != null }
+            if (namedAccessorCount > 0 && namedAccessorCount < descriptor.accessors.size) {
+                diagnosticHolder.report(ErrorsJs.JS_NAME_IS_NOT_ON_ALL_ACCESSORS.on(declaration))
+            }
         }
-    }
 
-    private fun checkDescriptor(descriptor: DeclarationDescriptor, declaration: KtDeclaration, diagnosticHolder: DiagnosticSink) {
-        val fqn = fqnGenerator.generate(descriptor)
-        if (fqn.shared && fqn.scope is ClassOrPackageFragmentDescriptor && isOpaque(fqn.descriptor)) {
-            val scope = getScope(fqn.scope)
-            val name = fqn.names.last()
-            val existing = scope[name]
-            if (existing != null && existing != fqn.descriptor) {
-                diagnosticHolder.report(ErrorsJs.JS_NAME_CLASH.on(declaration, name, existing))
-                val existingDeclaration = findPsi(existing) ?: declaration
-                if (clashedDescriptors.add(existing) && existingDeclaration is KtDeclaration && existingDeclaration != declaration) {
-                    diagnosticHolder.report(ErrorsJs.JS_NAME_CLASH.on(existingDeclaration, name, descriptor))
+        val jsNamePsi = AnnotationsUtils.getJsNameAnnotationPsi(bindingContext, declaration) ?: return
+
+        when (descriptor) {
+            is ConstructorDescriptor -> {
+                if (descriptor.isPrimary) {
+                    diagnosticHolder.report(ErrorsJs.JS_NAME_ON_PRIMARY_CONSTRUCTOR_PROHIBITED.on(jsNamePsi))
+                }
+            }
+            is PropertyAccessorDescriptor -> {
+                if (!descriptor.isDefault && AnnotationsUtils.getJsName(descriptor.correspondingProperty) != null) {
+                    diagnosticHolder.report(ErrorsJs.JS_NAME_ON_ACCESSOR_AND_PROPERTY.on(jsNamePsi))
                 }
             }
         }
     }
-
-    private fun findPsi(descriptor: DeclarationDescriptor): PsiElement? {
-        val psi = (descriptor as? DeclarationDescriptorWithSource)?.source?.getPsi()
-        return if (psi == null && descriptor is CallableMemberDescriptor &&
-                   descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE
-        ) {
-            descriptor.overriddenDescriptors.mapNotNull { findPsi(it) }.firstOrNull()
-        }
-        else {
-            psi
-        }
-    }
-
-    private fun getScope(descriptor: DeclarationDescriptor) = scopes.getOrPut(descriptor) {
-        val scope = mutableMapOf<String, DeclarationDescriptor>()
-        when (descriptor) {
-            is PackageFragmentDescriptor -> {
-                collect(descriptor.getMemberScope(), scope)
-                val module = DescriptorUtils.getContainingModule(descriptor)
-                module.getSubPackagesOf(descriptor.fqName) { true }
-                        .flatMap { module.getPackage(it).fragments }
-                        .forEach { collect(it, scope)  }
-            }
-            is ClassDescriptor -> collect(descriptor.defaultType.memberScope, scope)
-        }
-        scope
-    }
-
-    private fun collect(scope: MemberScope, target: MutableMap<String, DeclarationDescriptor>) {
-        for (descriptor in scope.getContributedDescriptors()) {
-            collect(descriptor, target)
-        }
-    }
-
-    private fun collect(descriptor: DeclarationDescriptor, target: MutableMap<String, DeclarationDescriptor>) {
-        if (descriptor is PropertyDescriptor && descriptor.isExtension) {
-            descriptor.accessors.forEach { collect(it, target) }
-        }
-        else {
-            val fqn = fqnGenerator.generate(descriptor)
-            if (fqn.shared && isOpaque(fqn.descriptor)) {
-                target[fqn.names.last()] = fqn.descriptor
-            }
-        }
-    }
-
-    private fun isOpaque(descriptor: DeclarationDescriptor) =
-            !AnnotationsUtils.isNativeObject(descriptor) && !AnnotationsUtils.isLibraryObject(descriptor)
 }

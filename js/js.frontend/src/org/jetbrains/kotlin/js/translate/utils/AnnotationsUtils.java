@@ -22,10 +22,18 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.js.PredefinedAnnotation;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.FqNameUnsafe;
+import org.jetbrains.kotlin.psi.KtAnnotated;
+import org.jetbrains.kotlin.psi.KtAnnotation;
+import org.jetbrains.kotlin.psi.KtAnnotationEntry;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
+import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 
@@ -141,6 +149,34 @@ public final class AnnotationsUtils {
         Object result = value.getValue();
         assert result instanceof String : "Parameter of JsName annotation should be string";
         return (String) result;
+    }
+
+    @Nullable
+    public static KtAnnotationEntry getJsNameAnnotationPsi(@NotNull BindingContext context, @NotNull KtAnnotated annotated) {
+        return findAnnotationPsi(context, annotated, new FqName(JS_NAME));
+    }
+
+    @Nullable
+    private static KtAnnotationEntry findAnnotationPsi(
+            @NotNull BindingContext context, @NotNull KtAnnotated annotated,
+            @NotNull FqName nameToFind
+    ) {
+        FqNameUnsafe nameToFindUnsafe = nameToFind.toUnsafe();
+
+        for (KtAnnotationEntry entry : annotated.getAnnotationEntries()) {
+            AnnotationDescriptor annotationDescriptor = context.get(BindingContext.ANNOTATION, entry);
+            assert annotationDescriptor != null : "Annotation descriptor expected for annotation entry: " +
+                                                  PsiUtilsKt.getTextWithLocation(entry);
+            ClassifierDescriptor typeDescriptor = annotationDescriptor.getType().getConstructor().getDeclarationDescriptor();
+            assert typeDescriptor instanceof ClassDescriptor : "Annotation type should be ClassDescriptor: " +
+                                                               PsiUtilsKt.getTextWithLocation(entry);
+            FqNameUnsafe entryName = DescriptorUtils.getFqName(typeDescriptor);
+            if (entryName.equals(nameToFindUnsafe)) {
+                return entry;
+            }
+        }
+
+        return null;
     }
 
     public static boolean isPredefinedObject(@NotNull DeclarationDescriptor descriptor) {
