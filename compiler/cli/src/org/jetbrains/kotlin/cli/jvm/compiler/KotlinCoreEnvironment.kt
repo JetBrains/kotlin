@@ -138,12 +138,21 @@ class KotlinCoreEnvironment private constructor(
         KotlinScriptDefinitionProvider.getInstance(project).let { scriptDefinitionProvider ->
             scriptDefinitionProvider.scriptDefinitions =
                     configuration.getList(JVMConfigurationKeys.SCRIPT_DEFINITIONS)
-                            .ifEmpty { listOf(StandardScriptDefinition) }
+                            .ifEmpty {
+                                if (configuration.get(JVMConfigurationKeys.LOAD_SCRIPT_CONFIGS) ?: false)
+                                    loadScriptConfigsFromProjectRoot(File(project.basePath ?: ".")).let { configs ->
+                                        val kotlinEnvVars = generateKotlinScriptClasspathEnvVars(project)
+                                        configs.map { KotlinConfigurableScriptDefinition(it, kotlinEnvVars) } + StandardScriptDefinition
+                                    }
+                                else null
+                                ?: listOf(StandardScriptDefinition)
+                            }
 
             configuration.addJvmClasspathRoots(
                     sourceFiles
-                            .mapNotNull { src -> src.virtualFile?.let { scriptDefinitionProvider.findScriptDefinition(it) } }
-                            .flatMap { it.getScriptDependenciesClasspath().map { File(it).canonicalFile } }
+                            .mapNotNull { src -> src.virtualFile }
+                            .flatMap { getScriptCombinedClasspath(it, project) }
+                            .map { File(it).canonicalFile }
                             .distinct())
         }
 

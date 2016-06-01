@@ -41,7 +41,7 @@ class KotlinScriptConfigurationManager(private val project: Project,
                                        private val kotlinScriptDependenciesIndexableSetContributor: KotlinScriptDependenciesIndexableSetContributor?
 ) : AbstractProjectComponent(project) {
 
-    private val kotlinEnvVars: Map<String, List<String>> by lazy { generateKotlinScriptClasspathEnvVarsForIdea(myProject) }
+    private val kotlinEnvVars: Map<String, List<String>> by lazy { generateKotlinScriptClasspathEnvVars(myProject) }
 
     init {
         reloadScriptDefinitions()

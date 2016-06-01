@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.asJava.KtLightElement
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
-import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
 import org.jetbrains.kotlin.script.getScriptDefinition
 import org.jetbrains.kotlin.script.getScriptExtraImports
 import org.jetbrains.kotlin.utils.sure

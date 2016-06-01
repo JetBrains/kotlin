@@ -35,9 +35,13 @@ fun getScriptExtraImports(psiFile: PsiFile): List<KotlinScriptExtraImport>  =
         } ?: emptyList()
 
 fun getScriptCombinedClasspath(file: VirtualFile, project: Project): List<String> =
-        (getScriptDefinition(file, project)?.getScriptDependenciesClasspath() ?: emptyList()) +
-        getScriptExtraImports(file, project).flatMap { it.classpath }
+        getScriptDefinition(file, project)?.run {
+            getScriptDependenciesClasspath() +
+            getScriptExtraImports(file, project).flatMap { it.classpath }
+        } ?: emptyList()
 
 fun getScriptCombinedClasspath(psiFile: PsiFile): List<String> =
-        (getScriptDefinition(psiFile) ?.getScriptDependenciesClasspath() ?: emptyList()) +
-        getScriptExtraImports(psiFile).flatMap { it.classpath }
+        getScriptDefinition(psiFile)?.run {
+            getScriptDependenciesClasspath() +
+            getScriptExtraImports(psiFile).flatMap { it.classpath }
+        } ?: emptyList()
