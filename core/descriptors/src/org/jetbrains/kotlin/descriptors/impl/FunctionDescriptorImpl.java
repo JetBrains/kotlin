@@ -58,6 +58,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     @Nullable
     private FunctionDescriptor initialSignatureDescriptor = null;
 
+    private Map<UserDataKey<?>, Object> userDataMap = null;
+
     protected FunctionDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
             @Nullable FunctionDescriptor original,
@@ -246,6 +248,13 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     }
 
     @Override
+    public <V> V getUserData(UserDataKey<V> key) {
+        if (userDataMap == null) return null;
+        //noinspection unchecked
+        return (V) userDataMap.get(key);
+    }
+
+    @Override
     public boolean isHiddenToOvercomeSignatureClash() {
         return isHiddenToOvercomeSignatureClash;
     }
@@ -341,6 +350,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         private Annotations additionalAnnotations = null;
         private boolean isHiddenForResolutionEverywhereBesideSupercalls = isHiddenForResolutionEverywhereBesideSupercalls();
         private SourceElement sourceElement;
+        private Map<UserDataKey<?>, Object> userDataMap = new LinkedHashMap<UserDataKey<?>, Object>();
 
         public CopyConfiguration(
                 @NotNull TypeSubstitution substitution,
@@ -504,6 +514,13 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             return this;
         }
 
+        @NotNull
+        @Override
+        public <V> CopyBuilder<FunctionDescriptor> putUserData(@NotNull UserDataKey<V> userDataKey, V value) {
+            userDataMap.put(userDataKey, value);
+            return this;
+        }
+
         @Override
         @Nullable
         public FunctionDescriptor build() {
@@ -619,6 +636,27 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         substitutedDescriptor.setHasSynthesizedParameterNames(hasSynthesizedParameterNames);
         substitutedDescriptor.setHiddenToOvercomeSignatureClash(configuration.isHiddenToOvercomeSignatureClash);
         substitutedDescriptor.setHiddenForResolutionEverywhereBesideSupercalls(configuration.isHiddenForResolutionEverywhereBesideSupercalls);
+
+        if (!configuration.userDataMap.isEmpty() || userDataMap != null) {
+            Map<UserDataKey<?>, Object> newMap = configuration.userDataMap;
+
+            if (userDataMap != null) {
+                for (Map.Entry<UserDataKey<?>, Object> entry : userDataMap.entrySet()) {
+                    if (!newMap.containsKey(entry.getKey())) {
+                        newMap.put(entry.getKey(), entry.getValue());
+                    }
+                }
+            }
+
+            if (newMap.size() == 1) {
+                substitutedDescriptor.userDataMap =
+                        Collections.<UserDataKey<?>, Object>singletonMap(
+                                newMap.keySet().iterator().next(), newMap.values().iterator().next());
+            }
+            else {
+                substitutedDescriptor.userDataMap = newMap;
+            }
+        }
 
         if (configuration.signatureChange || getInitialSignatureDescriptor() != null) {
             FunctionDescriptor initialSignature = (getInitialSignatureDescriptor() != null ? getInitialSignatureDescriptor() : this);

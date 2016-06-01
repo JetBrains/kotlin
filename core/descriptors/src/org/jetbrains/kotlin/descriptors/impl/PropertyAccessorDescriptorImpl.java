@@ -219,4 +219,10 @@ public abstract class PropertyAccessorDescriptorImpl extends DeclarationDescript
     public boolean isHiddenForResolutionEverywhereBesideSupercalls() {
         return false;
     }
+
+    @Nullable
+    @Override
+    public <V> V getUserData(UserDataKey<V> key) {
+        return null;
+    }
 }

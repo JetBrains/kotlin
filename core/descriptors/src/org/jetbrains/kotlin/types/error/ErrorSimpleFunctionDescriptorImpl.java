@@ -113,6 +113,15 @@ public class ErrorSimpleFunctionDescriptorImpl extends SimpleFunctionDescriptorI
 
             @NotNull
             @Override
+            public <V> CopyBuilder<SimpleFunctionDescriptor> putUserData(
+                    @NotNull UserDataKey<V> userDataKey,
+                    V value
+            ) {
+                return this;
+            }
+
+            @NotNull
+            @Override
             public CopyBuilder<SimpleFunctionDescriptor> setTypeParameters(@NotNull List<TypeParameterDescriptor> parameters) {
                 return this;
             }
@@ -194,6 +203,11 @@ public class ErrorSimpleFunctionDescriptorImpl extends SimpleFunctionDescriptorI
     @Override
     public boolean isSuspend() {
         return false;
+    }
+
+    @Override
+    public <V> V getUserData(UserDataKey<V> key) {
+        return null;
     }
 
     @Override
