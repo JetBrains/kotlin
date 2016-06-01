@@ -64,9 +64,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.WARNING
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
-import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
-import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
-import org.jetbrains.kotlin.cli.jvm.config.JvmContentRoot
+import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
@@ -89,7 +87,7 @@ import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExten
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
 import org.jetbrains.kotlin.resolve.lazy.declarations.CliDeclarationProviderFactoryService
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
-import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
+import org.jetbrains.kotlin.script.*
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.util.*
@@ -122,7 +120,6 @@ class KotlinCoreEnvironment private constructor(
         registerProjectServicesForCLI(projectEnvironment)
         registerProjectServices(projectEnvironment)
 
-        fillClasspath(configuration)
         val fileManager = ServiceManager.getService(project, CoreJavaFileManager::class.java)
         val index = JvmDependenciesIndex(javaRoots)
         (fileManager as KotlinCliJavaFileManagerImpl).initIndex(index)
@@ -137,7 +134,27 @@ class KotlinCoreEnvironment private constructor(
             }
         })
 
-        KotlinScriptDefinitionProvider.getInstance(project).scriptDefinitions = configuration.getList(JVMConfigurationKeys.SCRIPT_DEFINITIONS)
+        KotlinScriptDefinitionProvider.getInstance(project).let { scriptDefinitionProvider ->
+            scriptDefinitionProvider.scriptDefinitions =
+                    configuration.getList(JVMConfigurationKeys.SCRIPT_DEFINITIONS).let {
+                        if (it.isNotEmpty()) it
+                        else {
+                            val kotlinEnvVars = generateKotlinScriptClasspathEnvVarsForCompiler(project)
+                            loadScriptConfigsFromProjectRoot(File(project.basePath ?: ".")).map {
+                                KotlinConfigurableScriptDefinition(it, kotlinEnvVars)
+                            } + StandardScriptDefinition
+                        }
+                    }
+            KotlinScriptExtraImportsProvider.getInstance(project).let { scriptExtraImportsProvider ->
+                configuration.addJvmClasspathRoots(
+                        sourceFiles
+                                .filter { it.originalFile.virtualFile != null && scriptDefinitionProvider.isScript(it.originalFile.virtualFile) }
+                                .flatMap { scriptExtraImportsProvider.getExtraImports(it.originalFile.virtualFile).flatMap { it.classpath.map { File(it).canonicalFile } } }
+                                .distinct())
+            }
+        }
+
+        fillClasspath(configuration)
 
         project.registerService(JvmVirtualFileFinderFactory::class.java, JvmCliVirtualFileFinderFactory(index))
 
@@ -391,6 +408,7 @@ class KotlinCoreEnvironment private constructor(
         @JvmStatic fun registerProjectServices(projectEnvironment: JavaCoreProjectEnvironment) {
             with (projectEnvironment.project) {
                 registerService(KotlinScriptDefinitionProvider::class.java, KotlinScriptDefinitionProvider())
+                registerService(KotlinScriptExtraImportsProvider::class.java, KotlinScriptExtraImportsProvider(projectEnvironment.project))
                 registerService(KotlinJavaPsiFacade::class.java, KotlinJavaPsiFacade(this))
                 registerService(KtLightClassForFacade.FacadeStubCache::class.java, KtLightClassForFacade.FacadeStubCache(this))
             }
