@@ -131,6 +131,15 @@ fun KtExpression.negate(): KtExpression {
     return KtPsiFactory(this).createExpressionByPattern("!$0", this)
 }
 
+fun KtExpression.resultingWhens(): List<KtWhenExpression> = when (this) {
+    is KtWhenExpression -> listOf(this)
+    is KtIfExpression -> (then?.resultingWhens() ?: listOf()) + (`else`?.resultingWhens() ?: listOf())
+    is KtBinaryExpression -> (left?.resultingWhens() ?: listOf()) + (right?.resultingWhens() ?: listOf())
+    is KtUnaryExpression -> this.baseExpression?.resultingWhens() ?: listOf()
+    is KtBlockExpression -> statements.lastOrNull()?.resultingWhens() ?: listOf()
+    else -> listOf()
+}
+
 private fun KtExpression.specialNegation(): KtExpression? {
     val factory = KtPsiFactory(this)
     when (this) {

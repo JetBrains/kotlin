@@ -53,19 +53,13 @@ class ConvertToBlockBodyIntention : SelfTargetingIntention<KtDeclarationWithBody
     }
 
     companion object {
-        private fun KtExpression.whenAsResult(): Boolean = when (this) {
-            is KtWhenExpression -> true
-            is KtIfExpression -> (then?.whenAsResult() ?: false) || (`else`?.whenAsResult() ?: false)
-            is KtBlockExpression -> statements.lastOrNull()?.whenAsResult() ?: false
-            else -> false
-        }
 
         fun convert(declaration: KtDeclarationWithBody): KtDeclarationWithBody {
             val body = declaration.bodyExpression!!
 
             fun generateBody(returnsValue: Boolean): KtExpression {
                 val bodyType = body.analyze().getType(body)
-                val unitWhenAsResult = (bodyType == null || bodyType.isUnit()) && body.whenAsResult()
+                val unitWhenAsResult = (bodyType == null || bodyType.isUnit()) && body.resultingWhens().isNotEmpty()
                 val needReturn = returnsValue &&
                                  (bodyType == null || (!bodyType.isUnit() && !bodyType.isNothing()))
 
