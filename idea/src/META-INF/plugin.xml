@@ -248,6 +248,9 @@
     <projectService serviceInterface="org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider"
                     serviceImplementation="org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider"/>
 
+    <projectService serviceInterface="org.jetbrains.kotlin.script.KotlinScriptExtraImportsProvider"
+                    serviceImplementation="org.jetbrains.kotlin.script.KotlinScriptExtraImportsProvider"/>
+
     <projectService serviceInterface="org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder"
                     serviceImplementation="org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder"/>
 

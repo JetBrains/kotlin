@@ -16,9 +16,7 @@
 
 package org.jetbrains.kotlin.script
 
-import com.intellij.openapi.components.AbstractProjectComponent
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.JDOMUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.xmlb.XmlSerializer
 import com.intellij.util.xmlb.annotations.AbstractCollection
@@ -32,76 +30,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.types.KotlinType
-import java.io.File
-import java.io.InputStream
-import java.io.StringWriter
-import java.util.*
+import org.jetbrains.kotlin.utils.PathUtil
 
-
-val SCRIPT_CONFIG_FILE_EXTENSION = ".ktscfg.xml"
-
-fun isScriptDefinitionConfigFile(it: File) = it.isFile && it.name.endsWith(SCRIPT_CONFIG_FILE_EXTENSION, ignoreCase = true)
-
-fun loadScriptConfigsFromProjectRoot(projectRoot: File): List<KotlinScriptConfig> =
-    projectRoot.walk().filter ( ::isScriptDefinitionConfigFile ).toList()
-            .flatMap { loadScriptConfigs(it) }
-
-fun loadScriptConfigs(configFile: File): List<KotlinScriptConfig> =
-        JDOMUtil.loadDocument(configFile).rootElement.children.mapNotNull {
-            XmlSerializer.deserialize(it, KotlinScriptConfig::class.java)
-        }
-
-@Suppress("unused") // Used externally
-fun loadScriptConfigs(configStream: InputStream): List<KotlinScriptConfig> =
-        JDOMUtil.loadDocument(configStream).rootElement.children.mapNotNull {
-            XmlSerializer.deserialize(it, KotlinScriptConfig::class.java)
-        }
-
-@Suppress("unused")
-fun generateSampleScriptConfig(): String {
-
-    val doc = Document(Element("KotlinScriptDefinitions"))
-    val element = XmlSerializer.serialize(
-            KotlinScriptConfig(name = "abc", fileNameMatch = ".*\\.kts", classpath = arrayListOf("aaa", "bbb"),
-                               parameters = arrayListOf(KotlinScriptParameterConfig("p1", "t1"))))
-    doc.rootElement.addContent(element)
-
-    val sw = StringWriter()
-    with (XMLOutputter()) {
-        format = Format.getPrettyFormat()
-        output(doc, sw)
-    }
-    return sw.toString()
-}
-
-@Tag("scriptParam")
-class KotlinScriptParameterConfig(@Tag("name") var name: String = "",
-                                  @Tag("type") var type: String = "")
-
-@Tag("script")
-class KotlinScriptConfig(
-        @Tag("name")
-        var name: String = "KotlinScript",
-
-        @Tag("files")
-        var fileNameMatch: String = ".*\\.kts",
-
-        @Tag("classpath")
-        @AbstractCollection(surroundWithTag = false, elementTag = "path", elementValueAttribute = "")
-        var classpath: MutableList<String> = ArrayList(),
-
-        @Tag("parameters")
-        @AbstractCollection(surroundWithTag = false, elementValueAttribute = "")
-        var parameters: MutableList<KotlinScriptParameterConfig> = ArrayList(),
-
-        @Tag("supertypes")
-        @AbstractCollection(surroundWithTag = false, elementTag = "type", elementValueAttribute = "")
-        var supertypes: MutableList<String> = ArrayList(),
-
-        @Tag("superclassParameters")
-        @AbstractCollection(surroundWithTag = false, elementTag = "name", elementValueAttribute = "")
-        var superclassParamsMapping: MutableList<String> = ArrayList()
-)
 
 class KotlinConfigurableScriptDefinition(val config: KotlinScriptConfig, val environmentVars: Map<String, List<String>>?) : KotlinScriptDefinition {
     override val name = config.name
@@ -119,18 +49,56 @@ class KotlinConfigurableScriptDefinition(val config: KotlinScriptConfig, val env
 
     override fun getScriptName(script: KtScript): Name = ScriptNameUtil.fileNameWithExtensionStripped(script, KotlinParserDefinition.STD_SCRIPT_EXT)
 
-    // return all combination of replacements of env vars in the classpath entries
-    // if corresponding list of replacements is empty, all classpath entries containing the reference to the var are removed
-    // TODO: tests
-    override fun getScriptDependenciesClasspath(): List<String> =
-            if (environmentVars == null || environmentVars.isEmpty()) config.classpath
-            else config.classpath.flatMap { cpentry ->
-                    environmentVars.entries.fold(listOf(cpentry)) { p, v ->
-                        if (v.value.isEmpty() && cpentry.contains("\${${v.key}}")) emptyList()
-                        else v.value.flatMap { valListElement ->
-                            p.map { it.replace("\${${v.key}}", valListElement) }
-                        }
-                    }
-                }
+    protected val evaluatedClasspath by lazy { config.classpath.evalDistinctWith(environmentVars) }
+
+    override fun getScriptDependenciesClasspath(): List<String> = evaluatedClasspath
 }
 
+class KotlinDelegatingScriptDefinitionWithExtraImports internal constructor (
+        val delegate: KotlinScriptDefinition,
+        val extraImports: List<KotlinScriptExtraImport>
+) : KotlinScriptDefinition {
+    override val name: String get() = delegate.name
+    override fun getScriptParameters(scriptDescriptor: ScriptDescriptor): List<ScriptParameter> = delegate.getScriptParameters(scriptDescriptor)
+    override fun getScriptSupertypes(scriptDescriptor: ScriptDescriptor): List<KotlinType> = delegate.getScriptSupertypes(scriptDescriptor)
+    override fun getScriptParametersToPassToSuperclass(scriptDescriptor: ScriptDescriptor): List<Name> =
+        delegate.getScriptParametersToPassToSuperclass(scriptDescriptor)
+    override fun isScript(file: VirtualFile): Boolean = delegate.isScript(file)
+    override fun getScriptName(script: KtScript): Name = delegate.getScriptName(script)
+
+    protected val evaluatedExtraClasspath by lazy {
+        (delegate.getScriptDependenciesClasspath() + extraImports.flatMap { it.classpath }).distinct()
+    }
+
+    override fun getScriptDependenciesClasspath(): List<String> = evaluatedExtraClasspath
+}
+
+
+// return all combination of replacements of vars in the strings
+// if corresponding list of replacements is empty, all strings containing the reference to the var are removed
+// TODO: fix and tests
+// TODO: move to some utils
+internal fun List<String>.evalDistinctWith(varsMap: Map<String, List<String>>?): List<String> =
+        if (varsMap == null || varsMap.isEmpty()) this
+        else this.flatMap { cpentry ->
+            varsMap.entries.fold(listOf(cpentry)) { p, v ->
+                if (v.value.isEmpty() && cpentry.contains("\${${v.key}}")) emptyList()
+                else v.value.flatMap { valListElement ->
+                    p.map { it.replace("\${${v.key}}", valListElement) }
+                }
+            }
+        }
+
+fun generateKotlinScriptClasspathEnvVarsForCompiler(project: Project): Map<String, List<String>> {
+    val paths = PathUtil.getKotlinPathsForCompiler()
+    return mapOf("kotlin-runtime" to listOf(paths.runtimePath.canonicalPath),
+                 "project-root" to listOf(project.basePath ?: "."),
+                 "jdk" to PathUtil.getJdkClassesRoots().map { it.canonicalPath })
+}
+
+fun generateKotlinScriptClasspathEnvVarsForIdea(project: Project): Map<String, List<String>> {
+    val paths = PathUtil.getKotlinPathsForIdeaPlugin()
+    return mapOf("kotlin-runtime" to listOf(paths.runtimePath.canonicalPath),
+                 "project-root" to listOf(project.basePath ?: "."),
+                 "jdk" to PathUtil.getJdkClassesRoots().map { it.canonicalPath })
+}

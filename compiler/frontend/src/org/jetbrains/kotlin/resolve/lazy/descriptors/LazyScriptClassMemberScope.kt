@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
+import org.jetbrains.kotlin.script.getScriptDefinition
 import org.jetbrains.kotlin.utils.toReadOnlyList
 
 class LazyScriptClassMemberScope(
@@ -55,7 +56,7 @@ class LazyScriptClassMemberScope(
 
     private fun createScriptParameters(constructor: ConstructorDescriptorImpl): List<ValueParameterDescriptor> {
         val file = scriptDescriptor.scriptInfo.script.getContainingKtFile()
-        val scriptDefinition = KotlinScriptDefinitionProvider.getInstance(file.project).findScriptDefinition(file.originalFile.virtualFile) ?:
+        val scriptDefinition = getScriptDefinition(file) ?:
                     throw RuntimeException("file ${file.name} is not a script")
         return scriptDefinition.getScriptParameters(scriptDescriptor).mapIndexed { index, scriptParameter ->
             ValueParameterDescriptorImpl(
