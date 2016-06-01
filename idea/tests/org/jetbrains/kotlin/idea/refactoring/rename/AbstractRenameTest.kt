@@ -199,7 +199,7 @@ abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
 
             val searchInComments = renameParamsObject["searchInComments"]?.asBoolean ?: true
             val searchInTextOccurrences = renameParamsObject["searchInTextOccurrences"]?.asBoolean ?: true
-            runRenameProcessor(context, newName, substitution, searchInComments, searchInTextOccurrences)
+            runRenameProcessor(context, newName, substitution, renameParamsObject, searchInComments, searchInTextOccurrences)
         }
     }
 
@@ -211,7 +211,7 @@ abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
             val aClass = context.javaFacade.findClass(classFQN, context.project.allScope())!!
             val substitution = RenamePsiElementProcessor.forElement(aClass).substituteElementToRename(aClass, null)
 
-            runRenameProcessor(context, newName, substitution, true, true)
+            runRenameProcessor(context, newName, substitution, renameParamsObject, true, true)
         }
     }
 
@@ -229,7 +229,7 @@ abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
             if (method == null) throw IllegalStateException("Method with signature '$methodSignature' wasn't found in class $classFQN")
 
             val substitution = RenamePsiElementProcessor.forElement(method).substituteElementToRename(method, null)
-            runRenameProcessor(context, newName, substitution, false, false)
+            runRenameProcessor(context, newName, substitution, renameParamsObject, false, false)
         }
     }
 
@@ -272,7 +272,7 @@ abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
             val psiElement = segmentReference.resolve()!!
 
             val substitution = RenamePsiElementProcessor.forElement(psiElement).substituteElementToRename(psiElement, null)
-            runRenameProcessor(context, newName, substitution, true, true)
+            runRenameProcessor(context, newName, substitution, renameParamsObject, true, true)
         }
     }
 
@@ -284,7 +284,7 @@ abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
             val mainFile = rootDir.findChild(file)!!
             val psiFile = PsiManager.getInstance(context.project).findFile(mainFile)
 
-            runRenameProcessor(context, newName, psiFile, true, true)
+            runRenameProcessor(context, newName, psiFile, renameParamsObject, true, true)
         }
     }
 
@@ -298,7 +298,7 @@ abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
             val psiFile = PsiManager.getInstance(context.project).findFile(mainFile) as PropertiesFile
             val property = psiFile.findPropertyByKey(oldName) as Property
 
-            runRenameProcessor(context, newName, property, true, true)
+            runRenameProcessor(context, newName, property, renameParamsObject, true, true)
         }
     }
 
@@ -334,7 +334,7 @@ abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
 
             val substitution = RenamePsiElementProcessor.forElement(psiElement).substituteElementToRename(psiElement, null)
 
-            runRenameProcessor(context, newName, substitution, true, true)
+            runRenameProcessor(context, newName, substitution, renameParamsObject, true, true)
         }
     }
 
@@ -358,7 +358,7 @@ abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
 
             val substitution = RenamePsiElementProcessor.forElement(propertyWrapper).substituteElementToRename(propertyWrapper, null)
 
-            runRenameProcessor(context, newName, substitution, true, true)
+            runRenameProcessor(context, newName, substitution, renameParamsObject, true, true)
         }
     }
 
@@ -366,10 +366,14 @@ abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
             context: TestContext,
             newName: String,
             substitution: PsiElement?,
+            renameParamsObject: JsonObject,
             isSearchInComments: Boolean,
             isSearchTextOccurrences: Boolean
     ) {
         val renameProcessor = RenameProcessor(context.project, substitution, newName, isSearchInComments, isSearchTextOccurrences)
+        if (renameParamsObject["overloadRenamer.onlyPrimaryElement"]?.asBoolean ?: false) {
+            with(AutomaticOverloadsRenamer) { substitution?.elementFilter = { false } }
+        }
         Extensions.getExtensions(AutomaticRenamerFactory.EP_NAME).forEach { renameProcessor.addRenamerFactory(it) }
         renameProcessor.run()
     }
