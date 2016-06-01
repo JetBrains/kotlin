@@ -4866,6 +4866,18 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/multiFile/functionsVisibleFromOtherFile.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("packageAndMangledMethodDoNotClash.kt")
+        public void testPackageAndMangledMethodDoNotClash() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/multiFile/packageAndMangledMethodDoNotClash.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("packageAndPrivateDeclarationDoNotClash.kt")
+        public void testPackageAndPrivateDeclarationDoNotClash() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/multiFile/packageAndPrivateDeclarationDoNotClash.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("js/js.translator/testData/box/multiModule")
@@ -5104,6 +5116,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/nameClashes"), Pattern.compile("^([^_](.+))\\.kt$"), true);
         }
 
+        @TestMetadata("classAndCompanionObjectMembers.kt")
+        public void testClassAndCompanionObjectMembers() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/nameClashes/classAndCompanionObjectMembers.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("differenceInCapitalization.kt")
         public void testDifferenceInCapitalization() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/nameClashes/differenceInCapitalization.kt");
@@ -5113,6 +5131,30 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("extensionFunctionAndProperty.kt")
         public void testExtensionFunctionAndProperty() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/nameClashes/extensionFunctionAndProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("extensionPropertiesWithDifferentReceivers.kt")
+        public void testExtensionPropertiesWithDifferentReceivers() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/nameClashes/extensionPropertiesWithDifferentReceivers.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("extensionPropertyAndMethod.kt")
+        public void testExtensionPropertyAndMethod() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/nameClashes/extensionPropertyAndMethod.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("jsNameAndPrivate.kt")
+        public void testJsNameAndPrivate() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/nameClashes/jsNameAndPrivate.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("methodAndPrivateProperty.kt")
+        public void testMethodAndPrivateProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/nameClashes/methodAndPrivateProperty.kt");
             doTest(fileName);
         }
 
@@ -5131,6 +5173,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("overloadExtension.kt")
         public void testOverloadExtension() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/nameClashes/overloadExtension.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyAndNativeMethod.kt")
+        public void testPropertyAndNativeMethod() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/nameClashes/propertyAndNativeMethod.kt");
             doTest(fileName);
         }
     }
@@ -5170,6 +5218,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("inheritanceFromNativeTrait.kt")
         public void testInheritanceFromNativeTrait() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/inheritanceFromNativeTrait.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("jsName.kt")
+        public void testJsName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/jsName.kt");
             doTest(fileName);
         }
 

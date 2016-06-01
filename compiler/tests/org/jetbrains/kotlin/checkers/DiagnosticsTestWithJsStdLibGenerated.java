@@ -319,6 +319,24 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
             doTest(fileName);
         }
 
+        @TestMetadata("jsNameMissingOnAccessors.kt")
+        public void testJsNameMissingOnAccessors() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/jsNameMissingOnAccessors.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("jsNameOnPropertyAndAccessor.kt")
+        public void testJsNameOnPropertyAndAccessor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/jsNameOnPropertyAndAccessor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("jsNamePrihibitedOnPrimaryConstructor.kt")
+        public void testJsNamePrihibitedOnPrimaryConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/jsNamePrihibitedOnPrimaryConstructor.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("methodAndMethod.kt")
         public void testMethodAndMethod() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/methodAndMethod.kt");
