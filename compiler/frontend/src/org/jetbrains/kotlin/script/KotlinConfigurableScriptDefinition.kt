@@ -40,23 +40,21 @@ import java.util.*
 
 val SCRIPT_CONFIG_FILE_EXTENSION = ".ktscfg.xml"
 
-fun loadScriptDefinitionsFromDirectoryWithConfigs(dir: File, kotlinEnvVars: Map<String, List<String>>? = null): List<KotlinConfigurableScriptDefinition> =
-    dir.walk().filter { it.isFile && it.name.endsWith(SCRIPT_CONFIG_FILE_EXTENSION, ignoreCase = true) }.toList()
-            .flatMap { loadScriptDefinitionsFromConfig(it, kotlinEnvVars) }
+fun isScriptDefinitionConfigFile(it: File) = it.isFile && it.name.endsWith(SCRIPT_CONFIG_FILE_EXTENSION, ignoreCase = true)
 
-fun loadScriptDefinitionsFromConfig(configFile: File, kotlinEnvVars: Map<String, List<String>>? = null): List<KotlinConfigurableScriptDefinition> =
+fun loadScriptConfigsFromProjectRoot(projectRoot: File): List<KotlinScriptConfig> =
+    projectRoot.walk().filter ( ::isScriptDefinitionConfigFile ).toList()
+            .flatMap { loadScriptConfigs(it) }
+
+fun loadScriptConfigs(configFile: File): List<KotlinScriptConfig> =
         JDOMUtil.loadDocument(configFile).rootElement.children.mapNotNull {
-            XmlSerializer.deserialize(it, KotlinScriptConfig::class.java)?.let {
-                KotlinConfigurableScriptDefinition(it, kotlinEnvVars)
-            }
+            XmlSerializer.deserialize(it, KotlinScriptConfig::class.java)
         }
 
 @Suppress("unused") // Used externally
-fun loadScriptDefinitionsFromConfig(configStream: InputStream, kotlinEnvVars: Map<String, List<String>>? = null): List<KotlinConfigurableScriptDefinition> =
+fun loadScriptConfigs(configStream: InputStream): List<KotlinScriptConfig> =
         JDOMUtil.loadDocument(configStream).rootElement.children.mapNotNull {
-            XmlSerializer.deserialize(it, KotlinScriptConfig::class.java)?.let {
-                KotlinConfigurableScriptDefinition(it, kotlinEnvVars)
-            }
+            XmlSerializer.deserialize(it, KotlinScriptConfig::class.java)
         }
 
 @Suppress("unused")
@@ -135,3 +133,4 @@ class KotlinConfigurableScriptDefinition(val config: KotlinScriptConfig, val env
                     }
                 }
 }
+
