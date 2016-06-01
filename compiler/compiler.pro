@@ -41,6 +41,8 @@ messages/**)
 -dontwarn com.sun.jna.WString
 -dontwarn com.intellij.psi.util.PsiClassUtil
 
+-dontwarn com.thoughtworks.xstream.io.xml.**
+
 -libraryjars '<rtjar>'
 -libraryjars '<jssejar>'
 -libraryjars '<bootstrap.runtime>'
