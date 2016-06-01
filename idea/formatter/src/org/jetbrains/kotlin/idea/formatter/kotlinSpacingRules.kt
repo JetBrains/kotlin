@@ -182,6 +182,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             }
 
             afterInside(CONSTRUCTOR_KEYWORD, PRIMARY_CONSTRUCTOR).spaces(0)
+            betweenInside(IDENTIFIER, TYPE_PARAMETER_LIST, CLASS).spaces(0)
 
             aroundInside(DOT, DOT_QUALIFIED_EXPRESSION).spaces(0)
             aroundInside(SAFE_ACCESS, SAFE_ACCESS_EXPRESSION).spaces(0)
