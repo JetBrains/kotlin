@@ -1,9 +1,7 @@
 buildscript {
     repositories {
+        mavenLocal()
         mavenCentral()
-        maven {
-            url "file://" + pathToKotlinPlugin
-        }
     }
 
     dependencies {
@@ -19,9 +17,7 @@ compileKotlin2Js.kotlinOptions.moduleKind = "amd"
 compileKotlin2Js.kotlinOptions.outputFile = outDir + "app.js"
 
 repositories {
-    maven {
-        url "file://" + pathToKotlinPlugin
-    }
+    mavenLocal()
     mavenCentral()
 }
 

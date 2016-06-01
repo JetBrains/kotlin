@@ -1,33 +1,19 @@
 buildscript {
-  repositories {
-    mavenCentral()
-    maven {
-        url 'file://' + pathToKotlinPlugin
+    repositories {
+        mavenLocal()
     }
-  }
-  dependencies {
-    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    classpath "org.jetbrains.kotlin:kotlin-gradle-subplugin-example:$kotlin_version"
-  }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-subplugin-example:$kotlin_version"
+    }
 }
 
 apply plugin: "kotlin"
 
 repositories {
-  maven {
-     url 'file://' + pathToKotlinPlugin
-  }
-  mavenCentral()
+    mavenLocal()
 }
 
 dependencies {
-    compile  "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-}
-
-task show << {
-   buildscript.configurations.classpath.each { println it }
-}
-
-task wrapper(type: Wrapper) {
-  gradleVersion="1.4"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }

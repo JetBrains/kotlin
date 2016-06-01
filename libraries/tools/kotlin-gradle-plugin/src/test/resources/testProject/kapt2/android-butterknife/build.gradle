@@ -2,9 +2,7 @@
 
 buildscript {
     repositories {
-        maven {
-            url 'file://' + pathToKotlinPlugin
-        }
+        mavenLocal()
         jcenter()
     }
     dependencies {
@@ -16,9 +14,7 @@ buildscript {
 
 allprojects {
     repositories {
-        maven {
-            url 'file://' + pathToKotlinPlugin
-        }
+        mavenLocal()
         mavenCentral()
     }
 }

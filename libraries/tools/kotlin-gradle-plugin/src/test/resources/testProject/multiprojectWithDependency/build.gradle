@@ -1,11 +1,14 @@
 buildscript {
-  repositories {
-    mavenCentral()
-    maven {
-        url 'file://' + pathToKotlinPlugin
+    repositories {
+        mavenLocal()
     }
-  }
-  dependencies {
-    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-  }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+allprojects {
+    repositories {
+        mavenLocal()
+    }
 }

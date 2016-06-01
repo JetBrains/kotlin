@@ -1,9 +1,6 @@
 buildscript {
     repositories {
-        mavenCentral()
-        maven {
-            url 'file://' + pathToKotlinPlugin
-        }
+        mavenLocal()
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -14,10 +11,7 @@ apply plugin: "java"
 apply plugin: "kotlin"
 
 repositories {
-    maven {
-        url 'file://' + pathToKotlinPlugin
-    }
-    mavenCentral()
+    mavenLocal()
 }
 
 dependencies {
@@ -25,12 +19,4 @@ dependencies {
     compile "org.jetbrains.kotlin:annotation-processor-example:$kotlin_version"
     kapt "org.jetbrains.kotlin:annotation-processor-example:$kotlin_version"
     testCompile 'junit:junit:4.12'
-}
-
-task show << {
-    buildscript.configurations.classpath.each { println it }
-}
-
-task wrapper(type: Wrapper) {
-    gradleVersion="1.12"
 }

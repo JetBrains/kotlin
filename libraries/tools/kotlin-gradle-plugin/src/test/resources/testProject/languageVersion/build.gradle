@@ -1,9 +1,6 @@
 buildscript {
     repositories {
-        mavenCentral()
-        maven {
-            url 'file://' + pathToKotlinPlugin
-        }
+        mavenLocal()
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -21,10 +18,7 @@ sourceSets {
 }
 
 repositories {
-    maven {
-        url 'file://' + pathToKotlinPlugin
-    }
-    mavenCentral()
+    mavenLocal()
 }
 
 dependencies {
@@ -35,8 +29,4 @@ compileKotlin {
     kotlinOptions {
         languageVersion = "1.0"
     }
-}
-
-task wrapper(type: Wrapper) {
-    gradleVersion = "1.4"
 }
