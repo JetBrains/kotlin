@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.configuration;
 
 import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.idea.maven.model.MavenConstants;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.plugins.groovy.lang.psi.GroovyFile;
@@ -27,17 +26,7 @@ import java.io.File;
 
 public abstract class AbstractConfigureProjectByChangingFileTest extends LightCodeInsightTestCase {
     private static final String DEFAULT_VERSION = "default_version";
-
-    public void doTestWithMaven(@NotNull String path) throws Exception {
-        String pathWithFile = path + "/" + MavenConstants.POM_XML;
-        doTest(pathWithFile, pathWithFile.replace("pom", "pom_after"), new KotlinJavaMavenConfigurator());
-    }
-
-    public void doTestWithJSMaven(@NotNull String path) throws Exception {
-        String pathWithFile = path + "/" + MavenConstants.POM_XML;
-        doTest(pathWithFile, pathWithFile.replace("pom", "pom_after"), new KotlinJavascriptMavenConfigurator());
-    }
-
+    
     public void doTestGradle(@NotNull String path) throws Exception {
         doTest(path, path.replace("before", "after"), new KotlinGradleModuleConfigurator());
     }
@@ -52,9 +41,6 @@ public abstract class AbstractConfigureProjectByChangingFileTest extends LightCo
         if (configurator instanceof KotlinWithGradleConfigurator) {
             ((KotlinWithGradleConfigurator) configurator).changeGradleFile((GroovyFile) getFile(), true, version, collector);
             ((KotlinWithGradleConfigurator) configurator).changeGradleFile((GroovyFile) getFile(), false, version, collector);
-        }
-        else if (configurator instanceof KotlinMavenConfigurator) {
-            ((KotlinMavenConfigurator) configurator).changePomFile(getModule(), getFile(), version, collector);
         }
         collector.showNotification();
 
