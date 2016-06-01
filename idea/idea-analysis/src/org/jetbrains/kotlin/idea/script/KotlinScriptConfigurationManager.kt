@@ -17,11 +17,12 @@
 package org.jetbrains.kotlin.idea.script
 
 import com.intellij.openapi.components.AbstractProjectComponent
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx
 import com.intellij.openapi.util.EmptyRunnable
-import com.intellij.openapi.vfs.*
+import com.intellij.openapi.vfs.StandardFileSystems
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import com.intellij.psi.search.GlobalSearchScope
@@ -31,11 +32,13 @@ import org.jetbrains.kotlin.idea.caches.resolve.FileLibraryScope
 import org.jetbrains.kotlin.script.*
 import java.io.File
 import java.io.FileNotFoundException
-import java.io.InputStream
-import java.io.OutputStream
+import java.lang.ref.WeakReference
+import java.util.*
+import kotlin.concurrent.read
+import kotlin.concurrent.write
 
 @Suppress("unused") // project component
-class KotlinScriptConfigurationManager(private val project: Project,
+class KotlinScriptConfigurationManager(project: Project,
                                        private val scriptDefinitionProvider: KotlinScriptDefinitionProvider,
                                        private val scriptExtraImportsProvider: KotlinScriptExtraImportsProvider?,
                                        private val kotlinScriptDependenciesIndexableSetContributor: KotlinScriptDependenciesIndexableSetContributor?
@@ -45,47 +48,91 @@ class KotlinScriptConfigurationManager(private val project: Project,
 
     init {
         reloadScriptDefinitions()
-        val conn = myProject.messageBus.connect()
-        conn.subscribe(VirtualFileManager.VFS_CHANGES, object : BulkFileListener.Adapter() {
+
+        // TODO: get rid of this expensive call as soon as makeRootsChange call will work reliably
+        cacheAllScriptsExtraImports()
+
+        val weakThis = WeakReference(this)
+        myProject.messageBus.connect().subscribe(VirtualFileManager.VFS_CHANGES, object : BulkFileListener.Adapter() {
             override fun after(events: List<VFileEvent>) {
-                var anyScriptExtraImportsChanged = false
+                val changedExtraImportConfigs = ArrayList<VirtualFile>()
                 var anyScriptDefinitionChanged = false
                 events.filter { it is VFileEvent }.forEach {
                     it.file?.let {
-                        if (!anyScriptDefinitionChanged && isScriptDefinitionConfigFile(it)) {
+                        if (isScriptDefinitionConfigFile(it)) {
                             anyScriptDefinitionChanged = true
                         }
-                        scriptExtraImportsProvider?.run {
-                            if (isExtraImportsConfig(it)) {
-                                invalidateExtraImports(it)
-                                if (!anyScriptExtraImportsChanged) {
-                                    anyScriptExtraImportsChanged = true
+                        else {
+                            weakThis.get()?.scriptExtraImportsProvider?.run {
+                                if (isExtraImportsConfig(it)) {
+                                    changedExtraImportConfigs.add(it)
                                 }
                             }
                         }
                     }
                 }
                 if (anyScriptDefinitionChanged) {
-                    reloadScriptDefinitions()
+                    weakThis.get()?.reloadScriptDefinitions()
                 }
-                if (anyScriptExtraImportsChanged) {
-                    ProjectRootManagerEx.getInstanceEx(project)?.makeRootsChange(EmptyRunnable.getInstance(), false, true)
+                if (changedExtraImportConfigs.isNotEmpty()) {
+                    weakThis.get()?.scriptExtraImportsProvider?.invalidateExtraImportsByImportsFiles(changedExtraImportConfigs)
                 }
             }
         })
+        // omitting case then scriptExtraImportsProvider is not configured, considering it happens only in tests
+        scriptExtraImportsProvider?.subscribeOnExtraImportsChanged { files ->
+            weakThis.get()?.apply {
+                cacheLock.write {
+                    allScriptsClasspathCache = null
+                }
+                ProjectRootManagerEx.getInstanceEx(myProject)?.makeRootsChange(EmptyRunnable.getInstance(), false, true)
+            }
+        }
     }
 
-    private val scriptClasspathCache = hashMapOf<VirtualFile, List<VirtualFile>>()
     private var allScriptsClasspathCache: List<VirtualFile>? = null
+    private val cacheLock = java.util.concurrent.locks.ReentrantReadWriteLock()
 
     fun getScriptClasspath(file: VirtualFile): List<VirtualFile> =
-            scriptClasspathCache.getOrPut(file, {
-                getScriptClasspathRaw(file)
-                        .mapNotNull { StandardFileSystems.local().findFileByPath(it) }
-                        .distinct()
-            })
+            scriptExtraImportsProvider
+                    ?.getExtraImports(file)
+                    ?.flatMap { it.classpath }
+                    ?.map { it.classpathEntryToVfs() }
+                    ?: emptyList()
 
-    fun getAllScriptsClasspath(): List<VirtualFile> {
+    fun getAllScriptsClasspath(): List<VirtualFile> = cacheLock.read {
+        if (allScriptsClasspathCache == null) {
+            allScriptsClasspathCache =
+                    (scriptExtraImportsProvider?.getKnownCombinedClasspath() ?: emptyList())
+                    .distinct()
+                    .mapNotNull { it.classpathEntryToVfs() }
+        }
+        return allScriptsClasspathCache!!
+    }
+
+    private fun String.classpathEntryToVfs(): VirtualFile =
+            if (File(this).isDirectory)
+                StandardFileSystems.local()?.findFileByPath(this) ?: throw FileNotFoundException("Classpath entry points to a non-existent location: ${this}")
+            else
+                StandardFileSystems.jar()?.findFileByPath(this + URLUtil.JAR_SEPARATOR) ?: throw FileNotFoundException("Classpath entry points to a file that is not a JAR archive: ${this}")
+
+    fun getAllScriptsClasspathScope(): GlobalSearchScope? {
+        return getAllScriptsClasspath().let { cp ->
+            if (cp.isEmpty()) null
+            else GlobalSearchScope.union(cp.map { FileLibraryScope(myProject, it) }.toTypedArray())
+        }
+    }
+
+    private fun reloadScriptDefinitions() {
+        loadScriptConfigsFromProjectRoot(File(myProject.basePath ?: ".")).let {
+            if (it.isNotEmpty()) {
+                scriptDefinitionProvider.setScriptDefinitions(
+                        it.map { KotlinConfigurableScriptDefinition(it, kotlinEnvVars) } + StandardScriptDefinition)
+            }
+        }
+    }
+
+    private fun cacheAllScriptsExtraImports() {
         fun<R> VirtualFile.vfsWalkFiles(onFile: (VirtualFile) -> List<R>?): List<R> {
             assert(isDirectory)
             return children.flatMap { when {
@@ -93,38 +140,8 @@ class KotlinScriptConfigurationManager(private val project: Project,
                 else -> onFile(it) ?: emptyList()
             } }
         }
-        if (allScriptsClasspathCache == null) {
-            allScriptsClasspathCache = project.baseDir.vfsWalkFiles { getScriptClasspathRaw(it) }
-                    .distinct()
-                    .mapNotNull {
-                        if (File(it).isDirectory)
-                            StandardFileSystems.local()?.findFileByPath(it) ?: throw FileNotFoundException("Classpath entry points to a non-existent location: $it")
-                        else
-                            StandardFileSystems.jar()?.findFileByPath(it + URLUtil.JAR_SEPARATOR) ?: throw FileNotFoundException("Classpath entry points to a file that is not a JAR archive: $it")
-
-                    }
-        }
-        return allScriptsClasspathCache!!
-    }
-
-    fun getAllScriptsClasspathScope(): GlobalSearchScope? {
-        return getAllScriptsClasspath().let { cp ->
-            if (cp.isEmpty()) null
-            else GlobalSearchScope.union(cp.map { FileLibraryScope(project, it) }.toTypedArray())
-        }
-    }
-
-    private fun getScriptClasspathRaw(file: VirtualFile): List<String> =
-            scriptDefinitionProvider.findScriptDefinition(file)?.getScriptDependenciesClasspath()?.let {
-                it + (scriptExtraImportsProvider?.getExtraImports(file)?.flatMap { it.classpath } ?: emptyList())
-            } ?: emptyList()
-
-    private fun reloadScriptDefinitions() {
-        loadScriptConfigsFromProjectRoot(File(myProject.basePath ?: ".")).let {
-            if (it.isNotEmpty()) {
-                scriptDefinitionProvider.scriptDefinitions =
-                        it.map { KotlinConfigurableScriptDefinition(it, kotlinEnvVars) } + StandardScriptDefinition
-            }
+        myProject.baseDir.vfsWalkFiles {
+            scriptExtraImportsProvider?.getExtraImports(it)
         }
     }
 

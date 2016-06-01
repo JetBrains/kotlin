@@ -68,11 +68,13 @@ fun generateSampleScriptConfig(): String {
 }
 
 @Tag("scriptParam")
-class KotlinScriptParameterConfig(@Tag("name") var name: String = "",
-                                  @Tag("type") var type: String = "")
+data class KotlinScriptParameterConfig(
+        @Tag("name") var name: String = "",
+        @Tag("type") var type: String = ""
+)
 
 @Tag("script")
-class KotlinScriptConfig(
+data class KotlinScriptConfig(
         @Tag("name")
         var name: String = "KotlinScript",
 
