@@ -19,18 +19,19 @@ package org.jetbrains.kotlin.js.inline.clean
 import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.metadata.sideEffects
 import com.google.dart.compiler.backend.js.ast.metadata.synthetic
-import org.jetbrains.kotlin.js.inline.util.collectDefinedNames
 import org.jetbrains.kotlin.js.inline.util.collectFreeVariables
+import org.jetbrains.kotlin.js.inline.util.collectLocalVariables
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
-internal class TemporaryVariableElimination(private val root: JsStatement) {
+internal class TemporaryVariableElimination(function: JsFunction) {
+    private val root = function.body
     private val definitions = mutableMapOf<JsName, Int>()
     private val usages = mutableMapOf<JsName, Int>()
     private val inconsistent = mutableSetOf<JsName>()
     private val definedValues = mutableMapOf<JsName, JsExpression>()
     private val temporary = mutableSetOf<JsName>()
     private var hasChanges = false
-    private val namesToProcess = mutableSetOf<JsName>()
+    private val namesToProcess = function.collectLocalVariables()
     private val statementsToRemove = mutableSetOf<JsNode>()
     private val namesToSubstitute = mutableSetOf<JsName>()
     private val variablesToRemove = mutableSetOf<JsName>()
@@ -43,8 +44,6 @@ internal class TemporaryVariableElimination(private val root: JsStatement) {
     }
 
     private fun analyze() {
-        namesToProcess += collectDefinedNames(root)
-
         object : RecursiveJsVisitor() {
             val currentScope = mutableSetOf<JsName>()
             var localVars = mutableSetOf<JsName>()
@@ -543,22 +542,11 @@ internal class TemporaryVariableElimination(private val root: JsStatement) {
 
     private fun isTrivial(expr: JsExpression): Boolean = when (expr) {
         is JsNameRef -> {
-            val qualifier = expr.qualifier
-            if (qualifier == null) {
-                if (!expr.sideEffects) {
-                    true
-                }
-                else {
-                    val name = expr.name
-                    name != null && when (definitions[name] ?: 0) {
-                        0 -> true
-                        1 -> name !in namesToSubstitute || definedValues[name]?.let { isTrivial(it) } ?: false
-                        else -> false
-                    }
-                }
-            }
-            else {
-                !expr.sideEffects && isTrivial(qualifier)
+            val name = expr.name
+            name in namesToProcess && when (definitions[name]) {
+                null, 0 -> true
+                1  -> name !in namesToSubstitute || definedValues[name]?.let { isTrivial(it) } ?: false
+                else -> false
             }
         }
         is JsLiteral.JsValueLiteral -> true
