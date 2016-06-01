@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
 import org.jetbrains.kotlin.script.ScriptPriorities
+import org.jetbrains.kotlin.script.getScriptDefinition
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 
@@ -58,7 +59,7 @@ class LazyScriptDescriptor(
     private val scriptDefinition: KotlinScriptDefinition
             by lazy {
                 val file = scriptInfo.script.getContainingKtFile()
-                KotlinScriptDefinitionProvider.getInstance(file.project).findScriptDefinition(file.originalFile.virtualFile) ?:
+                getScriptDefinition(file) ?:
                     throw RuntimeException("file ${file.name} is not a script")
             }
 

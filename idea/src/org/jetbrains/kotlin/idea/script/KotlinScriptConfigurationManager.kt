@@ -22,25 +22,33 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import org.jetbrains.kotlin.script.*
-import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 
 @Suppress("unused") // project component
-class KotlinScriptConfigurationManager(private val project: Project, private val scriptDefinitionProvider: KotlinScriptDefinitionProvider) : AbstractProjectComponent(project) {
+class KotlinScriptConfigurationManager(project: Project,
+                                       private val scriptDefinitionProvider: KotlinScriptDefinitionProvider,
+                                       private val scriptExtraImportsProvider: KotlinScriptExtraImportsProvider
+) : AbstractProjectComponent(project) {
 
-    private val kotlinEnvVars: Map<String, List<String>> by lazy {
-        val paths = PathUtil.getKotlinPathsForIdeaPlugin()
-        mapOf("kotlin-runtime" to listOf(paths.runtimePath.canonicalPath),
-              "project-root" to listOf(project.basePath ?: "."),
-              "jdk" to PathUtil.getJdkClassesRoots().map { it.canonicalPath })
-    }
+    private val kotlinEnvVars: Map<String, List<String>> by lazy { generateKotlinScriptClasspathEnvVarsForIdea(myProject) }
 
     init {
         reloadScriptDefinitions()
-        val conn = project.messageBus.connect()
+        val conn = myProject.messageBus.connect()
         conn.subscribe(VirtualFileManager.VFS_CHANGES, object : BulkFileListener.Adapter() {
             override fun after(events: List<VFileEvent>) {
-                events.firstOrNull { it is VFileEvent && isScriptDefinitionConfigFile(File(it.path)) }?.let {
+                var anyScriptDefinitionChanged = false
+                events.filter { it is VFileEvent }.forEach {
+                    it.file?.let {
+                        if (!anyScriptDefinitionChanged && isScriptDefinitionConfigFile(it)) {
+                            anyScriptDefinitionChanged = true
+                        }
+                        if (scriptExtraImportsProvider.isExtraImportsConfig(it)) {
+                            scriptExtraImportsProvider.invalidateExtraImports(it)
+                        }
+                    }
+                }
+                if (anyScriptDefinitionChanged) {
                     reloadScriptDefinitions()
                 }
             }
@@ -48,7 +56,7 @@ class KotlinScriptConfigurationManager(private val project: Project, private val
     }
 
     private fun reloadScriptDefinitions() {
-        loadScriptConfigsFromProjectRoot(File(project.basePath ?: ".")).let {
+        loadScriptConfigsFromProjectRoot(File(myProject.basePath ?: ".")).let {
             if (it.isNotEmpty()) {
                 scriptDefinitionProvider.scriptDefinitions =
                         it.map { KotlinConfigurableScriptDefinition(it, kotlinEnvVars) } + StandardScriptDefinition
@@ -56,4 +64,5 @@ class KotlinScriptConfigurationManager(private val project: Project, private val
         }
     }
 }
+
 

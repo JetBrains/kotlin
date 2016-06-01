@@ -17,16 +17,13 @@
 package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.module.impl.scopes.LibraryScopeBase
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.*
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
-import com.intellij.openapi.roots.impl.libraries.LibraryImpl
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.roots.libraries.LibraryTable
-import com.intellij.openapi.roots.libraries.PersistentLibraryKind
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
@@ -291,7 +288,8 @@ internal object NotUnderContentRootModuleInfo : IdeaModuleInfo {
     override fun dependencies(): List<IdeaModuleInfo> = listOf(this)
 }
 
-internal data class CustomizedScriptModuleInfo(val project: Project, val module: Module?, val virtualFile: VirtualFile, val scriptDefinition: KotlinScriptDefinition) : IdeaModuleInfo {
+internal data class CustomizedScriptModuleInfo(val project: Project, val module: Module?, val virtualFile: VirtualFile,
+                                               val scriptDefinition: KotlinScriptDefinition) : IdeaModuleInfo {
     override val moduleOrigin: ModuleOrigin
         get() = ModuleOrigin.OTHER
 
@@ -300,15 +298,18 @@ internal data class CustomizedScriptModuleInfo(val project: Project, val module:
     override fun contentScope() = GlobalSearchScope.union(dependenciesRoots().map { FileLibraryScope(project, it) }.toTypedArray())
 
     private fun dependenciesRoots(): List<VirtualFile> {
-        // TODO: find out whether it should be cashed
+        // TODO: find out whether it should be cashed (some changes listener should be implemented for the cached roots)
         val virtualFileManager = VirtualFileManager.getInstance()
         val jarfs = StandardFileSystems.jar()
-        return scriptDefinition.getScriptDependenciesClasspath().map {
-            if (File(it).isFile)
-                jarfs.findFileByPath(it + URLUtil.JAR_SEPARATOR) ?: throw FileNotFoundException("Classpath entry points to a file that is not a JAR archive: $it")
-            else
-                virtualFileManager.findFileByUrl("file://$it") ?: throw FileNotFoundException("Classpath entry points to a non-existent location: $it")
-        }
+        return (scriptDefinition.getScriptDependenciesClasspath())
+                .map { File(it).canonicalFile }
+                .distinct()
+                .map {
+                    if (it.isFile)
+                        jarfs.findFileByPath(it.absolutePath + URLUtil.JAR_SEPARATOR) ?: throw FileNotFoundException("Classpath entry points to a file that is not a JAR archive: ${it.canonicalPath}")
+                    else
+                        virtualFileManager.findFileByUrl("file://${it.absolutePath}") ?: throw FileNotFoundException("Classpath entry points to a non-existent location: ${it.canonicalPath}")
+                }
     }
 
     override fun dependencies() =
