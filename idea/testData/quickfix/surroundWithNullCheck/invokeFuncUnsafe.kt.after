@@ -1,0 +1,7 @@
+// "Surround with null check" "true"
+
+fun foo(exec: (() -> Unit)?) {
+    if (exec != null) {
+        exec()
+    }
+}

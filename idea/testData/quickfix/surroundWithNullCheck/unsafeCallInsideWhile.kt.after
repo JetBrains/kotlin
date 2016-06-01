@@ -1,0 +1,7 @@
+// "Surround with null check" "true"
+
+fun foo(arg: Int?, flag: Boolean) {
+    while (flag) if (arg != null) {
+        arg.hashCode()
+    }
+}
