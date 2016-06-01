@@ -65,10 +65,10 @@ fun test() {
 // 1 SIPUSH 9000
 // 1 LDC 59000
 // 1 BIPUSH -8
-// 1 LDC K
+// 1 BIPUSH 75
 // 1 LDC 100000
 // 1 SIPUSH 901
-// 1 LDC false
+// 1 ICONST_0
 // 1 LDC 36.6
 // 1 LDC 42.4242
 // 1 LDC ":J"
