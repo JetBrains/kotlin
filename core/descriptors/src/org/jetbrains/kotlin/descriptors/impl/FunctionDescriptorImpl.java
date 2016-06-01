@@ -329,17 +329,17 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         protected @NotNull Kind kind;
         protected @NotNull List<ValueParameterDescriptor> newValueParameterDescriptors;
         protected @Nullable KotlinType newExtensionReceiverParameterType;
-        protected @Nullable ReceiverParameterDescriptor dispatchReceiverParameter;
+        protected @Nullable ReceiverParameterDescriptor dispatchReceiverParameter = FunctionDescriptorImpl.this.dispatchReceiverParameter;
         protected @NotNull KotlinType newReturnType;
         protected @Nullable Name name;
         protected boolean copyOverrides = true;
         protected boolean signatureChange = false;
         protected boolean preserveSourceElement = false;
         protected boolean dropOriginalInContainingParts = false;
-        private boolean isHiddenToOvercomeSignatureClash;
+        private boolean isHiddenToOvercomeSignatureClash = isHiddenToOvercomeSignatureClash();
         private List<TypeParameterDescriptor> newTypeParameters = null;
         private Annotations additionalAnnotations = null;
-        private boolean isHiddenForResolutionEverywhereBesideSupercalls;
+        private boolean isHiddenForResolutionEverywhereBesideSupercalls = isHiddenForResolutionEverywhereBesideSupercalls();
         private SourceElement sourceElement;
 
         public CopyConfiguration(
@@ -360,11 +360,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             this.kind = kind;
             this.newValueParameterDescriptors = newValueParameterDescriptors;
             this.newExtensionReceiverParameterType = newExtensionReceiverParameterType;
-            this.dispatchReceiverParameter = FunctionDescriptorImpl.this.dispatchReceiverParameter;
             this.newReturnType = newReturnType;
             this.name = name;
-            this.isHiddenToOvercomeSignatureClash = isHiddenToOvercomeSignatureClash();
-            this.isHiddenForResolutionEverywhereBesideSupercalls = isHiddenForResolutionEverywhereBesideSupercalls();
         }
 
         @Override
@@ -724,7 +721,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         return initialSignatureDescriptor;
     }
 
-    public void setInitialSignatureDescriptor(@Nullable FunctionDescriptor initialSignatureDescriptor) {
+    private void setInitialSignatureDescriptor(@Nullable FunctionDescriptor initialSignatureDescriptor) {
         this.initialSignatureDescriptor = initialSignatureDescriptor;
     }
 }
