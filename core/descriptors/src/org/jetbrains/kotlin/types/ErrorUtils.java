@@ -537,18 +537,6 @@ public class ErrorUtils {
             return Annotations.Companion.getEMPTY();
         }
 
-        @Nullable
-        @Override
-        public <T extends TypeCapability> T getCapability(@NotNull Class<T> capabilityClass) {
-            return null;
-        }
-
-        @NotNull
-        @Override
-        public TypeCapabilities getCapabilities() {
-            return TypeCapabilities.NONE.INSTANCE;
-        }
-
         @Override
         public String toString() {
             return constructor.toString() + (arguments.isEmpty() ? "" : joinToString(arguments, ", ", "<", ">", -1, "...", null));

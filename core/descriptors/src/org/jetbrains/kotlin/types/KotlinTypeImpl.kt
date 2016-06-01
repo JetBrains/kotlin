@@ -45,11 +45,10 @@ internal constructor(
                               nullable: Boolean,
                               arguments: List<TypeProjection>,
                               memberScope: MemberScope,
-                              capabilities: TypeCapabilities,
                               abbreviatedType: SimpleType? = null
         ): KotlinTypeImpl {
-            if (capabilities !== TypeCapabilities.NONE || abbreviatedType != null) {
-                return WithCapabilities(annotations, constructor, nullable, arguments, memberScope, capabilities, abbreviatedType)
+            if (abbreviatedType != null) {
+                return WithCapabilities(annotations, constructor, nullable, arguments, memberScope, abbreviatedType)
             }
             return KotlinTypeImpl(annotations, constructor, nullable, arguments, memberScope)
         }
@@ -71,7 +70,6 @@ internal constructor(
             nullable: Boolean,
             arguments: List<TypeProjection>,
             memberScope: MemberScope,
-            override val capabilities: TypeCapabilities,
             override val abbreviatedType: SimpleType?
     ) : KotlinTypeImpl(annotations, constructor, nullable, arguments, memberScope)
 

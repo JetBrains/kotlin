@@ -131,10 +131,6 @@ class FlexibleTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : Delegat
 
     override val delegateType: KotlinType get() = lowerBound
 
-    override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>): T? {
-        return super.getCapability(capabilityClass)
-    }
-
     override val isTypeVariable: Boolean get() = lowerBound.constructor.declarationDescriptor is TypeParameterDescriptor
                                                  && lowerBound.constructor == upperBound.constructor
 

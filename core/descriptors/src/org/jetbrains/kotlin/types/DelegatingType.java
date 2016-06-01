@@ -62,18 +62,6 @@ public abstract class DelegatingType implements KotlinType, SimpleType { // TODO
     }
 
     @Override
-    @Nullable
-    public <T extends TypeCapability> T getCapability(@NotNull Class<T> capabilityClass) {
-        return getDelegate().getCapability(capabilityClass);
-    }
-
-    @NotNull
-    @Override
-    public TypeCapabilities getCapabilities() {
-        return getDelegate().getCapabilities();
-    }
-
-    @Override
     public int hashCode() {
         return getDelegate().hashCode();
     }

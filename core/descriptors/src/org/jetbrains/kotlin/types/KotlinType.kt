@@ -37,11 +37,6 @@ interface KotlinType : Annotated {
     val isError: Boolean
 
     override fun equals(other: Any?): Boolean
-
-    fun <T : TypeCapability> getCapability(capabilityClass: Class<T>): T?
-
-    val capabilities: TypeCapabilities
-
 }
 
 @Deprecated("Temporary marker method for refactoring")
@@ -89,8 +84,6 @@ abstract class WrappedType() : KotlinType, LazyType {
 
     // todo: remove this later
     override val isError: Boolean get() = delegate.isError
-    override val capabilities: TypeCapabilities get() = delegate.capabilities
-    override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>): T? = delegate.getCapability(capabilityClass)
     override fun equals(other: Any?): Boolean = unwrap().equals(other)
     override fun hashCode(): Int = unwrap().hashCode()
 }
@@ -117,7 +110,7 @@ fun KotlinType.getAbbreviatedType(): SimpleType? = (unwrap() as? SimpleType)?.ab
 
 fun SimpleType.withAbbreviatedType(abbreviatedType: SimpleType): SimpleType {
     if (isError) return this
-    return KotlinTypeImpl.create(annotations, constructor, isMarkedNullable, arguments, memberScope, capabilities, abbreviatedType)
+    return KotlinTypeImpl.create(annotations, constructor, isMarkedNullable, arguments, memberScope, abbreviatedType)
 }
 
 private class WrappedSimpleType(
@@ -134,7 +127,7 @@ private class WrappedSimpleType(
     override fun unwrap(): KotlinType {
         if (delegate.isError) return delegate // todo
         if (delegate is CustomTypeVariable) return delegate // todo
-        return KotlinTypeImpl.create(annotations, constructor, isMarkedNullable, arguments, memberScope, capabilities, abbreviatedType)
+        return KotlinTypeImpl.create(annotations, constructor, isMarkedNullable, arguments, memberScope, abbreviatedType)
     }
 
     override fun toString(): String {

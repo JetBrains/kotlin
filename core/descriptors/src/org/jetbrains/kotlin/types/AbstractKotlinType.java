@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.types;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
@@ -26,17 +25,6 @@ import java.util.Iterator;
 import java.util.List;
 
 public abstract class AbstractKotlinType implements KotlinType, SimpleType { // TODO temporary upper bound
-    @Nullable
-    @Override
-    public <T extends TypeCapability> T getCapability(@NotNull Class<T> capabilityClass) {
-        return getCapabilities().getCapability(capabilityClass);
-    }
-
-    @NotNull
-    @Override
-    public TypeCapabilities getCapabilities() {
-        return TypeCapabilities.NONE.INSTANCE;
-    }
 
     @Override
     public final int hashCode() {
