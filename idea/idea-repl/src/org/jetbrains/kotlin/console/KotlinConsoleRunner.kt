@@ -43,7 +43,7 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.CharsetToolkit
-import com.intellij.psi.PsiFile
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiFileFactoryImpl
@@ -123,7 +123,7 @@ class KotlinConsoleRunner(
 
     private val consoleScriptDefinition = object : KotlinScriptDefinition {
         override val name = "Kotlin REPL"
-        override fun isScript(file: PsiFile) = file.originalFile.virtualFile == consoleView.virtualFile
+        override fun isScript(file: VirtualFile) = file == consoleView.virtualFile
         override fun getScriptParameters(scriptDescriptor: ScriptDescriptor) = emptyList<ScriptParameter>()
         override fun getScriptName(script: KtScript) = Name.identifier("REPL")
     }
