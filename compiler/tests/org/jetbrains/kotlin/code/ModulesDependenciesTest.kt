@@ -67,7 +67,7 @@ class ModulesDependenciesTest : TestCase() {
 
         TestCase.assertTrue("${NON_COMPILER_TESTS_MODULE_FILE.nameWithoutExtension} has a dependency to modules that can depend on " +
                             "$COMPILER_TESTS_MODULE_NAME module. This can cause multiple execution of compiler tests on teamcity.\n" +
-                            "Check modules:\n${MODULES_CAN_DEPEND_ON_COMPILER_TESTS.joinToString("\n")}",
+                            "Check modules:\n${FORBIDDEN_MODULE_NAMES.joinToString("\n")}",
                             nonCompilerTestsHasForbiddenDependencies)
     }
 }
