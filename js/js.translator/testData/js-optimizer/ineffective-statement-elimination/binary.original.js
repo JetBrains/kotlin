@@ -10,20 +10,20 @@ function se2(value) {
 }
 
 function test1() {
-    var $a = (se() - se() + se()) * se();
-    var $b = se() % se() / se();
-    var $c = se() >> se();
-    var $d = se() << se();
-    var $e = se() >>> se();
-    var $f = se() | se() & se() ^ se();
-    var $g1 = se() == se();
-    var $g2 = se() === se();
-    var $g3 = se() != se();
-    var $g4 = se() !== se();
-    var $h1 = se() > se();
-    var $h2 = se() >= se();
-    var $h3 = se() < se();
-    var $h4 = se() <= se();
+    var $a = (se("a1") - se("a2") + se("a3")) * se("a4");
+    var $b = se("b1") % se("b2") / se("b3");
+    var $c = se("c1") >> se("c2");
+    var $d = se("d1") << se("d2");
+    var $e = se("e1") >>> se("e2");
+    var $f = se("f1") | se("f2") & se("f3") ^ se("f4");
+    var $g1 = se("g1_1") == se("g1_2");
+    var $g2 = se("g2_1") === se("g2_2");
+    var $g3 = se("g3_1") != se("g3_2");
+    var $g4 = se("g4_1") !== se("g4_2");
+    var $h1 = se("h1_1") > se("h1_2");
+    var $h2 = se("h2_1") >= se("h2_2");
+    var $h3 = se("h3_1") < se("h3_2");
+    var $h4 = se("h4_1") <= se("h4_2");
 }
 
 function test2() {
