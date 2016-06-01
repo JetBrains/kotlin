@@ -82,6 +82,12 @@ public interface FunctionDescriptor extends CallableMemberDescriptor {
 
     boolean isSuspend();
 
+    interface UserDataKey<V> {}
+
+    // TODO: pull up userdata related members to DeclarationDescriptor and use more efficient implementation (e.g. THashMap)
+    @Nullable
+    <V> V getUserData(UserDataKey<V> key);
+
     @NotNull
     CopyBuilder<? extends FunctionDescriptor> newCopyBuilder();
 
@@ -145,6 +151,9 @@ public interface FunctionDescriptor extends CallableMemberDescriptor {
 
         @NotNull
         CopyBuilder<D> setSubstitution(@NotNull TypeSubstitution substitution);
+
+        @NotNull
+        <V> CopyBuilder<D> putUserData(@NotNull UserDataKey<V> userDataKey, V value);
 
         @Nullable
         D build();
