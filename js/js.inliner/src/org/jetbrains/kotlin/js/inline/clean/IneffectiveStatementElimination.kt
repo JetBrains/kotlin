@@ -126,6 +126,12 @@ class IneffectiveStatementElimination(private val root: JsFunction) {
                 }
             }
 
+            // Although it can be suspicious case, sometimes it really helps.
+            // Consider the following case: `Kotlin.modules['foo'].bar()`, where `foo` is inlineable. Expression decomposer produces
+            //   var $tmp = Kotlin.modules['foo'];
+            //   $tmp.bar();
+            // Then, inlined body of `bar` never uses `$tmp`, therefore we can eliminate it, so `Kotlin.modules['foo']` remains.
+            // It's good to eliminate such useless expression.
             is JsArrayAccess -> {
                 if (!expression.sideEffects) {
                     replace(expression.arrayExpression) + replace(expression.indexExpression)
