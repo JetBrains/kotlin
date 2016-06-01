@@ -28,6 +28,7 @@ import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
@@ -289,6 +290,12 @@ internal object NotUnderContentRootModuleInfo : IdeaModuleInfo {
     override fun dependencies(): List<IdeaModuleInfo> = listOf(this)
 }
 
+class CustomizedScriptModuleSearchScope(val scriptFile: VirtualFile, baseScope: GlobalSearchScope) : DelegatingGlobalSearchScope(baseScope) {
+    override fun equals(other: Any?) = other is CustomizedScriptModuleSearchScope && scriptFile == other.scriptFile && super.equals(other)
+
+    override fun hashCode() = scriptFile.hashCode() * 73 * super.hashCode()
+}
+
 internal data class CustomizedScriptModuleInfo(val project: Project, val module: Module?, val virtualFile: VirtualFile,
                                                val scriptDefinition: KotlinScriptDefinition,
                                                val scriptExtraImports: List<KotlinScriptExtraImport>) : IdeaModuleInfo {
@@ -297,7 +304,7 @@ internal data class CustomizedScriptModuleInfo(val project: Project, val module:
 
     override val name: Name = Name.special("<$SCRIPT_NAME_PREFIX${scriptDefinition.name}>")
 
-    override fun contentScope() = GlobalSearchScope.union(dependenciesRoots().map { FileLibraryScope(project, it) }.toTypedArray())
+    override fun contentScope() = CustomizedScriptModuleSearchScope(virtualFile, GlobalSearchScope.union(dependenciesRoots().map { FileLibraryScope(project, it) }.toTypedArray()))
 
     private fun dependenciesRoots(): List<VirtualFile> {
         // TODO: find out whether it should be cashed (some changes listener should be implemented for the cached roots)

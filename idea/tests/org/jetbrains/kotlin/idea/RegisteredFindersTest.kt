@@ -27,7 +27,7 @@ class RegisteredFindersTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor() = LightCodeInsightFixtureTestCase.JAVA_LATEST
 
     fun testKnownNonClasspathFinder() {
-        val expectedFindersNames = setOf("GantClassFinder", "GradleClassFinder").toMutableSet()
+        val expectedFindersNames = setOf("GantClassFinder", "GradleClassFinder", "KotlinScriptDependenciesClassFinder").toMutableSet()
 
         project.getExtensions<PsiElementFinder>(PsiElementFinder.EP_NAME).forEach { finder ->
             if (finder is NonClasspathClassFinder) {

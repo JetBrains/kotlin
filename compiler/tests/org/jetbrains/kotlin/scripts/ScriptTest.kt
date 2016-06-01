@@ -39,11 +39,10 @@ import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.Assert
 import org.junit.Test
 import java.io.File
-import kotlin.reflect.defaultType
+import java.lang.reflect.InvocationTargetException
 
 class ScriptTest {
     @Test
-    @Throws(Exception::class)
     fun testScriptWithParam() {
         val aClass = compileScript("fib.kts", SimpleParamsTestScriptDefinition(".kts", numIntParam()))
         Assert.assertNotNull(aClass)
@@ -51,8 +50,7 @@ class ScriptTest {
     }
 
     @Test
-    @Throws(Exception::class)
-    fun testStandardScript() {
+    fun testStandardScriptWithParams() {
         val aClass = compileScript("fib_std.kts", StandardScriptDefinition)
         Assert.assertNotNull(aClass)
         val anObj = KotlinToJVMBytecodeCompiler.tryConstructClassPub(aClass!!.kotlin, listOf("4", "comment"))
@@ -60,7 +58,14 @@ class ScriptTest {
     }
 
     @Test
-    @Throws(Exception::class)
+    fun testStandardScriptWithoutParams() {
+        val aClass = compileScript("fib_std.kts", StandardScriptDefinition)
+        Assert.assertNotNull(aClass)
+        val anObj = KotlinToJVMBytecodeCompiler.tryConstructClassPub(aClass!!.kotlin, emptyList())
+        Assert.assertNotNull(anObj)
+    }
+
+    @Test
     fun testScriptWithParamConversion() {
         val aClass = compileScript("fib.kts", SimpleParamsTestScriptDefinition(".kts", numIntParam()))
         Assert.assertNotNull(aClass)
@@ -69,7 +74,6 @@ class ScriptTest {
     }
 
     @Test
-    @Throws(Exception::class)
     fun testScriptWithPackage() {
         val aClass = compileScript("fib.pkg.kts", SimpleParamsTestScriptDefinition(".kts", numIntParam()))
         Assert.assertNotNull(aClass)
@@ -77,7 +81,6 @@ class ScriptTest {
     }
 
     @Test
-    @Throws(Exception::class)
     fun testScriptWithScriptDefinition() {
         val aClass = compileScript("fib.fib.kt", SimpleParamsTestScriptDefinition(".fib.kt", numIntParam()))
         Assert.assertNotNull(aClass)
@@ -124,11 +127,45 @@ class ScriptTest {
         Assert.assertNotNull(aClass2)
     }
 
+    @Test
+    fun testSmokeScriptException() {
+        val aClass = compileSmokeTestScript(
+                "scriptException/script.kts",
+                StandardWithClasspathScriptDefinition(
+                        ".kts",
+                        listOf("dependencies/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-runtime.jar",
+                               "dependencies/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-reflect.jar")))
+        Assert.assertNotNull(aClass)
+        var exceptionThrown = false
+        try {
+            KotlinToJVMBytecodeCompiler.tryConstructClassPub(aClass!!.kotlin, emptyList())
+        }
+        catch (e: InvocationTargetException) {
+            Assert.assertTrue(e.cause is IllegalStateException)
+            exceptionThrown = true
+        }
+        Assert.assertTrue(exceptionThrown)
+    }
+
     private fun compileScript(
             scriptPath: String,
             scriptDefinition: KotlinScriptDefinition,
             runIsolated: Boolean = true,
-            suppressOutput: Boolean = false): Class<*>?
+            suppressOutput: Boolean = false): Class<*>? =
+    compileScriptImpl("compiler/testData/script/" + scriptPath, scriptDefinition, runIsolated, suppressOutput)
+
+    private fun compileSmokeTestScript(
+            scriptPath: String,
+            scriptDefinition: KotlinScriptDefinition,
+            runIsolated: Boolean = true,
+            suppressOutput: Boolean = false): Class<*>? =
+            compileScriptImpl("compiler/testData/integration/smoke/" + scriptPath, scriptDefinition, runIsolated, suppressOutput)
+
+    private fun compileScriptImpl(
+            scriptPath: String,
+            scriptDefinition: KotlinScriptDefinition,
+            runIsolated: Boolean,
+            suppressOutput: Boolean): Class<*>?
     {
         val paths = PathUtil.getKotlinPathsForDistDirectory()
         val messageCollector =
@@ -139,7 +176,7 @@ class ScriptTest {
         try {
             val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.JDK_ONLY, TestJdkKind.FULL_JDK)
             configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
-            configuration.addKotlinSourceRoot("compiler/testData/script/" + scriptPath)
+            configuration.addKotlinSourceRoot(scriptPath)
             configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, scriptDefinition)
             scriptDefinition.getScriptDependenciesClasspath().forEach { configuration.addJvmClasspathRoot(File(it)) }
 

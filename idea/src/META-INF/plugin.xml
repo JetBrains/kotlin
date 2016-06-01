@@ -571,6 +571,7 @@
         implementationClass="org.jetbrains.kotlin.idea.hierarchy.overrides.KotlinOverrideHierarchyProvider" />
 
     <java.elementFinder implementation="org.jetbrains.kotlin.asJava.JavaElementFinder"/>
+    <java.elementFinder implementation="org.jetbrains.kotlin.idea.script.KotlinScriptDependenciesClassFinder"/>
     <java.shortNamesCache implementation="org.jetbrains.kotlin.idea.caches.KotlinShortNamesCache"/>
 
     <stubElementTypeHolder class="org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes"/>

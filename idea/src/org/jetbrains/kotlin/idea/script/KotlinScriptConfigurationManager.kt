@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.idea.script
 
 import com.intellij.openapi.components.AbstractProjectComponent
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.StandardFileSystems
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
@@ -25,9 +27,9 @@ import org.jetbrains.kotlin.script.*
 import java.io.File
 
 @Suppress("unused") // project component
-class KotlinScriptConfigurationManager(project: Project,
+class KotlinScriptConfigurationManager(private val project: Project,
                                        private val scriptDefinitionProvider: KotlinScriptDefinitionProvider,
-                                       scriptExtraImportsProvider: KotlinScriptExtraImportsProvider?
+                                       private val scriptExtraImportsProvider: KotlinScriptExtraImportsProvider?
 ) : AbstractProjectComponent(project) {
 
     private val kotlinEnvVars: Map<String, List<String>> by lazy { generateKotlinScriptClasspathEnvVarsForIdea(myProject) }
@@ -56,6 +58,31 @@ class KotlinScriptConfigurationManager(project: Project,
             }
         })
     }
+
+    // TODO: cache
+    fun getScriptClasspath(file: VirtualFile): List<VirtualFile> =
+        getScriptClasspathRaw(file)
+                .mapNotNull { StandardFileSystems.local().findFileByPath(it) }
+                .distinct()
+
+    // TODO: cache
+    fun getAllScriptsClasspath(): List<VirtualFile> {
+        fun<R> VirtualFile.vfsWalkFiles(onFile: (VirtualFile) -> List<R>?): List<R> {
+            assert(isDirectory)
+            return children.flatMap { when {
+                it.isDirectory -> it.vfsWalkFiles(onFile)
+                else -> onFile(it) ?: emptyList()
+            } }
+        }
+        return project.baseDir.vfsWalkFiles { getScriptClasspathRaw(it) }
+                .mapNotNull { StandardFileSystems.local()?.findFileByPath(it) }
+                .distinct()
+    }
+
+    private fun getScriptClasspathRaw(file: VirtualFile): List<String> =
+            scriptDefinitionProvider.findScriptDefinition(file)?.getScriptDependenciesClasspath()?.let {
+                it + (scriptExtraImportsProvider?.getExtraImports(file)?.flatMap { it.classpath } ?: emptyList())
+            } ?: emptyList()
 
     private fun reloadScriptDefinitions() {
         loadScriptConfigsFromProjectRoot(File(myProject.basePath ?: ".")).let {

@@ -50,20 +50,16 @@ object StandardScriptDefinition : KotlinScriptDefinition {
 
     override val name = "Kotlin Script"
 
-    override fun getScriptName(script: KtScript): Name {
-        return ScriptNameUtil.fileNameWithExtensionStripped(script, KotlinParserDefinition.STD_SCRIPT_EXT)
-    }
+    override fun getScriptName(script: KtScript): Name =
+            ScriptNameUtil.fileNameWithExtensionStripped(script, KotlinParserDefinition.STD_SCRIPT_EXT)
 
-    override fun isScript(file: VirtualFile): Boolean {
-        return PathUtil.getFileExtension(file.name) == KotlinParserDefinition.STD_SCRIPT_SUFFIX
-    }
+    override fun isScript(file: VirtualFile): Boolean =
+        PathUtil.getFileExtension(file.name) == KotlinParserDefinition.STD_SCRIPT_SUFFIX
 
     // NOTE: for now we treat .kts files as if they have 'args: Array<String>' parameter
     // this is not supposed to be final design
-    override fun getScriptParameters(scriptDescriptor: ScriptDescriptor): List<ScriptParameter> {
-        val kc: KClass<StandardScriptDefinition> = StandardScriptDefinition::class
-        return makeStringListScriptParameters(scriptDescriptor, ARGS_NAME)
-    }
+    override fun getScriptParameters(scriptDescriptor: ScriptDescriptor): List<ScriptParameter> =
+            makeStringListScriptParameters(scriptDescriptor, ARGS_NAME)
 }
 
 fun makeStringListScriptParameters(scriptDescriptor: ScriptDescriptor, propertyName: Name): List<ScriptParameter> {
