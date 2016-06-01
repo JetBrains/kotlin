@@ -23,17 +23,12 @@ import org.jetbrains.kotlin.js.inline.util.collectLocalVariables
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
 class IneffectiveStatementElimination(private val root: JsFunction) {
-    private val localVars = mutableSetOf<JsName>()
+    private val localVars = root.collectLocalVariables()
     private var hasChanges = false
 
     fun apply(): Boolean {
-        analyze()
         process()
         return hasChanges
-    }
-
-    private fun analyze() {
-        localVars += root.collectLocalVariables()
     }
 
     private fun process() {
@@ -43,7 +38,7 @@ class IneffectiveStatementElimination(private val root: JsFunction) {
                     val replacement = replace(x.expression)
                     if (replacement.size != 1 || replacement[0] != x.expression) {
                         hasChanges = true
-                        ctx.addPrevious(replacement.map { JsExpressionStatement(it).apply { synthetic = true } }.toList())
+                        ctx.addPrevious(replacement.map { JsExpressionStatement(it).apply { synthetic = true } })
                         ctx.removeMe()
                     }
                 }
@@ -55,11 +50,11 @@ class IneffectiveStatementElimination(private val root: JsFunction) {
     private fun replace(expression: JsExpression): List<JsExpression> {
         return when (expression) {
             is JsNameRef -> {
-                val qualifier = expression.qualifier
-                if (qualifier == null && expression.name in localVars) {
+                if (expression.name in localVars) {
                     listOf()
                 }
                 else if (!expression.sideEffects) {
+                    val qualifier = expression.qualifier
                     if (qualifier != null) replace(qualifier) else listOf()
                 }
                 else {
@@ -68,28 +63,65 @@ class IneffectiveStatementElimination(private val root: JsFunction) {
             }
 
             is JsUnaryOperation -> {
-                when (expression.operator) {
-                    JsUnaryOperator.DEC, JsUnaryOperator.INC, JsUnaryOperator.DELETE -> listOf(expression)
-                    else -> replace(expression.arg)
+                when (expression.operator!!) {
+                    JsUnaryOperator.BIT_NOT,
+                    JsUnaryOperator.NOT,
+                    JsUnaryOperator.TYPEOF,
+                    JsUnaryOperator.VOID,
+                    JsUnaryOperator.POS,
+                    JsUnaryOperator.NEG -> replace(expression.arg)
+
+                    JsUnaryOperator.DEC,
+                    JsUnaryOperator.INC,
+                    JsUnaryOperator.DELETE -> listOf(expression)
                 }
             }
 
             is JsBinaryOperation -> {
                 if (expression.sideEffects) {
                     when (expression.operator) {
-                        JsBinaryOperator.AND, JsBinaryOperator.OR -> {
+                        JsBinaryOperator.BIT_AND,
+                        JsBinaryOperator.BIT_OR,
+                        JsBinaryOperator.BIT_XOR,
+                        JsBinaryOperator.COMMA,
+                        JsBinaryOperator.ADD,
+                        JsBinaryOperator.SUB,
+                        JsBinaryOperator.MUL,
+                        JsBinaryOperator.DIV,
+                        JsBinaryOperator.MOD,
+                        JsBinaryOperator.EQ,
+                        JsBinaryOperator.NEQ,
+                        JsBinaryOperator.REF_EQ,
+                        JsBinaryOperator.REF_NEQ,
+                        JsBinaryOperator.GT,
+                        JsBinaryOperator.GTE,
+                        JsBinaryOperator.LT,
+                        JsBinaryOperator.LTE,
+                        JsBinaryOperator.SHL,
+                        JsBinaryOperator.SHR,
+                        JsBinaryOperator.SHRU -> replace(expression.arg1) + replace(expression.arg2)
+
+                        JsBinaryOperator.AND,
+                        JsBinaryOperator.OR -> {
                             val right = replace(expression.arg2)
                             if (right.isEmpty()) replace(expression.arg1) else listOf(expression)
                         }
-                        JsBinaryOperator.INOP, JsBinaryOperator.INSTANCEOF -> listOf(expression)
-                        else -> {
-                            if (!expression.operator.isAssignment) {
-                                replace(expression.arg1) + replace(expression.arg2)
-                            }
-                            else {
-                                listOf(expression)
-                            }
-                        }
+
+                        JsBinaryOperator.INOP,
+                        JsBinaryOperator.INSTANCEOF -> listOf(expression)
+
+                        JsBinaryOperator.ASG,
+                        JsBinaryOperator.ASG_ADD,
+                        JsBinaryOperator.ASG_SUB,
+                        JsBinaryOperator.ASG_MUL,
+                        JsBinaryOperator.ASG_DIV,
+                        JsBinaryOperator.ASG_MOD,
+                        JsBinaryOperator.ASG_BIT_AND,
+                        JsBinaryOperator.ASG_BIT_OR,
+                        JsBinaryOperator.ASG_BIT_XOR,
+                        JsBinaryOperator.ASG_SHL,
+                        JsBinaryOperator.ASG_SHR,
+                        JsBinaryOperator.ASG_SHRU -> listOf(expression)
                     }
                 }
                 else {
@@ -118,6 +150,7 @@ class IneffectiveStatementElimination(private val root: JsFunction) {
             is JsConditional -> {
                 val thenExpr = replace(expression.thenExpression)
                 val elseExpr = replace(expression.elseExpression)
+                // TODO: consider case like this one: cond ? se() + 1 : se() + 2
                 when {
                     thenExpr.isEmpty() && elseExpr.isEmpty() -> replace(expression.testExpression)
                     thenExpr.isEmpty() -> listOf(JsAstUtils.or(expression.testExpression, expression.elseExpression))
@@ -145,13 +178,11 @@ class IneffectiveStatementElimination(private val root: JsFunction) {
 
             is JsArrayLiteral -> replaceMany(expression.expressions)
 
-            is JsObjectLiteral -> expression.propertyInitializers.map { replace(it.labelExpr) + replace(it.valueExpr) }.flatten()
-
-            is JsFunction -> if (expression.name == null) listOf() else listOf(expression)
+            is JsObjectLiteral -> expression.propertyInitializers.flatMap { replace(it.labelExpr) + replace(it.valueExpr) }
 
             else -> listOf(expression)
         }
     }
 
-    private fun replaceMany(expressions: List<JsExpression>) = expressions.map { replace(it) }.flatten()
+    private fun replaceMany(expressions: List<JsExpression>) = expressions.flatMap { replace(it) }
 }
