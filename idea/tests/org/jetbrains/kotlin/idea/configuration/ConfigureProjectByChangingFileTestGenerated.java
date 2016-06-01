@@ -67,4 +67,5 @@ public class ConfigureProjectByChangingFileTestGenerated extends AbstractConfigu
             doTestGradle(fileName);
         }
     }
+
 }
