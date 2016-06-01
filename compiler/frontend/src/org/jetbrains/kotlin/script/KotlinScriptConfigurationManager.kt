@@ -20,20 +20,16 @@ import com.intellij.openapi.components.AbstractProjectComponent
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.JDOMUtil
-import com.intellij.psi.PsiFile
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.xmlb.XmlSerializer
 import com.intellij.util.xmlb.annotations.AbstractCollection
 import com.intellij.util.xmlb.annotations.Tag
-import org.jdom.Document
-import org.jdom.Element
-import org.jdom.output.Format
-import org.jdom.output.XMLOutputter
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.types.KotlinType
 import java.io.File
-import java.io.FileWriter
 import java.util.*
 
 class KotlinScriptConfigurationManager(project: Project, scriptDefinitionProvider: KotlinScriptDefinitionProvider) : AbstractProjectComponent(project) {
@@ -98,10 +94,10 @@ class KotlinConfigurableScriptDefinition(val config: KotlinScriptConfig) : Kotli
     override fun getScriptParametersToPassToSuperclass(scriptDescriptor: ScriptDescriptor): List<Name> =
         config.superclassParamsMapping.map { Name.identifier(it) }
 
-    override fun isScript(file: PsiFile): Boolean =
-        Regex(config.fileNameMatch).matches(file.name)
+    override fun isScript(file: VirtualFile): Boolean =
+            Regex(config.fileNameMatch).matches(file.name)
 
-    override fun getScriptName(script: KtScript): Name = Name.identifier(script.name ?: config.name)
+    override fun getScriptName(script: KtScript): Name = ScriptNameUtil.fileNameWithExtensionStripped(script, KotlinParserDefinition.STD_SCRIPT_EXT)
 
     override fun getScriptDependenciesClasspath(): List<String> = config.classpath
 }

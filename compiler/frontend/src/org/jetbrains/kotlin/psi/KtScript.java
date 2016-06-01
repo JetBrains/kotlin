@@ -47,7 +47,7 @@ public class KtScript extends KtNamedDeclarationStub<KotlinScriptStub> implement
         }
         KtFile containingKtFile = getContainingKtFile();
         KotlinScriptDefinition kotlinScriptDefinition =
-                KotlinScriptDefinitionProvider.getInstance(getProject()).findScriptDefinition(containingKtFile);
+                KotlinScriptDefinitionProvider.getInstance(getProject()).findScriptDefinition(containingKtFile.getOriginalFile().getVirtualFile());
         assert kotlinScriptDefinition != null : "Should not parse a script without definition";
         return containingKtFile.getPackageFqName().child(kotlinScriptDefinition.getScriptName(this));
     }

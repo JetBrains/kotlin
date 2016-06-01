@@ -55,7 +55,7 @@ class LazyScriptClassMemberScope(
 
     private fun createScriptParameters(constructor: ConstructorDescriptorImpl): List<ValueParameterDescriptor> {
         val file = scriptDescriptor.scriptInfo.script.getContainingKtFile()
-        val scriptDefinition = KotlinScriptDefinitionProvider.getInstance(file.project).findScriptDefinition(file) ?:
+        val scriptDefinition = KotlinScriptDefinitionProvider.getInstance(file.project).findScriptDefinition(file.originalFile.virtualFile) ?:
                     throw RuntimeException("file ${file.name} is not a script")
         return scriptDefinition.getScriptParameters(scriptDescriptor).mapIndexed { index, scriptParameter ->
             ValueParameterDescriptorImpl(

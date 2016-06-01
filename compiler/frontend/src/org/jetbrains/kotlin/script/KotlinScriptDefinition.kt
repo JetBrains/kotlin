@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.script
 
-import com.intellij.psi.PsiFile
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.name.ClassId
@@ -36,7 +36,7 @@ interface KotlinScriptDefinition {
     fun getScriptParameters(scriptDescriptor: ScriptDescriptor): List<ScriptParameter>
     fun getScriptSupertypes(scriptDescriptor: ScriptDescriptor): List<KotlinType> = emptyList()
     fun getScriptParametersToPassToSuperclass(scriptDescriptor: ScriptDescriptor): List<Name> = emptyList()
-    fun isScript(file: PsiFile): Boolean
+    fun isScript(file: VirtualFile): Boolean
     fun getScriptName(script: KtScript): Name
     fun getScriptDependenciesClasspath(): List<String> = emptyList()
 }
@@ -52,7 +52,7 @@ object StandardScriptDefinition : KotlinScriptDefinition {
         return ScriptNameUtil.fileNameWithExtensionStripped(script, KotlinParserDefinition.STD_SCRIPT_EXT)
     }
 
-    override fun isScript(file: PsiFile): Boolean {
+    override fun isScript(file: VirtualFile): Boolean {
         return PathUtil.getFileExtension(file.name) == KotlinParserDefinition.STD_SCRIPT_SUFFIX
     }
 

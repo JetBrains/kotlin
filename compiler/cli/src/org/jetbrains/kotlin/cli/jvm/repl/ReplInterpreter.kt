@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.cli.jvm.repl
 import com.google.common.base.Throwables
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.vfs.CharsetToolkit
-import com.intellij.psi.PsiFile
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.impl.PsiFileFactoryImpl
 import com.intellij.testFramework.LightVirtualFile
@@ -239,7 +239,7 @@ class ReplInterpreter(
 
             override fun getScriptParameters(scriptDescriptor: ScriptDescriptor): List<ScriptParameter> = emptyList()
 
-            override fun isScript(file: PsiFile): Boolean = StandardScriptDefinition.isScript(file)
+            override fun isScript(file: VirtualFile): Boolean = StandardScriptDefinition.isScript(file)
 
             override fun getScriptName(script: KtScript): Name = StandardScriptDefinition.getScriptName(script)
         }
