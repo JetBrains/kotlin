@@ -142,9 +142,9 @@ public class LazyDeclarationResolver {
                     CallableDescriptor callableDescriptor = (CallableDescriptor) ownerDescriptor;
                     typeParameters = callableDescriptor.getTypeParameters();
                 }
-                else if (ownerDescriptor instanceof ClassDescriptor) {
-                    ClassDescriptor classDescriptor = (ClassDescriptor) ownerDescriptor;
-                    typeParameters = classDescriptor.getTypeConstructor().getParameters();
+                else if (ownerDescriptor instanceof ClassifierDescriptorWithTypeParameters) {
+                    ClassifierDescriptorWithTypeParameters classifierDescriptor = (ClassifierDescriptorWithTypeParameters) ownerDescriptor;
+                    typeParameters = classifierDescriptor.getTypeConstructor().getParameters();
                 }
                 else {
                     throw new IllegalStateException("Unknown owner kind for a type parameter: " + ownerDescriptor);
