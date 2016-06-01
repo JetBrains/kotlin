@@ -77,6 +77,9 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @ValueDescription("<path>")
     public String declarationsOutputPath;
 
+    @Argument(value = "Xload-script-configs", description = "Load script configuration files from project directory tree")
+    public boolean loadScriptConfigs;
+
     // Paths to output directories for friend modules.
     public String[] friendPaths;
 

@@ -26,12 +26,12 @@ import kotlin.concurrent.write
 class KotlinScriptExtraImportsProvider(val project: Project) {
     private val lock = ReentrantReadWriteLock()
     private val cache = hashMapOf<VirtualFile, List<KotlinScriptExtraImport>>()
-    private val envVars: Map<String, List<String>> by lazy { generateKotlinScriptClasspathEnvVarsForIdea(project) }
+    private val envVars: Map<String, List<String>> by lazy { generateKotlinScriptClasspathEnvVars(project) }
 
     fun isExtraImportsConfig(file: VirtualFile): Boolean = file.name.endsWith(IMPORTSFILEEXTENSION)
 
     fun getExtraImports(file: VirtualFile): List<KotlinScriptExtraImport> = lock.read {
-        if (file.isInLocalFileSystem)
+        if (file.isValid)
             cache.getOrPut(file) {
                 file.parent.findFileByRelativePath(file.name + IMPORTSFILEEXTENSION)?.let {
                     loadScriptExtraImportConfigs(it.inputStream).map { KotlinScriptExtraImportFromConfig(it, envVars) }

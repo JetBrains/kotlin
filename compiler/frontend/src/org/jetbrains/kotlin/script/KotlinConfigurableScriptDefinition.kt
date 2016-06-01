@@ -30,7 +30,10 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.utils.KotlinPaths
+import org.jetbrains.kotlin.utils.KotlinPathsFromHomeDir
 import org.jetbrains.kotlin.utils.PathUtil
+import java.io.File
 
 
 class KotlinConfigurableScriptDefinition(val config: KotlinScriptConfig, val environmentVars: Map<String, List<String>>?) : KotlinScriptDefinition {
@@ -73,16 +76,26 @@ internal fun List<String>.evalWithVars(varsMap: Map<String, List<String>>?): Lis
             }
         }
 
-fun generateKotlinScriptClasspathEnvVarsForCompiler(project: Project): Map<String, List<String>> {
-    val paths = PathUtil.getKotlinPathsForCompiler()
-    return mapOf("kotlin-runtime" to listOf(paths.runtimePath.canonicalPath),
-                 "project-root" to listOf(project.basePath ?: "."),
-                 "jdk" to PathUtil.getJdkClassesRoots().map { it.canonicalPath })
-}
+fun generateKotlinScriptClasspathEnvVars(project: Project, kotlinHomeDir: File? = null): Map<String, List<String>> =
+        generateKotlinScriptClasspathEnvVarsFromPaths(
+                project,
+                kotlinHomeDir?.let { KotlinPathsFromHomeDir(it) } ?: tryFindKotlinPathsForScriptClasspathEnvVars(project))
 
-fun generateKotlinScriptClasspathEnvVarsForIdea(project: Project): Map<String, List<String>> {
-    val paths = PathUtil.getKotlinPathsForIdeaPlugin()
-    return mapOf("kotlin-runtime" to listOf(paths.runtimePath.canonicalPath),
-                 "project-root" to listOf(project.basePath ?: "."),
-                 "jdk" to PathUtil.getJdkClassesRoots().map { it.canonicalPath })
-}
+private fun tryFindKotlinPathsForScriptClasspathEnvVars(project: Project): KotlinPaths? =
+    sequenceOf( { PathUtil.getKotlinPathsForIdeaPlugin() },
+                { PathUtil.getKotlinPathsForJpsPlugin() },
+                { PathUtil.getKotlinPathsForCompiler() },
+                { KotlinPathsFromHomeDir(File(project.basePath ?: ".")) },
+                // note: these are only usable when debugging kotlin project
+                // TODO: replace with more reliable mechanism
+                { KotlinPathsFromHomeDir(File(PathUtil.getPathUtilJar().parentFile.parentFile.parentFile, "dist/kotlinc")) })
+    .map { it() }
+    .firstOrNull { it.runtimePath.exists() }
+
+private fun generateKotlinScriptClasspathEnvVarsFromPaths(project: Project, paths: KotlinPaths?): Map<String, List<String>> =
+        mapOf("kotlin-runtime" to (paths?.run { listOf(runtimePath.canonicalPath) } ?: emptyList()),
+              "kotlin-reflect" to (paths?.run { listOf(reflectPath.canonicalPath) } ?: emptyList()),
+              "project-root" to listOf(project.basePath ?: "."),
+              "jdk" to PathUtil.getJdkClassesRoots().map { it.canonicalPath })
+        .filterNot { it.value.isEmpty() }
+
