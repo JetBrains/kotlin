@@ -16,39 +16,6 @@
 
 package org.jetbrains.kotlin.types
 
-interface TypeCapability
-
-interface TypeCapabilities {
-    object NONE : TypeCapabilities {
-        override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>): T? = null
-    }
-
-    fun <T : TypeCapability> getCapability(capabilityClass: Class<T>): T?
-}
-
-class CompositeTypeCapabilities(private val first: TypeCapabilities, private val second: TypeCapabilities) : TypeCapabilities {
-    override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>): T? =
-            first.getCapability(capabilityClass) ?: second.getCapability(capabilityClass)
-}
-
-class SingletonTypeCapabilities(private val clazz: Class<*>, private val typeCapability: TypeCapability) : TypeCapabilities {
-    override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>): T? {
-        @Suppress("UNCHECKED_CAST")
-        if (capabilityClass == clazz) return typeCapability as T
-        return null
-    }
-}
-
-fun <T : TypeCapability> TypeCapabilities.addCapability(clazz: Class<T>, typeCapability: T): TypeCapabilities {
-    if (getCapability(clazz) === typeCapability) return this
-    val newCapabilities = SingletonTypeCapabilities(clazz, typeCapability)
-    if (this === TypeCapabilities.NONE) return newCapabilities
-
-    return CompositeTypeCapabilities(this, newCapabilities)
-}
-
-inline fun <reified T : TypeCapability> KotlinType.getCapability(): T? = getCapability(T::class.java)
-
 
 // To facilitate laziness, any KotlinType implementation may inherit from this trait,
 // even if it turns out that the type an instance represents is not actually a type variable

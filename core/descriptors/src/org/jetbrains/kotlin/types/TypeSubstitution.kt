@@ -116,10 +116,9 @@ class IndexedParametersSubstitution(
 @JvmOverloads
 fun KotlinType.replace(
         newArguments: List<TypeProjection> = arguments,
-        newAnnotations: Annotations = annotations,
-        newCapabilities: TypeCapabilities = capabilities
+        newAnnotations: Annotations = annotations
 ): KotlinType {
-    if (newArguments.isEmpty() && newAnnotations === annotations && newCapabilities === capabilities) return this
+    if (newArguments.isEmpty() && newAnnotations === annotations) return this
 
     if (newArguments.isEmpty()) {
         return KotlinTypeImpl.create(
@@ -127,8 +126,7 @@ fun KotlinType.replace(
                 constructor,
                 isMarkedNullable,
                 arguments,
-                memberScope,
-                newCapabilities
+                memberScope
         )
     }
 
@@ -145,8 +143,7 @@ fun KotlinType.replace(
             constructor,
             isMarkedNullable,
             newArguments,
-            newScope,
-            newCapabilities
+            newScope
     )
 }
 
