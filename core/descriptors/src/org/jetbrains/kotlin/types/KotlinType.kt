@@ -133,6 +133,7 @@ private class WrappedSimpleType(
 
     override fun unwrap(): KotlinType {
         if (delegate.isError) return delegate // todo
+        if (delegate is CustomTypeVariable) return delegate // todo
         return KotlinTypeImpl.create(annotations, constructor, isMarkedNullable, arguments, memberScope, capabilities, abbreviatedType)
     }
 

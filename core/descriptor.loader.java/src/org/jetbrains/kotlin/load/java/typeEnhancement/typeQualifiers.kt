@@ -59,7 +59,7 @@ private fun KotlinType.extractQualifiers(): JavaTypeQualifiers {
     return JavaTypeQualifiers(
             if (lower.isMarkedNullable) NULLABLE else if (!upper.isMarkedNullable) NOT_NULL else null,
             if (mapping.isReadOnly(lower)) READ_ONLY else if (mapping.isMutable(upper)) MUTABLE else null,
-            isNotNullTypeParameter = getCapability<CustomTypeVariable>() is NotNullTypeParameterTypeCapability)
+            isNotNullTypeParameter = unwrap() is NotNullTypeParameter)
 }
 
 private fun KotlinType.extractQualifiersFromAnnotations(): JavaTypeQualifiers {

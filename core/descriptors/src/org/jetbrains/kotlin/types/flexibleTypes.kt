@@ -132,9 +132,6 @@ class FlexibleTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : Delegat
     override val delegateType: KotlinType get() = lowerBound
 
     override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>): T? {
-        @Suppress("UNCHECKED_CAST")
-        if (capabilityClass == CustomTypeVariable::class.java) return this as T
-
         return super.getCapability(capabilityClass)
     }
 
