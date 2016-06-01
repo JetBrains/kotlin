@@ -1,7 +1,7 @@
 package foo
 
 // CHECK_CONTAINS_NO_CALLS: test
-// CHECK_VARS_COUNT: function=test count=0
+// CHECK_VARS_COUNT: function=test count=1
 
 object SumHolder {
     var sum = 0
