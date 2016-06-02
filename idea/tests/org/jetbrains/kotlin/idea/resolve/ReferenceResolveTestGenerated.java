@@ -383,6 +383,18 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
         doTest(fileName);
     }
 
+    @TestMetadata("TypeAlias.kt")
+    public void testTypeAlias() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/references/TypeAlias.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("TypeAliasRHS.kt")
+    public void testTypeAliasRHS() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/references/TypeAliasRHS.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("TypeArgumentBeforeDot.kt")
     public void testTypeArgumentBeforeDot() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/references/TypeArgumentBeforeDot.kt");

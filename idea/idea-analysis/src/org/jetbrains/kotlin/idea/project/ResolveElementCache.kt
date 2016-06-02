@@ -217,7 +217,8 @@ class ResolveElementCache(
                 KtTypeParameter::class.java,
                 KtTypeConstraint::class.java,
                 KtPackageDirective::class.java,
-                KtCodeFragment::class.java) as KtElement?
+                KtCodeFragment::class.java,
+                KtTypeAlias::class.java) as KtElement?
 
         when (elementOfAdditionalResolve) {
             null -> {
@@ -305,6 +306,8 @@ class ResolveElementCache(
             is KtAnnotationEntry -> annotationAdditionalResolve(resolveSession, resolveElement)
 
             is KtClass -> constructorAdditionalResolve(resolveSession, resolveElement, file)
+
+            is KtTypeAlias -> typealiasAdditionalResolve(resolveSession, resolveElement)
 
             is KtTypeParameter -> typeParameterAdditionalResolve(resolveSession, resolveElement)
 
@@ -500,6 +503,14 @@ class ResolveElementCache(
         val bodyResolver = createBodyResolver(resolveSession, trace, file, StatementFilter.NONE)
         bodyResolver.resolveConstructorParameterDefaultValuesAndAnnotations(DataFlowInfo.EMPTY, trace, klass, constructorDescriptor, scope)
 
+        return trace
+    }
+
+    private fun typealiasAdditionalResolve(resolveSession: ResolveSession, typeAlias: KtTypeAlias): BindingTrace {
+        val trace = createDelegatingTrace(typeAlias)
+        val typeAliasDescriptor = resolveSession.resolveToDescriptor(typeAlias)
+        ForceResolveUtil.forceResolveAllContents(typeAliasDescriptor)
+        forceResolveAnnotationsInside(typeAlias)
         return trace
     }
 

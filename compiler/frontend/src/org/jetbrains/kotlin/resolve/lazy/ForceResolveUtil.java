@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
+import org.jetbrains.kotlin.serialization.ProtoBuf;
 import org.jetbrains.kotlin.types.*;
 
 import java.util.Collection;
@@ -84,6 +85,10 @@ public class ForceResolveUtil {
             }
             forceResolveAllContents(callableDescriptor.getReturnType());
             forceResolveAllContents(callableDescriptor.getAnnotations());
+        }
+        else if (object instanceof TypeAliasDescriptor) {
+            TypeAliasDescriptor typeAliasDescriptor = (TypeAliasDescriptor) object;
+            forceResolveAllContents(typeAliasDescriptor.getUnderlyingType());
         }
     }
 
