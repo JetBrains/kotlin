@@ -173,3 +173,8 @@ open class DelegatedTypeSubstitution(val substitution: TypeSubstitution): TypeSu
 
     override fun filterAnnotations(annotations: Annotations) = substitution.filterAnnotations(annotations)
 }
+
+// This method used for transform type to simple type afler substitution
+fun KotlinType.asSimpleType(): SimpleType {
+    return unwrap() as? SimpleType ?: error("This is should be simple type: $this")
+}

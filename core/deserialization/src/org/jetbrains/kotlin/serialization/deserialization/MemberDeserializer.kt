@@ -180,8 +180,8 @@ class MemberDeserializer(private val c: DeserializationContext) {
         val local = c.childContext(typeAlias, proto.typeParameterList)
         typeAlias.initialize(
                 local.typeDeserializer.ownTypeParameters,
-                local.typeDeserializer.type(proto.underlyingType(c.typeTable)),
-                local.typeDeserializer.type(proto.expandedType(c.typeTable))
+                local.typeDeserializer.simpleType(proto.underlyingType(c.typeTable)),
+                local.typeDeserializer.simpleType(proto.expandedType(c.typeTable))
         )
 
         return typeAlias

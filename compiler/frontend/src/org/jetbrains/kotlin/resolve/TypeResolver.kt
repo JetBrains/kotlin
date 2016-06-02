@@ -71,8 +71,20 @@ class TypeResolver(
         return resolveType(TypeResolutionContext(scope, trace, checkBounds, false, typeReference.suppressDiagnosticsInDebugMode(), false), typeReference)
     }
 
-    fun resolveAbbreviatedType(scope: LexicalScope, typeReference: KtTypeReference, trace: BindingTrace, checkBounds: Boolean): KotlinType {
-        return resolveType(TypeResolutionContext(scope, trace, checkBounds, false, typeReference.suppressDiagnosticsInDebugMode(), true), typeReference)
+    fun resolveAbbreviatedType(scope: LexicalScope, typeReference: KtTypeReference, trace: BindingTrace, abbreviated: Boolean): SimpleType {
+        return resolveSimpleType(
+                TypeResolutionContext(scope, trace, true, false, typeReference.suppressDiagnosticsInDebugMode(), abbreviated),
+                typeReference
+        )
+    }
+
+    private fun resolveSimpleType(c: TypeResolutionContext, typeReference: KtTypeReference): SimpleType {
+        val unwrappedType = resolveType(c, typeReference).unwrap()
+        return when (unwrappedType) {
+            is DynamicType -> ErrorUtils.createErrorType("dynamic type in wrong context")
+            is SimpleType -> unwrappedType
+            else -> error("Unexpected type: $unwrappedType")
+        }
     }
 
     fun resolveExpandedTypeForTypeAlias(typeAliasDescriptor: TypeAliasDescriptor): KotlinType {

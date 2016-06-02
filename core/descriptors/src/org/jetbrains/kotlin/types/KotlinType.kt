@@ -136,7 +136,3 @@ abstract class FlexibleType(val lowerBound: SimpleType, val upperBound: SimpleTy
     override fun toString(): String = DescriptorRenderer.DEBUG_TEXT.renderType(this)
 }
 
-@Deprecated("Temporary marker method for refactoring")
-fun KotlinType.asSimpleType(): SimpleType {
-    return unwrap() as SimpleType
-}

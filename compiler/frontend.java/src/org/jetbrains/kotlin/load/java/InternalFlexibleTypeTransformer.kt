@@ -34,7 +34,7 @@ object InternalFlexibleTypeTransformer : TypeTransformerForTests() {
         val descriptor = kotlinType.constructor.declarationDescriptor
         if (descriptor != null && FLEXIBLE_TYPE_CLASSIFIER.asSingleFqName().toUnsafe() == DescriptorUtils.getFqName(descriptor)
             && kotlinType.arguments.size == 2) {
-            return KotlinTypeFactory.flexibleType(kotlinType.arguments[0].type.asSimpleType(), kotlinType.arguments[1].type.asSimpleType())
+            return KotlinTypeFactory.flexibleType(kotlinType.arguments[0].type.unwrap() as SimpleType, kotlinType.arguments[1].type.unwrap() as SimpleType)
         }
         return null
     }

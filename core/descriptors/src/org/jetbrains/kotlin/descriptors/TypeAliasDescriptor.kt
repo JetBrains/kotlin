@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.descriptors
 
-import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 
 interface TypeAliasDescriptor : ClassifierDescriptorWithTypeParameters, MemberDescriptor {
-    val underlyingType: KotlinType
+    val underlyingType: SimpleType
 
-    val expandedType: KotlinType
+    val expandedType: SimpleType
 
     val classDescriptor: ClassDescriptor?
 

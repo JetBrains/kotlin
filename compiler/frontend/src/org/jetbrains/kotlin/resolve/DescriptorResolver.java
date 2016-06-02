@@ -736,16 +736,17 @@ public class DescriptorResolver {
         else {
             typeAliasDescriptor.initialize(
                     typeParameterDescriptors,
-                    DeferredType.create(storageManager, trace, new Function0<KotlinType>() {
+                    storageManager.createLazyValue(new Function0<SimpleType>() {
                         @Override
-                        public KotlinType invoke() {
+                        public SimpleType invoke() {
                             return typeResolver.resolveAbbreviatedType(scopeWithTypeParameters, typeReference, trace, true);
                         }
                     }),
-                    DeferredType.create(storageManager, trace, new Function0<KotlinType>() {
+                    storageManager.createLazyValue(new Function0<SimpleType>() {
                         @Override
-                        public KotlinType invoke() {
-                            return typeResolver.resolveExpandedTypeForTypeAlias(typeAliasDescriptor);
+                        public SimpleType invoke() {
+                            // TODO do not reparse
+                            return typeResolver.resolveAbbreviatedType(scopeWithTypeParameters, typeReference, trace, false);
                         }
                     }));
         }
