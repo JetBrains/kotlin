@@ -171,5 +171,5 @@ private fun SimpleType.replaceArgumentsWithStarProjections(): SimpleType {
 
     val newArguments = constructor.parameters.map(::StarProjectionImpl)
 
-    return replace(newArguments).asSimpleType()
+    return replace(newArguments)
 }

@@ -50,6 +50,7 @@ public class CommonSupertypes {
 
     @NotNull
     public static KotlinType commonSupertype(@NotNull Collection<KotlinType> types) {
+        if (types.size() == 1) return types.iterator().next();
         // Recursion should not be significantly deeper than the deepest type in question
         // It can be slightly deeper, though: e.g. when initial types are simple, but their supertypes are complex
         return findCommonSupertype(types, 0, maxDepth(types) + 3);
@@ -86,18 +87,20 @@ public class CommonSupertypes {
         List<SimpleType> upper = new ArrayList<SimpleType>(types.size());
         List<SimpleType> lower = new ArrayList<SimpleType>(types.size());
         for (KotlinType type : types) {
-            if (FlexibleTypesKt.isFlexible(type)) {
+            UnwrappedType unwrappedType = type.unwrap();
+            if (unwrappedType instanceof FlexibleType) {
                 if (DynamicTypesKt.isDynamic(type)) {
                     return type;
                 }
                 hasFlexible = true;
-                FlexibleType flexibleType = FlexibleTypesKt.asFlexibleType(type);
+                FlexibleType flexibleType = (FlexibleType) type;
                 upper.add(flexibleType.getUpperBound());
                 lower.add(flexibleType.getLowerBound());
             }
             else {
-                upper.add(KotlinTypeKt.asSimpleType(type));
-                lower.add(KotlinTypeKt.asSimpleType(type));
+                SimpleType simpleType = (SimpleType) unwrappedType;
+                upper.add(simpleType);
+                lower.add(simpleType);
             }
         }
 
@@ -112,10 +115,6 @@ public class CommonSupertypes {
     private static SimpleType commonSuperTypeForInflexible(@NotNull Collection<SimpleType> types, int recursionDepth, int maxDepth) {
         assert !types.isEmpty();
         Collection<SimpleType> typeSet = new HashSet<SimpleType>(types);
-
-        // todo: dead code?
-        KotlinType bestFit = FlexibleTypesKt.singleBestRepresentative(typeSet);
-        if (bestFit != null) return KotlinTypeKt.asSimpleType(bestFit);
 
         // If any of the types is nullable, the result must be nullable
         // This also removed Nothing and Nothing? because they are subtypes of everything else
@@ -348,7 +347,7 @@ public class CommonSupertypes {
                             if (visited.contains(supertype.getConstructor())) {
                                 continue;
                             }
-                            result.add(KotlinTypeKt.asSimpleType(substitutor.safeSubstitute(supertype, Variance.INVARIANT)));
+                            result.add(FlexibleTypesKt.lowerIfFlexible(substitutor.safeSubstitute(supertype, Variance.INVARIANT)));
                         }
                         return result;
                     }

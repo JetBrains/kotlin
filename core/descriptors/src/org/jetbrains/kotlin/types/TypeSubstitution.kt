@@ -120,6 +120,21 @@ fun KotlinType.replace(
 ): KotlinType {
     if (newArguments.isEmpty() && newAnnotations === annotations) return this
 
+    val unwrapped = unwrap()
+    return when(unwrapped) {
+        is FlexibleType -> KotlinTypeFactory.flexibleType(unwrapped.lowerBound.replace(newArguments, newAnnotations),
+                                                          unwrapped.upperBound.replace(newArguments, newAnnotations))
+        is SimpleType -> unwrapped.replace(newArguments, newAnnotations)
+    }
+}
+
+@JvmOverloads
+fun SimpleType.replace(
+        newArguments: List<TypeProjection> = arguments,
+        newAnnotations: Annotations = annotations
+): SimpleType {
+    if (newArguments.isEmpty() && newAnnotations === annotations) return this
+
     if (newArguments.isEmpty()) {
         return KotlinTypeFactory.simpleType(
                 newAnnotations,

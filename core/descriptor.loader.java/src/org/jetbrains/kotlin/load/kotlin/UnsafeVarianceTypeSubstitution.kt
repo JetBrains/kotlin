@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
 import org.jetbrains.kotlin.descriptors.annotations.composeAnnotations
 import org.jetbrains.kotlin.descriptors.annotations.createUnsafeVarianceAnnotation
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 
 internal class UnsafeVarianceTypeSubstitution(kotlinBuiltIns: KotlinBuiltIns) : TypeSubstitution() {
     private val unsafeVarianceAnnotations = AnnotationsImpl(listOf(kotlinBuiltIns.createUnsafeVarianceAnnotation()))
@@ -38,18 +37,21 @@ internal class UnsafeVarianceTypeSubstitution(kotlinBuiltIns: KotlinBuiltIns) : 
                 },
                 customVariance = { null })
 
-        return topLevelType.annotatePartsWithUnsafeVariance(unsafeVariancePaths)
+        return topLevelType.unwrap().annotatePartsWithUnsafeVariance(unsafeVariancePaths)
+    }
+    private fun UnwrappedType.annotatePartsWithUnsafeVariance(unsafeVariancePaths: Collection<List<Int>>): UnwrappedType {
+        if (unsafeVariancePaths.isEmpty()) return this
+        return when (this) {
+            is FlexibleType ->
+                KotlinTypeFactory.flexibleType(
+                        lowerBound.annotatePartsWithUnsafeVariance(subPathsWithIndex(unsafeVariancePaths, 0)),
+                        upperBound.annotatePartsWithUnsafeVariance(subPathsWithIndex(unsafeVariancePaths, 1)))
+            is SimpleType -> annotatePartsWithUnsafeVariance(unsafeVariancePaths)
+        }
     }
 
-    private fun KotlinType.annotatePartsWithUnsafeVariance(unsafeVariancePaths: Collection<List<Int>>): KotlinType {
+    private fun SimpleType.annotatePartsWithUnsafeVariance(unsafeVariancePaths: Collection<List<Int>>): SimpleType {
         if (unsafeVariancePaths.isEmpty()) return this
-
-        if (isFlexible()) {
-            return KotlinTypeFactory.flexibleType(
-                    lowerIfFlexible().annotatePartsWithUnsafeVariance(subPathsWithIndex(unsafeVariancePaths, 0)).asSimpleType(),
-                    upperIfFlexible().annotatePartsWithUnsafeVariance(subPathsWithIndex(unsafeVariancePaths, 1)).asSimpleType()
-            )
-        }
 
         // if root is unsafe
         if (emptyList<Int>() in unsafeVariancePaths) {
@@ -61,7 +63,7 @@ internal class UnsafeVarianceTypeSubstitution(kotlinBuiltIns: KotlinBuiltIns) : 
                     if (argument.isStarProjection) return@map argument
             TypeProjectionImpl(
                     argument.projectionKind,
-                    argument.type.annotatePartsWithUnsafeVariance(subPathsWithIndex(unsafeVariancePaths, index)))
+                    argument.type.unwrap().annotatePartsWithUnsafeVariance(subPathsWithIndex(unsafeVariancePaths, index)))
                 })
     }
 

@@ -60,14 +60,23 @@ fun Collection<TypeProjection>.singleBestRepresentative(): TypeProjection? {
     val projectionKinds = this.map { it.projectionKind }.toSet()
     if (projectionKinds.size != 1) return null
 
-    val bestType = this.map { it.type }.singleBestRepresentative()
-    if (bestType == null) return null
+    val bestType = this.map { it.type }.singleBestRepresentative() ?: return null
 
     return TypeProjectionImpl(projectionKinds.single(), bestType)
 }
 
-fun KotlinType.lowerIfFlexible(): SimpleType = (if (this.isFlexible()) this.asFlexibleType().lowerBound else this).asSimpleType()
-fun KotlinType.upperIfFlexible(): SimpleType = (if (this.isFlexible()) this.asFlexibleType().upperBound else this).asSimpleType()
+fun KotlinType.lowerIfFlexible(): SimpleType = with(unwrap()) {
+    when (this) {
+        is FlexibleType -> lowerBound
+        is SimpleType -> this
+    }
+}
+fun KotlinType.upperIfFlexible(): SimpleType = with(unwrap()) {
+    when (this) {
+        is FlexibleType -> upperBound
+        is SimpleType -> this
+    }
+}
 
 class FlexibleTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : FlexibleType(lowerBound, upperBound), CustomTypeVariable {
     companion object {
