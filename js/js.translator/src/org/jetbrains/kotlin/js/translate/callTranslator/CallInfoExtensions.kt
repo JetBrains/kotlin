@@ -20,6 +20,7 @@ import com.google.dart.compiler.backend.js.ast.JsEmptyExpression
 import com.google.dart.compiler.backend.js.ast.JsExpression
 import com.google.dart.compiler.backend.js.ast.JsName
 import com.google.dart.compiler.backend.js.ast.metadata.HasMetadata
+import com.google.dart.compiler.backend.js.ast.metadata.SideEffectKind
 import com.google.dart.compiler.backend.js.ast.metadata.sideEffects
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -76,7 +77,7 @@ fun VariableAccessInfo.constructAccessExpression(ref: JsExpression): JsExpressio
         return ref
     } else {
         return if (value !is JsEmptyExpression) {
-            (ref as? HasMetadata)?.let { it.sideEffects = false }
+            (ref as? HasMetadata)?.let { it.sideEffects = SideEffectKind.PURE }
             JsAstUtils.assignment(ref, value!!)
         }
         else {

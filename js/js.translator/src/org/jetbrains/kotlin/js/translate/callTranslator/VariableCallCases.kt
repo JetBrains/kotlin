@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.js.translate.callTranslator
 import com.google.dart.compiler.backend.js.ast.JsExpression
 import com.google.dart.compiler.backend.js.ast.JsInvocation
 import com.google.dart.compiler.backend.js.ast.JsNameRef
+import com.google.dart.compiler.backend.js.ast.metadata.SideEffectKind
 import com.google.dart.compiler.backend.js.ast.metadata.sideEffects
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -62,8 +63,8 @@ object DefaultVariableAccessCase : VariableAccessCase() {
     override fun VariableAccessInfo.dispatchReceiver(): JsExpression {
         val accessor = JsNameRef(variableName, dispatchReceiver!!)
         val descriptor = callableDescriptor
-        if (descriptor is PropertyDescriptor && JsDescriptorUtils.sideEffectsPossible(descriptor)) {
-            accessor.sideEffects = false
+        if (descriptor is PropertyDescriptor && !JsDescriptorUtils.sideEffectsPossible(descriptor)) {
+            accessor.sideEffects = SideEffectKind.DEPENDS_ON_STATE
         }
         return constructAccessExpression(accessor)
     }

@@ -257,6 +257,18 @@ public class InlineEvaluationOrderTestGenerated extends AbstractInlineEvaluation
         doTest(fileName);
     }
 
+    @TestMetadata("propertyAccessAfterModification.kt")
+    public void testPropertyAccessAfterModification() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/propertyAccessAfterModification.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("propertyAccessAndInitializer.kt")
+    public void testPropertyAccessAndInitializer() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/propertyAccessAndInitializer.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("propertyAccessWithSideEffect.kt")
     public void testPropertyAccessWithSideEffect() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/propertyAccessWithSideEffect.kt");

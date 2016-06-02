@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.js.translate.intrinsic.functions.factories;
 import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.JsArrayAccess;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.metadata.MetadataProperties;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -97,9 +96,7 @@ public final class ArrayFIF extends CompositeFIF {
             assert receiver != null;
             assert arguments.size() == 1 : "Array get expression must have one argument.";
             JsExpression indexExpression = arguments.get(0);
-            JsArrayAccess result = new JsArrayAccess(receiver, indexExpression);
-            MetadataProperties.setSideEffects(result, false);
-            return result;
+            return new JsArrayAccess(receiver, indexExpression);
         }
     };
 
