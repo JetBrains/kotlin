@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.kotlin.load.java.descriptors.*;
-import org.jetbrains.kotlin.load.java.lazy.types.LazyJavaTypeResolver;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.FunctionTypeResolveUtilsKt;
@@ -55,15 +54,31 @@ public class SingleAbstractMethodUtils {
 
     @Nullable
     public static KotlinType getFunctionTypeForSamType(@NotNull KotlinType samType) {
+        UnwrappedType unwrappedType = samType.unwrap();
+        if (unwrappedType instanceof FlexibleType) {
+            SimpleType lower = getFunctionTypeForSamType(((FlexibleType) unwrappedType).getLowerBound());
+            SimpleType upper = getFunctionTypeForSamType(((FlexibleType) unwrappedType).getUpperBound());
+            assert (lower == null) == (upper == null) : "Illegal flexible type: " + unwrappedType;
+
+            if (upper == null) return null;
+            return KotlinTypeFactory.flexibleType(lower, upper);
+        }
+        else {
+            return getFunctionTypeForSamType((SimpleType) unwrappedType);
+        }
+    }
+
+    @Nullable
+    private static SimpleType getFunctionTypeForSamType(@NotNull SimpleType samType) {
         // e.g. samType == Comparator<String>?
 
         ClassifierDescriptor classifier = samType.getConstructor().getDeclarationDescriptor();
         if (classifier instanceof JavaClassDescriptor) {
             // Function2<T, T, Int>
-            KotlinType functionTypeDefault = ((JavaClassDescriptor) classifier).getFunctionTypeForSamInterface();
+            SimpleType functionTypeDefault = ((JavaClassDescriptor) classifier).getFunctionTypeForSamInterface();
 
             if (functionTypeDefault != null) {
-                KotlinType noProjectionsSamType = SingleAbstractMethodUtilsKt.nonProjectionParametrization(samType);
+                SimpleType noProjectionsSamType = SingleAbstractMethodUtilsKt.nonProjectionParametrization(samType);
                 if (noProjectionsSamType == null) return null;
 
                 // Function2<String, String, Int>?
@@ -71,19 +86,16 @@ public class SingleAbstractMethodUtils {
                 assert type != null : "Substitution based on type with no projections '" + noProjectionsSamType +
                                       "' should not end with conflict";
 
-                if (FlexibleTypesKt.isNullabilityFlexible(samType)) {
-                    SimpleType simpleType = KotlinTypeKt.asSimpleType(type);
-                    return KotlinTypeFactory.flexibleType(simpleType, simpleType.makeNullableAsSpecified(true));
-                }
+                SimpleType simpleType = KotlinTypeKt.asSimpleType(type);
 
-                return TypeUtils.makeNullableAsSpecified(type, samType.isMarkedNullable());
+                return simpleType.makeNullableAsSpecified(samType.isMarkedNullable());
             }
         }
         return null;
     }
 
     @NotNull
-    public static KotlinType getFunctionTypeForAbstractMethod(@NotNull FunctionDescriptor function) {
+    public static SimpleType getFunctionTypeForAbstractMethod(@NotNull FunctionDescriptor function) {
         KotlinType returnType = function.getReturnType();
         assert returnType != null : "function is not initialized: " + function;
         List<ValueParameterDescriptor> valueParameters = function.getValueParameters();

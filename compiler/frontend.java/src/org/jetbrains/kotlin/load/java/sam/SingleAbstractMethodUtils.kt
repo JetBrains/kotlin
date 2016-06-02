@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.sam
 
-import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.replace
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.check
 // - Otherwise no non-projection parametrization exists for such 'samType'
 //
 // See Non-wildcard parametrization in JLS 8 p.9.9 for clarification
-internal fun nonProjectionParametrization(samType: KotlinType): KotlinType? {
+internal fun nonProjectionParametrization(samType: SimpleType): SimpleType? {
     if (samType.arguments.none { it.projectionKind != Variance.INVARIANT }) return samType
     val parameters = samType.constructor.parameters
     val parametersSet = parameters.toSet()

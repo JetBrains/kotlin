@@ -126,7 +126,7 @@ class LazyJavaClassDescriptor(
 
     override fun getDeclaredTypeParameters() = declaredParameters()
 
-    override fun getFunctionTypeForSamInterface(): KotlinType? = functionTypeForSamInterface()
+    override fun getFunctionTypeForSamInterface(): SimpleType? = functionTypeForSamInterface()
 
     override fun isCompanionObject() = false
 
