@@ -10593,6 +10593,33 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest(fileName);
             }
         }
+
+        @TestMetadata("compiler/testData/codegen/box/ranges/nullableLoopParameter")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class NullableLoopParameter extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInNullableLoopParameter() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/ranges/nullableLoopParameter"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("progressionExpression.kt")
+            public void testProgressionExpression() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/nullableLoopParameter/progressionExpression.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("rangeExpression.kt")
+            public void testRangeExpression() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/nullableLoopParameter/rangeExpression.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("rangeLiteral.kt")
+            public void testRangeLiteral() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/nullableLoopParameter/rangeLiteral.kt");
+                doTest(fileName);
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/reflection")
