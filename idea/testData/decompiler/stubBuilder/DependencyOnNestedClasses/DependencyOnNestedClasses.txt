@@ -10,9 +10,9 @@ PsiJetFileStubImpl[package=test]
     SUPER_TYPE_LIST:
       SUPER_TYPE_ENTRY:
         TYPE_REFERENCE:
-          USER_TYPE:[isAbsoluteInRootPackage=false]
-            USER_TYPE:[isAbsoluteInRootPackage=false]
-              USER_TYPE:[isAbsoluteInRootPackage=false]
+          USER_TYPE:
+            USER_TYPE:
+              USER_TYPE:
                 REFERENCE_EXPRESSION:[referencedName=dependency]
               REFERENCE_EXPRESSION:[referencedName=D]
             REFERENCE_EXPRESSION:[referencedName=Nested]
@@ -22,46 +22,46 @@ PsiJetFileStubImpl[package=test]
         VALUE_PARAMETER_LIST:
           VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=nc]
             TYPE_REFERENCE:
-              USER_TYPE:[isAbsoluteInRootPackage=false]
-                USER_TYPE:[isAbsoluteInRootPackage=false]
-                  USER_TYPE:[isAbsoluteInRootPackage=false]
-                    USER_TYPE:[isAbsoluteInRootPackage=false]
+              USER_TYPE:
+                USER_TYPE:
+                  USER_TYPE:
+                    USER_TYPE:
                       REFERENCE_EXPRESSION:[referencedName=dependency]
                     REFERENCE_EXPRESSION:[referencedName=D]
                   REFERENCE_EXPRESSION:[referencedName=Companion]
                 REFERENCE_EXPRESSION:[referencedName=NestedInClassObject]
           VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=i]
             TYPE_REFERENCE:
-              USER_TYPE:[isAbsoluteInRootPackage=false]
-                USER_TYPE:[isAbsoluteInRootPackage=false]
-                  USER_TYPE:[isAbsoluteInRootPackage=false]
+              USER_TYPE:
+                USER_TYPE:
+                  USER_TYPE:
                     REFERENCE_EXPRESSION:[referencedName=dependency]
                   REFERENCE_EXPRESSION:[referencedName=D]
                 REFERENCE_EXPRESSION:[referencedName=Inner]
           VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=ii]
             TYPE_REFERENCE:
-              USER_TYPE:[isAbsoluteInRootPackage=false]
-                USER_TYPE:[isAbsoluteInRootPackage=false]
-                  USER_TYPE:[isAbsoluteInRootPackage=false]
-                    USER_TYPE:[isAbsoluteInRootPackage=false]
+              USER_TYPE:
+                USER_TYPE:
+                  USER_TYPE:
+                    USER_TYPE:
                       REFERENCE_EXPRESSION:[referencedName=dependency]
                     REFERENCE_EXPRESSION:[referencedName=D]
                   REFERENCE_EXPRESSION:[referencedName=Inner]
                 REFERENCE_EXPRESSION:[referencedName=Inner]
           VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=nn]
             TYPE_REFERENCE:
-              USER_TYPE:[isAbsoluteInRootPackage=false]
-                USER_TYPE:[isAbsoluteInRootPackage=false]
-                  USER_TYPE:[isAbsoluteInRootPackage=false]
-                    USER_TYPE:[isAbsoluteInRootPackage=false]
+              USER_TYPE:
+                USER_TYPE:
+                  USER_TYPE:
+                    USER_TYPE:
                       REFERENCE_EXPRESSION:[referencedName=dependency]
                     REFERENCE_EXPRESSION:[referencedName=D]
                   REFERENCE_EXPRESSION:[referencedName=Nested]
                 REFERENCE_EXPRESSION:[referencedName=Nested]
         TYPE_REFERENCE:
-          USER_TYPE:[isAbsoluteInRootPackage=false]
-            USER_TYPE:[isAbsoluteInRootPackage=false]
-              USER_TYPE:[isAbsoluteInRootPackage=false]
+          USER_TYPE:
+            USER_TYPE:
+              USER_TYPE:
                 REFERENCE_EXPRESSION:[referencedName=dependency]
               REFERENCE_EXPRESSION:[referencedName=D]
             REFERENCE_EXPRESSION:[referencedName=Nested]

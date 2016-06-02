@@ -28,9 +28,6 @@ fun Any?.vars(<!UNUSED_PARAMETER!>a<!>: Any?) : Int {
     if (example.ns.y is Int) {
         <!UNUSED_VALUE!>b =<!> <!DEBUG_INFO_SMARTCAST!>example.ns.y<!>
     }
-//    if (package.bottles.ns.y is Int) {
-//        b = ns.y
-//    }
     if (Obj.y is Int) {
         <!UNUSED_VALUE!>b =<!> <!DEBUG_INFO_SMARTCAST!>Obj.y<!>
     }

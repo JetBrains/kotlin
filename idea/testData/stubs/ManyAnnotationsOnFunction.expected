@@ -7,15 +7,15 @@ PsiJetFileStubImpl[package=]
         ANNOTATION_ENTRY:[hasValueArguments=false, shortName=Deprecated]
           CONSTRUCTOR_CALLEE:
             TYPE_REFERENCE:
-              USER_TYPE:[isAbsoluteInRootPackage=false]
-                USER_TYPE:[isAbsoluteInRootPackage=false]
-                  USER_TYPE:[isAbsoluteInRootPackage=false]
+              USER_TYPE:
+                USER_TYPE:
+                  USER_TYPE:
                     REFERENCE_EXPRESSION:[referencedName=java]
                   REFERENCE_EXPRESSION:[referencedName=lang]
                 REFERENCE_EXPRESSION:[referencedName=Deprecated]
         ANNOTATION_ENTRY:[hasValueArguments=false, shortName=Override]
           CONSTRUCTOR_CALLEE:
             TYPE_REFERENCE:
-              USER_TYPE:[isAbsoluteInRootPackage=false]
+              USER_TYPE:
                 REFERENCE_EXPRESSION:[referencedName=Override]
     VALUE_PARAMETER_LIST:

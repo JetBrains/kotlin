@@ -31,6 +31,12 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class LocalClassesTestGenerated extends AbstractLocalClassesTest {
+    @TestMetadata("ownClosureOfInnerLocalClass.kt")
+    public void ignoredOwnClosureOfInnerLocalClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/localClasses/ownClosureOfInnerLocalClass.kt");
+        doTest(fileName);
+    }
+
     public void testAllFilesPresentInLocalClasses() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/localClasses"), Pattern.compile("^(.+)\\.kt$"), true);
     }
@@ -44,6 +50,24 @@ public class LocalClassesTestGenerated extends AbstractLocalClassesTest {
     @TestMetadata("anonymousObjectInParameterInitializer.kt")
     public void testAnonymousObjectInParameterInitializer() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/localClasses/anonymousObjectInParameterInitializer.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("closureOfInnerLocalClass.kt")
+    public void testClosureOfInnerLocalClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/localClasses/closureOfInnerLocalClass.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("closureOfLambdaInLocalClass.kt")
+    public void testClosureOfLambdaInLocalClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/localClasses/closureOfLambdaInLocalClass.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("closureWithSelfInstantiation.kt")
+    public void testClosureWithSelfInstantiation() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/localClasses/closureWithSelfInstantiation.kt");
         doTest(fileName);
     }
 
@@ -140,6 +164,12 @@ public class LocalClassesTestGenerated extends AbstractLocalClassesTest {
     @TestMetadata("localClassInParameterInitializer.kt")
     public void testLocalClassInParameterInitializer() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/localClasses/localClassInParameterInitializer.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("localDataClass.kt")
+    public void testLocalDataClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/localClasses/localDataClass.kt");
         doTest(fileName);
     }
 

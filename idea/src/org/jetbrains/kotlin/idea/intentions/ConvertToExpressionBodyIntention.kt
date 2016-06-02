@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.utils.addToStdlib.check
 
 class ConvertToExpressionBodyIntention : SelfTargetingOffsetIndependentIntention<KtDeclarationWithBody>(
@@ -102,8 +103,17 @@ class ConvertToExpressionBodyIntention : SelfTargetingOffsetIndependentIntention
 
             else  -> {
                 if (statement is KtBinaryExpression && statement.operationToken in KtTokens.ALL_ASSIGNMENTS) return null // assignment does not have value
-                val expressionType = statement.analyze().getType(statement) ?: return null
-                if (!KotlinBuiltIns.isUnit(expressionType) && !KotlinBuiltIns.isNothing(expressionType)) return null
+
+                val context = statement.analyze()
+                val expressionType = context.getType(statement) ?: return null
+                val isUnit = KotlinBuiltIns.isUnit(expressionType)
+                if (!isUnit && !KotlinBuiltIns.isNothing(expressionType)) return null
+                if (isUnit) {
+                    val resultingWhens = statement.resultingWhens()
+                    if (resultingWhens.any { it.elseExpression == null && context.get(BindingContext.EXHAUSTIVE_WHEN, it) != true}) {
+                        return null
+                    }
+                }
                 return statement
             }
         }

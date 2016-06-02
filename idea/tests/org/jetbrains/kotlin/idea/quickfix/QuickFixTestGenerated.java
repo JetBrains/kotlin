@@ -151,6 +151,24 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/abstract"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
+        @TestMetadata("makeEnumEntryAbstract.kt")
+        public void testMakeEnumEntryAbstract() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/abstract/makeEnumEntryAbstract.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("makeObjectMemberAbstract.kt")
+        public void testMakeObjectMemberAbstract() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/abstract/makeObjectMemberAbstract.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("makeTopLevelAbstract.kt")
+        public void testMakeTopLevelAbstract() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/abstract/makeTopLevelAbstract.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("manyImpl.kt")
         public void testManyImpl() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/abstract/manyImpl.kt");
@@ -7620,6 +7638,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("addExclExclToRemoveNullabilityForSubclass.kt")
         public void testAddExclExclToRemoveNullabilityForSubclass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/addExclExclToRemoveNullabilityForSubclass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("addExclExclWhenSmartCastImpossible.kt")
+        public void testAddExclExclWhenSmartCastImpossible() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/addExclExclWhenSmartCastImpossible.kt");
             doTest(fileName);
         }
 

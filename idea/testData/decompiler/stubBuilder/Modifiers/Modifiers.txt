@@ -9,31 +9,31 @@ PsiJetFileStubImpl[package=test]
       VALUE_PARAMETER_LIST:
         VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
           TYPE_REFERENCE:
-            USER_TYPE:[isAbsoluteInRootPackage=false]
-              USER_TYPE:[isAbsoluteInRootPackage=false]
+            USER_TYPE:
+              USER_TYPE:
                 REFERENCE_EXPRESSION:[referencedName=kotlin]
               REFERENCE_EXPRESSION:[referencedName=Int]
     CLASS_BODY:
       PROPERTY:[fqName=test.Modifiers.extVar, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=extVar]
         MODIFIER_LIST:[public final]
         TYPE_REFERENCE:
-          USER_TYPE:[isAbsoluteInRootPackage=false]
-            USER_TYPE:[isAbsoluteInRootPackage=false]
+          USER_TYPE:
+            USER_TYPE:
               REFERENCE_EXPRESSION:[referencedName=kotlin]
             REFERENCE_EXPRESSION:[referencedName=Int]
       PROPERTY:[fqName=test.Modifiers.x, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=x]
         MODIFIER_LIST:[public final]
         TYPE_REFERENCE:
-          USER_TYPE:[isAbsoluteInRootPackage=false]
-            USER_TYPE:[isAbsoluteInRootPackage=false]
+          USER_TYPE:
+            USER_TYPE:
               REFERENCE_EXPRESSION:[referencedName=kotlin]
             REFERENCE_EXPRESSION:[referencedName=Int]
       FUN:[fqName=test.Modifiers.component1, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=component1]
         MODIFIER_LIST:[public final operator]
         VALUE_PARAMETER_LIST:
         TYPE_REFERENCE:
-          USER_TYPE:[isAbsoluteInRootPackage=false]
-            USER_TYPE:[isAbsoluteInRootPackage=false]
+          USER_TYPE:
+            USER_TYPE:
               REFERENCE_EXPRESSION:[referencedName=kotlin]
             REFERENCE_EXPRESSION:[referencedName=Int]
       FUN:[fqName=test.Modifiers.equals, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=equals]
@@ -42,21 +42,21 @@ PsiJetFileStubImpl[package=test]
           VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=other]
             TYPE_REFERENCE:
               NULLABLE_TYPE:
-                USER_TYPE:[isAbsoluteInRootPackage=false]
-                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                USER_TYPE:
+                  USER_TYPE:
                     REFERENCE_EXPRESSION:[referencedName=kotlin]
                   REFERENCE_EXPRESSION:[referencedName=Any]
         TYPE_REFERENCE:
-          USER_TYPE:[isAbsoluteInRootPackage=false]
-            USER_TYPE:[isAbsoluteInRootPackage=false]
+          USER_TYPE:
+            USER_TYPE:
               REFERENCE_EXPRESSION:[referencedName=kotlin]
             REFERENCE_EXPRESSION:[referencedName=Boolean]
       FUN:[fqName=test.Modifiers.extFun, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=extFun]
         MODIFIER_LIST:[public final external]
         VALUE_PARAMETER_LIST:
         TYPE_REFERENCE:
-          USER_TYPE:[isAbsoluteInRootPackage=false]
-            USER_TYPE:[isAbsoluteInRootPackage=false]
+          USER_TYPE:
+            USER_TYPE:
               REFERENCE_EXPRESSION:[referencedName=kotlin]
             REFERENCE_EXPRESSION:[referencedName=Unit]
       FUN:[fqName=test.Modifiers.inlined, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=inlined]
@@ -68,8 +68,8 @@ PsiJetFileStubImpl[package=test]
               FUNCTION_TYPE:
                 VALUE_PARAMETER_LIST:
                 TYPE_REFERENCE:
-                  USER_TYPE:[isAbsoluteInRootPackage=false]
-                    USER_TYPE:[isAbsoluteInRootPackage=false]
+                  USER_TYPE:
+                    USER_TYPE:
                       REFERENCE_EXPRESSION:[referencedName=kotlin]
                     REFERENCE_EXPRESSION:[referencedName=Unit]
           VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=arg2]
@@ -78,13 +78,13 @@ PsiJetFileStubImpl[package=test]
               FUNCTION_TYPE:
                 VALUE_PARAMETER_LIST:
                 TYPE_REFERENCE:
-                  USER_TYPE:[isAbsoluteInRootPackage=false]
-                    USER_TYPE:[isAbsoluteInRootPackage=false]
+                  USER_TYPE:
+                    USER_TYPE:
                       REFERENCE_EXPRESSION:[referencedName=kotlin]
                     REFERENCE_EXPRESSION:[referencedName=Unit]
         TYPE_REFERENCE:
-          USER_TYPE:[isAbsoluteInRootPackage=false]
-            USER_TYPE:[isAbsoluteInRootPackage=false]
+          USER_TYPE:
+            USER_TYPE:
               REFERENCE_EXPRESSION:[referencedName=kotlin]
             REFERENCE_EXPRESSION:[referencedName=Unit]
       FUN:[fqName=test.Modifiers.sum, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=sum]
@@ -92,19 +92,19 @@ PsiJetFileStubImpl[package=test]
         VALUE_PARAMETER_LIST:
           VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
             TYPE_REFERENCE:
-              USER_TYPE:[isAbsoluteInRootPackage=false]
-                USER_TYPE:[isAbsoluteInRootPackage=false]
+              USER_TYPE:
+                USER_TYPE:
                   REFERENCE_EXPRESSION:[referencedName=kotlin]
                 REFERENCE_EXPRESSION:[referencedName=Long]
           VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=sum]
             TYPE_REFERENCE:
-              USER_TYPE:[isAbsoluteInRootPackage=false]
-                USER_TYPE:[isAbsoluteInRootPackage=false]
+              USER_TYPE:
+                USER_TYPE:
                   REFERENCE_EXPRESSION:[referencedName=kotlin]
                 REFERENCE_EXPRESSION:[referencedName=Long]
         TYPE_REFERENCE:
-          USER_TYPE:[isAbsoluteInRootPackage=false]
-            USER_TYPE:[isAbsoluteInRootPackage=false]
+          USER_TYPE:
+            USER_TYPE:
               REFERENCE_EXPRESSION:[referencedName=kotlin]
             REFERENCE_EXPRESSION:[referencedName=Long]
       CLASS:[fqName=test.Modifiers.Ann, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Ann, superNames=[Annotation]]
@@ -115,8 +115,8 @@ PsiJetFileStubImpl[package=test]
         SUPER_TYPE_LIST:
           SUPER_TYPE_ENTRY:
             TYPE_REFERENCE:
-              USER_TYPE:[isAbsoluteInRootPackage=false]
-                USER_TYPE:[isAbsoluteInRootPackage=false]
+              USER_TYPE:
+                USER_TYPE:
                   REFERENCE_EXPRESSION:[referencedName=kotlin]
                 REFERENCE_EXPRESSION:[referencedName=Annotation]
         CLASS_BODY:

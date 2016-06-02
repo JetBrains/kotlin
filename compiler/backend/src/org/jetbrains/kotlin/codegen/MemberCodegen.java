@@ -409,7 +409,8 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
 
         KtExpression initializer = property.getInitializer();
 
-        ConstantValue<?> initializerValue = computeInitializerValue(property, propertyDescriptor, initializer);
+        ConstantValue<?> initializerValue =
+                initializer != null ? ExpressionCodegen.getCompileTimeConstant(initializer, bindingContext) : null;
         // we must write constant values for fields in light classes,
         // because Java's completion for annotation arguments uses this information
         if (initializerValue == null) return state.getClassBuilderMode() == ClassBuilderMode.FULL;
@@ -418,19 +419,6 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
         KotlinType jetType = getPropertyOrDelegateType(property, propertyDescriptor);
         Type type = typeMapper.mapType(jetType);
         return !skipDefaultValue(propertyDescriptor, initializerValue.getValue(), type);
-    }
-
-    @Nullable
-    private ConstantValue<?> computeInitializerValue(
-            @NotNull KtProperty property,
-            @NotNull PropertyDescriptor propertyDescriptor,
-            @Nullable KtExpression initializer
-    ) {
-        if (property.isVar() && initializer != null) {
-            BindingTrace tempTrace = TemporaryBindingTrace.create(state.getBindingTrace(), "property initializer");
-            return constantExpressionEvaluator.evaluateToConstantValue(initializer, tempTrace, propertyDescriptor.getType());
-        }
-        return propertyDescriptor.getCompileTimeInitializer();
     }
 
     @NotNull

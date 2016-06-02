@@ -166,6 +166,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             afterInside(IDENTIFIER, FUN).spacing(0, 0, 0, false, 0)
 
             around(AS_KEYWORD).spaces(1)
+            around(IS_KEYWORD).spaces(1)
             aroundInside(IDENTIFIER, BINARY_EXPRESSION).spaces(1)
 
             // before LPAR in constructor(): this() {}
@@ -181,6 +182,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             }
 
             afterInside(CONSTRUCTOR_KEYWORD, PRIMARY_CONSTRUCTOR).spaces(0)
+            betweenInside(IDENTIFIER, TYPE_PARAMETER_LIST, CLASS).spaces(0)
 
             aroundInside(DOT, DOT_QUALIFIED_EXPRESSION).spaces(0)
             aroundInside(SAFE_ACCESS, SAFE_ACCESS_EXPRESSION).spaces(0)

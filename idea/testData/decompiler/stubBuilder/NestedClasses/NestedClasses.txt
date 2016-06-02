@@ -13,16 +13,16 @@ PsiJetFileStubImpl[package=test]
       PROPERTY:[fqName=test.NestedClasses.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
         MODIFIER_LIST:[public final]
         TYPE_REFERENCE:
-          USER_TYPE:[isAbsoluteInRootPackage=false]
-            USER_TYPE:[isAbsoluteInRootPackage=false]
+          USER_TYPE:
+            USER_TYPE:
               REFERENCE_EXPRESSION:[referencedName=kotlin]
             REFERENCE_EXPRESSION:[referencedName=Int]
       FUN:[fqName=test.NestedClasses.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=f]
         MODIFIER_LIST:[public final]
         VALUE_PARAMETER_LIST:
         TYPE_REFERENCE:
-          USER_TYPE:[isAbsoluteInRootPackage=false]
-            USER_TYPE:[isAbsoluteInRootPackage=false]
+          USER_TYPE:
+            USER_TYPE:
               REFERENCE_EXPRESSION:[referencedName=kotlin]
             REFERENCE_EXPRESSION:[referencedName=Unit]
       CLASS:[fqName=test.NestedClasses.Inner, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner, superNames=[]]
@@ -30,7 +30,7 @@ PsiJetFileStubImpl[package=test]
         TYPE_PARAMETER_LIST:
           TYPE_PARAMETER:[fqName=null, isInVariance=false, isOutVariance=false, name=TI]
             TYPE_REFERENCE:
-              USER_TYPE:[isAbsoluteInRootPackage=false]
+              USER_TYPE:
                 REFERENCE_EXPRESSION:[referencedName=TOuter]
         PRIMARY_CONSTRUCTOR:
           MODIFIER_LIST:[public]
@@ -41,11 +41,11 @@ PsiJetFileStubImpl[package=test]
             VALUE_PARAMETER_LIST:
               VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p1]
                 TYPE_REFERENCE:
-                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                  USER_TYPE:
                     REFERENCE_EXPRESSION:[referencedName=TI]
             TYPE_REFERENCE:
-              USER_TYPE:[isAbsoluteInRootPackage=false]
-                USER_TYPE:[isAbsoluteInRootPackage=false]
+              USER_TYPE:
+                USER_TYPE:
                   REFERENCE_EXPRESSION:[referencedName=kotlin]
                 REFERENCE_EXPRESSION:[referencedName=Unit]
           CLASS:[fqName=test.NestedClasses.Inner.II, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=II, superNames=[]]
@@ -61,47 +61,47 @@ PsiJetFileStubImpl[package=test]
                 VALUE_PARAMETER_LIST:
                   VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p1]
                     TYPE_REFERENCE:
-                      USER_TYPE:[isAbsoluteInRootPackage=false]
+                      USER_TYPE:
                         REFERENCE_EXPRESSION:[referencedName=TII]
                   VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p2]
                     TYPE_REFERENCE:
-                      USER_TYPE:[isAbsoluteInRootPackage=false]
-                        USER_TYPE:[isAbsoluteInRootPackage=false]
-                          USER_TYPE:[isAbsoluteInRootPackage=false]
-                            USER_TYPE:[isAbsoluteInRootPackage=false]
+                      USER_TYPE:
+                        USER_TYPE:
+                          USER_TYPE:
+                            USER_TYPE:
                               REFERENCE_EXPRESSION:[referencedName=test]
                             REFERENCE_EXPRESSION:[referencedName=NestedClasses]
                             TYPE_ARGUMENT_LIST:
                               TYPE_PROJECTION:[projectionKind=NONE]
                                 TYPE_REFERENCE:
-                                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                                  USER_TYPE:
                                     REFERENCE_EXPRESSION:[referencedName=TOuter]
                           REFERENCE_EXPRESSION:[referencedName=Inner]
                           TYPE_ARGUMENT_LIST:
                             TYPE_PROJECTION:[projectionKind=NONE]
                               TYPE_REFERENCE:
-                                USER_TYPE:[isAbsoluteInRootPackage=false]
+                                USER_TYPE:
                                   REFERENCE_EXPRESSION:[referencedName=TI]
                         REFERENCE_EXPRESSION:[referencedName=II]
                         TYPE_ARGUMENT_LIST:
                           TYPE_PROJECTION:[projectionKind=NONE]
                             TYPE_REFERENCE:
-                              USER_TYPE:[isAbsoluteInRootPackage=false]
-                                USER_TYPE:[isAbsoluteInRootPackage=false]
+                              USER_TYPE:
+                                USER_TYPE:
                                   REFERENCE_EXPRESSION:[referencedName=test]
                                 REFERENCE_EXPRESSION:[referencedName=NestedClasses]
                                 TYPE_ARGUMENT_LIST:
                                   TYPE_PROJECTION:[projectionKind=NONE]
                                     TYPE_REFERENCE:
-                                      USER_TYPE:[isAbsoluteInRootPackage=false]
+                                      USER_TYPE:
                                         REFERENCE_EXPRESSION:[referencedName=TOuter]
                   VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p3]
                     TYPE_REFERENCE:
-                      USER_TYPE:[isAbsoluteInRootPackage=false]
+                      USER_TYPE:
                         REFERENCE_EXPRESSION:[referencedName=TOuter]
                 TYPE_REFERENCE:
-                  USER_TYPE:[isAbsoluteInRootPackage=false]
-                    USER_TYPE:[isAbsoluteInRootPackage=false]
+                  USER_TYPE:
+                    USER_TYPE:
                       REFERENCE_EXPRESSION:[referencedName=kotlin]
                     REFERENCE_EXPRESSION:[referencedName=Unit]
       CLASS:[fqName=test.NestedClasses.Nested, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested, superNames=[]]
@@ -115,8 +115,8 @@ PsiJetFileStubImpl[package=test]
           PROPERTY:[fqName=test.NestedClasses.Nested.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
             MODIFIER_LIST:[public final]
             TYPE_REFERENCE:
-              USER_TYPE:[isAbsoluteInRootPackage=false]
-                USER_TYPE:[isAbsoluteInRootPackage=false]
+              USER_TYPE:
+                USER_TYPE:
                   REFERENCE_EXPRESSION:[referencedName=kotlin]
                 REFERENCE_EXPRESSION:[referencedName=Int]
           FUN:[fqName=test.NestedClasses.Nested.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=f]
@@ -124,11 +124,11 @@ PsiJetFileStubImpl[package=test]
             VALUE_PARAMETER_LIST:
               VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p1]
                 TYPE_REFERENCE:
-                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                  USER_TYPE:
                     REFERENCE_EXPRESSION:[referencedName=TN]
             TYPE_REFERENCE:
-              USER_TYPE:[isAbsoluteInRootPackage=false]
-                USER_TYPE:[isAbsoluteInRootPackage=false]
+              USER_TYPE:
+                USER_TYPE:
                   REFERENCE_EXPRESSION:[referencedName=kotlin]
                 REFERENCE_EXPRESSION:[referencedName=Unit]
           CLASS:[fqName=test.NestedClasses.Nested.NI, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=NI, superNames=[]]
@@ -136,7 +136,7 @@ PsiJetFileStubImpl[package=test]
             TYPE_PARAMETER_LIST:
               TYPE_PARAMETER:[fqName=null, isInVariance=false, isOutVariance=false, name=TNI]
                 TYPE_REFERENCE:
-                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                  USER_TYPE:
                     REFERENCE_EXPRESSION:[referencedName=TN]
             PRIMARY_CONSTRUCTOR:
               MODIFIER_LIST:[public]
@@ -147,15 +147,15 @@ PsiJetFileStubImpl[package=test]
                 VALUE_PARAMETER_LIST:
                   VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p1]
                     TYPE_REFERENCE:
-                      USER_TYPE:[isAbsoluteInRootPackage=false]
+                      USER_TYPE:
                         REFERENCE_EXPRESSION:[referencedName=TN]
                   VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p2]
                     TYPE_REFERENCE:
-                      USER_TYPE:[isAbsoluteInRootPackage=false]
+                      USER_TYPE:
                         REFERENCE_EXPRESSION:[referencedName=TNI]
                 TYPE_REFERENCE:
-                  USER_TYPE:[isAbsoluteInRootPackage=false]
-                    USER_TYPE:[isAbsoluteInRootPackage=false]
+                  USER_TYPE:
+                    USER_TYPE:
                       REFERENCE_EXPRESSION:[referencedName=kotlin]
                     REFERENCE_EXPRESSION:[referencedName=Unit]
           CLASS:[fqName=test.NestedClasses.Nested.NN, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=NN, superNames=[]]
@@ -169,8 +169,8 @@ PsiJetFileStubImpl[package=test]
               PROPERTY:[fqName=test.NestedClasses.Nested.NN.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
                 MODIFIER_LIST:[public final]
                 TYPE_REFERENCE:
-                  USER_TYPE:[isAbsoluteInRootPackage=false]
-                    USER_TYPE:[isAbsoluteInRootPackage=false]
+                  USER_TYPE:
+                    USER_TYPE:
                       REFERENCE_EXPRESSION:[referencedName=kotlin]
                     REFERENCE_EXPRESSION:[referencedName=Int]
               FUN:[fqName=test.NestedClasses.Nested.NN.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=f]
@@ -178,10 +178,10 @@ PsiJetFileStubImpl[package=test]
                 VALUE_PARAMETER_LIST:
                   VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p1]
                     TYPE_REFERENCE:
-                      USER_TYPE:[isAbsoluteInRootPackage=false]
+                      USER_TYPE:
                         REFERENCE_EXPRESSION:[referencedName=TNN]
                 TYPE_REFERENCE:
-                  USER_TYPE:[isAbsoluteInRootPackage=false]
-                    USER_TYPE:[isAbsoluteInRootPackage=false]
+                  USER_TYPE:
+                    USER_TYPE:
                       REFERENCE_EXPRESSION:[referencedName=kotlin]
                     REFERENCE_EXPRESSION:[referencedName=Unit]

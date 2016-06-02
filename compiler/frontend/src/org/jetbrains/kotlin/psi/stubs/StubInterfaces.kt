@@ -18,10 +18,10 @@ package org.jetbrains.kotlin.psi.stubs
 
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.stubs.NamedStub
-import org.jetbrains.kotlin.name.FqName
-import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.PsiFileStub
+import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 
 interface KotlinFileStub : PsiFileStub<KtFile> {
@@ -68,7 +68,6 @@ interface KotlinFunctionStub : KotlinCallableStubBase<KtNamedFunction> {
 }
 
 interface KotlinImportDirectiveStub : StubElement<KtImportDirective> {
-    fun isAbsoluteInRootPackage(): Boolean
     fun isAllUnder(): Boolean
     fun getImportedFqName(): FqName?
     fun getAliasName(): String?
@@ -121,9 +120,7 @@ interface KotlinTypeProjectionStub : StubElement<KtTypeProjection> {
     fun getProjectionKind(): KtProjectionKind
 }
 
-interface KotlinUserTypeStub : StubElement<KtUserType> {
-    fun isAbsoluteInRootPackage(): Boolean
-}
+interface KotlinUserTypeStub : StubElement<KtUserType>
 
 interface KotlinScriptStub : KotlinStubWithFqName<KtScript> {
     override fun getFqName(): FqName

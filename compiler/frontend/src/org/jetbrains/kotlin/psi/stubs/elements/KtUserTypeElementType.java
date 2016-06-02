@@ -34,18 +34,16 @@ public class KtUserTypeElementType extends KtStubElementType<KotlinUserTypeStub,
 
     @Override
     public KotlinUserTypeStub createStub(@NotNull KtUserType psi, StubElement parentStub) {
-        return new KotlinUserTypeStubImpl(parentStub, psi.isAbsoluteInRootPackage());
+        return new KotlinUserTypeStubImpl(parentStub);
     }
 
     @Override
     public void serialize(@NotNull KotlinUserTypeStub stub, @NotNull StubOutputStream dataStream) throws IOException {
-        dataStream.writeBoolean(stub.isAbsoluteInRootPackage());
     }
 
     @NotNull
     @Override
     public KotlinUserTypeStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
-        boolean isAbsoluteInRootPackage = dataStream.readBoolean();
-        return new KotlinUserTypeStubImpl(parentStub, isAbsoluteInRootPackage);
+        return new KotlinUserTypeStubImpl(parentStub);
     }
 }

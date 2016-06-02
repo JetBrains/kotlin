@@ -112,6 +112,9 @@ messages/**)
 # for j2k
 -keep class com.intellij.codeInsight.NullableNotNullManager { public protected *; }
 
+# for gradle (see KT-12549)
+-keep class com.intellij.lang.properties.charset.Native2AsciiCharsetProvider { *; }
+
 # for kotlin-build-common (consider repacking compiler together with kotlin-build-common and remove this part afterwards)
 -keep class com.intellij.util.io.IOUtil { public *; }
 -keep class com.intellij.openapi.util.io.FileUtil { public *; }
@@ -154,3 +157,6 @@ messages/**)
     *** SKIP_DEBUG;
     *** SKIP_FRAMES;
 }
+
+# for kotlin-android-extensions in maven
+-keep class com.intellij.openapi.module.ModuleServiceManager { public *; }

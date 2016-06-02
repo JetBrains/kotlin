@@ -15,5 +15,5 @@ PsiJetFileStubImpl[package=]
         CLASS_BODY:
           PROPERTY:[fqName=D.Named.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
             TYPE_REFERENCE:
-              USER_TYPE:[isAbsoluteInRootPackage=false]
+              USER_TYPE:
                 REFERENCE_EXPRESSION:[referencedName=Int]

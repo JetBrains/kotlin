@@ -16,9 +16,6 @@
 
 package org.jetbrains.kotlin.incremental.testingUtils
 
-import com.google.common.collect.Sets
-import com.google.common.hash.Hashing
-import com.google.common.io.Files
 import com.google.protobuf.ExtensionRegistry
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.incremental.LocalFileKotlinClass
@@ -36,6 +33,7 @@ import java.io.File
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.util.*
+import java.util.zip.CRC32
 import kotlin.comparisons.compareBy
 
 // Set this to true if you want to dump all bytecode (test will fail in this case)
@@ -45,7 +43,7 @@ fun assertEqualDirectories(expected: File, actual: File, forgiveExtraFiles: Bool
     val pathsInExpected = getAllRelativePaths(expected)
     val pathsInActual = getAllRelativePaths(actual)
 
-    val commonPaths = Sets.intersection(pathsInExpected, pathsInActual)
+    val commonPaths = pathsInExpected.intersect(pathsInActual)
     val changedPaths = commonPaths
             .filter { DUMP_ALL || !Arrays.equals(File(expected, it).readBytes(), File(actual, it).readBytes()) }
             .sorted()
@@ -71,7 +69,11 @@ fun assertEqualDirectories(expected: File, actual: File, forgiveExtraFiles: Bool
     Assert.assertEquals(expectedString, actualString)
 }
 
-private fun File.hash() = Files.hash(this, Hashing.crc32())
+private fun File.checksumString(): String {
+    val crc32 = CRC32()
+    crc32.update(this.readBytes())
+    return java.lang.Long.toHexString(crc32.value)
+}
 
 private fun getDirectoryString(dir: File, interestingPaths: List<String>): String {
     val buf = StringBuilder()
@@ -93,7 +95,7 @@ private fun getDirectoryString(dir: File, interestingPaths: List<String>): Strin
                 }
             }
             else {
-                p.println(child.name, " ", child.hash())
+                p.println(child.name, " ", child.checksumString())
             }
         }
 

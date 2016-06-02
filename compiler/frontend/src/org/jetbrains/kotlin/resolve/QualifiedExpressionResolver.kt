@@ -69,7 +69,7 @@ class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageValidator
             isDebuggerContext: Boolean
     ): TypeQualifierResolutionResult {
         val ownerDescriptor = if (!isDebuggerContext) scope.ownerDescriptor else null
-        if (userType.qualifier == null && !userType.startWithPackage) { // optimization for non-qualified types
+        if (userType.qualifier == null) {
             val descriptor = userType.referenceExpression?.let {
                 val classifier = scope.findClassifier(it.getReferencedNameAsName(), KotlinLookupLocation(it))
                 storeResult(trace, it, classifier, ownerDescriptor, position = QualifierPosition.TYPE, isQualifier = false)
@@ -93,7 +93,7 @@ class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageValidator
 
         val qualifier = resolveToPackageOrClass(
                 qualifierPartList.subList(0, qualifierPartList.size - 1), module,
-                trace, ownerDescriptor, scope.check { !userType.startWithPackage }, position = QualifierPosition.TYPE
+                trace, ownerDescriptor, scope, position = QualifierPosition.TYPE
         ) ?: return TypeQualifierResolutionResult(qualifierPartList, null)
 
         val lastPart = qualifierPartList.last()
@@ -105,16 +105,6 @@ class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageValidator
         storeResult(trace, lastPart.expression, classifier, ownerDescriptor, position = QualifierPosition.TYPE, isQualifier = false)
         return TypeQualifierResolutionResult(qualifierPartList, classifier)
     }
-
-    private val KtUserType.startWithPackage: Boolean
-        get() {
-            var firstPart = this
-            while (firstPart.qualifier != null) {
-                firstPart = firstPart.qualifier!!
-            }
-            return firstPart.isAbsoluteInRootPackage
-        }
-
 
     private fun KtUserType.asQualifierPartList(): Pair<List<QualifierPart>, Boolean> {
         var hasError = false

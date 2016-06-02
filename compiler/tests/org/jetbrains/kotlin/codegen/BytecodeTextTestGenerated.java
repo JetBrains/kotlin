@@ -31,6 +31,12 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
+    @TestMetadata("accessorForOverridenVal.kt")
+    public void testAccessorForOverridenVal() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/accessorForOverridenVal.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("accessorForProtected.kt")
     public void testAccessorForProtected() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/accessorForProtected.kt");
@@ -86,6 +92,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
     @TestMetadata("callableReferenceInline.kt")
     public void testCallableReferenceInline() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/callableReferenceInline.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("charConstant.kt")
+    public void testCharConstant() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/charConstant.kt");
         doTest(fileName);
     }
 
@@ -248,6 +260,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
     @TestMetadata("noFlagAnnotations.kt")
     public void testNoFlagAnnotations() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/noFlagAnnotations.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("noNumberCheckCast.kt")
+    public void testNoNumberCheckCast() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/noNumberCheckCast.kt");
         doTest(fileName);
     }
 

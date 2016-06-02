@@ -23,6 +23,7 @@ import com.google.dart.compiler.backend.js.ast.metadata.HasMetadata;
 import com.google.dart.compiler.backend.js.ast.metadata.MetadataProperties;
 import com.intellij.openapi.util.Factory;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.HashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.ReflectionTypes;
@@ -41,6 +42,7 @@ import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.*;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.fqnWithoutSideEffects;
@@ -98,7 +100,10 @@ public final class StaticContext {
     private final Map<JsScope, JsFunction> scopeToFunction = Maps.newHashMap();
 
     @NotNull
-    private final Map<MemberDescriptor, List<DeclarationDescriptor>> localClassesClosure = Maps.newHashMap();
+    private final Map<MemberDescriptor, List<DeclarationDescriptor>> classOrConstructorClosure = Maps.newHashMap();
+
+    @NotNull
+    private final Map<ClassDescriptor, List<DeferredCallSite>> deferredCallSites = new HashMap<ClassDescriptor, List<DeferredCallSite>>();
 
     @NotNull
     private final JsConfig config;
@@ -658,12 +663,17 @@ public final class StaticContext {
     }
 
     public void putClassOrConstructorClosure(@NotNull MemberDescriptor localClass, @NotNull List<DeclarationDescriptor> closure) {
-        localClassesClosure.put(localClass, Lists.newArrayList(closure));
+        classOrConstructorClosure.put(localClass, Lists.newArrayList(closure));
     }
 
     @Nullable
     public List<DeclarationDescriptor> getClassOrConstructorClosure(@NotNull MemberDescriptor descriptor) {
-        List<DeclarationDescriptor> result = localClassesClosure.get(descriptor);
+        List<DeclarationDescriptor> result = classOrConstructorClosure.get(descriptor);
         return result != null ? Lists.newArrayList(result) : null;
+    }
+
+    @NotNull
+    public Map<ClassDescriptor, List<DeferredCallSite>> getDeferredCallSites() {
+        return deferredCallSites;
     }
 }

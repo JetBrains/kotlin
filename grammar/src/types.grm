@@ -36,7 +36,7 @@ selfType
 */
 
 userType
-  : ("package" ".")? simpleUserType{"."}
+  : simpleUserType{"."}
   ;
 
 simpleUserType

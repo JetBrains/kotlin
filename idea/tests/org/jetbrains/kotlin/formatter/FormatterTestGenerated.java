@@ -121,6 +121,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("ClassTypeParam.after.kt")
+        public void testClassTypeParam() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ClassTypeParam.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ColonSpaces.after.kt")
         public void testColonSpaces() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ColonSpaces.after.kt");
@@ -346,6 +352,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         @TestMetadata("InfixCall.after.kt")
         public void testInfixCall() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/InfixCall.after.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("Is.after.kt")
+        public void testIs() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/Is.after.kt");
             doTest(fileName);
         }
 
