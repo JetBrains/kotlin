@@ -735,9 +735,7 @@ public class DescriptorResolver {
                 DeferredType.create(storageManager, trace, new Function0<KotlinType>() {
                     @Override
                     public KotlinType invoke() {
-                        // TODO do not reparse type alias RHS, just expand it instead
-                        // NB this messes up with diagnostics
-                        return typeResolver.resolveType(scopeWithTypeParameters, typeReference, trace, true);
+                        return typeResolver.resolveExpandedTypeForTypeAlias(typeAliasDescriptor);
                     }
                 }));
 

@@ -1,4 +1,4 @@
-typealias A = <!RECURSIVE_TYPEALIAS_EXPANSION!>B<!>
-typealias B = <!RECURSIVE_TYPEALIAS_EXPANSION!>A<!>
+typealias A = B
+typealias B = A
 
 val x: <!RECURSIVE_TYPEALIAS_EXPANSION!>A<!> = TODO()

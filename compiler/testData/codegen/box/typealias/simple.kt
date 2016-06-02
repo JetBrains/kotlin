@@ -1,5 +1,7 @@
 typealias S = String
 
-val OK: S = "OK"
+typealias SF<T> = (T) -> S
 
-fun box(): S = OK
+val f: SF<S> = { it }
+
+fun box(): S = f("OK")

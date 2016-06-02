@@ -2,8 +2,8 @@
 
 class TColl<T, C : Collection<T>>
 
-typealias TCErr = TColl<String, <!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>Any<!>>
-typealias TCErr2 = <!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>TCErr<!>
+typealias TCErr = TColl<String, <!UPPER_BOUND_VIOLATED!>Any<!>>
+typealias TCErr2 = TCErr
 
 fun testType1(x: <!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>TCErr<!>) {}
 val testCtor1 = <!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>TCErr()<!>

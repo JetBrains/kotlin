@@ -88,6 +88,8 @@ abstract class AbstractTypeAliasDescriptor(
 
         override val annotations: Annotations
             get() = declarationDescriptor.annotations
+
+        override fun toString(): String = "[typealias ${declarationDescriptor.name.asString()}]"
     }
 
 }
