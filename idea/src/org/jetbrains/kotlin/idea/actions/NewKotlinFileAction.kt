@@ -27,13 +27,12 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.configuration.showConfigureKotlinNotificationIfNeeded
 
 class NewKotlinFileAction
-    : CreateFileFromTemplateAction(KotlinBundle.message("new.kotlin.file.action"),
+    : CreateFileFromTemplateAction("Kotlin File/Class",
                                    "Creates new Kotlin file or class",
                                    KotlinFileType.INSTANCE.icon),
       DumbAware
@@ -56,9 +55,7 @@ class NewKotlinFileAction
                 .addKind("Object", KotlinIcons.OBJECT, "Kotlin Object")
     }
 
-    override fun getActionName(directory: PsiDirectory, newName: String, templateName: String): String {
-        return KotlinBundle.message("new.kotlin.file.action")
-    }
+    override fun getActionName(directory: PsiDirectory, newName: String, templateName: String) = "Kotlin File/Class"
 
     override fun isAvailable(dataContext: DataContext): Boolean {
         if (super.isAvailable(dataContext)) {
