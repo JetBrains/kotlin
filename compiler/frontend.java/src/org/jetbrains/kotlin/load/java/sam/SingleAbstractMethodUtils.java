@@ -86,7 +86,7 @@ public class SingleAbstractMethodUtils {
                 assert type != null : "Substitution based on type with no projections '" + noProjectionsSamType +
                                       "' should not end with conflict";
 
-                SimpleType simpleType = KotlinTypeKt.asSimpleType(type);
+                SimpleType simpleType = TypeSubstitutionKt.asSimpleType(type);
 
                 return simpleType.makeNullableAsSpecified(samType.isMarkedNullable());
             }

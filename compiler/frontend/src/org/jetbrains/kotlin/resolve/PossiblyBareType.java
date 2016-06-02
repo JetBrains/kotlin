@@ -94,12 +94,12 @@ public class PossiblyBareType {
 
         KotlinType nullableActualType = TypeUtils.makeNullable(getActualType());
 
-        KotlinType abbreviatedType = SpecialTypesKt.getAbbreviatedType(getActualType());
+        AbbreviatedType abbreviatedType = SpecialTypesKt.getAbbreviatedType(getActualType());
         if (abbreviatedType == null) {
             return type(nullableActualType);
         }
         else {
-            return type(SpecialTypesKt.withAbbreviatedType(KotlinTypeKt.asSimpleType(nullableActualType), KotlinTypeKt.asSimpleType(TypeUtils.makeNullable(abbreviatedType))));
+            return type(abbreviatedType.makeNullableAsSpecified(true));
         }
     }
 

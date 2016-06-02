@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedAnnotationsWithPossibleTargets
 import org.jetbrains.kotlin.types.AbstractLazyType
 import org.jetbrains.kotlin.types.SimpleType
-import org.jetbrains.kotlin.types.withAbbreviatedType
+import org.jetbrains.kotlin.types.withAbbreviation
 import org.jetbrains.kotlin.utils.toReadOnlyList
 
 class DeserializedType private constructor(
@@ -58,7 +58,7 @@ class DeserializedType private constructor(
             val deserializedType = DeserializedType(c, typeProto, additionalAnnotations)
             val abbreviatedTypeProto = typeProto.abbreviatedType(c.typeTable) ?: return deserializedType
 
-            return deserializedType.withAbbreviatedType(DeserializedType(c, abbreviatedTypeProto, additionalAnnotations))
+            return deserializedType.withAbbreviation(DeserializedType(c, abbreviatedTypeProto, additionalAnnotations))
         }
     }
 }

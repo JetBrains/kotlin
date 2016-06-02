@@ -123,12 +123,12 @@ internal class DescriptorRendererImpl(
     }
 
     private fun renderNormalizedType(type: KotlinType): String {
-        val abbreviated = type.getAbbreviatedType()
+        val abbreviated = (type.unwrap() as? AbbreviatedType)
 
         if (abbreviated != null) {
             // TODO nullability is lost for abbreviated type?
-            val abbreviatedRendered = renderNormalizedTypeAsIs(abbreviated)
-            val unabbreviatedRendered = renderNormalizedTypeAsIs(type)
+            val abbreviatedRendered = renderNormalizedTypeAsIs(abbreviated.abbreviation)
+            val unabbreviatedRendered = renderNormalizedTypeAsIs(abbreviated.expandedType)
             return "$abbreviatedRendered [= $unabbreviatedRendered]"
         }
 

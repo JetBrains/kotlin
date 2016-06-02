@@ -24,9 +24,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.TypeTable
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.*
 
 interface DeserializedMemberDescriptor : MemberDescriptor {
     val proto: MessageLite
@@ -154,14 +152,14 @@ class DeserializedTypeAliasDescriptor(
 ) : AbstractTypeAliasDescriptor(containingDeclaration, annotations, name, SourceElement.NO_SOURCE, visibility),
         DeserializedMemberDescriptor {
 
-    override lateinit var underlyingType: KotlinType private set
-    override lateinit var expandedType: KotlinType private set
+    override lateinit var underlyingType: SimpleType private set
+    override lateinit var expandedType: SimpleType private set
     private lateinit var typeConstructorParameters: List<TypeParameterDescriptor>
 
     fun initialize(
             declaredTypeParameters: List<TypeParameterDescriptor>,
-            underlyingType: KotlinType,
-            expandedType: KotlinType
+            underlyingType: SimpleType,
+            expandedType: SimpleType
     ) {
         initialize(declaredTypeParameters)
         this.underlyingType = underlyingType
@@ -173,8 +171,8 @@ class DeserializedTypeAliasDescriptor(
         if (substitutor.isEmpty) return this
         val substituted = DeserializedTypeAliasDescriptor(containingDeclaration, annotations, name, visibility, proto, nameResolver, typeTable, containerSource)
         substituted.initialize(declaredTypeParameters,
-                               substitutor.safeSubstitute(underlyingType, Variance.INVARIANT),
-                               substitutor.safeSubstitute(expandedType, Variance.INVARIANT))
+                               substitutor.safeSubstitute(underlyingType, Variance.INVARIANT).asSimpleType(),
+                               substitutor.safeSubstitute(expandedType, Variance.INVARIANT).asSimpleType())
 
         return substituted
     }

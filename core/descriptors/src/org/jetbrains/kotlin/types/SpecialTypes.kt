@@ -29,19 +29,21 @@ abstract class DelegatingSimpleType : SimpleType() {
     override val memberScope: MemberScope get() = delegate.memberScope
 }
 
-private class AbbreviatedType(override val delegate: SimpleType, val abbreviatedType: SimpleType) : DelegatingSimpleType() {
+class AbbreviatedType(override val delegate: SimpleType, val abbreviation: SimpleType) : DelegatingSimpleType() {
+    val expandedType: SimpleType get() = delegate
+
     override fun replaceAnnotations(newAnnotations: Annotations)
-            = AbbreviatedType(delegate.replaceAnnotations(newAnnotations), abbreviatedType)
+            = AbbreviatedType(delegate.replaceAnnotations(newAnnotations), abbreviation)
 
     override fun makeNullableAsSpecified(newNullability: Boolean)
-            = AbbreviatedType(delegate.makeNullableAsSpecified(newNullability), abbreviatedType.makeNullableAsSpecified(newNullability))
+            = AbbreviatedType(delegate.makeNullableAsSpecified(newNullability), abbreviation.makeNullableAsSpecified(newNullability))
 
     override val isError: Boolean get() = false
 }
 
-fun KotlinType.getAbbreviatedType(): SimpleType? = (unwrap() as? AbbreviatedType)?.abbreviatedType
+fun KotlinType.getAbbreviatedType(): AbbreviatedType? = (unwrap() as? AbbreviatedType)
 
-fun SimpleType.withAbbreviatedType(abbreviatedType: SimpleType): SimpleType {
+fun SimpleType.withAbbreviation(abbreviatedType: SimpleType): SimpleType {
     if (isError) return this
     return AbbreviatedType(this, abbreviatedType)
 }

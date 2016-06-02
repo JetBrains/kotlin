@@ -152,7 +152,7 @@ public class TypeSubstitutor {
                     "Unexpected substituted projection kind: " + substitutedProjectionKind + "; original: " + originalProjectionKind;
 
             KotlinType substitutedFlexibleType = KotlinTypeFactory.flexibleType(
-                    KotlinTypeKt.asSimpleType(substitutedLower.getType()), KotlinTypeKt.asSimpleType(substitutedUpper.getType()));
+                    TypeSubstitutionKt.asSimpleType(substitutedLower.getType()), TypeSubstitutionKt.asSimpleType(substitutedUpper.getType()));
             return new TypeProjectionImpl(substitutedProjectionKind, substitutedFlexibleType);
         }
 
