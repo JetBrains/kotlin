@@ -17,6 +17,9 @@
   <depends optional="true" config-file="coverage.xml">Coverage</depends>
   <depends optional="true" config-file="i18n.xml">com.intellij.java-i18n</depends>
 
+  <!--for android studio only-->
+  <depends>com.intellij.modules.androidstudio</depends>
+
   <!-- ULTIMATE-PLUGIN-PLACEHOLDER -->
 
   <project-components>
