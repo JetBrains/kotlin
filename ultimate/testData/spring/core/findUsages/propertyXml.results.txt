@@ -1,1 +1,1 @@
-Usage in XML descriptor (6: 25) <property name="foo"/>
+Usage in XML descriptor 6 <property name="foo"/>
