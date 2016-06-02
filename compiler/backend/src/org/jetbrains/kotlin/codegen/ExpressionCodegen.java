@@ -766,9 +766,15 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         // This method consumes range/progression from stack
         // The result is stored to local variable
-        protected void generateRangeOrProgressionProperty(Type loopRangeType, String getterName, Type elementType, int varToStore) {
-            v.invokevirtual(loopRangeType.getInternalName(), getterName, "()" + elementType.getDescriptor(), false);
-            v.store(varToStore, elementType);
+        protected void generateRangeOrProgressionProperty(
+                @NotNull Type loopRangeType,
+                @NotNull String getterName,
+                @NotNull Type getterReturnType,
+                @NotNull Type varType,
+                int varToStore
+        ) {
+            v.invokevirtual(loopRangeType.getInternalName(), getterName, "()" + getterReturnType.getDescriptor(), false);
+            StackValue.local(varToStore, varType).store(StackValue.onStack(getterReturnType), v);
         }
     }
 
@@ -923,6 +929,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     private abstract class AbstractForInProgressionOrRangeLoopGenerator extends AbstractForLoopGenerator {
         protected int endVar;
 
+        private StackValue loopParameter;
+
         private AbstractForInProgressionOrRangeLoopGenerator(@NotNull KtForExpression forExpression) {
             super(forExpression);
 
@@ -949,8 +957,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         protected void checkPostCondition(@NotNull Label loopExit) {
             assert endVar != -1 :
                     "endVar must be allocated, endVar = " + endVar;
-
-            v.load(loopParameterVar, asmElementType);
+            loopParameter().put(asmElementType, v);
             v.load(endVar, asmElementType);
             if (asmElementType.getSort() == Type.LONG) {
                 v.lcmp();
@@ -963,6 +970,14 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         @Override
         public void checkPreCondition(@NotNull Label loopExit) {
+        }
+
+        @NotNull
+        protected StackValue loopParameter() {
+            if (loopParameter == null) {
+                loopParameter = StackValue.local(loopParameterVar, loopParameterType);
+            }
+            return loopParameter;
         }
     }
 
@@ -982,8 +997,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         @Override
         public void checkEmptyLoop(@NotNull Label loopExit) {
-
-            v.load(loopParameterVar, asmElementType);
+            loopParameter().put(asmElementType, v);
             v.load(endVar, asmElementType);
             if (asmElementType.getSort() == Type.LONG) {
                 v.lcmp();
@@ -1002,13 +1016,14 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         protected void increment(@NotNull Label loopExit) {
             checkPostCondition(loopExit);
 
-            if (asmElementType == Type.INT_TYPE) {
+            if (loopParameterType == Type.INT_TYPE) {
                 v.iinc(loopParameterVar, 1);
             }
             else {
-                v.load(loopParameterVar, asmElementType);
+                StackValue loopParameter = loopParameter();
+                loopParameter.put(asmElementType, v);
                 genIncrement(asmElementType, 1, v);
-                v.store(loopParameterVar, asmElementType);
+                loopParameter.store(StackValue.onStack(asmElementType), v);
             }
         }
     }
@@ -1026,8 +1041,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         @Override
         protected void storeRangeStartAndEnd() {
-            gen(rangeCall.left, asmElementType);
-            v.store(loopParameterVar, asmElementType);
+            gen(rangeCall.left, loopParameterType);
+            v.store(loopParameterVar, loopParameterType);
 
             gen(rangeCall.right, asmElementType);
             v.store(endVar, asmElementType);
@@ -1048,8 +1063,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             v.dup();
 
             // ranges inherit first and last from corresponding progressions
-            generateRangeOrProgressionProperty(asmLoopRangeType, "getFirst", asmElementType, loopParameterVar);
-            generateRangeOrProgressionProperty(asmLoopRangeType, "getLast", asmElementType, endVar);
+            generateRangeOrProgressionProperty(asmLoopRangeType, "getFirst", asmElementType, loopParameterType, loopParameterVar);
+            generateRangeOrProgressionProperty(asmLoopRangeType, "getLast", asmElementType, asmElementType, endVar);
         }
     }
 
@@ -1080,15 +1095,14 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             v.dup();
             v.dup();
 
-            generateRangeOrProgressionProperty(asmLoopRangeType, "getFirst", asmElementType, loopParameterVar);
-            generateRangeOrProgressionProperty(asmLoopRangeType, "getLast", asmElementType, endVar);
-            generateRangeOrProgressionProperty(asmLoopRangeType, "getStep", incrementType, incrementVar);
+            generateRangeOrProgressionProperty(asmLoopRangeType, "getFirst", asmElementType, loopParameterType, loopParameterVar);
+            generateRangeOrProgressionProperty(asmLoopRangeType, "getLast", asmElementType, asmElementType, endVar);
+            generateRangeOrProgressionProperty(asmLoopRangeType, "getStep", incrementType, incrementType, incrementVar);
         }
 
         @Override
         public void checkEmptyLoop(@NotNull Label loopExit) {
-
-            v.load(loopParameterVar, asmElementType);
+            loopParameter().put(asmElementType, v);
             v.load(endVar, asmElementType);
             v.load(incrementVar, incrementType);
 
@@ -1133,7 +1147,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         protected void increment(@NotNull Label loopExit) {
             checkPostCondition(loopExit);
 
-            v.load(loopParameterVar, asmElementType);
+            StackValue loopParameter = loopParameter();
+            loopParameter.put(asmElementType, v);
             v.load(incrementVar, asmElementType);
             v.add(asmElementType);
 
@@ -1141,7 +1156,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 StackValue.coerce(Type.INT_TYPE, asmElementType, v);
             }
 
-            v.store(loopParameterVar, asmElementType);
+            loopParameter.store(StackValue.onStack(asmElementType), v);
         }
     }
 
