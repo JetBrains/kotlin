@@ -18,18 +18,25 @@ package org.jetbrains.kotlin.idea.actions
 
 import com.intellij.ide.actions.CreateFileFromTemplateAction
 import com.intellij.ide.actions.CreateFileFromTemplateDialog
+import com.intellij.ide.fileTemplates.FileTemplate
+import com.intellij.ide.fileTemplates.FileTemplateManager
+import com.intellij.ide.fileTemplates.actions.AttributesDefaults
+import com.intellij.ide.fileTemplates.ui.CreateFromTemplateDialog
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.LangDataKeys
 import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.DumbAware
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
+import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.configuration.showConfigureKotlinNotificationIfNeeded
+import java.util.*
 
 class NewKotlinFileAction
     : CreateFileFromTemplateAction("Kotlin File/Class",
@@ -73,5 +80,60 @@ class NewKotlinFileAction
 
     override fun equals(obj: Any?): Boolean {
         return obj is NewKotlinFileAction
+    }
+
+    override fun createFileFromTemplate(name: String, template: FileTemplate, dir: PsiDirectory): PsiFile? {
+        val directorySeparators = if (template.name == "Kotlin File") arrayOf('/', '\\') else arrayOf('/', '\\', '.')
+        val (className, targetDir) = findOrCreateTarget(dir, name, directorySeparators)
+
+        val service = DumbService.getInstance(dir.project)
+        service.isAlternativeResolveEnabled = true
+        try {
+            return createFromTemplate(targetDir, className, template)
+        }
+        finally {
+            service.isAlternativeResolveEnabled = false
+        }
+    }
+
+    private fun findOrCreateTarget(dir: PsiDirectory, name: String, directorySeparators: Array<Char>): Pair<String, PsiDirectory> {
+        var className = name.removeSuffix(".kt")
+        var targetDir = dir
+
+        for (splitChar in directorySeparators) {
+            if (splitChar in className) {
+                val names = className.trim().split(splitChar)
+
+                for (dirName in names.dropLast(1)) {
+                    targetDir = targetDir.findSubdirectory(dirName) ?: targetDir.createSubdirectory(dirName)
+                }
+
+                className = names.last()
+                break
+            }
+        }
+        return Pair(className, targetDir)
+    }
+
+    private fun createFromTemplate(dir: PsiDirectory, className: String, template: FileTemplate): PsiFile? {
+        val project = dir.project
+        val defaultProperties = FileTemplateManager.getInstance(project).defaultProperties
+
+        val properties = Properties(defaultProperties)
+
+        val element = try {
+            CreateFromTemplateDialog(project, dir, template,
+                                     AttributesDefaults(className).withFixedName(true),
+                                     properties).create()
+        }
+        catch (e: IncorrectOperationException) {
+            throw e
+        }
+        catch (e: Exception) {
+            LOG.error(e)
+            return null
+        }
+
+        return element.containingFile
     }
 }
