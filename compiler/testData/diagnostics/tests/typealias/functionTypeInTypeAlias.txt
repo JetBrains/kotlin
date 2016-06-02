@@ -1,0 +1,4 @@
+package
+
+public typealias F = () -> kotlin.Unit
+public val f: () -> kotlin.Unit

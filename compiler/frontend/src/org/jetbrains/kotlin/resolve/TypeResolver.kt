@@ -71,6 +71,13 @@ class TypeResolver(
         return resolveType(TypeResolutionContext(scope, trace, checkBounds, false, typeReference.suppressDiagnosticsInDebugMode(), true), typeReference)
     }
 
+    fun resolveExpandedTypeForTypeAlias(typeAliasDescriptor: TypeAliasDescriptor): KotlinType {
+        val typeAliasExpansion = createTypeAliasExpansion(null, typeAliasDescriptor, emptyList())
+        val expandedType = expandTypeAlias(typeAliasExpansion, TypeAliasExpansionReportStrategy.DEFAULT, Annotations.EMPTY, 0,
+                                           withAbbreviatedType = false)
+        return expandedType
+    }
+
     private fun resolveType(c: TypeResolutionContext, typeReference: KtTypeReference): KotlinType {
         assert(!c.allowBareTypes) { "Use resolvePossiblyBareType() when bare types are allowed" }
         return resolvePossiblyBareType(c, typeReference).getActualType()
@@ -550,7 +557,8 @@ class TypeResolver(
             typeAliasExpansion: TypeAliasExpansion,
             reportStrategy: TypeAliasExpansionReportStrategy,
             annotations: Annotations,
-            recursionDepth: Int
+            recursionDepth: Int,
+            withAbbreviatedType: Boolean = true
     ): KotlinType {
         val originalProjection = TypeProjectionImpl(Variance.INVARIANT, typeAliasExpansion.descriptor.underlyingType)
         val expandedProjection = expandTypeProjectionForTypeAlias(originalProjection, typeAliasExpansion, null, reportStrategy, recursionDepth)
@@ -562,13 +570,18 @@ class TypeResolver(
             "Type alias expansion: result for ${typeAliasExpansion.descriptor} is ${expandedProjection.projectionKind}, should be invariant"
         }
 
-        val abbreviatedType = KotlinTypeImpl.create(annotations,
-                                                    typeAliasExpansion.descriptor.typeConstructor,
-                                                    originalProjection.type.isMarkedNullable,
-                                                    typeAliasExpansion.arguments,
-                                                    MemberScope.Empty)
+        return if (withAbbreviatedType) {
+            val abbreviatedType = KotlinTypeImpl.create(annotations,
+                                                        typeAliasExpansion.descriptor.typeConstructor,
+                                                        originalProjection.type.isMarkedNullable,
+                                                        typeAliasExpansion.arguments,
+                                                        MemberScope.Empty)
 
-        return expandedType.withAbbreviatedType(abbreviatedType)
+            expandedType.withAbbreviatedType(abbreviatedType)
+        }
+        else {
+            expandedType
+        }
     }
 
     private fun expandTypeProjectionForTypeAlias(
