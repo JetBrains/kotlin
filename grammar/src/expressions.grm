@@ -254,7 +254,7 @@ jump
 // one can use "it" as a parameter name
 functionLiteral
   : "{" statements "}"
-  : "{" (modifiers SimpleName){","} "->" statements "}"
+  : "{" (modifiers SimpleName (":" type)?){","} "->" statements "}"
   ;
 
 statements
