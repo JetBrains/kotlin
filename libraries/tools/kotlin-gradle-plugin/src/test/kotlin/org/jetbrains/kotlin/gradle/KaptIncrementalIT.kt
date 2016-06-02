@@ -28,7 +28,7 @@ abstract class KaptIncrementalBaseIT(val shouldUseStubs: Boolean): BaseGradleIT(
             arrayOf("A", "funA", "valA", "funUtil", "valUtil", "B", "funB", "valB", "useB")
 
     override fun defaultBuildOptions(): BuildOptions =
-            super.defaultBuildOptions().copy(withDaemon = true, incremental = true)
+            super.defaultBuildOptions().copy(incremental = true)
 
     @Test
     fun testBasic() {

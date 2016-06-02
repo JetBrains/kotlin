@@ -40,8 +40,8 @@ class KotlinGradlePluginJpsParametrizedCLIOnly : BaseIncrementalGradleIT() {
         JpsTestProject(buildLogFinder, jpsResourcesPath, relativePath).performAndAssertBuildStages(weakTesting = true)
     }
 
-    override fun defaultBuildOptions(): BuildOptions =
-            BuildOptions(withDaemon = true, incremental = true)
+    override fun defaultBuildOptions() =
+            super.defaultBuildOptions().copy(incremental = true)
 
     companion object {
 

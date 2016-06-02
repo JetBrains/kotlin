@@ -16,9 +16,6 @@ class KotlinGradleIT: BaseGradleIT() {
         private const val GRADLE_VERSION = "2.10"
     }
 
-    override fun defaultBuildOptions(): BuildOptions =
-            super.defaultBuildOptions().copy(withDaemon = true)
-
     @Test
     fun testCrossCompile() {
         val project = Project("kotlinJavaProject", GRADLE_VERSION)

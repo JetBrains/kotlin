@@ -20,7 +20,7 @@ abstract class BaseGradleIT {
 
     protected var workingDir = File(".")
 
-    protected open fun defaultBuildOptions(): BuildOptions = BuildOptions(withDaemon = false)
+    protected open fun defaultBuildOptions(): BuildOptions = BuildOptions(withDaemon = true)
 
     @Before
     fun setUp() {

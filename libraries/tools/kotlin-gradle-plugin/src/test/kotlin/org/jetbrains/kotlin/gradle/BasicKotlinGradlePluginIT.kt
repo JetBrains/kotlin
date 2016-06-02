@@ -1,12 +1,11 @@
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.api.logging.LogLevel
 import org.junit.Test
 
 class SimpleKotlinGradleIT : BaseGradleIT() {
 
     companion object {
-        private val GRADLE_VERSION = "2.3"
+        private const val GRADLE_VERSION = "2.10"
     }
 
     @Test

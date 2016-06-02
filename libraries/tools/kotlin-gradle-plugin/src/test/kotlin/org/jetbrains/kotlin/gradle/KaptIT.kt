@@ -12,9 +12,6 @@ class KaptIT: BaseGradleIT() {
         private const val GRADLE_VERSION = "2.14.1"
     }
 
-    override fun defaultBuildOptions(): BuildOptions =
-            super.defaultBuildOptions().copy(withDaemon = true)
-
     @Test
     fun testSimple() {
         val project = Project("kaptSimple", GRADLE_VERSION)
