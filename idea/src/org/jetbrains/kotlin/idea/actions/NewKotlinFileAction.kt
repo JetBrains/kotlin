@@ -14,83 +14,67 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.actions;
+package org.jetbrains.kotlin.idea.actions
 
-import com.intellij.ide.IdeView;
-import com.intellij.ide.actions.CreateFileFromTemplateAction;
-import com.intellij.ide.actions.CreateFileFromTemplateDialog;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.LangDataKeys;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.project.DumbAware;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ProjectFileIndex;
-import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiFile;
-import org.jetbrains.kotlin.idea.KotlinBundle;
-import org.jetbrains.kotlin.idea.KotlinFileType;
-import org.jetbrains.kotlin.idea.KotlinIcons;
-import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtilsKt;
+import com.intellij.ide.actions.CreateFileFromTemplateAction
+import com.intellij.ide.actions.CreateFileFromTemplateDialog
+import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.actionSystem.LangDataKeys
+import com.intellij.openapi.actionSystem.PlatformDataKeys
+import com.intellij.openapi.module.ModuleUtilCore
+import com.intellij.openapi.project.DumbAware
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ProjectRootManager
+import com.intellij.psi.PsiDirectory
+import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.KotlinIcons
+import org.jetbrains.kotlin.idea.configuration.showConfigureKotlinNotificationIfNeeded
 
-import java.util.Map;
+class NewKotlinFileAction
+    : CreateFileFromTemplateAction(KotlinBundle.message("new.kotlin.file.action"),
+                                   "Creates new Kotlin file or class",
+                                   KotlinFileType.INSTANCE.icon),
+      DumbAware
+{
+    override fun postProcess(createdElement: PsiFile?, templateName: String?, customProperties: Map<String, String>?) {
+        super.postProcess(createdElement, templateName, customProperties)
 
-public class NewKotlinFileAction extends CreateFileFromTemplateAction implements DumbAware {
-    public NewKotlinFileAction() {
-        super(KotlinBundle.message("new.kotlin.file.action"), "Creates new Kotlin file or class", KotlinFileType.INSTANCE.getIcon());
-    }
-
-    @Override
-    protected void postProcess(PsiFile createdElement, String templateName, Map<String, String> customProperties) {
-        super.postProcess(createdElement, templateName, customProperties);
-
-        Module module = ModuleUtilCore.findModuleForPsiElement(createdElement);
+        val module = ModuleUtilCore.findModuleForPsiElement(createdElement!!)
         if (module != null) {
-            ConfigureKotlinInProjectUtilsKt.showConfigureKotlinNotificationIfNeeded(module);
+            showConfigureKotlinNotificationIfNeeded(module)
         }
     }
 
-    @Override
-    protected void buildDialog(Project project, PsiDirectory directory, CreateFileFromTemplateDialog.Builder builder) {
-        builder
-                .setTitle("New Kotlin File/Class")
-                .addKind("File", KotlinFileType.INSTANCE.getIcon(), "Kotlin File")
+    override fun buildDialog(project: Project, directory: PsiDirectory, builder: CreateFileFromTemplateDialog.Builder) {
+        builder.setTitle("New Kotlin File/Class")
+                .addKind("File", KotlinFileType.INSTANCE.icon, "Kotlin File")
                 .addKind("Class", KotlinIcons.CLASS, "Kotlin Class")
                 .addKind("Interface", KotlinIcons.INTERFACE, "Kotlin Interface")
                 .addKind("Enum class", KotlinIcons.ENUM, "Kotlin Enum")
-                .addKind("Object", KotlinIcons.OBJECT, "Kotlin Object");
+                .addKind("Object", KotlinIcons.OBJECT, "Kotlin Object")
     }
 
-    @Override
-    protected String getActionName(PsiDirectory directory, String newName, String templateName) {
-        return KotlinBundle.message("new.kotlin.file.action");
+    override fun getActionName(directory: PsiDirectory, newName: String, templateName: String): String {
+        return KotlinBundle.message("new.kotlin.file.action")
     }
 
-    @Override
-    protected boolean isAvailable(DataContext dataContext) {
+    override fun isAvailable(dataContext: DataContext): Boolean {
         if (super.isAvailable(dataContext)) {
-            IdeView ideView = LangDataKeys.IDE_VIEW.getData(dataContext);
-            Project project = PlatformDataKeys.PROJECT.getData(dataContext);
-            assert ideView != null && project != null;
-            ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(project).getFileIndex();
-            for (PsiDirectory dir : ideView.getDirectories()) {
-                if (projectFileIndex.isInSourceContent(dir.getVirtualFile())) {
-                    return true;
-                }
-            }
+            val ideView = LangDataKeys.IDE_VIEW.getData(dataContext)!!
+            val project = PlatformDataKeys.PROJECT.getData(dataContext)!!
+            val projectFileIndex = ProjectRootManager.getInstance(project).fileIndex
+            return ideView.directories.any { projectFileIndex.isInSourceContent(it.virtualFile) }
         }
-        return false;
+        return false
     }
 
-    @Override
-    public int hashCode() {
-        return 0;
+    override fun hashCode(): Int {
+        return 0
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        return obj instanceof NewKotlinFileAction;
+    override fun equals(obj: Any?): Boolean {
+        return obj is NewKotlinFileAction
     }
 }
