@@ -1040,7 +1040,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
     /*
      * functionLiteral  // one can use "it" as a parameter name
      *   : "{" expressions "}"
-     *   : "{" (modifiers SimpleName){","} "->" statements "}"
+     *   : "{" (modifiers SimpleName (":" type)?){","} "->" statements "}"
      *   ;
      */
     private void parseFunctionLiteral() {
@@ -1134,7 +1134,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
 
 
     /*
-     * SimpleName{,}
+     * (SimpleName (":" type)?){","}
      */
     private void parseFunctionLiteralShorthandParameterList() {
         PsiBuilder.Marker parameterList = mark();
