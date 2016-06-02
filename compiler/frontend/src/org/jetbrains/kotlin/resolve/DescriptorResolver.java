@@ -678,21 +678,18 @@ public class DescriptorResolver {
         return variableDescriptor;
     }
 
-    @Nullable
+    @NotNull
     public TypeAliasDescriptor resolveTypeAliasDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull LexicalScope scope,
             @NotNull KtTypeAlias typeAlias,
             @NotNull final BindingTrace trace
     ) {
-        final KtTypeReference typeReference = typeAlias.getTypeReference();
-        if (typeReference == null) return null;
-
         KtModifierList modifierList = typeAlias.getModifierList();
         Visibility visibility = resolveVisibilityFromModifiers(typeAlias, getDefaultVisibility(typeAlias, containingDeclaration));
 
         Annotations allAnnotations = annotationResolver.resolveAnnotationsWithArguments(scope, modifierList, trace);
-        Name name = KtPsiUtil.safeName(typeAlias.getName());
+        final Name name = KtPsiUtil.safeName(typeAlias.getName());
         SourceElement sourceElement = KotlinSourceElementKt.toSourceElement(typeAlias);
         final LazyTypeAliasDescriptor typeAliasDescriptor = LazyTypeAliasDescriptor.create(
                 storageManager, trace, containingDeclaration, allAnnotations, name, sourceElement, visibility);
@@ -718,26 +715,38 @@ public class DescriptorResolver {
             }
         }
 
-        if (!languageFeatureSettings.supportsFeature(LanguageFeature.TypeAliases)) {
-            typeResolver.resolveType(scopeWithTypeParameters, typeReference, trace, true);
-            trace.report(UNSUPPORTED_TYPEALIAS.on(typeAlias.getTypeAliasKeyword()));
-            return null;
+        final KtTypeReference typeReference = typeAlias.getTypeReference();
+        if (typeReference == null) {
+            typeAliasDescriptor.initialize(
+                    typeParameterDescriptors,
+                    ErrorUtils.createErrorType(name.asString()),
+                    ErrorUtils.createErrorType(name.asString()));
         }
-
-        typeAliasDescriptor.initialize(
-                typeParameterDescriptors,
-                DeferredType.create(storageManager, trace, new Function0<KotlinType>() {
-                    @Override
-                    public KotlinType invoke() {
-                        return typeResolver.resolveAbbreviatedType(scopeWithTypeParameters, typeReference, trace, true);
-                    }
-                }),
-                DeferredType.create(storageManager, trace, new Function0<KotlinType>() {
-                    @Override
-                    public KotlinType invoke() {
-                        return typeResolver.resolveExpandedTypeForTypeAlias(typeAliasDescriptor);
-                    }
-                }));
+        else if (!languageFeatureSettings.supportsFeature(LanguageFeature.TypeAliases)) {
+            typeResolver.resolveAbbreviatedType(scopeWithTypeParameters, typeReference, trace, true);
+            PsiElement typeAliasKeyword = typeAlias.getTypeAliasKeyword();
+            trace.report(UNSUPPORTED_TYPEALIAS.on(typeAliasKeyword != null ? typeAliasKeyword : typeAlias));
+            typeAliasDescriptor.initialize(
+                    typeParameterDescriptors,
+                    ErrorUtils.createErrorType(name.asString()),
+                    ErrorUtils.createErrorType(name.asString()));
+        }
+        else {
+            typeAliasDescriptor.initialize(
+                    typeParameterDescriptors,
+                    DeferredType.create(storageManager, trace, new Function0<KotlinType>() {
+                        @Override
+                        public KotlinType invoke() {
+                            return typeResolver.resolveAbbreviatedType(scopeWithTypeParameters, typeReference, trace, true);
+                        }
+                    }),
+                    DeferredType.create(storageManager, trace, new Function0<KotlinType>() {
+                        @Override
+                        public KotlinType invoke() {
+                            return typeResolver.resolveExpandedTypeForTypeAlias(typeAliasDescriptor);
+                        }
+                    }));
+        }
 
         trace.record(TYPE_ALIAS, typeAlias, typeAliasDescriptor);
         return typeAliasDescriptor;
