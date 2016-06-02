@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.resolve.calls.checkers
 
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageFeatureSettings
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtExpression
@@ -37,3 +39,19 @@ object CoroutineSuspendCallChecker : CallChecker {
         }
     }
 }
+
+// It can't be another CallChecker implementation because of 3rd parameter
+fun checkCoroutineBuilderCall(
+        resolvedCall: ResolvedCall<*>,
+        context: BasicCallResolutionContext,
+        languageFeatureSettings: LanguageFeatureSettings
+) {
+    val descriptor = resolvedCall.candidateDescriptor as? FunctionDescriptor ?: return
+    if (descriptor.valueParameters.any { it.isCoroutine }
+        && !languageFeatureSettings.supportsFeature(LanguageFeature.Coroutines)) {
+        context.trace.report(
+                Errors.UNSUPPORTED_FEATURE.on(
+                        resolvedCall.call.calleeExpression ?: resolvedCall.call.callElement, LanguageFeature.Coroutines))
+    }
+}
+

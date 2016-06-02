@@ -20,6 +20,7 @@ import com.google.common.collect.ImmutableSet
 import com.google.common.collect.Sets
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageFeatureSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -70,10 +71,11 @@ internal class DeclarationsCheckerBuilder(
         private val descriptorResolver: DescriptorResolver,
         private val originalModifiersChecker: ModifiersChecker,
         private val annotationChecker: AnnotationChecker,
-        private val identifierChecker: IdentifierChecker
+        private val identifierChecker: IdentifierChecker,
+        private val languageFeatureSettings: LanguageFeatureSettings
 ) {
     fun withTrace(trace: BindingTrace) =
-            DeclarationsChecker(descriptorResolver, originalModifiersChecker, annotationChecker, identifierChecker, trace)
+            DeclarationsChecker(descriptorResolver, originalModifiersChecker, annotationChecker, identifierChecker, trace, languageFeatureSettings)
 }
 
 class DeclarationsChecker(
@@ -81,7 +83,8 @@ class DeclarationsChecker(
         modifiersChecker: ModifiersChecker,
         private val annotationChecker: AnnotationChecker,
         private val identifierChecker: IdentifierChecker,
-        private val trace: BindingTrace
+        private val trace: BindingTrace,
+        private val languageFeatureSettings: LanguageFeatureSettings
 ) {
 
     private val modifiersChecker = modifiersChecker.withTrace(trace)
@@ -190,7 +193,7 @@ class DeclarationsChecker(
             }
         }
         annotationChecker.check(packageDirective, trace, null)
-        ModifierCheckerCore.check(packageDirective, trace, null)
+        ModifierCheckerCore.check(packageDirective, trace, descriptor = null, languageFeatureSettings = languageFeatureSettings)
     }
 
     private fun checkTypesInClassHeader(classOrObject: KtClassOrObject) {

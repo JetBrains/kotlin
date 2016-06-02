@@ -558,7 +558,7 @@ public class BodyResolver {
 
     private void processModifiersOnInitializer(@NotNull KtModifierListOwner owner, @NotNull LexicalScope scope) {
         annotationChecker.check(owner, trace, null);
-        ModifierCheckerCore.INSTANCE.check(owner, trace, null);
+        ModifierCheckerCore.INSTANCE.check(owner, trace, null, languageFeatureSettings);
         KtModifierList modifierList = owner.getModifierList();
         if (modifierList == null) return;
 

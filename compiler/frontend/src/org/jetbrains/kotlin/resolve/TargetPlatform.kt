@@ -62,7 +62,6 @@ private val DEFAULT_DECLARATION_CHECKERS = listOf(
         ConstModifierChecker,
         UnderscoreChecker,
         InlineParameterChecker,
-        OperatorModifierChecker(),
         InfixModifierChecker(),
         SuspendModifierChecker,
         CoroutineModifierChecker)

@@ -673,7 +673,7 @@ class TypeResolver(
     ): List<TypeProjection> {
         return argumentElements.mapIndexed { i, argumentElement ->
             val projectionKind = argumentElement.projectionKind
-            ModifierCheckerCore.check(argumentElement, c.trace, null)
+            ModifierCheckerCore.check(argumentElement, c.trace, null, languageFeatureSettings)
             if (projectionKind == KtProjectionKind.STAR) {
                 val parameters = constructor.parameters
                 if (parameters.size > i) {

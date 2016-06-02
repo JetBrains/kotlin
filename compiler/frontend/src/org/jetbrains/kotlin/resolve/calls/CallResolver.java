@@ -22,6 +22,7 @@ import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.config.LanguageFeatureSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
@@ -70,13 +71,16 @@ public class CallResolver {
     private CallCompleter callCompleter;
     private NewResolutionOldInference newCallResolver;
     private final KotlinBuiltIns builtIns;
+    private final LanguageFeatureSettings languageFeatureSettings;
 
     private static final PerformanceCounter callResolvePerfCounter = PerformanceCounter.Companion.create("Call resolve", ExpressionTypingVisitorDispatcher.typeInfoPerfCounter);
 
     public CallResolver(
-            @NotNull KotlinBuiltIns builtIns
+            @NotNull KotlinBuiltIns builtIns,
+            @NotNull LanguageFeatureSettings languageFeatureSettings
     ) {
         this.builtIns = builtIns;
+        this.languageFeatureSettings = languageFeatureSettings;
     }
 
     // component dependency cycle
@@ -583,7 +587,7 @@ public class CallResolver {
         for (KtTypeProjection projection : typeArguments) {
             if (projection.getProjectionKind() != KtProjectionKind.NONE) {
                 context.trace.report(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT.on(projection));
-                ModifierCheckerCore.INSTANCE.check(projection, context.trace, null);
+                ModifierCheckerCore.INSTANCE.check(projection, context.trace, null, languageFeatureSettings);
             }
             KotlinType type = argumentTypeResolver.resolveTypeRefWithDefault(
                     projection.getTypeReference(), context.scope, context.trace,
