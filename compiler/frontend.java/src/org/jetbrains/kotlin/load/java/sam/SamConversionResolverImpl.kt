@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaConstructorDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaClassDescriptor
-import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.SimpleType
 
 object SamConversionResolverImpl : SamConversionResolver {
     override fun resolveSamConstructor(constructorOwner: DeclarationDescriptor, classifier: () -> ClassifierDescriptor?): SamConstructorDescriptor? {
@@ -44,7 +44,7 @@ object SamConversionResolverImpl : SamConversionResolver {
         }
     }
 
-    override fun resolveFunctionTypeIfSamInterface(classDescriptor: JavaClassDescriptor): KotlinType? {
+    override fun resolveFunctionTypeIfSamInterface(classDescriptor: JavaClassDescriptor): SimpleType? {
         val abstractMethod = SingleAbstractMethodUtils.getSingleAbstractMethodOrNull(classDescriptor) ?: return null
         return SingleAbstractMethodUtils.getFunctionTypeForAbstractMethod(abstractMethod)
     }
