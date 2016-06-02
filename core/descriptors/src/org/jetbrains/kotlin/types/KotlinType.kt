@@ -64,6 +64,7 @@ abstract class WrappedType() : KotlinType(), LazyType {
     override val arguments: List<TypeProjection> get() = delegate.arguments
     override val isMarkedNullable: Boolean get() = delegate.isMarkedNullable
     override val memberScope: MemberScope get() = delegate.memberScope
+    override val isError: Boolean get() = delegate.isError
 
     override final fun unwrap(): UnwrappedType {
         var result = delegate
@@ -81,9 +82,6 @@ abstract class WrappedType() : KotlinType(), LazyType {
             return "<Not computed yet>"
         }
     }
-
-    // todo: remove this later
-    override val isError: Boolean get() = delegate.isError
 }
 
 sealed class UnwrappedType: KotlinType() {

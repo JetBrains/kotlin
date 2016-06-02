@@ -104,7 +104,7 @@ class SpecifyTypeExplicitlyIntention : SelfTargetingIntention<KtCallableDeclarat
                             }
                         }
 
-                        KotlinTypeFactory.simpleType(it.asSimpleType(), arguments = newArguments)
+                        it.replace(newArguments)
                     }
                     .ifEmpty { return null }
             return object : ChooseValueExpression<KotlinType>(types, types.first()) {

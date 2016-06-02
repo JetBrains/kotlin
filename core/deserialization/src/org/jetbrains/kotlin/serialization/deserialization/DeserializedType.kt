@@ -20,15 +20,16 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedAnnotationsWithPossibleTargets
-import org.jetbrains.kotlin.storage.getValue
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.AbstractLazyType
+import org.jetbrains.kotlin.types.SimpleType
+import org.jetbrains.kotlin.types.withAbbreviatedType
 import org.jetbrains.kotlin.utils.toReadOnlyList
 
 class DeserializedType private constructor(
         private val c: DeserializationContext,
         private val typeProto: ProtoBuf.Type,
         private val additionalAnnotations: Annotations = Annotations.EMPTY
-) : AbstractLazyType(c.storageManager), LazyType {
+) : AbstractLazyType(c.storageManager) {
     override fun computeTypeConstructor() = c.typeDeserializer.typeConstructor(typeProto)
 
     override fun computeArguments() =
@@ -47,12 +48,6 @@ class DeserializedType private constructor(
     }
 
     override val isMarkedNullable: Boolean get() = typeProto.nullable
-
-    override val isError: Boolean
-        get() {
-            val descriptor = constructor.declarationDescriptor
-            return descriptor != null && ErrorUtils.isError(descriptor)
-        }
 
     companion object {
         fun create(

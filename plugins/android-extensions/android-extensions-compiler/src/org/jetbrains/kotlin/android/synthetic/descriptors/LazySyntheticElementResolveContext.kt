@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleD
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.SimpleType
 import java.util.*
 
 class LazySyntheticElementResolveContext(private val module: ModuleDescriptor, storageManager: StorageManager) {
@@ -53,11 +54,11 @@ class LazySyntheticElementResolveContext(private val module: ModuleDescriptor, s
 }
 
 internal class SyntheticElementResolveContext(
-        val viewType: KotlinType,
-        val activityType: KotlinType,
-        val fragmentType: KotlinType?,
-        val supportActivityType: KotlinType?,
-        val supportFragmentType: KotlinType?) {
+        val viewType: SimpleType,
+        val activityType: SimpleType,
+        val fragmentType: SimpleType?,
+        val supportActivityType: SimpleType?,
+        val supportFragmentType: SimpleType?) {
     companion object {
         private fun errorType() = ErrorUtils.createErrorType("")
         val ERROR_CONTEXT = SyntheticElementResolveContext(errorType(), errorType(), null, null, null)
@@ -71,12 +72,12 @@ internal class SyntheticElementResolveContext(
         receivers
     }
 
-    val fragmentTypes: List<Pair<KotlinType, KotlinType>> by lazy {
+    val fragmentTypes: List<Pair<SimpleType, SimpleType>> by lazy {
         if (fragmentType == null) {
-            emptyList<Pair<KotlinType, KotlinType>>()
+            emptyList<Pair<SimpleType, SimpleType>>()
         }
         else {
-            val types = ArrayList<Pair<KotlinType, KotlinType>>(4)
+            val types = ArrayList<Pair<SimpleType, SimpleType>>(4)
             types += Pair(activityType, fragmentType)
             types += Pair(fragmentType, fragmentType)
             if (supportActivityType != null && supportFragmentType != null) {

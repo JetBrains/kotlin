@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.serialization.deserialization.NotFoundClasses
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.ErrorUtils.UninferredParameterTypeConstructor
 import org.jetbrains.kotlin.types.TypeUtils.CANT_INFER_FUNCTION_PARAM_TYPE
-import org.jetbrains.kotlin.types.typeUtil.builtIns
 import java.util.*
 
 internal class DescriptorRendererImpl(
@@ -141,10 +140,10 @@ internal class DescriptorRendererImpl(
             return type.toString()
         }
         val unwrappedType = type.unwrap()
-        if (unwrappedType is FlexibleType) {
-            return unwrappedType.render(this, this)
+        return when (unwrappedType) {
+            is FlexibleType -> unwrappedType.render(this, this)
+            is SimpleType -> renderSimpleType(unwrappedType)
         }
-        return renderSimpleType(unwrappedType.asSimpleType())
     }
 
     private fun renderSimpleType(type: SimpleType): String {
