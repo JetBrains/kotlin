@@ -17,13 +17,12 @@
 package org.jetbrains.kotlin.js.translate.context;
 
 import com.google.dart.compiler.backend.js.ast.*;
-import com.google.dart.compiler.backend.js.ast.metadata.HasMetadata;
 import com.google.dart.compiler.backend.js.ast.metadata.MetadataProperties;
+import com.google.dart.compiler.backend.js.ast.metadata.SideEffectKind;
 import com.google.dart.compiler.backend.js.ast.metadata.TypeCheck;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
@@ -38,7 +37,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.google.dart.compiler.backend.js.ast.JsScopesKt.JsObjectScope;
-import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.fqnWithoutSideEffects;
+import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.pureFqn;
 import static org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getModuleName;
 import static org.jetbrains.kotlin.js.translate.utils.ManglingUtils.getStableMangledNameForDescriptor;
 import static org.jetbrains.kotlin.js.translate.utils.ManglingUtils.getSuggestedName;
@@ -143,7 +142,7 @@ public final class Namer {
 
     @NotNull
     public static JsNameRef superMethodNameRef(@NotNull JsName superClassJsName) {
-        return fqnWithoutSideEffects(SUPER_METHOD_NAME, superClassJsName.makeRef());
+        return pureFqn(SUPER_METHOD_NAME, superClassJsName.makeRef());
     }
 
     @NotNull
@@ -182,7 +181,7 @@ public final class Namer {
 
     @NotNull
     public static JsNameRef getRefToPrototype(@NotNull JsExpression classOrTraitExpression) {
-        return fqnWithoutSideEffects(getPrototypeName(), classOrTraitExpression);
+        return pureFqn(getPrototypeName(), classOrTraitExpression);
     }
 
     @NotNull
@@ -207,12 +206,12 @@ public final class Namer {
 
     @NotNull
     public static JsNameRef getFunctionCallRef(@NotNull JsExpression functionExpression) {
-        return fqnWithoutSideEffects(CALL_FUNCTION, functionExpression);
+        return pureFqn(CALL_FUNCTION, functionExpression);
     }
 
     @NotNull
     public static JsNameRef getFunctionApplyRef(@NotNull JsExpression functionExpression) {
-        return fqnWithoutSideEffects(APPLY_FUNCTION, functionExpression);
+        return pureFqn(APPLY_FUNCTION, functionExpression);
     }
 
     @NotNull
@@ -222,7 +221,7 @@ public final class Namer {
 
     @NotNull
     public static JsNameRef getCapturedVarAccessor(@NotNull JsExpression ref) {
-        return fqnWithoutSideEffects(CAPTURED_VAR_FIELD, ref);
+        return pureFqn(CAPTURED_VAR_FIELD, ref);
     }
 
     @NotNull
@@ -297,7 +296,6 @@ public final class Namer {
 
         isTypeName = kotlinScope.declareName("isType");
         modulesMap = kotlin("modules");
-        MetadataProperties.setSideEffects((HasMetadata) modulesMap, false);
     }
 
     @NotNull
@@ -377,7 +375,7 @@ public final class Namer {
 
     @NotNull
     public static JsNameRef kotlin(@NotNull JsName name) {
-        return fqnWithoutSideEffects(name, kotlinObject());
+        return pureFqn(name, kotlinObject());
     }
 
     @NotNull
@@ -387,7 +385,7 @@ public final class Namer {
 
     @NotNull
     public static JsNameRef kotlinObject() {
-        return fqnWithoutSideEffects(KOTLIN_NAME, null);
+        return pureFqn(KOTLIN_NAME, null);
     }
 
     @NotNull
@@ -444,14 +442,14 @@ public final class Namer {
         JsInvocation invocation = new JsInvocation(kotlin(functionName));
         invocation.getArguments().addAll(arguments);
         MetadataProperties.setTypeCheck(invocation, metadata);
-        MetadataProperties.setSideEffects(invocation, false);
+        MetadataProperties.setSideEffects(invocation, SideEffectKind.PURE);
         return invocation;
     }
 
     @NotNull
     public JsExpression isInstanceOf(@NotNull JsExpression instance, @NotNull JsExpression type) {
         JsInvocation result = new JsInvocation(kotlin(isTypeName), instance, type);
-        MetadataProperties.setSideEffects(result, false);
+        MetadataProperties.setSideEffects(result, SideEffectKind.PURE);
         return result;
     }
 
@@ -501,16 +499,16 @@ public final class Namer {
     @NotNull
     public JsExpression getModuleReference(@NotNull JsStringLiteral moduleName) {
         JsArrayAccess result = new JsArrayAccess(modulesMap, moduleName);
-        MetadataProperties.setSideEffects(result, false);
+        MetadataProperties.setSideEffects(result, SideEffectKind.PURE);
         return result;
     }
 
     public static JsNameRef kotlinLong() {
-        return fqnWithoutSideEffects("Long", kotlinObject());
+        return pureFqn("Long", kotlinObject());
     }
 
     @NotNull
     public static JsNameRef createInlineFunction() {
-        return fqnWithoutSideEffects(DEFINE_INLINE_FUNCTION, kotlinObject());
+        return pureFqn(DEFINE_INLINE_FUNCTION, kotlinObject());
     }
 }

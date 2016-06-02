@@ -55,7 +55,7 @@ var JsReturn.returnTarget: FunctionDescriptor? by MetadataProperty(default = nul
 
 var HasMetadata.synthetic: Boolean by MetadataProperty(default = false)
 
-var HasMetadata.sideEffects: Boolean by MetadataProperty(default = true)
+var HasMetadata.sideEffects: SideEffectKind by MetadataProperty(default = SideEffectKind.AFFECTS_STATE)
 
 enum class TypeCheck {
     TYPEOF,
@@ -63,4 +63,10 @@ enum class TypeCheck {
     OR_NULL,
     IS_ANY,
     AND_PREDICATE
+}
+
+enum class SideEffectKind {
+    AFFECTS_STATE,
+    DEPENDS_ON_STATE,
+    PURE
 }

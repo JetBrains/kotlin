@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.js.inline.clean
 
 import com.google.dart.compiler.backend.js.ast.*
+import com.google.dart.compiler.backend.js.ast.metadata.SideEffectKind
 import com.google.dart.compiler.backend.js.ast.metadata.sideEffects
 import com.google.dart.compiler.backend.js.ast.metadata.synthetic
 import org.jetbrains.kotlin.js.inline.util.collectLocalVariables
@@ -53,7 +54,7 @@ class IneffectiveStatementElimination(private val root: JsFunction) {
                 if (expression.name in localVars) {
                     listOf()
                 }
-                else if (!expression.sideEffects) {
+                else if (expression.sideEffects != SideEffectKind.AFFECTS_STATE) {
                     val qualifier = expression.qualifier
                     if (qualifier != null) replace(qualifier) else listOf()
                 }
@@ -78,7 +79,7 @@ class IneffectiveStatementElimination(private val root: JsFunction) {
             }
 
             is JsBinaryOperation -> {
-                if (expression.sideEffects) {
+                if (expression.sideEffects == SideEffectKind.AFFECTS_STATE) {
                     when (expression.operator) {
                         JsBinaryOperator.BIT_AND,
                         JsBinaryOperator.BIT_OR,
@@ -130,7 +131,7 @@ class IneffectiveStatementElimination(private val root: JsFunction) {
             }
 
             is JsInvocation -> {
-                if (!expression.sideEffects) {
+                if (expression.sideEffects != SideEffectKind.AFFECTS_STATE) {
                     replace(expression.qualifier) + replaceMany(expression.arguments)
                 }
                 else {
@@ -139,7 +140,7 @@ class IneffectiveStatementElimination(private val root: JsFunction) {
             }
 
             is JsNew -> {
-                if (!expression.sideEffects) {
+                if (expression.sideEffects != SideEffectKind.AFFECTS_STATE) {
                     replace(expression.constructorExpression) + replaceMany(expression.arguments)
                 }
                 else {
@@ -166,7 +167,7 @@ class IneffectiveStatementElimination(private val root: JsFunction) {
             // Then, inlined body of `bar` never uses `$tmp`, therefore we can eliminate it, so `Kotlin.modules['foo']` remains.
             // It's good to eliminate such useless expression.
             is JsArrayAccess -> {
-                if (!expression.sideEffects) {
+                if (expression.sideEffects != SideEffectKind.AFFECTS_STATE) {
                     replace(expression.arrayExpression) + replace(expression.indexExpression)
                 }
                 else {
