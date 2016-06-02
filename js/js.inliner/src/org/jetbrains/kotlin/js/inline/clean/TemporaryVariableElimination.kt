@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.js.inline.clean
 
 import com.google.dart.compiler.backend.js.ast.*
+import com.google.dart.compiler.backend.js.ast.metadata.SideEffectKind
 import com.google.dart.compiler.backend.js.ast.metadata.sideEffects
 import com.google.dart.compiler.backend.js.ast.metadata.synthetic
 import org.jetbrains.kotlin.js.inline.util.collectFreeVariables
@@ -180,14 +181,14 @@ internal class TemporaryVariableElimination(function: JsFunction) {
                 }
 
                 super.visitNameRef(nameRef)
-                if (nameRef.qualifier != null && nameRef.sideEffects) {
+                if (nameRef.qualifier != null && nameRef.sideEffects == SideEffectKind.AFFECTS_STATE) {
                     sideEffectOccurred = true
                 }
             }
 
             override fun visitInvocation(invocation: JsInvocation) {
                 super.visitInvocation(invocation)
-                if (invocation.sideEffects) {
+                if (invocation.sideEffects == SideEffectKind.AFFECTS_STATE) {
                     sideEffectOccurred = true
                 }
             }
@@ -242,7 +243,7 @@ internal class TemporaryVariableElimination(function: JsFunction) {
 
             override fun visitArrayAccess(x: JsArrayAccess) {
                 super.visitArrayAccess(x)
-                if (x.sideEffects) {
+                if (x.sideEffects == SideEffectKind.AFFECTS_STATE) {
                     sideEffectOccurred = true
                 }
             }
@@ -533,15 +534,21 @@ internal class TemporaryVariableElimination(function: JsFunction) {
 
     private fun isTrivial(expr: JsExpression): Boolean = when (expr) {
         is JsNameRef -> {
-            val name = expr.name
-            name in namesToProcess && when (definitions[name]) {
-                null, 0 -> true
-                1  -> name !in namesToSubstitute || definedValues[name]?.let { isTrivial(it) } ?: false
-                else -> false
+            val qualifier = expr.qualifier
+            if (expr.sideEffects == SideEffectKind.PURE && (qualifier == null || isTrivial(qualifier))) {
+                true
+            }
+            else {
+                val name = expr.name
+                name in namesToProcess && when (definitions[name]) {
+                    null, 0 -> true
+                    1 -> name !in namesToSubstitute || definedValues[name]?.let { isTrivial(it) } ?: false
+                    else -> false
+                }
             }
         }
         is JsLiteral.JsValueLiteral -> true
-        is JsInvocation -> !expr.sideEffects && isTrivial(expr.qualifier) && expr.arguments.all { isTrivial(it) }
+        is JsInvocation -> expr.sideEffects == SideEffectKind.PURE && isTrivial(expr.qualifier) && expr.arguments.all { isTrivial(it) }
         is JsArrayAccess -> isTrivial(expr.arrayExpression) && isTrivial(expr.indexExpression)
         else -> false
     }

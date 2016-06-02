@@ -211,7 +211,7 @@ public final class TopLevelFIF extends CompositeFIF {
 
             String mangledName = getStableMangledNameForDescriptor(JsPlatform.INSTANCE.getBuiltIns().getMutableMap(), operationName());
 
-            return new JsInvocation(JsAstUtils.fqnWithoutSideEffects(mangledName, thisOrReceiver), arguments);
+            return new JsInvocation(JsAstUtils.pureFqn(mangledName, thisOrReceiver), arguments);
         }
     }
 

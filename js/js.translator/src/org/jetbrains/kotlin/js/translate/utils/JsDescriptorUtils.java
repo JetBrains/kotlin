@@ -148,7 +148,13 @@ public final class JsDescriptorUtils {
     }
 
     public static boolean sideEffectsPossible(@NotNull PropertyDescriptor property) {
-        return isDefaultAccessor(property.getGetter()) && !ModalityKt.isOverridableOrOverrides(property);
+        return !isDefaultAccessor(property.getGetter()) || ModalityKt.isOverridableOrOverrides(property) ||
+                isStaticInitializationPossible(property);
+    }
+
+    private static boolean isStaticInitializationPossible(PropertyDescriptor property) {
+        DeclarationDescriptor container = property.getContainingDeclaration();
+        return container instanceof PackageFragmentDescriptor || DescriptorUtils.isObject(container);
     }
 
     public static boolean isSimpleFinalProperty(@NotNull PropertyDescriptor propertyDescriptor) {

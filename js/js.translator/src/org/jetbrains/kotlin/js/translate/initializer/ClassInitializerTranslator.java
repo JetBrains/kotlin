@@ -43,7 +43,7 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.*;
 import static org.jetbrains.kotlin.js.translate.utils.FunctionBodyTranslator.setDefaultValueForArguments;
-import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.fqnWithoutSideEffects;
+import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.pureFqn;
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.getPrimaryConstructorParameters;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.getClassDescriptorForType;
 
@@ -124,8 +124,8 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
 
         initFunction.getParameters().add(0, new JsParameter(outerName));
 
-        JsExpression paramRef = fqnWithoutSideEffects(outerName, null);
-        JsExpression assignment = JsAstUtils.assignment(fqnWithoutSideEffects(outerName, JsLiteral.THIS), paramRef);
+        JsExpression paramRef = pureFqn(outerName, null);
+        JsExpression assignment = JsAstUtils.assignment(pureFqn(outerName, JsLiteral.THIS), paramRef);
         initFunction.getBody().getStatements().add(new JsExpressionStatement(assignment));
     }
 
@@ -178,7 +178,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
                 }
 
                 if (superDescriptor.getContainingDeclaration().isInner() && descriptor.isInner()) {
-                    arguments.add(fqnWithoutSideEffects(Namer.OUTER_FIELD_NAME, JsLiteral.THIS));
+                    arguments.add(pureFqn(Namer.OUTER_FIELD_NAME, JsLiteral.THIS));
                 }
 
                 if (!DescriptorUtils.isAnonymousObject(descriptor)) {

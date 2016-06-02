@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.js.translate.declaration
 
 import com.google.dart.compiler.backend.js.ast.*
+import com.google.dart.compiler.backend.js.ast.metadata.SideEffectKind
+import com.google.dart.compiler.backend.js.ast.metadata.sideEffects
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.common.bridges.Bridge

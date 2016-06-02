@@ -43,7 +43,7 @@ public class KotlinFunctionIntrinsic extends FunctionIntrinsic {
             @NotNull List<JsExpression> arguments,
             @NotNull TranslationContext context
     ) {
-        JsExpression function = JsAstUtils.fqnWithoutSideEffects(functionName, Namer.kotlinObject());
+        JsExpression function = JsAstUtils.pureFqn(functionName, Namer.kotlinObject());
         return new JsInvocation(function, receiver == null ? arguments : TranslationUtils.generateInvocationArguments(receiver, arguments));
     }
 }
