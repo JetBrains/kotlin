@@ -121,7 +121,8 @@ private object KotlinResolveDataProvider {
             KtTypeConstraint::class.java,
             KtSuperTypeList::class.java,
             KtTypeParameter::class.java,
-            KtParameter::class.java
+            KtParameter::class.java,
+            KtTypeAlias::class.java
     )
 
     fun findAnalyzableParent(element: KtElement): KtElement {
