@@ -97,14 +97,16 @@ class JsNameClashChecker : SimpleDeclarationChecker {
     }
 
     private fun collect(descriptor: DeclarationDescriptor, target: MutableMap<String, DeclarationDescriptor>) {
-        if (descriptor is PropertyDescriptor && descriptor.isExtension) {
-            descriptor.accessors.forEach { collect(it, target) }
-        }
-        else {
-            val fqn = fqnGenerator.generate(descriptor)
-            if (fqn.shared && isOpaque(fqn.descriptor)) {
-                target[fqn.names.last()] = fqn.descriptor
+        if (descriptor is PropertyDescriptor) {
+            if (descriptor.isExtension || AnnotationsUtils.hasJsNameInAccessors(descriptor)) {
+                descriptor.accessors.forEach { collect(it, target) }
+                return
             }
+        }
+
+        val fqn = fqnGenerator.generate(descriptor)
+        if (fqn.shared && isOpaque(fqn.descriptor)) {
+            target[fqn.names.last()] = fqn.descriptor
         }
     }
 

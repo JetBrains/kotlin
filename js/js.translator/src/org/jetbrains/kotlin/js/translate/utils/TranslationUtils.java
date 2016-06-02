@@ -54,7 +54,10 @@ public final class TranslationUtils {
     public static JsPropertyInitializer translateFunctionAsEcma5PropertyDescriptor(@NotNull JsFunction function,
             @NotNull FunctionDescriptor descriptor,
             @NotNull TranslationContext context) {
-        if (DescriptorUtils.isExtension(descriptor)) {
+        if (DescriptorUtils.isExtension(descriptor) ||
+            descriptor instanceof PropertyAccessorDescriptor &&
+            shouldGenerateAccessors(((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty())
+        ) {
             return translateExtensionFunctionAsEcma5DataDescriptor(function, descriptor, context);
         }
         else {
@@ -298,5 +301,25 @@ public final class TranslationUtils {
         }
         DeclarationDescriptor descriptor = context.bindingContext().get(BindingContext.REFERENCE_TARGET, ((KtSimpleNameExpression) expression));
         return !(descriptor instanceof LocalVariableDescriptor) || !((LocalVariableDescriptor) descriptor).isDelegated();
+    }
+
+    public static boolean shouldGenerateAccessors(@NotNull CallableDescriptor descriptor) {
+        if (descriptor instanceof PropertyDescriptor) {
+            return shouldGenerateAccessors((PropertyDescriptor) descriptor);
+        }
+        else if (descriptor instanceof PropertyAccessorDescriptor) {
+            return shouldGenerateAccessors(((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty());
+        }
+        else {
+            return false;
+        }
+    }
+
+    private static boolean shouldGenerateAccessors(@NotNull PropertyDescriptor property) {
+        if (AnnotationsUtils.hasJsNameInAccessors(property)) return true;
+        for (PropertyDescriptor overriddenProperty : property.getOverriddenDescriptors()) {
+            if (shouldGenerateAccessors(overriddenProperty)) return true;
+        }
+        return false;
     }
 }

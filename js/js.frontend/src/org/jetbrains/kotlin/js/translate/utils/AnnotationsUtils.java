@@ -20,10 +20,7 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.js.PredefinedAnnotation;
 import org.jetbrains.kotlin.name.FqName;
@@ -143,6 +140,12 @@ public final class AnnotationsUtils {
         AnnotationDescriptor annotation = getAnnotationByName(descriptor, new FqName(JS_NAME));
         if (annotation == null) return null;
 
+        if (descriptor instanceof PropertyAccessorDescriptor) {
+            PropertyAccessorDescriptor accessor = (PropertyAccessorDescriptor) descriptor;
+            AnnotationDescriptor propertyAnnotation = getAnnotationByName(accessor.getCorrespondingProperty(), new FqName(JS_NAME));
+            if (propertyAnnotation == annotation) return null;
+        }
+
         ConstantValue<?> value = annotation.getAllValueArguments().values().iterator().next();
         assert value != null : "JsName annotation should always declare string parameter";
 
@@ -201,5 +204,12 @@ public final class AnnotationsUtils {
         }
         ClassDescriptor containingClass = DescriptorUtils.getContainingClass(descriptor);
         return containingClass != null && hasAnnotationOrInsideAnnotatedClass(containingClass, fqName);
+    }
+
+    public static boolean hasJsNameInAccessors(@NotNull PropertyDescriptor property) {
+        for (PropertyAccessorDescriptor accessor : property.getAccessors()) {
+            if (getJsName(accessor) != null) return true;
+        }
+        return false;
     }
 }
