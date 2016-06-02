@@ -235,7 +235,7 @@ internal class NotNullTypeParameter(override val delegate: SimpleType) : CustomT
         get() = false
 
     private fun SimpleType.prepareReplacement(): SimpleType {
-        val result = TypeUtils.makeNullableAsSpecified(this, false)
+        val result = makeNullableAsSpecified(false)
         if (!this.isTypeParameter()) return result
 
         return NotNullTypeParameter(result)

@@ -612,7 +612,7 @@ public abstract class KotlinBuiltIns {
 
     @NotNull
     public SimpleType getNullableNothingType() {
-        return TypeUtils.makeNullable(getNothingType());
+        return getNothingType().makeNullableAsSpecified(true);
     }
 
     @NotNull
@@ -622,7 +622,7 @@ public abstract class KotlinBuiltIns {
 
     @NotNull
     public SimpleType getNullableAnyType() {
-        return TypeUtils.makeNullable(getAnyType());
+        return getAnyType().makeNullableAsSpecified(true);
     }
 
     @NotNull

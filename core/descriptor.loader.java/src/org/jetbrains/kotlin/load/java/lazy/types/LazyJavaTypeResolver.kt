@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.Variance.*
 import org.jetbrains.kotlin.types.typeUtil.createProjection
-import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.kotlin.utils.toReadOnlyList
@@ -90,8 +89,8 @@ class LazyJavaTypeResolver(
             if (primitiveType != null) {
                 val jetType = c.module.builtIns.getPrimitiveArrayKotlinType(primitiveType)
                 return@run if (attr.allowFlexible)
-                    KotlinTypeFactory.flexibleType(jetType, TypeUtils.makeNullable(jetType))
-                else TypeUtils.makeNullableAsSpecified(jetType, !attr.isMarkedNotNull)
+                    KotlinTypeFactory.flexibleType(jetType, jetType.makeNullableAsSpecified(true))
+                else jetType.makeNullableAsSpecified(!attr.isMarkedNotNull)
             }
 
             val componentType = transformJavaType(javaComponentType,
@@ -100,12 +99,12 @@ class LazyJavaTypeResolver(
             if (attr.allowFlexible) {
                 return@run KotlinTypeFactory.flexibleType(
                         c.module.builtIns.getArrayType(INVARIANT, componentType),
-                        TypeUtils.makeNullable(c.module.builtIns.getArrayType(OUT_VARIANCE, componentType)))
+                        c.module.builtIns.getArrayType(OUT_VARIANCE, componentType).makeNullableAsSpecified(true))
             }
 
             val projectionKind = if (attr.howThisTypeIsUsed == MEMBER_SIGNATURE_CONTRAVARIANT || isVararg) OUT_VARIANCE else INVARIANT
             val result = c.module.builtIns.getArrayType(projectionKind, componentType)
-            return@run TypeUtils.makeNullableAsSpecified(result, !attr.isMarkedNotNull)
+            return@run result.makeNullableAsSpecified(!attr.isMarkedNotNull)
         }.replaceAnnotations(attr.typeAnnotations)
     }
 

@@ -96,28 +96,16 @@ public class TypeUtils {
     }
 
     @NotNull
-    public static SimpleType makeNullable(@NotNull SimpleType type) {
-        return KotlinTypeKt.asSimpleType(makeNullableAsSpecified(type, true));
-    }
-
-    @NotNull
-    public static SimpleType makeNotNullable(@NotNull SimpleType type) {
-        return KotlinTypeKt.asSimpleType(makeNullableAsSpecified(type, false));
-    }
-
-    @NotNull
-    public static SimpleType makeNullableAsSpecified(@NotNull SimpleType type, boolean nullable) {
-        return KotlinTypeKt.asSimpleType(makeNullableAsSpecified((KotlinType) type, nullable));
-    }
-
-    @NotNull
     public static KotlinType makeNullableAsSpecified(@NotNull KotlinType type, boolean nullable) {
         return type.unwrap().makeNullableAsSpecified(nullable);
     }
 
     @NotNull
     public static SimpleType makeNullableIfNeeded(@NotNull SimpleType type, boolean nullable) {
-        return KotlinTypeKt.asSimpleType(makeNullableIfNeeded((KotlinType) type, nullable));
+        if (nullable) {
+            return type.makeNullableAsSpecified(true);
+        }
+        return type;
     }
 
     @NotNull

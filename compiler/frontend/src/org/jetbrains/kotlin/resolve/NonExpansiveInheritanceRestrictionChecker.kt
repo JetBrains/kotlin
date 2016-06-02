@@ -103,7 +103,7 @@ object NonExpansiveInheritanceRestrictionChecker {
                         val constituents = constituentTypes(setOf(typeProjection.type))
 
                         for (typeParameter in typeParameters) {
-                            if (typeParameter.defaultType in constituents || TypeUtils.makeNullable(typeParameter.defaultType) in constituents) {
+                            if (typeParameter.defaultType in constituents || typeParameter.defaultType.makeNullableAsSpecified(true) in constituents) {
                                 addEdge(typeParameter, constituentTypeConstructor.parameters[i], !TypeUtils.isTypeParameter(typeProjection.type))
                             }
                         }
@@ -126,7 +126,7 @@ object NonExpansiveInheritanceRestrictionChecker {
                         val boundClosure = boundClosure(bounds)
                         val constituentTypes = constituentTypes(boundClosure)
                         for (typeParameter in typeParameters) {
-                            if (typeParameter.defaultType in constituentTypes || TypeUtils.makeNullable(typeParameter.defaultType) in constituentTypes) {
+                            if (typeParameter.defaultType in constituentTypes || typeParameter.defaultType.makeNullableAsSpecified(true) in constituentTypes) {
                                 addEdge(typeParameter, originalTypeParameter, true)
                             }
                         }

@@ -45,7 +45,6 @@ val KotlinType.builtIns: KotlinBuiltIns
     get() = constructor.builtIns
 
 fun KotlinType.makeNullable() = TypeUtils.makeNullable(this)
-fun KotlinType.makeNullableIfNeeded(nullable: Boolean) = TypeUtils.makeNullableIfNeeded(this, nullable)
 fun KotlinType.makeNotNullable() = TypeUtils.makeNotNullable(this)
 
 fun KotlinType.immediateSupertypes(): Collection<KotlinType> = TypeUtils.getImmediateSupertypes(this)

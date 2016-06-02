@@ -22,9 +22,9 @@ import org.jetbrains.kotlin.codegen.generateIsCheck
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.common.intConstant
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.builtIns
-import org.jetbrains.kotlin.types.typeUtil.makeNullableIfNeeded
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -43,7 +43,7 @@ class ReificationArgument(
             )
 
     fun reify(replacementAsmType: Type, kotlinType: KotlinType) =
-            Pair(Type.getType("[".repeat(arrayDepth) + replacementAsmType), kotlinType.arrayOf(arrayDepth).makeNullableIfNeeded(nullable))
+            Pair(Type.getType("[".repeat(arrayDepth) + replacementAsmType), TypeUtils.makeNullableIfNeeded(kotlinType.arrayOf(arrayDepth), nullable))
 
     private fun KotlinType.arrayOf(arrayDepth: Int): KotlinType {
         val builtins = this.builtIns
