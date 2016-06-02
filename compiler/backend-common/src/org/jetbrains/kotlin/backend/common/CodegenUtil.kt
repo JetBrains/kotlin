@@ -27,9 +27,9 @@ import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.isDynamic
+import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.keysToMapExceptNulls
 
 object CodegenUtil {
@@ -156,7 +156,7 @@ object CodegenUtil {
     @JvmStatic
     fun isEnumValueOfMethod(functionDescriptor: FunctionDescriptor): Boolean {
         val methodTypeParameters = functionDescriptor.valueParameters
-        val nullableString = TypeUtils.makeNullable(functionDescriptor.builtIns.stringType)
+        val nullableString = functionDescriptor.builtIns.stringType.makeNullable()
         return DescriptorUtils.ENUM_VALUE_OF == functionDescriptor.name
                && methodTypeParameters.size == 1
                && KotlinTypeChecker.DEFAULT.isSubtypeOf(methodTypeParameters[0].type, nullableString)

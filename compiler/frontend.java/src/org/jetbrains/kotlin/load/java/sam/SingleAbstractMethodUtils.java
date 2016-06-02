@@ -73,7 +73,7 @@ public class SingleAbstractMethodUtils {
 
                 if (FlexibleTypesKt.isNullabilityFlexible(samType)) {
                     SimpleType simpleType = KotlinTypeKt.asSimpleType(type);
-                    return KotlinTypeFactory.flexibleType(simpleType, TypeUtils.makeNullable(simpleType));
+                    return KotlinTypeFactory.flexibleType(simpleType, simpleType.makeNullableAsSpecified(true));
                 }
 
                 return TypeUtils.makeNullableAsSpecified(type, samType.isMarkedNullable());

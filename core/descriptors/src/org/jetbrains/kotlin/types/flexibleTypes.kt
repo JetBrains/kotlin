@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererOptions
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 
 
 fun KotlinType.isFlexible(): Boolean = unwrap() is FlexibleType
@@ -117,7 +116,7 @@ class FlexibleTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : Flexibl
         val unwrapped = replacement.unwrap()
         return when(unwrapped) {
             is FlexibleType -> unwrapped
-            is SimpleType -> KotlinTypeFactory.flexibleType(unwrapped, TypeUtils.makeNullable(unwrapped))
+            is SimpleType -> KotlinTypeFactory.flexibleType(unwrapped, unwrapped.makeNullableAsSpecified(true))
         }
     }
 

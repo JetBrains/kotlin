@@ -48,16 +48,16 @@ private fun KotlinType.approximateNonDynamicFlexibleTypes(preferNotNull: Boolean
         // Foo<Bar!>! -> Foo<Bar>?
         var approximation =
                 if (isCollection)
-                    TypeUtils.makeNullableAsSpecified(if (isAnnotatedReadOnly()) flexible.upperBound else flexible.lowerBound, !preferNotNull)
+                    (if (isAnnotatedReadOnly()) flexible.upperBound else flexible.lowerBound).makeNullableAsSpecified(!preferNotNull)
                 else
                     if (preferNotNull) flexible.lowerBound else flexible.upperBound
 
         approximation = approximation.approximateNonDynamicFlexibleTypes()
 
-        approximation = if (isAnnotatedNotNull()) TypeUtils.makeNotNullable(approximation) else approximation
+        approximation = if (isAnnotatedNotNull()) approximation.makeNullableAsSpecified(false) else approximation
 
         if (approximation.isMarkedNullable && !flexible.lowerBound.isMarkedNullable && TypeUtils.isTypeParameter(approximation) && TypeUtils.hasNullableSuperType(approximation)) {
-            approximation = TypeUtils.makeNotNullable(approximation)
+            approximation = approximation.makeNullableAsSpecified(false)
         }
 
         return approximation
