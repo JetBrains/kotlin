@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.resolve
 
 import com.intellij.util.SmartList
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageFeatureSettings
 import org.jetbrains.kotlin.context.TypeLazinessToken
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -55,7 +57,8 @@ class TypeResolver(
         private val lazinessToken: TypeLazinessToken,
         private val dynamicTypesSettings: DynamicTypesSettings,
         private val dynamicCallableDescriptors: DynamicCallableDescriptors,
-        private val identifierChecker: IdentifierChecker
+        private val identifierChecker: IdentifierChecker,
+        private val languageFeatureSettings: LanguageFeatureSettings
 ) {
 
     open class TypeTransformerForTests {
@@ -352,7 +355,7 @@ class TypeResolver(
                 type(resolveTypeForTypeParameter(c, annotations, descriptor, qualifierPart.expression, qualifierPart.typeArguments))
             }
             is ClassDescriptor -> resolveTypeForClass(c, annotations, descriptor, element, qualifierResolutionResult)
-            is TypeAliasDescriptor -> resolveTypeForTypeAlias(c, annotations, descriptor, element as KtUserType /* TODO */, qualifierResolutionResult)
+            is TypeAliasDescriptor -> resolveTypeForTypeAlias(c, annotations, descriptor, element as KtUserType, qualifierResolutionResult)
             else -> error("Unexpected classifier type: ${descriptor.javaClass}")
         }
     }
@@ -438,6 +441,10 @@ class TypeResolver(
         val projectionFromAllQualifierParts = qualifierResolutionResult.allProjections
 
         if (ErrorUtils.isError(descriptor)) {
+            return createErrorTypeForTypeConstructor(c, projectionFromAllQualifierParts, typeConstructor)
+        }
+        if (!languageFeatureSettings.supportsFeature(LanguageFeature.TypeAliases)) {
+            c.trace.report(UNSUPPORTED_TYPEALIAS.on(type))
             return createErrorTypeForTypeConstructor(c, projectionFromAllQualifierParts, typeConstructor)
         }
 
@@ -698,7 +705,7 @@ class TypeResolver(
             typeConstructor: TypeConstructor
     ): PossiblyBareType =
             type(ErrorUtils.createErrorTypeWithArguments(
-                    "$typeConstructor",
+                    typeConstructor.declarationDescriptor?.name?.asString() ?: typeConstructor.toString(),
                     resolveTypeProjectionsWithErrorConstructor(c, arguments)
             ))
 

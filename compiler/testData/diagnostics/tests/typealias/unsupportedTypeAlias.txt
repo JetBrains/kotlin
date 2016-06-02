@@ -1,7 +1,10 @@
 package
 
+public typealias CA = [ERROR : CA]
+public typealias L</*0*/ T>  = [ERROR : L]
+public typealias S = [ERROR : S]
 public val test1: [ERROR : S]
-public fun test2(/*0*/ x: [ERROR : L<S>]<[ERROR : S]>): [ERROR : L<S>]<[ERROR : S]>
+public fun test2(/*0*/ x: [ERROR : L]<[ERROR : S]>): [ERROR : L]<[ERROR : S]>
 
 public final class C {
     public constructor C()

@@ -19344,6 +19344,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("noRHS.kt")
+            public void testNoRHS() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/noRHS.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("parameterRestrictions.kt")
             public void testParameterRestrictions() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/parameterRestrictions.kt");
