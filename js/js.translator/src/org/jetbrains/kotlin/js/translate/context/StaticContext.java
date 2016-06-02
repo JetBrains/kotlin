@@ -236,7 +236,7 @@ public final class StaticContext {
                 expression = Namer.kotlinObject();
                 partNames = getNameForFQNPart(part);
             }
-            else if (isNativeObject(part.getDescriptor()) && !isNativeObject(part.getScope())) {
+            else if (isNative(part.getDescriptor()) && !isNativeObject(part.getScope())) {
                 expression = null;
                 partNames = getNameForFQNPart(part);
             }
@@ -256,6 +256,17 @@ public final class StaticContext {
             assert expression != null : "Since partNames is not empty, expression must be non-null";
             return expression;
         }
+    }
+
+    private static boolean isNative(DeclarationDescriptor descriptor) {
+        if (isNativeObject(descriptor)) return true;
+
+        if (descriptor instanceof PropertyAccessorDescriptor) {
+            PropertyAccessorDescriptor accessor = (PropertyAccessorDescriptor) descriptor;
+            return isNative(accessor.getCorrespondingProperty());
+        }
+
+        return false;
     }
 
     @NotNull

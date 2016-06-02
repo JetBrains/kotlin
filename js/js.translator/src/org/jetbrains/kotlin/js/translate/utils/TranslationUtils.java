@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.js.translate.utils;
 
 import com.google.dart.compiler.backend.js.ast.*;
+import com.google.dart.compiler.backend.js.ast.JsBinaryOperator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -51,7 +52,10 @@ public final class TranslationUtils {
     public static JsPropertyInitializer translateFunctionAsEcma5PropertyDescriptor(@NotNull JsFunction function,
             @NotNull FunctionDescriptor descriptor,
             @NotNull TranslationContext context) {
-        if (DescriptorUtils.isExtension(descriptor)) {
+        if (DescriptorUtils.isExtension(descriptor) ||
+            descriptor instanceof PropertyAccessorDescriptor &&
+            shouldGenerateAccessors(((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty())
+        ) {
             return translateExtensionFunctionAsEcma5DataDescriptor(function, descriptor, context);
         }
         else {
@@ -281,5 +285,25 @@ public final class TranslationUtils {
             suggestedName += context.getNameForDescriptor(descriptor).getIdent();
         }
         return suggestedName;
+    }
+
+    public static boolean shouldGenerateAccessors(@NotNull CallableDescriptor descriptor) {
+        if (descriptor instanceof PropertyDescriptor) {
+            return shouldGenerateAccessors((PropertyDescriptor) descriptor);
+        }
+        else if (descriptor instanceof PropertyAccessorDescriptor) {
+            return shouldGenerateAccessors(((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty());
+        }
+        else {
+            return false;
+        }
+    }
+
+    private static boolean shouldGenerateAccessors(@NotNull PropertyDescriptor property) {
+        if (AnnotationsUtils.hasJsNameInAccessors(property)) return true;
+        for (PropertyDescriptor overriddenProperty : property.getOverriddenDescriptors()) {
+            if (shouldGenerateAccessors(overriddenProperty)) return true;
+        }
+        return false;
     }
 }

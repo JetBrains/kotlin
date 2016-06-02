@@ -25,11 +25,11 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
+import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.psi.KtSuperExpression
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
@@ -63,7 +63,7 @@ fun VariableAccessInfo.isGetAccess(): Boolean = value == null
 
 fun VariableAccessInfo.getAccessDescriptor(): DeclarationDescriptor {
     val descriptor = variableDescriptor
-    if (descriptor is PropertyDescriptor && descriptor.isExtension) {
+    if (descriptor is PropertyDescriptor && (descriptor.isExtension || TranslationUtils.shouldGenerateAccessors(descriptor))) {
         val propertyAccessorDescriptor = if (isGetAccess()) descriptor.getter else descriptor.setter
         return propertyAccessorDescriptor!!
     }

@@ -24,9 +24,9 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.SimpleDeclarationChecker
+import org.jetbrains.kotlin.resolve.DeclarationChecker
 
-object JsNameChecker : SimpleDeclarationChecker {
+object JsNameChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink,
                        bindingContext: BindingContext) {
         if (descriptor is PropertyDescriptor) {
@@ -36,6 +36,7 @@ object JsNameChecker : SimpleDeclarationChecker {
             }
         }
 
+        if (AnnotationsUtils.getJsName(descriptor) == null) return
         val jsNamePsi = AnnotationsUtils.getJsNameAnnotationPsi(bindingContext, declaration) ?: return
 
         when (descriptor) {
@@ -45,7 +46,7 @@ object JsNameChecker : SimpleDeclarationChecker {
                 }
             }
             is PropertyAccessorDescriptor -> {
-                if (!descriptor.isDefault && AnnotationsUtils.getJsName(descriptor.correspondingProperty) != null) {
+                if (AnnotationsUtils.getJsName(descriptor.correspondingProperty) != null) {
                     diagnosticHolder.report(ErrorsJs.JS_NAME_ON_ACCESSOR_AND_PROPERTY.on(jsNamePsi))
                 }
             }

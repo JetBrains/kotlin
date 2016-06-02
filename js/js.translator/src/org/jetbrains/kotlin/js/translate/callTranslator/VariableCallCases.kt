@@ -23,7 +23,9 @@ import com.google.dart.compiler.backend.js.ast.metadata.SideEffectKind
 import com.google.dart.compiler.backend.js.ast.metadata.sideEffects
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.Namer.getCapturedVarAccessor
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.pureFqn
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.resolve.BindingContextUtils.isVarCapturedInClosure
@@ -36,16 +38,36 @@ object NativeVariableAccessCase : VariableAccessCase() {
     }
 
     override fun VariableAccessInfo.dispatchReceiver(): JsExpression {
-        return constructAccessExpression(JsNameRef(variableName, dispatchReceiver!!))
+        val descriptor = resolvedCall.resultingDescriptor
+        return if (descriptor is PropertyDescriptor && TranslationUtils.shouldGenerateAccessors(descriptor)) {
+            val methodRef = context.getNameForDescriptor(getAccessDescriptor())
+            JsInvocation(pureFqn(methodRef, dispatchReceiver!!), *additionalArguments.toTypedArray())
+        }
+        else {
+            constructAccessExpression(JsNameRef(variableName, dispatchReceiver!!))
+        }
     }
 
     override fun VariableAccessInfo.noReceivers(): JsExpression {
-        return constructAccessExpression(variableName.makeRef())
+        val descriptor = resolvedCall.resultingDescriptor
+        return if (descriptor is PropertyDescriptor && TranslationUtils.shouldGenerateAccessors(descriptor)) {
+            val methodRef = context.aliasOrValue(callableDescriptor) { context.getQualifiedReference(getAccessDescriptor()) }
+            JsInvocation(methodRef, *additionalArguments.toTypedArray())
+        }
+        else {
+            constructAccessExpression(variableName.makeRef())
+        }
     }
 }
 
 object DefaultVariableAccessCase : VariableAccessCase() {
     override fun VariableAccessInfo.noReceivers(): JsExpression {
+        val descriptor = resolvedCall.resultingDescriptor
+        if (descriptor is PropertyDescriptor && TranslationUtils.shouldGenerateAccessors(descriptor)) {
+            val methodRef = context.aliasOrValue(callableDescriptor) { context.getQualifiedReference(getAccessDescriptor()) }
+            return JsInvocation(methodRef, *additionalArguments.toTypedArray())
+        }
+
         val functionRef = context.aliasOrValue(callableDescriptor) {
             context.getQualifiedReference(variableDescriptor)
         }
@@ -61,30 +83,28 @@ object DefaultVariableAccessCase : VariableAccessCase() {
     }
 
     override fun VariableAccessInfo.dispatchReceiver(): JsExpression {
-        val accessor = JsNameRef(variableName, dispatchReceiver!!)
-        val descriptor = callableDescriptor
-        if (descriptor is PropertyDescriptor && !JsDescriptorUtils.sideEffectsPossibleOnRead(descriptor)) {
-            accessor.sideEffects = SideEffectKind.DEPENDS_ON_STATE
+        val descriptor = resolvedCall.resultingDescriptor
+        return if (descriptor is PropertyDescriptor && TranslationUtils.shouldGenerateAccessors(descriptor)) {
+            val callExpr = pureFqn(context.getNameForDescriptor(getAccessDescriptor()), dispatchReceiver!!)
+            JsInvocation(callExpr, *additionalArguments.toTypedArray())
         }
-        return constructAccessExpression(accessor)
+        else {
+            val accessor = JsNameRef(variableName, dispatchReceiver!!)
+            if (descriptor is PropertyDescriptor && !JsDescriptorUtils.sideEffectsPossibleOnRead(descriptor)) {
+                accessor.sideEffects = SideEffectKind.DEPENDS_ON_STATE
+            }
+            constructAccessExpression(accessor)
+        }
     }
 
     override fun VariableAccessInfo.extensionReceiver(): JsExpression {
         val functionRef = context.aliasOrValue(callableDescriptor) { context.getQualifiedReference(getAccessDescriptor()) }
-        return if (isGetAccess()) {
-            JsInvocation(functionRef, extensionReceiver!!)
-        } else {
-            JsInvocation(functionRef, extensionReceiver!!, value!!)
-        }
+        return  JsInvocation(functionRef, extensionReceiver!!, *additionalArguments.toTypedArray())
     }
 
     override fun VariableAccessInfo.bothReceivers(): JsExpression {
         val funRef = JsNameRef(context.getNameForDescriptor(getAccessDescriptor()), dispatchReceiver!!)
-        return if (isGetAccess()) {
-            JsInvocation(funRef, extensionReceiver!!)
-        } else {
-            JsInvocation(funRef, extensionReceiver!!, value!!)
-        }
+        return JsInvocation(funRef, extensionReceiver!!, *additionalArguments.toTypedArray())
     }
 }
 
@@ -116,13 +136,24 @@ object DelegatePropertyAccessIntrinsic : DelegateIntrinsic<VariableAccessInfo> {
 object SuperPropertyAccessCase : VariableAccessCase() {
     override fun VariableAccessInfo.dispatchReceiver(): JsExpression {
         val variableName = context.program().getStringLiteral(this.variableName.ident)
+        val descriptor = resolvedCall.resultingDescriptor
 
-        return if (isGetAccess())
-            JsInvocation(context.namer().callGetProperty, dispatchReceiver!!, calleeOwner, variableName)
-        else
-            JsInvocation(context.namer().callSetProperty, dispatchReceiver!!, calleeOwner, variableName, value!!)
+        return if (descriptor is PropertyDescriptor && TranslationUtils.shouldGenerateAccessors(descriptor)) {
+            val accessor = getAccessDescriptor()
+            val prototype = pureFqn(Namer.getPrototypeName(), context.getQualifiedReference(descriptor.containingDeclaration))
+            val funRef = Namer.getFunctionCallRef(pureFqn(context.getNameForDescriptor(accessor), prototype))
+            val arguments = listOf(dispatchReceiver!!) + additionalArguments
+            JsInvocation(funRef, *arguments.toTypedArray())
+        }
+        else {
+            val callExpr = if (isGetAccess()) context.namer().callGetProperty else context.namer().callSetProperty
+            val arguments = listOf(dispatchReceiver!!, calleeOwner, variableName) + additionalArguments
+            JsInvocation(callExpr, *arguments.toTypedArray())
+        }
     }
 }
+
+private val VariableAccessInfo.additionalArguments: List<JsExpression> get() = value?.let { listOf(it) }.orEmpty()
 
 fun VariableAccessInfo.translateVariableAccess(): JsExpression {
     val intrinsic = DelegatePropertyAccessIntrinsic.intrinsic(this)

@@ -325,6 +325,12 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
             doTest(fileName);
         }
 
+        @TestMetadata("jsNameOnAccessors.kt")
+        public void testJsNameOnAccessors() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/jsNameOnAccessors.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("jsNameOnPropertyAndAccessor.kt")
         public void testJsNameOnPropertyAndAccessor() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/jsNameOnPropertyAndAccessor.kt");

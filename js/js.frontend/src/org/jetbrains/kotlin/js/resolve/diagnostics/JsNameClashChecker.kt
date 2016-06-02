@@ -26,12 +26,11 @@ import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DeclarationChecker
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.SimpleDeclarationChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.source.getPsi
 
-class JsNameClashChecker : SimpleDeclarationChecker {
+class JsNameClashChecker : DeclarationChecker {
     private val fqnGenerator = FQNGenerator()
     private val scopes = mutableMapOf<DeclarationDescriptor, MutableMap<String, DeclarationDescriptor>>()
     private val clashedDescriptors = mutableSetOf<DeclarationDescriptor>()
@@ -97,14 +96,16 @@ class JsNameClashChecker : SimpleDeclarationChecker {
     }
 
     private fun collect(descriptor: DeclarationDescriptor, target: MutableMap<String, DeclarationDescriptor>) {
-        if (descriptor is PropertyDescriptor && descriptor.isExtension) {
-            descriptor.accessors.forEach { collect(it, target) }
-        }
-        else {
-            val fqn = fqnGenerator.generate(descriptor)
-            if (fqn.shared && isOpaque(fqn.descriptor)) {
-                target[fqn.names.last()] = fqn.descriptor
+        if (descriptor is PropertyDescriptor) {
+            if (descriptor.isExtension || AnnotationsUtils.hasJsNameInAccessors(descriptor)) {
+                descriptor.accessors.forEach { collect(it, target) }
+                return
             }
+        }
+
+        val fqn = fqnGenerator.generate(descriptor)
+        if (fqn.shared && isOpaque(fqn.descriptor)) {
+            target[fqn.names.last()] = fqn.descriptor
         }
     }
 

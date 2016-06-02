@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.js.resolve.diagnostics.NativeInnerClassChecker
 import org.jetbrains.kotlin.resolve.IdentifierChecker
 import org.jetbrains.kotlin.resolve.OverloadFilter
 import org.jetbrains.kotlin.resolve.PlatformConfigurator
-import org.jetbrains.kotlin.resolve.scopes.SyntheticConstructorsProvider
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.types.DynamicTypesAllowed
 
@@ -46,8 +45,6 @@ object JsPlatformConfigurator : PlatformConfigurator(
 
         container.useImpl<JsCallChecker>()
         container.useInstance(SyntheticScopes.Empty)
-        container.useInstance(SyntheticConstructorsProvider.Empty)
-        container.useInstance(JsNameChecker())
         container.useInstance(JsNameClashChecker())
     }
 }
