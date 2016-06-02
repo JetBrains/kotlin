@@ -666,6 +666,8 @@
 
     <annotationSupport language="kotlin" implementationClass="com.intellij.psi.impl.source.tree.java.JavaAnnotationSupport"/>
 
+    <createFromTemplateHandler implementation="org.jetbrains.kotlin.idea.actions.KotlinCreateFromTemplateHandler"/>
+
     <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.IfNullToElvisIntention</className>
       <category>Kotlin</category>
