@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.types.expressions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.builtins.ReflectionTypes;
+import org.jetbrains.kotlin.config.LanguageFeatureSettings;
 import org.jetbrains.kotlin.context.GlobalContext;
 import org.jetbrains.kotlin.incremental.components.LookupTracker;
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
@@ -61,8 +62,8 @@ public class ExpressionTypingComponents {
     /*package*/ DeclarationsCheckerBuilder declarationsCheckerBuilder;
     /*package*/ LocalVariableResolver localVariableResolver;
     /*package*/ LookupTracker lookupTracker;
-    /*package*/ DelegatedPropertyResolver delegatedPropertyResolver;
     /*package*/ OverloadChecker overloadChecker;
+    /*package*/ LanguageFeatureSettings languageFeatureSettings;
 
     @Inject
     public void setGlobalContext(@NotNull GlobalContext globalContext) {
@@ -210,12 +211,12 @@ public class ExpressionTypingComponents {
     }
 
     @Inject
-    public void setDelegatedPropertyResolver(DelegatedPropertyResolver delegatedPropertyResolver) {
-        this.delegatedPropertyResolver = delegatedPropertyResolver;
+    public void setOverloadChecker(OverloadChecker overloadChecker) {
+        this.overloadChecker = overloadChecker;
     }
 
     @Inject
-    public void setOverloadChecker(OverloadChecker overloadChecker) {
-        this.overloadChecker = overloadChecker;
+    public void setLanguageFeatureSettings(@NotNull LanguageFeatureSettings languageFeatureSettings) {
+        this.languageFeatureSettings = languageFeatureSettings;
     }
 }

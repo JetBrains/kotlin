@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.resolve
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageFeatureSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -88,6 +90,11 @@ object ModifierCheckerCore {
             CONST_KEYWORD     to EnumSet.of(MEMBER_PROPERTY, TOP_LEVEL_PROPERTY),
             OPERATOR_KEYWORD  to EnumSet.of(FUNCTION),
             INFIX_KEYWORD     to EnumSet.of(FUNCTION)
+    )
+
+    val featureDependencies = mapOf(
+            COROUTINE_KEYWORD to LanguageFeature.Coroutines,
+            SUSPEND_KEYWORD   to LanguageFeature.Coroutines
     )
 
     // NOTE: deprecated targets must be possible!
@@ -242,6 +249,23 @@ object ModifierCheckerCore {
         return true
     }
 
+    private fun checkLanguageLevelSupport(
+            trace: BindingTrace,
+            node: ASTNode,
+            languageFeatureSettings: LanguageFeatureSettings
+    ): Boolean {
+        val modifier = node.elementType as KtModifierKeywordToken
+        val dependency = featureDependencies[modifier] ?: return true
+
+        if (!languageFeatureSettings.supportsFeature(dependency)) {
+            trace.report(Errors.UNSUPPORTED_FEATURE.on(node.psi, dependency))
+            return false
+        }
+
+        return true
+    }
+
+
     // Should return false if error is reported, true otherwise
     private fun checkParent(trace: BindingTrace, node: ASTNode, parentDescriptor: DeclarationDescriptor?): Boolean {
         val modifier = node.elementType as KtModifierKeywordToken
@@ -264,7 +288,13 @@ object ModifierCheckerCore {
 
     private val MODIFIER_KEYWORD_SET = TokenSet.orSet(KtTokens.SOFT_KEYWORDS, TokenSet.create(KtTokens.IN_KEYWORD))
 
-    private fun checkModifierList(list: KtModifierList, trace: BindingTrace, parentDescriptor: DeclarationDescriptor?, actualTargets: List<KotlinTarget>) {
+    private fun checkModifierList(
+            list: KtModifierList,
+            trace: BindingTrace,
+            parentDescriptor: DeclarationDescriptor?,
+            actualTargets: List<KotlinTarget>,
+            languageFeatureSettings: LanguageFeatureSettings
+    ) {
         // It's a list of all nodes with error already reported
         // General strategy: report no more than one error but any number of warnings
         val incorrectNodes = hashSetOf<ASTNode>()
@@ -283,21 +313,29 @@ object ModifierCheckerCore {
                 else if (!checkParent(trace, second, parentDescriptor)) {
                     incorrectNodes += second
                 }
+                else if (!checkLanguageLevelSupport(trace, second, languageFeatureSettings)) {
+                    incorrectNodes += second
+                }
             }
         }
     }
 
-    fun check(listOwner: KtModifierListOwner, trace: BindingTrace, descriptor: DeclarationDescriptor?) {
+    fun check(
+            listOwner: KtModifierListOwner,
+            trace: BindingTrace,
+            descriptor: DeclarationDescriptor?,
+            languageFeatureSettings: LanguageFeatureSettings
+    ) {
         if (listOwner is KtDeclarationWithBody) {
             // JetFunction or JetPropertyAccessor
             for (parameter in listOwner.valueParameters) {
                 if (!parameter.hasValOrVar()) {
-                    check(parameter, trace, null)
+                    check(parameter, trace, null, languageFeatureSettings)
                 }
             }
         }
         val actualTargets = AnnotationChecker.getDeclarationSiteActualTargetList(listOwner, descriptor as? ClassDescriptor, trace)
         val list = listOwner.modifierList ?: return
-        checkModifierList(list, trace, descriptor?.containingDeclaration, actualTargets)
+        checkModifierList(list, trace, descriptor?.containingDeclaration, actualTargets, languageFeatureSettings)
     }
 }

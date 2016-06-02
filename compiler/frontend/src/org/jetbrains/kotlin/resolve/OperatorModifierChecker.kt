@@ -32,6 +32,8 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageFeatureSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
@@ -40,20 +42,28 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.util.CheckResult
 import org.jetbrains.kotlin.util.OperatorChecks
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
-class OperatorModifierChecker : DeclarationChecker {
-    override fun check(
+object OperatorModifierChecker {
+    fun check(
             declaration: KtDeclaration,
             descriptor: DeclarationDescriptor,
             diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext
+            languageFeatureSettings: LanguageFeatureSettings
     ) {
         val functionDescriptor = descriptor as? FunctionDescriptor ?: return
         if (!functionDescriptor.isOperator) return
         val modifier = declaration.modifierList?.getModifier(KtTokens.OPERATOR_KEYWORD) ?: return
 
         val checkResult = OperatorChecks.checkOperator(functionDescriptor)
-        if (checkResult.isSuccess) return
+        if (checkResult.isSuccess) {
+            if (functionDescriptor.name == OperatorNameConventions.COROUTINE_HANDLE_RESULT
+                    && !languageFeatureSettings.supportsFeature(LanguageFeature.Coroutines)
+            ) {
+                diagnosticHolder.report(Errors.UNSUPPORTED_FEATURE.on(modifier, LanguageFeature.Coroutines))
+            }
+            return
+        }
 
         val errorDescription = if (checkResult is CheckResult.IllegalSignature)
             checkResult.error

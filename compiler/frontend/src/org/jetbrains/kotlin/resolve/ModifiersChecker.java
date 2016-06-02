@@ -21,6 +21,7 @@ import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.config.LanguageFeatureSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1;
 import org.jetbrains.kotlin.lexer.KtKeywordToken;
@@ -157,9 +158,12 @@ public class ModifiersChecker {
 
         @NotNull
         private final BindingTrace trace;
+        @NotNull
+        private final LanguageFeatureSettings languageFeatureSettings;
 
-        private ModifiersCheckingProcedure(@NotNull BindingTrace trace) {
+        private ModifiersCheckingProcedure(@NotNull BindingTrace trace, LanguageFeatureSettings languageFeatureSettings) {
             this.trace = trace;
+            this.languageFeatureSettings = languageFeatureSettings;
         }
 
         public void checkParameterHasNoValOrVar(
@@ -182,7 +186,7 @@ public class ModifiersChecker {
             AnnotationUseSiteTargetChecker.INSTANCE.check(modifierListOwner, descriptor, trace);
             runDeclarationCheckers(modifierListOwner, descriptor);
             annotationChecker.check(modifierListOwner, trace, descriptor);
-            ModifierCheckerCore.INSTANCE.check(modifierListOwner, trace, descriptor);
+            ModifierCheckerCore.INSTANCE.check(modifierListOwner, trace, descriptor, languageFeatureSettings);
         }
 
         public void checkModifiersForLocalDeclaration(
@@ -194,10 +198,10 @@ public class ModifiersChecker {
 
         public void checkModifiersForDestructuringDeclaration(@NotNull KtDestructuringDeclaration multiDeclaration) {
             annotationChecker.check(multiDeclaration, trace, null);
-            ModifierCheckerCore.INSTANCE.check(multiDeclaration, trace, null);
+            ModifierCheckerCore.INSTANCE.check(multiDeclaration, trace, null, languageFeatureSettings);
             for (KtDestructuringDeclarationEntry multiEntry: multiDeclaration.getEntries()) {
                 annotationChecker.check(multiEntry, trace, null);
-                ModifierCheckerCore.INSTANCE.check(multiEntry, trace, null);
+                ModifierCheckerCore.INSTANCE.check(multiEntry, trace, null, languageFeatureSettings);
                 UnderscoreChecker.INSTANCE.checkNamed(multiEntry, trace);
             }
         }
@@ -235,13 +239,14 @@ public class ModifiersChecker {
             for (DeclarationChecker checker : declarationCheckers) {
                 checker.check(declaration, descriptor, trace, trace.getBindingContext());
             }
+            OperatorModifierChecker.INSTANCE.check(declaration, descriptor, trace, languageFeatureSettings);
         }
 
         public void checkTypeParametersModifiers(@NotNull KtModifierListOwner modifierListOwner) {
             if (!(modifierListOwner instanceof KtTypeParameterListOwner)) return;
             List<KtTypeParameter> typeParameters = ((KtTypeParameterListOwner) modifierListOwner).getTypeParameters();
             for (KtTypeParameter typeParameter : typeParameters) {
-                ModifierCheckerCore.INSTANCE.check(typeParameter, trace, null);
+                ModifierCheckerCore.INSTANCE.check(typeParameter, trace, null, languageFeatureSettings);
             }
         }
     }
@@ -252,13 +257,21 @@ public class ModifiersChecker {
     @NotNull
     private final Iterable<DeclarationChecker> declarationCheckers;
 
-    public ModifiersChecker(@NotNull AnnotationChecker annotationChecker, @NotNull Iterable<DeclarationChecker> declarationCheckers) {
+    @NotNull
+    private final LanguageFeatureSettings languageFeatureSettings;
+
+    public ModifiersChecker(
+            @NotNull AnnotationChecker annotationChecker,
+            @NotNull Iterable<DeclarationChecker> declarationCheckers,
+            @NotNull LanguageFeatureSettings languageFeatureSettings
+    ) {
         this.annotationChecker = annotationChecker;
         this.declarationCheckers = declarationCheckers;
+        this.languageFeatureSettings = languageFeatureSettings;
     }
 
     @NotNull
     public ModifiersCheckingProcedure withTrace(@NotNull BindingTrace trace) {
-        return new ModifiersCheckingProcedure(trace);
+        return new ModifiersCheckingProcedure(trace, languageFeatureSettings);
     }
 }
