@@ -20,6 +20,9 @@
   <depends optional="true" config-file="injection.xml">org.intellij.intelliLang</depends>
   <depends optional="true" config-file="decompiler.xml">org.jetbrains.java.decompiler</depends>
 
+  <!--for android studio only-->
+  <depends>com.intellij.modules.androidstudio</depends>
+
   <!-- ULTIMATE-PLUGIN-PLACEHOLDER -->
 
   <project-components>
