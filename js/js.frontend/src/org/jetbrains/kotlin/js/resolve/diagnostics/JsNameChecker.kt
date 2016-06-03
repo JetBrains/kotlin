@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.js.resolve.diagnostics
 
+import org.jetbrains.kotlin.config.LanguageFeatureSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
@@ -25,7 +26,7 @@ import org.jetbrains.kotlin.resolve.DeclarationChecker
 
 object JsNameChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink,
-                       bindingContext: BindingContext) {
+                       bindingContext: BindingContext, languageFeatureSettings: LanguageFeatureSettings) {
         if (descriptor is PropertyDescriptor) {
             val namedAccessorCount = descriptor.accessors.count { AnnotationsUtils.getJsName(it) != null }
             if (namedAccessorCount > 0 && namedAccessorCount < descriptor.accessors.size) {

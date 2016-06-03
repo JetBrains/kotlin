@@ -295,6 +295,12 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
             doTest(fileName);
         }
 
+        @TestMetadata("conflictingNamesFromSuperclass.kt")
+        public void testConflictingNamesFromSuperclass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/conflictingNamesFromSuperclass.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("extensionPropertyAndMethod.kt")
         public void testExtensionPropertyAndMethod() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/extensionPropertyAndMethod.kt");
@@ -358,6 +364,12 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         @TestMetadata("methodAndMethod.kt")
         public void testMethodAndMethod() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/methodAndMethod.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("overriddenJsNameClash.kt")
+        public void testOverriddenJsNameClash() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/overriddenJsNameClash.kt");
             doTest(fileName);
         }
 

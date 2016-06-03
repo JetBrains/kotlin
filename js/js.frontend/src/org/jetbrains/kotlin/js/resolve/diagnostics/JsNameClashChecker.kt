@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.js.resolve.diagnostics
 
-import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.config.LanguageFeatureSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.js.naming.FQNGenerator
@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.resolve.DeclarationChecker
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.resolve.source.getPsi
 
 class JsNameClashChecker : DeclarationChecker {
     private val fqnGenerator = FQNGenerator()
@@ -39,7 +38,8 @@ class JsNameClashChecker : DeclarationChecker {
             declaration: KtDeclaration,
             descriptor: DeclarationDescriptor,
             diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext
+            bindingContext: BindingContext,
+            languageFeatureSettings: LanguageFeatureSettings
     ) {
         if (declaration !is KtProperty || !descriptor.isExtension) {
             checkDescriptor(descriptor, declaration, diagnosticHolder)
@@ -54,23 +54,27 @@ class JsNameClashChecker : DeclarationChecker {
             val existing = scope[name]
             if (existing != null && existing != fqn.descriptor) {
                 diagnosticHolder.report(ErrorsJs.JS_NAME_CLASH.on(declaration, name, existing))
-                val existingDeclaration = findPsi(existing) ?: declaration
+                val existingDeclaration = existing.findPsi() ?: declaration
                 if (clashedDescriptors.add(existing) && existingDeclaration is KtDeclaration && existingDeclaration != declaration) {
                     diagnosticHolder.report(ErrorsJs.JS_NAME_CLASH.on(existingDeclaration, name, descriptor))
                 }
             }
         }
-    }
 
-    private fun findPsi(descriptor: DeclarationDescriptor): PsiElement? {
-        val psi = (descriptor as? DeclarationDescriptorWithSource)?.source?.getPsi()
-        return if (psi == null && descriptor is CallableMemberDescriptor &&
-                   descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE
-        ) {
-            descriptor.overriddenDescriptors.mapNotNull { findPsi(it) }.firstOrNull()
-        }
-        else {
-            psi
+        val fqnDescriptor = fqn.descriptor
+        if (fqnDescriptor is ClassDescriptor) {
+            val fakeOverrides = fqnDescriptor.defaultType.memberScope.getContributedDescriptors().asSequence()
+                    .mapNotNull { it as? CallableMemberDescriptor }
+                    .filter { it.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE }
+            for (override in fakeOverrides) {
+                val overrideFqn = fqnGenerator.generate(override)
+                val scope = getScope(overrideFqn.scope)
+                val name = overrideFqn.names.last()
+                val existing = scope[name]
+                if (existing != null && existing != overrideFqn.descriptor) {
+                    diagnosticHolder.report(ErrorsJs.JS_NAME_CLASH_SYNTHETIC.on(declaration, name, override, existing))
+                }
+            }
         }
     }
 

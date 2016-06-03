@@ -39,10 +39,14 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
         put(ErrorsJs.NATIVE_INNER_CLASS_PROHIBITED, "Native inner classes are prohibited")
         put(ErrorsJs.JS_NAME_CLASH, "JavaScript name ({0}) generated for this declaration clashes with another declaration: {1}",
             Renderers.STRING, Renderers.COMPACT)
+        put(ErrorsJs.JS_NAME_CLASH_SYNTHETIC, "JavaScript name {0} is generated from two different inherited members: {1} and {2}",
+            Renderers.STRING, Renderers.COMPACT, Renderers.COMPACT)
         put(ErrorsJs.JS_NAME_ON_PRIMARY_CONSTRUCTOR_PROHIBITED, "@JsName annotation is prohibited for primary constructors")
         put(ErrorsJs.JS_NAME_ON_ACCESSOR_AND_PROPERTY, "@JsName can be either on a property or its accessors, not both of them")
         put(ErrorsJs.JS_NAME_IS_NOT_ON_ALL_ACCESSORS, "@JsName should be on all of the property accessors")
         put(ErrorsJs.JS_NAME_PROHIBITED_FOR_OVERRIDE, "@JsName is prohibited for overridden members")
+        put(ErrorsJs.JS_NAME_OVERRIDE_CLASH, "Conflicting names got from overridden declarations {0} and {1}", Renderers.COMPACT,
+            Renderers.COMPACT)
 
         this
     }
