@@ -54,7 +54,9 @@ fun KotlinType.unwrap(): KotlinType {
     return this
 }
 
-interface SimpleType : KotlinType
+interface SimpleType : KotlinType {
+    val abbreviatedType : SimpleType? get() = null
+}
 
 interface TypeWithCustomReplacement : KotlinType {
     fun makeNullableAsSpecified(nullable: Boolean): KotlinType
@@ -111,6 +113,13 @@ fun SimpleType.lazyReplaceAnnotations(newAnnotations: Annotations): SimpleType {
     }
 }
 
+fun KotlinType.getAbbreviatedType(): SimpleType? = (unwrap() as? SimpleType)?.abbreviatedType
+
+fun SimpleType.withAbbreviatedType(abbreviatedType: SimpleType): SimpleType {
+    if (isError) return this
+    return KotlinTypeImpl.create(annotations, constructor, isMarkedNullable, arguments, memberScope, capabilities, abbreviatedType)
+}
+
 private class WrappedSimpleType(
         override val delegate: SimpleType,
         val newAnnotations: Annotations? = null,
@@ -124,7 +133,7 @@ private class WrappedSimpleType(
 
     override fun unwrap(): KotlinType {
         if (delegate.isError) return delegate // todo
-        return KotlinTypeImpl.create(annotations, constructor, isMarkedNullable, arguments, memberScope, capabilities)
+        return KotlinTypeImpl.create(annotations, constructor, isMarkedNullable, arguments, memberScope, capabilities, abbreviatedType)
     }
 
     override fun toString(): String {

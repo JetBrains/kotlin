@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -94,12 +94,12 @@ public class PossiblyBareType {
 
         KotlinType nullableActualType = TypeUtils.makeNullable(getActualType());
 
-        KotlinType abbreviatedType = TypeCapabilitiesKt.getAbbreviatedType(getActualType());
+        KotlinType abbreviatedType = KotlinTypeKt.getAbbreviatedType(getActualType());
         if (abbreviatedType == null) {
             return type(nullableActualType);
         }
         else {
-            return type(TypeCapabilitiesKt.withAbbreviatedType(nullableActualType, TypeUtils.makeNullable(abbreviatedType)));
+            return type(KotlinTypeKt.withAbbreviatedType(KotlinTypeKt.asSimpleType(nullableActualType), KotlinTypeKt.asSimpleType(TypeUtils.makeNullable(abbreviatedType))));
         }
     }
 
