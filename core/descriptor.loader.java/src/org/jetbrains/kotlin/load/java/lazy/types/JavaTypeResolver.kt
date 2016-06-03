@@ -114,9 +114,8 @@ class JavaTypeResolver(
         val constructor = computeTypeConstructor(javaType, attr) ?: return null
         val arguments = computeArguments(javaType, attr, constructor)
         val isNullable = isNullable(javaType, attr)
-        val memberScope = AbstractLazyType.computeMemberScope(constructor, arguments)
 
-        return KotlinTypeFactory.simpleType(annotations, constructor, arguments, isNullable, memberScope)
+        return KotlinTypeFactory.simpleType(annotations, constructor, arguments, isNullable)
     }
 
     private fun computeTypeConstructor(javaType: JavaClassifierType, attr: JavaTypeAttributes): TypeConstructor? {

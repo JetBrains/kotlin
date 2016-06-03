@@ -17,10 +17,21 @@
 package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
 object KotlinTypeFactory {
+    private fun computeMemberScope(constructor: TypeConstructor, arguments: List<TypeProjection>): MemberScope {
+        val descriptor = constructor.declarationDescriptor
+        return when (descriptor) {
+            is TypeParameterDescriptor -> descriptor.getDefaultType().memberScope
+            is ClassDescriptor ->  descriptor.getMemberScope(TypeConstructorSubstitution.create(constructor, arguments))
+            is TypeAliasDescriptor -> ErrorUtils.createErrorScope("Scope for abbreviation: ${descriptor.name}", true)
+            else -> throw IllegalStateException("Unsupported classifier: $descriptor for constructor: $constructor")
+        }
+    }
 
     @JvmStatic
     fun simpleType(
@@ -28,7 +39,7 @@ object KotlinTypeFactory {
             constructor: TypeConstructor,
             arguments: List<TypeProjection>,
             nullable: Boolean,
-            memberScope: MemberScope
+            memberScope: MemberScope = computeMemberScope(constructor, arguments)
     ): SimpleType = SimpleTypeImpl(annotations, constructor, arguments, nullable, memberScope)
 
     @JvmStatic

@@ -471,7 +471,7 @@ class TypeResolver(
         }
 
         return if (c.abbreviated) {
-            val abbreviatedType = KotlinTypeFactory.simpleType(annotations, descriptor.typeConstructor, arguments, false, MemberScope.Empty)
+            val abbreviatedType = KotlinTypeFactory.simpleType(annotations, descriptor.typeConstructor, arguments, false)
             type(abbreviatedType)
         }
         else {
