@@ -262,7 +262,8 @@ private class DifferenceCalculatorForPackageFacade(oldData: ProtoMapValue, newDa
                 ProtoBufPackageKind.PROPERTY_LIST ->
                     names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Package::getPropertyList))
                 ProtoBufPackageKind.TYPE_TABLE,
-                ProtoBufPackageKind.PACKAGE_MODULE_NAME -> {
+                ProtoBufPackageKind.PACKAGE_MODULE_NAME,
+                ProtoBufPackageKind.TYPE_ALIAS_LIST -> {
                     // TODO
                 }
                 else -> throw IllegalArgumentException("Unsupported kind: $kind")
