@@ -24,7 +24,6 @@ import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode;
 import java.util.Collection;
 
 public class InlinedLambdaRemapper extends FieldRemapper {
-
     public InlinedLambdaRemapper(
             @NotNull String lambdaInternalName,
             @NotNull FieldRemapper parent,
@@ -34,16 +33,13 @@ public class InlinedLambdaRemapper extends FieldRemapper {
     }
 
     @Override
-    public boolean canProcess(@NotNull String fieldOwner, String fieldName, boolean isFolding) {
-        return isFolding && super.canProcess(fieldOwner, fieldName, isFolding);
+    public boolean canProcess(@NotNull String fieldOwner, @NotNull String fieldName, boolean isFolding) {
+        return isFolding && super.canProcess(fieldOwner, fieldName, true);
     }
 
     @Override
     @Nullable
-    public CapturedParamInfo findField(
-            @NotNull FieldInsnNode fieldInsnNode,
-            @NotNull Collection<CapturedParamInfo> captured
-    ) {
+    public CapturedParamInfo findField(@NotNull FieldInsnNode fieldInsnNode, @NotNull Collection<CapturedParamInfo> captured) {
         return parent.findField(fieldInsnNode, captured);
     }
 
@@ -52,14 +48,12 @@ public class InlinedLambdaRemapper extends FieldRemapper {
         return true;
     }
 
-
     @Nullable
     @Override
     public StackValue getFieldForInline(@NotNull FieldInsnNode node, @Nullable StackValue prefix) {
         if (parent.isRoot()) {
             return super.getFieldForInline(node, prefix);
-        } else {
-            return parent.getFieldForInline(node, prefix);
         }
+        return parent.getFieldForInline(node, prefix);
     }
 }

@@ -42,14 +42,13 @@ abstract class ObjectTransformer<out T : TransformationInfo>(@JvmField val trans
 
         return RemappingClassBuilder(
                 classBuilder,
-                AsmTypeRemapper(inliningContext.typeRemapper, inliningContext.root.typeParameterMappings == null, transformationResult))
+                AsmTypeRemapper(inliningContext.typeRemapper, inliningContext.root.typeParameterMappings == null, transformationResult)
+        )
     }
-
 
     fun createClassReader(): ClassReader {
         return InlineCodegenUtil.buildClassReaderByInternalName(state, transformationInfo.oldClassName)
     }
-
 }
 
 class WhenMappingTransformer(
@@ -72,7 +71,7 @@ class WhenMappingTransformer(
             }
 
             override fun visitField(access: Int, name: String, desc: String, signature: String?, value: Any?): FieldVisitor? {
-                return if (name.equals(fieldNode.name)) {
+                return if (name == fieldNode.name) {
                     classBuilder.newField(JvmDeclarationOrigin.NO_ORIGIN, access, name, desc, signature, value)
                 }
                 else {
@@ -80,18 +79,22 @@ class WhenMappingTransformer(
                 }
             }
 
-            override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
-                val methodNode = MethodNode(access, name, desc, signature, exceptions)
-                methodNodes.add(methodNode)
-                return methodNode
+            override fun visitMethod(
+                    access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?
+            ): MethodVisitor? {
+                return MethodNode(access, name, desc, signature, exceptions).apply {
+                    methodNodes.add(this)
+                }
             }
         }, ClassReader.SKIP_FRAMES)
 
-        assert(methodNodes.size == 1, { "When mapping ${fieldNode.owner} class should contain only one method but: " + methodNodes.joinToString { it.name } })
+        assert(methodNodes.size == 1) {
+            "When mapping ${fieldNode.owner} class should contain only one method but: " + methodNodes.joinToString { it.name }
+        }
         val clinit = methodNodes.first()
         assert(clinit.name == "<clinit>", { "When mapping should contains only <clinit> method, but contains '${clinit.name}'" })
 
-        var transformedClinit = cutOtherMappings(clinit)
+        val transformedClinit = cutOtherMappings(clinit)
         val result = classBuilder.newMethod(
                 JvmDeclarationOrigin.NO_ORIGIN, transformedClinit.access, transformedClinit.name, transformedClinit.desc,
                 transformedClinit.signature, transformedClinit.exceptions.toTypedArray()
@@ -101,7 +104,6 @@ class WhenMappingTransformer(
 
         return transformationResult
     }
-
 
     private fun cutOtherMappings(node: MethodNode): MethodNode {
         val myArrayAccess = InsnSequence(node.instructions).first {
@@ -123,9 +125,9 @@ class WhenMappingTransformer(
         return result
     }
 
-    private fun isValues(node: AbstractInsnNode) = node is MethodInsnNode &&
-                                                   node.opcode == Opcodes.INVOKESTATIC &&
-                                                   node.name == "values" &&
-                                                   node.desc == "()[" + Type.getObjectType(node.owner).descriptor
+    private fun isValues(node: AbstractInsnNode) =
+            node is MethodInsnNode &&
+            node.opcode == Opcodes.INVOKESTATIC &&
+            node.name == "values" &&
+            node.desc == "()[" + Type.getObjectType(node.owner).descriptor
 }
-

@@ -43,45 +43,24 @@ import java.util.*;
 import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.*;
 
 public class MethodInliner {
-
     private final MethodNode node;
-
     private final Parameters parameters;
-
     private final InliningContext inliningContext;
-
     private final FieldRemapper nodeRemapper;
-
     private final boolean isSameModule;
-
     private final String errorPrefix;
-
     private final SourceMapper sourceMapper;
-
     private final InlineCallSiteInfo inlineCallSiteInfo;
-
     private final KotlinTypeMapper typeMapper;
-
     private final List<InvokeCall> invokeCalls = new ArrayList<InvokeCall>();
-
     //keeps order
     private final List<TransformationInfo> transformations = new ArrayList<TransformationInfo>();
     //current state
     private final Map<String, String> currentTypeMapping = new HashMap<String, String>();
-
     private final InlineResult result;
-
     private int lambdasFinallyBlocks;
-
     private final InlineOnlySmapSkipper inlineOnlySmapSkipper;
 
-    /*
-     *
-     * @param node
-     * @param parameters
-     * @param inliningContext
-     * @param lambdaType - in case on lambda 'invoke' inlining
-     */
     public MethodInliner(
             @NotNull MethodNode node,
             @NotNull Parameters parameters,
@@ -106,6 +85,7 @@ public class MethodInliner {
         this.inlineOnlySmapSkipper = smapSkipper;
     }
 
+    @NotNull
     public InlineResult doInline(
             @NotNull MethodVisitor adapter,
             @NotNull LocalVarRemapper remapper,
@@ -115,6 +95,7 @@ public class MethodInliner {
         return doInline(adapter, remapper, remapReturn, labelOwner, 0);
     }
 
+    @NotNull
     private InlineResult doInline(
             @NotNull MethodVisitor adapter,
             @NotNull LocalVarRemapper remapper,
@@ -129,11 +110,12 @@ public class MethodInliner {
         Label end = new Label();
         transformedNode = doInline(transformedNode);
         removeClosureAssertions(transformedNode);
-        InsnList instructions = transformedNode.instructions;
-        instructions.resetLabels();
+        transformedNode.instructions.resetLabels();
 
-        MethodNode resultNode = new MethodNode(InlineCodegenUtil.API, transformedNode.access, transformedNode.name, transformedNode.desc,
-                                         transformedNode.signature, ArrayUtil.toStringArray(transformedNode.exceptions));
+        MethodNode resultNode = new MethodNode(
+                InlineCodegenUtil.API, transformedNode.access, transformedNode.name, transformedNode.desc,
+                transformedNode.signature, ArrayUtil.toStringArray(transformedNode.exceptions)
+        );
         RemapVisitor visitor = new RemapVisitor(resultNode, remapper, nodeRemapper);
         try {
             transformedNode.accept(visitor);
@@ -145,7 +127,10 @@ public class MethodInliner {
         resultNode.visitLabel(end);
 
         if (inliningContext.isRoot()) {
-            InternalFinallyBlockInliner.processInlineFunFinallyBlocks(resultNode, lambdasFinallyBlocks, ((StackValue.Local)remapper.remap(parameters.getArgsSizeOnStack() + 1).value).index);
+            StackValue remapValue = remapper.remap(parameters.getArgsSizeOnStack() + 1).value;
+            InternalFinallyBlockInliner.processInlineFunFinallyBlocks(
+                    resultNode, lambdasFinallyBlocks, ((StackValue.Local) remapValue).index
+            );
         }
 
         processReturns(resultNode, labelOwner, remapReturn, end);
@@ -156,8 +141,8 @@ public class MethodInliner {
         return result;
     }
 
-    private MethodNode doInline(final MethodNode node) {
-
+    @NotNull
+    private MethodNode doInline(@NotNull MethodNode node) {
         final Deque<InvokeCall> currentInvokes = new LinkedList<InvokeCall>(invokeCalls);
 
         final MethodNode resultNode = new MethodNode(node.access, node.name, node.desc, node.signature, null);
@@ -174,8 +159,8 @@ public class MethodInliner {
 
         final int markerShift = InlineCodegenUtil.calcMarkerShift(parameters, node);
         InlineAdapter lambdaInliner = new InlineAdapter(remappingMethodAdapter, parameters.getArgsSizeOnStack(), sourceMapper) {
-
             private TransformationInfo transformationInfo;
+
             private void handleAnonymousObjectRegeneration() {
                 transformationInfo = iterator.next();
 
@@ -190,10 +175,7 @@ public class MethodInliner {
                             currentTypeMapping,
                             inlineCallSiteInfo
                     );
-                    ObjectTransformer transformer = transformationInfo.createTransformer(
-                            childInliningContext,
-                            isSameModule
-                    );
+                    ObjectTransformer transformer = transformationInfo.createTransformer(childInliningContext, isSameModule);
 
                     InlineResult transformResult = transformer.doTransform(nodeRemapper);
                     result.addAllClassesToRemove(transformResult);
@@ -213,7 +195,7 @@ public class MethodInliner {
 
             @Override
             public void anew(@NotNull Type type) {
-                if (isAnonymousConstructorCall(type.getInternalName(), "<init>")) {
+                if (isAnonymousClass(type.getInternalName())) {
                     handleAnonymousObjectRegeneration();
                 }
 
@@ -245,23 +227,25 @@ public class MethodInliner {
 
                     setLambdaInlining(true);
                     SMAP lambdaSMAP = info.getNode().getClassSMAP();
+                    //noinspection ConstantConditions
                     SourceMapper mapper =
-                            inliningContext.classRegeneration && !inliningContext.isInliningLambda ?
-                            new NestedSourceMapper(sourceMapper, lambdaSMAP.getIntervals(), lambdaSMAP.getSourceInfo())
+                            inliningContext.classRegeneration && !inliningContext.isInliningLambda
+                            ? new NestedSourceMapper(sourceMapper, lambdaSMAP.getIntervals(), lambdaSMAP.getSourceInfo())
                             : new InlineLambdaSourceMapper(sourceMapper.getParent(), info.getNode());
-                    MethodInliner inliner = new MethodInliner(info.getNode().getNode(), lambdaParameters,
-                                                              inliningContext.subInlineLambda(info),
-                                                              newCapturedRemapper, true /*cause all calls in same module as lambda*/,
-                                                              "Lambda inlining " + info.getLambdaClassType().getInternalName(),
-                                                              mapper, inlineCallSiteInfo, null);
+                    MethodInliner inliner = new MethodInliner(
+                            info.getNode().getNode(), lambdaParameters, inliningContext.subInlineLambda(info),
+                            newCapturedRemapper, true /*cause all calls in same module as lambda*/,
+                            "Lambda inlining " + info.getLambdaClassType().getInternalName(),
+                            mapper, inlineCallSiteInfo, null
+                    );
 
                     LocalVarRemapper remapper = new LocalVarRemapper(lambdaParameters, valueParamShift);
-                    InlineResult lambdaResult = inliner.doInline(this.mv, remapper, true, info, invokeCall.finallyDepthShift);//TODO add skipped this and receiver
+                    //TODO add skipped this and receiver
+                    InlineResult lambdaResult = inliner.doInline(this.mv, remapper, true, info, invokeCall.finallyDepthShift);
                     result.addAllClassesToRemove(lambdaResult);
 
                     //return value boxing/unboxing
-                    Method bridge =
-                            typeMapper.mapAsmMethod(ClosureCodegen.getErasedInvokeFunction(info.getFunctionDescriptor()));
+                    Method bridge = typeMapper.mapAsmMethod(ClosureCodegen.getErasedInvokeFunction(info.getFunctionDescriptor()));
                     Method delegate = typeMapper.mapAsmMethod(info.getFunctionDescriptor());
                     StackValue.onStack(delegate.getReturnType()).put(bridge.getReturnType(), this);
                     setLambdaInlining(false);
@@ -274,31 +258,38 @@ public class MethodInliner {
                 else if (isAnonymousConstructorCall(owner, name)) { //TODO add method
                     //TODO add proper message
                     assert transformationInfo instanceof AnonymousObjectTransformationInfo :
-                            "<init> call doesn't correspond to object transformation info: " + owner + "." + name + ", info " + transformationInfo;
+                            "<init> call doesn't correspond to object transformation info: " +
+                            owner + "." + name + ", info " + transformationInfo;
                     if (transformationInfo.shouldRegenerate(isSameModule)) {
                         //put additional captured parameters on stack
-                        for (CapturedParamDesc capturedParamDesc : ((AnonymousObjectTransformationInfo) transformationInfo).getAllRecapturedParameters()) {
-                            visitFieldInsn(Opcodes.GETSTATIC, capturedParamDesc.getContainingLambdaName(),
-                                           "$$$" + capturedParamDesc.getFieldName(), capturedParamDesc.getType().getDescriptor());
+                        AnonymousObjectTransformationInfo info = (AnonymousObjectTransformationInfo) transformationInfo;
+                        for (CapturedParamDesc capturedParamDesc : info.getAllRecapturedParameters()) {
+                            visitFieldInsn(
+                                    Opcodes.GETSTATIC, capturedParamDesc.getContainingLambdaName(),
+                                    "$$$" + capturedParamDesc.getFieldName(), capturedParamDesc.getType().getDescriptor()
+                            );
                         }
-                        super.visitMethodInsn(opcode, transformationInfo.getNewClassName(), name,
-                                              ((AnonymousObjectTransformationInfo) transformationInfo).getNewConstructorDescriptor(), itf);
+                        super.visitMethodInsn(opcode, transformationInfo.getNewClassName(), name, info.getNewConstructorDescriptor(), itf);
 
                         //TODO: add new inner class also for other contexts
                         if (inliningContext.getParent() instanceof RegeneratedClassContext) {
-                            inliningContext.getParent().typeRemapper.addAdditionalMappings(transformationInfo.getOldClassName(), transformationInfo.getNewClassName());
+                            inliningContext.getParent().typeRemapper.addAdditionalMappings(
+                                    transformationInfo.getOldClassName(), transformationInfo.getNewClassName()
+                            );
                         }
 
                         transformationInfo = null;
-                    } else {
-                        super.visitMethodInsn(opcode, changeOwnerForExternalPackage(owner, opcode), name, desc, itf);
+                    }
+                    else {
+                        super.visitMethodInsn(opcode, owner, name, desc, itf);
                     }
                 }
-                else if (!inliningContext.isInliningLambda && ReifiedTypeInliner.isNeedClassReificationMarker(new MethodInsnNode(opcode, owner, name, desc, false))) {
+                else if (!inliningContext.isInliningLambda &&
+                         ReifiedTypeInliner.isNeedClassReificationMarker(new MethodInsnNode(opcode, owner, name, desc, false))) {
                     //we shouldn't process here content of inlining lambda it should be reified at external level
                 }
                 else {
-                    super.visitMethodInsn(opcode, changeOwnerForExternalPackage(owner, opcode), name, desc, itf);
+                    super.visitMethodInsn(opcode, owner, name, desc, itf);
                 }
             }
 
@@ -315,7 +306,6 @@ public class MethodInliner {
                 lambdasFinallyBlocks = resultNode.tryCatchBlocks.size();
                 super.visitMaxs(stack, locals);
             }
-
         };
 
         node.accept(lambdaInliner);
@@ -324,18 +314,20 @@ public class MethodInliner {
     }
 
     @NotNull
-    public static CapturedParamInfo findCapturedField(FieldInsnNode node, FieldRemapper fieldRemapper) {
+    public static CapturedParamInfo findCapturedField(@NotNull FieldInsnNode node, @NotNull FieldRemapper fieldRemapper) {
         assert node.name.startsWith("$$$") : "Captured field template should start with $$$ prefix";
         FieldInsnNode fin = new FieldInsnNode(node.getOpcode(), node.owner, node.name.substring(3), node.desc);
         CapturedParamInfo field = fieldRemapper.findField(fin);
         if (field == null) {
-            throw new IllegalStateException("Couldn't find captured field " + node.owner + "." + node.name + " in " + fieldRemapper.getLambdaInternalName());
+            throw new IllegalStateException(
+                    "Couldn't find captured field " + node.owner + "." + node.name + " in " + fieldRemapper.getLambdaInternalName()
+            );
         }
         return field;
     }
 
     @NotNull
-    public MethodNode prepareNode(@NotNull MethodNode node, int finallyDeepShift) {
+    private MethodNode prepareNode(@NotNull MethodNode node, int finallyDeepShift) {
         final int capturedParamsSize = parameters.getCapturedArgsSizeOnStack();
         final int realParametersSize = parameters.getRealArgsSizeOnStack();
         Type[] types = Type.getArgumentTypes(node.desc);
@@ -345,8 +337,10 @@ public class MethodInliner {
         Type[] allTypes = ArrayUtil.mergeArrays(types, capturedTypes.toArray(new Type[capturedTypes.size()]));
 
         node.instructions.resetLabels();
-        MethodNode transformedNode = new MethodNode(InlineCodegenUtil.API, node.access, node.name, Type.getMethodDescriptor(returnType, allTypes), node.signature, null) {
-
+        MethodNode transformedNode = new MethodNode(
+                InlineCodegenUtil.API, node.access, node.name, Type.getMethodDescriptor(returnType, allTypes), node.signature, null
+        ) {
+            @SuppressWarnings("ConstantConditions")
             private final boolean GENERATE_DEBUG_INFO = InlineCodegenUtil.GENERATE_SMAP && inlineOnlySmapSkipper == null;
 
             private final boolean isInliningLambda = nodeRemapper.isInsideInliningLambda();
@@ -372,7 +366,7 @@ public class MethodInliner {
 
             @Override
             public void visitLineNumber(int line, @NotNull Label start) {
-                if(isInliningLambda || GENERATE_DEBUG_INFO) {
+                if (isInliningLambda || GENERATE_DEBUG_INFO) {
                     super.visitLineNumber(line, start);
                 }
             }
@@ -382,9 +376,8 @@ public class MethodInliner {
                     @NotNull String name, @NotNull String desc, String signature, @NotNull Label start, @NotNull Label end, int index
             ) {
                 if (isInliningLambda || GENERATE_DEBUG_INFO) {
-                    String varSuffix = inliningContext.isRoot() &&
-                                       !InlineCodegenUtil.isFakeLocalVariableForInline(name) ?
-                                       INLINE_FUN_VAR_SUFFIX : "";
+                    String varSuffix =
+                            inliningContext.isRoot() && !InlineCodegenUtil.isFakeLocalVariableForInline(name) ? INLINE_FUN_VAR_SUFFIX : "";
                     String varName = !varSuffix.isEmpty() && name.equals("this") ? name + "_" : name;
                     super.visitLocalVariable(varName + varSuffix, desc, signature, start, end, getNewIndex(index));
                 }
@@ -400,7 +393,9 @@ public class MethodInliner {
     }
 
     @NotNull
-    protected MethodNode markPlacesForInlineAndRemoveInlinable(@NotNull MethodNode node, @NotNull LabelOwner labelOwner, int finallyDeepShift) {
+    private MethodNode markPlacesForInlineAndRemoveInlinable(
+            @NotNull MethodNode node, @NotNull LabelOwner labelOwner, int finallyDeepShift
+    ) {
         node = prepareNode(node, finallyDeepShift);
 
         Frame<SourceValue>[] sources = analyzeMethodNodeBeforeInline(node);
@@ -460,9 +455,7 @@ public class MethodInliner {
                         }
 
                         transformations.add(
-                                buildConstructorInvocation(
-                                        owner, desc, lambdaMapping, awaitClassReification
-                                )
+                                buildConstructorInvocation(owner, desc, lambdaMapping, awaitClassReification)
                         );
                         awaitClassReification = false;
                     }
@@ -482,7 +475,8 @@ public class MethodInliner {
                     else if (isWhenMappingAccess(className, fieldInsnNode.name)) {
                         transformations.add(
                             new WhenMappingTransformationInfo(
-                                    className, inliningContext.nameGenerator, isAlreadyRegenerated(className), fieldInsnNode)
+                                    className, inliningContext.nameGenerator, isAlreadyRegenerated(className), fieldInsnNode
+                            )
                         );
                     }
 
@@ -498,7 +492,8 @@ public class MethodInliner {
                     //NB: Cause we generate exception table for default handler using gaps (see ExpressionCodegen.visitTryExpression)
                     //it may occurs that interval for default handler starts before catch start label, so this label seems as dead,
                     //but as result all this labels will be merged into one (see KT-5863)
-                } else {
+                }
+                else {
                     toDelete.add(prevNode);
                 }
             }
@@ -522,6 +517,7 @@ public class MethodInliner {
         return node;
     }
 
+    @NotNull
     private Frame<SourceValue>[] analyzeMethodNodeBeforeInline(@NotNull MethodNode node) {
         try {
             new MandatoryMethodTransformer().transform("fake", node);
@@ -545,14 +541,12 @@ public class MethodInliner {
             }
         };
 
-        Frame<SourceValue>[] sources;
         try {
-            sources = analyzer.analyze("fake", node);
+            return analyzer.analyze("fake", node);
         }
         catch (AnalyzerException e) {
             throw wrapException(e, node, "couldn't inline method call");
         }
-        return sources;
     }
 
     private static boolean isEmptyTryInterval(@NotNull TryCatchBlockNode tryCatchBlockNode) {
@@ -595,7 +589,8 @@ public class MethodInliner {
             int varIndex = ((VarInsnNode) insnNode).var;
             return getLambdaIfExists(varIndex);
         }
-        else if (insnNode instanceof FieldInsnNode) {
+
+        if (insnNode instanceof FieldInsnNode) {
             FieldInsnNode fieldInsnNode = (FieldInsnNode) insnNode;
             if (fieldInsnNode.name.startsWith("$$$")) {
                 return findCapturedField(fieldInsnNode, nodeRemapper).getLambda();
@@ -605,6 +600,7 @@ public class MethodInliner {
         return null;
     }
 
+    @Nullable
     private LambdaInfo getLambdaIfExists(int varIndex) {
         if (varIndex < parameters.getArgsSizeOnStack()) {
             return parameters.getParameterByDeclarationSlot(varIndex).getLambda();
@@ -612,13 +608,14 @@ public class MethodInliner {
         return null;
     }
 
-    private static void removeClosureAssertions(MethodNode node) {
+    private static void removeClosureAssertions(@NotNull MethodNode node) {
         AbstractInsnNode cur = node.instructions.getFirst();
         while (cur != null && cur.getNext() != null) {
             AbstractInsnNode next = cur.getNext();
             if (next.getType() == AbstractInsnNode.METHOD_INSN) {
                 MethodInsnNode methodInsnNode = (MethodInsnNode) next;
-                if (methodInsnNode.name.equals("checkParameterIsNotNull") && methodInsnNode.owner.equals(IntrinsicMethods.INTRINSICS_CLASS_NAME)) {
+                if (methodInsnNode.name.equals("checkParameterIsNotNull") &&
+                    methodInsnNode.owner.equals(IntrinsicMethods.INTRINSICS_CLASS_NAME)) {
                     AbstractInsnNode prev = cur.getPrevious();
 
                     assert cur.getOpcode() == Opcodes.LDC : "checkParameterIsNotNull should go after LDC but " + cur;
@@ -676,7 +673,7 @@ public class MethodInliner {
     }
 
     @NotNull
-    public static List<AbstractInsnNode> getCapturedFieldAccessChain(@NotNull VarInsnNode aload0) {
+    private static List<AbstractInsnNode> getCapturedFieldAccessChain(@NotNull VarInsnNode aload0) {
         List<AbstractInsnNode> fieldAccessChain = new ArrayList<AbstractInsnNode>();
         fieldAccessChain.add(aload0);
         AbstractInsnNode next = aload0.getNext();
@@ -697,7 +694,9 @@ public class MethodInliner {
         return fieldAccessChain;
     }
 
-    public static void putStackValuesIntoLocals(List<Type> directOrder, int shift, InstructionAdapter iv, String descriptor) {
+    private static void putStackValuesIntoLocals(
+            @NotNull List<Type> directOrder, int shift, @NotNull InstructionAdapter iv, @NotNull String descriptor
+    ) {
         Type[] actualParams = Type.getArgumentTypes(descriptor);
         assert actualParams.length == directOrder.size() : "Number of expected and actual params should be equals!";
 
@@ -719,42 +718,21 @@ public class MethodInliner {
         }
     }
 
-    //TODO: check it's external module
-    //TODO?: assert method exists in facade?
-    public String changeOwnerForExternalPackage(String type, int opcode) {
-        //if (isSameModule || (opcode & Opcodes.INVOKESTATIC) == 0) {
-        //    return type;
-        //}
-
-        //JvmClassName name = JvmClassName.byInternalName(type);
-        //String packageClassInternalName = PackageClassUtils.getPackageClassInternalName(name.getPackageFqName());
-        //if (type.startsWith(packageClassInternalName + '$')) {
-        //    VirtualFile virtualFile = InlineCodegenUtil.findVirtualFile(inliningContext.state.getProject(), type);
-        //    if (virtualFile != null) {
-        //        KotlinJvmBinaryClass klass = KotlinBinaryClassCache.getKotlinBinaryClass(virtualFile);
-        //        if (klass != null && klass.getClassHeader().getSyntheticClassKind() == KotlinSyntheticClass.Kind.PACKAGE_PART) {
-        //            return packageClassInternalName;
-        //        }
-        //    }
-        //}
-
-        return type;
-    }
-
     @NotNull
-    public RuntimeException wrapException(@NotNull Throwable originalException, @NotNull MethodNode node, @NotNull String errorSuffix) {
+    private RuntimeException wrapException(@NotNull Throwable originalException, @NotNull MethodNode node, @NotNull String errorSuffix) {
         if (originalException instanceof InlineException) {
             return new InlineException(errorPrefix + ": " + errorSuffix, originalException);
         }
         else {
-            return new InlineException(errorPrefix + ": " + errorSuffix + "\ncause: " +
-                                       getNodeText(node), originalException);
+            return new InlineException(errorPrefix + ": " + errorSuffix + "\nCause: " + getNodeText(node), originalException);
         }
     }
 
     @NotNull
     //process local and global returns (local substituted with goto end-label global kept unchanged)
-    public static List<PointForExternalFinallyBlocks> processReturns(@NotNull MethodNode node, @NotNull LabelOwner labelOwner, boolean remapReturn, Label endLabel) {
+    public static List<PointForExternalFinallyBlocks> processReturns(
+            @NotNull MethodNode node, @NotNull LabelOwner labelOwner, boolean remapReturn, @Nullable Label endLabel
+    ) {
         if (!remapReturn) {
             return Collections.emptyList();
         }
@@ -785,9 +763,9 @@ public class MethodInliner {
                 //generate finally block before nonLocalReturn flag/return/goto
                 LabelNode label = new LabelNode();
                 instructions.insert(insnNode, label);
-                result.add(new PointForExternalFinallyBlocks(getInstructionToInsertFinallyBefore(insnNode, isLocalReturn),
-                                                             getReturnType(insnNode.getOpcode()),
-                                                             label));
+                result.add(new PointForExternalFinallyBlocks(
+                        getInstructionToInsertFinallyBefore(insnNode, isLocalReturn), getReturnType(insnNode.getOpcode()), label
+                ));
             }
             insnNode = insnNode.getNext();
         }
@@ -860,7 +838,7 @@ public class MethodInliner {
             }
         }
 
-        public void transform(MethodNode methodNode) {
+        public void transform(@NotNull MethodNode methodNode) {
             int returnVariableIndex = -1;
             if (needsReturnVariable) {
                 returnVariableIndex = methodNode.maxLocals;
@@ -872,6 +850,7 @@ public class MethodInliner {
             }
         }
 
+        @NotNull
         public static LocalReturnsNormalizer createFor(
                 @NotNull MethodNode methodNode,
                 @NotNull LabelOwner owner,
@@ -905,21 +884,16 @@ public class MethodInliner {
         }
     }
 
-
-
     @NotNull
-    private static AbstractInsnNode getInstructionToInsertFinallyBefore(@NotNull AbstractInsnNode nonLocalReturnOrJump, boolean isLocal)  {
+    private static AbstractInsnNode getInstructionToInsertFinallyBefore(@NotNull AbstractInsnNode nonLocalReturnOrJump, boolean isLocal) {
         return isLocal ? nonLocalReturnOrJump : nonLocalReturnOrJump.getPrevious();
     }
 
     //Place to insert finally blocks from try blocks that wraps inline fun call
     public static class PointForExternalFinallyBlocks {
-
-        final AbstractInsnNode beforeIns;
-
-        final Type returnType;
-
-        final LabelNode finallyIntervalEnd;
+        public final AbstractInsnNode beforeIns;
+        public final Type returnType;
+        public final LabelNode finallyIntervalEnd;
 
         public PointForExternalFinallyBlocks(
                 @NotNull AbstractInsnNode beforeIns,
@@ -930,6 +904,5 @@ public class MethodInliner {
             this.returnType = returnType;
             this.finallyIntervalEnd = finallyIntervalEnd;
         }
-
     }
 }

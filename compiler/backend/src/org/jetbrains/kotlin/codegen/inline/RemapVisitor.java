@@ -28,14 +28,14 @@ public class RemapVisitor extends MethodBodyVisitor {
     private final FieldRemapper nodeRemapper;
     private final InstructionAdapter instructionAdapter;
 
-    protected RemapVisitor(
-            MethodVisitor mv,
-            LocalVarRemapper localVarRemapper,
-            FieldRemapper nodeRemapper
+    public RemapVisitor(
+            @NotNull MethodVisitor mv,
+            @NotNull LocalVarRemapper remapper,
+            @NotNull FieldRemapper nodeRemapper
     ) {
         super(mv);
         this.instructionAdapter = new InstructionAdapter(mv);
-        this.remapper = localVarRemapper;
+        this.remapper = remapper;
         this.nodeRemapper = nodeRemapper;
     }
 
@@ -58,19 +58,13 @@ public class RemapVisitor extends MethodBodyVisitor {
 
     @Override
     public void visitFieldInsn(int opcode, @NotNull String owner, @NotNull String name, @NotNull String desc) {
-        if (name.startsWith("$$$")) {
-            if (nodeRemapper instanceof RegeneratedLambdaFieldRemapper || nodeRemapper.isRoot()) {
-                FieldInsnNode fin = new FieldInsnNode(opcode, owner, name, desc);
-                StackValue inline = nodeRemapper.getFieldForInline(fin, null);
-                assert inline != null : "Captured field should have not null stackValue " + fin;
-                inline.put(inline.type, this);
-            }
-            else {
-                super.visitFieldInsn(opcode, owner, name, desc);
-            }
+        if (name.startsWith("$$$") && (nodeRemapper instanceof RegeneratedLambdaFieldRemapper || nodeRemapper.isRoot())) {
+            FieldInsnNode fin = new FieldInsnNode(opcode, owner, name, desc);
+            StackValue inline = nodeRemapper.getFieldForInline(fin, null);
+            assert inline != null : "Captured field should have not null stackValue " + fin;
+            inline.put(inline.type, this);
+            return;
         }
-        else {
-            super.visitFieldInsn(opcode, owner, name, desc);
-        }
+        super.visitFieldInsn(opcode, owner, name, desc);
     }
 }

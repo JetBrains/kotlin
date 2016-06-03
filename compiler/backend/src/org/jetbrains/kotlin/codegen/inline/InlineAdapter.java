@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen.inline;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
@@ -27,19 +28,16 @@ import java.util.List;
 import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.getLoadStoreArgSize;
 
 public class InlineAdapter extends InstructionAdapter {
-
-    private int nextLocalIndex = 0;
     private final SourceMapper sourceMapper;
-
-    private boolean isLambdaInlining = false;
-
     private final List<CatchBlock> blocks = new ArrayList<CatchBlock>();
 
+    private boolean isLambdaInlining = false;
+    private int nextLocalIndex = 0;
     private int nextLocalIndexBeforeInline = -1;
 
-    public InlineAdapter(MethodVisitor mv, int localsSize, @NotNull SourceMapper sourceMapper) {
+    public InlineAdapter(@NotNull MethodVisitor mv, int localsSize, @NotNull SourceMapper sourceMapper) {
         super(InlineCodegenUtil.API, mv);
-        nextLocalIndex = localsSize;
+        this.nextLocalIndex = localsSize;
         this.sourceMapper = sourceMapper;
     }
 
@@ -70,15 +68,15 @@ public class InlineAdapter extends InstructionAdapter {
         this.isLambdaInlining = isInlining;
         if (isInlining) {
             nextLocalIndexBeforeInline = nextLocalIndex;
-        } else {
+        }
+        else {
             nextLocalIndex = nextLocalIndexBeforeInline;
         }
     }
 
     @Override
-    public void visitTryCatchBlock(Label start,
-            Label end, Label handler, String type) {
-        if(!isLambdaInlining) {
+    public void visitTryCatchBlock(@NotNull Label start, @NotNull Label end, @NotNull Label handler, @Nullable String type) {
+        if (!isLambdaInlining) {
             blocks.add(new CatchBlock(start, end, handler, type));
         }
         else {
@@ -87,7 +85,7 @@ public class InlineAdapter extends InstructionAdapter {
     }
 
     @Override
-    public void visitLineNumber(int line, Label start) {
+    public void visitLineNumber(int line, @NotNull Label start) {
         if (InlineCodegenUtil.GENERATE_SMAP) {
             line = sourceMapper.mapLineNumber(line);
         }
@@ -111,7 +109,7 @@ public class InlineAdapter extends InstructionAdapter {
         private final Label handler;
         private final String type;
 
-        public CatchBlock(Label start, Label end, Label handler, String type) {
+        public CatchBlock(@NotNull Label start, @NotNull Label end, @NotNull Label handler, @Nullable String type) {
             this.start = start;
             this.end = end;
             this.handler = handler;

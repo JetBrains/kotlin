@@ -44,9 +44,4 @@ public class CapturedParamDesc {
     public Type getType() {
         return type;
     }
-
-    @NotNull
-    public static CapturedParamDesc createDesc(@NotNull CapturedParamOwner containingLambdaInfo, @NotNull String fieldName, @NotNull Type type) {
-        return new CapturedParamDesc(containingLambdaInfo, fieldName, type);
-    }
 }
