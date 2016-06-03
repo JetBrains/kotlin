@@ -49,6 +49,7 @@ fun KtDeclaration.toLightElements(): List<PsiNamedElement> =
             is KtParameter -> ArrayList<PsiNamedElement>().let { elements ->
                 toPsiParameters().toCollection(elements)
                 LightClassUtil.getLightClassPropertyMethods(this).toCollection(elements)
+                toAnnotationLightMethod()?.let { elements.add(it) }
 
                 elements
             }
@@ -94,6 +95,14 @@ fun KtParameter.toPsiParameters(): Collection<PsiParameter> {
     return methods.mapNotNull {
         if (it.parameterList.parametersCount > lightParamIndex) it.parameterList.parameters[lightParamIndex] else null
     }
+}
+
+private fun KtParameter.toAnnotationLightMethod(): PsiMethod? {
+    val parent = ownerFunction as? KtPrimaryConstructor ?: return null
+    val containingClass = parent.getContainingClassOrObject()
+    if (!containingClass.isAnnotation()) return null
+
+    return LightClassUtil.getLightClassMethod(this)
 }
 
 fun KtTypeParameter.toPsiTypeParameters(): List<PsiTypeParameter> {
