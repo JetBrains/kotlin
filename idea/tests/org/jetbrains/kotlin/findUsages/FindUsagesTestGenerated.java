@@ -1422,6 +1422,12 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/findUsages/java/findJavaMethodUsages"), Pattern.compile("^(.+)\\.0\\.java$"), true);
             }
 
+            @TestMetadata("ConventionUsages.0.java")
+            public void testConventionUsages() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/java/findJavaMethodUsages/ConventionUsages.0.java");
+                doTest(fileName);
+            }
+
             @TestMetadata("JKMethodOverrides.0.java")
             public void testJKMethodOverrides() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/java/findJavaMethodUsages/JKMethodOverrides.0.java");
