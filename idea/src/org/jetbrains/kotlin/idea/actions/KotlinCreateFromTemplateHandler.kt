@@ -26,8 +26,8 @@ class KotlinCreateFromTemplateHandler : DefaultCreateFromTemplateHandler() {
 
     override fun prepareProperties(props: MutableMap<String, Any>) {
         val packageName = props[FileTemplate.ATTRIBUTE_PACKAGE_NAME] as? String
-        if (packageName != null) {
-            props[FileTemplate.ATTRIBUTE_PACKAGE_NAME] = packageName
+        if (!packageName.isNullOrEmpty()) {
+            props[FileTemplate.ATTRIBUTE_PACKAGE_NAME] = packageName!!
                     .split('.')
                     .map { it.quoteIfNeeded() }
                     .joinToString(".")
