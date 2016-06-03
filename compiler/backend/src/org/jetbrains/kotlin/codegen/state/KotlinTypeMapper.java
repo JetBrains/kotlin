@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,7 +71,6 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
-import org.jetbrains.kotlin.serialization.deserialization.DeserializedType;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.kotlin.types.*;
@@ -450,14 +449,7 @@ public class KotlinTypeMapper {
         PsiElement declarationElement = DescriptorToSourceUtils.descriptorToDeclaration(descriptor);
 
         if (declarationElement == null) {
-            String message = "Error type encountered: %s (%s).";
-            if (FlexibleTypesKt.upperIfFlexible(type) instanceof DeserializedType) {
-                message +=
-                        " One of the possible reasons may be that this type is not directly accessible from this module. " +
-                        "To workaround this error, try adding an explicit dependency on the module or library which contains this type " +
-                        "to the classpath";
-            }
-            return String.format(message, type, type.getClass().getSimpleName());
+            return String.format("Error type encountered: %s (%s).", type, type.getClass().getSimpleName());
         }
 
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
