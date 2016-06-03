@@ -131,6 +131,12 @@ public class BridgeTestGenerated extends AbstractBridgeTest {
         doTest(fileName);
     }
 
+    @TestMetadata("jsNative.kt")
+    public void testJsNative() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/bridges/jsNative.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("kt1939.kt")
     public void testKt1939() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/bridges/kt1939.kt");
