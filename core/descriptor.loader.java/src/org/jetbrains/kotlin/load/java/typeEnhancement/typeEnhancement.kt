@@ -129,16 +129,11 @@ private fun SimpleType.enhanceInflexible(qualifiers: (Int) -> JavaTypeQualifiers
             enhancedNullabilityAnnotations
     ).filterNotNull().compositeAnnotationsOrSingle()
 
-    val newSubstitution = TypeConstructorSubstitution.create(typeConstructor, enhancedArguments)
-
     val enhancedType = KotlinTypeFactory.simpleType(
             newAnnotations,
             typeConstructor,
             enhancedArguments,
-            enhancedNullability,
-            if (enhancedClassifier is ClassDescriptor)
-                enhancedClassifier.getMemberScope(newSubstitution)
-            else enhancedClassifier.defaultType.memberScope
+            enhancedNullability
     )
 
     val result = if (effectiveQualifiers.isNotNullTypeParameter) NotNullTypeParameter(enhancedType) else enhancedType

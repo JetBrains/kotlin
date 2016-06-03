@@ -121,8 +121,7 @@ internal object RawSubstitution : TypeSubstitution() {
                     TypeProjectionImpl(componentTypeProjection.projectionKind, eraseType(componentTypeProjection.type))
             )
             return KotlinTypeFactory.simpleType(
-                    type.annotations, type.constructor, arguments, type.isMarkedNullable,
-                    declaration.getMemberScope(arguments)
+                    type.annotations, type.constructor, arguments, type.isMarkedNullable
             ) to false
         }
 

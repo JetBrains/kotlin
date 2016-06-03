@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.types
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 
@@ -145,20 +144,11 @@ fun SimpleType.replace(
         )
     }
 
-    val newSubstitution = TypeConstructorSubstitution.create(constructor, newArguments)
-
-    val declarationDescriptor = constructor.declarationDescriptor
-    val newScope =
-            if (declarationDescriptor is ClassDescriptor)
-                declarationDescriptor.getMemberScope(newSubstitution)
-            else ErrorUtils.createErrorScope("Unexpected declaration descriptor for type constructor: $constructor")
-
     return KotlinTypeFactory.simpleType(
             newAnnotations,
             constructor,
             newArguments,
-            isMarkedNullable,
-            newScope
+            isMarkedNullable
     )
 }
 
