@@ -4123,6 +4123,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("illegalState.kt")
+        public void testIllegalState() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/illegalState.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("innerSuspensionCalls.kt")
         public void testInnerSuspensionCalls() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/innerSuspensionCalls.kt");

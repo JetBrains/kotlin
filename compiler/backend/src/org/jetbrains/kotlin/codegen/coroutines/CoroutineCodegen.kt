@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 
 class CoroutineCodegen(
@@ -73,9 +74,7 @@ class CoroutineCodegen(
                     1, codegen.v)
 
                 with(codegen.v) {
-                    load(0, AsmTypes.OBJECT_TYPE)
-                    iconst(0)
-                    putfield(v.thisName, COROUTINE_LABEL_FIELD_NAME, Type.INT_TYPE.descriptor)
+                    setLabelValue(LABEL_VALUE_BEFORE_FIRST_SUSPENSION)
                     load(0, AsmTypes.OBJECT_TYPE)
                     areturn(AsmTypes.OBJECT_TYPE)
                 }
@@ -123,7 +122,6 @@ class CoroutineCodegen(
                                        })
     }
 
-
     private fun createSynthesizedImplementationByName(
             name: String,
             interfaceSupertype: KotlinType,
@@ -164,8 +162,23 @@ class CoroutineCodegen(
                                        })
     }
 
+    private fun InstructionAdapter.setLabelValue(value: Int) {
+        load(0, AsmTypes.OBJECT_TYPE)
+        iconst(value)
+        putfield(v.thisName, COROUTINE_LABEL_FIELD_NAME, Type.INT_TYPE.descriptor)
+    }
+
+    override fun generateAdditionalCodeInConstructor(iv: InstructionAdapter) {
+        super.generateAdditionalCodeInConstructor(iv)
+        // Change label value to illegal to make sure continuation will not be used until `invoke(Controler)`
+        // where correct value will be set up
+        iv.setLabelValue(LABEL_VALUE_BEFORE_INVOKE)
+    }
 
     companion object {
+        private const val LABEL_VALUE_BEFORE_INVOKE = -2
+        private const val LABEL_VALUE_BEFORE_FIRST_SUSPENSION = 0
+
         @JvmStatic fun create(
                 expressionCodegen: ExpressionCodegen,
                 originalCoroutineLambdaDescriptor: FunctionDescriptor,
