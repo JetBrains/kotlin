@@ -11,7 +11,11 @@ open class A {
         }
 }
 
-class B : A() {
+interface C {
+    @get:JsName("getZ_") val z: Int
+}
+
+class B : A(), C {
     override val x: Int
         get() = 42
 
@@ -20,6 +24,8 @@ class B : A() {
         set(value) {
             super.y = value + 2
         }
+
+    override val z = 55
 }
 
 fun getPackage() = js("return Kotlin.modules.JS_TESTS.foo")
@@ -31,6 +37,7 @@ fun box(): String {
     assertEquals(15, a.y)
     a.y = 13
     assertEquals(30, a.y)
+    assertEquals(55, a.z)
 
     val d: dynamic = B()
 
@@ -38,6 +45,7 @@ fun box(): String {
     assertEquals(15, d.getY_())
     d.setY_(13)
     assertEquals(30, d.getY_())
+    assertEquals(55, d.getZ_())
 
     return "OK"
 }

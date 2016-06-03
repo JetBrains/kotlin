@@ -1,4 +1,4 @@
-// ONLY_THIS_QUALIFIED_REFERENCES: foo_qltb3l$
+// ONLY_THIS_QUALIFIED_REFERENCES: foo_0
 
 package foo
 

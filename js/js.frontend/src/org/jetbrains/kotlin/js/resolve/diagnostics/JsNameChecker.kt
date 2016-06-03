@@ -37,7 +37,7 @@ object JsNameChecker : DeclarationChecker {
         }
 
         if (AnnotationsUtils.getJsName(descriptor) == null) return
-        val jsNamePsi = AnnotationsUtils.getJsNameAnnotationPsi(bindingContext, declaration) ?: return
+        val jsNamePsi = AnnotationsUtils.getJsNameAnnotationPsi(bindingContext, declaration, descriptor) ?: return
 
         when (descriptor) {
             is ConstructorDescriptor -> {

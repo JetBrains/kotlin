@@ -150,6 +150,7 @@ public final class JsDescriptorUtils {
         return !isExtension(propertyDescriptor) &&
                isDefaultAccessor(propertyDescriptor.getGetter()) &&
                isDefaultAccessor(propertyDescriptor.getSetter()) &&
+               !TranslationUtils.shouldGenerateAccessors(propertyDescriptor) &&
                !ModalityKt.isOverridableOrOverrides(propertyDescriptor);
     }
 

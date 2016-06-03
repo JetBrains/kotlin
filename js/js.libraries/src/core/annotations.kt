@@ -19,7 +19,7 @@ package kotlin.js
 import kotlin.annotation.AnnotationTarget.*
 
 @native
-@Target(CLASS, FUNCTION, PROPERTY, CONSTRUCTOR, VALUE_PARAMETER)
+@Target(CLASS, FUNCTION, PROPERTY, CONSTRUCTOR, VALUE_PARAMETER, PROPERTY_GETTER, PROPERTY_SETTER)
 public annotation class native(public val name: String = "")
 
 @native
