@@ -1,11 +1,7 @@
 package org.jetbrains.android.inspections.klint;
 
 import com.android.annotations.concurrency.GuardedBy;
-import com.android.tools.klint.detector.api.Category;
-import com.android.tools.klint.detector.api.Implementation;
-import com.android.tools.klint.detector.api.Issue;
-import com.android.tools.klint.detector.api.Scope;
-import com.android.tools.klint.detector.api.Severity;
+import com.android.tools.klint.detector.api.*;
 import com.intellij.analysis.AnalysisScope;
 import com.intellij.codeHighlighting.HighlightDisplayLevel;
 import com.intellij.codeInsight.daemon.HighlightDisplayKey;
@@ -22,7 +18,6 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.profile.codeInspection.InspectionProjectProfileManager;
 import com.intellij.psi.*;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.HashMap;
 import org.jetbrains.android.util.AndroidBundle;
@@ -218,6 +213,10 @@ public abstract class AndroidLintInspectionBase extends GlobalInspectionTool {
     @Override
     public boolean isAvailable(@NotNull Project project, @NotNull PsiElement context) {
       return true;
+    }
+
+    public boolean isSuppressAll() {
+      return false;
     }
 
     @NotNull
