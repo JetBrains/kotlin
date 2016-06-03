@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
 open class KotlinTypeImpl
-private constructor(
+internal constructor(
         override val annotations: Annotations,
         final override val constructor: TypeConstructor,
         override val isMarkedNullable: Boolean,
@@ -45,10 +45,11 @@ private constructor(
                               nullable: Boolean,
                               arguments: List<TypeProjection>,
                               memberScope: MemberScope,
-                              capabilities: TypeCapabilities
+                              capabilities: TypeCapabilities,
+                              abbreviatedType: SimpleType? = null
         ): KotlinTypeImpl {
-            if (capabilities !== TypeCapabilities.NONE) {
-                return WithCapabilities(annotations, constructor, nullable, arguments, memberScope, capabilities)
+            if (capabilities !== TypeCapabilities.NONE || abbreviatedType != null) {
+                return WithCapabilities(annotations, constructor, nullable, arguments, memberScope, capabilities, abbreviatedType)
             }
             return KotlinTypeImpl(annotations, constructor, nullable, arguments, memberScope)
         }
@@ -70,7 +71,8 @@ private constructor(
             nullable: Boolean,
             arguments: List<TypeProjection>,
             memberScope: MemberScope,
-            override val capabilities: TypeCapabilities
+            override val capabilities: TypeCapabilities,
+            override val abbreviatedType: SimpleType?
     ) : KotlinTypeImpl(annotations, constructor, nullable, arguments, memberScope)
 
     init {

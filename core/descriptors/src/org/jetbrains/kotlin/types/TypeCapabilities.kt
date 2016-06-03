@@ -47,14 +47,6 @@ fun <T : TypeCapability> TypeCapabilities.addCapability(clazz: Class<T>, typeCap
     return CompositeTypeCapabilities(this, newCapabilities)
 }
 
-fun <T : TypeCapability> TypeCapabilities.overrideCapability(clazz: Class<T>, typeCapability: T): TypeCapabilities {
-    if (getCapability(clazz) === typeCapability) return this
-    val newCapabilities = SingletonTypeCapabilities(clazz, typeCapability)
-    if (this === org.jetbrains.kotlin.types.TypeCapabilities.NONE) return newCapabilities
-
-    return CompositeTypeCapabilities(newCapabilities, this)
-}
-
 inline fun <reified T : TypeCapability> KotlinType.getCapability(): T? = getCapability(T::class.java)
 
 
@@ -92,20 +84,3 @@ fun sameTypeConstructors(first: KotlinType, second: KotlinType): Boolean {
            || (second.unwrap() as? SubtypingRepresentatives)?.sameTypeConstructor(first) ?: false
 }
 
-interface AbbreviatedType : TypeCapability {
-    val abbreviatedType : KotlinType
-}
-
-fun KotlinType.hasAbbreviatedType(): Boolean =
-        getCapability(AbbreviatedType::class.java) != null
-
-fun KotlinType.getAbbreviatedType(): KotlinType? =
-        getCapability(AbbreviatedType::class.java)?.abbreviatedType
-
-private class AbbreviatedTypeImpl(override val abbreviatedType: KotlinType): AbbreviatedType
-
-fun TypeCapabilities.withAbbreviatedType(abbreviatedType: KotlinType): TypeCapabilities =
-        overrideCapability(AbbreviatedType::class.java, AbbreviatedTypeImpl(abbreviatedType))
-
-fun KotlinType.withAbbreviatedType(abbreviatedType: KotlinType): KotlinType =
-        if (!isError) replace(newCapabilities = capabilities.withAbbreviatedType(abbreviatedType)) else this

@@ -87,4 +87,10 @@ public abstract class AbstractKotlinType implements KotlinType, SimpleType { // 
 
         return sb.toString();
     }
+
+    @Nullable
+    @Override
+    public SimpleType getAbbreviatedType() {
+        return null;
+    }
 }

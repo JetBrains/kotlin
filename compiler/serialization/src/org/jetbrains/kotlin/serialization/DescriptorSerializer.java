@@ -548,7 +548,7 @@ public class DescriptorSerializer {
             builder.setNullable(type.isMarkedNullable());
         }
 
-        KotlinType abbreviatedType = TypeCapabilitiesKt.getAbbreviatedType(type);
+        KotlinType abbreviatedType = KotlinTypeKt.getAbbreviatedType(type);
         if (abbreviatedType != null) {
             if (useTypeTable()) {
                 builder.setAbbreviatedTypeId(typeId(abbreviatedType));

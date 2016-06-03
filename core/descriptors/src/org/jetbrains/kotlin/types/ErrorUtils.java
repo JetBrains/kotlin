@@ -553,6 +553,12 @@ public class ErrorUtils {
         public String toString() {
             return constructor.toString() + (arguments.isEmpty() ? "" : joinToString(arguments, ", ", "<", ">", -1, "...", null));
         }
+
+        @Nullable
+        @Override
+        public SimpleType getAbbreviatedType() {
+            return null;
+        }
     }
 
     @NotNull

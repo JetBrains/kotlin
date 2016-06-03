@@ -91,4 +91,10 @@ public abstract class DelegatingType implements KotlinType, SimpleType { // TODO
     public String toString() {
         return getDelegate().toString();
     }
+
+    @Nullable
+    @Override
+    public SimpleType getAbbreviatedType() {
+        return null;
+    }
 }

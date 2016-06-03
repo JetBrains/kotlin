@@ -93,6 +93,12 @@ public class TypeUtils {
         public String toString() {
             return name;
         }
+
+        @Nullable
+        @Override
+        public SimpleType getAbbreviatedType() {
+            return null;
+        }
     }
 
     @NotNull
