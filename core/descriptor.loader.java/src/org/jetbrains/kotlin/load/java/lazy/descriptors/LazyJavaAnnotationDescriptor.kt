@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.load.java.lazy.descriptors
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME
 import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
@@ -137,10 +138,7 @@ class LazyJavaAnnotationDescriptor(
 
         val arguments = listOf(TypeProjectionImpl(type))
 
-        val javaClassObjectType = object : AbstractLazyType(c.storageManager) {
-            override fun computeTypeConstructor() = jlClass.typeConstructor
-            override fun computeArguments() = arguments
-        }
+        val javaClassObjectType = KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, jlClass, arguments)
 
         return factory.createKClassValue(javaClassObjectType)
     }
