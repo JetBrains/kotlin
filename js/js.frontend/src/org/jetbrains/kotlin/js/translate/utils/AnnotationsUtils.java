@@ -22,15 +22,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget;
+import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.js.PredefinedAnnotation;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.psi.KtAnnotated;
-import org.jetbrains.kotlin.psi.KtAnnotation;
 import org.jetbrains.kotlin.psi.KtAnnotationEntry;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 
@@ -124,7 +122,8 @@ public final class AnnotationsUtils {
 
     @Nullable
     private static AnnotationDescriptor getAnnotationByName(@NotNull DeclarationDescriptor descriptor, @NotNull FqName fqName) {
-        return descriptor.getAnnotations().findAnnotation(fqName);
+        AnnotationWithTarget annotationWithTarget = Annotations.Companion.findAnyAnnotation(descriptor.getAnnotations(), (fqName));
+        return annotationWithTarget != null ? annotationWithTarget.getAnnotation() : null;
     }
 
     public static boolean isNativeObject(@NotNull DeclarationDescriptor descriptor) {
@@ -137,14 +136,8 @@ public final class AnnotationsUtils {
 
     @Nullable
     public static String getJsName(@NotNull DeclarationDescriptor descriptor) {
-        AnnotationDescriptor annotation = getAnnotationByName(descriptor, new FqName(JS_NAME));
+        AnnotationDescriptor annotation = getJsNameAnnotation(descriptor);
         if (annotation == null) return null;
-
-        if (descriptor instanceof PropertyAccessorDescriptor) {
-            PropertyAccessorDescriptor accessor = (PropertyAccessorDescriptor) descriptor;
-            AnnotationDescriptor propertyAnnotation = getAnnotationByName(accessor.getCorrespondingProperty(), new FqName(JS_NAME));
-            if (propertyAnnotation == annotation) return null;
-        }
 
         ConstantValue<?> value = annotation.getAllValueArguments().values().iterator().next();
         assert value != null : "JsName annotation should always declare string parameter";
@@ -155,26 +148,28 @@ public final class AnnotationsUtils {
     }
 
     @Nullable
-    public static KtAnnotationEntry getJsNameAnnotationPsi(@NotNull BindingContext context, @NotNull KtAnnotated annotated) {
-        return findAnnotationPsi(context, annotated, new FqName(JS_NAME));
+    private static AnnotationDescriptor getJsNameAnnotation(@NotNull DeclarationDescriptor descriptor) {
+        AnnotationDescriptor annotation = getAnnotationByName(descriptor, new FqName(JS_NAME));
+        if (annotation == null) return null;
+
+        if (descriptor instanceof PropertyAccessorDescriptor) {
+            PropertyAccessorDescriptor accessor = (PropertyAccessorDescriptor) descriptor;
+            AnnotationDescriptor propertyAnnotation = getAnnotationByName(accessor.getCorrespondingProperty(), new FqName(JS_NAME));
+            if (propertyAnnotation == annotation) return null;
+        }
+
+        return annotation;
     }
 
     @Nullable
-    private static KtAnnotationEntry findAnnotationPsi(
-            @NotNull BindingContext context, @NotNull KtAnnotated annotated,
-            @NotNull FqName nameToFind
-    ) {
-        FqNameUnsafe nameToFindUnsafe = nameToFind.toUnsafe();
+    public static KtAnnotationEntry getJsNameAnnotationPsi(@NotNull BindingContext context, @NotNull KtAnnotated annotated,
+            @NotNull DeclarationDescriptor descriptor) {
+        AnnotationDescriptor annotation = getJsNameAnnotation(descriptor);
+        if (annotation == null) return null;
 
         for (KtAnnotationEntry entry : annotated.getAnnotationEntries()) {
             AnnotationDescriptor annotationDescriptor = context.get(BindingContext.ANNOTATION, entry);
-            assert annotationDescriptor != null : "Annotation descriptor expected for annotation entry: " +
-                                                  PsiUtilsKt.getTextWithLocation(entry);
-            ClassifierDescriptor typeDescriptor = annotationDescriptor.getType().getConstructor().getDeclarationDescriptor();
-            assert typeDescriptor instanceof ClassDescriptor : "Annotation type should be ClassDescriptor: " +
-                                                               PsiUtilsKt.getTextWithLocation(entry);
-            FqNameUnsafe entryName = DescriptorUtils.getFqName(typeDescriptor);
-            if (entryName.equals(nameToFindUnsafe)) {
+            if (annotationDescriptor == annotation) {
                 return entry;
             }
         }

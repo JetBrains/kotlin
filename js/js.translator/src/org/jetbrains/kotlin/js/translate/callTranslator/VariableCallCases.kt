@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.Namer.getCapturedVarAccessor
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.fqnWithoutSideEffects
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.pureFqn
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.resolve.BindingContextUtils.isVarCapturedInClosure
@@ -42,7 +42,7 @@ object NativeVariableAccessCase : VariableAccessCase() {
         val descriptor = resolvedCall.resultingDescriptor
         return if (descriptor is PropertyDescriptor && TranslationUtils.shouldGenerateAccessors(descriptor)) {
             val methodRef = context.getNameForDescriptor(getAccessDescriptor())
-            JsInvocation(fqnWithoutSideEffects(methodRef, dispatchReceiver!!), *additionalArguments.toTypedArray())
+            JsInvocation(pureFqn(methodRef, dispatchReceiver!!), *additionalArguments.toTypedArray())
         }
         else {
             constructAccessExpression(JsNameRef(variableName, dispatchReceiver!!))
@@ -152,8 +152,8 @@ object SuperPropertyAccessCase : VariableAccessCase() {
 
         return if (descriptor is PropertyDescriptor && TranslationUtils.shouldGenerateAccessors(descriptor)) {
             val accessor = getAccessDescriptor()
-            val prototype = fqnWithoutSideEffects(Namer.getPrototypeName(), context.getQualifiedReference(descriptor.containingDeclaration))
-            val funRef = Namer.getFunctionCallRef(fqnWithoutSideEffects(context.getNameForDescriptor(accessor), prototype))
+            val prototype = pureFqn(Namer.getPrototypeName(), context.getQualifiedReference(descriptor.containingDeclaration))
+            val funRef = Namer.getFunctionCallRef(pureFqn(context.getNameForDescriptor(accessor), prototype))
             val arguments = listOf(dispatchReceiver!!) + additionalArguments
             JsInvocation(funRef, *arguments.toTypedArray())
         }

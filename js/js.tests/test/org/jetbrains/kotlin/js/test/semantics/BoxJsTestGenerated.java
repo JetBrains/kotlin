@@ -1177,6 +1177,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("jsNamePropertyDelegation.kt")
+        public void testJsNamePropertyDelegation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/delegation/jsNamePropertyDelegation.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("onObject.kt")
         public void testOnObject() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/delegation/onObject.kt");
@@ -5281,6 +5287,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("jsNamePropertyAccessors.kt")
+        public void testJsNamePropertyAccessors() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/jsNamePropertyAccessors.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt1519.kt")
         public void testKt1519() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/kt1519.kt");
@@ -5880,6 +5892,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("accessorsWithJsName.kt")
+        public void testAccessorsWithJsName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/propertyAccess/accessorsWithJsName.kt");
+            doTest(fileName);
+        }
+
         public void testAllFilesPresentInPropertyAccess() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/propertyAccess"), Pattern.compile("^([^_](.+))\\.kt$"), true);
         }
@@ -5899,6 +5917,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("customSetter.kt")
         public void testCustomSetter() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/propertyAccess/customSetter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultAccessorsWithJsName.kt")
+        public void testDefaultAccessorsWithJsName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/propertyAccess/defaultAccessorsWithJsName.kt");
             doTest(fileName);
         }
 
@@ -5977,6 +6001,18 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("setter.kt")
         public void testSetter() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/propertyAccess/setter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("staticAccessorsWithJsName.kt")
+        public void testStaticAccessorsWithJsName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/propertyAccess/staticAccessorsWithJsName.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("subclassAccessorsWithJsNameInSuper.kt")
+        public void testSubclassAccessorsWithJsNameInSuper() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/propertyAccess/subclassAccessorsWithJsNameInSuper.kt");
             doTest(fileName);
         }
 

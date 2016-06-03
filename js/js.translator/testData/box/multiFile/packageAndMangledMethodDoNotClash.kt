@@ -3,10 +3,10 @@ package foo
 
 fun bar(x: Int) = x
 
-fun box(): Boolean {
+fun box(): String {
     assertEquals(23, bar(23))
     assertEquals(42, foo.bar.x)
-    return true
+    return "OK"
 }
 
 // FILE: foobar.kt
