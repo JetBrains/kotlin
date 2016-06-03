@@ -273,6 +273,7 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
                 is KtParameter -> {
                     searchPropertyMethods(queryParameters, element)
                     runReadAction {
+
                         val componentFunctionDescriptor = element.dataClassComponentFunction()
                         if (componentFunctionDescriptor != null) {
                             val containingClass = element.getStrictParentOfType<KtClassOrObject>()?.toLightClass()
