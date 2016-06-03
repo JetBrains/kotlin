@@ -17,10 +17,8 @@
 package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
-import java.util.*
 
 interface TransformationInfo {
-
     val oldClassName: String
 
     val newClassName: String
@@ -29,10 +27,7 @@ interface TransformationInfo {
 
     fun canRemoveAfterTransformation(): Boolean
 
-    fun createTransformer(
-            inliningContext: InliningContext,
-            sameModule: Boolean
-    ): ObjectTransformer<*>
+    fun createTransformer(inliningContext: InliningContext, sameModule: Boolean): ObjectTransformer<*>
 }
 
 class WhenMappingTransformationInfo(
@@ -41,22 +36,17 @@ class WhenMappingTransformationInfo(
         val alreadyRegenerated: Boolean,
         val fieldNode: FieldInsnNode
 ) : TransformationInfo {
-
     override val newClassName by lazy {
-        nameGenerator.genWhenClassNamePrefix() + TRANSFORMED_WHEN_MAPPING_MARKER + oldClassName.substringAfterLast("/").substringAfterLast(TRANSFORMED_WHEN_MAPPING_MARKER)
+        nameGenerator.genWhenClassNamePrefix() + TRANSFORMED_WHEN_MAPPING_MARKER +
+        oldClassName.substringAfterLast("/").substringAfterLast(TRANSFORMED_WHEN_MAPPING_MARKER)
     }
 
-    override fun shouldRegenerate(sameModule: Boolean): Boolean {
-        return !alreadyRegenerated && !sameModule
-    }
+    override fun shouldRegenerate(sameModule: Boolean): Boolean = !alreadyRegenerated && !sameModule
 
-    override fun canRemoveAfterTransformation(): Boolean {
-        return true
-    }
+    override fun canRemoveAfterTransformation(): Boolean = true
 
-    override fun createTransformer(inliningContext: InliningContext, sameModule: Boolean): ObjectTransformer<*> {
-        return WhenMappingTransformer(this, inliningContext)
-    }
+    override fun createTransformer(inliningContext: InliningContext, sameModule: Boolean): ObjectTransformer<*> =
+            WhenMappingTransformer(this, inliningContext)
 
     companion object {
         const val TRANSFORMED_WHEN_MAPPING_MARKER = "\$wm$"
@@ -71,8 +61,8 @@ class AnonymousObjectTransformationInfo internal constructor(
         private val alreadyRegenerated: Boolean,
         val constructorDesc: String?,
         private val isStaticOrigin: Boolean,
-        nameGenerator: NameGenerator) : TransformationInfo {
-
+        nameGenerator: NameGenerator
+) : TransformationInfo {
     override val newClassName: String by lazy {
         nameGenerator.genLambdaClassName()
     }
@@ -89,14 +79,10 @@ class AnonymousObjectTransformationInfo internal constructor(
             alreadyRegenerated: Boolean,
             isStaticOrigin: Boolean,
             nameGenerator: NameGenerator
-    ) : this(
-            ownerInternalName, needReification,
-            HashMap<Int, LambdaInfo>(), false, alreadyRegenerated, null, isStaticOrigin, nameGenerator) {
-    }
+    ) : this(ownerInternalName, needReification, hashMapOf(), false, alreadyRegenerated, null, isStaticOrigin, nameGenerator)
 
-    override fun shouldRegenerate(sameModule: Boolean): Boolean {
-        return !alreadyRegenerated && (!lambdasToInline.isEmpty() || !sameModule || capturedOuterRegenerated || needReification)
-    }
+    override fun shouldRegenerate(sameModule: Boolean): Boolean =
+            !alreadyRegenerated && (!lambdasToInline.isEmpty() || !sameModule || capturedOuterRegenerated || needReification)
 
     override fun canRemoveAfterTransformation(): Boolean {
         // Note: It is unsafe to remove anonymous class that is referenced by GETSTATIC within lambda
@@ -104,7 +90,6 @@ class AnonymousObjectTransformationInfo internal constructor(
         return !isStaticOrigin
     }
 
-    override fun createTransformer(inliningContext: InliningContext, sameModule: Boolean): ObjectTransformer<*> {
-        return AnonymousObjectTransformer(this, inliningContext, sameModule)
-    }
+    override fun createTransformer(inliningContext: InliningContext, sameModule: Boolean): ObjectTransformer<*> =
+            AnonymousObjectTransformer(this, inliningContext, sameModule)
 }

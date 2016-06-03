@@ -54,7 +54,7 @@ public class MethodBodyVisitor extends InstructionAdapter {
     }
 
     @Override
-    public void visitAttribute(Attribute attr) {
+    public void visitAttribute(@NotNull Attribute attr) {
     }
 
     @Override

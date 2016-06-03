@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.psi.KtElement;
 import java.util.Map;
 
 public class RootInliningContext extends InliningContext {
-    public final CodegenContext startContext;
     private final InlineCallSiteInfo inlineCallSiteInfo;
     public final TypeParameterMappings typeParameterMappings;
     public final KtElement callElement;
@@ -34,7 +33,6 @@ public class RootInliningContext extends InliningContext {
             @NotNull Map<Integer, LambdaInfo> map,
             @NotNull GenerationState state,
             @NotNull NameGenerator nameGenerator,
-            @NotNull CodegenContext startContext,
             @NotNull KtElement callElement,
             @NotNull InlineCallSiteInfo classNameToInline,
             @NotNull ReifiedTypeInliner inliner,
@@ -42,11 +40,11 @@ public class RootInliningContext extends InliningContext {
     ) {
         super(null, map, state, nameGenerator, TypeRemapper.createRoot(typeParameterMappings), inliner, false, false);
         this.callElement = callElement;
-        this.startContext = startContext;
         this.inlineCallSiteInfo = classNameToInline;
         this.typeParameterMappings = typeParameterMappings;
     }
 
+    @NotNull
     @Override
     public InlineCallSiteInfo getCallSiteInfo() {
         return inlineCallSiteInfo;

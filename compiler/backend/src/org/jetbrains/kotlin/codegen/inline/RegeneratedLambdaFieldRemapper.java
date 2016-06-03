@@ -34,11 +34,11 @@ public class RegeneratedLambdaFieldRemapper extends FieldRemapper {
     private final boolean isConstructor;
 
     public RegeneratedLambdaFieldRemapper(
-            String oldOwnerType,
-            String newOwnerType,
-            Parameters parameters,
-            Map<String, LambdaInfo> recapturedLambdas,
-            FieldRemapper remapper,
+            @NotNull String oldOwnerType,
+            @NotNull String newOwnerType,
+            @NotNull Parameters parameters,
+            @NotNull Map<String, LambdaInfo> recapturedLambdas,
+            @NotNull FieldRemapper remapper,
             boolean isConstructor
     ) {
         super(oldOwnerType, remapper, parameters);
@@ -50,12 +50,12 @@ public class RegeneratedLambdaFieldRemapper extends FieldRemapper {
     }
 
     @Override
-    public boolean canProcess(@NotNull String fieldOwner, String fieldName, boolean isFolding) {
+    public boolean canProcess(@NotNull String fieldOwner, @NotNull String fieldName, boolean isFolding) {
         return super.canProcess(fieldOwner, fieldName, isFolding) || isRecapturedLambdaType(fieldOwner, isFolding);
     }
 
-    private boolean isRecapturedLambdaType(String owner, boolean isFolding) {
-        return recapturedLambdas.containsKey(owner)  && (isFolding || false == parent instanceof InlinedLambdaRemapper);
+    private boolean isRecapturedLambdaType(@NotNull String owner, boolean isFolding) {
+        return recapturedLambdas.containsKey(owner) && (isFolding || !(parent instanceof InlinedLambdaRemapper));
     }
 
     @Nullable
@@ -64,9 +64,8 @@ public class RegeneratedLambdaFieldRemapper extends FieldRemapper {
         boolean searchInParent = !canProcess(fieldInsnNode.owner, fieldInsnNode.name, false);
         if (searchInParent) {
             return parent.findField(fieldInsnNode);
-        } else {
-            return findFieldInMyCaptured(fieldInsnNode);
         }
+        return findFieldInMyCaptured(fieldInsnNode);
     }
 
     @Override
@@ -75,10 +74,11 @@ public class RegeneratedLambdaFieldRemapper extends FieldRemapper {
     }
 
     @Nullable
-    public CapturedParamInfo findFieldInMyCaptured(@NotNull FieldInsnNode fieldInsnNode) {
+    private CapturedParamInfo findFieldInMyCaptured(@NotNull FieldInsnNode fieldInsnNode) {
         return super.findField(fieldInsnNode, parameters.getCaptured());
     }
 
+    @NotNull
     @Override
     public String getNewLambdaInternalName() {
         return newOwnerType;
@@ -98,18 +98,23 @@ public class RegeneratedLambdaFieldRemapper extends FieldRemapper {
 
         boolean searchInParent = false;
         if (field == null) {
-            field = findFieldInMyCaptured(new FieldInsnNode(Opcodes.GETSTATIC, oldOwnerType, "this$0", Type.getObjectType(parent.getLambdaInternalName()).getDescriptor()));
+            field = findFieldInMyCaptured(new FieldInsnNode(
+                    Opcodes.GETSTATIC, oldOwnerType, InlineCodegenUtil.THIS$0,
+                    Type.getObjectType(parent.getLambdaInternalName()).getDescriptor()
+            ));
             searchInParent = true;
             if (field == null) {
                 throw new IllegalStateException("Couldn't find captured this " + getLambdaInternalName() + " for " + node.name);
             }
         }
 
-        StackValue result = StackValue.field(field.isSkipped ?
-                                             Type.getObjectType(parent.parent.getNewLambdaInternalName()) : field.getType(),
-                                             Type.getObjectType(getNewLambdaInternalName()), /*TODO owner type*/
-                                             field.getNewFieldName(), false,
-                                             prefix == null ? StackValue.LOCAL_0 : prefix);
+        StackValue result = StackValue.field(
+                field.isSkipped ?
+                Type.getObjectType(parent.parent.getNewLambdaInternalName()) : field.getType(),
+                Type.getObjectType(getNewLambdaInternalName()), /*TODO owner type*/
+                field.getNewFieldName(), false,
+                prefix == null ? StackValue.LOCAL_0 : prefix
+        );
 
         return searchInParent ? parent.getFieldForInline(node, result) : result;
     }

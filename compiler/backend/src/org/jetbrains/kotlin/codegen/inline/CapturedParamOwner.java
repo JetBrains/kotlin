@@ -16,8 +16,10 @@
 
 package org.jetbrains.kotlin.codegen.inline;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.org.objectweb.asm.Type;
 
 public interface CapturedParamOwner {
+    @NotNull
     Type getType();
 }
