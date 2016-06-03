@@ -49,7 +49,6 @@ import org.jetbrains.org.objectweb.asm.Opcodes;
 
 import java.io.File;
 
-import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.LOCAL_VARIABLE_DELEGATE;
 import static org.jetbrains.kotlin.descriptors.ClassKind.ANNOTATION_CLASS;
 import static org.jetbrains.kotlin.descriptors.ClassKind.INTERFACE;
 import static org.jetbrains.kotlin.descriptors.Modality.ABSTRACT;
@@ -292,25 +291,5 @@ public class JvmCodegenUtil {
             }
         }
         return null;
-    }
-
-    @NotNull
-    public static StackValue.Delegate delegatedVariableValue(
-            @NotNull StackValue delegateValue,
-            @NotNull StackValue metadataValue,
-            VariableDescriptorWithAccessors variableDescriptor,
-            @NotNull BindingContext bindingContext,
-            @NotNull KotlinTypeMapper typeMapper
-    ) {
-        VariableDescriptor delegateVariableDescriptor = bindingContext.get(LOCAL_VARIABLE_DELEGATE, variableDescriptor);
-        assert delegateVariableDescriptor != null : variableDescriptor;
-
-        VariableAccessorDescriptor getterDescriptor = variableDescriptor.getGetter();
-        VariableAccessorDescriptor setterDescriptor = variableDescriptor.getSetter();
-
-        //noinspection ConstantConditions
-        CallableMethod getterMethod = typeMapper.mapToCallableMethod(getterDescriptor, false);
-        CallableMethod setterMethod = setterDescriptor != null ? typeMapper.mapToCallableMethod(setterDescriptor, false) : null;
-        return StackValue.delegate(typeMapper.mapType(variableDescriptor.getType()), delegateValue, metadataValue, getterMethod, setterMethod);
     }
 }
