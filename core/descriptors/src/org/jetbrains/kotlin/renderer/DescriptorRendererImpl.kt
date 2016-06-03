@@ -169,7 +169,7 @@ internal class DescriptorRendererImpl(
         return type.isFunctionType && type.arguments.none { it.isStarProjection }
     }
 
-    override fun renderFlexibleType(lowerRendered: String, upperRendered: String): String {
+    override fun renderFlexibleType(lowerRendered: String, upperRendered: String, builtIns: KotlinBuiltIns): String {
         if (differsOnlyInNullability(lowerRendered, upperRendered)) {
             if (upperRendered.startsWith("(")) {
                 // the case of complex type, e.g. (() -> Unit)?
@@ -178,7 +178,7 @@ internal class DescriptorRendererImpl(
             return lowerRendered + "!"
         }
 
-        val kotlinCollectionsPrefix = classifierNamePolicy.renderClassifier(DefaultBuiltIns.Instance.collection, this).substringBefore("Collection")
+        val kotlinCollectionsPrefix = classifierNamePolicy.renderClassifier(builtIns.collection, this).substringBefore("Collection")
         val mutablePrefix = "Mutable"
         // java.util.List<Foo> -> (Mutable)List<Foo!>!
         val simpleCollection = replacePrefixes(lowerRendered, kotlinCollectionsPrefix + mutablePrefix, upperRendered, kotlinCollectionsPrefix, kotlinCollectionsPrefix + "(" + mutablePrefix + ")")
@@ -187,7 +187,7 @@ internal class DescriptorRendererImpl(
         val mutableEntry = replacePrefixes(lowerRendered, kotlinCollectionsPrefix + "MutableMap.MutableEntry", upperRendered, kotlinCollectionsPrefix + "Map.Entry", kotlinCollectionsPrefix + "(Mutable)Map.(Mutable)Entry")
         if (mutableEntry != null) return mutableEntry
 
-        val kotlinPrefix = classifierNamePolicy.renderClassifier(DefaultBuiltIns.Instance.array, this).substringBefore("Array")
+        val kotlinPrefix = classifierNamePolicy.renderClassifier(builtIns.array, this).substringBefore("Array")
         // Foo[] -> Array<(out) Foo!>!
         val array = replacePrefixes(lowerRendered, kotlinPrefix + escape("Array<"), upperRendered, kotlinPrefix + escape("Array<out "), kotlinPrefix + escape("Array<(out) "))
         if (array != null) return array

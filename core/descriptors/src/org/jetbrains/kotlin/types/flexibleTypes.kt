@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererOptions
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.typeUtil.builtIns
 
 
 fun KotlinType.isFlexible(): Boolean = unwrap() is FlexibleType
@@ -127,7 +128,7 @@ class FlexibleTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : Flexibl
         if (options.debugMode) {
             return "(${renderer.renderType(lowerBound)}..${renderer.renderType(upperBound)})"
         }
-        return renderer.renderFlexibleType(renderer.renderType(lowerBound), renderer.renderType(upperBound))
+        return renderer.renderFlexibleType(renderer.renderType(lowerBound), renderer.renderType(upperBound), builtIns)
     }
 
     override fun makeNullableAsSpecified(newNullability: Boolean): UnwrappedType

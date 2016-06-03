@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.renderer
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -38,7 +39,7 @@ abstract class DescriptorRenderer {
 
     abstract fun renderType(type: KotlinType): String
 
-    abstract fun renderFlexibleType(lowerRendered: String, upperRendered: String): String
+    abstract fun renderFlexibleType(lowerRendered: String, upperRendered: String, builtIns: KotlinBuiltIns): String
 
     abstract fun renderTypeArguments(typeArguments: List<TypeProjection>): String
 

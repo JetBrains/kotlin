@@ -92,6 +92,8 @@ public class JvmSerializerExtension extends SerializerExtension {
 
         if (flexibleType instanceof RawTypeImpl) {
             lowerProto.setExtension(JvmProtoBuf.isRaw, true);
+
+            // we write this Extension for compatibility with old compiler
             upperProto.setExtension(JvmProtoBuf.isRaw, true);
         }
     }

@@ -13475,6 +13475,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("rawEnhancment.kt")
+                public void testRawEnhancment() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/rawTypes/rawEnhancment.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("rawSupertype.kt")
                 public void testRawSupertype() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/rawTypes/rawSupertype.kt");

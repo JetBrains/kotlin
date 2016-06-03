@@ -12,7 +12,6 @@ public class A<T> {
 
 // FILE: B.java
 
-// TODO: E shoult has supertype A<*> which is raw type
 public class B<E extends A> {
     public E foo() { return null;}
     E field;
@@ -27,6 +26,7 @@ public class Test {
 // FILE: main.kt
 
 fun foo(x: B<*>) {
+    // TODO: x.foo() now is flexible type instead of raw, because of captured type approximation
     val q: MutableList<String> = x.foo().getChildrenStubs()
 
     // Raw(B).field erased to A<Any!>..A<out Any!>?
