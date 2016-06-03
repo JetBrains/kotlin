@@ -121,11 +121,11 @@ fun KotlinType.replace(
     if (newArguments.isEmpty() && newAnnotations === annotations) return this
 
     if (newArguments.isEmpty()) {
-        return KotlinTypeImpl.create(
+        return KotlinTypeFactory.simpleType(
                 newAnnotations,
                 constructor,
-                isMarkedNullable,
                 arguments,
+                isMarkedNullable,
                 memberScope
         )
     }
@@ -138,11 +138,11 @@ fun KotlinType.replace(
                 declarationDescriptor.getMemberScope(newSubstitution)
             else ErrorUtils.createErrorScope("Unexpected declaration descriptor for type constructor: $constructor")
 
-    return KotlinTypeImpl.create(
+    return KotlinTypeFactory.simpleType(
             newAnnotations,
             constructor,
-            isMarkedNullable,
             newArguments,
+            isMarkedNullable,
             newScope
     )
 }

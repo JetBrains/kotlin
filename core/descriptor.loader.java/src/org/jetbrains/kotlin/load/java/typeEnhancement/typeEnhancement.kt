@@ -124,14 +124,14 @@ private fun KotlinType.enhanceInflexible(qualifiers: (Int) -> JavaTypeQualifiers
 
     val newSubstitution = TypeConstructorSubstitution.create(typeConstructor, enhancedArguments)
 
-    val enhancedType = KotlinTypeImpl.create(
+    val enhancedType = KotlinTypeFactory.simpleType(
             newAnnotations,
             typeConstructor,
-            enhancedNullability,
             enhancedArguments,
+            enhancedNullability,
             if (enhancedClassifier is ClassDescriptor)
                 enhancedClassifier.getMemberScope(newSubstitution)
-            else enhancedClassifier.getDefaultType().memberScope
+            else enhancedClassifier.defaultType.memberScope
     )
 
     val result = if (effectiveQualifiers.isNotNullTypeParameter) NotNullTypeParameter(enhancedType) else enhancedType
@@ -213,8 +213,7 @@ private object EnhancedTypeAnnotationDescriptor : AnnotationDescriptor {
     override fun toString() = "[EnhancedType]"
 }
 
-internal class NotNullTypeParameter(private val delegate: SimpleType) : CustomTypeVariable, DelegatingType(), SimpleType {
-    override fun getDelegate(): KotlinType? = delegate
+internal class NotNullTypeParameter(override val delegate: SimpleType) : CustomTypeVariable, DelegatingSimpleType() {
 
     override val isTypeVariable: Boolean
         get() = true
@@ -240,4 +239,10 @@ internal class NotNullTypeParameter(private val delegate: SimpleType) : CustomTy
 
         return NotNullTypeParameter(result)
     }
+
+    override fun replaceAnnotations(newAnnotations: Annotations) = NotNullTypeParameter(delegate.replaceAnnotations(newAnnotations))
+    override fun makeNullableAsSpecified(newNullability: Boolean) = this
+
+    override val isError: Boolean
+        get() = false
 }

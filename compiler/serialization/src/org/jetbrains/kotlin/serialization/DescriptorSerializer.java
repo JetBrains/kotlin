@@ -506,7 +506,7 @@ public class DescriptorSerializer {
         }
 
         if (FlexibleTypesKt.isFlexible(type)) {
-            DelegatingFlexibleType flexibleType = (DelegatingFlexibleType) FlexibleTypesKt.asFlexibleType(type);
+            FlexibleType flexibleType = FlexibleTypesKt.asFlexibleType(type);
 
             ProtoBuf.Type.Builder lowerBound = type(flexibleType.getLowerBound());
             ProtoBuf.Type.Builder upperBound = type(flexibleType.getUpperBound());
@@ -548,7 +548,7 @@ public class DescriptorSerializer {
             builder.setNullable(type.isMarkedNullable());
         }
 
-        KotlinType abbreviatedType = KotlinTypeKt.getAbbreviatedType(type);
+        KotlinType abbreviatedType = SpecialTypesKt.getAbbreviatedType(type);
         if (abbreviatedType != null) {
             if (useTypeTable()) {
                 builder.setAbbreviatedTypeId(typeId(abbreviatedType));

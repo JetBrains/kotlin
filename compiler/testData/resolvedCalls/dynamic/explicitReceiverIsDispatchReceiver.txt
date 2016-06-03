@@ -9,5 +9,5 @@ Resolved call:
 Resulting descriptor: fun foo(): dynamic defined in bar
 
 Explicit receiver kind = DISPATCH_RECEIVER
-Dispatch receiver = a {('Nothing'..'Any?')}
+Dispatch receiver = a {dynamic}
 Extension receiver = NO_RECEIVER

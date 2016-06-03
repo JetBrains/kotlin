@@ -20,10 +20,10 @@ import com.google.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.serialization.KotlinSerializerExtensionBase
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
-import org.jetbrains.kotlin.types.DelegatingFlexibleType
+import org.jetbrains.kotlin.types.FlexibleType
 
 class KotlinJavascriptSerializerExtension : KotlinSerializerExtensionBase(JsSerializerProtocol) {
-    override fun serializeFlexibleType(flexibleType: DelegatingFlexibleType, lowerProto: ProtoBuf.Type.Builder, upperProto: ProtoBuf.Type.Builder) {
+    override fun serializeFlexibleType(flexibleType: FlexibleType, lowerProto: ProtoBuf.Type.Builder, upperProto: ProtoBuf.Type.Builder) {
         lowerProto.flexibleTypeCapabilitiesId = stringTable.getStringIndex(DynamicTypeDeserializer.id)
     }
 }

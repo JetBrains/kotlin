@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.serialization.SerializerExtension;
 import org.jetbrains.kotlin.serialization.StringTable;
 import org.jetbrains.kotlin.serialization.jvm.ClassMapperLite;
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf;
-import org.jetbrains.kotlin.types.DelegatingFlexibleType;
+import org.jetbrains.kotlin.types.FlexibleType;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.Method;
@@ -84,7 +84,7 @@ public class JvmSerializerExtension extends SerializerExtension {
 
     @Override
     public void serializeFlexibleType(
-            @NotNull DelegatingFlexibleType flexibleType,
+            @NotNull FlexibleType flexibleType,
             @NotNull ProtoBuf.Type.Builder lowerProto,
             @NotNull ProtoBuf.Type.Builder upperProto
     ) {

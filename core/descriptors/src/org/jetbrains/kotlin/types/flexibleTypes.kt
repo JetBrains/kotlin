@@ -23,21 +23,6 @@ import org.jetbrains.kotlin.renderer.DescriptorRendererOptions
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 
-interface FlexibleType : SubtypingRepresentatives, TypeWithCustomReplacement {
-    // lowerBound is a subtype of upperBound
-    val lowerBound: SimpleType
-    val upperBound: SimpleType
-
-    override val subTypeRepresentative: KotlinType
-        get() = lowerBound
-
-    override val superTypeRepresentative: KotlinType
-        get() = upperBound
-
-    override fun sameTypeConstructor(type: KotlinType) = false
-
-    fun render(renderer: DescriptorRenderer, options: DescriptorRendererOptions): String
-}
 
 fun KotlinType.isFlexible(): Boolean = unwrap() is FlexibleType
 fun KotlinType.asFlexibleType(): FlexibleType = unwrap() as FlexibleType
@@ -84,21 +69,18 @@ fun Collection<TypeProjection>.singleBestRepresentative(): TypeProjection? {
 fun KotlinType.lowerIfFlexible(): SimpleType = (if (this.isFlexible()) this.asFlexibleType().lowerBound else this).asSimpleType()
 fun KotlinType.upperIfFlexible(): SimpleType = (if (this.isFlexible()) this.asFlexibleType().upperBound else this).asSimpleType()
 
-abstract class DelegatingFlexibleType protected constructor(
-        override val lowerBound: SimpleType,
-        override val upperBound: SimpleType
-) : DelegatingType(), FlexibleType {
+class FlexibleTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : FlexibleType(lowerBound, upperBound), CustomTypeVariable {
     companion object {
         @JvmField
         var RUN_SLOW_ASSERTIONS = false
     }
 
-     // These assertions are needed for checking invariants of flexible types.
-     //
-     // Unfortunately isSubtypeOf is running resolve for lazy types.
-     // Because of this we can't run these assertions when we are creating this type. See EA-74904
-     //
-     // Also isSubtypeOf is not a very fast operation, so we are running assertions only if ASSERTIONS_ENABLED. See KT-7540
+    // These assertions are needed for checking invariants of flexible types.
+    //
+    // Unfortunately isSubtypeOf is running resolve for lazy types.
+    // Because of this we can't run these assertions when we are creating this type. See EA-74904
+    //
+    // Also isSubtypeOf is not a very fast operation, so we are running assertions only if ASSERTIONS_ENABLED. See KT-7540
     private var assertionsDone = false
 
     private fun runAssertions() {
@@ -113,39 +95,25 @@ abstract class DelegatingFlexibleType protected constructor(
         }
     }
 
-    protected abstract val delegateType: KotlinType
-
-    override fun makeNullableAsSpecified(nullable: Boolean): KotlinType {
-        return KotlinTypeFactory.flexibleType(TypeUtils.makeNullableAsSpecified(lowerBound, nullable), TypeUtils.makeNullableAsSpecified(upperBound, nullable))
-    }
-
-    override fun getDelegate(): KotlinType {
-        runAssertions()
-        return delegateType
-    }
-
-    override fun toString() = "('$lowerBound'..'$upperBound')"
-}
-
-class FlexibleTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : DelegatingFlexibleType(lowerBound, upperBound), CustomTypeVariable {
-
-    override val delegateType: KotlinType get() = lowerBound
+    override val delegate: SimpleType
+        get() {
+            runAssertions()
+            return lowerBound
+        }
 
     override val isTypeVariable: Boolean get() = lowerBound.constructor.declarationDescriptor is TypeParameterDescriptor
                                                  && lowerBound.constructor == upperBound.constructor
 
     override fun substitutionResult(replacement: KotlinType): KotlinType {
-        if (replacement.isFlexible()) {
-            return replacement
-        }
-        else {
-            val simpleType = replacement.asSimpleType()
-            return KotlinTypeFactory.flexibleType(simpleType, TypeUtils.makeNullable(simpleType))
+        val unwrapped = replacement.unwrap()
+        return when(unwrapped) {
+            is FlexibleType -> unwrapped
+            is SimpleType -> KotlinTypeFactory.flexibleType(unwrapped, TypeUtils.makeNullable(unwrapped))
         }
     }
 
-    override fun replaceAnnotations(newAnnotations: Annotations): KotlinType
-            = KotlinTypeFactory.flexibleType(lowerBound.replaceAnnotations(newAnnotations).asSimpleType(), upperBound)
+    override fun replaceAnnotations(newAnnotations: Annotations): UnwrappedType
+            = KotlinTypeFactory.flexibleType(lowerBound.replaceAnnotations(newAnnotations), upperBound.replaceAnnotations(newAnnotations))
 
     override fun render(renderer: DescriptorRenderer, options: DescriptorRendererOptions): String {
         if (options.debugMode) {
@@ -153,4 +121,7 @@ class FlexibleTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : Delegat
         }
         return renderer.renderFlexibleType(renderer.renderType(lowerBound), renderer.renderType(upperBound))
     }
+
+    override fun makeNullableAsSpecified(newNullability: Boolean): UnwrappedType
+            = KotlinTypeFactory.flexibleType(lowerBound.makeNullableAsSpecified(newNullability), upperBound.makeNullableAsSpecified(newNullability))
 }

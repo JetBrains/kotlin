@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.utils.toReadOnlyList
 
-class DeserializedType(
+class DeserializedType private constructor(
         private val c: DeserializationContext,
         private val typeProto: ProtoBuf.Type,
         private val additionalAnnotations: Annotations = Annotations.EMPTY
@@ -54,9 +54,18 @@ class DeserializedType(
             return descriptor != null && ErrorUtils.isError(descriptor)
         }
 
-    override val abbreviatedType by c.storageManager.createNullableLazyValue {
-        val abbreviatedTypeProto = typeProto.abbreviatedType(c.typeTable) ?: return@createNullableLazyValue null
+    companion object {
+        fun create(
+                c: DeserializationContext,
+                typeProto: ProtoBuf.Type,
+                additionalAnnotations: Annotations
+        ): SimpleType {
+            val deserializedType = DeserializedType(c, typeProto, additionalAnnotations)
+            val abbreviatedTypeProto = typeProto.abbreviatedType(c.typeTable) ?: return deserializedType
 
-        c.typeDeserializer.type(abbreviatedTypeProto, additionalAnnotations).asSimpleType()
+            return deserializedType.withAbbreviatedType(DeserializedType(c, abbreviatedTypeProto, additionalAnnotations))
+        }
     }
 }
+
+

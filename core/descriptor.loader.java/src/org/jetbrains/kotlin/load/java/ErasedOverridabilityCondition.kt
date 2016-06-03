@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.load.java.lazy.types.RawTypeImpl
 import org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition
 import org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition.Result
 import org.jetbrains.kotlin.resolve.OverridingUtil
-import org.jetbrains.kotlin.types.unwrap
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
 class ErasedOverridabilityCondition : ExternalOverridabilityCondition {

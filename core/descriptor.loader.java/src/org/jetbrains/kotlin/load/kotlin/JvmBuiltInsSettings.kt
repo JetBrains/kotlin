@@ -78,7 +78,7 @@ open class JvmBuiltInsSettings(
 
         //NOTE: can't reference anyType right away, because this is sometimes called when JvmBuiltIns are initializing
         val superTypes = listOf(object : WrappedType() {
-            override fun unwrap() = moduleDescriptor.builtIns.anyType
+            override val delegate: KotlinType get() = moduleDescriptor.builtIns.anyType
         })
 
         val mockSerializableClass = ClassDescriptorImpl(

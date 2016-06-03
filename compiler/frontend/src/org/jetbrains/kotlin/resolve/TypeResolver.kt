@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.Variance.*
 import org.jetbrains.kotlin.types.typeUtil.isArrayOfNothing
@@ -102,7 +103,7 @@ class TypeResolver(
             class LazyKotlinType : WrappedType(), LazyEntity {
                 private val _delegate = storageManager.createLazyValue { doResolvePossiblyBareType(c, typeReference).getActualType() }
 
-                override fun unwrap() = _delegate()
+                override val delegate: KotlinType by _delegate
                 override fun isComputed() = _delegate.isComputed()
 
                 override fun forceResolveAllContents() {

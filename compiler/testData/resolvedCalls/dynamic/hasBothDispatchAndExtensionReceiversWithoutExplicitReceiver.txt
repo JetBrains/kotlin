@@ -18,4 +18,4 @@ Resulting descriptor: fun dynamic.foo(): Unit defined in A
 
 Explicit receiver kind = NO_EXPLICIT_RECEIVER
 Dispatch receiver = AExt{fun A.<anonymous>(): Unit defined in bar}
-Extension receiver = ('Nothing'..'Any?')Ext{fun dynamic.<anonymous>(): Unit defined in bar.<anonymous>}
+Extension receiver = dynamicExt{fun dynamic.<anonymous>(): Unit defined in bar.<anonymous>}

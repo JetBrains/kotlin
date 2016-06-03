@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
 import org.jetbrains.kotlin.serialization.deserialization.TypeDeserializer
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.KotlinTypeImpl
 import org.jetbrains.kotlin.utils.Printer
 import java.lang.reflect.Constructor
 import java.lang.reflect.GenericDeclaration
@@ -177,7 +176,7 @@ class LazyOperationsLog(
                     o.joinTo(sb, ", ", prefix = "{", postfix = "}", limit = 3) { render(it) }
                 }
             }
-            o is KotlinTypeImpl -> {
+            o is KotlinType -> {
                 StringBuilder().apply {
                     append(o.constructor)
                     if (!o.arguments.isEmpty()) {

@@ -27,17 +27,15 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 
-class RawTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : DelegatingFlexibleType(lowerBound, upperBound), RawType {
+class RawTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : FlexibleType(lowerBound, upperBound), RawType {
     init {
         assert (KotlinTypeChecker.DEFAULT.isSubtypeOf(lowerBound, upperBound)) {
             "Lower bound $lowerBound of a flexible type must be a subtype of the upper bound $upperBound"
         }
     }
-    override fun getDelegate(): KotlinType = delegateType
 
-    override val delegateType: KotlinType get() = lowerBound
+    override val delegate: SimpleType get() = lowerBound
 
     override val memberScope: MemberScope
         get() {
@@ -46,11 +44,11 @@ class RawTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : DelegatingFl
             return classDescriptor.getMemberScope(RawSubstitution)
         }
 
-    override fun replaceAnnotations(newAnnotations: Annotations): KotlinType
-            = RawTypeImpl(lowerBound.replaceAnnotations(newAnnotations).asSimpleType(), upperBound)
+    override fun replaceAnnotations(newAnnotations: Annotations)
+            = RawTypeImpl(lowerBound.replaceAnnotations(newAnnotations), upperBound.replaceAnnotations(newAnnotations))
 
-    override fun makeNullableAsSpecified(nullable: Boolean): KotlinType
-            = RawTypeImpl(TypeUtils.makeNullableAsSpecified(lowerBound, nullable), TypeUtils.makeNullableAsSpecified(upperBound, nullable))
+    override fun makeNullableAsSpecified(newNullability: Boolean)
+            = RawTypeImpl(lowerBound.makeNullableAsSpecified(newNullability), upperBound.makeNullableAsSpecified(newNullability))
 
     override fun render(renderer: DescriptorRenderer, options: DescriptorRendererOptions): String {
         fun onlyOutDiffers(first: String, second: String) = first == second.removePrefix("out ") || second == "*"

@@ -62,7 +62,7 @@ class CapturedType(
         override val constructor: TypeConstructor = CapturedTypeConstructor(typeProjection),
         override val isMarkedNullable: Boolean = false,
         override val annotations: Annotations = Annotations.EMPTY
-): AbstractKotlinType(), SubtypingRepresentatives, TypeWithCustomReplacement {
+): SimpleType(), SubtypingRepresentatives {
 
     override val arguments: List<TypeProjection>
         get() = listOf()
@@ -83,14 +83,14 @@ class CapturedType(
 
     override fun sameTypeConstructor(type: KotlinType) = constructor === type.constructor
 
-    override fun toString() = "Captured($typeProjection)${if (isMarkedNullable) '?' else ""}"
+    override fun toString() = "Captured($typeProjection)" + if (isMarkedNullable) "?" else ""
 
-    override fun makeNullableAsSpecified(nullable: Boolean): KotlinType {
-        if (nullable == isMarkedNullable) return this
-        return CapturedType(typeProjection, constructor, nullable, annotations)
+    override fun makeNullableAsSpecified(newNullability: Boolean): CapturedType {
+        if (newNullability == isMarkedNullable) return this
+        return CapturedType(typeProjection, constructor, newNullability, annotations)
     }
 
-    override fun replaceAnnotations(newAnnotations: Annotations): KotlinType = CapturedType(typeProjection, constructor, isMarkedNullable, newAnnotations)
+    override fun replaceAnnotations(newAnnotations: Annotations): CapturedType = CapturedType(typeProjection, constructor, isMarkedNullable, newAnnotations)
 }
 
 fun createCapturedType(typeProjection: TypeProjection): KotlinType
@@ -120,7 +120,8 @@ private fun TypeProjection.createCapturedIfNeeded(typeParameterDescriptor: TypeP
         // TODO: Make star projection type lazy
         return if (isStarProjection)
             TypeProjectionImpl(object : WrappedType() {
-                override fun unwrap(): KotlinType = this@createCapturedIfNeeded.type
+                override val delegate: KotlinType
+                    get() = this@createCapturedIfNeeded.type
             })
         else
             TypeProjectionImpl(this@createCapturedIfNeeded.type)

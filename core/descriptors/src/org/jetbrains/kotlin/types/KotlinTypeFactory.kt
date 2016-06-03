@@ -29,14 +29,14 @@ object KotlinTypeFactory {
             arguments: List<TypeProjection>,
             nullable: Boolean,
             memberScope: MemberScope
-    ): SimpleType = KotlinTypeImpl.create(annotations, constructor, nullable, arguments, memberScope)
+    ): SimpleType = SimpleTypeImpl(annotations, constructor, arguments, nullable, memberScope)
 
     @JvmStatic
     fun simpleNotNullType(
             annotations: Annotations,
             descriptor: ClassDescriptor,
             arguments: List<TypeProjection>
-    ): SimpleType = KotlinTypeImpl.create(annotations, descriptor.typeConstructor, false, arguments, descriptor.getMemberScope(arguments))
+    ): SimpleType = SimpleTypeImpl(annotations, descriptor.typeConstructor, arguments, false, descriptor.getMemberScope(arguments))
 
     @JvmStatic
     fun simpleType(
@@ -49,8 +49,28 @@ object KotlinTypeFactory {
     ): SimpleType = simpleType(annotations, constructor, arguments, nullable, memberScope)
 
     @JvmStatic
-    fun flexibleType(lowerBound: SimpleType, upperBound: SimpleType): KotlinType {
+    fun flexibleType(lowerBound: SimpleType, upperBound: SimpleType): UnwrappedType {
         if (lowerBound == upperBound) return lowerBound
         return FlexibleTypeImpl(lowerBound, upperBound)
+    }
+}
+
+private class SimpleTypeImpl(
+        override val annotations: Annotations,
+        override val constructor: TypeConstructor,
+        override val arguments: List<TypeProjection>,
+        override val isMarkedNullable: Boolean,
+        override val memberScope: MemberScope
+) : SimpleType() {
+    override fun replaceAnnotations(newAnnotations: Annotations) = SimpleTypeImpl(newAnnotations, constructor, arguments, isMarkedNullable, memberScope)
+    override fun makeNullableAsSpecified(newNullability: Boolean) = SimpleTypeImpl(annotations, constructor, arguments, newNullability, memberScope)
+
+    override val isError: Boolean
+        get() = false
+
+    init {
+        if (memberScope is ErrorUtils.ErrorScope) {
+            throw IllegalStateException("SimpleTypeImpl should not be created for error type: $memberScope\n$constructor")
+        }
     }
 }

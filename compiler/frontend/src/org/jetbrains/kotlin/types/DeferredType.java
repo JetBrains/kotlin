@@ -88,7 +88,7 @@ public class DeferredType extends WrappedType implements LazyType {
 
     @NotNull
     @Override
-    public KotlinType unwrap() {
+    public KotlinType getDelegate() {
         return lazyValue.invoke();
     }
 

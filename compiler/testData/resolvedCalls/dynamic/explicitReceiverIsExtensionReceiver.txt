@@ -12,4 +12,4 @@ Resulting descriptor: fun dynamic.foo(): Unit defined in root package
 
 Explicit receiver kind = EXTENSION_RECEIVER
 Dispatch receiver = NO_RECEIVER
-Extension receiver = a {('Nothing'..'Any?')}
+Extension receiver = a {dynamic}
