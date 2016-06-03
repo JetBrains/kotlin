@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.WrappedType
+import org.jetbrains.kotlin.types.LazyWrappedType
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addToStdlib.check
@@ -60,7 +60,7 @@ open class JvmBuiltInsSettings(
 
     private val ownerModuleDescriptor: ModuleDescriptor by lazy(deferredOwnerModuleDescriptor)
 
-    private val mockSerializableType = createMockJavaIoSerializableType()
+    private val mockSerializableType = storageManager.createMockJavaIoSerializableType()
 
     private val javaAnalogueClassesWithCustomSupertypeCache = storageManager.createCacheWithNotNullValues<FqName, ClassDescriptor>()
 
@@ -71,15 +71,13 @@ open class JvmBuiltInsSettings(
         ).let { AnnotationsImpl(listOf(it)) }
     }
 
-    private fun createMockJavaIoSerializableType(): KotlinType {
+    private fun StorageManager.createMockJavaIoSerializableType(): KotlinType {
         val mockJavaIoPackageFragment = object : PackageFragmentDescriptorImpl(moduleDescriptor, FqName("java.io")) {
             override fun getMemberScope() = MemberScope.Empty
         }
 
         //NOTE: can't reference anyType right away, because this is sometimes called when JvmBuiltIns are initializing
-        val superTypes = listOf(object : WrappedType() {
-            override val delegate: KotlinType get() = moduleDescriptor.builtIns.anyType
-        })
+        val superTypes = listOf(LazyWrappedType(this) { moduleDescriptor.builtIns.anyType })
 
         val mockSerializableClass = ClassDescriptorImpl(
                 mockJavaIoPackageFragment, Name.identifier("Serializable"), Modality.ABSTRACT, ClassKind.INTERFACE, superTypes, SourceElement.NO_SOURCE
