@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.js.resolve.diagnostics
 
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -38,6 +35,10 @@ object JsNameChecker : DeclarationChecker {
 
         if (AnnotationsUtils.getJsName(descriptor) == null) return
         val jsNamePsi = AnnotationsUtils.getJsNameAnnotationPsi(bindingContext, declaration, descriptor) ?: return
+
+        if (descriptor is CallableMemberDescriptor && descriptor.overriddenDescriptors.isNotEmpty()) {
+            diagnosticHolder.report(ErrorsJs.JS_NAME_PROHIBITED_FOR_OVERRIDE.on(jsNamePsi))
+        }
 
         when (descriptor) {
             is ConstructorDescriptor -> {
