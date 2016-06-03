@@ -4200,6 +4200,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/suspendInTheMiddleOfObjectConstruction.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("tryFinallyInsideInlineLambda.kt")
+        public void testTryFinallyInsideInlineLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/tryFinallyInsideInlineLambda.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/dataClasses")
