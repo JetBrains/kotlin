@@ -85,8 +85,10 @@ class RawTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : FlexibleType
 internal object RawSubstitution : TypeSubstitution() {
     override fun get(key: KotlinType) = TypeProjectionImpl(eraseType(key))
 
-    private val lowerTypeAttr = TypeUsage.MEMBER_SIGNATURE_INVARIANT.toAttributes().toRawBound(RawBound.LOWER)
-    private val upperTypeAttr = TypeUsage.MEMBER_SIGNATURE_INVARIANT.toAttributes().toRawBound(RawBound.UPPER)
+    private val lowerTypeAttr = TypeUsage.MEMBER_SIGNATURE_INVARIANT.toAttributes()
+            .computeAttributes(allowFlexible = false, isRaw = true, forLower = true)
+    private val upperTypeAttr = TypeUsage.MEMBER_SIGNATURE_INVARIANT.toAttributes()
+            .computeAttributes(allowFlexible = false, isRaw = true, forLower = false)
 
     fun eraseType(type: KotlinType): KotlinType {
         val declaration = type.constructor.declarationDescriptor

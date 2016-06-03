@@ -35,16 +35,7 @@ abstract class AbstractLazyType(storageManager: StorageManager) : SimpleType(), 
 
     protected abstract fun computeArguments(): List<TypeProjection>
 
-    override val memberScope by storageManager.createLazyValue { computeMemberScope() }
-
-    fun computeMemberScope(): MemberScope {
-        val descriptor = constructor.declarationDescriptor
-        return when (descriptor) {
-            is TypeParameterDescriptor -> descriptor.getDefaultType().memberScope
-            is ClassDescriptor ->  descriptor.getMemberScope(TypeConstructorSubstitution.create(constructor, arguments))
-            else -> throw IllegalStateException("Unsupported classifier: $descriptor")
-        }
-    }
+    override val memberScope by storageManager.createLazyValue { computeMemberScope(constructor, arguments) }
 
     override val isMarkedNullable: Boolean get() = false
 
@@ -62,5 +53,16 @@ abstract class AbstractLazyType(storageManager: StorageManager) : SimpleType(), 
             if (constructor.parameters.isEmpty()) constructor.toString()
             else "$constructor<not-computed>"
         else -> super.toString()
+    }
+
+    companion object {
+        fun computeMemberScope(constructor: TypeConstructor, arguments: List<TypeProjection>): MemberScope {
+            val descriptor = constructor.declarationDescriptor
+            return when (descriptor) {
+                is TypeParameterDescriptor -> descriptor.getDefaultType().memberScope
+                is ClassDescriptor ->  descriptor.getMemberScope(TypeConstructorSubstitution.create(constructor, arguments))
+                else -> throw IllegalStateException("Unsupported classifier: $descriptor")
+            }
+        }
     }
 }

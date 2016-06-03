@@ -51,34 +51,13 @@ class LazyJavaTypeResolver(
             is JavaPrimitiveType -> {
                 val primitiveType = javaType.type
                 if (primitiveType != null) c.module.builtIns.getPrimitiveKotlinType(primitiveType)
-                else c.module.builtIns.getUnitType()
+                else c.module.builtIns.unitType
             }
             is JavaClassifierType -> transformJavaClassifierType(javaType, attr)
             is JavaArrayType -> transformArrayType(javaType, attr)
             // Top level type can be a wildcard only in case of broken Java code, but we should not fail with exceptions in such cases
             is JavaWildcardType -> javaType.bound?.let { transformJavaType(it, attr) } ?: c.module.builtIns.defaultBound
             else -> throw UnsupportedOperationException("Unsupported type: " + javaType)
-        }
-    }
-
-    private fun transformJavaClassifierType(javaType: JavaClassifierType, attr: JavaTypeAttributes): KotlinType {
-        val allowFlexible = attr.allowFlexible && attr.howThisTypeIsUsed != SUPERTYPE
-
-        val lowerAttr = if (allowFlexible) attr.toFlexible(FLEXIBLE_LOWER_BOUND) else attr
-        val upperAttr = if (allowFlexible) attr.toFlexible(FLEXIBLE_UPPER_BOUND) else attr
-
-        return if (javaType.isRaw) {
-            RawTypeImpl(LazyJavaClassifierType(javaType, lowerAttr.toRawBound(RawBound.LOWER)),
-                               LazyJavaClassifierType(javaType, upperAttr.toRawBound(RawBound.UPPER)))
-        }
-        else if (allowFlexible) {
-            KotlinTypeFactory.flexibleType(
-                    LazyJavaClassifierType(javaType, lowerAttr),
-                    LazyJavaClassifierType(javaType, upperAttr)
-            )
-        }
-        else {
-            LazyJavaClassifierType(javaType, attr)
         }
     }
 
@@ -108,189 +87,208 @@ class LazyJavaTypeResolver(
         }.replaceAnnotations(attr.typeAnnotations)
     }
 
-    private inner class LazyJavaClassifierType(
-            private val javaType: JavaClassifierType,
-            private val attr: JavaTypeAttributes
-    ) : AbstractLazyType(c.storageManager) {
-        override val annotations = CompositeAnnotations(listOf(LazyJavaAnnotations(c, javaType), attr.typeAnnotations))
+    private fun transformJavaClassifierType(javaType: JavaClassifierType, attr: JavaTypeAttributes): KotlinType {
+        fun errorType() = ErrorUtils.createErrorType("Unresolved java class ${javaType.presentableText}")
 
-        private val classifier: JavaClassifier? get() = javaType.classifier
+        val allowFlexible = attr.allowFlexible && attr.howThisTypeIsUsed != SUPERTYPE
+        val isRaw = javaType.isRaw
+        if (!javaType.isRaw && !allowFlexible) {
+            return computeSimpleJavaClassifierType(javaType, attr) ?: errorType()
+        }
 
-        override fun computeTypeConstructor(): TypeConstructor {
-            val classifier = classifier ?: return createNotFoundClass()
-            return when (classifier) {
-                is JavaClass -> {
-                    val fqName = classifier.fqName.sure { "Class type should have a FQ name: $classifier" }
+        fun computeBound(lower: Boolean) = computeSimpleJavaClassifierType(javaType, attr.computeAttributes(allowFlexible, isRaw, forLower = lower))
 
-                    val classData = mapKotlinClass(fqName) ?: c.components.moduleClassResolver.resolveClass(classifier)
-                    classData?.typeConstructor ?: createNotFoundClass()
-                }
-                is JavaTypeParameter -> {
-                    typeParameterResolver.resolveTypeParameter(classifier)?.typeConstructor
-                        ?: ErrorUtils.createErrorTypeConstructor("Unresolved Java type parameter: " + javaType.presentableText)
-                }
-                else -> throw IllegalStateException("Unknown classifier kind: $classifier")
+        val lower = computeBound(lower = true) ?: return errorType()
+        val upper = computeBound(lower = false) ?: return errorType()
+
+        return if (javaType.isRaw) {
+            RawTypeImpl(lower, upper)
+        }
+        else {
+            KotlinTypeFactory.flexibleType(lower, upper)
+        }
+    }
+
+    private fun computeSimpleJavaClassifierType(javaType: JavaClassifierType, attr: JavaTypeAttributes): SimpleType? {
+        val annotations = CompositeAnnotations(listOf(LazyJavaAnnotations(c, javaType), attr.typeAnnotations))
+        val constructor = computeTypeConstructor(javaType, attr) ?: return null
+        val arguments = computeArguments(javaType, attr, constructor)
+        val isNullable = isNullable(javaType, attr)
+        val memberScope = AbstractLazyType.computeMemberScope(constructor, arguments)
+
+        return KotlinTypeFactory.simpleType(annotations, constructor, arguments, isNullable, memberScope)
+    }
+
+    private fun computeTypeConstructor(javaType: JavaClassifierType, attr: JavaTypeAttributes): TypeConstructor? {
+        val classifier = javaType.classifier ?: return createNotFoundClass(javaType)
+        return when (classifier) {
+            is JavaClass -> {
+                val fqName = classifier.fqName.sure { "Class type should have a FQ name: $classifier" }
+
+                val classData = mapKotlinClass(javaType, attr, fqName) ?: c.components.moduleClassResolver.resolveClass(classifier)
+                classData?.typeConstructor ?: createNotFoundClass(javaType)
+            }
+            is JavaTypeParameter -> {
+                typeParameterResolver.resolveTypeParameter(classifier)?.typeConstructor
+            }
+            else -> throw IllegalStateException("Unknown classifier kind: $classifier")
+        }
+    }
+
+    // There's no way to extract precise type information in PSI when the type's classifier cannot be resolved.
+    // So we just take the canonical text of the type (which seems to be the only option at the moment), erase all type arguments
+    // and treat the resulting qualified name as if it references a simple top-level class.
+    // Note that this makes MISSING_DEPENDENCY_CLASS diagnostic messages not as precise as they could be in some corner cases.
+    private fun createNotFoundClass(javaType: JavaClassifierType): TypeConstructor {
+        val classId = parseCanonicalFqNameIgnoringTypeArguments(javaType.canonicalText)
+        return c.components.deserializedDescriptorResolver.components.notFoundClasses.get(classId, listOf(0))
+    }
+
+    private fun mapKotlinClass(javaType: JavaClassifierType, attr: JavaTypeAttributes, fqName: FqName): ClassDescriptor? {
+        if (attr.isForAnnotationParameter && fqName == JAVA_LANG_CLASS_FQ_NAME) {
+            return c.components.reflectionTypes.kClass
+        }
+
+        val javaToKotlin = JavaToKotlinClassMap.INSTANCE
+
+        val howThisTypeIsUsedEffectively = when {
+            attr.flexibility == FLEXIBLE_LOWER_BOUND -> MEMBER_SIGNATURE_COVARIANT
+            attr.flexibility == FLEXIBLE_UPPER_BOUND -> MEMBER_SIGNATURE_CONTRAVARIANT
+
+        // This case has to be checked before isMarkedReadOnly/isMarkedMutable, because those two are slow
+        // not mapped, we don't care about being marked mutable/read-only
+            javaToKotlin.mapPlatformClass(fqName, c.module.builtIns).isEmpty() -> attr.howThisTypeIsUsed
+
+        // Read (possibly external) annotations
+            else -> attr.howThisTypeIsUsedAccordingToAnnotations
+        }
+
+        val kotlinDescriptor = javaToKotlin.mapJavaToKotlin(fqName, c.module.builtIns) ?: return null
+
+        if (javaToKotlin.isReadOnly(kotlinDescriptor)) {
+            if (howThisTypeIsUsedEffectively == MEMBER_SIGNATURE_COVARIANT
+                || howThisTypeIsUsedEffectively == SUPERTYPE
+                || javaType.argumentsMakeSenseOnlyForMutableContainer(readOnlyContainer = kotlinDescriptor)) {
+                return javaToKotlin.convertReadOnlyToMutable(kotlinDescriptor)
             }
         }
 
-        // There's no way to extract precise type information in PSI when the type's classifier cannot be resolved.
-        // So we just take the canonical text of the type (which seems to be the only option at the moment), erase all type arguments
-        // and treat the resulting qualified name as if it references a simple top-level class.
-        // Note that this makes MISSING_DEPENDENCY_CLASS diagnostic messages not as precise as they could be in some corner cases.
-        private fun createNotFoundClass(): TypeConstructor {
-            val classId = parseCanonicalFqNameIgnoringTypeArguments(javaType.canonicalText)
-            return c.components.deserializedDescriptorResolver.components.notFoundClasses.get(classId, listOf(0))
-        }
+        return kotlinDescriptor
+    }
 
-        private fun mapKotlinClass(fqName: FqName): ClassDescriptor? {
-            if (attr.isForAnnotationParameter && fqName == JAVA_LANG_CLASS_FQ_NAME) {
-                return c.components.reflectionTypes.kClass
-            }
+    // Returns true for covariant read-only container that has mutable pair with invariant parameter
+    // List<in A> does not make sense, but MutableList<in A> does
+    // Same for Map<K, in V>
+    // But both Iterable<in A>, MutableIterable<in A> don't make sense as they are covariant, so return false
+    private fun JavaClassifierType.argumentsMakeSenseOnlyForMutableContainer(
+            readOnlyContainer: ClassDescriptor
+    ): Boolean {
+        fun JavaType?.isSuperWildcard(): Boolean = (this as? JavaWildcardType)?.let { it.bound != null && !it.isExtends } ?: false
 
-            val javaToKotlin = JavaToKotlinClassMap.INSTANCE
+        if (!typeArguments.lastOrNull().isSuperWildcard()) return false
+        val mutableLastParameterVariance = JavaToKotlinClassMap.INSTANCE.convertReadOnlyToMutable(readOnlyContainer)
+                                                   .typeConstructor.parameters.lastOrNull()?.variance ?: return false
 
-            val howThisTypeIsUsedEffectively = when {
-                attr.flexibility == FLEXIBLE_LOWER_BOUND -> MEMBER_SIGNATURE_COVARIANT
-                attr.flexibility == FLEXIBLE_UPPER_BOUND -> MEMBER_SIGNATURE_CONTRAVARIANT
+        return mutableLastParameterVariance != OUT_VARIANCE
+    }
 
-                // This case has to be checked before isMarkedReadOnly/isMarkedMutable, because those two are slow
-                // not mapped, we don't care about being marked mutable/read-only
-                javaToKotlin.mapPlatformClass(fqName, c.module.builtIns).isEmpty() -> attr.howThisTypeIsUsed
-
-                // Read (possibly external) annotations
-                else -> attr.howThisTypeIsUsedAccordingToAnnotations
-            }
-
-            val kotlinDescriptor = javaToKotlin.mapJavaToKotlin(fqName, c.module.builtIns) ?: return null
-
-            if (javaToKotlin.isReadOnly(kotlinDescriptor)) {
-                if (howThisTypeIsUsedEffectively == MEMBER_SIGNATURE_COVARIANT
-                    || howThisTypeIsUsedEffectively == SUPERTYPE
-                    || javaType.argumentsMakeSenseOnlyForMutableContainer(readOnlyContainer = kotlinDescriptor)) {
-                    return javaToKotlin.convertReadOnlyToMutable(kotlinDescriptor)
-                }
-            }
-
-            return kotlinDescriptor
-        }
-
-        // Returns true for covariant read-only container that has mutable pair with invariant parameter
-        // List<in A> does not make sense, but MutableList<in A> does
-        // Same for Map<K, in V>
-        // But both Iterable<in A>, MutableIterable<in A> don't make sense as they are covariant, so return false
-        private fun JavaClassifierType.argumentsMakeSenseOnlyForMutableContainer(
-                readOnlyContainer: ClassDescriptor
-        ): Boolean {
-            if (!typeArguments.lastOrNull().isSuperWildcard()) return false
-            val mutableLastParameterVariance = JavaToKotlinClassMap.INSTANCE.convertReadOnlyToMutable(readOnlyContainer)
-                    .typeConstructor.parameters.lastOrNull()?.variance ?: return false
-
-            return mutableLastParameterVariance != OUT_VARIANCE
-        }
-
-        private fun JavaType?.isSuperWildcard(): Boolean = (this as? JavaWildcardType)?.let { it.bound != null && !it.isExtends } ?: false
-
-        private fun eraseTypeParameters(): Boolean {
-            if (attr.rawBound != RawBound.NOT_RAW) return true
+    fun computeArguments(javaType: JavaClassifierType, attr: JavaTypeAttributes, constructor: TypeConstructor): List<TypeProjection> {
+        val eraseTypeParameters = run {
+            if (attr.rawBound != RawBound.NOT_RAW) return@run true
 
             // This option is needed because sometimes we get weird versions of JDK classes in the class path,
             // such as collections with no generics, so the Java types are not raw, formally, but they don't match with
             // their Kotlin analogs, so we treat them as raw to avoid exceptions
-            return javaType.typeArguments.isEmpty() && !constructor.parameters.isEmpty()
+            javaType.typeArguments.isEmpty() && !constructor.parameters.isEmpty()
         }
 
-        override fun computeArguments(): List<TypeProjection> {
-            val typeParameters = constructor.parameters
-            if (eraseTypeParameters()) {
-                return typeParameters.map {
-                    parameter ->
-                    // Some activity for preventing recursion in cases like `class A<T extends A, F extends T>`
-                    //
-                    // When calculating upper bound of some parameter (attr.upperBoundOfTypeParameter),
-                    // do not try to start upper bound calculation of it again.
-                    // If we met such recursive dependency it means that upper bound of `attr.upperBoundOfTypeParameter` based effectively
-                    // on the current class, so we can manually erase default type of current constructor.
-                    //
-                    // In example above corner cases are:
-                    // - Calculating first argument for raw upper bound of T. It depends on T, so we just get A<*, *>
-                    // - Calculating second argument for raw upper bound of T. It depends on F, that again depends on upper bound of T,
-                    //   so we get A<*, *>.
-                    // Summary result for upper bound of T is `A<A<*, *>, A<*, *>>..A<out A<*, *>, out A<*, *>>`
-                    val erasedUpperBound =
+        val typeParameters = constructor.parameters
+        if (eraseTypeParameters) {
+            return typeParameters.map {
+                parameter ->
+                // Some activity for preventing recursion in cases like `class A<T extends A, F extends T>`
+                //
+                // When calculating upper bound of some parameter (attr.upperBoundOfTypeParameter),
+                // do not try to start upper bound calculation of it again.
+                // If we met such recursive dependency it means that upper bound of `attr.upperBoundOfTypeParameter` based effectively
+                // on the current class, so we can manually erase default type of current constructor.
+                //
+                // In example above corner cases are:
+                // - Calculating first argument for raw upper bound of T. It depends on T, so we just get A<*, *>
+                // - Calculating second argument for raw upper bound of T. It depends on F, that again depends on upper bound of T,
+                //   so we get A<*, *>.
+                // Summary result for upper bound of T is `A<A<*, *>, A<*, *>>..A<out A<*, *>, out A<*, *>>`
+                val erasedUpperBound =
                         parameter.getErasedUpperBound(attr.upperBoundOfTypeParameter) {
                             constructor.declarationDescriptor!!.defaultType.replaceArgumentsWithStarProjections()
                         }
 
-                    RawSubstitution.computeProjection(parameter, attr, erasedUpperBound)
-                }.toReadOnlyList()
-            }
-
-            if (typeParameters.size != javaType.typeArguments.size) {
-                // Most of the time this means there is an error in the Java code
-                return typeParameters.map { p -> TypeProjectionImpl(ErrorUtils.createErrorType(p.name.asString())) }.toReadOnlyList()
-            }
-            val howTheProjectionIsUsed = if (attr.howThisTypeIsUsed == SUPERTYPE) SUPERTYPE_ARGUMENT else TYPE_ARGUMENT
-            return javaType.typeArguments.withIndex().map {
-                indexedArgument ->
-                val (i, javaTypeArgument) = indexedArgument
-
-                assert(i < typeParameters.size) {
-                    "Argument index should be less then type parameters count, but $i > ${typeParameters.size}"
-                }
-
-                val parameter = typeParameters[i]
-                transformToTypeProjection(javaTypeArgument, howTheProjectionIsUsed.toAttributes(), parameter)
+                RawSubstitution.computeProjection(parameter, attr, erasedUpperBound)
             }.toReadOnlyList()
         }
 
-        private fun transformToTypeProjection(
-                javaType: JavaType,
-                attr: JavaTypeAttributes,
-                typeParameter: TypeParameterDescriptor
-        ): TypeProjection {
-            return when (javaType) {
-                is JavaWildcardType -> {
-                    val bound = javaType.bound
-                    val projectionKind = if (javaType.isExtends) OUT_VARIANCE else IN_VARIANCE
-                    if (bound == null || projectionKind.isConflictingArgumentFor(typeParameter))
-                        makeStarProjection(typeParameter, attr)
-                    else {
-                        createProjection(
-                                type = transformJavaType(bound, UPPER_BOUND.toAttributes()),
-                                projectionKind = projectionKind,
-                                typeParameterDescriptor = typeParameter
-                        )
-                    }
-                }
-                else -> TypeProjectionImpl(INVARIANT, transformJavaType(javaType, attr))
+        if (typeParameters.size != javaType.typeArguments.size) {
+            // Most of the time this means there is an error in the Java code
+            return typeParameters.map { p -> TypeProjectionImpl(ErrorUtils.createErrorType(p.name.asString())) }.toReadOnlyList()
+        }
+        val howTheProjectionIsUsed = if (attr.howThisTypeIsUsed == SUPERTYPE) SUPERTYPE_ARGUMENT else TYPE_ARGUMENT
+        return javaType.typeArguments.withIndex().map {
+            indexedArgument ->
+            val (i, javaTypeArgument) = indexedArgument
+
+            assert(i < typeParameters.size) {
+                "Argument index should be less then type parameters count, but $i > ${typeParameters.size}"
             }
-        }
 
-        private fun Variance.isConflictingArgumentFor(typeParameter: TypeParameterDescriptor): Boolean {
-            if (typeParameter.variance == INVARIANT) return false
-            return this != typeParameter.variance
-        }
-
-        private val nullable = c.storageManager.createLazyValue l@ {
-            if (attr.flexibility == FLEXIBLE_LOWER_BOUND) return@l false
-            if (attr.flexibility == FLEXIBLE_UPPER_BOUND) return@l true
-
-            !attr.isMarkedNotNull &&
-            // 'L extends List<T>' in Java is a List<T> in Kotlin, not a List<T?>
-            // nullability will be taken care of in individual member signatures
-            when (classifier) {
-                is JavaTypeParameter -> {
-                    attr.howThisTypeIsUsed !in setOf(TYPE_ARGUMENT, UPPER_BOUND, SUPERTYPE_ARGUMENT, SUPERTYPE)
-                }
-                is JavaClass,
-                null -> attr.howThisTypeIsUsed !in setOf(TYPE_ARGUMENT, SUPERTYPE_ARGUMENT, SUPERTYPE)
-                else -> error("Unknown classifier: ${classifier}")
-            }
-        }
-
-        override val isMarkedNullable: Boolean get() = nullable()
+            val parameter = typeParameters[i]
+            transformToTypeProjection(javaTypeArgument, howTheProjectionIsUsed.toAttributes(), parameter)
+        }.toReadOnlyList()
     }
 
+    private fun transformToTypeProjection(
+            javaType: JavaType,
+            attr: JavaTypeAttributes,
+            typeParameter: TypeParameterDescriptor
+    ): TypeProjection {
+        return when (javaType) {
+            is JavaWildcardType -> {
+                val bound = javaType.bound
+                val projectionKind = if (javaType.isExtends) OUT_VARIANCE else IN_VARIANCE
+                if (bound == null || projectionKind.isConflictingArgumentFor(typeParameter))
+                    makeStarProjection(typeParameter, attr)
+                else {
+                    createProjection(
+                            type = transformJavaType(bound, UPPER_BOUND.toAttributes()),
+                            projectionKind = projectionKind,
+                            typeParameterDescriptor = typeParameter
+                    )
+                }
+            }
+            else -> TypeProjectionImpl(INVARIANT, transformJavaType(javaType, attr))
+        }
+    }
+
+    private fun Variance.isConflictingArgumentFor(typeParameter: TypeParameterDescriptor): Boolean {
+        if (typeParameter.variance == INVARIANT) return false
+        return this != typeParameter.variance
+    }
+
+    private fun isNullable(javaType: JavaClassifierType, attr: JavaTypeAttributes): Boolean {
+        if (attr.flexibility == FLEXIBLE_LOWER_BOUND) return false
+        if (attr.flexibility == FLEXIBLE_UPPER_BOUND) return true
+
+        return !attr.isMarkedNotNull &&
+        // 'L extends List<T>' in Java is a List<T> in Kotlin, not a List<T?>
+        // nullability will be taken care of in individual member signatures
+        when (javaType.classifier) {
+            is JavaTypeParameter -> {
+                attr.howThisTypeIsUsed !in setOf(TYPE_ARGUMENT, UPPER_BOUND, SUPERTYPE_ARGUMENT, SUPERTYPE)
+            }
+            is JavaClass,
+            null -> attr.howThisTypeIsUsed !in setOf(TYPE_ARGUMENT, SUPERTYPE_ARGUMENT, SUPERTYPE)
+            else -> error("Unknown classifier: ${javaType.classifier}")
+        }
+    }
 }
 
 internal fun makeStarProjection(
@@ -372,14 +370,10 @@ fun TypeUsage.toAttributes(
     override val upperBoundOfTypeParameter: TypeParameterDescriptor? = upperBoundForTypeParameter
 }
 
-fun JavaTypeAttributes.toFlexible(flexibility: JavaTypeFlexibility) =
+fun JavaTypeAttributes.computeAttributes(allowFlexible: Boolean, isRaw: Boolean, forLower: Boolean) =
         object : JavaTypeAttributes by this {
-            override val flexibility = flexibility
-        }
-
-fun JavaTypeAttributes.toRawBound(rawBound: RawBound) =
-        object : JavaTypeAttributes by this {
-            override val rawBound = rawBound
+            override val flexibility = if (!allowFlexible) INFLEXIBLE else if(forLower) FLEXIBLE_LOWER_BOUND else FLEXIBLE_UPPER_BOUND
+            override val rawBound = if (!isRaw) RawBound.NOT_RAW else if(forLower) RawBound.LOWER else RawBound.UPPER
         }
 
 
