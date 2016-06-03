@@ -405,11 +405,17 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
                 iv.invokespecial(superClassAsmType.getInternalName(), "<init>", "()V", false);
             }
 
+            generateAdditionalCodeInConstructor(iv);
+
             iv.visitInsn(RETURN);
 
             FunctionCodegen.endVisit(iv, "constructor", element);
         }
         return constructor;
+    }
+
+    protected void generateAdditionalCodeInConstructor(@NotNull InstructionAdapter iv) {
+
     }
 
     @NotNull
