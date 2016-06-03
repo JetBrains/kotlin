@@ -136,7 +136,12 @@ open class MethodAnalyzer<V : Value>(
     private fun visitTableSwitchInsnNode(insnNode: TableSwitchInsnNode, current: Frame<V>, insn: Int) {
         var jump = instructions.indexOf(insnNode.dflt)
         processControlFlowEdge(current, insn, jump)
-        for (label in insnNode.labels) {
+        // In most cases order of visiting switch labels should not matter
+        // The only one is a tableswitch being added in the beginning of coroutine method, these switch' labels may lead
+        // in the middle of try/catch block, and FixStackAnalyzer is not ready for this (trying to restore stack before it was saved)
+        // So we just fix the order of labels being traversed: the first one should be one at the method beginning
+        // Using 'reversed' is because nodes are processed in LIFO order
+        for (label in insnNode.labels.reversed()) {
             jump = instructions.indexOf(label)
             processControlFlowEdge(current, insn, jump)
         }

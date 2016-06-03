@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.codegen.coroutines
 
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.optimization.MandatoryMethodTransformer
-import org.jetbrains.kotlin.codegen.optimization.SKIP_MANDATORY_TRANSFORMATIONS_ANNOTATION_DESC
 import org.jetbrains.kotlin.codegen.optimization.common.OptimizationBasicInterpreter
 import org.jetbrains.kotlin.codegen.optimization.common.asSequence
 import org.jetbrains.kotlin.codegen.optimization.common.insnListOf
@@ -69,8 +68,6 @@ class CoroutineTransformerMethodVisitor(
         MandatoryMethodTransformer().transform("fake", methodNode)
 
         processUninitializedStores(methodNode)
-
-        methodNode.visibleAnnotations.add(AnnotationNode(SKIP_MANDATORY_TRANSFORMATIONS_ANNOTATION_DESC))
 
         val suspensionPoints = collectSuspensionPoints(methodNode)
         if (suspensionPoints.isEmpty()) return
