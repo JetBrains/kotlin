@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import java.util.Map;
 
 public class RegeneratedClassContext extends InliningContext {
-    private InlineCallSiteInfo callSiteInfo;
+    private final InlineCallSiteInfo callSiteInfo;
 
     public RegeneratedClassContext(
             @Nullable InliningContext parent,
@@ -39,6 +39,8 @@ public class RegeneratedClassContext extends InliningContext {
         this.callSiteInfo = callSiteInfo;
     }
 
+    @NotNull
+    @Override
     public InlineCallSiteInfo getCallSiteInfo() {
         return callSiteInfo;
     }

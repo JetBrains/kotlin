@@ -64,7 +64,7 @@ object SMAPParser {
             /*only simple mapping now*/
             val targetSplit = lineMapping.indexOf(':')
             val originalPart = lineMapping.substring(0, targetSplit)
-            var rangeSeparator = originalPart.indexOf(',').let { if (it < 0) targetSplit else it }
+            val rangeSeparator = originalPart.indexOf(',').let { if (it < 0) targetSplit else it }
 
             val fileSeparator = lineMapping.indexOf('#')
             val originalIndex = originalPart.substring(0, fileSeparator).toInt()

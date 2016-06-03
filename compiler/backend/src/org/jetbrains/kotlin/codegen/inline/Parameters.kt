@@ -45,7 +45,7 @@ internal class Parameters(val real: List<ParameterInfo>, val captured: List<Capt
         }
     }
 
-    fun getDeclarationSlot(info : ParameterInfo): Int {
+    fun getDeclarationSlot(info: ParameterInfo): Int {
         return paramToDeclByteCodeIndex[info]!!
     }
 
@@ -54,10 +54,7 @@ internal class Parameters(val real: List<ParameterInfo>, val captured: List<Capt
     }
 
     private fun get(index: Int): ParameterInfo {
-        if (index < real.size) {
-            return real.get(index)
-        }
-        return captured.get(index - real.size)
+        return real.getOrNull(index) ?: captured[index - real.size]
     }
 
     override fun iterator(): Iterator<ParameterInfo> {
@@ -71,7 +68,7 @@ internal class Parameters(val real: List<ParameterInfo>, val captured: List<Capt
 
     companion object {
         fun shift(capturedParams: List<CapturedParamInfo>, realSize: Int): List<CapturedParamInfo> {
-            return capturedParams.withIndex().map { it.value.newIndex(it.index+ realSize) }
+            return capturedParams.withIndex().map { it.value.newIndex(it.index + realSize) }
         }
     }
 }

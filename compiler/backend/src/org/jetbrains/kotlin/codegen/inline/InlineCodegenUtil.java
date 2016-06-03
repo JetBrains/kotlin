@@ -17,12 +17,10 @@
 package org.jetbrains.kotlin.codegen.inline;
 
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.codegen.MemberCodegen;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
@@ -31,7 +29,6 @@ import org.jetbrains.kotlin.codegen.context.CodegenContextUtil;
 import org.jetbrains.kotlin.codegen.context.InlineLambdaContext;
 import org.jetbrains.kotlin.codegen.context.MethodContext;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicArrayConstructorsKt;
-import org.jetbrains.kotlin.codegen.optimization.common.UtilKt;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.codegen.when.WhenByEnumsMapping;
@@ -63,19 +60,19 @@ public class InlineCodegenUtil {
     public static final boolean GENERATE_SMAP = true;
     public static final int API = Opcodes.ASM5;
 
-    public static final String CAPTURED_FIELD_PREFIX = "$";
-    public static final String NON_CAPTURED_FIELD_PREFIX = "$$";
+    private static final String CAPTURED_FIELD_PREFIX = "$";
+    private static final String NON_CAPTURED_FIELD_PREFIX = "$$";
     public static final String THIS$0 = "this$0";
     public static final String THIS = "this";
-    public static final String RECEIVER$0 = "receiver$0";
-    public static final String NON_LOCAL_RETURN = "$$$$$NON_LOCAL_RETURN$$$$$";
+    private static final String RECEIVER$0 = "receiver$0";
+    private static final String NON_LOCAL_RETURN = "$$$$$NON_LOCAL_RETURN$$$$$";
     public static final String FIRST_FUN_LABEL = "$$$$$ROOT$$$$$";
     public static final String NUMBERED_FUNCTION_PREFIX = "kotlin/jvm/functions/Function";
-    public static final String INLINE_MARKER_CLASS_NAME = "kotlin/jvm/internal/InlineMarker";
-    public static final String INLINE_MARKER_BEFORE_METHOD_NAME = "beforeInlineCall";
-    public static final String INLINE_MARKER_AFTER_METHOD_NAME = "afterInlineCall";
-    public static final String INLINE_MARKER_FINALLY_START = "finallyStart";
-    public static final String INLINE_MARKER_FINALLY_END = "finallyEnd";
+    private static final String INLINE_MARKER_CLASS_NAME = "kotlin/jvm/internal/InlineMarker";
+    private static final String INLINE_MARKER_BEFORE_METHOD_NAME = "beforeInlineCall";
+    private static final String INLINE_MARKER_AFTER_METHOD_NAME = "afterInlineCall";
+    private static final String INLINE_MARKER_FINALLY_START = "finallyStart";
+    private static final String INLINE_MARKER_FINALLY_END = "finallyEnd";
     public static final String INLINE_TRANSFORMATION_SUFFIX = "$inlined";
     public static final String INLINE_FUN_THIS_0_SUFFIX = "$inline_fun";
     public static final String INLINE_FUN_VAR_SUFFIX = "$iv";
@@ -93,6 +90,7 @@ public class InlineCodegenUtil {
         final int[] lines = new int[2];
         lines[0] = Integer.MAX_VALUE;
         lines[1] = Integer.MIN_VALUE;
+        //noinspection PointlessBitwiseExpression
         cr.accept(new ClassVisitor(API) {
             @Override
             public void visit(int version, int access, @NotNull String name, String signature, String superName, String[] interfaces) {
@@ -174,7 +172,7 @@ public class InlineCodegenUtil {
     }
 
     @Nullable
-    public static VirtualFile findVirtualFileImprecise(@NotNull GenerationState state, @NotNull String internalClassName) {
+    private static VirtualFile findVirtualFileImprecise(@NotNull GenerationState state, @NotNull String internalClassName) {
         FqName packageFqName = JvmClassName.byInternalName(internalClassName).getPackageFqName();
         String classNameWithDollars = StringsKt.substringAfterLast(internalClassName, "/", internalClassName);
         //TODO: we cannot construct proper classId at this point, we need to read InnerClasses info from class file
@@ -182,6 +180,7 @@ public class InlineCodegenUtil {
         return findVirtualFile(state, new ClassId(packageFqName, Name.identifier(classNameWithDollars)));
     }
 
+    @NotNull
     public static String getInlineName(
             @NotNull CodegenContext codegenContext,
             @NotNull KotlinTypeMapper typeMapper,
@@ -190,6 +189,7 @@ public class InlineCodegenUtil {
         return getInlineName(codegenContext, codegenContext.getContextDescriptor(), typeMapper, fileClassesManager);
     }
 
+    @NotNull
     private static String getInlineName(
             @NotNull CodegenContext codegenContext,
             @NotNull DeclarationDescriptor currentDescriptor,
@@ -197,21 +197,24 @@ public class InlineCodegenUtil {
             @NotNull JvmFileClassesProvider fileClassesProvider
     ) {
         if (currentDescriptor instanceof PackageFragmentDescriptor) {
-            PsiFile file = getContainingFile(codegenContext);
+            PsiFile file = DescriptorToSourceUtils.getContainingFile(codegenContext.getContextDescriptor());
 
             Type implementationOwnerType;
             if (file == null) {
                 implementationOwnerType = CodegenContextUtil.getImplementationOwnerClassType(codegenContext);
-            } else {
+            }
+            else {
                 implementationOwnerType = FileClasses.getFileClassType(fileClassesProvider, (KtFile) file);
             }
 
             if (implementationOwnerType == null) {
                 DeclarationDescriptor contextDescriptor = codegenContext.getContextDescriptor();
                 //noinspection ConstantConditions
-                throw new RuntimeException("Couldn't find declaration for " +
-                                           contextDescriptor.getContainingDeclaration().getName() + "." + contextDescriptor.getName() +
-                                           "; context: " + codegenContext);
+                throw new RuntimeException(
+                        "Couldn't find declaration for " +
+                        contextDescriptor.getContainingDeclaration().getName() + "." + contextDescriptor.getName() +
+                        "; context: " + codegenContext
+                );
             }
 
             return implementationOwnerType.getInternalName();
@@ -219,12 +222,12 @@ public class InlineCodegenUtil {
         else if (currentDescriptor instanceof ClassifierDescriptor) {
             Type type = typeMapper.mapType((ClassifierDescriptor) currentDescriptor);
             return type.getInternalName();
-        } else if (currentDescriptor instanceof FunctionDescriptor) {
+        }
+        else if (currentDescriptor instanceof FunctionDescriptor) {
             ClassDescriptor descriptor =
                     typeMapper.getBindingContext().get(CodegenBinding.CLASS_FOR_CALLABLE, (FunctionDescriptor) currentDescriptor);
             if (descriptor != null) {
-                Type type = typeMapper.mapType(descriptor);
-                return type.getInternalName();
+                return typeMapper.mapType(descriptor).getInternalName();
             }
         }
 
@@ -246,14 +249,15 @@ public class InlineCodegenUtil {
     }
 
     public static boolean isWhenMappingAccess(@NotNull String internalName, @NotNull String fieldName) {
-        return fieldName.startsWith(WhenByEnumsMapping.MAPPING_ARRAY_FIELD_PREFIX) && internalName.endsWith(WhenByEnumsMapping.MAPPINGS_CLASS_NAME_POSTFIX);
+        return fieldName.startsWith(WhenByEnumsMapping.MAPPING_ARRAY_FIELD_PREFIX) &&
+               internalName.endsWith(WhenByEnumsMapping.MAPPINGS_CLASS_NAME_POSTFIX);
     }
 
     public static boolean isAnonymousSingletonLoad(@NotNull String internalName, @NotNull String fieldName) {
         return JvmAbi.INSTANCE_FIELD.equals(fieldName) && isAnonymousClass(internalName);
     }
 
-    public static boolean isAnonymousClass(String internalName) {
+    public static boolean isAnonymousClass(@NotNull String internalName) {
         String shortName = getLastNamePart(internalName);
         int index = shortName.lastIndexOf("$");
 
@@ -269,16 +273,6 @@ public class InlineCodegenUtil {
     private static String getLastNamePart(@NotNull String internalName) {
         int index = internalName.lastIndexOf("/");
         return index < 0 ? internalName : internalName.substring(index + 1);
-    }
-
-    @Nullable
-    public static PsiFile getContainingFile(CodegenContext codegenContext) {
-        DeclarationDescriptor contextDescriptor = codegenContext.getContextDescriptor();
-        PsiElement psiElement = DescriptorToSourceUtils.descriptorToDeclaration(contextDescriptor);
-        if (psiElement != null) {
-            return psiElement.getContainingFile();
-        }
-        return null;
     }
 
     @NotNull
@@ -317,7 +311,8 @@ public class InlineCodegenUtil {
         return getMarkedReturnLabelOrNull(returnIns) != null;
     }
 
-    public static @Nullable String getMarkedReturnLabelOrNull(@NotNull AbstractInsnNode returnInsn) {
+    @Nullable
+    public static String getMarkedReturnLabelOrNull(@NotNull AbstractInsnNode returnInsn) {
         if (!isReturnOpcode(returnInsn.getOpcode())) {
             return null;
         }
@@ -335,30 +330,33 @@ public class InlineCodegenUtil {
         iv.invokestatic(NON_LOCAL_RETURN, labelName, "()V", false);
     }
 
+    @NotNull
     public static Type getReturnType(int opcode) {
         switch (opcode) {
-            case Opcodes.RETURN: return Type.VOID_TYPE;
-            case Opcodes.IRETURN: return Type.INT_TYPE;
-            case Opcodes.DRETURN: return Type.DOUBLE_TYPE;
-            case Opcodes.FRETURN: return Type.FLOAT_TYPE;
-            case Opcodes.LRETURN: return Type.LONG_TYPE;
-            default: return AsmTypes.OBJECT_TYPE;
-        }
-    }
-
-    public static void insertNodeBefore(@NotNull MethodNode from, @NotNull InsnList instructions, @NotNull AbstractInsnNode beforeNode) {
-        ListIterator<AbstractInsnNode> iterator = from.instructions.iterator();
-        while (iterator.hasNext()) {
-            AbstractInsnNode next = iterator.next();
-            instructions.insertBefore(beforeNode, next);
+            case Opcodes.RETURN:
+                return Type.VOID_TYPE;
+            case Opcodes.IRETURN:
+                return Type.INT_TYPE;
+            case Opcodes.DRETURN:
+                return Type.DOUBLE_TYPE;
+            case Opcodes.FRETURN:
+                return Type.FLOAT_TYPE;
+            case Opcodes.LRETURN:
+                return Type.LONG_TYPE;
+            default:
+                return AsmTypes.OBJECT_TYPE;
         }
     }
 
     public static void insertNodeBefore(@NotNull MethodNode from, @NotNull MethodNode to, @NotNull AbstractInsnNode beforeNode) {
-        insertNodeBefore(from, to.instructions, beforeNode);
+        ListIterator<AbstractInsnNode> iterator = from.instructions.iterator();
+        while (iterator.hasNext()) {
+            AbstractInsnNode next = iterator.next();
+            to.instructions.insertBefore(beforeNode, next);
+        }
     }
 
-
+    @NotNull
     public static MethodNode createEmptyMethodNode() {
         return new MethodNode(API, 0, "fake", "()V", null, null);
     }
@@ -374,11 +372,7 @@ public class InlineCodegenUtil {
 
     @NotNull
     public static String getNodeText(@Nullable MethodNode node) {
-        return getNodeText(node, new Textifier());
-    }
-
-    @NotNull
-    public static String getNodeText(@Nullable MethodNode node, @NotNull Textifier textifier) {
+        Textifier textifier = new Textifier();
         if (node == null) {
             return "Not generated";
         }
@@ -386,7 +380,7 @@ public class InlineCodegenUtil {
         StringWriter sw = new StringWriter();
         textifier.print(new PrintWriter(sw));
         sw.flush();
-        return node.name + " " + node.desc + ": \n " + sw.getBuffer().toString();
+        return node.name + " " + node.desc + ":\n" + sw.getBuffer().toString();
     }
 
     @NotNull
@@ -397,13 +391,11 @@ public class InlineCodegenUtil {
             if (outputFile != null) {
                 return new ClassReader(outputFile.asByteArray());
             }
-            else {
-                VirtualFile file = findVirtualFileImprecise(state, internalName);
-                if (file == null) {
-                    throw new RuntimeException("Couldn't find virtual file for " + internalName);
-                }
+            VirtualFile file = findVirtualFileImprecise(state, internalName);
+            if (file != null) {
                 return new ClassReader(file.contentsToByteArray());
             }
+            throw new RuntimeException("Couldn't find virtual file for " + internalName);
         }
         catch (IOException e) {
             throw new RuntimeException(e);
@@ -424,10 +416,10 @@ public class InlineCodegenUtil {
     }
 
     public static boolean isFinallyMarker(@Nullable AbstractInsnNode node) {
-        return isFinallyMarker(node, INLINE_MARKER_FINALLY_END) || isFinallyMarker(node, INLINE_MARKER_FINALLY_START);
+        return node != null && (isFinallyStart(node) || isFinallyEnd(node));
     }
 
-    public static boolean isFinallyMarker(@Nullable AbstractInsnNode node, String name) {
+    private static boolean isFinallyMarker(@NotNull AbstractInsnNode node, String name) {
         if (!(node instanceof MethodInsnNode)) return false;
         MethodInsnNode method = (MethodInsnNode) node;
         return INLINE_MARKER_CLASS_NAME.equals(method.owner) && name.equals(method.name);
@@ -437,69 +429,51 @@ public class InlineCodegenUtil {
         return context.isInlineMethodContext() || context instanceof InlineLambdaContext;
     }
 
-    public static int getConstant(AbstractInsnNode ins) {
+    public static int getConstant(@NotNull AbstractInsnNode ins) {
         int opcode = ins.getOpcode();
         Integer value;
         if (opcode >= Opcodes.ICONST_0 && opcode <= Opcodes.ICONST_5) {
-            value = opcode - Opcodes.ICONST_0;
+            return opcode - Opcodes.ICONST_0;
         }
         else if (opcode == Opcodes.BIPUSH || opcode == Opcodes.SIPUSH) {
-            IntInsnNode index = (IntInsnNode) ins;
-            value = index.operand;
+            return ((IntInsnNode) ins).operand;
         }
         else {
             LdcInsnNode index = (LdcInsnNode) ins;
-            value = (Integer) index.cst;
-        }
-        return value;
-    }
-
-    public static class LabelTextifier extends Textifier {
-
-        public LabelTextifier() {
-            super(API);
-        }
-
-        @Nullable
-        @TestOnly
-        @SuppressWarnings("UnusedDeclaration")
-        public String getLabelNameIfExists(@NotNull Label l) {
-            return labelNames == null ? null : labelNames.get(l);
+            return (Integer) index.cst;
         }
     }
 
-    public static void addInlineMarker(
-            @NotNull InstructionAdapter v,
-            boolean isStartNotEnd
-    ) {
-        v.visitMethodInsn(Opcodes.INVOKESTATIC, INLINE_MARKER_CLASS_NAME,
-                          (isStartNotEnd ? INLINE_MARKER_BEFORE_METHOD_NAME : INLINE_MARKER_AFTER_METHOD_NAME),
-                          "()V", false);
+    public static void addInlineMarker(@NotNull InstructionAdapter v, boolean isStartNotEnd) {
+        v.visitMethodInsn(
+                Opcodes.INVOKESTATIC, INLINE_MARKER_CLASS_NAME,
+                isStartNotEnd ? INLINE_MARKER_BEFORE_METHOD_NAME : INLINE_MARKER_AFTER_METHOD_NAME,
+                "()V", false
+        );
     }
 
-    public static boolean isInlineMarker(AbstractInsnNode insn) {
+    public static boolean isInlineMarker(@NotNull AbstractInsnNode insn) {
         return isInlineMarker(insn, null);
     }
 
-    public static boolean isInlineMarker(AbstractInsnNode insn, String name) {
-        if (insn instanceof MethodInsnNode) {
-            MethodInsnNode methodInsnNode = (MethodInsnNode) insn;
-            return insn.getOpcode() == Opcodes.INVOKESTATIC &&
-                   methodInsnNode.owner.equals(INLINE_MARKER_CLASS_NAME) &&
-                   (name != null ? methodInsnNode.name.equals(name)
-                                 : methodInsnNode.name.equals(INLINE_MARKER_BEFORE_METHOD_NAME) ||
-                                   methodInsnNode.name.equals(INLINE_MARKER_AFTER_METHOD_NAME));
-        }
-        else {
+    private static boolean isInlineMarker(@NotNull AbstractInsnNode insn, @Nullable String name) {
+        if (!(insn instanceof MethodInsnNode)) {
             return false;
         }
+
+        MethodInsnNode methodInsnNode = (MethodInsnNode) insn;
+        return insn.getOpcode() == Opcodes.INVOKESTATIC &&
+               methodInsnNode.owner.equals(INLINE_MARKER_CLASS_NAME) &&
+               (name != null ? methodInsnNode.name.equals(name)
+                             : methodInsnNode.name.equals(INLINE_MARKER_BEFORE_METHOD_NAME) ||
+                               methodInsnNode.name.equals(INLINE_MARKER_AFTER_METHOD_NAME));
     }
 
-    public static boolean isBeforeInlineMarker(AbstractInsnNode insn) {
+    public static boolean isBeforeInlineMarker(@NotNull AbstractInsnNode insn) {
         return isInlineMarker(insn, INLINE_MARKER_BEFORE_METHOD_NAME);
     }
 
-    public static boolean isAfterInlineMarker(AbstractInsnNode insn) {
+    public static boolean isAfterInlineMarker(@NotNull AbstractInsnNode insn) {
         return isInlineMarker(insn, INLINE_MARKER_AFTER_METHOD_NAME);
     }
 
@@ -511,44 +485,27 @@ public class InlineCodegenUtil {
         return opcode >= Opcodes.ISTORE && opcode <= Opcodes.ASTORE;
     }
 
-    public static int calcMarkerShift(Parameters parameters, MethodNode node) {
+    public static int calcMarkerShift(@NotNull Parameters parameters, @NotNull MethodNode node) {
         int markerShiftTemp = getIndexAfterLastMarker(node);
         return markerShiftTemp - parameters.getRealArgsSizeOnStack() + parameters.getArgsSizeOnStack();
     }
 
-    protected static int getIndexAfterLastMarker(MethodNode node) {
-        int markerShiftTemp = -1;
+    private static int getIndexAfterLastMarker(@NotNull MethodNode node) {
+        int result = -1;
         for (LocalVariableNode variable : node.localVariables) {
             if (isFakeLocalVariableForInline(variable.name)) {
-                markerShiftTemp = Math.max(markerShiftTemp, variable.index + 1);
+                result = Math.max(result, variable.index + 1);
             }
-        }
-        return markerShiftTemp;
-    }
-
-    public static boolean isFakeLocalVariableForInline(@NotNull String name) {
-        return name.startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION) || name.startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT);
-    }
-
-    public static boolean isThis0(String name) {
-        return THIS$0.equals(name);
-    }
-
-    @Nullable
-    public static AbstractInsnNode getPrevMeaningful(@NotNull AbstractInsnNode node) {
-        AbstractInsnNode result = node.getPrevious();
-        while (result != null && !UtilKt.isMeaningful(result)) {
-            result = result.getPrevious();
         }
         return result;
     }
 
-    public static void removeInterval(@NotNull MethodNode node, @NotNull AbstractInsnNode startInc, @NotNull AbstractInsnNode endInc) {
-        while (startInc != endInc) {
-            AbstractInsnNode next = startInc.getNext();
-            node.instructions.remove(startInc);
-            startInc = next;
-        }
-        node.instructions.remove(startInc);
+    public static boolean isFakeLocalVariableForInline(@NotNull String name) {
+        return name.startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION) ||
+               name.startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT);
+    }
+
+    public static boolean isThis0(@NotNull String name) {
+        return THIS$0.equals(name);
     }
 }

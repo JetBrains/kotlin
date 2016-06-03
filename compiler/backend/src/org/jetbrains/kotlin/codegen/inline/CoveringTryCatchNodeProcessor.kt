@@ -17,18 +17,12 @@
 package org.jetbrains.kotlin.codegen.inline
 
 import com.google.common.collect.LinkedListMultimap
-import java.util.ArrayList
-import com.intellij.util.containers.Stack
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
-import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.*
-import java.util.Comparator
-import java.util.Collections
+import java.util.*
 
 abstract class CoveringTryCatchNodeProcessor(parameterSize: Int) {
-
     val tryBlocksMetaInfo: IntervalMetaInfo<TryCatchBlockNodeInfo> = IntervalMetaInfo()
-
     val localVarsMetaInfo: IntervalMetaInfo<LocalVarNodeWrapper> = IntervalMetaInfo()
 
     var nextFreeLocalIndex: Int = parameterSize
@@ -70,18 +64,17 @@ abstract class CoveringTryCatchNodeProcessor(parameterSize: Int) {
             result
         }
 
-        Collections.sort<TryCatchBlockNodeInfo>(intervals, comp)
+        Collections.sort(intervals, comp)
         return intervals
     }
 
-    protected fun substituteTryBlockNodes(node: MethodNode) {
+    fun substituteTryBlockNodes(node: MethodNode) {
         node.tryCatchBlocks.clear()
         sortTryCatchBlocks(tryBlocksMetaInfo.allIntervals)
         for (info in tryBlocksMetaInfo.getMeaningfulIntervals()) {
             node.tryCatchBlocks.add(info.node)
         }
     }
-
 
     fun substituteLocalVarTable(node: MethodNode) {
         node.localVariables.clear()
@@ -92,13 +85,9 @@ abstract class CoveringTryCatchNodeProcessor(parameterSize: Int) {
 }
 
 class IntervalMetaInfo<T : SplittableInterval<T>> {
-
     val intervalStarts = LinkedListMultimap.create<LabelNode, T>()
-
     val intervalEnds = LinkedListMultimap.create<LabelNode, T>()
-
     val allIntervals: ArrayList<T> = arrayListOf()
-
     val currentIntervals: MutableSet<T> = linkedSetOf()
 
     fun addNewInterval(newInfo: T) {
@@ -117,15 +106,8 @@ class IntervalMetaInfo<T : SplittableInterval<T>> {
         intervalEnds.put(remapped.endLabel, remapped)
     }
 
-    fun splitCurrentIntervals(by : Interval, keepStart: Boolean): List<SplitPair<T>> {
+    fun splitCurrentIntervals(by: Interval, keepStart: Boolean): List<SplitPair<T>> {
         return currentIntervals.map { split(it, by, keepStart) }
-    }
-
-    fun splitAndRemoveIntervalsFromCurrents(by : Interval) {
-        val copies = ArrayList(currentIntervals)
-        copies.forEach {
-            splitAndRemoveInterval(it, by, true)
-        }
     }
 
     fun processCurrent(curIns: LabelNode, directOrder: Boolean) {
@@ -140,25 +122,27 @@ class IntervalMetaInfo<T : SplittableInterval<T>> {
         }
     }
 
-    fun split(interval: T, by : Interval, keepStart: Boolean): SplitPair<T> {
+    fun split(interval: T, by: Interval, keepStart: Boolean): SplitPair<T> {
         val split = interval.split(by, keepStart)
         if (!keepStart) {
             remapStartLabel(split.newPart.startLabel, split.patchedPart)
-        } else {
+        }
+        else {
             remapEndLabel(split.newPart.endLabel, split.patchedPart)
         }
         addNewInterval(split.newPart)
         return split
     }
 
-    fun splitAndRemoveInterval(interval: T, by : Interval, keepStart: Boolean): SplitPair<T> {
+    fun splitAndRemoveInterval(interval: T, by: Interval, keepStart: Boolean): SplitPair<T> {
         val splitPair = split(interval, by, keepStart)
         val removed = currentIntervals.remove(splitPair.patchedPart)
-        assert(removed, {"Wrong interval structure: $splitPair"})
+        assert(removed) { "Wrong interval structure: $splitPair" }
         return splitPair
     }
 
-    fun getInterval(curIns: LabelNode, isOpen: Boolean) = if (isOpen) intervalStarts.get(curIns) else intervalEnds.get(curIns)
+    fun getInterval(curIns: LabelNode, isOpen: Boolean) =
+            if (isOpen) intervalStarts.get(curIns) else intervalEnds.get(curIns)
 }
 
 private fun Interval.isMeaningless(): Boolean {
@@ -175,23 +159,16 @@ fun <T : SplittableInterval<T>> IntervalMetaInfo<T>.getMeaningfulIntervals(): Li
 }
 
 class DefaultProcessor(val node: MethodNode, parameterSize: Int) : CoveringTryCatchNodeProcessor(parameterSize) {
-
     init {
-        node.tryCatchBlocks.forEach { addTryNode(it) }
-        node.localVariables.forEach { addLocalVarNode(it) }
+        node.tryCatchBlocks.forEach {
+            tryBlocksMetaInfo.addNewInterval(TryCatchBlockNodeInfo(it, false))
+        }
+        node.localVariables.forEach {
+            localVarsMetaInfo.addNewInterval(LocalVarNodeWrapper(it))
+        }
     }
 
-    fun addLocalVarNode(it: LocalVariableNode) {
-        localVarsMetaInfo.addNewInterval(LocalVarNodeWrapper(it))
-    }
-
-    fun addTryNode(node: TryCatchBlockNode) {
-        tryBlocksMetaInfo.addNewInterval(TryCatchBlockNodeInfo(node, false))
-    }
-
-    override fun instructionIndex(inst: AbstractInsnNode): Int {
-        return node.instructions.indexOf(inst)
-    }
+    override fun instructionIndex(inst: AbstractInsnNode): Int = node.instructions.indexOf(inst)
 }
 
 class LocalVarNodeWrapper(val node: LocalVariableNode) : Interval, SplittableInterval<LocalVarNodeWrapper> {
@@ -216,5 +193,4 @@ class LocalVarNodeWrapper(val node: LocalVariableNode) : Interval, SplittableInt
                 LocalVariableNode(node.name, node.desc, node.signature, newPartInterval.first, newPartInterval.second, node.index)
         ))
     }
-
 }

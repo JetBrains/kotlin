@@ -39,7 +39,8 @@ class ReificationArgument(
             ReificationArgument(
                     replacement.parameterName,
                     this.nullable || (replacement.nullable && this.arrayDepth == 0),
-                    this.arrayDepth + replacement.arrayDepth)
+                    this.arrayDepth + replacement.arrayDepth
+            )
 
     fun reify(replacementAsmType: Type, kotlinType: KotlinType) =
             Pair(Type.getType("[".repeat(arrayDepth) + replacementAsmType), kotlinType.arrayOf(arrayDepth).makeNullableIfNeeded(nullable))
@@ -57,7 +58,6 @@ class ReificationArgument(
 }
 
 class ReifiedTypeInliner(private val parametersMapping: TypeParameterMappings?) {
-
     enum class OperationKind {
         NEW_ARRAY, AS, SAFE_AS, IS, JAVA_CLASS;
 
@@ -65,8 +65,8 @@ class ReifiedTypeInliner(private val parametersMapping: TypeParameterMappings?) 
     }
 
     companion object {
-        @JvmField val REIFIED_OPERATION_MARKER_METHOD_NAME = "reifiedOperationMarker"
-        @JvmField val NEED_CLASS_REIFICATION_MARKER_METHOD_NAME = "needClassReification"
+        const val REIFIED_OPERATION_MARKER_METHOD_NAME = "reifiedOperationMarker"
+        const val NEED_CLASS_REIFICATION_MARKER_METHOD_NAME = "needClassReification"
 
         private fun isOperationReifiedMarker(insn: AbstractInsnNode) =
                 isReifiedMarker(insn) { it == REIFIED_OPERATION_MARKER_METHOD_NAME }
@@ -76,10 +76,12 @@ class ReifiedTypeInliner(private val parametersMapping: TypeParameterMappings?) 
             return insn.owner == IntrinsicMethods.INTRINSICS_CLASS_NAME && namePredicate(insn.name)
         }
 
-        @JvmStatic fun isNeedClassReificationMarker(insn: AbstractInsnNode): Boolean =
+        @JvmStatic
+        fun isNeedClassReificationMarker(insn: AbstractInsnNode): Boolean =
                 isReifiedMarker(insn) { s -> s == NEED_CLASS_REIFICATION_MARKER_METHOD_NAME }
 
-        @JvmStatic fun putNeedClassReificationMarker(v: MethodVisitor) {
+        @JvmStatic
+        fun putNeedClassReificationMarker(v: MethodVisitor) {
             v.visitMethodInsn(
                     Opcodes.INVOKESTATIC,
                     IntrinsicMethods.INTRINSICS_CLASS_NAME, NEED_CLASS_REIFICATION_MARKER_METHOD_NAME,
@@ -102,7 +104,7 @@ class ReifiedTypeInliner(private val parametersMapping: TypeParameterMappings?) 
 
         val instructions = node.instructions
         maxStackSize = 0
-        var result = ReifiedTypeParametersUsages()
+        val result = ReifiedTypeParametersUsages()
         for (insn in instructions.toArray()) {
             if (isOperationReifiedMarker(insn)) {
                 val newName: String? = processReifyMarker(insn as MethodInsnNode, instructions)
@@ -144,7 +146,8 @@ class ReifiedTypeInliner(private val parametersMapping: TypeParameterMappings?) 
             }
 
             return null
-        } else {
+        }
+        else {
             val newReificationArgument = reificationArgument.combine(mapping.reificationArgument!!)
             instructions.set(insn.previous!!, LdcInsnNode(newReificationArgument.asString()))
             return mapping.reificationArgument.parameterName
@@ -154,43 +157,45 @@ class ReifiedTypeInliner(private val parametersMapping: TypeParameterMappings?) 
     private fun processNewArray(insn: MethodInsnNode, parameter: Type) =
             processNextTypeInsn(insn, parameter, Opcodes.ANEWARRAY)
 
-    private fun processAs(insn: MethodInsnNode,
-                          instructions: InsnList,
-                          kotlinType: KotlinType,
-                          asmType: Type,
-                          safe: Boolean) =
-            rewriteNextTypeInsn(insn, Opcodes.CHECKCAST) { stubCheckcast: AbstractInsnNode ->
-                if (stubCheckcast !is TypeInsnNode) return false
+    private fun processAs(
+            insn: MethodInsnNode,
+            instructions: InsnList,
+            kotlinType: KotlinType,
+            asmType: Type,
+            safe: Boolean
+    ) = rewriteNextTypeInsn(insn, Opcodes.CHECKCAST) { stubCheckcast: AbstractInsnNode ->
+        if (stubCheckcast !is TypeInsnNode) return false
 
-                val newMethodNode = MethodNode(InlineCodegenUtil.API)
-                generateAsCast(InstructionAdapter(newMethodNode), kotlinType, asmType, safe)
+        val newMethodNode = MethodNode(InlineCodegenUtil.API)
+        generateAsCast(InstructionAdapter(newMethodNode), kotlinType, asmType, safe)
 
-                instructions.insert(insn, newMethodNode.instructions)
-                instructions.remove(stubCheckcast)
+        instructions.insert(insn, newMethodNode.instructions)
+        instructions.remove(stubCheckcast)
 
-                // TODO: refine max stack calculation (it's not always as big as +4)
-                maxStackSize = Math.max(maxStackSize, 4)
+        // TODO: refine max stack calculation (it's not always as big as +4)
+        maxStackSize = Math.max(maxStackSize, 4)
 
-                return true
-            }
+        return true
+    }
 
-    private fun processIs(insn: MethodInsnNode,
-                          instructions: InsnList,
-                          kotlinType: KotlinType,
-                          asmType: Type) =
-            rewriteNextTypeInsn(insn, Opcodes.INSTANCEOF) { stubInstanceOf: AbstractInsnNode ->
-                if (stubInstanceOf !is TypeInsnNode) return false
+    private fun processIs(
+            insn: MethodInsnNode,
+            instructions: InsnList,
+            kotlinType: KotlinType,
+            asmType: Type
+    ) = rewriteNextTypeInsn(insn, Opcodes.INSTANCEOF) { stubInstanceOf: AbstractInsnNode ->
+        if (stubInstanceOf !is TypeInsnNode) return false
 
-                val newMethodNode = MethodNode(InlineCodegenUtil.API)
-                generateIsCheck(InstructionAdapter(newMethodNode), kotlinType, asmType)
+        val newMethodNode = MethodNode(InlineCodegenUtil.API)
+        generateIsCheck(InstructionAdapter(newMethodNode), kotlinType, asmType)
 
-                instructions.insert(insn, newMethodNode.instructions)
-                instructions.remove(stubInstanceOf)
+        instructions.insert(insn, newMethodNode.instructions)
+        instructions.remove(stubInstanceOf)
 
-                // TODO: refine max stack calculation (it's not always as big as +2)
-                maxStackSize = Math.max(maxStackSize, 2)
-                return true
-            }
+        // TODO: refine max stack calculation (it's not always as big as +2)
+        maxStackSize = Math.max(maxStackSize, 2)
+        return true
+    }
 
     inline private fun rewriteNextTypeInsn(
             marker: MethodInsnNode,
@@ -214,7 +219,6 @@ class ReifiedTypeInliner(private val parametersMapping: TypeParameterMappings?) 
         next.cst = parameter
         return true
     }
-
 }
 
 private val MethodInsnNode.reificationArgument: ReificationArgument?
@@ -242,16 +246,18 @@ class TypeParameterMappings() {
     private val mappingsByName = hashMapOf<String, TypeParameterMapping>()
 
     fun addParameterMappingToType(name: String, type: KotlinType, asmType: Type, signature: String, isReified: Boolean) {
-        mappingsByName[name] =  TypeParameterMapping(name, type, asmType, reificationArgument = null, signature = signature, isReified = isReified)
+        mappingsByName[name] = TypeParameterMapping(
+                name, type, asmType, reificationArgument = null, signature = signature, isReified = isReified
+        )
     }
 
     fun addParameterMappingForFurtherReification(name: String, type: KotlinType, reificationArgument: ReificationArgument, isReified: Boolean) {
-        mappingsByName[name] = TypeParameterMapping(name, type, asmType = null, reificationArgument = reificationArgument, signature = null, isReified = isReified)
+        mappingsByName[name] = TypeParameterMapping(
+                name, type, asmType = null, reificationArgument = reificationArgument, signature = null, isReified = isReified
+        )
     }
 
-    operator fun get(name: String): TypeParameterMapping? {
-        return mappingsByName[name]
-    }
+    operator fun get(name: String): TypeParameterMapping? = mappingsByName[name]
 
     fun hasReifiedParameters() = mappingsByName.values.any { it.isReified }
 
@@ -261,7 +267,8 @@ class TypeParameterMappings() {
 }
 
 class TypeParameterMapping(
-        val name: String, val type: KotlinType,
+        val name: String,
+        val type: KotlinType,
         val asmType: Type?,
         val reificationArgument: ReificationArgument?,
         val signature: String?,
