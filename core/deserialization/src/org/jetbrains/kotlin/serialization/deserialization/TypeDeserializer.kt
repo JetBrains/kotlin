@@ -17,8 +17,10 @@
 package org.jetbrains.kotlin.serialization.deserialization
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedAnnotationsWithPossibleTargets
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedTypeParameterDescriptor
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.utils.toReadOnlyList
@@ -27,7 +29,7 @@ import java.util.*
 class TypeDeserializer(
         private val c: DeserializationContext,
         private val parent: TypeDeserializer?,
-        private val typeParameterProtos: List<ProtoBuf.TypeParameter>,
+        typeParameterProtos: List<ProtoBuf.TypeParameter>,
         private val debugName: String
 ) {
     private val classDescriptors: (Int) -> ClassDescriptor? = c.storageManager.createMemoizedFunctionWithNullableValues {
@@ -38,7 +40,7 @@ class TypeDeserializer(
         fqNameIndex -> computeTypeAliasDescriptor(fqNameIndex)
     }
 
-    private val typeParameterDescriptors = c.storageManager.createLazyValue {
+    private val typeParameterDescriptors =
         if (typeParameterProtos.isEmpty()) {
             mapOf<Int, TypeParameterDescriptor>()
         }
@@ -49,10 +51,9 @@ class TypeDeserializer(
             }
             result
         }
-    }
 
     val ownTypeParameters: List<TypeParameterDescriptor>
-            get() = typeParameterDescriptors().values.toReadOnlyList()
+            get() = typeParameterDescriptors.values.toReadOnlyList()
 
     // TODO: don't load identical types from TypeTable more than once
     fun type(proto: ProtoBuf.Type, additionalAnnotations: Annotations = Annotations.EMPTY): KotlinType {
@@ -66,10 +67,32 @@ class TypeDeserializer(
         return simpleType(proto, additionalAnnotations)
     }
 
-    fun simpleType(proto: ProtoBuf.Type, additionalAnnotations: Annotations = Annotations.EMPTY)
-            = DeserializedType.create(c, proto, additionalAnnotations)
+    fun simpleType(proto: ProtoBuf.Type, additionalAnnotations: Annotations = Annotations.EMPTY): SimpleType {
+        val constructor = typeConstructor(proto)
+        if (ErrorUtils.isError(constructor.declarationDescriptor)) {
+            return ErrorUtils.createErrorTypeWithCustomConstructor(constructor.toString(), constructor)
+        }
 
-    fun typeConstructor(proto: ProtoBuf.Type): TypeConstructor =
+        val annotations = DeserializedAnnotationsWithPossibleTargets(c.storageManager) {
+            c.components.annotationAndConstantLoader
+                    .loadTypeAnnotations(proto, c.nameResolver)
+                    .map { AnnotationWithTarget(it, null) } + additionalAnnotations.getAllAnnotations()
+        }
+
+        fun ProtoBuf.Type.collectAllArguments(): List<ProtoBuf.Type.Argument> =
+                argumentList + outerType(c.typeTable)?.collectAllArguments().orEmpty()
+
+        val arguments = proto.collectAllArguments().mapIndexed { index, proto ->
+            typeArgument(constructor.parameters.getOrNull(index), proto)
+        }.toReadOnlyList()
+
+        val simpleType = KotlinTypeFactory.simpleType(annotations, constructor, arguments, proto.nullable)
+
+        val abbreviatedTypeProto = proto.abbreviatedType(c.typeTable) ?: return simpleType
+        return simpleType.withAbbreviation(simpleType(abbreviatedTypeProto, additionalAnnotations))
+    }
+
+    private fun typeConstructor(proto: ProtoBuf.Type): TypeConstructor =
             when {
                 proto.hasClassName() -> {
                     classDescriptors(proto.className)?.typeConstructor
@@ -77,27 +100,22 @@ class TypeDeserializer(
                 }
                 proto.hasTypeParameter() ->
                     typeParameterTypeConstructor(proto.typeParameter)
-                    ?: ErrorUtils.createErrorType("Unknown type parameter ${proto.typeParameter}").constructor
+                    ?: ErrorUtils.createErrorTypeConstructor("Unknown type parameter ${proto.typeParameter}")
                 proto.hasTypeParameterName() -> {
                     val container = c.containingDeclaration
-                    val typeParameters = when (container) {
-                        is ClassifierDescriptorWithTypeParameters -> container.typeConstructor.parameters
-                        is CallableDescriptor -> container.typeParameters
-                        else -> emptyList<TypeParameterDescriptor>()
-                    }
                     val name = c.nameResolver.getString(proto.typeParameterName)
-                    val parameter = typeParameters.find { it.name.asString() == name }
-                    parameter?.typeConstructor ?: ErrorUtils.createErrorType("Deserialized type parameter $name in $container").constructor
+                    val parameter = ownTypeParameters.find { it.name.asString() == name }
+                    parameter?.typeConstructor ?: ErrorUtils.createErrorTypeConstructor("Deserialized type parameter $name in $container")
                 }
                 proto.hasTypeAliasName() -> {
                     typeAliasDescriptors(proto.typeAliasName)?.typeConstructor
                     ?: TODO("not found type aliases")
                 }
-                else -> ErrorUtils.createErrorType("Unknown type").constructor
+                else -> ErrorUtils.createErrorTypeConstructor("Unknown type")
             }
 
     private fun typeParameterTypeConstructor(typeParameterId: Int): TypeConstructor? =
-            typeParameterDescriptors().get(typeParameterId)?.typeConstructor ?:
+            typeParameterDescriptors.get(typeParameterId)?.typeConstructor ?:
             parent?.typeParameterTypeConstructor(typeParameterId)
 
     private fun computeClassDescriptor(fqNameIndex: Int): ClassDescriptor? {
@@ -119,7 +137,7 @@ class TypeDeserializer(
         }
     }
 
-    fun typeArgument(parameter: TypeParameterDescriptor?, typeArgumentProto: ProtoBuf.Type.Argument): TypeProjection {
+    private fun typeArgument(parameter: TypeParameterDescriptor?, typeArgumentProto: ProtoBuf.Type.Argument): TypeProjection {
         if (typeArgumentProto.projection == ProtoBuf.Type.Argument.Projection.STAR) {
             return if (parameter == null)
                 TypeBasedStarProjectionImpl(c.components.moduleDescriptor.builtIns.nullableAnyType)
