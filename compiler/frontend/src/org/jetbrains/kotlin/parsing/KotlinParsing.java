@@ -1195,9 +1195,12 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         expect(IDENTIFIER, "Type name expected", TokenSet.orSet(TokenSet.create(LT, EQ, SEMICOLON), TOP_LEVEL_DECLARATION_FIRST));
 
-        // TODO drop type constraints parsing
-        if (parseTypeParameterList(TYPE_PARAMETER_GT_RECOVERY_SET)) {
+        parseTypeParameterList(TYPE_PARAMETER_GT_RECOVERY_SET);
+
+        if (at(WHERE_KEYWORD)) {
+            PsiBuilder.Marker error = mark();
             parseTypeConstraints();
+            error.error("Type alias parameters can't have bounds");
         }
 
         expect(EQ, "Expecting '='", TokenSet.orSet(TOP_LEVEL_DECLARATION_FIRST, TokenSet.create(SEMICOLON)));
