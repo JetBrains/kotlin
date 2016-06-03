@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.storage.StorageManager
 
 abstract class DelegatingSimpleType : SimpleType() {
     protected abstract val delegate: SimpleType
@@ -46,4 +47,12 @@ fun KotlinType.getAbbreviatedType(): AbbreviatedType? = (unwrap() as? Abbreviate
 fun SimpleType.withAbbreviation(abbreviatedType: SimpleType): SimpleType {
     if (isError) return this
     return AbbreviatedType(this, abbreviatedType)
+}
+
+class LazyWrappedType(storageManager: StorageManager, computation: () -> KotlinType): WrappedType() {
+    private val lazyValue = storageManager.createLazyValue(computation)
+
+    override val delegate: KotlinType get() = lazyValue()
+
+    override fun isComputed(): Boolean = lazyValue.isComputed()
 }

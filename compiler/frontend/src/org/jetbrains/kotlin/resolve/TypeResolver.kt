@@ -112,19 +112,10 @@ class TypeResolver(
 
         if (!c.allowBareTypes && !c.forceResolveLazyTypes && lazinessToken.isLazy()) {
             // Bare types can be allowed only inside expressions; lazy type resolution is only relevant for declarations
-            class LazyKotlinType : WrappedType(), LazyEntity {
-                private val _delegate = storageManager.createLazyValue { doResolvePossiblyBareType(c, typeReference).getActualType() }
 
-                override val delegate: KotlinType by _delegate
-                override fun isComputed() = _delegate.isComputed()
-
-                override fun forceResolveAllContents() {
-                    ForceResolveUtil.forceResolveAllContents(constructor)
-                    arguments.forEach { ForceResolveUtil.forceResolveAllContents(it.type) }
-                }
+            val lazyKotlinType = LazyWrappedType(storageManager) {
+                doResolvePossiblyBareType(c, typeReference).getActualType()
             }
-
-            val lazyKotlinType = LazyKotlinType()
             c.trace.record(resolvedTypeSlice, typeReference, lazyKotlinType)
             return type(lazyKotlinType)
         }

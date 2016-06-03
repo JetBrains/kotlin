@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.Variance.IN_VARIANCE
 import org.jetbrains.kotlin.types.Variance.OUT_VARIANCE
@@ -119,9 +120,8 @@ private fun TypeProjection.createCapturedIfNeeded(typeParameterDescriptor: TypeP
     if (typeParameterDescriptor.variance == projectionKind) {
         // TODO: Make star projection type lazy
         return if (isStarProjection)
-            TypeProjectionImpl(object : WrappedType() {
-                override val delegate: KotlinType
-                    get() = this@createCapturedIfNeeded.type
+            TypeProjectionImpl(LazyWrappedType(LockBasedStorageManager.NO_LOCKS) {
+                this@createCapturedIfNeeded.type
             })
         else
             TypeProjectionImpl(this@createCapturedIfNeeded.type)
