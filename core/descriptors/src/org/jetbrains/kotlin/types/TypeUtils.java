@@ -36,7 +36,7 @@ public class TypeUtils {
     public static final SimpleType DONT_CARE = ErrorUtils.createErrorTypeWithCustomDebugName("DONT_CARE");
     public static final SimpleType CANT_INFER_FUNCTION_PARAM_TYPE = ErrorUtils.createErrorType("Cannot be inferred");
 
-    public static class SpecialType implements SimpleType {
+    public static class SpecialType extends DelegatingSimpleType {
         private final String name;
 
         public SpecialType(String name) {
@@ -45,24 +45,7 @@ public class TypeUtils {
 
         @NotNull
         @Override
-        public TypeConstructor getConstructor() {
-            throw new IllegalStateException(name);
-        }
-
-        @NotNull
-        @Override
-        public List<TypeProjection> getArguments() {
-            throw new IllegalStateException(name);
-        }
-
-        @Override
-        public boolean isMarkedNullable() {
-            throw new IllegalStateException(name);
-        }
-
-        @NotNull
-        @Override
-        public MemberScope getMemberScope() {
+        protected SimpleType getDelegate() {
             throw new IllegalStateException(name);
         }
 
@@ -73,19 +56,19 @@ public class TypeUtils {
 
         @NotNull
         @Override
-        public Annotations getAnnotations() {
+        public SimpleType replaceAnnotations(@NotNull Annotations newAnnotations) {
+            throw new IllegalStateException(name);
+        }
+
+        @NotNull
+        @Override
+        public SimpleType makeNullableAsSpecified(boolean newNullability) {
             throw new IllegalStateException(name);
         }
 
         @Override
         public String toString() {
             return name;
-        }
-
-        @Nullable
-        @Override
-        public SimpleType getAbbreviatedType() {
-            return null;
         }
     }
 
@@ -129,17 +112,7 @@ public class TypeUtils {
 
     @NotNull
     public static KotlinType makeNullableAsSpecified(@NotNull KotlinType type, boolean nullable) {
-        KotlinType unwrappedType = KotlinTypeKt.unwrap(type);
-        if (unwrappedType instanceof TypeWithCustomReplacement) {
-            return ((TypeWithCustomReplacement) unwrappedType).makeNullableAsSpecified(nullable);
-        }
-        else {
-            SimpleType simpleType = (SimpleType) unwrappedType;
-
-            if (!(simpleType instanceof LazyType) && simpleType.isMarkedNullable() == nullable) return simpleType;
-
-            return KotlinTypeKt.lazyReplaceNullability(simpleType, nullable);
-        }
+        return type.unwrap().makeNullableAsSpecified(nullable);
     }
 
     @NotNull
@@ -431,7 +404,7 @@ public class TypeUtils {
         if (type == null) return false;
         if (isSpecialType.invoke(type)) return true;
 
-        KotlinType unwrappedType = KotlinTypeKt.unwrap(type);
+        UnwrappedType unwrappedType = type.unwrap();
         FlexibleType flexibleType = unwrappedType instanceof FlexibleType ? (FlexibleType) unwrappedType : null;
         if (flexibleType != null
             && (contains(flexibleType.getLowerBound(), isSpecialType) || contains(flexibleType.getUpperBound(), isSpecialType))) {

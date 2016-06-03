@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 
-abstract class AbstractLazyType(storageManager: StorageManager) : AbstractKotlinType(), SimpleType, LazyType {
+abstract class AbstractLazyType(storageManager: StorageManager) : SimpleType(), LazyType {
 
     private val typeConstructor = storageManager.createLazyValue { computeTypeConstructor() }
     override val constructor by typeConstructor
@@ -51,6 +51,10 @@ abstract class AbstractLazyType(storageManager: StorageManager) : AbstractKotlin
     override val isError: Boolean get() = constructor.declarationDescriptor?.let { d -> ErrorUtils.isError(d) } ?: false
 
     override val annotations: Annotations get() = Annotations.EMPTY
+
+    // TODO: do not force resolution
+    override fun replaceAnnotations(newAnnotations: Annotations): SimpleType = KotlinTypeFactory.simpleType(this, annotations = newAnnotations)
+    override fun makeNullableAsSpecified(newNullability: Boolean): SimpleType = KotlinTypeFactory.simpleType(this, nullable = newNullability)
 
     override fun toString() = when {
         !typeConstructor.isComputed() -> "[Not-computed]"

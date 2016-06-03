@@ -36,17 +36,15 @@ fun KotlinType.isDynamic(): Boolean = unwrap() is DynamicType
 
 fun createDynamicType(builtIns: KotlinBuiltIns) = DynamicType(builtIns, Annotations.EMPTY)
 
-class DynamicType(builtIns: KotlinBuiltIns, override val annotations: Annotations) : DelegatingFlexibleType(builtIns.nothingType, builtIns.nullableAnyType) {
-    override val delegateType: KotlinType get() = upperBound
+class DynamicType(builtIns: KotlinBuiltIns, override val annotations: Annotations) : FlexibleType(builtIns.nothingType, builtIns.nullableAnyType) {
+    override val delegate: SimpleType get() = upperBound
 
-    override fun makeNullableAsSpecified(nullable: Boolean): KotlinType {
-        // Nullability has no effect on dynamics
-        return createDynamicType(delegateType.builtIns)
-    }
+    // Nullability has no effect on dynamics
+    override fun makeNullableAsSpecified(newNullability: Boolean): DynamicType = this
 
     override val isMarkedNullable: Boolean get() = false
 
-    override fun replaceAnnotations(newAnnotations: Annotations): KotlinType = DynamicType(delegateType.builtIns, annotations)
+    override fun replaceAnnotations(newAnnotations: Annotations): DynamicType = DynamicType(delegate.builtIns, annotations)
 
     override fun render(renderer: DescriptorRenderer, options: DescriptorRendererOptions): String = "dynamic"
 }

@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.serialization;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.types.DelegatingFlexibleType;
+import org.jetbrains.kotlin.types.FlexibleType;
 import org.jetbrains.kotlin.types.KotlinType;
 
 public abstract class SerializerExtension {
@@ -50,7 +50,7 @@ public abstract class SerializerExtension {
     public void serializeValueParameter(@NotNull ValueParameterDescriptor descriptor, @NotNull ProtoBuf.ValueParameter.Builder proto) {
     }
 
-    public void serializeFlexibleType(@NotNull DelegatingFlexibleType flexibleType, @NotNull ProtoBuf.Type.Builder lowerProto, @NotNull ProtoBuf.Type.Builder upperProto) {
+    public void serializeFlexibleType(@NotNull FlexibleType flexibleType, @NotNull ProtoBuf.Type.Builder lowerProto, @NotNull ProtoBuf.Type.Builder upperProto) {
     }
 
     public void serializeType(@NotNull KotlinType type, @NotNull ProtoBuf.Type.Builder proto) {

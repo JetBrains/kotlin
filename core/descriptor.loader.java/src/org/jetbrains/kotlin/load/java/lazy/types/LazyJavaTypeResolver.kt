@@ -115,10 +115,10 @@ class LazyJavaTypeResolver(
     ) : AbstractLazyType(c.storageManager) {
         override val annotations = CompositeAnnotations(listOf(LazyJavaAnnotations(c, javaType), attr.typeAnnotations))
 
-        private val classifier = c.storageManager.createNullableLazyValue { javaType.classifier }
+        private val classifier: JavaClassifier? get() = javaType.classifier
 
         override fun computeTypeConstructor(): TypeConstructor {
-            val classifier = classifier() ?: return createNotFoundClass()
+            val classifier = classifier ?: return createNotFoundClass()
             return when (classifier) {
                 is JavaClass -> {
                     val fqName = classifier.fqName.sure { "Class type should have a FQ name: $classifier" }
@@ -279,13 +279,13 @@ class LazyJavaTypeResolver(
             !attr.isMarkedNotNull &&
             // 'L extends List<T>' in Java is a List<T> in Kotlin, not a List<T?>
             // nullability will be taken care of in individual member signatures
-            when (classifier()) {
+            when (classifier) {
                 is JavaTypeParameter -> {
                     attr.howThisTypeIsUsed !in setOf(TYPE_ARGUMENT, UPPER_BOUND, SUPERTYPE_ARGUMENT, SUPERTYPE)
                 }
                 is JavaClass,
                 null -> attr.howThisTypeIsUsed !in setOf(TYPE_ARGUMENT, SUPERTYPE_ARGUMENT, SUPERTYPE)
-                else -> error("Unknown classifier: ${classifier()}")
+                else -> error("Unknown classifier: ${classifier}")
             }
         }
 

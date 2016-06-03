@@ -133,7 +133,7 @@ public class TypeSubstitutor {
 
         // The type is within the substitution range, i.e. T or T?
         KotlinType type = originalProjection.getType();
-        if (DynamicTypesKt.isDynamic(type) || KotlinTypeKt.unwrap(type) instanceof RawType) {
+        if (DynamicTypesKt.isDynamic(type) || type.unwrap() instanceof RawType) {
             return originalProjection; // todo investigate
         }
 

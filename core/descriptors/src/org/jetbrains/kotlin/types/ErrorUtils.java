@@ -390,7 +390,7 @@ public class ErrorUtils {
 
     @NotNull
     public static SimpleType createErrorTypeWithArguments(@NotNull String debugMessage, @NotNull List<TypeProjection> arguments) {
-        return new ErrorTypeImpl(createErrorTypeConstructor(debugMessage), createErrorScope(debugMessage), arguments);
+        return new ErrorTypeImpl(createErrorTypeConstructor(debugMessage), createErrorScope(debugMessage), arguments, false);
     }
 
     @NotNull
@@ -472,35 +472,26 @@ public class ErrorUtils {
         return candidate instanceof ErrorClassDescriptor;
     }
 
-    @NotNull
-    public static TypeParameterDescriptor createErrorTypeParameter(int index, @NotNull String debugMessage) {
-        return TypeParameterDescriptorImpl.createWithDefaultBound(
-                ERROR_CLASS,
-                Annotations.Companion.getEMPTY(),
-                false,
-                Variance.INVARIANT,
-                Name.special("<ERROR: " + debugMessage + ">"),
-                index
-        );
-    }
-
-    private static class ErrorTypeImpl implements SimpleType {
+    private static class ErrorTypeImpl extends SimpleType {
         private final TypeConstructor constructor;
         private final MemberScope memberScope;
         private final List<TypeProjection> arguments;
+        private final boolean nullability;
 
         private ErrorTypeImpl(
                 @NotNull TypeConstructor constructor,
                 @NotNull MemberScope memberScope,
-                @NotNull List<TypeProjection> arguments
+                @NotNull List<TypeProjection> arguments,
+                boolean nullability
         ) {
             this.constructor = constructor;
             this.memberScope = memberScope;
             this.arguments = arguments;
+            this.nullability = nullability;
         }
 
         private ErrorTypeImpl(@NotNull TypeConstructor constructor, @NotNull MemberScope memberScope) {
-            this(constructor, memberScope, Collections.<TypeProjection>emptyList());
+            this(constructor, memberScope, Collections.<TypeProjection>emptyList(), false);
         }
 
         @NotNull
@@ -517,7 +508,7 @@ public class ErrorUtils {
 
         @Override
         public boolean isMarkedNullable() {
-            return false;
+            return nullability;
         }
 
         @NotNull
@@ -542,10 +533,16 @@ public class ErrorUtils {
             return constructor.toString() + (arguments.isEmpty() ? "" : joinToString(arguments, ", ", "<", ">", -1, "...", null));
         }
 
-        @Nullable
+        @NotNull
         @Override
-        public SimpleType getAbbreviatedType() {
-            return null;
+        public SimpleType replaceAnnotations(@NotNull Annotations newAnnotations) {
+            return this;
+        }
+
+        @NotNull
+        @Override
+        public SimpleType makeNullableAsSpecified(boolean newNullability) {
+            return new ErrorTypeImpl(constructor, memberScope, arguments, newNullability);
         }
     }
 

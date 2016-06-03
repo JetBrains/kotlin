@@ -85,10 +85,7 @@ fun TypeProjection.substitute(doSubstitute: (KotlinType) -> KotlinType): TypePro
 
 fun KotlinType.replaceAnnotations(newAnnotations: Annotations): KotlinType {
     if (annotations.isEmpty() && newAnnotations.isEmpty()) return this
-    val unwrappedType = unwrap()
-    if (unwrappedType is TypeWithCustomReplacement) return unwrappedType.replaceAnnotations(newAnnotations)
-
-    return asSimpleType().lazyReplaceAnnotations(newAnnotations)
+    return unwrap().replaceAnnotations(newAnnotations)
 }
 
 fun KotlinTypeChecker.equalTypesOrNulls(type1: KotlinType?, type2: KotlinType?): Boolean {
@@ -165,7 +162,7 @@ fun KotlinType.replaceArgumentsWithStarProjections(): KotlinType {
         )
     }
     else {
-        return asSimpleType().replaceArgumentsWithStarProjections()
+        return (unwrapped as SimpleType).replaceArgumentsWithStarProjections()
     }
 }
 

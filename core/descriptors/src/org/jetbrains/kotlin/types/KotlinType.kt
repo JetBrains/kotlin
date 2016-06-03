@@ -19,59 +19,59 @@ package org.jetbrains.kotlin.types
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.DescriptorRendererOptions
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
 /**
  * @see KotlinTypeChecker.isSubtypeOf
  */
-interface KotlinType : Annotated {
-    val constructor: TypeConstructor
+sealed class KotlinType : Annotated {
 
-    val arguments: List<TypeProjection>
+    abstract val constructor: TypeConstructor
+    abstract val arguments: List<TypeProjection>
+    abstract val isMarkedNullable: Boolean
+    abstract val memberScope: MemberScope
+    abstract val isError: Boolean
 
-    val isMarkedNullable: Boolean
+    abstract fun unwrap(): UnwrappedType
 
-    val memberScope: MemberScope
+    // ------- internal staff ------
 
-    val isError: Boolean
+    final override fun hashCode(): Int {
+        if (isError) return super.hashCode()
 
-    override fun equals(other: Any?): Boolean
+        var result = constructor.hashCode()
+        result = 31 * result + arguments.hashCode()
+        result = 31 * result + if (isMarkedNullable) 1 else 0
+        return result
+    }
+
+    final override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is KotlinType) return false
+
+        return isMarkedNullable == other.isMarkedNullable && KotlinTypeChecker.FLEXIBLE_UNEQUAL_TO_INFLEXIBLE.equalTypes(this, other)
+    }
 }
 
-@Deprecated("Temporary marker method for refactoring")
-fun KotlinType.asSimpleType(): SimpleType {
-    return unwrap() as SimpleType
-}
+abstract class WrappedType() : KotlinType(), LazyType {
+    open fun isComputed(): Boolean = true
+    protected abstract val delegate: KotlinType
 
-fun KotlinType.unwrap(): KotlinType {
-    if (this is WrappedType) return unwrap().unwrap()
-    return this
-}
-
-interface SimpleType : KotlinType {
-    val abbreviatedType : SimpleType? get() = null
-}
-
-interface TypeWithCustomReplacement : KotlinType {
-    fun makeNullableAsSpecified(nullable: Boolean): KotlinType
-
-    fun replaceAnnotations(newAnnotations: Annotations): KotlinType
-}
-
-abstract class WrappedType() : KotlinType, LazyType {
     override val annotations: Annotations get() = delegate.annotations
     override val constructor: TypeConstructor get() = delegate.constructor
     override val arguments: List<TypeProjection> get() = delegate.arguments
     override val isMarkedNullable: Boolean get() = delegate.isMarkedNullable
     override val memberScope: MemberScope get() = delegate.memberScope
 
-
-    open fun isComputed(): Boolean = true
-    open val delegate: KotlinType
-        get() = unwrap()
-
-    abstract fun unwrap(): KotlinType
+    override final fun unwrap(): UnwrappedType {
+        var result = delegate
+        while (result is WrappedType) {
+            result = result.delegate
+        }
+        return result as UnwrappedType
+    }
 
     override fun toString(): String {
         if (isComputed()) {
@@ -84,58 +84,26 @@ abstract class WrappedType() : KotlinType, LazyType {
 
     // todo: remove this later
     override val isError: Boolean get() = delegate.isError
-    override fun equals(other: Any?): Boolean = unwrap().equals(other)
-    override fun hashCode(): Int = unwrap().hashCode()
 }
 
-fun SimpleType.lazyReplaceNullability(newNullable: Boolean): SimpleType {
-    if (this is WrappedSimpleType) {
-        return WrappedSimpleType(delegate, newAnnotations, newNullable)
-    }
-    else {
-        return WrappedSimpleType(this, newNullable = newNullable)
-    }
+sealed class UnwrappedType: KotlinType() {
+    abstract fun replaceAnnotations(newAnnotations: Annotations): UnwrappedType
+    abstract fun makeNullableAsSpecified(newNullability: Boolean): UnwrappedType
+
+    override final fun unwrap(): UnwrappedType = this
 }
 
-fun SimpleType.lazyReplaceAnnotations(newAnnotations: Annotations): SimpleType {
-    if (this is WrappedSimpleType) {
-        return WrappedSimpleType(delegate, newAnnotations, newNullable)
-    }
-    else {
-        return WrappedSimpleType(this, newAnnotations)
-    }
-}
-
-fun KotlinType.getAbbreviatedType(): SimpleType? = (unwrap() as? SimpleType)?.abbreviatedType
-
-fun SimpleType.withAbbreviatedType(abbreviatedType: SimpleType): SimpleType {
-    if (isError) return this
-    return KotlinTypeImpl.create(annotations, constructor, isMarkedNullable, arguments, memberScope, abbreviatedType)
-}
-
-private class WrappedSimpleType(
-        override val delegate: SimpleType,
-        val newAnnotations: Annotations? = null,
-        val newNullable: Boolean? = null
-): WrappedType(), SimpleType {
-    override val annotations: Annotations
-        get() = newAnnotations ?: delegate.annotations
-
-    override val isMarkedNullable: Boolean
-        get() = newNullable ?: delegate.isMarkedNullable
-
-    override fun unwrap(): KotlinType {
-        if (delegate.isError) return delegate // todo
-        if (delegate is CustomTypeVariable) return delegate // todo
-        return KotlinTypeImpl.create(annotations, constructor, isMarkedNullable, arguments, memberScope, abbreviatedType)
-    }
+abstract class SimpleType : UnwrappedType() {
+    abstract override fun replaceAnnotations(newAnnotations: Annotations): SimpleType
+    abstract override fun makeNullableAsSpecified(newNullability: Boolean): SimpleType
 
     override fun toString(): String {
-        if (isError) return delegate.toString()
+        // for error types this method should be overridden
+        if (isError) return "ErrorType"
 
         return buildString {
-            for (annotation in annotations.getAllAnnotations()) {
-                append("[", DescriptorRenderer.DEBUG_TEXT.renderAnnotation(annotation.annotation, annotation.target), "] ")
+            for ((annotation, target) in annotations.getAllAnnotations()) {
+                append("[", DescriptorRenderer.DEBUG_TEXT.renderAnnotation(annotation, target), "] ")
             }
 
             append(constructor)
@@ -143,4 +111,34 @@ private class WrappedSimpleType(
             if (isMarkedNullable) append("?")
         }
     }
+}
+
+// lowerBound is a subtype of upperBound
+abstract class FlexibleType(val lowerBound: SimpleType, val upperBound: SimpleType) :
+        UnwrappedType(), SubtypingRepresentatives {
+
+    abstract val delegate: SimpleType
+
+    override val subTypeRepresentative: KotlinType
+        get() = lowerBound
+    override val superTypeRepresentative: KotlinType
+        get() = upperBound
+
+    override fun sameTypeConstructor(type: KotlinType) = false
+
+    abstract fun render(renderer: DescriptorRenderer, options: DescriptorRendererOptions): String
+
+    override val annotations: Annotations get() = delegate.annotations
+    override val constructor: TypeConstructor get() = delegate.constructor
+    override val arguments: List<TypeProjection> get() = delegate.arguments
+    override val isMarkedNullable: Boolean get() = delegate.isMarkedNullable
+    override val memberScope: MemberScope get() = delegate.memberScope
+    override val isError: Boolean get() = false
+
+    override fun toString(): String = DescriptorRenderer.DEBUG_TEXT.renderType(this)
+}
+
+@Deprecated("Temporary marker method for refactoring")
+fun KotlinType.asSimpleType(): SimpleType {
+    return unwrap() as SimpleType
 }
