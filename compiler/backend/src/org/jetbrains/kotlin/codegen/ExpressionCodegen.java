@@ -2330,7 +2330,28 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             return lookupCapturedValueInConstructorParameters(descriptor);
         }
 
-        return context.lookupInContext(descriptor, StackValue.LOCAL_0, state, false);
+        return lookupInContext(descriptor, StackValue.LOCAL_0, state, false, context);
+    }
+
+    @Nullable
+    StackValue lookupInContext(
+            @NotNull DeclarationDescriptor descriptor,
+            @NotNull StackValue prefix,
+            @NotNull GenerationState state,
+            boolean ignoreNoOuter,
+            @NotNull CodegenContext context
+    ) {
+        StackValue value = context.lookupInContext(descriptor, prefix, state, ignoreNoOuter);
+        if(!isDelegatedLocalVariable(descriptor) || value == null) {
+            return value;
+        }
+
+
+        VariableDescriptor metadata = getDelegatedLocalVariableMetadata((VariableDescriptor) descriptor, state.getBindingContext());
+        StackValue metadataValue = context.lookupInContext(metadata, prefix, state, ignoreNoOuter);
+        assert metadataValue != null : "Metadata stack value should be non-null for local delegated property";
+        return delegatedVariableValue(value, metadataValue, (VariableDescriptorWithAccessors) descriptor, state.getBindingContext(),
+                                              state.getTypeMapper());
     }
 
     @Nullable
@@ -3752,7 +3773,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         VariableDescriptorWithAccessors variableDescriptor = (VariableDescriptorWithAccessors) descriptor;
         StackValue metadataValue = getVariableMetadataValue(variableDescriptor);
-        return JvmCodegenUtil.delegatedVariableValue(varValue, metadataValue, variableDescriptor, bindingContext, typeMapper);
+        return delegatedVariableValue(varValue, metadataValue, variableDescriptor, bindingContext, typeMapper);
     }
 
     private void initializeLocalVariable(
@@ -4453,5 +4474,25 @@ The "returned" value of try expression with no finally is either the last expres
             returnType = type;
             labelName = name;
         }
+    }
+
+    @NotNull
+    private static StackValue.Delegate delegatedVariableValue(
+            @NotNull StackValue delegateValue,
+            @NotNull StackValue metadataValue,
+            @NotNull VariableDescriptorWithAccessors variableDescriptor,
+            @NotNull BindingContext bindingContext,
+            @NotNull KotlinTypeMapper typeMapper
+    ) {
+        VariableDescriptor delegateVariableDescriptor = bindingContext.get(LOCAL_VARIABLE_DELEGATE, variableDescriptor);
+        assert delegateVariableDescriptor != null : variableDescriptor;
+
+        VariableAccessorDescriptor getterDescriptor = variableDescriptor.getGetter();
+        VariableAccessorDescriptor setterDescriptor = variableDescriptor.getSetter();
+
+        //noinspection ConstantConditions
+        CallableMethod getterMethod = typeMapper.mapToCallableMethod(getterDescriptor, false);
+        CallableMethod setterMethod = setterDescriptor != null ? typeMapper.mapToCallableMethod(setterDescriptor, false) : null;
+        return StackValue.delegate(typeMapper.mapType(variableDescriptor.getType()), delegateValue, metadataValue, getterMethod, setterMethod);
     }
 }

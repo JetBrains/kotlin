@@ -51,20 +51,13 @@ public interface LocalLookup {
                     Type classType
             ) {
                 VariableDescriptor vd = (VariableDescriptor) d;
-                VariableDescriptor originalVariableDescriptor = vd;
 
                 boolean idx = localLookup != null && localLookup.lookupLocal(vd);
                 if (!idx) return null;
 
-                boolean delegatedVar = false;
                 VariableDescriptor delegateVariableDescriptor = state.getBindingContext().get(LOCAL_VARIABLE_DELEGATE, vd);
-                if (delegateVariableDescriptor != null) {
-                    vd = delegateVariableDescriptor;
-                    delegatedVar = true;
-                }
-
                 Type sharedVarType = state.getTypeMapper().getSharedVarType(vd);
-                Type localType = state.getTypeMapper().mapType(vd);
+                Type localType = state.getTypeMapper().mapType(delegateVariableDescriptor != null ? delegateVariableDescriptor : vd);
                 Type type = sharedVarType != null ? sharedVarType : localType;
 
                 String fieldName = "$" + vd.getName();
@@ -79,19 +72,6 @@ public interface LocalLookup {
                 }
                 else {
                     innerValue = StackValue.field(type, classType, fieldName, false, thiz, vd);
-                    if (delegatedVar) {
-                        VariableDescriptor metadataVariableDescriptor = getDelegatedLocalVariableMetadata(originalVariableDescriptor, state.getBindingContext());
-                        StackValue metadataValue = innerValue(metadataVariableDescriptor, localLookup, state, closure, classType);
-                        assert metadataValue != null : originalVariableDescriptor;
-
-                        innerValue = JvmCodegenUtil.delegatedVariableValue(
-                                innerValue,
-                                metadataValue,
-                                (VariableDescriptorWithAccessors) originalVariableDescriptor,
-                                state.getBindingContext(),
-                                state.getTypeMapper()
-                        );
-                    }
                     enclosedValueDescriptor = new EnclosedValueDescriptor(fieldName, d, innerValue, type);
                 }
 
