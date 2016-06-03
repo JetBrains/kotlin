@@ -58,7 +58,7 @@ private open class Result(open val type: KotlinType, val subtreeSize: Int, val w
 private class SimpleResult(override val type: SimpleType, subtreeSize: Int, wereChanges: Boolean): Result(type, subtreeSize, wereChanges)
 
 private fun UnwrappedType.enhancePossiblyFlexible(qualifiers: (Int) -> JavaTypeQualifiers, index: Int): Result {
-    if (isError || this is RawTypeImpl) return Result(this, 1, false) // todo: Raw
+    if (isError) return Result(this, 1, false)
     return when(this) {
         is FlexibleType -> {
             val lowerResult = lowerBound.enhanceInflexible(qualifiers, index, TypeComponentPosition.FLEXIBLE_LOWER)
@@ -71,8 +71,14 @@ private fun UnwrappedType.enhancePossiblyFlexible(qualifiers: (Int) -> JavaTypeQ
 
             val wereChanges = lowerResult.wereChanges || upperResult.wereChanges
             Result(
-                if (wereChanges)
-                    KotlinTypeFactory.flexibleType(lowerResult.type, upperResult.type)
+                if (wereChanges) {
+                    if (this is RawTypeImpl) {
+                        RawTypeImpl(lowerResult.type, upperResult.type)
+                    }
+                    else {
+                        KotlinTypeFactory.flexibleType(lowerResult.type, upperResult.type)
+                    }
+                }
                 else
                     this@enhancePossiblyFlexible,
                 lowerResult.subtreeSize,

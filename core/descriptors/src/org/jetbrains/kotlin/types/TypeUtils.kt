@@ -154,14 +154,12 @@ fun KotlinType.contains(predicate: (KotlinType) -> Boolean) = TypeUtils.contains
 
 fun KotlinType.replaceArgumentsWithStarProjections(): KotlinType {
     val unwrapped = unwrap()
-    if (unwrapped is FlexibleType) {
-        return KotlinTypeFactory.flexibleType(
+    return when (unwrapped) {
+        is FlexibleType -> KotlinTypeFactory.flexibleType(
                 unwrapped.lowerBound.replaceArgumentsWithStarProjections(),
                 unwrapped.upperBound.replaceArgumentsWithStarProjections()
         )
-    }
-    else {
-        return (unwrapped as SimpleType).replaceArgumentsWithStarProjections()
+        is SimpleType -> unwrapped.replaceArgumentsWithStarProjections()
     }
 }
 

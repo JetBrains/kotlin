@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.typeUtil.builtIns
 
 class RawTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : FlexibleType(lowerBound, upperBound), RawType {
     init {
@@ -66,7 +67,7 @@ class RawTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : FlexibleType
         if (options.debugMode) {
             return "raw ($lowerRendered..$upperRendered)"
         }
-        if (upperBound.arguments.isEmpty()) return renderer.renderFlexibleType(lowerRendered, upperRendered)
+        if (upperBound.arguments.isEmpty()) return renderer.renderFlexibleType(lowerRendered, upperRendered, builtIns)
 
         val lowerArgs = renderArguments(lowerBound)
         val upperArgs = renderArguments(upperBound)
@@ -77,7 +78,7 @@ class RawTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : FlexibleType
                 else upperRendered
         val newLower = lowerRendered.replaceArgs(newArgs)
         if (newLower == newUpper) return newLower
-        return renderer.renderFlexibleType(newLower, newUpper)
+        return renderer.renderFlexibleType(newLower, newUpper, builtIns)
     }
 }
 
@@ -106,6 +107,7 @@ internal object RawSubstitution : TypeSubstitution() {
         }
     }
 
+    // false means that type cannot be raw
     private fun eraseInflexibleBasedOnClassDescriptor(
             type: SimpleType, declaration: ClassDescriptor, attr: JavaTypeAttributes
     ): Pair<SimpleType, Boolean> {

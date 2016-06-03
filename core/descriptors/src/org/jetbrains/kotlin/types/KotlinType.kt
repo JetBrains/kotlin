@@ -96,9 +96,6 @@ abstract class SimpleType : UnwrappedType() {
     abstract override fun makeNullableAsSpecified(newNullability: Boolean): SimpleType
 
     override fun toString(): String {
-        // for error types this method should be overridden
-        if (isError) return "ErrorType"
-
         return buildString {
             for ((annotation, target) in annotations.getAllAnnotations()) {
                 append("[", DescriptorRenderer.DEBUG_TEXT.renderAnnotation(annotation, target), "] ")
