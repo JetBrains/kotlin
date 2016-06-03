@@ -178,8 +178,7 @@ open class KtLightClassForExplicitDeclaration(
     }
 
     private val _containingFile: PsiFile by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        val virtualFile = classOrObject.containingFile.virtualFile
-        assert(virtualFile != null) { "No virtual file for " + classOrObject.text }
+        classOrObject.containingFile.virtualFile ?: error("No virtual file for " + classOrObject.text)
 
         object : FakeFileForLightClass(
                 classOrObject.getContainingKtFile(),
@@ -211,18 +210,18 @@ open class KtLightClassForExplicitDeclaration(
     override fun getNavigationElement(): PsiElement = classOrObject
 
     override fun isEquivalentTo(another: PsiElement?): Boolean {
-        return another is PsiClass && Comparing.equal(another.getQualifiedName(), qualifiedName)
+        return another is PsiClass && Comparing.equal(another.qualifiedName, qualifiedName)
     }
 
     override fun getElementIcon(flags: Int): Icon? {
-        throw UnsupportedOperationException("This should be done byt JetIconProvider")
+        throw UnsupportedOperationException("This should be done by JetIconProvider")
     }
 
-    override fun equals(o: Any?): Boolean {
-        if (this === o) return true
-        if (o == null || javaClass != o.javaClass) return false
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || javaClass != other.javaClass) return false
 
-        val aClass = o as KtLightClassForExplicitDeclaration
+        val aClass = other as KtLightClassForExplicitDeclaration
 
         if (classFqName != aClass.classFqName) return false
 
@@ -260,7 +259,7 @@ open class KtLightClassForExplicitDeclaration(
     private val _modifierList : PsiModifierList by lazy(LazyThreadSafetyMode.PUBLICATION) {
         object : KtLightModifierListWithExplicitModifiers(this@KtLightClassForExplicitDeclaration, computeModifiers()) {
             override val delegate: PsiAnnotationOwner
-                get() = this@KtLightClassForExplicitDeclaration.getDelegate().modifierList!!
+                get() = this@KtLightClassForExplicitDeclaration.delegate.modifierList!!
         }
     }
 
@@ -307,7 +306,7 @@ open class KtLightClassForExplicitDeclaration(
 
     private fun isSealed(): Boolean = classOrObject.hasModifier(SEALED_KEYWORD)
 
-    override fun hasModifierProperty(@NonNls name: String): Boolean = getModifierList().hasModifierProperty(name)
+    override fun hasModifierProperty(@NonNls name: String): Boolean = modifierList.hasModifierProperty(name)
 
     override fun isDeprecated(): Boolean {
         val jetModifierList = classOrObject.modifierList ?: return false
@@ -435,7 +434,7 @@ open class KtLightClassForExplicitDeclaration(
             if (value == null) {
                 value = CachedValuesManager.getManager(classOrObject.project).createCachedValue(
                         LightClassDataProviderForClassOrObject(outermostClassOrObject), false)
-                value = outermostClassOrObject.putUserDataIfAbsent(JAVA_API_STUB, value)!!
+                value = outermostClassOrObject.putUserDataIfAbsent(JAVA_API_STUB, value)
             }
             return value
         }
