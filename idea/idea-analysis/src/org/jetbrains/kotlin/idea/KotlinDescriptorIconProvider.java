@@ -108,7 +108,7 @@ public final class KotlinDescriptorIconProvider {
                 case ENUM_ENTRY:
                     return KotlinIcons.ENUM;
                 case ANNOTATION_CLASS:
-                    return PlatformIcons.ANNOTATION_TYPE_ICON;
+                    return KotlinIcons.ANNOTATION;
                 case OBJECT:
                     return KotlinIcons.OBJECT;
                 case CLASS:
