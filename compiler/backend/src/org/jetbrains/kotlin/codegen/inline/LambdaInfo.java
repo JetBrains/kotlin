@@ -39,7 +39,7 @@ import java.util.Set;
 
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.*;
 
-public class LambdaInfo implements CapturedParamOwner, LabelOwner {
+public class LambdaInfo implements LabelOwner {
     public final KtExpression expression;
     private final KotlinTypeMapper typeMapper;
     public final Set<String> labels;
@@ -139,7 +139,7 @@ public class LambdaInfo implements CapturedParamOwner, LabelOwner {
 
     @NotNull
     private CapturedParamDesc getCapturedParamInfo(@NotNull EnclosedValueDescriptor descriptor) {
-        return new CapturedParamDesc(this, descriptor.getFieldName(), descriptor.getType());
+        return new CapturedParamDesc(closureClassType, descriptor.getFieldName(), descriptor.getType());
     }
 
     @NotNull
@@ -159,12 +159,6 @@ public class LambdaInfo implements CapturedParamOwner, LabelOwner {
         }
 
         return builder.buildParameters();
-    }
-
-    @NotNull
-    @Override
-    public Type getType() {
-        return closureClassType;
     }
 
     @Override
