@@ -365,14 +365,6 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
             @NotNull final AnonymousObjectTransformationInfo transformationInfo,
             @NotNull FieldRemapper parentFieldRemapper
     ) {
-        CapturedParamOwner owner = new CapturedParamOwner() {
-            @NotNull
-            @Override
-            public Type getType() {
-                return Type.getObjectType(transformationInfo.getOldClassName());
-            }
-        };
-
         Set<LambdaInfo> capturedLambdas = new LinkedHashSet<LambdaInfo>(); //captured var of inlined parameter
         List<CapturedParamInfo> constructorAdditionalFakeParams = new ArrayList<CapturedParamInfo>();
         Map<Integer, LambdaInfo> indexToLambda = transformationInfo.getLambdasToInline();
@@ -399,7 +391,8 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
                                     ? getNewFieldName(fieldName, true)
                                     : fieldName;
                             CapturedParamInfo info = capturedParamBuilder.addCapturedParam(
-                                    owner, fieldName, newFieldName, Type.getType(fieldNode.desc), lambdaInfo != null, null
+                                    Type.getObjectType(transformationInfo.getOldClassName()), fieldName, newFieldName,
+                                    Type.getType(fieldNode.desc), lambdaInfo != null, null
                             );
                             if (lambdaInfo != null) {
                                 info.setLambda(lambdaInfo);
@@ -488,15 +481,8 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
             //lambda with non InlinedLambdaRemapper already have outer
             FieldRemapper parent = parentFieldRemapper.getParent();
             assert parent instanceof RegeneratedLambdaFieldRemapper;
-            final Type ownerType = Type.getObjectType(parent.getLambdaInternalName());
-
-            CapturedParamDesc desc = new CapturedParamDesc(new CapturedParamOwner() {
-                @NotNull
-                @Override
-                public Type getType() {
-                    return ownerType;
-                }
-            }, InlineCodegenUtil.THIS, ownerType);
+            Type ownerType = Type.getObjectType(parent.getLambdaInternalName());
+            CapturedParamDesc desc = new CapturedParamDesc(ownerType, InlineCodegenUtil.THIS, ownerType);
             CapturedParamInfo recapturedParamInfo =
                     capturedParamBuilder.addCapturedParam(desc, InlineCodegenUtil.THIS$0/*outer lambda/object*/);
             StackValue composed = StackValue.LOCAL_0;

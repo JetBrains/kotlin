@@ -64,7 +64,7 @@ internal class ParametersBuilder private constructor() {
     }
 
     fun addCapturedParam(
-            containingLambda: CapturedParamOwner,
+            containingLambdaType: Type,
             fieldName: String,
             newFieldName: String,
             type: Type,
@@ -72,7 +72,7 @@ internal class ParametersBuilder private constructor() {
             original: ParameterInfo?
     ): CapturedParamInfo {
         val info = CapturedParamInfo(
-                CapturedParamDesc(containingLambda, fieldName, type), newFieldName, skipped, nextCapturedIndex(), original?.index ?: -1
+                CapturedParamDesc(containingLambdaType, fieldName, type), newFieldName, skipped, nextCapturedIndex(), original?.index ?: -1
         )
         if (original != null) {
             info.lambda = original.lambda
