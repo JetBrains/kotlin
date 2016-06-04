@@ -24,7 +24,21 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
 /**
- * @see KotlinTypeChecker.isSubtypeOf
+ * [KotlinType] has only two direct subclasses: [WrappedType] and [UnwrappedType].
+ *
+ * WrappedType is used for lazy computations and for other purposes,
+ * where we cannot compute type directly because of lazy initializations.
+ * We cannot check type on instanceOf directly, because WrappedType is a wrapper around type.
+ *
+ * To solve this problem, there is another subclass of KotlinType -- UnwrappedType.
+ * So, if you have instance of UnwrappedType, you can safely check this type by instanceOf.
+ * To get UnwrappedType you should call method [unwrap].
+ *
+ * For example, if you want to check, that current type is Flexible, you should run the following:
+ * `type.unwrap() is FlexibleType`.
+ * For more examples see usages of method [unwrap].
+ *
+ * For type creation see [KotlinTypeFactory].
  */
 sealed class KotlinType : Annotated {
 
@@ -35,8 +49,6 @@ sealed class KotlinType : Annotated {
     abstract val isError: Boolean
 
     abstract fun unwrap(): UnwrappedType
-
-    // ------- internal staff ------
 
     final override fun hashCode(): Int {
         if (isError) return super.hashCode()
@@ -84,6 +96,17 @@ abstract class WrappedType() : KotlinType() {
     }
 }
 
+/**
+ * If you have instance of this type, you can safety check it using instanceOf.
+ *
+ * WARNING: For wrappers around types you should use only [WrappedType].
+ *
+ * Methods [replaceAnnotations] and [makeNullableAsSpecified] exist here,
+ * because type should save its own internal structure when we want to replace nullability or annotations.
+ * For example: nullable captured type still should be captured type.
+ *
+ * todo: specify what happens with internal structure when we apply some [TypeSubstitutor]
+ */
 sealed class UnwrappedType: KotlinType() {
     abstract fun replaceAnnotations(newAnnotations: Annotations): UnwrappedType
     abstract fun makeNullableAsSpecified(newNullability: Boolean): UnwrappedType
@@ -91,6 +114,11 @@ sealed class UnwrappedType: KotlinType() {
     override final fun unwrap(): UnwrappedType = this
 }
 
+/**
+ * This type represents simple type. If you have pure kotlin code without java classes and dynamic types,
+ * then all your types are simple.
+ * Or more precisely, all instances are subclasses of [SimpleType] or [WrappedType] (which contains [SimpleType] inside).
+ */
 abstract class SimpleType : UnwrappedType() {
     abstract override fun replaceAnnotations(newAnnotations: Annotations): SimpleType
     abstract override fun makeNullableAsSpecified(newNullability: Boolean): SimpleType
