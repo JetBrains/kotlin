@@ -35,8 +35,8 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.LazyType;
 import org.jetbrains.kotlin.types.TypeConstructor;
+import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
 import java.util.*;
@@ -450,7 +450,7 @@ public class DescriptorUtils {
     public static boolean shouldRecordInitializerForProperty(@NotNull VariableDescriptor variable, @NotNull KotlinType type) {
         if (variable.isVar() || type.isError()) return false;
 
-        if (type instanceof LazyType || type.isMarkedNullable()) return true;
+        if (TypeUtils.acceptsNullable(type)) return true;
 
         KotlinBuiltIns builtIns = getBuiltIns(variable);
         return KotlinBuiltIns.isPrimitiveType(type) ||

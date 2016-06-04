@@ -136,8 +136,8 @@ internal class DescriptorRendererImpl(
     }
 
     private fun renderNormalizedTypeAsIs(type: KotlinType): String {
-        if (type is LazyType && debugMode) {
-            return type.toString()
+        if (type is WrappedType && debugMode && !type.isComputed()) {
+            return "<Not computed yet>"
         }
         val unwrappedType = type.unwrap()
         return when (unwrappedType) {
