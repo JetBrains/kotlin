@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.storage.NullableLazyValue;
 import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.LazyType;
 
 public abstract class VariableDescriptorWithInitializerImpl extends VariableDescriptorImpl {
     private final boolean isVar;
@@ -54,7 +53,7 @@ public abstract class VariableDescriptorWithInitializerImpl extends VariableDesc
     @Override
     public ConstantValue<?> getCompileTimeInitializer() {
         // Force computation and setting of compileTimeInitializer, if needed
-        if (compileTimeInitializer == null && outType instanceof LazyType) {
+        if (compileTimeInitializer == null) {
             outType.getConstructor();
         }
 

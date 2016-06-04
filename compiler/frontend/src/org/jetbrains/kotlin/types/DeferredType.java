@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.util.ReenteringLazyValueComputationException;
 
 import static org.jetbrains.kotlin.resolve.BindingContext.DEFERRED_TYPE;
 
-public class DeferredType extends WrappedType implements LazyType {
+public class DeferredType extends WrappedType {
 
     private static final Function1 EMPTY_CONSUMER = new Function1<Object, Void>() {
         @Override

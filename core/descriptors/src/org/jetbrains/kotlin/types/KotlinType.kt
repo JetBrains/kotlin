@@ -55,7 +55,7 @@ sealed class KotlinType : Annotated {
     }
 }
 
-abstract class WrappedType() : KotlinType(), LazyType {
+abstract class WrappedType() : KotlinType() {
     open fun isComputed(): Boolean = true
     protected abstract val delegate: KotlinType
 
