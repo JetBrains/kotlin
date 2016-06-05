@@ -451,7 +451,8 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
 
                     CapturedParamInfo recapturedParamInfo = capturedParamBuilder.addCapturedParam(
                             desc,
-                            alreadyAddedParam != null ? alreadyAddedParam.getNewFieldName() : getNewFieldName(desc.getFieldName(), false)
+                            alreadyAddedParam != null ? alreadyAddedParam.getNewFieldName() : getNewFieldName(desc.getFieldName(), false),
+                            alreadyAddedParam != null
                     );
                     StackValue composed = StackValue.field(
                             desc.getType(),
@@ -465,9 +466,6 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
 
                     constructorParamBuilder.addCapturedParam(recapturedParamInfo, recapturedParamInfo.getNewFieldName())
                             .setRemapValue(composed);
-                    if (alreadyAddedParam != null) {
-                        recapturedParamInfo.setSkipInConstructor(true);
-                    }
 
                     if (isThis0(desc.getFieldName())) {
                         alreadyAdded.put(key, recapturedParamInfo);
@@ -484,7 +482,7 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
             Type ownerType = Type.getObjectType(parent.getLambdaInternalName());
             CapturedParamDesc desc = new CapturedParamDesc(ownerType, InlineCodegenUtil.THIS, ownerType);
             CapturedParamInfo recapturedParamInfo =
-                    capturedParamBuilder.addCapturedParam(desc, InlineCodegenUtil.THIS$0/*outer lambda/object*/);
+                    capturedParamBuilder.addCapturedParam(desc, InlineCodegenUtil.THIS$0/*outer lambda/object*/, false);
             StackValue composed = StackValue.LOCAL_0;
             recapturedParamInfo.setRemapValue(composed);
             allRecapturedParameters.add(desc);
