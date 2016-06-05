@@ -1,0 +1,28 @@
+message Upload {
+  message Method {
+    enum TYPE {
+      DFU = 1;
+    }
+    // Type of upload method.
+    optional TYPE type = 1;
+    // Upload port.
+    optional string port = 2;
+    // Device address, smth like 8087:0ABA.
+    optional string device = 3;
+    // Additional programmator-specific arguments.
+    repeated string arguments = 4;
+  }
+  // Firmware data.
+  optional bytes data = 1;
+  // Method of firmware upload.
+  optional Method method = 2;
+}
+
+message UploadResult {
+  optional string error = 1;
+}
+
+message LogMessage {
+  optional string source = 1;
+  optional bytes message = 2;
+}
