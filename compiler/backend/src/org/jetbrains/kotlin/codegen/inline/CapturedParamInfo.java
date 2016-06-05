@@ -23,21 +23,27 @@ import org.jetbrains.kotlin.codegen.StackValue;
 public class CapturedParamInfo extends ParameterInfo {
     public final CapturedParamDesc desc;
     private final String newFieldName;
-
-    private boolean skipInConstructor;
+    private final boolean skipInConstructor;
 
     public CapturedParamInfo(@NotNull CapturedParamDesc desc, @NotNull String newFieldName, boolean skipped, int index, int remapIndex) {
         super(desc.getType(), skipped, index, remapIndex, index);
         this.desc = desc;
         this.newFieldName = newFieldName;
+        this.skipInConstructor = false;
     }
 
     public CapturedParamInfo(
-            @NotNull CapturedParamDesc desc, @NotNull String newFieldName, boolean skipped, int index, @Nullable StackValue remapIndex
+            @NotNull CapturedParamDesc desc,
+            @NotNull String newFieldName,
+            boolean skipped,
+            int index,
+            @Nullable StackValue remapIndex,
+            boolean skipInConstructor
     ) {
         super(desc.getType(), skipped, index, remapIndex, index);
         this.desc = desc;
         this.newFieldName = newFieldName;
+        this.skipInConstructor = skipInConstructor;
     }
 
     @NotNull
@@ -57,10 +63,9 @@ public class CapturedParamInfo extends ParameterInfo {
 
     @NotNull
     private CapturedParamInfo clone(int newIndex, @Nullable StackValue newRemapIndex) {
-        CapturedParamInfo capturedParamInfo = new CapturedParamInfo(desc, newFieldName, isSkipped, newIndex, newRemapIndex);
-        capturedParamInfo.setLambda(getLambda());
-        capturedParamInfo.setSkipInConstructor(skipInConstructor);
-        return capturedParamInfo;
+        CapturedParamInfo result = new CapturedParamInfo(desc, newFieldName, isSkipped, newIndex, newRemapIndex, skipInConstructor);
+        result.setLambda(getLambda());
+        return result;
     }
 
     @NotNull
@@ -70,9 +75,5 @@ public class CapturedParamInfo extends ParameterInfo {
 
     public boolean isSkipInConstructor() {
         return skipInConstructor;
-    }
-
-    public void setSkipInConstructor(boolean skipInConstructor) {
-        this.skipInConstructor = skipInConstructor;
     }
 }

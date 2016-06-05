@@ -55,8 +55,8 @@ internal class ParametersBuilder private constructor() {
 
     private fun nextCapturedIndex(): Int = nextCaptured
 
-    fun addCapturedParam(desc: CapturedParamDesc, newFieldName: String): CapturedParamInfo {
-        return addCapturedParameter(CapturedParamInfo(desc, newFieldName, false, nextCapturedIndex(), null))
+    fun addCapturedParam(desc: CapturedParamDesc, newFieldName: String, skipInConstructor: Boolean): CapturedParamInfo {
+        return addCapturedParameter(CapturedParamInfo(desc, newFieldName, false, nextCapturedIndex(), null, skipInConstructor))
     }
 
     fun addCapturedParamCopy(copyFrom: CapturedParamInfo): CapturedParamInfo {

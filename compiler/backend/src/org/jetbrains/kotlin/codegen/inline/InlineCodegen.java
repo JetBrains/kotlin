@@ -587,7 +587,7 @@ public class InlineCodegen extends CallGenerator {
             ParameterInfo info;
             if (capturedParamIndex >= 0) {
                 CapturedParamDesc capturedParamInfoInLambda = activeLambda.getCapturedVars().get(capturedParamIndex);
-                info = invocationParamBuilder.addCapturedParam(capturedParamInfoInLambda, capturedParamInfoInLambda.getFieldName());
+                info = invocationParamBuilder.addCapturedParam(capturedParamInfoInLambda, capturedParamInfoInLambda.getFieldName(), false);
                 info.setRemapValue(remappedIndex);
             }
             else {
