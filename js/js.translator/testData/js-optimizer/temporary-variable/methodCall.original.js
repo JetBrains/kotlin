@@ -5,12 +5,13 @@ function init() {
     log = "";
 }
 
-function foo(n) {
+function foo_(n) {
     log += "{" + n + "}";
     return n;
 }
 
 function test1() {
+    var foo = foo_;
     init();
 
     var $tmp1 = foo(1);
@@ -20,6 +21,7 @@ function test1() {
 }
 
 function test2() {
+    var foo = foo_;
     init();
 
     var $tmp2 = foo(2);
@@ -29,6 +31,7 @@ function test2() {
 }
 
 function test3() {
+    var foo = foo_;
     init();
 
     var $tmp1 = foo(1);
@@ -39,6 +42,7 @@ function test3() {
 }
 
 function test4() {
+    var foo = foo_;
     init();
 
     var $tmp1 = foo(1);
@@ -49,6 +53,7 @@ function test4() {
 }
 
 function test5() {
+    var foo = foo_;
     init();
 
     var $tmp1 = foo(1);
@@ -60,6 +65,7 @@ function test5() {
 }
 
 function test6() {
+    var foo = foo_;
     init();
 
     var $tmp = foo(1);
