@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.components.*
-import org.jetbrains.kotlin.load.java.lazy.types.LazyJavaTypeResolver
+import org.jetbrains.kotlin.load.java.lazy.types.JavaTypeResolver
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElementFactory
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameterListOwner
 import org.jetbrains.kotlin.load.kotlin.DeserializedDescriptorResolver
@@ -64,7 +64,7 @@ class LazyJavaResolverContext(
         val components: JavaResolverComponents,
         val typeParameterResolver: TypeParameterResolver
 ) {
-    val typeResolver = LazyJavaTypeResolver(this, typeParameterResolver)
+    val typeResolver = JavaTypeResolver(this, typeParameterResolver)
 
     val storageManager: StorageManager
         get() = components.storageManager
