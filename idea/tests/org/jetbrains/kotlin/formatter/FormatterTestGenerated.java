@@ -379,6 +379,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("MethodCall.after.kt")
+        public void testMethodCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/MethodCall.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("Multideclaration.after.kt")
         public void testMultideclaration() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/Multideclaration.after.kt");
