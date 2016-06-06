@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor;
+import org.jetbrains.kotlin.types.expressions.DoubleColonLHS;
 import org.jetbrains.kotlin.types.expressions.LabelResolver;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
@@ -699,6 +700,13 @@ public class InlineCodegen extends CallGenerator {
             // TODO: support inline of property references passed to inlinable function parameters
             SimpleFunctionDescriptor functionReference = state.getBindingContext().get(BindingContext.FUNCTION, deparenthesized);
             if (functionReference == null) return false;
+
+            KtExpression receiverExpression = ((KtCallableReferenceExpression) deparenthesized).getReceiverExpression();
+            if (receiverExpression != null) {
+                // TODO (!): support inline for bound function references
+                DoubleColonLHS lhs = state.getBindingContext().get(BindingContext.DOUBLE_COLON_LHS, receiverExpression);
+                if (lhs instanceof DoubleColonLHS.Expression) return false;
+            }
         }
 
         return InlineUtil.isInlineLambdaParameter(valueParameterDescriptor) &&
