@@ -25,17 +25,85 @@ import org.jetbrains.kotlin.js.inline.util.collectLocalVariables
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.splitToRanges
 
-internal class TemporaryVariableElimination(function: JsFunction) {
+/**
+ * Eliminates temporary variables by substituting their usages by values assigned to them.
+ * This is only possible when each definition of a variables has exactly one corresponding usage.
+ * We don't perform any dataflow analysis, so we move variables with several definitions out of scope,
+ * assuming every temporary variables is defined once.
+ *
+ * This class runs three passes. The first is analysis pass, which determines how many times each variable is referenced
+ * and is defined. The second is substitution pass, which does not actually modify expressions, but detects
+ * which variables should be substituted. The third is clenup pass which actually substitutes
+ * variables supplied by the previous pass.
+ *
+ * While substituting, we should ensure that no evaluation order violated. This means that we should
+ * take side effects into account. We can't change order of two expressions that produce side effect.
+ * We can change order of expressions that don't produce side effect, although we can't
+ * move these expressions beyond side effects. Finally, we can move pure expressions without restrictions.
+ *
+ * The general rule is the following. Consider sequence:
+ *
+ *     $t_1 = E_1;
+ *     $t_2 = E_2;
+ *     ...
+ *     $t_n = E_n;
+ *
+ * We keep list L of remembered temporary variables. We scan statements from top to bottom,
+ * until eventually reach `$t_k = E_k;`, where `k <= n`. We can apply the following rules:
+ *
+ * 1. Scan `E_k` in evaluation order and collect references to temporary variables until we reach side effect.
+ *    We refer to the list of collected variables as C.
+ * 2. In `C` find occurrence of `$t = lastOf(L)`, otherwise stop.
+ * 3. If found, substitute `$t` and remove it from `L`.
+ * 4. Additionally, remove `$t` and all succeeding variables from `C`.
+ * 5. Repeat applying 2, 3 and 4.
+ *
+ * The rationale behind (1) is that whenever we have side effect, we can't move anything beyond it.
+ * The rationale behind (4) is we don't want to change order of expressions assigned to temporary variables, therefore
+ * we can't move `C_{m-1}` after `C_m`.
+ *
+ * JavaScript allows such "inconsistent" construct:
+ *
+ *     console.out($tmp);
+ *     var $tmp = E;
+ *
+ * In this case we get `undefined` reported to console, due to variable hoisting. We can't consider `$tmp` as a temporary,
+ * so we should check whether definition of `$tmp` precedes its usage, or, more accurately, dominates it.
+ * We don't build dominator tree. Instead, we suppose that statement A dominates B if B is declared in the that contains A,
+ * or in a sub-block of A's container.
+ *
+ * We don't relocate two expressions if they both don't produce side effect, since it makes code much more complicated.
+ * Instead, we expect these cases to be optimized in several passes, i.e:
+ *
+ *     $a = A
+ *     $b = B
+ *     foo($b, $a)
+ *
+ * where both A and B don't produce the side effect. The first pass won't relocate `$a`. However, if we apply this
+ * optimization to the code:
+ *
+ *     $a = A
+ *     foo(B, $a)
+ *
+ * we get `$a` eliminated.
+ */
+internal class TemporaryVariableElimination(private val function: JsFunction) {
     private val root = function.body
     private val definitions = mutableMapOf<JsName, Int>()
     private val usages = mutableMapOf<JsName, Int>()
-    private val inconsistent = mutableSetOf<JsName>()
     private val definedValues = mutableMapOf<JsName, JsExpression>()
     private val temporary = mutableSetOf<JsName>()
     private var hasChanges = false
     private val localVariables = function.collectLocalVariables()
-    private val statementsToRemove = mutableSetOf<JsNode>()
+
+    // During `perform` phase we collect all variables we should substitute and all statements we should remove later,
+    // when cleaning-up
     private val namesToSubstitute = mutableSetOf<JsName>()
+    private val statementsToRemove = mutableSetOf<JsNode>()
+
+    private val namesWithSideEffects = mutableSetOf<JsName>()
+
+    // Unused variables that are safe to remove
     private val variablesToRemove = mutableSetOf<JsName>()
 
     fun apply(): Boolean {
@@ -47,7 +115,7 @@ internal class TemporaryVariableElimination(function: JsFunction) {
 
     private fun analyze() {
         object : RecursiveJsVisitor() {
-            val currentScope = mutableSetOf<JsName>()
+            val currentScope = function.parameters.asSequence().map { it.name }.toMutableSet()
             var localVars = mutableSetOf<JsName>()
 
             override fun visitExpressionStatement(x: JsExpressionStatement) {
@@ -84,10 +152,11 @@ internal class TemporaryVariableElimination(function: JsFunction) {
 
             override fun visitNameRef(nameRef: JsNameRef) {
                 val name = nameRef.name
-                if (name != null && nameRef.qualifier == null && name in localVariables) {
+                if (name != null && name in localVariables) {
                     useVariable(name)
                     if (name !in currentScope) {
-                        inconsistent += name
+                        // Variable is inconsistent, i.e. it's defined after it's used.
+                        assignVariable(name, JsLiteral.UNDEFINED)
                     }
                     return
                 }
@@ -153,169 +222,76 @@ internal class TemporaryVariableElimination(function: JsFunction) {
     private fun perform() {
         object : RecursiveJsVisitor() {
             val lastAssignedVars = mutableListOf<Pair<JsName, JsNode>>()
-            var lastProperlyUsedIndex = -1
-            var firstUsedIndex = 0
-            var nextExpectedIndex = -1
-            var sideEffectOccurred = false
-
-            override fun visitNameRef(nameRef: JsNameRef) {
-                val name = nameRef.name
-                if (name != null && nameRef.qualifier == null && shouldConsiderTemporary(name)) {
-                    val index = lastAssignedVars.indexOfFirst { it.first == name }
-                    if (index >= 0) {
-                        if (sideEffectOccurred) {
-                            lastProperlyUsedIndex = -1
-                        }
-                        else {
-                            if (index == nextExpectedIndex) {
-                                ++nextExpectedIndex
-                            }
-                            else {
-                                lastProperlyUsedIndex = index
-                                nextExpectedIndex = index + 1
-                            }
-                        }
-                        firstUsedIndex = Math.min(firstUsedIndex, index)
-                    }
-                    return
-                }
-
-                super.visitNameRef(nameRef)
-                if (nameRef.qualifier != null && nameRef.sideEffects == SideEffectKind.AFFECTS_STATE) {
-                    sideEffectOccurred = true
-                }
-            }
-
-            override fun visitInvocation(invocation: JsInvocation) {
-                super.visitInvocation(invocation)
-                if (invocation.sideEffects == SideEffectKind.AFFECTS_STATE) {
-                    sideEffectOccurred = true
-                }
-            }
-
-            override fun visitNew(x: JsNew) {
-                super.visitNew(x)
-                sideEffectOccurred = true
-            }
-
-            override fun visitPrefixOperation(x: JsPrefixOperation) {
-                super.visitPrefixOperation(x)
-                when (x.operator) {
-                    JsUnaryOperator.INC, JsUnaryOperator.DEC -> sideEffectOccurred = true
-                    else -> {}
-                }
-            }
-
-            override fun visitPostfixOperation(x: JsPostfixOperation) {
-                super.visitPostfixOperation(x)
-                when (x.operator) {
-                    JsUnaryOperator.INC, JsUnaryOperator.DEC -> sideEffectOccurred = true
-                    else -> {}
-                }
-            }
-
-            override fun visitBinaryExpression(x: JsBinaryOperation) {
-                if (x.operator == JsBinaryOperator.ASG) {
-                    val left = x.arg1
-                    val right = x.arg2
-
-                    if (left is JsNameRef) {
-                        val qualifier = left.qualifier
-                        if (qualifier != null) {
-                            accept(qualifier)
-                        }
-                    }
-                    else if (left is JsArrayAccess) {
-                        accept(left.arrayExpression)
-                        accept(left.indexExpression)
-                    }
-                    else {
-                        accept(left)
-                    }
-
-                    accept(right)
-                    sideEffectOccurred = true
-                }
-                else {
-                    super.visitBinaryExpression(x)
-                }
-            }
-
-            override fun visitArrayAccess(x: JsArrayAccess) {
-                super.visitArrayAccess(x)
-                if (x.sideEffects == SideEffectKind.AFFECTS_STATE) {
-                    sideEffectOccurred = true
-                }
-            }
-
-            override fun visitArray(x: JsArrayLiteral) {
-                super.visitArray(x)
-                sideEffectOccurred = true
-            }
 
             override fun visitExpressionStatement(x: JsExpressionStatement) {
                 val expression = x.expression
                 val assignment = JsAstUtils.decomposeAssignmentToVariable(expression)
                 if (assignment != null) {
                     val (name, value) = assignment
-                    if (shouldConsiderTemporary(name)) {
-                        handleTopLevel(value, false)
-                        if (isTrivial(value) && name !in inconsistent) {
-                            statementsToRemove += x
-                            namesToSubstitute += name
-                        }
-                        else {
-                            lastAssignedVars.clear()
-                            lastAssignedVars += Pair(name, x)
-                            sideEffectOccurred = false
-                        }
-                        return
-                    }
-                    else if (shouldConsiderUnused(name)) {
-                        variablesToRemove += name
-                        handleTopLevel(value)
-                        return
+                    handleDefinition(name, value, x)
+                }
+                else {
+                    if (handleExpression(expression)) {
+                        invalidateTemporaries()
                     }
                 }
+            }
 
-                handleTopLevel(expression)
+            override fun visitVars(x: JsVars) {
+                for (v in x.vars) {
+                    val initializer = v.initExpression
+                    if (initializer != null) {
+                        handleDefinition(v.name, initializer, v)
+                    }
+                }
+            }
+
+            private fun handleDefinition(name: JsName, value: JsExpression, node: JsNode) {
+                val sideEffects = handleExpression(value)
+                if (shouldConsiderTemporary(name)) {
+                    if (isTrivial(value)) {
+                        statementsToRemove += node
+                        namesToSubstitute += name
+                    }
+                    else {
+                        lastAssignedVars += Pair(name, node)
+                        if (sideEffects) {
+                            namesWithSideEffects += name
+                        }
+                    }
+                }
+                else {
+                    if (shouldConsiderUnused(name)) {
+                        variablesToRemove += name
+                    }
+                    if (sideEffects) {
+                        invalidateTemporaries()
+                    }
+                }
             }
 
             override fun visitIf(x: JsIf) {
-                handleTopLevel(x.ifExpression)
-                flush()
+                handleExpression(x.ifExpression)
+                invalidateTemporaries()
                 accept(x.thenStatement)
-                flush()
-                x.elseStatement?.let { accept(it); flush() }
-            }
-
-            override fun visitConditional(x: JsConditional) {
-                accept(x.testExpression)
-
-                val lastAssignedVarsBackup = lastAssignedVars.toMutableList()
-                lastAssignedVars.clear()
-                accept(x.thenExpression)
-                accept(x.elseExpression)
-                lastAssignedVars.clear()
-                lastAssignedVars += lastAssignedVarsBackup
-
-                sideEffectOccurred = true
+                invalidateTemporaries()
+                x.elseStatement?.let { accept(it); invalidateTemporaries() }
             }
 
             override fun visitReturn(x: JsReturn) {
-                x.expression?.let { handleTopLevel(it) }
-                flush()
+                x.expression?.let { handleExpression(it) }
+                invalidateTemporaries()
             }
 
             override fun visitThrow(x: JsThrow) {
-                handleTopLevel(x.expression)
-                flush()
+                handleExpression(x.expression)
+                invalidateTemporaries()
             }
 
             override fun visit(x: JsSwitch) {
-                handleTopLevel(x.expression)
-                flush()
-                x.cases.forEach { accept(it); flush() }
+                handleExpression(x.expression)
+                invalidateTemporaries()
+                x.cases.forEach { accept(it); invalidateTemporaries() }
             }
 
             override fun visitObjectLiteral(x: JsObjectLiteral) {
@@ -325,118 +301,199 @@ internal class TemporaryVariableElimination(function: JsFunction) {
             }
 
             override fun visitWhile(x: JsWhile) {
-                flush()
+                invalidateTemporaries()
                 super.visitWhile(x)
-                flush()
+                invalidateTemporaries()
             }
 
             override fun visitDoWhile(x: JsDoWhile) {
-                flush()
+                invalidateTemporaries()
                 super.visitDoWhile(x)
-                flush()
+                invalidateTemporaries()
             }
 
             override fun visitForIn(x: JsForIn) {
-                handleTopLevel(x.objectExpression)
-                flush()
+                handleExpression(x.objectExpression)
+                invalidateTemporaries()
                 accept(x.body)
-                flush()
+                invalidateTemporaries()
             }
 
             override fun visitFor(x: JsFor) {
                 x.initVars?.let { accept(it) }
-                x.initExpression?.let { handleTopLevel(it) }
+                x.initExpression?.let { handleExpression(it) }
 
-                flush()
+                invalidateTemporaries()
 
                 x.condition?.let { accept(it) }
                 x.incrementExpression?.let { accept(it) }
 
-                flush()
+                invalidateTemporaries()
                 accept(x.body)
-                flush()
+                invalidateTemporaries()
             }
 
             override fun visitTry(x: JsTry) {
-                flush()
+                invalidateTemporaries()
                 super.visitTry(x)
-                flush()
+                invalidateTemporaries()
             }
 
             override fun visitCatch(x: JsCatch) {
-                flush()
+                invalidateTemporaries()
                 super.visitCatch(x)
-                flush()
+                invalidateTemporaries()
             }
 
             override fun visitLabel(x: JsLabel) {
-                flush()
+                invalidateTemporaries()
                 super.visitLabel(x)
-                flush()
+                invalidateTemporaries()
             }
 
-            override fun visitVars(x: JsVars) {
-                for (v in x.vars) {
-                    val initializer = v.initExpression
-                    if (initializer != null) {
-                        val name = v.name
-                        if (shouldConsiderTemporary(name)) {
-                            handleTopLevel(initializer, false)
-                            if (isTrivial(initializer) && name !in inconsistent) {
-                                statementsToRemove += v
-                                namesToSubstitute += name
-                            }
-                            else {
-                                lastAssignedVars.clear()
-                                lastAssignedVars += Pair(name, v)
-                                sideEffectOccurred = false
-                            }
-                        }
-                        else {
-                            if (shouldConsiderUnused(name)) {
-                                variablesToRemove += name
-                            }
-                            handleTopLevel(initializer)
-                        }
-                    }
-                }
+            override fun visitBreak(x: JsBreak) {
+                invalidateTemporaries()
             }
 
-            override fun visitFunction(x: JsFunction) { }
+            override fun visitContinue(x: JsContinue) {
+                invalidateTemporaries()
+            }
 
-            override fun visitBreak(x: JsBreak) { }
-
-            override fun visitContinue(x: JsContinue) { }
-
-            private fun flush() {
+            private fun invalidateTemporaries() {
                 lastAssignedVars.clear()
             }
 
-            private fun handleTopLevel(expression: JsExpression, respectSideEffects: Boolean = true) {
-                lastProperlyUsedIndex = -1
-                firstUsedIndex = lastAssignedVars.size
-                nextExpectedIndex = -1
-                sideEffectOccurred = false
-                accept(expression)
+            private fun handleExpression(expression: JsExpression): Boolean {
+                val candidateFinder = SubstitutionCandidateFinder()
+                candidateFinder.accept(expression)
 
-                if (lastProperlyUsedIndex >= 0 && nextExpectedIndex == lastAssignedVars.size) {
-                    lastAssignedVars.asSequence()
-                            .drop(lastProperlyUsedIndex)
-                            .forEach {
-                                val (name, statement) = it
-                                statementsToRemove += statement
-                                namesToSubstitute += name
-                            }
+                var candidates = candidateFinder.substitutableVariableReferences
+                while (lastAssignedVars.isNotEmpty()) {
+                    val (assignedVar, assignedStatement) = lastAssignedVars.last()
+                    val candidateIndex = candidates.lastIndexOf(assignedVar)
+                    if (candidateIndex < 0) break
+
+                    namesToSubstitute += assignedVar
+                    statementsToRemove += assignedStatement
+                    if (assignedVar in namesWithSideEffects) {
+                        candidateFinder.sideEffectOccurred = true
+                    }
+                    candidates = candidates.subList(0, candidateIndex)
+                    lastAssignedVars.removeAt(lastAssignedVars.lastIndex)
                 }
 
-                if (respectSideEffects && sideEffectOccurred) {
-                    lastAssignedVars.clear()
-                }
-                else {
-                    lastAssignedVars.subList(firstUsedIndex, lastAssignedVars.size).clear()
-                }
+                return candidateFinder.sideEffectOccurred
             }
         }.accept(root)
+    }
+
+    /**
+     * Scans expression in evaluation order and finds all references to temporary variables, until side effect found.
+     */
+    private inner class SubstitutionCandidateFinder : RecursiveJsVisitor() {
+        // Contains all found references to local temporary variables before side effect occurred.
+        val substitutableVariableReferences = mutableListOf<JsName>()
+
+        var sideEffectOccurred = false
+
+        override fun visitFunction(x: JsFunction) {
+            sideEffectOccurred = true
+        }
+
+        override fun visitObjectLiteral(x: JsObjectLiteral) {
+            for (initializer in x.propertyInitializers) {
+                accept(initializer.valueExpr)
+            }
+            sideEffectOccurred = true
+        }
+
+        override fun visitNew(x: JsNew) {
+            super.visitNew(x)
+            if (x.sideEffects == SideEffectKind.AFFECTS_STATE) {
+                sideEffectOccurred = true
+            }
+        }
+
+        override fun visitInvocation(invocation: JsInvocation) {
+            super.visitInvocation(invocation)
+            if (invocation.sideEffects == SideEffectKind.AFFECTS_STATE) {
+                sideEffectOccurred = true
+            }
+        }
+
+        override fun visitConditional(x: JsConditional) {
+            accept(x.testExpression)
+        }
+
+        override fun visitArrayAccess(x: JsArrayAccess) {
+            super.visitArrayAccess(x)
+            if (x.sideEffects == SideEffectKind.AFFECTS_STATE) {
+                sideEffectOccurred = true
+            }
+        }
+
+        override fun visitArray(x: JsArrayLiteral) {
+            super.visitArray(x)
+            sideEffectOccurred = true
+        }
+
+        override fun visitPrefixOperation(x: JsPrefixOperation) {
+            super.visitPrefixOperation(x)
+            when (x.operator) {
+                JsUnaryOperator.INC, JsUnaryOperator.DEC -> sideEffectOccurred = true
+                else -> {}
+            }
+        }
+
+        override fun visitPostfixOperation(x: JsPostfixOperation) {
+            super.visitPostfixOperation(x)
+            when (x.operator) {
+                JsUnaryOperator.INC, JsUnaryOperator.DEC -> sideEffectOccurred = true
+                else -> {}
+            }
+        }
+
+        override fun visitNameRef(nameRef: JsNameRef) {
+            val name = nameRef.name
+            if (name != null && name in localVariables) {
+                if (name !in namesToSubstitute && shouldConsiderTemporary(name)) {
+                    if (!sideEffectOccurred) {
+                        substitutableVariableReferences += name
+                    }
+                }
+            }
+            else {
+                super.visitNameRef(nameRef)
+                if (nameRef.sideEffects == SideEffectKind.AFFECTS_STATE) {
+                    sideEffectOccurred = true
+                }
+            }
+        }
+
+        override fun visitBinaryExpression(x: JsBinaryOperation) {
+            if (x.operator == JsBinaryOperator.ASG) {
+                val left = x.arg1
+                val right = x.arg2
+
+                if (left is JsNameRef) {
+                    val qualifier = left.qualifier
+                    if (qualifier != null) {
+                        accept(qualifier)
+                    }
+                }
+                else if (left is JsArrayAccess) {
+                    accept(left.arrayExpression)
+                    accept(left.indexExpression)
+                }
+                // Don't visit LHS of `a = b`, since it's not a reference, it's a definition.
+
+                accept(right)
+                sideEffectOccurred = true
+            }
+            else {
+                super.visitBinaryExpression(x)
+            }
+        }
     }
 
     private fun cleanUp() {
