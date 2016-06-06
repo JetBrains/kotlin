@@ -226,6 +226,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
 
             aroundInside(ARROW, FUNCTION_TYPE).spaceIf(kotlinSettings.SPACE_AROUND_FUNCTION_TYPE_ARROW)
 
+            before(VALUE_ARGUMENT_LIST).spaces(0)
             between(VALUE_ARGUMENT_LIST, LAMBDA_ARGUMENT).spaces(1)
             betweenInside(REFERENCE_EXPRESSION, LAMBDA_ARGUMENT, CALL_EXPRESSION).spaces(1)
             betweenInside(TYPE_ARGUMENT_LIST, LAMBDA_ARGUMENT, CALL_EXPRESSION).spaces(1)
