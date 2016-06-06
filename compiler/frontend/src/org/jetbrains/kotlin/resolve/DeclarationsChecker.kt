@@ -140,6 +140,25 @@ class DeclarationsChecker(
             checkConstructorDeclaration(constructorDescriptor, declaration)
             exposedChecker.checkFunction(declaration, constructorDescriptor)
         }
+
+        for ((declaration, typeAliasDescriptor) in bodiesResolveContext.typeAliases.entries) {
+            checkTypeAliasDeclaration(typeAliasDescriptor, declaration)
+            modifiersChecker.checkModifiersForDeclaration(declaration, typeAliasDescriptor)
+            // TODO exposedChecker.checkTypeAlias(declaration, typeAliasDescriptor)
+        }
+    }
+
+    private fun checkTypeAliasDeclaration(typeAliasDescriptor: TypeAliasDescriptor, declaration: KtTypeAlias) {
+        val typeReference = declaration.getTypeReference()
+        if (typeReference == null) return
+
+        val expandedType = typeAliasDescriptor.expandedType // TODO refactor type alias expansion
+        if (expandedType.isError) return
+
+        val expandedClassifier = expandedType.constructor.declarationDescriptor
+        if (expandedClassifier is TypeParameterDescriptor) {
+            trace.report(TYPEALIAS_SHOULD_EXPAND_TO_CLASS.on(typeReference, expandedType))
+        }
     }
 
     private fun checkConstructorDeclaration(constructorDescriptor: ConstructorDescriptor, declaration: KtDeclaration) {
