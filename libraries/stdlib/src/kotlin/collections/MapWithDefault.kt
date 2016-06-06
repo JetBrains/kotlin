@@ -10,7 +10,7 @@ import java.util.*
  * By default no implicit value is provided for maps and a [NoSuchElementException] is thrown.
  * To create a map with implicit default value use [withDefault] method.
  *
- * @throws NoSuchElementException when the map doesn't contain value for the specified key and no implicit default was provided for that map.
+ * @throws NoSuchElementException when the map doesn't contain a value for the specified key and no implicit default was provided for that map.
  */
 @kotlin.jvm.JvmName("getOrImplicitDefaultNullable")
 @kotlin.internal.InlineExposed
@@ -24,9 +24,9 @@ internal fun <K, V> Map<K, V>.getOrImplicitDefault(key: K): V {
 /**
  * Returns a wrapper of this read-only map, having the implicit default value provided with the specified function [defaultValue].
  * This implicit default value is used when properties are delegated to the returned map,
- * and that map doesn't contain value for the key specified.
+ * and that map doesn't contain a value for the key specified.
  *
- * When this map already have an implicit default value provided with a former call to [withDefault], it is being replaced by this call.
+ * When this map already has an implicit default value provided with a former call to [withDefault], it is being replaced by this call.
  */
 public fun <K, V> Map<K, V>.withDefault(defaultValue: (key: K) -> V): Map<K, V> =
         when (this) {
@@ -37,9 +37,9 @@ public fun <K, V> Map<K, V>.withDefault(defaultValue: (key: K) -> V): Map<K, V> 
 /**
  * Returns a wrapper of this mutable map, having the implicit default value provided with the specified function [defaultValue].
  * This implicit default value is used when properties are delegated to the returned map,
- * and that map doesn't contain value for the key specified.
+ * and that map doesn't contain a value for the key specified.
  *
- * When this map already have an implicit default value provided with a former call to [withDefault], it is being replaced by this call.
+ * When this map already has an implicit default value provided with a former call to [withDefault], it is being replaced by this call.
  */
 @kotlin.jvm.JvmName("withDefaultMutable")
 public fun <K, V> MutableMap<K, V>.withDefault(defaultValue: (key: K) -> V): MutableMap<K, V> =
