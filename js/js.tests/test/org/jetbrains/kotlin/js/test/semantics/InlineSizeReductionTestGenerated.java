@@ -65,6 +65,12 @@ public class InlineSizeReductionTestGenerated extends AbstractInlineSizeReductio
         doTest(fileName);
     }
 
+    @TestMetadata("propertyReferenceDoesNotProduceSideEffect.kt")
+    public void testPropertyReferenceDoesNotProduceSideEffect() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineSizeReduction/cases/propertyReferenceDoesNotProduceSideEffect.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("returnInlineCall.kt")
     public void testReturnInlineCall() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineSizeReduction/cases/returnInlineCall.kt");

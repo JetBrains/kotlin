@@ -63,7 +63,7 @@ object DefaultVariableAccessCase : VariableAccessCase() {
     override fun VariableAccessInfo.dispatchReceiver(): JsExpression {
         val accessor = JsNameRef(variableName, dispatchReceiver!!)
         val descriptor = callableDescriptor
-        if (descriptor is PropertyDescriptor && !JsDescriptorUtils.sideEffectsPossible(descriptor)) {
+        if (descriptor is PropertyDescriptor && !JsDescriptorUtils.sideEffectsPossibleOnRead(descriptor)) {
             accessor.sideEffects = SideEffectKind.DEPENDS_ON_STATE
         }
         return constructAccessExpression(accessor)
