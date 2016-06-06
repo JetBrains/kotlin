@@ -54,7 +54,7 @@ class A {
             O.Y()
             O.foo(O.bar)
 
-            with (O) {
+            with(O) {
                 Y()
                 foo(bar)
                 1.extFoo(1.extBar)
