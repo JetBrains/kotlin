@@ -8728,4 +8728,43 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
     }
+
+    @TestMetadata("idea/testData/quickfix/wrapWithSafeLetCall")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class WrapWithSafeLetCall extends AbstractQuickFixTest {
+        public void testAllFilesPresentInWrapWithSafeLetCall() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/wrapWithSafeLetCall"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("chainedUnsafeCall.kt")
+        public void testChainedUnsafeCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/wrapWithSafeLetCall/chainedUnsafeCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("expressionUnsafeCall.kt")
+        public void testExpressionUnsafeCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/wrapWithSafeLetCall/expressionUnsafeCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("invokeFuncUnsafe.kt")
+        public void testInvokeFuncUnsafe() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/wrapWithSafeLetCall/invokeFuncUnsafe.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("invokeUnsafe.kt")
+        public void testInvokeUnsafe() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/wrapWithSafeLetCall/invokeUnsafe.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unstableValue.kt")
+        public void testUnstableValue() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/wrapWithSafeLetCall/unstableValue.kt");
+            doTest(fileName);
+        }
+    }
 }
