@@ -121,52 +121,46 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         }
         val dependenciesForSyntheticFileCache = listOf(PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT, filesModificationTracker)
         val debugName = "completion/highlighting in $syntheticFileModule for files ${files.joinToString { it.name }} for platform $targetPlatform"
+
+        fun makeGlobalResolveSessionProvider(reuseDataFrom: ProjectResolutionFacade? = null,
+                                             moduleFilter: (IdeaModuleInfo) -> Boolean = { true }
+        ): CachedValueProvider.Result<ModuleResolverProvider> {
+            return globalResolveSessionProvider(
+                    debugName,
+                    project,
+                    targetPlatform,
+                    sdk,
+                    commonGlobalContext = globalContext,
+                    syntheticFiles = files,
+                    reuseDataFrom = reuseDataFrom,
+                    moduleFilter = moduleFilter,
+                    dependencies = dependenciesForSyntheticFileCache
+            )
+        }
+
         return when {
             syntheticFileModule is ModuleSourceInfo -> {
                 val dependentModules = syntheticFileModule.getDependentModules()
                 ProjectResolutionFacade(project, globalContext.storageManager) {
-                    globalResolveSessionProvider(
-                            debugName,
-                            project,
-                            targetPlatform,
-                            sdk,
-                            commonGlobalContext = globalContext,
-                            syntheticFiles = files,
+                    makeGlobalResolveSessionProvider(
                             reuseDataFrom = globalFacade(targetPlatform, sdk),
-                            moduleFilter = { it in dependentModules },
-                            dependencies = dependenciesForSyntheticFileCache
-                    )
+                            moduleFilter = { it in dependentModules })
                 }
             }
 
-            syntheticFileModule is CustomizedScriptModuleInfo -> {
+            syntheticFileModule is ScriptModuleInfo -> {
                 ProjectResolutionFacade(project, globalContext.storageManager) {
-                    globalResolveSessionProvider(
-                            debugName,
-                            project,
-                            targetPlatform,
-                            sdk,
-                            commonGlobalContext = globalContext,
-                            syntheticFiles = files,
-                            reuseDataFrom = librariesFacade(targetPlatform, sdk),
-                            moduleFilter = { true },
-                            dependencies = dependenciesForSyntheticFileCache
+                    makeGlobalResolveSessionProvider(
+                            reuseDataFrom = librariesFacade(targetPlatform, sdk)
                     )
                 }
             }
 
             syntheticFileModule is LibrarySourceInfo || syntheticFileModule is NotUnderContentRootModuleInfo -> {
                 ProjectResolutionFacade(project, globalContext.storageManager) {
-                    globalResolveSessionProvider(
-                            debugName,
-                            project,
-                            targetPlatform,
-                            sdk,
-                            commonGlobalContext = globalContext,
-                            syntheticFiles = files,
+                    makeGlobalResolveSessionProvider(
                             reuseDataFrom = librariesFacade(targetPlatform, sdk),
-                            moduleFilter = { it == syntheticFileModule },
-                            dependencies = dependenciesForSyntheticFileCache
+                            moduleFilter = { it == syntheticFileModule }
                     )
                 }
             }
@@ -177,16 +171,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
                 // (file under both classes and sources root)
                 LOG.warn("Creating cache with synthetic files ($files) in classes of library $syntheticFileModule")
                 ProjectResolutionFacade(project, globalContext.storageManager) {
-                    globalResolveSessionProvider(
-                            debugName,
-                            project,
-                            targetPlatform,
-                            sdk,
-                            commonGlobalContext = globalContext,
-                            syntheticFiles = files,
-                            moduleFilter = { true },
-                            dependencies = dependenciesForSyntheticFileCache
-                    )
+                    makeGlobalResolveSessionProvider()
                 }
             }
 

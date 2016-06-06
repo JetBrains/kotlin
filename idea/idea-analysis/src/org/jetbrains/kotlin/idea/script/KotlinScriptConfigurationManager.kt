@@ -30,6 +30,7 @@ import com.intellij.util.indexing.IndexableSetContributor
 import com.intellij.util.io.URLUtil
 import org.jetbrains.kotlin.idea.caches.resolve.FileLibraryScope
 import org.jetbrains.kotlin.script.*
+import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.io.FileNotFoundException
 import java.lang.ref.WeakReference
@@ -44,7 +45,7 @@ class KotlinScriptConfigurationManager(project: Project,
                                        private val kotlinScriptDependenciesIndexableSetContributor: KotlinScriptDependenciesIndexableSetContributor?
 ) : AbstractProjectComponent(project) {
 
-    private val kotlinEnvVars: Map<String, List<String>> by lazy { generateKotlinScriptClasspathEnvVars(myProject) }
+    private val kotlinEnvVars: Map<String, List<String>> by lazy { generateKotlinScriptClasspathEnvVarsFromPaths(myProject, PathUtil.getKotlinPathsForIdeaPlugin()) }
 
     init {
         reloadScriptDefinitions()
@@ -57,7 +58,7 @@ class KotlinScriptConfigurationManager(project: Project,
             override fun after(events: List<VFileEvent>) {
                 val changedExtraImportConfigs = ArrayList<VirtualFile>()
                 var anyScriptDefinitionChanged = false
-                events.filter { it is VFileEvent }.forEach {
+                events.forEach {
                     it.file?.let {
                         if (isScriptDefinitionConfigFile(it)) {
                             anyScriptDefinitionChanged = true
@@ -155,10 +156,8 @@ class KotlinScriptConfigurationManager(project: Project,
 
 class KotlinScriptDependenciesIndexableSetContributor : IndexableSetContributor() {
 
-    override fun getAdditionalProjectRootsToIndex(project: Project): Set<VirtualFile> {
-        return super.getAdditionalProjectRootsToIndex(project) +
-            KotlinScriptConfigurationManager.getInstance(project).getAllScriptsClasspath()
-    }
+    override fun getAdditionalProjectRootsToIndex(project: Project): Set<VirtualFile> =
+            KotlinScriptConfigurationManager.getInstance(project).getAllScriptsClasspath().toSet()
 
     override fun getAdditionalRootsToIndex(): Set<VirtualFile> = emptySet()
 }

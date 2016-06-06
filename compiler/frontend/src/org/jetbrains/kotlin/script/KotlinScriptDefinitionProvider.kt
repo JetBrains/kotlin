@@ -65,7 +65,9 @@ class KotlinScriptDefinitionProvider {
     }
 
     fun removeScriptDefinition(scriptDefinition: KotlinScriptDefinition) {
-        definitions.remove(scriptDefinition)
+        definitionsLock.write {
+            definitions.remove(scriptDefinition)
+        }
     }
 
     companion object {
