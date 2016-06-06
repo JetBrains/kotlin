@@ -17,18 +17,14 @@
 package org.jetbrains.kotlin.codegen.optimization.fixStack
 
 import com.intellij.util.SmartList
-import com.intellij.util.containers.SmartHashSet
 import com.intellij.util.containers.Stack
 import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil
 import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
-import org.jetbrains.kotlin.codegen.optimization.common.findPreviousOrNull
-import org.jetbrains.kotlin.codegen.optimization.common.hasOpcode
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsn
 import org.jetbrains.kotlin.codegen.pseudoInsns.parsePseudoInsnOrNull
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.JumpInsnNode
-import org.jetbrains.org.objectweb.asm.tree.LabelNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 internal class FixStackContext(val methodNode: MethodNode) {
@@ -36,15 +32,19 @@ internal class FixStackContext(val methodNode: MethodNode) {
     val fakeAlwaysTrueIfeqMarkers = arrayListOf<AbstractInsnNode>()
     val fakeAlwaysFalseIfeqMarkers = arrayListOf<AbstractInsnNode>()
 
-    val saveStackNodesForTryStartLabel = hashMapOf<LabelNode, AbstractInsnNode>()
-    val saveStackMarkerForRestoreMarker = hashMapOf<AbstractInsnNode, AbstractInsnNode>()
+    val isThereAnyTryCatch: Boolean
+    val saveStackMarkerForRestoreMarker: Map<AbstractInsnNode, AbstractInsnNode>
     val restoreStackMarkersForSaveMarker = hashMapOf<AbstractInsnNode, MutableList<AbstractInsnNode>>()
 
     val openingInlineMethodMarker = hashMapOf<AbstractInsnNode, AbstractInsnNode>()
     var consistentInlineMarkers: Boolean = true; private set
 
     init {
-        insertTryCatchBlocksMarkers(methodNode)
+        saveStackMarkerForRestoreMarker = insertTryCatchBlocksMarkers(methodNode)
+        isThereAnyTryCatch = saveStackMarkerForRestoreMarker.isNotEmpty()
+        for ((restore, save) in saveStackMarkerForRestoreMarker) {
+            restoreStackMarkersForSaveMarker.getOrPut(save) { SmartList() }.add(restore)
+        }
 
         val inlineMarkersStack = Stack<AbstractInsnNode>()
 
@@ -57,10 +57,6 @@ internal class FixStackContext(val methodNode: MethodNode) {
                     visitFakeAlwaysTrueIfeq(insnNode)
                 pseudoInsn == PseudoInsn.FAKE_ALWAYS_FALSE_IFEQ ->
                     visitFakeAlwaysFalseIfeq(insnNode)
-                pseudoInsn == PseudoInsn.SAVE_STACK_BEFORE_TRY ->
-                    visitSaveStackBeforeTry(insnNode)
-                pseudoInsn == PseudoInsn.RESTORE_STACK_IN_TRY_CATCH ->
-                    visitRestoreStackInTryCatch(insnNode)
                 InlineCodegenUtil.isBeforeInlineMarker(insnNode) -> {
                     inlineMarkersStack.push(insnNode)
                 }
@@ -92,51 +88,18 @@ internal class FixStackContext(val methodNode: MethodNode) {
         fakeAlwaysFalseIfeqMarkers.add(insnNode)
     }
 
-    private fun visitSaveStackBeforeTry(insnNode: AbstractInsnNode) {
-        val tryStartLabel = insnNode.next
-        assert(tryStartLabel is LabelNode) { "${indexOf(insnNode)}: save should be followed by a label" }
-        saveStackNodesForTryStartLabel[tryStartLabel as LabelNode] = insnNode
-    }
-
-    private fun visitRestoreStackInTryCatch(insnNode: AbstractInsnNode) {
-        val restoreLabel = insnNode.findPreviousOrNull { it.hasOpcode() }!!.findPreviousOrNull { it is LabelNode || it.hasOpcode() }!!
-        if (restoreLabel !is LabelNode) {
-            throw AssertionError("${indexOf(insnNode)}: restore should be preceded by a catch block label")
-        }
-        val saveNodes = findMatchingSaveNodes(restoreLabel)
-        if (saveNodes.isEmpty()) {
-            throw AssertionError("${indexOf(insnNode)}: in handler ${indexOf(restoreLabel)} restore is not matched with save")
-        }
-        else if (saveNodes.size > 1) {
-            throw AssertionError("${indexOf(insnNode)}: in handler ${indexOf(restoreLabel)} restore is matched with several saves")
-        }
-        val saveNode = saveNodes.first()
-        saveStackMarkerForRestoreMarker[insnNode] = saveNode
-        restoreStackMarkersForSaveMarker.getOrPut(saveNode, { SmartList<AbstractInsnNode>() }).add(insnNode)
-    }
-
-    private fun findMatchingSaveNodes(restoreLabel: LabelNode): List<AbstractInsnNode> {
-        val saveNodes = SmartHashSet<AbstractInsnNode>()
-        methodNode.tryCatchBlocks.forEach { tcb ->
-            if (restoreLabel == tcb.start || restoreLabel == tcb.handler) {
-                saveStackNodesForTryStartLabel[tcb.start]?.let { saveNodes.add(it) }
-            }
-        }
-        return SmartList<AbstractInsnNode>(saveNodes)
-    }
-
     private fun indexOf(node: AbstractInsnNode) = methodNode.instructions.indexOf(node)
 
     fun hasAnyMarkers(): Boolean =
             breakContinueGotoNodes.isNotEmpty() ||
             fakeAlwaysTrueIfeqMarkers.isNotEmpty() ||
             fakeAlwaysFalseIfeqMarkers.isNotEmpty() ||
-            saveStackNodesForTryStartLabel.isNotEmpty() ||
+            isThereAnyTryCatch ||
             openingInlineMethodMarker.isNotEmpty()
 
     fun isAnalysisRequired(): Boolean =
             breakContinueGotoNodes.isNotEmpty() ||
-            saveStackNodesForTryStartLabel.isNotEmpty() ||
+            isThereAnyTryCatch ||
             openingInlineMethodMarker.isNotEmpty()
 
 }
