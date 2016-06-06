@@ -36,8 +36,8 @@ fun isScriptDefinitionConfigFile(file: java.io.File) = file.isFile && file.name.
 fun isScriptDefinitionConfigFile(file: com.intellij.openapi.vfs.VirtualFile) = !file.isDirectory && file.name.endsWith(org.jetbrains.kotlin.script.SCRIPT_CONFIG_FILE_EXTENSION)
 
 fun loadScriptConfigsFromProjectRoot(projectRoot: java.io.File): List<org.jetbrains.kotlin.script.KotlinScriptConfig> =
-        projectRoot.walk().filter(::isScriptDefinitionConfigFile).toList()
-                .flatMap { loadScriptConfigs(it) }
+        projectRoot.listFiles { it -> isScriptDefinitionConfigFile(it) }.toList()
+            .flatMap { loadScriptConfigs(it) }
 
 fun loadScriptConfigs(configFile: File): List<KotlinScriptConfig> =
         JDOMUtil.loadDocument(configFile).rootElement.children.mapNotNull {

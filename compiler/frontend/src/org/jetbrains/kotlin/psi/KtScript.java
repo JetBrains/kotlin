@@ -30,6 +30,19 @@ import java.util.List;
 
 public class KtScript extends KtNamedDeclarationStub<KotlinScriptStub> implements KtDeclarationContainer {
 
+    private KotlinScriptDefinition kotlinScriptDefinitionField = null;
+    private boolean kotlinScriptDefinitionInitialized = false;
+
+    // make it a simple lazy value after converting to kotlin
+    private KotlinScriptDefinition getKotlinScriptDefinition() {
+        if (!kotlinScriptDefinitionInitialized) {
+            kotlinScriptDefinitionField = GetScriptDefinitionKt.getScriptDefinition(getContainingKtFile());
+            kotlinScriptDefinitionInitialized = true;
+            assert kotlinScriptDefinitionField != null : "Should not parse a script without definition";
+        }
+        return kotlinScriptDefinitionField;
+    }
+
     public KtScript(@NotNull ASTNode node) {
         super(node);
     }
@@ -46,10 +59,7 @@ public class KtScript extends KtNamedDeclarationStub<KotlinScriptStub> implement
             return stub.getFqName();
         }
         KtFile containingKtFile = getContainingKtFile();
-        KotlinScriptDefinition kotlinScriptDefinition =
-                GetScriptDefinitionKt.getScriptDefinition(containingKtFile);
-        assert kotlinScriptDefinition != null : "Should not parse a script without definition";
-        return containingKtFile.getPackageFqName().child(kotlinScriptDefinition.getScriptName(this));
+        return containingKtFile.getPackageFqName().child(getKotlinScriptDefinition().getScriptName(this));
     }
 
     @Override
