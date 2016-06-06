@@ -22,6 +22,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.conversion.copy.range
 import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention
 import org.jetbrains.kotlin.idea.quickfix.AddExclExclCallFix
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.types.isNullabilityFlexible
+import org.jetbrains.kotlin.utils.SmartList
 
 class HasPlatformTypeInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
@@ -45,13 +47,12 @@ class HasPlatformTypeInspection : AbstractKotlinInspection() {
                     else -> return
                 }
 
-                val context = declaration.analyze(BodyResolveMode.PARTIAL)
-                val returnType = declaration.getReturnType(context) ?: return
-                if (!returnType.isFlexibleRecursive()) return
+                val result = isReturnTypeFlexible(declaration)
+                if (!result.isFlexible) return
 
-                val fixes = mutableListOf(IntentionWrapper(SpecifyTypeExplicitlyIntention(), declaration.containingFile))
+                val fixes = SmartList(IntentionWrapper(SpecifyTypeExplicitlyIntention(deduplicate = false), declaration.containingFile))
 
-                if (returnType.isNullabilityFlexible()) {
+                if (result.isNullabilityFlexible) {
                     val expression = declaration.node.findChildByType(KtTokens.EQ)?.psi?.getNextSiblingIgnoringWhitespaceAndComments()
                     if (expression != null) {
                         fixes += IntentionWrapper(AddExclExclCallFix(expression), declaration.containingFile)
@@ -69,18 +70,34 @@ class HasPlatformTypeInspection : AbstractKotlinInspection() {
                 )
                 holder.registerProblem(problemDescriptor)
             }
-
-            private fun KtDeclaration.getReturnType(bindingContext: BindingContext): KotlinType? {
-                val callable = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, this] as? CallableDescriptor ?: return null
-                return callable.returnType
-            }
-
-            private fun KotlinType.isFlexibleRecursive(): Boolean {
-                if (isFlexible()) return true
-                return arguments.any { it.type.isFlexibleRecursive() }
-            }
         }
     }
 
+    override fun getShortName() = SHORT_NAME
 
+    companion object {
+        val SHORT_NAME = "HasPlatformType"
+
+        fun isInRange(declaration: KtNamedDeclaration, offset: Int) : Boolean {
+            return declaration.nameIdentifier?.range?.contains(offset) ?: false
+        }
+
+        fun isReturnTypeFlexible(declaration: KtNamedDeclaration): AnalysisResult {
+            val context = declaration.analyze(BodyResolveMode.PARTIAL)
+            val returnType = declaration.getReturnType(context) ?: return AnalysisResult(false, false)
+            return AnalysisResult(returnType.isFlexibleRecursive(), returnType.isNullabilityFlexible())
+        }
+
+        private fun KtDeclaration.getReturnType(bindingContext: BindingContext): KotlinType? {
+            val callable = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, this] as? CallableDescriptor ?: return null
+            return callable.returnType
+        }
+
+        private fun KotlinType.isFlexibleRecursive(): Boolean {
+            if (isFlexible()) return true
+            return arguments.any { it.type.isFlexibleRecursive() }
+        }
+    }
+
+    class AnalysisResult(val isFlexible: Boolean, val isNullabilityFlexible: Boolean)
 }
