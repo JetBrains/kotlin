@@ -33,7 +33,7 @@ internal class TemporaryVariableElimination(function: JsFunction) {
     private val definedValues = mutableMapOf<JsName, JsExpression>()
     private val temporary = mutableSetOf<JsName>()
     private var hasChanges = false
-    private val namesToProcess = function.collectLocalVariables()
+    private val localVariables = function.collectLocalVariables()
     private val statementsToRemove = mutableSetOf<JsNode>()
     private val namesToSubstitute = mutableSetOf<JsName>()
     private val variablesToRemove = mutableSetOf<JsName>()
@@ -54,7 +54,7 @@ internal class TemporaryVariableElimination(function: JsFunction) {
                 val assignment = JsAstUtils.decomposeAssignmentToVariable(x.expression)
                 if (assignment != null) {
                     val (name, value) = assignment
-                    if (name in namesToProcess) {
+                    if (name in localVariables) {
                         assignVariable(name, value)
                         addVar(name)
                         accept(value)
@@ -71,7 +71,7 @@ internal class TemporaryVariableElimination(function: JsFunction) {
                 for (v in x.vars) {
                     val name = v.name
                     val value = v.initExpression
-                    if (value != null && name in namesToProcess) {
+                    if (value != null && name in localVariables) {
                         assignVariable(name, value)
                         addVar(name)
                         accept(value)
@@ -84,7 +84,7 @@ internal class TemporaryVariableElimination(function: JsFunction) {
 
             override fun visitNameRef(nameRef: JsNameRef) {
                 val name = nameRef.name
-                if (name != null && nameRef.qualifier == null && name in namesToProcess) {
+                if (name != null && nameRef.qualifier == null && name in localVariables) {
                     useVariable(name)
                     if (name !in currentScope) {
                         inconsistent += name
@@ -523,13 +523,16 @@ internal class TemporaryVariableElimination(function: JsFunction) {
         usages[name] = (usages[name] ?: 0) + 1
     }
 
-    private fun shouldConsiderUnused(name: JsName) = (definitions[name] ?: 0) == 1 && (usages[name] ?: 0) == 0 && name in temporary
+    private fun shouldConsiderUnused(name: JsName) = definitions[name] == 1 && (usages[name] ?: 0) == 0 && name in temporary
 
     private fun shouldConsiderTemporary(name: JsName): Boolean {
-        if (definitions[name] ?: 0 != 1 || name !in temporary) return false
+        if (definitions[name] != 1 || name !in temporary) return false
 
         val expr = definedValues[name]
-        return (expr != null && isTrivial(expr)) || usages[name] ?: 0 == 1
+        // It's useful to copy trivial expressions when they are used more than once. Example are temporary variables
+        // that receiver another (non-temporary) variables. To prevent code from bloating, we don't treat large value literals
+        // as trivial expressions.
+        return (expr != null && isTrivial(expr)) || usages[name] == 1
     }
 
     private fun isTrivial(expr: JsExpression): Boolean = when (expr) {
@@ -540,14 +543,15 @@ internal class TemporaryVariableElimination(function: JsFunction) {
             }
             else {
                 val name = expr.name
-                name in namesToProcess && when (definitions[name]) {
+                name in localVariables && when (definitions[name]) {
+                    // Local variables with zero definitions are function parameters. We can relocate and copy them.
                     null, 0 -> true
                     1 -> name !in namesToSubstitute || definedValues[name]?.let { isTrivial(it) } ?: false
                     else -> false
                 }
             }
         }
-        is JsLiteral.JsValueLiteral -> true
+        is JsLiteral.JsValueLiteral -> expr.toString().length < 10
         is JsInvocation -> expr.sideEffects == SideEffectKind.PURE && isTrivial(expr.qualifier) && expr.arguments.all { isTrivial(it) }
         is JsArrayAccess -> isTrivial(expr.arrayExpression) && isTrivial(expr.indexExpression)
         else -> false

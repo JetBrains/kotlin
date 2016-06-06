@@ -24,8 +24,7 @@ import org.jetbrains.kotlin.js.inline.util.collectFreeVariables
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
 internal class TemporaryAssignmentElimination(private val root: JsBlock) {
-    // We say "use" about any references to a temporary variable
-    private val useCount = mutableMapOf<JsName, Int>()
+    private val referenceCount = mutableMapOf<JsName, Int>()
 
     // We say "usage" about special kind of a reference to a temporary variable in the following cases:
     //   someVar = $tmp;
@@ -129,7 +128,7 @@ internal class TemporaryAssignmentElimination(private val root: JsBlock) {
 
     private fun getUsageSequence(name: JsName): UsageSequence? {
         return usageSequences.getOrPut(name) {
-            if (useCount[name] != 1) return null
+            if (referenceCount[name] != 1) return null
 
             val usage = usages[name]
             val mappedUsage: UsageSequence? = when (usage) {
@@ -255,7 +254,7 @@ internal class TemporaryAssignmentElimination(private val root: JsBlock) {
     }
 
     private fun use(name: JsName) {
-        useCount[name] = 1 + (useCount[name] ?: 0)
+        referenceCount[name] = 1 + (referenceCount[name] ?: 0)
     }
 
     private sealed class Usage(val statement: JsStatement) {
