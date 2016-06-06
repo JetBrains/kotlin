@@ -20,6 +20,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
+import org.jetbrains.kotlin.psi.KtAnnotation
+import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.types.KotlinType
 import kotlin.reflect.KClass
@@ -34,7 +36,8 @@ interface ScriptDependencies {
 }
 
 interface GetScriptDependencies {
-    operator fun invoke(annotations: Iterable<Annotation>, context: Any?): ScriptDependencies?
+    operator fun invoke(annotations: Iterable<KtAnnotationEntry>, context: Any?): ScriptDependencies? = null
+    operator fun invoke(context: Any?): ScriptDependencies? = null
 }
 
 @Target(AnnotationTarget.CLASS)
@@ -64,7 +67,7 @@ data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>, val
     }
 
     private val dependencies by lazy {
-        dependenciesExtractors.mapNotNull { it(template.annotations, context) }
+        dependenciesExtractors.mapNotNull { it(context) }
     }
 
     override fun getScriptDependenciesClasspath(): List<String> = dependencies.flatMap { it.classpath }

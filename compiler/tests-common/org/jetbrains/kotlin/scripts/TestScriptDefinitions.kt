@@ -85,7 +85,7 @@ fun classpathFromProperty(): List<String> =
                 .map { File(it).canonicalPath }
     } ?: emptyList()
 
-private fun URL.toFile() =
+fun URL.toFile() =
     try {
         File(toURI().schemeSpecificPart)
     }
