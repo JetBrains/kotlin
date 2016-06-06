@@ -38,4 +38,6 @@ android {
             minSdkVersion 14
         }
     }
+
+    publishNonDefault true
 }
