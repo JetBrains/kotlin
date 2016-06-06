@@ -23,7 +23,7 @@ import com.google.dart.compiler.backend.js.ast.metadata.synthetic
 import org.jetbrains.kotlin.js.inline.util.collectLocalVariables
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
-class IneffectiveStatementElimination(private val root: JsFunction) {
+class RedundantStatementElimination(private val root: JsFunction) {
     private val localVars = root.collectLocalVariables()
     private var hasChanges = false
 

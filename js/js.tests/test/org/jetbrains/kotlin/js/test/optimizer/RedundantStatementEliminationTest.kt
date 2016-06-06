@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.js.test.optimizer
 
 import org.junit.Test
 
-class IneffectiveStatementEliminationTest() : BasicOptimizerTest("ineffective-statement-elimination") {
+class RedundantStatementEliminationTest() : BasicOptimizerTest("redundant-statement-elimination") {
     @Test fun binary() = box()
 
     @Test fun unary() = box()
