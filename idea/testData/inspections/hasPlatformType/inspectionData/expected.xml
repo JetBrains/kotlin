@@ -1,0 +1,34 @@
+<problems>
+    <problem>
+        <file>function.kt</file>
+        <line>3</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/function.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Function, property or variable has platform type.</problem_class>
+        <description>Function has platform type. Make the type explicit to prevent subtle bugs.</description>
+    </problem>
+    <problem>
+        <file>property1.kt</file>
+        <line>3</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/property1.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Function, property or variable has platform type.</problem_class>
+        <description>Property has platform type. Make the type explicit to prevent subtle bugs.</description>
+    </problem>
+    <problem>
+        <file>property2.kt</file>
+        <line>3</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/property2.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Function, property or variable has platform type.</problem_class>
+        <description>Property has platform type. Make the type explicit to prevent subtle bugs.</description>
+    </problem>
+    <problem>
+        <file>local.kt</file>
+        <line>4</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/local.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Function, property or variable has platform type.</problem_class>
+        <description>Variable has platform type. Make the type explicit to prevent subtle bugs.</description>
+    </problem>
+</problems>
