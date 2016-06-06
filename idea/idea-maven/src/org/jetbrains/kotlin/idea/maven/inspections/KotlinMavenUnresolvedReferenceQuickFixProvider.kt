@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.maven.inspections
 
-import com.intellij.codeInsight.daemon.HighlightDisplayKey
 import com.intellij.codeInsight.daemon.QuickFixActionRegistrar
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInsight.intention.LowPriorityAction
@@ -25,8 +24,6 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
-import com.intellij.openapi.util.Condition
-import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.SmartPsiElementPointer
@@ -35,21 +32,14 @@ import org.jetbrains.idea.maven.dom.MavenDomUtil
 import org.jetbrains.idea.maven.indices.MavenArtifactSearchDialog
 import org.jetbrains.idea.maven.project.MavenProjectsManager
 import org.jetbrains.idea.maven.utils.MavenArtifactScope
-import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.maven.PomFile
-import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
-import org.jetbrains.kotlin.idea.quickfix.IntentionActionPriority
-import org.jetbrains.kotlin.idea.quickfix.KotlinIntentionActionFactoryWithDelegate
-import org.jetbrains.kotlin.idea.quickfix.QuickFixWithDelegateFactory
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtImportDirective
-import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
-import java.util.*
 
 class KotlinMavenUnresolvedReferenceQuickFixProvider : UnresolvedReferenceQuickFixProvider<KtSimpleNameReference>() {
     override fun getReferenceClass(): Class<KtSimpleNameReference>  = KtSimpleNameReference::class.java
