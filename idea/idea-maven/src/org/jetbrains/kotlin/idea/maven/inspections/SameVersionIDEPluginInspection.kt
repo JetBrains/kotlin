@@ -22,6 +22,7 @@ import com.intellij.util.xml.highlighting.DomElementAnnotationHolder
 import com.intellij.util.xml.highlighting.DomElementsInspection
 import org.jetbrains.idea.maven.dom.model.MavenDomPlugin
 import org.jetbrains.idea.maven.dom.model.MavenDomProjectModel
+import org.jetbrains.idea.maven.project.MavenProjectsManager
 import org.jetbrains.kotlin.idea.maven.PomFile
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 
@@ -30,6 +31,13 @@ class SameVersionIDEPluginInspection : DomElementsInspection<MavenDomProjectMode
 
     override fun checkFileElement(domFileElement: DomFileElement<MavenDomProjectModel>?, holder: DomElementAnnotationHolder?) {
         if (domFileElement == null || holder == null) {
+            return
+        }
+
+        val project = domFileElement.module?.project ?: return
+        val mavenManager = MavenProjectsManager.getInstance(project) ?: return
+
+        if (!mavenManager.isMavenizedProject || !mavenManager.isManagedFile(domFileElement.file.virtualFile)) {
             return
         }
 
