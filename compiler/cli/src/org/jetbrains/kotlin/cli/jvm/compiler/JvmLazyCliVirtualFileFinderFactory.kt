@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,9 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinder
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinderFactory
 
-class JvmCliVirtualFileFinderFactory(private val index: JvmDependenciesIndex) : JvmVirtualFileFinderFactory {
+class JvmLazyCliVirtualFileFinderFactory(private val makeIndex: () -> JvmDependenciesIndex) : JvmVirtualFileFinderFactory {
+
+    private val index by lazy { makeIndex() }
+
     override fun create(scope: GlobalSearchScope): JvmVirtualFileFinder = JvmCliVirtualFileFinder(index)
 }

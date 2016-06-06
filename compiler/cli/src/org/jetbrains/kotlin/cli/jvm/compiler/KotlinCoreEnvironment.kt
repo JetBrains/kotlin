@@ -163,9 +163,7 @@ class KotlinCoreEnvironment private constructor(
             }
         }
 
-        fillClasspath(configuration)
-
-        project.registerService(JvmVirtualFileFinderFactory::class.java, JvmCliVirtualFileFinderFactory(index))
+        project.registerService(JvmVirtualFileFinderFactory::class.java, JvmLazyCliVirtualFileFinderFactory({ fillClasspath(configuration); index } ))
 
         ExternalDeclarationsProvider.registerExtensionPoint(project)
         ExpressionCodegenExtension.registerExtensionPoint(project)
