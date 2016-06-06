@@ -20,8 +20,11 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 class WrapWithSafeLetCallFix(
         expression: KtExpression,
@@ -40,7 +43,7 @@ class WrapWithSafeLetCallFix(
         element.replace(wrapped)
     }
 
-    companion object : KotlinSingleIntentionActionFactory() {
+    object UnsafeFactory : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val element = diagnostic.psiElement
             val expression = element.getParentOfType<KtExpression>(true) ?: return null
@@ -49,6 +52,22 @@ class WrapWithSafeLetCallFix(
             val nullableExpression = (parent as? KtCallExpression)?.calleeExpression ?: return null
 
             return WrapWithSafeLetCallFix(expression, nullableExpression)
+        }
+    }
+
+    object TypeMismatchFactory : KotlinSingleIntentionActionFactory() {
+        override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+            val typeMismatch = Errors.TYPE_MISMATCH.cast(diagnostic)
+            val argument = typeMismatch.psiElement.parent as? KtValueArgument ?: return null
+            val call = argument.getParentOfType<KtCallExpression>(true) ?: return null
+
+            val expected = typeMismatch.a
+            val actual = typeMismatch.b
+            if (expected.isMarkedNullable || !actual.isMarkedNullable) return null
+            val expectedNullable = TypeUtils.makeNullable(expected)
+            if (!actual.isSubtypeOf(expectedNullable)) return null
+
+            return WrapWithSafeLetCallFix(call, typeMismatch.psiElement)
         }
     }
 }
