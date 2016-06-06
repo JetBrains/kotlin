@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
-import org.jetbrains.org.objectweb.asm.tree.TryCatchBlockNode
+import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.firstLabelInChain
 import org.jetbrains.org.objectweb.asm.tree.LabelNode
-import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.*
+import org.jetbrains.org.objectweb.asm.tree.TryCatchBlockNode
 
 enum class TryCatchPosition {
     START,
@@ -26,9 +26,9 @@ enum class TryCatchPosition {
     INNER
 }
 
-class SplitPair<out T: Interval>(val patchedPart: T, val newPart: T)
+class SplitPair<out T : Interval>(val patchedPart: T, val newPart: T)
 
-class SimpleInterval(override val startLabel: LabelNode, override val endLabel: LabelNode ) : Interval
+class SimpleInterval(override val startLabel: LabelNode, override val endLabel: LabelNode) : Interval
 
 interface Interval {
     val startLabel: LabelNode
@@ -36,20 +36,21 @@ interface Interval {
 
     /*note that some intervals are mutable */
     fun isEmpty(): Boolean = startLabel == endLabel
-
 }
 
-interface SplittableInterval<T: Interval> : Interval {
+interface SplittableInterval<out T : Interval> : Interval {
     fun split(splitBy: Interval, keepStart: Boolean): SplitPair<T>
 }
-
 
 interface IntervalWithHandler : Interval {
     val handler: LabelNode
     val type: String?
 }
 
-class TryCatchBlockNodeInfo(val node: TryCatchBlockNode, val onlyCopyNotProcess: Boolean) : IntervalWithHandler, SplittableInterval<TryCatchBlockNodeInfo> {
+class TryCatchBlockNodeInfo(
+        val node: TryCatchBlockNode,
+        val onlyCopyNotProcess: Boolean
+) : IntervalWithHandler, SplittableInterval<TryCatchBlockNodeInfo> {
     override val startLabel: LabelNode
         get() = node.start
     override val endLabel: LabelNode
@@ -77,15 +78,15 @@ class TryCatchBlockNodeInfo(val node: TryCatchBlockNode, val onlyCopyNotProcess:
     }
 }
 
-class TryCatchBlockNodePosition(val nodeInfo: TryCatchBlockNodeInfo, var position: TryCatchPosition) : IntervalWithHandler by nodeInfo {
-
-}
+class TryCatchBlockNodePosition(
+        val nodeInfo: TryCatchBlockNodeInfo,
+        var position: TryCatchPosition
+) : IntervalWithHandler by nodeInfo
 
 class TryBlockCluster<T : IntervalWithHandler>(val blocks: MutableList<T>) {
     val defaultHandler: T?
         get() = blocks.firstOrNull() { it.type == null }
 }
-
 
 fun <T : IntervalWithHandler> doClustering(blocks: List<T>): List<TryBlockCluster<T>> {
     data class TryBlockInterval(val startLabel: LabelNode, val endLabel: LabelNode)

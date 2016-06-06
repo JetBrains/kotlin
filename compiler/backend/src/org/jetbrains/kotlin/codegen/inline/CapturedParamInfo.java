@@ -17,38 +17,33 @@
 package org.jetbrains.kotlin.codegen.inline;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.StackValue;
-import org.jetbrains.org.objectweb.asm.Type;
 
 public class CapturedParamInfo extends ParameterInfo {
-
-    public static final CapturedParamInfo STUB = new CapturedParamInfo(CapturedParamDesc.createDesc(new CapturedParamOwner() {
-        @Override
-        public Type getType() {
-            return Type.getObjectType("STUB");
-        }
-    }, "STUB", Type.getObjectType("STUB")), true, -1, -1);
-
     public final CapturedParamDesc desc;
-
     private final String newFieldName;
-
-    private boolean skipInConstructor;
-
-    public CapturedParamInfo(@NotNull CapturedParamDesc desc, boolean skipped, int index, int remapIndex) {
-        this(desc, desc.getFieldName(), skipped, index, remapIndex);
-    }
+    private final boolean skipInConstructor;
 
     public CapturedParamInfo(@NotNull CapturedParamDesc desc, @NotNull String newFieldName, boolean skipped, int index, int remapIndex) {
         super(desc.getType(), skipped, index, remapIndex, index);
         this.desc = desc;
         this.newFieldName = newFieldName;
+        this.skipInConstructor = false;
     }
 
-    public CapturedParamInfo(@NotNull CapturedParamDesc desc, @NotNull String newFieldName, boolean skipped, int index, StackValue remapIndex) {
+    public CapturedParamInfo(
+            @NotNull CapturedParamDesc desc,
+            @NotNull String newFieldName,
+            boolean skipped,
+            int index,
+            @Nullable StackValue remapIndex,
+            boolean skipInConstructor
+    ) {
         super(desc.getType(), skipped, index, remapIndex, index);
         this.desc = desc;
         this.newFieldName = newFieldName;
+        this.skipInConstructor = skipInConstructor;
     }
 
     @NotNull
@@ -67,11 +62,10 @@ public class CapturedParamInfo extends ParameterInfo {
     }
 
     @NotNull
-    public CapturedParamInfo clone(int newIndex, StackValue newRamapIndex) {
-        CapturedParamInfo capturedParamInfo = new CapturedParamInfo(desc, newFieldName, isSkipped, newIndex, newRamapIndex);
-        capturedParamInfo.setLambda(lambda);
-        capturedParamInfo.setSkipInConstructor(skipInConstructor);
-        return capturedParamInfo;
+    private CapturedParamInfo clone(int newIndex, @Nullable StackValue newRemapIndex) {
+        CapturedParamInfo result = new CapturedParamInfo(desc, newFieldName, isSkipped, newIndex, newRemapIndex, skipInConstructor);
+        result.setLambda(getLambda());
+        return result;
     }
 
     @NotNull
@@ -81,9 +75,5 @@ public class CapturedParamInfo extends ParameterInfo {
 
     public boolean isSkipInConstructor() {
         return skipInConstructor;
-    }
-
-    public void setSkipInConstructor(boolean skipInConstructor) {
-        this.skipInConstructor = skipInConstructor;
     }
 }

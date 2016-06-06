@@ -16,16 +16,17 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
-import java.util.HashMap
+import java.util.*
 
-class TypeParameter(val oldName: String, val  newName: String?, val isReified: Boolean, val signature: String?)
+class TypeParameter(val oldName: String, val newName: String?, val isReified: Boolean, val signature: String?)
 
 //typeMapping data could be changed outside through method processing
-class TypeRemapper private constructor(private val typeMapping: MutableMap<String, String>, val parent: TypeRemapper?, val isInlineLambda: Boolean = false) {
-
+class TypeRemapper private constructor(
+        private val typeMapping: MutableMap<String, String>,
+        val parent: TypeRemapper?,
+        val isInlineLambda: Boolean = false
+) {
     private var additionalMappings: MutableMap<String, String> = hashMapOf()
-
-
     private val typeParametersMapping: MutableMap<String, TypeParameter> = hashMapOf()
 
     fun addMapping(type: String, newType: String) {
@@ -37,11 +38,11 @@ class TypeRemapper private constructor(private val typeMapping: MutableMap<Strin
     }
 
     fun map(type: String): String {
-        return typeMapping[type] ?: additionalMappings?.get(type) ?: type
+        return typeMapping[type] ?: additionalMappings[type] ?: type
     }
 
     fun addAdditionalMappings(oldName: String, newName: String) {
-        additionalMappings!!.put(oldName, newName)
+        additionalMappings[oldName] = newName
     }
 
     fun registerTypeParameter(name: String) {
@@ -52,7 +53,9 @@ class TypeRemapper private constructor(private val typeMapping: MutableMap<Strin
     }
 
     fun registerTypeParameter(mapping: TypeParameterMapping) {
-        typeParametersMapping[mapping.name] = TypeParameter(mapping.name, mapping.reificationArgument?.parameterName, mapping.isReified, mapping.signature)
+        typeParametersMapping[mapping.name] = TypeParameter(
+                mapping.name, mapping.reificationArgument?.parameterName, mapping.isReified, mapping.signature
+        )
     }
 
     fun mapTypeParameter(name: String): TypeParameter? {
@@ -60,14 +63,13 @@ class TypeRemapper private constructor(private val typeMapping: MutableMap<Strin
     }
 
     companion object {
-
         @JvmStatic
         fun createRoot(formalTypeParameters: TypeParameterMappings?): TypeRemapper {
-            val typeRemapper = TypeRemapper(HashMap<String, String>(), null)
-            formalTypeParameters?.forEach {
-                typeRemapper.registerTypeParameter(it)
+            return TypeRemapper(HashMap<String, String>(), null).apply {
+                formalTypeParameters?.forEach {
+                    registerTypeParameter(it)
+                }
             }
-            return typeRemapper
         }
 
         @JvmStatic
@@ -82,9 +84,9 @@ class TypeRemapper private constructor(private val typeMapping: MutableMap<Strin
         }
 
         private fun createNewAndMerge(remapper: TypeRemapper, additionalTypeMappings: Map<String, String>): MutableMap<String, String> {
-            val map = HashMap(remapper.typeMapping)
-            map += additionalTypeMappings
-            return map
+            return HashMap(remapper.typeMapping).apply {
+                this += additionalTypeMappings
+            }
         }
     }
 }

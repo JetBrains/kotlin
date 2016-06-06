@@ -20,19 +20,19 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.org.objectweb.asm.Type;
 
 public class CapturedParamDesc {
-    private final CapturedParamOwner containingLambda;
+    private final Type containingLambdaType;
     private final String fieldName;
     private final Type type;
 
-    public CapturedParamDesc(@NotNull CapturedParamOwner containingLambda, @NotNull String fieldName, @NotNull Type type) {
-        this.containingLambda = containingLambda;
+    public CapturedParamDesc(@NotNull Type containingLambdaType, @NotNull String fieldName, @NotNull Type type) {
+        this.containingLambdaType = containingLambdaType;
         this.fieldName = fieldName;
         this.type = type;
     }
 
     @NotNull
     public String getContainingLambdaName() {
-        return containingLambda.getType().getInternalName();
+        return containingLambdaType.getInternalName();
     }
 
     @NotNull
@@ -43,10 +43,5 @@ public class CapturedParamDesc {
     @NotNull
     public Type getType() {
         return type;
-    }
-
-    @NotNull
-    public static CapturedParamDesc createDesc(@NotNull CapturedParamOwner containingLambdaInfo, @NotNull String fieldName, @NotNull Type type) {
-        return new CapturedParamDesc(containingLambdaInfo, fieldName, type);
     }
 }

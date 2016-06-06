@@ -39,37 +39,27 @@ import java.util.Set;
 
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.*;
 
-public class LambdaInfo implements CapturedParamOwner, LabelOwner {
-
+public class LambdaInfo implements LabelOwner {
     public final KtExpression expression;
-
     private final KotlinTypeMapper typeMapper;
-
-    @NotNull
     public final Set<String> labels;
-
     private final CalculatedClosure closure;
-
     public final boolean isCrossInline;
-
-    private SMAPAndMethodNode node;
-
-    private List<CapturedParamDesc> capturedVars;
-
     private final FunctionDescriptor functionDescriptor;
-
     private final ClassDescriptor classDescriptor;
-
     private final Type closureClassType;
 
-    LambdaInfo(@NotNull KtExpression expr, @NotNull KotlinTypeMapper typeMapper, boolean isCrossInline) {
+    private SMAPAndMethodNode node;
+    private List<CapturedParamDesc> capturedVars;
+
+    public LambdaInfo(@NotNull KtExpression expression, @NotNull KotlinTypeMapper typeMapper, boolean isCrossInline) {
         this.isCrossInline = isCrossInline;
-        this.expression = expr instanceof KtLambdaExpression ?
-                          ((KtLambdaExpression) expr).getFunctionLiteral() : expr;
+        this.expression = expression instanceof KtLambdaExpression ?
+                          ((KtLambdaExpression) expression).getFunctionLiteral() : expression;
 
         this.typeMapper = typeMapper;
         BindingContext bindingContext = typeMapper.getBindingContext();
-        functionDescriptor = bindingContext.get(BindingContext.FUNCTION, expression);
+        functionDescriptor = bindingContext.get(BindingContext.FUNCTION, this.expression);
         assert functionDescriptor != null : "Function is not resolved to descriptor: " + expression.getText();
 
         classDescriptor = anonymousClassForCallable(bindingContext, functionDescriptor);
@@ -78,34 +68,39 @@ public class LambdaInfo implements CapturedParamOwner, LabelOwner {
         closure = bindingContext.get(CLOSURE, classDescriptor);
         assert closure != null : "Closure for lambda should be not null " + expression.getText();
 
-
-        labels = InlineCodegen.getDeclarationLabels(expr, functionDescriptor);
+        labels = InlineCodegen.getDeclarationLabels(expression, functionDescriptor);
     }
 
+    @NotNull
     public SMAPAndMethodNode getNode() {
         return node;
     }
 
-    public void setNode(SMAPAndMethodNode node) {
+    public void setNode(@NotNull SMAPAndMethodNode node) {
         this.node = node;
     }
 
+    @NotNull
     public FunctionDescriptor getFunctionDescriptor() {
         return functionDescriptor;
     }
 
+    @NotNull
     public KtExpression getFunctionWithBodyOrCallableReference() {
         return expression;
     }
 
+    @NotNull
     public ClassDescriptor getClassDescriptor() {
         return classDescriptor;
     }
 
+    @NotNull
     public Type getLambdaClassType() {
         return closureClassType;
     }
 
+    @NotNull
     public List<CapturedParamDesc> getCapturedVars() {
         //lazy initialization cause it would be calculated after object creation
         if (capturedVars == null) {
@@ -114,11 +109,12 @@ public class LambdaInfo implements CapturedParamOwner, LabelOwner {
             if (closure.getCaptureThis() != null) {
                 Type type = typeMapper.mapType(closure.getCaptureThis());
                 EnclosedValueDescriptor descriptor =
-                        new EnclosedValueDescriptor(AsmUtil.CAPTURED_THIS_FIELD,
-                                                    null,
-                                                    StackValue.field(type, closureClassType, AsmUtil.CAPTURED_THIS_FIELD, false,
-                                                                     StackValue.LOCAL_0),
-                                                    type);
+                        new EnclosedValueDescriptor(
+                                AsmUtil.CAPTURED_THIS_FIELD,
+                                /* descriptor = */ null,
+                                StackValue.field(type, closureClassType, AsmUtil.CAPTURED_THIS_FIELD, false, StackValue.LOCAL_0),
+                                type
+                        );
                 capturedVars.add(getCapturedParamInfo(descriptor));
             }
 
@@ -127,10 +123,10 @@ public class LambdaInfo implements CapturedParamOwner, LabelOwner {
                 EnclosedValueDescriptor descriptor =
                         new EnclosedValueDescriptor(
                                 AsmUtil.CAPTURED_RECEIVER_FIELD,
-                                null,
-                                StackValue.field(type, closureClassType, AsmUtil.CAPTURED_RECEIVER_FIELD, false,
-                                                 StackValue.LOCAL_0),
-                                type);
+                                /* descriptor = */ null,
+                                StackValue.field(type, closureClassType, AsmUtil.CAPTURED_RECEIVER_FIELD, false, StackValue.LOCAL_0),
+                                type
+                        );
                 capturedVars.add(getCapturedParamInfo(descriptor));
             }
 
@@ -143,23 +139,22 @@ public class LambdaInfo implements CapturedParamOwner, LabelOwner {
 
     @NotNull
     private CapturedParamDesc getCapturedParamInfo(@NotNull EnclosedValueDescriptor descriptor) {
-        return CapturedParamDesc.createDesc(this, descriptor.getFieldName(), descriptor.getType());
+        return new CapturedParamDesc(closureClassType, descriptor.getFieldName(), descriptor.getType());
     }
 
     @NotNull
     public List<Type> getInvokeParamsWithoutCaptured() {
-        Type[] types = typeMapper.mapAsmMethod(functionDescriptor).getArgumentTypes();
-        return Arrays.asList(types);
+        return Arrays.asList(typeMapper.mapAsmMethod(functionDescriptor).getArgumentTypes());
     }
 
     @NotNull
-    public Parameters addAllParameters(FieldRemapper remapper) {
+    public Parameters addAllParameters(@NotNull FieldRemapper remapper) {
         Method asmMethod = typeMapper.mapAsmMethod(getFunctionDescriptor());
-        ParametersBuilder builder =
-                ParametersBuilder.initializeBuilderFrom(AsmTypes.OBJECT_TYPE, asmMethod.getDescriptor(), this);
+        ParametersBuilder builder = ParametersBuilder.initializeBuilderFrom(AsmTypes.OBJECT_TYPE, asmMethod.getDescriptor(), this);
 
         for (CapturedParamDesc info : getCapturedVars()) {
             CapturedParamInfo field = remapper.findField(new FieldInsnNode(0, info.getContainingLambdaName(), info.getFieldName(), ""));
+            assert field != null : "Captured field not found: " + info.getContainingLambdaName() + "." + info.getFieldName();
             builder.addCapturedParam(field, info.getFieldName());
         }
 
@@ -167,14 +162,7 @@ public class LambdaInfo implements CapturedParamOwner, LabelOwner {
     }
 
     @Override
-    public Type getType() {
-        return closureClassType;
-    }
-
-    @Override
     public boolean isMyLabel(@NotNull String name) {
         return labels.contains(name);
     }
-
 }
-

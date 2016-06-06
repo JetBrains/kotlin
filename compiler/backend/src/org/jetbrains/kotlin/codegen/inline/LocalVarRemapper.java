@@ -28,18 +28,16 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import static org.jetbrains.kotlin.codegen.inline.LocalVarRemapper.RemapStatus.*;
 
 public class LocalVarRemapper {
-
     private final Parameters params;
     private final int actualParamsSize;
-
     private final StackValue[] remapValues;
     private final int additionalShift;
 
-    public LocalVarRemapper(Parameters params, int additionalShift) {
+    public LocalVarRemapper(@NotNull Parameters params, int additionalShift) {
         this.additionalShift = additionalShift;
         this.params = params;
 
-        remapValues = new StackValue [params.getArgsSizeOnStack()];
+        remapValues = new StackValue[params.getArgsSizeOnStack()];
 
         int realSize = 0;
         for (ParameterInfo info : params) {
@@ -56,7 +54,8 @@ public class LocalVarRemapper {
         actualParamsSize = realSize;
     }
 
-    public RemapInfo doRemap(int index) {
+    @NotNull
+    private RemapInfo doRemap(int index) {
         int remappedIndex;
 
         if (index < params.getArgsSizeOnStack()) {
@@ -67,16 +66,20 @@ public class LocalVarRemapper {
             }
             if (info.isRemapped()) {
                 return new RemapInfo(remapped, info, REMAPPED);
-            } else {
-                remappedIndex = ((StackValue.Local)remapped).index;
             }
-        } else {
-            remappedIndex = actualParamsSize - params.getArgsSizeOnStack() + index; //captured params not used directly in this inlined method, they used in closure
+            else {
+                remappedIndex = ((StackValue.Local) remapped).index;
+            }
+        }
+        else {
+            //captured params are not used directly in this inlined method, they are used in closure
+            remappedIndex = actualParamsSize - params.getArgsSizeOnStack() + index;
         }
 
         return new RemapInfo(StackValue.local(remappedIndex + additionalShift, AsmTypes.OBJECT_TYPE), null, SHIFT);
     }
 
+    @NotNull
     public RemapInfo remap(int index) {
         RemapInfo info = doRemap(index);
         if (FAIL == info.status) {
@@ -86,23 +89,29 @@ public class LocalVarRemapper {
         return info;
     }
 
-    public void visitIincInsn(int var, int increment, MethodVisitor mv) {
+    public void visitIincInsn(int var, int increment, @NotNull MethodVisitor mv) {
         RemapInfo remap = remap(var);
-        assert remap.value instanceof StackValue.Local;
+        assert remap.value instanceof StackValue.Local : "Remapped value should be a local: " + remap.value;
         mv.visitIincInsn(((StackValue.Local) remap.value).index, increment);
     }
 
-    public void visitLocalVariable(String name, String desc, String signature, Label start, Label end, int index, MethodVisitor mv) {
+    public void visitLocalVariable(
+            @NotNull String name,
+            @NotNull String desc,
+            @Nullable String signature,
+            @NotNull Label start,
+            @NotNull Label end,
+            int index,
+            MethodVisitor mv
+    ) {
         RemapInfo info = doRemap(index);
         //add entries only for shifted vars
         if (SHIFT == info.status) {
-            int newIndex = ((StackValue.Local) info.value).index;
-            mv.visitLocalVariable(name, desc, signature, start, end, newIndex);
+            mv.visitLocalVariable(name, desc, signature, start, end, ((StackValue.Local) info.value).index);
         }
     }
 
-
-    public void visitVarInsn(int opcode, int var, InstructionAdapter mv) {
+    public void visitVarInsn(int opcode, int var, @NotNull InstructionAdapter mv) {
         RemapInfo remapInfo = remap(var);
         StackValue value = remapInfo.value;
         if (value instanceof StackValue.Local) {
@@ -117,7 +126,8 @@ public class LocalVarRemapper {
             if (remapInfo.parameterInfo != null) {
                 StackValue.coerce(value.type, remapInfo.parameterInfo.type, mv);
             }
-        } else {
+        }
+        else {
             assert remapInfo.parameterInfo != null : "Non local value should have parameter info";
             value.put(remapInfo.parameterInfo.type, mv);
         }
@@ -134,15 +144,15 @@ public class LocalVarRemapper {
         public final ParameterInfo parameterInfo;
         public final RemapStatus status;
 
-        public RemapInfo(@NotNull StackValue value, @Nullable ParameterInfo info, RemapStatus remapStatus) {
+        public RemapInfo(@NotNull StackValue value, @Nullable ParameterInfo parameterInfo, @NotNull RemapStatus remapStatus) {
             this.value = value;
-            parameterInfo = info;
+            this.parameterInfo = parameterInfo;
             this.status = remapStatus;
         }
 
-        public RemapInfo(@NotNull ParameterInfo info) {
+        public RemapInfo(@NotNull ParameterInfo parameterInfo) {
             this.value = null;
-            parameterInfo = info;
+            this.parameterInfo = parameterInfo;
             this.status = FAIL;
         }
     }

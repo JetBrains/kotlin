@@ -65,7 +65,7 @@ class InlineCodegenForDefaultBody(
     }
 
     override fun genCallInner(callableMethod: Callable, resolvedCall: ResolvedCall<*>?, callDefault: Boolean, codegen: ExpressionCodegen) {
-        val nodeAndSmap = InlineCodegen.createMethodNode(functionDescriptor, jvmSignature, codegen, context, callDefault, state)
+        val nodeAndSmap = InlineCodegen.createMethodNode(functionDescriptor, jvmSignature, codegen, context, callDefault)
         val childSourceMapper = InlineCodegen.createNestedSourceMapper(nodeAndSmap, sourceMapper)
 
         val node = nodeAndSmap.node
