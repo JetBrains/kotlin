@@ -175,9 +175,9 @@ class LazyImportScope(
         INVISIBLE_CLASSES
     }
 
-    fun isClassVisible(descriptor: ClassDescriptor): Boolean {
+    private fun isClassifierVisible(descriptor: ClassifierDescriptor): Boolean {
         if (filteringKind == FilteringKind.ALL) return true
-        val visibility = descriptor.visibility
+        val visibility = (descriptor as DeclarationDescriptorWithVisibility).visibility
         val includeVisible = filteringKind == FilteringKind.VISIBLE_CLASSES
         if (!visibility.mustCheckInImports()) return includeVisible
         return Visibilities.isVisibleIgnoringReceiver(descriptor, importResolver.moduleDescriptor) == includeVisible
@@ -186,7 +186,10 @@ class LazyImportScope(
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
         return importResolver.selectSingleFromImports(name) { scope, name ->
             val descriptor = scope.getContributedClassifier(name, location)
-            if (descriptor != null && isClassVisible(descriptor as ClassDescriptor/*no type parameter can be imported*/)) descriptor else null
+            if ((descriptor is ClassDescriptor || descriptor is TypeAliasDescriptor) && isClassifierVisible(descriptor))
+                descriptor
+            else
+                null /* type parameters can't be imported */
         }
     }
 
