@@ -53,10 +53,14 @@ import java.util.*
 import javax.swing.Icon
 
 open class KtLightClassForExplicitDeclaration(
-        protected val classFqName: FqName, // FqName of (possibly inner) class
+        private val classFqNameFunction: ((KtClassOrObject) -> FqName),
         protected val classOrObject: KtClassOrObject)
 : KtWrappingLightClass(classOrObject.manager), KtJavaMirrorMarker, StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
     private val lightIdentifier = KtLightIdentifier(this, classOrObject)
+
+    protected val classFqName : FqName by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        classFqNameFunction(classOrObject)
+    }
 
     private val _extendsList by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val listDelegate = super.getExtendsList() ?: return@lazy null
@@ -152,7 +156,7 @@ open class KtLightClassForExplicitDeclaration(
     override fun getFqName(): FqName = classFqName
 
     override fun copy(): PsiElement {
-        return KtLightClassForExplicitDeclaration(classFqName, classOrObject.copy() as KtClassOrObject)
+        return KtLightClassForExplicitDeclaration({ classFqName }, classOrObject.copy() as KtClassOrObject)
     }
 
     override val clsDelegate: PsiClass by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -420,13 +424,18 @@ open class KtLightClassForExplicitDeclaration(
 
 
         fun create(classOrObject: KtClassOrObject): KtLightClassForExplicitDeclaration? {
-            val fqName = predictFqName(classOrObject) ?: return null
-
             if (classOrObject is KtObjectDeclaration && classOrObject.isObjectLiteral()) {
-                return KtLightClassForAnonymousDeclaration(fqName, classOrObject)
+                if (classOrObject.containingFile.virtualFile == null) {
+                    return null
+                }
+
+                return KtLightClassForAnonymousDeclaration(
+                        { predictFqName(it) ?: throw IllegalArgumentException("Failed to create fqname for anonymous class: " + classOrObject) },
+                        classOrObject)
             }
 
-            return KtLightClassForExplicitDeclaration(fqName, classOrObject)
+            val fqName = predictFqName(classOrObject) ?: return null
+            return KtLightClassForExplicitDeclaration({ fqName }, classOrObject)
         }
 
         private fun predictFqName(classOrObject: KtClassOrObject): FqName? {

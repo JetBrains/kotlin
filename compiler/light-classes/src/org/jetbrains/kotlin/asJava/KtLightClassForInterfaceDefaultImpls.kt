@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 open class KtLightClassForInterfaceDefaultImpls(
         classFqName: FqName,
         classOrObject: KtClassOrObject)
-: KtLightClassForExplicitDeclaration(classFqName, classOrObject){
+: KtLightClassForExplicitDeclaration({ classFqName }, classOrObject){
 
     override fun copy(): PsiElement {
         return KtLightClassForInterfaceDefaultImpls(classFqName, classOrObject.copy() as KtClassOrObject)
