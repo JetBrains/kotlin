@@ -77,6 +77,9 @@ fun VariableAccessInfo.constructAccessExpression(ref: JsExpression): JsExpressio
         return ref
     } else {
         return if (value !is JsEmptyExpression) {
+            // This is useful when passing AST to TemporaryAssignmentElimination. It can bring
+            // property assignment like `obj.propertyName = $tmp` to places where `$tmp` gets its value,
+            // but only when it's sure that no side effects possible.
             (ref as? HasMetadata)?.let { it.sideEffects = SideEffectKind.PURE }
             JsAstUtils.assignment(ref, value!!)
         }

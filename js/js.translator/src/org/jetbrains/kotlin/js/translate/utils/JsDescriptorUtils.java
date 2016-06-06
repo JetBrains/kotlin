@@ -147,7 +147,7 @@ public final class JsDescriptorUtils {
         return accessorDescriptor == null || accessorDescriptor.isDefault();
     }
 
-    public static boolean sideEffectsPossible(@NotNull PropertyDescriptor property) {
+    public static boolean sideEffectsPossibleOnRead(@NotNull PropertyDescriptor property) {
         return !isDefaultAccessor(property.getGetter()) || ModalityKt.isOverridableOrOverrides(property) ||
                 isStaticInitializationPossible(property);
     }

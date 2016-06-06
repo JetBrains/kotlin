@@ -267,10 +267,9 @@ internal class ExpressionDecomposer private constructor(
             // Qualifier might be a reference to lambda property. See KT-7674
             // An exception here is `fn.call()`, which are marked as side effect free. Further recognition of such
             // case in inliner might be quite difficult, so never extract such call (and other calls marked this way).
-            if (qualifier in containsNodeWithSideEffect && (qualifier as? HasMetadata)?.sideEffects != SideEffectKind.PURE) {
-                qualifier = qualifier.extractToTemporary()
-            }
-            else if (callee != null && receiver != null && receiver in containsNodeWithSideEffect) {
+             if ((qualifier !in containsNodeWithSideEffect || (qualifier as? HasMetadata)?.sideEffects == SideEffectKind.PURE) &&
+                 (callee != null && receiver != null && receiver in containsNodeWithSideEffect)
+             ) {
                 val receiverTmp = receiver.extractToTemporary()
                 callee.qualifier = receiverTmp
             }
