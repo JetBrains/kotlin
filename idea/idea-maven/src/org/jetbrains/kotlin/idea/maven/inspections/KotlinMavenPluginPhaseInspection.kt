@@ -199,5 +199,4 @@ private fun MavenPlugin.isKotlinMavenPlugin() = groupId == KotlinMavenConfigurat
 
 private fun MavenDomGoal.isJsGoal() = rawText == PomFile.KotlinGoals.Js || rawText == PomFile.KotlinGoals.TestJs
 
-private fun List<MavenDomPluginExecution>.atPhase(phase: String) = filter { it.phase.stringValue == phase }
 private fun List<MavenDomPluginExecution>.notAtPhase(phase: String) = filter { it.phase.stringValue != phase }
