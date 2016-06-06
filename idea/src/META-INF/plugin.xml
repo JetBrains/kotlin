@@ -1569,6 +1569,14 @@
                      language="kotlin"
     />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.HasPlatformTypeInspection"
+                     displayName="Function or property has platform type"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+    />
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.CanBePrimaryConstructorPropertyInspection"
                      displayName="Property is explicitly assigned to constructor parameter"
                      groupName="Kotlin"
