@@ -50,6 +50,10 @@ class MavenPluginSourcesMoveToExecutionIntention : PsiElementBaseIntentionAction
             return false
         }
 
+        if (MavenDomUtil.getMavenDomProjectModel(project, file.virtualFile) == null) {
+            return false
+        }
+
         val pom = PomFile(file as XmlFile)
         if (domElement.getParentOfType(MavenDomBuild::class.java, false)?.sourceDirectory === domElement) {
             return pom.findKotlinExecutions(PomFile.KotlinGoals.Compile, PomFile.KotlinGoals.Js).isNotEmpty()
