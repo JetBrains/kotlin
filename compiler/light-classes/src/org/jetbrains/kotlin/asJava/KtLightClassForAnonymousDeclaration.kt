@@ -25,9 +25,9 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
-internal open class KtLightClassForAnonymousDeclaration(name: FqName,
+internal open class KtLightClassForAnonymousDeclaration(fqNameFunction: ((KtClassOrObject) -> FqName),
                                                         classOrObject: KtClassOrObject) :
-        KtLightClassForExplicitDeclaration(name, classOrObject), PsiAnonymousClass {
+        KtLightClassForExplicitDeclaration(fqNameFunction, classOrObject), PsiAnonymousClass {
 
     private var cachedBaseType: SoftReference<PsiClassType>? = null
 
@@ -120,7 +120,7 @@ internal open class KtLightClassForAnonymousDeclaration(name: FqName,
     override fun getTypeParameterList() = null
     override fun isEnum() = false
 
-    override fun copy(): PsiElement = KtLightClassForAnonymousDeclaration(classFqName, classOrObject)
+    override fun copy(): PsiElement = KtLightClassForAnonymousDeclaration({ classFqName }, classOrObject)
 
     companion object {
         private val LOG = Logger.getInstance(KtLightClassForAnonymousDeclaration::class.java)
