@@ -1,0 +1,4 @@
+package
+
+public fun f1(/*0*/ x: kotlin.String?): kotlin.String
+public fun f2(/*0*/ y: kotlin.String?): kotlin.String

@@ -38,16 +38,20 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.KotlinTypeImpl
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
 import javax.inject.Inject
 
 sealed class DoubleColonLHS(val type: KotlinType) {
-    class Expression(val typeInfo: KotlinTypeInfo) : DoubleColonLHS(typeInfo.type!!)
+    class Expression(typeInfo: KotlinTypeInfo) : DoubleColonLHS(typeInfo.type!!) {
+        val dataFlowInfo: DataFlowInfo = typeInfo.dataFlowInfo
+    }
 
     class Type(type: KotlinType, val possiblyBareType: PossiblyBareType) : DoubleColonLHS(type)
 }
@@ -82,7 +86,9 @@ class DoubleColonExpressionResolver(
             val type = result?.type
             if (type != null && !type.isError) {
                 checkClassLiteral(c, expression, result!!)
-                return dataFlowAnalyzer.createCheckedTypeInfo(reflectionTypes.getKClassType(Annotations.EMPTY, type), c, expression)
+                val kClassType = reflectionTypes.getKClassType(Annotations.EMPTY, type)
+                val dataFlowInfo = (result as? DoubleColonLHS.Expression)?.dataFlowInfo ?: c.dataFlowInfo
+                return dataFlowAnalyzer.checkType(createTypeInfo(kClassType, dataFlowInfo), expression, c)
             }
         }
 
@@ -151,7 +157,7 @@ class DoubleColonExpressionResolver(
 
         if (shouldTryResolveLHSAsExpression(doubleColonExpression)) {
             val traceForExpr = TemporaryTraceAndCache.create(c, "resolve '::' LHS as expression", expression)
-            val contextForExpr = c.replaceTraceAndCache(traceForExpr)
+            val contextForExpr = c.replaceTraceAndCache(traceForExpr).replaceExpectedType(NO_EXPECTED_TYPE)
             val typeInfo = expressionTypingServices.getTypeInfo(expression, contextForExpr)
             val type = typeInfo.type
 
@@ -255,7 +261,8 @@ class DoubleColonExpressionResolver(
 
         val (lhs, resolutionResults) = resolveCallableReference(expression, c, ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS)
         val result = getCallableReferenceType(expression, lhs, resolutionResults, c)
-        return dataFlowAnalyzer.createCheckedTypeInfo(result, c, expression)
+        val dataFlowInfo = (lhs as? DoubleColonLHS.Expression)?.dataFlowInfo ?: c.dataFlowInfo
+        return dataFlowAnalyzer.checkType(createTypeInfo(result, dataFlowInfo), expression, c)
     }
 
     private fun getCallableReferenceType(
