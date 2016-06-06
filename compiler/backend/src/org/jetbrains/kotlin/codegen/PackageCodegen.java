@@ -99,7 +99,7 @@ public class PackageCodegen {
         List<KtClassOrObject> classOrObjects = new ArrayList<KtClassOrObject>();
 
         for (KtDeclaration declaration : file.getDeclarations()) {
-            if (declaration instanceof KtProperty || declaration instanceof KtNamedFunction) {
+            if (declaration instanceof KtProperty || declaration instanceof KtNamedFunction || declaration instanceof KtTypeAlias) {
                 generatePackagePart = true;
             }
             else if (declaration instanceof KtClassOrObject) {

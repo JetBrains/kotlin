@@ -47,6 +47,12 @@ class KtFileLightClassTest : KotlinLightCodeInsightFixtureTestCase() {
         assertEquals(1, aClass.findMethodsByName("bar", false).size)
     }
 
+    fun testAliasesOnly() {
+        val file = myFixture.configureByFile("aliasesOnly.kt") as KtFile
+        val aClass = file.classes.single()
+        assertEquals(0, aClass.getMethods().size)
+    }
+
     override fun getTestDataPath(): String? {
         return PluginTestCaseBase.getTestDataPathBase() + "/asJava/fileLightClass/"
     }
