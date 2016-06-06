@@ -317,8 +317,14 @@ object KotlinToJVMBytecodeCompiler {
         catch (e: java.lang.NoSuchMethodException) {
             for (ctor in scriptClass.kotlin.constructors) {
                 val (ctorArgs, scriptArgsLeft) = ctor.parameters.fold(Pair(emptyList<Any>(), scriptArgs), ::foldingFunc)
-                if (ctorArgs.size == ctor.parameters.size && (scriptArgsLeft == null || scriptArgsLeft.isEmpty()))
-                    return ctor.call(*ctorArgs.toTypedArray())
+                if (ctorArgs.size <= ctor.parameters.size && (scriptArgsLeft == null || scriptArgsLeft.isEmpty())) {
+                    val argsMap = ctorArgs.zip(ctor.parameters) { a, p -> Pair(p, a) }.toMap()
+                    try {
+                        return ctor.callBy(argsMap)
+                    }
+                    catch (e: Exception) { // TODO: find the exact exception type thrown then callBy fails
+                    }
+                }
             }
         }
         return null

@@ -32,7 +32,7 @@ fun getResolveScope(file: KtFile): GlobalSearchScope {
 
     return when (file.getModuleInfo()) {
         is ModuleSourceInfo -> KotlinSourceFilterScope.sourceAndClassFiles(file.resolveScope, file.project)
-        is CustomizedScriptModuleInfo -> file.getModuleInfo().contentScope()
+        is ScriptModuleInfo -> file.getModuleInfo().contentScope()
         else -> GlobalSearchScope.EMPTY_SCOPE
     }
 }

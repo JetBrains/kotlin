@@ -92,7 +92,7 @@ private fun tryFindKotlinPathsForScriptClasspathEnvVars(project: Project): Kotli
     .map { it() }
     .firstOrNull { it.runtimePath.exists() }
 
-private fun generateKotlinScriptClasspathEnvVarsFromPaths(project: Project, paths: KotlinPaths?): Map<String, List<String>> =
+fun generateKotlinScriptClasspathEnvVarsFromPaths(project: Project, paths: KotlinPaths?): Map<String, List<String>> =
         mapOf("kotlin-runtime" to (paths?.run { listOf(runtimePath.canonicalPath) } ?: emptyList()),
               "kotlin-reflect" to (paths?.run { listOf(reflectPath.canonicalPath) } ?: emptyList()),
               "project-root" to listOf(project.basePath ?: "."),

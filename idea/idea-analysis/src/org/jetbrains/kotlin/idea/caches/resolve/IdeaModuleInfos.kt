@@ -290,40 +290,40 @@ internal object NotUnderContentRootModuleInfo : IdeaModuleInfo {
     override fun dependencies(): List<IdeaModuleInfo> = listOf(this)
 }
 
-class CustomizedScriptModuleSearchScope(val scriptFile: VirtualFile, baseScope: GlobalSearchScope) : DelegatingGlobalSearchScope(baseScope) {
-    override fun equals(other: Any?) = other is CustomizedScriptModuleSearchScope && scriptFile == other.scriptFile && super.equals(other)
+class ScriptModuleSearchScope(val scriptFile: VirtualFile, baseScope: GlobalSearchScope) : DelegatingGlobalSearchScope(baseScope) {
+    override fun equals(other: Any?) = other is ScriptModuleSearchScope && scriptFile == other.scriptFile && super.equals(other)
 
     override fun hashCode() = scriptFile.hashCode() * 73 * super.hashCode()
 }
 
-internal data class CustomizedScriptModuleInfo(val project: Project, val module: Module?, val virtualFile: VirtualFile,
-                                               val scriptDefinition: KotlinScriptDefinition,
-                                               val scriptExtraImports: List<KotlinScriptExtraImport>) : IdeaModuleInfo {
+internal data class ScriptModuleInfo(val project: Project, val module: Module?, val scriptFile: VirtualFile,
+                                     val scriptDefinition: KotlinScriptDefinition,
+                                     val scriptExtraImports: List<KotlinScriptExtraImport>) : IdeaModuleInfo {
     override val moduleOrigin: ModuleOrigin
         get() = ModuleOrigin.OTHER
 
     override val name: Name = Name.special("<$SCRIPT_NAME_PREFIX${scriptDefinition.name}>")
 
-    override fun contentScope(): CustomizedScriptModuleSearchScope {
+    override fun contentScope(): ScriptModuleSearchScope {
         val dependenciesRoots = dependenciesRoots()
-        return CustomizedScriptModuleSearchScope(
-                virtualFile,
+        return ScriptModuleSearchScope(
+                scriptFile,
                 if (dependenciesRoots.isEmpty()) GlobalSearchScope.EMPTY_SCOPE
                 else GlobalSearchScope.union(dependenciesRoots.map { FileLibraryScope(project, it) }.toTypedArray()))
     }
 
     private fun dependenciesRoots(): List<VirtualFile> {
         // TODO: find out whether it should be cashed (some changes listener should be implemented for the cached roots)
-        val virtualFileManager = VirtualFileManager.getInstance()
         val jarfs = StandardFileSystems.jar()
         return (scriptDefinition.getScriptDependenciesClasspath() + scriptExtraImports.flatMap { it.classpath })
                 .map { File(it).canonicalFile }
                 .distinct()
-                .map {
+                .mapNotNull {
+                    // TODO: ensure that the entries are checked elsewhere, so diagnostics is delivered to a user if files are not correctly specified
                     if (it.isFile)
-                        jarfs.findFileByPath(it.absolutePath + URLUtil.JAR_SEPARATOR) ?: throw FileNotFoundException("Classpath entry points to a file that is not a JAR archive: ${it.canonicalPath}")
+                        jarfs.findFileByPath(it.absolutePath + URLUtil.JAR_SEPARATOR) ?: null // diag: Classpath entry points to a file that is not a JAR archive
                     else
-                        virtualFileManager.findFileByUrl("file://${it.absolutePath}") ?: throw FileNotFoundException("Classpath entry points to a non-existent location: ${it.canonicalPath}")
+                        StandardFileSystems.local().findFileByPath(it.absolutePath) ?: null // diag: Classpath entry points to a non-existent location
                 }
     }
 
@@ -337,7 +337,6 @@ internal data class CustomizedScriptModuleInfo(val project: Project, val module:
 }
 
 class FileLibraryScope(project: Project, private val libraryRoot: VirtualFile) : GlobalSearchScope(project) {
-    val cachedEntries : MutableSet<VirtualFile> = hashSetOf()
 
     override fun contains(file: VirtualFile): Boolean =
         VfsUtilCore.isAncestor(libraryRoot, file, false)
@@ -351,53 +350,6 @@ class FileLibraryScope(project: Project, private val libraryRoot: VirtualFile) :
     override fun equals(other: Any?) = other is FileLibraryScope && libraryRoot == other.libraryRoot
 
     override fun hashCode() = libraryRoot.hashCode()
-}
-
-private data class FakeFileLibrary(val libraryRoot: VirtualFile) : Library {
-    override fun getFiles(rootType: OrderRootType): Array<out VirtualFile> = arrayOf(libraryRoot)
-
-    override fun getUrls(rootType: OrderRootType): Array<out String> = arrayOf(libraryRoot.url)
-
-    override fun getName(): String? = libraryRoot.name
-
-    override fun getModifiableModel(): Library.ModifiableModel { throw UnsupportedOperationException() }
-
-    override fun getTable(): LibraryTable? = null
-
-    override fun getRootProvider(): RootProvider { throw UnsupportedOperationException() }
-
-    override fun isJarDirectory(url: String): Boolean { throw UnsupportedOperationException() }
-
-    override fun isJarDirectory(url: String, rootType: OrderRootType): Boolean { throw UnsupportedOperationException() }
-
-    override fun isValid(url: String, rootType: OrderRootType): Boolean { throw UnsupportedOperationException() }
-
-    override fun readExternal(element: Element?) { throw UnsupportedOperationException() }
-
-    override fun writeExternal(element: Element?) { throw UnsupportedOperationException() }
-
-    override fun dispose() { }
-}
-
-private class FileLibraryModuleInfo(project: Project, val libraryRoot: VirtualFile) : LibraryInfo(project, FakeFileLibrary(libraryRoot)) {
-
-    override val moduleOrigin: ModuleOrigin
-        get() = ModuleOrigin.OTHER
-
-    override val name: Name = Name.special("<$LIBRARY_NAME_PREFIX${libraryRoot.nameWithoutExtension}>")
-
-    override fun contentScope() = FileLibraryScope(project, libraryRoot)
-
-    override fun dependencies(): List<IdeaModuleInfo> = emptyList()
-
-    override fun toString() = "FileLibraryModuleInfo(root=${libraryRoot.name})"
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        return (other is FileLibraryModuleInfo && libraryRoot == other.libraryRoot)
-    }
-
-    override fun hashCode(): Int = 47 * libraryRoot.hashCode()
 }
 
 private class LibraryWithoutSourceScope(project: Project, private val library: Library) :

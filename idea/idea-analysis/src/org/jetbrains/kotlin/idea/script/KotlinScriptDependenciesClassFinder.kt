@@ -25,11 +25,10 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.search.EverythingGlobalScope
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.containers.ConcurrentFactoryMap
-import org.jetbrains.kotlin.idea.caches.resolve.CustomizedScriptModuleSearchScope
+import org.jetbrains.kotlin.idea.caches.resolve.ScriptModuleSearchScope
 import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
 import org.jetbrains.kotlin.resolve.jvm.KotlinSafeClassFinder
 
-@Suppress("unused") // project extension
 class KotlinScriptDependenciesClassFinder(project: Project,
                                          private val kotlinScriptConfigurationManager: KotlinScriptConfigurationManager
 ) : NonClasspathClassFinder(project), KotlinSafeClassFinder {
@@ -46,8 +45,8 @@ class KotlinScriptDependenciesClassFinder(project: Project,
     override fun calcClassRoots(): List<VirtualFile> = kotlinScriptConfigurationManager.getAllScriptsClasspath()
 
     override fun getCache(scope: GlobalSearchScope?): PackageDirectoryCache =
-            (scope as? CustomizedScriptModuleSearchScope ?:
-             (scope as? JavaClassFinderImpl.DelegatingGlobalSearchScopeWithBaseAccess)?.base as? CustomizedScriptModuleSearchScope
+            (scope as? ScriptModuleSearchScope ?:
+             (scope as? JavaClassFinderImpl.FilterOutKotlinSourceFilesScope)?.base as? ScriptModuleSearchScope
             )?.let {
                 myCaches.get(it.scriptFile)
             } ?: super.getCache(scope)
@@ -60,8 +59,8 @@ class KotlinScriptDependenciesClassFinder(project: Project,
     override fun findClass(qualifiedName: String, scope: GlobalSearchScope): PsiClass? =
         super.findClass(qualifiedName, scope)?.let { aClass ->
             when {
-                scope is CustomizedScriptModuleSearchScope ||
-                (scope as? JavaClassFinderImpl.DelegatingGlobalSearchScopeWithBaseAccess)?.base is CustomizedScriptModuleSearchScope ||
+                scope is ScriptModuleSearchScope ||
+                (scope as? JavaClassFinderImpl.FilterOutKotlinSourceFilesScope)?.base is ScriptModuleSearchScope ||
                 scope is EverythingGlobalScope ||
                 aClass.containingFile?.virtualFile.let { file ->
                     file != null &&
