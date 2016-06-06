@@ -26,6 +26,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.idea.util.treeNextNonWhitespace
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtFile
@@ -62,7 +63,8 @@ class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
         if (needFolding(node)) {
             val textRange = getRangeToFold(node)
             if (!isOneLine(textRange, document)) {
-                descriptors.add(FoldingDescriptor(node, textRange))
+                descriptors.add(if (isNewLineRequired(node, document)) KtFoldingDescriptor(node, textRange, true)
+                                else FoldingDescriptor(node, textRange))
             }
         }
 
@@ -101,6 +103,26 @@ class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
         node.elementType == KDocTokens.KDOC -> "/**...*/"
         node.psi is KtImportList -> "..."
         else ->  "{...}"
+    }
+
+    private fun isNewLineRequired(node: ASTNode, document: Document): Boolean {
+        if (node.elementType != KtNodeTypes.BLOCK ) return false
+        val parent = node.treeParent
+        val pet = parent.elementType
+        val next: ASTNode?
+        if (pet == KtNodeTypes.THEN || pet == KtNodeTypes.CATCH) {
+            next = parent.treeNextNonWhitespace()
+        }
+        else if (pet == KtNodeTypes.TRY) {
+            next = node.treeNextNonWhitespace()
+        }
+        else if (pet == KtNodeTypes.BODY && parent.treeParent.elementType == KtNodeTypes.DO_WHILE) {
+            next = parent.treeNextNonWhitespace()
+        }
+        else {
+            return false
+        }
+        return next != null && document.getLineNumber(next.startOffset) == document.getLineNumber(node.textRange.endOffset)
     }
 
     override fun isRegionCollapsedByDefault(node: ASTNode): Boolean {

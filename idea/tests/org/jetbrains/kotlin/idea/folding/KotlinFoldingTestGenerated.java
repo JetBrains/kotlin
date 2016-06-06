@@ -94,6 +94,12 @@ public class KotlinFoldingTestGenerated extends AbstractKotlinFoldingTest {
             doSettingsFoldingTest(fileName);
         }
 
+        @TestMetadata("doWhile.kt")
+        public void testDoWhile() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/folding/checkCollapse/doWhile.kt");
+            doSettingsFoldingTest(fileName);
+        }
+
         @TestMetadata("functionLiteral.kt")
         public void testFunctionLiteral() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/folding/checkCollapse/functionLiteral.kt");
@@ -112,9 +118,21 @@ public class KotlinFoldingTestGenerated extends AbstractKotlinFoldingTest {
             doSettingsFoldingTest(fileName);
         }
 
+        @TestMetadata("ifElseIfElse.kt")
+        public void testIfElseIfElse() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/folding/checkCollapse/ifElseIfElse.kt");
+            doSettingsFoldingTest(fileName);
+        }
+
         @TestMetadata("imports.kt")
         public void testImports() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/folding/checkCollapse/imports.kt");
+            doSettingsFoldingTest(fileName);
+        }
+
+        @TestMetadata("tryCatch.kt")
+        public void testTryCatch() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/folding/checkCollapse/tryCatch.kt");
             doSettingsFoldingTest(fileName);
         }
     }
