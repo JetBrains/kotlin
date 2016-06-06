@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.utils.toReadOnlyList
 
 private val JAVA_LANG_CLASS_FQ_NAME: FqName = FqName("java.lang.Class")
 
-class LazyJavaTypeResolver(
+class JavaTypeResolver(
         private val c: LazyJavaResolverContext,
         private val typeParameterResolver: TypeParameterResolver
 ) {
