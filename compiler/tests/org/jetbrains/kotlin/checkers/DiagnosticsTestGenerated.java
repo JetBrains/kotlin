@@ -19410,6 +19410,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("typeAliasShouldExpandToClass.kt")
+            public void testTypeAliasShouldExpandToClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/typeAliasShouldExpandToClass.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("unsupportedTypeAlias.kt")
             public void testUnsupportedTypeAlias() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/unsupportedTypeAlias.kt");
