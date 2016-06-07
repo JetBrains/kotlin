@@ -1,0 +1,21 @@
+apply plugin: 'com.android.test'
+apply plugin: 'kotlin-android'
+
+android {
+    compileSdkVersion 22
+    buildToolsVersion "21.1.2"
+
+    sourceSets {
+        main.kotlin.srcDirs += 'root/kotlin'
+    }
+
+    defaultConfig {
+        minSdkVersion 7
+        targetSdkVersion 22
+
+        testApplicationId 'org.jetbrains.kotlin.gradle.test.androidalfa'
+    }
+
+    targetProjectPath ':Android'
+    targetVariant 'flavor1Debug'
+}

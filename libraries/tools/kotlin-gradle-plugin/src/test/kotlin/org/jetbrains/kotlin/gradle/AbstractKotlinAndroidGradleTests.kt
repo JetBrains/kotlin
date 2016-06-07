@@ -25,6 +25,7 @@ abstract class AbstractKotlinAndroidGradleTests(
         project.build("build") {
             assertSuccessful()
             assertContains(":Lib:compileReleaseKotlin",
+                    ":Test:compileDebugKotlin",
                     ":compileFlavor1DebugKotlin",
                     ":compileFlavor2DebugKotlin",
                     ":compileFlavor1JnidebugKotlin",
@@ -50,6 +51,7 @@ abstract class AbstractKotlinAndroidGradleTests(
         project.build("build", "--rerun-tasks") {
             assertSuccessful()
             assertContains(":Lib:compileReleaseKotlin",
+                    ":Test:compileDebugKotlin",
                     ":compileFlavor1DebugKotlin",
                     ":compileFlavor2DebugKotlin",
                     ":compileFlavor1JnidebugKotlin",

@@ -325,7 +325,8 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
         project.afterEvaluate { project ->
             if (project != null) {
                 val plugin = (project.plugins.findPlugin("android")
-                                ?: project.plugins.findPlugin("android-library")) as BasePlugin
+                                ?: project.plugins.findPlugin("android-library")
+                                ?: project.plugins.findPlugin("com.android.test")) as BasePlugin
 
                 val variantManager = AndroidGradleWrapper.getVariantDataManager(plugin)
                 processVariantData(variantManager.variantDataList, project,
