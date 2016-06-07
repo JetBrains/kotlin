@@ -31,10 +31,7 @@ import org.jetbrains.kotlin.resolve.BindingContext.TYPE
 import org.jetbrains.kotlin.resolve.BindingContext.TYPE_PARAMETER
 import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveAbstractMembers
 import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveOpenMembers
-import org.jetbrains.kotlin.types.IntersectionTypeConstructor
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.SubstitutionUtils
-import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.isNothing
@@ -149,14 +146,14 @@ class DeclarationsChecker(
     }
 
     private fun checkTypeAliasDeclaration(typeAliasDescriptor: TypeAliasDescriptor, declaration: KtTypeAlias) {
-        val typeReference = declaration.getTypeReference()
-        if (typeReference == null) return
+        val typeReference = declaration.getTypeReference() ?: return
 
         val expandedType = typeAliasDescriptor.expandedType // TODO refactor type alias expansion
         if (expandedType.isError) return
 
         val expandedClassifier = expandedType.constructor.declarationDescriptor
-        if (expandedClassifier is TypeParameterDescriptor) {
+
+        if (expandedType.isDynamic() || expandedClassifier is TypeParameterDescriptor) {
             trace.report(TYPEALIAS_SHOULD_EXPAND_TO_CLASS.on(typeReference, expandedType))
         }
     }
